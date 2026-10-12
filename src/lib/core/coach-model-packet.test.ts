@@ -53,21 +53,26 @@ test("a targeted packet keeps required sources and removes unrelated running det
   const source = brief("下一课要不要调整")
   const packet = compactSingleCoachPacket(source, [], [])
   assert.equal(packet.intent, "NEXT_SESSION")
-  assert.equal("running" in packet.current, false)
+  // K15 (user-requested): next-session packets now carry running facts so advice can cite them.
+  assert.equal("running" in packet.current, true)
   assert.equal(packet.current.sourceIds.includes("sore"), true)
   assert.equal(packet.current.sourceIds.includes("context:competition"), true)
   assert.equal(packet.current.sourceIds.includes("context:cycle"), true)
-  assert.equal(packet.current.sourceIds.includes("rep"), false)
+  assert.equal(packet.current.sourceIds.includes("rep"), true)
   assert.equal(JSON.stringify(packet).length < JSON.stringify({ history: [], current: source, candidates: [] }).length, true)
 })
 
 test("running and fuel packets expose only their own evidence", () => {
-  const run = compactSingleCoachPacket(brief("200 米这次用了多少秒"), [], [])
+  const source0 = brief("200 米这次用了多少秒")
+  const run = compactSingleCoachPacket(source0, [], [])
   assert.equal(run.intent, "RUNNING")
   assert.equal(run.current.sourceIds.includes("rep"), true)
-  assert.equal(run.current.sourceIds.includes("sore"), false)
+  // K15: sources required by the next-session rule are visible in every intent.
+  assert.equal(run.current.sourceIds.includes("sore"), (source0.nextSession?.requiredSourceIds ?? []).includes("sore"))
+  assert.equal(run.current.sourceIds.includes("context:cycle"), (source0.nextSession?.requiredSourceIds ?? []).includes("context:cycle"))
 
   const fuel = compactSingleCoachPacket(brief("这次掉速是不是吃少了"), [], [])
   assert.equal(fuel.intent, "FUEL")
   assert.equal(fuel.current.sourceIds.includes("rep"), false)
+  assert.equal(fuel.current.sourceIds.filter((id) => !(brief("这次掉速是不是吃少了").nextSession?.requiredSourceIds ?? []).includes(id)).includes("sore"), false)
 })

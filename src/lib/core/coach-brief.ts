@@ -248,11 +248,16 @@ type CoachModelJson = { mode?: string; text?: string; citations?: string[]; next
 // is still treated as a proposal.
 const SYMPTOM_WORSENING = /(?:疼痛|酸痛|痛感|症状|不适|疼|痛|跑后|跑完|训练后|运动后|练完)(?:(?!可以|建议|下次|再|能|应)[^。；，、\n]){0,6}?加重/g
 
+// K15: a hedged causal statement ("不一定会导致体重显著增加") describes an outcome,
+// not a training proposal. Advice words inside the span keep it a proposal.
+const HEDGED_OUTCOME = /(?:不一定|未必|并不|不会|不至于|不太会)(?:会)?(?:导致|引起|造成|带来|让|使)(?:(?!可以|建议|下次|再|能|应)[^。；，\n]){0,14}?(?:增加|提高|上升|变重)/g
+
 function withoutNegatedIncrease(clause: string): string {
   // K13: "不支持/不允许/不批准/限制…增加" are prohibitions too. "限制" only counts
   // when it is not itself lifted (不再限制、解除限制、取消限制、放开限制、没有限制).
   return clause
     .replace(SYMPTOM_WORSENING, "")
+    .replace(HEDGED_OUTCOME, "")
     .replace(/(?:不要|不能|不可|不宜|不应该|不建议|不得|不会|不许|避免|禁止|别|暂缓|停止|不支持|不允许|不批准|不赞成|盲目|(?<!不再|解除|取消|放开|没有)限制|不)[^。；，、\n]{0,8}?(?:加量|加重|加(?:\d+|一|两|几)?(?:组|次|课|节)|加速|增加|提高|提升|提速|冲量|更多组|延长距离|上调负荷|冲强度)(?:[（(](?:(?!可以|建议|下次|但|而是|只|改为|换成|应|再|能)[^）)]){0,24}[）)]|(?:(?!可以|建议|下次|但|而是|只|改为|换成|应|再|能)[^。；，\n]){0,24}(?=[。；，\n]|$))?/g, "")
 }
 
@@ -336,6 +341,42 @@ function recoveryConflictFailure(brief: CoachBrief, mode: CoachTurn["mode"], tex
   const shown = values.every((value) => new RegExp(`(?<!\\d)${value}(?!\\d)`).test(joined))
   if (mode === "ask" && citedAll && shown) return null
   return reject("冲突的恢复记录没有被同时追问，无法采用。")
+}
+
+// K15: internal field names, enums and source ids must not reach the visible text.
+const INTERNAL_TERMS: [RegExp, string][] = [
+  [/\b(?:returnToTraining\.)?clearance\s*(?:为|是|=|:|：)?\s*UNKNOWN\b/g, "目前不能确认已经恢复"],
+  [/\bincreaseSupported\s*(?:为|是|=|:|：)?\s*false\b/g, "目前证据不支持加量"],
+  [/\bKEEP_OR_REDUCE_ONLY\b|\bHOLD_OR_REDUCE\b/g, "只能保持或减量"],
+  [/\bKEEP_ONLY\b/g, "只能保持原计划"],
+  [/\bRECOVERY_ONLY\b/g, "只安排恢复"],
+  [/\bASK_FOR_RECOVERY\b/g, "需要先补充恢复情况"],
+  [/\bSESSION_RPE\b/g, "主观强度"],
+  [/\bSUBJECTIVE_RECOVERY\b/g, "主观恢复"],
+  [/\bPAIN_RECORDED\b/g, "已记录疼痛"],
+  [/\bSORENESS_RECORDED\b/g, "已记录酸痛"],
+  [/\b(?:requiredSourceIds|sourceIds|occurrenceId|nextSession|returnToTraining|mustAsk|increaseBlocked|medicalReferral)\b/g, "相关记录"],
+  [/\bUNKNOWN\b/g, "未知"],
+]
+
+export function scrubInternalTerms(brief: Pick<CoachBrief, "sourceIds">, text: string): string {
+  let out = text
+  for (const [pattern, replacement] of INTERNAL_TERMS) out = out.replace(pattern, replacement)
+  for (const id of [...brief.sourceIds].sort((a, b) => b.length - a.length)) {
+    if (id.length < 4) continue
+    out = out.split(`（${id}）`).join("").split(`(${id})`).join("").split(`[${id}]`).join("").split(id).join("该记录")
+  }
+  return out.replace(/该记录(?:[、，,]\s*该记录)+/g, "相关记录").replace(/\s{2,}/g, " ").trim()
+}
+
+// K15: in ask mode nextStep is not shown, so a safe referral there is moved into the text.
+function generalOnlyReplaced(text: string): boolean {
+  return text.startsWith("请先选择一条有训练开始事件的记录") || text.startsWith("本次训练有未解决的重复记录") || text.startsWith("要建议下一课，需要先记录")
+}
+
+function referralOnly(text: string): boolean {
+  return /(?:医生|医学|医院|就医|营养师|康复|评估|专业人员)/.test(text)
+    && !/(?:下一课|下次训练|下一次训练|加量|增加|提高|提速|加组|组数|配速|跑量|间歇)/.test(withoutNegatedIncrease(text).replace(/暂停[^。；，\n]{0,10}/g, ""))
 }
 
 export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
@@ -427,7 +468,12 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
     text = `${text}已有疼痛记录，必要时请做运动医学或康复评估。这不是诊断。`
   }
   text = softenUnrecordedSets(brief, text)
+  if (mode === "ask" && nextStep && !generalOnlyReplaced(text) && referralOnly(nextStep) && !stillProposesIncrease(nextStep) && !text.includes(nextStep)) {
+    text = `${text}${/[。！？?]$/.test(text) ? "" : "。"}${nextStep}`
+  }
+  text = scrubInternalTerms(brief, text)
   if (mode !== "answer") nextStep = null
+  else if (nextStep) nextStep = scrubInternalTerms(brief, nextStep)
   return { mode, text, nextStep, citations, medicalReferral: brief.constraints.medicalReferral, planChanged: false }
 }
 

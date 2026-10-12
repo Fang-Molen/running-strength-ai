@@ -51,12 +51,17 @@ export function guardCode(turn: CoachTurn): string {
   return rules.find(([fragment]) => turn.text.includes(fragment))?.[1] ?? "GUARD_REJECTED"
 }
 
-export function coachSystemPrompt(kind: CoachCallKind, intent: CoachQuestionIntent, recoveryConflict: boolean, highRpeGap: boolean, sorenessOnly: boolean): string {
+/** K15: the question itself states a corrected value ("记错了，实际是…"). */
+export function verbalCorrection(question: string): boolean {
+  return /(?:更正|记错|写错|录错|填错|输错|说错)|(?:实际|其实)(?:是|为|应该是)\s*\S{0,6}\d/.test(question)
+}
+
+export function coachSystemPrompt(kind: CoachCallKind, intent: CoachQuestionIntent, recoveryConflict: boolean, highRpeGap: boolean, sorenessOnly: boolean, question = ""): string {
   const conflict = recoveryConflict
     ? "本次主观恢复有多条冲突 FACT。mode 必须是 ask，citations 同时列入每一条恢复 FACT 的 id，正文同时保留每条分数，请用户确认哪条有效，nextStep 为 null。不要计算平均值，不要挑选其中一条，不要给出下一课处方。正文不要写出增加、提高、提速、加组、恢复正常、安全回归。"
     : ""
   const highRpe = highRpeGap
-    ? "当前 RPE 至少为 7，恢复和睡眠都未记录。mode 必须是 ask，引用 SESSION_RPE，写明这两项尚未记录，只问主观恢复是多少或睡眠几小时中的一个，nextStep 为 null。不要写保持、减量、恢复课或加量。不要用核对当下症状代替这个追问。"
+    ? `当前 RPE 至少为 7，恢复和睡眠都未记录。mode 必须是 ask，引用 SESSION_RPE，写明这两项尚未记录，只问主观恢复是多少或睡眠几小时中的一个，nextStep 为 null。不要写保持、减量、恢复课或加量。不要用核对当下症状代替这个追问。${verbalCorrection(question) ? "用户口头更正了数值：先说明记录里目前的数值，请用户在训练记录里更正后再谈下一课，更正前不能把口头数值当事实。" : ""}`
     : ""
   const soreness = sorenessOnly
     ? "本次只有酸痛、没有疼痛。正文必须写明酸痛不等于疼痛，或酸痛本身不能说明伤病，并写明目前不能确认已经恢复（放行状态未知）。只写不是诊断不够。不得写没有疼痛、已经恢复或安全回归。只可保持、减量、恢复、观察或继续核对症状。"
@@ -159,7 +164,7 @@ export function buildCoachModelRequest(data: AskCoachData): CoachModelRequest {
   const basePacket = seriesPacket ?? (data.compare ? { history: data.history, newer: data.compare.left, older: data.compare.right, pairedRunning: pairedRunningObservations(data.compare.left, data.compare.right) } : compactSingleCoachPacket(data.brief, data.history, data.candidates));
   const knowledgeContext = buildCurriculumModelContext(data.brief.question);
   const packet = JSON.stringify({ ...basePacket, knowledgeContext });
-  const system = coachSystemPrompt(kind, intent, recoveryConflict, highRpeGap, sorenessOnly) + CURRICULUM_SYSTEM_BOUNDARY
+  const system = coachSystemPrompt(kind, intent, recoveryConflict, highRpeGap, sorenessOnly, data.brief.question) + CURRICULUM_SYSTEM_BOUNDARY
   return { kind, intent, maxTokens, packet, system, messages: [{ role: "system", content: system }, { role: "user", content: packet }], knowledgeContext }
 }
 
