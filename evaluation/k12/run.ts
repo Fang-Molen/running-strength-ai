@@ -48,17 +48,20 @@ for (const [index, s] of scenarios.entries()) {
     conflictReviews: kc.conflictReviews.entries.map((e: { id: string }) => e.id), syntheticExample: kc.syntheticExample?.id ?? null, truncated: kc.truncated,
   }
   const attempts: unknown[] = []
-  let final: { model: string; status: number; bodyText: string; startedAt: string; endedAt: string; elapsedMs: number; retry: boolean; payload: unknown } | null = null
+  let final: { model: string; status: number; bodyText: string; startedAt: string; endedAt: string; elapsedMs: number; retry: boolean; payload: unknown; attemptNo?: number } | null = null
   let blocked: string | null = null
-  for (const [attemptIndex, model] of models.slice(0, 2).entries()) {
+  const retries = Number(process.env.FANGKUN_EVAL_RETRIES ?? 0) || 0
+  const backoffMs = Number(process.env.FANGKUN_EVAL_BACKOFF_MS ?? 20000)
+  const plan = models.slice(0, 2).flatMap((m) => Array.from({ length: 1 + retries }, () => m))
+  for (const [attemptIndex, model] of plan.entries()) {
     const payload = { model, temperature: 0.2, max_tokens: request.maxTokens + extraTokens, response_format: COACH_RESPONSE_FORMAT, messages: request.messages, ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}) }
     const result = await withEvalCall(process.env, ledger, { batch, caseId: s.id, model, attempt: attemptIndex + 1 }, () => callOpenAICompatible(baseUrl, keyEnv, payload))
     if (!result.ok) { blocked = result.reason; break }
     const r = result.value
     attempts.push({ model, status: r.status, error: r.error, startedAt: r.startedAt, endedAt: r.endedAt, elapsedMs: r.elapsedMs, bodyPreview: r.ok ? null : r.bodyText.slice(0, 600) })
-    if (r.ok) { final = { model, status: r.status, bodyText: r.bodyText, startedAt: r.startedAt, endedAt: r.endedAt, elapsedMs: r.elapsedMs, retry: attemptIndex > 0, payload }; break }
+    if (r.ok) { final = { model, status: r.status, bodyText: r.bodyText, startedAt: r.startedAt, endedAt: r.endedAt, elapsedMs: r.elapsedMs, retry: attemptIndex > 0, payload, attemptNo: attemptIndex + 1 }; break }
     if (![0, 429, 500, 502, 503, 504].includes(r.status)) break
-    await sleep(4000)
+    await sleep(r.status === 429 || r.status === 503 ? backoffMs * 2 ** Math.min(attemptIndex, 3) : 4000)
   }
   let content: string | null = null, finish: string | null = null, usage: unknown = null, returnedModel: string | null = null, bodyJson: unknown = null
   if (final) {
@@ -78,7 +81,7 @@ for (const [index, s] of scenarios.entries()) {
     entry: "EXTERNAL_MODEL_WITH_FANGKUN_CONTEXT", pipeline: "coach-pipeline.ts (askCoach request+guard code), eval adapter transport", source_revision: sourceRev,
     provider: providerLabel, base_url: baseUrl, model_requested: final?.model ?? models[0] ?? null, model_returned: returnedModel,
     params: { temperature: 0.2, max_tokens: request.maxTokens + extraTokens, product_max_tokens: request.maxTokens, stream: false, response_format: "json_schema coach_answer (product schema)", reasoning_effort: reasoningEffort ?? null },
-    started_at: final?.startedAt ?? null, ended_at: final?.endedAt ?? null, elapsed_ms: final?.elapsedMs ?? null, retry: final?.retry ?? false, attempts,
+    started_at: final?.startedAt ?? null, ended_at: final?.endedAt ?? null, elapsed_ms: final?.elapsedMs ?? null, retry: final?.retry ?? false, attempt_no: final?.attemptNo ?? null, attempts,
     raw_response_body: final?.bodyText ?? null, raw_response: content, finish_reason: finish, usage,
     cost: { billed_usd: final ? costNote : 0, evidence: usage },
     guard: guarded ? { mode: guarded.turn.mode, code: guarded.code, subcode: guarded.subcode, text: guarded.turn.text, nextStep: guarded.turn.nextStep, citations: guarded.turn.citations, medicalReferral: guarded.turn.medicalReferral } : null,
