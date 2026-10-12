@@ -69,7 +69,7 @@ test('the real server handler uses curriculum only after existing authorization'
  assert.ok(source.indexOf('beginModelCall()',askStart)>askStart);assert.ok(source.indexOf('beginModelCall()',askStart)<source.indexOf('buildCoachModelRequest(data)',askStart))
  assert.ok(source.indexOf('XAI_API_KEY',askStart)<source.indexOf('buildCoachModelRequest(data)',askStart))
  assert.doesNotMatch(source,/buildCurriculumModelContext/)
- assert.ok(pipeline.includes('buildCurriculumModelContext(data.brief.question)'));assert.ok(pipeline.includes('JSON.stringify({ ...basePacket, knowledgeContext })'));assert.match(pipeline,/coachSystemPrompt\(kind, intent, recoveryConflict, highRpeGap, sorenessOnly\) \+ CURRICULUM_SYSTEM_BOUNDARY/)
+ assert.ok(pipeline.includes('buildCurriculumModelContext(data.brief.question)'));assert.ok(pipeline.includes('JSON.stringify({ ...basePacket, knowledgeContext })'));assert.match(pipeline,/coachSystemPrompt\(kind, intent, recoveryConflict, highRpeGap, sorenessOnly, data\.brief\.question\) \+ CURRICULUM_SYSTEM_BOUNDARY/)
  assert.doesNotMatch(pipeline,/fetch\(|process\.env|XAI_API_KEY|beginModelCall/)
 })
 test('public evaluation variants stay outside runtime source imports',()=>{const source=readFileSync(new URL('./coach-curriculum.ts',import.meta.url),'utf8');assert.doesNotMatch(source,/evaluation\/|public-variations\.json|input-only\.json/);assert.equal(retrieveTeachingExamples('400米间歇变慢调整',1).every(e=>e.dataOrigin==='SYNTHETIC_TEACHING'),true)})

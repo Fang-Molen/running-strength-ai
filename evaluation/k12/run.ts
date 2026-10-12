@@ -27,6 +27,8 @@ const keyEnv = process.env.FANGKUN_EVAL_KEY_ENV ?? ""
 const models = (process.env.FANGKUN_EVAL_MODELS ?? "").split(",").map((m) => m.trim()).filter(Boolean)
 const reasoningEffort = process.env.FANGKUN_EVAL_REASONING_EFFORT || undefined
 const extraTokens = Number(process.env.FANGKUN_EVAL_EXTRA_TOKENS ?? 0) || 0
+const providerLabel = process.env.FANGKUN_EVAL_PROVIDER_LABEL ?? "Google Gemini API (OpenAI-compatible endpoint)"
+const costNote = process.env.FANGKUN_EVAL_COST_NOTE ?? "0 expected (free tier key per user; billing status not verifiable via API)"
 const pauseMs = Number(process.env.FANGKUN_EVAL_PAUSE_MS ?? 6000)
 const sha = (s: string) => createHash("sha256").update(s).digest("hex")
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -74,11 +76,11 @@ for (const [index, s] of scenarios.entries()) {
     kind: request.kind, intent: request.intent, product_max_tokens: request.maxTokens,
     retrieved, payload: payloadForRecord, payload_sha256: sha(payloadText),
     entry: "EXTERNAL_MODEL_WITH_FANGKUN_CONTEXT", pipeline: "coach-pipeline.ts (askCoach request+guard code), eval adapter transport", source_revision: sourceRev,
-    provider: "Google Gemini API (OpenAI-compatible endpoint)", base_url: baseUrl, model_requested: final?.model ?? models[0] ?? null, model_returned: returnedModel,
+    provider: providerLabel, base_url: baseUrl, model_requested: final?.model ?? models[0] ?? null, model_returned: returnedModel,
     params: { temperature: 0.2, max_tokens: request.maxTokens + extraTokens, product_max_tokens: request.maxTokens, stream: false, response_format: "json_schema coach_answer (product schema)", reasoning_effort: reasoningEffort ?? null },
     started_at: final?.startedAt ?? null, ended_at: final?.endedAt ?? null, elapsed_ms: final?.elapsedMs ?? null, retry: final?.retry ?? false, attempts,
     raw_response_body: final?.bodyText ?? null, raw_response: content, finish_reason: finish, usage,
-    cost: { billed_usd: final ? "0 expected (free tier key per user; billing status not verifiable via API)" : 0, evidence: usage },
+    cost: { billed_usd: final ? costNote : 0, evidence: usage },
     guard: guarded ? { mode: guarded.turn.mode, code: guarded.code, subcode: guarded.subcode, text: guarded.turn.text, nextStep: guarded.turn.nextStep, citations: guarded.turn.citations, medicalReferral: guarded.turn.medicalReferral } : null,
     status: final && content != null ? "REAL_MODEL_RESPONSE" : "NO_REAL_MODEL_RESPONSE", blocked_reason: blocked,
     scorer: null,
