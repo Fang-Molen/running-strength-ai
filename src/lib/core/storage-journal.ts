@@ -1,6 +1,6 @@
 import { currentStore, type MemoryStore } from "./storage.ts";
 
-type Entry<T> = { schemaVersion: 1; id: string; order: number; data: T };
+export type Entry<T> = { schemaVersion: 1; id: string; order: number; recordedAt?: string; data: T };
 const clocks = new WeakMap<MemoryStore, number>();
 export function storeKeys(box: MemoryStore): string[] {
   if (box.keys) return [...box.keys()];
@@ -51,7 +51,7 @@ export function appendJournal<T>(prefix: string, id: string, data: T): boolean {
     clocks.set(box, order);
     const nonce = crypto.randomUUID();
     const key = prefix + id + ":" + nonce;
-    const serialized = JSON.stringify({ schemaVersion: 1, id, order, data });
+    const serialized = JSON.stringify({ schemaVersion: 1, id, order, recordedAt: new Date().toISOString(), data });
     box.setItem(key, serialized);
     return box.getItem(key) === serialized;
   } catch {

@@ -8,6 +8,8 @@ export type CorrectionKind = "FIELD" | "VOID" | "RESTORE"
 
 export type TrainingCorrection = {
   correctionId: string
+  /** Actual local submission time; absent in legacy rows. Never inferred from at. */
+  recordedAt?: string
   schemaVersion: 1
   trainingOccurrenceId: string
   kind: CorrectionKind
@@ -59,6 +61,7 @@ export function appendCorrection(input: {
   if (input.kind === "FIELD" && !input.field) return null
   const row: TrainingCorrection = {
     correctionId: nextId(),
+    recordedAt: new Date().toISOString(),
     schemaVersion: 1,
     trainingOccurrenceId: input.trainingOccurrenceId,
     kind: input.kind,
