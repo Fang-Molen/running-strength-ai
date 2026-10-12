@@ -243,16 +243,25 @@ export type CoachTurn = {
 
 type CoachModelJson = { mode?: string; text?: string; citations?: string[]; nextStep?: string | null; medicalReferral?: boolean }
 
+// K13: a worsening symptom ("疼痛跑后加重") describes the athlete, not a proposed
+// load increase. The filler may not contain advice words, so "疼痛减轻后可以加重"
+// is still treated as a proposal.
+const SYMPTOM_WORSENING = /(?:疼痛|酸痛|痛感|症状|不适|疼|痛|跑后|跑完|训练后|运动后|练完)(?:(?!可以|建议|下次|再|能|应)[^。；，、\n]){0,6}?加重/g
+
 function withoutNegatedIncrease(clause: string): string {
-  return clause.replace(/(?:不要|不能|不可|不宜|不应该|不建议|不得|不会|不许|避免|禁止|别|暂缓|停止|不)[^。；，、\n]{0,8}?(?:加量|加重|加(?:\d+|一|两|几)?组|加速|增加|提高|提升|提速|冲量|更多组|延长距离|上调负荷|冲强度)/g, "")
+  // K13: "不支持/不允许/不批准/限制…增加" are prohibitions too. "限制" only counts
+  // when it is not itself lifted (不再限制、解除限制、取消限制、放开限制、没有限制).
+  return clause
+    .replace(SYMPTOM_WORSENING, "")
+    .replace(/(?:不要|不能|不可|不宜|不应该|不建议|不得|不会|不许|避免|禁止|别|暂缓|停止|不支持|不允许|不批准|不赞成|(?<!不再|解除|取消|放开|没有)限制|不)[^。；，、\n]{0,8}?(?:加量|加重|加(?:\d+|一|两|几)?(?:组|次|课|节)|加速|增加|提高|提升|提速|冲量|更多组|延长距离|上调负荷|冲强度)(?:[（(](?:(?!可以|建议|下次|但|而是|只|改为|换成|应|再|能)[^）)]){0,24}[）)]|(?:(?!可以|建议|下次|但|而是|只|改为|换成|应|再|能)[^。；，\n]){0,24}(?=[。；，\n]|$))?/g, "")
 }
 
 function mentionsProposedIncrease(text: string): boolean {
-  return text.split(/[。；，、\n]/).some((clause) => /(?:下次|下一课|接下来|建议|可以|应该|可考虑|批准).{0,16}(?:加量|加(?:\d+|一|两|几)?组|加重|提速|增加|提高|提升|延长距离|上调负荷|冲强度)/.test(withoutNegatedIncrease(clause)))
+  return text.split(/[。；，、\n]/).some((clause) => /(?:下次|下一课|接下来|建议|可以|应该|必须|可考虑|批准).{0,16}(?:加量|加(?:\d+|一|两|几)?(?:组|次|课|节)|加重|提速|增加|提高|提升|延长距离|上调负荷|冲强度)/.test(withoutNegatedIncrease(clause)))
 }
 
 function stillProposesIncrease(text: string): boolean {
-  return text.split(/[。；，、\n]/).some((clause) => /加(?:大|高|多|长|快|重|组|量|速|(?:\d+|一|两|几)组)|增加|提高|提升|提速|冲量|更多组|延长距离|上调负荷|冲强度/.test(withoutNegatedIncrease(clause)))
+  return text.split(/[。；，、\n]/).some((clause) => /加(?:大|高|多|长|快|重|组|量|速|课|(?:\d+|一|两|几)(?:组|次|课|节))|增加|提高|提升|提速|冲量|更多组|延长距离|上调负荷|冲强度/.test(withoutNegatedIncrease(clause)))
 }
 
 export function recoveryConflictApplies(brief: Pick<CoachBrief, "question" | "sources">): boolean {
@@ -365,7 +374,19 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
   if (highRpeFailure) return highRpeFailure
   const sorenessFailure = sorenessBoundaryFailure(brief, mode, text, nextStep, citations)
   if (sorenessFailure) return sorenessFailure
-  if (brief.mustAsk.length > 0 && mode !== "ask") {
+  // K13: without a selected training the model may only give general, non-personal
+  // guidance. Any proposed increase or body value is replaced by the fixed prompt.
+  const generalOnly = brief.mustAsk.length === 1 && brief.mustAsk[0] === "NO_TRAINING_OCCURRENCE"
+  const generalUnsafe = (candidate: string) => mentionsProposedIncrease(candidate) || stillProposesIncrease(candidate) || uncitedBodyValue(brief, candidate, []) || unsupportedBodyStatement(brief, candidate, []) || unsupportedMedicalConclusion(candidate)
+  if (generalOnly && generalUnsafe(`${text} ${nextStep ?? ""}`)) {
+    mode = "ask"
+    nextStep = null
+    text = "请先选择一条有训练开始事件的记录，我才能核对这次训练。"
+  } else if (generalOnly && mode !== "ask") {
+    mode = "ask"
+    nextStep = null
+    text = `${text}（以上是一般性说明，没有结合你的训练记录；如需针对你的情况，请先选择一条训练记录。）`
+  } else if (brief.mustAsk.length > 0 && mode !== "ask") {
     mode = "ask"
     nextStep = null
     text = brief.mustAsk.includes("NO_TRAINING_OCCURRENCE") ? "请先选择一条有训练开始事件的记录，我才能核对这次训练。" : "本次训练有未解决的重复记录。请先核对冲突的原始记录，再讨论调整。"
