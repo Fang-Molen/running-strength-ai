@@ -84,7 +84,20 @@ export function projectCoachNextSession(input: NextInput): CoachNextSessionView 
   return { status, increaseSupported: false, allowed, blockers, sourceIds, requiredSourceIds: [...new Set(requiredSourceIds)] }
 }
 
-export function nextSessionAdviceNeedsSource(view: CoachNextSessionView | undefined, text: string, citations: string[]): boolean {
+// K13.2: a referral to a clinician/dietitian or a request to complete/correct the
+// record is not next-session training advice. Only such clauses are removed; any
+// clause that also mentions a training change still requires the sources.
+function withoutReferralOrRecordCheck(text: string): string {
+  return text.split(/(?<=[。；\n])/).filter((clause) => {
+    const referral = /建议(?:你|您)?(?:尽快)?(?:寻求|咨询|进行|做|找|去|前往)?[^。；\n]{0,14}(?:医生|医学|医院|就医|营养师|康复|评估)/.test(clause)
+    const recordCheck = /(?:核对|补全|补充|更正)[^。；\n]{0,10}(?:记录|饮食)/.test(clause)
+    const training = /(?:下一课|下一次训练|下次训练|明天|减量|减少|恢复课|恢复训练|降低|少一组|保持原计划|加量|增加|提高|间歇|跑量|组数|强度)/.test(clause)
+    return !((referral || recordCheck) && !training)
+  }).join("")
+}
+
+export function nextSessionAdviceNeedsSource(view: CoachNextSessionView | undefined, rawText: string, citations: string[]): boolean {
+  const text = withoutReferralOrRecordCheck(rawText)
   if (!view || view.requiredSourceIds.length === 0 || !/(?:下一课|下一次训练|建议|保持原计划|减量|减少|恢复课|恢复训练|降低|少一组|停止)/.test(text)) return false
   return view.requiredSourceIds.some((id) => !citations.includes(id))
 }

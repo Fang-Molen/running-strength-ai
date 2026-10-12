@@ -90,3 +90,22 @@ test("duplicate records still force the fixed conflict prompt", () => {
   assert.equal(turn.mode, "ask")
   assert.match(turn.text, /重复记录/)
 })
+
+test("K13.2: referral or record-completion advice is not next-session training advice", () => {
+  const base = parts()
+  const p = parts({ question: "掉速是不是吃少了？", sleepHours: 5, sources: base.sources!.map((x) => x.id === "ev:sleep" ? { ...x, detail: "SLEEP 睡眠：5小时；已绑定本次训练的记录，不能单独作为恢复或伤病诊断" } : x) })
+  const brief = deriveCoachBrief(p)
+  assert.ok((brief.nextSession?.requiredSourceIds.length ?? 0) > 0)
+  const ok = guardCoachResponse(brief, answer("记录不完整，不能据此推断摄入不足，也无法诊断RED-S。如有持续症状，建议寻求运动医学医生或注册营养师评估。", ["occ"], "请核对并补全当日的饮食记录。"))
+  assert.equal(ok.mode, "answer")
+  for (const [text, next] of [["建议明天减量并咨询医生。", null], ["建议找康复师评估，下次训练加量。", null], ["记录不完整。", "建议下一课减少组数。"]] as const) {
+    assert.equal(guardCoachResponse(brief, answer(text, ["occ"], next)).mode, "unavailable", text)
+  }
+})
+
+test("K13.2: '盲目增加' is discouragement; a plain proposal is not", () => {
+  const brief = deriveCoachBrief(parts({ question: "最后200米总被反超怎么办？", occurrenceId: null, sessionRpe: null, sleepHours: null, subjectiveRecovery: null, sourceIds: [], sources: [] }))
+  const kept = guardCoachResponse(brief, answer("不能仅凭末段被反超就断定是乳酸耐受差并盲目增加高强度课表。", [], null, "ask"))
+  assert.match(kept.text, /盲目增加/)
+  assert.equal(guardCoachResponse(brief, answer("建议每周增加两次乳酸课。", [], null, "ask")).text, "请先选择一条有训练开始事件的记录，我才能核对这次训练。")
+})
