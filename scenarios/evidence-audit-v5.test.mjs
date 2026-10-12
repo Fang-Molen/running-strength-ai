@@ -1,0 +1,13 @@
+import test from 'node:test'; import assert from 'node:assert/strict';
+import {auditAthleteEvidence} from '../src/lib/core/athlete-evidence-audit.ts';
+const pb=(id='pb1',value=960)=>({id,kind:'PB',date:'2024-05-01',value,unit:'5000m_seconds',source:'OFFICIAL'});
+test('historical PB never proves current fitness',()=>{const r=auditAthleteEvidence([pb()]);assert.equal(r.currentPerformanceKnown,false);assert.equal(r.decisionAuthorization,false)});
+test('identical repeated ID is idempotent',()=>assert.equal(auditAthleteEvidence([pb(),pb()]).accepted.length,1));
+test('different facts under same ID conflict',()=>assert.equal(auditAthleteEvidence([pb(),pb('pb1',980)]).conflicts[0].reason,'SAME_ID_DIFFERENT_FACT'));
+test('different IDs same-date PB disagreement conflicts',()=>assert.equal(auditAthleteEvidence([pb(),pb('pb2',980)]).conflicts[0].reason,'CONFLICTING_PB_SAME_DATE'));
+test('different dates do not constitute same-event conflict',()=>{const x={...pb('pb2',980),date:'2025-05-01'};assert.equal(auditAthleteEvidence([pb(),x]).conflicts.length,0)});
+test('negative performance rejected',()=>assert.equal(auditAthleteEvidence([pb('bad',-1)]).rejected.length,1));
+test('NaN rejected',()=>assert.equal(auditAthleteEvidence([pb('bad',NaN)]).rejected.length,1));
+test('missing PB rejected',()=>assert.equal(auditAthleteEvidence([{...pb(),value:null}]).rejected.length,1));
+test('non PB null allowed as missing observation',()=>assert.equal(auditAthleteEvidence([{...pb(),kind:'RECOVERY',value:null}]).accepted.length,1));
+test('no input cannot authorize',()=>assert.equal(auditAthleteEvidence([]).decisionAuthorization,false));

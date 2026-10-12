@@ -1,0 +1,86 @@
+TAP version 13
+# (node:2036) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 400 x 6 preserves order and detects slowing without fatigue inference
+ok 1 - 400 x 6 preserves order and detects slowing without fatigue inference
+  ---
+  duration_ms: 1.49662
+  type: 'test'
+  ...
+# Subtest: progressive acceleration is observed, not penalized
+ok 2 - progressive acceleration is observed, not penalized
+  ---
+  duration_ms: 0.147933
+  type: 'test'
+  ...
+# Subtest: missing evidence never becomes zero
+ok 3 - missing evidence never becomes zero
+  ---
+  duration_ms: 0.143406
+  type: 'test'
+  ...
+# Subtest: different distances are not compared
+ok 4 - different distances are not compared
+  ---
+  duration_ms: 0.274313
+  type: 'test'
+  ...
+# Subtest: duplicate ordinal is rejected
+ok 5 - duplicate ordinal is rejected
+  ---
+  duration_ms: 0.214482
+  type: 'test'
+  ...
+# Subtest: stable timings respect explicit tolerance
+ok 6 - stable timings respect explicit tolerance
+  ---
+  duration_ms: 0.221223
+  type: 'test'
+  ...
+# (node:2037) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: same timings different purposes yield different alignment
+ok 7 - same timings different purposes yield different alignment
+  ---
+  duration_ms: 1.013513
+  type: 'test'
+  ...
+# Subtest: faster progression observed without prescription
+ok 8 - faster progression observed without prescription
+  ---
+  duration_ms: 0.276836
+  type: 'test'
+  ...
+# Subtest: unspecified purpose cannot be inferred
+ok 9 - unspecified purpose cannot be inferred
+  ---
+  duration_ms: 0.128103
+  type: 'test'
+  ...
+# Subtest: target deviation preserves event provenance
+ok 10 - target deviation preserves event provenance
+  ---
+  duration_ms: 0.721905
+  type: 'test'
+  ...
+# Subtest: missing rest and followup remain explicit
+ok 11 - missing rest and followup remain explicit
+  ---
+  duration_ms: 0.346972
+  type: 'test'
+  ...
+# Subtest: mixed distances prevent purpose alignment
+ok 12 - mixed distances prevent purpose alignment
+  ---
+  duration_ms: 0.133501
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 134.250323

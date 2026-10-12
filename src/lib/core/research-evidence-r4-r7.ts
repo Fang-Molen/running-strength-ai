@@ -1,0 +1,603 @@
+// GENERATED read-only R4–R7 research archive candidates (2026-10-12).
+// ARCHIVE_REPORTED means the prior research report claimed a verification depth;
+// it does NOT mean this code integration independently rechecked the original paper.
+// Not a personal training fact, a prescription, a diagnosis, or a decision rule.
+export type ArchivedResearchEvidence = {
+  id: string; domain: string; title: string; doi: string; url: string; design: string;
+  population: string; claim: string; limits: string; transfer: string;
+  verification: string; status: 'ARCHIVE_REPORTED'; events: string[];
+  keywords: string[]; prescriptionApproved: false
+}
+export const ARCHIVED_RESEARCH_VERSION = 'FK-RESEARCH-R4-R7-20261012-CANDIDATE' as const
+export const ARCHIVED_RESEARCH: readonly ArchivedResearchEvidence[] = [
+  {
+    "id": "R4-001",
+    "domain": "跨栏专项/生物力学",
+    "title": "Effect of hurdling step strategy on the kinematics of the hurdle clearance technique",
+    "doi": "10.1080/14763141.2021.1970214",
+    "url": "https://irep.ntu.ac.uk/id/eprint/51322/",
+    "design": "横断面运动学比较（非随机干预）",
+    "population": "12名男性跨栏/短跑运动员；7步组6人、8步组6人",
+    "claim": "7步组起跳点离栏更远0.20m，落地点离栏更近0.42m；平均水平速度组间差0.02m/s，起跑到第一栏时间差0.01s。",
+    "limits": "小样本、组间选择偏倚、二维观察；不能证明7步优于8步。",
+    "transfer": "仅110m栏第一栏进栏技术；不外推400m栏、女子100m栏或所有身高步长。",
+    "verification": "ABSTRACT_CHECKED",
+    "events": [
+      "110米栏"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-002",
+    "domain": "投掷/链球生物力学",
+    "title": "Biomechanics of the Hammer Throw: Narrative Review",
+    "doi": "10.3389/fspor.2022.853536",
+    "url": "https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2022.853536/full",
+    "design": "叙述性综述（非系统综述或Meta）",
+    "population": "既往链球运动学与力学研究，非单一试验样本",
+    "claim": "出手线速度是投掷距离的核心力学变量之一；文献描述下肢经躯干和上肢传递动量的运动链；研究对预摆、首圈进入与旋转轴的测量仍有缺口。",
+    "limits": "机制性与叙述性证据；不证明特定力量训练会提高比赛距离；未给可用的统一效应量。",
+    "transfer": "只限链球技术背景；不将旋转动力学直接套用铅球、标枪或铁饼。",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [
+      "链球"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-003",
+    "domain": "投掷/标枪专项",
+    "title": "Kinematic Contribution to Javelin Velocity at Different Run-Up Velocities in Male Athletes",
+    "doi": "10.5114/jhk/168143",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38053957/",
+    "design": "被试内两条件运动学比较（非训练干预）",
+    "population": "12名大学男性标枪运动员",
+    "claim": "短助跑时躯干前倾对标枪速度的贡献较小，躯干逆时针旋转贡献较大；助跑速度改变会改变不同身体运动对出手速度的相对贡献。",
+    "limits": "小样本男性大学运动员、即时运动学比较；未研究长期学习或成绩增益。",
+    "transfer": "不能推断短助跑训练必然改善完整助跑成绩；不能直接推广女子/青少年标枪。",
+    "verification": "ABSTRACT_CHECKED_FULL_TEXT_LINK_FOUND",
+    "events": [
+      "标枪"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-004",
+    "domain": "跳跃/三级跳负荷",
+    "title": "Biomechanical loading in the triple jump",
+    "doi": "10.1080/026404100402421",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10855682/",
+    "design": "小样本实验室/场地生物力学观察",
+    "population": "7名国家级三级跳运动员（4男、3女）",
+    "claim": "step阶段报告最大垂直地面反作用力约15.2倍体重；平均触地时间hop 0.139s、step 0.157s、jump 0.177s。",
+    "limits": "n=7，极端力峰对设备、技术和测量条件敏感；不是受伤风险阈值或训练安全剂量。",
+    "transfer": "不能用15.2倍体重作为所有跳跃/跨栏运动员的固定负荷或自动伤病评分。",
+    "verification": "ABSTRACT_CHECKED",
+    "events": [
+      "三级跳"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-005",
+    "domain": "特殊人群/女性热适应/比赛环境",
+    "title": "Heat Adaptation for Females: A Systematic Review and Meta-Analysis of Physiological Adaptations and Exercise Performance in the Heat",
+    "doi": "10.1007/s40279-023-01831-2",
+    "url": "https://link.springer.com/article/10.1007/s40279-023-01831-2",
+    "design": "系统综述与随机效应Meta（主要为干预前后对比）",
+    "population": "30项研究；22项进入Meta；热适应女性参与者235人，年龄18–46岁",
+    "claim": "运动核心温度ES=-0.81（95%CI -1.01至-0.60），心率ES=-0.60（-0.74至-0.45）；热环境表现测试ES=1.00（0.56至1.45）。",
+    "limits": "主要前后变化、非统一对照干预；30项中仅少数跑步研究；作者未预注册；月经周期控制不足；不能据此推定个体效果或固定热适应处方。",
+    "transfer": "适用健康18–50岁女性的热适应研究背景；不能直接外推青少年、妊娠、热病风险者、不同项目或炎热天气安全放行。",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "热适应",
+      "高温",
+      "热环境"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-006",
+    "domain": "特殊人群/女性热环境策略",
+    "title": "Influence of acute heat mitigation strategies on core temperature, heart rate and aerobic performance in females: A systematic literature review",
+    "doi": "10.1080/02640414.2024.2396225",
+    "url": "https://doi.org/10.1080/02640414.2024.2396225",
+    "design": "系统文献综述（急性热缓解策略）",
+    "population": "13项研究，共118名女性",
+    "claim": "多数研究未改善热负担（9/10）、心血管负担（6/6）或表现（8/10）；少数冰背心预冷研究报告跑步表现改善。",
+    "limits": "样本和方案异质；单项显著效应不等于普遍有效；不等于热适应干预研究。",
+    "transfer": "不能直接推广到所有女子田径项目，尤其不能当作高温安全保证。",
+    "verification": "ABSTRACT_CHECKED",
+    "events": [],
+    "keywords": [
+      "热适应",
+      "高温",
+      "热环境"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-007",
+    "domain": "运动心理/比赛表现",
+    "title": "Effects of Psychological Interventions to Enhance Athletic Performance: A Systematic Review and Meta-Analysis",
+    "doi": "10.1007/s40279-023-01931-z",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10933186/",
+    "design": "预注册系统综述+多水平Meta与敏感性分析",
+    "population": "111项研究符合综述纳入标准；25项（37个效应）进入5组Meta；竞技运动员",
+    "claim": "心理技能训练g=0.83（95%CI 0.21–1.45）、正念/接纳g=0.67（0.01–1.32）、表象g=0.75（0.14–1.36）；排除非随机研究与主观表现终点后，所有综合效应不再显著。",
+    "limits": "干预类型和专项异质、原研究偏倚风险；不显著不等于无效；不能承诺具体运动员提升幅度。",
+    "transfer": "运动心理背景可跨专项讨论，但没有足够直接证据预测800米或投掷单项的表现收益。",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "心理",
+      "正念",
+      "表象"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-008",
+    "domain": "特殊人群/残疾运动员伤病",
+    "title": "Prevalence and incidence of injuries in para athletes: a systematic review with meta-analysis and GRADE recommendations",
+    "doi": "10.1136/bjsports-2020-102823",
+    "url": "https://doi.org/10.1136/bjsports-2020-102823",
+    "design": "系统综述+Meta+GRADE证据质量评定",
+    "population": "42项研究，跨多种残疾类别和竞技项目；患病率Meta n=12151、发生率Meta n=11608",
+    "claim": "损伤患病率40.8%（95%CI 32.5–49.8%，I²=97.7%，证据极低）；发生率14.3/1000 athlete-days（11.9–16.8，I²=98.4%，证据低）。",
+    "limits": "极高异质性、定义和监测方法不同；总体数值不等于某残疾类别或某田径项目的个体风险。",
+    "transfer": "仅作为残疾运动员分层监测需求的背景；不适合套到健全运动员或直接触发伤病风险等级。",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "残疾",
+      "伤病",
+      "损伤"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R4-009",
+    "domain": "投掷/标枪技术运动学",
+    "title": "Kinematic Factors Related to Forward and Vertical Release Velocity in Male Javelin Throwers",
+    "doi": "10.5432/ijshs.202146",
+    "url": "https://www.jstage.jst.go.jp/article/ijshs/20/0/20_202146/_article",
+    "design": "比赛现场横断面三维运动学与偏相关分析",
+    "population": "115名男性标枪选手，真实比赛录像",
+    "claim": "右脚至左脚着地间的身体重心前向速度与更高的出手速度相关；前向和垂直出手速度的相关运动学因素不同。",
+    "limits": "观察性相关研究，不证明改变单一技术变量能提高成绩；不能用作统一技术角度处方。",
+    "transfer": "不外推女性、其他投掷项目或青少年；也不能替代个体三维技术测量。",
+    "verification": "ABSTRACT_CHECKED",
+    "events": [
+      "标枪"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-001",
+    "domain": "400米栏",
+    "title": "Otsuka & Isaka 2019",
+    "doi": "10.1371/journal.pone.0204185",
+    "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0204185",
+    "design": "比赛录像观察；27名男性运动员，491次比赛",
+    "population": "比赛录像观察；27名男性运动员，491次比赛",
+    "claim": "后半程速度与个人成绩关系显著；组间与个人内结论不等价",
+    "limits": "非随机干预；不能推断训练因果",
+    "transfer": "女子、青少年、其他跨栏项目不可直接外推",
+    "verification": "开放获取正文可核对",
+    "events": [
+      "400米栏"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-002",
+    "domain": "女子400米栏",
+    "title": "Changes in stride pattern of elite women’s 400 metres hurdles from 2019 to 2022",
+    "doi": "",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11903702/",
+    "design": "赛事录像观察；255次表现",
+    "population": "赛事录像观察；255次表现",
+    "claim": "识别18种步数模式；高水平组常见后段15步转16步",
+    "limits": "赛事观察；个体身高和能力影响步数",
+    "transfer": "不可制定统一最优步数",
+    "verification": "开放获取正文来源；未核实DOI",
+    "events": [
+      "400米栏"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-003",
+    "domain": "男子400米栏",
+    "title": "Pacing Strategy in Men’s 400 m Hurdles",
+    "doi": "10.2478/hukin-2021-0059",
+    "url": "https://cir.nii.ac.jp/crid/1360016870096123392",
+    "design": "历史国际赛事观察；273次决赛比赛",
+    "population": "历史国际赛事观察；273次决赛比赛",
+    "claim": "节奏与步数策略多样，强调个体化",
+    "limits": "历史跨度大；时代和赛道条件差异",
+    "transfer": "不能外推至女子或非精英",
+    "verification": "摘要级核对",
+    "events": [
+      "400米栏"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-004",
+    "domain": "撑竿跳",
+    "title": "Frère et al. 2025",
+    "doi": "10.1016/j.jbiomech.2025.112765",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40403601/",
+    "design": "横断面视频力学分析；84名不同性别和水平运动员",
+    "population": "横断面视频力学分析；84名不同性别和水平运动员",
+    "claim": "不同能量交换策略可实现相近表现",
+    "limits": "相关性研究；未验证技术干预",
+    "transfer": "不可直接给个人设置速度或握高阈值",
+    "verification": "摘要级核对",
+    "events": [
+      "撑竿跳"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-005",
+    "domain": "撑竿跳",
+    "title": "Factor analysis of pole vault run-up and takeoff",
+    "doi": "10.1080/14763141.2022.2080104",
+    "url": "https://www.tandfonline.com/doi/full/10.1080/14763141.2022.2080104",
+    "design": "8名运动员30次成功试跳；测力台和运动捕捉",
+    "population": "8名运动员30次成功试跳；测力台和运动捕捉",
+    "claim": "助跑、起跳力学变量与最大质心高度关联",
+    "limits": "样本极小，重复试跳非独立运动员",
+    "transfer": "不能用回归系数预测其他群体",
+    "verification": "摘要级核对",
+    "events": [
+      "铅球"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-006",
+    "domain": "铅球",
+    "title": "Kato et al. 2026",
+    "doi": "10.1016/j.jbmo.2026.100022",
+    "url": "https://www.sciencedirect.com/science/article/pii/S305113132600021X",
+    "design": "28名男性铅球运动员比赛三维视频观察",
+    "population": "28名男性铅球运动员比赛三维视频观察",
+    "claim": "研究各阶段动量与出手速度关系",
+    "limits": "摘要未提供充分效应估计；无因果证据",
+    "transfer": "不能迁移至女子或其他投掷",
+    "verification": "摘要级核对",
+    "events": [
+      "铅球"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-007",
+    "domain": "铅球",
+    "title": "Rotational shot put: a phase analysis of current kinematic knowledge",
+    "doi": "",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31368410/",
+    "design": "叙述性综述；纳入20篇研究",
+    "population": "叙述性综述；纳入20篇研究",
+    "claim": "强调分阶段动量传递与出手速度",
+    "limits": "非系统定量效应合成；原文DOI未核实",
+    "transfer": "不可作为个人动作处方",
+    "verification": "摘要级核对",
+    "events": [
+      "铁饼"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R5-008",
+    "domain": "铁饼",
+    "title": "Bartlett 1992",
+    "doi": "10.1080/02640419208729944",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/1433463/",
+    "design": "生物力学叙述性综述",
+    "population": "生物力学叙述性综述",
+    "claim": "区分圈内动作与飞行空气动力学；指出证据不足",
+    "limits": "年代久远；器材和测量方法更新",
+    "transfer": "仅用于历史知识背景",
+    "verification": "摘要级核对",
+    "events": [
+      "铁饼"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R6-001",
+    "domain": "女子100m栏/男子110m栏",
+    "title": "Biomechanics of World-Class Men and Women Hurdlers",
+    "doi": "10.3389/fspor.2021.704308",
+    "url": "https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2021.704308/full",
+    "design": "比赛高速视频运动学观察",
+    "population": "2017世锦赛16名决赛选手",
+    "claim": "相对栏高与跨栏轨迹、步长差异相关",
+    "limits": "性别与栏高混杂；非干预",
+    "transfer": "不可直接迁移到青少年或400m栏",
+    "verification": "全文",
+    "events": [
+      "100米栏",
+      "110米栏"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R6-002",
+    "domain": "跳高",
+    "title": "Curved Approach in High Jump Induces Greater Jumping Height without Greater Joint Kinetic Exertions than Straight Approach",
+    "doi": "10.1249/MSS.0000000000002761",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34347669/",
+    "design": "弧线与直线助跑生物力学比较",
+    "population": "摘要未充分确认样本详情",
+    "claim": "弧线助跑跳跃高度较高",
+    "limits": "摘要不足以复核所有统计量与样本细节",
+    "transfer": "不能推导个人最优弧线半径",
+    "verification": "摘要",
+    "events": [
+      "跳高"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R6-003",
+    "domain": "链球",
+    "title": "Rotation of the hammer and performance in hammer throwing",
+    "doi": "10.3389/fbioe.2024.1449465",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39262629/",
+    "design": "比赛较远与较近投掷比较",
+    "population": "26名女子链球运动员",
+    "claim": "较远投掷出手速度更高，双支撑加速与旋转半径等不同",
+    "limits": "观察性；不能证明技术调整因果效果",
+    "transfer": "不能直接外推男子、初学者",
+    "verification": "摘要",
+    "events": [
+      "链球"
+    ],
+    "keywords": [],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-001",
+    "domain": "个体适应/运动生理",
+    "title": "Refuting the myth of non-response to exercise training: non-responders do respond to higher dose of training",
+    "doi": "10.1113/JP273480",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5451738/",
+    "design": "分组比较+无反应者后续加量实验；不是长期专项赛成绩RCT",
+    "population": "78名健康成年人；非精英800米运动员",
+    "claim": "首阶段无反应者比例随组别为69%、40%、29%、0%、0%；第二阶段参与者未再被归为无反应者；定义阈值为Wmax典型误差±3.96%",
+    "limits": "非响应界定依赖单一指标和测量误差；加量阶段无等时随机对照，选择性入组；存在2018伦理审批号更正",
+    "transfer": "不能用于疲劳/疼痛/伤后人群，不能据此自动增加800米训练负荷",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "个体适应",
+      "训练适应",
+      "无反应"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-002",
+    "domain": "个体适应/因果推断",
+    "title": "An appraisal of the SDIR as an estimate of true individual differences in training responsiveness in parallel-arm exercise randomized controlled trials",
+    "doi": "10.14814/phy2.14163",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6642277/",
+    "design": "方法学评述，辅以饮食/活动变化与6项RCT脱落数据的再分析",
+    "population": "既有锻炼RCT参试者，原论述非特定田径项目",
+    "claim": "对照组因不满分组而退出的比例12.8%，运动组3.4%（P<0.001）；SDIR的解释依赖组间测量误差和日常行为波动相似等假设",
+    "limits": "方法学评述，不对任一运动员估计真实训练反应；二次分析不证明组间变化机制",
+    "transfer": "一次计时波动或VO2变化不能被归类为个体先天有反应/无反应",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "个体适应",
+      "因果",
+      "测量误差"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-003",
+    "domain": "测量设备/睡眠/疲劳恢复",
+    "title": "Accuracy of Fitbit Charge 4, Garmin Vivosmart 4, and WHOOP Versus Polysomnography: Systematic Review",
+    "doi": "10.2196/52192",
+    "url": "https://mhealth.jmir.org/2024/1/e52192/",
+    "design": "系统综述；非Meta汇总",
+    "population": "8项研究；单研究样本2至53名成人；包含非运动员和睡眠疾病群体",
+    "claim": "8项合格研究；睡眠总时长与分期存在设备/研究差异，Garmin Vivosmart 4两项验证样本为18人与5人；REM分期识别有限",
+    "limits": "旧型号，研究样本小；作者未预注册综述；摘要WHOOP REM差异“21.0min”与表2中简单均值12.75min不一致，须核实来源；不能归因到新版设备",
+    "transfer": "不能将Garmin/Apple等未经对应版本验证的数据当临床PSG；不能用睡眠分期单项数值自动诊断恢复",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "睡眠",
+      "手表",
+      "设备",
+      "可穿戴"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-004",
+    "domain": "周期负荷/运动医学/损伤研究",
+    "title": "The Relationship Between Acute: Chronic Workload Ratios and Injury Risk in Sports: A Systematic Review",
+    "doi": "10.2147/OAJSM.S231405",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7047972/",
+    "design": "系统综述，非Meta",
+    "population": "27项体育训练负荷与损伤关联研究；多数为团队项目队列研究",
+    "claim": "27项研究；比率0.80-1.30附近可能出现较低损伤关联，但指标、窗口与参照组异质性高；原质量评定均值59.7%",
+    "limits": "混合不同计量方法和运动项目；发表偏倚未评估；相关性和预测性非因果效果",
+    "transfer": "0.8-1.3不能作为800米、400米栏、田赛和术后恢复统一安全阈值",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "负荷",
+      "ACWR",
+      "伤病"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-005",
+    "domain": "周期负荷/损伤因果/教练方法",
+    "title": "Training Load and Its Role in Injury Prevention, Part 2: Conceptual and Methodologic Pitfalls",
+    "doi": "10.4085/1062-6050-501-19",
+    "url": "https://meridian.allenpress.com/jat/article/55/9/893/444129/Training-Load-and-Its-Role-in-Injury-Prevention",
+    "design": "临床观点/方法学评论，非系统综述与临床试验",
+    "population": "分析既有运动负荷与损伤文献",
+    "claim": "指出ACWR研究中暴露定义、比值数学耦合、时间窗、分类切点、缺失值和因果结构等10类方法风险；主张负荷用于监测而非直接预测个体损伤",
+    "limits": "观点性论证并非ACWR完全无关联的实证否证；发表2021年补充引文更正",
+    "transfer": "不可仅依靠ACWR数值判断任意田径运动员“安全”或“危险”",
+    "verification": "ABSTRACT_AND_INDEXED_BODY_EXCERPTS_CHECKED",
+    "events": [],
+    "keywords": [
+      "负荷",
+      "ACWR",
+      "伤病"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-006",
+    "domain": "特殊人群/青少年运动医学",
+    "title": "Maturity-associated considerations for training load, injury risk, and physical performance in youth soccer: One size does not fit all",
+    "doi": "10.1016/j.jshs.2020.09.003",
+    "url": "https://doi.org/10.1016/j.jshs.2020.09.003",
+    "design": "叙述性综述，不是新RCT",
+    "population": "青少年足球运动员与相关研究；未直接考察田径运动员",
+    "claim": "综述指出同年龄青少年生物成熟程度不同；PHV推断公式存在误差，快速生长阶段更需考虑损伤/负荷；建议规范定期测量",
+    "limits": "足球情境、成熟度算法误差与性别/项目迁移问题；证据支持程度不等于精准PHV预测",
+    "transfer": "不得把足球PHV风险规则直接用于青少年跨栏、撑竿跳、短跑的自动限制",
+    "verification": "ABSTRACT_AND_INDEXED_BODY_EXCERPTS_CHECKED",
+    "events": [],
+    "keywords": [
+      "青少年",
+      "成熟度",
+      "PHV"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-007",
+    "domain": "营养/REDs/运动医学争议",
+    "title": "Does Relative Energy Deficiency in Sport (REDs) Syndrome Exist?",
+    "doi": "10.1007/s40279-024-02108-y",
+    "url": "https://link.springer.com/article/10.1007/s40279-024-02108-y",
+    "design": "批判性叙述综述；非新原始临床试验",
+    "population": "跨运动项目的REDs和低能量可用性研究",
+    "claim": "提出多因素综合评估的框架；指出低能量可用性田野测量、症状特异性、长期因果研究仍有不足",
+    "limits": "批判性综述是作者观点；不能由证据不足推出REDs不存在，更不否认营养不足、骨骼和月经健康问题",
+    "transfer": "不得以疲劳、月经异常或伤病单项自诊REDs，也不得因争议忽略就医提示",
+    "verification": "FULL_TEXT_HTML_CHECKED",
+    "events": [],
+    "keywords": [
+      "RED",
+      "营养",
+      "能量可用性"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-008",
+    "domain": "营养/REDs/运动医学争议",
+    "title": "Yes: Relative Energy Deficiency in Sport (REDs) Does Exist!",
+    "doi": "10.1007/s40279-025-02219-0",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40307664/",
+    "design": "论战回应/致编辑信，非新实验和系统综述",
+    "population": "无新增试验参与者，代表一方解释立场",
+    "claim": "原作者及共识参与者发表反驳论文；本轮仅核实标题、DOI、期刊、日期、作者和立场，未看到可独立核对的全文论证内容",
+    "limits": "仅书目/元数据级可核实，PubMed无摘要；不得虚构回应的具体证据与分析",
+    "transfer": "既不能凭标题认证所有REDs主张，也不能忽略严重临床问题",
+    "verification": "METADATA_ONLY_NO_ABSTRACT",
+    "events": [],
+    "keywords": [
+      "RED",
+      "营养",
+      "能量可用性"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  },
+  {
+    "id": "R7-009",
+    "domain": "AI知识安全/验证与评价方法",
+    "title": "The TRIPOD-LLM reporting guideline for studies using large language models",
+    "doi": "10.1038/s41591-024-03425-5",
+    "url": "https://www.nature.com/articles/s41591-024-03425-5",
+    "design": "Delphi专家共识报告规范，不是运动教练AI有效性试验",
+    "population": "医疗/生物医学大语言模型研究，非田径训练试用者",
+    "claim": "19项主条目与50项子条目，强调版本、数据、评估设置、人工监督和透明度",
+    "limits": "报告规范不是通过规范就证明AI安全或有效；来自生物医学，不等于直接验证方坤",
+    "transfer": "适合借鉴证据追溯、模型版本和测试规范；尚不能授权训练决策",
+    "verification": "ABSTRACT_AND_INDEXED_BODY_EXCERPTS_CHECKED",
+    "events": [],
+    "keywords": [
+      "AI",
+      "知识",
+      "评估"
+    ],
+    "status": "ARCHIVE_REPORTED",
+    "prescriptionApproved": false
+  }
+] as const
+
+/** Explicit event/keyword matching only. Never infer 400m evidence from 400m hurdles. */
+export function selectArchivedResearch(events: readonly string[], question = '', limit = 2): ArchivedResearchEvidence[] {
+  if (!Number.isInteger(limit) || limit < 0 || limit > 5) throw new Error('INVALID_RESEARCH_LIMIT')
+  if (limit === 0) return []
+  const matches = ARCHIVED_RESEARCH.filter(card =>
+    card.events.some(event => events.includes(event)) ||
+    (question.trim().length > 0 && card.keywords.some(keyword => question.toLowerCase().includes(keyword.toLowerCase())))
+  )
+  return matches.slice(0, limit)
+}

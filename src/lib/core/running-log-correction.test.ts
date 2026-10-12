@@ -1,0 +1,9 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { setStoreBackend, type MemoryStore } from './storage.ts'
+import { correctRunningMetric, correctedRunningMetric, runningCorrectionKey } from './running-log-correction.ts'
+import type { RunningRepetitionSlot } from './running-execution.ts'
+const store = (): MemoryStore => { const map = new Map<string,string>(); return { keys:()=>[...map.keys()], getItem: key => map.get(key) ?? null, setItem: (key, value) => { map.set(key,value) } } }
+const slot: RunningRepetitionSlot = { trainingOccurrenceId:'occ-1', runningSnapshotId:'snap-1', componentId:'c', blockId:'b', stepId:'s', roundOrdinal:1, repeatOrdinal:1, status:'COMPLETED', plannedDistanceMeters:200, plannedDurationSeconds:28, actualDistanceMeters:200, actualDurationSeconds:29, sourceEventIds:['event-1'], derivedPaceSecPerMeter:29/200, paceDistanceSourceEventId:'event-1', paceDurationSourceEventId:'event-1' }
+test('running corrections keep raw facts and use unique source event', () => { setStoreBackend(store()); assert.equal(runningCorrectionKey(slot),'run-event:event-1'); assert.equal(correctRunningMetric(slot,'duration',28.2,'计时修正'),true); assert.deepEqual(correctedRunningMetric(slot,'duration'),{value:28.2,corrected:true}); assert.equal(slot.actualDurationSeconds,29); assert.equal(correctRunningMetric(slot,'duration',27.9,'再次核对'),true); assert.equal(correctedRunningMetric(slot,'duration').value,27.9); setStoreBackend(null) })
+test('ambiguous or missing source cannot be corrected', () => { setStoreBackend(store()); const ambiguous={...slot,sourceEventIds:['a','b']}; assert.equal(runningCorrectionKey(ambiguous),null); assert.equal(correctRunningMetric(ambiguous,'duration',27,'test'),false); assert.equal(correctRunningMetric(slot,'duration',-1,'test'),false); assert.equal(correctRunningMetric(slot,'duration',28,''),false); assert.equal(correctedRunningMetric(slot,'duration').corrected,false); setStoreBackend(null) })

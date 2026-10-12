@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/lib/core/coach-cognition*.ts",
+    "src/lib/core/coach-local-first.ts",
+    "src/lib/core/coach-local-safety.ts",
+    "src/components/coach-cognition-panel.tsx"
+  ],
+  "exclude": ["**/*.test.mjs"]
+}

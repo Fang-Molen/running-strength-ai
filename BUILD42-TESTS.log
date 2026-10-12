@@ -1,0 +1,242 @@
+TAP version 13
+# (node:668) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: empty backup accepted
+ok 1 - empty backup accepted
+  ---
+  duration_ms: 1.017339
+  type: 'test'
+  ...
+# Subtest: reject unknown schema
+ok 2 - reject unknown schema
+  ---
+  duration_ms: 0.248584
+  type: 'test'
+  ...
+# Subtest: reject malformed record
+ok 3 - reject malformed record
+  ---
+  duration_ms: 0.1799
+  type: 'test'
+  ...
+# Subtest: restore requires confirmation
+ok 4 - restore requires confirmation
+  ---
+  duration_ms: 0.370237
+  type: 'test'
+  ...
+# Subtest: reject excessive entries
+ok 5 - reject excessive entries
+  ---
+  duration_ms: 0.17956
+  type: 'test'
+  ...
+# (node:669) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 睡眠7小时25分保留分钟精度
+ok 6 - 睡眠7小时25分保留分钟精度
+  ---
+  duration_ms: 10.741413
+  type: 'test'
+  ...
+# Subtest: 睡眠7:25解析为小时而不是运动分段
+ok 7 - 睡眠7:25解析为小时而不是运动分段
+  ---
+  duration_ms: 0.595174
+  type: 'test'
+  ...
+# Subtest: 睡眠23小时仍保留但25小时拒绝
+ok 8 - 睡眠23小时仍保留但25小时拒绝
+  ---
+  duration_ms: 0.643527
+  type: 'test'
+  ...
+# Subtest: HRV ms 单位明确
+ok 9 - HRV ms 单位明确
+  ---
+  duration_ms: 1.0052
+  type: 'test'
+  ...
+# Subtest: 无单位HRV不猜
+ok 10 - 无单位HRV不猜
+  ---
+  duration_ms: 0.119891
+  type: 'test'
+  ...
+# Subtest: 静息心率
+ok 11 - 静息心率
+  ---
+  duration_ms: 0.337146
+  type: 'test'
+  ...
+# Subtest: RHR英文
+ok 12 - RHR英文
+  ---
+  duration_ms: 0.109605
+  type: 'test'
+  ...
+# Subtest: 平均心率
+ok 13 - 平均心率
+  ---
+  duration_ms: 0.091398
+  type: 'test'
+  ...
+# Subtest: 普通心率不误判为静息
+ok 14 - 普通心率不误判为静息
+  ---
+  duration_ms: 0.331308
+  type: 'test'
+  ...
+# Subtest: 体重
+ok 15 - 体重
+  ---
+  duration_ms: 0.466221
+  type: 'test'
+  ...
+# Subtest: 体脂
+ok 16 - 体脂
+  ---
+  duration_ms: 0.154742
+  type: 'test'
+  ...
+# Subtest: 血氧
+ok 17 - 血氧
+  ---
+  duration_ms: 0.084557
+  type: 'test'
+  ...
+# Subtest: 设备评分不是HRV
+ok 18 - 设备评分不是HRV
+  ---
+  duration_ms: 0.063425
+  type: 'test'
+  ...
+# Subtest: 未标记体重不推断
+ok 19 - 未标记体重不推断
+  ---
+  duration_ms: 0.052258
+  type: 'test'
+  ...
+# Subtest: 错误体重范围被拒绝
+ok 20 - 错误体重范围被拒绝
+  ---
+  duration_ms: 0.055283
+  type: 'test'
+  ...
+# Subtest: 分段400米68秒含心率恢复
+ok 21 - 分段400米68秒含心率恢复
+  ---
+  duration_ms: 0.463446
+  type: 'test'
+  ...
+# Subtest: 分段1公里3:45
+ok 22 - 分段1公里3:45
+  ---
+  duration_ms: 0.204738
+  type: 'test'
+  ...
+# Subtest: 没有时间不把距离当已完成
+ok 23 - 没有时间不把距离当已完成
+  ---
+  duration_ms: 0.075694
+  type: 'test'
+  ...
+# Subtest: 分段重复训练保留每段
+ok 24 - 分段重复训练保留每段
+  ---
+  duration_ms: 0.175894
+  type: 'test'
+  ...
+# Subtest: 异常80000米不采纳
+ok 25 - 异常80000米不采纳
+  ---
+  duration_ms: 0.070967
+  type: 'test'
+  ...
+# Subtest: 力量实际组重量次数
+ok 26 - 力量实际组重量次数
+  ---
+  duration_ms: 0.144767
+  type: 'test'
+  ...
+# Subtest: 力量没有次数不采纳
+ok 27 - 力量没有次数不采纳
+  ---
+  duration_ms: 0.073951
+  type: 'test'
+  ...
+# Subtest: 同一行两个指标分别记录
+ok 28 - 同一行两个指标分别记录
+  ---
+  duration_ms: 0.066089
+  type: 'test'
+  ...
+# Subtest: 多行混合
+ok 29 - 多行混合
+  ---
+  duration_ms: 0.074081
+  type: 'test'
+  ...
+# Subtest: 空文本提示缺证据
+ok 30 - 空文本提示缺证据
+  ---
+  duration_ms: 0.1264
+  type: 'test'
+  ...
+# Subtest: 重复截图数字发出警告
+ok 31 - 重复截图数字发出警告
+  ---
+  duration_ms: 0.082674
+  type: 'test'
+  ...
+# Subtest: 无来源不能确认
+ok 32 - 无来源不能确认
+  ---
+  duration_ms: 0.278719
+  type: 'test'
+  ...
+# Subtest: 无时区不能确认
+ok 33 - 无时区不能确认
+  ---
+  duration_ms: 0.164277
+  type: 'test'
+  ...
+# Subtest: 必须人工确认
+ok 34 - 必须人工确认
+  ---
+  duration_ms: 0.091828
+  type: 'test'
+  ...
+# Subtest: 重复值禁止确认
+ok 35 - 重复值禁止确认
+  ---
+  duration_ms: 0.69222
+  type: 'test'
+  ...
+# Subtest: 合法记录只保存证据不改训练
+ok 36 - 合法记录只保存证据不改训练
+  ---
+  duration_ms: 0.203876
+  type: 'test'
+  ...
+# Subtest: 无效数值被拒绝
+ok 37 - 无效数值被拒绝
+  ---
+  duration_ms: 0.076104
+  type: 'test'
+  ...
+# Subtest: 未知字符串不会虚构
+ok 38 - 未知字符串不会虚构
+  ---
+  duration_ms: 0.065529
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 165.295347

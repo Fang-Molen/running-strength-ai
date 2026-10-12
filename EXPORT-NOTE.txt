@@ -1,0 +1,19 @@
+跑步力量源码导出说明
+==================
+
+这是当前仓库的源码，不是 dist / build，也不是重新生成的相似项目。
+界面是五个底部导航：今日、计划、日志、方坤、身体。设置从齿轮进入，不是第六个导航。
+
+安装：
+  npm ci
+  复制 .env.example 为 .env，只在服务端填写 XAI_API_KEY。没有密钥时，在线模型不可用，不会编造教练回复。
+  npm run typecheck
+  npm test
+  npm run build
+
+本包不包含：
+  node_modules、生产构建产物、已发布站点、用户浏览器里的训练记录、真实 API Key。
+训练数据在使用者自己的浏览器 localStorage，不在这个 ZIP 里。
+
+环境变量示例见 .env.example：
+  XAI_API_KEY=

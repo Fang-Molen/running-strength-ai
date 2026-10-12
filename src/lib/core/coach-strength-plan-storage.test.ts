@@ -1,0 +1,12 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {commitControlledStrengthPlan,COACH_STRENGTH_PLAN_KEY} from './coach-strength-plan-storage.ts'
+import {applyStrengthReduction,proposeStrengthReduction} from './coach-strength-plan-control.ts'
+import type {Plan} from '../strength/model.ts'
+const plan=():Plan=>({name:'strength',sessions:[{id:'s1',name:'s1',moves:[{id:'m1',catalogId:null,customName:'深蹲',sets:4,mode:'reps',amount:8,restSec:90,weightKg:60}]}],cycle:{block:1,week:1,logs:[],lastChange:''}})
+function fixture(){const p=plan();const q=proposeStrengthReduction(p,'s1','m1')!;const r=applyStrengthReduction(p,q,{previewUnlocked:true,athleteConfirmed:true,confirmedProposalId:q.id,hasTrainingStartedToday:false,unresolvedPain:false,timestamp:'2026-10-11T00:00:00Z'});if(!r.ok)throw Error(r.reason);const m=new Map([[COACH_STRENGTH_PLAN_KEY,JSON.stringify(p)]]);return {p,r,m,store:{keys:()=>[...m.keys()], getItem:(key:string)=>m.get(key)??null,setItem:(key:string,value:string)=>{m.set(key,value)}}}}
+test('plan and audit saved together',()=>{const {p,r,m,store}=fixture();const result=commitControlledStrengthPlan(store,JSON.stringify(p),r.plan);assert.equal(result.ok,true);const saved=JSON.parse(m.get(COACH_STRENGTH_PLAN_KEY)!);assert.equal(saved.sessions[0].moves[0].sets,3);assert.equal(saved.coachEditHistory[0].before.moves[0].sets,4)})
+test('stale tab cannot overwrite current plan',()=>{const {p,r,m,store}=fixture();m.set(COACH_STRENGTH_PLAN_KEY,'{"name":"changed"}');assert.equal(commitControlledStrengthPlan(store,JSON.stringify(p),r.plan).ok,false);assert.equal(m.get(COACH_STRENGTH_PLAN_KEY),'{"name":"changed"}')})
+test('failed setItem leaves original plan intact',()=>{const {p,r,m}=fixture();const store={keys:()=>[...m.keys()], getItem:(key:string)=>m.get(key)??null,setItem:()=>{throw Error('quota')}};assert.equal(commitControlledStrengthPlan(store,JSON.stringify(p),r.plan).ok,false);assert.equal(JSON.parse(m.get(COACH_STRENGTH_PLAN_KEY)!).sessions[0].moves[0].sets,4)})
+test('no new audit cannot be saved as coach edit',()=>{const {p,r,store}=fixture();const altered={...r.plan,coachEditHistory:[]};assert.equal(commitControlledStrengthPlan(store,JSON.stringify(p),altered).ok,false)})
+test('no revision bump denied',()=>{const {p,r,store}=fixture();const altered={...r.plan,coachEditRevision:0};assert.equal(commitControlledStrengthPlan(store,JSON.stringify(p),altered).ok,false)})

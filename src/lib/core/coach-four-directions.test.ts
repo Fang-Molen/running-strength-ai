@@ -1,0 +1,12 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {reviewFourDirections,type CoachContext} from './coach-four-directions.ts';
+const sample=():CoachContext=>({history:[{id:'a',day:'2026-09-01',category:'SPRINT',cmjCm:40},{id:'b',day:'2026-09-03',category:'SPRINT',cmjCm:41},{id:'c',day:'2026-09-05',category:'SPRINT',cmjCm:39}],current:{id:'d',day:'2026-09-07',category:'SPRINT',rpe:9,sleepHours:5,cmjCm:36},next:{id:'e',day:'2026-09-08',category:'SPRINT',purpose:'max speed',intensity:'HARD'}});
+test('multiple hypotheses are not diagnoses',()=>{const r=reviewFourDirections(sample());assert.ok(r.hypotheses.length>=3);assert.equal(r.prescription.action,'REVIEW_HIGH_INTENSITY');assert.equal(r.prescription.requiresConfirmation,true)});
+test('CMJ personal baseline uses median',()=>{const r=reviewFourDirections(sample());assert.equal(r.baseline.cmjMedian,40);assert.equal(r.baseline.cmjChangePercent,-10)});
+test('missing baseline remains unknown',()=>{const c=sample();c.history=[];assert.equal(reviewFourDirections(c).baseline.usable,false)});
+test('hamstring discomfort high speed safety first',()=>{const c=sample();c.current.pain=2;c.current.functionalLimitation=false;assert.equal(reviewFourDirections(c).prescription.action,'SAFETY_REVIEW')});
+test('pain with functional limitation safety regardless intensity',()=>{const c=sample();c.next.intensity='EASY';c.current.pain=1;c.current.functionalLimitation=true;assert.equal(reviewFourDirections(c).prescription.action,'SAFETY_REVIEW')});
+test('no evidence not equivalent to confirmed recovery',()=>{const c=sample();c.history=[];c.current={id:'d',day:'2026-09-07',category:'EASY'};const r=reviewFourDirections(c);assert.equal(r.prescription.action,'KEEP_CANDIDATE');assert.match(r.prescription.rationale,/不等于/)});
+test('prediction signed error recorded',()=>{const c=sample();c.previousPrediction={event:'3000m',predictedSeconds:600,actualSeconds:615};assert.equal(reviewFourDirections(c).predictionAudit?.errorSeconds,15)});
+test('no prediction stays unknown',()=>{assert.equal(reviewFourDirections(sample()).predictionAudit,null)});
+test('future history not used as baseline',()=>{const c=sample();c.history=[...c.history,{id:'future',day:'2026-09-09',category:'SPRINT',cmjCm:100}];assert.equal(reviewFourDirections(c).baseline.cmjMedian,40)});
+test('no automatic prescription',()=>{assert.equal(reviewFourDirections(sample()).prescription.requiresConfirmation,true)});

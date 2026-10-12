@@ -1,0 +1,292 @@
+TAP version 13
+# (node:1698) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: local always available
+ok 1 - local always available
+  ---
+  duration_ms: 0.877298
+  type: 'test'
+  ...
+# Subtest: cloud requires online
+ok 2 - cloud requires online
+  ---
+  duration_ms: 0.128232
+  type: 'test'
+  ...
+# Subtest: cloud requires consent
+ok 3 - cloud requires consent
+  ---
+  duration_ms: 0.122744
+  type: 'test'
+  ...
+# Subtest: unverified coupon cannot authorize
+ok 4 - unverified coupon cannot authorize
+  ---
+  duration_ms: 0.246531
+  type: 'test'
+  ...
+# Subtest: expired grant rejected
+ok 5 - expired grant rejected
+  ---
+  duration_ms: 0.126
+  type: 'test'
+  ...
+# Subtest: insufficient balance rejected
+ok 6 - insufficient balance rejected
+  ---
+  duration_ms: 0.120321
+  type: 'test'
+  ...
+# Subtest: verified valid grant permits request
+ok 7 - verified valid grant permits request
+  ---
+  duration_ms: 0.160161
+  type: 'test'
+  ...
+# Subtest: upload requires user confirmation
+ok 8 - upload requires user confirmation
+  ---
+  duration_ms: 0.117376
+  type: 'test'
+  ...
+# (node:1699) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: period_planning remains free
+ok 9 - period_planning remains free
+  ---
+  duration_ms: 5.859011
+  type: 'test'
+  ...
+# Subtest: season_planning remains free
+ok 10 - season_planning remains free
+  ---
+  duration_ms: 0.294883
+  type: 'test'
+  ...
+# Subtest: plan_editing remains free
+ok 11 - plan_editing remains free
+  ---
+  duration_ms: 0.116465
+  type: 'test'
+  ...
+# Subtest: training_execution remains free
+ok 12 - training_execution remains free
+  ---
+  duration_ms: 0.111387
+  type: 'test'
+  ...
+# Subtest: training_history remains free
+ok 13 - training_history remains free
+  ---
+  duration_ms: 0.231958
+  type: 'test'
+  ...
+# Subtest: strength remains free
+ok 14 - strength remains free
+  ---
+  duration_ms: 0.183967
+  type: 'test'
+  ...
+# Subtest: recovery remains free
+ok 15 - recovery remains free
+  ---
+  duration_ms: 0.11924
+  type: 'test'
+  ...
+# Subtest: injury_safety remains free
+ok 16 - injury_safety remains free
+  ---
+  duration_ms: 0.103075
+  type: 'test'
+  ...
+# Subtest: nutrition remains free
+ok 17 - nutrition remains free
+  ---
+  duration_ms: 5.341564
+  type: 'test'
+  ...
+# Subtest: product_management remains free
+ok 18 - product_management remains free
+  ---
+  duration_ms: 0.45233
+  type: 'test'
+  ...
+# Subtest: device_import remains free
+ok 19 - device_import remains free
+  ---
+  duration_ms: 0.181682
+  type: 'test'
+  ...
+# Subtest: image_upload remains free
+ok 20 - image_upload remains free
+  ---
+  duration_ms: 0.092639
+  type: 'test'
+  ...
+# Subtest: local_ocr remains free
+ok 21 - local_ocr remains free
+  ---
+  duration_ms: 0.081443
+  type: 'test'
+  ...
+# Subtest: manual_image_review remains free
+ok 22 - manual_image_review remains free
+  ---
+  duration_ms: 0.071438
+  type: 'test'
+  ...
+# Subtest: basic_coach remains free
+ok 23 - basic_coach remains free
+  ---
+  duration_ms: 0.070276
+  type: 'test'
+  ...
+# Subtest: memory_review remains free
+ok 24 - memory_review remains free
+  ---
+  duration_ms: 0.073581
+  type: 'test'
+  ...
+# Subtest: backup_restore remains free
+ok 25 - backup_restore remains free
+  ---
+  duration_ms: 0.068593
+  type: 'test'
+  ...
+# Subtest: local model needs no credits
+ok 26 - local model needs no credits
+  ---
+  duration_ms: 0.196805
+  type: 'test'
+  ...
+# Subtest: free remote model needs consent
+ok 27 - free remote model needs consent
+  ---
+  duration_ms: 0.110105
+  type: 'test'
+  ...
+# Subtest: free remote model costs no credits
+ok 28 - free remote model costs no credits
+  ---
+  duration_ms: 0.143095
+  type: 'test'
+  ...
+# Subtest: metered model needs server authorization
+ok 29 - metered model needs server authorization
+  ---
+  duration_ms: 0.09981
+  type: 'test'
+  ...
+# Subtest: metered model requires credits
+ok 30 - metered model requires credits
+  ---
+  duration_ms: 0.103316
+  type: 'test'
+  ...
+# Subtest: metered model requires explicit consent
+ok 31 - metered model requires explicit consent
+  ---
+  duration_ms: 0.100801
+  type: 'test'
+  ...
+# Subtest: metered model cannot call offline
+ok 32 - metered model cannot call offline
+  ---
+  duration_ms: 0.10646
+  type: 'test'
+  ...
+# Subtest: metered model allows verified grant
+ok 33 - metered model allows verified grant
+  ---
+  duration_ms: 0.091077
+  type: 'test'
+  ...
+# Subtest: invalid negative cost rejected
+ok 34 - invalid negative cost rejected
+  ---
+  duration_ms: 0.104117
+  type: 'test'
+  ...
+# (node:1700) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: period_plan free without credits
+ok 35 - period_plan free without credits
+  ---
+  duration_ms: 1.302086
+  type: 'test'
+  ...
+# Subtest: product_management free without credits
+ok 36 - product_management free without credits
+  ---
+  duration_ms: 0.136405
+  type: 'test'
+  ...
+# Subtest: training_log free without credits
+ok 37 - training_log free without credits
+  ---
+  duration_ms: 0.191768
+  type: 'test'
+  ...
+# Subtest: basic_coach free without credits
+ok 38 - basic_coach free without credits
+  ---
+  duration_ms: 0.167171
+  type: 'test'
+  ...
+# Subtest: image_ocr free without credits
+ok 39 - image_ocr free without credits
+  ---
+  duration_ms: 0.137085
+  type: 'test'
+  ...
+# Subtest: metered needs server grant
+ok 40 - metered needs server grant
+  ---
+  duration_ms: 0.138138
+  type: 'test'
+  ...
+# Subtest: metered needs sufficient credits
+ok 41 - metered needs sufficient credits
+  ---
+  duration_ms: 0.169875
+  type: 'test'
+  ...
+# Subtest: metered authorized
+ok 42 - metered authorized
+  ---
+  duration_ms: 0.135794
+  type: 'test'
+  ...
+# Subtest: offline falls back
+ok 43 - offline falls back
+  ---
+  duration_ms: 0.368905
+  type: 'test'
+  ...
+# Subtest: image consent independent
+ok 44 - image consent independent
+  ---
+  duration_ms: 0.469215
+  type: 'test'
+  ...
+# Subtest: safety vetoes everything
+ok 45 - safety vetoes everything
+  ---
+  duration_ms: 0.204718
+  type: 'test'
+  ...
+# Subtest: explicit paid route does not turn ordinary feature into paid-only
+ok 46 - explicit paid route does not turn ordinary feature into paid-only
+  ---
+  duration_ms: 0.966402
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 170.754673

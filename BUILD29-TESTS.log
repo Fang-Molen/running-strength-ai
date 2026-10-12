@@ -1,0 +1,162 @@
+TAP version 13
+# (node:12207) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: completion creates grounded notice
+ok 1 - completion creates grounded notice
+  ---
+  duration_ms: 5.646098
+  type: 'test'
+  ...
+# Subtest: start creates grounded notice
+ok 2 - start creates grounded notice
+  ---
+  duration_ms: 0.343633
+  type: 'test'
+  ...
+# Subtest: high RPE does not diagnose fatigue
+ok 3 - high RPE does not diagnose fatigue
+  ---
+  duration_ms: 5.469288
+  type: 'test'
+  ...
+# Subtest: recovery RPE does not masquerade as session RPE
+ok 4 - recovery RPE does not masquerade as session RPE
+  ---
+  duration_ms: 0.601096
+  type: 'test'
+  ...
+# Subtest: unrecognized events do not trigger
+ok 5 - unrecognized events do not trigger
+  ---
+  duration_ms: 0.217013
+  type: 'test'
+  ...
+# Subtest: duplicate event is not shown twice
+ok 6 - duplicate event is not shown twice
+  ---
+  duration_ms: 0.190152
+  type: 'test'
+  ...
+# Subtest: inbox bounded to 5
+ok 7 - inbox bounded to 5
+  ---
+  duration_ms: 0.231985
+  type: 'test'
+  ...
+# (node:12208) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: multi-turn event time GI context
+ok 8 - multi-turn event time GI context
+  ---
+  duration_ms: 6.940618
+  type: 'test'
+  ...
+# Subtest: do not mistake ordinary numeric results for start time
+ok 9 - do not mistake ordinary numeric results for start time
+  ---
+  duration_ms: 0.732611
+  type: 'test'
+  ...
+# Subtest: do not infer medical symptoms from negation
+ok 10 - do not infer medical symptoms from negation
+  ---
+  duration_ms: 0.484795
+  type: 'test'
+  ...
+# Subtest: does not inject context into unrelated question
+ok 11 - does not inject context into unrelated question
+  ---
+  duration_ms: 0.608381
+  type: 'test'
+  ...
+# (node:12209) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 双阈值适合我吗
+ok 12 - 双阈值适合我吗
+  ---
+  duration_ms: 5.073903
+  type: 'test'
+  ...
+# Subtest: 热量缺口怎么计算
+ok 13 - 热量缺口怎么计算
+  ---
+  duration_ms: 3.591986
+  type: 'test'
+  ...
+# Subtest: 铁蛋白低吃什么
+ok 14 - 铁蛋白低吃什么
+  ---
+  duration_ms: 6.45333
+  type: 'test'
+  ...
+# Subtest: 胸痛呼吸困难怎么办
+ok 15 - 胸痛呼吸困难怎么办
+  ---
+  duration_ms: 0.321634
+  type: 'test'
+  ...
+# Subtest: 今天训练怎么样
+ok 16 - 今天训练怎么样
+  ---
+  duration_ms: 1.038781
+  type: 'test'
+  ...
+# Subtest: no false evidence and pain safety
+ok 17 - no false evidence and pain safety
+  ---
+  duration_ms: 0.590802
+  type: 'test'
+  ...
+# (node:12246) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: recorded food is not interpreted as whole-day intake
+ok 18 - recorded food is not interpreted as whole-day intake
+  ---
+  duration_ms: 2.55806
+  type: 'test'
+  ...
+# Subtest: missing food does not imply fasting
+ok 19 - missing food does not imply fasting
+  ---
+  duration_ms: 0.625347
+  type: 'test'
+  ...
+# Subtest: cross-day food not attributed to old workout
+ok 20 - cross-day food not attributed to old workout
+  ---
+  duration_ms: 0.408507
+  type: 'test'
+  ...
+# Subtest: missing provenance hides numeric claim
+ok 21 - missing provenance hides numeric claim
+  ---
+  duration_ms: 0.352075
+  type: 'test'
+  ...
+# Subtest: training facts only when recorded
+ok 22 - training facts only when recorded
+  ---
+  duration_ms: 1.04987
+  type: 'test'
+  ...
+# Subtest: no occurrence means no guessed training
+ok 23 - no occurrence means no guessed training
+  ---
+  duration_ms: 2.150063
+  type: 'test'
+  ...
+# Subtest: unrelated question stays on existing coach path
+ok 24 - unrelated question stays on existing coach path
+  ---
+  duration_ms: 0.648084
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 903.819844

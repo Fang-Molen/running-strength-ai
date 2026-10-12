@@ -1,0 +1,212 @@
+[
+  {
+    "id": 1,
+    "q": "我刚跑完突然胸口压榨样疼痛",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 2,
+    "q": "没有胸痛，但刚刚晕厥了",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 3,
+    "q": "跑步时喘不上气",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 4,
+    "q": "我现在呼吸困难",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 5,
+    "q": "去年胸痛现在完全没症状",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 6,
+    "q": "今天没有胸痛",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 7,
+    "q": "跑步后跟腱疼痛",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 8,
+    "q": "怀疑应力性骨折",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 9,
+    "q": "我膝盖肿起来了",
+    "expected": "CAUTION",
+    "actual": "CAUTION",
+    "pass": true
+  },
+  {
+    "id": 10,
+    "q": "我没有膝盖肿胀",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 11,
+    "q": "跑步时小腿疼",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 12,
+    "q": "我没有疼痛想跑步",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 13,
+    "q": "训练后出现晕倒",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 14,
+    "q": "我最近贫血能练吗",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 15,
+    "q": "上次骨折已经康复还能跑吗",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 16,
+    "q": "脚踝扭伤了",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 17,
+    "q": "昨天跑步头晕今天还头晕",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 18,
+    "q": "我训练时心脏疼",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 19,
+    "q": "只是担心比赛失败",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 20,
+    "q": "跑完跟腱不舒服",
+    "expected": "CAUTION",
+    "actual": "CAUTION",
+    "pass": true
+  },
+  {
+    "id": 21,
+    "q": "最近跑步时眼前一黑",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 22,
+    "q": "我否认晕厥",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 23,
+    "q": "今天胸口不痛",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 24,
+    "q": "过去曾有晕厥现在无症状",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 25,
+    "q": "跑步时气短而且胸闷",
+    "expected": "EMERGENCY",
+    "actual": "EMERGENCY",
+    "pass": true
+  },
+  {
+    "id": 26,
+    "q": "今天没有任何不适",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 27,
+    "q": "连续几天足底疼",
+    "expected": "MEDICAL_REVIEW",
+    "actual": "MEDICAL_REVIEW",
+    "pass": true
+  },
+  {
+    "id": 28,
+    "q": "昨天跑后脚踝明显肿",
+    "expected": "CAUTION",
+    "actual": "CAUTION",
+    "pass": true
+  },
+  {
+    "id": 29,
+    "q": "最近800米训练配速怎么安排",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  },
+  {
+    "id": 30,
+    "q": "5000米PB16分钟预测3000米",
+    "expected": "NONE",
+    "actual": "NONE",
+    "pass": true
+  }
+]
