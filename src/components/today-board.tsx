@@ -5,6 +5,7 @@ import type { RunningPlan } from "@/lib/core/running-plan"
 import { REASON_LABELS, SWAP_LABELS, applyAction, findConflicts, logActual, review, swapProposal, weekOf, weekSummary, type Conflict, type ConflictAction, type DeviationReason, type Intensity, type ScheduleEntry, type SwapReason } from "@/lib/ui/day-schedule-rules"
 import { classifyRun, classifyStrength, loadSchedule, proposeWeek, readRecovery, runEntry, saveSchedule, strengthEntry, syncFangkun, type ScheduleStore } from "@/lib/ui/day-schedule"
 import { syncActualToLog } from "@/lib/ui/checklist-log"
+import { BAND_COLOR, applyOverride, planBand, type Band, type Override } from "@/lib/ui/day-override"
 import { TodayChecklist } from "@/components/today-checklist"
 import { SavedBadge } from "@/components/saved-badge"
 
@@ -14,14 +15,14 @@ const ACT: Record<ConflictAction, string> = { postpone: "顺延一天", reduce: 
 const dot = (e: ScheduleEntry) => e.modality === "run" ? "bg-[#2182bd]" : "bg-[#d07a2b]"
 const shown = (e: ScheduleEntry) => e.status !== "rejected"
 
-export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAskCoach, onFood }: { plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onAskCoach: () => void; onFood?: () => void }) {
+export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAskCoach, onFood, revision = 0, override = null, band = true }: { plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onAskCoach: () => void; onFood?: () => void; revision?: number; override?: Override | null; band?: boolean }) {
   const [store, setStore] = useState<ScheduleStore>({ entries: [], acks: [] })
   const [day, setDay] = useState(today)
   const [open, setOpen] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
   const [stamp, setStamp] = useState(0)
   const [note, setNote] = useState("")
-  useEffect(() => { const s = syncFangkun(loadSchedule()); setStore(s); saveSchedule(s) }, [])
+  useEffect(() => { const s = syncFangkun(loadSchedule()); setStore(s); saveSchedule(s) }, [revision])
   useEffect(() => { setDay(today) }, [today])
   const week = useMemo(() => weekOf(day || today), [day, today])
   const conflicts = useMemo(() => findConflicts(store.entries, week, today, readRecovery(today), store.acks), [store, week, today])
@@ -34,7 +35,9 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
     const entries = logActual(store.entries, e.id, actual); setEntries(entries)
     const r = syncActualToLog(entries.find((x) => x.id === e.id)!, sessionOf(e)); setNote(r.ok ? (r.reason ?? (actual.outcome === "missed" ? "已记下没练，原因会给方坤参考。" : "已记入训练日志，方坤可见。")) : `日志未同步：${r.reason}`)
   }
-  const list = store.entries.filter((e) => e.date === day && shown(e))
+  const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e)), override)
+  const sloted = list.some((e) => e.slot)
+  const groups: [string, ScheduleEntry[]][] = sloted ? [["上午", list.filter((e) => e.slot !== "pm")], ["今晚", list.filter((e) => e.slot === "pm")]] : [["", list]]
   const proposals = store.entries.filter((e) => week.includes(e.date) && e.status === "proposed")
   const rank = (c: Conflict) => c.id.startsWith("rec:") ? 0 : c.level === "warn" ? 1 : 2
   const dayConflicts = conflicts.filter((c) => c.date === day || c.entryIds.some((id) => list.some((e) => e.id === id))).sort((x, y) => rank(x) - rank(y))
@@ -54,11 +57,11 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
       <div className="mt-2 flex flex-wrap gap-1.5">{c.actions.map((a) => <button key={a} type="button" className="fk-chip" onClick={() => act(c, a)}>{ACT[a]}</button>)}</div>
     </div>)}
     <div className="mt-3 space-y-2">
-      {list.map((e) => <EntryCard key={e.id} e={e} today={today} open={open === e.id} session={sessionOf(e)} onToggle={() => setOpen(open === e.id ? null : e.id)}
+      {groups.map(([label, items]) => items.length ? <div key={label} className="space-y-2">{label ? <p className="px-1 text-xs font-bold text-muted">{label}</p> : null}{items.map((e) => <EntryCard key={e.id} e={e} band={band ? planBand(e) : null} today={today} open={open === e.id} session={sessionOf(e)} onToggle={() => setOpen(open === e.id ? null : e.id)}
         onReview={(d, patch) => setEntries(review(store.entries, e.id, d, patch))}
         onSwap={(why) => { const n = swapProposal(e, why); setEntries([...review(store.entries, e.id, "reject"), n]); setOpen(n.id) }}
         onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
-        onOpenRun={() => e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}
+        onOpenRun={() => e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}</div> : null)}
       {!list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null}
       {note ? <p className="px-1 text-xs text-muted" role="status">{note}</p> : null}
     </div>
@@ -80,8 +83,8 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
   </section>
 }
 
-function EntryCard({ e, today, open, session, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach, onFood }: {
-  e: ScheduleEntry; today: string; open: boolean; session: Session | undefined; onToggle: () => void
+function EntryCard({ e, band, today, open, session, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach, onFood }: {
+  e: ScheduleEntry; band?: Band; today: string; open: boolean; session: Session | undefined; onToggle: () => void
   onReview: (d: "accept" | "reject", patch?: Partial<Pick<ScheduleEntry, "title" | "minutes" | "intensity" | "date">>) => void
   onSwap: (why: SwapReason) => void; onActual: (a: Parameters<typeof logActual>[2]) => void; onSkip: () => void
   onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void; onFood?: () => void
@@ -93,19 +96,20 @@ function EntryCard({ e, today, open, session, onToggle, onReview, onSwap, onActu
   const proposed = e.status === "proposed"
   const reasonChips = <div className="fk-chips flex-wrap">{(Object.keys(REASON_LABELS) as DeviationReason[]).map((r) => <button key={r} type="button" className="fk-chip" aria-pressed={reasons.includes(r)} onClick={() => setReasons(reasons.includes(r) ? reasons.filter((x) => x !== r) : [...reasons, r])}>{REASON_LABELS[r]}</button>)}</div>
   const a = e.actual
-  return <div className={"rounded-2xl border bg-surface-2 " + (proposed ? "border-dashed border-[#7a5cc7]" : "border-line")}>
+  return <div style={band ? { borderLeft: `5px solid ${BAND_COLOR[band]}` } : undefined} data-band={band ?? undefined} className={"rounded-2xl border bg-surface-2 " + (proposed ? "border-dashed border-[#7a5cc7]" : "border-line")}>
     <button type="button" aria-expanded={open} onClick={onToggle} className="flex w-full items-center gap-3 p-3 text-left">
       <span className={"relative grid size-10 shrink-0 place-items-center rounded-xl text-white " + dot(e)}><Icon className="size-5" />{e.source === "fangkun" ? <Bot className="absolute -bottom-1 -right-1 size-4 rounded-full bg-surface p-0.5 text-[#7a5cc7]" /> : null}</span>
       <span className="min-w-0 flex-1"><span className="block truncate font-bold">{e.title}</span>
         <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">{e.minutes} 分钟 · <span className={e.intensity === "HARD" ? "font-bold text-[#c0612b]" : ""}>{INT[e.intensity]}</span>
           <span className={"rounded-full px-1.5 py-0.5 text-[10px] font-bold " + (e.source === "fangkun" ? "bg-[#7a5cc7]/15 text-[#6a4cb7]" : "bg-line text-fg")}>{e.source === "fangkun" ? "方坤" : "自定"}</span>
           {proposed ? <span className="rounded-full bg-[#7a5cc7] px-1.5 py-0.5 text-[10px] font-bold text-white">待确认</span> : null}
+          {e.overrideNote ? <span className="text-[10px] font-bold text-[#6a4cb7]">今天临时改</span> : null}{e.unplanned ? <span className="text-[10px]">计划外</span> : null}
           {e.edited ? <span className="text-[10px]">已改</span> : null}{e.reduced ? <span className="text-[10px]">已降强度</span> : null}{e.movedFrom ? <span className="text-[10px]">由 {e.movedFrom.slice(5)} 顺延</span> : null}
           {a ? <span className={"text-[10px] font-bold " + (a.outcome === "as_planned" ? "text-[#269775]" : a.outcome === "different" ? "text-[#c0612b]" : "text-muted")}>{a.outcome === "as_planned" ? "✓ 按计划" : a.outcome === "different" ? `实际 ${a.minutes ?? "?"} 分钟` : "没练"}</span> : null}</span></span>
       <ChevronDown className={"size-4 shrink-0 transition " + (open ? "rotate-180" : "")} />
     </button>
     {proposed ? <div className="border-t border-line px-3 pb-3 pt-2">
-      {e.swapReason ? <p className="mb-2 text-xs text-muted">方坤：{e.swapReason}</p> : null}
+      {e.swapReason ? <p className="mb-2 text-xs text-muted">方坤：{e.swapReason}</p> : null}{e.overrideNote ? <p className="mb-2 text-xs text-[#6a4cb7]">{e.overrideNote}</p> : null}
       <div className="grid grid-cols-4 gap-1.5">
         <button type="button" className="fk-chip justify-center" onClick={() => onReview("accept")}><Check className="size-3.5" />接受</button>
         <button type="button" className="fk-chip justify-center" aria-pressed={mode === "edit"} onClick={() => setMode(mode === "edit" ? "none" : "edit")}><Pencil className="size-3.5" />自己改</button>

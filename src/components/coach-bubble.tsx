@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+import { loadSettings } from "@/lib/ui/app-settings"
 import { useState } from "react"
 import { AlertTriangle } from "lucide-react"
 import { splitReply } from "@/lib/ui/coach-bubble"
@@ -5,6 +7,7 @@ import { splitReply } from "@/lib/ui/coach-bubble"
 export function CoachBubble({ role, text }: { role: "user" | "coach"; text: string }) {
   const [open, setOpen] = useState(false)
   const [ev, setEv] = useState(false)
+  useEffect(() => { const st = loadSettings(); setOpen(st.coachStyle === "detailed"); setEv(st.showEvidence) }, [])
   if (role === "user") return <div className="flex justify-end"><p className="fk-bubble-user whitespace-pre-wrap">{text}</p></div>
   const p = splitReply(text)
   return <div className="flex justify-start">

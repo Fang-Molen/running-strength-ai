@@ -15,7 +15,11 @@ import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
 import { DietPage } from "@/components/fuel-guide";
-import { WatchSetting } from "@/components/profile-sheet";
+import { HomeHeader, LogMetricsPanel, Onboarding, QuickLog, SettingsHub } from "@/components/r8";
+import { ONBOARD_KEY } from "@/lib/ui/first-run";
+import { OVERRIDE_KEY, type Override } from "@/lib/ui/day-override";
+import { loadSettings } from "@/lib/ui/app-settings";
+const localDayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 import { AssessmentPanel } from "@/components/assessment-panel";
 import { TrackSessionPanel } from "@/components/track-session";
 import { TrainingDecisionCard } from "@/components/training-decision-card";
@@ -131,6 +135,11 @@ export function StrengthApp() {
   const [kcal, setKcal] = useState<number | null>(null);
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
   const [tab, setTab] = useState<"today" | "plan" | "log" | "coach" | "body" | "diet">("today");
+  const [homeRev, setHomeRev] = useState(0);
+  const [dayOverride, setDayOverride] = useState<Override | null>(null);
+  const [bandOn, setBandOn] = useState(true);
+  const [firstRun, setFirstRun] = useState(false);
+  useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");
   const [showPlanTools, setShowPlanTools] = useState(false);
@@ -417,7 +426,8 @@ export function StrengthApp() {
           <>
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
-            <TodayBoard plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
+            <HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} />
+            <TodayBoard revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
               onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
               onFood={() => { setTab("diet"); }}
@@ -695,6 +705,7 @@ export function StrengthApp() {
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
       {tab === "log" ? <div className="px-3 pt-2"><AssessmentPanel /></div> : null}
+      {tab === "log" ? <LogMetricsPanel today={todayIso} /> : null}
       {tab === "log" ? <TrainingLogPanel plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
@@ -720,7 +731,7 @@ export function StrengthApp() {
             <button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { const node = document.getElementById("body-records"); if (node instanceof HTMLDetailsElement) node.open = true; document.getElementById("body-devices")?.scrollIntoView({ block: "start" }); }, 40); }} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Watch className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">运动设备</span><span className="block text-xs font-normal text-muted">导入与设备说明</span></span><span aria-hidden="true">›</span></button>
             <button type="button" onClick={() => setSettingsPane("backup")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Database className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">数据备份与恢复</span><span className="block text-xs font-normal text-muted">备份、恢复、导出</span></span><span aria-hidden="true">›</span></button>
           </section> : null}
-          {settingsPane === "menu" ? <WatchSetting /> : null}
+          {settingsPane === "menu" ? <SettingsHub onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "menu" ? <p className="mt-3 px-1 text-xs text-muted">管理个人资料、目标、外观与本机数据。</p> : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">返回列表</button>}
           {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
             <h2 className="font-bold">界面与壁纸</h2>
@@ -831,6 +842,8 @@ export function StrengthApp() {
         </div>
         </div>
       ) : null}
+      {tab !== "coach" ? <QuickLog today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
+      {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <nav className="ui03-dock dock fixed inset-x-0 bottom-0 z-20" aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-6">
           {(

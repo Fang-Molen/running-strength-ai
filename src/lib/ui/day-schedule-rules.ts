@@ -10,6 +10,7 @@ export type ScheduleEntry = {
   lowerHeavy: boolean; source: "fangkun" | "custom"; refId: string | null
   status: "proposed" | "planned" | "done" | "skipped" | "rejected"; reduced?: boolean; movedFrom?: string
   edited?: boolean; swapReason?: string
+  slot?: "am" | "pm"; overrideNote?: string; unplanned?: boolean
   actual?: Actual
 }
 export type DeviationReason = "tired" | "short" | "pain" | "weather" | "other"
