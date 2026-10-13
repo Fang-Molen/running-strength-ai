@@ -3,31 +3,38 @@ import { Pause, Timer } from "lucide-react"
 import { displayName, type Session } from "@/lib/strength/model"
 import { STATE_LABELS, editSet, initChecklist, loadChecklist, progress, reconcile, saveChecklist, toggleMove, toggleSet, type ChecklistState, type StateTag } from "@/lib/ui/today-checklist"
 import { SavedBadge } from "@/components/saved-badge"
+import { syncChecklistToLog } from "@/lib/ui/checklist-log"
 
 const mmss = (ms: number) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` }
 
-export function TodayChecklist({ session, runTitle, onOpenRun, onOpenFull, onAskCoach }: { session: Session | undefined; runTitle: string | null; onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void }) {
-  const date = useMemo(() => new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10), [])
+export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, onOpenRun, onOpenFull, onAskCoach, bare = false, onProgress }: { slotId?: string; title?: string; session: Session | undefined; runTitle: string | null; onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void; bare?: boolean; onProgress?: (done: number, total: number) => void }) {
+  const date = useMemo(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` }, [])
+  const sid = slotId ?? session?.id ?? "none"
+  const [logNote, setLogNote] = useState("")
   const [s, setS] = useState<ChecklistState | null>(null)
   const [stamp, setStamp] = useState(0)
   const [editing, setEditing] = useState<string | null>(null)
   const [now, setNow] = useState(Date.now())
   const first = useRef(true)
   useEffect(() => {
-    const fresh = initChecklist(date, session?.id ?? "none", (session?.moves ?? []).map((m) => ({ id: m.id, sets: m.sets, amount: m.amount, weightKg: m.weightKg })), Boolean(runTitle))
-    setS(reconcile(loadChecklist(window.localStorage, date), fresh))
-  }, [date, session, runTitle])
-  useEffect(() => { if (!s) return; if (first.current) { first.current = false; return } if (saveChecklist(window.localStorage, s)) setStamp(Date.now()) }, [s])
+    const fresh = initChecklist(date, sid, (session?.moves ?? []).map((m) => ({ id: m.id, sets: m.sets, amount: m.amount, weightKg: m.weightKg })), Boolean(runTitle))
+    setS(reconcile(loadChecklist(window.localStorage, date, sid), fresh))
+  }, [date, sid, session, runTitle])
+  useEffect(() => { if (!s) return; if (first.current) { first.current = false; return } if (saveChecklist(window.localStorage, s)) setStamp(Date.now())
+    const p0 = progress(s); onProgress?.(p0.done, p0.total)
+    const t = window.setTimeout(() => { const r = syncChecklistToLog(s, cardTitle ?? session?.name ?? runTitle ?? "训练", Object.fromEntries((session?.moves ?? []).map((m) => [m.id, displayName(m)]))); setLogNote(r.ok ? "已同步到训练日志，方坤可见" : `日志未同步：${r.reason}`) }, 1200)
+    return () => window.clearTimeout(t) }, [s])
   useEffect(() => { const t = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(t) }, [])
   if (!s || (!session && !runTitle)) return null
   const p = progress(s)
   const rest = s.restEndsAt && s.restEndsAt > now ? s.restEndsAt - now : 0
   const upd = (next: ChecklistState) => setS(next)
-  return <section aria-label="今日训练清单" className="home-card mb-3 px-3 py-3">
-    <div className="flex items-center justify-between gap-2 px-1">
+  return <section aria-label="今日训练清单" className={bare ? "pt-1" : "home-card mb-3 px-3 py-3"}>
+    {bare ? null : <div className="flex items-center justify-between gap-2 px-1">
       <div className="min-w-0"><p className="product-eyebrow">今日清单</p><h2 className="truncate text-lg font-bold">{session?.name ?? runTitle}</h2></div>
       <div className="flex flex-col items-end"><strong className="text-lg">{p.done}/{p.total}</strong><SavedBadge stamp={stamp} /></div>
-    </div>
+    </div>}
+    {bare ? <div className="flex items-center justify-between px-1 text-xs text-muted"><span>{p.done}/{p.total} 完成</span><SavedBadge stamp={stamp} /></div> : null}
     <div className="mx-1 mt-2 h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-[#269775] transition-all" style={{ width: `${p.total ? (p.done / p.total) * 100 : 0}%` }} /></div>
     {s.startedAt || rest ? <div className="fk-timer mt-3" aria-live="polite">
       <span className="flex items-center gap-1.5 text-sm"><Timer className="size-4" />{rest ? <>组间休息 <b className="text-lg tabular-nums">{mmss(rest)}</b></> : <>已练 <b className="tabular-nums">{mmss(now - (s.startedAt ?? now))}</b></>}</span>
@@ -63,7 +70,8 @@ export function TodayChecklist({ session, runTitle, onOpenRun, onOpenFull, onAsk
       <div className="fk-chips" role="group" aria-label="主观用力 RPE"><span className="self-center text-xs text-muted">RPE</span>{[5, 6, 7, 8, 9, 10].map((n) => <button key={n} type="button" className="fk-chip" aria-pressed={s.rpe === n} onClick={() => upd({ ...s, rpe: s.rpe === n ? null : n, updatedAt: Date.now() })}>{n}</button>)}</div>
       {s.state === "tired" || s.state === "short" ? <p className="text-xs text-muted">已标记“{STATE_LABELS[s.state]}”：这次只说明今天的状态，不会当成能力下降。</p> : null}
       {s.state === "pain" ? <p className="text-xs text-[var(--color-risk)]">有疼痛先停下该动作。<button type="button" className="fk-link" onClick={onAskCoach}>告诉方坤部位 ›</button></p> : null}
-      <button type="button" className="fk-link text-sm" onClick={onOpenFull}>完整记录（逐组反馈给方坤分析）›</button>
+      {logNote ? <p className="text-xs text-muted">{logNote}</p> : null}
+      <button type="button" className="fk-link text-sm" onClick={onOpenFull}>逐组详细记录（含疼痛部位）›</button>
     </div>
   </section>
 }
