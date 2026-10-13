@@ -350,3 +350,37 @@ textarea {
   .product-status { font-size: 9px; padding-inline: 7px; }
   .product-task-strip > div { padding-inline: 7px; }
 }
+
+/* ---- FK UI R4 (2026-10-13): concise cards, chips, tiles, checklist, coach bubbles ---- */
+.fk-saved { font-size: 12px; font-weight: 700; color: #269775; opacity: 0; transition: opacity .2s; min-width: 4.5em; text-align: right; }
+.fk-saved-on { opacity: 1; }
+.fk-chip { display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--color-line); background: var(--color-surface); font-size: 13px; font-weight: 700; color: var(--color-fg); white-space: nowrap; }
+.fk-chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-accent-fg); border-color: var(--color-accent); }
+.fk-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.fk-tile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 768px) { .fk-tile-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.fk-tile { border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-surface-2); padding: 10px 12px; min-width: 0; }
+.fk-tile-open { grid-column: 1 / -1; background: var(--color-surface); }
+.fk-drop { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 12px; border: 1.5px dashed var(--color-accent); border-radius: 16px; text-align: center; cursor: pointer; background: var(--color-surface-2); }
+.fk-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.fk-table th { text-align: left; color: var(--color-muted); font-weight: 600; padding: 6px; border-bottom: 1px solid var(--color-line); white-space: nowrap; }
+.fk-table td { padding: 4px 6px; border-bottom: 1px solid var(--color-line); white-space: nowrap; }
+.fk-cell { min-height: 32px; border: 1px solid var(--color-line); border-radius: 8px; background: var(--color-bg); padding: 0 6px; }
+.fk-primary { min-height: 48px; border-radius: 14px; background: var(--color-accent); color: var(--color-accent-fg); font-weight: 800; }
+.fk-primary:disabled { opacity: .45; }
+.fk-link { min-height: 36px; font-weight: 700; color: var(--color-accent); }
+.fk-check-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--color-line); }
+.fk-check-row:last-child { border-bottom: 0; }
+.fk-tick { flex: none; width: 34px; height: 34px; border-radius: 999px; border: 2px solid var(--color-line); display: grid; place-items: center; font-weight: 900; color: transparent; }
+.fk-tick[aria-pressed="true"] { background: #269775; border-color: #269775; color: #fff; }
+.fk-set-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.fk-set { min-width: 54px; min-height: 36px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--color-line); font-size: 12px; font-weight: 700; background: var(--color-surface); }
+.fk-set[aria-pressed="true"] { background: rgba(38,151,117,.14); border-color: #269775; color: #1d7a5e; }
+.fk-timer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 14px; background: var(--color-surface-2); }
+.fk-bubble-coach { max-width: 88%; border-radius: 18px 18px 18px 6px; padding: 10px 12px; background: var(--color-surface); border: 1px solid var(--color-line); font-size: 14px; line-height: 1.55; }
+.fk-bubble-user { max-width: 82%; border-radius: 18px 18px 6px 18px; padding: 9px 12px; background: var(--color-accent); color: var(--color-accent-fg); font-size: 14px; line-height: 1.5; }
+.fk-bubble-lead { font-weight: 700; }
+.fk-bubble ul { margin-top: 6px; padding-left: 1.1em; list-style: disc; }
+.fk-bubble-risk { border: 1.5px solid var(--color-risk); background: color-mix(in srgb, var(--color-risk) 9%, var(--color-surface)); }
+.fk-risk-head { display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--color-risk); margin-bottom: 4px; }
+@media (min-width: 900px) { .fk-two-col { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: start; } }

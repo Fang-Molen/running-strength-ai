@@ -1,3 +1,4 @@
+import { CoachBubble } from "@/components/coach-bubble";
 import { LearningLibrary } from "@/components/learning-library";
 import { CoachCognitionPanel } from "@/components/coach-cognition-panel";
 import { CoachFirstWeekPanel } from '@/components/coach-first-week-panel';
@@ -488,29 +489,18 @@ export function CoachSheet({
         <p className="product-chat-intro">说说你的目标，或选择一节训练一起看。方坤会先核对事实，再解释与建议。</p>
         <details open={Boolean(firstWeekGoal)} className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">首次使用 · 目标与首周计划</summary><CoachFirstWeekPanel requestedGoal={firstWeekGoal} /></details>
         {cognitionTurn && <CoachCognitionPanel key={`${cognitionTurn.brief.occurrenceId}:${cognitionTurn.brief.question}`} cognition={cognitionTurn.cognition} brief={cognitionTurn.brief} />}
-        {memory?.messages.filter((message) => message.id !== "hi").map((message) => (
-          <div key={message.id} className={message.role === "user" ? "flex justify-end" : "flex justify-start"}>
-            <p
-              className={
-                "max-w-[85%] rounded-2xl px-3 py-2 text-sm " +
-                (message.role === "user" ? "rounded-tr-md bg-accent text-accent-fg" : "rounded-tl-md stat-run text-fg")
-              }
-            >
-              <span className="whitespace-pre-wrap">{message.text}</span>
-            </p>
-          </div>
-        ))}
+        {memory?.messages.filter((message) => message.id !== "hi").map((message) => <CoachBubble key={message.id} role={message.role} text={message.text} />)}
         <div ref={bottom} />
         </div>
       </div>
       <div hidden={section !== "chat"} className={"shrink-0 " + (embedded ? "pt-2" : "border-t border-line px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]")}>
         {activityNotices.length ? <div className="mb-2 rounded-card border border-line p-2 text-xs" aria-live="polite"><div className="flex justify-between gap-2"><strong>方坤 · 本次打开期间的活动</strong><button type="button" onClick={() => setActivityNotices([])}>清除提示</button></div>{activityNotices.map(item => <p key={item.id} className="mt-1">{item.message}</p>)}</div> : null}
-        <div className="mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限">
-          <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
+        <details className="mb-2 rounded-card border border-line px-3 py-1 text-xs" aria-label="方坤联网权限">
+          <summary className="min-h-9 cursor-pointer font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</summary>
           <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); try { window.localStorage.setItem(COACH_NETWORK_MODE_KEY, next); } catch { /* storage unavailable */ } }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
           {networkMode === "public-knowledge" && <div className="mt-2 flex flex-wrap gap-2">{COACH_PUBLIC_REFERENCES.map((item) => <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="underline" onClick={(event) => { if (!authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed) event.preventDefault() }}>{item.label}</a>)}</div>}
           <div className="mt-1 text-muted">公开链接仅供人工查阅；自动检索、内容核验和付费模型额度服务尚未接入。</div>
-        </div>
+        </details>
         {onlineRequest ? <div className="mb-2 flex flex-wrap items-center gap-2 text-xs"><span>复杂问题可主动尝试线上大模型（必须有服务端授权或额度；当前未实现赠送额度发放）。点击将发送问题及相关训练摘要给服务端，请先确认隐私。</span><button type="button" className="min-h-10 rounded-card border border-line px-3" disabled={sending || isOnline === false} onClick={() => void send(onlineRequest, true, true)}>{isOnline === false ? "离线不可调用" : "确认尝试线上回答"}</button><button type="button" className="min-h-10 px-2" onClick={() => setOnlineRequest(null)}>暂不使用</button></div> : null}
         {retryQuestion ? (
           <button type="button" className="mb-2 h-11 rounded-card border border-line px-3 text-sm" disabled={sending} onClick={() => void send(retryQuestion, true, true)}>
@@ -613,6 +603,8 @@ export function CoachSheet({
         </div> : null}
         </details>
         <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+          <button type="button" className="fk-chip shrink-0" onClick={() => { setSection("chat"); setDraft("今天该练什么？先给结论，最多三条要点"); }}>今天练什么</button>
+          <button type="button" className="fk-chip shrink-0" onClick={() => { setSection("chat"); setDraft("我今天状态不好（睡得少/没时间），这节课怎么调整？这次不代表能力下降吧"); }}>状态差怎么调</button>
           <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("帮我复盘这节训练，先说明已记录事实和缺失数据"); }}>分析最近训练</button>
           <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("根据已记录的恢复、睡眠和疼痛，说明现在不能确认什么"); }}>解释恢复数据</button>
           <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("查看我已保存的专项目标，不要假设没有写下的成绩"); }}>查看专项目标</button>

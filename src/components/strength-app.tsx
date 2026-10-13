@@ -13,6 +13,7 @@ import { readWallpaper, writeWallpaper, WALLPAPERS, type WallpaperId, readDispla
 import { TrainingLogPanel } from "@/components/training-log-panel";
 import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Watch, X } from "lucide-react";
 import { DayCard } from "@/components/day-card";
+import { TodayChecklist } from "@/components/today-checklist";
 import { TrackSessionPanel } from "@/components/track-session";
 import { TrainingDecisionCard } from "@/components/training-decision-card";
 import { SessionOverview } from "@/components/session-overview";
@@ -409,15 +410,16 @@ export function StrengthApp() {
       <main className={"ui03-main mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "today" || tab === "plan" ? "" : " hidden")}>
         {tab === "today" ? (
           <>
-            <section className="product-today-intro">
-              <div><p className="product-eyebrow">把注意力留给这一课</p><h2>{trackHome?.openOccurrenceId ? "继续当前训练" : "从今天的一步开始"}</h2><p>先查看课表，再分别记录跑步、力量与反馈。</p></div>
-              <span className="product-status">{statusText}</span>
-            </section>
+            {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
             <section aria-label="今日概览" className="product-task-strip">
               <div><span>当前课表</span><strong>{ready ? `${courseCount} 项` : "读取中"}</strong></div>
               <div><span>跑步</span><strong>{!ready ? "读取中" : trackHome?.openOccurrenceId ? "进行中" : trackHome?.planId ? "有计划" : "未安排"}</strong></div>
               <div><span>力量反馈</span><strong>{!ready ? "读取中" : liftLogged ? "本周期已记" : "未记录"}</strong></div>
             </section>
+            <TodayChecklist session={session} runTitle={trackHome?.planId ? trackHome.title : null}
+              onOpenRun={() => { if (trackHome?.planId && !workspaceOpen) setCourseChoice(`run:${trackHome.planId}`); document.querySelector('[aria-label="今日训练安排"]')?.scrollIntoView({ block: "start", behavior: "smooth" }); }}
+              onOpenFull={() => { if (session && !workspaceOpen) setCourseChoice(`lift:${session.id}`); document.querySelector('[aria-label="今日训练安排"]')?.scrollIntoView({ block: "start", behavior: "smooth" }); }}
+              onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />
             <section aria-label="今日训练安排" className="home-card mb-3 px-3 py-3">
               <div className="product-section-heading"><h2>当前可用课程</h2><button type="button" className="product-text-action" onClick={() => setTab("plan")}>查看计划 ›</button></div>
               <p className="mt-1 px-1 text-xs text-muted">按已保存课表展示；没有安排日期的课程不视为今日必做。</p>

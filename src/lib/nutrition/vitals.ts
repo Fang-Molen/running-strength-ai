@@ -4,7 +4,7 @@ export const VITALS_KEY = "fr255-vitals-v1"
 
 export const VITAL_KINDS = ["HRV", "RHR", "NIGHT_HR", "SLEEP", "RECOVERY"] as const
 export type VitalKind = (typeof VITAL_KINDS)[number]
-export type VitalSource = "MANUAL" | "IMAGE_CONFIRMED"
+export type VitalSource = "MANUAL" | "IMAGE_CONFIRMED" | "DEVICE_CONFIRMED"
 export type HrvMethod = "RMSSD" | "SDNN" | "UNSPECIFIED"
 
 export type VitalRecord = {
@@ -85,7 +85,7 @@ export function isVitalRecord(value: unknown): value is VitalRecord {
     && item.unit === UNITS[item.kind]
     && isDate(item.observedOn)
     && (item.observedAt === null || /^\d{2}:\d{2}$/.test(item.observedAt))
-    && (item.source === "MANUAL" || item.source === "IMAGE_CONFIRMED")
+    && (item.source === "MANUAL" || item.source === "IMAGE_CONFIRMED" || item.source === "DEVICE_CONFIRMED")
     && typeof item.note === "string"
     && item.note.length <= 80
     && (item.kind === "HRV" ? item.hrvMethod === "RMSSD" || item.hrvMethod === "SDNN" || item.hrvMethod === "UNSPECIFIED" : item.hrvMethod === null)
@@ -117,7 +117,7 @@ export function validateVital(draft: VitalDraft): { ok: true; value: number; uni
   }
   const clock = draft.observedAt == null || draft.observedAt === "" ? null : draft.observedAt
   if (clock != null && !/^([01]\d|2[0-3]):[0-5]\d$/.test(clock)) return { ok: false, reason: "测量时间需为 24 小时制，或留空。" }
-  if (draft.source !== "MANUAL" && draft.source !== "IMAGE_CONFIRMED") return { ok: false, reason: "来源不正确。" }
+  if (draft.source !== "MANUAL" && draft.source !== "IMAGE_CONFIRMED" && draft.source !== "DEVICE_CONFIRMED") return { ok: false, reason: "来源不正确。" }
   const note = (draft.note ?? "").trim()
   if (note.length > 80) return { ok: false, reason: "备注最多 80 字。" }
   if (draft.kind === "HRV") {

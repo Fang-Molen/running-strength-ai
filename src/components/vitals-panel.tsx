@@ -162,7 +162,7 @@ export function VitalsPanel({ revision, importHints, onSaved }: { revision: numb
       {shown.length === 0 ? <p className="mt-2 text-muted">暂无记录</p> : <ul className="mt-2 grid gap-2">
         {shown.map((item) => <li key={item.id} className="rounded-xl border border-line px-3 py-2.5">
           <p className="font-bold">{VITAL_LABELS[item.kind]} · {formatValue(item)}</p>
-          <p className="text-xs text-muted">{item.observedOn}{item.observedAt ? ` ${item.observedAt}` : " · 时刻未记录"}{item.hrvMethod ? ` · ${HRV_METHOD_LABELS[item.hrvMethod]}` : ""} · {item.source === "MANUAL" ? "手工" : "对照截图"}</p>
+          <p className="text-xs text-muted">{item.observedOn}{item.observedAt ? ` ${item.observedAt}` : " · 时刻未记录"}{item.hrvMethod ? ` · ${HRV_METHOD_LABELS[item.hrvMethod]}` : ""} · {item.source === "MANUAL" ? "手工" : item.source === "DEVICE_CONFIRMED" ? "设备导入" : "对照截图"}</p>
           {item.note ? <p className="text-xs">{item.note}</p> : null}
           <button type="button" onClick={() => {
             if (!window.confirm(`确认删除这条${VITAL_LABELS[item.kind]}记录？此操作不可撤销。`)) return
