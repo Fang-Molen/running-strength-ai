@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Upload } from "lucide-react"
 import { METRIC_LABELS, METRIC_UNITS, mergeResults, paceText, parseDeviceFile, parseSummaryText, type DeviceActivity, type DeviceHealthRow, type DeviceParseResult } from "@/lib/ui/device-parse"
-import { activityDraftId, existingKeys, saveDeviceRows } from "@/lib/ui/device-store"
+import { activityDraftId, existingKeys, isDuplicate, saveDeviceRows } from "@/lib/ui/device-store"
 import { SavedBadge } from "@/components/saved-badge"
 
 declare global { interface Window { Tesseract?: { createWorker: (lang: string, oem: number, opts: Record<string, unknown>) => Promise<{ recognize: (img: Blob) => Promise<{ data: { text: string } }> }> } } }
@@ -43,7 +43,7 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
     merged.kind = parts.map((p) => p.kind).join(" + ")
     const have = existingKeys()
     const dh = new Set(merged.health.filter((h) => have.health.has(h.key)).map((h) => h.key))
-    const da = new Set(merged.activities.filter((a) => have.activities.has(activityDraftId(a))).map((a) => a.key))
+    const da = new Set(merged.activities.filter((a) => (have.activities.has(activityDraftId(a)) || isDuplicate(a, have))).map((a) => a.key))
     setDup({ h: dh, a: da })
     setPickH(Object.fromEntries(merged.health.map((h) => [h.key, !dh.has(h.key)])))
     setPickA(Object.fromEntries(merged.activities.map((a) => [a.key, !da.has(a.key)])))

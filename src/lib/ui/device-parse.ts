@@ -513,3 +513,12 @@ export function paceText(a: Pick<DeviceActivity, "distanceM" | "durationSec">): 
   const s = a.durationSec / (a.distanceM / 1000)
   return `${Math.floor(s / 60)}'${String(Math.round(s % 60)).padStart(2, "0")}"/km`
 }
+
+/** 跨来源去重（如 FIT 与 Strava 同一次跑）：开始时间相差 ≤2 分钟且距离相差 ≤3%（或都无距离）视为同一次。 */
+export type ActSig = { startIso: string | null; distanceM: number | null }
+export function sameActivity(a: ActSig, b: ActSig): boolean {
+  if (!a.startIso || !b.startIso) return false
+  if (Math.abs(Date.parse(a.startIso) - Date.parse(b.startIso)) > 120_000) return false
+  if (a.distanceM == null || b.distanceM == null) return a.distanceM == null && b.distanceM == null
+  return Math.abs(a.distanceM - b.distanceM) <= Math.max(a.distanceM, b.distanceM) * 0.03
+}

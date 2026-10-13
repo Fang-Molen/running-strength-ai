@@ -7,7 +7,7 @@ import { SavedBadge } from "@/components/saved-badge"
 
 type TileId = "RHR" | "HRV" | "SLEEP" | "WEIGHT" | "BODY_BATTERY" | "READINESS" | "RECOVERY" | "STRESS"
 type Point = { day: string; value: number; source: string }
-const TILES: { id: TileId; name: string; unit: string; icon: typeof Moon; better: "up" | "down" | "none" }[] = [
+const ALL_TILES: { id: TileId; name: string; unit: string; icon: typeof Moon; better: "up" | "down" | "none" }[] = [
   { id: "READINESS", name: "训练准备度", unit: "/100", icon: Gauge, better: "up" },
   { id: "SLEEP", name: "睡眠", unit: "小时", icon: Moon, better: "up" },
   { id: "RHR", name: "静息心率", unit: "次/分", icon: HeartPulse, better: "down" },
@@ -24,7 +24,8 @@ function loadPref(): TileId[] {
 }
 const SRC: Record<string, string> = { MANUAL: "手工", IMAGE_CONFIRMED: "对照截图", DEVICE_CONFIRMED: "设备导入" }
 
-export function HealthTiles({ vitals, checks, today, revision, onJump }: { vitals: VitalRecord[]; checks: BodyCheck[]; today: string; revision: number; onJump: (target: string) => void }) {
+export function HealthTiles({ vitals, checks, today, revision, onJump, allowed }: { vitals: VitalRecord[]; checks: BodyCheck[]; today: string; revision: number; onJump: (target: string) => void; allowed?: string[] }) {
+  const TILES = allowed ? ALL_TILES.filter((t) => allowed.includes(t.id)) : ALL_TILES
   const [shown, setShown] = useState<TileId[]>(DEFAULT_SHOWN)
   const [open, setOpen] = useState<TileId | null>(null)
   const [editing, setEditing] = useState(false)

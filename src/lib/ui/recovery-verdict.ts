@@ -1,6 +1,6 @@
 /** 今日恢复一句话结论。只描述“今天的状态”，不评价能力（手册：状态≠能力，一次不判定；数据缺失不推断恢复良好 S-05）。 */
 import { RULES } from "./day-schedule-rules.ts"
-export type RecoveryInput = { readiness: number | null; bodyBattery: number | null; sleepH: number | null; sleepBase: number | null; hrv: number | null; hrvBase: number | null; rhr: number | null; rhrBase: number | null; subjective: number | null; stress: number | null }
+export type RecoveryInput = { readiness: number | null; bodyBattery: number | null; sleepH: number | null; sleepBase: number | null; hrv: number | null; hrvBase: number | null; rhr: number | null; rhrBase: number | null; subjective: number | null; stress: number | null; pain?: "none" | "mild" | "sharp" | null }
 export type Verdict = { level: "go" | "watch" | "reduce" | "unknown"; title: string; reasons: string[]; note: string }
 export const VERDICT_RULES = { rhrRise: 5, lowBattery: 30, lowSubjective: 4, highStress: 75 } as const // 本应用【经验规则】
 export function recoveryVerdict(i: RecoveryInput): Verdict {
@@ -12,6 +12,8 @@ export function recoveryVerdict(i: RecoveryInput): Verdict {
   if (i.sleepH != null && i.sleepBase) (i.sleepH <= i.sleepBase - RULES.sleepWorseHours ? soft : good).push(`睡眠 ${i.sleepH} 小时（平时 ${i.sleepBase.toFixed(1)}）`)
   if (i.subjective != null) (i.subjective <= VERDICT_RULES.lowSubjective ? bad : good).push(`主观恢复 ${i.subjective}/10`)
   if (i.stress != null && i.stress >= VERDICT_RULES.highStress) soft.push(`压力 ${i.stress}`)
+  if (i.pain === "sharp") bad.push("明显疼痛（手册 P-03：疼痛先处理）")
+  if (i.pain === "mild") soft.push("有点疼")
   const note = "这只反映今天的状态，不代表能力变化。"
   if (!bad.length && !soft.length && !good.length) return { level: "unknown", title: "数据不足，按身体感觉来", reasons: ["今天还没有恢复数据"], note: "缺数据不代表恢复良好，可导入手表数据或手动记一下。" }
   if (bad.length || soft.length >= 2) return { level: "reduce", title: "建议降强度", reasons: [...bad, ...soft].slice(0, 3), note }

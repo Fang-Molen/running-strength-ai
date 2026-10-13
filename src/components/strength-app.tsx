@@ -15,6 +15,7 @@ import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
 import { DietPage } from "@/components/fuel-guide";
+import { WatchSetting } from "@/components/profile-sheet";
 import { AssessmentPanel } from "@/components/assessment-panel";
 import { TrackSessionPanel } from "@/components/track-session";
 import { TrainingDecisionCard } from "@/components/training-decision-card";
@@ -719,6 +720,7 @@ export function StrengthApp() {
             <button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { const node = document.getElementById("body-records"); if (node instanceof HTMLDetailsElement) node.open = true; document.getElementById("body-devices")?.scrollIntoView({ block: "start" }); }, 40); }} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Watch className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">运动设备</span><span className="block text-xs font-normal text-muted">导入与设备说明</span></span><span aria-hidden="true">›</span></button>
             <button type="button" onClick={() => setSettingsPane("backup")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Database className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">数据备份与恢复</span><span className="block text-xs font-normal text-muted">备份、恢复、导出</span></span><span aria-hidden="true">›</span></button>
           </section> : null}
+          {settingsPane === "menu" ? <WatchSetting /> : null}
           {settingsPane === "menu" ? <p className="mt-3 px-1 text-xs text-muted">管理个人资料、目标、外观与本机数据。</p> : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">返回列表</button>}
           {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
             <h2 className="font-bold">界面与壁纸</h2>

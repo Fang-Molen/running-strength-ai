@@ -1,3 +1,5 @@
+import * as React from "react"
+import { TIERS, TIER_LABEL, WATCHES, loadTier, loadWatch, saveTier, saveWatch, type Tier, type WatchId } from "@/lib/ui/watch-mode"
 import { useState } from "react";
 import { X } from "lucide-react";
 import { badClocks, PRESETS, profileError, type Profile } from "@/lib/strength/profile";
@@ -89,6 +91,7 @@ export function ProfileSheet({
           <p className="mt-1 text-sm text-muted">{profileSexLabel(draft.sex)}{draft.age ? ` · ${draft.age} 岁` : " · 年龄未填"} · {draft.heightCm || "身高未填"} 厘米 · {draft.weightKg || "体重未填"} 公斤{draft.bodyFat ? ` · 体脂 ${draft.bodyFat}%` : ""}</p>
         )}
         </section>
+        <WatchSetting />
         <section className="mt-3 rounded-card border border-line bg-surface p-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold">训练目标</h3>
@@ -331,4 +334,18 @@ function Stepper({
       </div>
     </div>
   );
+}
+
+export function WatchSetting() {
+  const [w, setW] = React.useState<WatchId | null>(null)
+  const [t, setT] = React.useState<Tier>("basic")
+  React.useEffect(() => { setW(loadWatch()); setT(loadTier()) }, [])
+  return <section className="mt-3 rounded-card border border-line bg-surface p-4" aria-label="我的手表">
+    <h3 className="text-sm font-bold">数据来源</h3>
+    <p className="mt-1 text-xs text-muted">决定健康页用“手表自动”还是“手动打卡”。自动保存。</p>
+    <div className="mt-2 flex flex-wrap gap-1.5">{WATCHES.map(([id, label]) => <button key={id} type="button" className="fk-chip" aria-pressed={w === id} onClick={() => { saveWatch(id); setW(id); setT(loadTier()) }}>{label}</button>)}</div>
+    <h3 className="mt-3 text-sm font-bold">版本（可手动升降）</h3>
+    <div className="mt-2 flex flex-wrap gap-1.5" aria-label="版本">{(Object.keys(TIERS) as Tier[]).map((id) => <button key={id} type="button" className="fk-chip" aria-pressed={t === id} onClick={() => { saveTier(id); setT(id) }}>{TIER_LABEL[id]}</button>)}</div>
+    <p className="mt-1 text-xs text-muted">{TIERS[t].desc}</p>
+  </section>
 }
