@@ -8,6 +8,8 @@ import { INTAKE_PREFIX, type FirstWeekDraft } from "@/lib/core/coach-first-week"
 import { loadCoachPlanCandidates } from "@/lib/core/coach-plan"
 import { loadVitals } from "@/lib/nutrition/vitals"
 import { loadExtras } from "@/lib/ui/device-store"
+import { applyFeedbackToProposal } from "@/lib/ui/coach-assessment"
+import { loadFeedback } from "@/lib/ui/assessment-store"
 import { adaptProposal, adaptation, addDays, weekOf, type Recovery, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
 
 export const SCHEDULE_KEY = "fk-schedule-v1"
@@ -76,7 +78,7 @@ export function syncFangkun(store: ScheduleStore): ScheduleStore {
   const have = new Set(store.entries.map((e) => e.id.replace(/@.*$/, "")))
   const now = new Date(); const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
   const a = adaptation(store.entries, today)
-  const add = fangkunSessions().filter((e) => !have.has(e.id) && e.date >= today).map((e) => adaptProposal(e, a))
+  const add = fangkunSessions().filter((e) => !have.has(e.id) && e.date >= today).map((e) => applyFeedbackToProposal(adaptProposal(e, a), loadFeedback()))
   return add.length ? { ...store, entries: [...store.entries, ...add] } : store
 }
 
@@ -112,5 +114,10 @@ export function proposeWeek(store: ScheduleStore, week: string[], today: string,
   if (easy[0] && free(5)) { out.push({ ...runEntry(easy[0].r, week[5], "fangkun"), status: "proposed", kind: "coach" }); busy.add(week[5]) }
   const strengthDays = [...hardDays.slice(0, hard.length), 3, 0, 6].filter((i, k, arr) => arr.indexOf(i) === k && week[i] >= today && (!busy.has(week[i]) || hardDays.includes(i)))
   sessions.slice(0, 2).forEach((sess, i) => { const d = strengthDays[i]; if (d != null) out.push({ ...strengthEntry(sess, week[d], "fangkun"), status: "proposed", kind: "coach" }) })
-  return { ...store, entries: [...store.entries, ...out.map((e) => adaptProposal(e, a))] }
+  return { ...store, entries: [...store.entries, ...out.map((e) => applyFeedbackToProposal(adaptProposal(e, a), loadFeedback()))] }
+}
+
+/** 当天已确认（接受/自定/已完成）的课，供饮食建议用；待确认的建议不算。 */
+export function confirmedSessionsOn(date: string): { title: string; modality: "run" | "strength" | "rest"; minutes: number; intensity: "EASY" | "MODERATE" | "HARD" }[] {
+  return loadSchedule().entries.filter((e) => e.date === date && (e.status === "planned" || e.status === "done")).map((e) => ({ title: e.title, modality: e.modality, minutes: e.actual?.minutes ?? e.minutes, intensity: e.actual?.intensity ?? e.intensity }))
 }

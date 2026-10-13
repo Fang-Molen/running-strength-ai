@@ -14,7 +14,7 @@ const ACT: Record<ConflictAction, string> = { postpone: "顺延一天", reduce: 
 const dot = (e: ScheduleEntry) => e.modality === "run" ? "bg-[#2182bd]" : "bg-[#d07a2b]"
 const shown = (e: ScheduleEntry) => e.status !== "rejected"
 
-export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAskCoach }: { plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onAskCoach: () => void }) {
+export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAskCoach, onFood }: { plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onAskCoach: () => void; onFood?: () => void }) {
   const [store, setStore] = useState<ScheduleStore>({ entries: [], acks: [] })
   const [day, setDay] = useState(today)
   const [open, setOpen] = useState<string | null>(null)
@@ -58,7 +58,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
         onReview={(d, patch) => setEntries(review(store.entries, e.id, d, patch))}
         onSwap={(why) => { const n = swapProposal(e, why); setEntries([...review(store.entries, e.id, "reject"), n]); setOpen(n.id) }}
         onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
-        onOpenRun={() => e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} />)}
+        onOpenRun={() => e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}
       {!list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null}
       {note ? <p className="px-1 text-xs text-muted" role="status">{note}</p> : null}
     </div>
@@ -80,11 +80,11 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
   </section>
 }
 
-function EntryCard({ e, today, open, session, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach }: {
+function EntryCard({ e, today, open, session, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach, onFood }: {
   e: ScheduleEntry; today: string; open: boolean; session: Session | undefined; onToggle: () => void
   onReview: (d: "accept" | "reject", patch?: Partial<Pick<ScheduleEntry, "title" | "minutes" | "intensity" | "date">>) => void
   onSwap: (why: SwapReason) => void; onActual: (a: Parameters<typeof logActual>[2]) => void; onSkip: () => void
-  onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void
+  onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void; onFood?: () => void
 }) {
   const [mode, setMode] = useState<"none" | "edit" | "swap" | "diff" | "miss">("none")
   const [title, setTitle] = useState(e.title), [mins, setMins] = useState(e.minutes), [inten, setInten] = useState<Intensity>(e.intensity)
@@ -140,7 +140,7 @@ function EntryCard({ e, today, open, session, onToggle, onReview, onSwap, onActu
           <TodayChecklist bare slotId={e.id} title={e.title} session={session} runTitle={e.modality === "run" ? e.title : null} onOpenRun={onOpenRun} onOpenFull={onOpenFull} onAskCoach={onAskCoach} />
         </details> : null}
       </> : <p className="text-sm text-muted">{a ? `已记录：${a.outcome === "as_planned" ? "按计划完成" : a.outcome === "different" ? `实际 ${a.minutes} 分钟 · ${a.intensity ? INT[a.intensity] : ""}` : "没练"}${a.reasons.length ? ` · ${a.reasons.map((r) => REASON_LABELS[r]).join("、")}` : ""}` : "到当天再记录完成情况。"}{e.focus.length ? ` 重点：${e.focus.join("、")}` : ""}</p>}
-      <div className="mt-2"><button type="button" className="fk-chip" onClick={onSkip}><X className="size-3.5" />{e.source === "custom" ? "移除" : "不做这节"}</button></div>
+      <div className="mt-2 flex items-center gap-3"><button type="button" className="fk-link text-xs" onClick={onOpenFull}>详细记录 ›</button>{onFood ? <button type="button" className="fk-link text-xs" onClick={onFood}>练前后吃什么 ›</button> : null}<button type="button" className="fk-chip ml-auto" onClick={onSkip}><X className="size-3.5" />{e.source === "custom" ? "移除" : "不做这节"}</button></div>
     </div> : null}
   </div>
 }

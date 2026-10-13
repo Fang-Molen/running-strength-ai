@@ -11,9 +11,11 @@ import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
 import { readWallpaper, writeWallpaper, WALLPAPERS, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
 import { TrainingLogPanel } from "@/components/training-log-panel";
-import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Watch, X } from "lucide-react";
+import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Utensils, Watch, X } from "lucide-react";
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
+import { DietPage } from "@/components/fuel-guide";
+import { AssessmentPanel } from "@/components/assessment-panel";
 import { TrackSessionPanel } from "@/components/track-session";
 import { TrainingDecisionCard } from "@/components/training-decision-card";
 import { SessionOverview } from "@/components/session-overview";
@@ -127,7 +129,7 @@ export function StrengthApp() {
   const [runKm, setRunKm] = useState<number | null>(null);
   const [kcal, setKcal] = useState<number | null>(null);
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
-  const [tab, setTab] = useState<"today" | "plan" | "log" | "coach" | "body">("today");
+  const [tab, setTab] = useState<"today" | "plan" | "log" | "coach" | "body" | "diet">("today");
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");
   const [showPlanTools, setShowPlanTools] = useState(false);
@@ -234,6 +236,7 @@ export function StrengthApp() {
   const minutes = session ? estimateMinutes(session) : 0;
   const variant = homeVariant(preference);
   const trackHome = ready ? trackHomeView() : null;
+  const openDetail = () => { const d = document.getElementById("detail-record"); if (d instanceof HTMLDetailsElement) d.open = true; window.setTimeout(() => d?.scrollIntoView({ block: "start", behavior: "smooth" }), 30); };
   const todayIso = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
   const liftLogged = Boolean(session && plan.cycle?.logs.some((log) => log.sessionId === session.id));
   const courseCount = (trackHome?.planId ? 1 : 0) + (session ? 1 : 0);
@@ -241,7 +244,7 @@ export function StrengthApp() {
   const doneCount = 0;
   const liftSummary = (session?.moves ?? []).slice(0, 4).map((move) => displayName(move)).join(" · ");
   const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : courseCount === 0 ? "暂无安排" : "待选择课程";
-  const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI" : "身体与恢复";
+  const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI" : tab === "diet" ? "饮食" : "健康";
   const phaseLabel = plan.cycle ? PHASES.find((item) => item.week === plan.cycle?.week)?.label ?? "" : "";
   const headerHint = tab === "today"
     ? (clockLabel ? `${clockLabel} · ${statusText}` : statusText)
@@ -412,17 +415,14 @@ export function StrengthApp() {
         {tab === "today" ? (
           <>
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
-            <section aria-label="今日概览" className="product-task-strip">
-              <div><span>当前课表</span><strong>{ready ? `${courseCount} 项` : "读取中"}</strong></div>
-              <div><span>跑步</span><strong>{!ready ? "读取中" : trackHome?.openOccurrenceId ? "进行中" : trackHome?.planId ? "有计划" : "未安排"}</strong></div>
-              <div><span>力量反馈</span><strong>{!ready ? "读取中" : liftLogged ? "本周期已记" : "未记录"}</strong></div>
-            </section>
+
             <TodayBoard plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
-              onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); document.querySelector('[aria-label="今日训练安排"]')?.scrollIntoView({ block: "start", behavior: "smooth" }); }}
-              onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } document.querySelector('[aria-label="今日训练安排"]')?.scrollIntoView({ block: "start", behavior: "smooth" }); }}
+              onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
+              onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
+              onFood={() => { setTab("diet"); }}
               onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />
-            <section aria-label="今日训练安排" className="home-card mb-3 px-3 py-3">
-              <div className="product-section-heading"><h2>当前可用课程</h2><button type="button" className="product-text-action" onClick={() => setTab("plan")}>查看计划 ›</button></div>
+            <details id="detail-record" aria-label="今日训练安排" className="home-card mb-3 px-3 py-2">
+              <summary className="flex min-h-11 cursor-pointer items-center justify-between font-bold">详细记录（逐组 / 分段，含训练前判断）<button type="button" className="product-text-action" onClick={(e) => { e.preventDefault(); setTab("plan"); }}>计划 ›</button></summary>
               <p className="mt-1 px-1 text-xs text-muted">按已保存课表展示；没有安排日期的课程不视为今日必做。</p>
               <label className="mt-3 block text-sm font-bold">本次要执行的课程
                 <select aria-label="本次要执行的课程" value={courseChoice} disabled={workspaceOpen || !!trainingDecision.current} onChange={event => { setCourseChoice(event.target.value); const index=plan.sessions.findIndex(x=>`lift:${x.id}`===event.target.value); if(index>=0)setActive(index); }} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-surface px-3">
@@ -434,17 +434,7 @@ export function StrengthApp() {
               <div className="mt-3 space-y-2 text-sm text-muted" aria-label="分项进度"><p>跑步：{trackHome?.progress ?? "未安排"}</p><p>力量：{session ? `${session.name} · ${ready && executionOf(session.id).open ? "进行中" : "查看课程核对历史与反馈"}` : "未安排"}</p></div>
               <button type="button" disabled={!ready||!courseChoice||workspaceOpen} className="mt-4 min-h-14 w-full rounded-2xl bg-accent font-bold text-accent-fg disabled:opacity-50" onClick={()=>{setWorkspaceMounted(true);setWorkspaceOpen(true);}}>{workspaceOpen ? "训练工作区已打开" : courseChoice.startsWith("run:") && openTrackOccurrence(courseChoice.slice(4)) || courseChoice.startsWith("lift:") && ready && executionOf(courseChoice.slice(5)).open ? "继续训练" : "开始训练"}</button>
               <p className="mt-2 text-xs text-muted">仅进入选定课程。跑步和力量的独立课次不会自动合并，分项完成也不代表整课完成。</p>
-            </section>
-            <section className="product-quick-actions" aria-label="今日快捷记录">
-              <button type="button" onClick={() => { setBodyPane("nutrition"); setTab("body"); }}><span>记饮食</span><small>餐食与摄入</small></button>
-              <button type="button" onClick={() => { setBodyPane("recovery"); setTab("body"); }}><span>记恢复</span><small>睡眠与主观状态</small></button>
-              <button type="button" onClick={() => setTab("log")}><span>看日志</span><small>成绩、反馈与来源</small></button>
-            </section>
-            <section className="product-coach-note home-card p-4" aria-label="方坤今日">
-              <span className="product-avatar"><FangShen face="focus" motion={false} /></span>
-              <div className="min-w-0 flex-1"><h2 className="text-sm font-bold">方坤陪你一起梳理</h2><p className="mt-1 text-xs text-muted">{coachHint}</p></div>
-              <button type="button" className="product-text-action" onClick={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }}>聊聊 ›</button>
-            </section>
+            </details>
           </>
         ) : null}
         {workspaceMounted ? <section hidden={!workspaceOpen||tab!=="today"} aria-label="训练工作区" className="mb-4 space-y-3 rounded-card border border-line bg-surface p-4">
@@ -703,10 +693,12 @@ export function StrengthApp() {
 
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
+      {tab === "log" ? <div className="px-3 pt-2"><AssessmentPanel /></div> : null}
       {tab === "log" ? <TrainingLogPanel plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
-      {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { if (next === "body") setBodyPane("nutrition"); setTab(next); }}
+      {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
+      <div className={tab === "diet" ? "" : "hidden"}><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div>
       <div className={tab === "body" ? "" : "hidden"}>
         <BodyCenter active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />
       </div>
@@ -838,14 +830,15 @@ export function StrengthApp() {
         </div>
       ) : null}
       <nav className="ui03-dock dock fixed inset-x-0 bottom-0 z-20" aria-label="主导航">
-        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
+        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-6">
           {(
             [
               ["today", "今日", House],
               ["plan", "计划", ClipboardList],
               ["log", "日志", CalendarDays],
               ["coach", "方坤", MessageCircle],
-              ["body", "身体", Scale],
+              ["body", "健康", Scale],
+              ["diet", "饮食", Utensils],
             ] as const
           ).map(([id, label, Icon]) => (
             <button

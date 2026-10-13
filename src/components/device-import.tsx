@@ -6,7 +6,7 @@ import { SavedBadge } from "@/components/saved-badge"
 
 declare global { interface Window { Tesseract?: { createWorker: (lang: string, oem: number, opts: Record<string, unknown>) => Promise<{ recognize: (img: Blob) => Promise<{ data: { text: string } }> }> } } }
 let ocrWorker: Awaited<ReturnType<NonNullable<Window["Tesseract"]>["createWorker"]>> | null = null
-async function ocr(file: Blob, onStatus: (s: string) => void): Promise<string> {
+export async function ocr(file: Blob, onStatus: (s: string) => void): Promise<string> {
   if (!window.Tesseract) await new Promise<void>((ok, bad) => { const s = document.createElement("script"); s.src = "/vendor/tesseract/tesseract.min.js"; s.onload = () => ok(); s.onerror = () => bad(new Error("识别组件加载失败")); document.head.appendChild(s) })
   if (!ocrWorker) { onStatus("首次识别：加载本机识别组件（约 6MB，之后可离线）…"); ocrWorker = await window.Tesseract!.createWorker("chi_sim", 1, { workerPath: "/vendor/tesseract/worker.min.js", corePath: "/vendor/tesseract/", langPath: "/vendor/tesseract/", gzip: true, cacheMethod: "write" }) }
   onStatus("正在识别截图…")

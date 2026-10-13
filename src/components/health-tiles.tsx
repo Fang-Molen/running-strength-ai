@@ -18,7 +18,7 @@ const TILES: { id: TileId; name: string; unit: string; icon: typeof Moon; better
   { id: "STRESS", name: "压力", unit: "/100", icon: Waves, better: "down" },
 ]
 export const HEALTH_TILE_PREF_KEY = "fk-health-tiles-v1"
-const DEFAULT_SHOWN: TileId[] = ["READINESS", "SLEEP", "RHR", "HRV", "BODY_BATTERY", "WEIGHT"]
+const DEFAULT_SHOWN: TileId[] = ["READINESS", "SLEEP", "HRV", "RHR", "BODY_BATTERY", "STRESS", "RECOVERY"]
 function loadPref(): TileId[] {
   try { const v = JSON.parse(localStorage.getItem(HEALTH_TILE_PREF_KEY) ?? "null"); return Array.isArray(v) ? v : DEFAULT_SHOWN } catch { return DEFAULT_SHOWN }
 }

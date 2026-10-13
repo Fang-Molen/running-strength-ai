@@ -4,6 +4,7 @@ import { BodyPanel } from "@/components/body-panel"
 import { DeviceCenter } from "@/components/device-center"
 import { DeviceImport } from "@/components/device-import"
 import { HealthTiles } from "@/components/health-tiles"
+import { PainLog, RecoveryVerdictCard } from "@/components/health-extras"
 import { FuelPanel } from "@/components/fuel-panel"
 import { VitalsPanel, type ImportHint } from "@/components/vitals-panel"
 import { loadChecks, todayDate, type BodyCheck } from "@/lib/nutrition/body"
@@ -113,9 +114,10 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
 
   return <div className="mx-auto max-w-3xl px-3 pt-2 pb-nav">
     <nav className="product-segments mb-3" aria-label="身体工作区">
-      {([["recovery", "恢复"], ["nutrition", "饮食"], ["trend", "变化"], ["device", "设备"]] as const).map(([id, label]) => <button type="button" key={id} aria-pressed={pane === id} onClick={() => setPane(id)}>{label}</button>)}
+      {([["recovery", "今日恢复"], ["trend", "身体指标"], ["device", "设备导入"]] as const).map(([id, label]) => <button type="button" key={id} aria-pressed={pane === id} onClick={() => setPane(id)}>{label}</button>)}
     </nav>
     <div hidden={pane !== "recovery"}>
+      <RecoveryVerdictCard today={today} revision={revision} onImport={() => setPane("device")} />
       <HealthTiles vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />
     <section className="px-1" data-legacy-span={span} data-legacy-metrics={metrics.length}>
       <details className="mt-1 px-1 text-xs text-muted">
@@ -124,23 +126,10 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
       </details>
     </section>
     </div>
-    <section hidden={pane !== "nutrition"} className="home-card px-4 py-4" aria-label="营养概览">
-      <div className="flex items-end justify-between gap-3">
-        <h2 className="text-base font-bold">饮食与营养</h2>
-        <p className="text-sm font-bold">{eaten == null ? "热量未记录" : `${eaten} kcal`}{nutrition ? <span className="font-normal text-muted"> / {nutrition.kcal}</span> : null}</p>
-      </div>
-      {eaten != null && nutrition ? <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-[#269775]" style={{ width: `${Math.min(100, Math.round((eaten / nutrition.kcal) * 100))}%` }} /></div> : null}
-      <p className="mt-2 text-sm"><span className="tone-lift font-bold">蛋白质 {protein == null ? "未记录" : `${protein} g`}</span>{nutrition ? <span className="text-muted"> · 目标 {nutrition.protein} g</span> : <span className="text-muted"> · 热量目标未设置</span>}</p>
-      <a href="#body-fuel" onClick={() => setPane("nutrition")} className="mt-2 flex min-h-11 items-center text-sm font-bold text-accent">食物记录 · 热量 · 蛋白质</a>
-    </section>
     <section id="body-records" className="mt-3">
       <div hidden={pane !== "device"}><DeviceImport today={today} onSaved={() => setRevision((value) => value + 1)} /></div>
       <div hidden={pane !== "recovery"} id="body-vitals" className="scroll-mt-6"><details className="home-card p-3" onToggle={() => undefined}><summary className="min-h-11 cursor-pointer text-sm font-bold">手动补记 · 历史记录</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision((value) => value + 1)} /></details></div>
-      <div hidden={pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><p className="product-eyebrow">身体变化</p><h2 className="font-bold mt-1">体重与体测记录</h2><p className="mt-2 text-sm text-muted">最近体重 {latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}。历史日期与今天分开查看。</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /></div>
-      <div hidden={pane !== "nutrition"} id="body-fuel" className="mt-3 scroll-mt-6">
-        <h2 className="text-base font-bold">营养与热量</h2>
-        <FuelPanel profile={profile} onEdit={onEdit} revision={revision} onSaved={() => setRevision(value => value + 1)} />
-      </div>
+      <div hidden={pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">最近体重 {latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}。趋势在“今日恢复”的体重方块里展开看。</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><PainLog today={today} /></div>
       <div hidden={pane !== "device"} id="body-devices" className="scroll-mt-6"><details className="home-card mt-3 p-3"><summary className="min-h-10 cursor-pointer text-sm font-bold">其他品牌导出步骤（华为 / 小米 / COROS / Apple）</summary><DeviceCenter /></details></div>
     </section>
   </div>
