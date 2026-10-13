@@ -15,8 +15,11 @@ import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
 import { DietPage } from "@/components/fuel-guide";
-import { HomeHeader, LogMetricsPanel, Onboarding, QuickLog, SettingsHub } from "@/components/r8";
+import { ReviewPanel } from "@/components/review-card";
+import { HealthLinkSheet, HomeEditor, useLocalReminders, HomeHeader, LogMetricsPanel, Onboarding, QuickLog, SettingsHub } from "@/components/r8";
 import { ONBOARD_KEY } from "@/lib/ui/first-run";
+import { LAYOUT_DEFAULT, loadLayout, type Layout, type QuickId } from "@/lib/ui/home-layout";
+import { readLaunchParams } from "@/lib/ui/shortcut-link";
 import { OVERRIDE_KEY, type Override } from "@/lib/ui/day-override";
 import { loadSettings } from "@/lib/ui/app-settings";
 const localDayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -139,6 +142,11 @@ export function StrengthApp() {
   const [dayOverride, setDayOverride] = useState<Override | null>(null);
   const [bandOn, setBandOn] = useState(true);
   const [firstRun, setFirstRun] = useState(false);
+  const [homeLayout, setHomeLayout] = useState<Layout>(LAYOUT_DEFAULT);
+  const [editHome, setEditHome] = useState(false);
+  const [quickOpen, setQuickOpen] = useState<{ text: string; n: number } | null>(null);
+  const [healthLink, setHealthLink] = useState<string | null>(null);
+  useEffect(() => { setHomeLayout(loadLayout()); const lp = readLaunchParams(location.search); if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() }); if (lp.health) setHealthLink(lp.health); if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname); }, []);
   useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");
@@ -246,8 +254,19 @@ export function StrengthApp() {
   const minutes = session ? estimateMinutes(session) : 0;
   const variant = homeVariant(preference);
   const trackHome = ready ? trackHomeView() : null;
+  const quickAction = (q: QuickId | "more") => {
+    if (q === "more") return setEditHome(true);
+    if (q === "log") return setQuickOpen({ text: "", n: Date.now() });
+    if (q === "weight") return setQuickOpen({ text: "体重 ", n: Date.now() });
+    if (q === "import") { setBodyPane("device"); return setTab("body"); }
+    if (q === "health") { setBodyPane("recovery"); return setTab("body"); }
+    if (q === "coach") { setCoachLink("ask"); setCoachFocus(null); return setTab("coach"); }
+    if (q === "diet") return setTab("diet");
+    openDetail();
+  };
   const openDetail = () => { const d = document.getElementById("detail-record"); if (d instanceof HTMLDetailsElement) d.open = true; window.setTimeout(() => d?.scrollIntoView({ block: "start", behavior: "smooth" }), 30); };
   const todayIso = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+  useLocalReminders(todayIso);
   const liftLogged = Boolean(session && plan.cycle?.logs.some((log) => log.sessionId === session.id));
   const courseCount = (trackHome?.planId ? 1 : 0) + (session ? 1 : 0);
   // Part records and undated legacy feedback cannot establish whole-course completion.
@@ -423,16 +442,16 @@ export function StrengthApp() {
 
       <main className={"ui03-main mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "today" || tab === "plan" ? "" : " hidden")}>
         {tab === "today" ? (
-          <>
+          <div className="flex flex-col">
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
-            <HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} />
-            <TodayBoard revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
+            <HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
+            <div style={{ order: homeLayout.order.indexOf("week") }}><TodayBoard revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
               onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
               onFood={() => { setTab("diet"); }}
-              onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />
-            <details id="detail-record" aria-label="今日训练安排" className="home-card mb-3 px-3 py-2">
+              onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /></div>
+            <details id="detail-record" aria-label="今日训练安排" hidden={homeLayout.hidden.includes("detail")} style={{ order: homeLayout.order.indexOf("detail") }} className="home-card mb-3 px-3 py-2">
               <summary className="flex min-h-11 cursor-pointer items-center justify-between font-bold">详细记录（逐组 / 分段，含训练前判断）<button type="button" className="product-text-action" onClick={(e) => { e.preventDefault(); setTab("plan"); }}>计划 ›</button></summary>
               <p className="mt-1 px-1 text-xs text-muted">按已保存课表展示；没有安排日期的课程不视为今日必做。</p>
               <label className="mt-3 block text-sm font-bold">本次要执行的课程
@@ -446,7 +465,8 @@ export function StrengthApp() {
               <button type="button" disabled={!ready||!courseChoice||workspaceOpen} className="mt-4 min-h-14 w-full rounded-2xl bg-accent font-bold text-accent-fg disabled:opacity-50" onClick={()=>{setWorkspaceMounted(true);setWorkspaceOpen(true);}}>{workspaceOpen ? "训练工作区已打开" : courseChoice.startsWith("run:") && openTrackOccurrence(courseChoice.slice(4)) || courseChoice.startsWith("lift:") && ready && executionOf(courseChoice.slice(5)).open ? "继续训练" : "开始训练"}</button>
               <p className="mt-2 text-xs text-muted">仅进入选定课程。跑步和力量的独立课次不会自动合并，分项完成也不代表整课完成。</p>
             </details>
-          </>
+            <div style={{ order: 100 }} className="h-20" aria-hidden="true" />
+          </div>
         ) : null}
         {workspaceMounted ? <section hidden={!workspaceOpen||tab!=="today"} aria-label="训练工作区" className="mb-4 space-y-3 rounded-card border border-line bg-surface p-4">
           <div className="flex items-center justify-between gap-2"><h2 className="font-bold">当前课程 · {courseChoice.startsWith("run:") ? courseChoice.slice(4) : session?.name}</h2><button type="button" className="min-h-11 text-sm" onClick={()=>{if(trainingDecision.current){setNotice("请先在执行页暂停或结束当前力量课，再选择其他课程。");return;}setWorkspaceOpen(false);}}>返回课程选择</button></div>
@@ -706,6 +726,7 @@ export function StrengthApp() {
       </main>
       {tab === "log" ? <div className="px-3 pt-2"><AssessmentPanel /></div> : null}
       {tab === "log" ? <LogMetricsPanel today={todayIso} /> : null}
+      {tab === "log" ? <div className="mx-3 mb-3"><ReviewPanel today={todayIso} title="方坤复盘" /></div> : null}
       {tab === "log" ? <TrainingLogPanel plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
@@ -842,7 +863,9 @@ export function StrengthApp() {
         </div>
         </div>
       ) : null}
-      {tab !== "coach" ? <QuickLog today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
+      {true ? <QuickLog hideFab={tab === "coach"} openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
+      {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
+      {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}
       {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <nav className="ui03-dock dock fixed inset-x-0 bottom-0 z-20" aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-6">

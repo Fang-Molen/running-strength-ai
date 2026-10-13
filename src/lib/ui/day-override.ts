@@ -15,12 +15,14 @@ export function applyOverride(entries: ScheduleEntry[], o: Override | null): Sch
 }
 /** 计划 vs 实际色带（TrainingPeaks 阈值）：绿 80–120%，黄 50–79%/121–150%，橙 <50% 或 >150%，红 没练，灰 计划外。 */
 export type Band = "green" | "yellow" | "orange" | "red" | "grey" | null
-export function planBand(e: ScheduleEntry): Band {
+/** 计划按距离（跑步且 km 有值）时按距离比，否则按时长；basis="time" 可强制按时长。 */
+export function bandBasisOf(e: ScheduleEntry, basis: "auto" | "time" | "distance" = "auto"): "time" | "distance" { return basis !== "time" && e.modality === "run" && !!e.km && e.actual?.km != null ? "distance" : "time" }
+export function planBand(e: ScheduleEntry, basis: "auto" | "time" | "distance" = "auto"): Band {
   if (!e.actual) return null
   if (e.actual.outcome === "missed") return "red"
   if (e.source === "custom" && e.status === "done" && e.unplanned) return "grey"
   if (e.actual.outcome === "as_planned") return "green"
-  const r = (e.actual.minutes ?? 0) / Math.max(1, e.minutes)
+  const r = bandBasisOf(e, basis) === "distance" ? (e.actual.km ?? 0) / e.km! : (e.actual.minutes ?? 0) / Math.max(1, e.minutes)
   return r >= 0.8 && r <= 1.2 ? "green" : r >= 0.5 && r <= 1.5 ? "yellow" : "orange"
 }
 export const BAND_COLOR: Record<Exclude<Band, null>, string> = { green: "#269775", yellow: "#d9b33b", orange: "#e07b2b", red: "#c0392b", grey: "#9aa5ad" }

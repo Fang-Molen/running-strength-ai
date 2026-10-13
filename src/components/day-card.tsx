@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { confirmDraft, createDraft } from "@/lib/core/control";
 import { formatDuration, loadDay, onDayChange, parseDuration, parseKm, removeRun, saveBurn, type DayRecord } from "@/lib/nutrition/day";
+import { EnergyGauge } from "@/components/energy-gauge"
 
 export function DayCard({ part }: { part: "run" | "burn" | "all" }) {
   const [day, setDay] = useState<DayRecord>({ date: "", burn: null, runs: [] });
@@ -111,7 +112,7 @@ export function DayCard({ part }: { part: "run" | "burn" | "all" }) {
                 <input value={time} onChange={(event) => setTime(event.target.value)} placeholder="用时" className="h-11 rounded-2xl border border-line bg-bg px-3 text-sm outline-none" />
               </div>
               <input value={note} onChange={(event) => setNote(event.target.value)} placeholder="轻松跑，或 400米×8" className="mt-2 h-11 w-full rounded-2xl border border-line bg-bg px-3 text-sm outline-none" />
-              <input value={rpe} inputMode="numeric" onChange={(event) => setRpe(event.target.value)} placeholder="RPE，可不填" className="mt-2 h-11 w-full rounded-2xl border border-line bg-bg px-3 text-sm outline-none" />
+              <div className="mt-2"><EnergyGauge compact mode="run" label="用力（气力槽，可不填）" value={rpe === "" ? null : Number(rpe)} onChange={(v) => setRpe(v == null ? "" : String(v))} /></div>
               <button type="button" onClick={commitRun} className="mt-2 h-11 rounded-2xl bg-accent px-4 text-sm font-bold text-accent-fg">记下这节跑</button>
             </>
           ) : (

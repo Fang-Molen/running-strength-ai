@@ -22,6 +22,7 @@ import { CoachKnowledgePanel } from "./coach-knowledge-panel"
 import { assessImportCompleteness, refreshImportCompleteness } from "@/lib/core/import-completeness"
 import { observeImportedRunning } from "@/lib/core/running-observation"
 import { trialReviewClosed } from "@/lib/core/trial"
+import { EnergyGauge } from "@/components/energy-gauge"
 
 type Step = "input" | "review" | "result"
 
@@ -292,7 +293,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
           <label className="col-span-2"><FieldLabel label="标题" field={draft.title} /><input value={draft.title.value ?? ""} onChange={(event) => patch({ title: recorded(event.target.value || null) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
           <label><FieldLabel label="总时长（秒）" field={draft.durationSeconds} /><input inputMode="decimal" value={draft.durationSeconds.value ?? ""} onChange={(event) => patch({ durationSeconds: recorded(number(event.target.value)) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
           <label><FieldLabel label="总距离（米）" field={draft.totalDistanceMeters} /><input inputMode="decimal" value={draft.totalDistanceMeters.value ?? ""} onChange={(event) => patch({ totalDistanceMeters: recorded(number(event.target.value)) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
-          <label className="col-span-2"><FieldLabel label="这节训练整体有多吃力？" field={draft.sessionRpe} /><input inputMode="numeric" value={draft.sessionRpe.value ?? ""} onChange={(event) => patch({ sessionRpe: sessionRpeField(event.target.value) })} placeholder="整课 RPE 1–10，可留空" className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
+          <div className="col-span-2"><FieldLabel label="这节训练整体有多吃力？" field={draft.sessionRpe} /><EnergyGauge label="整课用力（气力槽，可留空）" mode={draft.sport === "RUNNING" ? "run" : "strength"} value={draft.sessionRpe.value ?? null} onChange={(v) => patch({ sessionRpe: sessionRpeField(v == null ? "" : String(v)) })} /></div>
           <details className="col-span-2 rounded-card bg-bg p-3 text-xs text-muted"><summary className="min-h-11 cursor-pointer py-2 font-bold text-fg">用力说明（自己选，不会自动打分）</summary><p className="mt-2">这是产品引导，不是经过验证的中文版量表，也不把分数对应到固定配速、心率或剩余次数。空白表示未记录。整课 RPE 和某一组的用力不是一回事。</p><ul className="mt-2 list-disc pl-4"><li>1–2：很轻松，呼吸平稳。</li><li>3–4：轻松，能说话。跑步像放松跑，力量留有很多余力。</li><li>5–6：中等，说话开始断续。</li><li>7–8：很吃力，只能说短句。</li><li>9–10：极吃力。10 不是必须打到，也不等于应该做到失败。</li></ul></details>
           <label><FieldLabel label="恢复 1–10" field={draft.subjectiveRecovery} /><input inputMode="numeric" value={draft.subjectiveRecovery.value ?? ""} onChange={(event) => patch({ subjectiveRecovery: recorded(number(event.target.value)) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
         </section>

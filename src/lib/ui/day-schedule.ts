@@ -10,6 +10,7 @@ import { loadVitals } from "@/lib/nutrition/vitals"
 import { loadExtras } from "@/lib/ui/device-store"
 import { applyFeedbackToProposal } from "@/lib/ui/coach-assessment"
 import { loadSettings } from "@/lib/ui/app-settings"
+import { acceptedAdaptation } from "@/lib/ui/review"
 import { loadFeedback } from "@/lib/ui/assessment-store"
 import { adaptProposal, adaptation, addDays, weekOf, type Recovery, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
 
@@ -78,7 +79,7 @@ export function fangkunSessions(): ScheduleEntry[] {
 export function syncFangkun(store: ScheduleStore): ScheduleStore {
   const have = new Set(store.entries.map((e) => e.id.replace(/@.*$/, "")))
   const now = new Date(); const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
-  const a = adaptation(store.entries, today)
+  const a = acceptedAdaptation(today) ?? adaptation(store.entries, today)
   const add = fangkunSessions().filter((e) => !have.has(e.id) && e.date >= today).map((e) => (loadSettings().personalize ? applyFeedbackToProposal(adaptProposal(e, a), loadFeedback()) : e))
   return add.length ? { ...store, entries: [...store.entries, ...add] } : store
 }
@@ -105,7 +106,7 @@ export function readRecovery(today: string): Recovery | null {
  */
 export function proposeWeek(store: ScheduleStore, week: string[], today: string, sessions: Session[], runPlans: RunningPlan[]): ScheduleStore {
   const busy = new Set(store.entries.filter((e) => e.status !== "rejected").map((e) => e.date))
-  const a = adaptation(store.entries, today)
+  const a = acceptedAdaptation(today) ?? adaptation(store.entries, today)
   const free = (i: number) => week[i] >= today && !busy.has(week[i])
   const out: ScheduleEntry[] = []
   const runs = runPlans.map((r) => ({ r, c: classifyRun(r) }))

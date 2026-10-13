@@ -4,6 +4,7 @@ import { displayName, type Session } from "@/lib/strength/model"
 import { STATE_LABELS, editSet, initChecklist, loadChecklist, progress, reconcile, saveChecklist, toggleMove, toggleSet, type ChecklistState, type StateTag } from "@/lib/ui/today-checklist"
 import { SavedBadge } from "@/components/saved-badge"
 import { syncChecklistToLog } from "@/lib/ui/checklist-log"
+import { EnergyGauge } from "@/components/energy-gauge"
 
 const mmss = (ms: number) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` }
 
@@ -67,7 +68,7 @@ export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, on
     </div>
     <div className="mt-3 space-y-2 px-1">
       <div className="fk-chips" role="group" aria-label="今天状态">{(Object.keys(STATE_LABELS) as StateTag[]).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.state === k} onClick={() => upd({ ...s, state: s.state === k ? null : k, updatedAt: Date.now() })}>{STATE_LABELS[k]}</button>)}</div>
-      <div className="fk-chips" role="group" aria-label="主观用力 RPE"><span className="self-center text-xs text-muted">RPE</span>{[5, 6, 7, 8, 9, 10].map((n) => <button key={n} type="button" className="fk-chip" aria-pressed={s.rpe === n} onClick={() => upd({ ...s, rpe: s.rpe === n ? null : n, updatedAt: Date.now() })}>{n}</button>)}</div>
+      <EnergyGauge compact value={s.rpe ?? null} mode={runTitle && !session ? "run" : "strength"} onChange={(v) => upd({ ...s, rpe: v, updatedAt: Date.now() })} />
       {s.state === "tired" || s.state === "short" ? <p className="text-xs text-muted">已标记“{STATE_LABELS[s.state]}”：这次只说明今天的状态，不会当成能力下降。</p> : null}
       {s.state === "pain" ? <p className="text-xs text-[var(--color-risk)]">有疼痛先停下该动作。<button type="button" className="fk-link" onClick={onAskCoach}>告诉方坤部位 ›</button></p> : null}
       {logNote ? <p className="text-xs text-muted">{logNote}</p> : null}

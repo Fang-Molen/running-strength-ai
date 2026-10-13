@@ -18,3 +18,15 @@ export function splitReply(text: string): BubbleParts {
   if (risk) return { lead, points: body, more: [], evidence, risk }
   return { lead, points: body.slice(0, 3), more: body.slice(3), evidence, risk }
 }
+
+/** 回复里的行内操作：按内容给最多 3 个按钮；安全类回复不给（先处理安全）。 */
+export type ReplyAction = "plan" | "adjust" | "data"
+export function replyActions(text: string): ReplyAction[] {
+  if (isRedFlag(text)) return []
+  const out: ReplyAction[] = []
+  if (/加一节|安排|排(一|进)|计划里|加入计划|今天练/.test(text)) out.push("plan")
+  if (/调整|降强度|缩短|进阶|减量|下调|先不加/.test(text)) out.push("adjust")
+  if (/HRV|心率|睡眠|数据|记录显示|配速|体重/.test(text)) out.push("data")
+  return out
+}
+export const ACTION_LABEL: Record<ReplyAction, string> = { plan: "加入计划", adjust: "接受调整", data: "看数据" }

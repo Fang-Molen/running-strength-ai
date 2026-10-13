@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { loadSettings } from "@/lib/ui/app-settings"
 import { useState } from "react"
 import { AlertTriangle } from "lucide-react"
-import { splitReply } from "@/lib/ui/coach-bubble"
+import { ACTION_LABEL, replyActions, splitReply } from "@/lib/ui/coach-bubble"
 
 export function CoachBubble({ role, text }: { role: "user" | "coach"; text: string }) {
   const [open, setOpen] = useState(false)
@@ -17,6 +17,7 @@ export function CoachBubble({ role, text }: { role: "user" | "coach"; text: stri
       {p.points.length ? <ul>{p.points.map((x, i) => <li key={i}>{x}</li>)}</ul> : null}
       {open && p.more.length ? <ul>{p.more.map((x, i) => <li key={i}>{x}</li>)}</ul> : null}
       {ev && p.evidence.length ? <div className="mt-2 rounded-lg bg-surface-2 p-2 text-xs text-muted">{p.evidence.map((x, i) => <p key={i}>{x}</p>)}</div> : null}
+      {replyActions(text).length ? <div className="mt-2 flex flex-wrap gap-1.5" aria-label="回复操作">{replyActions(text).map((a) => <button key={a} type="button" className="fk-chip" onClick={() => window.dispatchEvent(new CustomEvent("fk-coach-action", { detail: { action: a, text } }))}>{ACTION_LABEL[a]}</button>)}</div> : null}
       {p.more.length || p.evidence.length ? <div className="mt-1 flex gap-3 text-xs">
         {p.more.length ? <button type="button" className="fk-link" onClick={() => setOpen(!open)}>{open ? "收起" : `展开 ${p.more.length} 条`}</button> : null}
         {p.evidence.length ? <button type="button" className="fk-link" onClick={() => setEv(!ev)}>{ev ? "隐藏依据" : "看依据"}</button> : null}

@@ -74,3 +74,19 @@ self.addEventListener("fetch", (event) => {
   if (!cacheable(event.request, url)) return
   event.respondWith(networkFirst(event.request))
 })
+
+// R9：推送与通知点击。目前没有推送服务器，提醒由页面在打开期间调用 showNotification；
+// 将来服务器用 VAPID 发 Web Push 时，这里直接显示（iOS 16.4+ 需添加到主屏幕）。
+self.addEventListener("push", (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data ? event.data.text() : "" }; }
+  event.waitUntil(self.registration.showNotification(data.title || "方坤", { body: data.body || "看看今天的课", tag: data.tag || "fk-reminder", data: { url: data.url || "/" } }));
+});
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || "/";
+  event.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+    for (const c of list) { if ("focus" in c) { c.navigate(url); return c.focus(); } }
+    return self.clients.openWindow(url);
+  }));
+});

@@ -10,13 +10,13 @@ export type ScheduleEntry = {
   lowerHeavy: boolean; source: "fangkun" | "custom"; refId: string | null
   status: "proposed" | "planned" | "done" | "skipped" | "rejected"; reduced?: boolean; movedFrom?: string
   edited?: boolean; swapReason?: string
-  slot?: "am" | "pm"; overrideNote?: string; unplanned?: boolean
+  slot?: "am" | "pm"; overrideNote?: string; unplanned?: boolean; km?: number
   actual?: Actual
 }
 export type DeviationReason = "tired" | "short" | "pain" | "weather" | "other"
 export const REASON_LABELS: Record<DeviationReason, string> = { tired: "状态差", short: "时间不够", pain: "有疼痛", weather: "天气", other: "其他" }
 /** 实际执行与计划分开存：计划字段不改，actual 只记真实发生的。 */
-export type Actual = { outcome: "as_planned" | "different" | "missed"; minutes: number | null; intensity: Intensity | null; note: string; reasons: DeviationReason[]; at: string }
+export type Actual = { outcome: "as_planned" | "different" | "missed"; minutes: number | null; km?: number | null; rpe?: number | null; intensity: Intensity | null; note: string; reasons: DeviationReason[]; at: string }
 export type Recovery = { readiness: number | null; sleepRecent: number[]; sleepBaseline: number | null; hrvToday: number | null; hrvBaseline: number | null }
 export type ConflictAction = "postpone" | "reduce" | "keepOne" | "ack"
 export type Conflict = { id: string; date: string; level: "warn" | "info"; text: string; basis: string; entryIds: string[]; target: string | null; actions: ConflictAction[] }

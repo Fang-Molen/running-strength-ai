@@ -1,3 +1,4 @@
+import { EnergyGauge } from "@/components/energy-gauge";
 import { useEffect, useState } from "react";
 import { loadEvents, onAppEvent } from "@/lib/core/events";
 import {
@@ -528,15 +529,7 @@ export function TrackRunner({
               <p className="text-sm">
                 结束与反馈一并保存。缺失为未知；提前结束不会把剩余段写成完成。
               </p>
-              <label className="block mt-3">
-                整课RPE（1–10；空白为未知）
-                <input
-                  value={rpe}
-                  inputMode="decimal"
-                  onChange={(e) => setRpe(e.target.value)}
-                  className="h-12 w-full border border-line"
-                />
-              </label>
+              <div className="mt-3"><EnergyGauge label="整课用力（气力槽，可不填）" mode="run" value={rpe === "" ? null : Number(rpe)} onChange={(v) => setRpe(v == null ? "" : String(v))} /></div>
               <label className="block mt-3">
                 疼痛（0–10；空白为未知）
                 <input

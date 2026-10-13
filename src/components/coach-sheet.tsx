@@ -1,3 +1,9 @@
+import { ReviewCard, ReviewPanel } from "@/components/review-card";
+import { buildReview, upsertReview, type Review } from "@/lib/ui/review";
+import { loadSchedule } from "@/lib/ui/day-schedule";
+import { gateRecovery, loadTier } from "@/lib/ui/watch-mode";
+import { recoveryVerdict } from "@/lib/ui/recovery-verdict";
+import { readRecoveryInput } from "@/components/health-extras";
 import { CoachBubble } from "@/components/coach-bubble";
 import { LearningLibrary } from "@/components/learning-library";
 import { CoachCognitionPanel } from "@/components/coach-cognition-panel";
@@ -33,6 +39,7 @@ import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import type { CoachFuel } from "@/lib/core/coach-fuel";
 import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";
 import type { Plan } from "@/lib/strength/model";
+import { EnergyGauge } from "@/components/energy-gauge";
 
 function latestSessionRpe(events: { event_type: string; payload: Record<string, unknown> }[]): number | null {
   for (const event of [...events].reverse()) {
@@ -44,6 +51,15 @@ function latestSessionRpe(events: { event_type: string; payload: Record<string, 
     if (typeof session === "number" && Number.isInteger(session) && session >= 1 && session <= 10) return session
   }
   return null
+}
+
+const QUICK_ASKS = ["今天练什么", "复盘本周", "状态差怎么调", "记一笔"];
+const chatToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+function ChatContext({ fallback }: { fallback: string }) {
+  const [ctx, setCtx] = useState<{ session: string | null; verdict: string } | null>(null);
+  useEffect(() => { const t = chatToday(); const e = loadSchedule().entries.find((x) => x.date === t && (x.status === "planned" || x.status === "done")); const v = recoveryVerdict(gateRecovery(loadTier(), readRecoveryInput(t))); setCtx({ session: e ? `${e.title} · ${e.minutes} 分` : null, verdict: v.title }); }, []);
+  if (!ctx) return <p className="truncate text-xs text-muted">{fallback}</p>;
+  return <div className="mt-0.5 flex gap-1.5 overflow-x-auto text-[11px]" aria-label="今日上下文"><span className="shrink-0 rounded-full bg-[#2182bd]/12 px-2 py-0.5 font-bold text-[#1a6a9c]">今日课：{ctx.session ?? "休息"}</span><span className="shrink-0 rounded-full bg-[#269775]/12 px-2 py-0.5 font-bold text-[#1d7a5e]">恢复：{ctx.verdict}</span></div>;
 }
 
 export function CoachSheet({
@@ -183,6 +199,21 @@ export function CoachSheet({
     bottom.current?.scrollIntoView({ block: "end" });
   }, [memory?.messages.length]);
 
+  const [chatReviews, setChatReviews] = useState<Review[]>([]);
+  const [actionNote, setActionNote] = useState("");
+  function weekReviewNow() { const r = buildReview("week", loadSchedule().entries, chatToday(), loadTier()); upsertReview(r); setChatReviews((l) => [...l, r]); return r; }
+  function quickAsk(q: string) {
+    if (q === "复盘本周") { weekReviewNow(); return; }
+    if (q === "记一笔") { window.dispatchEvent(new CustomEvent("fk-open-quicklog")); return; }
+    void send(({ "今天练什么": "今天该练什么？先给结论，最多三条要点", "状态差怎么调": "我今天状态不好（睡得少/没时间），这节课怎么调整？这次不代表能力下降吧" } as Record<string, string>)[q] ?? q);
+  }
+  useEffect(() => {
+    const h = (ev: Event) => { const a = (ev as CustomEvent).detail?.action;
+      if (a === "plan") onNavigate?.("plan");
+      else if (a === "data") onNavigate?.("body");
+      else if (a === "adjust") { const r = weekReviewNow(); if (r.adjustment) { upsertReview({ ...r, accepted: true }); setActionNote(`已接受调整：${r.adjustment.note}`); } else setActionNote("最近记录不需要调整，按原计划。"); } };
+    window.addEventListener("fk-coach-action", h); return () => window.removeEventListener("fk-coach-action", h);
+  }, [onNavigate]);
   async function send(text: string, retry = false, useCloud = false) {
     const value = text.trim();
     if (!value || !memory || sending) return;
@@ -303,7 +334,7 @@ export function CoachSheet({
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-base font-bold">方坤</h2>
-          <p className="truncate text-xs text-muted">{statusLine} · {connectivity}</p>
+          <ChatContext fallback={`${statusLine} · ${connectivity}`} />
         </div>
         {embedded ? null : <button type="button" onClick={onClose} className="grid size-10 shrink-0 place-items-center" aria-label="关闭"><X className="size-5" /></button>}
       </div>
@@ -317,6 +348,7 @@ export function CoachSheet({
       <div className={"min-h-0 flex-1 space-y-3 overflow-y-auto py-2 " + (embedded ? "px-0.5" : "px-4")}>
         {section === "learn" ? <LearningLibrary onNavigate={onNavigate} publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed} /> : null}
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
+        <ReviewPanel today={chatToday()} title="复盘" />
         {coordinationPanel ?? null}
         <div className="flex justify-start gap-2">
           <span className="mt-1 grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-surface"><span className="origin-center scale-[0.45]"><FangShen face="happy" motion={false} /></span></span>
@@ -490,6 +522,8 @@ export function CoachSheet({
         <details open={Boolean(firstWeekGoal)} className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">首次使用 · 目标与首周计划</summary><CoachFirstWeekPanel requestedGoal={firstWeekGoal} /></details>
         {cognitionTurn && <CoachCognitionPanel key={`${cognitionTurn.brief.occurrenceId}:${cognitionTurn.brief.question}`} cognition={cognitionTurn.cognition} brief={cognitionTurn.brief} />}
         {memory?.messages.filter((message) => message.id !== "hi").map((message) => <CoachBubble key={message.id} role={message.role} text={message.text} />)}
+        {chatReviews.map((r) => <ReviewCard key={r.id} review={r} />)}
+        {actionNote ? <p className="text-center text-xs text-muted" role="status">{actionNote}</p> : null}
         <div ref={bottom} />
         </div>
       </div>
@@ -568,7 +602,7 @@ export function CoachSheet({
         {selectedOccurrenceId ? <div className="mb-2 text-xs">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted">这节训练整体有多吃力？</span>
-            <input type="number" min="1" max="10" step="1" value={rpeDraft} onChange={(event) => setRpeDraft(event.target.value)} placeholder="整课 RPE 1–10" aria-label="本次训练 RPE" className="h-10 w-32 rounded-card border border-line bg-surface px-2" />
+            <div className="w-full"><EnergyGauge compact label="本次训练 RPE（气力槽）" value={rpeDraft === "" ? null : Number(rpeDraft)} onChange={(v) => setRpeDraft(v == null ? "" : String(v))} /></div>
             <input type="number" min="1" max="10" step="1" value={recoveryDraft} onChange={(event) => setRecoveryDraft(event.target.value)} placeholder="恢复感 1–10" aria-label="本次主观恢复" className="h-10 w-32 rounded-card border border-line bg-surface px-2" />
             <button type="button" className="h-10 rounded-card border border-line px-3" onClick={() => {
               const result = recordCoachEvidence(selectedOccurrenceId, { sessionRpe: rpeDraft ? Number(rpeDraft) : undefined, subjectiveRecovery: recoveryDraft ? Number(recoveryDraft) : undefined });
@@ -602,7 +636,7 @@ export function CoachSheet({
           }}>确认身体反馈</button>
         </div> : null}
         </details>
-        <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+        <div hidden className="mb-2 flex gap-2 overflow-x-auto pb-1">
           <button type="button" className="fk-chip shrink-0" onClick={() => { setSection("chat"); setDraft("今天该练什么？先给结论，最多三条要点"); }}>今天练什么</button>
           <button type="button" className="fk-chip shrink-0" onClick={() => { setSection("chat"); setDraft("我今天状态不好（睡得少/没时间），这节课怎么调整？这次不代表能力下降吧"); }}>状态差怎么调</button>
           <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("帮我复盘这节训练，先说明已记录事实和缺失数据"); }}>分析最近训练</button>
@@ -611,6 +645,7 @@ export function CoachSheet({
           <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("为什么相同的400米×8，组间休息1分钟和8分钟训练刺激不同？"); }}>理解间歇原理</button>
           <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
         </div>
+        <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1" aria-label="快捷提问">{QUICK_ASKS.map((q) => <button key={q} type="button" disabled={sending} className="fk-chip shrink-0" onClick={() => quickAsk(q)}>{q}</button>)}</div>
         <form
           className="flex gap-2 pt-2"
           onSubmit={(event) => {

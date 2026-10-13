@@ -31,7 +31,7 @@ export function syncActualToLog(e: ScheduleEntry, session: Session | undefined):
   const draft = createTrainingImportDraft({
     sport: e.modality === "run" ? "RUNNING" : "STRENGTH", occurredAt: f(a.at.replace(/\.\d+Z$/, "Z")), title: f(`${e.title}${a.outcome === "different" ? " · 实际不同" : " · 按计划"}`.slice(0, 120)),
     durationSeconds: f(a.minutes ? a.minutes * 60 : null), totalDistanceMeters: f(null), runningStructure: e.modality === "run" ? "CONTINUOUS" : "UNAVAILABLE", runningSegments: [], strengthSets,
-    sessionRpe: f(null), subjectiveRecovery: f(null), sleepHours: f(null), pain: f(a.reasons.includes("pain") ? { location: "未说明部位", intensity: null } : null), soreness: f(null),
+    sessionRpe: f(a.rpe != null && a.rpe >= 1 ? Math.round(a.rpe) : null), subjectiveRecovery: f(null), sleepHours: f(null), pain: f(a.reasons.includes("pain") ? { location: "未说明部位", intensity: null } : null), soreness: f(null),
     uncertainFields: [], conflicts: [], warnings: [reasons.length ? `偏差原因：${reasons.join("、")}（状态/时间类只说明当天状态）` : "", a.note ? `备注：${a.note.slice(0, 60)}` : "", `计划 ${e.minutes} 分钟 · ${e.intensity}`].filter(Boolean),
   }, "TEXT", ["user-confirmed"])
   draft.draftId = draftId
