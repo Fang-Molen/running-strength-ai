@@ -11,6 +11,7 @@ import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
 import { readWallpaper, writeWallpaper, WALLPAPERS, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
 import { TrainingLogPanel } from "@/components/training-log-panel";
+import { AbilityRadarCard } from "@/components/ability-radar-card";
 import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Utensils, Watch, X } from "lucide-react";
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
@@ -724,6 +725,7 @@ export function StrengthApp() {
 
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
+      {tab === "log" ? <div className="mx-auto max-w-3xl px-3 pt-2"><AbilityRadarCard asOf={todayIso} /></div> : null}
       {tab === "log" ? <div className="px-3 pt-2"><AssessmentPanel /></div> : null}
       {tab === "log" ? <LogMetricsPanel today={todayIso} /> : null}
       {tab === "log" ? <div className="mx-3 mb-3"><ReviewPanel today={todayIso} title="方坤复盘" /></div> : null}
