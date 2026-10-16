@@ -1,3 +1,4 @@
+import { MuscleExplorerSheet } from "@/components/muscle-explorer";
 import { MUSCLES, muscleMapSVG } from "@/lib/strength/demo/musclemap.js";
 import atlasIndex from "../lib/strength/atlas-index.json" with { type: "json" };
 import { isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
@@ -107,6 +108,7 @@ export function PartChips({ value, onChange }: { value: string[]; onChange: (v: 
 
 export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenRest }: { value: Ex[]; onChange: (v: Ex[]) => void; parts: string[]; betweenRest?: number | null; onBetweenRest?: (v: number | null) => void }) {
   const [bulk, setBulk] = useState<[string, string]>(["", ""]);
+  const [mx, setMx] = useState(false);
   const [q, setQ] = useState("");
   const [demo, setDemo] = useState<string | null>(null);
   const lib = useMemo(() => LIBRARY.filter((x) => (!parts.length || x.parts.some((p) => parts.includes(p))) && (!q || x.name.includes(q))), [parts, q]);
@@ -139,6 +141,8 @@ export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenR
         {side ? <div className="col-span-4 flex flex-wrap items-center gap-1"><span className="shrink-0">换侧间隔</span><RestInput v={splitSec(e.sideRestSec)} onV={(v) => setRest(i, "sideRestSec", toSec(...v))} label={`${e.name}换侧间隔`} /><span className={e.sideRestSec == null ? "text-amber-400" : "text-muted"}>{fmtRest(e.sideRestSec)}</span></div> : null}
       </div>; })()}
     </div>)}
+    <button type="button" className="min-h-10 rounded-full border border-line px-3 text-sm" onClick={() => setMx(true)}>人体肌群 3D · 足踝小腿动作</button>
+    {mx ? <MuscleExplorerSheet onClose={() => setMx(false)} /> : null}
     <input className="min-h-10 w-full rounded-card border border-line bg-surface px-2" placeholder="搜索动作" value={q} onChange={(e) => setQ(e.target.value)} />
     <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">{lib.map((x) => <button key={x.name} type="button" className="fk-chip" onClick={() => add(x.name)}>＋{x.name}</button>)}
       {q && !lib.some((x) => x.name === q) ? <button type="button" className="fk-chip" onClick={() => { add(q); setQ(""); }}>＋自定义「{q}」</button> : null}</div>

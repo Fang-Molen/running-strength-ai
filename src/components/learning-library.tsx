@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MuscleExplorerSheet } from '@/components/muscle-explorer';
 import { BookOpen, ArrowUpRight } from 'lucide-react';
 import { TEACHING_RULES, TEACHING_SOURCES } from '@/lib/core/coach-curriculum-data';
 import { CATALOG } from '@/lib/strength/catalog';
@@ -15,6 +16,7 @@ const CATEGORIES = [
 /** Existing teaching materials only. Browsing never submits a question or changes athlete data. */
 export function LearningLibrary({ onNavigate, publicReferencesAllowed = false }: { onNavigate?: (tab: 'plan' | 'body' | 'log') => void; publicReferencesAllowed?: boolean }) {
   const [category, setCategory] = useState<string>('course');
+  const [mx, setMx] = useState(false);
   const selected = CATEGORIES.find(item => item.id === category)!;
   const lessons = TEACHING_RULES.filter(rule => (selected.cores as readonly string[]).includes(rule.originalId[0]));
   return <section className="learning-library" aria-label="方坤学习目录">
@@ -23,7 +25,7 @@ export function LearningLibrary({ onNavigate, publicReferencesAllowed = false }:
     <div className="learning-categories" role="group" aria-label="内容栏目">
       {CATEGORIES.map(item => <button key={item.id} type="button" aria-pressed={item.id === category} onClick={() => setCategory(item.id)}><strong>{item.label}</strong><span>{item.hint}</span></button>)}
     </div>
-    {category === 'technique' ? <div className="home-card p-4"><h3 className="font-bold">现有动作库 · {CATALOG.length} 个动作</h3><p className="mt-2 text-sm text-muted">在计划里选择动作，可查看原有动作示意、技术提示与设置；浏览不会加入课表。</p><button type="button" className="product-text-action" onClick={() => onNavigate?.('plan')}>打开动作与课表 <ArrowUpRight size={16} /></button></div> : null}
+    {category === 'technique' ? <div className="home-card p-4"><h3 className="font-bold">现有动作库 · {CATALOG.length} 个动作</h3><p className="mt-2 text-sm text-muted">在计划里选择动作，可查看原有动作示意、技术提示与设置；浏览不会加入课表。</p><button type="button" className="product-text-action" onClick={() => onNavigate?.('plan')}>打开动作与课表 <ArrowUpRight size={16} /></button><button type="button" className="product-text-action" onClick={() => setMx(true)}>人体肌群 3D · 足踝小腿动作 <ArrowUpRight size={16} /></button>{mx ? <MuscleExplorerSheet onClose={() => setMx(false)} /> : null}</div> : null}
     {category === 'nutrition' ? <div className="home-card p-4"><h3 className="font-bold">食物、餐食与营养记录</h3><p className="mt-2 text-sm text-muted">原有食物搜索、手动记录和营养明细保留在身体页。这里只提供入口，尚未接入独立营养教学正文。</p><button type="button" className="product-text-action" onClick={() => onNavigate?.('body')}>打开饮食与营养 <ArrowUpRight size={16} /></button></div> : null}
     <div className="space-y-3 mt-3">
       {lessons.map(rule => <details key={rule.id} className="home-card p-4">

@@ -3,7 +3,7 @@ export const MOTION_KEYS:Readonly<Record<string,string>>={ 'cable-cross': 'cable
 export const motionKey=(id:string)=>MOTION_KEYS[id]??null
 export const has3d=(id:string)=>motionKey(id)!==null
 export const DEMO_VERSION='fk-demo3d-fieldwork-v4-v1'
-export const DEMO_ASSETS=["/demo3d/viewer3d.js", "/demo3d/data.js", "/demo3d/muscles.js", "/demo3d/motions.js", "/demo3d/renderer.js", "/demo3d/musclemap.js", "/demo3d/models/human.glb", "/demo3d/models/regions.png", "/demo3d/vendor/three.module.min.js", "/demo3d/vendor/jsm/controls/OrbitControls.js", "/demo3d/vendor/jsm/utils/BufferGeometryUtils.js", "/demo3d/vendor/jsm/utils/SkeletonUtils.js", "/demo3d/vendor/jsm/loaders/GLTFLoader.js"] as const
+export const DEMO_ASSETS=["/demo3d/viewer3d.js", "/demo3d/body3d.js", "/demo3d/data.js", "/demo3d/muscles.js", "/demo3d/motions.js", "/demo3d/renderer.js", "/demo3d/musclemap.js", "/demo3d/models/human.glb", "/demo3d/models/regions.png", "/demo3d/vendor/three.module.min.js", "/demo3d/vendor/jsm/controls/OrbitControls.js", "/demo3d/vendor/jsm/utils/BufferGeometryUtils.js", "/demo3d/vendor/jsm/utils/SkeletonUtils.js", "/demo3d/vendor/jsm/loaders/GLTFLoader.js"] as const
 /** Opt-in download: same-origin public assets only. Never starts on app boot. */
 export async function downloadDemoAssets(onProgress?:(done:number,total:number)=>void){
  if(typeof caches==='undefined')throw new Error('此浏览器暂不支持离线动作缓存')

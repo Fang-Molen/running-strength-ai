@@ -20,14 +20,14 @@ function muscleMaterial(src, state) {
   const m = new THREE.MeshStandardMaterial({ map: src.map, roughness: .73, metalness: 0 });
   m.onBeforeCompile = sh => {
     sh.uniforms.uHi = { value: state.hi }; sh.uniforms.uBorder = { value: state }; sh.uniforms.uReg = { value: REG };
-    sh.uniforms.uP = { value: COL.p }; sh.uniforms.uS = { value: COL.s };
+    sh.uniforms.uShirt = { value: state.shirt === 0 ? 0 : 1 }; sh.uniforms.uP = { value: COL.p }; sh.uniforms.uS = { value: COL.s };
     Object.defineProperty(sh.uniforms.uBorder, 'value', { get: () => state.border });
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHi[40];uniform float uBorder;uniform vec3 uP;uniform vec3 uS;uniform sampler2D uReg;\nfloat hiOf(int id){ float h=0.0; for(int i=0;i<40;i++){ if(i==id) h=uHi[i]; } return h; }\nint idAt(vec2 uv){ return int(floor(texture2D(uReg,uv).r*255.0+0.5)); }')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHi[40];uniform float uBorder;uniform float uShirt;uniform vec3 uP;uniform vec3 uS;uniform sampler2D uReg;\nfloat hiOf(int id){ float h=0.0; for(int i=0;i<40;i++){ if(i==id) h=uHi[i]; } return h; }\nint idAt(vec2 uv){ return int(floor(texture2D(uReg,uv).r*255.0+0.5)); }')
       .replace('#include <map_fragment>', `#include <map_fragment>
       { vec4 rg = texture2D(uReg, vMapUv); int id = int(floor(rg.r*255.0+0.5)); float h = hiOf(id);
-        if (rg.g>0.75) diffuseColor.rgb = vec3(0.10,0.11,0.13); else if (rg.g>0.25) diffuseColor.rgb = vec3(0.11,0.15,0.22);
-        if (id>0 && h>0.0) { vec3 c = h>1.5 ? uP : uS; float fab = rg.g>0.25 ? 0.78 : 1.0; diffuseColor.rgb = mix(diffuseColor.rgb, c, (h>1.5?0.74:0.48)*fab); }
-        else if (id>0 && uBorder>0.5 && rg.g<0.25) { diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80,0.72,0.66), 0.22); }
+        if (rg.g>0.75) diffuseColor.rgb = vec3(0.10,0.11,0.13); else if (rg.g>0.25 && uShirt>0.5) diffuseColor.rgb = vec3(0.11,0.15,0.22);
+        if (id>0 && h>0.0) { vec3 c = h>1.5 ? uP : uS; float fab = (rg.g>0.75 || (rg.g>0.25 && uShirt>0.5)) ? 0.78 : 1.0; diffuseColor.rgb = mix(diffuseColor.rgb, c, (h>1.5?0.74:0.48)*fab); }
+        else if (id>0 && uBorder>0.5 && (rg.g<0.25 || (rg.g<0.75 && uShirt<0.5))) { diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80,0.72,0.66), 0.22); }
         if (id>0 && (h>0.0 || uBorder>0.5)) {
           float o = 1.6/2048.0; float e = 0.0;
           e += float(idAt(vMapUv+vec2(o,0.))!=id); e += float(idAt(vMapUv-vec2(o,0.))!=id); e += float(idAt(vMapUv+vec2(0.,o))!=id); e += float(idAt(vMapUv-vec2(0.,o))!=id);
@@ -372,3 +372,4 @@ export async function createAnatomy(canvas, labelsEl, hi) {
   const ro = new ResizeObserver(() => { resize(); draw(); }); ro.observe(canvas);
   return { destroy() { ro.disconnect(); renderer.dispose(); } };
 }
+export { makeRig, REG as regionTexture };
