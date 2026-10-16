@@ -1,3 +1,4 @@
+import { Sheet, Toast, useToast } from "@/components/sheet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Utensils, UserRound, Activity, Target, ArrowRightLeft, PieChart, TrendingDown, HeartPulse, Lightbulb, Plus, Camera, X, Sun, Moon, Coffee, ChevronUp, ChevronDown, Droplet, Beef, Flame, Leaf } from "lucide-react";
 import { loadProfile, saveProfile } from "@/lib/strength/profile";
@@ -168,53 +169,84 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       {sheet === "fiber" ? <><p>成人每天 25 g 以上；练前 1–2 小时那餐少吃高纤维，避免胃肠不适。</p><p className="keep text-xs text-muted">依据：EFSA NDA Panel. Dietary Reference Values for carbohydrates and dietary fibre. EFSA Journal 2010;8(3):1462；ACSM 2016</p></> : null}
     </div></div> : null}
     {mealList ? <MealList meal={mealList} entries={entries.filter((e) => e.meal === mealList)} onClose={() => setMealList(null)} onAdd={() => { setLogMeal(mealList); setMealList(null); }} onChanged={() => setEntries(todayEntries(loadEntries()))} /> : null}
-    {logMeal ? <FoodSheet meal={logMeal} onMeal={setLogMeal} onClose={() => setLogMeal(null)} onSaved={() => { setEntries(todayEntries(loadEntries())); setLogMeal(null); }} /> : null}
+    {logMeal ? <FoodSheet meal={logMeal} onMeal={setLogMeal} onClose={() => setLogMeal(null)} onSaved={() => setEntries(todayEntries(loadEntries()))} /> : null}
   </div>;
 
 }
 
+type Basis = "100g" | "serv" | "this";
+type FoodDraft = { name: string; sel: FoodRow | null; amount: string; unit: "g" | "份"; basis: Basis; m: { kcal: string; protein: string; carb: string; fat: string } };
+const FOOD_DRAFT = "fk-food-draft-v1";
+const emptyDraft = (): FoodDraft => ({ name: "", sel: null, amount: "", unit: "g", basis: "this", m: { kcal: "", protein: "", carb: "", fat: "" } });
 function FoodSheet({ meal, onMeal, onClose, onSaved }: { meal: Meal; onMeal: (m: Meal) => void; onClose: () => void; onSaved: () => void }) {
-  const [name, setName] = useState(""), [photo, setPhoto] = useState<File | null>(null), [err, setErr] = useState("");
-  const [sel, setSel] = useState<FoodRow | null>(null), [grams, setGrams] = useState(""), [mk, setMk] = useState(""), [mp, setMp] = useState("");
+  const [d, setD] = useState<FoodDraft>(() => { try { return { ...emptyDraft(), ...JSON.parse(localStorage.getItem(FOOD_DRAFT) || "null") }; } catch { return emptyDraft(); } });
+  const [day, setDay] = useState<"today" | "yesterday">("today"); const [free, setFree] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null), [err, setErr] = useState(""), [busy, setBusy] = useState(false); const saving = useRef(false);
+  const [toast, setToast] = useToast();
   const [dbv, setDbv] = useState(0);
   useEffect(() => { void loadCn().then(() => setDbv((v) => v + 1)); void loadUsda().then(() => setDbv((v) => v + 1)); }, []);
-  const hits = useMemo(() => (sel || name.trim().length < 1 ? [] : foodSearch(name, 8)), [name, sel, dbv]);
-  const g = Number(grams) || 0;
-  const est = sel && g > 0 ? scale(sel, g) : null;
+  useEffect(() => { try { localStorage.setItem(FOOD_DRAFT, JSON.stringify(d)); } catch { /* draft is best-effort */ } }, [d]);
+  const up = (p: Partial<FoodDraft>) => { setD((x) => ({ ...x, ...p })); setErr(""); };
+  const sel = d.sel;
+  const hits = useMemo(() => (sel || free || d.name.trim().length < 1 ? [] : foodSearch(d.name, 10)), [d.name, sel, dbv, free]);
+  const amt = Number(d.amount) || 0;
+  const est = sel && amt > 0 ? scale(sel, amt) : null;
+  const dbKnown = !!est && est.kcal != null;
+  const num = (x: string) => (x.trim() === "" ? null : Number(x));
+  // manual nutrients: one basis only, converted once to 本次摄入
+  const factor = d.basis === "this" ? 1 : d.basis === "100g" ? (d.unit === "g" && amt > 0 ? amt / 100 : null) : (d.unit === "份" && amt > 0 ? amt : null);
+  const manual = (k: keyof FoodDraft["m"]) => { const v = num(d.m[k]); return v == null || factor == null ? null : Math.round(v * factor * 10) / 10; };
+  const mk = manual("kcal");
+  const dateIso = day === "today" ? undefined : new Date(Date.now() - 864e5 + 8 * 3600e3).toISOString().slice(0, 10);
   const save = async () => {
-    if (!name.trim() && !photo) { setErr("写个名字或拍张照"); return; }
-    let photoId: string | undefined;
-    try { if (photo) { photoId = `ph-${Date.now()}`; await savePhoto(photoId, await shrink(photo)); } } catch { setErr("照片没存上，文字照常保存"); photoId = undefined; }
-    const manual = Number(mk) > 0;
-    const known = est && est.kcal != null;
-    const r = addEntry(sel && est ? { meal, name: sel.n, grams: sel.b === "g" ? g : 0, amount: g, unit: sel.b === "g" ? "g" : "份", kcal: est.kcal ?? 0, protein: est.protein ?? undefined, carb: est.carb, fat: est.fat, fiber: est.fiber, foodId: known ? sel.i : undefined, label: known ? sourceLabel(sel) : PENDING_LABEL, photo: photoId } : { meal, name: name.trim() || "照片记录", grams: 0, kcal: manual ? Number(mk) : 0, protein: Number(mp) > 0 ? Number(mp) : undefined, label: manual ? "手填" : PENDING_LABEL, photo: photoId });
-    if (!r) { setErr("保存失败，存储可能已满"); return; }
-    onSaved();
+    if (saving.current) return;
+    if (!d.name.trim() && !photo) { setErr("写个名字或拍张照"); return; }
+    if (amt <= 0 && (sel || d.name.trim())) { setErr("先填份量"); return; }
+    saving.current = true; setBusy(true);
+    try {
+      let photoId: string | undefined;
+      try { if (photo) { photoId = `ph-${Date.now()}`; await savePhoto(photoId, await shrink(photo)); } } catch { photoId = undefined; }
+      const unit = sel ? (sel.b === "g" ? "g" : "份") : d.unit;
+      const useDb = sel && dbKnown;
+      const kcal = useDb ? est!.kcal! : mk;
+      const row = { meal, name: sel?.n ?? (d.name.trim() || "照片记录"), grams: unit === "g" ? amt : 0, amount: amt || undefined, unit: unit as "g" | "份", kcal: kcal ?? 0,
+        protein: (useDb ? est!.protein : manual("protein")) ?? undefined, carb: useDb ? est!.carb : manual("carb"), fat: useDb ? est!.fat : manual("fat"), fiber: useDb ? est!.fiber : null,
+        foodId: useDb ? sel!.i : undefined, label: useDb ? sourceLabel(sel!) : kcal != null ? "手填" : PENDING_LABEL, photo: photoId };
+      const r = addEntry(row, dateIso);
+      if (!r) { throw new Error("本机存储已满或被禁用（可删除旧照片后重试）"); }
+      onSaved(); setToast(`已保存到${meal}`); setD(emptyDraft()); setFree(false); setPhoto(null); localStorage.removeItem(FOOD_DRAFT);
+    } catch (e) { saving.current = false; setErr(`保存失败：${(e as Error)?.message || "未知原因"}。输入已保留。`); setBusy(false); return; }
+    finally { setBusy(false); if (saving.current) setTimeout(() => { saving.current = false; }, 600); }
   };
-  const [kb, setKb] = useState(0);
-  useEffect(() => {
-    const vv = window.visualViewport; const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
-    const on = () => { if (vv) setKb(Math.max(0, window.innerHeight - vv.height - vv.offsetTop)); };
-    vv?.addEventListener("resize", on); vv?.addEventListener("scroll", on); on();
-    return () => { document.body.style.overflow = prev; vv?.removeEventListener("resize", on); vv?.removeEventListener("scroll", on); };
-  }, []);
-  return <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-[2px]" style={{ touchAction: "none" }} onClick={onClose}>
-    <div role="dialog" aria-modal="true" aria-label="记录饮食" className="absolute inset-x-0 rounded-t-3xl border-t border-line bg-[#141518] px-4 pt-2 shadow-2xl" style={{ bottom: kb, paddingBottom: kb ? 12 : "max(16px, env(safe-area-inset-bottom))", touchAction: "auto" }} onClick={(e) => e.stopPropagation()}>
-      <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line" />
-      <div className="flex items-center justify-between"><b className="text-base">记录饮食</b><button type="button" aria-label="关闭" className="grid size-10 place-items-center" onClick={onClose}><X className="size-5" /></button></div>
-      <div className="mt-2 grid grid-cols-4 gap-1.5">{MEALS.map((m) => <button key={m} type="button" aria-pressed={meal === m} onClick={() => onMeal(m)} className={"min-h-10 rounded-xl border text-sm " + (meal === m ? "border-accent bg-accent/15 font-bold text-accent" : "border-line")}>{m}</button>)}</div>
-      <input aria-label="吃了什么" placeholder="吃了什么，如：汉堡、米饭一碗" value={name} onChange={(e) => { setName(e.target.value.slice(0, 60)); setSel(null); }} className="fk-cell mt-3 min-h-12 w-full text-base" />
-      {hits.length ? <ul className="mt-1 max-h-44 overflow-y-auto rounded-xl border border-line">{hits.map((h) => { const d = scale(h, defaultAmount(h)); return <li key={h.i}><button type="button" className="flex min-h-10 w-full items-center justify-between gap-2 px-3 text-left text-sm" onClick={() => { setSel(h); setName(h.n); setGrams(String(defaultAmount(h))); }}><span className="min-w-0 truncate">{h.n}{h.br ? <span className="text-xs text-muted"> · {h.br}</span> : null}</span><span className="shrink-0 text-xs text-muted">{h.b === "g" ? `${defaultAmount(h)}g` : h.s.u} · {d.kcal ?? "—"} kcal{needsCheck(h) ? " · 待核" : ""}</span></button></li>; })}</ul> : null}
-      {sel ? <div className="mt-2 rounded-xl bg-surface-2 p-2 text-sm"><div className="flex flex-wrap items-center gap-1.5"><input aria-label={sel.b === "g" ? "克数" : "份数"} inputMode="decimal" value={grams} onChange={(e) => setGrams(e.target.value.replace(/[^\d.]/g, "").slice(0, 5))} className="fk-cell w-20" /><span>{sel.b === "g" ? "g" : `份（${sel.s.u}）`}</span>{sel.b === "g" ? [...(sel.s.g ? [["1份", sel.s.g] as [string, number]] : []), ...sel.pt].slice(0, 4).map(([u, w]) => <button key={u + w} type="button" className="fk-chip" onClick={() => setGrams(String(Math.round(w)))}>{u} {Math.round(w)}g</button>) : [0.5, 1, 2].map((k) => <button key={k} type="button" className="fk-chip" onClick={() => setGrams(String(k))}>{k} 份</button>)}</div>
-        {est ? <p className="mt-1"><b>{est.kcal ?? "—"}</b> kcal · 蛋白 {est.protein ?? "—"} · 碳水 {est.carb ?? "—"} · 脂肪 {est.fat ?? "—"} g</p> : null}<p className="keep text-[10px] text-muted">{sourceLabel(sel)}{needsCheck(sel) ? "，数值待核" : ""}</p></div>
-      : name.trim() && !hits.length ? <div className="mt-2 flex items-center gap-1.5 text-sm"><span className="keep text-xs text-muted">库里没找到，可手填</span><input aria-label="热量" placeholder="kcal" inputMode="numeric" value={mk} onChange={(e) => setMk(e.target.value.replace(/\D/g, "").slice(0, 4))} className="fk-cell w-20" /><input aria-label="蛋白" placeholder="蛋白 g" inputMode="decimal" value={mp} onChange={(e) => setMp(e.target.value.replace(/[^\d.]/g, "").slice(0, 5))} className="fk-cell w-20" /></div> : null}
-      {err ? <p className="keep mt-1 text-xs text-[var(--color-risk)]">{err}</p> : null}
-      <div className="mt-3 flex gap-2">
-        <label className="flex min-h-12 w-28 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-line text-sm"><Camera className="size-4" />{photo ? "已拍 ✓" : "拍照"}<input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} /></label>
-        <button type="button" className="fk-orange-btn min-h-12 flex-1 rounded-xl font-bold" onClick={() => void save()}>记录</button>
-      </div>
-    </div>
-  </div>;
+  const statusOf = (h: FoodRow) => { const m = scale(h, defaultAmount(h)); return m.kcal == null ? "营养待补充" : needsCheck(h) ? "数值待核" : "已核"; };
+  const cell = "fk-cell min-h-11 w-full text-base";
+  return <><Toast msg={toast} /><Sheet label="登记饮食" title="登记饮食" onClose={onClose}
+    sub={<div className="flex flex-wrap items-center gap-1">{(["today", "yesterday"] as const).map((x) => <button key={x} type="button" aria-pressed={day === x} onClick={() => setDay(x)} className={"min-h-8 rounded-full border px-2.5 " + (day === x ? "border-accent text-accent" : "border-line")}>{x === "today" ? "今天" : "昨天"}</button>)}<span className="mx-1 text-line">|</span>{MEALS.map((m) => <button key={m} type="button" aria-pressed={meal === m} onClick={() => onMeal(m)} className={"min-h-8 rounded-full border px-2.5 " + (meal === m ? "border-accent bg-accent/15 font-bold text-accent" : "border-line")}>{m}</button>)}</div>}
+    footer={<>{err ? <p role="alert" className="keep mb-2 text-sm text-[var(--color-risk)]">{err}</p> : null}<div className="flex gap-2">
+      <label className="flex min-h-12 w-24 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-line text-sm"><Camera className="size-4" />{photo ? "已拍✓" : "拍照"}<input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} /></label>
+      <button type="button" disabled={busy} className="fk-orange-btn min-h-12 flex-1 rounded-xl text-base font-bold disabled:opacity-50" onClick={() => void save()}>{busy ? "保存中…" : `保存到${meal}`}</button></div></>}>
+    <input aria-label="吃了什么" placeholder="搜索食物，如：鸡腿堡、米饭" value={d.name} onChange={(e) => { up({ name: e.target.value.slice(0, 60), sel: null }); setFree(false); }} className={cell} />
+    {hits.length ? <ul className="mt-2 divide-y divide-line rounded-xl border border-line" aria-label="搜索结果">{hits.map((h) => <li key={h.i}><button type="button" className="w-full px-3 py-2 text-left" onClick={() => up({ sel: h, name: h.n, amount: String(defaultAmount(h)), unit: h.b === "g" ? "g" : "份" })}>
+      <p className="text-base font-bold">{h.n}</p>
+      <p className="keep text-xs text-muted">{[h.br ? `品牌 ${h.br}` : "通用", h.rg ? `地区 ${h.rg}` : null, h.b === "g" ? (h.s.g ? `1份≈${Math.round(h.s.g)}g` : "按克") : `规格 ${h.s.u}`].filter(Boolean).join(" · ")}<span className={statusOf(h) === "已核" ? " text-emerald-400" : " text-amber-400"}> · {statusOf(h)}</span></p></button></li>)}<li><button type="button" className="w-full px-3 py-2 text-left text-accent" onClick={() => { setFree(true); up({ amount: "", unit: "g" }); }}>都不是，直接记录「{d.name.trim()}」</button></li></ul>
+      : d.name.trim() && !sel ? <p className="mt-2 text-sm text-muted">库里没找到「{d.name.trim()}」，可直接填份量和营养（不填就记为待补充）。</p> : null}
+    {sel || (d.name.trim() && !hits.length) ? <div className="mt-3 space-y-3">
+      <div><p className="text-sm font-bold">① 份量</p><div className="mt-1 flex flex-wrap items-center gap-1.5">
+        <input aria-label="份量" inputMode="decimal" value={d.amount} onChange={(e) => up({ amount: e.target.value.replace(/[^\d.]/g, "").slice(0, 6) })} className="fk-cell min-h-11 w-24 text-base" />
+        {sel ? <span>{sel.b === "g" ? "g" : `份（${sel.s.u}）`}</span> : (["g", "份"] as const).map((u) => <button key={u} type="button" aria-pressed={d.unit === u} onClick={() => up({ unit: u })} className={"min-h-9 rounded-lg border px-3 " + (d.unit === u ? "border-accent text-accent" : "border-line")}>{u}</button>)}
+        {sel && sel.b === "g" ? [...(sel.s.g ? [["1份", sel.s.g] as [string, number]] : []), ...sel.pt].slice(0, 3).map(([u, w]) => <button key={u + w} type="button" className="fk-chip" onClick={() => up({ amount: String(Math.round(w)) })}>{u} {Math.round(w)}g</button>) : sel ? [0.5, 1, 2].map((k) => <button key={k} type="button" className="fk-chip" onClick={() => up({ amount: String(k) })}>{k}份</button>) : null}
+      </div></div>
+      {amt > 0 ? <div><p className="text-sm font-bold">② 营养（本次摄入）</p>
+        {sel && dbKnown ? <div className="mt-1 grid grid-cols-4 gap-1 text-center">{([["热量", est!.kcal, "kcal"], ["蛋白", est!.protein, "g"], ["碳水", est!.carb, "g"], ["脂肪", est!.fat, "g"]] as const).map(([l, v, u]) => <div key={l} className="rounded-lg bg-surface-2 py-1.5"><p className="keep text-[11px] text-muted">{l}</p><p className="font-bold">{v == null ? <span className="text-amber-400">待补充</span> : `${v}`}<small className="text-muted"> {v == null ? "" : u}</small></p></div>)}<p className="keep col-span-4 text-left text-[11px] text-muted">{sourceLabel(sel)}{needsCheck(sel) ? " · 数值待核" : ""}</p></div>
+        : <div className="mt-1 rounded-xl border border-amber-500/40 p-2">
+          <p className="text-sm text-amber-400">营养待补充 — 可按包装标签或自己估计填写，不填也能保存</p>
+          <div className="mt-1 flex gap-1 text-sm">{([["100g", "每100g"], ["serv", "每份"], ["this", "本次摄入"]] as const).map(([b, l]) => <button key={b} type="button" aria-pressed={d.basis === b} disabled={(b === "100g" && d.unit !== "g" && !sel) || (b === "100g" && sel?.b === "serv") || (b === "serv" && (sel ? sel.b === "g" : d.unit !== "份"))} onClick={() => up({ basis: b })} className={"min-h-9 flex-1 rounded-lg border disabled:opacity-30 " + (d.basis === b ? "border-accent text-accent" : "border-line")}>{l}</button>)}</div>
+          <div className="mt-2 grid grid-cols-4 gap-1">{([["kcal", "热量kcal"], ["protein", "蛋白g"], ["carb", "碳水g"], ["fat", "脂肪g"]] as const).map(([k, l]) => <label key={k} className="text-[11px] text-muted">{l}<input aria-label={`${l}（${d.basis === "100g" ? "每100g" : d.basis === "serv" ? "每份" : "本次"}）`} inputMode="decimal" value={d.m[k]} onChange={(e) => up({ m: { ...d.m, [k]: e.target.value.replace(/[^\d.]/g, "").slice(0, 6) } })} className="fk-cell mt-0.5 min-h-10 w-full" /></label>)}</div>
+          {d.basis !== "this" && mk != null ? <p className="keep mt-1 text-xs text-muted">按 {amt}{d.unit === "g" || sel?.b === "g" ? "g" : "份"} 折算本次：{mk} kcal</p> : null}
+        </div>}
+      </div> : null}
+    </div> : null}
+  </Sheet></>;
 }
 
 const COMP: { key: keyof BodyCheck; label: string; unit: string }[] = [

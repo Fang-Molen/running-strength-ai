@@ -41,7 +41,7 @@ export function loadEntries(): FoodEntry[] {
 
 export function saveEntries(entries: FoodEntry[]): boolean {
   try {
-    localStorage.setItem(KEY, JSON.stringify(entries.slice(-200)));
+    localStorage.setItem(KEY, JSON.stringify(entries.slice(-5000)));
     return true
   } catch {
     return false
@@ -57,8 +57,8 @@ export function todayEaten(entries?: FoodEntry[]): number {
   return todayEntries(entries).reduce((sum, item) => sum + item.kcal, 0);
 }
 
-export function addEntry(entry: Omit<FoodEntry, "id" | "date">): FoodEntry[] | null {
-  const row = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, date: today() }
+export function addEntry(entry: Omit<FoodEntry, "id" | "date">, date?: string): FoodEntry[] | null {
+  const row = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, date: date ?? today() }
   const next = [...loadEntries(), row]
   if (!saveEntries(next)) return null
   dispatchEvent("NUTRITION_RECORDED", { id: row.id, meal: row.meal, name: row.name, grams: row.grams, kcal: row.kcal, protein: row.protein ?? 0 })

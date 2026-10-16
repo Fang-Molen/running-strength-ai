@@ -22,6 +22,7 @@ import { EnergyGauge } from "@/components/energy-gauge"
 import { HOME_CARDS, QUICK_OPTIONS, move, saveLayout, setQuick, toggleCard, type CardId, type Layout, type QuickId } from "@/lib/ui/home-layout"
 import { parseHealthParam } from "@/lib/ui/shortcut-link"
 import { saveDeviceRows } from "@/lib/ui/device-store"
+import { Sheet, Toast, useToast } from "@/components/sheet"
 import { pendingLocal, sentToday, support, SENT_KEY } from "@/lib/ui/notify"
 
 const read = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d } }
@@ -158,31 +159,70 @@ function saveParsed(p: Parsed, today: string, rpe: number | null = null): string
   draft.draftId = `act-${id}`
   const r = confirmTrainingImport(draft); return r.ok ? "已记入训练日志" : `日志未同步：${r.reason}`
 }
-export function QuickLog({ today, onSaved, onFile, openWith, hideFab = false }: { today: string; onSaved: () => void; onFile: () => void; openWith?: { text: string; n: number } | null; hideFab?: boolean }) {
-  const [open, setOpen] = useState(false), [text, setText] = useState("")
-  const [msg, setMsg] = useState(""), [stamp, setStamp] = useState(0), [rpe, setRpe] = useState<number | null>(null)
+type Att = { id: string; name: string; url: string };
+type Note = { id: string; date: string; at: string; text: string; atts: Att[]; parsed?: string };
+const QL_DRAFT = "fk-quicklog-draft-v1", NOTES = "fk-notes-v1";
+const loadNotes = (): Note[] => { try { const v = JSON.parse(localStorage.getItem(NOTES) || "[]"); return Array.isArray(v) ? v : [] } catch { return [] } }
+async function toThumb(file: File): Promise<string> {
+  const { shrink } = await import("@/lib/nutrition/food-photo"); const blob = await shrink(file, 640)
+  return await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = () => no(r.error); r.readAsDataURL(blob) })
+}
+export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; onSaved: () => void; onFile: () => void; openWith?: { text: string; n: number } | null; hideFab?: boolean }) {
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState(""), [atts, setAtts] = useState<Att[]>([])
+  const [err, setErr] = useState(""), [busy, setBusy] = useState(false), [rpe, setRpe] = useState<number | null>(null), [ocrMsg, setOcrMsg] = useState("")
+  const [notes, setNotes] = useState<Note[]>([]), [toast, setToast] = useToast()
+  const loaded = useRef(false), saving = useRef(false)
+  useEffect(() => { try { const d = JSON.parse(localStorage.getItem(QL_DRAFT) || "null"); if (d) { setText(d.text || ""); setAtts(d.atts || []) } } catch { /* none */ } loaded.current = true }, [])
+  useEffect(() => { if (!loaded.current) return; try { if (text || atts.length) localStorage.setItem(QL_DRAFT, JSON.stringify({ text, atts })); else localStorage.removeItem(QL_DRAFT) } catch { /* draft best-effort */ } }, [text, atts])
   useEffect(() => { if (openWith) { setText(openWith.text); setOpen(true) } }, [openWith])
   useEffect(() => { const h = () => setOpen(true); window.addEventListener("fk-open-quicklog", h); return () => window.removeEventListener("fk-open-quicklog", h) }, [])
-  const fileRef = useRef<HTMLInputElement>(null)
-  const p = text.trim() ? parseQuickLog(text) : null
-  const save = () => { if (!p) return; const m = saveParsed(p, today, rpe); setRpe(null); setMsg(m); if (m.startsWith("已")) { setText(""); setStamp(Date.now()); onSaved() } }
+  useEffect(() => { if (open) setNotes(loadNotes()) }, [open])
+  const taRef = useRef<HTMLTextAreaElement>(null), fileRef = useRef<HTMLInputElement>(null)
+  useEffect(() => { const t = taRef.current; if (t) { t.style.height = "auto"; t.style.height = `${Math.min(t.scrollHeight, 260)}px` } }, [text, open])
+  const p: Parsed | null = useMemo(() => { if (!text.trim()) return null; for (const l of text.split(/\n|；|;/)) { const r = parseQuickLog(l.trim()); if (r.kind !== "unknown") return r } return null }, [text])
+  const save = () => {
+    if (saving.current) return
+    if (!text.trim() && !atts.length) { setErr("先写点什么或加一张截图"); return }
+    saving.current = true; setBusy(true); setErr("")
+    try {
+      let parsedMsg = ""
+      if (p) { parsedMsg = saveParsed(p, today, rpe); if (!parsedMsg.startsWith("已")) throw new Error(parsedMsg) }
+      const note: Note = { id: `n-${Date.now()}`, date: today, at: new Date().toISOString(), text: text.trim(), atts, parsed: p ? parsedMsg : undefined }
+      const next = [note, ...loadNotes()]
+      try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { throw new Error("本机存储已满或被禁用（截图较大时可先移除截图）") }
+      setNotes(next); setText(""); setAtts([]); setRpe(null); localStorage.removeItem(QL_DRAFT); onSaved()
+      setToast(p ? "已保存，并记入训练/身体数据" : "已保存为笔记")
+    } catch (e) { saving.current = false; setErr(`保存失败：${(e as Error)?.message || "未知原因"}。输入已保留。`); setBusy(false); return }
+    finally { setBusy(false); if (saving.current) setTimeout(() => { saving.current = false }, 600) }
+  }
+  const delNote = (id: string) => { const next = loadNotes().filter((n) => n.id !== id); try { localStorage.setItem(NOTES, JSON.stringify(next)); setNotes(next); setToast("已删除这条记录") } catch { setErr("删除失败，请重试") } }
   return <>
-    {hideFab ? null : <button type="button" aria-label="记一笔" onClick={() => setOpen(true)} className="fk-fab fixed right-3 z-30 grid size-12 place-items-center rounded-full bg-accent font-bold text-accent-fg shadow-lg md:right-[calc(50%-23rem)] md:flex md:size-auto md:min-h-12 md:gap-1 md:px-4"><Plus className="size-5" /><span className="sr-only md:not-sr-only">记一笔</span></button>}
-    {open ? <div className="fixed inset-0 z-40 flex items-end bg-black/30 md:items-center" onClick={() => setOpen(false)}>
-      <section role="dialog" aria-label="记一笔" onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-xl rounded-t-3xl bg-bg p-4 md:rounded-3xl">
-        <div className="flex items-center justify-between"><h2 className="text-lg font-bold">记一笔</h2><SavedBadge stamp={stamp} /><button type="button" aria-label="关闭" onClick={() => setOpen(false)} className="grid size-10 place-items-center"><X className="size-5" /></button></div>
-        <input autoFocus aria-label="一句话" value={text} onChange={(e) => { setText(e.target.value.slice(0, 80)); setMsg("") }} placeholder="如：深蹲 3×8 60kg / 轻松跑 5公里 32分 / 体重 65" className="fk-cell mt-2 w-full min-h-12" />
-        <div className="mt-2 flex gap-2"><button type="button" className="fk-chip" onClick={() => fileRef.current?.click()}><Camera className="size-4" />截图</button><button type="button" className="fk-chip" onClick={() => { setOpen(false); onFile() }}><FileUp className="size-4" />文件（FIT/GPX…）</button>
-          <input ref={fileRef} type="file" accept="image/*" hidden onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; setMsg("识别中…"); const t = await ocr(file, setMsg).catch(() => ""); setText(t.split("\n").find((l) => parseQuickLog(l).kind !== "unknown") ?? t.slice(0, 80)); setMsg("已识别，请核对") }} /></div>
-        {p ? <div className="mt-3 rounded-2xl border border-line bg-surface p-3 text-sm" aria-label="识别结果">
-          {p.kind === "run" ? <p><b className="text-[#2182bd]">跑步</b> · {p.title} · 距离 {p.km ?? "—"} 公里 · 用时 {p.minutes ?? "—"} 分{p.pace ? ` · 配速 ${p.pace}` : ""}{p.when ? ` · ${p.when === "pm" ? "今晚" : "上午"}` : ""}</p>
-            : p.kind === "strength" ? <p><b className="text-[#d07a2b]">力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg ?? "自重"}{p.kg ? " kg" : ""}</p>
-            : p.kind === "weight" ? <p><b>体重</b> · {p.kg} kg</p> : <p className="text-muted">没认出来。试试“深蹲 3×8 60kg”或“轻松跑 5公里 32分”。</p>}
-          {p.kind === "run" || p.kind === "strength" ? <div className="mt-2"><EnergyGauge compact mode={p.kind === "run" ? "run" : "strength"} label="用力（气力槽，可不填）" value={rpe} onChange={setRpe} /></div> : null}
-          {p.kind !== "unknown" ? <button type="button" className="fk-primary mt-2 min-h-11 w-full" onClick={save}>确认保存</button> : null}
-        </div> : null}
-        {msg ? <p className="mt-2 text-xs text-muted" role="status">{msg}</p> : null}
-      </section></div> : null}
+    <Toast msg={toast} />
+    {open ? <Sheet label="记一笔" title="记一笔" sub={`${Number(today.slice(5, 7))}月${Number(today.slice(8, 10))}日 · 关闭会保留草稿`} onClose={() => setOpen(false)}
+      footer={<>{err ? <p role="alert" className="keep mb-2 text-sm text-[var(--color-risk)]">{err}</p> : null}<div className="flex gap-2">
+        <button type="button" className="min-h-12 rounded-xl border border-line px-4" onClick={() => setOpen(false)}>取消</button>
+        <button type="button" disabled={busy} className="fk-orange-btn min-h-12 flex-1 rounded-xl text-base font-bold disabled:opacity-50" onClick={save}>{busy ? "保存中…" : "保存记录"}</button></div></>}>
+      <textarea ref={taRef} aria-label="记录内容" rows={3} value={text} onChange={(e) => { setText(e.target.value.slice(0, 2000)); setErr("") }} placeholder="记录训练、体重或身体感受……" className="fk-cell w-full resize-none whitespace-pre-wrap break-words py-2 text-base leading-relaxed" />
+      <div className="mt-2 flex flex-wrap gap-2">
+        <button type="button" className="fk-chip" onClick={() => fileRef.current?.click()}><Camera className="size-4" />添加截图</button>
+        <button type="button" className="fk-chip" onClick={() => { setOpen(false); onFile() }}><FileUp className="size-4" />导入文件（FIT/GPX）</button>
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={async (e) => { const file = e.target.files?.[0]; e.target.value = ""; if (!file) return; if (atts.length >= 3) { setErr("最多 3 张截图"); return }
+          try { const url = await toThumb(file); setAtts((a) => [...a, { id: `a-${Date.now()}`, name: file.name, url }]) } catch { setErr("截图读取失败"); return }
+          setOcrMsg("识别中…"); const t = await ocr(file, setOcrMsg).catch(() => ""); const line = t.split("\n").find((l) => parseQuickLog(l).kind !== "unknown"); if (line) setText((x) => (x ? x + "\n" : "") + line); setOcrMsg(line ? "已从截图识别一行，请核对" : "") }} />
+      </div>
+      {ocrMsg ? <p className="keep mt-1 text-xs text-muted" role="status">{ocrMsg}</p> : null}
+      {atts.length ? <div className="mt-2 flex gap-2" aria-label="附件">{atts.map((a) => <div key={a.id} className="relative"><img src={a.url} alt={a.name} className="size-20 rounded-lg border border-line object-cover" /><button type="button" aria-label={`移除${a.name}`} className="absolute -right-2 -top-2 grid size-7 place-items-center rounded-full bg-black text-white" onClick={() => setAtts(atts.filter((x) => x.id !== a.id))}><X className="size-4" /></button></div>)}</div> : null}
+      {text.trim() ? <div className="mt-3 rounded-2xl border border-line bg-surface p-3 text-sm" aria-label="识别结果">
+        {p ? <>{p.kind === "run" ? <p><b className="text-[#2182bd]">识别为跑步</b> · {p.title} · 距离 {p.km ?? "—"} 公里 · 用时 {p.minutes ?? "—"} 分{p.pace ? ` · 配速 ${p.pace}` : ""}</p>
+          : p.kind === "strength" ? <p><b className="text-[#d07a2b]">识别为力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg ?? "自重"}{p.kg ? " kg" : ""}</p>
+          : p.kind === "weight" ? <p><b>识别为体重</b> · {p.kg} kg</p> : null}
+          <p className="keep mt-1 text-xs text-muted">保存后会记入数据，原文也会作为笔记保留。</p>
+          {p.kind === "run" || p.kind === "strength" ? <div className="mt-2"><EnergyGauge compact mode={p.kind === "run" ? "run" : "strength"} label="用力（可不填）" value={rpe} onChange={setRpe} /></div> : null}</>
+          : <p className="text-muted">没有识别出训练或体重数据，将作为笔记保存，不会丢失。</p>}
+      </div> : null}
+      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的记录</p><ul className="mt-1 divide-y divide-line">{notes.slice(0, 5).map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{n.at.slice(5, 16).replace("T", " ")}{n.atts.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}</p></div><button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => delNote(n.id)}>删除已保存记录</button></li>)}</ul></div> : null}
+    </Sheet> : null}
   </>
 }
 
