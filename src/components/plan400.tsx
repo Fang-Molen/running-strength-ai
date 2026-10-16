@@ -40,8 +40,8 @@ const FIELDS: [keyof Log, string, string][] = [
 function DayCard({ d, log, onSave, open }: { d: Day; log: Log; onSave: (l: Log) => void; open?: boolean }) {
   const [edit, setEdit] = useState<Log>(log);
   const status = log.done === "done" ? "✅" : log.done === "reduced" ? "🟡" : log.done === "skipped" ? "⏭" : "";
-  return <details open={open} className="rounded-card border border-line bg-surface p-3">
-    <summary className="flex min-h-11 cursor-pointer items-center gap-2"><span className="w-20 shrink-0 font-bold">{md(d.date)} {d.weekday}</span><span className="flex-1">{d.title}</span><span>{status}</span></summary>
+  return <details open={open} className="rounded-xl border border-line bg-surface px-3 py-1">
+    <summary className="flex min-h-9 cursor-pointer items-center gap-2 text-sm"><span className="w-[5.5rem] shrink-0 whitespace-nowrap font-bold">{md(d.date)} {d.weekday}</span><span className="min-w-0 flex-1 truncate">{d.title}</span><span>{status}</span></summary>
     
     <div className="mt-2 space-y-1 text-sm"><p className="font-bold">正式主课 / 恢复课</p>{d.main.slice(1).map((t, i) => <p key={i}>{t}</p>)}
       <p className="pt-1 font-bold">辅助激活与技术</p><p>{d.aux.join("")}</p><p className="pt-1 font-bold">力量与核心</p><p>{d.strength.join("")}</p><StrengthOverride d={d} /></div>
@@ -63,12 +63,16 @@ export function Plan400() {
   const [logs, setLogs] = useState(load); const t = bj();
   const save = (date: string, l: Log) => { const n = { ...load(), [date]: l }; localStorage.setItem(KEY, JSON.stringify(n)); setLogs(n); };
   const weeks = plan.weeks as { week: string; title: string; range: string; principle: string }[];
-  return <section className="home-card mb-3 space-y-2 p-4" aria-label="400米计划">
-    <h2 className="font-bold">{plan.name}</h2>
+  const curWeek = (days.find((d) => d.date >= t) ?? days[days.length - 1])?.week;
+  const doneN = Object.values(logs).filter((l) => l.done).length;
+  return <details className="home-card mb-3 px-3 py-1" aria-label="400米计划">
+    <summary className="flex min-h-11 cursor-pointer items-center gap-2"><b className="min-w-0 flex-1 truncate">{plan.name}</b><span className="keep shrink-0 text-xs text-muted">{curWeek ?? ""} · 已练 {doneN}/{days.length}</span></summary>
+    <div className="space-y-1 pb-2">
     
-    {weeks.map((w) => { const ds = days.filter((d) => d.week === w.week); return <details key={w.week} open={ds.some((d) => d.date >= t && d.date <= new Date(Date.now() + 8 * 3600e3 + 6 * 86400e3).toISOString().slice(0, 10))} className="rounded-card border border-line p-2">
-      <summary className="min-h-11 cursor-pointer font-bold">{w.week}｜{w.title}｜{md(ds[0].date)}—{md(ds[ds.length - 1].date)}</summary>
-      <p className="keep mb-2 text-xs text-muted">{w.principle}</p><div className="space-y-2">{ds.map((d) => <DayCard key={d.date} d={d} log={logs[d.date] ?? {}} onSave={(l) => save(d.date, l)} />)}</div></details>; })}
+    {weeks.map((w) => { const ds = days.filter((d) => d.week === w.week); return <details key={w.week} open={w.week === curWeek} className="rounded-xl border border-line px-2">
+      <summary className="flex min-h-9 items-center cursor-pointer truncate text-sm font-bold">{w.week}｜{w.title}｜{md(ds[0].date)}—{md(ds[ds.length - 1].date)}</summary>
+      <details className="mb-1 text-xs text-muted"><summary className="keep cursor-pointer py-1">本周原则</summary><p className="keep">{w.principle}</p></details><div className="space-y-1">{ds.map((d) => <DayCard key={d.date} d={d} log={logs[d.date] ?? {}} onSave={(l) => save(d.date, l)} />)}</div></details>; })}
     {days.filter((d) => d.week === "TEST").map((d) => <DayCard key={d.date} d={{ ...d, main: ["", ...d.main] }} log={logs[d.date] ?? {}} onSave={(l) => save(d.date, l)} />)}
-  </section>;
+    </div>
+  </details>;
 }

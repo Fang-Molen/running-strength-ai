@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Plus } from "lucide-react"
+import { Plus , Smile } from "lucide-react"
 import { loadVitals } from "@/lib/nutrition/vitals"
 import { loadExtras } from "@/lib/ui/device-store"
 import { VERDICT_RULES, recoveryVerdict, type RecoveryInput } from "@/lib/ui/recovery-verdict"
@@ -87,16 +87,16 @@ export function CheckinCard({ today, watch, onSaved, onPain }: { today: string; 
   useEffect(() => { if (today) setC(loadCheckins().find((x) => x.date === today) ?? null) }, [today])
   const set = (patch: Partial<Checkin>) => { setC(saveCheckin(today, patch)); setStamp(Date.now()); onSaved() }
   const noWatch = watch === "none"
-  return <section className="home-card mb-3 p-4" aria-label="今日打卡">
-    <div className="flex items-center justify-between"><h2 className="text-base font-bold">{noWatch ? "今日打卡（30 秒）" : "手表测不到的，点一下"}</h2><SavedBadge stamp={stamp} /></div>
-    {noWatch ? <Row label="昨晚睡了"><>{SLEEP_CHIPS.map(([l, v]) => <button key={l} type="button" className="fk-chip" aria-pressed={c?.sleep === v} onClick={() => set({ sleep: v })}>{l} 小时</button>)}</></Row> : null}
-    <Row label="主观疲劳"><>{FATIGUE.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.fatigue === id} onClick={() => set({ fatigue: id })}>{l}</button>)}</></Row>
-    <Row label="疼痛"><>{PAIN.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.pain === id} onClick={() => set({ pain: id })}>{l}</button>)}</></Row>
+  return <section className="fk-dash-card fk-subjective w-full p-2" aria-label="主观感受">
+    <div className="flex items-center justify-between"><h2 className="fk-dash-title text-sm"><Smile className="size-4" />主观感受</h2><SavedBadge stamp={stamp} /></div>
+    {noWatch ? <Row label="睡眠"><>{SLEEP_CHIPS.map(([l, v]) => <button key={l} type="button" className="fk-chip" aria-pressed={c?.sleep === v} onClick={() => set({ sleep: v })}>{l} 小时</button>)}</></Row> : null}
+    <Row label="疲劳"><>{FATIGUE.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.fatigue === id} onClick={() => set({ fatigue: id })}>{l}</button>)}</></Row>
+    <Row label="酸痛"><>{PAIN.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.pain === id} onClick={() => set({ pain: id })}>{l}</button>)}</></Row>
     {c?.pain && c.pain !== "none" ? <button type="button" className="fk-link mt-2 text-sm" onClick={onPain}>记下部位和程度 ›</button> : null}
   </section>
 }
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="mt-2"><p className="text-xs text-muted">{label}</p><div className="mt-1 flex flex-wrap gap-1.5">{children}</div></div>
+  return <div className="mt-1.5 flex items-start gap-2"><p className="keep w-8 shrink-0 pt-1 text-xs text-muted">{label}</p><div className="flex flex-1 flex-wrap gap-1">{children}</div></div>
 }
 
 /** 每组一张简单的上传说明卡；组内选品牌只用于显示对应步骤。 */

@@ -1,7 +1,10 @@
+import { HomeDashboard } from "@/components/home-dashboard";
 import { GarminLog } from "@/components/garmin-log";
 import { lazy, Suspense } from "react";
 const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel"));
 import { Plan400, Plan400Today } from "@/components/plan400";
+import { DeviceImport } from "@/components/device-import";
+import { importVault } from "@/lib/vault";
 import { GarminSync } from "@/components/garmin-sync";
 import { initVault } from "@/lib/vault";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -21,6 +24,7 @@ import { AbilityRadarCard } from "@/components/ability-radar-card";
 import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Utensils, Watch, X } from "lucide-react";
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
+import { PlanSourceCard } from "@/components/plan-source";
 import { DietPage } from "@/components/fuel-guide";
 import { ReviewPanel } from "@/components/review-card";
 import { HealthLinkSheet, HomeEditor, useLocalReminders, HomeHeader, LogMetricsPanel, Onboarding, QuickLog, SettingsHub } from "@/components/r8";
@@ -146,6 +150,10 @@ export function StrengthApp() {
   const [kcal, setKcal] = useState<number | null>(null);
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
   useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem("fk-vault-restored")) { sessionStorage.setItem("fk-vault-restored", "1"); location.reload(); } }).catch(() => {}); }, []);
+  const [dietSheet, setDietSheet] = useState(false);
+  const [planSrc, setPlanSrc] = useState<string>("400m-v4");
+  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}").active; if (v) setPlanSrc(v); } catch { /* keep default */ } }, []);
+  const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}"); localStorage.setItem("fk-plan-source-v1", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };
   const [tab, setTab] = useState<"today" | "plan" | "log" | "coach" | "body" | "diet">("today");
   const [homeRev, setHomeRev] = useState(0);
   const [dayOverride, setDayOverride] = useState<Override | null>(null);
@@ -243,10 +251,14 @@ export function StrengthApp() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).then(async (next) => {
         registration = next;
+        void next.update().catch(() => {});
         await navigator.serviceWorker.ready;
         apply();
       }).catch(() => {});
       navigator.serviceWorker.addEventListener("controllerchange", apply);
+      const hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener("controllerchange", () => { if (hadController && !sessionStorage.getItem("fk-sw-reloaded")) { sessionStorage.setItem("fk-sw-reloaded", "1"); location.reload(); } });
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && navigator.onLine) void registration?.update().catch(() => {}); });
     }
     const update = () => { if (navigator.onLine) void registration?.update(); };
     window.addEventListener("online", update);
@@ -432,15 +444,16 @@ export function StrengthApp() {
 
   return (
     <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "flex h-dvh flex-col overflow-hidden" : "min-h-screen")} data-candidate-version="FK-PRODUCT-UI-R3-20261011" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
-      <header className="ui03-header px-4 pt-3 pb-2">
+      <header className="ui03-header px-4 pt-1 pb-1">
         <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="kicker ui03-overline">方坤 · RUNNING & STRENGTH</p>
+            {tab === "today" ? <><h1 className="text-[1.6rem] font-black italic leading-none tracking-wide">FANGKUN</h1><p className="text-sm font-bold">更好的你</p></> : <><p className="kicker ui03-overline">FANGKUN</p>
             <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
-            <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>
+            <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p></>}
           </div>
-          <button type="button" onClick={() => { if (tab === "coach") { setTab(prevTab.current); } else { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); } }} className="mr-2 grid size-11 shrink-0 place-items-center rounded-full bg-accent text-accent-fg shadow-sm" aria-label={tab === "coach" ? "关闭方坤" : "打开方坤"}>{tab === "coach" ? <X className="size-5" /> : <MessageCircle className="size-5" />}</button>
-          <button type="button" onClick={() => { setSettingsPane("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button>
+          <div className="flex shrink-0 items-center gap-2">
+          <button type="button" onClick={() => { if (tab === "coach") { setTab(prevTab.current); } else { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); } }} className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-accent bg-surface shadow-sm" aria-label={tab === "coach" ? "关闭方坤" : "打开方坤"}>{tab === "coach" ? <X className="size-5" /> : <img src="/fangshen/happy-bust.png" alt="" className="size-full object-cover object-top" />}</button>
+          <button type="button" onClick={() => { setSettingsPane("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
         </div>
       </header>
       {offline ? <p className="mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已经打开过的今日、计划、日志和身体仍可使用。方坤本地问答仍可用，在线模型不可用。</p> : null}
@@ -455,7 +468,7 @@ export function StrengthApp() {
           <div className="flex flex-col">
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
-            <Plan400Today /><HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
+            <div className="mb-3 flex justify-center"><span className="rounded-full border border-line px-4 py-1.5 text-sm">{Number(todayIso.slice(5,7))}月{Number(todayIso.slice(8,10))}日 周{"日一二三四五六"[new Date(todayIso + "T12:00:00").getDay()]}</span></div><Plan400Today /><HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
             <div style={{ order: homeLayout.order.indexOf("week") }}><TodayBoard revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
               onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
@@ -485,13 +498,14 @@ export function StrengthApp() {
             <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setTab("plan");}} /></details>
           </> : <p>选定课程已不存在，请重新选择。</p>}
         </section> : null}
-        {tab === "plan" ? <Plan400 /> : null}
-        {tab === "plan" ? <section className="home-card product-goal-card mb-3 p-4" aria-label="当前目标">
+        {tab === "plan" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : null}
+        {tab === "plan" && planSrc === "400m-v4" ? <Plan400 /> : null}
+        {tab === "plan" && planSrc !== "400m-v4" ? <section className="home-card product-goal-card mb-3 p-4" aria-label="当前目标">
           <div className="product-section-heading"><div><p className="product-eyebrow">目标与约束</p><h2>{GOALS.find(goal => goal.id === preference.primaryGoal)?.label ?? "目标待确认"}</h2></div><button type="button" className="product-text-action" onClick={() => { setSettingsPane("goals"); setSettingsOpen(true); }}>修改 ›</button></div>
           <p className="mt-2 text-sm text-muted">{profileFilled(profile) ? profileSummary(profile) : "当前能力、期限、可用时间与运动限制，需进一步确认。"}</p>
           <button type="button" className="product-text-action" onClick={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }}>和方坤完善首周候选计划 ›</button>
         </section> : null}
-        {tab === "plan" ? (
+        {tab === "plan" && planSrc !== "400m-v4" ? (
           <section className="home-card mb-3 px-3 py-3" aria-label="训练周期">
             <div className="flex items-center justify-between gap-2 px-1">
               <h2 className="font-bold">训练周期</h2>
@@ -528,9 +542,9 @@ export function StrengthApp() {
             </div>
           </section>
         ) : null}
-        {tab === "plan" ? <details className="home-card mt-3 px-4 py-2" open={planMore} onToggle={(event) => setPlanMore(event.currentTarget.open)}>
+        {tab === "plan" && planSrc !== "400m-v4" ? <details className="home-card mt-3 px-4 py-2" open={planMore} onToggle={(event) => setPlanMore(event.currentTarget.open)}>
           <summary className="min-h-12 cursor-pointer text-sm font-bold">调整周期、模板和这节课</summary>
-        {tab === "plan" && showPlanTools && plan.sessions.length > 1 ? (
+        {tab === "plan" && planSrc !== "400m-v4" && showPlanTools && plan.sessions.length > 1 ? (
           <nav aria-label="选择要查看的训练课" className="mb-4 rounded-card border border-line bg-surface p-3">
             <p className="mb-2 text-xs font-bold text-muted">查看本周期其他训练课 · 共 {plan.sessions.length} 节</p>
             <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="训练课列表">
@@ -555,7 +569,7 @@ export function StrengthApp() {
             </div>
           </nav>
         ) : null}
-        {tab === "plan" ? <section>
+        {tab === "plan" && planSrc !== "400m-v4" ? <section>
           <button type="button" aria-expanded={showPlanTools} onClick={() => setShowPlanTools((current) => !current)} className="flex min-h-11 w-full items-center justify-between rounded-card border border-line bg-surface px-4 text-left text-sm font-bold">
             训练模板与周期管理 {showPlanTools ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
           </button>
@@ -602,7 +616,7 @@ export function StrengthApp() {
           />
           </> : null}
         </section> : null}
-        {tab === "plan" ? <details className="mt-3 rounded-card border border-line bg-surface p-3">
+        {tab === "plan" && planSrc !== "400m-v4" ? <details className="mt-3 rounded-card border border-line bg-surface p-3">
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">实验功能 · 周期计划候选</summary>
           
           <button
@@ -736,23 +750,20 @@ export function StrengthApp() {
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
       {tab === "log" ? <div className="mx-auto max-w-3xl px-3 pt-2"><AbilityRadarCard asOf={todayIso} /></div> : null}
-      {tab === "log" ? <div className="px-3 pt-2"><AssessmentPanel /></div> : null}
+      {tab === "log" ? <div className="pt-2"><LogMetricsPanel today={todayIso} /></div> : null}
       {tab === "log" ? <GarminLog /> : null}
-      {tab === "log" ? <LogMetricsPanel today={todayIso} /> : null}
-      {tab === "log" ? <div className="mx-3 mb-3"><ReviewPanel today={todayIso} title="方坤复盘" /></div> : null}
-      {tab === "log" ? <TrainingLogPanel plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
+      {tab === "log" ? <TrainingLogPanel reviewSlot={<div className="mt-3"><ReviewPanel today={todayIso} title="方坤复盘" /></div>} plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
+      {tab === "log" ? <div className="px-3 pt-2 pb-nav"><AssessmentPanel /></div> : null}
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
-      <div className={tab === "diet" ? "" : "hidden"}><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div>
-      <div className={tab === "body" ? "" : "hidden"}>
-        <GarminSync />
-        <details className="home-card mx-3 my-3 p-4"><summary className="min-h-11 cursor-pointer font-bold">体型变化</summary>{tab === "body" ? <Suspense fallback={<p>正在打开…</p>}><BodyLabPanel /></Suspense> : null}</details>
-        <BodyCenter active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />
+      <div className={tab === "diet" ? "" : "hidden"}><div className="px-3 pt-3"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div> : null}</div>
+      <div className={tab === "body" ? "" : "hidden"}><div className="px-3 pt-3"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
       </div>
+      <StandaloneWelcome />
       {settingsOpen ? (
         <div className="fixed inset-0 z-40 overflow-y-auto bg-bg">
-        <div className="mx-auto max-w-3xl px-4 pt-4 pb-nav">
+        <div className="mx-auto max-w-3xl px-4 pb-nav" style={{ paddingTop: "max(6px, env(safe-area-inset-top))" }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[11px] font-semibold tracking-[0.16em] text-accent">RUNNING & STRENGTH</p>
@@ -767,6 +778,8 @@ export function StrengthApp() {
             <button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { const node = document.getElementById("body-records"); if (node instanceof HTMLDetailsElement) node.open = true; document.getElementById("body-devices")?.scrollIntoView({ block: "start" }); }, 40); }} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Watch className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">运动设备</span><span className="block text-xs font-normal text-muted">导入与设备说明</span></span><span aria-hidden="true">›</span></button>
             <button type="button" onClick={() => setSettingsPane("backup")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Database className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">数据备份与恢复</span><span className="block text-xs font-normal text-muted">备份、恢复、导出</span></span><span aria-hidden="true">›</span></button>
           </section> : null}
+          {settingsPane === "menu" ? <StorageHint /> : null}
+          {settingsPane === "menu" ? <div className="-mx-3 mt-3"><GarminSync /><details className="home-card mx-3 my-3 p-3"><summary className="min-h-11 cursor-pointer font-bold">设备导入</summary><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></details></div> : null}
           {settingsPane === "menu" ? <SettingsHub onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "menu" ? null : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">返回列表</button>}
           {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
@@ -1198,4 +1211,34 @@ function Stepper({
 
 function round(n: number): number {
   return Math.round(n * 2) / 2;
+}
+
+function StandaloneWelcome() {
+  const [show, setShow] = useState(false), [msg, setMsg] = useState("");
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    let n = 0; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i) ?? ""; if (/^(fr255-(food|body|plan|schedule)|fk-(plan400|garmin-acts|bodylab))/.test(k)) n++; }
+    if (standalone && n === 0 && !localStorage.getItem("fk-welcome-standalone-v1")) setShow(true);
+  }, []);
+  if (!show) return null;
+  const done = () => { localStorage.setItem("fk-welcome-standalone-v1", "1"); setShow(false); };
+  return <div className="fixed inset-0 z-[60] overflow-y-auto bg-bg p-4" style={{ paddingTop: "calc(env(safe-area-inset-top) + 12px)" }} role="dialog" aria-label="欢迎">
+    <h2 className="text-xl font-bold">欢迎使用主屏幕版方坤</h2>
+    <p className="keep mt-1 text-sm text-muted">主屏幕版和 Safari 版的数据是分开存的。</p>
+    <section className="fk-dash-card mt-3 p-3">
+      <b>从 Safari 版迁移数据</b>
+      <ol className="keep mt-1 list-decimal pl-5 text-xs text-muted"><li>在 Safari 打开方坤 → ⚙️ → 全部数据备份 → 一键导出 → 存储到「文件」</li><li>回到这里，点下面按钮选那个备份文件</li></ol>
+      <label className="fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold">选择备份文件导入<input type="file" accept="application/json,.json" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const n = await importVault(f); localStorage.setItem("fk-welcome-standalone-v1", "1"); setMsg(`已恢复 ${n} 项，正在刷新`); setTimeout(() => location.reload(), 800); } catch (err) { setMsg((err as Error).message); } }} /></label>
+      {msg ? <p className="keep mt-1 text-xs" aria-live="polite">{msg}</p> : null}
+    </section>
+    <div className="-mx-3 mt-3"><GarminSync /></div>
+    <button type="button" className="mt-3 min-h-11 w-full rounded-xl border border-line text-sm" onClick={done}>跳过，从头开始</button>
+  </div>;
+}
+
+function StorageHint() {
+  const [show, setShow] = useState(false);
+  useEffect(() => { setShow(!localStorage.getItem("fk-storage-hint-v1")); }, []);
+  if (!show) return null;
+  return <section className="home-card mt-3 p-3 text-sm" aria-label="存储提示"><b>Safari 和主屏幕 App 的数据是分开的</b><p className="keep mt-1 text-xs text-muted">在 Safari 里记的数据，添加到主屏幕后不会自动出现。先在原来那边「全部数据备份 → 导出」，再到另一边「导入恢复」。</p><button type="button" className="fk-link mt-1 text-xs" onClick={() => { localStorage.setItem("fk-storage-hint-v1", "1"); setShow(false); }}>知道了</button></section>;
 }

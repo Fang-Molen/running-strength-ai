@@ -387,3 +387,38 @@ textarea {
 
 /* 用户要求：隐藏全站说明小字（状态值加 .keep 保留） */
 .product-ui p.text-xs.text-muted:not(.keep), .product-ui p[class*="text-[10px]"]:not(.keep), .product-ui p[class*="text-[11px]"]:not(.keep) { display: none; }
+
+/* ===== 2026-10-16 设计稿主题：深色 + 橙色（design-ref/home.jpg） ===== */
+.app-wallpaper.product-ui, .app-wallpaper.product-ui[data-theme], .app-wallpaper.product-ui[data-theme][data-wallpaper] {
+  --color-bg: #0c0d0f; --color-surface: #16181b; --color-surface-2: #1f2226; --color-fg: #f4f4f5; --color-muted: #9a9ca3;
+  --color-line: #2c2f35; --color-accent: #ff6a1a; --color-accent-fg: #ffffff; --color-warn: #ffb547; --color-risk: #ff6b5e;
+  background: radial-gradient(120% 60% at 50% 0%, #1b1d21 0%, #0c0d0f 60%) fixed; color: var(--color-fg); color-scheme: dark;
+}
+.product-ui .home-card, .product-ui .rounded-card.border { background: linear-gradient(180deg, #17191c, #121417); border-color: #2a2d33; }
+.product-ui .ui03-dock-inner { background: rgba(18,19,22,.92); border: 1px solid #2a2d33; backdrop-filter: blur(12px); }
+.product-ui .ui03-tab-active, .product-ui .text-accent { color: #ff6a1a; }
+.product-ui .stat-run { background: rgba(255,106,26,.16); }
+.product-ui input, .product-ui select, .product-ui textarea { color: var(--color-fg); }
+.fk-dash-card { background: linear-gradient(180deg, #17191c, #111316); border: 1px solid #2a2d33; border-radius: 16px; padding: 12px; }
+.fk-dash-title { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 15px; }
+.fk-dash-title svg { color: #ff6a1a; }
+.fk-orange-btn { background: linear-gradient(180deg, #ff7a2e, #ff5a0a); color: #fff; border-radius: 999px; font-weight: 800; }
+.fk-bar { height: 8px; border-radius: 99px; background: #2a2d33; overflow: hidden; } .fk-bar > i { display: block; height: 100%; border-radius: 99px; }
+.fk-script { font-family: "Brush Script MT", "Segoe Script", cursive; color: #ff7a2e; }
+
+/* fixed chrome: header sticks under safe-area, nav fixed, content scrolls */
+.product-ui .ui03-header { position: sticky; top: 0; z-index: 30; }
+.ui03-dock { padding-bottom: env(safe-area-inset-bottom); }
+.product-ui .ui03-header { padding-top: max(6px, env(safe-area-inset-top)); }
+.product-ui .ui03-header-inner { min-height: 52px; }
+/* collapsed rows: no tall empty padding */
+.product-ui details:not([open]) { padding-top: 0 !important; padding-bottom: 0 !important; }
+.product-ui details > summary { display: flex; align-items: center; min-height: 44px; }
+.product-ui details > summary::-webkit-details-marker { display: none; }
+/* iOS: no light band above header */
+html, body { background: #0b0b0d !important; color-scheme: dark; margin: 0; padding: 0; }
+body { min-height: 100dvh; overscroll-behavior-y: none; }
+.product-ui .ui03-header { top: 0; margin-top: 0; background: #0b0b0d; padding-top: 6px; }
+@media all and (display-mode: standalone) { .product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 4px); } }
+.fk-subjective .fk-chip { min-height: 30px; padding: 2px 10px; font-size: 12px; }
+.product-ui .fk-chip[aria-pressed="true"] { background: #ff6a1a; border-color: #ff6a1a; color: #fff; }

@@ -23,7 +23,15 @@ export function demoIdFor(name: string): string | null {
   return c && demoData.exercises.some((e) => e.id === c.id) ? c.id : null;
 }
 export function DemoSheet({ id, onClose }: { id: string; onClose: () => void }) {
-  return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg p-3" role="dialog" aria-label="动作演示"><button type="button" className="mb-2 min-h-11 rounded-card border border-line px-4 font-bold" onClick={onClose}>关闭</button><Suspense fallback={<p>正在打开演示…</p>}><ExerciseDemo catalogId={id} /></Suspense></div>;
+  const e = demoData.exercises.find((x) => x.id === id) as unknown as { name_zh: string; name_en: string; category: string; equipment: string[]; default_sets: number; default_reps_or_time: { mode: string; amount: number }; default_rest_sec: number; review?: string } | undefined;
+  return <div className="product-ui app-wallpaper fixed inset-0 z-50 overflow-y-auto p-4" data-theme="dark" role="dialog" aria-label="动作详情">
+    <div className="flex items-start justify-between"><div><h1 className="text-3xl font-black">{e?.name_zh}</h1><p className="text-sm uppercase tracking-[.2em] text-muted">{e?.name_en}</p></div><button type="button" className="min-h-11 rounded-full border border-line px-4 font-bold" onClick={onClose}>关闭</button></div>
+    {e ? <div className="mt-2 flex flex-wrap gap-2 text-xs">{[e.category, ...e.equipment].map((t) => <span key={t} className="rounded-md border border-line px-2 py-1">{t}</span>)}</div> : null}
+    {e ? <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">推荐参数</div><p className="mt-1">默认 {e.default_sets} 组 × {e.default_reps_or_time.amount}{e.default_reps_or_time.mode === "seconds" ? " 秒" : " 次"} · 组间休息 {e.default_rest_sec} 秒</p><p className="mt-1 text-muted">新手 / 进阶 / 力量 / 爆发分级参数：待补</p></div> : null}
+    <div className="fk-dash-card mt-3"><Suspense fallback={<p>正在打开演示…</p>}><ExerciseDemo catalogId={id} /></Suspense></div>
+    <div className="mt-3 grid grid-cols-2 gap-3 text-sm"><div className="fk-dash-card"><div className="fk-dash-title">训练目标</div><p className="mt-1 text-muted">待补</p></div><div className="fk-dash-card"><div className="fk-dash-title">适用人群</div><p className="mt-1 text-muted">待补</p></div></div>
+    <p className="keep mt-3 text-xs text-muted">动作要领为方坤自写内容，尚未经专业审校{e?.review ? `（${e.review}）` : ""}</p>
+  </div>;
 }
 export const PARTS = ["下肢", "上肢", "核心", "后链", "小腿", "全身", "快速力量"] as const;
 const EXTRA: [string, string[]][] = [

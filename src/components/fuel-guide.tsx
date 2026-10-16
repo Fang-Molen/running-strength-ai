@@ -1,3 +1,4 @@
+import { Model } from "@/components/bodylab/bodylab-panel"
 import { useEffect, useMemo, useState } from "react"
 import { Camera, ChevronDown, Droplets, Utensils } from "lucide-react"
 import type { Profile } from "@/lib/strength/profile"
@@ -35,19 +36,19 @@ const FlagBox = ({ f }: { f: FuelFlag }) => <p className={"rounded-lg p-2 text-x
 /** 身体 → 饮食：目标、时机、补水、怎么选、温和提示 */
 export function FuelGuide({ profile, revision, onEditProfile, goal = "keep", servingAdjust = 0 }: { profile: Profile; revision: number; onEditProfile: () => void; goal?: FuelGoal; servingAdjust?: number }) {
   const f = useFuel(profile, revision, goal, servingAdjust)
-  const [open, setOpen] = useState<number | null>(0)
+  const [open, setOpen] = useState<number | null>(null)
   const [signStamp, setSignStamp] = useState(0)
   const t = f.targets
   return <section className="home-card p-4 text-sm" aria-label="今天怎么吃">
     <div className="flex items-center justify-between"><h2 className="text-base font-bold">今天怎么吃</h2><span className="text-xs text-muted">{t ? DAY_LABEL[t.type] : ""}{f.sessions.length ? ` · ${f.sessions.length} 节课` : " · 今天没排课"}</span></div>
-    {homeTips(t, f.sessions, f.flags).length ? <ul className="mt-2 list-disc space-y-1 rounded-xl bg-surface-2 py-2 pl-7 pr-2" aria-label="今日要点">{homeTips(t, f.sessions, f.flags).map((x, i) => <TipLine key={i} t={x} />)}</ul> : null}
+    
     {!t ? <p className="mt-2 text-muted">先填体重，方坤才能按 g/kg 算目标。<button type="button" className="fk-link" onClick={onEditProfile}>去填 ›</button></p> : <>
-      <div className="fk-tile-grid mt-3">
-        <div className="fk-tile"><p className="text-xs text-muted">碳水</p><p className="mt-1 text-xl font-bold">{t.carbG[0]}–{t.carbG[1]}<span className="ml-1 text-xs text-muted">g</span></p><p className="text-[11px] text-muted">{t.carbPerKg[0]}–{t.carbPerKg[1]} g/kg</p></div>
-        <div className="fk-tile"><p className="text-xs text-muted">蛋白</p><p className="mt-1 text-xl font-bold">{t.proteinG}<span className="ml-1 text-xs text-muted">g</span></p><p className="text-[11px] text-muted">{t.proteinPerKg} g/kg · 分 {t.meals} 次 · 每次约 {t.proteinPerMeal} g</p></div>
-        {f.plan ? <div className="fk-tile"><p className="text-xs text-muted">热量参考</p><p className="mt-1 text-xl font-bold">{f.plan.kcal}<span className="ml-1 text-xs text-muted">kcal</span></p><p className="text-[11px] text-muted">按资料估算，训练多的日子可多吃</p></div> : null}
+      <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+        <div className="rounded-xl bg-surface-2 py-2"><p className="text-[11px] text-muted keep">碳水</p><p className="font-bold">{t.carbG[0]}–{t.carbG[1]}<small className="text-muted"> g</small></p></div>
+        <div className="rounded-xl bg-surface-2 py-2"><p className="text-[11px] text-muted keep">蛋白</p><p className="font-bold">{t.proteinG}<small className="text-muted"> g</small></p></div>
+        <div className="rounded-xl bg-surface-2 py-2"><p className="text-[11px] text-muted keep">热量</p><p className="font-bold">{f.plan ? f.plan.kcal : "—"}<small className="text-muted"> kcal</small></p></div>
       </div>
-      <ul className="mt-2 list-disc space-y-1 pl-5">{[...t.goalTips, t.tips[0]].map((x, i) => <TipLine key={i} t={x} />)}</ul>
+      <details className="mt-2"><summary className="min-h-10 cursor-pointer font-bold">要点与依据</summary><ul className="list-disc space-y-1 pl-5">{[...homeTips(t, f.sessions, f.flags), ...t.goalTips, t.tips[0]].map((x, i) => <TipLine key={i} t={x} />)}</ul><p className="mt-1 text-xs">碳水 {t.carbPerKg[0]}–{t.carbPerKg[1]} g/kg · 蛋白 {t.proteinPerKg} g/kg，分 {t.meals} 次，每次约 {t.proteinPerMeal} g</p></details>
     </>}
     {f.flags.length ? <div className="mt-3 space-y-1.5">{f.flags.map((x, i) => <FlagBox key={i} f={x} />)}</div> : null}
     {f.sessions.map((s, i) => { const tm = sessionTiming(s, f.kg, null); const isOpen = open === i
@@ -101,6 +102,11 @@ type GoalPref = { goal: FuelGoal; servingAdjust: number }
 function loadGoal(profile: Profile): GoalPref { try { const v = JSON.parse(localStorage.getItem(GOAL_KEY) ?? "null"); if (v?.goal) return v } catch { /* default */ } return { goal: profile.aim === "lose" ? "cut" : profile.aim === "gain" ? "gain" : "run", servingAdjust: 0 } }
 
 /** 饮食页：目标 → 今日目标与要点 → 体重趋势 → 快速记录 → 详细记录 */
+function DietFigure({ profile }: { profile: Profile }) {
+  const h = Number(profile.heightCm), w = Number(profile.weightKg)
+  if (!(h >= 140 && w >= 35)) return null
+  return <div className="h-56 w-full"><Model profile={{ heightCm: h, massKg: w, bodyFatPct: Number(profile.bodyFat) || (profile.sex === "female" ? 27 : 18), frame: 0, sex: profile.sex === "female" ? "female" : "male" }} yaw={0} frameHeight={h / 100} onYaw={() => {}} /></div>
+}
 export function DietPage({ profile, onEditProfile, active }: { profile: Profile; onEditProfile: () => void; active: boolean }) {
   const [mounted, setMounted] = useState(false)
   const [pref, setPref] = useState<GoalPref>({ goal: "run", servingAdjust: 0 })
@@ -113,11 +119,10 @@ export function DietPage({ profile, onEditProfile, active }: { profile: Profile;
   const kg = Number(profile.weightKg) >= 30 ? Number(profile.weightKg) : null
   const advice = weightTrendAdvice(pref.goal, kg, week)
   return <div className="mx-auto max-w-3xl space-y-3 px-3 pt-2 pb-nav">
-    <section className="home-card p-4" aria-label="饮食目标">
+    <section className="home-card p-3" aria-label="饮食目标"><div>
       <div className="flex items-center justify-between"><h2 className="text-base font-bold">我的目标</h2><SavedBadge stamp={stamp} /></div>
       <div className="mt-2 grid grid-cols-4 gap-1.5">{(Object.keys(GOAL_LABEL) as FuelGoal[]).map((g) => <button key={g} type="button" className="fk-chip justify-center" aria-pressed={pref.goal === g} onClick={() => save({ goal: g, servingAdjust: 0 })}>{GOAL_LABEL[g]}</button>)}</div>
-      <p className="mt-2 text-xs text-muted">随时可改；目标和当天训练一起决定下面的数字。</p>
-    </section>
+    </div></section>
     {mounted ? <>
       <FuelGuide profile={profile} revision={revision} onEditProfile={onEditProfile} goal={pref.goal} servingAdjust={pref.servingAdjust} />
       <section className="home-card p-4 text-sm" aria-label="体重趋势">
@@ -126,7 +131,7 @@ export function DietPage({ profile, onEditProfile, active }: { profile: Profile;
         {advice.adjust ? <div className="mt-2 flex gap-2"><button type="button" className="fk-chip" onClick={() => save({ ...pref, servingAdjust: Math.max(-3, Math.min(3, pref.servingAdjust + advice.adjust)) })}>接受调整</button><button type="button" className="fk-chip" onClick={() => setWeek(null)}>先不用</button></div> : null}
         {pref.servingAdjust ? <p className="mt-1 text-xs text-muted">当前：每天{pref.servingAdjust > 0 ? "多" : "少"} {Math.abs(pref.servingAdjust)} 份主食。<button type="button" className="fk-link" onClick={() => save({ ...pref, servingAdjust: 0 })}>撤销</button></p> : null}
       </section>
-      <QuickFoodLog onSaved={() => setRevision((v) => v + 1)} />
+      <div id="quick-food"><QuickFoodLog onSaved={() => setRevision((v) => v + 1)} /></div>
     </> : null}
     <details className="home-card p-3"><summary className="min-h-10 cursor-pointer text-sm font-bold">详细记录 · 食物库 · 热量设置</summary><FuelPanel profile={profile} onEdit={onEditProfile} revision={revision} onSaved={() => setRevision((v) => v + 1)} /></details>
   </div>

@@ -1,3 +1,4 @@
+import type React from "react"
 import { useMemo, useState } from "react"
 import { Activity, CalendarDays, Dumbbell } from "lucide-react"
 import { loadEvents } from "@/lib/core/events"
@@ -288,7 +289,7 @@ function recordKind(item: TrainingOccurrence): "run" | "lift" | "mixed" | "unkno
   return "unknown"
 }
 
-export function TrainingLogPanel({ plan, onAsk }: { plan: Plan; onAsk: (occurrenceId: string | null) => void }) {
+export function TrainingLogPanel({ plan, onAsk , reviewSlot }: { plan: Plan; onAsk: (occurrenceId: string | null) => void ; reviewSlot?: React.ReactNode }) {
   const [logRevision, setLogRevision] = useState(0)
   const imports = useMemo(() => loadConfirmedTrainingImports().filter((item) => !String(item.title.value ?? "").includes("佳明账号同步")), [logRevision])
   const occurrences = useMemo(() => listTrainingOccurrences(), [])
@@ -352,13 +353,11 @@ export function TrainingLogPanel({ plan, onAsk }: { plan: Plan; onAsk: (occurren
         {visibleImports.map((item) => <ImportRow key={item.confirmedImportId} item={item} onAsk={onAsk} onDeleted={() => setLogRevision((value) => value + 1)} />)}
       </div>}
     </section>
-    <details className="home-card mt-3 px-4 py-3 text-sm">
-      <summary className="min-h-11 cursor-pointer font-bold">本周期感受</summary>
+    {reviewSlot}
+    <details className="home-card mt-3 px-3 py-0 text-sm">
+      <summary className="min-h-11 cursor-pointer content-center font-bold">本周感受与成长</summary>
       
       {plan.cycle?.logs.length ? <ul className="mt-2 space-y-2">{plan.cycle.logs.map((log) => <li key={log.sessionId}>{plan.sessions.find((item) => item.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <p className="mt-2 text-muted">这周还没有感受记录。</p>}
-    </details>
-    <details className="home-card mt-3 px-4 py-3 text-sm">
-      <summary className="min-h-11 cursor-pointer font-bold">本周成长</summary>
       <AthleteGrowthCard plan={plan} />
     </details>
     {grouped.undatedImports || grouped.undatedOccurrences ? <section className="home-card mt-3 px-4 py-3 text-sm">

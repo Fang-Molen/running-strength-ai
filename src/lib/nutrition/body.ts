@@ -14,6 +14,11 @@ export type BodyCheck = {
   boneRate?: number;
   bmr?: number;
   waist?: number;
+  visceral?: number;
+  boneMass?: number;
+  armMuscle?: number;
+  trunkMuscle?: number;
+  legMuscle?: number;
 };
 
 const KEY = "fr255-body-v1";

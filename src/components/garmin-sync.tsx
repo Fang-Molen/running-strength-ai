@@ -60,6 +60,9 @@ export function GarminSync() {
         if (typeof s.body?.restingHeartRate === "number") health.push({ key: `RHR:${d}`, source: src, metric: "RHR", day: d, value: s.body.restingHeartRate });
         if (typeof s.body?.bodyBatteryHighestValue === "number") health.push({ key: `BODY_BATTERY:${d}`, source: src, metric: "BODY_BATTERY", day: d, value: s.body.bodyBatteryHighestValue });
         if (typeof s.body?.averageStressLevel === "number" && s.body.averageStressLevel >= 0) health.push({ key: `STRESS:${d}`, source: src, metric: "STRESS", day: d, value: s.body.averageStressLevel });
+        if (typeof s.body?.totalSteps === "number" && s.body.totalSteps > 0) health.push({ key: `STEPS:${d}`, source: src, metric: "STEPS", day: d, value: s.body.totalSteps });
+        if (typeof s.body?.averageSpo2 === "number" && s.body.averageSpo2 > 0) health.push({ key: `SPO2:${d}`, source: src, metric: "SPO2", day: d, value: s.body.averageSpo2 });
+        if (typeof s.body?.avgWakingRespirationValue === "number" && s.body.avgWakingRespirationValue > 0) health.push({ key: `RESP:${d}`, source: src, metric: "RESP", day: d, value: s.body.avgWakingRespirationValue });
         const hv = h.body?.hrvSummary?.lastNightAvg;
         if (typeof hv === "number") health.push({ key: `HRV:${d}`, source: src, metric: "HRV", day: d, value: hv });
         const secs = sl.body?.dailySleepDTO?.sleepTimeSeconds;

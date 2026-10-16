@@ -34,7 +34,7 @@ export const CHECKIN_KEY = "fk-checkin-v1"
 export const FATIGUE = [["fresh", "轻松", 8], ["ok", "一般", 6], ["tired", "很累", 3]] as const
 export const PAIN = [["none", "不疼"], ["mild", "有点疼"], ["sharp", "明显疼"]] as const
 export const SLEEP_CHIPS = [["<6", 5.5], ["6–7", 6.5], ["7–8", 7.5], [">8", 8.5]] as const
-export type Checkin = { date: string; fatigue?: (typeof FATIGUE)[number][0]; pain?: (typeof PAIN)[number][0]; sleep?: number; at: string }
+export type Checkin = { date: string; fatigue?: (typeof FATIGUE)[number][0]; pain?: (typeof PAIN)[number][0]; sleep?: number; recovery?: number; at: string }
 export function loadCheckins(s: KV | null = store()): Checkin[] { try { const v = JSON.parse(s?.getItem(CHECKIN_KEY) ?? "[]"); return Array.isArray(v) ? v : [] } catch { return [] } }
 export function saveCheckin(date: string, patch: Partial<Checkin>, s: KV | null = store()): Checkin {
   const all = loadCheckins(s).filter((c) => c.date !== date)

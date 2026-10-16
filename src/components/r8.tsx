@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Bell, Camera, ChevronRight, FileUp, Flame, Plus, X } from "lucide-react"
+import { Bell, Camera, ChevronRight, FileUp, Flame, Info, Plus, X } from "lucide-react"
 import { DEFAULTS, EQUIPMENT, EXPERIENCE, GOALS, ONBOARD_KEY, PRESET, QUESTIONS, VENUES, WHEN, goalLabel, previewWeek, tierFor, toggleGoal, type Answers } from "@/lib/ui/first-run"
 import { BRANDS, GROUP_HINT, TIERS, TIER_LABEL, WATCHES, gateRecovery, loadBrand, loadTier, loadWatch, saveTier, saveWatch, type Tier, type WatchId } from "@/lib/ui/watch-mode"
 import { loadSchedule, saveSchedule } from "@/lib/ui/day-schedule"
@@ -187,15 +187,16 @@ export function QuickLog({ today, onSaved, onFile, openWith, hideFab = false }: 
 
 /* ---------------- 训练日志：按版本显示的指标 ---------------- */
 export function LogMetricsPanel({ today }: { today: string }) {
-  const [m, setM] = useState<ReturnType<typeof logMetrics> | null>(null), [tier, setTier] = useState<Tier>("basic")
-  useEffect(() => { if (!today) return; const t = loadTier(); setTier(t); setM(logMetrics(t, loadSchedule().entries, today)) }, [today])
+  const [m, setM] = useState<ReturnType<typeof logMetrics> | null>(null), [tier, setTier] = useState<Tier>("basic"), [info, setInfo] = useState(false), [count, setCount] = useState(0)
+  useEffect(() => { if (!today) return; const t = loadTier(); setTier(t); const es = loadSchedule().entries; setM(logMetrics(t, es, today)); const since = new Date(new Date(today + "T12:00:00").getTime() - 6 * 864e5).toISOString().slice(0, 10); setCount(es.filter((e) => e.actual && e.actual.outcome !== "missed" && e.date >= since && e.date <= today).length) }, [today])
   if (!m || (!m.trend && !m.load)) return null
   const max = Math.max(1, ...(m.trend ?? []).map((x) => x.minutes))
-  return <section className="home-card mx-3 mb-3 p-4 text-sm" aria-label="训练趋势">
-    <div className="flex items-center justify-between"><h2 className="text-base font-bold">训练趋势</h2><span className="text-[11px] text-muted">{TIER_LABEL[tier]}</span></div>
+  return <section className="fk-dash-card mx-3 mb-3 p-3 text-sm" aria-label="本周概览">
+    <div className="flex items-center justify-between gap-2"><h2 className="fk-dash-title text-base">本周概览</h2><span className="keep ml-auto text-xs text-muted">7 天 {count} 次 · {TIER_LABEL[tier]}</span><button type="button" aria-label="依据" aria-expanded={info} className="grid size-8 place-items-center" onClick={() => setInfo(!info)}><Info className="size-4 text-muted" /></button></div>
     {m.trend ? <div className="mt-2 flex h-16 items-end gap-2">{m.trend.map((x) => <div key={x.week} className="flex flex-1 flex-col items-center gap-1"><div className="w-full rounded-t bg-[#2182bd]" style={{ height: `${(x.minutes / max) * 44 + 2}px` }} /><span className="text-[10px] text-muted">{x.week.slice(5)} · {x.minutes}′</span></div>)}</div> : null}
-    {m.load ? <p className="mt-2">训练负荷：近 7 天 {m.load.acute} · 前 4 周周均 {m.load.chronicWeekly}{m.load.ratio != null ? ` · 比值 ${m.load.ratio}` : ""} <span className="text-[10px] text-muted">【经验规则】时长×强度系数；比值明显 &gt;1.5 时留意（Gabbett 2016，仅作参考）</span></p> : null}
-    {m.dynamics ? <p className="mt-1 text-xs text-muted">跑步动态（步频/触地/垂直振幅）与配速/心率区间：导入 FIT 后在每条记录里显示。</p> : null}
+    {m.load ? <p className="keep mt-2">负荷：近 7 天 {m.load.acute} · 前 4 周周均 {m.load.chronicWeekly}{m.load.ratio != null ? ` · 比值 ${m.load.ratio}` : ""} </p> : null}
+    {info ? <p className="keep mt-1 text-[11px] text-muted">【经验规则】负荷=时长×强度系数；近 7 天/前 4 周周均比值明显 &gt;1.5 时留意（Gabbett 2016, BJSM 50:273–280，仅作参考）</p> : null}
+    {m.dynamics && info ? <p className="mt-1 text-xs text-muted">跑步动态（步频/触地/垂直振幅）与配速/心率区间：导入 FIT 后在每条记录里显示。</p> : null}
   </section>
 }
 

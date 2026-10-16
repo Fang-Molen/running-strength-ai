@@ -11,6 +11,7 @@ export type FoodEntry = {
   kcal: number;
   protein?: number;
   label?: string;
+  photo?: string;
 };
 
 export const MEALS: Meal[] = ["早餐", "午餐", "晚餐", "加餐"];

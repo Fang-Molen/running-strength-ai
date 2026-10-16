@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Check, ThumbsDown, ThumbsUp } from "lucide-react"
+import { Check, Sparkles, ThumbsDown, ThumbsUp } from "lucide-react"
 import { buildReview, loadReviews, upsertReview, type Review, type ReviewKind } from "@/lib/ui/review"
 import { BAND_COLOR } from "@/lib/ui/day-override"
 import { loadSchedule } from "@/lib/ui/day-schedule"
@@ -40,17 +40,18 @@ export function ReviewCard({ review, onChange }: { review: Review; onChange?: (r
 }
 
 export function ReviewPanel({ today, title = "复盘" }: { today: string; title?: string }) {
-  const [list, setList] = useState<Review[]>([]), [cur, setCur] = useState<Review | null>(null)
+  const [list, setList] = useState<Review[]>([]), [cur, setCur] = useState<Review | null>(null), [hist, setHist] = useState(false)
   useEffect(() => { setList(loadReviews()) }, [])
   const make = (kind: ReviewKind) => {
     const entries = loadSchedule().entries
     const last = kind === "session" ? entries.filter((e) => e.actual && e.date <= today).sort((a, b) => (a.actual!.at < b.actual!.at ? 1 : -1))[0] : undefined
     const r = buildReview(kind, entries, today, loadTier(), last?.id); setCur(r); setList(upsertReview(r))
   }
-  return <section className="space-y-2" aria-label="复盘">
-    <div className="flex items-center gap-1.5"><h2 className="mr-auto text-base font-bold">{title}</h2>{(["day", "week", "session"] as ReviewKind[]).map((k) => <button key={k} type="button" className="fk-chip" onClick={() => make(k)}>{({ day: "今日", week: "本周", session: "最近一课" })[k]}</button>)}</div>
+  return <section className="fk-dash-card space-y-2 p-3" aria-label="复盘">
+    <h2 className="fk-dash-title text-base"><Sparkles className="size-5" />{title}</h2>
+    <div className="grid grid-cols-3 gap-1 rounded-xl border border-line p-0.5">{(["day", "week", "session"] as ReviewKind[]).map((k) => <button key={k} type="button" aria-pressed={cur?.kind === k} className={"min-h-9 rounded-lg text-sm " + (cur?.kind === k ? "bg-accent font-bold text-accent-fg" : "")} onClick={() => make(k)}>{({ day: "今日", week: "本周", session: "最近一课" })[k]}</button>)}</div>
     {cur ? <ReviewCard key={cur.id} review={cur} onChange={(n) => setList(loadReviews())} /> : null}
-    {list.filter((x) => x.id !== cur?.id).length ? <details className="rounded-2xl bg-surface p-3 text-sm"><summary className="min-h-10 cursor-pointer font-bold">历史复盘（{list.filter((x) => x.id !== cur?.id).length}）</summary>
-      <ul className="mt-1 divide-y divide-line">{list.filter((x) => x.id !== cur?.id).slice(0, 20).map((x) => <li key={x.id}><button type="button" className="flex min-h-11 w-full items-center gap-2 text-left" onClick={() => setCur(x)}><span className="text-xs text-muted">{x.createdAt.slice(5, 10)}</span><b className="text-xs">{({ day: "今日", week: "本周", session: "单课" })[x.kind]}</b><span className="flex-1 truncate">{x.verdict}</span>{x.feedback ? (x.feedback.vote === "up" ? "👍" : "👎") : null}{x.accepted ? <Check className="size-3.5 text-[#269775]" /> : null}</button></li>)}</ul></details> : null}
+    {list.filter((x) => x.id !== cur?.id).length ? <div className="text-sm"><button type="button" className="fk-link text-xs" aria-expanded={hist} onClick={() => setHist(!hist)}>历史复盘（{list.filter((x) => x.id !== cur?.id).length}）›</button>{hist ? <>
+      <ul className="mt-1 divide-y divide-line">{list.filter((x) => x.id !== cur?.id).slice(0, 20).map((x) => <li key={x.id}><button type="button" className="flex min-h-11 w-full items-center gap-2 text-left" onClick={() => setCur(x)}><span className="text-xs text-muted">{x.createdAt.slice(5, 10)}</span><b className="text-xs">{({ day: "今日", week: "本周", session: "单课" })[x.kind]}</b><span className="flex-1 truncate">{x.verdict}</span>{x.feedback ? (x.feedback.vote === "up" ? "👍" : "👎") : null}{x.accepted ? <Check className="size-3.5 text-[#269775]" /> : null}</button></li>)}</ul></> : null}</div> : null}
   </section>
 }

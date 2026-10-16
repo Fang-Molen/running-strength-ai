@@ -60,7 +60,7 @@ function vitalParts(record: VitalRecord | null, kind: VitalKind): { value: strin
 
 import { loadWatch, saveWatch, loadTier, TIERS, type Tier, type WatchId } from "@/lib/ui/watch-mode"
 export type BodyPane = "recovery" | "nutrition" | "trend" | "device";
-export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery", active = true }: { profile: Profile; onProfile: (next: Profile) => void; onEdit: () => void; initialPane?: BodyPane; active?: boolean }) {
+export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery", active = true , compact }: { profile: Profile; onProfile: (next: Profile) => void; onEdit: () => void; initialPane?: BodyPane; active?: boolean ; compact?: boolean }) {
   const [pane, setPane] = useState<BodyPane>(initialPane)
   const [watch, setWatch] = useState<WatchId | null | undefined>(undefined)
   const [tier, setTier] = useState<Tier | null>(null)
@@ -118,14 +118,14 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
 
   if (watch === null) return <div className="mx-auto max-w-3xl px-3 pt-2 pb-nav"><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} /></div>
   const hasWatch = watch != null && watch !== "none"
-  return <div className="mx-auto max-w-3xl px-3 pt-2 pb-nav">
-    <nav className="product-segments mb-3" aria-label="身体工作区">
-      {([["recovery", "今日恢复"], ["trend", "身体指标"], ["device", "设备导入"]] as const).map(([id, label]) => <button type="button" key={id} aria-pressed={pane === id} onClick={() => setPane(id)}>{label}</button>)}
-    </nav>
+  return <div className={compact ? "" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}>
+    {compact ? null : <nav className="product-segments mb-3" aria-label="身体工作区">
+      {([["recovery", "今日恢复"], ["trend", "身体指标"]] as const).map(([id, label]) => <button type="button" key={id} aria-pressed={pane === id} onClick={() => setPane(id)}>{label}</button>)}
+    </nav>}
     <div hidden={pane !== "recovery"}>
-      <RecoveryVerdictCard today={today} revision={revision} watch={watch} onImport={() => setPane("device")} />
-      {watch ? <CheckinCard today={today} watch={watch} onSaved={() => setRevision((v) => v + 1)} onPain={() => { setPane("trend"); window.setTimeout(() => document.getElementById("pain-log")?.scrollIntoView({ block: "start" }), 40) }} /> : null}
-      {watch === "none" ? null : 
+      {compact ? null : <RecoveryVerdictCard today={today} revision={revision} watch={watch} onImport={() => setPane("device")} />}
+      {watch && !compact ? <CheckinCard today={today} watch={watch} onSaved={() => setRevision((v) => v + 1)} onPain={() => { setPane("trend"); window.setTimeout(() => document.getElementById("pain-log")?.scrollIntoView({ block: "start" }), 40) }} /> : null}
+      {watch === "none" || compact ? null : 
       <HealthTiles allowed={tier ? TIERS[tier].tiles : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
     <section className="px-1" data-legacy-span={span} data-legacy-metrics={metrics.length}>
     </section>
@@ -133,7 +133,7 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
     <section id="body-records" className="mt-3">
       <div hidden={pane !== "device"}>{watch ? <SourceGuide watch={watch} /> : null}<DeviceImport today={today} onSaved={() => setRevision((value) => value + 1)} /></div>
       <div hidden={pane !== "recovery" || hasWatch} id="body-vitals" className="scroll-mt-6"><details className="home-card p-3" onToggle={() => undefined}><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision((value) => value + 1)} /></details></div>
-      <div hidden={pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">{latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><div id="pain-log"><PainLog today={today} /></div></div>
+      <div hidden={compact || pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">{latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><div id="pain-log"><PainLog today={today} /></div></div>
       <div hidden={pane !== "device"} id="body-devices" className="scroll-mt-6"><details className="home-card mt-3 p-3"><summary className="min-h-10 cursor-pointer text-sm font-bold">其他品牌导出步骤（华为 / 小米 / COROS / Apple）</summary><DeviceCenter /></details></div>
     </section>
   </div>

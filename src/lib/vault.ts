@@ -85,7 +85,13 @@ export async function exportVault(): Promise<void> {
   const kv = await vaultAll();
   for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) kv.set(k, localStorage.getItem(k)!); }
   const blob = new Blob([JSON.stringify({ format: "fangkun-vault-backup", schema: VAULT_SCHEMA, exportedAt: new Date().toISOString(), data: Object.fromEntries(kv) })], { type: "application/json" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `方坤全部数据备份-${new Date().toISOString().slice(0, 10)}.json`; a.click(); markBackedUp();
+  const name = `fangkun-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  const file = typeof File === "function" ? new File([blob], name, { type: "application/json" }) : null;
+  const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+  if (file && nav.canShare?.({ files: [file] })) {
+    try { await nav.share({ files: [file], title: "方坤全部数据备份" }); markBackedUp(); return; } catch (e) { if ((e as Error).name === "AbortError") return; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); markBackedUp();
 }
 export async function importVault(file: File): Promise<number> {
   const b = JSON.parse(await file.text());

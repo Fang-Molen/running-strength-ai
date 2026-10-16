@@ -16,7 +16,7 @@ function initial():BodyScenario{
 type Profile=BodyScenario['left']&{sex:string}
 type Avatar={update:(profile:object)=>void;setYaw:(yaw:number)=>void;setFraming:(height:number)=>void;dispose:()=>void;error?:unknown}
 type Module={AvatarViewer:new(canvas:HTMLCanvasElement,options?:{onError?:(error:unknown)=>void;onYawChange?:(yaw:number)=>void})=>Avatar}
-function Model({profile,yaw,onYaw,frameHeight}:{profile:Profile;yaw:number;frameHeight:number;onYaw:(yaw:number)=>void}){
+export function Model({profile,yaw,onYaw,frameHeight}:{profile:Profile;yaw:number;frameHeight:number;onYaw:(yaw:number)=>void}){
  const canvas=useRef<HTMLCanvasElement>(null),model=useRef<Avatar|null>(null),latest=useRef({profile,yaw,onYaw,frameHeight});latest.current={profile,yaw,onYaw,frameHeight}
  const [error,setError]=useState(false),[loaded,setLoaded]=useState(false)
  useEffect(()=>{let stopped=false;const url=new URL('/fangkun-bodylab/model/avatar3d.mjs',window.location.origin).href
