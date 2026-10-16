@@ -13,36 +13,14 @@ const api = async (p: string, init?: RequestInit, ms = 20000) => {
 const day = (d: number) => new Date(Date.now() + 8 * 3600e3 - d * 86400e3).toISOString().slice(0, 10);
 function sport(k: string): [DeviceActivity["sport"], string] { k = k.toLowerCase(); if (/run|track|treadmill/.test(k)) return ["RUNNING", "跑步"]; if (/strength|fitness|training|weight|hiit|indoor_cardio/.test(k)) return ["STRENGTH", "力量"]; return ["UNKNOWN", k || "其他"]; }
 
-export function GarminSync() {
-  const [st, setSt] = useState<{ loggedIn: boolean; profile?: { displayName?: string; fullName?: string } | null } | null>(null);
-  const [form, setForm] = useState({ region: "cn", username: "", password: "" });
-  const [mfa, setMfa] = useState<string | null>(null); const [code, setCode] = useState("");
-  const [msg, setMsg] = useState(""); const [busy, setBusy] = useState(false);
-  const file = useRef<HTMLInputElement>(null);
-  const [snaps, setSnaps] = useState<Snapshot[]>([]);
-  const [remind, setRemind] = useState(false);
-  useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); const last = localStorage.getItem("fk-last-export"); setRemind(needsBackupReminder() || !last || Date.now() - Date.parse(last) > 14 * 86400e3); }, []);
-  const refresh = () => api("status").then((r) => setSt(r.body)).catch(() => setSt({ loggedIn: false }));
-  useEffect(() => { void refresh(); }, []);
-  async function login() {
-    setBusy(true); setMsg("");
-    const r = await api("login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(form) });
-    setForm((f) => ({ ...f, password: "" }));
-    if (r.body.mfa) { setMfa(r.body.state); setMsg("佳明发了验证码，请输入"); }
-    else if (r.body.ok) { setMsg("已登录"); await refresh(); } else setMsg(r.body.message || "登录失败");
-    setBusy(false);
-  }
-  async function sendMfa() {
-    setBusy(true); const r = await api("mfa", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ state: mfa, code }) });
-    if (r.body.ok) { setMfa(null); setMsg("已登录"); await refresh(); } else setMsg(r.body.message || "验证失败"); setBusy(false);
-  }
-  async function sync() {
-    setBusy(true); setMsg("同步中…");
-    try {
+let running = false;
+export async function runGarminSync(setMsg: (s: string) => void, whoIn?: string): Promise<"ok" | "auth" | "fail" | "busy"> {
+  if (running) return "busy"; running = true;
+  try {
       const acts: DeviceActivity[] = []; const health: DeviceHealthRow[] = [];
       const a = await api("g/activitylist-service/activities/search/activities?start=0&limit=200");
-      if (a.status === 401) { setMsg("登录过期，请重新登录"); await refresh(); return; }
-      if (!Array.isArray(a.body)) { setMsg(`活动列表获取失败：${a.body?.message || "HTTP " + a.status}`); return; }
+      if (a.status === 401) { setMsg("登录过期，请重新登录"); return "auth"; }
+      if (!Array.isArray(a.body)) { setMsg(`活动列表获取失败：${a.body?.message || "HTTP " + a.status}`); return "fail"; }
       setMsg(`已取到 ${a.body.length} 条活动，正在取健康数据…`);
       saveGarminActivities(a.body);
       for (const o of Array.isArray(a.body) ? a.body : []) {
@@ -51,7 +29,7 @@ export function GarminSync() {
         const dur = typeof o.duration === "number" ? Math.round(o.duration) : null; const dist = typeof o.distance === "number" && o.distance > 0 ? Math.round(o.distance) : null;
         acts.push({ key: activityKey(startIso, dist, dur), source: "佳明账号同步", sport: sp, sportLabel: label, startIso, durationSec: dur, distanceM: dist, avgHr: o.averageHR ? Math.round(o.averageHR) : null, maxHr: o.maxHR ? Math.round(o.maxHR) : null, calories: o.calories ? Math.round(o.calories) : null, avgCadence: o.averageRunningCadenceInStepsPerMinute ? Math.round(o.averageRunningCadenceInStepsPerMinute) : null, avgPower: o.avgPower ?? null, verticalOscMm: o.avgVerticalOscillation ? Math.round(o.avgVerticalOscillation * 10) : null, groundContactMs: o.avgGroundContactTime ? Math.round(o.avgGroundContactTime) : null, sets: [] });
       }
-      const who = st?.profile?.displayName;
+      const who = whoIn ?? (await api("status")).body?.profile?.displayName;
       let fails = 0;
       for (let i = 0; i < 14 && who; i++) {
         const d = day(i); const src = "佳明账号同步"; setMsg(`已取到 ${acts.length} 条活动 · 健康数据 ${i + 1}/14 天…`);
@@ -71,11 +49,60 @@ export function GarminSync() {
       const r = saveDeviceRows(health, acts);
       localStorage.setItem("fk-garmin-last-sync", new Date().toISOString());
       setMsg(`同步完成 新增 ${r.saved} 条`);
-    } catch (e) { setMsg("同步失败：" + String((e as Error)?.message || e)); } finally { setBusy(false); }
+      return "ok";
+  } catch (e) { setMsg("同步失败：" + String((e as Error)?.message || e)); return "fail"; } finally { running = false; }
+}
+const AUTO_MS = 5 * 60e3;
+let lastTry = 0;
+/** 每次打开/回到前台（距上次 >5 分钟）+ 开着时每 2 小时：已登录、在线才静默同步；失败后 30 分钟内不重试。 */
+export async function maybeAutoGarminSync(): Promise<void> {
+  if (!navigator.onLine || running) return;
+  const last = Date.parse(localStorage.getItem("fk-garmin-last-sync") || "") || 0;
+  const failAt = Date.parse(localStorage.getItem("fk-garmin-auto-fail") || "") || 0;
+  if (Date.now() - last < AUTO_MS || Date.now() - failAt < 30 * 60e3 || Date.now() - lastTry < 60e3) return;
+  lastTry = Date.now();
+  const st = await api("status", undefined, 10000);
+  if (!st.body?.loggedIn) return;
+  const r = await runGarminSync(() => {}, st.body?.profile?.displayName);
+  if (r === "ok") localStorage.removeItem("fk-garmin-auto-fail"); else if (r !== "busy") localStorage.setItem("fk-garmin-auto-fail", new Date().toISOString());
+  window.dispatchEvent(new Event("fk-garmin-synced"));
+}
+
+export function GarminSync() {
+  const [st, setSt] = useState<{ loggedIn: boolean; profile?: { displayName?: string; fullName?: string } | null } | null>(null);
+  const [form, setForm] = useState({ region: "cn", username: "", password: "" });
+  const [mfa, setMfa] = useState<string | null>(null); const [code, setCode] = useState("");
+  const [msg, setMsg] = useState(""); const [busy, setBusy] = useState(false);
+  const file = useRef<HTMLInputElement>(null);
+  const [snaps, setSnaps] = useState<Snapshot[]>([]);
+  const [lastSync, setLastSync] = useState("");
+  useEffect(() => { const f = () => { const t = localStorage.getItem("fk-garmin-last-sync"); setLastSync(t ? new Date(t).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""); }; f(); window.addEventListener("fk-garmin-synced", f); return () => window.removeEventListener("fk-garmin-synced", f); }, [msg]);
+  const [remind, setRemind] = useState(false);
+  useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); const last = localStorage.getItem("fk-last-export"); setRemind(needsBackupReminder() || !last || Date.now() - Date.parse(last) > 14 * 86400e3); }, []);
+  const refresh = () => api("status").then((r) => setSt(r.body)).catch(() => setSt({ loggedIn: false }));
+  useEffect(() => { void refresh(); }, []);
+  async function login() {
+    setBusy(true); setMsg("");
+    const r = await api("login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(form) });
+    setForm((f) => ({ ...f, password: "" }));
+    if (r.body.mfa) { setMfa(r.body.state); setMsg("佳明发了验证码，请输入"); }
+    else if (r.body.ok) { setMsg("已登录"); await refresh(); } else setMsg(r.body.message || "登录失败");
+    setBusy(false);
+  }
+  async function sendMfa() {
+    setBusy(true); const r = await api("mfa", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ state: mfa, code }) });
+    if (r.body.ok) { setMfa(null); setMsg("已登录"); await refresh(); } else setMsg(r.body.message || "验证失败"); setBusy(false);
+  }
+  async function sync() {
+    setBusy(true); setMsg("同步中…");
+    const r = await runGarminSync(setMsg, st?.profile?.displayName);
+    if (r === "auth") await refresh(); if (r === "busy") setMsg("正在后台同步…");
+    setBusy(false);
   }
   const input = "min-h-11 w-full rounded-card border border-line bg-surface px-3";
   return <section className="home-card mx-3 my-3 space-y-2 p-4 text-sm" id="garmin-sync">
     <h2 className="font-bold">佳明账号同步</h2>
+    <p className="keep text-xs text-muted">自动同步：打开时 + 每 2 小时{lastSync && !st?.loggedIn ? ` · 上次同步 ${lastSync}` : ""}</p>
     {st?.loggedIn ? <>
       <p className="text-muted">已登录 {st.profile?.fullName || st.profile?.displayName || ""} · 上次同步 {localStorage.getItem("fk-garmin-last-sync")?.slice(0, 16).replace("T", " ") ?? "无"}</p>
       <div className="flex gap-2"><button type="button" disabled={busy} className="min-h-11 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={sync}>同步最近活动和健康数据</button><button type="button" className="min-h-11 rounded-card border border-line px-3" onClick={async () => { await api("logout"); await refresh(); }}>退出</button></div>

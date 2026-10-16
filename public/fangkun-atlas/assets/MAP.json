@@ -1,0 +1,99 @@
+{
+  "strength": {
+    "back-squat": {
+      "male": "assets/strength/back-squat-male.webp",
+      "female": "assets/strength/back-squat-female.webp"
+    },
+    "bss": {
+      "male": "assets/strength/bss-male.webp",
+      "female": "assets/strength/bss-female.webp"
+    },
+    "rdl": {
+      "male": "assets/strength/rdl-male.webp",
+      "female": "assets/strength/rdl-female.webp"
+    },
+    "hip-thrust": {
+      "male": "assets/strength/hip-thrust-male.webp",
+      "female": "assets/strength/hip-thrust-female.webp"
+    },
+    "goblet": {
+      "male": "assets/strength/goblet-male.webp",
+      "female": "assets/strength/goblet-female.webp"
+    },
+    "step-up": {
+      "male": "assets/strength/step-up-male.webp",
+      "female": "assets/strength/step-up-female.webp"
+    },
+    "kb-swing": {
+      "male": "assets/strength/kb-swing-male.webp",
+      "female": "assets/strength/kb-swing-female.webp"
+    },
+    "bb-dl": {
+      "male": "assets/strength/bb-dl-male.webp"
+    },
+    "calf": {
+      "male": "assets/strength/calf-male.webp"
+    },
+    "bb-ohp": {
+      "male": "assets/strength/bb-ohp-male.webp"
+    },
+    "bb-bench": {
+      "male": "assets/strength/bb-bench-male.webp"
+    },
+    "pullup": {
+      "male": "assets/strength/pullup-male.webp"
+    },
+    "bb-row": {
+      "male": "assets/strength/bb-row-male.webp"
+    },
+    "plank": {
+      "male": "assets/strength/plank-male.webp"
+    },
+    "db-lunge": {
+      "male": "assets/strength/db-lunge-male.webp",
+      "female": "assets/strength/db-lunge-female.webp"
+    },
+    "db-rdl": {
+      "male": "assets/strength/db-rdl-male.webp",
+      "female": "assets/strength/db-rdl-female.webp"
+    }
+  },
+  "running": {
+    "a-march": {
+      "male": "assets/running/a-march-male.webp"
+    },
+    "a-skip": {
+      "male": "assets/running/a-skip-male.webp"
+    },
+    "quick-steps": {
+      "male": "assets/running/quick-steps-male.webp"
+    },
+    "heel-recovery": {
+      "male": "assets/running/heel-recovery-male.webp"
+    },
+    "straight-leg": {
+      "male": "assets/running/straight-leg-male.webp"
+    },
+    "bounding": {
+      "male": "assets/running/bounding-male.webp"
+    },
+    "single-hop": {
+      "male": "assets/running/single-hop-male.webp"
+    },
+    "quick-switch": {
+      "male": "assets/running/quick-switch-male.webp"
+    },
+    "start-drive": {
+      "male": "assets/running/start-drive-male.webp"
+    },
+    "acceleration": {
+      "male": "assets/running/acceleration-male.webp"
+    },
+    "curve": {
+      "male": "assets/running/curve-male.webp"
+    },
+    "max-speed": {
+      "male": "assets/running/max-speed-male.webp"
+    }
+  }
+}

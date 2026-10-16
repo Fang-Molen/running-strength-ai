@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Utensils, UserRound, Activity, Target, ArrowRightLeft, PieChart, TrendingDown, HeartPulse, Lightbulb, Plus, Camera, X, Sun, Moon, Coffee, ChevronUp, ChevronDown, Droplet, Beef, Flame, Leaf } from "lucide-react";
-import { loadProfile } from "@/lib/strength/profile";
-import { loadEntries, todayEntries, addEntry, MEALS, type Meal } from "@/lib/nutrition/log";
+import { loadProfile, saveProfile } from "@/lib/strength/profile";
+import { loadEntries, saveEntries, todayEntries, addEntry, aggregate, nutrientOf, updateEntry, PENDING_LABEL, MEALS, type Meal, type FoodEntry, type NutrientKey } from "@/lib/nutrition/log";
+import { loadCn, loadUsda, search as foodSearch, scale, defaultAmount, needsCheck, sourceLabel, type FoodRow } from "@/lib/nutrition/food-db";
 import { savePhoto, shrink } from "@/lib/nutrition/food-photo";
 import { loadChecks, removeCheck, upsertCheck, todayDate, type BodyCheck } from "@/lib/nutrition/body";
 import { loadVitals } from "@/lib/nutrition/vitals";
@@ -25,11 +26,18 @@ export function HomeDashboard(props: { onFood: () => void; onBody: () => void; o
   return ready ? <HomeDashboardInner {...props} /> : null;
 }
 function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: () => void; onBody: () => void; onAdvice?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
-  const profile = useMemo(() => loadProfile(), []);
+  const [profile, setProfile] = useState(() => loadProfile());
+  const [goalBf, setGoalBf] = useState<number | null>(() => { const v = Number(localStorage.getItem("fk-goal-bf-v1")); return v > 0 ? v : null; });
+  const [draftKg, setDraftKg] = useState<number | null>(null);
+  const [draftBf, setDraftBf] = useState<number | null>(null);
   const [entries, setEntries] = useState(() => todayEntries(loadEntries()));
   const [logMeal, setLogMeal] = useState<Meal | null>(null);
+  const [mealList, setMealList] = useState<Meal | null>(null);
+  useEffect(() => { if (localStorage.getItem("fk-food-migrate-v3")) return; const all = loadEntries(); const next = all.map((e) => (e.kcal === 0 && e.label !== "手填" && !(e.foodId && e.label && !e.label.includes("待补")) ? { ...e, foodId: undefined, label: PENDING_LABEL } : e)); if (saveEntries(next)) { localStorage.setItem("fk-food-migrate-v3", "1"); setEntries(todayEntries(next)); } }, []);
+  useEffect(() => { if (localStorage.getItem("fk-food-migrate-v2")) return; void loadCn().then(() => { const all = loadEntries(); let n = 0; const next = all.map((e) => { if (e.foodId || (e.kcal && e.label !== "自动匹配·待核")) return e; const h = foodSearch(e.name, 1)[0]; if (h && (h.n === e.name || h.a.includes(e.name) || e.name.includes(h.n))) { const amt = defaultAmount(h); const m = scale(h, amt); if (m.kcal != null) { n++; return { ...e, foodId: h.i, amount: amt, unit: h.b === "g" ? "g" : "份", grams: h.b === "g" ? amt : 0, kcal: m.kcal, protein: m.protein ?? undefined, carb: m.carb, fat: m.fat, fiber: m.fiber, label: `自动匹配·${sourceLabel(h)}` }; } } return e.kcal ? e : { ...e, label: "未估算" }; }); if (saveEntries(next)) { localStorage.setItem("fk-food-migrate-v2", String(n)); setEntries(todayEntries(next)); } }).catch(() => {}); }, []);
   const [checks, setChecks] = useState(() => [...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)));
-  const [bodyOpen, setBodyOpen] = useState(false);
+  const [bodyOpen, setBodyOpenRaw] = useState<false | "figure" | "data">(false);
+  const setBodyOpen = (v: boolean | "figure" | "data") => setBodyOpenRaw(v === true ? "figure" : v);
   const [editDate, setEditDate] = useState<string | null>(null);
   const [range, setRange] = useState<number>(30);
   const vitals = useMemo(() => loadVitals().records, []);
@@ -41,8 +49,11 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
   const fat = n(last?.fat) ?? n(profile.bodyFat);
   const target = n(profile.targetKg);
   const sex = profile.sex === "female" ? "female" : "male";
-  const kcal = entries.reduce((s, e) => s + (e.kcal || 0), 0);
-  const protein = entries.reduce((s, e) => s + (e.protein || 0), 0);
+  const agg = aggregate(entries);
+  const kcal = agg.kcal.sum;
+  const protein = agg.protein.sum;
+  const sumK = (k: "carb" | "fat" | "fiber") => { const xs = entries.map((e) => e[k]).filter((v): v is number => typeof v === "number"); return xs.length ? xs.reduce((a, b) => a + b, 0) : null; };
+  const carbSum = sumK("carb"), fatSum = sumK("fat"), fiberSum = sumK("fiber");
   const meals = MEALS.map((m) => ({ m, done: entries.some((e) => e.meal === m) }));
   const month = checks.filter((c) => c.date >= new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10));
   const delta = month.length >= 2 ? month[month.length - 1].weight - month[0].weight : null;
@@ -52,7 +63,10 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
   const progress = weight && target && start && start !== target ? Math.max(0, Math.min(1, (start - weight) / (start - target))) : null;
   const yaw = view === "side" ? Math.PI / 2 : view === "back" ? Math.PI : 0;
   const me = weight && height ? { heightCm: height, massKg: weight, bodyFatPct: fat ?? (sex === "male" ? 18 : 27), frame: 0, sex } : null;
-  const goalShape = me && target ? { ...me, massKg: target } : null;
+  const gKg = draftKg ?? target, gBf = draftBf ?? goalBf;
+  const goalShape = me && gKg ? { ...me, massKg: gKg, bodyFatPct: gBf ?? me.bodyFatPct } : null;
+  const setGoal = () => { if (draftKg != null) { const np = { ...profile, targetKg: String(draftKg) }; saveProfile(np); setProfile(np); } if (draftBf != null) { localStorage.setItem("fk-goal-bf-v1", String(draftBf)); setGoalBf(draftBf); } setDraftKg(null); setDraftBf(null); };
+  const dirty = draftKg != null || draftBf != null;
   const pct = plan && kcal ? Math.min(1, kcal / plan.kcal) : 0;
 
   void onBody; const D = only !== "body", B = only !== "diet";
@@ -64,7 +78,8 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
   const series = checks.filter((c) => c.date >= new Date(Date.now() - range * 864e5).toISOString().slice(0, 10)).map((c) => ({ d: c.date, v: trend === "weight" ? c.weight : trend === "fat" ? c.fat : c.muscle })).filter((x): x is { d: string; v: number } => typeof x.v === "number" && x.v > 0);
   const shown = shape === "goal" && goalShape ? goalShape : me;
   const R = 2 * Math.PI * 42;
-  const bar = (label: string, got: number | null, goal: number | undefined, color: string) => <div key={label} className="text-xs"><div className="flex justify-between"><span>{label}</span><span className="text-muted">{got != null ? `${Math.round(got)}` : "未记录"}{goal ? ` / ${goal} g` : ""}{got != null && goal ? `  ${Math.round(got / goal * 100)}%` : ""}</span></div><div className="fk-bar mt-0.5"><i style={{ width: `${got != null && goal ? Math.min(100, got / goal * 100) : 0}%`, background: color }} /></div></div>;
+  const pend = (k: NutrientKey) => (agg[k].pending ? ` +${agg[k].pending}项待补充` : "");
+  const bar = (label: string, k: NutrientKey, goal: number | undefined, color: string) => { const a = agg[k]; const got = a.known ? a.sum : null; return <div key={label} className="text-xs"><div className="flex justify-between"><span>{label}</span><span className="text-muted">{got != null ? `${Math.round(got)}` : entries.length ? "待补充" : "未记录"}{goal ? ` / ${goal} g` : ""}{got != null && goal ? `  ${Math.round(got / goal * 100)}%` : ""}<span className="text-amber-400">{entries.length ? pend(k) : ""}</span></span></div><div className="fk-bar mt-0.5"><i style={{ width: `${got != null && goal ? Math.min(100, got / goal * 100) : 0}%`, background: color }} /></div></div>; };
   const tile = (Icon: typeof Sun, label: string, value: string | null, sub: string | undefined, k: "SLEEP" | "RHR" | "HRV" | "water") => <button type="button" onClick={() => setSheet(k)} className="rounded-xl border border-line bg-surface-2 p-2 text-left"><p className="flex items-center gap-1 whitespace-nowrap text-xs"><Icon className="size-3.5 shrink-0 text-accent" />{label}</p><p className="mt-1 text-base font-bold">{value ?? "—"}</p><p className="keep text-[11px] text-muted">{value ? sub ?? "" : "暂无数据"}</p></button>;
   const tip = (Icon: typeof Sun, k: string, t: string, id: "protein" | "carb" | "fat" | "fiber") => <button key={k} type="button" onClick={() => setSheet(id)} className="flex w-full items-start gap-2 py-1 text-left text-xs"><Icon className="mt-0.5 size-4 shrink-0 text-accent" /><span className="w-16 shrink-0 whitespace-nowrap font-bold">{k}</span><span className="text-muted">{t}</span></button>;
   return <div className="space-y-3">
@@ -73,13 +88,14 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       <div className="flex items-center gap-2"><Utensils className="size-6 text-accent" /><div className="min-w-0 flex-1"><b>今日饮食记录</b><p className="keep text-xs text-muted">已记录 {meals.filter((x) => x.done).length}/4 餐 · {Math.round(kcal)}{plan ? ` / ${plan.kcal} kcal (${Math.round(pct * 100)}%)` : " kcal"}</p></div>
         <button type="button" className="fk-orange-btn flex min-h-10 items-center gap-1 rounded-xl px-3 text-sm font-bold" onClick={() => { const h = new Date().getHours(); setLogMeal(h < 10 ? "早餐" : h < 15 ? "午餐" : h < 21 ? "晚餐" : "加餐"); }}><Plus className="size-4" />记录饮食</button>
         <button type="button" aria-expanded={mealsOpen} aria-label="展开收起" className="min-h-10 px-1" onClick={() => setMealsOpen(!mealsOpen)}>{mealsOpen ? <ChevronUp className="size-5" /> : <ChevronDown className="size-5" />}</button></div>
-      {mealsOpen ? <div className="mt-2 grid grid-cols-4 gap-1.5">{meals.map(({ m, done }) => { const I = MEAL_ICON[m]; return <button key={m} type="button" onClick={() => setLogMeal(m)} className="flex items-center gap-1 rounded-xl border border-line bg-surface-2 p-1.5 text-left"><I className="size-4 shrink-0 text-accent" /><span className="text-xs leading-tight">{m}<br /><span className={done ? "text-emerald-400" : "text-muted"}>{done ? "已记录" : "未记录"}</span></span></button>; })}</div> : null}
+      {mealsOpen ? <div className="mt-2 grid grid-cols-4 gap-1.5">{meals.map(({ m, done }) => { const I = MEAL_ICON[m]; return <button key={m} type="button" onClick={() => (done ? setMealList(m) : setLogMeal(m))} className="flex items-center gap-1 rounded-xl border border-line bg-surface-2 p-1.5 text-left"><I className="size-4 shrink-0 text-accent" /><span className="text-xs leading-tight">{m}<br /><span className={done ? "text-emerald-400" : "text-muted"}>{done ? "已记录" : "未记录"}</span></span></button>; })}</div> : null}
     </section>
     <div className="grid grid-cols-1 gap-3">
       <section className="fk-dash-card p-2">
         <button type="button" onClick={() => setSheet("macro")} className="fk-dash-title text-sm"><PieChart className="size-4" />今日营养摄入 ›</button>
         <svg viewBox="0 0 100 100" className="mx-auto mt-1 size-28"><circle cx="50" cy="50" r="42" fill="none" stroke="#2a2b30" strokeWidth="9" /><circle cx="50" cy="50" r="42" fill="none" stroke="#ff6a1a" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${R * pct} ${R}`} transform="rotate(-90 50 50)" /><text x="50" y="47" textAnchor="middle" fill="currentColor" fontSize="15" fontWeight="700">{Math.round(kcal)}</text><text x="50" y="60" textAnchor="middle" fill="#9a9ca3" fontSize="7">{plan ? `/ ${plan.kcal} kcal` : "kcal"}</text><text x="50" y="71" textAnchor="middle" fill="#ffb84a" fontSize="8">{plan ? `${Math.round(pct * 100)}%` : ""}</text></svg>
-        <div className="space-y-1">{bar("蛋白质", entries.length ? protein : null, plan?.protein, "#ff6a1a")}{bar("碳水", null, plan?.carb, "#4aa8ff")}{bar("脂肪", null, plan?.fat, "#ffb020")}{bar("膳食纤维", null, 25, "#3ccf6a")}</div>
+        {agg.kcal.pending ? <p className="keep -mt-1 text-center text-[11px] text-amber-400">已知合计 · {agg.kcal.pending} 项待补充</p> : null}
+        <div className="space-y-1">{bar("蛋白质", "protein", plan?.protein, "#ff6a1a")}{bar("碳水", "carb", plan?.carb, "#4aa8ff")}{bar("脂肪", "fat", plan?.fat, "#ffb020")}{bar("膳食纤维", "fiber", 25, "#3ccf6a")}</div>
       </section>
       <section className="fk-dash-card p-2">
         <button type="button" onClick={onAdvice ?? onFood} className="fk-dash-title text-sm"><Lightbulb className="size-4" />营养建议 ›</button>
@@ -94,10 +110,10 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       <div className="grid grid-cols-2 gap-3">
       <button type="button" onClick={() => setBodyOpen(true)} className="fk-dash-card row-span-3 flex flex-col p-2 text-left">
         <span className="fk-dash-title text-sm"><UserRound className="size-4" />我的形象 ›</span>
-        <span className="mt-1 block h-[260px] w-full">{me ? <span className="pointer-events-none block h-full"><Model profile={me} yaw={0} frameHeight={height! / 100} onYaw={() => {}} /></span> : <Empty text="填身高和体重后显示" />}</span>
-        <span className="keep mt-1 text-center text-xs text-muted">正面 · 点开看侧面/背面/体成分</span>
+        <span className="mt-1 block h-[240px] w-full overflow-hidden">{me ? <span className="pointer-events-none block h-full"><Model profile={me} yaw={0} frameHeight={height! / 100} onYaw={() => {}} /></span> : <Empty text="填身高和体重后显示" />}</span>
+        <span className="keep mt-auto pt-1 text-center text-[10px] text-muted">点开看详情</span>
       </button>
-      <section className="fk-dash-card cursor-pointer p-2" onClick={() => setBodyOpen(true)}>
+      <section className="fk-dash-card cursor-pointer p-2" onClick={() => setBodyOpen("data")}>
         <div className="fk-dash-title text-sm"><Activity className="size-4" />身体数据 ›</div>
         {weight ? <div className="mt-1 grid grid-cols-2 gap-1 text-xs"><div><span className="text-muted">体重</span><br /><b>{f1(weight)} kg</b></div><div><span className="text-muted">体脂率</span><br /><b>{fat ? `${f1(fat)}%` : "—"}</b></div><div><span className="text-muted">BMI</span><br /><b>{height ? f1(weight / (height / 100) ** 2) : "—"}</b></div><div><span className="text-muted">肌肉量</span><br /><b>{last?.muscle ? `${f1(last.muscle)}` : "—"}</b></div></div> : <Empty text="还没有体重记录" />}
       </section>
@@ -114,29 +130,37 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       <HealthGrid vitals={vitals} />
       {slot}
       <RecoveryTrend vitals={vitals} />
-      <section className="fk-dash-card p-2">
-        <button type="button" onClick={() => setSheet("trend")} className="fk-dash-title text-sm"><TrendingDown className="size-4" />体重变化趋势 ›</button>
-        <div className="mt-1 flex items-center gap-1 text-[11px]"><span className="flex rounded border border-line">{([[7, "周"], [30, "月"], [182, "半年"], [365, "年"]] as const).map(([d, l]) => <button key={l} type="button" aria-pressed={range === d} onClick={() => setRange(d)} className={"min-h-7 px-1.5 " + (range === d ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span><span className="ml-auto flex rounded border border-line">{([["weight", "体重"], ["fat", "体脂率"], ["muscle", "肌肉量"]] as const).map(([k, l]) => <button key={k} type="button" aria-pressed={trend === k} onClick={() => setTrend(k)} className={"min-h-7 px-1.5 " + (trend === k ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span></div>
-        {series.length >= 2 ? <TrendChart key={`${trend}-${range}`} points={series} /> : <Empty text="记录 2 次以上后显示" />}
-        <div className="flex justify-between text-xs"><span><b>{weight ? `${f1(weight)} kg` : "—"}</b></span><span className={delta != null && delta < 0 ? "text-emerald-400" : "text-muted"}>{delta != null ? `${delta > 0 ? "+" : ""}${f1(delta)} kg/30天` : ""}</span><span className="text-muted">{target ? `目标 ${f1(target)}` : ""}</span></div>
-      </section>
     </div>
-    {bodyOpen ? <BodyDetail editDate={editDate} onClose={() => { setBodyOpen(false); setEditDate(null); }} onSaved={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))} checks={checks}>      <section className="fk-dash-card flex flex-col p-2">
-        <div className="fk-dash-title text-sm"><UserRound className="size-4" />我的身体形象</div>
-        <div className="relative mt-1 min-h-[420px] flex-1" onClick={(e) => { if ((e.target as HTMLElement).closest("button")) return; if (goalShape) setShape(shape === "cmp" ? "now" : "cmp"); }}>
-          <div className="absolute left-0 top-0 z-10 flex flex-col gap-1">{(["front", "side", "back"] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={"flex size-11 flex-col items-center justify-center rounded-lg border text-[10px] " + (view === v ? "border-accent text-accent" : "border-line text-muted")}><UserRound className="size-4" />{v === "front" ? "正面" : v === "side" ? "侧面" : "背面"}</button>)}</div>
-          {shown ? (shape === "cmp" && goalShape ? <div className="grid h-full grid-cols-2 pl-12">{([[me!, "当前"], [goalShape, "目标"]] as const).map(([p, l]) => <div key={l} className="h-full [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: buildAvatarSvg(p, { view, frameHeight: height! / 100, label: l }) }} />)}</div> : <div className="h-[420px] pl-10"><Model profile={shown} yaw={yaw} frameHeight={height! / 100} onYaw={() => {}} /></div>) : <div className="pl-12"><Empty text="填身高和体重后显示" /></div>}
+    {bodyOpen ? <BodyDetail mode={bodyOpen} editDate={editDate} onClose={() => { setBodyOpen(false); setEditDate(null); }} onSaved={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))} checks={checks} onTrend={() => setBodyOpen("data")}>
+      <section className="fk-dash-card p-2">
+        <div className="flex gap-2">
+          <div className="flex flex-col gap-1">{(["front", "side", "back"] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={"flex size-11 flex-col items-center justify-center rounded-lg border text-[10px] " + (view === v ? "border-accent text-accent" : "border-line text-muted")}><UserRound className="size-4" />{v === "front" ? "正面" : v === "side" ? "侧面" : "背面"}</button>)}</div>
+          {me ? <div className="grid flex-1 grid-cols-[1fr_auto_1fr] items-end">
+            <div className="text-center"><div className="h-[340px] pt-2"><Model profile={me} yaw={yaw} frameHeight={height! / 100 * 1.08} onYaw={() => {}} /></div><p className="keep text-xs text-muted">当前</p><b>{f1(me.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {fat ? `${f1(fat)}%` : "—"}</p></div>
+            <span className="self-center pb-16 text-2xl font-black text-accent">›</span>
+            <div className="text-center">{goalShape ? <><div className="h-[340px] pt-2 opacity-45"><Model profile={goalShape} yaw={yaw} frameHeight={height! / 100 * 1.08} onYaw={() => {}} /></div><p className="keep text-xs text-muted">目标</p><b>{f1(goalShape.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {gBf ? `${f1(gBf)}%` : "—"}</p></> : <div className="flex h-[340px] items-center"><Empty text="在下方选择目标体重" /></div>}</div>
+          </div> : <div className="flex-1"><Empty text="填身高和体重后显示" /></div>}
         </div>
-        <div className="mt-1 grid grid-cols-3 gap-1">{([["now", "当前"], ["goal", "目标"], ["cmp", "对比"]] as const).map(([k, l]) => <button key={k} type="button" aria-pressed={shape === k} disabled={k !== "now" && !goalShape} onClick={() => setShape(k)} className={"min-h-8 rounded-lg border text-xs disabled:opacity-40 " + (shape === k ? "border-accent text-accent" : "border-line")}>{l}</button>)}</div>
-        
-      </section></BodyDetail> : null}
+        {me ? <div className="mt-2 rounded-xl border border-line p-2 text-xs">
+          <div className="flex justify-between"><span>目标体重</span><b className="text-accent">{gKg ? `${f1(gKg)} kg` : "—"}</b></div>
+          <input aria-label="目标体重" type="range" min={54} max={66} step={0.5} value={gKg ?? 60} onChange={(e) => setDraftKg(Number(e.target.value))} className="w-full accent-[#ff6a1a]" />
+          <div className="flex gap-1">{[58, 60, 62].map((v) => <button key={v} type="button" aria-pressed={gKg === v} onClick={() => setDraftKg(v)} className={"min-h-8 flex-1 rounded-lg border " + (gKg === v ? "border-accent text-accent" : "border-line text-muted")}>{v} kg</button>)}</div>
+          <div className="mt-2 flex justify-between"><span>目标体脂率</span><b className="text-accent">{gBf ? `${f1(gBf)}%` : "—"}</b></div>
+          <input aria-label="目标体脂率" type="range" min={6} max={20} step={0.5} value={gBf ?? 12} onChange={(e) => setDraftBf(Number(e.target.value))} className="w-full accent-[#ff6a1a]" />
+          <div className="flex gap-1">{[8, 10, 12].map((v) => <button key={v} type="button" aria-pressed={gBf === v} onClick={() => setDraftBf(v)} className={"min-h-8 flex-1 rounded-lg border " + (gBf === v ? "border-accent text-accent" : "border-line text-muted")}>{v}%</button>)}</div>
+          {gKg && weight ? <p className="keep mt-1 text-muted">与当前相差 {f1(gKg - weight)} kg{gBf && fat ? ` · 体脂 ${f1(gBf - fat)}%` : ""}</p> : null}
+          <button type="button" disabled={!dirty} onClick={setGoal} className="fk-orange-btn mt-2 min-h-10 w-full rounded-lg font-bold disabled:opacity-40">设为目标</button>
+        </div> : null}
+        <div className="mt-2 grid grid-cols-4 gap-1 rounded-xl border border-line p-1.5 text-center"><div><p className="keep text-[10px] text-muted">身高</p><b className="text-sm">{height ? `${height}` : "—"}</b></div><div><p className="keep text-[10px] text-muted">肌肉量</p><b className="text-sm">{last?.muscle ? f1(last.muscle) : "—"}</b></div><div><p className="keep text-[10px] text-muted">BMI</p><b className="text-sm">{height && weight ? f1(weight / (height / 100) ** 2) : "—"}</b></div><div><p className="keep text-[10px] text-muted">基础代谢</p><b className="text-sm">{last?.bmr ?? plan?.bmr ?? "—"}</b></div></div>
+      </section>
+      </BodyDetail> : null}
     </> : null}
     {sheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="详情"><div className="sticky top-0 flex items-center justify-between border-b border-line bg-bg px-4 pb-2" style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }}><b>{TITLE[sheet]}</b><button type="button" className="min-h-11 px-3" onClick={() => setSheet(null)}>关闭</button></div><div className="space-y-2 p-4 text-sm">
       {sheet === "macro" ? <><table className="w-full text-left"><thead className="text-xs text-muted"><tr><th>营养素</th><th>已吃</th><th>目标</th></tr></thead><tbody>
-        <tr><td>热量</td><td>{Math.round(kcal)} kcal</td><td>{plan ? `${plan.kcal} kcal` : "—"}</td></tr><tr><td>蛋白质</td><td>{entries.length ? `${Math.round(protein)} g` : "未记录"}</td><td>{plan ? `${plan.protein} g` : "—"}</td></tr><tr><td>碳水</td><td>未记录</td><td>{plan ? `${plan.carb} g` : "—"}</td></tr><tr><td>脂肪</td><td>未记录</td><td>{plan ? `${plan.fat} g` : "—"}</td></tr><tr><td>膳食纤维</td><td>未记录</td><td>25 g</td></tr></tbody></table>
-        <b className="block pt-2">今天吃了</b>{entries.length ? entries.map((e) => <p key={e.id}>{e.meal} · {e.name} {e.grams} g · {Math.round(e.kcal)} kcal{e.protein ? ` · 蛋白 ${Math.round(e.protein)} g` : ""}</p>) : <Empty text="今天还没有记录" />}
+        <tr><td>热量</td><td>{agg.kcal.known ? `${Math.round(agg.kcal.sum)} kcal` : "待补充"}{agg.kcal.pending ? ` +${agg.kcal.pending}项待补充` : ""}</td><td>{plan ? `${plan.kcal} kcal` : "—"}</td></tr><tr><td>蛋白质</td><td>{agg.protein.known ? `${Math.round(agg.protein.sum)} g` : "待补充"}{agg.protein.pending ? ` +${agg.protein.pending}项待补充` : ""}</td><td>{plan ? `${plan.protein} g` : "—"}</td></tr><tr><td>碳水</td><td>{agg.carb.known ? `${Math.round(agg.carb.sum)} g` : "待补充"}{agg.carb.pending ? ` +${agg.carb.pending}项待补充` : ""}</td><td>{plan ? `${plan.carb} g` : "—"}</td></tr><tr><td>脂肪</td><td>{agg.fat.known ? `${Math.round(agg.fat.sum)} g` : "待补充"}{agg.fat.pending ? ` +${agg.fat.pending}项待补充` : ""}</td><td>{plan ? `${plan.fat} g` : "—"}</td></tr><tr><td>膳食纤维</td><td>{agg.fiber.known ? `${Math.round(agg.fiber.sum)} g` : "待补充"}{agg.fiber.pending ? ` +${agg.fiber.pending}项待补充` : ""}</td><td>25 g</td></tr></tbody></table>
+        <b className="block pt-2">今天吃了</b>{entries.length ? entries.map((e) => <p key={e.id}>{e.meal} · {e.name} {entryLine(e)}</p>) : <Empty text="今天还没有记录" />}
         <button type="button" className="fk-orange-btn mt-2 min-h-11 w-full rounded-xl font-bold" onClick={() => { setSheet(null); setLogMeal("加餐"); }}>记录饮食</button></> : null}
-      {sheet === "trend" ? <WeightSheet checks={checks} onAdd={() => { setSheet(null); setEditDate(null); setBodyOpen(true); }} onEdit={(d) => { setSheet(null); setEditDate(d); setBodyOpen(true); }} onChanged={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))} /> : null}
+      
       {sheet === "SLEEP" || sheet === "RHR" || sheet === "HRV" ? (() => { const rs = vitals.filter((v) => v.kind === sheet).sort((a, b) => b.observedOn.localeCompare(a.observedOn)).slice(0, 30); return rs.length ? rs.map((r) => <p key={r.id} className="flex justify-between border-b border-line py-1"><span>{r.observedOn}</span><span>{sheet === "SLEEP" ? `${f1(r.value)} h` : `${Math.round(r.value)} ${r.unit}`}</span></p>) : <Empty text="暂无数据，佳明同步或手动记录后显示" />; })() : null}
       {sheet === "water" ? <Empty text="饮水还没有记录入口（待接入）" /> : null}
       {sheet === "protein" ? <><p>{plan ? `每天约 ${plan.protein} g` : "填资料后计算每日目标"}；运动人群 1.4–2.0 g/kg/天，分 3–5 次吃，每次约 0.3 g/kg，练后 2 小时内吃一次。</p><p className="keep text-xs text-muted">依据：Jäger R, et al. ISSN Position Stand: protein and exercise. JISSN 2017;14:20；Thomas DT, et al. Nutrition and Athletic Performance (ACSM). MSSE 2016;48(3):543–568</p></> : null}
@@ -144,6 +168,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       {sheet === "fat" ? <><p>{plan ? `约 ${plan.fat} g/天` : "填资料后计算"}；脂肪约占总热量 20–35%，长期低于 20% 不建议。</p><p className="keep text-xs text-muted">依据：Thomas DT, et al. ACSM 2016, MSSE 48(3):543–568</p></> : null}
       {sheet === "fiber" ? <><p>成人每天 25 g 以上；练前 1–2 小时那餐少吃高纤维，避免胃肠不适。</p><p className="keep text-xs text-muted">依据：EFSA NDA Panel. Dietary Reference Values for carbohydrates and dietary fibre. EFSA Journal 2010;8(3):1462；ACSM 2016</p></> : null}
     </div></div> : null}
+    {mealList ? <MealList meal={mealList} entries={entries.filter((e) => e.meal === mealList)} onClose={() => setMealList(null)} onAdd={() => { setLogMeal(mealList); setMealList(null); }} onChanged={() => setEntries(todayEntries(loadEntries()))} /> : null}
     {logMeal ? <FoodSheet meal={logMeal} onMeal={setLogMeal} onClose={() => setLogMeal(null)} onSaved={() => { setEntries(todayEntries(loadEntries())); setLogMeal(null); }} /> : null}
   </div>;
 
@@ -151,11 +176,19 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
 
 function FoodSheet({ meal, onMeal, onClose, onSaved }: { meal: Meal; onMeal: (m: Meal) => void; onClose: () => void; onSaved: () => void }) {
   const [name, setName] = useState(""), [photo, setPhoto] = useState<File | null>(null), [err, setErr] = useState("");
+  const [sel, setSel] = useState<FoodRow | null>(null), [grams, setGrams] = useState(""), [mk, setMk] = useState(""), [mp, setMp] = useState("");
+  const [dbv, setDbv] = useState(0);
+  useEffect(() => { void loadCn().then(() => setDbv((v) => v + 1)); void loadUsda().then(() => setDbv((v) => v + 1)); }, []);
+  const hits = useMemo(() => (sel || name.trim().length < 1 ? [] : foodSearch(name, 8)), [name, sel, dbv]);
+  const g = Number(grams) || 0;
+  const est = sel && g > 0 ? scale(sel, g) : null;
   const save = async () => {
     if (!name.trim() && !photo) { setErr("写个名字或拍张照"); return; }
     let photoId: string | undefined;
     try { if (photo) { photoId = `ph-${Date.now()}`; await savePhoto(photoId, await shrink(photo)); } } catch { setErr("照片没存上，文字照常保存"); photoId = undefined; }
-    const r = addEntry({ meal, name: name.trim() || "照片记录", grams: 0, kcal: 0, photo: photoId });
+    const manual = Number(mk) > 0;
+    const known = est && est.kcal != null;
+    const r = addEntry(sel && est ? { meal, name: sel.n, grams: sel.b === "g" ? g : 0, amount: g, unit: sel.b === "g" ? "g" : "份", kcal: est.kcal ?? 0, protein: est.protein ?? undefined, carb: est.carb, fat: est.fat, fiber: est.fiber, foodId: known ? sel.i : undefined, label: known ? sourceLabel(sel) : PENDING_LABEL, photo: photoId } : { meal, name: name.trim() || "照片记录", grams: 0, kcal: manual ? Number(mk) : 0, protein: Number(mp) > 0 ? Number(mp) : undefined, label: manual ? "手填" : PENDING_LABEL, photo: photoId });
     if (!r) { setErr("保存失败，存储可能已满"); return; }
     onSaved();
   };
@@ -171,7 +204,11 @@ function FoodSheet({ meal, onMeal, onClose, onSaved }: { meal: Meal; onMeal: (m:
       <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line" />
       <div className="flex items-center justify-between"><b className="text-base">记录饮食</b><button type="button" aria-label="关闭" className="grid size-10 place-items-center" onClick={onClose}><X className="size-5" /></button></div>
       <div className="mt-2 grid grid-cols-4 gap-1.5">{MEALS.map((m) => <button key={m} type="button" aria-pressed={meal === m} onClick={() => onMeal(m)} className={"min-h-10 rounded-xl border text-sm " + (meal === m ? "border-accent bg-accent/15 font-bold text-accent" : "border-line")}>{m}</button>)}</div>
-      <input aria-label="吃了什么" placeholder="吃了什么，如：米饭一碗、鸡胸 150g" value={name} onChange={(e) => setName(e.target.value.slice(0, 60))} className="fk-cell mt-3 min-h-12 w-full text-base" />
+      <input aria-label="吃了什么" placeholder="吃了什么，如：汉堡、米饭一碗" value={name} onChange={(e) => { setName(e.target.value.slice(0, 60)); setSel(null); }} className="fk-cell mt-3 min-h-12 w-full text-base" />
+      {hits.length ? <ul className="mt-1 max-h-44 overflow-y-auto rounded-xl border border-line">{hits.map((h) => { const d = scale(h, defaultAmount(h)); return <li key={h.i}><button type="button" className="flex min-h-10 w-full items-center justify-between gap-2 px-3 text-left text-sm" onClick={() => { setSel(h); setName(h.n); setGrams(String(defaultAmount(h))); }}><span className="min-w-0 truncate">{h.n}{h.br ? <span className="text-xs text-muted"> · {h.br}</span> : null}</span><span className="shrink-0 text-xs text-muted">{h.b === "g" ? `${defaultAmount(h)}g` : h.s.u} · {d.kcal ?? "—"} kcal{needsCheck(h) ? " · 待核" : ""}</span></button></li>; })}</ul> : null}
+      {sel ? <div className="mt-2 rounded-xl bg-surface-2 p-2 text-sm"><div className="flex flex-wrap items-center gap-1.5"><input aria-label={sel.b === "g" ? "克数" : "份数"} inputMode="decimal" value={grams} onChange={(e) => setGrams(e.target.value.replace(/[^\d.]/g, "").slice(0, 5))} className="fk-cell w-20" /><span>{sel.b === "g" ? "g" : `份（${sel.s.u}）`}</span>{sel.b === "g" ? [...(sel.s.g ? [["1份", sel.s.g] as [string, number]] : []), ...sel.pt].slice(0, 4).map(([u, w]) => <button key={u + w} type="button" className="fk-chip" onClick={() => setGrams(String(Math.round(w)))}>{u} {Math.round(w)}g</button>) : [0.5, 1, 2].map((k) => <button key={k} type="button" className="fk-chip" onClick={() => setGrams(String(k))}>{k} 份</button>)}</div>
+        {est ? <p className="mt-1"><b>{est.kcal ?? "—"}</b> kcal · 蛋白 {est.protein ?? "—"} · 碳水 {est.carb ?? "—"} · 脂肪 {est.fat ?? "—"} g</p> : null}<p className="keep text-[10px] text-muted">{sourceLabel(sel)}{needsCheck(sel) ? "，数值待核" : ""}</p></div>
+      : name.trim() && !hits.length ? <div className="mt-2 flex items-center gap-1.5 text-sm"><span className="keep text-xs text-muted">库里没找到，可手填</span><input aria-label="热量" placeholder="kcal" inputMode="numeric" value={mk} onChange={(e) => setMk(e.target.value.replace(/\D/g, "").slice(0, 4))} className="fk-cell w-20" /><input aria-label="蛋白" placeholder="蛋白 g" inputMode="decimal" value={mp} onChange={(e) => setMp(e.target.value.replace(/[^\d.]/g, "").slice(0, 5))} className="fk-cell w-20" /></div> : null}
       {err ? <p className="keep mt-1 text-xs text-[var(--color-risk)]">{err}</p> : null}
       <div className="mt-3 flex gap-2">
         <label className="flex min-h-12 w-28 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-line text-sm"><Camera className="size-4" />{photo ? "已拍 ✓" : "拍照"}<input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} /></label>
@@ -186,11 +223,13 @@ const COMP: { key: keyof BodyCheck; label: string; unit: string }[] = [
   { key: "armMuscle", label: "双臂肌肉", unit: "kg" }, { key: "trunkMuscle", label: "躯干肌肉", unit: "kg" }, { key: "legMuscle", label: "双腿肌肉", unit: "kg" },
   { key: "visceral", label: "内脏脂肪", unit: "级" }, { key: "waterRate", label: "水分", unit: "%" }, { key: "boneMass", label: "骨量", unit: "kg" }, { key: "bmr", label: "基础代谢", unit: "kcal" },
 ];
-function BodyDetail({ children, checks, onClose, onSaved, editDate }: { children: React.ReactNode; checks: BodyCheck[]; onClose: () => void; onSaved: () => void; editDate?: string | null }) {
+function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mode }: { children: React.ReactNode; checks: BodyCheck[]; onClose: () => void; onSaved: () => void; editDate?: string | null; onTrend: () => void; mode: "figure" | "data" }) {
   const last = checks[checks.length - 1];
   const [form, setForm] = useState<Record<string, string>>(() => { const c = editDate ? checks.find((x) => x.date === editDate) : null; const f: Record<string, string> = { date: editDate ?? todayDate() }; if (c) for (const k of COMP) { const v = c[k.key]; if (v != null) f[k.key as string] = String(v); } return f; });
   const formRef = useRef<HTMLDetailsElement>(null);
+  const editAt = (d: string | null) => { const c = d ? checks.find((x) => x.date === d) : null; const f: Record<string, string> = { date: d ?? todayDate() }; if (c) for (const k of COMP) { const v = c[k.key]; if (v != null) f[k.key as string] = String(v); } setForm(f); if (formRef.current) { formRef.current.open = true; formRef.current.scrollIntoView({ block: "start", behavior: "smooth" }); } };
   useEffect(() => { if (editDate && formRef.current) { formRef.current.open = true; formRef.current.scrollIntoView({ block: "start" }); } }, [editDate]);
+  const h = Number(loadProfile().heightCm) || 0;
   const [msg, setMsg] = useState("");
   const save = () => {
     const w = Number(form.weight);
@@ -202,13 +241,13 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate }: { children
     setMsg("已保存"); setForm({ date: todayDate() }); onSaved();
   };
   return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="身体详情">
-    <div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>我的身体</b><button type="button" className="min-h-11 px-3" onClick={onClose}>关闭</button></div>
-    <div className="space-y-3 p-3">
-      {children}
-      <section className="fk-dash-card p-3">
-        <div className="fk-dash-title text-sm"><Activity className="size-4" />体成分{last ? <span className="keep ml-auto text-xs font-normal text-muted">{last.date}</span> : null}</div>
-        {last ? <div className="mt-2 grid grid-cols-3 gap-2 text-center">{COMP.map((c) => { const v = last[c.key] as number | undefined; return <div key={c.key as string} className="rounded-lg bg-surface-2 p-1.5"><b className="text-sm">{v ? f1(v) : "—"}</b><p className="keep text-[10px] text-muted">{c.label}{v ? ` ${c.unit}` : ""}</p></div>; })}</div> : <Empty text="还没有体脂秤记录" />}
+    <div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>{mode === "figure" ? "我的形象" : "身体数据"}</b><button type="button" className="min-h-11 px-3" onClick={onClose}>关闭</button></div>
+    <div className="space-y-3 px-3 pb-6 pt-2">
+      {mode === "figure" ? <>{children}<button type="button" className="min-h-11 w-full rounded-xl border border-line text-sm" onClick={onTrend}>身体数据与趋势 ›</button></> : <>
+      <section className="fk-dash-card p-3"><div className="fk-dash-title text-sm"><Activity className="size-4" />体成分{last ? <span className="keep ml-auto text-xs font-normal text-muted">{last.date}</span> : null}</div>
+        {last ? <div className="mt-2 grid grid-cols-3 gap-2 text-center">{COMP.map((c) => { const v = last[c.key] as number | undefined; return <div key={c.key as string} className="rounded-lg bg-surface-2 p-1.5"><b className="text-sm">{v ? f1(v) : "—"}</b><p className="keep text-[10px] text-muted">{c.label}{v ? ` ${c.unit}` : ""}</p></div>; })}<div className="rounded-lg bg-surface-2 p-1.5"><b className="text-sm">{h ? f1(last.weight / (h / 100) ** 2) : "—"}</b><p className="keep text-[10px] text-muted">BMI</p></div></div> : <Empty text="还没有身体数据" />}
       </section>
+      <section className="fk-dash-card space-y-2 p-3"><div className="fk-dash-title text-sm"><TrendingDown className="size-4" />趋势与历史</div><WeightSheet checks={checks} onAdd={() => editAt(null)} onEdit={(d) => editAt(d)} onChanged={onSaved} /></section>
       <details ref={formRef} className="fk-dash-card px-3"><summary className="min-h-11 cursor-pointer font-bold">手动记录体脂秤数据</summary>
         <div className="grid grid-cols-2 gap-2 pb-3">
           <label className="col-span-2 text-xs">日期<input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="fk-cell mt-0.5 w-full" /></label>
@@ -216,10 +255,7 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate }: { children
           <button type="button" className="fk-orange-btn col-span-2 min-h-11 rounded-xl font-bold" onClick={save}>保存</button>
           {msg ? <p className="keep col-span-2 text-xs" aria-live="polite">{msg}</p> : null}
         </div>
-      </details>
-      <section className="fk-dash-card p-3"><div className="fk-dash-title text-sm"><TrendingDown className="size-4" />历史</div>
-        {checks.length ? <div className="mt-1 text-xs">{[...checks].reverse().slice(0, 60).map((c) => <p key={c.id} className="flex justify-between border-b border-line py-1"><span>{c.date}</span><span>{f1(c.weight)} kg{c.fat ? ` · ${f1(c.fat)}%` : ""}{c.muscle ? ` · 肌 ${f1(c.muscle)}` : ""}{c.visceral ? ` · 内脏 ${c.visceral}` : ""}</span></p>)}</div> : <Empty text="暂无历史" />}
-      </section>
+      </details></>}
     </div>
   </div>;
 }
@@ -238,7 +274,7 @@ function RecoveryTrend({ vitals }: { vitals: ReturnType<typeof loadVitals>["reco
   return <section className="fk-dash-card p-2">
     <div className="fk-dash-title text-sm"><Activity className="size-4" />恢复趋势<span className="keep ml-auto text-[10px] font-normal text-muted">{meta[2]}</span></div>
     <div className="mt-1 flex items-center gap-1 text-[11px]"><span className="flex flex-wrap rounded border border-line">{REC.map(([id, l]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)} className={"min-h-7 px-1.5 " + (k === id ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span><span className="ml-auto flex rounded border border-line">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={"min-h-7 px-1.5 " + (days === d ? "bg-accent text-accent-fg" : "")}>{d}天</button>)}</span></div>
-    {pts.length >= 2 ? <TrendChart key={`${k}-${days}`} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /> : <Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "同步佳明 2 天以上后显示"} />}
+    {pts.length >= 2 ? <TrendChart key={`${k}-${days}`} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /> : <Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "同步佳明 2 天以上后显示"} />}
   </section>;
 }
 
@@ -285,14 +321,14 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
       <div className="flex items-center justify-between"><b>{om.label}</b><button type="button" className="min-h-10 px-2" onClick={() => setOpen(null)}>关闭</button></div>
       {om.subj ? <div className="mt-1 flex flex-wrap gap-1.5"><span className="keep self-center text-xs text-muted">今天</span>{SUBJ[om.id].map(([l, v]) => { const last = series[om.id]?.find((p) => p.d === today)?.v; return <button key={l} type="button" className="fk-chip" aria-pressed={last === v} onClick={() => rate(om.id, v)}>{l}</button>; })}</div> : null}
       <div className="mt-2 flex rounded border border-line text-xs">{[7, 30, 90, 365].map((d) => <button key={d} type="button" aria-pressed={hd === d} onClick={() => setHd(d)} className={"min-h-8 flex-1 " + (hd === d ? "bg-accent text-accent-fg" : "")}>{d === 365 ? "年" : `${d}天`}</button>)}</div>
-      {(() => { const since = new Date(Date.now() - hd * 864e5).toISOString().slice(0, 10); const ps = (series[om.id] ?? []).filter((p) => p.d >= since); return <>{ps.length >= 2 ? <TrendChart key={`${om.id}-${hd}`} points={ps} height={180} fmt={om.fmt} /> : <Empty text="这个时间段少于 2 天数据" />}<div className="mt-2 max-h-48 overflow-y-auto text-xs">{[...ps].reverse().map((p) => <p key={p.d} className="flex justify-between border-b border-line py-1"><span>{p.d}</span><b>{om.subj ? SUBJ[om.id].find(([, v]) => v === p.v)?.[0] ?? p.v : (om.fmt ?? ((v: number) => String(Math.round(v))))(p.v)}</b></p>)}</div></>; })()}
+      {(() => { const since = new Date(Date.now() - hd * 864e5).toISOString().slice(0, 10); const ps = (series[om.id] ?? []).filter((p) => p.d >= since); return <>{ps.length >= 2 ? <TrendChart key={`${om.id}-${hd}`} points={ps} height={180} fmt={om.fmt} unit={om.subj ? "分" : om.unit} /> : <Empty text="这个时间段少于 2 天数据" />}<div className="mt-2 max-h-48 overflow-y-auto text-xs">{[...ps].reverse().map((p) => <p key={p.d} className="flex justify-between border-b border-line py-1"><span>{p.d}</span><b>{om.subj ? SUBJ[om.id].find(([, v]) => v === p.v)?.[0] ?? p.v : (om.fmt ?? ((v: number) => String(Math.round(v))))(p.v)}</b></p>)}</div></>; })()}
     </div></div> : null}
   </section>;
 }
 
-const WM: { key: keyof BodyCheck; label: string; color: string }[] = [
-  { key: "weight", label: "体重", color: "#ff6a1a" }, { key: "fat", label: "体脂率", color: "#4aa8ff" }, { key: "muscle", label: "肌肉量", color: "#3ccf6a" },
-  { key: "visceral", label: "内脏脂肪", color: "#ffb020" }, { key: "waterRate", label: "水分", color: "#7ad7f0" }, { key: "bmr", label: "基础代谢", color: "#c08bff" },
+const WM: { key: keyof BodyCheck; label: string; color: string; unit: string }[] = [
+  { key: "weight", label: "体重", color: "#ff6a1a", unit: "kg" }, { key: "fat", label: "体脂率", color: "#4aa8ff", unit: "%" }, { key: "muscle", label: "肌肉量", color: "#3ccf6a", unit: "kg" },
+  { key: "visceral", label: "内脏脂肪", color: "#ffb020", unit: "级" }, { key: "waterRate", label: "水分", color: "#7ad7f0", unit: "%" }, { key: "bmr", label: "基础代谢", color: "#c08bff", unit: "kcal" },
 ];
 function WeightSheet({ checks, onAdd, onEdit, onChanged }: { checks: BodyCheck[]; onAdd: () => void; onEdit: (d: string) => void; onChanged: () => void }) {
   const [sel, setSel] = useState<string[]>(["weight"]);
@@ -300,12 +336,50 @@ function WeightSheet({ checks, onAdd, onEdit, onChanged }: { checks: BodyCheck[]
   const since = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
   const inRange = checks.filter((c) => c.date >= since);
   const avail = WM.filter((m) => checks.some((c) => typeof c[m.key] === "number"));
-  const series = WM.filter((m) => sel.includes(m.key as string)).map((m) => ({ label: m.label, color: m.color, points: inRange.filter((c) => typeof c[m.key] === "number" && (c[m.key] as number) > 0).map((c) => ({ d: c.date, v: c[m.key] as number })) }));
+  const series = WM.filter((m) => sel.includes(m.key as string)).map((m) => ({ label: m.label, color: m.color, unit: m.unit, points: inRange.filter((c) => typeof c[m.key] === "number" && (c[m.key] as number) > 0).map((c) => ({ d: c.date, v: c[m.key] as number })) }));
   return <>
     <div className="flex flex-wrap gap-1">{avail.map((m) => <label key={m.key as string} className="flex min-h-8 items-center gap-1 rounded-full border border-line px-2 text-xs"><input type="checkbox" checked={sel.includes(m.key as string)} onChange={(e) => setSel(e.target.checked ? [...sel, m.key as string] : sel.filter((x) => x !== m.key))} /><span style={{ color: m.color }}>●</span>{m.label}</label>)}</div>
     <div className="flex rounded border border-line text-xs">{([[7, "周"], [30, "月"], [182, "半年"], [365, "年"]] as const).map(([d, l]) => <button key={l} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={"min-h-8 flex-1 " + (days === d ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</div>
-    {series.some((s) => s.points.length >= 2) ? <MultiTrend key={`${days}-${sel.join()}`} series={series} height={200} /> : <Empty text="这个时间段记录少于 2 次" />}
+    {series.some((s) => s.points.length >= 1) ? <MultiTrend key={`${days}-${sel.join()}`} series={series} height={200} /> : <Empty text="这个时间段还没有记录" />}
+    {series.length && series.every((s) => s.points.length < 2) && series.some((s) => s.points.length === 1) ? <p className="keep text-xs text-muted">再记录 1 次即可显示曲线</p> : null}
     <button type="button" className="fk-orange-btn min-h-11 w-full rounded-xl font-bold" onClick={onAdd}>+ 记录</button>
     {checks.length ? <div className="text-xs">{[...checks].reverse().slice(0, 100).map((c) => <div key={c.id} className="flex items-center gap-2 border-b border-line py-1.5"><span className="w-20 shrink-0">{c.date}</span><span className="flex-1">{f1(c.weight)} kg{c.fat ? ` · ${f1(c.fat)}%` : ""}{c.muscle ? ` · 肌 ${f1(c.muscle)}` : ""}</span><button type="button" className="min-h-8 px-2 text-accent" onClick={() => onEdit(c.date)}>编辑</button><button type="button" className="min-h-8 px-2 text-muted" onClick={() => { if (confirm(`删除 ${c.date} 的记录？`)) { removeCheck(c.id); onChanged(); } }}>删除</button></div>)}</div> : <Empty text="还没有体重记录" />}
   </>;
+}
+
+function entryLine(e: FoodEntry): string {
+  const k = nutrientOf(e, "kcal"); const amt = e.amount ?? e.grams;
+  const a = amt > 0 ? `${amt} ${e.unit === "份" ? "份" : "g"} · ` : "";
+  if (k == null) return `${a}已记录，营养待补充`;
+  const extra = (["protein", "carb", "fat"] as NutrientKey[]).map((n) => { const v = nutrientOf(e, n); return v == null ? null : `${n === "protein" ? "蛋白" : n === "carb" ? "碳水" : "脂肪"} ${v} g`; }).filter(Boolean).join(" · ");
+  return `${a}${Math.round(k)} kcal${extra ? " · " + extra : ""}`;
+}
+function EntryEditor({ e, onDone }: { e: FoodEntry; onDone: () => void }) {
+  const init = (n: NutrientKey) => { const v = nutrientOf(e, n); return v == null ? "" : String(v); };
+  const [f, setF] = useState({ kcal: init("kcal"), protein: init("protein"), carb: init("carb"), fat: init("fat"), amount: String((e.amount ?? e.grams) || "") });
+  const save = () => {
+    const num = (x: string) => (x.trim() === "" ? null : Number(x));
+    const amt = num(f.amount), old = e.amount ?? e.grams;
+    const p: Partial<FoodEntry> = { kcal: num(f.kcal) ?? 0, protein: num(f.protein) ?? undefined, carb: num(f.carb), fat: num(f.fat) };
+    const changedNutr = f.kcal !== init("kcal") || f.protein !== init("protein") || f.carb !== init("carb") || f.fat !== init("fat");
+    if (amt && old && amt !== old && !changedNutr) { const k = amt / old; const sc = (v: number | null) => (v == null ? null : Math.round(v * k * 10) / 10); p.kcal = Math.round((num(f.kcal) ?? 0) * k); p.protein = sc(num(f.protein)) ?? undefined; p.carb = sc(num(f.carb)); p.fat = sc(num(f.fat)); }
+    if (amt) { p.amount = amt; p.grams = e.unit === "份" ? 0 : amt; if (!e.unit) p.unit = "g"; }
+    p.label = num(f.kcal) == null ? PENDING_LABEL : changedNutr ? "手填" : e.label;
+    updateEntry(e.id, p); onDone();
+  };
+  const cell = (k: keyof typeof f, l: string) => <label className="text-[11px] text-muted">{l}<input inputMode="decimal" aria-label={l} value={f[k]} onChange={(ev) => setF({ ...f, [k]: ev.target.value.replace(/[^\d.]/g, "").slice(0, 6) })} className="fk-cell mt-0.5 w-full" /></label>;
+  return <div className="mt-1 grid grid-cols-5 gap-1">{cell("kcal", "热量kcal")}{cell("protein", "蛋白g")}{cell("carb", "碳水g")}{cell("fat", "脂肪g")}{cell("amount", e.unit === "份" ? "份量份" : "份量g")}<button type="button" className="fk-orange-btn col-span-5 min-h-10 rounded-lg text-sm font-bold" onClick={save}>保存</button></div>;
+}
+function MealList({ meal, entries, onClose, onAdd, onChanged }: { meal: Meal; entries: FoodEntry[]; onClose: () => void; onAdd: () => void; onChanged: () => void }) {
+  const [edit, setEdit] = useState<string | null>(null);
+  const del = (id: string) => { const all = loadEntries(); if (saveEntries(all.filter((e) => e.id !== id))) onChanged(); };
+  return <div className="fixed inset-0 z-[70] bg-black/60" onClick={onClose}><div role="dialog" aria-label={meal} className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-3xl border-t border-line bg-[#141518] px-4 pt-2" style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }} onClick={(e) => e.stopPropagation()}>
+    <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line" />
+    <div className="flex items-center justify-between"><b className="text-base">{meal}</b><button type="button" aria-label="关闭" className="grid size-10 place-items-center" onClick={onClose}><X className="size-5" /></button></div>
+    {entries.map((e) => <div key={e.id} className="border-b border-line py-2 text-sm"><div className="flex items-center gap-2"><div className="min-w-0 flex-1"><p className="truncate">{e.name}</p><p className={"keep text-xs " + (nutrientOf(e, "kcal") == null ? "text-amber-400" : "text-muted")}>{entryLine(e)}</p></div>
+      <button type="button" className="min-h-9 px-2 text-xs text-accent" onClick={() => setEdit(edit === e.id ? null : e.id)}>{nutrientOf(e, "kcal") == null ? "补录" : "编辑"}</button>
+      <button type="button" className="min-h-9 px-2 text-xs text-muted" onClick={() => del(e.id)}>删除</button></div>
+      {edit === e.id ? <EntryEditor e={e} onDone={() => { setEdit(null); onChanged(); }} /> : null}</div>)}
+    <button type="button" className="fk-orange-btn mt-3 min-h-11 w-full rounded-xl font-bold" onClick={onAdd}>+ 添加</button>
+  </div></div>;
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { niceTicks } from "@/components/trend-chart"
 import { Bell, Camera, ChevronRight, FileUp, Flame, Info, Plus, X } from "lucide-react"
 import { DEFAULTS, EQUIPMENT, EXPERIENCE, GOALS, ONBOARD_KEY, PRESET, QUESTIONS, VENUES, WHEN, goalLabel, previewWeek, tierFor, toggleGoal, type Answers } from "@/lib/ui/first-run"
 import { BRANDS, GROUP_HINT, TIERS, TIER_LABEL, WATCHES, gateRecovery, loadBrand, loadTier, loadWatch, saveTier, saveWatch, type Tier, type WatchId } from "@/lib/ui/watch-mode"
@@ -166,7 +167,7 @@ export function QuickLog({ today, onSaved, onFile, openWith, hideFab = false }: 
   const p = text.trim() ? parseQuickLog(text) : null
   const save = () => { if (!p) return; const m = saveParsed(p, today, rpe); setRpe(null); setMsg(m); if (m.startsWith("已")) { setText(""); setStamp(Date.now()); onSaved() } }
   return <>
-    {hideFab ? null : <button type="button" aria-label="记一笔" onClick={() => setOpen(true)} style={{ bottom: "calc(env(safe-area-inset-bottom) + 5.75rem)" }} className="fixed right-3 z-30 grid size-12 place-items-center rounded-full bg-accent font-bold text-accent-fg shadow-lg md:right-[calc(50%-23rem)] md:flex md:size-auto md:min-h-12 md:gap-1 md:px-4"><Plus className="size-5" /><span className="sr-only md:not-sr-only">记一笔</span></button>}
+    {hideFab ? null : <button type="button" aria-label="记一笔" onClick={() => setOpen(true)} className="fk-fab fixed right-3 z-30 grid size-12 place-items-center rounded-full bg-accent font-bold text-accent-fg shadow-lg md:right-[calc(50%-23rem)] md:flex md:size-auto md:min-h-12 md:gap-1 md:px-4"><Plus className="size-5" /><span className="sr-only md:not-sr-only">记一笔</span></button>}
     {open ? <div className="fixed inset-0 z-40 flex items-end bg-black/30 md:items-center" onClick={() => setOpen(false)}>
       <section role="dialog" aria-label="记一笔" onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-xl rounded-t-3xl bg-bg p-4 md:rounded-3xl">
         <div className="flex items-center justify-between"><h2 className="text-lg font-bold">记一笔</h2><SavedBadge stamp={stamp} /><button type="button" aria-label="关闭" onClick={() => setOpen(false)} className="grid size-10 place-items-center"><X className="size-5" /></button></div>
@@ -193,7 +194,7 @@ export function LogMetricsPanel({ today }: { today: string }) {
   const max = Math.max(1, ...(m.trend ?? []).map((x) => x.minutes))
   return <section className="fk-dash-card mx-3 mb-3 p-3 text-sm" aria-label="本周概览">
     <div className="flex items-center justify-between gap-2"><h2 className="fk-dash-title text-base">本周概览</h2><span className="keep ml-auto text-xs text-muted">7 天 {count} 次 · {TIER_LABEL[tier]}</span><button type="button" aria-label="依据" aria-expanded={info} className="grid size-8 place-items-center" onClick={() => setInfo(!info)}><Info className="size-4 text-muted" /></button></div>
-    {m.trend ? <div className="mt-2 flex h-16 items-end gap-2">{m.trend.map((x) => <div key={x.week} className="flex flex-1 flex-col items-center gap-1"><div className="w-full rounded-t bg-[#2182bd]" style={{ height: `${(x.minutes / max) * 44 + 2}px` }} /><span className="text-[10px] text-muted">{x.week.slice(5)} · {x.minutes}′</span></div>)}</div> : null}
+    {m.trend ? (() => { const tk = niceTicks(0, max, 3); const top = tk[tk.length - 1] || 1; return <div className="mt-2 flex gap-1"><div className="relative h-20 w-8 text-[10px] text-muted">{tk.map((v) => <span key={v} className="absolute right-1 translate-y-1/2" style={{ bottom: `${(v / top) * 100}%` }}>{v}</span>)}<span className="absolute -top-3 left-0">分钟</span></div><div className="flex-1"><div className="relative flex h-20 items-end gap-2">{tk.map((v) => <i key={v} className="absolute inset-x-0 border-t border-line" style={{ bottom: `${(v / top) * 100}%` }} />)}{m.trend.map((x) => <div key={x.week} className="relative z-10 flex-1 rounded-t bg-[#ff6a1a]" style={{ height: `${(x.minutes / top) * 100}%` }} title={`${x.minutes} 分钟`} />)}</div><div className="flex gap-2 text-[10px] text-muted">{m.trend.map((x) => <span key={x.week} className="flex-1 text-center">{x.week.slice(5)}</span>)}</div></div></div>; })() : null}
     {m.load ? <p className="keep mt-2">负荷：近 7 天 {m.load.acute} · 前 4 周周均 {m.load.chronicWeekly}{m.load.ratio != null ? ` · 比值 ${m.load.ratio}` : ""} </p> : null}
     {info ? <p className="keep mt-1 text-[11px] text-muted">【经验规则】负荷=时长×强度系数；近 7 天/前 4 周周均比值明显 &gt;1.5 时留意（Gabbett 2016, BJSM 50:273–280，仅作参考）</p> : null}
     {m.dynamics && info ? <p className="mt-1 text-xs text-muted">跑步动态（步频/触地/垂直振幅）与配速/心率区间：导入 FIT 后在每条记录里显示。</p> : null}

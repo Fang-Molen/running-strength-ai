@@ -1,4 +1,4 @@
-const CACHE = "fr255-shell-v34"
+const CACHE = "fr255-shell-v48"
 const CACHE_PREFIX = "fr255-shell-"
 
 function blocked(url) {
@@ -29,6 +29,10 @@ function cacheable(request, url) {
 async function fromNetwork(request) {
   const cache = await caches.open(CACHE)
   const response = await fetch(request)
+  const isDoc = request.mode === "navigate" || request.destination === "document"
+  const htmlBody = /text\/html/i.test(response.headers.get("content-type") || "")
+  // An asset URL answered with HTML is a stale/missing chunk: never cache it, surface a 404.
+  if (!isDoc && htmlBody) return new Response("Not Found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } })
   if (response && response.ok && response.type === "basic") {
     const contentType = response.headers.get("content-type") || ""
     const isScript = request.destination === "script" || /\.(?:m?js)(?:$)/i.test(new URL(request.url).pathname)

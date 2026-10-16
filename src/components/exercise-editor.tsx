@@ -1,6 +1,8 @@
+import atlasIndex from "../lib/strength/atlas-index.json" with { type: "json" };
+import { isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { demoData } from "@/lib/strength/demo/provider";
-const ExerciseDemo = lazy(() => import("@/components/exercise-demo"));
+const ExerciseDemo = lazy(() => import("@/components/exercise-demo").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { CATALOG } from "@/lib/strength/catalog";
 
@@ -22,6 +24,28 @@ export function demoIdFor(name: string): string | null {
   const c = CATALOG.find((x) => x.name === n) ?? CATALOG.find((x) => x.name.includes(n) || n.includes(x.name));
   return c && demoData.exercises.some((e) => e.id === c.id) ? c.id : null;
 }
+type AtlasRow = { muscles: string[]; aux: string[]; training?: { sets: number; amount: number; unit: string; restSec: number }; img: { male?: string; female?: string }; seq_male?: string[]; seq_female?: string[] };
+const ATLAS = atlasIndex as Record<string, AtlasRow>;
+function AtlasBlock({ id }: { id: string }) {
+  const a = ATLAS[id];
+  const [sex, setSex] = useState<"male" | "female">("male");
+  if (!a) return null;
+  const img = a.img[sex] ?? a.img.male ?? a.img.female;
+  const seq = a[`seq_${sex}`] ?? a.seq_male ?? a.seq_female;
+  const src = (x: string) => `/fangkun-atlas/${x}`;
+  return <>
+    {img || seq ? <div className="fk-dash-card mt-3">
+      <div className="flex items-center"><div className="fk-dash-title">动作图</div>{a.img.male && a.img.female ? <span className="ml-auto flex rounded border border-line text-xs">{(["male", "female"] as const).map((x) => <button key={x} type="button" aria-pressed={sex === x} onClick={() => setSex(x)} className={"min-h-8 px-3 " + (sex === x ? "bg-accent text-accent-fg" : "")}>{x === "male" ? "男" : "女"}</button>)}</span> : null}</div>
+      {img ? <img src={src(img)} alt="动作示意" className="mt-2 w-full rounded-xl" loading="lazy" /> : null}
+      {seq ? <><p className="keep mt-2 text-xs text-muted">分解图</p><div className="mt-1 grid grid-cols-5 gap-1">{seq.map((f, i) => <figure key={f}><img src={src(f)} alt={`第${i + 1}步`} className="w-full rounded-md" loading="lazy" /><figcaption className="text-center text-[10px] text-muted">0{i + 1}</figcaption></figure>)}</div></> : null}
+    </div> : null}
+    <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">目标肌群</div>
+      <p className="mt-1">主要：{a.muscles.join("、") || "待补"}</p>{a.aux.length ? <p className="text-muted">辅助：{a.aux.join("、")}</p> : null}
+      <div className="mt-2 grid grid-cols-2 gap-1">{(["front", "back"] as const).map((v) => <figure key={v}><img src={src(`assets/anatomy/${sex}-${v}.webp`)} alt={v === "front" ? "正面肌肉示意" : "背面肌肉示意"} className="w-full rounded-md" loading="lazy" /><figcaption className="text-center text-[10px] text-muted">{v === "front" ? "正面" : "背面"}（示意）</figcaption></figure>)}</div>
+    </div>
+    <p className="keep mt-2 text-[11px] text-muted">动作图与肌肉图为生成的示意插画，待专业校核</p>
+  </>;
+}
 export function DemoSheet({ id, onClose }: { id: string; onClose: () => void }) {
   const e = demoData.exercises.find((x) => x.id === id) as unknown as { name_zh: string; name_en: string; category: string; equipment: string[]; default_sets: number; default_reps_or_time: { mode: string; amount: number }; default_rest_sec: number; review?: string } | undefined;
   return <div className="product-ui app-wallpaper fixed inset-0 z-50 overflow-y-auto p-4" data-theme="dark" role="dialog" aria-label="动作详情">
@@ -29,6 +53,7 @@ export function DemoSheet({ id, onClose }: { id: string; onClose: () => void }) 
     {e ? <div className="mt-2 flex flex-wrap gap-2 text-xs">{[e.category, ...e.equipment].map((t) => <span key={t} className="rounded-md border border-line px-2 py-1">{t}</span>)}</div> : null}
     {e ? <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">推荐参数</div><p className="mt-1">默认 {e.default_sets} 组 × {e.default_reps_or_time.amount}{e.default_reps_or_time.mode === "seconds" ? " 秒" : " 次"} · 组间休息 {e.default_rest_sec} 秒</p><p className="mt-1 text-muted">新手 / 进阶 / 力量 / 爆发分级参数：待补</p></div> : null}
     <div className="fk-dash-card mt-3"><Suspense fallback={<p>正在打开演示…</p>}><ExerciseDemo catalogId={id} /></Suspense></div>
+    <AtlasBlock id={id} />
     <div className="mt-3 grid grid-cols-2 gap-3 text-sm"><div className="fk-dash-card"><div className="fk-dash-title">训练目标</div><p className="mt-1 text-muted">待补</p></div><div className="fk-dash-card"><div className="fk-dash-title">适用人群</div><p className="mt-1 text-muted">待补</p></div></div>
     <p className="keep mt-3 text-xs text-muted">动作要领为方坤自写内容，尚未经专业审校{e?.review ? `（${e.review}）` : ""}</p>
   </div>;

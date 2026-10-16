@@ -1,10 +1,12 @@
+import { installChunkRecovery, isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
 import { HomeDashboard } from "@/components/home-dashboard";
 import { GarminLog } from "@/components/garmin-log";
 import { lazy, Suspense } from "react";
-const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel"));
+const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 import { Plan400, Plan400Today } from "@/components/plan400";
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
+import { maybeAutoGarminSync } from "@/components/garmin-sync";
 import { GarminSync } from "@/components/garmin-sync";
 import { initVault } from "@/lib/vault";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -151,6 +153,7 @@ export function StrengthApp() {
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
   useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem("fk-vault-restored")) { sessionStorage.setItem("fk-vault-restored", "1"); location.reload(); } }).catch(() => {}); }, []);
   const [dietSheet, setDietSheet] = useState(false);
+  useEffect(() => { const go = () => { if (document.visibilityState === "visible") window.setTimeout(() => void maybeAutoGarminSync().catch(() => {}), 1500); }; go(); document.addEventListener("visibilitychange", go); const iv = window.setInterval(() => { if (document.visibilityState === "visible") void maybeAutoGarminSync().catch(() => {}); }, 2 * 3600e3 + 5000); return () => { document.removeEventListener("visibilitychange", go); window.clearInterval(iv); }; }, []);
   const [planSrc, setPlanSrc] = useState<string>("400m-v4");
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}").active; if (v) setPlanSrc(v); } catch { /* keep default */ } }, []);
   const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}"); localStorage.setItem("fk-plan-source-v1", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };
@@ -447,11 +450,12 @@ export function StrengthApp() {
       <header className="ui03-header px-4 pt-1 pb-1">
         <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
-            {tab === "today" ? <><h1 className="text-[1.6rem] font-black italic leading-none tracking-wide">FANGKUN</h1><p className="text-sm font-bold">更好的你</p></> : <><p className="kicker ui03-overline">FANGKUN</p>
+            {tab === "today" ? <><h1 className="text-[1.6rem] font-black italic leading-none tracking-wide">FANGKUN</h1><p className="text-sm font-bold">更好的你</p></> : <>
             <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
             <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p></>}
           </div>
           <div className="flex shrink-0 items-center gap-2">
+          {tab === "today" ? <button type="button" aria-label="记一笔" onClick={() => window.dispatchEvent(new Event("fk-open-quicklog"))} className="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><Plus className="size-4" />记一笔</button> : null}
           <button type="button" onClick={() => { if (tab === "coach") { setTab(prevTab.current); } else { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); } }} className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-accent bg-surface shadow-sm" aria-label={tab === "coach" ? "关闭方坤" : "打开方坤"}>{tab === "coach" ? <X className="size-5" /> : <img src="/fangshen/happy-bust.png" alt="" className="size-full object-cover object-top" />}</button>
           <button type="button" onClick={() => { setSettingsPane("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
         </div>
@@ -757,8 +761,8 @@ export function StrengthApp() {
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
-      <div className={tab === "diet" ? "" : "hidden"}><div className="px-3 pt-3"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div> : null}</div>
-      <div className={tab === "body" ? "" : "hidden"}><div className="px-3 pt-3"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
+      <div className={tab === "diet" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div> : null}</div>
+      <div className={tab === "body" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
       </div>
       <StandaloneWelcome />
       {settingsOpen ? (
@@ -891,10 +895,11 @@ export function StrengthApp() {
         </div>
         </div>
       ) : null}
-      {true ? <QuickLog hideFab={tab === "coach"} openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
+      {true ? <QuickLog hideFab openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}
       {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
+      <ChromeMetrics />
       <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " hidden" : "")} aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
           {(
@@ -1242,3 +1247,21 @@ function StorageHint() {
   if (!show) return null;
   return <section className="home-card mt-3 p-3 text-sm" aria-label="存储提示"><b>Safari 和主屏幕 App 的数据是分开的</b><p className="keep mt-1 text-xs text-muted">在 Safari 里记的数据，添加到主屏幕后不会自动出现。先在原来那边「全部数据备份 → 导出」，再到另一边「导入恢复」。</p><button type="button" className="fk-link mt-1 text-xs" onClick={() => { localStorage.setItem("fk-storage-hint-v1", "1"); setShow(false); }}>知道了</button></section>;
 }
+
+function ChromeMetrics() {
+  useEffect(() => {
+    const root = document.documentElement; const nav = document.querySelector<HTMLElement>(".ui03-dock");
+    const navH = () => { const h = nav && nav.offsetParent !== null ? nav.getBoundingClientRect().height : 0; root.style.setProperty("--fk-nav-h", `${Math.round(h)}px`); };
+    const kb = () => { const vv = window.visualViewport; const ae = document.activeElement as HTMLElement | null; const typing = !!ae && (ae.tagName === "INPUT" && !["range", "checkbox", "radio", "button", "file"].includes((ae as HTMLInputElement).type) || ae.tagName === "TEXTAREA" || ae.isContentEditable); root.classList.toggle("fk-kb", typing || (!!vv && vv.height < window.innerHeight * 0.75)); if (vv) { root.style.setProperty("--fk-kb-h", `${Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))}px`); root.style.setProperty("--fk-vvh", `${Math.round(vv.height)}px`); } };
+    window.visualViewport?.addEventListener("scroll", kb);
+    const sheet = () => root.classList.toggle("fk-sheet", !!document.querySelector('[role="dialog"]'));
+    const ro = nav ? new ResizeObserver(navH) : null; if (nav && ro) ro.observe(nav);
+    const mo = new MutationObserver(() => { sheet(); navH(); }); mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+    navH(); sheet(); kb();
+    window.visualViewport?.addEventListener("resize", kb); document.addEventListener("focusin", kb); document.addEventListener("focusout", () => setTimeout(kb, 50)); window.addEventListener("resize", navH);
+    return () => { ro?.disconnect(); mo.disconnect(); window.visualViewport?.removeEventListener("resize", kb); document.removeEventListener("focusin", kb); window.removeEventListener("resize", navH); };
+  }, []);
+  return null;
+}
+
+installChunkRecovery();

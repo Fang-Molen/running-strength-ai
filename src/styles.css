@@ -422,3 +422,22 @@ body { min-height: 100dvh; overscroll-behavior-y: none; }
 @media all and (display-mode: standalone) { .product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 4px); } }
 .fk-subjective .fk-chip { min-height: 30px; padding: 2px 10px; font-size: 12px; }
 .product-ui .fk-chip[aria-pressed="true"] { background: #ff6a1a; border-color: #ff6a1a; color: #fff; }
+/* full-width bottom bar flush to edges */
+.product-ui .ui03-dock { padding: 0 0 env(safe-area-inset-bottom) !important; background: #0b0b0d; border-top: 1px solid #22252b; pointer-events: auto; }
+.product-ui .ui03-dock-inner { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; margin-bottom: 0 !important; }
+/* header: tight, bg reaches under status bar */
+.product-ui .ui03-header { padding-top: 4px; padding-bottom: 4px; }
+.product-ui .ui03-header-inner { min-height: 48px; }
+@media all and (display-mode: standalone) { .product-ui .ui03-header { padding-top: env(safe-area-inset-top); } }
+@media all and (display-mode: standalone) { .product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 6px) !important; } }
+/* v46 iPhone chrome: single safe-area source, content clears real nav + FAB */
+:root { --fk-nav-h: calc(64px + env(safe-area-inset-bottom)); }
+html, body { background: #0b0b0d; }
+.product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 4px) !important; padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+.pb-nav { padding-bottom: calc(var(--fk-nav-h) + 24px) !important; }
+.product-ui .ui03-dock { padding-left: env(safe-area-inset-left) !important; padding-right: env(safe-area-inset-right) !important; }
+.fk-fab { bottom: calc(var(--fk-nav-h) + 12px); right: max(12px, env(safe-area-inset-right)); }
+.fk-kb .fk-fab, .fk-sheet .fk-fab { display: none !important; }
+.fk-kb .ui03-dock { display: none; }
+/* keyboard: lift bottom sheets above the on-screen keyboard instead of squashing */
+.fk-kb [role="dialog"].bottom-0, .fk-kb .fixed.inset-0 > [role="dialog"] { bottom: var(--fk-kb-h, 0px); max-height: calc(var(--fk-vvh, 100dvh) - 12px); overflow-y: auto; }

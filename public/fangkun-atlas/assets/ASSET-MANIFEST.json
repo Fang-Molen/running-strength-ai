@@ -1,0 +1,452 @@
+{
+  "version": "FK-ATLAS-R1",
+  "assets": [
+    {
+      "path": "assets/anatomy/female-back.webp",
+      "sha256": "15e0c0ce558ff327773cfaf67c66919d52f5ffea5bb081001a63cb246f74a319",
+      "bytes": 22816,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/anatomy/female-front.webp",
+      "sha256": "b03dc7d71a323389c530e9bbdff203509d13f035cf1fa57b4b1e120be7d01931",
+      "bytes": 24238,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/anatomy/male-back.webp",
+      "sha256": "bac6408ebfc45dcbadd5dd19db7d9cd298382f5ac6617540ff03ca1dba11f861",
+      "bytes": 25582,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/anatomy/male-front.webp",
+      "sha256": "cbc555a9a0112fb7ddf437375fbd799383962ba7bb22782d634a578131555b59",
+      "bytes": 25894,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/hero/female-alt.webp",
+      "sha256": "beebbf6f501fd82784984700700cf2ca96c7ed3544d5e661007b29abad8e3e3a",
+      "bytes": 31360,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/hero/female.webp",
+      "sha256": "eb33bbea3be507df7ed75665a1c999630c4f3cc84f965a2794870473e43c8c77",
+      "bytes": 54078,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/hero/male-alt.webp",
+      "sha256": "42f8a14a7584c1511519f589ab1c41dd0b87fea5a462ef4638d1d716c76ae717",
+      "bytes": 30016,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/hero/male.webp",
+      "sha256": "942bc516c88fbc39829dab661ab694380c570dd3e6e647bfe53301c5cf6526a4",
+      "bytes": 57550,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/a-march-male.webp",
+      "sha256": "af172ba56f89f207d4ff442f04cff6bd977a658794b1d0341a7dee4e921d84dc",
+      "bytes": 13130,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/a-skip-male.webp",
+      "sha256": "a06bc6f035af9fa2575427cea7764879d1ee875b1428e5efc27850a0c033ad00",
+      "bytes": 13058,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/acceleration-male.webp",
+      "sha256": "562efe59f71f99db07037587aafdafeb271926bedbcfe268e75df4bcf7f384fd",
+      "bytes": 13218,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/bounding-male.webp",
+      "sha256": "3481224827887b1e4529c060c1fb0c8e27d85f358e9dac55ad01b2d8cac86840",
+      "bytes": 11172,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/curve-male.webp",
+      "sha256": "230a7919cd388070329452ec3bd73311bd2996a90832d58846d5fa3480c08979",
+      "bytes": 14016,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/heel-recovery-male.webp",
+      "sha256": "20ac0dd328a38f39c2f757cd691d38409e7ac41c3052410f8ea980ce7bc57227",
+      "bytes": 10290,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/max-speed-male.webp",
+      "sha256": "c410ef3b237148f367012f0a5ba8d2049cd41b7a29307433a6dc2aadeac089ad",
+      "bytes": 12380,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/quick-steps-male.webp",
+      "sha256": "81f488246a87fe45acafcbee8a2030159ed8184385a1356bf3a09fea5aea244e",
+      "bytes": 11112,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/quick-switch-male.webp",
+      "sha256": "1210a92c0ecf6d1a970a7ef354392f56c56fe237189df58a991491017a086d51",
+      "bytes": 11302,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/single-hop-male.webp",
+      "sha256": "875810592d0d42c02dd7645ea34b5516097bd0894e5c7a41b1aeb31738f3c9c0",
+      "bytes": 11590,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/start-drive-male.webp",
+      "sha256": "965fcde565f7f33cdadd1070497774ac3143116b8350cbfeedb55c07508463fd",
+      "bytes": 12288,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/running/straight-leg-male.webp",
+      "sha256": "203f81883028813304737a4941bca00dd190bd9c0f2813b3a7e3f09568ec05be",
+      "bytes": 9790,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-female-1.webp",
+      "sha256": "fd8cce50b019262dcfbdfd2cec34389430b7f647fb5356aa56f9e44644008030",
+      "bytes": 9386,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-female-2.webp",
+      "sha256": "b750e264da17ce5aa6b2769ea719afdb759f5d0e37d567985cd5061b9294c486",
+      "bytes": 9908,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-female-3.webp",
+      "sha256": "d0f0ea5e10760e91555dc420199b5489ee105ed75a45cff85601dd6fa3110828",
+      "bytes": 10254,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-female-4.webp",
+      "sha256": "12e8fce4500c33ae73ccdc57f04455bdf984aefddb82ad4e8bd394b10e3a4993",
+      "bytes": 10640,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-female-5.webp",
+      "sha256": "9b08d9e9a9dc49057eb6687f36e9c1696159aa563534587ad44332eb5702afd7",
+      "bytes": 10556,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-male-1.webp",
+      "sha256": "db529b0d913494aa57e1b7319b4ea8d53b2799f0dcc32444501f00fba53703bc",
+      "bytes": 9640,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-male-2.webp",
+      "sha256": "23bc8e315779d11486cb6ce5ee5c21ed5e1742c214f274b5f71fe1c239389b48",
+      "bytes": 9834,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-male-3.webp",
+      "sha256": "985ce345dba4f493f69651b1cc343a1df61c6f50336b670c10b51f820313308d",
+      "bytes": 9704,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-male-4.webp",
+      "sha256": "ebea3c743f4bfcf40b22aa881c6a996894b88ab1e5b62bdfb4f9c3d0433823ea",
+      "bytes": 10210,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/sequence/back-squat-male-5.webp",
+      "sha256": "9d9a9fc17f606cb47f12a7ed28a1fb1f71260f23562d68d6fb14539e2c56fff7",
+      "bytes": 9396,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/back-squat-female.webp",
+      "sha256": "977d07964ef26d0f057564be34ac476ffb27d7ca623178e150d2ac64f45735f5",
+      "bytes": 11786,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/back-squat-male.webp",
+      "sha256": "91a834e7c2d1815156f0447095774fcfe416179252b4b9d99b560078374138f1",
+      "bytes": 12458,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/bb-bench-male.webp",
+      "sha256": "4a52d519a5dfd562bbd86d052b0886d90cbf538ee9c7450b5792754244a31f70",
+      "bytes": 10562,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/bb-dl-male.webp",
+      "sha256": "08813509899a7af406959809311c263ead6b8c4985befebfb0f0d39678450af0",
+      "bytes": 10952,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/bb-ohp-male.webp",
+      "sha256": "c7d9b2708bedab73d86471003d0cbb5eeec1f07b56ebf77d844025b75dc50541",
+      "bytes": 8418,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/bb-row-male.webp",
+      "sha256": "dcbd598afcbf0609495f12e34d5c93e827ea7723268e9839620a52eef008ffb6",
+      "bytes": 10436,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/box-jump-female.webp",
+      "sha256": "2cbd6805187a00482ef96aa5e30c407889519702654baf5f7ed315dad89a0b4f",
+      "bytes": 11042,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/box-jump-male.webp",
+      "sha256": "59d7fade803f820f4ed99522f8b6e36839ea0b0d25ae406b576ea9cbbbe53596",
+      "bytes": 12156,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/bss-female.webp",
+      "sha256": "8ce51d505c02338f1f08f1a5d97b185455ec718cea006af9f583dd039ace013d",
+      "bytes": 8844,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/bss-male.webp",
+      "sha256": "7b27d9ba66b9778687811972fa34e1482718f1af66da2f68d142e6c6ad0d39c2",
+      "bytes": 10480,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/calf-male.webp",
+      "sha256": "553f95221784e15baff48304d356a814f4249ddd141694c629cbc236e27b31c2",
+      "bytes": 7970,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/db-lunge-female.webp",
+      "sha256": "7428ebb95fd351a917706171bf16bbc1a18d76c9d10324f0b01264e20ccf8e73",
+      "bytes": 9940,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/db-lunge-male.webp",
+      "sha256": "f41b7681fdf9894e3c63c2201705a57005843db0c35c1a31be555137f179d6a6",
+      "bytes": 9978,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/db-rdl-female.webp",
+      "sha256": "92ddaa2ed05775b99bb6a8dca62c9bb2da73de84aa4b456a3bec988cf926d5ca",
+      "bytes": 10070,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/db-rdl-male.webp",
+      "sha256": "7d891567c30ae8a61c033ff3f572f08a6665b4e9aeb5265e3ed5d09d2a72f537",
+      "bytes": 10212,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/goblet-female.webp",
+      "sha256": "f51f5c5a70e998014e5ea7c46fd7f7656fe88b6085e531aa1cb26638b40e6a1b",
+      "bytes": 8690,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/goblet-male.webp",
+      "sha256": "1769d0ff8a30a264f958d51dd78682d277c95ba418dd6ac0049f5cf8554db24c",
+      "bytes": 9580,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/hip-thrust-female.webp",
+      "sha256": "7e931ef3173fe776d7615b08a002efc7c2b7f841e6acc63c0116fbfbebabd870",
+      "bytes": 10008,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/hip-thrust-male.webp",
+      "sha256": "66c0c892e59045680040276a0fdfa5c671a07df49b08266cb37730d217a681d6",
+      "bytes": 10942,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/kb-swing-female.webp",
+      "sha256": "bed440cd025d2a7bafc7bbfc633b4ec563b7b51840afa8af93485989de637667",
+      "bytes": 9164,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/kb-swing-male.webp",
+      "sha256": "2453e80ef0e80e51d0a94d1795bb11a2128060b5623f2d1a7b5bb05c86bd53c2",
+      "bytes": 9442,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/lunge-female.webp",
+      "sha256": "7428ebb95fd351a917706171bf16bbc1a18d76c9d10324f0b01264e20ccf8e73",
+      "bytes": 9940,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/lunge-male.webp",
+      "sha256": "f41b7681fdf9894e3c63c2201705a57005843db0c35c1a31be555137f179d6a6",
+      "bytes": 9978,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/plank-male.webp",
+      "sha256": "a10e99cc44c073418ff04639d5935a656519ab2df4c88cf126e0ab7bafa27596",
+      "bytes": 10044,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/pullup-male.webp",
+      "sha256": "38e336df6ddcaf92aff5a5be485d39618092b9a5e48557d0e4800b7e45437f20",
+      "bytes": 8158,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/rdl-female.webp",
+      "sha256": "480075ecad888effc74bbadebbef432c12cacafdc3e570660abe3a33da2156e8",
+      "bytes": 9604,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/rdl-male.webp",
+      "sha256": "4ddc34d62b4edf86b6e9fd8bf2e176ed6fcf101835c637475b784f858ec29b30",
+      "bytes": 10516,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/single-rdl-female.webp",
+      "sha256": "92ddaa2ed05775b99bb6a8dca62c9bb2da73de84aa4b456a3bec988cf926d5ca",
+      "bytes": 10070,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/single-rdl-male.webp",
+      "sha256": "7d891567c30ae8a61c033ff3f572f08a6665b4e9aeb5265e3ed5d09d2a72f537",
+      "bytes": 10212,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/step-up-female.webp",
+      "sha256": "8c4c027bcb62486e4c58337ebe809a4171083dd86556cb1346051012511d6b0a",
+      "bytes": 9156,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    },
+    {
+      "path": "assets/strength/step-up-male.webp",
+      "sha256": "7ea46a99525af6c0ff831d1002c63423b986be0da84b1b47d517e1a0da608a41",
+      "bytes": 9706,
+      "origin": "generated-reference crop",
+      "status": "visual-illustration-not-clinically-validated"
+    }
+  ],
+  "strengthPhotoIds": [
+    "back-squat",
+    "bss",
+    "rdl",
+    "hip-thrust",
+    "goblet",
+    "step-up",
+    "kb-swing",
+    "bb-dl",
+    "calf",
+    "bb-ohp",
+    "bb-bench",
+    "pullup",
+    "bb-row",
+    "plank",
+    "db-lunge",
+    "db-rdl"
+  ],
+  "matchedStrengthGenderPairs": 9,
+  "genderCaveat": "9 paired strength action illustrations, 12 male running visual references; original female running motion and compatible female GLB are NOT available."
+}
