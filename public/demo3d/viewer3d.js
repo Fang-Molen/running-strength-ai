@@ -246,12 +246,14 @@ export async function createStage(canvas, mo, opt = {}) {
   if (mo.hbar) { const [len, col] = mo.hbar; const g = new THREE.Group(); const r = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, len, 16), MS(col ?? 0xb8bcc2)); r.rotation.z = Math.PI / 2; g.add(r); scene.add(g); props.hbar = g; }
   props.trk = (mo.track || []).map(t => { const g0 = t.cyl ? new THREE.CylinderGeometry(t.cyl[0], t.cyl[0], t.cyl[1], 20).rotateZ(Math.PI / 2) : new THREE.BoxGeometry(t.box[0], t.box[1], t.box[2]); const m = new THREE.Mesh(g0, new THREE.MeshStandardMaterial({ color: (t.box || t.cyl)[t.cyl ? 2 : 3] ?? 0x3b2a22, roughness: .8 })); m.castShadow = m.receiveShadow = true; scene.add(m); return m; });
   if (mo.props?.includes('bench')) { const b = new THREE.Mesh(new THREE.BoxGeometry(.3, .42, 1.2), new THREE.MeshStandardMaterial({ color: 0x3b2a22 })); b.position.y = .21; scene.add(b); props.bench = b; }
-  const ctl = new OrbitControls(cam, canvas); ctl.enableDamping = true; ctl.enablePan = false; ctl.minDistance = 0.4; ctl.maxDistance = 7;
+  const ctl = new OrbitControls(cam, canvas); ctl.enableDamping = true; ctl.enablePan = false; ctl.autoRotate = false;
+  // Clamp: eye level to slight top-down only, ±30° around the chosen view, bounded zoom; no flipping, no view from below.
+  ctl.minPolarAngle = 62 * Math.PI / 180; ctl.maxPolarAngle = 92 * Math.PI / 180; canvas.style.touchAction = 'pan-y';
   const tgt = new THREE.Vector3(...(mo.camTarget || [0, .9, 0])); ctl.target.copy(tgt);
-  const dist = mo.camDist || 3.6;
+  const dist = mo.camDist || 3.6; ctl.minDistance = dist * 0.55; ctl.maxDistance = dist * 1.35;
   const VIEWS = { front: 0, side: 90, back: 180, three: 40 };
   function setView(v) { if (props.bar) props.bar.traverse(o => { if (o.material && o.material.transparent) o.material.opacity = (v === 'side') ? 0.12 : 0.42; });
-    const a = (VIEWS[v] ?? v) * Math.PI / 180; cam.position.set(tgt.x + Math.sin(a) * dist, tgt.y + .35, tgt.z + Math.cos(a) * dist); ctl.target.copy(tgt); ctl.update(); }
+    const a = (VIEWS[v] ?? v) * Math.PI / 180; const w = Math.atan2(Math.sin(a), Math.cos(a)); ctl.minAzimuthAngle = w - Math.PI / 6; ctl.maxAzimuthAngle = w + Math.PI / 6; cam.position.set(tgt.x + Math.sin(a) * dist, tgt.y + .35, tgt.z + Math.cos(a) * dist); ctl.target.copy(tgt); ctl.update(); }
   setView(opt.view || mo.view || 'three');
   let speed = 1, playing = true, t = 0, last = performance.now(), raf, phaseCb = opt.onPhase, lastPhase;
   const wp = n => { const x = new THREE.Vector3(); rig.bones[n].getWorldPosition(x); return x; };
@@ -277,13 +279,14 @@ export async function createStage(canvas, mo, opt = {}) {
   }
   function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
   const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
-  function loop(now) { const dt = (now - last) / 1000; last = now; if (playing) t += dt * speed; frame(t); ctl.update(); renderer.render(scene, cam); raf = requestAnimationFrame(loop); }
+  let onScreen = true; const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }); io.observe(canvas);
+  function loop(now) { const dt = (now - last) / 1000; last = now; if (onScreen && !document.hidden) { if (playing) t += dt * speed; frame(t); ctl.update(); renderer.render(scene, cam); } raf = requestAnimationFrame(loop); }
   raf = requestAnimationFrame(loop);
   return {
     setView, toggle() { playing = !playing; return playing; }, setSpeed(s) { speed = s; },
     setShoes(mode) { rig.root.traverse(o => { if (o.isMesh && /shoe/i.test(o.name + (o.material?.name || ''))) { o.visible = mode !== 'off'; o.material.transparent = mode === 'clear'; o.material.opacity = mode === 'clear' ? 0.28 : 1; o.material.depthWrite = mode !== 'clear'; o.material.needsUpdate = true; } }); },
     seek(x) { t = x; frame(t); renderer.render(scene, cam); }, setHi(h) { state.hi.splice(0, 40, ...h); },
-    destroy() { cancelAnimationFrame(raf); ro.disconnect(); ctl.dispose(); renderer.dispose(); },
+    destroy() { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); ctl.dispose(); renderer.dispose(); },
     render() { frame(t); renderer.render(scene, cam); }, renderer, rig
   };
 }

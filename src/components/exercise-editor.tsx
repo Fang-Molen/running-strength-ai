@@ -29,7 +29,7 @@ export function demoIdFor(name: string): string | null {
 type AtlasRow = { muscles: string[]; aux: string[]; training?: { sets: number; amount: number; unit: string; restSec: number }; img: { male?: string; female?: string }; seq_male?: string[]; seq_female?: string[] };
 const ATLAS = atlasIndex as Record<string, AtlasRow>;
 type Cue = { setup: string[]; execution: string[]; breathing: string[]; mistakes: string[]; safety: string[]; regression: string[]; progression: string[] };
-type DemoEx = { id: string; name_zh: string; name_en: string; category: string; equipment: string[]; default_sets: number; default_reps_or_time: { mode: string; amount: number }; default_rest_sec: number; review?: string; primary_muscles: string[]; secondary_muscles: string[]; cues?: Cue };
+type DemoEx = { id: string; name_zh: string; name_en: string; category: string; equipment: string[]; default_sets: number; default_reps_or_time: { mode: string; amount: number }; default_rest_sec: number; review?: string; primary_muscles: string[]; secondary_muscles: string[]; cues?: Cue; muscle_source?: string };
 const EN_ZH: Record<string, string> = { "delt front": "三角肌前束", "delt side": "三角肌中束", "delt rear": "三角肌后束", "glute med": "臀中肌", feet: "足底内在肌" };
 const zh = (m: string) => (MUSCLES as Record<string, string>)[m] ?? EN_ZH[m] ?? m;
 function MuscleCard({ e, sex }: { e: DemoEx | undefined; sex: "male" | "female" }) {
@@ -37,7 +37,7 @@ function MuscleCard({ e, sex }: { e: DemoEx | undefined; sex: "male" | "female" 
   const [pick, setPick] = useState<string | null>(null);
   if (!e) return null;
   const prim = e.primary_muscles, sec = e.secondary_muscles;
-  const backHeavy = prim.length > 0 && prim.every((m) => ["lats", "rhomboids", "erectors", "glutes", "hamstrings", "calves", "traps", "delt_rear", "triceps", "glute_med"].includes(m));
+  const backHeavy = prim.length > 0 && prim.every((m) => ["lats", "rhomboids", "erectors", "glutes", "hamstrings", "calves", "soleus", "traps", "delt_rear", "triceps", "glute_med"].includes(m));
   return <div className="fk-dash-card mt-3 text-sm" aria-label="目标肌群">
     <div className="flex items-center"><div className="fk-dash-title">目标肌群</div>
       <span className="ml-auto flex rounded border border-line text-xs">{(["front", "back"] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={"min-h-9 px-3 " + (view === v ? "bg-accent text-accent-fg" : "")}>{v === "front" ? "正面" : "背面"}</button>)}</span></div>
@@ -47,6 +47,7 @@ function MuscleCard({ e, sex }: { e: DemoEx | undefined; sex: "male" | "female" 
     <div className="mt-2 flex flex-wrap gap-3 text-xs"><span className="flex items-center gap-1"><i className="inline-block size-3 rounded-sm bg-[#ff5a3c]" />主要</span><span className="flex items-center gap-1"><i className="inline-block size-3 rounded-sm bg-[#ffb199]" />辅助</span><span className="flex items-center gap-1"><i className="inline-block size-3 rounded-sm bg-[#4da3ff]" />你点选的</span></div>
     {pick ? <p className="keep mt-1">{zh(pick)}：{prim.includes(pick) ? "本动作主要参与" : sec.includes(pick) ? "本动作辅助参与" : "本动作不是重点"}</p> : null}
     <p className="mt-2">主要：{prim.map(zh).join("、") || "待补"}</p>{sec.length ? <p className="text-muted">辅助：{sec.map(zh).join("、")}</p> : null}
+    {e.muscle_source ? <p className="keep mt-1 text-[11px] text-muted">依据：{e.muscle_source}</p> : <p className="keep mt-1 text-[11px] text-amber-400">肌群对应：待核（方坤自写，尚无逐条出处）</p>}
     <p className="keep mt-1 text-[11px] text-muted">高亮表示动作涉及的肌群，不是实测的发力程度、疲劳或恢复。2D 示意图（{sex === "male" ? "男" : "女"}性动作图对应同一肌群图）。</p>
   </div>;
 }
