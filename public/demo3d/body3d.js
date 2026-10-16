@@ -50,7 +50,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   const FOCUS = { body: { t: [0, .86, 0], d: 4.1 }, calf: { t: [0, .38, 0], d: 1.45 }, foot: { t: [0, .07, .04], d: 0.95 } };
   let view = 'front', focus = 'body';
   function place() {
-    const f = FOCUS[focus], a = deg(EXPLORER_VIEWS[view]);
+    const f = FOCUS[focus], a = deg(EXPLORER_VIEWS[view]); ctl.enableDamping = false; ctl.update(); ctl.enableDamping = true;
     ctl.minAzimuthAngle = -Infinity; ctl.maxAzimuthAngle = Infinity; ctl.minDistance = 0; ctl.maxDistance = Infinity;
     ctl.target.set(...f.t); cam.position.set(f.t[0] + Math.sin(a) * f.d, f.t[1] + f.d * 0.12, f.t[2] + Math.cos(a) * f.d); ctl.update();
     const w = Math.atan2(Math.sin(a), Math.cos(a)); ctl.minAzimuthAngle = w - deg(30); ctl.maxAzimuthAngle = w + deg(30);
@@ -83,11 +83,11 @@ export async function createMuscleExplorer(canvas, opt = {}) {
 // ---------- t428 C / t432 姿势与体型 ----------
 export const POSES = {
   stand: { label: '标准站姿', p: { uarmAb: 10, farmAb: 8 } },
-  relax: { label: '自然休闲', p: { uarmAb: 6, farm: 12, farmAb: 4, thigh_l: 4, thighAb_r: 7, shin_l: -6, trunkTw: 4 } },
+  relax: { label: '自然休闲', p: { uarmAb: 5, farm: 16, farmAb: 2, thigh_l: 8, thighAb_l: 1, shin_l: -12, thighAb_r: 8, trunkTw: 6, head: 172 } },
   hips: { label: '叉腰', p: { uarm: -12, uarmAb: 44, farm: -30, farmAb: -62, farmTw: 0 } },
   arms: { label: '轻抱臂', p: { uarm: 22, uarmAb: 14, farm: 92, farmAb: -72 } },
-  flex: { label: '屈肘展示', p: { uarm: 0, uarmAb: 82, farm: 175, farmAb: 70 } },
-  run: { label: '跑步定格', p: { uarm_l: -35, farm_l: 70, uarm_r: 40, farm_r: 100, thigh_l: 42, shin_l: -35, thigh_r: -18, shin_r: -75, trunk: 184, uarmAb: 6, farmAb: 4 } },
+  flex: { label: '屈肘展示', p: { uarm: 0, uarmAb: 84, farm: 165, farmAb: 6, farmTw: 60 } },
+  run: { label: '跑步定格', p: { uarm_l: -35, farm_l: 70, uarm_r: 40, farm_r: 128, thigh_l: 42, shin_l: -35, thigh_r: -18, shin_r: -75, trunk: 184, uarmAb: 6, farmAb: 4 } },
 };
 // regional girth (metres along surface normal) per bone
 export const REGION_BONES = { waist: ['pelvis', 'spine_01', 'spine_02'], chest: ['spine_03'], upperArm: ['upperarm_l', 'upperarm_r'], thigh: ['thigh_l', 'thigh_r'], calf: ['calf_l', 'calf_r'], shoulders: ['clavicle_l', 'clavicle_r'] };
@@ -115,10 +115,10 @@ export async function createFigureViewer(canvas, opt = {}) {
   const items = Array.from({ length: n }, () => { const scene = baseScene(opt.bg); const rig = makeRig(gltf, { hi: new Array(40).fill(0), border: 0 }); scene.add(rig.root); return { scene, rig, setG: shapeRig(rig) }; });
   const cam = new THREE.PerspectiveCamera(28, 1, .05, 30); const ctl = makeControls(cam, canvas);
   ctl.minPolarAngle = deg(70); ctl.maxPolarAngle = deg(92);
-  const T = new THREE.Vector3(0, .9, 0), D = 4.4; ctl.minDistance = D * .6; ctl.maxDistance = D * 1.3;
+  const T = new THREE.Vector3(0, 1.0, 0), D = 5.3; ctl.minDistance = D * .6; ctl.maxDistance = D * 1.3;
   let pose = 'stand';
   function setPose(k) { pose = POSES[k] ? k : 'stand'; for (const it of items) { applyPose(it.rig, POSES[pose].p); it.rig.root.position.set(0, 0, 0); ground(it.rig); } }
-  function setView(v) { const a = deg(FIG_VIEWS[v] ?? 0); ctl.target.copy(T); cam.position.set(Math.sin(a) * D, T.y + .25, Math.cos(a) * D); ctl.update(); }
+  function setView(v) { const a = deg(FIG_VIEWS[v] ?? 0); ctl.enableDamping = false; ctl.update(); ctl.enableDamping = true; ctl.target.copy(T); cam.position.set(Math.sin(a) * D, T.y + .25, Math.cos(a) * D); ctl.update(); }
   setPose('stand'); setView('front');
   function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = (w / n) / h; cam.updateProjectionMatrix(); }
   const ro = new ResizeObserver(resize); ro.observe(canvas); resize();

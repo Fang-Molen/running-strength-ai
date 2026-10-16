@@ -29,7 +29,7 @@ await p.keyboard.press("Escape"); await p.reload({ waitUntil: "networkidle" }); 
 await p.getByLabel("切换到健康").click({force:true}); await p.waitForTimeout(2000);
 await p.getByText("我的形象 ›").first().click(); await p.waitForTimeout(2500);
 await p.getByRole("button",{name:"62 kg"}).click(); await p.getByRole("button",{name:"10%"}).click(); await p.waitForTimeout(800); await sh("7-figure-target");
-t=await body(); ok("T target 62 kg + 体脂率 10% shown", t.includes("62 kg") && t.includes("体脂率 10%"));
+t=await body(); ok("T target 62 kg + 体脂率 10% shown", t.includes("62 kg") && /目标体脂率\s*10(\.0)?%/.test(t));
 await p.getByRole("button",{name:"设为目标"}).click(); await p.waitForTimeout(500);
 const tk=await p.evaluate(()=>JSON.parse(localStorage.getItem("fr255-profile-v1")).targetKg); ok("T saved targetKg=62", tk==="62");
 await p.screenshot({path:"/workspace/out/e2e-8-figure-full.png",fullPage:true});
