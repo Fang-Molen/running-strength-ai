@@ -1251,7 +1251,7 @@ function StorageHint() {
 function ChromeMetrics() {
   useEffect(() => {
     const root = document.documentElement; const nav = document.querySelector<HTMLElement>(".ui03-dock");
-    const navH = () => { const h = nav && nav.offsetParent !== null ? nav.getBoundingClientRect().height : 0; root.style.setProperty("--fk-nav-h", `${Math.round(h)}px`); };
+    const navH = () => { const h = nav && getComputedStyle(nav).display !== "none" ? nav.getBoundingClientRect().height : 0; root.style.setProperty("--fk-nav-h", `${Math.round(h)}px`); };
     const kb = () => { const vv = window.visualViewport; const ae = document.activeElement as HTMLElement | null; const typing = !!ae && (ae.tagName === "INPUT" && !["range", "checkbox", "radio", "button", "file"].includes((ae as HTMLInputElement).type) || ae.tagName === "TEXTAREA" || ae.isContentEditable); root.classList.toggle("fk-kb", typing || (!!vv && vv.height < window.innerHeight * 0.75)); if (vv) { root.style.setProperty("--fk-kb-h", `${Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))}px`); root.style.setProperty("--fk-vvh", `${Math.round(vv.height)}px`); } };
     window.visualViewport?.addEventListener("scroll", kb);
     const sheet = () => root.classList.toggle("fk-sheet", !!document.querySelector('[role="dialog"]'));
