@@ -4,7 +4,7 @@ import {has3d,downloadDemoAssets} from '@/lib/strength/demo'
 import {muscleMapSVG,MUSCLES} from '@/lib/strength/demo/musclemap.js'
 import './exercise-demo.css'
 const PHASE:Record<string,string>={con:'发力',ecc:'控制还原',hold:''}
-export default function ExerciseDemo({catalogId,onAdd}:{catalogId:string;onAdd?:()=>void}){
+export default function ExerciseDemo({catalogId,onAdd,compact}:{catalogId:string;onAdd?:()=>void;compact?:boolean}){
  const e=demoData.exercises.find(e=>e.id===catalogId)
  const svg=useRef<SVGSVGElement>(null),canvas=useRef<HTMLCanvasElement>(null),anat=useRef<HTMLCanvasElement>(null),labels=useRef<HTMLDivElement>(null),player=useRef<DemoPlayer|null>(null)
  const [status,setStatus]=useState('先显示2D示意，3D模型加载中…'),[ready,setReady]=useState(false),[anatomyReady,setAnatomyReady]=useState(false),[phase,setPhase]=useState(''),[playing,setPlaying]=useState(true),[slow,setSlow]=useState(false),[view,setView]=useState<DemoView>('three'),[shoes,setShoes]=useState<Shoes>('on'),[download,setDownload]=useState('')
@@ -28,6 +28,12 @@ export default function ExerciseDemo({catalogId,onAdd}:{catalogId:string;onAdd?:
  },[catalogId])
  if(!e)return <p>该动作的演示尚未提供；没有使用其他变式替代。</p>
  const cue=e.cues
+ if(compact)return <section className="fk-demo" style={{position:'relative'}} aria-label={`${e.name_zh}动作演示`}>
+  <div className="stage3" style={{marginTop:12}}><canvas ref={canvas} aria-label="3D动作演示" style={{visibility:ready?'visible':'hidden'}}/><div className="stage-fallback" hidden={ready}><svg ref={svg} className="fig" aria-label="2D动作示意"/></div><div className="phase">{phase}</div><div className="hint" role="status">{status}</div></div>
+  <div className="ctrl">{(['front','side','back','three'] as const).map((v,i)=><button type="button" key={v} disabled={!ready} aria-pressed={view===v} className={view===v?'on':''} onClick={()=>{setView(v);player.current?.setView(v)}}>{['正面','侧面','背面','斜侧'][i]}</button>)}</div>
+  <div className="ctrl"><button type="button" onClick={()=>{playing?player.current?.pause():player.current?.play();setPlaying(!playing)}}>{playing?'暂停':'播放'}</button><button type="button" className={slow?'on':''} onClick={()=>{player.current?.setSpeed(slow?1:.35);setSlow(!slow)}}>慢放</button></div>
+  <p className="meta">示意演示，非真人示范</p>
+ </section>
  return <section className="fk-demo" style={{position:'relative'}} aria-label={`${e.name_zh}动作演示`}>
   <p className="meta">{e.category} · {e.equipment.join('、')}{e.tempo?` · ${e.tempo}`:''}</p>
   <div className="stage3" style={{marginTop:12}}><canvas ref={canvas} aria-label="3D动作演示" style={{visibility:ready?'visible':'hidden'}}/><div className="stage-fallback" hidden={ready}><svg ref={svg} className="fig" aria-label="2D动作示意"/></div><div className="phase">{phase}</div><div className="hint" role="status">{status}</div></div>
