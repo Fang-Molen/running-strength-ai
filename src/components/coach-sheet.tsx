@@ -5,6 +5,7 @@ import { gateRecovery, loadTier } from "@/lib/ui/watch-mode";
 import { recoveryVerdict } from "@/lib/ui/recovery-verdict";
 import { readRecoveryInput } from "@/components/health-extras";
 import { CoachBubble } from "@/components/coach-bubble";
+import { CoachFeedback, FeedbackExportBar } from "@/components/coach-feedback";
 import { LearningLibrary } from "@/components/learning-library";
 import { CoachCognitionPanel } from "@/components/coach-cognition-panel";
 import { CoachFirstWeekPanel } from '@/components/coach-first-week-panel';
@@ -521,7 +522,7 @@ export function CoachSheet({
         <p className="product-chat-intro">说说你的目标，或选择一节训练一起看。方坤会先核对事实，再解释与建议。</p>
         <details open={Boolean(firstWeekGoal)} className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">首次使用 · 目标与首周计划</summary><CoachFirstWeekPanel requestedGoal={firstWeekGoal} /></details>
         {cognitionTurn && <CoachCognitionPanel key={`${cognitionTurn.brief.occurrenceId}:${cognitionTurn.brief.question}`} cognition={cognitionTurn.cognition} brief={cognitionTurn.brief} />}
-        {memory?.messages.filter((message) => message.id !== "hi").map((message) => <CoachBubble key={message.id} role={message.role} text={message.text} />)}
+        <FeedbackExportBar />{memory?.messages.filter((message) => message.id !== "hi").map((message, i, arr) => <div key={message.id}><CoachBubble role={message.role} text={message.text} />{message.role === "coach" ? <CoachFeedback answer={message.text} question={[...arr.slice(0, i)].reverse().find((m) => m.role === "user")?.text} /> : null}</div>)}
         {chatReviews.map((r) => <ReviewCard key={r.id} review={r} />)}
         {actionNote ? <p className="text-center text-xs text-muted" role="status">{actionNote}</p> : null}
         <div ref={bottom} />

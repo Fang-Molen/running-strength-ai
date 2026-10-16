@@ -1,3 +1,6 @@
+import { Plan400, Plan400Today } from "@/components/plan400";
+import { GarminSync } from "@/components/garmin-sync";
+import { initVault } from "@/lib/vault";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
 import { bootCore, captureOriginalPlan, dispatchEvent } from "@/lib/core";
@@ -138,6 +141,7 @@ export function StrengthApp() {
   const [runKm, setRunKm] = useState<number | null>(null);
   const [kcal, setKcal] = useState<number | null>(null);
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
+  useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem("fk-vault-restored")) { sessionStorage.setItem("fk-vault-restored", "1"); location.reload(); } }).catch(() => {}); }, []);
   const [tab, setTab] = useState<"today" | "plan" | "log" | "coach" | "body" | "diet">("today");
   const [homeRev, setHomeRev] = useState(0);
   const [dayOverride, setDayOverride] = useState<Override | null>(null);
@@ -274,7 +278,7 @@ export function StrengthApp() {
   const doneCount = 0;
   const liftSummary = (session?.moves ?? []).slice(0, 4).map((move) => displayName(move)).join(" · ");
   const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : courseCount === 0 ? "暂无安排" : "待选择课程";
-  const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI" : tab === "diet" ? "饮食" : "健康";
+  const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI · 测试版" : tab === "diet" ? "饮食" : "健康";
   const phaseLabel = plan.cycle ? PHASES.find((item) => item.week === plan.cycle?.week)?.label ?? "" : "";
   const headerHint = tab === "today"
     ? (clockLabel ? `${clockLabel} · ${statusText}` : statusText)
@@ -446,7 +450,7 @@ export function StrengthApp() {
           <div className="flex flex-col">
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
-            <HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
+            <Plan400Today /><HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
             <div style={{ order: homeLayout.order.indexOf("week") }}><TodayBoard revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso}
               onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
@@ -476,6 +480,7 @@ export function StrengthApp() {
             <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setTab("plan");}} /></details>
           </> : <p>选定课程已不存在，请重新选择。</p>}
         </section> : null}
+        {tab === "plan" ? <Plan400 /> : null}
         {tab === "plan" ? <section className="home-card product-goal-card mb-3 p-4" aria-label="当前目标">
           <div className="product-section-heading"><div><p className="product-eyebrow">目标与约束</p><h2>{GOALS.find(goal => goal.id === preference.primaryGoal)?.label ?? "目标待确认"}</h2></div><button type="button" className="product-text-action" onClick={() => { setSettingsPane("goals"); setSettingsOpen(true); }}>修改 ›</button></div>
           <p className="mt-2 text-sm text-muted">{profileFilled(profile) ? profileSummary(profile) : "当前能力、期限、可用时间与运动限制，需进一步确认。"}</p>
@@ -735,6 +740,7 @@ export function StrengthApp() {
       /> : null}
       <div className={tab === "diet" ? "" : "hidden"}><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div>
       <div className={tab === "body" ? "" : "hidden"}>
+        <GarminSync />
         <BodyCenter active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />
       </div>
       {settingsOpen ? (
@@ -876,7 +882,7 @@ export function StrengthApp() {
               ["today", "今日", House],
               ["plan", "计划", ClipboardList],
               ["log", "日志", CalendarDays],
-              ["coach", "方坤", MessageCircle],
+              ["coach", "方坤β", MessageCircle],
               ["body", "健康", Scale],
               ["diet", "饮食", Utensils],
             ] as const

@@ -52,7 +52,7 @@ function boot() {
 }
 
 test("the shell cache version moves off fr255-shell-1 and only owns its own prefix", () => {
-  assert.match(source, /const CACHE = "fr255-shell-2"/)
+  assert.match(source, /const CACHE = "fr255-shell-3"/)
   assert.doesNotMatch(source, /fr255-shell-1/)
   assert.doesNotMatch(source, /localStorage|indexedDB|sessionStorage/)
   assert.match(source, /ownedShellCache\(key\) && key !== CACHE/)
@@ -93,7 +93,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { cached = promise },
   })
   assert.equal(await (await cached).text(), "export const fresh = 1")
-  assert.equal(stores.get("fr255-shell-2").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
+  assert.equal(stores.get("fr255-shell-3").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
   setFetch(async () => { throw new Error("offline") })
   let offline
   handlers.get("fetch")({
@@ -115,7 +115,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { html = promise },
   })
   await html
-  assert.equal(stores.get("fr255-shell-2").has("https://example.test/assets/bad.js"), false)
+  assert.equal(stores.get("fr255-shell-3").has("https://example.test/assets/bad.js"), false)
   let intercepted = false
   handlers.get("fetch")({
     request: { url: "https://example.test/backup.zip", method: "GET", destination: "document", mode: "navigate", headers: { get: () => null } },

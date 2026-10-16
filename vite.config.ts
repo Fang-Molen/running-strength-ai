@@ -166,11 +166,11 @@ export default defineConfig(({ command, isPreview }) => ({
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({ spa: { enabled: true } }),
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "vercel",
+            preset: "static",
             serverDir: "./server",
             vercel: { functions: { maxDuration: 60 } },
           }),
