@@ -8,7 +8,7 @@ export function exportFeedback() {
 }
 export function CoachFeedback({ answer, question }: { answer: string; question?: string }) {
   const [open, setOpen] = useState(false); const [note, setNote] = useState(""); const [done, setDone] = useState(false);
-  if (done) return <p className="ml-2 text-xs text-muted">已记下反馈（本机保存）</p>;
+  if (done) return <p className="keep ml-2 text-xs text-muted">已记下反馈（本机保存）</p>;
   if (!open) return <button type="button" className="ml-2 text-xs text-muted underline" onClick={() => setOpen(true)}>反馈/报错</button>;
   return <div className="ml-2 mt-1 flex gap-2"><input className="min-h-9 flex-1 rounded border border-line bg-surface px-2 text-sm" placeholder="哪里不对？" value={note} onChange={(e) => setNote(e.target.value)} />
     <button type="button" className="rounded border border-line px-2 text-sm" onClick={() => { const list = loadFeedback(); list.push({ at: new Date().toISOString(), answer, question, note }); localStorage.setItem(KEY, JSON.stringify(list)); setDone(true); }}>保存</button></div>;

@@ -3,6 +3,7 @@ import { saveDeviceRows } from "@/lib/ui/device-store";
 import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
 import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
 import { exportFeedback } from "@/components/coach-feedback";
+import { saveGarminActivities } from "@/components/garmin-log";
 
 const api = async (p: string, init?: RequestInit, ms = 20000) => {
   const ac = new AbortController(); const t = setTimeout(() => ac.abort(), ms);
@@ -10,7 +11,7 @@ const api = async (p: string, init?: RequestInit, ms = 20000) => {
   catch { return { status: 0, body: { ok: false, message: "请求超时或网络中断" } }; } finally { clearTimeout(t); }
 };
 const day = (d: number) => new Date(Date.now() + 8 * 3600e3 - d * 86400e3).toISOString().slice(0, 10);
-function sport(k: string): [DeviceActivity["sport"], string] { if (/run|track|treadmill/.test(k)) return ["RUNNING", "跑步"]; if (/strength|fitness|training/.test(k)) return ["STRENGTH", "力量"]; return ["UNKNOWN", k || "其他"]; }
+function sport(k: string): [DeviceActivity["sport"], string] { k = k.toLowerCase(); if (/run|track|treadmill/.test(k)) return ["RUNNING", "跑步"]; if (/strength|fitness|training|weight|hiit|indoor_cardio/.test(k)) return ["STRENGTH", "力量"]; return ["UNKNOWN", k || "其他"]; }
 
 export function GarminSync() {
   const [st, setSt] = useState<{ loggedIn: boolean; profile?: { displayName?: string; fullName?: string } | null } | null>(null);
@@ -39,10 +40,11 @@ export function GarminSync() {
     setBusy(true); setMsg("同步中…");
     try {
       const acts: DeviceActivity[] = []; const health: DeviceHealthRow[] = [];
-      const a = await api("g/activitylist-service/activities/search/activities?start=0&limit=60");
+      const a = await api("g/activitylist-service/activities/search/activities?start=0&limit=200");
       if (a.status === 401) { setMsg("登录过期，请重新登录"); await refresh(); return; }
       if (!Array.isArray(a.body)) { setMsg(`活动列表获取失败：${a.body?.message || "HTTP " + a.status}`); return; }
       setMsg(`已取到 ${a.body.length} 条活动，正在取健康数据…`);
+      saveGarminActivities(a.body);
       for (const o of Array.isArray(a.body) ? a.body : []) {
         const [sp, label] = sport(o.activityType?.typeKey ?? "");
         const startIso = o.startTimeGMT ? new Date(o.startTimeGMT.replace(" ", "T") + "Z").toISOString() : null;
@@ -65,7 +67,7 @@ export function GarminSync() {
       }
       const r = saveDeviceRows(health, acts);
       localStorage.setItem("fk-garmin-last-sync", new Date().toISOString());
-      setMsg(`同步完成：活动 ${acts.length} 条、健康 ${health.length} 条；新增 ${r.saved}，重复跳过 ${r.skipped}${!who ? "（未取到账号名，健康数据跳过）" : ""}${fails ? `；${fails} 天健康数据失败` : ""}${r.errors.length ? "；" + r.errors.join("，") : ""}`);
+      setMsg(`同步完成 新增 ${r.saved} 条`);
     } catch (e) { setMsg("同步失败：" + String((e as Error)?.message || e)); } finally { setBusy(false); }
   }
   const input = "min-h-11 w-full rounded-card border border-line bg-surface px-3";

@@ -290,7 +290,7 @@ function recordKind(item: TrainingOccurrence): "run" | "lift" | "mixed" | "unkno
 
 export function TrainingLogPanel({ plan, onAsk }: { plan: Plan; onAsk: (occurrenceId: string | null) => void }) {
   const [logRevision, setLogRevision] = useState(0)
-  const imports = useMemo(() => loadConfirmedTrainingImports(), [logRevision])
+  const imports = useMemo(() => loadConfirmedTrainingImports().filter((item) => !String(item.title.value ?? "").includes("佳明账号同步")), [logRevision])
   const occurrences = useMemo(() => listTrainingOccurrences(), [])
   const grouped = useMemo(() => logMarks(
     imports.map((item) => ({ at: item.occurredAt.value })),

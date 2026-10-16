@@ -384,3 +384,6 @@ textarea {
 .fk-bubble-risk { border: 1.5px solid var(--color-risk); background: color-mix(in srgb, var(--color-risk) 9%, var(--color-surface)); }
 .fk-risk-head { display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--color-risk); margin-bottom: 4px; }
 @media (min-width: 900px) { .fk-two-col { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: start; } }
+
+/* 用户要求：隐藏全站说明小字（状态值加 .keep 保留） */
+.product-ui p.text-xs.text-muted:not(.keep), .product-ui p[class*="text-[10px]"]:not(.keep), .product-ui p[class*="text-[11px]"]:not(.keep) { display: none; }

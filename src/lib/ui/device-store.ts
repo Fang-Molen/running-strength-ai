@@ -54,9 +54,9 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
   for (const a of activities) {
     const draftId = activityDraftId(a)
     if (have.activities.has(draftId) || isDuplicate(a, have)) { skipped++; continue }
-    have.sigs.push({ startIso: a.startIso, distanceM: a.distanceM }); try { localStorage.setItem(SIG_KEY, JSON.stringify(have.sigs.slice(-500))) } catch { /* ignore */ }
     const sport = a.sport === "UNKNOWN" ? (a.distanceM ? "RUNNING" : "UNKNOWN") : a.sport
-    const strengthSets = a.sets.filter((s) => s.reps != null || s.durationSec != null).slice(0, 80).map((s, i) => ({ id: `s${i + 1}`, exerciseName: field(s.name), setOrdinal: field(i + 1), weightKg: field(s.weightKg), repetitions: field(s.reps), durationSeconds: field(s.durationSec), recoverySeconds: field(null), completion: "COMPLETED" }))
+    const realSets = a.sets.length ? a.sets : (sport === "STRENGTH" && a.durationSec ? [{ name: "力量训练", reps: null, weightKg: null, durationSec: a.durationSec }] : [])
+    const strengthSets = realSets.filter((s) => s.reps != null || s.durationSec != null).slice(0, 80).map((s, i) => ({ id: `s${i + 1}`, exerciseName: field(s.name), setOrdinal: field(i + 1), weightKg: field(s.weightKg), repetitions: field(s.reps), durationSeconds: field(s.durationSec), recoverySeconds: field(null), completion: "COMPLETED" }))
     const draft = createTrainingImportDraft({
       sport: sport === "STRENGTH" && !strengthSets.length ? "UNKNOWN" : sport,
       occurredAt: field(a.startIso ? a.startIso.replace(/\.\d+Z$/, "Z") : null), title: field(`${a.sportLabel} · ${a.source}`.slice(0, 120)),
@@ -66,6 +66,7 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
     }, "TEXT", ["user-confirmed"])
     draft.draftId = draftId
     const res = confirmTrainingImport(draft)
+    if (res.ok) { have.sigs.push({ startIso: a.startIso, distanceM: a.distanceM }); try { localStorage.setItem(SIG_KEY, JSON.stringify(have.sigs.slice(-500))) } catch { /* ignore */ } }
     if (res.ok && !res.duplicate) saved++
     else if (res.ok) skipped++
     else errors.push(`${a.startIso?.slice(0, 10) ?? ""} ${a.sportLabel}：${res.reason}`)

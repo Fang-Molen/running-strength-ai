@@ -73,3 +73,13 @@ test("swap: never raises intensity, keeps day", () => {
   for (const w of ["tired", "short", "noRun", "other"] as const) { const n = swapProposal(base, w); assert.equal(n.date, base.date); assert.notEqual(n.intensity, "HARD"); assert.equal(n.status, "proposed") }
   assert.equal(swapProposal(base, "noRun").modality, "strength")
 })
+
+import { clearActual as _clear, dedupeEntries as _dedupe, logActual as _log } from "./day-schedule-rules.ts"
+test("状态可清除回待做；重复条目去重保留最后一次", () => {
+  const base = { date: "2026-10-16", kind: "strength", modality: "strength", title: "力量 · 核心+下肢", focus: [], minutes: 40, intensity: "MODERATE", lowerHeavy: true, source: "custom", refId: "s1", status: "planned" } as const
+  let es = [{ ...base, id: "a" }, { ...base, id: "b" }] as any[]
+  es = _log(es, "a", { outcome: "missed", minutes: 0, intensity: null, note: "", reasons: [] }, "2026-10-16T01:00:00Z")
+  es = _log(es, "b", { outcome: "missed", minutes: 0, intensity: null, note: "", reasons: [] }, "2026-10-16T02:00:00Z")
+  const d = _dedupe(es); assert.equal(d.removed, 1); assert.equal(d.entries[0].id, "b")
+  const c = _clear(d.entries, "b"); assert.equal(c[0].actual, undefined); assert.equal(c[0].status, "planned")
+})

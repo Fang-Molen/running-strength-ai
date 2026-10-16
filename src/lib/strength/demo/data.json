@@ -1,0 +1,9684 @@
+{
+ "version": "FK-DEMO-1",
+ "generated": "2026-10-14",
+ "exercises": [
+  {
+   "id": "bb-bench",
+   "name_zh": "杠铃卧推",
+   "name_en": "Barbell Bench Press",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 0,
+    "category_key": "BENCH_PRESS",
+    "exercise_name": 1,
+    "exercise_key": "BARBELL_BENCH_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_front"
+   ],
+   "equipment": [
+    "杠铃",
+    "卧推凳"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧在凳上，双眼大致在杠铃正下方",
+     "肩胛骨向后向下收紧，上背贴凳，保持自然腰弓",
+     "双脚踩实地面，臀部不离凳",
+     "握距约比肩宽一拳半"
+    ],
+    "execution": [
+     "出杠后杠铃在肩正上方",
+     "控制下放到乳头线附近，前臂大致垂直地面",
+     "脚蹬地、胸口挺住，把杠铃推回肩上方"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "肩胛没收紧、推起时耸肩",
+     "臀部离凳",
+     "杠铃落点过高（锁骨）或手腕后折",
+     "反弹借力"
+    ],
+    "safety": [
+     "大重量必须有保护者或在架内设保护杆",
+     "不要用拇指不握的“自杀式握法”",
+     "肩前侧疼痛时缩小幅度或改哑铃"
+    ],
+    "regression": [
+     "哑铃卧推",
+     "俯卧撑",
+     "地板卧推"
+    ],
+    "progression": [
+     "暂停卧推",
+     "逐步加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bench_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-bench",
+   "name_zh": "哑铃卧推",
+   "name_en": "Dumbbell Bench Press",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 0,
+    "category_key": "BENCH_PRESS",
+    "exercise_name": 6,
+    "exercise_key": "DUMBBELL_BENCH_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_front"
+   ],
+   "equipment": [
+    "哑铃",
+    "卧推凳"
+   ],
+   "cues": {
+    "setup": [
+     "坐在凳端，哑铃立放大腿上，躺下时借膝盖顶起到胸旁",
+     "肩胛骨向后向下收紧，上背贴凳，保持自然腰弓",
+     "双脚踩实地面，臀部不离凳"
+    ],
+    "execution": [
+     "两只哑铃在胸上方，掌心朝脚方向",
+     "屈肘下放到胸侧，肘与身体约 45–60°",
+     "向上并略向内推回，不必让哑铃相撞"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "肘外展成 90°",
+     "两侧速度不一致",
+     "底部放松失去控制"
+    ],
+    "safety": [
+     "结束时先把哑铃放回大腿再坐起，不要从两侧直接扔下",
+     "肩不适时减小底部深度"
+    ],
+    "regression": [
+     "较轻哑铃",
+     "俯卧撑"
+    ],
+    "progression": [
+     "单臂哑铃卧推",
+     "加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bench_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "inc-db-bench",
+   "name_zh": "上斜哑铃卧推",
+   "name_en": "Incline Dumbbell Bench Press",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 0,
+    "category_key": "BENCH_PRESS",
+    "exercise_name": 9,
+    "exercise_key": "INCLINE_DUMBBELL_BENCH_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest",
+    "delt_front"
+   ],
+   "secondary_muscles": [
+    "triceps"
+   ],
+   "equipment": [
+    "哑铃",
+    "可调上斜凳"
+   ],
+   "cues": {
+    "setup": [
+     "凳面调到 30–45°",
+     "背、臀贴凳，双脚踩实",
+     "肩胛向后向下收紧"
+    ],
+    "execution": [
+     "哑铃从上胸两侧推起到肩正上方",
+     "控制下放到上胸外侧",
+     "保持胸口挺起"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "角度过大变成肩推",
+     "下背离凳过度拱起",
+     "耸肩"
+    ],
+    "safety": [
+     "肩痛时减小角度或重量"
+    ],
+    "regression": [
+     "平板哑铃卧推",
+     "上斜俯卧撑"
+    ],
+    "progression": [
+     "上斜杠铃卧推",
+     "加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bench_inc_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "inc-bb-bench",
+   "name_zh": "上斜杠铃卧推",
+   "name_en": "Incline Barbell Bench Press",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 0,
+    "category_key": "BENCH_PRESS",
+    "exercise_name": 8,
+    "exercise_key": "INCLINE_BARBELL_BENCH_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest",
+    "delt_front"
+   ],
+   "secondary_muscles": [
+    "triceps"
+   ],
+   "equipment": [
+    "杠铃",
+    "上斜卧推架"
+   ],
+   "cues": {
+    "setup": [
+     "凳面 30–45°",
+     "杠铃位于眼睛上方",
+     "肩胛收紧，双脚踩实"
+    ],
+    "execution": [
+     "出杠到肩上方",
+     "下放到锁骨下方的上胸",
+     "垂直向上推回"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "落点太低到腹部",
+     "臀部离凳",
+     "腕后折"
+    ],
+    "safety": [
+     "大重量必须有保护者或在架内设保护杆",
+     "不要用拇指不握的“自杀式握法”",
+     "肩前侧疼痛时缩小幅度或改哑铃"
+    ],
+    "regression": [
+     "上斜哑铃卧推"
+    ],
+    "progression": [
+     "暂停上斜卧推"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bench_inc_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "cg-bench",
+   "name_zh": "窄距杠铃卧推",
+   "name_en": "Close Grip Barbell Bench Press",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 0,
+    "category_key": "BENCH_PRESS",
+    "exercise_name": 4,
+    "exercise_key": "CLOSE_GRIP_BARBELL_BENCH_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps",
+    "chest"
+   ],
+   "secondary_muscles": [
+    "delt_front"
+   ],
+   "equipment": [
+    "杠铃",
+    "卧推凳"
+   ],
+   "cues": {
+    "setup": [
+     "握距约与肩同宽（不要更窄，以免伤腕）",
+     "仰卧在凳上，双眼大致在杠铃正下方",
+     "肩胛骨向后向下收紧，上背贴凳，保持自然腰弓",
+     "双脚踩实地面，臀部不离凳"
+    ],
+    "execution": [
+     "下放时肘贴近身体",
+     "落点在胸骨下段",
+     "伸肘推起，感受肱三头肌发力"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "握得过窄、手腕疼",
+     "肘向外张开"
+    ],
+    "safety": [
+     "大重量必须有保护者或在架内设保护杆",
+     "不要用拇指不握的“自杀式握法”",
+     "肩前侧疼痛时缩小幅度或改哑铃",
+     "腕不适时改用 EZ 杆或哑铃"
+    ],
+    "regression": [
+     "钻石俯卧撑",
+     "跪姿窄距俯卧撑"
+    ],
+    "progression": [
+     "加重",
+     "暂停"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bench_cg",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-fly",
+   "name_zh": "哑铃飞鸟",
+   "name_en": "Dumbbell Flye",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 9,
+    "category_key": "FLYE",
+    "exercise_name": 2,
+    "exercise_key": "DUMBBELL_FLYE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest"
+   ],
+   "secondary_muscles": [
+    "delt_front",
+    "biceps"
+   ],
+   "equipment": [
+    "哑铃",
+    "卧推凳"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧凳上，哑铃在胸上方，掌心相对",
+     "肘微屈并在整个动作中固定这个角度",
+     "肩胛收紧"
+    ],
+    "execution": [
+     "像抱大树一样向两侧打开下放",
+     "下到胸部有拉伸感、上臂约与身体齐平即停",
+     "用胸发力沿弧线合拢"
+    ],
+    "breathing": [
+     "打开时吸气",
+     "合拢时呼气"
+    ],
+    "mistakes": [
+     "屈肘过多变成卧推",
+     "下放过深",
+     "用太重"
+    ],
+    "safety": [
+     "重量宜轻，肩前侧疼痛立即减小幅度"
+    ],
+    "regression": [
+     "龙门架夹胸",
+     "减小幅度"
+    ],
+    "progression": [
+     "底部停 1 秒",
+     "上斜飞鸟"
+    ]
+   },
+   "tempo": "开 2 秒 · 合 1 秒",
+   "anim": "fly_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "cable-cross",
+   "name_zh": "龙门架夹胸",
+   "name_en": "Cable Crossover",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 9,
+    "category_key": "FLYE",
+    "exercise_name": 0,
+    "exercise_key": "CABLE_CROSSOVER"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest"
+   ],
+   "secondary_muscles": [
+    "delt_front"
+   ],
+   "equipment": [
+    "龙门架",
+    "D 形把手"
+   ],
+   "cues": {
+    "setup": [
+     "滑轮调到高位，两手各握一个把手",
+     "一脚在前分腿站，上身略前倾",
+     "肘微屈固定"
+    ],
+    "execution": [
+     "双手从两侧向身体前下方沿弧线合拢",
+     "手在腹前相遇，挤压胸部 1 秒",
+     "控制还原到胸部拉伸位"
+    ],
+    "breathing": [
+     "还原时吸气",
+     "合拢时呼气"
+    ],
+    "mistakes": [
+     "屈伸肘代替夹胸",
+     "身体前后晃动借力",
+     "耸肩"
+    ],
+    "safety": [
+     "重量宜中轻，肩部拉伸感过强就缩小开合"
+    ],
+    "regression": [
+     "弹力带夹胸",
+     "哑铃飞鸟"
+    ],
+    "progression": [
+     "单侧夹胸",
+     "低位到高位夹胸"
+    ]
+   },
+   "tempo": "合 1 秒 · 回 2 秒",
+   "anim": "fly_cable",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "pushup",
+   "name_zh": "俯卧撑",
+   "name_en": "Push Up",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 22,
+    "category_key": "PUSH_UP",
+    "exercise_name": 77,
+    "exercise_key": "PUSH_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_front",
+    "abs"
+   ],
+   "equipment": [
+    "无器械"
+   ],
+   "cues": {
+    "setup": [
+     "双手撑地，略宽于肩，手指朝前",
+     "双脚并拢或与髋同宽，身体从头到脚跟成一条直线",
+     "收紧臀部和腹部"
+    ],
+    "execution": [
+     "屈肘下放，肘与身体约成 45°",
+     "胸口下到离地一拳左右",
+     "手掌推地把身体整体推起，肩胛在顶端稍微前伸"
+    ],
+    "breathing": [
+     "下放时吸气",
+     "推起时呼气"
+    ],
+    "mistakes": [
+     "塌腰或撅臀",
+     "肘向两侧打开成 90°",
+     "只动头不动胸，幅度太小",
+     "耸肩"
+    ],
+    "safety": [
+     "手腕不适可握哑铃或用俯卧撑架保持手腕中立",
+     "肩前侧疼痛时缩小幅度、肘再收紧"
+    ],
+    "regression": [
+     "跪姿俯卧撑",
+     "上斜俯卧撑（手撑凳子或墙）"
+    ],
+    "progression": [
+     "下斜俯卧撑（脚垫高）",
+     "负重背心",
+     "暂停俯卧撑"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "pushup",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "knee-pushup",
+   "name_zh": "跪姿俯卧撑",
+   "name_en": "Kneeling Push Up",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 22,
+    "category_key": "PUSH_UP",
+    "exercise_name": 33,
+    "exercise_key": "KNEELING_PUSH_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "chest",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_front",
+    "abs"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "双膝跪在垫上，双手略宽于肩",
+     "从头到膝成一条直线",
+     "收紧腹部和臀部"
+    ],
+    "execution": [
+     "屈肘下放，肘与身体约 45°",
+     "胸口接近地面",
+     "推起时保持身体整体移动"
+    ],
+    "breathing": [
+     "下放吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "臀部翘起",
+     "塌腰",
+     "只低头不下胸"
+    ],
+    "safety": [
+     "膝盖下垫软垫",
+     "手腕不适用拳撑或俯卧撑架"
+    ],
+    "regression": [
+     "上斜俯卧撑（撑墙或桌）"
+    ],
+    "progression": [
+     "标准俯卧撑",
+     "跪姿下放 3 秒"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "pushup_knee",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "diamond-pushup",
+   "name_zh": "钻石俯卧撑",
+   "name_en": "Diamond Push Up",
+   "category": "胸",
+   "garmin_fit": {
+    "category": 22,
+    "category_key": "PUSH_UP",
+    "exercise_name": 15,
+    "exercise_key": "DIAMOND_PUSH_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps",
+    "chest"
+   ],
+   "secondary_muscles": [
+    "delt_front",
+    "abs"
+   ],
+   "equipment": [
+    "无器械"
+   ],
+   "cues": {
+    "setup": [
+     "双手在胸下方，拇指和食指相碰成菱形",
+     "双脚并拢，身体成直线"
+    ],
+    "execution": [
+     "下放时肘贴近身体向后",
+     "胸口接近手背",
+     "伸肘推起"
+    ],
+    "breathing": [
+     "下放吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "肘外张",
+     "塌腰",
+     "幅度太小"
+    ],
+    "safety": [
+     "手腕或肘部不适时把双手稍分开"
+    ],
+    "regression": [
+     "跪姿钻石俯卧撑",
+     "窄距俯卧撑"
+    ],
+    "progression": [
+     "脚垫高",
+     "负重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "pushup_diamond",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "pullup",
+   "name_zh": "引体向上",
+   "name_en": "Pull Up",
+   "category": "背",
+   "garmin_fit": {
+    "category": 21,
+    "category_key": "PULL_UP",
+    "exercise_name": 38,
+    "exercise_key": "PULL_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "biceps"
+   ],
+   "secondary_muscles": [
+    "rhomboids",
+    "delt_rear",
+    "forearm",
+    "abs"
+   ],
+   "equipment": [
+    "单杠"
+   ],
+   "cues": {
+    "setup": [
+     "正手握杠，略宽于肩",
+     "悬垂时肩胛先下沉，身体微收紧",
+     "双腿并拢或微屈交叉"
+    ],
+    "execution": [
+     "肘向下向后拉，把胸口拉向单杠",
+     "下巴过杠",
+     "控制下放到手臂几乎伸直"
+    ],
+    "breathing": [
+     "下放时吸气",
+     "上拉时呼气"
+    ],
+    "mistakes": [
+     "摆动借力（踢腿）",
+     "只拉到一半",
+     "底部完全放松、肩被挂着",
+     "耸肩把下巴往上够"
+    ],
+    "safety": [
+     "肩部疼痛或无法控制下放时改辅助版本",
+     "下杠不要直接跳落"
+    ],
+    "regression": [
+     "弹力带辅助引体",
+     "离心引体（跳上去慢放 3–5 秒）",
+     "高位下拉"
+    ],
+    "progression": [
+     "负重引体",
+     "暂停引体"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2–3 秒",
+   "anim": "pullup",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "chinup",
+   "name_zh": "反手引体",
+   "name_en": "Close Grip Chin Up",
+   "category": "背",
+   "garmin_fit": {
+    "category": 21,
+    "category_key": "PULL_UP",
+    "exercise_name": 3,
+    "exercise_key": "CLOSE_GRIP_CHIN_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "biceps"
+   ],
+   "secondary_muscles": [
+    "rhomboids",
+    "forearm",
+    "abs"
+   ],
+   "equipment": [
+    "单杠"
+   ],
+   "cues": {
+    "setup": [
+     "反手（掌心朝自己）握杠，约与肩同宽",
+     "悬垂，肩胛下沉"
+    ],
+    "execution": [
+     "屈肘把胸口拉向杠，肘贴近身体",
+     "下巴过杠",
+     "控制下放"
+    ],
+    "breathing": [
+     "下放吸气",
+     "上拉呼气"
+    ],
+    "mistakes": [
+     "摆动借力（踢腿）",
+     "只拉到一半",
+     "底部完全放松、肩被挂着",
+     "耸肩把下巴往上够"
+    ],
+    "safety": [
+     "肘内侧不适时改中立握"
+    ],
+    "regression": [
+     "弹力带辅助反手引体",
+     "离心反手引体"
+    ],
+    "progression": [
+     "负重反手引体"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2–3 秒",
+   "anim": "chinup",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "assist-chin",
+   "name_zh": "弹力带辅助引体",
+   "name_en": "Band Assisted Chin Up",
+   "category": "背",
+   "garmin_fit": {
+    "category": 21,
+    "category_key": "PULL_UP",
+    "exercise_name": 2,
+    "exercise_key": "BAND_ASSISTED_CHIN_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "biceps"
+   ],
+   "secondary_muscles": [
+    "rhomboids",
+    "forearm"
+   ],
+   "equipment": [
+    "单杠",
+    "弹力带"
+   ],
+   "cues": {
+    "setup": [
+     "弹力带挂在杠上，单膝或双脚踩进带圈",
+     "反手握杠，肩胛下沉"
+    ],
+    "execution": [
+     "肘向下拉，胸口靠近杠",
+     "下巴过杠",
+     "慢慢下放，别让弹力带把你弹下去"
+    ],
+    "breathing": [
+     "下放吸气",
+     "上拉呼气"
+    ],
+    "mistakes": [
+     "完全靠弹力带弹起",
+     "底部放松"
+    ],
+    "safety": [
+     "确认弹力带挂牢、无破损",
+     "脚从带里出来时先站稳"
+    ],
+    "regression": [
+     "更粗的弹力带",
+     "高位下拉"
+    ],
+    "progression": [
+     "更细的弹力带",
+     "离心引体"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 3 秒",
+   "anim": "chinup",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "lat-pd",
+   "name_zh": "高位下拉",
+   "name_en": "Lat Pulldown",
+   "category": "背",
+   "garmin_fit": {
+    "category": 21,
+    "category_key": "PULL_UP",
+    "exercise_name": 13,
+    "exercise_key": "LAT_PULLDOWN"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats"
+   ],
+   "secondary_muscles": [
+    "biceps",
+    "rhomboids",
+    "delt_rear"
+   ],
+   "equipment": [
+    "高位下拉器"
+   ],
+   "cues": {
+    "setup": [
+     "坐好并把大腿卡在护垫下",
+     "握把宽度略宽于肩",
+     "上身微后仰 10–15°，胸口挺起"
+    ],
+    "execution": [
+     "先下沉肩胛，再屈肘把横杆拉到上胸",
+     "肘向下向后，感受腋下发力",
+     "控制还原到手臂伸直"
+    ],
+    "breathing": [
+     "还原吸气",
+     "下拉呼气"
+    ],
+    "mistakes": [
+     "身体大幅后仰借力",
+     "拉到颈后",
+     "耸肩"
+    ],
+    "safety": [
+     "不要拉到颈后",
+     "重量以能控制还原为准"
+    ],
+    "regression": [
+     "减轻重量",
+     "弹力带下拉"
+    ],
+    "progression": [
+     "引体向上",
+     "单臂下拉"
+    ]
+   },
+   "tempo": "下 1 秒 · 回 2 秒",
+   "anim": "pulldown",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "close-lat",
+   "name_zh": "窄距下拉",
+   "name_en": "Close Grip Lat Pulldown",
+   "category": "背",
+   "garmin_fit": {
+    "category": 21,
+    "category_key": "PULL_UP",
+    "exercise_name": 5,
+    "exercise_key": "CLOSE_GRIP_LAT_PULLDOWN"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats"
+   ],
+   "secondary_muscles": [
+    "biceps",
+    "rhomboids"
+   ],
+   "equipment": [
+    "高位下拉器",
+    "窄距 V 把"
+   ],
+   "cues": {
+    "setup": [
+     "坐好并把大腿卡在护垫下",
+     "用窄距 V 把或中立握，双手相距约 10–15 厘米",
+     "胸口挺起"
+    ],
+    "execution": [
+     "肘贴近身体向下拉",
+     "把手拉到胸骨上方",
+     "控制还原"
+    ],
+    "breathing": [
+     "还原吸气",
+     "下拉呼气"
+    ],
+    "mistakes": [
+     "身体后仰过多",
+     "手臂发力为主"
+    ],
+    "safety": [
+     "重量以能控制还原为准"
+    ],
+    "regression": [
+     "减轻重量"
+    ],
+    "progression": [
+     "反手引体"
+    ]
+   },
+   "tempo": "下 1 秒 · 回 2 秒",
+   "anim": "pulldown",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-row",
+   "name_zh": "单臂哑铃划船",
+   "name_en": "One Arm Bent Over Row",
+   "category": "背",
+   "garmin_fit": {
+    "category": 23,
+    "category_key": "ROW",
+    "exercise_name": 13,
+    "exercise_key": "ONE_ARM_BENT_OVER_ROW"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "rhomboids"
+   ],
+   "secondary_muscles": [
+    "biceps",
+    "delt_rear",
+    "erectors"
+   ],
+   "equipment": [
+    "哑铃",
+    "凳"
+   ],
+   "cues": {
+    "setup": [
+     "同侧手和膝撑在凳上，另一脚踩地",
+     "背部平直，与地面接近平行",
+     "另一只手握哑铃自然下垂"
+    ],
+    "execution": [
+     "肘贴近身体，把哑铃拉向髋部",
+     "顶端肩胛内收，停 1 秒",
+     "控制下放到手臂伸直"
+    ],
+    "breathing": [
+     "下放吸气",
+     "上拉呼气"
+    ],
+    "mistakes": [
+     "躯干转动借力",
+     "耸肩向耳朵拉",
+     "背部弓起"
+    ],
+    "safety": [
+     "下背不适时缩短组数并确保撑稳"
+    ],
+    "regression": [
+     "较轻哑铃",
+     "胸靠上斜凳划船"
+    ],
+    "progression": [
+     "加重",
+     "暂停划船"
+    ]
+   },
+   "tempo": "拉 1 秒 · 停 1 秒 · 放 2 秒",
+   "anim": "row_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bb-row",
+   "name_zh": "反握杠铃划船",
+   "name_en": "Reverse Grip Barbell Row",
+   "category": "背",
+   "garmin_fit": {
+    "category": 23,
+    "category_key": "ROW",
+    "exercise_name": 16,
+    "exercise_key": "REVERSE_GRIP_BARBELL_ROW"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "rhomboids"
+   ],
+   "secondary_muscles": [
+    "biceps",
+    "delt_rear",
+    "erectors",
+    "hamstrings"
+   ],
+   "equipment": [
+    "杠铃"
+   ],
+   "cues": {
+    "setup": [
+     "反握（掌心朝前）杠铃，约与肩同宽",
+     "屈髋俯身到上身约 45° 或更低，膝微屈",
+     "背部平直，腹部收紧"
+    ],
+    "execution": [
+     "把杠铃拉向肚脐下方",
+     "肘贴近身体向后",
+     "控制下放，保持上身角度不变"
+    ],
+    "breathing": [
+     "下放吸气",
+     "上拉呼气"
+    ],
+    "mistakes": [
+     "起身借力",
+     "弓背",
+     "拉向胸口太高"
+    ],
+    "safety": [
+     "下背疼痛时改用胸靠凳划船",
+     "握力不足可用助力带"
+    ],
+    "regression": [
+     "单臂哑铃划船",
+     "坐姿绳索划船"
+    ],
+    "progression": [
+     "暂停划船",
+     "加重"
+    ]
+   },
+   "tempo": "拉 1 秒 · 放 2 秒",
+   "anim": "row_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "cable-row",
+   "name_zh": "坐姿绳索划船",
+   "name_en": "Seated Cable Row",
+   "category": "背",
+   "garmin_fit": {
+    "category": 23,
+    "category_key": "ROW",
+    "exercise_name": 18,
+    "exercise_key": "SEATED_CABLE_ROW"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "rhomboids"
+   ],
+   "secondary_muscles": [
+    "biceps",
+    "delt_rear",
+    "erectors"
+   ],
+   "equipment": [
+    "坐姿划船器"
+   ],
+   "cues": {
+    "setup": [
+     "坐好，双脚踩踏板，膝微屈",
+     "握把手，背部挺直，上身约垂直"
+    ],
+    "execution": [
+     "先挺胸、肩胛后收，再屈肘把手拉到腹部",
+     "肘贴近身体",
+     "控制还原，肩可略前伸"
+    ],
+    "breathing": [
+     "还原吸气",
+     "拉回呼气"
+    ],
+    "mistakes": [
+     "身体大幅前后摇摆",
+     "弓背",
+     "耸肩"
+    ],
+    "safety": [
+     "重量以上身能保持不动为准"
+    ],
+    "regression": [
+     "减轻重量",
+     "弹力带划船"
+    ],
+    "progression": [
+     "单臂绳索划船",
+     "顶端停 2 秒"
+    ]
+   },
+   "tempo": "拉 1 秒 · 回 2 秒",
+   "anim": "row_cable",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "face-pull",
+   "name_zh": "面拉",
+   "name_en": "Face Pull",
+   "category": "背",
+   "garmin_fit": {
+    "category": 23,
+    "category_key": "ROW",
+    "exercise_name": 5,
+    "exercise_key": "FACE_PULL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_rear",
+    "rhomboids"
+   ],
+   "secondary_muscles": [
+    "traps",
+    "biceps"
+   ],
+   "equipment": [
+    "龙门架",
+    "绳索把手"
+   ],
+   "cues": {
+    "setup": [
+     "滑轮调到与脸同高或略高",
+     "双手握绳索两端，后退一步，手臂伸直"
+    ],
+    "execution": [
+     "肘抬高向两侧后方拉，把绳子拉向额头/眼睛",
+     "拉到底时双手分开到耳旁，像展示肌肉",
+     "控制还原"
+    ],
+    "breathing": [
+     "还原吸气",
+     "拉回呼气"
+    ],
+    "mistakes": [
+     "肘下垂变成划船",
+     "身体后仰借力",
+     "重量太大"
+    ],
+    "safety": [
+     "重量宜轻，追求控制"
+    ],
+    "regression": [
+     "弹力带面拉"
+    ],
+    "progression": [
+     "顶端停 2 秒"
+    ]
+   },
+   "tempo": "拉 1 秒 · 停 1 秒 · 回 2 秒",
+   "anim": "facepull",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "inv-row",
+   "name_zh": "反向划船",
+   "name_en": "Modified Inverted Row",
+   "category": "背",
+   "garmin_fit": {
+    "category": 23,
+    "category_key": "ROW",
+    "exercise_name": 10,
+    "exercise_key": "MODIFIED_INVERTED_ROW"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "lats",
+    "rhomboids"
+   ],
+   "secondary_muscles": [
+    "biceps",
+    "delt_rear",
+    "abs",
+    "glutes"
+   ],
+   "equipment": [
+    "史密斯架或低单杠"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃调到约腰高，仰卧在杠下",
+     "正握杠略宽于肩，脚跟着地",
+     "身体从头到脚跟成直线"
+    ],
+    "execution": [
+     "把胸口拉向杠",
+     "顶端肩胛内收",
+     "控制下放到手臂伸直"
+    ],
+    "breathing": [
+     "下放吸气",
+     "上拉呼气"
+    ],
+    "mistakes": [
+     "塌腰",
+     "只用手臂拉",
+     "下巴前伸"
+    ],
+    "safety": [
+     "确认杠铃锁牢"
+    ],
+    "regression": [
+     "杠调高、身体更直立",
+     "屈膝做"
+    ],
+    "progression": [
+     "杠调低",
+     "脚垫高"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "inv_row",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bb-shrug",
+   "name_zh": "杠铃耸肩",
+   "name_en": "Barbell Shrug",
+   "category": "背",
+   "garmin_fit": {
+    "category": 26,
+    "category_key": "SHRUG",
+    "exercise_name": 1,
+    "exercise_key": "BARBELL_SHRUG"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "traps"
+   ],
+   "secondary_muscles": [
+    "forearm"
+   ],
+   "equipment": [
+    "杠铃"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃在身前，正握略宽于肩",
+     "站直，核心收紧"
+    ],
+    "execution": [
+     "肩膀垂直向上耸向耳朵",
+     "顶端停 1 秒",
+     "慢慢放下到完全放松"
+    ],
+    "breathing": [
+     "放下吸气",
+     "耸起呼气"
+    ],
+    "mistakes": [
+     "肩膀绕圈",
+     "屈肘借力",
+     "头前伸"
+    ],
+    "safety": [
+     "颈部不适时减轻重量"
+    ],
+    "regression": [
+     "哑铃耸肩",
+     "减轻重量"
+    ],
+    "progression": [
+     "顶端停 2 秒"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "shrug_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-shrug",
+   "name_zh": "哑铃耸肩",
+   "name_en": "Dumbbell Shrug",
+   "category": "背",
+   "garmin_fit": {
+    "category": 26,
+    "category_key": "SHRUG",
+    "exercise_name": 5,
+    "exercise_key": "DUMBBELL_SHRUG"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "traps"
+   ],
+   "secondary_muscles": [
+    "forearm"
+   ],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "双手握重量自然垂在体侧或身前",
+     "站直，核心收紧"
+    ],
+    "execution": [
+     "肩膀垂直向上耸向耳朵",
+     "顶端停 1 秒",
+     "慢慢放下到完全放松"
+    ],
+    "breathing": [
+     "放下吸气",
+     "耸起呼气"
+    ],
+    "mistakes": [
+     "肩膀绕圈",
+     "屈肘借力",
+     "头前伸"
+    ],
+    "safety": [
+     "颈部不适时减轻重量"
+    ],
+    "regression": [
+     "减轻重量"
+    ],
+    "progression": [
+     "顶端停 2 秒",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "shrug_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-ohp",
+   "name_zh": "坐姿哑铃推举",
+   "name_en": "Seated Dumbbell Shoulder Press",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 24,
+    "category_key": "SHOULDER_PRESS",
+    "exercise_name": 17,
+    "exercise_key": "SEATED_DUMBBELL_SHOULDER_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_front",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_side",
+    "traps"
+   ],
+   "equipment": [
+    "哑铃",
+    "可调凳"
+   ],
+   "cues": {
+    "setup": [
+     "靠背调到接近垂直，坐稳",
+     "哑铃举到肩旁，掌心朝前",
+     "背贴靠背，腹部收紧"
+    ],
+    "execution": [
+     "向上推到手臂接近伸直",
+     "顶端哑铃在头的正上方",
+     "控制下放到耳朵高度附近"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "腰过度后仰",
+     "肘过度外张",
+     "推起时耸肩",
+     "只推到一半"
+    ],
+    "safety": [
+     "肩痛时改用对握或减小幅度"
+    ],
+    "regression": [
+     "较轻哑铃",
+     "单臂推举"
+    ],
+    "progression": [
+     "站姿推举"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "ohp_db_seated",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bb-ohp",
+   "name_zh": "杠铃推举",
+   "name_en": "Barbell Shoulder Press",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 24,
+    "category_key": "SHOULDER_PRESS",
+    "exercise_name": 4,
+    "exercise_key": "BARBELL_SHOULDER_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_front",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_side",
+    "traps",
+    "abs",
+    "glutes"
+   ],
+   "equipment": [
+    "杠铃",
+    "深蹲架"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃放在上胸/锁骨前，握距略宽于肩",
+     "双脚与髋同宽，臀和腹部收紧",
+     "前臂接近垂直"
+    ],
+    "execution": [
+     "杠铃垂直上推，头略后让",
+     "杠铃过额头后头回到中间，锁定在头正上方",
+     "控制下放回锁骨"
+    ],
+    "breathing": [
+     "推前吸气收紧",
+     "过最难点后呼气"
+    ],
+    "mistakes": [
+     "腰过度后仰",
+     "肘过度外张",
+     "推起时耸肩",
+     "只推到一半"
+    ],
+    "safety": [
+     "下背疼痛时改坐姿哑铃推举"
+    ],
+    "regression": [
+     "坐姿哑铃推举"
+    ],
+    "progression": [
+     "借力推举",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "ohp_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "arnold",
+   "name_zh": "阿诺德推举",
+   "name_en": "Arnold Press",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 24,
+    "category_key": "SHOULDER_PRESS",
+    "exercise_name": 1,
+    "exercise_key": "ARNOLD_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_front",
+    "delt_side"
+   ],
+   "secondary_muscles": [
+    "triceps"
+   ],
+   "equipment": [
+    "哑铃",
+    "可调凳"
+   ],
+   "cues": {
+    "setup": [
+     "坐姿，哑铃在胸前，掌心朝自己",
+     "背贴靠背"
+    ],
+    "execution": [
+     "边推起边旋转手腕，到顶端掌心朝前",
+     "顶端手臂接近伸直",
+     "下放时反向旋转回到起始"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "旋转太快失控",
+     "腰后仰"
+    ],
+    "safety": [
+     "肩部有撞击感时改普通推举"
+    ],
+    "regression": [
+     "坐姿哑铃推举"
+    ],
+    "progression": [
+     "加重"
+    ]
+   },
+   "tempo": "上 2 秒 · 下 2 秒",
+   "anim": "ohp_arnold",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-press",
+   "name_zh": "哑铃过头推举",
+   "name_en": "Overhead Dumbbell Press",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 24,
+    "category_key": "SHOULDER_PRESS",
+    "exercise_name": 15,
+    "exercise_key": "OVERHEAD_DUMBBELL_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_front",
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "delt_side",
+    "abs"
+   ],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "站立，双脚与髋同宽",
+     "哑铃举到肩旁，掌心朝前或相对",
+     "臀腹收紧"
+    ],
+    "execution": [
+     "向上推到头正上方",
+     "手臂接近伸直",
+     "控制下放到肩旁"
+    ],
+    "breathing": [
+     "下放（离心）时吸气",
+     "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+    ],
+    "mistakes": [
+     "腰过度后仰",
+     "肘过度外张",
+     "推起时耸肩",
+     "只推到一半"
+    ],
+    "safety": [
+     "腰部不适改坐姿"
+    ],
+    "regression": [
+     "坐姿哑铃推举"
+    ],
+    "progression": [
+     "单臂站姿推举",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "ohp_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "lat-raise",
+   "name_zh": "坐姿侧平举",
+   "name_en": "Seated Lateral Raise",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 14,
+    "category_key": "LATERAL_RAISE",
+    "exercise_name": 24,
+    "exercise_key": "SEATED_LATERAL_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_side"
+   ],
+   "secondary_muscles": [
+    "traps",
+    "delt_front"
+   ],
+   "equipment": [
+    "哑铃",
+    "凳"
+   ],
+   "cues": {
+    "setup": [
+     "坐在凳端，哑铃垂在体侧",
+     "上身挺直，肘微屈"
+    ],
+    "execution": [
+     "向两侧抬起到与肩同高",
+     "小拇指一侧略高，像倒水",
+     "慢慢放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "抬起呼气"
+    ],
+    "mistakes": [
+     "耸肩",
+     "借身体摆动",
+     "手高于肩太多",
+     "肘完全伸直锁死"
+    ],
+    "safety": [
+     "重量宜轻，肩部刺痛立即停止"
+    ],
+    "regression": [
+     "更轻哑铃",
+     "弹力带侧平举"
+    ],
+    "progression": [
+     "顶端停 1 秒",
+     "单侧绳索侧平举"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "lat_raise",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "lean-raise",
+   "name_zh": "哑铃侧平举",
+   "name_en": "Leaning Dumbbell Lateral Raise",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 14,
+    "category_key": "LATERAL_RAISE",
+    "exercise_name": 11,
+    "exercise_key": "LEANING_DUMBBELL_LATERAL_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_side"
+   ],
+   "secondary_muscles": [
+    "traps"
+   ],
+   "equipment": [
+    "哑铃",
+    "立柱或架子"
+   ],
+   "cues": {
+    "setup": [
+     "一手扶住立柱，身体向外倾斜约 15°",
+     "另一只手握哑铃垂在体前"
+    ],
+    "execution": [
+     "向外侧抬起到与肩同高",
+     "控制放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "抬起呼气"
+    ],
+    "mistakes": [
+     "耸肩",
+     "借身体摆动",
+     "手高于肩太多",
+     "肘完全伸直锁死"
+    ],
+    "safety": [
+     "重量宜轻"
+    ],
+    "regression": [
+     "坐姿侧平举"
+    ],
+    "progression": [
+     "顶端停 1 秒"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "lean_raise",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "front-raise",
+   "name_zh": "绳索前平举",
+   "name_en": "Cable Front Raise",
+   "category": "肩",
+   "garmin_fit": {
+    "category": 14,
+    "category_key": "LATERAL_RAISE",
+    "exercise_name": 5,
+    "exercise_key": "CABLE_FRONT_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "delt_front"
+   ],
+   "secondary_muscles": [
+    "delt_side",
+    "chest"
+   ],
+   "equipment": [
+    "龙门架",
+    "把手"
+   ],
+   "cues": {
+    "setup": [
+     "低位滑轮，背对或面对器械站立",
+     "手握把手在大腿前，肘微屈"
+    ],
+    "execution": [
+     "向前抬起到与肩同高",
+     "控制放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "抬起呼气"
+    ],
+    "mistakes": [
+     "身体后仰",
+     "抬得过高",
+     "耸肩"
+    ],
+    "safety": [
+     "重量宜轻"
+    ],
+    "regression": [
+     "哑铃前平举（更轻）"
+    ],
+    "progression": [
+     "顶端停 1 秒"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "front_raise",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bb-curl",
+   "name_zh": "杠铃弯举",
+   "name_en": "Barbell Biceps Curl",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 7,
+    "category_key": "CURL",
+    "exercise_name": 3,
+    "exercise_key": "BARBELL_BICEPS_CURL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "biceps"
+   ],
+   "secondary_muscles": [
+    "forearm"
+   ],
+   "equipment": [
+    "杠铃或 EZ 杆"
+   ],
+   "cues": {
+    "setup": [
+     "站直，双脚与髋同宽",
+     "上臂贴近身体两侧",
+     "反握杠铃，约与肩同宽"
+    ],
+    "execution": [
+     "只动肘关节，把杠铃弯举到胸前",
+     "顶端挤压 1 秒",
+     "慢慢放下到手臂伸直"
+    ],
+    "breathing": [
+     "放下吸气",
+     "举起呼气"
+    ],
+    "mistakes": [
+     "上臂前后摆动",
+     "身体后仰借力",
+     "下放不完全",
+     "手腕弯曲"
+    ],
+    "safety": [
+     "手腕不适改用 EZ 杆"
+    ],
+    "regression": [
+     "哑铃弯举",
+     "减轻重量"
+    ],
+    "progression": [
+     "慢速离心",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2–3 秒",
+   "anim": "curl_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-curl",
+   "name_zh": "哑铃弯举",
+   "name_en": "Standing Dumbbell Biceps Curl",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 7,
+    "category_key": "CURL",
+    "exercise_name": 37,
+    "exercise_key": "STANDING_DUMBBELL_BICEPS_CURL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "biceps"
+   ],
+   "secondary_muscles": [
+    "forearm"
+   ],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "站直，双脚与髋同宽",
+     "上臂贴近身体两侧",
+     "掌心朝前"
+    ],
+    "execution": [
+     "屈肘举起哑铃，可交替或同时",
+     "顶端挤压",
+     "控制放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "举起呼气"
+    ],
+    "mistakes": [
+     "上臂前后摆动",
+     "身体后仰借力",
+     "下放不完全",
+     "手腕弯曲"
+    ],
+    "safety": [
+     "肘部疼痛时减轻重量"
+    ],
+    "regression": [
+     "较轻哑铃",
+     "坐姿弯举"
+    ],
+    "progression": [
+     "上斜凳弯举",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "curl_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "hammer",
+   "name_zh": "锤式弯举",
+   "name_en": "Dumbbell Hammer Curl",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 7,
+    "category_key": "CURL",
+    "exercise_name": 16,
+    "exercise_key": "DUMBBELL_HAMMER_CURL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "biceps",
+    "forearm"
+   ],
+   "secondary_muscles": [],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "站直，双脚与髋同宽",
+     "上臂贴近身体两侧",
+     "掌心相对（中立握），像握锤子"
+    ],
+    "execution": [
+     "保持中立握屈肘上举",
+     "顶端停 1 秒",
+     "控制放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "举起呼气"
+    ],
+    "mistakes": [
+     "上臂前后摆动",
+     "身体后仰借力",
+     "下放不完全",
+     "手腕弯曲"
+    ],
+    "safety": [
+     "肘外侧不适减轻重量"
+    ],
+    "regression": [
+     "较轻哑铃"
+    ],
+    "progression": [
+     "交替锤式弯举",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "curl_hammer",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "cable-curl",
+   "name_zh": "绳索弯举",
+   "name_en": "Cable Biceps Curl",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 7,
+    "category_key": "CURL",
+    "exercise_name": 8,
+    "exercise_key": "CABLE_BICEPS_CURL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "biceps"
+   ],
+   "secondary_muscles": [
+    "forearm"
+   ],
+   "equipment": [
+    "龙门架",
+    "直杆或绳索"
+   ],
+   "cues": {
+    "setup": [
+     "低位滑轮，面对器械站立",
+     "反握把手，上臂贴身"
+    ],
+    "execution": [
+     "屈肘把把手拉到胸前",
+     "顶端挤压",
+     "慢慢还原"
+    ],
+    "breathing": [
+     "还原吸气",
+     "弯举呼气"
+    ],
+    "mistakes": [
+     "上臂前后摆动",
+     "身体后仰借力",
+     "下放不完全",
+     "手腕弯曲"
+    ],
+    "safety": [
+     "重量以上臂不动为准"
+    ],
+    "regression": [
+     "弹力带弯举"
+    ],
+    "progression": [
+     "单臂绳索弯举"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "curl_cable",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "pressdown",
+   "name_zh": "绳索下压",
+   "name_en": "Triceps Pressdown",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 30,
+    "category_key": "TRICEPS_EXTENSION",
+    "exercise_name": 39,
+    "exercise_key": "TRICEPS_PRESSDOWN"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "forearm"
+   ],
+   "equipment": [
+    "龙门架",
+    "直杆或绳索"
+   ],
+   "cues": {
+    "setup": [
+     "高位滑轮，面对器械站，上身微前倾",
+     "上臂贴住身体两侧，肘屈约 90°"
+    ],
+    "execution": [
+     "只动肘，把把手向下压到手臂伸直",
+     "底部挤压 1 秒",
+     "控制还原到肘约 90°"
+    ],
+    "breathing": [
+     "还原吸气",
+     "下压呼气"
+    ],
+    "mistakes": [
+     "肘离开身体前后移动",
+     "耸肩",
+     "身体压上去借力"
+    ],
+    "safety": [
+     "肘部疼痛时换绳索或减轻"
+    ],
+    "regression": [
+     "弹力带下压"
+    ],
+    "progression": [
+     "单臂下压",
+     "加重"
+    ]
+   },
+   "tempo": "下 1 秒 · 回 2 秒",
+   "anim": "pressdown",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "oh-ext",
+   "name_zh": "哑铃颈后臂屈伸",
+   "name_en": "Overhead Dumbbell Triceps Extension",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 30,
+    "category_key": "TRICEPS_EXTENSION",
+    "exercise_name": 15,
+    "exercise_key": "OVERHEAD_DUMBBELL_TRICEPS_EXTENSION"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "abs"
+   ],
+   "equipment": [
+    "哑铃",
+    "凳"
+   ],
+   "cues": {
+    "setup": [
+     "坐直，双手托住一只哑铃举过头顶",
+     "上臂贴近耳朵，核心收紧"
+    ],
+    "execution": [
+     "屈肘让哑铃下放到头后",
+     "上臂保持不动",
+     "伸肘把哑铃推回头顶"
+    ],
+    "breathing": [
+     "下放吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "肘向两侧张开",
+     "腰后仰",
+     "下放太快"
+    ],
+    "safety": [
+     "肩活动度不足时改绳索下压",
+     "注意不要碰到头"
+    ],
+    "regression": [
+     "绳索下压"
+    ],
+    "progression": [
+     "单臂颈后臂屈伸",
+     "加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "oh_ext",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "skull",
+   "name_zh": "仰卧臂屈伸",
+   "name_en": "Dumbbell Lying Triceps Extension",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 30,
+    "category_key": "TRICEPS_EXTENSION",
+    "exercise_name": 7,
+    "exercise_key": "DUMBBELL_LYING_TRICEPS_EXTENSION"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps"
+   ],
+   "secondary_muscles": [],
+   "equipment": [
+    "哑铃",
+    "卧推凳"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧凳上，双手各握哑铃举在肩上方",
+     "掌心相对"
+    ],
+    "execution": [
+     "上臂保持不动，屈肘让哑铃下放到头两侧",
+     "伸肘推回"
+    ],
+    "breathing": [
+     "下放吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "上臂前后摆动",
+     "肘外张",
+     "下放失控"
+    ],
+    "safety": [
+     "重量宜中等，别砸到头",
+     "肘疼时减小幅度"
+    ],
+    "regression": [
+     "绳索下压"
+    ],
+    "progression": [
+     "加重",
+     "慢速离心"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "skull",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bench-dip",
+   "name_zh": "凳上臂屈伸",
+   "name_en": "Bench Dip",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 30,
+    "category_key": "TRICEPS_EXTENSION",
+    "exercise_name": 0,
+    "exercise_key": "BENCH_DIP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps"
+   ],
+   "secondary_muscles": [
+    "chest",
+    "delt_front"
+   ],
+   "equipment": [
+    "凳"
+   ],
+   "cues": {
+    "setup": [
+     "背对凳子，双手撑在凳边，手指朝前",
+     "双腿向前伸，脚跟着地（屈膝更容易）"
+    ],
+    "execution": [
+     "屈肘让身体下沉，直到上臂约与地面平行",
+     "伸肘把身体推起"
+    ],
+    "breathing": [
+     "下沉吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "下得太深",
+     "肩前耸",
+     "身体离凳太远"
+    ],
+    "safety": [
+     "肩前侧疼痛立即停止并减小深度"
+    ],
+    "regression": [
+     "屈膝版本"
+    ],
+    "progression": [
+     "脚垫高",
+     "双杠臂屈伸"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bench_dip",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "dip",
+   "name_zh": "双杠臂屈伸",
+   "name_en": "Body Weight Dip",
+   "category": "手臂",
+   "garmin_fit": {
+    "category": 30,
+    "category_key": "TRICEPS_EXTENSION",
+    "exercise_name": 2,
+    "exercise_key": "BODY_WEIGHT_DIP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "triceps",
+    "chest"
+   ],
+   "secondary_muscles": [
+    "delt_front"
+   ],
+   "equipment": [
+    "双杠"
+   ],
+   "cues": {
+    "setup": [
+     "双手撑在双杠上，手臂伸直",
+     "肩胛下沉，身体微前倾"
+    ],
+    "execution": [
+     "屈肘下沉到上臂约与地面平行",
+     "伸肘撑起"
+    ],
+    "breathing": [
+     "下沉吸气",
+     "撑起呼气"
+    ],
+    "mistakes": [
+     "下得过深",
+     "耸肩",
+     "身体摆动"
+    ],
+    "safety": [
+     "肩痛立即停止",
+     "先从辅助版开始"
+    ],
+    "regression": [
+     "凳上臂屈伸",
+     "弹力带辅助双杠"
+    ],
+    "progression": [
+     "负重双杠"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "dip",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "back-squat",
+   "name_zh": "杠铃深蹲",
+   "name_en": "Barbell Back Squat",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 28,
+    "category_key": "SQUAT",
+    "exercise_name": 6,
+    "exercise_key": "BARBELL_BACK_SQUAT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "adductors",
+    "hamstrings",
+    "erectors",
+    "abs"
+   ],
+   "equipment": [
+    "杠铃",
+    "深蹲架"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃放在斜方肌上沿（高杠）或后三角肌上（低杠），双手握紧压实",
+     "双脚略宽于肩，脚尖外转 15–30°",
+     "出杠后后退两三步站稳，全脚掌着地"
+    ],
+    "execution": [
+     "屈髋屈膝同时下蹲，膝盖跟随脚尖方向",
+     "蹲到大腿至少与地面平行，或在背不弯的前提下尽量深",
+     "脚掌发力推地站起，髋和肩同时上升"
+    ],
+    "breathing": [
+     "下蹲前深吸气、收紧腹部（腹内压）",
+     "站起过了最难点再呼气"
+    ],
+    "mistakes": [
+     "膝盖内扣",
+     "脚跟离地、重心前移到脚尖",
+     "起身时臀部先上、变成“早安式”",
+     "腰部在底部弯曲（骨盆后卷明显）"
+    ],
+    "safety": [
+     "在深蹲架内设好保护杆，高度略低于最低点",
+     "力竭前停组，不要独自做极限重量",
+     "膝、腰疼痛超过 3/10 立即停止"
+    ],
+    "regression": [
+     "高脚杯深蹲",
+     "箱式深蹲（坐到凳上）",
+     "徒手深蹲"
+    ],
+    "progression": [
+     "暂停深蹲（底部停 2 秒）",
+     "前蹲",
+     "逐步加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "squat_back",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "front-squat",
+   "name_zh": "前蹲",
+   "name_en": "Barbell Front Squat",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 28,
+    "category_key": "SQUAT",
+    "exercise_name": 8,
+    "exercise_key": "BARBELL_FRONT_SQUAT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "abs",
+    "erectors",
+    "adductors"
+   ],
+   "equipment": [
+    "杠铃",
+    "深蹲架"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃放在三角肌前束上，肘向前抬高",
+     "双脚略宽于肩，脚尖微外转"
+    ],
+    "execution": [
+     "保持肘抬高、上身直立下蹲",
+     "蹲到大腿至少平行",
+     "脚掌推地站起"
+    ],
+    "breathing": [
+     "下蹲前吸气并收紧腹部",
+     "站起过最难点后呼气"
+    ],
+    "mistakes": [
+     "膝盖内扣",
+     "脚跟离地",
+     "弓背",
+     "起身臀先上",
+     "肘下垂导致杠铃前滚"
+    ],
+    "safety": [
+     "架内设保护杆",
+     "手腕不适可用交叉握或助力带"
+    ],
+    "regression": [
+     "高脚杯深蹲"
+    ],
+    "progression": [
+     "暂停前蹲",
+     "加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "squat_front",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "goblet",
+   "name_zh": "高脚杯深蹲",
+   "name_en": "Goblet Squat",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 28,
+    "category_key": "SQUAT",
+    "exercise_name": 37,
+    "exercise_key": "GOBLET_SQUAT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "adductors",
+    "abs"
+   ],
+   "equipment": [
+    "哑铃或壶铃"
+   ],
+   "cues": {
+    "setup": [
+     "双手捧住哑铃一端或壶铃把手，贴在胸前",
+     "双脚略宽于肩，脚尖微外转"
+    ],
+    "execution": [
+     "屈髋屈膝下蹲，肘在两膝之间",
+     "上身尽量直立",
+     "脚掌推地站起"
+    ],
+    "breathing": [
+     "下蹲前吸气并收紧腹部",
+     "站起过最难点后呼气"
+    ],
+    "mistakes": [
+     "膝盖内扣",
+     "脚跟离地",
+     "弓背",
+     "起身臀先上"
+    ],
+    "safety": [
+     "膝痛时减少深度"
+    ],
+    "regression": [
+     "徒手深蹲",
+     "箱式深蹲"
+    ],
+    "progression": [
+     "暂停高脚杯深蹲",
+     "杠铃深蹲"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "squat_goblet",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-squat",
+   "name_zh": "哑铃深蹲",
+   "name_en": "Dumbbell Squat",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 28,
+    "category_key": "SQUAT",
+    "exercise_name": 29,
+    "exercise_key": "DUMBBELL_SQUAT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "adductors",
+    "forearm"
+   ],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "双手各握哑铃垂在体侧",
+     "双脚与肩同宽"
+    ],
+    "execution": [
+     "下蹲到大腿接近平行",
+     "保持胸口挺起",
+     "推地站起"
+    ],
+    "breathing": [
+     "下蹲前吸气并收紧腹部",
+     "站起过最难点后呼气"
+    ],
+    "mistakes": [
+     "膝盖内扣",
+     "脚跟离地",
+     "弓背",
+     "起身臀先上"
+    ],
+    "safety": [
+     "握力先于腿疲劳时可用助力带"
+    ],
+    "regression": [
+     "徒手深蹲",
+     "高脚杯深蹲"
+    ],
+    "progression": [
+     "加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "squat_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "leg-press",
+   "name_zh": "腿举",
+   "name_en": "Leg Press",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 28,
+    "category_key": "SQUAT",
+    "exercise_name": 0,
+    "exercise_key": "LEG_PRESS"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "adductors"
+   ],
+   "equipment": [
+    "腿举机"
+   ],
+   "cues": {
+    "setup": [
+     "背和臀贴紧靠背",
+     "双脚放在踏板中部，与髋同宽",
+     "打开安全锁前先伸腿"
+    ],
+    "execution": [
+     "屈膝让踏板下降到膝约 90°",
+     "脚掌发力推回，膝不锁死"
+    ],
+    "breathing": [
+     "下放吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "下得太深导致臀部离垫、下背卷起",
+     "膝盖锁死",
+     "膝内扣"
+    ],
+    "safety": [
+     "结束时先锁上安全锁",
+     "下背离垫立即减小深度"
+    ],
+    "regression": [
+     "减轻重量"
+    ],
+    "progression": [
+     "单腿腿举"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "leg_press",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bb-dl",
+   "name_zh": "杠铃硬拉",
+   "name_en": "Barbell Deadlift",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 8,
+    "category_key": "DEADLIFT",
+    "exercise_name": 0,
+    "exercise_key": "BARBELL_DEADLIFT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glutes",
+    "hamstrings",
+    "erectors"
+   ],
+   "secondary_muscles": [
+    "quads",
+    "traps",
+    "forearm",
+    "lats"
+   ],
+   "equipment": [
+    "杠铃"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃在脚中线上方，双脚与髋同宽",
+     "屈髋屈膝握杠，握距在腿外侧",
+     "背平直，胸口挺起，拉紧杠铃"
+    ],
+    "execution": [
+     "脚推地，杠铃贴腿上升",
+     "杠过膝后伸髋站直",
+     "沿原路控制放回地面"
+    ],
+    "breathing": [
+     "起拉前深吸气、收紧腹部",
+     "站直后呼气，再吸气准备下一次"
+    ],
+    "mistakes": [
+     "弓背",
+     "杠离身体太远",
+     "先抬臀再抬上身",
+     "顶端过度后仰"
+    ],
+    "safety": [
+     "腰背疼痛立即停止",
+     "从合适高度开始（必要时垫高）"
+    ],
+    "regression": [
+     "六角杠硬拉",
+     "壶铃硬拉"
+    ],
+    "progression": [
+     "暂停硬拉",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "dl_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "rdl",
+   "name_zh": "罗马尼亚硬拉",
+   "name_en": "Barbell Straight Leg Deadlift",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 8,
+    "category_key": "DEADLIFT",
+    "exercise_name": 1,
+    "exercise_key": "BARBELL_STRAIGHT_LEG_DEADLIFT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "erectors",
+    "forearm"
+   ],
+   "equipment": [
+    "杠铃"
+   ],
+   "cues": {
+    "setup": [
+     "站直握杠于大腿前，膝微屈",
+     "背平直，肩胛收紧"
+    ],
+    "execution": [
+     "臀部向后推，杠铃贴腿下滑",
+     "下到腘绳肌有明显拉伸（通常过膝到小腿中段）",
+     "伸髋站直"
+    ],
+    "breathing": [
+     "下放吸气",
+     "站起呼气"
+    ],
+    "mistakes": [
+     "弓背",
+     "屈膝变成深蹲",
+     "杠离开腿"
+    ],
+    "safety": [
+     "腰部不适减小幅度"
+    ],
+    "regression": [
+     "哑铃罗马尼亚硬拉",
+     "早安式（徒手）"
+    ],
+    "progression": [
+     "单腿罗马尼亚硬拉",
+     "加重"
+    ]
+   },
+   "tempo": "下 2–3 秒 · 上 1 秒",
+   "anim": "rdl",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-rdl",
+   "name_zh": "单腿哑铃硬拉",
+   "name_en": "Single Leg Romanian Deadlift With Dumbbell",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 8,
+    "category_key": "DEADLIFT",
+    "exercise_name": 14,
+    "exercise_key": "SINGLE_LEG_ROMANIAN_DEADLIFT_WITH_DUMBBELL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "glute_med",
+    "erectors",
+    "abs"
+   ],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "单腿站立，支撑腿膝微屈",
+     "另一侧手握哑铃"
+    ],
+    "execution": [
+     "身体前倾，后腿向后抬，身体和后腿成一条直线",
+     "髋部保持朝下不外翻",
+     "回到站立"
+    ],
+    "breathing": [
+     "下放吸气",
+     "站起呼气"
+    ],
+    "mistakes": [
+     "髋部翻开",
+     "弓背",
+     "失去平衡快速下放"
+    ],
+    "safety": [
+     "扶墙或扶杆练平衡"
+    ],
+    "regression": [
+     "扶墙单腿硬拉",
+     "双腿罗马尼亚硬拉"
+    ],
+    "progression": [
+     "加重",
+     "闭眼平衡（谨慎）"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "rdl_single",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "sumo",
+   "name_zh": "相扑硬拉",
+   "name_en": "Sumo Deadlift",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 8,
+    "category_key": "DEADLIFT",
+    "exercise_name": 15,
+    "exercise_key": "SUMO_DEADLIFT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glutes",
+    "quads",
+    "adductors"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "erectors"
+   ],
+   "equipment": [
+    "杠铃"
+   ],
+   "cues": {
+    "setup": [
+     "双脚宽站，脚尖外转约 45°",
+     "手在两腿内侧握杠，约与肩同宽",
+     "膝盖向外顶，背平直"
+    ],
+    "execution": [
+     "腿推地向两侧撑开站起",
+     "杠贴身体上升",
+     "伸髋站直，控制放回"
+    ],
+    "breathing": [
+     "起拉前深吸气、收紧腹部",
+     "站直后呼气，再吸气准备下一次"
+    ],
+    "mistakes": [
+     "弓背",
+     "杠离身体太远",
+     "先抬臀再抬上身",
+     "顶端过度后仰",
+     "膝盖内扣"
+    ],
+    "safety": [
+     "髋内收肌不适减小站距"
+    ],
+    "regression": [
+     "六角杠硬拉"
+    ],
+    "progression": [
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "dl_sumo",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "trap-dl",
+   "name_zh": "六角杠硬拉",
+   "name_en": "Trap Bar Deadlift",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 8,
+    "category_key": "DEADLIFT",
+    "exercise_name": 17,
+    "exercise_key": "TRAP_BAR_DEADLIFT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "erectors",
+    "traps"
+   ],
+   "equipment": [
+    "六角杠"
+   ],
+   "cues": {
+    "setup": [
+     "站在六角杠中间，双脚与髋同宽",
+     "屈髋屈膝握住两侧把手",
+     "背平直，胸口挺起"
+    ],
+    "execution": [
+     "腿推地站起",
+     "伸髋站直",
+     "控制放回"
+    ],
+    "breathing": [
+     "起拉前深吸气、收紧腹部",
+     "站直后呼气，再吸气准备下一次"
+    ],
+    "mistakes": [
+     "弓背",
+     "膝内扣"
+    ],
+    "safety": [
+     "腰背疼痛立即停止"
+    ],
+    "regression": [
+     "壶铃硬拉"
+    ],
+    "progression": [
+     "杠铃硬拉",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "dl_trap",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "db-lunge",
+   "name_zh": "哑铃弓步",
+   "name_en": "Dumbbell Lunge",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 17,
+    "category_key": "LUNGE",
+    "exercise_name": 21,
+    "exercise_key": "DUMBBELL_LUNGE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "adductors",
+    "hamstrings",
+    "glute_med"
+   ],
+   "equipment": [
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "双手各握哑铃垂在体侧",
+     "站直，双脚与髋同宽"
+    ],
+    "execution": [
+     "一腿向前跨一大步",
+     "屈双膝下沉，后膝接近地面",
+     "前脚推地回到起始，换腿"
+    ],
+    "breathing": [
+     "下沉吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "前膝内扣",
+     "上身前倾过多",
+     "步幅太小导致前脚跟抬起",
+     "后膝重重砸地"
+    ],
+    "safety": [
+     "膝痛时改后撤步弓步"
+    ],
+    "regression": [
+     "徒手弓步",
+     "原地分腿蹲"
+    ],
+    "progression": [
+     "加重",
+     "行走弓步"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "lunge_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "walk-lunge",
+   "name_zh": "行走弓步",
+   "name_en": "Walking Lunge",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 17,
+    "category_key": "LUNGE",
+    "exercise_name": 78,
+    "exercise_key": "WALKING_LUNGE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "adductors",
+    "hamstrings",
+    "glute_med"
+   ],
+   "equipment": [
+    "无器械或哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "站直，确保前方有足够空间"
+    ],
+    "execution": [
+     "向前跨步下沉",
+     "后脚直接向前迈成下一步",
+     "连续行进"
+    ],
+    "breathing": [
+     "下沉吸气",
+     "起身呼气"
+    ],
+    "mistakes": [
+     "前膝内扣",
+     "上身前倾过多",
+     "步幅太小导致前脚跟抬起",
+     "后膝重重砸地",
+     "左右摇晃"
+    ],
+    "safety": [
+     "地面防滑，保持平衡"
+    ],
+    "regression": [
+     "原地弓步"
+    ],
+    "progression": [
+     "手持哑铃"
+    ]
+   },
+   "tempo": "下 1 秒 · 上 1 秒",
+   "anim": "lunge_db",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "rev-lunge",
+   "name_zh": "杠铃后撤步弓步",
+   "name_en": "Barbell Reverse Lunge",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 17,
+    "category_key": "LUNGE",
+    "exercise_name": 11,
+    "exercise_key": "BARBELL_REVERSE_LUNGE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "adductors",
+    "abs"
+   ],
+   "equipment": [
+    "杠铃",
+    "深蹲架"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃放在上背，出杠站稳",
+     "双脚与髋同宽"
+    ],
+    "execution": [
+     "一腿向后撤一大步",
+     "下沉到后膝接近地面",
+     "前脚推地收回，换腿"
+    ],
+    "breathing": [
+     "下沉吸气",
+     "起身呼气"
+    ],
+    "mistakes": [
+     "前膝内扣",
+     "上身前倾过多",
+     "步幅太小导致前脚跟抬起",
+     "后膝重重砸地"
+    ],
+    "safety": [
+     "平衡不好先用哑铃",
+     "架内设保护杆"
+    ],
+    "regression": [
+     "徒手后撤步",
+     "哑铃后撤步"
+    ],
+    "progression": [
+     "加重"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "lunge_bb_rev",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bss",
+   "name_zh": "保加利亚分腿蹲",
+   "name_en": "Dumbbell Bulgarian Split Squat",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 17,
+    "category_key": "LUNGE",
+    "exercise_name": 18,
+    "exercise_key": "DUMBBELL_BULGARIAN_SPLIT_SQUAT"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "adductors",
+    "hamstrings",
+    "glute_med"
+   ],
+   "equipment": [
+    "凳",
+    "哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "背对凳子，后脚脚背放在凳上",
+     "前脚向前约一大步",
+     "双手各握哑铃"
+    ],
+    "execution": [
+     "垂直下沉，前大腿接近平行",
+     "前脚推地站起",
+     "做完一侧再换"
+    ],
+    "breathing": [
+     "下沉吸气",
+     "起身呼气"
+    ],
+    "mistakes": [
+     "前脚离凳太近",
+     "前膝内扣",
+     "后腿发力"
+    ],
+    "safety": [
+     "先徒手找好距离",
+     "扶杆练平衡"
+    ],
+    "regression": [
+     "徒手分腿蹲"
+    ],
+    "progression": [
+     "加重",
+     "暂停"
+    ]
+   },
+   "tempo": "下 2 秒 · 上 1 秒",
+   "anim": "bss",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "leg-curl",
+   "name_zh": "腿弯举",
+   "name_en": "Leg Curl",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 15,
+    "category_key": "LEG_CURL",
+    "exercise_name": 0,
+    "exercise_key": "LEG_CURL"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "hamstrings"
+   ],
+   "secondary_muscles": [
+    "calves"
+   ],
+   "equipment": [
+    "腿弯举机"
+   ],
+   "cues": {
+    "setup": [
+     "俯卧在器械上，护垫在跟腱上方",
+     "膝盖对准器械转轴",
+     "双手握扶手"
+    ],
+    "execution": [
+     "屈膝把护垫勾向臀部",
+     "顶端停 1 秒",
+     "慢慢放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "勾起呼气"
+    ],
+    "mistakes": [
+     "臀部翘起",
+     "放下太快",
+     "甩动借力"
+    ],
+    "safety": [
+     "腘绳肌抽筋立即停止并拉伸"
+    ],
+    "regression": [
+     "弹力带腿弯举"
+    ],
+    "progression": [
+     "单腿腿弯举",
+     "慢速离心"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2–3 秒",
+   "anim": "leg_curl",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "good-morning",
+   "name_zh": "早安式",
+   "name_en": "Good Morning",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 15,
+    "category_key": "LEG_CURL",
+    "exercise_name": 2,
+    "exercise_key": "GOOD_MORNING"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "hamstrings",
+    "erectors"
+   ],
+   "secondary_muscles": [
+    "glutes"
+   ],
+   "equipment": [
+    "杠铃"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃放在上背，双脚与髋同宽",
+     "膝微屈，背平直"
+    ],
+    "execution": [
+     "臀部向后推，上身前倾到接近水平（以背不弯为准）",
+     "伸髋回到站立"
+    ],
+    "breathing": [
+     "下放吸气",
+     "站起呼气"
+    ],
+    "mistakes": [
+     "弓背",
+     "屈膝过多"
+    ],
+    "safety": [
+     "从很轻重量开始，腰背不适立即停止"
+    ],
+    "regression": [
+     "徒手早安",
+     "罗马尼亚硬拉"
+    ],
+    "progression": [
+     "加重"
+    ]
+   },
+   "tempo": "下 2–3 秒 · 上 1 秒",
+   "anim": "good_morning",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "calf",
+   "name_zh": "站姿提踵",
+   "name_en": "Standing Calf Raise",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 1,
+    "category_key": "CALF_RAISE",
+    "exercise_name": 18,
+    "exercise_key": "STANDING_CALF_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "calves"
+   ],
+   "secondary_muscles": [],
+   "equipment": [
+    "稳固台阶"
+   ],
+   "cues": {
+    "setup": [
+     "前脚掌踩在台阶边缘，脚跟悬空",
+     "手扶墙或扶手保持平衡"
+    ],
+    "execution": [
+     "脚跟慢慢下放到小腿有拉伸感",
+     "用前脚掌推起到最高",
+     "顶端停 1 秒"
+    ],
+    "breathing": [
+     "下放吸气",
+     "提踵呼气"
+    ],
+    "mistakes": [
+     "弹跳借力",
+     "幅度太小",
+     "膝盖锁死"
+    ],
+    "safety": [
+     "跟腱疼痛时只在平地做"
+    ],
+    "regression": [
+     "平地提踵"
+    ],
+    "progression": [
+     "单腿提踵",
+     "手持哑铃"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "calf",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bb-calf",
+   "name_zh": "杠铃提踵",
+   "name_en": "Standing Barbell Calf Raise",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 1,
+    "category_key": "CALF_RAISE",
+    "exercise_name": 17,
+    "exercise_key": "STANDING_BARBELL_CALF_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "calves"
+   ],
+   "secondary_muscles": [
+    "abs"
+   ],
+   "equipment": [
+    "杠铃",
+    "深蹲架"
+   ],
+   "cues": {
+    "setup": [
+     "杠铃放在上背，站在架内",
+     "可站在杠铃片上增加幅度"
+    ],
+    "execution": [
+     "脚跟下放",
+     "前脚掌推起到最高",
+     "停 1 秒"
+    ],
+    "breathing": [
+     "下放吸气",
+     "提踵呼气"
+    ],
+    "mistakes": [
+     "弹跳借力",
+     "幅度太小",
+     "膝盖锁死",
+     "身体前后晃"
+    ],
+    "safety": [
+     "架内设保护杆"
+    ],
+    "regression": [
+     "站姿提踵"
+    ],
+    "progression": [
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "calf_bb",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "seat-calf",
+   "name_zh": "坐姿提踵",
+   "name_en": "Seated Calf Raise",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 1,
+    "category_key": "CALF_RAISE",
+    "exercise_name": 6,
+    "exercise_key": "SEATED_CALF_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "calves"
+   ],
+   "secondary_muscles": [],
+   "equipment": [
+    "坐姿提踵机或凳+哑铃"
+   ],
+   "cues": {
+    "setup": [
+     "坐姿，前脚掌踩在踏板上",
+     "护垫或重量压在膝盖上方"
+    ],
+    "execution": [
+     "脚跟下放",
+     "用前脚掌把膝盖推高",
+     "停 1 秒"
+    ],
+    "breathing": [
+     "下放吸气",
+     "提踵呼气"
+    ],
+    "mistakes": [
+     "弹跳借力",
+     "幅度太小",
+     "膝盖锁死"
+    ],
+    "safety": [
+     "跟腱疼痛时减轻"
+    ],
+    "regression": [
+     "减轻重量"
+    ],
+    "progression": [
+     "加重",
+     "慢速离心"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "calf_seat",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "step-up",
+   "name_zh": "登阶",
+   "name_en": "Step Up",
+   "category": "腿",
+   "garmin_fit": {
+    "category": 28,
+    "category_key": "SQUAT",
+    "exercise_name": 66,
+    "exercise_key": "STEP_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "glute_med",
+    "calves"
+   ],
+   "equipment": [
+    "稳固台阶",
+    "哑铃（可选）"
+   ],
+   "cues": {
+    "setup": [
+     "面对台阶站立，台阶约膝盖高",
+     "一只脚整个放在台阶上"
+    ],
+    "execution": [
+     "上面那条腿发力把身体推上台阶站直",
+     "后脚不要蹬地借力",
+     "控制下放，做完一侧换腿"
+    ],
+    "breathing": [
+     "上台阶呼气",
+     "下放吸气"
+    ],
+    "mistakes": [
+     "后脚蹬地",
+     "膝内扣",
+     "台阶太高"
+    ],
+    "safety": [
+     "确认台阶稳固不滑"
+    ],
+    "regression": [
+     "降低台阶高度"
+    ],
+    "progression": [
+     "手持哑铃",
+     "更高台阶"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "step_up",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "hip-thrust",
+   "name_zh": "杠铃臀推",
+   "name_en": "Barbell Hip Thrust With Bench",
+   "category": "臀",
+   "garmin_fit": {
+    "category": 10,
+    "category_key": "HIP_RAISE",
+    "exercise_name": 1,
+    "exercise_key": "BARBELL_HIP_THRUST_WITH_BENCH"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "quads",
+    "abs"
+   ],
+   "equipment": [
+    "杠铃",
+    "凳",
+    "杠铃垫"
+   ],
+   "cues": {
+    "setup": [
+     "上背（肩胛下缘）靠在凳边",
+     "杠铃加垫子放在髋部",
+     "双脚与髋同宽踩地，膝约 90°"
+    ],
+    "execution": [
+     "脚跟推地，伸髋把杠铃推起",
+     "顶端身体从肩到膝成一条直线，夹紧臀部",
+     "控制下放"
+    ],
+    "breathing": [
+     "下放吸气",
+     "推起呼气"
+    ],
+    "mistakes": [
+     "顶端腰过度后仰",
+     "脚离太远变腘绳肌发力",
+     "颈部过度后仰"
+    ],
+    "safety": [
+     "杠铃一定加垫",
+     "腰部不适时降低重量"
+    ],
+    "regression": [
+     "臀桥"
+    ],
+    "progression": [
+     "单腿臀推",
+     "加重"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "hip_thrust",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "glute-bridge",
+   "name_zh": "臀桥",
+   "name_en": "Hip Raise",
+   "category": "臀",
+   "garmin_fit": {
+    "category": 10,
+    "category_key": "HIP_RAISE",
+    "exercise_name": 11,
+    "exercise_key": "HIP_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "abs"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧屈膝，双脚与髋同宽踩地",
+     "双手放在身体两侧"
+    ],
+    "execution": [
+     "脚跟推地抬起臀部",
+     "顶端肩、髋、膝成一条直线，夹紧臀部",
+     "慢慢放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "抬起呼气"
+    ],
+    "mistakes": [
+     "腰过度后仰",
+     "脚离臀部太远"
+    ],
+    "safety": [
+     "腰痛时减小幅度"
+    ],
+    "regression": [
+     "减小幅度"
+    ],
+    "progression": [
+     "单腿臀桥",
+     "杠铃臀推"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 2 秒 · 下 2 秒",
+   "anim": "bridge",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "single-hip",
+   "name_zh": "单腿臀桥",
+   "name_en": "Single Leg Hip Raise",
+   "category": "臀",
+   "garmin_fit": {
+    "category": 10,
+    "category_key": "HIP_RAISE",
+    "exercise_name": 30,
+    "exercise_key": "SINGLE_LEG_HIP_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glutes"
+   ],
+   "secondary_muscles": [
+    "hamstrings",
+    "glute_med",
+    "abs"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧屈膝，一腿伸直抬起",
+     "双手放两侧"
+    ],
+    "execution": [
+     "支撑腿脚跟推地抬起臀部",
+     "骨盆保持水平不歪",
+     "慢慢放下，做完一侧换边"
+    ],
+    "breathing": [
+     "放下吸气",
+     "抬起呼气"
+    ],
+    "mistakes": [
+     "骨盆一侧下沉",
+     "腰后仰"
+    ],
+    "safety": [
+     "腘绳肌抽筋时缩短距离"
+    ],
+    "regression": [
+     "双腿臀桥"
+    ],
+    "progression": [
+     "脚垫高单腿臀桥"
+    ]
+   },
+   "tempo": "上 1 秒 · 停 1 秒 · 下 2 秒",
+   "anim": "bridge_single",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "kb-swing",
+   "name_zh": "壶铃摆荡",
+   "name_en": "Kettlebell Swing",
+   "category": "臀",
+   "garmin_fit": {
+    "category": 10,
+    "category_key": "HIP_RAISE",
+    "exercise_name": 23,
+    "exercise_key": "KETTLEBELL_SWING"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glutes",
+    "hamstrings"
+   ],
+   "secondary_muscles": [
+    "erectors",
+    "abs",
+    "forearm",
+    "delt_front"
+   ],
+   "equipment": [
+    "壶铃"
+   ],
+   "cues": {
+    "setup": [
+     "双脚略宽于肩，壶铃放在前方约一脚距离",
+     "屈髋俯身握住壶铃，背平直"
+    ],
+    "execution": [
+     "把壶铃向后摆到两腿之间",
+     "臀部爆发前推，把壶铃荡到约胸口高度",
+     "手臂只是“绳子”，不主动举",
+     "壶铃回落时顺势屈髋"
+    ],
+    "breathing": [
+     "向后摆时吸气",
+     "顶端呼气"
+    ],
+    "mistakes": [
+     "用手臂举壶铃",
+     "变成深蹲",
+     "顶端后仰",
+     "弓背"
+    ],
+    "safety": [
+     "周围留出空间",
+     "先学会髋铰链再加重"
+    ],
+    "regression": [
+     "壶铃硬拉",
+     "臀桥"
+    ],
+    "progression": [
+     "加重",
+     "单手摆荡"
+    ]
+   },
+   "tempo": "爆发 · 有节奏",
+   "anim": "kb_swing",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "side-leg",
+   "name_zh": "侧卧抬腿",
+   "name_en": "Side Lying Leg Raise",
+   "category": "臀",
+   "garmin_fit": {
+    "category": 11,
+    "category_key": "HIP_STABILITY",
+    "exercise_name": 21,
+    "exercise_key": "SIDE_LYING_LEG_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "glute_med"
+   ],
+   "secondary_muscles": [
+    "obliques"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "侧卧，下方手臂枕头，双腿伸直叠放",
+     "身体成一条直线"
+    ],
+    "execution": [
+     "上方腿伸直向上抬起约 30–45°",
+     "脚尖朝前或略向下",
+     "慢慢放下"
+    ],
+    "breathing": [
+     "放下吸气",
+     "抬起呼气"
+    ],
+    "mistakes": [
+     "身体后翻",
+     "腿向前摆",
+     "抬得过高"
+    ],
+    "safety": [
+     "髋外侧不适时减小幅度"
+    ],
+    "regression": [
+     "屈膝侧卧抬腿（蚌式）"
+    ],
+    "progression": [
+     "脚踝负重",
+     "弹力带"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "side_leg",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "farmer",
+   "name_zh": "农夫行走",
+   "name_en": "Farmers Walk",
+   "category": "全身",
+   "garmin_fit": {
+    "category": 3,
+    "category_key": "CARRY",
+    "exercise_name": 1,
+    "exercise_key": "FARMERS_WALK"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "forearm",
+    "traps"
+   ],
+   "secondary_muscles": [
+    "abs",
+    "glutes",
+    "quads",
+    "obliques"
+   ],
+   "equipment": [
+    "哑铃或壶铃"
+   ],
+   "cues": {
+    "setup": [
+     "双手各握较重的哑铃或壶铃，站直",
+     "肩胛下沉，核心收紧"
+    ],
+    "execution": [
+     "小步稳定向前走",
+     "保持身体直立不左右晃",
+     "走完距离或时间后放下"
+    ],
+    "breathing": [
+     "自然呼吸，不要憋气"
+    ],
+    "mistakes": [
+     "耸肩",
+     "身体侧弯",
+     "步子太大"
+    ],
+    "safety": [
+     "放下时屈髋屈膝，像硬拉"
+    ],
+    "regression": [
+     "较轻重量",
+     "原地站立持握"
+    ],
+    "progression": [
+     "加重",
+     "单侧农夫行走"
+    ]
+   },
+   "tempo": "稳定步行",
+   "anim": "farmer",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "plank",
+   "name_zh": "平板支撑",
+   "name_en": "Plank",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 19,
+    "category_key": "PLANK",
+    "exercise_name": 43,
+    "exercise_key": "PLANK"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "seconds",
+    "amount": 30
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs"
+   ],
+   "secondary_muscles": [
+    "obliques",
+    "delt_front",
+    "glutes",
+    "quads"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "前臂撑地，肘在肩正下方",
+     "双脚并拢或与髋同宽，脚尖撑地"
+    ],
+    "execution": [
+     "收紧腹部和臀部，身体从头到脚跟成一条直线",
+     "保持规定时间"
+    ],
+    "breathing": [
+     "自然呼吸，不憋气"
+    ],
+    "mistakes": [
+     "塌腰或撅臀",
+     "憋气",
+     "耸肩",
+     "低头"
+    ],
+    "safety": [
+     "腰痛时停止并改跪姿平板"
+    ],
+    "regression": [
+     "跪姿平板",
+     "上斜平板"
+    ],
+    "progression": [
+     "延长时间",
+     "抬单脚或单手"
+    ]
+   },
+   "tempo": "保持",
+   "anim": "plank",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "side-plank",
+   "name_zh": "侧平板",
+   "name_en": "Side Plank",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 19,
+    "category_key": "PLANK",
+    "exercise_name": 66,
+    "exercise_key": "SIDE_PLANK"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "seconds",
+    "amount": 30
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "obliques"
+   ],
+   "secondary_muscles": [
+    "abs",
+    "glute_med",
+    "delt_side"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "侧卧，肘在肩正下方撑地",
+     "双腿伸直叠放或前后放"
+    ],
+    "execution": [
+     "抬起臀部，身体成一条直线",
+     "保持规定时间，再换边"
+    ],
+    "breathing": [
+     "自然呼吸"
+    ],
+    "mistakes": [
+     "臀部下沉",
+     "身体前后翻",
+     "耸肩"
+    ],
+    "safety": [
+     "肩部不适改屈膝版本"
+    ],
+    "regression": [
+     "屈膝侧平板"
+    ],
+    "progression": [
+     "抬上方腿",
+     "延长时间"
+    ]
+   },
+   "tempo": "保持",
+   "anim": "side_plank",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "knee-plank",
+   "name_zh": "跪姿平板",
+   "name_en": "Kneeling Plank",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 19,
+    "category_key": "PLANK",
+    "exercise_name": 22,
+    "exercise_key": "KNEELING_PLANK"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "seconds",
+    "amount": 30
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs"
+   ],
+   "secondary_muscles": [
+    "obliques",
+    "delt_front"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "前臂撑地，肘在肩正下方",
+     "双膝着地"
+    ],
+    "execution": [
+     "收紧腹部，从头到膝成一条直线",
+     "保持规定时间"
+    ],
+    "breathing": [
+     "自然呼吸"
+    ],
+    "mistakes": [
+     "塌腰或撅臀",
+     "憋气",
+     "耸肩",
+     "低头"
+    ],
+    "safety": [
+     "膝下垫软垫"
+    ],
+    "regression": [
+     "缩短时间"
+    ],
+    "progression": [
+     "标准平板支撑"
+    ]
+   },
+   "tempo": "保持",
+   "anim": "plank_knee",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "climber",
+   "name_zh": "登山者",
+   "name_en": "Mountain Climber",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 19,
+    "category_key": "PLANK",
+    "exercise_name": 34,
+    "exercise_key": "MOUNTAIN_CLIMBER"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs",
+    "hip_flexors"
+   ],
+   "secondary_muscles": [
+    "delt_front",
+    "quads",
+    "obliques"
+   ],
+   "equipment": [
+    "无器械"
+   ],
+   "cues": {
+    "setup": [
+     "俯卧撑顶端姿势，手在肩正下方",
+     "身体成一条直线"
+    ],
+    "execution": [
+     "一侧膝盖向胸口拉",
+     "快速换腿，像原地跑",
+     "臀部保持不抬高"
+    ],
+    "breathing": [
+     "保持节奏呼吸"
+    ],
+    "mistakes": [
+     "臀部翘起",
+     "手不在肩下方",
+     "速度太快动作变形"
+    ],
+    "safety": [
+     "手腕不适用拳撑"
+    ],
+    "regression": [
+     "慢速登山者",
+     "手撑凳子"
+    ],
+    "progression": [
+     "加快速度",
+     "交叉登山者"
+    ]
+   },
+   "tempo": "节奏进行",
+   "anim": "climber",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "dead-bug",
+   "name_zh": "死虫",
+   "name_en": "Dead Bug",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 11,
+    "category_key": "HIP_STABILITY",
+    "exercise_name": 1,
+    "exercise_key": "DEAD_BUG"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs"
+   ],
+   "secondary_muscles": [
+    "obliques",
+    "hip_flexors"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧，双臂垂直伸向天花板",
+     "髋膝都屈 90°（桌面式）",
+     "下背轻压地面"
+    ],
+    "execution": [
+     "同时伸展对侧的手臂和腿，接近地面",
+     "下背不离地",
+     "回到起始，换另一侧"
+    ],
+    "breathing": [
+     "伸展时呼气",
+     "收回时吸气"
+    ],
+    "mistakes": [
+     "下背拱起",
+     "动作太快",
+     "憋气"
+    ],
+    "safety": [
+     "腰部不适时减小伸展幅度"
+    ],
+    "regression": [
+     "只动腿",
+     "只动手"
+    ],
+    "progression": [
+     "手持轻哑铃",
+     "慢速"
+    ]
+   },
+   "tempo": "伸 2 秒 · 收 1 秒",
+   "anim": "dead_bug",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "crunch",
+   "name_zh": "卷腹",
+   "name_en": "Crunch",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 6,
+    "category_key": "CRUNCH",
+    "exercise_name": 83,
+    "exercise_key": "CRUNCH"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs"
+   ],
+   "secondary_muscles": [
+    "obliques"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧屈膝，双脚踩地",
+     "双手轻放耳旁或胸前"
+    ],
+    "execution": [
+     "腹部发力卷起上背，肩胛离地",
+     "下背保持贴地",
+     "慢慢放下"
+    ],
+    "breathing": [
+     "卷起时呼气",
+     "放下时吸气"
+    ],
+    "mistakes": [
+     "用手抱头拉脖子",
+     "借惯性甩起",
+     "下放太快"
+    ],
+    "safety": [
+     "颈部不适时手托头但不拉"
+    ],
+    "regression": [
+     "减小幅度"
+    ],
+    "progression": [
+     "负重卷腹",
+     "顶端停 1 秒"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "crunch",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "bicycle",
+   "name_zh": "自行车卷腹",
+   "name_en": "Bicycle Crunch",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 6,
+    "category_key": "CRUNCH",
+    "exercise_name": 0,
+    "exercise_key": "BICYCLE_CRUNCH"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs",
+    "obliques"
+   ],
+   "secondary_muscles": [
+    "hip_flexors"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧，双手轻放耳旁",
+     "双腿抬起，屈膝"
+    ],
+    "execution": [
+     "肩胛离地，一侧肘转向对侧膝",
+     "另一腿伸直，交替进行",
+     "动作像骑自行车"
+    ],
+    "breathing": [
+     "转体时呼气"
+    ],
+    "mistakes": [
+     "用手抱头拉脖子",
+     "借惯性甩起",
+     "下放太快",
+     "只动肘不转上身"
+    ],
+    "safety": [
+     "下背离地时把腿抬高一些"
+    ],
+    "regression": [
+     "慢速",
+     "腿抬高"
+    ],
+    "progression": [
+     "加快节奏",
+     "顶端停 1 秒"
+    ]
+   },
+   "tempo": "有节奏交替",
+   "anim": "bicycle",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "russian",
+   "name_zh": "俄罗斯转体",
+   "name_en": "Russian Twist",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 5,
+    "category_key": "CORE",
+    "exercise_name": 46,
+    "exercise_key": "RUSSIAN_TWIST"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "obliques"
+   ],
+   "secondary_muscles": [
+    "abs",
+    "hip_flexors"
+   ],
+   "equipment": [
+    "无器械或负重"
+   ],
+   "cues": {
+    "setup": [
+     "坐在垫上，屈膝，上身后仰约 45°",
+     "双手合握在胸前"
+    ],
+    "execution": [
+     "躯干向一侧转，手靠近地面",
+     "再转向另一侧",
+     "保持胸口挺起"
+    ],
+    "breathing": [
+     "转动时呼气"
+    ],
+    "mistakes": [
+     "只摆手臂不转躯干",
+     "弓背",
+     "速度太快"
+    ],
+    "safety": [
+     "腰部不适时双脚着地、减小幅度"
+    ],
+    "regression": [
+     "双脚着地"
+    ],
+    "progression": [
+     "双脚离地",
+     "手持重物"
+    ]
+   },
+   "tempo": "有节奏交替",
+   "anim": "russian",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "situp",
+   "name_zh": "仰卧起坐",
+   "name_en": "Sit Up",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 27,
+    "category_key": "SIT_UP",
+    "exercise_name": 37,
+    "exercise_key": "SIT_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs",
+    "hip_flexors"
+   ],
+   "secondary_muscles": [
+    "obliques"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧屈膝，双脚踩地（可固定）",
+     "双手交叉胸前"
+    ],
+    "execution": [
+     "腹部发力卷起，坐到上身接近直立",
+     "控制放下，一节一节贴地"
+    ],
+    "breathing": [
+     "起身呼气",
+     "放下吸气"
+    ],
+    "mistakes": [
+     "用手抱头拉脖子",
+     "借惯性甩起",
+     "下放太快"
+    ],
+    "safety": [
+     "腰痛时改卷腹"
+    ],
+    "regression": [
+     "卷腹"
+    ],
+    "progression": [
+     "负重仰卧起坐"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "situp",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "vup",
+   "name_zh": "两头起",
+   "name_en": "V Up",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 27,
+    "category_key": "SIT_UP",
+    "exercise_name": 31,
+    "exercise_key": "V_UP"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs",
+    "hip_flexors"
+   ],
+   "secondary_muscles": [
+    "obliques"
+   ],
+   "equipment": [
+    "无器械",
+    "垫子"
+   ],
+   "cues": {
+    "setup": [
+     "仰卧，双臂伸过头顶，双腿伸直"
+    ],
+    "execution": [
+     "同时抬起上身和双腿，双手去够脚尖",
+     "身体成 V 字",
+     "控制放下"
+    ],
+    "breathing": [
+     "起时呼气",
+     "落时吸气"
+    ],
+    "mistakes": [
+     "甩动借力",
+     "腿屈太多",
+     "落地太快"
+    ],
+    "safety": [
+     "腰部不适时改屈膝两头起"
+    ],
+    "regression": [
+     "屈膝两头起",
+     "卷腹"
+    ],
+    "progression": [
+     "慢速",
+     "顶端停 1 秒"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "vup",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "knee-raise",
+   "name_zh": "悬垂举膝",
+   "name_en": "Hanging Knee Raise",
+   "category": "核心",
+   "garmin_fit": {
+    "category": 16,
+    "category_key": "LEG_RAISE",
+    "exercise_name": 0,
+    "exercise_key": "HANGING_KNEE_RAISE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "abs",
+    "hip_flexors"
+   ],
+   "secondary_muscles": [
+    "forearm",
+    "lats"
+   ],
+   "equipment": [
+    "单杠"
+   ],
+   "cues": {
+    "setup": [
+     "正握单杠悬垂，肩胛下沉",
+     "身体保持稳定不摆"
+    ],
+    "execution": [
+     "收腹把膝盖抬向胸口",
+     "骨盆微微后卷",
+     "控制放下"
+    ],
+    "breathing": [
+     "抬起时呼气"
+    ],
+    "mistakes": [
+     "身体前后荡",
+     "只抬到 90° 不卷骨盆",
+     "下放太快"
+    ],
+    "safety": [
+     "握力不足时用助力带"
+    ],
+    "regression": [
+     "仰卧举腿",
+     "罗马椅举膝"
+    ],
+    "progression": [
+     "悬垂直腿举",
+     "负重"
+    ]
+   },
+   "tempo": "上 1 秒 · 下 2 秒",
+   "anim": "knee_raise",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  },
+  {
+   "id": "burpee",
+   "name_zh": "波比跳",
+   "name_en": "Burpee",
+   "category": "全身",
+   "garmin_fit": {
+    "category": 29,
+    "category_key": "TOTAL_BODY",
+    "exercise_name": 0,
+    "exercise_key": "BURPEE"
+   },
+   "default_sets": 3,
+   "default_reps_or_time": {
+    "mode": "reps",
+    "amount": 10
+   },
+   "default_rest_sec": 75,
+   "primary_muscles": [
+    "quads",
+    "chest"
+   ],
+   "secondary_muscles": [
+    "glutes",
+    "abs",
+    "triceps",
+    "delt_front",
+    "calves"
+   ],
+   "equipment": [
+    "无器械"
+   ],
+   "cues": {
+    "setup": [
+     "站直，双脚与肩同宽"
+    ],
+    "execution": [
+     "下蹲双手撑地",
+     "双脚跳回成俯卧撑姿势（可加一个俯卧撑）",
+     "双脚跳回手旁",
+     "向上跳起，双手过头"
+    ],
+    "breathing": [
+     "保持节奏，落地时呼气"
+    ],
+    "mistakes": [
+     "塌腰",
+     "落地膝内扣",
+     "动作太快变形"
+    ],
+    "safety": [
+     "落地要轻，用前脚掌缓冲"
+    ],
+    "regression": [
+     "不跳跃，脚一步步后撤和收回"
+    ],
+    "progression": [
+     "加俯卧撑",
+     "加快节奏"
+    ]
+   },
+   "tempo": "连续节奏",
+   "anim": "burpee",
+   "muscle_mapping_status": "proposed",
+   "review": "UNREVIEWED",
+   "provenance": {
+    "author": "方坤动作演示原型（自制参数化骨架+自写要领）",
+    "license": "自有，可随方坤源码分发",
+    "third_party_assets": null
+   }
+  }
+ ],
+ "animations": {
+  "squat_back": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 140
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 140
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [
+    {
+     "type": "barbell",
+     "at": "sho",
+     "off": [
+      -7,
+      3
+     ]
+    }
+   ],
+   "heldFront": []
+  },
+  "squat_front": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 95,
+      "farm": -160,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 95,
+      "farm": -160,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 95,
+      "farm": -160,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 160
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 95,
+      "farm": -160,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 160
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "sho",
+     "off": [
+      8,
+      -2
+     ]
+    }
+   ]
+  },
+  "squat_goblet": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 155
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 155
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "kettlebell",
+     "at": "wrist",
+     "off": [
+      2,
+      -4
+     ]
+    }
+   ]
+  },
+  "squat_db": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 2,
+      "shin": -2,
+      "trunk": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 145
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 90.0,
+      "shin": -30.0,
+      "trunk": 145
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "pushup": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     140,
+     178
+    ],
+    "foot": 0,
+    "neck": 95
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": 114,
+      "uarm": 0,
+      "farm": 0,
+      "thigh": -66,
+      "shin": -66,
+      "foot": 5
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 114,
+      "uarm": 0,
+      "farm": 0,
+      "thigh": -66,
+      "shin": -66,
+      "foot": 5
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "trunk": 99,
+      "uarm": -75,
+      "farm": 60,
+      "thigh": -81,
+      "shin": -81,
+      "foot": 5
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 99,
+      "uarm": -75,
+      "farm": 60,
+      "thigh": -81,
+      "shin": -81,
+      "foot": 5
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "pushup_knee": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     140,
+     178
+    ],
+    "foot": 0,
+    "neck": 95
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": 126,
+      "uarm": 0,
+      "farm": 0,
+      "thigh": -54,
+      "shin": -92,
+      "foot": -150
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 126,
+      "uarm": 0,
+      "farm": 0,
+      "thigh": -54,
+      "shin": -92,
+      "foot": -150
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "trunk": 102,
+      "uarm": -75,
+      "farm": 60,
+      "thigh": -78,
+      "shin": -92,
+      "foot": -150
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 102,
+      "uarm": -75,
+      "farm": 60,
+      "thigh": -78,
+      "shin": -92,
+      "foot": -150
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "pushup_diamond": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     140,
+     178
+    ],
+    "foot": 0,
+    "neck": 95
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": 114,
+      "uarm": 0,
+      "farm": 0,
+      "thigh": -66,
+      "shin": -66,
+      "foot": 5
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 114,
+      "uarm": 0,
+      "farm": 0,
+      "thigh": -66,
+      "shin": -66,
+      "foot": 5
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "trunk": 99,
+      "uarm": -80,
+      "farm": 65,
+      "thigh": -81,
+      "shin": -81,
+      "foot": 5
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 99,
+      "uarm": -80,
+      "farm": 65,
+      "thigh": -81,
+      "shin": -81,
+      "foot": 5
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "bench_bb": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     110,
+     133
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "bench_db": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     110,
+     133
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 20,
+      "farm": 170
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "bench_inc_db": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     110,
+     133
+    ],
+    "trunk": -125,
+    "neck": -125,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 155,
+      "farm": 155
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 155,
+      "farm": 155
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": -5,
+      "farm": 145
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -5,
+      "farm": 145
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "bench_inc_bb": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     110,
+     133
+    ],
+    "trunk": -125,
+    "neck": -125,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 155,
+      "farm": 155
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 155,
+      "farm": 155
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": -5,
+      "farm": 145
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -5,
+      "farm": 145
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "bench_cg": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     110,
+     133
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 5,
+      "farm": 175
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 5,
+      "farm": 175
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "fly_db": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     133
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "uarm2": 180,
+      "farm2": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "uarm2": 180,
+      "farm2": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": -110,
+      "farm": -125,
+      "uarm2": 110,
+      "farm2": 125
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -110,
+      "farm": -125,
+      "uarm2": 110,
+      "farm2": 125
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "fly_cable": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "trunk": 168
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": -60,
+      "farm": -30
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -60,
+      "farm": -30
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 95,
+      "farm": 105
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 95,
+      "farm": 105
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 40,
+     "y": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "pullup": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     100,
+     20
+    ],
+    "thigh": 15,
+    "shin": -35,
+    "foot": 60
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "trunk": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "trunk": 180
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 172,
+      "trunk": 172
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 172,
+      "trunk": 172
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "x1": 60,
+     "x2": 150,
+     "y": 20
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "chinup": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     100,
+     20
+    ],
+    "thigh": 15,
+    "shin": -35,
+    "foot": 60
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "trunk": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "trunk": 180
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 10,
+      "farm": 176,
+      "trunk": 172
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 10,
+      "farm": 176,
+      "trunk": 172
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "x1": 60,
+     "x2": 150,
+     "y": 20
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "pulldown": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     95,
+     140
+    ],
+    "thigh": 90,
+    "shin": 0,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 172,
+      "farm": 176
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 172,
+      "farm": 176
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 25,
+      "farm": 170,
+      "trunk": 168
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 25,
+      "farm": 170,
+      "trunk": 168
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 110,
+     "y": 15
+    },
+    {
+     "type": "bench",
+     "x": 70,
+     "y": 143,
+     "w": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "row_db": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "thigh": 15,
+    "shin": -12,
+    "trunk": 105,
+    "uarm2": 95,
+    "farm2": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -55,
+      "farm": 5
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -55,
+      "farm": 5
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 105,
+     "y": 120,
+     "w": 50
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "row_bb": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "thigh": 15,
+    "shin": -12,
+    "trunk": 105
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -60,
+      "farm": 20
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -60,
+      "farm": 20
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "row_cable": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     80,
+     170
+    ],
+    "thigh": 92,
+    "shin": 88,
+    "foot": 180
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 90,
+      "farm": 90,
+      "trunk": 170
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 90,
+      "farm": 90,
+      "trunk": 170
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -40,
+      "farm": 85,
+      "trunk": 182
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -40,
+      "farm": 85,
+      "trunk": 182
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 175,
+     "y": 160
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "facepull": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "trunk": 182
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 85,
+      "farm": 85
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 85,
+      "farm": 85
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -95,
+      "farm": 135
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -95,
+      "farm": 135
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 175,
+     "y": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "inv_row": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     130,
+     100
+    ],
+    "foot": 180
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "trunk": 118,
+      "thigh": -62,
+      "shin": -62
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "trunk": 118,
+      "thigh": -62,
+      "shin": -62
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -40,
+      "farm": 155,
+      "trunk": 104,
+      "thigh": -76,
+      "shin": -76
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -40,
+      "farm": 155,
+      "trunk": 104,
+      "thigh": -76,
+      "shin": -76
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "x1": 110,
+     "x2": 150,
+     "y": 100
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "shrug_bb": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "sh": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "sh": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "sh": 7
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "sh": 7
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "shrug_db": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "sh": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "sh": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "sh": 7
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "sh": 7
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "ohp_db_seated": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     95,
+     140
+    ],
+    "thigh": 90,
+    "shin": 0,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 175
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 175
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 70,
+     "y": 143,
+     "w": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "ohp_bb": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 175
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 175
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "ohp_arnold": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     95,
+     140
+    ],
+    "thigh": 90,
+    "shin": 0,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 75,
+      "farm": 178
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 75,
+      "farm": 178
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 70,
+     "y": 143,
+     "w": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "ohp_db": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 175
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 30,
+      "farm": 175
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "lat_raise": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "view": "front",
+    "thigh": 4,
+    "shin": 4,
+    "foot": 40
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 10
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 10
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 88,
+      "farm": 92
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 88,
+      "farm": 92
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "lean_raise": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "view": "front",
+    "trunk": 172,
+    "thigh": 4,
+    "shin": 4,
+    "foot": 40
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 10
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 10
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 88,
+      "farm": 92
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 88,
+      "farm": 92
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "front_raise": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 5,
+      "farm": 5
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 5,
+      "farm": 5
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 90,
+      "farm": 90
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 90,
+      "farm": 90
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 60,
+     "y": 176
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "curl_bb": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "curl_db": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "curl_hammer": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist",
+     "off": [
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  "curl_cable": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 8,
+      "farm": 160
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 125,
+     "y": 176
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "pressdown": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "trunk": 172
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 5,
+      "farm": 115
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 5,
+      "farm": 115
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "cable",
+     "x": 115,
+     "y": 20
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "oh_ext": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     95,
+     140
+    ],
+    "thigh": 90,
+    "shin": 0,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 172,
+      "farm": -20
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 172,
+      "farm": -20
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 175,
+      "farm": 178
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 175,
+      "farm": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 70,
+     "y": 143,
+     "w": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "skull": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     133
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 75,
+    "shin": -5,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 165,
+      "farm": -120
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 165,
+      "farm": -120
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 178
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 178,
+      "farm": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 100
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "dip": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     105,
+     95
+    ],
+    "thigh": 20,
+    "shin": -60,
+    "foot": 30
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": -105,
+      "farm": 5,
+      "trunk": 165
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -105,
+      "farm": 5,
+      "trunk": 165
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -5,
+      "farm": 0,
+      "trunk": 178
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -5,
+      "farm": 0,
+      "trunk": 178
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "x1": 85,
+     "x2": 125,
+     "y": 95
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "bench_dip": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     60,
+     140
+    ],
+    "thigh": 85,
+    "shin": 10,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": -95,
+      "farm": 15,
+      "trunk": 178
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -95,
+      "farm": 15,
+      "trunk": 178
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -10,
+      "farm": 0,
+      "trunk": 180
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -10,
+      "farm": 0,
+      "trunk": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 20,
+     "y": 140,
+     "w": 45
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "leg_press": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     85,
+     140
+    ],
+    "trunk": -125,
+    "neck": -125,
+    "uarm": 5,
+    "farm": 40
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 168,
+      "shin": 70,
+      "foot": 160
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 168,
+      "shin": 70,
+      "foot": 160
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 128,
+      "shin": 128,
+      "foot": 200
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 128,
+      "shin": 128,
+      "foot": 200
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 143,
+     "w": 60
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "dl_bb": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 60,
+      "shin": -22,
+      "trunk": 118,
+      "uarm": 5,
+      "farm": 5
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 60,
+      "shin": -22,
+      "trunk": 118,
+      "uarm": 5,
+      "farm": 5
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist",
+     "off": [
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  "dl_sumo": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 70,
+      "shin": -10,
+      "trunk": 135,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 70,
+      "shin": -10,
+      "trunk": 135,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "dl_trap": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 75,
+      "shin": -25,
+      "trunk": 135,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 75,
+      "shin": -25,
+      "trunk": 135,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "handle",
+     "at": "wrist"
+    }
+   ]
+  },
+  "rdl": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "thigh": 18,
+      "shin": -8,
+      "trunk": 100,
+      "uarm": 10,
+      "farm": 10
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 18,
+      "shin": -8,
+      "trunk": 100,
+      "uarm": 10,
+      "farm": 10
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "barbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "rdl_single": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "thigh2": 0,
+      "shin2": 0
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "thigh2": 0,
+      "shin2": 0
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "thigh": 15,
+      "shin": -8,
+      "trunk": 95,
+      "thigh2": -85,
+      "shin2": -85,
+      "foot2": 0
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 15,
+      "shin": -8,
+      "trunk": 95,
+      "thigh2": -85,
+      "shin2": -85,
+      "foot2": 0
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "good_morning": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": -50,
+      "farm": 160
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": -50,
+      "farm": 160
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "thigh": 18,
+      "shin": -8,
+      "trunk": 100,
+      "uarm": -50,
+      "farm": 160
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 18,
+      "shin": -8,
+      "trunk": 100,
+      "uarm": -50,
+      "farm": 160
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [
+    {
+     "type": "barbell",
+     "at": "sho",
+     "off": [
+      -6,
+      -3
+     ]
+    }
+   ],
+   "heldFront": []
+  },
+  "kb_swing": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 25,
+      "shin": -15,
+      "trunk": 100,
+      "uarm": -30,
+      "farm": -30
+     },
+     "dur": 0.05,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 25,
+      "shin": -15,
+      "trunk": 100,
+      "uarm": -30,
+      "farm": -30
+     },
+     "dur": 0.5,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 0,
+      "shin": 0,
+      "trunk": 182,
+      "uarm": 95,
+      "farm": 95
+     },
+     "dur": 0.1,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 0,
+      "shin": 0,
+      "trunk": 182,
+      "uarm": 95,
+      "farm": 95
+     },
+     "dur": 0.6,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "kettlebell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "lunge_db": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     120,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 20,
+      "shin": -8,
+      "thigh2": -28,
+      "shin2": -35,
+      "foot2": 20
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 20,
+      "shin": -8,
+      "thigh2": -28,
+      "shin2": -35,
+      "foot2": 20
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 85,
+      "shin": -5,
+      "thigh2": -10,
+      "shin2": -95,
+      "foot2": -20
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 85,
+      "shin": -5,
+      "thigh2": -10,
+      "shin2": -95,
+      "foot2": -20
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "lunge_bb_rev": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     120,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 20,
+      "shin": -8,
+      "thigh2": -28,
+      "shin2": -35,
+      "foot2": 20
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 20,
+      "shin": -8,
+      "thigh2": -28,
+      "shin2": -35,
+      "foot2": 20
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 85,
+      "shin": -5,
+      "thigh2": -10,
+      "shin2": -95,
+      "foot2": -20
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -50,
+      "farm": 160,
+      "thigh": 85,
+      "shin": -5,
+      "thigh2": -10,
+      "shin2": -95,
+      "foot2": -20
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [
+    {
+     "type": "barbell",
+     "at": "sho",
+     "off": [
+      -6,
+      3
+     ]
+    }
+   ],
+   "heldFront": []
+  },
+  "bss": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     120,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 20,
+      "shin": -8,
+      "thigh2": -20,
+      "shin2": -105,
+      "foot2": -170
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 20,
+      "shin": -8,
+      "thigh2": -20,
+      "shin2": -105,
+      "foot2": -170
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 85,
+      "shin": -5,
+      "thigh2": 5,
+      "shin2": -120,
+      "foot2": -170
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 0,
+      "farm": 0,
+      "thigh": 85,
+      "shin": -5,
+      "thigh2": 5,
+      "shin2": -120,
+      "foot2": -170
+     },
+     "dur": 1.0,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 10,
+     "y": 140,
+     "w": 40
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "step_up": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     120,
+     147
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 80,
+      "shin": -5,
+      "thigh2": -5,
+      "shin2": -20
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 80,
+      "shin": -5,
+      "thigh2": -5,
+      "shin2": -20
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 5,
+      "shin": 0,
+      "thigh2": -5,
+      "shin2": -5,
+      "foot2": 60
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 5,
+      "shin": 0,
+      "thigh2": -5,
+      "shin2": -5,
+      "foot2": 60
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "box",
+     "x": 105,
+     "y": 150,
+     "w": 45
+    }
+   ],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "leg_curl": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     95,
+     133
+    ],
+    "trunk": 90,
+    "neck": 120,
+    "uarm": 0,
+    "farm": 60,
+    "thigh": -90,
+    "foot": -90
+   },
+   "frames": [
+    {
+     "pose": {
+      "shin": -90
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "shin": -90
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "shin": 175,
+      "foot": -180
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "shin": 175,
+      "foot": -180
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 40,
+     "y": 140,
+     "w": 110
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "calf": {
+   "base": {
+    "anchor": "toe",
+    "at": [
+     112,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "foot": 90
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "foot": 90
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "foot": 45
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "foot": 45
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": []
+  },
+  "calf_bb": {
+   "base": {
+    "anchor": "toe",
+    "at": [
+     112,
+     177
+    ],
+    "uarm": -50,
+    "farm": 160
+   },
+   "frames": [
+    {
+     "pose": {
+      "foot": 90
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "foot": 90
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "foot": 45
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "foot": 45
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [
+    {
+     "type": "barbell",
+     "at": "sho",
+     "off": [
+      -6,
+      3
+     ]
+    }
+   ],
+   "heldFront": []
+  },
+  "calf_seat": {
+   "base": {
+    "anchor": "toe",
+    "at": [
+     130,
+     177
+    ],
+    "thigh": 90,
+    "shin": 0,
+    "trunk": 180,
+    "uarm": 40,
+    "farm": 100
+   },
+   "frames": [
+    {
+     "pose": {
+      "foot": 90
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "foot": 90
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "foot": 45
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "foot": 45
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 60,
+     "y": 140,
+     "w": 40
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "hip_thrust": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     150,
+     177
+    ],
+    "foot": 90,
+    "uarm": -60,
+    "farm": -100
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 120,
+      "shin": 15,
+      "trunk": -116,
+      "neck": -116
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 120,
+      "shin": 15,
+      "trunk": -116,
+      "neck": -116
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 92,
+      "shin": 0,
+      "trunk": -92,
+      "neck": -92
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 92,
+      "shin": 0,
+      "trunk": -92,
+      "neck": -92
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bench",
+     "x": 10,
+     "y": 135,
+     "w": 50
+    }
+   ],
+   "held": [
+    {
+     "type": "barbell",
+     "at": "hip",
+     "off": [
+      0,
+      -8
+     ]
+    }
+   ],
+   "heldFront": []
+  },
+  "bridge": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     150,
+     177
+    ],
+    "foot": 90,
+    "uarm": -60,
+    "farm": -90
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 135,
+      "shin": 40,
+      "trunk": -88,
+      "neck": -88
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 135,
+      "shin": 40,
+      "trunk": -88,
+      "neck": -88
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 105,
+      "shin": 10,
+      "trunk": -55,
+      "neck": -60
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 105,
+      "shin": 10,
+      "trunk": -55,
+      "neck": -60
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "bridge_single": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     150,
+     177
+    ],
+    "foot": 90,
+    "uarm": -60,
+    "farm": -90
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 135,
+      "shin": 40,
+      "trunk": -88,
+      "neck": -88,
+      "thigh2": 115,
+      "shin2": 115,
+      "foot2": 200
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 135,
+      "shin": 40,
+      "trunk": -88,
+      "neck": -88,
+      "thigh2": 115,
+      "shin2": 115,
+      "foot2": 200
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 105,
+      "shin": 10,
+      "trunk": -55,
+      "neck": -60,
+      "thigh2": 105,
+      "shin2": 105,
+      "foot2": 195
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 105,
+      "shin": 10,
+      "trunk": -55,
+      "neck": -60,
+      "thigh2": 105,
+      "shin2": 105,
+      "foot2": 195
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "side_leg": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     110,
+     170
+    ],
+    "view": "front",
+    "trunk": -90,
+    "neck": -90,
+    "uarm": -180,
+    "farm": -90,
+    "thigh2": 90,
+    "shin2": 90,
+    "foot2": 180
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 88,
+      "shin": 88,
+      "foot": 180
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 88,
+      "shin": 88,
+      "foot": 180
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 130,
+      "shin": 130,
+      "foot": 220
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 130,
+      "shin": 130,
+      "foot": 220
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": []
+  },
+  "farmer": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     95,
+     177
+    ],
+    "uarm": 0,
+    "farm": 0
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 20,
+      "shin": -5,
+      "thigh2": -15,
+      "shin2": -25
+     },
+     "dur": 0.45,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": -15,
+      "shin": -25,
+      "thigh2": 20,
+      "shin2": -5
+     },
+     "dur": 0.45,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": [
+    {
+     "type": "dumbbell",
+     "at": "wrist"
+    }
+   ]
+  },
+  "plank": {
+   "base": {
+    "anchor": "elbow",
+    "at": [
+     140,
+     177
+    ],
+    "uarm": 0,
+    "farm": 90,
+    "foot": 5,
+    "neck": 100
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": 104,
+      "thigh": -76,
+      "shin": -76
+     },
+     "dur": 1.6,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 104,
+      "thigh": -76,
+      "shin": -76,
+      "sh": 1.2
+     },
+     "dur": 1.6,
+     "phase": "hold"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "plank_knee": {
+   "base": {
+    "anchor": "elbow",
+    "at": [
+     140,
+     177
+    ],
+    "uarm": 0,
+    "farm": 90,
+    "foot": 5,
+    "neck": 100
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": 118,
+      "thigh": -62,
+      "shin": -92,
+      "foot": -150
+     },
+     "dur": 1.6,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 118,
+      "thigh": -62,
+      "shin": -92,
+      "foot": -150,
+      "sh": 1.2
+     },
+     "dur": 1.6,
+     "phase": "hold"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "side_plank": {
+   "base": {
+    "anchor": "elbow",
+    "at": [
+     140,
+     177
+    ],
+    "uarm": 0,
+    "farm": -90,
+    "foot": 5,
+    "neck": 100,
+    "view": "front",
+    "uarm2": 180,
+    "farm2": 180,
+    "foot2": 5
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": 104,
+      "thigh": -76,
+      "shin": -76,
+      "thigh2": -76,
+      "shin2": -76
+     },
+     "dur": 1.6,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 104,
+      "thigh": -76,
+      "shin": -76,
+      "thigh2": -76,
+      "shin2": -76,
+      "sh": 1.2
+     },
+     "dur": 1.6,
+     "phase": "hold"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "climber": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     140,
+     177
+    ],
+    "uarm": 0,
+    "farm": 0,
+    "foot": 5,
+    "trunk": 112,
+    "neck": 100
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": -68,
+      "shin": -68,
+      "thigh2": 40,
+      "shin2": -60
+     },
+     "dur": 0.35,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 40,
+      "shin": -60,
+      "thigh2": -68,
+      "shin2": -68
+     },
+     "dur": 0.35,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "dead_bug": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     172
+    ],
+    "trunk": -90,
+    "neck": -90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "thigh": 180,
+      "shin": 90,
+      "uarm2": 180,
+      "farm2": 180,
+      "thigh2": 180,
+      "shin2": 90
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": 180,
+      "farm": 180,
+      "thigh": 180,
+      "shin": 90,
+      "uarm2": 180,
+      "farm2": 180,
+      "thigh2": 180,
+      "shin2": 90
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": -95,
+      "farm": -92,
+      "thigh": 180,
+      "shin": 90,
+      "uarm2": 180,
+      "farm2": 180,
+      "thigh2": 100,
+      "shin2": 95
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "uarm": -95,
+      "farm": -92,
+      "thigh": 180,
+      "shin": 90,
+      "uarm2": 180,
+      "farm2": 180,
+      "thigh2": 100,
+      "shin2": 95
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "crunch": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     172
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 135,
+    "shin": -20,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": -90,
+      "neck": -90,
+      "uarm": -150,
+      "farm": -20
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": -90,
+      "neck": -90,
+      "uarm": -150,
+      "farm": -20
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "trunk": -122,
+      "neck": -140,
+      "uarm": -160,
+      "farm": -30
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": -122,
+      "neck": -140,
+      "uarm": -160,
+      "farm": -30
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "bicycle": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     172
+    ],
+    "trunk": -120,
+    "neck": -135,
+    "uarm": -160,
+    "farm": -30
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 150,
+      "shin": 60,
+      "thigh2": 100,
+      "shin2": 100
+     },
+     "dur": 0.6,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 100,
+      "shin": 100,
+      "thigh2": 150,
+      "shin2": 60
+     },
+     "dur": 0.6,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "russian": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     172
+    ],
+    "trunk": -145,
+    "neck": -150,
+    "thigh": 130,
+    "shin": 40,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "uarm": 70,
+      "farm": 110,
+      "uarm2": 40,
+      "farm2": 80
+     },
+     "dur": 0.6,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "uarm": 40,
+      "farm": 80,
+      "uarm2": 70,
+      "farm2": 110
+     },
+     "dur": 0.6,
+     "phase": "con"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "situp": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     172
+    ],
+    "trunk": -90,
+    "neck": -90,
+    "thigh": 135,
+    "shin": -20,
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": -90,
+      "neck": -90,
+      "uarm": -150,
+      "farm": -20
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": -90,
+      "neck": -90,
+      "uarm": -150,
+      "farm": -20
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "trunk": 165,
+      "neck": 150,
+      "uarm": 160,
+      "farm": -20
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": 165,
+      "neck": 150,
+      "uarm": 160,
+      "farm": -20
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "vup": {
+   "base": {
+    "anchor": "hip",
+    "at": [
+     105,
+     172
+    ],
+    "foot": 90
+   },
+   "frames": [
+    {
+     "pose": {
+      "trunk": -90,
+      "neck": -90,
+      "uarm": -90,
+      "farm": -90,
+      "thigh": 92,
+      "shin": 92
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": -90,
+      "neck": -90,
+      "uarm": -90,
+      "farm": -90,
+      "thigh": 92,
+      "shin": 92
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "trunk": -140,
+      "neck": -140,
+      "uarm": 145,
+      "farm": 140,
+      "thigh": 140,
+      "shin": 140
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "trunk": -140,
+      "neck": -140,
+      "uarm": 145,
+      "farm": 140,
+      "thigh": 140,
+      "shin": 140
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "mat",
+     "x1": 20,
+     "x2": 180
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "knee_raise": {
+   "base": {
+    "anchor": "wrist",
+    "at": [
+     100,
+     20
+    ],
+    "uarm": 180,
+    "farm": 180,
+    "trunk": 180
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 0,
+      "shin": 0,
+      "foot": 60
+     },
+     "dur": 0.3,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 0,
+      "shin": 0,
+      "foot": 60
+     },
+     "dur": 1.0,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 100,
+      "shin": 0,
+      "foot": 60,
+      "trunk": 172
+     },
+     "dur": 0.2,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 100,
+      "shin": 0,
+      "foot": 60,
+      "trunk": 172
+     },
+     "dur": 1.4,
+     "phase": "ecc"
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "x1": 60,
+     "x2": 150,
+     "y": 20
+    }
+   ],
+   "held": [],
+   "heldFront": []
+  },
+  "burpee": {
+   "base": {
+    "anchor": "ankle",
+    "at": [
+     60,
+     177
+    ]
+   },
+   "frames": [
+    {
+     "pose": {
+      "thigh": 2,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.35,
+     "phase": "hold"
+    },
+    {
+     "pose": {
+      "thigh": 115,
+      "shin": -40,
+      "trunk": 120,
+      "uarm": 10,
+      "farm": 0
+     },
+     "dur": 0.35,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "thigh": -68,
+      "shin": -68,
+      "foot": 5,
+      "trunk": 112,
+      "uarm": 0,
+      "farm": 0
+     },
+     "dur": 0.45,
+     "phase": "ecc"
+    },
+    {
+     "pose": {
+      "thigh": 115,
+      "shin": -40,
+      "trunk": 120,
+      "uarm": 10,
+      "farm": 0
+     },
+     "dur": 0.35,
+     "phase": "con"
+    },
+    {
+     "pose": {
+      "thigh": 0,
+      "shin": 0,
+      "trunk": 180,
+      "uarm": 175,
+      "farm": 178,
+      "foot": 40
+     },
+     "dur": 0.35,
+     "phase": "con"
+    }
+   ],
+   "props": [],
+   "held": [],
+   "heldFront": []
+  }
+ }
+}

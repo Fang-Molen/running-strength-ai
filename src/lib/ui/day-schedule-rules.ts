@@ -12,6 +12,7 @@ export type ScheduleEntry = {
   edited?: boolean; swapReason?: string
   slot?: "am" | "pm"; overrideNote?: string; unplanned?: boolean; km?: number
   actual?: Actual
+  exercises?: { name: string; sets: string; reps: string; weight: string; rpe: string; unit?: "reps" | "sec" | "m"; perSide?: boolean }[]
 }
 export type DeviationReason = "tired" | "short" | "pain" | "weather" | "other"
 export const REASON_LABELS: Record<DeviationReason, string> = { tired: "状态差", short: "时间不够", pain: "有疼痛", weather: "天气", other: "其他" }
@@ -94,6 +95,19 @@ export function logActual(entries: ScheduleEntry[], id: string, actual: Omit<Act
     const full: Actual = actual.outcome === "as_planned" ? { ...actual, minutes: e.minutes, intensity: e.intensity, reasons: [], at } : { ...actual, at }
     return { ...e, actual: full, status: actual.outcome === "missed" ? "planned" : "done" }
   })
+}
+export function clearActual(entries: ScheduleEntry[], id: string): ScheduleEntry[] {
+  return entries.map((e) => { if (e.id !== id) return e; const { actual: _a, ...rest } = e; return { ...rest, status: "planned" as const } })
+}
+/** 重复点击/重复添加造成的同日同课重复条目：保留最后一次记录的那条 */
+export function dedupeEntries(entries: ScheduleEntry[]): { entries: ScheduleEntry[]; removed: number } {
+  const key = (e: ScheduleEntry) => `${e.date}|${e.source}|${e.refId ?? ""}|${e.title}|${e.slot ?? ""}`
+  const best = new Map<string, ScheduleEntry>()
+  const score = (e: ScheduleEntry) => e.actual?.at ?? ""
+  for (const e of entries) { if (e.status === "rejected") continue; const k = key(e); const b = best.get(k); if (!b || score(e) > score(b)) best.set(k, e) }
+  const keep = new Set([...best.values()].map((e) => e.id))
+  const out = entries.filter((e) => e.status === "rejected" || keep.has(e.id))
+  return { entries: out, removed: entries.length - out.length }
 }
 export type WeekSummary = { planned: number; plannedMin: number; asPlanned: number; different: number; missed: number; open: number; actualMin: number; reasons: [DeviationReason, number][]; note: string }
 export function weekSummary(entries: ScheduleEntry[], week: string[], today: string): WeekSummary {

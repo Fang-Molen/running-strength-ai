@@ -30,10 +30,10 @@ export function RecoveryVerdictCard({ today, revision, onImport, watch }: { toda
     <p className="product-eyebrow">今日恢复</p>
     <h2 className="mt-1 text-xl font-bold">{v.title}</h2>
     {depth >= 2 ? <p className="mt-1 text-sm">{v.reasons.join(" · ")}</p> : null}
-    <p className="mt-1 text-xs text-muted">{v.note}{v.level === "unknown" ? <button type="button" className="fk-link ml-1" onClick={onImport}>导入手表数据 ›</button> : null}</p>
+    <p className="keep mt-1 text-xs text-muted">{v.level === "unknown" ? <button type="button" className="fk-link ml-1" onClick={onImport}>导入手表数据 ›</button> : null}</p>
     {watch && watch !== "none" ? <SourceLine watch={watch} revision={revision} onImport={onImport} /> : null}
     {depth >= 3 ? <p className="mt-1 text-[10px] text-muted">依据：HRV 较 7 天均值降 ≥{RULES.hrvDropPct}% 或准备度 &lt;{RULES.lowReadiness} 记为偏低；静息心率高 {VERDICT_RULES.rhrRise} 次以上、睡眠少 {RULES.sleepWorseHours} 小时以上记为留意。</p> : null}
-    <p className="mt-1 text-[10px] text-muted">{TIER_LABEL[tier]} · 阈值为本应用经验规则；手册：缺数据不推断恢复良好。</p>
+    <p className="mt-1 text-[10px] text-muted">{TIER_LABEL[tier]}</p>
   </section>
 }
 

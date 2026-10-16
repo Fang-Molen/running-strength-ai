@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Bot, Check, ChevronDown, Dumbbell, Footprints, Pencil, Plus, RefreshCw, TriangleAlert, X } from "lucide-react"
 import type { Plan, Session } from "@/lib/strength/model"
 import type { RunningPlan } from "@/lib/core/running-plan"
-import { REASON_LABELS, SWAP_LABELS, applyAction, findConflicts, logActual, review, swapProposal, weekOf, weekSummary, type Conflict, type ConflictAction, type DeviationReason, type Intensity, type ScheduleEntry, type SwapReason } from "@/lib/ui/day-schedule-rules"
+import { clearActual, dedupeEntries, REASON_LABELS, SWAP_LABELS, applyAction, findConflicts, logActual, review, swapProposal, weekOf, weekSummary, type Conflict, type ConflictAction, type DeviationReason, type Intensity, type ScheduleEntry, type SwapReason } from "@/lib/ui/day-schedule-rules"
 import { classifyRun, classifyStrength, loadSchedule, proposeWeek, readRecovery, runEntry, saveSchedule, strengthEntry, syncFangkun, type ScheduleStore } from "@/lib/ui/day-schedule"
 import { syncActualToLog } from "@/lib/ui/checklist-log"
 import { PARTS, injuryAdvice, loadInjury, needsInjuryAsk, saveInjury, type Injury, type InjuryStore, type Part } from "@/lib/ui/injury"
@@ -11,6 +11,7 @@ import { EnergyGauge } from "@/components/energy-gauge"
 import { BAND_COLOR, applyOverride, planBand, type Band, type Override } from "@/lib/ui/day-override"
 import { TodayChecklist } from "@/components/today-checklist"
 import { SavedBadge } from "@/components/saved-badge"
+import { CustomSessionBuilder } from "@/components/custom-session-builder"
 
 const WD = ["一", "二", "三", "四", "五", "六", "日"]
 const INT: Record<Intensity, string> = { EASY: "轻松", MODERATE: "中等", HARD: "高强度" }
@@ -25,7 +26,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
   const [adding, setAdding] = useState(false)
   const [stamp, setStamp] = useState(0)
   const [note, setNote] = useState("")
-  useEffect(() => { const s = syncFangkun(loadSchedule()); setStore(s); saveSchedule(s) }, [revision])
+  useEffect(() => { let s = syncFangkun(loadSchedule()); const d = dedupeEntries(s.entries); if (d.removed) { s = { ...s, entries: d.entries }; try { localStorage.setItem("fk-dedupe-log", JSON.stringify({ at: new Date().toISOString(), removed: d.removed })) } catch { /* ignore */ } } setStore(s); saveSchedule(s) }, [revision])
   useEffect(() => { setDay(today) }, [today])
   const week = useMemo(() => weekOf(day || today), [day, today])
   const conflicts = useMemo(() => findConflicts(store.entries, week, today, readRecovery(today), store.acks), [store, week, today])
@@ -34,9 +35,17 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
   const setEntries = (entries: ScheduleEntry[]) => commit({ ...store, entries })
   const act = (c: Conflict, a: ConflictAction) => commit(a === "ack" ? { ...store, acks: [...store.acks, c.id] } : { ...store, entries: applyAction(store.entries, c, a) })
   const sessionOf = (e: ScheduleEntry) => e.modality === "strength" ? plan.sessions.find((s) => s.id === e.refId) : undefined
-  const saveActual = (e: ScheduleEntry, actual: Parameters<typeof logActual>[2]) => {
-    const entries = logActual(store.entries, e.id, actual); setEntries(entries)
-    const r = syncActualToLog(entries.find((x) => x.id === e.id)!, sessionOf(e)); setNote(r.ok ? (r.reason ?? (actual.outcome === "missed" ? "已记下没练，原因会给方坤参考。" : "已记入训练日志，方坤可见。")) : `日志未同步：${r.reason}`)
+  const [undo, setUndo] = useState<{ entries: ScheduleEntry[]; id: string; label: string } | null>(null)
+  const lastTap = useRef(0)
+  useEffect(() => { if (!undo) return; const t = setTimeout(() => setUndo(null), 5000); return () => clearTimeout(t) }, [undo])
+  const restore = () => { if (!undo) return; setEntries(undo.entries); const e = undo.entries.find((x) => x.id === undo.id); if (e) syncActualToLog(e, sessionOf(e)); setUndo(null) }
+  const saveActual = (e: ScheduleEntry, actual: Parameters<typeof logActual>[2] | null) => {
+    const now = Date.now(); if (now - lastTap.current < 400) return; lastTap.current = now
+    const prev = store.entries
+    const cur = prev.find((x) => x.id === e.id)?.actual
+    const entries = actual === null || (cur && cur.outcome === actual.outcome && actual.outcome === "as_planned") ? clearActual(prev, e.id) : logActual(prev, e.id, actual); setEntries(entries)
+    setUndo({ entries: prev, id: e.id, label: entries.find((x) => x.id === e.id)?.actual ? "已记录" : "已改回待做" })
+    const r = syncActualToLog(entries.find((x) => x.id === e.id)!, sessionOf(e)); setNote(r.ok ? (r.reason ?? (actual?.outcome === "missed" ? "已记下没练，原因会给方坤参考。" : "已记入训练日志，方坤可见。")) : `日志未同步：${r.reason}`)
   }
   const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e)), override)
   const sloted = list.some((e) => e.slot)
@@ -70,7 +79,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
         onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
         onOpenRun={() => e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}</div> : null)}
       {!list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null}
-      {note ? <p className="px-1 text-xs text-muted" role="status">{note}</p> : null}
+      {undo ? <div role="status" className="fixed inset-x-3 bottom-24 z-40 mx-auto flex max-w-md items-center justify-between rounded-card bg-fg px-4 py-3 text-sm text-bg shadow-lg"><span>{undo.label}</span><button type="button" className="font-bold underline" onClick={restore}>撤销</button></div> : null}
     </div>
     <div className="mt-2 flex flex-wrap gap-3 px-1">
       <button type="button" className="fk-link flex items-center gap-1 text-sm" aria-expanded={adding} onClick={() => setAdding(!adding)}><Plus className="size-4" />自己加一节</button>
@@ -79,12 +88,12 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
     {adding ? <div className="fk-chips mt-1 flex-wrap px-1" role="group" aria-label="可添加的课">
       {plan.sessions.map((s) => <button key={s.id} type="button" className="fk-chip" onClick={() => { setEntries([...store.entries, strengthEntry(s, day, "custom")]); setAdding(false) }}><Dumbbell className="size-3.5" />力量 · {classifyStrength(s).focus.join("+") || s.name}</button>)}
       {runPlans.map((r) => <button key={r.planId} type="button" className="fk-chip" onClick={() => { setEntries([...store.entries, runEntry(r, day, "custom")]); setAdding(false) }}><Footprints className="size-3.5" />{classifyRun(r).title}</button>)}
-      
     </div> : null}
+    {adding ? <CustomSessionBuilder day={day} onAdd={(e) => { setEntries([...store.entries, e]); setAdding(false) }} /> : null}
     <div className="mt-3 rounded-xl bg-surface-2 p-3 text-sm" aria-label="本周计划与实际">
       <p className="font-bold">本周 计划 vs 实际</p>
       <p className="mt-1">计划 {summary.planned} 节 · 按计划 <b>{summary.asPlanned}</b> · 有变 <b>{summary.different}</b> · 没练 <b>{summary.missed}</b>{summary.open ? ` · 待做 ${summary.open}` : ""}</p>
-      <p className="text-xs text-muted">时长 实际 {summary.actualMin} / 计划 {summary.plannedMin} 分钟{summary.reasons.length ? ` · 主要原因：${summary.reasons.slice(0, 2).map(([r, n]) => `${REASON_LABELS[r]}×${n}`).join("、")}` : ""}</p>
+      <p className="keep text-xs text-muted">时长 实际 {summary.actualMin} / 计划 {summary.plannedMin} 分钟{summary.reasons.length ? ` · 主要原因：${summary.reasons.slice(0, 2).map(([r, n]) => `${REASON_LABELS[r]}×${n}`).join("、")}` : ""}</p>
       <p className="mt-1 text-xs"><Bot className="mr-1 inline size-3.5" />{summary.note}</p>
     </div>
   </section>
@@ -93,7 +102,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
 function EntryCard({ e, injuries = [], band, today, open, session, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach, onFood }: {
   e: ScheduleEntry; injuries?: Injury[]; band?: Band; today: string; open: boolean; session: Session | undefined; onToggle: () => void
   onReview: (d: "accept" | "reject", patch?: Partial<Pick<ScheduleEntry, "title" | "minutes" | "intensity" | "date">>) => void
-  onSwap: (why: SwapReason) => void; onActual: (a: Parameters<typeof logActual>[2]) => void; onSkip: () => void
+  onSwap: (why: SwapReason) => void; onActual: (a: Parameters<typeof logActual>[2] | null) => void; onSkip: () => void
   onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void; onFood?: () => void
 }) {
   const [mode, setMode] = useState<"none" | "edit" | "swap" | "diff" | "miss">("none")
@@ -139,11 +148,15 @@ function EntryCard({ e, injuries = [], band, today, open, session, onToggle, onR
         {adv.caution.length ? <p>从轻重量开始：{adv.caution.join("、")}</p> : null}
         {adv.safety.filter((x) => !x.red).map((x) => <p key={x.text} className="text-muted">{x.text}（{x.rule}）</p>)}
       </div> : null}
-      {e.date === today || (e.date < today && !a) ? <>
+      <div className="mb-2" aria-label="课程内容">
+        {e.exercises?.length ? <ul className="mb-2 text-sm">{e.exercises.map((x, k) => <li key={k}>{x.name} {x.sets}×{x.reps}{x.unit === "sec" ? "秒" : x.unit === "m" ? "米" : "次"}{x.perSide ? "/每侧" : ""}{x.weight ? ` @${x.weight}kg` : ""}</li>)}</ul> : null}
+        <TodayChecklist bare slotId={e.id} title={e.title} session={session} runTitle={e.modality === "run" ? e.title : null} onOpenRun={onOpenRun} onOpenFull={onOpenFull} onAskCoach={onAskCoach} />
+      </div>
+      {e.date <= today ? <>
         <div className="grid grid-cols-3 gap-1.5">
           <button type="button" className="fk-chip justify-center" aria-pressed={a?.outcome === "as_planned"} onClick={() => { setMode("none"); onActual({ outcome: "as_planned", minutes: null, intensity: null, note: "", reasons: [] }) }}>按计划完成</button>
-          <button type="button" className="fk-chip justify-center" aria-pressed={mode === "diff" || a?.outcome === "different"} onClick={() => setMode(mode === "diff" ? "none" : "diff")}>实际不同</button>
-          <button type="button" className="fk-chip justify-center" aria-pressed={mode === "miss" || a?.outcome === "missed"} onClick={() => setMode(mode === "miss" ? "none" : "miss")}>没练</button>
+          <button type="button" className="fk-chip justify-center" aria-pressed={mode === "diff" || a?.outcome === "different"} onClick={() => { if (a?.outcome === "different" && mode !== "diff") { onActual(null); return } setMode(mode === "diff" ? "none" : "diff") }}>实际不同</button>
+          <button type="button" className="fk-chip justify-center" aria-pressed={mode === "miss" || a?.outcome === "missed"} onClick={() => { if (a?.outcome === "missed" && mode !== "miss") { onActual(null); return } setMode(mode === "miss" ? "none" : "miss") }}>没练</button>
         </div>
         {mode === "diff" ? <div className="mt-2 space-y-2 text-sm">
           <div className="flex flex-wrap items-center gap-2"><label className="flex items-center gap-1">实际<input aria-label="实际分钟" inputMode="numeric" value={aMin} onChange={(x) => setAMin(Number(x.target.value) || 0)} className="fk-cell w-14" />分钟</label>
@@ -156,9 +169,7 @@ function EntryCard({ e, injuries = [], band, today, open, session, onToggle, onR
         {mode === "miss" ? <div className="mt-2 space-y-2">{reasonChips}<button type="button" className="fk-primary min-h-10 w-full" onClick={() => { setMode("none"); onActual({ outcome: "missed", minutes: 0, intensity: null, note: "", reasons }) }}>记为没练</button></div> : null}
         {reasons.includes("tired") || reasons.includes("short") ? null : null}
         {reasons.includes("pain") ? <p className="mt-1 text-xs text-[var(--color-risk)]">有疼痛：<button type="button" className="fk-link" onClick={onAskCoach}>告诉方坤部位 ›</button></p> : null}
-        {e.date === today ? <details className="mt-2"><summary className="min-h-9 cursor-pointer text-xs font-bold text-muted">逐组打勾（可选，细节同步到日志）</summary>
-          <TodayChecklist bare slotId={e.id} title={e.title} session={session} runTitle={e.modality === "run" ? e.title : null} onOpenRun={onOpenRun} onOpenFull={onOpenFull} onAskCoach={onAskCoach} />
-        </details> : null}
+
       </> : <p className="text-sm text-muted">{a ? `已记录：${a.outcome === "as_planned" ? "按计划完成" : a.outcome === "different" ? `实际 ${a.minutes} 分钟 · ${a.intensity ? INT[a.intensity] : ""}` : "没练"}${a.reasons.length ? ` · ${a.reasons.map((r) => REASON_LABELS[r]).join("、")}` : ""}` : "到当天再记录完成情况。"}{e.focus.length ? ` 重点：${e.focus.join("、")}` : ""}</p>}
       <div className="mt-2 flex items-center gap-3"><button type="button" className="fk-link text-xs" onClick={onOpenFull}>详细记录 ›</button>{onFood ? <button type="button" className="fk-link text-xs" onClick={onFood}>练前后吃什么 ›</button> : null}<button type="button" className="fk-chip ml-auto" onClick={onSkip}><X className="size-3.5" />{e.source === "custom" ? "移除" : "不做这节"}</button></div>
     </div> : null}

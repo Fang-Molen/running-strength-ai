@@ -128,16 +128,12 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
       {watch === "none" ? null : 
       <HealthTiles allowed={tier ? TIERS[tier].tiles : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
     <section className="px-1" data-legacy-span={span} data-legacy-metrics={metrics.length}>
-      <details className="mt-1 px-1 text-xs text-muted">
-        <summary className="min-h-11 cursor-pointer font-bold text-fg">口径与未记录说明</summary>
-        <p className="mt-1">未记录不代表正常，也不补成 0。HRV、静息心率、夜间心率和睡眠分开，不合并口径。酸痛只认绑定某次训练的记录，这里没有另造分数。今日监测 {todayVitalsCount} / 5 项。今日体重 {bodyRecordedToday ? `${latest?.weight} kg` : "待记录"}，历史体重保留。柱状只来自已保存数值。</p>
-      </details>
     </section>
     </div>
     <section id="body-records" className="mt-3">
       <div hidden={pane !== "device"}>{watch ? <SourceGuide watch={watch} /> : null}<DeviceImport today={today} onSaved={() => setRevision((value) => value + 1)} /></div>
       <div hidden={pane !== "recovery" || hasWatch} id="body-vitals" className="scroll-mt-6"><details className="home-card p-3" onToggle={() => undefined}><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision((value) => value + 1)} /></details></div>
-      <div hidden={pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">最近体重 {latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}。趋势在“今日恢复”的体重方块里展开看。</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><div id="pain-log"><PainLog today={today} /></div></div>
+      <div hidden={pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">{latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><div id="pain-log"><PainLog today={today} /></div></div>
       <div hidden={pane !== "device"} id="body-devices" className="scroll-mt-6"><details className="home-card mt-3 p-3"><summary className="min-h-10 cursor-pointer text-sm font-bold">其他品牌导出步骤（华为 / 小米 / COROS / Apple）</summary><DeviceCenter /></details></div>
     </section>
   </div>

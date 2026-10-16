@@ -1,3 +1,6 @@
+import { GarminLog } from "@/components/garmin-log";
+import { lazy, Suspense } from "react";
+const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel"));
 import { Plan400, Plan400Today } from "@/components/plan400";
 import { GarminSync } from "@/components/garmin-sync";
 import { initVault } from "@/lib/vault";
@@ -133,6 +136,7 @@ export function StrengthApp() {
   const [trainingImportOpen, setTrainingImportOpen] = useState(false);
   const [coachPlanOpen, setCoachPlanOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const prevTab = useRef<"today" | "plan" | "log" | "body" | "diet">("today");
   const [settingsPane, setSettingsPane] = useState<"menu" | "goals" | "theme" | "backup">("menu");
   const [weekPeek, setWeekPeek] = useState<1 | 2 | 3 | 4 | null>(null);
   const [preference, setPreference] = useState<SportGoalPreference>(DEFAULT_SPORT_GOAL);
@@ -285,15 +289,15 @@ export function StrengthApp() {
     : tab === "plan"
       ? (plan.cycle ? `第 ${plan.cycle.week} 周 · ${phaseLabel}` : "周期未就绪")
       : tab === "log"
-        ? "点一条查看原始记录"
+        ? ""
         : tab === "coach"
           ? "对话 · 学习 · 复盘"
-          : "未记录不会显示成 0";
+          : "";
   const coachHint = !ready
     ? "正在读取本机记录。"
     : trackHome?.openOccurrenceId
       ? trackHome.progress
-      : "还没有可引用的今日结论。数据不足时不会判断疲劳、恢复或伤病。";
+      : "";
 
   function choosePreference(next: SportGoalPreference) {
     if (typeof localStorage === "undefined" || !saveSportGoal(next, localStorage)) {
@@ -435,6 +439,7 @@ export function StrengthApp() {
             <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
             <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>
           </div>
+          <button type="button" onClick={() => { if (tab === "coach") { setTab(prevTab.current); } else { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); } }} className="mr-2 grid size-11 shrink-0 place-items-center rounded-full bg-accent text-accent-fg shadow-sm" aria-label={tab === "coach" ? "关闭方坤" : "打开方坤"}>{tab === "coach" ? <X className="size-5" /> : <MessageCircle className="size-5" />}</button>
           <button type="button" onClick={() => { setSettingsPane("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button>
         </div>
       </header>
@@ -732,6 +737,7 @@ export function StrengthApp() {
       </main>
       {tab === "log" ? <div className="mx-auto max-w-3xl px-3 pt-2"><AbilityRadarCard asOf={todayIso} /></div> : null}
       {tab === "log" ? <div className="px-3 pt-2"><AssessmentPanel /></div> : null}
+      {tab === "log" ? <GarminLog /> : null}
       {tab === "log" ? <LogMetricsPanel today={todayIso} /> : null}
       {tab === "log" ? <div className="mx-3 mb-3"><ReviewPanel today={todayIso} title="方坤复盘" /></div> : null}
       {tab === "log" ? <TrainingLogPanel plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
@@ -741,6 +747,7 @@ export function StrengthApp() {
       <div className={tab === "diet" ? "" : "hidden"}><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div>
       <div className={tab === "body" ? "" : "hidden"}>
         <GarminSync />
+        <details className="home-card mx-3 my-3 p-4"><summary className="min-h-11 cursor-pointer font-bold">体型变化</summary>{tab === "body" ? <Suspense fallback={<p>正在打开…</p>}><BodyLabPanel /></Suspense> : null}</details>
         <BodyCenter active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />
       </div>
       {settingsOpen ? (
@@ -875,16 +882,15 @@ export function StrengthApp() {
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}
       {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
-      <nav className="ui03-dock dock fixed inset-x-0 bottom-0 z-20" aria-label="主导航">
-        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-6">
+      <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " hidden" : "")} aria-label="主导航">
+        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
           {(
             [
               ["today", "今日", House],
               ["plan", "计划", ClipboardList],
-              ["log", "日志", CalendarDays],
-              ["coach", "方坤β", MessageCircle],
-              ["body", "健康", Scale],
               ["diet", "饮食", Utensils],
+              ["log", "日志", CalendarDays],
+              ["body", "健康", Scale],
             ] as const
           ).map(([id, label, Icon]) => (
             <button
@@ -893,9 +899,9 @@ export function StrengthApp() {
               onClick={() => setTab(id)}
               aria-label={`切换到${label}`}
               aria-current={tab === id ? "page" : undefined}
-              className={"ui03-tab flex min-h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-bold " + (id === "coach" ? "ui04-coach-tab " : "") + (tab === id ? "ui03-tab-active text-accent" : "text-muted")}
+              className={"ui03-tab flex min-h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-bold " + "" + (tab === id ? "ui03-tab-active text-accent" : "text-muted")}
             >
-              <span className={"ui03-tab-icon grid h-8 min-w-12 place-items-center rounded-2xl " + (id === "coach" ? "ui04-coach-tab-icon " : tab === id ? "stat-run" : "")}><Icon className="size-5" strokeWidth={tab === id ? 2.4 : 2} /></span>
+              <span className={"ui03-tab-icon grid h-8 min-w-12 place-items-center rounded-2xl " + (tab === id ? "stat-run" : "")}><Icon className="size-5" strokeWidth={tab === id ? 2.4 : 2} /></span>
               <span className="ui03-tab-label">{label}</span>
             </button>
           ))}
