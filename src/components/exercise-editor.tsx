@@ -92,7 +92,7 @@ export function ExerciseEditor({ value, onChange, parts }: { value: Ex[]; onChan
   return <div className="space-y-2">
     {demo ? <DemoSheet id={demo} onClose={() => setDemo(null)} /> : null}
     {value.map((e, i) => <div key={i} className="rounded-card border border-line p-2" data-ex-row>
-      <div className="flex items-center gap-1"><input className="min-h-9 flex-1 rounded border border-line bg-surface px-2 font-bold" value={e.name} onChange={(x) => set(i, "name", x.target.value)} />
+      <div className="flex items-center gap-1"><input className="min-h-9 min-w-0 flex-1 rounded border border-line bg-surface px-2 font-bold" value={e.name} onChange={(x) => set(i, "name", x.target.value)} />
         {demoIdFor(e.name) ? <button type="button" aria-label="看演示" className="min-h-9 rounded border border-line px-2 text-xs" onClick={() => setDemo(demoIdFor(e.name))}>演示</button> : null}
         <button type="button" aria-label="上移" className="size-9" onClick={() => move(i, -1)}><ChevronUp className="mx-auto size-4" /></button>
         <button type="button" aria-label="下移" className="size-9" onClick={() => move(i, 1)}><ChevronDown className="mx-auto size-4" /></button>
