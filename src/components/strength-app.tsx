@@ -458,7 +458,7 @@ export function StrengthApp() {
               onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /></div>
             <details id="detail-record" aria-label="今日训练安排" hidden={homeLayout.hidden.includes("detail")} style={{ order: homeLayout.order.indexOf("detail") }} className="home-card mb-3 px-3 py-2">
               <summary className="flex min-h-11 cursor-pointer items-center justify-between font-bold">详细记录（逐组 / 分段，含训练前判断）<button type="button" className="product-text-action" onClick={(e) => { e.preventDefault(); setTab("plan"); }}>计划 ›</button></summary>
-              <p className="mt-1 px-1 text-xs text-muted">按已保存课表展示；没有安排日期的课程不视为今日必做。</p>
+              
               <label className="mt-3 block text-sm font-bold">本次要执行的课程
                 <select aria-label="本次要执行的课程" value={courseChoice} disabled={workspaceOpen || !!trainingDecision.current} onChange={event => { setCourseChoice(event.target.value); const index=plan.sessions.findIndex(x=>`lift:${x.id}`===event.target.value); if(index>=0)setActive(index); }} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-surface px-3">
                   <option value="">先选择课程</option>
@@ -468,7 +468,7 @@ export function StrengthApp() {
               </label>
               <div className="mt-3 space-y-2 text-sm text-muted" aria-label="分项进度"><p>跑步：{trackHome?.progress ?? "未安排"}</p><p>力量：{session ? `${session.name} · ${ready && executionOf(session.id).open ? "进行中" : "查看课程核对历史与反馈"}` : "未安排"}</p></div>
               <button type="button" disabled={!ready||!courseChoice||workspaceOpen} className="mt-4 min-h-14 w-full rounded-2xl bg-accent font-bold text-accent-fg disabled:opacity-50" onClick={()=>{setWorkspaceMounted(true);setWorkspaceOpen(true);}}>{workspaceOpen ? "训练工作区已打开" : courseChoice.startsWith("run:") && openTrackOccurrence(courseChoice.slice(4)) || courseChoice.startsWith("lift:") && ready && executionOf(courseChoice.slice(5)).open ? "继续训练" : "开始训练"}</button>
-              <p className="mt-2 text-xs text-muted">仅进入选定课程。跑步和力量的独立课次不会自动合并，分项完成也不代表整课完成。</p>
+              
             </details>
             <div style={{ order: 100 }} className="h-20" aria-hidden="true" />
           </div>
@@ -538,7 +538,7 @@ export function StrengthApp() {
                 </button>
               ))}
             </div>
-            <p className="mt-2 text-xs text-muted">切换只改变当前查看的课，不会自动改写训练计划或记录。</p>
+            
             <div className="mt-3 rounded-card border border-line p-3">
               <p className="text-sm font-bold">手动调整本周期力量课程顺序</p>
               <p className="mt-1 text-xs text-muted">当前：第 {active + 1} 节 · {session?.name}。调整前会确认；只交换力量课程排列，不更改跑步计划、不自动判断恢复安全、不把课程记为完成。</p>
@@ -546,7 +546,7 @@ export function StrengthApp() {
                 <button type="button" disabled={active === 0} onClick={() => reorderStrengthSession(-1)} className="min-h-11 rounded-card border border-line px-4 text-sm font-bold disabled:opacity-40">向前调整一节</button>
                 <button type="button" disabled={active >= plan.sessions.length - 1} onClick={() => reorderStrengthSession(1)} className="min-h-11 rounded-card border border-line px-4 text-sm font-bold disabled:opacity-40">向后调整一节</button>
               </div>
-              <p className="mt-2 text-xs text-muted">注意：这不是指定日期的跨日执行，也没有验证小周期训练目标。强度较高或恢复不明时，请先核对相邻跑步课与力量课。</p>
+              
             </div>
           </nav>
         ) : null}
@@ -599,7 +599,7 @@ export function StrengthApp() {
         </section> : null}
         {tab === "plan" ? <details className="mt-3 rounded-card border border-line bg-surface p-3">
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">实验功能 · 周期计划候选</summary>
-          <p className="mt-2 text-sm text-muted">试用版不应用 AI 周期计划。接受只记下候选选择，不会改当前课表、Decision、疲劳或能力。</p>
+          
           <button
             type="button"
             onClick={() => setCoachPlanOpen(true)}
@@ -761,10 +761,10 @@ export function StrengthApp() {
             <button type="button" onClick={() => setSettingsPane("backup")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Database className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">数据备份与恢复</span><span className="block text-xs font-normal text-muted">备份、恢复、导出</span></span><span aria-hidden="true">›</span></button>
           </section> : null}
           {settingsPane === "menu" ? <SettingsHub onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
-          {settingsPane === "menu" ? <p className="mt-3 px-1 text-xs text-muted">管理个人资料、目标、外观与本机数据。</p> : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">返回列表</button>}
+          {settingsPane === "menu" ? null : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">返回列表</button>}
           {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
             <h2 className="font-bold">界面与壁纸</h2>
-            <p className="mt-1 text-sm text-muted">只调整本机视觉外观，不影响训练、身体数据或 AI 决策。无需联网。</p>
+            
             <div className="mt-3" role="group" aria-label="显示模式">
               <p className="mb-2 text-sm font-bold">显示模式</p>
               <div className="grid grid-cols-3 gap-2">
@@ -793,7 +793,7 @@ export function StrengthApp() {
           </section> : null}
           {settingsPane === "goals" ? <section id="settings-goals" className="home-card mt-3 p-4 text-sm">
             <h2 className="font-bold">运动项目与目标</h2>
-            <p className="mt-1 text-muted">只改变首页展示。不会改课表、历史、疲劳或能力，也不会调用模型。</p>
+            
             <p className="mt-3 text-xs font-bold text-muted">运动项目</p>
             <div className="mt-2 flex flex-col gap-2">
               {SPORTS.map((item) => (
@@ -815,7 +815,7 @@ export function StrengthApp() {
             </div>
             <div className="mt-4 border-t border-line pt-3">
               <p className="font-bold">其他并行目标（可多选）</p>
-              <p className="mt-1 text-xs text-muted">与主要目标、次要目标分别保存。这里只记录意向，不会自动叠加训练量、改变热量或触发 AI 决策。</p>
+              
               <div className="mt-2 flex flex-wrap gap-2">
                 {GOALS.filter((item) => item.id !== preference.primaryGoal).map((item) => {
                   const selected = supportingGoals.includes(item.id as GoalId)
@@ -831,7 +831,7 @@ export function StrengthApp() {
           </section> : null}
           {settingsPane === "backup" ? <section id="settings-backup" className="home-card mt-3 p-4 text-sm">
             <h2 className="font-bold">本机备份</h2>
-            <p className="mt-1 text-muted">记录只在这台手机的这个网站里。换成另一个网址不会自动带上。请定期下载备份。备份不会清空现有记录；恢复只覆盖备份里有的项目。</p>
+            
             <p className="mt-1 text-xs text-muted">版本 {TRIAL_VERSION}</p>
             <button type="button" className="mt-3 h-12 w-full rounded-card border border-line font-bold" onClick={() => {
               const blob = new Blob([collectLocalBackup(localStorage)], { type: "application/json" })
@@ -966,7 +966,7 @@ export function StrengthApp() {
           <div className="rounded-card border border-line bg-surface-2 p-3">
             <p className="text-xs font-bold text-muted">正在记录</p>
             <p className="mt-1 text-base font-bold">{session.name}</p>
-            <p className="mt-1 text-xs text-muted">选一个最符合这节训练的感受；不需要填写长报告。</p>
+            
           </div>
           <fieldset className="mt-4">
             <legend className="text-sm font-bold">1. 这节练得怎么样？</legend>
@@ -988,7 +988,7 @@ export function StrengthApp() {
           {feel === "pain" ? (
             <fieldset className="mt-4 rounded-card border border-line p-3">
               <legend className="px-1 text-sm font-bold">2. 哪个动作不舒服？</legend>
-              <p className="mb-2 text-xs text-muted">可选择多个；不确定时可以不选。这里只记录你的感受，不代表医学判断。</p>
+              
               <div className="flex flex-wrap gap-2">
                 {session.moves.map((move) => {
                   const on = painIds.includes(move.id);
@@ -1023,7 +1023,7 @@ export function StrengthApp() {
               <span className="mt-1 block text-right text-xs">{feelNote.length}/80</span>
             </label>
           </details>
-          <p className="mt-3 text-xs text-muted">确认后使用原有反馈保存规则；如需调整，可以再次打开本节反馈。</p>
+          
           <button
             type="button"
             onClick={() => {

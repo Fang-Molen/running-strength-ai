@@ -53,7 +53,7 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed }
     </div>
     {editing ? <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="选择显示的指标">
       {TILES.map((t) => <button key={t.id} type="button" className="fk-chip" aria-pressed={shown.includes(t.id)} onClick={() => save(shown.includes(t.id) ? shown.filter((x) => x !== t.id) : [...shown, t.id])}>{shown.includes(t.id) ? "✓ " : "+ "}{t.name}</button>)}
-      <p className="w-full text-xs text-muted">点一下切换显示，自动保存。隐藏的指标仍照常记录。</p>
+      
     </div> : null}
     <div className="fk-tile-grid mt-3">
       {tiles.map((t) => {
@@ -90,7 +90,7 @@ function TileDetail({ points, unit, onRecord }: { points: Point[]; unit: string;
     </div> : <p className="text-muted">记录 2 次以上才画趋势。</p>}
     {avg != null ? <p className="mt-1 text-muted">近 {last14.length} 次：均值 {avg} · 最低 {min} · 最高 {max} {unit}</p> : null}
     {points.at(-1) ? <p className="text-muted">最近来源：{points.at(-1)!.source}</p> : null}
-    <p className="mt-1 text-muted">一次波动不代表状态变差，结合连续几天和主观感受看。</p>
+    
     <button type="button" className="fk-link mt-1" onClick={onRecord}>补记 / 导入 ›</button>
   </div>
 }

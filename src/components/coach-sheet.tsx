@@ -417,7 +417,7 @@ export function CoachSheet({
             {screen.decision?.readiness === "READY" && athlete.recovery.sleep == null ? (
               <p className="text-sm">规则分析给出 READY。没有睡眠记录，不能把它看成恢复正常。决策结果没有在这页被改掉。核心待修复项：证据不足时引擎仍可能返回 READY。</p>
             ) : null}
-            <p className="text-xs text-muted">下面分开显示：已确认训练事实、可追溯的规则分析、证据不足、尚未接入的能力。模型回答仍未开放，不会用固定话术冒充。</p>
+            
             {screen.decision && screen.planned ? (
               <DecisionCard
                 decision={screen.decision}
@@ -448,7 +448,7 @@ export function CoachSheet({
               painNoted={athlete.recovery.pain}
               sessionRpe={latestSessionRpe(loadEvents())}
             />
-            <p className="text-sm text-muted">长期能力和个人响应学习在试用版不开放，这里不显示能力分，也不会根据这次问答改能力。</p>
+            
             {competitionView({
               target: athlete.competition.target,
               date: athlete.competition.date,
@@ -552,7 +552,7 @@ export function CoachSheet({
         ) : null}
         <details className="mb-2 rounded-card border border-line px-3 py-2 text-xs">
           <summary className="min-h-9 cursor-pointer font-bold text-fg">{link === "unbound" ? "未绑定上传，没有自动关联" : selectedOccurrenceId ? `当前关联 ${selectedOccurrenceId}` : "尚未关联具体训练 · 按需展开"}</summary>
-          <p className="mb-2 mt-1 text-muted">多节训练不会自动猜测归属；需要引用成绩、比较训练或记录身体反馈时再选择。</p>
+          
         <label className="mb-2 flex items-center gap-2 text-xs text-muted">
           本次问答关联训练
           <select value={selectedOccurrenceId ?? ""} onChange={(event) => { setSelectedOccurrenceId(event.target.value || null); setRpeDraft(""); setRecoveryDraft(""); setBodyLocation(""); setBodyIntensity(""); }} className="h-10 min-w-0 flex-1 rounded-card border border-line bg-surface px-2 text-fg" aria-label="选择训练记录">
@@ -598,7 +598,7 @@ export function CoachSheet({
             })}
           </div>
           {seriesIds.length ? <button type="button" className="mt-2 h-10 rounded-card border border-line px-3" onClick={() => setSeriesIds([])}>清空纵向选择</button> : null}
-          <p className="mt-1 text-muted">选满后，下一问直接走正式纵向分析，省去候选路由。</p>
+          
         </details>
         {selectedOccurrenceId ? <div className="mb-2 text-xs">
           <div className="flex flex-wrap items-center gap-2">

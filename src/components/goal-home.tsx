@@ -43,12 +43,12 @@ export function GoalHome({ variant, sportLabel, primaryLabel, secondaryLabel, se
         <p className="text-xs font-bold text-muted">{sportLabel} · {title}</p>
         <p className="mt-1 text-xl font-bold">主要目标 · {primaryLabel}</p>
         <p className="mt-1 text-sm text-muted">{secondaryLabel ? `次要目标 · ${secondaryLabel}。次要目标只保存选择，不改课表。` : "没有次要目标。"}</p>
-        <p className="mt-2 text-sm text-muted">这里只展示已经保存的记录和现有入口。不生成热量赤字、减重速度或新的训练处方。这个目标的 AI 训练决策尚未接入。</p>
+        
       </section>
       {variant === "fat-loss" ? (
         <Card title="今日有氧">
           {runKm != null ? <p>今天已记录跑步 {runKm} 公里。这是已保存的跑步记录，不是建议配速。</p> : <p>暂无今日跑步记录。</p>}
-          <p className="mt-2 text-muted">下面仍使用现有跑步记录，不会另建一套训练。</p>
+          
         </Card>
       ) : null}
       <Card title={variant === "muscle" ? "今日力量训练" : "全身力量"}>
@@ -62,13 +62,13 @@ export function GoalHome({ variant, sportLabel, primaryLabel, secondaryLabel, se
         <Card title={variant === "fat-loss" ? "体重趋势" : "身体与营养"}>
           <p>{weightText ?? "暂无体重记录。"}</p>
           <p className="mt-1">{kcal != null ? `今日已记录摄入 ${kcal} 千卡。` : "暂无今日饮食记录。"}</p>
-          <p className="mt-1 text-muted">没有记录就不会显示成正常或已达标。</p>
+          
         </Card>
       ) : (
         <Card title="已有记录">
           <p>{weightText ?? "暂无体重记录。"}</p>
           <p className="mt-1">{runKm != null ? `今天已记录跑步 ${runKm} 公里。` : "暂无今日跑步记录。"}</p>
-          <p className="mt-1 text-muted">综合体能没有单独的处方引擎。下面仍是原来的课表和记录。</p>
+          
         </Card>
       )}
       <div className="flex flex-col gap-2">

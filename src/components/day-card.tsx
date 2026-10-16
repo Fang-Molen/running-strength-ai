@@ -123,7 +123,7 @@ export function DayCard({ part }: { part: "run" | "burn" | "all" }) {
       {part !== "run" ? (
         <div className={part === "all" ? "mt-4 border-t border-line pt-3" : ""}>
           <h2 className="text-sm font-bold">设备总消耗（手表总消耗等）</h2>
-          <p className="mt-1 text-xs text-muted">手表全天总消耗（静息＋活动），不是单次训练热量。记录后不会再把跑步或力量消耗加一次。</p>
+          
           <div className="mt-2 flex gap-2">
             <input value={burnText} inputMode="numeric" onChange={(event) => setBurnText(event.target.value)} placeholder="比如 2410" className="h-11 min-w-0 flex-1 rounded-2xl border border-line bg-bg px-3 text-sm outline-none" />
             <button type="button" onClick={commitBurn} className="h-11 shrink-0 rounded-2xl border border-line px-3 text-sm font-bold">记下</button>

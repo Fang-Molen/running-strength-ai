@@ -79,7 +79,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
     {adding ? <div className="fk-chips mt-1 flex-wrap px-1" role="group" aria-label="可添加的课">
       {plan.sessions.map((s) => <button key={s.id} type="button" className="fk-chip" onClick={() => { setEntries([...store.entries, strengthEntry(s, day, "custom")]); setAdding(false) }}><Dumbbell className="size-3.5" />力量 · {classifyStrength(s).focus.join("+") || s.name}</button>)}
       {runPlans.map((r) => <button key={r.planId} type="button" className="fk-chip" onClick={() => { setEntries([...store.entries, runEntry(r, day, "custom")]); setAdding(false) }}><Footprints className="size-3.5" />{classifyRun(r).title}</button>)}
-      <p className="w-full text-[11px] text-muted">自己加的课和方坤的建议同样参与冲突检查。</p>
+      
     </div> : null}
     <div className="mt-3 rounded-xl bg-surface-2 p-3 text-sm" aria-label="本周计划与实际">
       <p className="font-bold">本周 计划 vs 实际</p>
@@ -154,7 +154,7 @@ function EntryCard({ e, injuries = [], band, today, open, session, onToggle, onR
           <button type="button" className="fk-primary min-h-10 w-full" onClick={() => { setMode("none"); onActual({ outcome: "different", minutes: aMin, intensity: aInt, note: aNote, reasons, rpe: aRpe }) }}>保存实际</button>
         </div> : null}
         {mode === "miss" ? <div className="mt-2 space-y-2">{reasonChips}<button type="button" className="fk-primary min-h-10 w-full" onClick={() => { setMode("none"); onActual({ outcome: "missed", minutes: 0, intensity: null, note: "", reasons }) }}>记为没练</button></div> : null}
-        {reasons.includes("tired") || reasons.includes("short") ? <p className="mt-1 text-xs text-muted">状态差/时间不够只说明当天状态，方坤不会据此判定能力下降。</p> : null}
+        {reasons.includes("tired") || reasons.includes("short") ? null : null}
         {reasons.includes("pain") ? <p className="mt-1 text-xs text-[var(--color-risk)]">有疼痛：<button type="button" className="fk-link" onClick={onAskCoach}>告诉方坤部位 ›</button></p> : null}
         {e.date === today ? <details className="mt-2"><summary className="min-h-9 cursor-pointer text-xs font-bold text-muted">逐组打勾（可选，细节同步到日志）</summary>
           <TodayChecklist bare slotId={e.id} title={e.title} session={session} runTitle={e.modality === "run" ? e.title : null} onOpenRun={onOpenRun} onOpenFull={onOpenFull} onAskCoach={onAskCoach} />
@@ -173,7 +173,7 @@ function InjuryCard({ onSave }: { onSave: (v: InjuryStore) => void }) {
   const patch = (part: Part, p: Partial<Injury>) => setItems(items.map((x) => x.part === part ? { ...x, ...p } : x))
   return <div className="rounded-2xl border-2 border-[#d07a2b] bg-surface p-3 text-sm" aria-label="伤病确认">
     <p className="font-bold">排力量课前问一句：哪里有旧伤或现在疼？</p>
-    <p className="text-xs text-muted">方坤据此挑动作；不说病名，只判断要不要避开或找专业人员。</p>
+    
     <div className="mt-2 flex flex-wrap gap-1.5">{PARTS.map((p) => <button key={p} type="button" className="fk-chip" aria-pressed={items.some((x) => x.part === p)} onClick={() => toggle(p)}>{p}</button>)}</div>
     {items.map((it) => <div key={it.part} className="mt-2 flex flex-wrap items-center gap-1.5 text-xs"><b className="w-16">{it.part}</b>
       <button type="button" className="fk-chip" aria-pressed={it.kind === "old"} onClick={() => patch(it.part, { kind: "old", score: undefined })}>旧伤</button>

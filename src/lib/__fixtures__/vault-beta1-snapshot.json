@@ -1,0 +1,17 @@
+{
+ "format": "fangkun-vault-backup",
+ "schema": 1,
+ "exportedAt": "2026-10-16T15:30:00Z",
+ "data": {
+  "fk-feedback-v1": "[{\"at\": \"2026-10-16T15:26:34Z\", \"answer\": \"示例回答\", \"question\": \"今天腿有点酸，还能跑间歇吗？\", \"note\": \"测试反馈\"}]",
+  "fk-plan400-v4-log": "{\"2026-10-19\": {\"done\": \"done\", \"reps\": \"150m: 21.3/21.0/21.6\", \"rest\": \"7分/8分\", \"rpe\": \"7\", \"r24\": \"6.5h·7\", \"savedAt\": \"2026-10-19T12:00:00Z\"}}",
+  "fk-device-acts-v1": "[{\"key\": \"k1\", \"source\": \"佳明账号同步\", \"sport\": \"RUNNING\", \"startIso\": \"2026-10-15T10:00:00Z\", \"durationSec\": 1800, \"distanceM\": 5000}]",
+  "fk-device-extra-v1": "[{\"metric\": \"HRV\", \"day\": \"2026-10-15\", \"value\": 62, \"source\": \"\\u4f73\\u660e\\u8d26\\u53f7\\u540c\\u6b65\"}]",
+  "fk-garmin-last-sync": "2026-10-16T15:00:00Z",
+  "fr255-events-v1": "[{\"id\": \"e1\", \"type\": \"session_done\", \"at\": \"2026-10-15T10:30:00Z\"}]",
+  "fr255-cognition-memory-r1": "{\"messages\": [{\"id\": \"m1\", \"role\": \"user\", \"text\": \"你好\"}]}",
+  "fr255-profile-v1": "{\"age\": 25}",
+  "fr255-strength-plan-v3": "{\"sessions\": []}",
+  "fk-settings-v1": "{\"theme\": \"system\"}"
+ }
+}

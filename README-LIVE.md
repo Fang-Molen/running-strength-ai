@@ -30,3 +30,11 @@ npx wrangler pages deploy .output/public --project-name molen-fangkun --branch m
 git commit -am "..." && git tag live-YYYYMMDD
 ```
 构建为 SPA 静态（vite.config.ts：tanstackStart spa + nitro preset static），Functions 目录随部署上传。Service worker 自动更新并刷新一次（训练进行中不刷新）。
+
+## 数据延续到正式版（必须遵守）
+- **以后所有版本都部署到同一个 Pages 项目 / 域名 `molen-fangkun.pages.dev`**（数据跟着域名走，IndexedDB/localStorage 不跨域名）。不要新建项目或换域名；要换的话，先让用户导出再导入。
+- 不要改已有的存储键名，也不要删除；结构要变就在 `src/lib/vault.ts` 的 `MIGRATIONS` 里加 `VAULT_SCHEMA+1` 的迁移，只追加、只补字段。
+- `src/lib/vault-migration.test.ts` 用测试版数据快照（`src/lib/__fixtures__/vault-beta1-snapshot.json`）验证升级后键和值都还在。新版本发布前必须通过；有新的存储键就把它加进 fixture。
+- IndexedDB `fangkun-vault` 版本 2：`kv`（实时镜像）、`meta`（schema、lastSync）、`snapshots`（每天自动快照，保留最近 7 份，健康页可恢复）。
+- 大版本发布时把 `APP_MAJOR` 改掉 → 健康页提醒用户先导出备份（14 天没导出也会提醒）。
+- 改动都记在 `CHANGELOG-user.md`。

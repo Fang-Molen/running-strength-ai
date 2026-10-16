@@ -4,14 +4,27 @@
  */
 export const VAULT_DB = "fangkun-vault";
 export const VAULT_SCHEMA = 1;
-const MIGRATIONS: Record<number, (kv: Map<string, string>) => void> = {
-  // 1: 初始版本。以后新增：2: (kv) => { ...只改写/补字段，不删除用户数据... }
+/** 迁移只能追加：可以新增键、给旧值补字段；绝不删除或清空用户键。测试 vault-migration.test.ts 会校验。 */
+export const MIGRATIONS: Record<number, (kv: Map<string, string>) => void> = {
+  // 1: 初始版本（2026-10-16 测试版）。以后新增：2: (kv) => { ... }
 };
+export function migrateKv(kv: Map<string, string>, from: number, to = VAULT_SCHEMA): Map<string, string> {
+  let v = from || 1; while (v < to) { v++; MIGRATIONS[v]?.(kv); } return kv;
+}
+export const SNAPSHOT_KEEP = 7;
+export const SNAPSHOT_EVERY_MS = 24 * 3600e3;
+export type Snapshot = { at: string; schema: number; data: Record<string, string> };
+/** 纯函数：给定已有快照和现在的数据，返回新的快照列表（最多 7 份，至少隔 24 小时） */
+export function rotateSnapshots(list: Snapshot[], data: Record<string, string>, now = Date.now()): Snapshot[] {
+  const last = list[list.length - 1];
+  if (last && now - Date.parse(last.at) < SNAPSHOT_EVERY_MS) return list;
+  return [...list, { at: new Date(now).toISOString(), schema: VAULT_SCHEMA, data }].slice(-SNAPSHOT_KEEP);
+}
 let dbp: Promise<IDBDatabase> | null = null;
 function db(): Promise<IDBDatabase> {
   return (dbp ??= new Promise((res, rej) => {
-    const r = indexedDB.open(VAULT_DB, 1);
-    r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains("kv")) d.createObjectStore("kv"); if (!d.objectStoreNames.contains("meta")) d.createObjectStore("meta"); };
+    const r = indexedDB.open(VAULT_DB, 2);
+    r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains("kv")) d.createObjectStore("kv"); if (!d.objectStoreNames.contains("meta")) d.createObjectStore("meta"); if (!d.objectStoreNames.contains("snapshots")) d.createObjectStore("snapshots"); };
     r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
   }));
 }
@@ -34,7 +47,7 @@ export async function initVault(): Promise<{ restored: number; persisted: boolea
   // 迁移
   let ver = Number((await tx<number>("meta", "readonly", (s) => s.get("schema"))) ?? 0);
   if (ver === 0 && kv.size === 0) ver = VAULT_SCHEMA;
-  while (ver < VAULT_SCHEMA) { ver++; MIGRATIONS[ver]?.(kv); }
+  if (ver < VAULT_SCHEMA) migrateKv(kv, ver);
   // 恢复：localStorage 被系统清掉的键从 IndexedDB 找回（不覆盖已有值）
   let restored = 0;
   for (const [k, v] of kv) if (localStorage.getItem(k) === null) { try { localStorage.setItem(k, v); restored++; } catch { /* full */ } }
@@ -46,19 +59,39 @@ export async function initVault(): Promise<{ restored: number; persisted: boolea
   const set = Storage.prototype.setItem, rem = Storage.prototype.removeItem;
   Storage.prototype.setItem = function (k: string, v: string) { set.call(this, k, v); if (this === localStorage && !skip(k)) void tx("kv", "readwrite", (s) => { s.put(String(v), k); }).catch(() => {}); };
   Storage.prototype.removeItem = function (k: string) { rem.call(this, k); if (this === localStorage) void tx("kv", "readwrite", (s) => { s.delete(k); }).catch(() => {}); };
+  void snapshotNow().catch(() => {});
   return { restored, persisted };
 }
+export async function listSnapshots(): Promise<Snapshot[]> { return ((await tx<Snapshot[]>("snapshots", "readonly", (s) => s.get("list"))) ?? []) as Snapshot[]; }
+export async function snapshotNow(): Promise<void> {
+  const data: Record<string, string> = {};
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) data[k] = localStorage.getItem(k)!; }
+  const list = await listSnapshots(); const next = rotateSnapshots(list, data);
+  if (next !== list) await tx("snapshots", "readwrite", (s) => { s.put(next, "list"); });
+}
+export async function restoreSnapshot(at: string): Promise<number> {
+  const snap = (await listSnapshots()).find((x) => x.at === at); if (!snap) return 0;
+  const kv = migrateKv(new Map(Object.entries(snap.data)), snap.schema);
+  for (const [k, v] of kv) localStorage.setItem(k, v); return kv.size;
+}
+/** 大版本更新前提醒导出：APP_MAJOR 变化时返回 true（直到用户导出一次） */
+export const APP_MAJOR = "beta-1";
+export function needsBackupReminder(): boolean {
+  const seen = localStorage.getItem("fk-app-major"); if (seen === null) { localStorage.setItem("fk-app-major", APP_MAJOR); return false; }
+  return seen !== APP_MAJOR;
+}
+export function markBackedUp(): void { localStorage.setItem("fk-app-major", APP_MAJOR); localStorage.setItem("fk-last-export", new Date().toISOString()); }
 export async function exportVault(): Promise<void> {
   const kv = await vaultAll();
   for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) kv.set(k, localStorage.getItem(k)!); }
   const blob = new Blob([JSON.stringify({ format: "fangkun-vault-backup", schema: VAULT_SCHEMA, exportedAt: new Date().toISOString(), data: Object.fromEntries(kv) })], { type: "application/json" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `方坤全部数据备份-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `方坤全部数据备份-${new Date().toISOString().slice(0, 10)}.json`; a.click(); markBackedUp();
 }
 export async function importVault(file: File): Promise<number> {
   const b = JSON.parse(await file.text());
   if (b?.format !== "fangkun-vault-backup" || typeof b.data !== "object") throw new Error("不是方坤备份文件");
   const kv = new Map<string, string>(Object.entries(b.data).map(([k, v]) => [k, String(v)]));
-  let ver = Number(b.schema) || 1; while (ver < VAULT_SCHEMA) { ver++; MIGRATIONS[ver]?.(kv); }
+  migrateKv(kv, Number(b.schema) || 1);
   let n = 0; for (const [k, v] of kv) { localStorage.setItem(k, v); n++; }
   return n;
 }

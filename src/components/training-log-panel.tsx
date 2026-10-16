@@ -152,7 +152,7 @@ function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan:
             {runningCorrectionKey(slot) ? <button type="button" className="min-h-11 underline" onClick={() => { setRunningEdit(slot); setRunningMetric("duration"); setRunningValue(String(duration.value ?? "")); setRunningReason(""); setFail("") }}>修改本段成绩</button> : null}
           </div>
         })}
-        <p className="text-xs text-muted">纠错保留原始事件，仅更新日志显示；不会自动改变训练决策或能力值。</p>
+        
       </section> : null}
       <p className="font-bold">力量实际完成</p>
       {attempts.length ? <ul className="space-y-1">{attempts.map((event) => {
@@ -200,7 +200,7 @@ function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan:
         <label className="block">字段<select className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" value={runningMetric} onChange={event => { const metric = event.target.value as "distance" | "duration"; setRunningMetric(metric); setRunningValue(String(correctedRunningMetric(runningEdit, metric).value ?? "")) }}><option value="duration">用时（秒）</option><option value="distance">距离（米）</option></select></label>
         <label className="block">正确数值<input type="number" min="0.001" step="any" className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" value={runningValue} onChange={event => setRunningValue(event.target.value)}/></label>
         <label className="block">修改原因<input className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" value={runningReason} onChange={event => setRunningReason(event.target.value)} placeholder="例如计时笔误" /></label>
-        <p className="text-xs text-muted">保存为可追溯纠错，不覆盖原始成绩，也不修改 AI 决策。</p>
+        
         {fail ? <p role="alert">{fail}</p> : null}
         <button type="button" className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={() => { const ok = correctRunningMetric(runningEdit, runningMetric, Number(runningValue), runningReason); if (ok) { setRunningEdit(null); setTick(v => v + 1) } else setFail("请填写有效的正数和修改原因，且本段必须有唯一来源事件。") }}>确认保存纠错</button>
         <button type="button" className="min-h-11 w-full" onClick={() => setRunningEdit(null)}>取消</button>
@@ -237,7 +237,7 @@ function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan:
           <button type="button" onClick={resetSheet} className="mt-2 min-h-11 w-full text-muted">取消</button>
         </> : <>
           <p className="mt-2">请再确认一次。原因：{reason.trim()}</p>
-          <p className="mt-1 text-muted">不会删除或覆盖原始训练记录。</p>
+          
           <button type="button" onClick={save} className="mt-3 min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg">{confirmLabel}</button>
           <button type="button" onClick={() => setStep("edit")} className="mt-2 min-h-11 w-full text-muted">返回修改</button>
         </>}
@@ -259,11 +259,11 @@ function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingImport; 
       <span className="text-lg text-muted" aria-hidden="true">{open ? "↑" : "›"}</span>
     </button>
     {open ? <div className="mt-2 space-y-2 border-t border-line pt-2">
-      <p className="text-xs text-muted">这是独立的已确认上传，不并入同日正式训练，也不能在这里改写原始事实。没有可靠原计划时，不计算完成度。</p>
+      
       {item.runningSegments.length ? <ul className="space-y-1">{item.runningSegments.map((segment, index) => <li key={segment.id}>跑步 {index + 1} · {segment.distanceMeters.value ?? "距离未记录"} 米 · {segment.durationSeconds.value ?? "时间未记录"} 秒 · {STATUS[segment.completion] ?? segment.completion}</li>)}</ul> : <p className="text-muted">跑步分段：未记录</p>}
       {item.strengthSets.length ? <ul className="space-y-1">{item.strengthSets.map((set, index) => <li key={set.id}>力量 {index + 1} · {set.exerciseName.value || "动作未记录"} · {set.repetitions.value ?? "次数未记录"} · {STATUS[set.completion] ?? set.completion}</li>)}</ul> : null}
       <button type="button" onClick={() => onAsk(null)} className="min-h-11 rounded-full border border-line px-3 font-bold">问教练</button>
-      <p className="text-xs text-muted">上传记录没有可靠训练编号，打开教练后不会自动关联。</p>
+      
       {!deleteConfirm ? <button type="button" onClick={() => { setDeleteConfirm(true); setDeleteError("") }} className="min-h-11 rounded-full border border-red-500 px-3 font-bold text-red-600">永久删除这条上传记录</button> : <div className="rounded-xl border border-red-500 p-3 space-y-2">
         <p className="font-bold">确认永久删除？</p>
         <p className="text-xs">将从本机已确认上传记录中移除该条数据，不能通过“恢复作废”找回。建议先导出备份。其他训练记录不受影响。</p>
@@ -354,7 +354,7 @@ export function TrainingLogPanel({ plan, onAsk }: { plan: Plan; onAsk: (occurren
     </section>
     <details className="home-card mt-3 px-4 py-3 text-sm">
       <summary className="min-h-11 cursor-pointer font-bold">本周期感受</summary>
-      <p className="mt-1 text-xs text-muted">这些反馈没有单独的日期，所以不放进上面的记录，也不当成某一次训练证据。</p>
+      
       {plan.cycle?.logs.length ? <ul className="mt-2 space-y-2">{plan.cycle.logs.map((log) => <li key={log.sessionId}>{plan.sessions.find((item) => item.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <p className="mt-2 text-muted">这周还没有感受记录。</p>}
     </details>
     <details className="home-card mt-3 px-4 py-3 text-sm">
@@ -363,7 +363,7 @@ export function TrainingLogPanel({ plan, onAsk }: { plan: Plan; onAsk: (occurren
     </details>
     {grouped.undatedImports || grouped.undatedOccurrences ? <section className="home-card mt-3 px-4 py-3 text-sm">
       <h2 className="font-bold">没有可用日期的记录</h2>
-      <p className="mt-1 text-xs text-muted">这些记录缺少能放进日历的时间。这里单独列出，不编造日期。</p>
+      
       {imports.filter((item) => !calendarDayShanghai(item.occurredAt.value)).map((item) => <ImportRow key={item.confirmedImportId} item={item} onAsk={onAsk} onDeleted={() => setLogRevision((value) => value + 1)} />)}
       {occurrences.filter((item) => !calendarDayShanghai(item.startedAt)).map((item) => <OccurrenceCard key={item.trainingOccurrenceId} item={item} plan={plan} onAsk={onAsk} />)}
     </section> : null}

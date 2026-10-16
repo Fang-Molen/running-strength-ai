@@ -56,7 +56,7 @@ export function PainLog({ today }: { today: string }) {
     </div>
     {score > 3 && part ? <p className="mt-1 text-xs text-[var(--color-risk)]">疼痛 &gt;3/10 或改变跑姿：停止引起疼痛的训练，48 小时内不做引起疼痛的动作；不缓解请就医。（手册 P-03【经验规则】）</p> : null}
     {long.map(([p]) => <p key={p} className="mt-1 rounded-lg border border-[var(--color-risk)] p-2 text-xs text-[var(--color-risk)]">「{p}」记录跨度已超过 14 天，建议找运动医学/康复专业人员检查。（手册 P-07）</p>)}
-    {list.length ? <ul className="mt-2 divide-y divide-line">{[...list].reverse().slice(0, 6).map((p) => <li key={p.id} className="flex items-center justify-between py-1.5"><span>{p.date.slice(5)} · {p.part} · <b>{p.score}/10</b></span><button type="button" className="text-xs text-muted" onClick={() => save(list.filter((x) => x.id !== p.id))}>删除</button></li>)}</ul> : <p className="mt-2 text-xs text-muted">没有记录。方坤不说病名，只提示什么时候该找专业人员。</p>}
+    {list.length ? <ul className="mt-2 divide-y divide-line">{[...list].reverse().slice(0, 6).map((p) => <li key={p.id} className="flex items-center justify-between py-1.5"><span>{p.date.slice(5)} · {p.part} · <b>{p.score}/10</b></span><button type="button" className="text-xs text-muted" onClick={() => save(list.filter((x) => x.id !== p.id))}>删除</button></li>)}</ul> : <p className="mt-2 text-xs text-muted">没有记录。</p>}
   </section>
 }
 

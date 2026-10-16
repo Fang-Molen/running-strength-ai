@@ -35,7 +35,7 @@ export function AbilityPanel({ rows }: { rows: AbilityRow[] }) {
   return (
     <section className="rounded-card border border-line bg-surface p-3 text-sm">
       <h3 className="font-bold">当前能力</h3>
-      <p className="mt-1 text-xs text-muted">这是长期能力，不是今天的状态。</p>
+      
       <ul className="mt-2 flex flex-col gap-2">
         {rows.map((row) => (
           <li key={row.key}>
@@ -73,7 +73,7 @@ export function TodayState({
   return (
     <section className="text-sm">
       <h3 className="font-bold">今日状态</h3>
-      <p className="text-xs text-muted">现有规则指标，尚未完成个人校准。不是疲劳百分比，也不是受伤概率。</p>
+      
       {uncalibrated ? (
         <p className="mt-1">证据不足。没有训练反馈时，不把默认分说成正常或恢复较好。</p>
       ) : (
