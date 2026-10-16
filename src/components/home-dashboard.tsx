@@ -110,7 +110,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       <div className="grid grid-cols-2 gap-3">
       <button type="button" onClick={() => setBodyOpen(true)} className="fk-dash-card row-span-3 flex flex-col p-2 text-left">
         <span className="fk-dash-title text-sm"><UserRound className="size-4" />我的形象 ›</span>
-        <span className="mt-1 block h-[240px] w-full overflow-hidden">{me ? <span className="pointer-events-none block h-full"><Model profile={me} yaw={0} frameHeight={height! / 100} onYaw={() => {}} /></span> : <Empty text="填身高和体重后显示" />}</span>
+        <span className="mt-1 block h-[240px] w-full overflow-hidden">{me ? <span className="pointer-events-none block h-full"><Figure sex={sex} base={me} p={me} /></span> : <Empty text="填身高和体重后显示" />}</span>
         <span className="keep mt-auto pt-1 text-center text-[10px] text-muted">点开看详情</span>
       </button>
       <section className="fk-dash-card cursor-pointer p-2" onClick={() => setBodyOpen("data")}>
@@ -123,7 +123,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       </section>
       <button type="button" onClick={() => { setShape("cmp"); setBodyOpen(true); }} className="fk-dash-card p-2 text-left">
         <span className="fk-dash-title text-sm"><ArrowRightLeft className="size-4" />体型对比 ›</span>
-        {me && goalShape ? <span className="mt-1 grid grid-cols-2 gap-1 text-center text-[10px]">{([[me, "当前"], [goalShape, "目标"]] as const).map(([p, l]) => <span key={l}><span className="block h-20 [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: buildAvatarSvg(p, { view: "front", frameHeight: height! / 100, label: l }) }} />{l} {f1(p.massKg)}</span>)}</span> : <Empty text="需要身高、体重、目标体重" />}
+        {me && goalShape ? <span className="mt-1 grid grid-cols-2 gap-1 text-center text-[10px]">{([[me, "当前"], [goalShape, "目标"]] as const).map(([p, l]) => <span key={l}><span className="block h-24"><Figure sex={sex} base={me} p={p} ghost={l === "目标"} /></span>{l} {f1(p.massKg)}</span>)}</span> : <Empty text="需要身高、体重、目标体重" />}
       </button>
       </div>
     <div className="grid grid-cols-1 gap-3">
@@ -134,11 +134,10 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
     {bodyOpen ? <BodyDetail mode={bodyOpen} editDate={editDate} onClose={() => { setBodyOpen(false); setEditDate(null); }} onSaved={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))} checks={checks} onTrend={() => setBodyOpen("data")}>
       <section className="fk-dash-card p-2">
         <div className="flex gap-2">
-          <div className="flex flex-col gap-1">{(["front", "side", "back"] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={"flex size-11 flex-col items-center justify-center rounded-lg border text-[10px] " + (view === v ? "border-accent text-accent" : "border-line text-muted")}><UserRound className="size-4" />{v === "front" ? "正面" : v === "side" ? "侧面" : "背面"}</button>)}</div>
           {me ? <div className="grid flex-1 grid-cols-[1fr_auto_1fr] items-end">
-            <div className="text-center"><div className="h-[340px] pt-2"><Model profile={me} yaw={yaw} frameHeight={height! / 100 * 1.08} onYaw={() => {}} /></div><p className="keep text-xs text-muted">当前</p><b>{f1(me.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {fat ? `${f1(fat)}%` : "—"}</p></div>
+            <div className="text-center"><div className="h-[340px] pt-2"><Figure sex={sex} base={me} p={me} /></div><p className="keep text-xs text-muted">当前</p><b>{f1(me.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {fat ? `${f1(fat)}%` : "—"}</p></div>
             <span className="self-center pb-16 text-2xl font-black text-accent">›</span>
-            <div className="text-center">{goalShape ? <><div className="h-[340px] pt-2 opacity-45"><Model profile={goalShape} yaw={yaw} frameHeight={height! / 100 * 1.08} onYaw={() => {}} /></div><p className="keep text-xs text-muted">目标</p><b>{f1(goalShape.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {gBf ? `${f1(gBf)}%` : "—"}</p></> : <div className="flex h-[340px] items-center"><Empty text="在下方选择目标体重" /></div>}</div>
+            <div className="text-center">{goalShape ? <><div className="h-[340px] pt-2"><Figure sex={sex} base={me} p={goalShape} ghost /></div><p className="keep text-xs text-muted">目标</p><b>{f1(goalShape.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {gBf ? `${f1(gBf)}%` : "—"}</p></> : <div className="flex h-[340px] items-center"><Empty text="在下方选择目标体重" /></div>}</div>
           </div> : <div className="flex-1"><Empty text="填身高和体重后显示" /></div>}
         </div>
         {me ? <div className="mt-2 rounded-xl border border-line p-2 text-xs">
@@ -382,4 +381,14 @@ function MealList({ meal, entries, onClose, onAdd, onChanged }: { meal: Meal; en
       {edit === e.id ? <EntryEditor e={e} onDone={() => { setEdit(null); onChanged(); }} /> : null}</div>)}
     <button type="button" className="fk-orange-btn mt-3 min-h-11 w-full rounded-xl font-bold" onClick={onAdd}>+ 添加</button>
   </div></div>;
+}
+
+type FigP = { heightCm: number; massKg: number; bodyFatPct: number };
+// Illustrated character (04 pack hero art, background removed). Target morphs by
+// horizontal scale from the user's current build; a visual cue, not a measurement.
+function Figure({ sex, base, p, ghost }: { sex: "male" | "female"; base: FigP; p: FigP; ghost?: boolean }) {
+  const sx = Math.max(0.8, Math.min(1.25, Math.sqrt(p.massKg / base.massKg) * (1 + (p.bodyFatPct - base.bodyFatPct) * 0.008)));
+  return <span className="relative flex h-full w-full items-end justify-center">
+    <img src={`/fangkun-atlas/figure-${sex}.webp`} alt={ghost ? "目标形象" : "当前形象"} draggable={false} className="h-full w-auto max-w-none object-contain transition-transform duration-300" style={{ transform: `scaleX(${sx.toFixed(3)})`, transformOrigin: "50% 100%", opacity: ghost ? 0.5 : 1, filter: ghost ? "grayscale(.35) brightness(.9)" : "drop-shadow(0 6px 14px rgba(0,0,0,.5))" }} />
+  </span>;
 }

@@ -1,4 +1,4 @@
-const CACHE = "fr255-shell-v49"
+const CACHE = "fr255-shell-v50"
 const CACHE_PREFIX = "fr255-shell-"
 
 function blocked(url) {
