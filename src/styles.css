@@ -441,3 +441,15 @@ html, body { background: #0b0b0d; }
 .fk-kb .ui03-dock { display: none; }
 /* keyboard: lift bottom sheets above the on-screen keyboard instead of squashing */
 .fk-kb [role="dialog"].bottom-0, .fk-kb .fixed.inset-0 > [role="dialog"] { bottom: var(--fk-kb-h, 0px); max-height: calc(var(--fk-vvh, 100dvh) - 12px); overflow-y: auto; }
+/* t427 detail-sheet typography: prominent topic headers, readable body, muted sources */
+.fk-detail .fk-topic, .fk-detail details > summary, .fk-detail section > div:first-child > h2 { font-size: 18.5px; font-weight: 800; line-height: 1.35; color: #f4f4f5; }
+.fk-detail .fk-topic { position: relative; padding: 12px 12px 12px 18px !important; margin: 0 -12px; background: rgba(255,106,26,.08); border-bottom: 1px solid #2a2d33; border-radius: 12px 12px 0 0; }
+.fk-detail details:not([open]) > .fk-topic, .fk-detail button.fk-topic[aria-expanded="false"] { border-radius: 12px; border-bottom: 0; }
+.fk-detail .fk-topic::before { content: ""; position: absolute; left: 8px; top: 12px; bottom: 12px; width: 4px; border-radius: 2px; background: #ff6a1a; }
+.fk-detail button.fk-topic { margin: 0; }
+.fk-detail .fk-sub { margin-top: 10px; font-size: 15px; font-weight: 700; color: #ff9a4a; }
+.fk-detail .fk-body, .fk-detail li, .fk-detail p { font-size: 16px; line-height: 1.6; }
+.fk-detail ul { margin-top: 8px; }
+.fk-detail .fk-src { font-size: 13px !important; color: #9a9ca3; white-space: normal; }
+.fk-detail details, .fk-detail .rounded-xl.border { margin-top: 14px; }
+.fk-detail .grid p { font-size: inherit; line-height: 1.3; }

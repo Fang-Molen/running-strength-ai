@@ -30,7 +30,7 @@ function useFuel(profile: Profile, revision = 0, goal: FuelGoal = "keep", servin
   const flags = useMemo(() => fuelFlags({ targetKcal: plan?.kcal ?? null, bmr: plan?.bmr ?? null, aim: plan?.aim ?? null, dayType: targets?.type ?? "rest", loggedDays: state.logged, weekWeightDeltaKg: state.week, signs: state.signs }), [plan?.kcal, plan?.bmr, plan?.aim, targets?.type, state])
   return { ...state, kg: kg >= 30 ? kg : null, plan, targets, flags, setSigns: (s: Signs) => { try { localStorage.setItem(SIGNS_KEY, JSON.stringify(s)) } catch { /* ignore */ } setState({ ...state, signs: s }) } }
 }
-const TipLine = ({ t }: { t: Tip }) => <li className="leading-snug">{t.text} <span className="whitespace-nowrap text-[10px] text-muted">{t.tag}{t.cite ? ` ${t.cite}` : ""}</span></li>
+const TipLine = ({ t }: { t: Tip }) => <li className="fk-body leading-snug">{t.text} <span className="fk-src whitespace-nowrap text-[10px] text-muted">{t.tag}{t.cite ? ` ${t.cite}` : ""}</span></li>
 const FlagBox = ({ f }: { f: FuelFlag }) => <p className={"rounded-lg p-2 text-xs " + (f.level === "refer" ? "border border-[var(--color-risk)] text-[var(--color-risk)]" : f.level === "warn" ? "bg-[#fdf3e8] text-[#8a5a22] dark:bg-transparent" : "bg-surface-2")}>{f.text} <span className="opacity-70">{f.tag}{f.cite ? ` ${f.cite}` : ""}</span></p>
 
 /** 身体 → 饮食：目标、时机、补水、怎么选、温和提示 */
@@ -48,26 +48,26 @@ export function FuelGuide({ profile, revision, onEditProfile, goal = "keep", ser
         <div className="rounded-xl bg-surface-2 py-2"><p className="text-[11px] text-muted keep">蛋白</p><p className="font-bold">{t.proteinG}<small className="text-muted"> g</small></p></div>
         <div className="rounded-xl bg-surface-2 py-2"><p className="text-[11px] text-muted keep">热量</p><p className="font-bold">{f.plan ? f.plan.kcal : "—"}<small className="text-muted"> kcal</small></p></div>
       </div>
-      <details className="mt-2"><summary className="min-h-10 cursor-pointer font-bold">要点与依据</summary><ul className="list-disc space-y-1 pl-5">{[...homeTips(t, f.sessions, f.flags), ...t.goalTips, t.tips[0]].map((x, i) => <TipLine key={i} t={x} />)}</ul><p className="mt-1 text-xs">碳水 {t.carbPerKg[0]}–{t.carbPerKg[1]} g/kg · 蛋白 {t.proteinPerKg} g/kg，分 {t.meals} 次，每次约 {t.proteinPerMeal} g</p></details>
+      <details className="mt-2"><summary className="fk-topic min-h-10 cursor-pointer font-bold">要点与依据</summary><ul className="list-disc space-y-1 pl-5">{[...homeTips(t, f.sessions, f.flags), ...t.goalTips, t.tips[0]].map((x, i) => <TipLine key={i} t={x} />)}</ul><p className="mt-1 text-xs">碳水 {t.carbPerKg[0]}–{t.carbPerKg[1]} g/kg · 蛋白 {t.proteinPerKg} g/kg，分 {t.meals} 次，每次约 {t.proteinPerMeal} g</p></details>
     </>}
     {f.flags.length ? <div className="mt-3 space-y-1.5">{f.flags.map((x, i) => <FlagBox key={i} f={x} />)}</div> : null}
     {f.sessions.map((s, i) => { const tm = sessionTiming(s, f.kg, null); const isOpen = open === i
       return <div key={i} className="mt-3 rounded-xl border border-line">
-        <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : i)} className="flex w-full items-center justify-between p-2.5 text-left font-bold"><span>「{s.title}」前中后怎么吃</span><ChevronDown className={"size-4 " + (isOpen ? "rotate-180" : "")} /></button>
+        <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : i)} className="fk-topic flex w-full items-center justify-between p-2.5 text-left font-bold"><span>「{s.title}」前中后怎么吃</span><ChevronDown className={"size-4 " + (isOpen ? "rotate-180" : "")} /></button>
         {isOpen ? <div className="space-y-2 px-3 pb-3">
-          {([["练前", tm.before], ["练中", tm.during], ["练后", tm.after]] as const).map(([k, list]) => <div key={k}><p className="text-xs font-bold text-muted">{k}</p><ul className="list-disc space-y-1 pl-5">{list.map((x, j) => <TipLine key={j} t={x} />)}</ul></div>)}
+          {([["练前", tm.before], ["练中", tm.during], ["练后", tm.after]] as const).map(([k, list]) => <div key={k}><p className="fk-sub">{k}</p><ul className="list-disc space-y-1 pl-5">{list.map((x, j) => <TipLine key={j} t={x} />)}</ul></div>)}
         </div> : null}
       </div> })}
-    <details className="mt-3 rounded-xl border border-line px-3 py-1"><summary className="flex min-h-10 cursor-pointer items-center gap-1.5 font-bold"><Droplets className="size-4 text-[#2182bd]" />补水</summary>
+    <details className="mt-3 rounded-xl border border-line px-3 py-1"><summary className="fk-topic flex min-h-10 cursor-pointer items-center gap-1.5 font-bold"><Droplets className="size-4 text-[#2182bd]" />补水</summary>
       <ul className="list-disc space-y-1 pb-2 pl-5">
         <TipLine t={{ text: f.kg ? `练前约 4 小时喝 ${Math.round(f.kg * 5)}–${Math.round(f.kg * 7)} ml。` : "练前约 4 小时喝 5–7 ml/kg。", tag: "【共识】", cite: "ACSM 2016" }} />
         <TipLine t={{ text: "练中别让体重掉超过 2%；练后每少 1 kg 补 1.25–1.5 L，可加点盐。", tag: "【共识】", cite: "ACSM 2016" }} />
         <TipLine t={{ text: "平时看尿色：淡黄就够，深黄说明喝少了。", tag: "【经验规则】" }} />
       </ul></details>
-    <details className="mt-2 rounded-xl border border-line px-3 py-1"><summary className="min-h-10 cursor-pointer font-bold">食堂 / 外卖怎么选 · {GOAL_LABEL[goal]}</summary>
-      <ul className="space-y-1 pb-2">{(GOAL_EXAMPLES[goal] ?? MEAL_EXAMPLES[t?.type ?? "rest"]).map((m) => <li key={m.scene}><b>{m.scene}：</b>{m.pick}</li>)}</ul>
-      <p className="pb-2 text-[11px] text-muted">【经验规则】举例，份量按饱腹和训练量调。</p></details>
-    <details className="mt-2 rounded-xl border border-line px-3 py-1"><summary className="flex min-h-10 cursor-pointer items-center justify-between font-bold">身体信号自查（可选）<SavedBadge stamp={signStamp} /></summary>
+    <details className="mt-2 rounded-xl border border-line px-3 py-1"><summary className="fk-topic min-h-10 cursor-pointer font-bold">食堂 / 外卖怎么选 · {GOAL_LABEL[goal]}</summary>
+      <ul className="space-y-1 pb-2">{(GOAL_EXAMPLES[goal] ?? MEAL_EXAMPLES[t?.type ?? "rest"]).map((m) => <li className="fk-body" key={m.scene}><b>{m.scene}：</b>{m.pick}</li>)}</ul>
+      <p className="fk-src pb-2 text-[11px] text-muted">【经验规则】举例，份量按饱腹和训练量调。</p></details>
+    <details className="mt-2 rounded-xl border border-line px-3 py-1"><summary className="fk-topic flex min-h-10 cursor-pointer items-center justify-between font-bold">身体信号自查（可选）<SavedBadge stamp={signStamp} /></summary>
       <div className="space-y-1.5 pb-2">{([["missedPeriods", "月经不规律或连续几个月没来"], ["boneStress", "骨头上某一点按压痛 / 应力性骨折史"], ["frequentIllness", "最近经常感冒生病"], ["persistentFatigue", "持续疲劳、成绩下滑"]] as const).map(([k, label]) => <label key={k} className="flex items-center gap-2"><input type="checkbox" checked={Boolean(f.signs[k])} onChange={(e) => { f.setSigns({ ...f.signs, [k]: e.target.checked }); setSignStamp(Date.now()) }} />{label}</label>)}
         <p className="text-[11px] text-muted">只用于提醒就医，不做诊断，只存在本机。依据：IOC 2023 REDs 共识。</p></div></details>
   </section>
