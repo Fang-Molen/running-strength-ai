@@ -12,7 +12,7 @@ const isFormal = (t: string) => !/恢复|休息|活动度/.test(t);
 export function CustomSessionBuilder({ day, onAdd }: { day: string; onAdd: (e: ScheduleEntry) => void }) {
   const [type, setType] = useState<(typeof TYPES)[number][0] | null>(null);
   const [sub, setSub] = useState<string>(""); const [parts, setParts] = useState<string[]>([]);
-  const [dist, setDist] = useState(""); const [reps, setReps] = useState(""); const [exs, setExs] = useState<Ex[]>([]);
+  const [dist, setDist] = useState(""); const [reps, setReps] = useState(""); const [exs, setExs] = useState<Ex[]>([]); const [between, setBetween] = useState<number | null>(null);
   const [minutes, setMinutes] = useState("40"); const [slot, setSlot] = useState<"am" | "pm">("pm"); const [hard, setHard] = useState<Intensity>("MODERATE");
   const p400 = (plan.days as { date: string; title: string }[]).find((d) => d.date === day);
   const intensity: Intensity = type === "run" ? (RUN_SUB.find((x) => x[0] === sub)?.[1] ?? "EASY") : type === "other" ? "EASY" : hard;
@@ -22,7 +22,7 @@ export function CustomSessionBuilder({ day, onAdd }: { day: string; onAdd: (e: S
     if (!type) return;
     const title = type === "run" ? `${sub || "跑步"}${dist ? ` ${dist}` : ""}${reps ? ` ×${reps}` : ""}` : type === "strength" ? `力量 · ${parts.join("+") || "自选"}` : type === "mixed" ? `混合 · ${sub || "跑步"}+${parts.join("+") || "力量"}` : sub || "有氧";
     const focus = [...(type === "run" || type === "mixed" ? [sub].filter(Boolean) : []), ...parts, ...exs.map((e) => e.name)];
-    onAdd({ id: `custom:${day}:${Math.random().toString(36).slice(2, 7)}`, date: day, kind: type === "strength" ? "strength" : "run", modality: type === "strength" || type === "mixed" ? "strength" : "run", title, focus, minutes: Number(minutes) || 30, intensity, lowerHeavy, source: "custom", refId: null, status: "planned", slot, exercises: exs.length ? exs : undefined, km: type === "run" && /km/i.test(dist) ? parseFloat(dist) : undefined });
+    onAdd({ id: `custom:${day}:${Math.random().toString(36).slice(2, 7)}`, date: day, kind: type === "strength" ? "strength" : "run", modality: type === "strength" || type === "mixed" ? "strength" : "run", title, focus, minutes: Number(minutes) || 30, intensity, lowerHeavy, source: "custom", refId: null, status: "planned", slot, exercises: exs.length ? exs : undefined, betweenRestSec: exs.length ? between : undefined, km: type === "run" && /km/i.test(dist) ? parseFloat(dist) : undefined });
   }
   return <div className="mt-2 space-y-2 rounded-card border border-line p-3 text-sm">
     <div className="flex flex-wrap gap-2">{TYPES.map(([v, t]) => <button key={v} type="button" aria-pressed={type === v} className="fk-chip" onClick={() => { setType(v); setSub(""); setParts([]); }}>{t}</button>)}</div>
@@ -31,7 +31,7 @@ export function CustomSessionBuilder({ day, onAdd }: { day: string; onAdd: (e: S
     {type === "run" ? <div className="grid grid-cols-2 gap-2"><input className="min-h-10 rounded-card border border-line bg-surface px-2" placeholder="距离 如 200m / 5km" value={dist} onChange={(e) => setDist(e.target.value)} /><input className="min-h-10 rounded-card border border-line bg-surface px-2" inputMode="numeric" placeholder="组数" value={reps} onChange={(e) => setReps(e.target.value)} /></div> : null}
     {type === "strength" || type === "mixed" ? <>
       <PartChips value={parts} onChange={setParts} />
-      <ExerciseEditor value={exs} onChange={setExs} parts={parts} />
+      <ExerciseEditor value={exs} onChange={setExs} parts={parts} betweenRest={between} onBetweenRest={setBetween} />
       <div className="flex gap-2">{(["EASY", "MODERATE", "HARD"] as Intensity[]).map((v) => <button key={v} type="button" aria-pressed={hard === v} className="fk-chip" onClick={() => setHard(v)}>{v === "EASY" ? "轻" : v === "MODERATE" ? "中" : "重"}</button>)}</div>
     </> : null}
     {type ? <div className="flex items-center gap-2">

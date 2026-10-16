@@ -1,13 +1,14 @@
 import atlasIndex from "../lib/strength/atlas-index.json" with { type: "json" };
 import { isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
-import { lazy, Suspense, useMemo, useState } from "react";
+import { REST_SUGGEST, fmtRest, splitSec, toSec } from "@/lib/strength/rest";
+import { lazy, Suspense, useMemo, useState, useEffect } from "react";
 import { demoData } from "@/lib/strength/demo/provider";
 const ExerciseDemo = lazy(() => import("@/components/exercise-demo").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { CATALOG } from "@/lib/strength/catalog";
 
 export type Unit = "reps" | "sec" | "m";
-export type Ex = { name: string; sets: string; reps: string; weight: string; rpe: string; unit?: Unit; perSide?: boolean };
+export type Ex = { name: string; sets: string; reps: string; weight: string; rpe: string; unit?: Unit; perSide?: boolean; restSec?: number | null; sideRestSec?: number | null };
 export type Dose = { unit: Unit; perSide: boolean; bodyweight: boolean; sets: string; amount: string };
 export const UNIT_LABEL: Record<Unit, string> = { reps: "次", sec: "秒", m: "米" };
 export function doseOf(name: string): Dose {
@@ -81,7 +82,8 @@ export function PartChips({ value, onChange }: { value: string[]; onChange: (v: 
   return <div className="flex flex-wrap gap-2">{PARTS.map((t) => <button key={t} type="button" className="fk-chip" aria-pressed={value.includes(t)} onClick={() => onChange(value.includes(t) ? value.filter((x) => x !== t) : [...value, t])}>{t}</button>)}</div>;
 }
 
-export function ExerciseEditor({ value, onChange, parts }: { value: Ex[]; onChange: (v: Ex[]) => void; parts: string[] }) {
+export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenRest }: { value: Ex[]; onChange: (v: Ex[]) => void; parts: string[]; betweenRest?: number | null; onBetweenRest?: (v: number | null) => void }) {
+  const [bulk, setBulk] = useState<[string, string]>(["", ""]);
   const [q, setQ] = useState("");
   const [demo, setDemo] = useState<string | null>(null);
   const lib = useMemo(() => LIBRARY.filter((x) => (!parts.length || x.parts.some((p) => parts.includes(p))) && (!q || x.name.includes(q))), [parts, q]);
@@ -89,7 +91,15 @@ export function ExerciseEditor({ value, onChange, parts }: { value: Ex[]; onChan
   const move = (i: number, d: number) => { const n = [...value]; const j = i + d; if (j < 0 || j >= n.length) return; [n[i], n[j]] = [n[j], n[i]]; onChange(n); };
   const add = (name: string) => { const d = doseOf(name); onChange([...value, { name, sets: d.sets, reps: d.amount, weight: "", rpe: "", unit: d.unit, perSide: d.perSide }]); };
   const inp = "min-h-9 w-full rounded border border-line bg-surface px-1 text-center";
+  const setRest = (i: number, k: "restSec" | "sideRestSec", v: number | null) => onChange(value.map((e, j) => (j === i ? { ...e, [k]: v } : e)));
   return <div className="space-y-2">
+    {value.length ? <div className="rounded-card border border-line p-2 text-xs" aria-label="批量设置组间休息">
+      <p className="font-bold">批量设置组间休息 <span className="font-normal text-muted">（之后可逐个修改）</span></p>
+      <div className="mt-1 flex items-center gap-1"><RestInput v={bulk} onV={setBulk} label="批量" />
+        <button type="button" className="fk-chip" onClick={() => setBulk(splitSec(REST_SUGGEST))}>建议 {REST_SUGGEST} 秒</button>
+        <button type="button" disabled={toSec(...bulk) == null} className="min-h-9 rounded-lg bg-accent px-3 font-bold text-accent-fg disabled:opacity-40" onClick={() => { const v = toSec(...bulk); onChange(value.map((e) => ({ ...e, restSec: v }))); }}>应用到全部</button></div>
+      {onBetweenRest ? <div className="mt-2 flex items-center gap-1"><span className="shrink-0">动作之间休息</span><RestInput v={splitSec(betweenRest)} onV={(v) => onBetweenRest(toSec(...v))} label="动作之间休息" /><span className="text-muted">{fmtRest(betweenRest)}</span></div> : null}
+    </div> : null}
     {demo ? <DemoSheet id={demo} onClose={() => setDemo(null)} /> : null}
     {value.map((e, i) => <div key={i} className="rounded-card border border-line p-2" data-ex-row>
       <div className="flex items-center gap-1"><input className="min-h-9 min-w-0 flex-1 rounded border border-line bg-surface px-2 font-bold" value={e.name} onChange={(x) => set(i, "name", x.target.value)} />
@@ -102,10 +112,20 @@ export function ExerciseEditor({ value, onChange, parts }: { value: Ex[]; onChan
         <label><select aria-label="单位" className="bg-transparent" value={unit} onChange={(x) => onChange(value.map((y, j) => (j === i ? { ...y, unit: x.target.value as Unit } : y)))}>{(["reps", "sec", "m"] as Unit[]).map((u) => <option key={u} value={u}>{UNIT_LABEL[u]}</option>)}</select>{side ? "/每侧" : ""}<input className={inp} inputMode="numeric" value={e.reps} onChange={(x) => set(i, "reps", x.target.value)} /></label>
         <label>重量kg<input className={inp} inputMode="decimal" placeholder={d.bodyweight ? "自重" : ""} value={e.weight} onChange={(x) => set(i, "weight", x.target.value)} /></label>
         <label>RPE<input className={inp} inputMode="decimal" value={e.rpe} onChange={(x) => set(i, "rpe", x.target.value)} /></label>
+        <div className="col-span-4 mt-1 flex flex-wrap items-center gap-1"><span className="shrink-0">{side ? "两侧做完后组间休息" : "组间休息"}</span><RestInput v={splitSec(e.restSec)} onV={(v) => setRest(i, "restSec", toSec(...v))} label={`${e.name}组间休息`} /><span className={e.restSec == null ? "text-amber-400" : "text-muted"}>{fmtRest(e.restSec)}</span></div>
+        {side ? <div className="col-span-4 flex flex-wrap items-center gap-1"><span className="shrink-0">换侧间隔</span><RestInput v={splitSec(e.sideRestSec)} onV={(v) => setRest(i, "sideRestSec", toSec(...v))} label={`${e.name}换侧间隔`} /><span className={e.sideRestSec == null ? "text-amber-400" : "text-muted"}>{fmtRest(e.sideRestSec)}</span></div> : null}
       </div>; })()}
     </div>)}
     <input className="min-h-10 w-full rounded-card border border-line bg-surface px-2" placeholder="搜索动作" value={q} onChange={(e) => setQ(e.target.value)} />
     <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">{lib.map((x) => <button key={x.name} type="button" className="fk-chip" onClick={() => add(x.name)}>＋{x.name}</button>)}
       {q && !lib.some((x) => x.name === q) ? <button type="button" className="fk-chip" onClick={() => { add(q); setQ(""); }}>＋自定义「{q}」</button> : null}</div>
   </div>;
+}
+
+function RestInput({ v, onV, label }: { v: [string, string]; onV: (v: [string, string]) => void; label: string }) {
+  const [m, setM] = useState(v[0]); const [sec, setSec] = useState(v[1]);
+  useEffect(() => { setM(v[0]); setSec(v[1]); }, [v[0], v[1]]);
+  const c = "min-h-9 w-11 rounded border border-line bg-surface px-1 text-center";
+  const clean = (x: string) => x.replace(/\D/g, "").slice(0, 3);
+  return <span className="inline-flex items-center gap-0.5"><input aria-label={`${label}分`} className={c} inputMode="numeric" value={m} onChange={(x) => { const n = clean(x.target.value); setM(n); onV([n, sec]); }} />分<input aria-label={`${label}秒`} className={c} inputMode="numeric" value={sec} onChange={(x) => { const n = clean(x.target.value); setSec(n); onV([m, n]); }} />秒</span>;
 }

@@ -12,7 +12,10 @@ export type ScheduleEntry = {
   edited?: boolean; swapReason?: string
   slot?: "am" | "pm"; overrideNote?: string; unplanned?: boolean; km?: number
   actual?: Actual
-  exercises?: { name: string; sets: string; reps: string; weight: string; rpe: string; unit?: "reps" | "sec" | "m"; perSide?: boolean }[]
+  exercises?: { name: string; sets: string; reps: string; weight: string; rpe: string; unit?: "reps" | "sec" | "m"; perSide?: boolean; restSec?: number | null; sideRestSec?: number | null }[]
+  /** 动作之间休息（null = 未设置） */ betweenRestSec?: number | null
+  /** t422 一次性补的组间休息（方坤课无自定义动作时） */ restFillSec?: number | null
+  /** 实际休息，与计划分开存 */ restLog?: { name: string; planned: number | null; actual: number; at: string }[]
 }
 export type DeviationReason = "tired" | "short" | "pain" | "weather" | "other"
 export const REASON_LABELS: Record<DeviationReason, string> = { tired: "状态差", short: "时间不够", pain: "有疼痛", weather: "天气", other: "其他" }

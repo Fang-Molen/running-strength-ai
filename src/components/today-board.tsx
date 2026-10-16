@@ -12,6 +12,8 @@ import { BAND_COLOR, applyOverride, planBand, type Band, type Override } from "@
 import { TodayChecklist } from "@/components/today-checklist"
 import { SavedBadge } from "@/components/saved-badge"
 import { CustomSessionBuilder } from "@/components/custom-session-builder"
+import { fillRestOnce, fmtRest } from "@/lib/strength/rest"
+import { RestTimer } from "@/components/rest-timer"
 
 const WD = ["一", "二", "三", "四", "五", "六", "日"]
 const INT: Record<Intensity, string> = { EASY: "轻松", MODERATE: "中等", HARD: "高强度" }
@@ -26,7 +28,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
   const [adding, setAdding] = useState(false)
   const [stamp, setStamp] = useState(0)
   const [note, setNote] = useState("")
-  useEffect(() => { let s = syncFangkun(loadSchedule()); const d = dedupeEntries(s.entries); if (d.removed) { s = { ...s, entries: d.entries }; try { localStorage.setItem("fk-dedupe-log", JSON.stringify({ at: new Date().toISOString(), removed: d.removed })) } catch { /* ignore */ } } setStore(s); saveSchedule(s) }, [revision])
+  useEffect(() => { let s = syncFangkun(loadSchedule()); if (!localStorage.getItem("fk-rest-fill-20261017")) { const f = fillRestOnce(s.entries); if (f.changed) s = { ...s, entries: f.entries }; if (saveSchedule(s)) localStorage.setItem("fk-rest-fill-20261017", JSON.stringify({ at: new Date().toISOString(), changed: f.changed })) } const d = dedupeEntries(s.entries); if (d.removed) { s = { ...s, entries: d.entries }; try { localStorage.setItem("fk-dedupe-log", JSON.stringify({ at: new Date().toISOString(), removed: d.removed })) } catch { /* ignore */ } } setStore(s); saveSchedule(s) }, [revision])
   useEffect(() => { setDay(today) }, [today])
   const week = useMemo(() => weekOf(day || today), [day, today])
   const conflicts = useMemo(() => findConflicts(store.entries, week, today, readRecovery(today), store.acks), [store, week, today])
@@ -76,6 +78,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
       {groups.map(([label, items]) => items.length ? <div key={label} className="space-y-2">{label ? <p className="px-1 text-xs font-bold text-muted">{label}</p> : null}{items.map((e) => <EntryCard key={e.id} e={e} injuries={inj.items} band={band ? planBand(e) : null} today={today} open={open === e.id} session={sessionOf(e)} onToggle={() => setOpen(open === e.id ? null : e.id)}
         onReview={(d, patch) => setEntries(review(store.entries, e.id, d, patch))}
         onSwap={(why) => { const n = swapProposal(e, why); setEntries([...review(store.entries, e.id, "reject"), n]); setOpen(n.id) }}
+        onRest={(r) => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, restLog: [...(x.restLog ?? []), r] } : x))}
         onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
         onOpenRun={() => e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}</div> : null)}
       {!list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null}
@@ -99,7 +102,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onAsk
   </section>
 }
 
-function EntryCard({ e, injuries = [], band, today, open, session, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach, onFood }: {
+function EntryCard({ e, injuries = [], band, today, open, session, onRest, onToggle, onReview, onSwap, onActual, onSkip, onOpenRun, onOpenFull, onAskCoach, onFood }: { onRest?: (r: { name: string; planned: number | null; actual: number; at: string }) => void;
   e: ScheduleEntry; injuries?: Injury[]; band?: Band; today: string; open: boolean; session: Session | undefined; onToggle: () => void
   onReview: (d: "accept" | "reject", patch?: Partial<Pick<ScheduleEntry, "title" | "minutes" | "intensity" | "date">>) => void
   onSwap: (why: SwapReason) => void; onActual: (a: Parameters<typeof logActual>[2] | null) => void; onSkip: () => void
@@ -149,7 +152,9 @@ function EntryCard({ e, injuries = [], band, today, open, session, onToggle, onR
         {adv.safety.filter((x) => !x.red).map((x) => <p key={x.text} className="text-muted">{x.text}（{x.rule}）</p>)}
       </div> : null}
       <div className="mb-2" aria-label="课程内容">
-        {e.exercises?.length ? <ul className="mb-2 text-sm">{e.exercises.map((x, k) => <li key={k}>{x.name} {x.sets}×{x.reps}{x.unit === "sec" ? "秒" : x.unit === "m" ? "米" : "次"}{x.perSide ? "/每侧" : ""}{x.weight ? ` @${x.weight}kg` : ""}</li>)}</ul> : null}
+        {e.exercises?.length ? <ul className="mb-2 space-y-1 text-sm">{e.exercises.map((x, k) => <li key={k} className="flex flex-wrap items-center gap-x-1"><span>{x.name} {x.sets}×{x.reps}{x.unit === "sec" ? "秒" : x.unit === "m" ? "米" : "次"}{x.perSide ? "/每侧" : ""}{x.weight ? ` @${x.weight}kg` : ""}</span><span className={x.restSec == null ? "text-amber-400" : "text-muted"}>｜组间休息：{fmtRest(x.restSec)}</span>{x.perSide ? <span className="text-muted">｜换侧：{fmtRest(x.sideRestSec)}</span> : null}</li>)}{e.betweenRestSec != null ? <li className="text-muted">动作之间休息：{fmtRest(e.betweenRestSec)}</li> : null}</ul> : null}
+        {e.restFillSec != null && !e.exercises?.length ? <p className="mb-1 text-sm text-muted">本节组间休息：{fmtRest(e.restFillSec)}（每个动作）</p> : null}
+        {e.modality === "strength" && e.date <= today ? <RestTimer items={(e.exercises?.length ? e.exercises.map((x) => ({ name: x.name, planned: x.restSec ?? null })) : session ? session.moves.map((m) => ({ name: displayName(m), planned: e.restFillSec ?? m.restSec ?? null })) : [])} log={e.restLog ?? []} onLog={(r) => onRest?.(r)} /> : null}
         <TodayChecklist bare slotId={e.id} title={e.title} session={session} runTitle={e.modality === "run" ? e.title : null} onOpenRun={onOpenRun} onOpenFull={onOpenFull} onAskCoach={onAskCoach} />
       </div>
       {e.date <= today ? <>
