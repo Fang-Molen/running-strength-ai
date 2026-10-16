@@ -1,4 +1,6 @@
 import { ShapeSim3D } from "@/components/shape-sim-3d";
+/** t433: 3D shape/pose viewer hidden until a character-matching rigged model exists. 我的形象 uses the character art only. */
+const SHAPE_SIM_3D = false;
 import { Sheet, Toast, useToast } from "@/components/sheet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Utensils, UserRound, Activity, Target, ArrowRightLeft, PieChart, TrendingDown, HeartPulse, Lightbulb, Plus, Camera, X, Sun, Moon, Coffee, ChevronUp, ChevronDown, Droplet, Beef, Flame, Leaf } from "lucide-react";
@@ -96,7 +98,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       <section className="fk-dash-card p-2">
         <button type="button" onClick={() => setSheet("macro")} className="fk-dash-title text-sm"><PieChart className="size-4" />今日营养摄入 ›</button>
         <svg viewBox="0 0 100 100" className="mx-auto mt-1 size-28"><circle cx="50" cy="50" r="42" fill="none" stroke="#2a2b30" strokeWidth="9" /><circle cx="50" cy="50" r="42" fill="none" stroke="#ff6a1a" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${R * pct} ${R}`} transform="rotate(-90 50 50)" /><text x="50" y="47" textAnchor="middle" fill="currentColor" fontSize="15" fontWeight="700">{Math.round(kcal)}</text><text x="50" y="60" textAnchor="middle" fill="#9a9ca3" fontSize="7">{plan ? `/ ${plan.kcal} kcal` : "kcal"}</text><text x="50" y="71" textAnchor="middle" fill="#ffb84a" fontSize="8">{plan ? `${Math.round(pct * 100)}%` : ""}</text></svg>
-        {agg.kcal.pending ? <p className="keep -mt-1 text-center text-[11px] text-amber-400">已知合计 · {agg.kcal.pending} 项待补充</p> : null}
+        {agg.kcal.pending ? <p className="keep -mt-1 text-center text-[11px] text-amber-400">已记录，营养待补充 · 已知合计 · {agg.kcal.pending} 项待补充</p> : null}
         <div className="space-y-1">{bar("蛋白质", "protein", plan?.protein, "#ff6a1a")}{bar("碳水", "carb", plan?.carb, "#4aa8ff")}{bar("脂肪", "fat", plan?.fat, "#ffb020")}{bar("膳食纤维", "fiber", 25, "#3ccf6a")}</div>
       </section>
       <section className="fk-dash-card p-2">
@@ -113,7 +115,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       <button type="button" onClick={() => setBodyOpen(true)} className="fk-dash-card row-span-3 flex flex-col p-2 text-left">
         <span className="fk-dash-title text-sm"><UserRound className="size-4" />我的形象 ›</span>
         <span className="mt-1 block h-[240px] w-full overflow-hidden">{me ? <span className="pointer-events-none block h-full"><Figure sex={sex} base={me} p={me} /></span> : <Empty text="填身高和体重后显示" />}</span>
-        <span className="keep mt-auto pt-1 text-center text-[10px] text-muted">点开看详情</span>
+        <span className="keep mt-auto pt-1 text-center text-[10px] text-muted">静态插画 · 点开看详情</span>
       </button>
       <section className="fk-dash-card cursor-pointer p-2" onClick={() => setBodyOpen("data")}>
         <div className="fk-dash-title text-sm"><Activity className="size-4" />身体数据 ›</div>
@@ -124,7 +126,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
         {weight && target ? <><p className="keep text-xs text-muted">目标 {f1(target)} kg</p>{progress != null ? <><p className="text-sm">已完成 <b>{Math.round(progress * 100)}%</b></p><div className="fk-bar mt-1"><i style={{ width: `${progress * 100}%`, background: "linear-gradient(90deg,#ff5a0a,#ff9a4a)" }} /></div></> : null}<p className="mt-1 text-xs">还差 <b className="text-emerald-400">{f1(Math.abs(target - weight))} kg</b></p></> : <Empty text="在个人资料里设目标体重" />}
       </section>
       <button type="button" onClick={() => { setShape("cmp"); setBodyOpen(true); }} className="fk-dash-card p-2 text-left">
-        <span className="fk-dash-title text-sm"><ArrowRightLeft className="size-4" />体型对比 ›</span><span className="keep block text-[10px] text-muted">静态插画 · 点开看 3D 模拟</span>
+        <span className="fk-dash-title text-sm"><ArrowRightLeft className="size-4" />体型对比 ›</span><span className="keep block text-[10px] text-amber-400">体型模拟尚未启用</span>
         {me && goalShape ? <span className="mt-1 grid grid-cols-2 gap-1 text-center text-[10px]">{([[me, "当前"], [goalShape, "目标"]] as const).map(([p, l]) => <span key={l}><span className="block h-24"><Figure sex={sex} base={me} p={p} ghost={l === "目标"} /></span>{l} {f1(p.massKg)}</span>)}</span> : <Empty text="需要身高、体重、目标体重" />}
       </button>
       </div>
@@ -136,7 +138,11 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
     {bodyOpen ? <BodyDetail mode={bodyOpen} editDate={editDate} onClose={() => { setBodyOpen(false); setEditDate(null); }} onSaved={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))} checks={checks} onTrend={() => setBodyOpen("data")}>
       <section className="fk-dash-card p-2">
         <div className="flex gap-2">
-          {me ? <div className="flex-1"><ShapeSim3D sex={sex} cur={{ kg: me.massKg, bf: fat ?? null }} tgt={goalShape ? { kg: goalShape.massKg, bf: gBf ?? null } : null} /></div> : <div className="flex-1"><Empty text="填身高和体重后显示" /></div>}
+          {me && SHAPE_SIM_3D ? <div className="flex-1"><ShapeSim3D sex={sex} cur={{ kg: me.massKg, bf: fat ?? null }} tgt={goalShape ? { kg: goalShape.massKg, bf: gBf ?? null } : null} /></div> : me ? <div className="flex-1"><p className="keep mb-1 text-center text-[11px] text-amber-400">体型模拟尚未启用 · 两侧为同一标准插画，差异见下方数字</p><div className="grid grid-cols-[1fr_auto_1fr] items-end">
+            <div className="text-center"><div className="h-[340px] pt-2"><Figure sex={sex} base={me} p={me} /></div><p className="keep text-xs text-muted">当前</p><b>{f1(me.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {fat ? `${f1(fat)}%` : "—"}</p></div>
+            <span className="self-center pb-16 text-center text-2xl font-black text-accent">›</span>
+            <div className="text-center">{goalShape ? <><div className="h-[340px] pt-2"><Figure sex={sex} base={me} p={goalShape} ghost /></div><p className="keep text-xs text-muted">目标</p><b>{f1(goalShape.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {gBf ? `${f1(gBf)}%` : "—"}</p></> : <div className="flex h-[340px] items-center"><Empty text="在下方选择目标体重" /></div>}</div>
+          </div></div> : <div className="flex-1"><Empty text="填身高和体重后显示" /></div>}
         </div>
         {me ? <div className="mt-2 rounded-xl border border-line p-2 text-xs">
           <div className="flex justify-between"><span>目标体重</span><b className="text-accent">{gKg ? `${f1(gKg)} kg` : "—"}</b></div>
