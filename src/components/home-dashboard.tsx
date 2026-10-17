@@ -1,18 +1,15 @@
-import { ShapeSim3D } from "@/components/shape-sim-3d";
-/** t433: 3D shape/pose viewer hidden until a character-matching rigged model exists. 我的形象 uses the character art only. */
-const SHAPE_SIM_3D = false;
+import { BodyFigureSheet } from "@/components/body-figure-sheet";
+import { readGoalBodyFat } from "@/lib/body/goal-editor";
 import { Sheet, Toast, useToast } from "@/components/sheet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Utensils, UserRound, Activity, Target, ArrowRightLeft, PieChart, TrendingDown, HeartPulse, Lightbulb, Plus, Camera, X, Sun, Moon, Coffee, ChevronUp, ChevronDown, Droplet, Beef, Flame, Leaf } from "lucide-react";
-import { loadProfile, saveProfile } from "@/lib/strength/profile";
+import { loadProfile } from "@/lib/strength/profile";
 import { loadEntries, saveEntries, todayEntries, addEntry, aggregate, nutrientOf, updateEntry, PENDING_LABEL, MEALS, type Meal, type FoodEntry, type NutrientKey } from "@/lib/nutrition/log";
 import { loadCn, loadUsda, search as foodSearch, scale, defaultAmount, needsCheck, sourceLabel, type FoodRow } from "@/lib/nutrition/food-db";
 import { savePhoto, shrink } from "@/lib/nutrition/food-photo";
 import { loadChecks, removeCheck, upsertCheck, todayDate, type BodyCheck } from "@/lib/nutrition/body";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { computePlan } from "@/lib/nutrition/calc";
-import { buildAvatarSvg } from "@/components/bodylab/avatar.mjs";
-import { Model } from "@/components/bodylab/bodylab-panel";
 import { TrendChart, MultiTrend, type Pt } from "@/components/trend-chart";
 import { loadCheckins, saveCheckin } from "@/lib/ui/watch-mode";
 import { loadExtras } from "@/lib/ui/device-store";
@@ -31,9 +28,7 @@ export function HomeDashboard(props: { onFood: () => void; onBody: () => void; o
 }
 function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: () => void; onBody: () => void; onAdvice?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
   const [profile, setProfile] = useState(() => loadProfile());
-  const [goalBf, setGoalBf] = useState<number | null>(() => { const v = Number(localStorage.getItem("fk-goal-bf-v1")); return v > 0 ? v : null; });
-  const [draftKg, setDraftKg] = useState<number | null>(null);
-  const [draftBf, setDraftBf] = useState<number | null>(null);
+  const [goalBf, setGoalBf] = useState<number | null>(readGoalBodyFat);
   const [entries, setEntries] = useState(() => todayEntries(loadEntries()));
   const [logMeal, setLogMeal] = useState<Meal | null>(null);
   const [mealList, setMealList] = useState<Meal | null>(null);
@@ -46,7 +41,6 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
   const [range, setRange] = useState<number>(30);
   const vitals = useMemo(() => loadVitals().records, []);
   const plan = useMemo(() => computePlan(profile), [profile]);
-  const [view, setView] = useState<"front" | "side" | "back">("front");
   const last = checks[checks.length - 1];
   const weight = n(last?.weight) ?? n(profile.weightKg);
   const height = n(profile.heightCm);
@@ -65,22 +59,15 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
   const sleep = latest("SLEEP"), rhr = latest("RHR"), rec = latest("RECOVERY");
   const start = checks[0]?.weight ?? weight;
   const progress = weight && target && start && start !== target ? Math.max(0, Math.min(1, (start - weight) / (start - target))) : null;
-  const yaw = view === "side" ? Math.PI / 2 : view === "back" ? Math.PI : 0;
   const me = weight && height ? { heightCm: height, massKg: weight, bodyFatPct: fat ?? (sex === "male" ? 18 : 27), frame: 0, sex } : null;
-  const gKg = draftKg ?? target, gBf = draftBf ?? goalBf;
-  const goalShape = me && gKg ? { ...me, massKg: gKg, bodyFatPct: gBf ?? me.bodyFatPct } : null;
-  const setGoal = () => { if (draftKg != null) { const np = { ...profile, targetKg: String(draftKg) }; saveProfile(np); setProfile(np); } if (draftBf != null) { localStorage.setItem("fk-goal-bf-v1", String(draftBf)); setGoalBf(draftBf); } setDraftKg(null); setDraftBf(null); };
-  const dirty = draftKg != null || draftBf != null;
   const pct = plan && kcal ? Math.min(1, kcal / plan.kcal) : 0;
 
   void onBody; const D = only !== "body", B = only !== "diet";
   const [mealsOpen, setMealsOpen] = useState(true);
   const [sheet, setSheet] = useState<null | "macro" | "trend" | "SLEEP" | "RHR" | "HRV" | "water" | "protein" | "carb" | "fat" | "fiber">(null);
-  const [shape, setShape] = useState<"now" | "goal" | "cmp">("now");
   const [trend, setTrend] = useState<"weight" | "fat" | "muscle">("weight");
   const hrv = latest("HRV");
   const series = checks.filter((c) => c.date >= new Date(Date.now() - range * 864e5).toISOString().slice(0, 10)).map((c) => ({ d: c.date, v: trend === "weight" ? c.weight : trend === "fat" ? c.fat : c.muscle })).filter((x): x is { d: string; v: number } => typeof x.v === "number" && x.v > 0);
-  const shown = shape === "goal" && goalShape ? goalShape : me;
   const R = 2 * Math.PI * 42;
   const pend = (k: NutrientKey) => (agg[k].pending ? ` +${agg[k].pending}项待补充` : "");
   const bar = (label: string, k: NutrientKey, goal: number | undefined, color: string) => { const a = agg[k]; const got = a.known ? a.sum : null; return <div key={label} className="text-xs"><div className="flex justify-between"><span>{label}</span><span className="text-muted">{got != null ? `${Math.round(got)}` : entries.length ? "待补充" : "未记录"}{goal ? ` / ${goal} g` : ""}{got != null && goal ? `  ${Math.round(got / goal * 100)}%` : ""}<span className="text-amber-400">{entries.length ? pend(k) : ""}</span></span></div><div className="fk-bar mt-0.5"><i style={{ width: `${got != null && goal ? Math.min(100, got / goal * 100) : 0}%`, background: color }} /></div></div>; };
@@ -111,10 +98,10 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       </div>
     </> : null}
     {B ? <>
-      <div className="grid grid-cols-2 gap-3">
-      <button type="button" onClick={() => setBodyOpen(true)} className="fk-dash-card row-span-3 flex flex-col p-2 text-left">
+      <div className="fk-health-figure-grid grid grid-cols-2 gap-3">
+      <button type="button" onClick={() => setBodyOpen(true)} className="fk-dash-card fk-health-portrait flex flex-col p-2 text-left">
         <span className="fk-dash-title text-sm"><UserRound className="size-4" />我的形象 ›</span>
-        <span className="mt-1 block h-[240px] w-full overflow-hidden">{me ? <span className="pointer-events-none block h-full"><Figure sex={sex} base={me} p={me} /></span> : <Empty text="填身高和体重后显示" />}</span>
+        <span className="fk-character-image mt-1 block w-full">{me ? <span className="pointer-events-none block h-full"><Figure sex={sex} /></span> : <Empty text="填身高和体重后显示" />}</span>
         <span className="keep mt-auto pt-1 text-center text-[10px] text-muted">静态插画 · 点开看详情</span>
       </button>
       <section className="fk-dash-card cursor-pointer p-2" onClick={() => setBodyOpen("data")}>
@@ -125,9 +112,9 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
         <div className="fk-dash-title text-sm"><Target className="size-4" />目标进度</div>
         {weight && target ? <><p className="keep text-xs text-muted">目标 {f1(target)} kg</p>{progress != null ? <><p className="text-sm">已完成 <b>{Math.round(progress * 100)}%</b></p><div className="fk-bar mt-1"><i style={{ width: `${progress * 100}%`, background: "linear-gradient(90deg,#ff5a0a,#ff9a4a)" }} /></div></> : null}<p className="mt-1 text-xs">还差 <b className="text-emerald-400">{f1(Math.abs(target - weight))} kg</b></p></> : <Empty text="在个人资料里设目标体重" />}
       </section>
-      <button type="button" onClick={() => { setShape("cmp"); setBodyOpen(true); }} className="fk-dash-card p-2 text-left">
-        <span className="fk-dash-title text-sm"><ArrowRightLeft className="size-4" />体型对比 ›</span><span className="keep block text-[10px] text-amber-400">体型模拟尚未启用</span>
-        {me && goalShape ? <span className="mt-1 grid grid-cols-2 gap-1 text-center text-[10px]">{([[me, "当前"], [goalShape, "目标"]] as const).map(([p, l]) => <span key={l}><span className="block h-24"><Figure sex={sex} base={me} p={p} ghost={l === "目标"} /></span>{l} {f1(p.massKg)}</span>)}</span> : <Empty text="需要身高、体重、目标体重" />}
+      <button type="button" onClick={() => setBodyOpen("figure")} className="fk-dash-card fk-health-goal-link p-3 text-left">
+        <span><span className="fk-dash-title text-sm"><ArrowRightLeft className="size-4" />形象与目标 ›</span><span className="keep block text-[11px] text-muted">查看形象 · 调整目标</span></span>
+        <span className="text-right text-sm"><b>{weight === null ? "—" : f1(weight)} → {target === null ? "未设置" : f1(target)}</b><span className="keep block text-xs text-muted">kg{weight !== null && target !== null ? ` · 相差 ${f1(Math.abs(target - weight))} kg` : ""}</span></span>
       </button>
       </div>
     <div className="grid grid-cols-1 gap-3">
@@ -135,28 +122,11 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       {slot}
       <RecoveryTrend vitals={vitals} />
     </div>
-    {bodyOpen ? <BodyDetail mode={bodyOpen} editDate={editDate} onClose={() => { setBodyOpen(false); setEditDate(null); }} onSaved={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))} checks={checks} onTrend={() => setBodyOpen("data")}>
-      <section className="fk-dash-card p-2">
-        <div className="flex gap-2">
-          {me && SHAPE_SIM_3D ? <div className="flex-1"><ShapeSim3D sex={sex} cur={{ kg: me.massKg, bf: fat ?? null }} tgt={goalShape ? { kg: goalShape.massKg, bf: gBf ?? null } : null} /></div> : me ? <div className="flex-1"><p className="keep mb-1 text-center text-[11px] text-amber-400">体型模拟尚未启用 · 两侧为同一标准插画，差异见下方数字</p><div className="grid grid-cols-[1fr_auto_1fr] items-end">
-            <div className="text-center"><div className="h-[340px] pt-2"><Figure sex={sex} base={me} p={me} /></div><p className="keep text-xs text-muted">当前</p><b>{f1(me.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {fat ? `${f1(fat)}%` : "—"}</p></div>
-            <span className="self-center pb-16 text-center text-2xl font-black text-accent">›</span>
-            <div className="text-center">{goalShape ? <><div className="h-[340px] pt-2"><Figure sex={sex} base={me} p={goalShape} ghost /></div><p className="keep text-xs text-muted">目标</p><b>{f1(goalShape.massKg)} kg</b><p className="keep text-[11px] text-muted">体脂率 {gBf ? `${f1(gBf)}%` : "—"}</p></> : <div className="flex h-[340px] items-center"><Empty text="在下方选择目标体重" /></div>}</div>
-          </div></div> : <div className="flex-1"><Empty text="填身高和体重后显示" /></div>}
-        </div>
-        {me ? <div className="mt-2 rounded-xl border border-line p-2 text-xs">
-          <div className="flex justify-between"><span>目标体重</span><b className="text-accent">{gKg ? `${f1(gKg)} kg` : "—"}</b></div>
-          <input aria-label="目标体重" type="range" min={54} max={66} step={0.5} value={gKg ?? 60} onChange={(e) => setDraftKg(Number(e.target.value))} className="w-full accent-[#ff6a1a]" />
-          <div className="flex gap-1">{[58, 60, 62].map((v) => <button key={v} type="button" aria-pressed={gKg === v} onClick={() => setDraftKg(v)} className={"min-h-8 flex-1 rounded-lg border " + (gKg === v ? "border-accent text-accent" : "border-line text-muted")}>{v} kg</button>)}</div>
-          <div className="mt-2 flex justify-between"><span>目标体脂率</span><b className="text-accent">{gBf ? `${f1(gBf)}%` : "—"}</b></div>
-          <input aria-label="目标体脂率" type="range" min={6} max={20} step={0.5} value={gBf ?? 12} onChange={(e) => setDraftBf(Number(e.target.value))} className="w-full accent-[#ff6a1a]" />
-          <div className="flex gap-1">{[8, 10, 12].map((v) => <button key={v} type="button" aria-pressed={gBf === v} onClick={() => setDraftBf(v)} className={"min-h-8 flex-1 rounded-lg border " + (gBf === v ? "border-accent text-accent" : "border-line text-muted")}>{v}%</button>)}</div>
-          {gKg && weight ? <p className="keep mt-1 text-muted">与当前相差 {f1(gKg - weight)} kg{gBf && fat ? ` · 体脂 ${f1(gBf - fat)}%` : ""}</p> : null}
-          <button type="button" disabled={!dirty} onClick={setGoal} className="fk-orange-btn mt-2 min-h-10 w-full rounded-lg font-bold disabled:opacity-40">设为目标</button>
-        </div> : null}
-        <div className="mt-2 grid grid-cols-4 gap-1 rounded-xl border border-line p-1.5 text-center"><div><p className="keep text-[10px] text-muted">身高</p><b className="text-sm">{height ? `${height}` : "—"}</b></div><div><p className="keep text-[10px] text-muted">肌肉量</p><b className="text-sm">{last?.muscle ? f1(last.muscle) : "—"}</b></div><div><p className="keep text-[10px] text-muted">BMI</p><b className="text-sm">{height && weight ? f1(weight / (height / 100) ** 2) : "—"}</b></div><div><p className="keep text-[10px] text-muted">基础代谢</p><b className="text-sm">{last?.bmr ?? plan?.bmr ?? "—"}</b></div></div>
-      </section>
-      </BodyDetail> : null}
+    {bodyOpen === "figure" ? <BodyFigureSheet sex={sex} kg={weight} bf={fat} targetKg={target} targetBf={goalBf}
+      onClose={() => setBodyOpen(false)} onData={() => setBodyOpen("data")}
+      onSaved={(next, bf) => { setProfile(next); setGoalBf(bf); }} /> : bodyOpen === "data" ? <BodyDetail mode="data" editDate={editDate}
+        onClose={() => { setBodyOpen(false); setEditDate(null); }} onSaved={() => setChecks([...loadChecks()].sort((a, b) => a.date.localeCompare(b.date)))}
+        checks={checks} onTrend={() => setBodyOpen("data")} /> : null}
     </> : null}
     {sheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="详情"><div className="sticky top-0 flex items-center justify-between border-b border-line bg-bg px-4 pb-2" style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }}><b>{TITLE[sheet]}</b><button type="button" className="min-h-11 px-3" onClick={() => setSheet(null)}>关闭</button></div><div className="space-y-2 p-4 text-sm">
       {sheet === "macro" ? <><table className="w-full text-left"><thead className="text-xs text-muted"><tr><th>营养素</th><th>已吃</th><th>目标</th></tr></thead><tbody>
@@ -257,7 +227,7 @@ const COMP: { key: keyof BodyCheck; label: string; unit: string }[] = [
   { key: "armMuscle", label: "双臂肌肉", unit: "kg" }, { key: "trunkMuscle", label: "躯干肌肉", unit: "kg" }, { key: "legMuscle", label: "双腿肌肉", unit: "kg" },
   { key: "visceral", label: "内脏脂肪", unit: "级" }, { key: "waterRate", label: "水分", unit: "%" }, { key: "boneMass", label: "骨量", unit: "kg" }, { key: "bmr", label: "基础代谢", unit: "kcal" },
 ];
-function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mode }: { children: React.ReactNode; checks: BodyCheck[]; onClose: () => void; onSaved: () => void; editDate?: string | null; onTrend: () => void; mode: "figure" | "data" }) {
+function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mode }: { children?: React.ReactNode; checks: BodyCheck[]; onClose: () => void; onSaved: () => void; editDate?: string | null; onTrend: () => void; mode: "figure" | "data" }) {
   const last = checks[checks.length - 1];
   const [form, setForm] = useState<Record<string, string>>(() => { const c = editDate ? checks.find((x) => x.date === editDate) : null; const f: Record<string, string> = { date: editDate ?? todayDate() }; if (c) for (const k of COMP) { const v = c[k.key]; if (v != null) f[k.key as string] = String(v); } return f; });
   const formRef = useRef<HTMLDetailsElement>(null);
@@ -276,7 +246,7 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mod
   };
   return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="身体详情">
     <div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>{mode === "figure" ? "我的形象" : "身体数据"}</b><button type="button" className="min-h-11 px-3" onClick={onClose}>关闭</button></div>
-    <div className="space-y-3 px-3 pb-6 pt-2">
+    <div className="space-y-3 px-3 pt-2" style={{ paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}>
       {mode === "figure" ? <>{children}<button type="button" className="min-h-11 w-full rounded-xl border border-line text-sm" onClick={onTrend}>身体数据与趋势 ›</button></> : <>
       <section className="fk-dash-card p-3"><div className="fk-dash-title text-sm"><Activity className="size-4" />体成分{last ? <span className="keep ml-auto text-xs font-normal text-muted">{last.date}</span> : null}</div>
         {last ? <div className="mt-2 grid grid-cols-3 gap-2 text-center">{COMP.map((c) => { const v = last[c.key] as number | undefined; return <div key={c.key as string} className="rounded-lg bg-surface-2 p-1.5"><b className="text-sm">{v ? f1(v) : "—"}</b><p className="keep text-[10px] text-muted">{c.label}{v ? ` ${c.unit}` : ""}</p></div>; })}<div className="rounded-lg bg-surface-2 p-1.5"><b className="text-sm">{h ? f1(last.weight / (h / 100) ** 2) : "—"}</b><p className="keep text-[10px] text-muted">BMI</p></div></div> : <Empty text="还没有身体数据" />}
@@ -423,6 +393,6 @@ type FigP = { heightCm: number; massKg: number; bodyFatPct: number };
 // so current and target show the same standard figure; numbers carry the difference.
 function Figure({ sex }: { sex: "male" | "female"; base?: FigP; p?: FigP; ghost?: boolean }) {
   return <span className="relative flex h-full w-full items-end justify-center">
-    <img src={`/fangkun-atlas/figure-${sex}.webp`} alt="标准形象插画" draggable={false} className="h-full w-auto max-w-none object-contain" style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,.5))" }} />
+    <img src={`/fangkun-atlas/figure-${sex}.webp`} alt="标准形象插画" draggable={false} className="h-full w-full max-w-full object-contain" style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,.5))" }} />
   </span>;
 }

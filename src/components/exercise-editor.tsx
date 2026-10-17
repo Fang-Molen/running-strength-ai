@@ -1,5 +1,6 @@
 import { MuscleExplorerSheet } from "@/components/muscle-explorer";
-import { MUSCLES, muscleMapSVG } from "@/lib/strength/demo/musclemap.js";
+import { MuscleTargetCard } from "@/components/muscle-target-card";
+import { Sheet } from "@/components/sheet";
 import atlasIndex from "../lib/strength/atlas-index.json" with { type: "json" };
 import { isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
 import { REST_SUGGEST, fmtRest, splitSec, toSec } from "@/lib/strength/rest";
@@ -31,58 +32,40 @@ type AtlasRow = { muscles: string[]; aux: string[]; training?: { sets: number; a
 const ATLAS = atlasIndex as Record<string, AtlasRow>;
 type Cue = { setup: string[]; execution: string[]; breathing: string[]; mistakes: string[]; safety: string[]; regression: string[]; progression: string[] };
 type DemoEx = { id: string; name_zh: string; name_en: string; category: string; equipment: string[]; default_sets: number; default_reps_or_time: { mode: string; amount: number }; default_rest_sec: number; review?: string; primary_muscles: string[]; secondary_muscles: string[]; cues?: Cue; muscle_source?: string };
-const EN_ZH: Record<string, string> = { "delt front": "三角肌前束", "delt side": "三角肌中束", "delt rear": "三角肌后束", "glute med": "臀中肌", feet: "足底内在肌" };
-const zh = (m: string) => (MUSCLES as Record<string, string>)[m] ?? EN_ZH[m] ?? m;
-function MuscleCard({ e, sex }: { e: DemoEx | undefined; sex: "male" | "female" }) {
-  const [view, setView] = useState<"front" | "back">("front");
-  const [pick, setPick] = useState<string | null>(null);
-  if (!e) return null;
-  const prim = e.primary_muscles, sec = e.secondary_muscles;
-  const backHeavy = prim.length > 0 && prim.every((m) => ["lats", "rhomboids", "erectors", "glutes", "hamstrings", "calves", "soleus", "traps", "delt_rear", "triceps", "glute_med"].includes(m));
-  return <div className="fk-dash-card mt-3 text-sm" aria-label="目标肌群">
-    <div className="flex items-center"><div className="fk-dash-title">目标肌群</div>
-      <span className="ml-auto flex rounded border border-line text-xs">{(["front", "back"] as const).map((v) => <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={"min-h-9 px-3 " + (view === v ? "bg-accent text-accent-fg" : "")}>{v === "front" ? "正面" : "背面"}</button>)}</span></div>
-    {backHeavy && view === "front" ? <p className="keep mt-1 text-xs text-amber-400">主要肌群多在背面，可切换到背面查看</p> : null}
-    <div className="mx-auto mt-2 w-full max-w-[220px] [&>svg]:h-auto [&>svg]:w-full" onClick={(ev) => { const m = (ev.target as Element).getAttribute?.("data-m"); setPick(m); }}
-      dangerouslySetInnerHTML={{ __html: muscleMapSVG(view, prim as never, sec as never, { selected: (pick ? [pick] : []) as never }) }} />
-    <div className="mt-2 flex flex-wrap gap-3 text-xs"><span className="flex items-center gap-1"><i className="inline-block size-3 rounded-sm bg-[#ff5a3c]" />主要</span><span className="flex items-center gap-1"><i className="inline-block size-3 rounded-sm bg-[#ffb199]" />辅助</span><span className="flex items-center gap-1"><i className="inline-block size-3 rounded-sm bg-[#4da3ff]" />你点选的</span></div>
-    {pick ? <p className="keep mt-1">{zh(pick)}：{prim.includes(pick) ? "本动作主要参与" : sec.includes(pick) ? "本动作辅助参与" : "本动作不是重点"}</p> : null}
-    <p className="mt-2">主要：{prim.map(zh).join("、") || "待补"}</p>{sec.length ? <p className="text-muted">辅助：{sec.map(zh).join("、")}</p> : null}
-    {e.muscle_source ? <p className="keep mt-1 text-[11px] text-muted">依据：{e.muscle_source}</p> : <p className="keep mt-1 text-[11px] text-amber-400">肌群对应：待核（方坤自写，尚无逐条出处）</p>}
-    <p className="keep mt-1 text-[11px] text-muted">高亮表示动作涉及的肌群，不是实测的发力程度、疲劳或恢复。2D 示意图（{sex === "male" ? "男" : "女"}性动作图对应同一肌群图）。</p>
-  </div>;
-}
 function DemoBlock({ id }: { id: string }) {
   const a = ATLAS[id];
-  const [sex, setSex] = useState<"male" | "female">("male");
-  const [show3d, setShow3d] = useState(false);
-  const img = a ? (a.img[sex] ?? a.img.male ?? a.img.female) : undefined;
-  const seq = a ? (a[`seq_${sex}`] ?? a.seq_male ?? a.seq_female) : undefined;
-  const src = (x: string) => `/fangkun-atlas/${x}`;
-  const demo = <Suspense fallback={<p>正在打开演示…</p>}><ExerciseDemo catalogId={id} compact /></Suspense>;
-  return <div className="fk-dash-card mt-3">
-    <div className="flex items-center gap-2"><div className="fk-dash-title">动作图</div>
-      {a && a.img.male && a.img.female ? <span className="ml-auto flex rounded border border-line text-xs">{(["male", "female"] as const).map((x) => <button key={x} type="button" aria-pressed={sex === x} onClick={() => setSex(x)} className={"min-h-9 px-3 " + (sex === x ? "bg-accent text-accent-fg" : "")}>{x === "male" ? "男" : "女"}</button>)}</span> : null}</div>
-    {img ? <><img src={src(img)} alt="动作示意" className="mt-2 max-h-[60dvh] w-full rounded-xl object-contain" loading="lazy" />
-      {seq ? <div className="mt-2 grid grid-cols-5 gap-1">{seq.map((f, i) => <figure key={f}><img src={src(f)} alt={`第${i + 1}步`} className="w-full rounded-md object-contain" loading="lazy" /><figcaption className="text-center text-[10px] text-muted">0{i + 1}</figcaption></figure>)}</div> : null}
-      <button type="button" aria-expanded={show3d} className="mt-2 min-h-10 w-full rounded-xl border border-line text-sm" onClick={() => setShow3d(!show3d)}>{show3d ? "收起动画演示" : "播放动画演示（可慢放）"}</button>
-      {show3d ? <div className="mt-2">{demo}</div> : null}</> : <div className="mt-2">{demo}</div>}
-    <p className="keep mt-2 text-[11px] text-muted">动作图为生成的示意插画；动画为示意模型。待专业校核</p>
-  </div>;
+  const [sex, setSex] = useState<"male" | "female">(() => a?.img.male ? "male" : "female");
+  const [animation, setAnimation] = useState(!a?.img.male && !a?.img.female);
+  const img = a?.img[sex];
+  const seq = a?.[`seq_${sex}`];
+  const src = (value: string) => `/fangkun-atlas/${value}`;
+  return <section className="fk-dash-card mt-3" aria-label="动作演示区域">
+    <div className="flex flex-wrap items-center gap-2"><h2 className="fk-dash-title">动作演示</h2>
+      <div className="ml-auto flex gap-1" role="group" aria-label="演示类型">
+        <button type="button" disabled={!img} aria-pressed={!animation} className="fk-chip" onClick={() => setAnimation(false)}>动作图</button>
+        <button type="button" aria-pressed={animation} className="fk-chip" onClick={() => setAnimation(true)}>示意动画</button>
+      </div></div>
+    {animation ? <Suspense fallback={<p className="keep p-4 text-sm">正在打开演示…</p>}><ExerciseDemo key={id} catalogId={id} compact /></Suspense> : <>
+      {a?.img.male && a?.img.female ? <div className="mt-2 flex gap-2" role="group" aria-label="动作插画人物">{(["male", "female"] as const).map(value => <button key={value} type="button" aria-pressed={sex === value} onClick={() => setSex(value)} className="fk-chip">{value === "male" ? "男性插画" : "女性插画"}</button>)}</div> : null}
+      {img ? <img src={src(img)} alt="动作参考插画" className="mx-auto mt-2 block max-h-[46dvh] w-full rounded-xl object-contain" loading="lazy" /> : <p className="keep mt-2 text-sm text-muted">此人物暂缺动作插画，可切换至示意动画。</p>}
+      {seq ? <div className="mt-2 grid grid-cols-5 gap-1">{seq.map((frame, i) => <figure key={frame}><img src={src(frame)} alt={`第${i + 1}步`} className="w-full rounded-md object-contain" loading="lazy" /><figcaption className="text-center text-[10px] text-muted">0{i + 1}</figcaption></figure>)}</div> : null}
+    </>}
+    <p className="keep mt-2 text-[11px] text-muted">{animation ? "动画为通用男性示意模型；女性配套动画尚未提供。" : "动作参考插画，尚待动作专业校核。"}</p>
+  </section>;
 }
 export function DemoSheet({ id, onClose }: { id: string; onClose: () => void }) {
   const e = demoData.exercises.find((x) => x.id === id) as unknown as DemoEx | undefined;
   const cue = e?.cues;
-  return <div className="product-ui app-wallpaper fixed inset-0 z-50 overflow-y-auto px-4 pt-[max(16px,env(safe-area-inset-top))]" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 32px)" }} data-theme="dark" role="dialog" aria-label="动作详情">
-    <div className="flex items-start justify-between gap-2"><div className="min-w-0"><h1 className="text-3xl font-black">{e?.name_zh}</h1><p className="text-sm uppercase tracking-[.2em] text-muted">{e?.name_en}</p></div><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-4 font-bold" onClick={onClose}>关闭</button></div>
-    {e ? <div className="mt-2 flex flex-wrap gap-2 text-xs">{[e.category, ...e.equipment].map((t) => <span key={t} className="rounded-md border border-line px-2 py-1">{t}</span>)}</div> : null}
-    <DemoBlock id={id} />
-    <MuscleCard e={e} sex="male" />
-    {e ? <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">推荐参数</div><p className="mt-1">默认 {e.default_sets} 组 × {e.default_reps_or_time.amount}{e.default_reps_or_time.mode === "seconds" ? " 秒" : " 次"} · 组间休息 {e.default_rest_sec} 秒</p></div> : null}
-    {cue ? <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">怎么做</div>{([["准备", cue.setup], ["动作", cue.execution], ["呼吸", cue.breathing], ["常见错误", cue.mistakes], ["安全", cue.safety], ["变简单 / 变难", [...cue.regression.map((x) => "简单：" + x), ...cue.progression.map((x) => "进阶：" + x)]]] as [string, string[]][]).map(([t, lines], i) => <details key={t} open={i < 2} className="mt-2"><summary className="min-h-9 font-bold">{t}</summary><ul className="list-disc pl-5">{lines.map((l, n) => <li key={n}>{l}</li>)}</ul></details>)}</div> : null}
-    <p className="keep mt-3 text-xs text-muted">动作要领为方坤自写内容，尚未经专业审校{e?.review ? `（${e.review}）` : ""}</p>
-  </div>;
+  return <Sheet label="动作详情" title={e?.name_zh ?? "动作详情"} sub={e?.name_en} onClose={onClose} footer={<button type="button" className="min-h-11 w-full rounded-xl border border-line text-sm" onClick={onClose}>完成查看</button>}>
+    {e ? <div className="flex flex-wrap gap-2 text-xs">{[e.category, ...e.equipment].map(t => <span key={t} className="rounded-md border border-line px-2 py-1">{t}</span>)}</div> : null}
+    <DemoBlock key={id} id={id} />
+    {e ? <MuscleTargetCard key={id} exercise={e} /> : null}
+    {e ? <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">参考参数</div><p className="keep mt-1">{e.default_sets} 组 × {e.default_reps_or_time.amount}{e.default_reps_or_time.mode === "seconds" ? " 秒" : " 次"} · 组间休息 {e.default_rest_sec} 秒</p><p className="keep mt-1 text-xs text-muted">可在训练编辑器修改组数、数量、重量和休息。</p></div> : null}
+    {cue ? <div className="fk-dash-card mt-3 text-sm"><div className="fk-dash-title">怎么做</div>{([["准备", cue.setup], ["动作", cue.execution], ["呼吸", cue.breathing], ["常见错误", cue.mistakes], ["安全", cue.safety], ["变简单 / 变难", [...cue.regression.map(x => "简单：" + x), ...cue.progression.map(x => "进阶：" + x)]]] as [string, string[]][]).map(([title, lines], i) => <details key={title} open={i < 2} className="mt-2"><summary className="min-h-11 font-bold">{title}</summary><ul className="list-disc pl-5">{lines.map((line, n) => <li key={n}>{line}</li>)}</ul></details>)}</div> : null}
+    <details className="mt-3 text-xs text-muted"><summary className="min-h-10">动作审校状态</summary><p className="keep">动作要领尚待逐条专业审校。</p></details>
+  </Sheet>;
 }
+
 export const PARTS = ["下肢", "上肢", "核心", "后链", "小腿", "全身", "快速力量"] as const;
 const EXTRA: [string, string[]][] = [
   ["分腿蹲", ["下肢"]], ["保加利亚分腿蹲", ["下肢"]], ["台阶上步", ["下肢"]], ["深蹲", ["下肢", "全身"]], ["陷阱杠硬拉", ["后链", "全身"]],

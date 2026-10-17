@@ -3,6 +3,7 @@ import * as THREE from '/demo3d/vendor/three.module.min.js';
 import { OrbitControls } from './vendor/jsm/controls/OrbitControls.js';
 import { loadModel, makeRig, applyPose, regionTexture } from './viewer3d.js';
 import MUS from './muscles.js';
+import { placeRestrictedView, muscleHighlights } from './viewer-policy.js';
 
 const deg = d => d * Math.PI / 180;
 function baseScene(bg) {
@@ -16,7 +17,7 @@ function baseScene(bg) {
 }
 function ground(rig) { // feet on the floor: lowest skinned vertex -> y=0
   rig.root.updateMatrixWorld(true); let min = Infinity; const v = new THREE.Vector3();
-  rig.root.traverse(o => { if (!o.isSkinnedMesh) return; const n = o.geometry.attributes.position.count; for (let i = 0; i < n; i += 7) { o.getVertexPosition(i, v); v.applyMatrix4(o.matrixWorld); if (v.y < min) min = v.y; } });
+  rig.root.traverse(o => { if (!o.isSkinnedMesh || !o.visible) return; const n = o.geometry.attributes.position.count; for (let i = 0; i < n; i++) { o.getVertexPosition(i, v); v.applyMatrix4(o.matrixWorld); if (v.y < min) min = v.y; } });
   rig.root.position.y -= min; rig.root.updateMatrixWorld(true); return -min;
 }
 function regionPixels() {
@@ -37,12 +38,13 @@ function loopOnScreen(canvas, draw) {
 export const EXPLORER_VIEWS = { front: 0, left: 90, right: -90, back: 180 };
 export async function createMuscleExplorer(canvas, opt = {}) {
   const gltf = await loadModel();
-  const state = { hi: new Array(40).fill(0), border: 1, shirt: 0 }; // bare torso so torso muscles are visible; opaque shorts stay
+  const state = { hi: muscleHighlights(MUS, opt.primary || [], opt.secondary || []), border: 0, shirt: 0 }; // bare torso so torso muscles are visible; opaque shorts stay
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: !!opt.capture });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
   const scene = baseScene(opt.bg); const rig = makeRig(gltf, state); scene.add(rig.root);
-  applyPose(rig, { uarmAb: 14, farmAb: 10, foot: 86 }); ground(rig);
+  applyPose(rig, { uarmAb: 14, farmAb: 10, foot: 86 });
   rig.root.traverse(o => { if (o.isMesh && /shoe/i.test(o.name + (o.material?.name || ''))) o.visible = false; }); // barefoot for foot/ankle muscles
+  ground(rig); // Ground the visible bare feet, not the hidden shoes.
   const cam = new THREE.PerspectiveCamera(30, 1, .03, 30);
   const ctl = makeControls(cam, canvas);
   // Clamp: polar from eye level (90°) to slight top-down (62°), ±30° azimuth around the chosen view.
@@ -50,11 +52,8 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   const FOCUS = { body: { t: [0, .86, 0], d: 4.1 }, calf: { t: [0, .38, 0], d: 1.45 }, foot: { t: [0, .07, .04], d: 0.95 } };
   let view = 'front', focus = 'body';
   function place() {
-    const f = FOCUS[focus], a = deg(EXPLORER_VIEWS[view]); ctl.enableDamping = false; ctl.update(); ctl.enableDamping = true;
-    ctl.minAzimuthAngle = -Infinity; ctl.maxAzimuthAngle = Infinity; ctl.minDistance = 0; ctl.maxDistance = Infinity;
-    ctl.target.set(...f.t); cam.position.set(f.t[0] + Math.sin(a) * f.d, f.t[1] + f.d * 0.12, f.t[2] + Math.cos(a) * f.d); ctl.update();
-    const w = Math.atan2(Math.sin(a), Math.cos(a)); ctl.minAzimuthAngle = w - deg(30); ctl.maxAzimuthAngle = w + deg(30);
-    ctl.minDistance = f.d * 0.5; ctl.maxDistance = f.d * 1.25; ctl.update();
+    const f = FOCUS[focus];
+    placeRestrictedView(ctl, cam, EXPLORER_VIEWS[view], new THREE.Vector3(...f.t), f.d, focus === 'body' ? .9 : .75);
   }
   place();
   const { RS, px } = regionPixels();
@@ -66,17 +65,19 @@ export async function createMuscleExplorer(canvas, opt = {}) {
     const id = px[(Math.min(RS - 1, Math.floor(hit.uv.y * RS)) * RS + Math.min(RS - 1, Math.floor(hit.uv.x * RS))) * 4];
     return id ? id : null;
   }
-  function select(id) { state.hi.fill(0); if (id) state.hi[id] = 2; const m = id ? MUS[id - 1] : null; opt.onPick?.(m ? { id, k: m.k, zh: m.zh, g: m.g } : null); }
-  canvas.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
-  canvas.addEventListener('pointerup', e => { if (!down) return; const moved = Math.hypot(e.clientX - down[0], e.clientY - down[1]); down = null; if (moved < 8) select(pickAt(e.clientX, e.clientY)); });
+  function select(id, key = null) { const m = id ? MUS[id - 1] : null; const h = muscleHighlights(MUS, opt.primary || [], opt.secondary || [], key || m?.k || null); state.hi.splice(0, state.hi.length, ...h); opt.onPick?.(m ? { id, k: m.k, zh: m.zh, g: m.g } : null); }
+  const pointerDown = e => { down = e.isPrimary === false ? null : [e.clientX, e.clientY]; };
+  const pointerUp = e => { if (!down) return; const moved = Math.hypot(e.clientX - down[0], e.clientY - down[1]); down = null; if (moved < 8) select(pickAt(e.clientX, e.clientY)); };
+  const pointerCancel = () => { down = null; };
+  canvas.addEventListener('pointerdown', pointerDown); canvas.addEventListener('pointerup', pointerUp); canvas.addEventListener('pointercancel', pointerCancel);
   function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
   const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
   const stop = loopOnScreen(canvas, () => { ctl.update(); renderer.render(scene, cam); });
   return {
-    setView(v) { view = v; place(); }, setFocus(f) { focus = f; place(); }, reset() { view = 'front'; focus = 'body'; select(null); place(); },
-    selectKey(k) { const i = MUS.findIndex(m => m.k === k); select(i >= 0 ? i + 1 : null); }, pickAt,
+    setView(v) { if (!(v in EXPLORER_VIEWS)) return; view = v; place(); }, setFocus(f) { if (!(f in FOCUS)) return; focus = f; place(); }, reset() { view = 'front'; focus = 'body'; select(null); place(); },
+    selectKey(k) { if (!k) { select(null); return; } const i = MUS.findIndex(m => m.k === k || m.g === k); select(i >= 0 ? i + 1 : null, k); }, pickAt,
     get state() { return { view, focus, polar: ctl.getPolarAngle() * 180 / Math.PI, azimuth: ctl.getAzimuthalAngle() * 180 / Math.PI, dist: cam.position.distanceTo(ctl.target) }; },
-    destroy() { stop(); ro.disconnect(); ctl.dispose(); renderer.dispose(); }
+    destroy() { stop(); ro.disconnect(); canvas.removeEventListener('pointerdown', pointerDown); canvas.removeEventListener('pointerup', pointerUp); canvas.removeEventListener('pointercancel', pointerCancel); ctl.dispose(); rig.root.traverse(o => { if (o.isMesh) o.material.dispose(); }); renderer.dispose(); }
   };
 }
 
@@ -114,11 +115,11 @@ export async function createFigureViewer(canvas, opt = {}) {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
   const items = Array.from({ length: n }, () => { const scene = baseScene(opt.bg); const rig = makeRig(gltf, { hi: new Array(40).fill(0), border: 0 }); scene.add(rig.root); return { scene, rig, setG: shapeRig(rig) }; });
   const cam = new THREE.PerspectiveCamera(28, 1, .05, 30); const ctl = makeControls(cam, canvas);
-  ctl.minPolarAngle = deg(70); ctl.maxPolarAngle = deg(92);
+  ctl.minPolarAngle = deg(70); ctl.maxPolarAngle = deg(90);
   const T = new THREE.Vector3(0, 1.0, 0), D = 5.3; ctl.minDistance = D * .6; ctl.maxDistance = D * 1.3;
   let pose = 'stand';
   function setPose(k) { pose = POSES[k] ? k : 'stand'; for (const it of items) { applyPose(it.rig, POSES[pose].p); it.rig.root.position.set(0, 0, 0); ground(it.rig); } }
-  function setView(v) { const a = deg(FIG_VIEWS[v] ?? 0); ctl.enableDamping = false; ctl.update(); ctl.enableDamping = true; ctl.target.copy(T); cam.position.set(Math.sin(a) * D, T.y + .25, Math.cos(a) * D); ctl.update(); }
+  function setView(v) { placeRestrictedView(ctl, cam, FIG_VIEWS[v] ?? 0, T, D, .85); }
   setPose('stand'); setView('front');
   function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); cam.aspect = (w / n) / h; cam.updateProjectionMatrix(); }
   const ro = new ResizeObserver(resize); ro.observe(canvas); resize();

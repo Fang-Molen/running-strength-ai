@@ -4,45 +4,50 @@ import { GLTFLoader } from './vendor/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/jsm/controls/OrbitControls.js';
 import * as SkeletonUtils from './vendor/jsm/utils/SkeletonUtils.js';
 import MUS from './muscles.js';
+import { placeRestrictedView, muscleHighlights } from './viewer-policy.js';
 
 const COL = { p: new THREE.Color('#ed7655'), s: new THREE.Color('#f0b08a') }; // Fieldwork: muted muscle overlay palette
-let baseGLTF = null;
+let baseGLTF = null, modelTask = null;
 export async function loadModel() {
-  if (!baseGLTF) {
-    const [g, t] = await Promise.all([new GLTFLoader().loadAsync(new URL('./models/human.glb', import.meta.url).href), new THREE.TextureLoader().loadAsync(new URL('./models/regions.png', import.meta.url).href)]);
-    t.flipY = false; t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; t.colorSpace = THREE.NoColorSpace; REG = t; baseGLTF = g;
-  }
-  return baseGLTF;
+  if (baseGLTF) return baseGLTF;
+  if (!modelTask) modelTask = Promise.all([
+    new GLTFLoader().loadAsync(new URL('./models/human.glb', import.meta.url).href),
+    new THREE.TextureLoader().loadAsync(new URL('./models/regions.png', import.meta.url).href),
+  ]).then(([g, t]) => {
+    t.flipY = false; t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; t.colorSpace = THREE.NoColorSpace;
+    REG = t; baseGLTF = g; return g;
+  }).catch(error => { modelTask = null; throw error; });
+  return modelTask;
 }
 // ---------- material with muscle overlay ----------
 let REG = null;
 function muscleMaterial(src, state) {
-  const m = new THREE.MeshStandardMaterial({ map: src.map, roughness: .73, metalness: 0 });
+  const m = new THREE.MeshStandardMaterial({ map: src.map, roughness: .78, metalness: 0, transparent: false, opacity: 1 });
   m.onBeforeCompile = sh => {
     sh.uniforms.uHi = { value: state.hi }; sh.uniforms.uBorder = { value: state }; sh.uniforms.uReg = { value: REG };
-    sh.uniforms.uShirt = { value: state.shirt === 0 ? 0 : 1 }; sh.uniforms.uP = { value: COL.p }; sh.uniforms.uS = { value: COL.s };
+    sh.uniforms.uSel = { value: new THREE.Color('#62a6ff') }; sh.uniforms.uShirt = { value: state.shirt === 0 ? 0 : 1 }; sh.uniforms.uP = { value: COL.p }; sh.uniforms.uS = { value: COL.s };
     Object.defineProperty(sh.uniforms.uBorder, 'value', { get: () => state.border });
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHi[40];uniform float uBorder;uniform float uShirt;uniform vec3 uP;uniform vec3 uS;uniform sampler2D uReg;\nfloat hiOf(int id){ float h=0.0; for(int i=0;i<40;i++){ if(i==id) h=uHi[i]; } return h; }\nint idAt(vec2 uv){ return int(floor(texture2D(uReg,uv).r*255.0+0.5)); }')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHi[40];uniform float uBorder;uniform float uShirt;uniform vec3 uP;uniform vec3 uS;uniform vec3 uSel;uniform sampler2D uReg;\nfloat hiOf(int id){ float h=0.0; for(int i=0;i<40;i++){ if(i==id) h=uHi[i]; } return h; }\nint idAt(vec2 uv){ return int(floor(texture2D(uReg,uv).r*255.0+0.5)); }')
       .replace('#include <map_fragment>', `#include <map_fragment>
       { vec4 rg = texture2D(uReg, vMapUv); int id = int(floor(rg.r*255.0+0.5)); float h = hiOf(id);
         if (rg.g>0.75) diffuseColor.rgb = vec3(0.10,0.11,0.13); else if (rg.g>0.25 && uShirt>0.5) diffuseColor.rgb = vec3(0.11,0.15,0.22);
-        if (id>0 && h>0.0) { vec3 c = h>1.5 ? uP : uS; float fab = (rg.g>0.75 || (rg.g>0.25 && uShirt>0.5)) ? 0.78 : 1.0; diffuseColor.rgb = mix(diffuseColor.rgb, c, (h>1.5?0.74:0.48)*fab); }
+        if (id>0 && h>0.0) { vec3 c = h>2.5 ? uSel : h>1.5 ? uP : uS; float fab = (rg.g>0.75 || (rg.g>0.25 && uShirt>0.5)) ? 0.78 : 1.0; diffuseColor.rgb = mix(diffuseColor.rgb, c, (h>1.5?0.74:0.48)*fab); }
         else if (id>0 && uBorder>0.5 && (rg.g<0.25 || (rg.g<0.75 && uShirt<0.5))) { diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80,0.72,0.66), 0.22); }
         if (id>0 && (h>0.0 || uBorder>0.5)) {
           float o = 1.6/2048.0; float e = 0.0;
           e += float(idAt(vMapUv+vec2(o,0.))!=id); e += float(idAt(vMapUv-vec2(o,0.))!=id); e += float(idAt(vMapUv+vec2(0.,o))!=id); e += float(idAt(vMapUv-vec2(0.,o))!=id);
           float ln = clamp(e,0.,1.); if (h>0.0) ln = max(ln, rg.b*0.7);
           diffuseColor.rgb = mix(diffuseColor.rgb, h>0.0 ? vec3(0.32,0.02,0.03) : vec3(0.35,0.25,0.22), ln*0.68);
-        } }`);
+        }
+        // The unlabelled covered pelvic area always remains opaque, independent of highlights/shirt mode.
+        if (rg.g>0.75 && id==0) { diffuseColor.rgb = vec3(0.10,0.11,0.13); diffuseColor.a = 1.0; }
+      }`);
   };
   return m;
 }
 export function muscleIndexFor(primary, secondary, extraPrimary = [], extraSecondary = []) {
-  const hi = new Array(40).fill(0);
-  MUS.forEach((m, i) => {
-    if (primary.includes(m.g) || extraPrimary.includes(m.k)) hi[i + 1] = 2;
-    else if (secondary.includes(m.g) || extraSecondary.includes(m.k)) hi[i + 1] = Math.max(hi[i + 1], 1);
-  });
+  const hi = muscleHighlights(MUS, primary, secondary);
+  MUS.forEach((m, i) => { if (extraPrimary.includes(m.k)) hi[i + 1] = 2; else if (!hi[i + 1] && extraSecondary.includes(m.k)) hi[i + 1] = 1; });
   return hi;
 }
 // ---------- rig ----------
@@ -248,12 +253,12 @@ export async function createStage(canvas, mo, opt = {}) {
   if (mo.props?.includes('bench')) { const b = new THREE.Mesh(new THREE.BoxGeometry(.3, .42, 1.2), new THREE.MeshStandardMaterial({ color: 0x3b2a22 })); b.position.y = .21; scene.add(b); props.bench = b; }
   const ctl = new OrbitControls(cam, canvas); ctl.enableDamping = true; ctl.enablePan = false; ctl.autoRotate = false;
   // Clamp: eye level to slight top-down only, ±30° around the chosen view, bounded zoom; no flipping, no view from below.
-  ctl.minPolarAngle = 62 * Math.PI / 180; ctl.maxPolarAngle = 92 * Math.PI / 180; canvas.style.touchAction = 'pan-y';
+  ctl.minPolarAngle = 62 * Math.PI / 180; ctl.maxPolarAngle = 90 * Math.PI / 180; canvas.style.touchAction = 'pan-y';
   const tgt = new THREE.Vector3(...(mo.camTarget || [0, .9, 0])); ctl.target.copy(tgt);
   const dist = mo.camDist || 3.6; ctl.minDistance = dist * 0.55; ctl.maxDistance = dist * 1.35;
   const VIEWS = { front: 0, side: 90, back: 180, three: 40 };
   function setView(v) { if (props.bar) props.bar.traverse(o => { if (o.material && o.material.transparent) o.material.opacity = (v === 'side') ? 0.12 : 0.42; });
-    const a = (VIEWS[v] ?? v) * Math.PI / 180; const w = Math.atan2(Math.sin(a), Math.cos(a)); ctl.minAzimuthAngle = w - Math.PI / 6; ctl.maxAzimuthAngle = w + Math.PI / 6; cam.position.set(tgt.x + Math.sin(a) * dist, tgt.y + .35, tgt.z + Math.cos(a) * dist); ctl.target.copy(tgt); ctl.update(); }
+    placeRestrictedView(ctl, cam, VIEWS[v] ?? 0, tgt, dist, .75); }
   setView(opt.view || mo.view || 'three');
   let speed = 1, playing = true, t = 0, last = performance.now(), raf, phaseCb = opt.onPhase, lastPhase;
   const wp = n => { const x = new THREE.Vector3(); rig.bones[n].getWorldPosition(x); return x; };

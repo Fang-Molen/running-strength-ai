@@ -1,0 +1,13 @@
+.fk-figure-overview{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:16px;border:1px solid var(--color-line);border-radius:18px;padding:12px;background:var(--color-surface)}
+.fk-figure-overview img{width:100%;height:190px;object-fit:contain;object-position:center bottom}
+.fk-figure-goal{display:grid;gap:10px;margin-top:16px}.fk-figure-number{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px}
+.fk-figure-number button,.fk-figure-number input,.fk-figure-presets button{min-height:44px;border:1px solid var(--color-line);border-radius:12px;background:var(--color-surface);color:inherit;text-align:center;font-size:16px}
+.fk-figure-number input{width:100%;min-width:0;font-size:22px;font-weight:700}.fk-figure-presets{display:flex;gap:8px}.fk-figure-presets button{flex:1}
+.fk-figure-presets button[aria-pressed=true]{border-color:var(--color-accent);color:var(--color-accent);background:color-mix(in srgb,var(--color-accent) 10%,transparent)}
+.fk-figure-check{display:flex;align-items:center;gap:8px;min-height:44px}.fk-figure-check input{width:20px;height:20px;accent-color:#ff6a1a}
+.fk-figure-delta{display:flex;flex-wrap:wrap;gap:8px 12px;padding:12px;background:var(--color-surface);border-radius:12px;font-size:14px}
+.fk-figure-status{min-height:18px;margin:0 0 6px;text-align:center;font-size:12px;color:var(--color-muted)}.fk-figure-save{width:100%;min-height:48px;border-radius:14px;font-weight:700}.fk-figure-save:disabled{opacity:.55}
+.fk-health-figure-grid{align-items:start}.fk-health-figure-grid .fk-health-portrait{grid-row:span 2}.fk-health-portrait .fk-character-image{height:222px;max-height:42dvh;overflow:visible}
+.fk-character-image img{width:100%;height:100%;max-width:100%;object-fit:contain;object-position:center bottom}
+.fk-health-goal-link{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}.fk-health-goal-link>span{min-width:0}
+@media(max-width:360px){.fk-figure-overview{gap:8px;padding:8px}.fk-figure-overview img{height:160px}.fk-health-portrait .fk-character-image{height:205px}}

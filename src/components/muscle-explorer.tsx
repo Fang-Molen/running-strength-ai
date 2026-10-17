@@ -37,9 +37,9 @@ function Viewer3D({ onPick, apiRef }: { onPick: (p: Pick) => void; apiRef: React
       {!ready && !err ? <p className="keep absolute inset-x-0 top-1/2 text-center text-sm text-muted">3D 模型加载中…</p> : null}
       {err ? <div className="absolute inset-0 grid place-items-center bg-[#171a1e] p-3 text-center">
         <div><p className="keep text-sm">{err}</p><button type="button" className={btn(false) + " mt-2"} onClick={() => setTries(x => x + 1)}>重试</button>
-          <img src="/fangkun-atlas/assets/anatomy/male-front.webp" alt="静态肌群插画" className="mx-auto mt-2 h-48 object-contain" />
-          <p className="keep text-[11px] text-muted">静态插画（非 3D，不可点选）</p></div></div> : null}
+          <p className="keep mt-2 text-xs text-muted">可先从下方选择肌群，查看名称与相关动作。</p></div></div> : null}
     </div>
+    {err ? <div className="mt-2 flex max-h-36 flex-wrap gap-1 overflow-y-auto" aria-label="备用肌群列表">{MUS.map((m, index) => <button key={m.k} type="button" className="min-h-9 rounded-full border border-line px-2 text-xs" onClick={() => onPick({ id: index + 1, k: m.k, zh: m.zh, g: m.g })}>{m.zh}</button>)}</div> : null}
     <p className="keep mt-1 text-[11px] text-muted">区域着色模型：肌群颜色画在同一人体网格的贴图上，不是独立肌肉建模。拖动旋转（限 ±30°）· 双指缩放 · 点选肌群。</p>
     <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="视角">
       {([["front", "正面"], ["left", "左侧"], ["right", "右侧"], ["back", "背面"]] as const).map(([v, l]) => <button key={v} type="button" aria-pressed={view === v} className={btn(view === v)} onClick={() => { setView(v); apiRef.current?.setView(v); }}>{l}</button>)}
