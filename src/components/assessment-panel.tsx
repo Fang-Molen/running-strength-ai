@@ -6,6 +6,7 @@ import { loadSchedule } from "@/lib/ui/day-schedule"
 import { recoveryVerdict } from "@/lib/ui/recovery-verdict"
 import { readRecoveryInput } from "@/components/health-extras"
 import { SavedBadge } from "@/components/saved-badge"
+import { onAppEvent } from '@/lib/core/events';
 
 const localDay = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` }
 
@@ -30,7 +31,7 @@ export function AssessmentPanel() {
   const [feedback, setFeedback] = useState<Feedback[]>([])
   const [stamp, setStamp] = useState(0)
   const run = (fb = loadFeedback()) => { const today = localDay(); setFeedback(fb); setA(assess({ today, entries: loadSchedule().entries, logs: loadLoggedSessions(), recovery: recoveryVerdict(readRecoveryInput(today)), feedback: fb })) }
-  useEffect(() => { run() }, [])
+  useEffect(() => { const refresh = () => run(); run(); const unsubscribe = onAppEvent(refresh); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('fk-training-activities-changed', refresh); window.addEventListener('storage', refresh); return () => { unsubscribe(); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('fk-training-activities-changed', refresh); window.removeEventListener('storage', refresh); }; }, [])
   const onSave = (f: Feedback) => { const next = [...feedback.filter((x) => x.targetId !== f.targetId), f]; if (saveFeedback(next)) setStamp(Date.now()); setFeedback(next) }
   if (!a) return null
   return <section aria-label="方坤评估" className="home-card mx-auto mb-3 max-w-3xl p-4 text-sm">

@@ -43,9 +43,9 @@ function ctx(partial: Partial<TrainingContext> = {}): TrainingContext {
 
 const planned = { name: "深蹲", sets: 4, amount: 8, weightKg: 60 }
 
-test("A ready athlete keeps the original plan", () => {
+test("A low legacy index stays cautious and keeps the original plan", () => {
   const decision = createTrainingDecision(ctx(), planned)
-  assert.equal(decision.readiness, "READY")
+  assert.equal(decision.readiness, "CAUTION")
   assert.equal(decision.change, "none")
   assert.equal(decision.weightKg, 60)
   assert.equal(decision.sets, 4)
@@ -166,7 +166,7 @@ test("recorded HRV and resting heart rate stay on the context and off the decisi
   assert.equal(seen.restingHeartRate?.value, 48)
   const low = generateTrainingAdjustment(ctx({ fatigue: 20, sleepHours: 4, hrv: seen.hrv, restingHeartRate: seen.restingHeartRate, snapshot: seen.snapshot }), planned)
   const plain = generateTrainingAdjustment(ctx({ fatigue: 20 }), planned)
-  assert.equal(low.readiness, "READY")
+  assert.equal(low.readiness, "CAUTION")
   assert.equal(low.change, plain.change)
   assert.equal(low.sets, plain.sets)
   assert.equal(low.weightKg, plain.weightKg)
@@ -222,7 +222,7 @@ test("a pain event is visible without becoming the decision pain flag", () => {
   assert.equal(seen.snapshot?.trainingInterrupted, true)
   assert.equal(seen.snapshot?.injuryReported, false)
   const decision = generateTrainingAdjustment(ctx({ fatigue: 20, snapshot: seen.snapshot }), planned)
-  assert.equal(decision.readiness, "READY")
+  assert.equal(decision.readiness, "CAUTION")
   assert.equal(decision.change, "none")
   setStoreBackend(null)
 })

@@ -1,0 +1,491 @@
+{
+  "version": "FK-V74-UI-INTEGRATED-20261017",
+  "generatedAt": "2026-10-17T09:56:50.304805+00:00",
+  "scope": "Independent source candidate using V74 UI/assets and retained R4+health logic; synthetic data only; no deployment",
+  "regression": {
+    "PASS": 3647,
+    "FAIL": 0,
+    "SKIP": 0,
+    "suites": [
+      {
+        "name": "full-npm",
+        "command": [
+          "npm",
+          "test"
+        ],
+        "exitCode": 0,
+        "status": "PASS",
+        "seconds": 284.87,
+        "counts": {
+          "tests": 2366,
+          "pass": 2366,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      },
+      {
+        "name": "full-extra",
+        "command": [
+          "node",
+          "--import",
+          "./scripts/test-register.mjs",
+          "--test",
+          "--test-reporter=tap",
+          "--test-concurrency=3",
+          "src/components/training-redesign.test.tsx",
+          "src/components/warmup-workflow.test.tsx",
+          "src/lib/body/avatar-appearance.test.ts",
+          "src/lib/body/goal-editor.test.ts",
+          "src/lib/body/muscle-actions.test.ts",
+          "src/lib/body/shape-sim.test.ts",
+          "src/lib/body/viewer-policy.test.ts",
+          "src/lib/core/adaptive-plan-audit.test.ts",
+          "src/lib/core/adaptive-plan-permissions.test.ts",
+          "src/lib/core/ai-access-contract.test.mjs",
+          "src/lib/core/ai-feature-policy.test.mjs",
+          "src/lib/core/ai-task-router.test.mjs",
+          "src/lib/core/asof-event-ledger.test.ts",
+          "src/lib/core/asof-k20.test.ts",
+          "src/lib/core/athlete-baseline.test.mjs",
+          "src/lib/core/athlete-evidence-readiness.test.ts",
+          "src/lib/core/athlete-longitudinal-evidence.test.ts",
+          "src/lib/core/athlete-seven-dimensions.test.mjs",
+          "src/lib/core/backup-inspection.test.ts",
+          "src/lib/core/browser-capabilities.test.ts",
+          "src/lib/core/coach-activity-watch.test.ts",
+          "src/lib/core/coach-adversarial.test.ts",
+          "src/lib/core/coach-conversation-context.test.ts",
+          "src/lib/core/coach-fieldwork-context.test.ts",
+          "src/lib/core/coach-four-directions.test.ts",
+          "src/lib/core/coach-guard-k15.test.ts",
+          "src/lib/core/coach-learning-readiness.test.ts",
+          "src/lib/core/coach-network-policy.test.ts",
+          "src/lib/core/coach-p0-p1.test.ts",
+          "src/lib/core/coach-periodic-observations.test.ts",
+          "src/lib/core/coach-persona.test.ts",
+          "src/lib/core/coach-plan-governance.test.ts",
+          "src/lib/core/coach-preview-transaction.test.ts",
+          "src/lib/core/coach-question-reasoning.test.ts",
+          "src/lib/core/coach-r14-chat.test.ts",
+          "src/lib/core/coach-r184-preparation.test.ts",
+          "src/lib/core/coach-r185-integration.test.ts",
+          "src/lib/core/coach-record-context.test.ts",
+          "src/lib/core/coach-strength-plan-control.test.ts",
+          "src/lib/core/coach-strength-plan-storage.test.ts",
+          "src/lib/core/coach-training-mechanisms.test.ts",
+          "src/lib/core/device-evidence-backup.test.ts",
+          "src/lib/core/device-image-evidence.test.ts",
+          "src/lib/core/execution.test.ts",
+          "src/lib/core/local-ocr-policy.test.ts",
+          "src/lib/core/longitudinal-comparability.test.ts",
+          "src/lib/core/longitudinal-review-safety.test.ts",
+          "src/lib/core/longitudinal-review.test.ts",
+          "src/lib/core/offline-training-evidence.test.mjs",
+          "src/lib/core/prospective-evidence.test.ts",
+          "src/lib/core/research-cognition-bridge.test.ts",
+          "src/lib/core/research-conflict-index.test.ts",
+          "src/lib/core/research-conflict-source-audit.test.ts",
+          "src/lib/core/research-context.test.ts",
+          "src/lib/core/research-coverage-audit.test.ts",
+          "src/lib/core/research-evidence-r4-r7.test.ts",
+          "src/lib/core/research-history-reconciliation.test.ts",
+          "src/lib/core/research-k11-blind.test.ts",
+          "src/lib/core/research-knowledge-registry.test.ts",
+          "src/lib/core/research-methodology.test.ts",
+          "src/lib/core/research-reasoning-audit-k10.test.ts",
+          "src/lib/core/research-reasoning-audit-k12-regression.test.ts",
+          "src/lib/core/research-reasoning-audit-k9.test.ts",
+          "src/lib/core/research-reasoning-audit.test.ts",
+          "src/lib/core/rest-clock.test.ts",
+          "src/lib/core/running-context-exam.test.mjs",
+          "src/lib/core/running-log-correction.test.ts",
+          "src/lib/core/running-occurrence-context.test.mjs",
+          "src/lib/core/running-reasoning-audit.test.mjs",
+          "src/lib/core/running-sequence-observation.test.mjs",
+          "src/lib/core/running-session-context.test.mjs",
+          "src/lib/core/running-structured-context.test.mjs",
+          "src/lib/core/running-timeline-reasoning.test.mjs",
+          "src/lib/core/training-import-delete.test.ts",
+          "src/lib/exercise-dose.test.ts",
+          "src/lib/health/health-hardening.test.ts",
+          "src/lib/health/health-v74.test.ts",
+          "src/lib/nutrition/catalog.test.ts",
+          "src/lib/nutrition/energy-source.test.ts",
+          "src/lib/nutrition/food-agg.test.ts",
+          "src/lib/nutrition/food-db.test.ts",
+          "src/lib/nutrition/fuel-guide.test.ts",
+          "src/lib/nutrition/v74-compat.test.ts",
+          "src/lib/preview-path-prefix.test.ts",
+          "src/lib/running-technique/catalogue.test.ts",
+          "src/lib/strength/coach-output-retry.test.ts",
+          "src/lib/strength/demo-fieldwork.test.ts",
+          "src/lib/strength/rest.test.ts",
+          "src/lib/ui/ability-radar.test.ts",
+          "src/lib/ui/athlete-growth.test.ts",
+          "src/lib/ui/coach-assessment.test.ts",
+          "src/lib/ui/coach-bubble.test.ts",
+          "src/lib/ui/day-schedule-rules.test.ts",
+          "src/lib/ui/device-csv-preview.test.ts",
+          "src/lib/ui/device-guides.test.ts",
+          "src/lib/ui/device-import-contract.test.ts",
+          "src/lib/ui/device-parse.test.ts",
+          "src/lib/ui/fangkun-ui-20261016.test.ts",
+          "src/lib/ui/fieldwork.test.ts",
+          "src/lib/ui/goal-portfolio.test.ts",
+          "src/lib/ui/onboarding.test.ts",
+          "src/lib/ui/r8.test.ts",
+          "src/lib/ui/r9.test.ts",
+          "src/lib/ui/recovery-verdict.test.ts",
+          "src/lib/ui/scheduled-training.test.ts",
+          "src/lib/ui/sheet-scroll-lock.test.ts",
+          "src/lib/ui/today-checklist.test.ts",
+          "src/lib/ui/warmup.test.ts",
+          "src/lib/ui/watch-mode.test.ts",
+          "src/lib/vault-migration.test.ts",
+          "src/lib/vision/vision-v73.test.ts"
+        ],
+        "exitCode": 0,
+        "status": "PASS",
+        "seconds": 358.61,
+        "counts": {
+          "tests": 1281,
+          "pass": 1281,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      },
+      {
+        "name": "final-type",
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "exitCode": 0,
+        "status": "PASS",
+        "seconds": 70.01,
+        "counts": {
+          "tests": 0,
+          "pass": 0,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      },
+      {
+        "name": "final-build",
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "exitCode": 0,
+        "status": "PASS",
+        "seconds": 30.34,
+        "counts": {
+          "tests": 0,
+          "pass": 0,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      }
+    ]
+  },
+  "browser": [
+    {
+      "file": "browser-functional-development.json",
+      "PASS": 8,
+      "FAIL": 0,
+      "SKIP": 0,
+      "results": [
+        {
+          "name": "hydrated mobile home with no horizontal overflow",
+          "status": "PASS"
+        },
+        {
+          "name": "legacy nutrition totals and collapsible meals",
+          "status": "PASS"
+        },
+        {
+          "name": "strength library and male GLB ready",
+          "status": "PASS"
+        },
+        {
+          "name": "motion playback, scrubbing and female model",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit offline resource download",
+          "status": "PASS"
+        },
+        {
+          "name": "nested modal closes and body model opens",
+          "status": "PASS"
+        },
+        {
+          "name": "female appearance saves separately and survives reload",
+          "status": "PASS"
+        },
+        {
+          "name": "desktop render and no uncaught runtime errors",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "file": "browser-functional-production.json",
+      "PASS": 10,
+      "FAIL": 0,
+      "SKIP": 0,
+      "results": [
+        {
+          "name": "hydrated mobile home with no horizontal overflow",
+          "status": "PASS",
+          "seconds": 45.575
+        },
+        {
+          "name": "legacy nutrition totals and collapsible meals",
+          "status": "PASS",
+          "seconds": 2.918
+        },
+        {
+          "name": "strength library and male GLB ready",
+          "status": "PASS",
+          "seconds": 72.254
+        },
+        {
+          "name": "motion playback, scrubbing and female model",
+          "status": "PASS",
+          "seconds": 64.411
+        },
+        {
+          "name": "explicit offline resource download",
+          "status": "PASS",
+          "seconds": 194.238
+        },
+        {
+          "name": "nested modal closes and body model opens",
+          "status": "PASS",
+          "seconds": 4.32
+        },
+        {
+          "name": "female appearance saves separately and survives reload",
+          "status": "PASS",
+          "seconds": 19.397
+        },
+        {
+          "name": "manual food saves and unknown nutrients remain pending",
+          "status": "PASS",
+          "seconds": 17.61
+        },
+        {
+          "name": "offline reload preserves records and cached female 3D opens",
+          "status": "PASS",
+          "seconds": 22.268
+        },
+        {
+          "name": "desktop render and no uncaught runtime errors",
+          "status": "PASS",
+          "seconds": 1.358
+        }
+      ]
+    },
+    {
+      "file": "browser-dev.json",
+      "PASS": 12,
+      "FAIL": 0,
+      "SKIP": 0,
+      "results": [
+        {
+          "name": "mobile home renders",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "mobile no overflow",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "UI answer uses actual sleep minutes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "next question rereads corrected value",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "browser is offline",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "offline answer completes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "reload retains health records",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "emergency overrides daily health interpretation",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "formal plan unchanged",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "no model or other POST requests",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "no browser runtime errors",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "desktop renders without overflow",
+          "status": "PASS",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "file": "browser-prod.json",
+      "PASS": 12,
+      "FAIL": 0,
+      "SKIP": 0,
+      "results": [
+        {
+          "name": "mobile home renders",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "mobile no overflow",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "UI answer uses actual sleep minutes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "next question rereads corrected value",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "browser is offline",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "offline answer completes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "offline reload preserves corrected health and chat history",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "emergency overrides daily health interpretation",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "formal plan unchanged",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "no model or other POST requests",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "no browser runtime errors",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "desktop renders without overflow",
+          "status": "PASS",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "file": "browser-schedule.json",
+      "PASS": 2,
+      "FAIL": 0,
+      "SKIP": 0,
+      "results": [
+        {
+          "name": "user confirms a two-round course without flattening rest structure",
+          "status": "PASS"
+        },
+        {
+          "name": "saved course and warmup configuration survive refresh and editor reopen",
+          "status": "PASS"
+        }
+      ]
+    }
+  ],
+  "geometry": {
+    "exerciseIds": 76,
+    "uniqueClips": 86,
+    "poses": 688,
+    "PASS": 172,
+    "FAIL": 0,
+    "scope": "Real GLB skinning, 4 samples/clip per character; not biomechanical approval or complete self-intersection proof"
+  },
+  "notExecuted": [
+    {
+      "name": "Real iPhone/iOS/PWA installation and performance",
+      "status": "SKIP"
+    },
+    {
+      "name": "User actual V70 storage migration",
+      "status": "SKIP"
+    },
+    {
+      "name": "Real Garmin/FIT/GPS data validation this turn",
+      "status": "SKIP"
+    },
+    {
+      "name": "External/paid models and production deployment",
+      "status": "SKIP"
+    },
+    {
+      "name": "Professional review of all motion biomechanics and custom identity likeness",
+      "status": "SKIP"
+    }
+  ],
+  "knownLimits": [
+    "Generic male/female references, not exact design faces or measured personal physiques",
+    "Local preview compression causes tens-of-seconds cold model downloads; 90s bounded model load with labelled 2D fallback/retry; initial 27-asset offline download can take several minutes",
+    "Extended/custom exercises without approved animation stay text-only",
+    "No approved population norms means no fabricated 0–100 capability scores",
+    "Previously recorded failures are retained; final passing rows do not erase cold-load and superseded-contract failures"
+  ],
+  "readiness": "Ready for independent Grok local integration acceptance; NOT released or certified for real device upgrade"
+}

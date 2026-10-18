@@ -1,4 +1,4 @@
-import { dispatchEvent } from "@/lib/core/events";
+import { dispatchEvent, loadEvents, currentAthleteId } from "@/lib/core/events";
 
 export type BodyCheck = {
   id: string;
@@ -14,11 +14,10 @@ export type BodyCheck = {
   boneRate?: number;
   bmr?: number;
   waist?: number;
-  visceral?: number;
-  boneMass?: number;
-  armMuscle?: number;
-  trunkMuscle?: number;
-  legMuscle?: number;
+  visceral?: number; boneMass?: number; armMuscle?: number; trunkMuscle?: number; legMuscle?: number;
+  athleteId?: string;
+  source?: "MANUAL";
+  recordedAt?: string;
 };
 
 const KEY = "fr255-body-v1";
@@ -49,17 +48,23 @@ export function todayDate(): string {
 }
 
 export function loadChecks(): BodyCheck[] {
-  if (typeof localStorage === "undefined") return [];
+  let legacy: BodyCheck[] = [];
   try {
-    const parsed = JSON.parse(localStorage.getItem(KEY) || "[]") as BodyCheck[];
-    return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.weight === "number" && /^\d{4}-\d{2}-\d{2}$/.test(item.date)).slice(-180) : [];
-  } catch {
-    return [];
+    const parsed = JSON.parse(typeof localStorage === "undefined" ? "[]" : localStorage.getItem(KEY) || "[]") as BodyCheck[];
+    legacy = Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.weight === "number" && /^\d{4}-\d{2}-\d{2}$/.test(item.date) && (item.athleteId ? item.athleteId === currentAthleteId() : currentAthleteId() === "local")) : [];
+  } catch { /* Legacy storage is never overwritten during reads. */ }
+  const checks = new Map(legacy.map(check => [check.date, check]));
+  for (const event of loadEvents()) {
+    if (event.event_type !== "BODY_MEASUREMENT_RECORDED" || event.athlete_id !== currentAthleteId()) continue;
+    const check = event.payload.bodyCheck as BodyCheck | undefined;
+    if (check && typeof check.date === "string" && Number.isFinite(check.weight) && check.weight > 0 && check.athleteId === event.athlete_id) checks.set(check.date, check);
+    if (typeof event.payload.removedCheckDate === "string") checks.delete(event.payload.removedCheckDate);
   }
+  return [...checks.values()].sort((a,b)=>a.date.localeCompare(b.date));
 }
 
 export function saveChecks(checks: BodyCheck[]): BodyCheck[] | null {
-  const sorted = [...checks].sort((a, b) => (a.date < b.date ? -1 : 1)).slice(-180);
+  const sorted = [...checks].sort((a, b) => (a.date < b.date ? -1 : 1));
   try {
     localStorage.setItem(KEY, JSON.stringify(sorted));
   } catch {
@@ -69,15 +74,18 @@ export function saveChecks(checks: BodyCheck[]): BodyCheck[] | null {
 }
 
 export function upsertCheck(check: Omit<BodyCheck, "id">): BodyCheck[] | null {
-  const checks = loadChecks().filter((item) => item.date !== check.date);
-  const saved = saveChecks([...checks, { ...check, id: check.date }]);
-  if (!saved) return null
-  dispatchEvent("BODY_MEASUREMENT_RECORDED", { date: check.date, weight: check.weight, fat: check.fat ?? null, muscle: check.muscle ?? null });
-  return saved;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(check.date) || !Number.isFinite(check.weight) || check.weight <= 0 ||
+    BODY_FIELDS.some(field => { const value = check[field.key]; return value !== undefined && (!Number.isFinite(value) || value < field.min || value > field.max); })) return null;
+  const previous = loadChecks().find(row => row.date === check.date);
+  const row: BodyCheck = { ...previous, ...check, id: previous?.id ?? `body-${crypto.randomUUID()}`, athleteId: currentAthleteId(), source: "MANUAL", recordedAt: new Date().toISOString() };
+  if (!dispatchEvent("BODY_MEASUREMENT_RECORDED", { date: row.date, weight: row.weight, fat: row.fat ?? null, muscle: row.muscle ?? null, bodyCheck: row })) return null;
+  return loadChecks();
 }
 
 export function removeCheck(id: string): BodyCheck[] | null {
-  return saveChecks(loadChecks().filter((item) => item.id !== id));
+  const row = loadChecks().find(check => check.id === id);
+  if (!row || !dispatchEvent("BODY_MEASUREMENT_RECORDED", { removedCheckDate: row.date })) return null;
+  return loadChecks();
 }
 
 function daysAgo(date: string): number {

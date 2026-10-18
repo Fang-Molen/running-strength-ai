@@ -1,0 +1,2 @@
+export type AtlasRequest={id:string;type:'strength'|'running';genderView:'male'|'female';requiresUserConfirmation:true}
+export function mountFangkunAtlas(root:HTMLElement,options:{assetBase:string;gender:'male'|'female';favorites:string[];onFavoritesChange:(ids:string[])=>boolean;onGenderChange:(gender:'male'|'female')=>void;onRequestPlanDraft:(request:AtlasRequest)=>void;onOpen3D:(id:string)=>void}):{destroy():void}

@@ -1,0 +1,5 @@
+{
+  "schema": "fangkun-approved-motion-v1",
+  "assets": [],
+  "note": "EMPTY ON PURPOSE: import assets only after licensed mesh, rig, motion, biomechanical and device review. Old characters MUST NOT be used as fallback."
+}

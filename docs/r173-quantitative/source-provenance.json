@@ -1,0 +1,74 @@
+{
+  "intake": {
+    "status": "COMPLETE_FILE_READ",
+    "appTestsExecuted": false,
+    "newAttachments": [
+      {
+        "name": "1-R173_知识转接_规则表v2.xlsx",
+        "sha256": "6a6b4d9d88ba0de9745f1946704edc9f0f2c6d92387651301329458ea59ce5da",
+        "bytes": 140575
+      },
+      {
+        "name": "2-R173.zip",
+        "sha256": "643131555e1664b3e534ec5073c23906e1b147f322bd691ae31ae360b479dfb7",
+        "bytes": 150531
+      }
+    ],
+    "worksheetCount": 22,
+    "supersedesIncompleteIntake": true
+  },
+  "R172ArchiveManifestComparison": [
+    {
+      "file": "R172_交付与边界说明.md",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "file": "R172_剩余107条合同.csv",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "file": "R172_剩余107条机器可读合同.jsonl",
+      "bytesMatch": true,
+      "sha256Match": true
+    },
+    {
+      "file": "方坤规则表_V7_R172_全132条量化判断合同.xlsx",
+      "bytesMatch": true,
+      "sha256Match": true
+    }
+  ],
+  "documentConflictResolutions": [
+    {
+      "rules": [
+        "FAT_RHR",
+        "FAT_HRV"
+      ],
+      "chosen": "R171/R173 median RHR and natural-log RMSSD baseline; supersedes older R168 formula"
+    },
+    {
+      "rules": [
+        "FAT_DECOUPLING"
+      ],
+      "chosen": "R172/R173 HR/speed window ratio; not old Pw:HR"
+    },
+    {
+      "rules": [
+        "ABIL_CS",
+        "ABIL_ASR",
+        "ABIL_HRMAX",
+        "STR_VL",
+        "TISSUE_HSR"
+      ],
+      "chosen": "R173 NON_NUMERIC is initial classification; explicit arithmetic reused from R168/R169 with R172 quality boundaries, not upgraded to prescription"
+    },
+    {
+      "rules": [
+        "RTR_VOLUME"
+      ],
+      "chosen": "R173 week-over-week descriptive formula only, not percentage of pre-injury capacity; permission remains required"
+    }
+  ],
+  "programTestsExecuted": false
+}

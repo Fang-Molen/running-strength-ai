@@ -1,0 +1,167 @@
+{
+  "version": "fk-simple-humanoid-23-v1",
+  "referenceOnly": false,
+  "bones": [
+    {
+      "name": "Root",
+      "head": "root",
+      "tail": "pelvis",
+      "parent": null,
+      "deform": false
+    },
+    {
+      "name": "pelvis",
+      "head": "pelvis",
+      "tail": "spine_01",
+      "parent": "Root",
+      "deform": true
+    },
+    {
+      "name": "spine_01",
+      "head": "spine_01",
+      "tail": "spine_02",
+      "parent": "pelvis",
+      "deform": true
+    },
+    {
+      "name": "spine_02",
+      "head": "spine_02",
+      "tail": "spine_03",
+      "parent": "spine_01",
+      "deform": true
+    },
+    {
+      "name": "spine_03",
+      "head": "spine_03",
+      "tail": "neck",
+      "parent": "spine_02",
+      "deform": true
+    },
+    {
+      "name": "neck_01",
+      "head": "neck",
+      "tail": "head",
+      "parent": "spine_03",
+      "deform": true
+    },
+    {
+      "name": "head",
+      "head": "head",
+      "tail": "head_top",
+      "parent": "neck_01",
+      "deform": true
+    },
+    {
+      "name": "clavicle_l",
+      "head": "spine_03",
+      "tail": "shoulder_l",
+      "parent": "spine_03",
+      "deform": true
+    },
+    {
+      "name": "upperarm_l",
+      "head": "shoulder_l",
+      "tail": "elbow_l",
+      "parent": "clavicle_l",
+      "deform": true
+    },
+    {
+      "name": "lowerarm_l",
+      "head": "elbow_l",
+      "tail": "wrist_l",
+      "parent": "upperarm_l",
+      "deform": true
+    },
+    {
+      "name": "hand_l",
+      "head": "wrist_l",
+      "tail": "hand_tip_l",
+      "parent": "lowerarm_l",
+      "deform": true
+    },
+    {
+      "name": "thigh_l",
+      "head": "hip_l",
+      "tail": "knee_l",
+      "parent": "pelvis",
+      "deform": true
+    },
+    {
+      "name": "calf_l",
+      "head": "knee_l",
+      "tail": "ankle_l",
+      "parent": "thigh_l",
+      "deform": true
+    },
+    {
+      "name": "foot_l",
+      "head": "ankle_l",
+      "tail": "toe_l",
+      "parent": "calf_l",
+      "deform": true
+    },
+    {
+      "name": "ball_l",
+      "head": "toe_l",
+      "tail": "toe_tip_l",
+      "parent": "foot_l",
+      "deform": true
+    },
+    {
+      "name": "clavicle_r",
+      "head": "spine_03",
+      "tail": "shoulder_r",
+      "parent": "spine_03",
+      "deform": true
+    },
+    {
+      "name": "upperarm_r",
+      "head": "shoulder_r",
+      "tail": "elbow_r",
+      "parent": "clavicle_r",
+      "deform": true
+    },
+    {
+      "name": "lowerarm_r",
+      "head": "elbow_r",
+      "tail": "wrist_r",
+      "parent": "upperarm_r",
+      "deform": true
+    },
+    {
+      "name": "hand_r",
+      "head": "wrist_r",
+      "tail": "hand_tip_r",
+      "parent": "lowerarm_r",
+      "deform": true
+    },
+    {
+      "name": "thigh_r",
+      "head": "hip_r",
+      "tail": "knee_r",
+      "parent": "pelvis",
+      "deform": true
+    },
+    {
+      "name": "calf_r",
+      "head": "knee_r",
+      "tail": "ankle_r",
+      "parent": "thigh_r",
+      "deform": true
+    },
+    {
+      "name": "foot_r",
+      "head": "ankle_r",
+      "tail": "toe_r",
+      "parent": "calf_r",
+      "deform": true
+    },
+    {
+      "name": "ball_r",
+      "head": "toe_r",
+      "tail": "toe_tip_r",
+      "parent": "foot_r",
+      "deform": true
+    }
+  ]
+}

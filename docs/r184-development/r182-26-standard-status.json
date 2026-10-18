@@ -1,0 +1,262 @@
+[
+  {
+    "id": "STD-01",
+    "topic": "统一对象",
+    "rule": "Athlete/Metric/Measurement/Reference/Score/Goal/Observation各自独立",
+    "scope": "所有",
+    "forbidden": "不允许把比赛积分、能力分、目标进度混成一个字段",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "类型分离：Measurement/Score/Goal/Observation；比赛秒值独立于官方积分",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-02",
+    "topic": "指标唯一身份",
+    "rule": "metricId+formulaVersion+unit+protocolKey+athleteId",
+    "scope": "所有",
+    "forbidden": "同名指标不同测法不能直接合并",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "比较校验athlete/metric/variant/protocol/unit/formula；显式来源版本",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-03",
+    "topic": "五项竞技能力",
+    "rule": "SPD/SEN/AER/PWR/ECO是长期测量构念",
+    "scope": "雷达",
+    "forbidden": "REC恢复与BEH执行不得进入竞技总分",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "五个竞技轴；REC/BEH独立，无总分",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-04",
+    "topic": "来源时间",
+    "rule": "eventTime、recordedAt、sourceRevision分开保存",
+    "scope": "所有",
+    "forbidden": "不能用未来记录重算过去可见预测",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "测量发生/记录/分析时间分开；预测时间审计；读取日志commit时间；旧缺commit记录不用于回溯预测证明",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-05",
+    "topic": "缺失",
+    "rule": "null+原因，SKIPPED/NOT_RECORDED/UNKNOWN分开",
+    "scope": "所有",
+    "forbidden": "缺失不得当0、失败或最差分",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "未知null+原因；BEH分开跳过与未记录；设备适配保留缺圈",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-06",
+    "topic": "方向",
+    "rule": "高好/低好/情境相关，情境相关不得自动标优劣",
+    "scope": "指标",
+    "forbidden": "SEN03/SEN04不得仅凭正负赋好坏",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "SPD速度方向纠正；SEN03/04按情境，不按正负赋分",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-07",
+    "topic": "参考准入",
+    "rule": "参考来源+项目+人群+测量协议+版本+审核批准+有效锚点",
+    "scope": "能力分",
+    "forbidden": "没有完整参考=score null",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "评分前提校验，正式参考列表为空",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-08",
+    "topic": "评分计算",
+    "rule": "higher:100*clip((x-L)/(U-L));lower:100*clip((L-x)/(L-U))",
+    "scope": "能力分",
+    "forbidden": "不准自动选择群体极值为锚点",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "带锚点方向校验及裁剪的可调用公式；当前没有可启用常模",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-09",
+    "topic": "人群匹配",
+    "rule": "性别/年龄段/竞技层级/专项/规则版本应在参考覆盖范围内",
+    "scope": "能力分",
+    "forbidden": "跨性别、年龄和项目不能静默套用",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "sport+populationKey必须精确匹配；人群分类生成器尚未接入，默认null拒绝评分",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-10",
+    "topic": "参考语义",
+    "rule": "0-100仅是该版本参考尺度位置，不是生物能力百分比",
+    "scope": "能力分",
+    "forbidden": "不能叫绝对能力值",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "评分解释限定参考尺度位置，不是生物能力百分比",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-11",
+    "topic": "维度合成",
+    "rule": "只有同构念、预先权重、缺失策略和验证才允许合成",
+    "scope": "雷达",
+    "forbidden": "不合格只展示各子指标，不算维度总分",
+    "implementationStatus": "BLOCKED",
+    "implementationScope": "缺少经核准的维度合成权重/策略/验证；维度score固定null",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-12",
+    "topic": "时间比较",
+    "rule": "相同协议/人群参考版本/算法版本才可比较分数",
+    "scope": "历史",
+    "forbidden": "版本变更要重算两期或显示不可比",
+    "implementationStatus": "BLOCKED",
+    "implementationScope": "已实现原始测量同算法同协议比较；尚未实现历史能力分同参考版本重算服务",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-13",
+    "topic": "测量误差",
+    "rule": "报告观测差、TE/SEM、MDC与适用假设",
+    "scope": "趋势",
+    "forbidden": "不把SWC当MDC；无误差时不说真实提高",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "观测差/MDC95有可调用实现，需匹配SEM审阅；无误差不称真实提高",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-14",
+    "topic": "目标进度",
+    "rule": "100*(current-baseline)/(target-baseline)，同指标同协议固定版本",
+    "scope": "目标",
+    "forbidden": "基线=目标或跨协议则UNAVAILABLE",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "目标固定版本、同协议、目标建立不晚于新测量且已有基线",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-15",
+    "topic": "目标显示",
+    "rule": "原始进度可<0或>100；进度条裁剪仅为UI",
+    "scope": "目标",
+    "forbidden": "不得当能力分",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "原始进度与裁剪显示值分开，不进入能力分；目标编辑UI未接入",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-16",
+    "topic": "世界田联积分",
+    "rule": "官方赛事积分独立COMPETITION_POINTS字段并记录版本",
+    "scope": "比赛",
+    "forbidden": "不直接映射SPD/AER/PWR/ECO分",
+    "implementationStatus": "BLOCKED",
+    "implementationScope": "比赛成绩已独立；缺少可执行官方积分表与版本，未实现世界田联积分计算",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-17",
+    "topic": "测试质量等级",
+    "rule": "A/B/C/D为产品数据可信度标签，不等于研究GRADE",
+    "scope": "数据",
+    "forbidden": "单次PB不自动A；同协议多次也未必A",
+    "implementationStatus": "BLOCKED",
+    "implementationScope": "尚无核准A/B/C/D质量标签准则，不由单次PB或条数自动评级",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-18",
+    "topic": "历史新鲜度",
+    "rule": "展示实测日期；有效期需逐指标核准",
+    "scope": "历史",
+    "forbidden": "不能统一超过28天作废",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "保留测量日期，不统一28天作废；逐指标有效期尚无批准规则",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-19",
+    "topic": "参考更新",
+    "rule": "新参考版本不覆盖旧历史；保留referenceId与hash",
+    "scope": "所有",
+    "forbidden": "旧新分数不直接相减",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "参考ID/版本/hash随评分和复盘保留；不覆盖旧记录；无自动参考更新服务",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-20",
+    "topic": "安全独立",
+    "rule": "症状与专业许可优先于能力图和恢复状态",
+    "scope": "所有",
+    "forbidden": "高分不能放行伤后最大速度",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "复用既有安全门控；候选HOLD；评分不提供医学许可",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-21",
+    "topic": "专项配置",
+    "rule": "400/800/1500核心/辅助只是研究优先级，不是权重",
+    "scope": "专项",
+    "forbidden": "不能凭“核心”给60%权重",
+    "implementationStatus": "BLOCKED",
+    "implementationScope": "400/800/1500优先级已阅读保留候选含义；未做专项自动优先级调度，不作为权重",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-22",
+    "topic": "低证据显示",
+    "rule": "显示原始数值、协议、日期、为何待评估和下次观察",
+    "scope": "UI",
+    "forbidden": "不得用0填满雷达多边形",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "五维原始指标卡；缺数据待评估；不画补零雷达；界面未实测",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-23",
+    "topic": "教练闭环",
+    "rule": "评分变化→P1假设→P2观察→P3修订→P4候选",
+    "scope": "P1-P4",
+    "forbidden": "不得低分自动加量",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "复用同一OfflineReview和追加日志，观察与单项假设关联；批准课程库适配尚待补齐",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-24",
+    "topic": "预测隔离",
+    "rule": "能力图不是P6赛绩预测模型",
+    "scope": "P6",
+    "forbidden": "无时间外验证不报精确PB",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "预测隔离与时间审计；无有效预测模型，秒值固定null",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-25",
+    "topic": "重复队列",
+    "rule": "同一研究系列/同一运动员重复成绩不可重复计独立人群",
+    "scope": "证据",
+    "forbidden": "不得凭记录条数虚增样本",
+    "implementationStatus": "BLOCKED",
+    "implementationScope": "个人对比拒绝同一测量来源重修订充新样本；研究队列去重服务尚未实现",
+    "verification": "NOT_RUN"
+  },
+  {
+    "id": "STD-26",
+    "topic": "版本冻结",
+    "rule": "标准号、指标字典、公式、来源、参考、界面版本独立",
+    "scope": "治理",
+    "forbidden": "没有变更记录不静默修改分数",
+    "implementationStatus": "IMPLEMENTED",
+    "implementationScope": "R173/R182适配/Development/OfflineReview版本分开；变更清单与哈希快照",
+    "verification": "NOT_RUN"
+  }
+]

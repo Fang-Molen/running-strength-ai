@@ -1,4 +1,6 @@
 import { energySentence } from "@/lib/nutrition/calc";
+import type { ReasoningBasis } from '@/lib/core/coach-reasoning';
+import { validDialogue, type CoachDialogue } from '@/lib/core/coach-dialogue';
 import { advise, bandOf, type FatigueBand, type RunGoal, type WeekNote } from "./agent";
 import {
   displayName,
@@ -15,9 +17,12 @@ export type ChatMessage = {
   id: string;
   role: "user" | "coach";
   text: string;
+  analysisBasis?: ReasoningBasis;
+  factDetails?: string;
 };
 
 export type CoachMemory = {
+  dialogue?: CoachDialogue;
   minutes: number;
   messages: ChatMessage[];
   fatigue: number;
@@ -30,7 +35,8 @@ const STORAGE_KEY = "fr255-coach-v2";
 const OLD_KEY = "fr255-coach-v1";
 
 export const GREETING =
-  "可以说这节练得怎样，也可以说成绩。掉速、轻松日很沉、节奏课跑废了，都按疲劳处理，不拿来改目标。力量课照旧记。";
+  "可以给我目标，也可以指定一节训练。我会核对计划、实际记录与反馈，比较可能解释；资料不足时先问关键问题，调整建议由你确认。";
+const LEGACY_GREETING="可以说这节练得怎样，也可以说成绩。掉速、轻松日很沉、节奏课跑废了，都按疲劳处理，不拿来改目标。力量课照旧记。";
 
 export const COACH_CHIPS = ["综合这次表现，下一课怎么安排？", "这次记录里，酸痛和疼痛分别是什么？", "最近三次同一训练有什么变化？", "这次掉速，现有记录能说明什么？", "推进做完，RPE 8，腿沉"];
 
@@ -63,8 +69,9 @@ export function loadCoach(): CoachMemory {
     if (!parsed || !Array.isArray(parsed.messages) || parsed.messages.length === 0) return freshMemory();
     const fatigue = typeof parsed.fatigue === "number" ? parsed.fatigue : 20;
     return {
+      ...(validDialogue(parsed.dialogue)?{dialogue:parsed.dialogue}:{}),
       minutes: parsed.minutes || 30,
-      messages: parsed.messages.slice(-40),
+      messages: parsed.messages.slice(-40).map(m=>m.id==='hi'&&m.role==='coach'&&m.text===LEGACY_GREETING?{...m,text:GREETING}:m),
       fatigue,
       band: parsed.band ?? bandOf(fatigue),
       goals: Array.isArray(parsed.goals) ? parsed.goals : [],

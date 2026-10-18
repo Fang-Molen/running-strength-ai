@@ -1,0 +1,289 @@
+{
+  "version": "FANGKUN-BRAIN-R4-P0-20261016",
+  "status": "LOCAL_AUTOMATED_REGRESSION_PASS",
+  "baseline": {
+    "archive": "/workspace/fangkun/delivery-ui-polish-20261016/fk-ui-polish-full-source.zip",
+    "sha256": "18e78a69d32f2f4de309148de75548551a2eb7f458a279acbed7e9dddeac79d4",
+    "attachmentSha256": "7ba3cd8f6c04f0360a8c0ef5f293f6bcac264e95cda7f681850d8fd5f74515c8"
+  },
+  "rules": {
+    "P0-01": {
+      "PASS": 3,
+      "FAIL": 0
+    },
+    "P0-02": {
+      "PASS": 2,
+      "FAIL": 0
+    },
+    "P0-03": {
+      "PASS": 8,
+      "FAIL": 0
+    },
+    "P0-04": {
+      "PASS": 2,
+      "FAIL": 0
+    }
+  },
+  "runs": [
+    {
+      "name": "16-typecheck-final",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "startUtc": "2026-10-16T09:19:31Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedSeconds": 106.84,
+      "reportedTotals": {
+        "tests": 0,
+        "pass": 0,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "16-typecheck-final.log"
+    },
+    {
+      "name": "17-build-final",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "startUtc": "2026-10-16T09:19:31Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedSeconds": 68.09,
+      "reportedTotals": {
+        "tests": 0,
+        "pass": 0,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "17-build-final.log"
+    },
+    {
+      "name": "14-extra-regression-final",
+      "command": [
+        "/tmp/fangkun-r189-node22/node-v22.22.0-linux-x64/bin/node",
+        "--import",
+        "./scripts/test-register.mjs",
+        "--test",
+        "--test-concurrency=2",
+        "src/lib/core/adaptive-plan-audit.test.ts",
+        "src/lib/core/adaptive-plan-permissions.test.ts",
+        "src/lib/core/ai-access-contract.test.mjs",
+        "src/lib/core/ai-feature-policy.test.mjs",
+        "src/lib/core/ai-task-router.test.mjs",
+        "src/lib/core/athlete-baseline.test.mjs",
+        "src/lib/core/athlete-evidence-readiness.test.ts",
+        "src/lib/core/athlete-longitudinal-evidence.test.ts",
+        "src/lib/core/athlete-seven-dimensions.test.mjs",
+        "src/lib/core/backup-inspection.test.ts",
+        "src/lib/core/browser-capabilities.test.ts",
+        "src/lib/core/coach-activity-watch.test.ts",
+        "src/lib/core/coach-adversarial.test.ts",
+        "src/lib/core/coach-conversation-context.test.ts",
+        "src/lib/core/coach-fieldwork-context.test.ts",
+        "src/lib/core/coach-four-directions.test.ts",
+        "src/lib/core/coach-learning-readiness.test.ts",
+        "src/lib/core/coach-network-policy.test.ts",
+        "src/lib/core/coach-p0-p1.test.ts",
+        "src/lib/core/coach-periodic-observations.test.ts",
+        "src/lib/core/coach-persona.test.ts",
+        "src/lib/core/coach-plan-governance.test.ts",
+        "src/lib/core/coach-preview-transaction.test.ts",
+        "src/lib/core/coach-question-reasoning.test.ts",
+        "src/lib/core/coach-r14-chat.test.ts",
+        "src/lib/core/coach-r184-preparation.test.ts",
+        "src/lib/core/coach-r185-integration.test.ts",
+        "src/lib/core/coach-record-context.test.ts",
+        "src/lib/core/coach-strength-plan-control.test.ts",
+        "src/lib/core/coach-strength-plan-storage.test.ts",
+        "src/lib/core/coach-training-mechanisms.test.ts",
+        "src/lib/core/device-evidence-backup.test.ts",
+        "src/lib/core/device-image-evidence.test.ts",
+        "src/lib/core/execution.test.ts",
+        "src/lib/core/local-ocr-policy.test.ts",
+        "src/lib/core/offline-training-evidence.test.mjs",
+        "src/lib/core/research-cognition-bridge.test.ts",
+        "src/lib/core/research-conflict-index.test.ts",
+        "src/lib/core/research-conflict-source-audit.test.ts",
+        "src/lib/core/research-context.test.ts",
+        "src/lib/core/research-coverage-audit.test.ts",
+        "src/lib/core/research-evidence-r4-r7.test.ts",
+        "src/lib/core/research-history-reconciliation.test.ts",
+        "src/lib/core/research-k11-blind.test.ts",
+        "src/lib/core/research-knowledge-registry.test.ts",
+        "src/lib/core/research-methodology.test.ts",
+        "src/lib/core/research-reasoning-audit-k10.test.ts",
+        "src/lib/core/research-reasoning-audit-k12-regression.test.ts",
+        "src/lib/core/research-reasoning-audit-k9.test.ts",
+        "src/lib/core/research-reasoning-audit.test.ts",
+        "src/lib/core/rest-clock.test.ts",
+        "src/lib/core/running-context-exam.test.mjs",
+        "src/lib/core/running-log-correction.test.ts",
+        "src/lib/core/running-occurrence-context.test.mjs",
+        "src/lib/core/running-reasoning-audit.test.mjs",
+        "src/lib/core/running-sequence-observation.test.mjs",
+        "src/lib/core/running-session-context.test.mjs",
+        "src/lib/core/running-structured-context.test.mjs",
+        "src/lib/core/running-timeline-reasoning.test.mjs",
+        "src/lib/core/training-import-delete.test.ts",
+        "src/lib/nutrition/catalog.test.ts",
+        "src/lib/nutrition/energy-source.test.ts",
+        "src/lib/preview-path-prefix.test.ts",
+        "src/lib/running-technique/catalogue.test.ts",
+        "src/lib/strength/coach-output-retry.test.ts",
+        "src/lib/strength/demo-fieldwork.test.ts",
+        "src/lib/ui/athlete-growth.test.ts",
+        "src/lib/ui/device-csv-preview.test.ts",
+        "src/lib/ui/device-guides.test.ts",
+        "src/lib/ui/device-import-contract.test.ts",
+        "src/lib/ui/fangkun-ui-20261016.test.ts",
+        "src/lib/ui/fieldwork.test.ts",
+        "src/lib/ui/goal-portfolio.test.ts",
+        "src/lib/ui/onboarding.test.ts"
+      ],
+      "startUtc": "2026-10-16T09:21:18Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedSeconds": 227.44,
+      "reportedTotals": {
+        "tests": 1003,
+        "pass": 1003,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "14-extra-regression-final.log"
+    },
+    {
+      "name": "15-p0-final-ipc",
+      "command": [
+        "/tmp/fangkun-r189-node22/node-v22.22.0-linux-x64/bin/node",
+        "--import",
+        "./scripts/test-register.mjs",
+        "src/lib/core/fk-r4-p0.test.ts"
+      ],
+      "startUtc": "2026-10-16T09:24:40Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedSeconds": 11.05,
+      "reportedTotals": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "15-p0-final-ipc.log"
+    },
+    {
+      "name": "19-npm-test-recheck",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "status": "PASS",
+      "reason": "Retest unchanged assertions after CSS-only test-loader adaptation",
+      "exitCode": 0,
+      "elapsedSeconds": 396.25,
+      "reportedTotals": {
+        "tests": 2294,
+        "pass": 2294,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "19-npm-test-recheck.log"
+    }
+  ],
+  "priorMainRegression": {
+    "name": "13-npm-test-final",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "startUtc": "2026-10-16T09:20:39Z",
+    "status": "FAIL",
+    "exitCode": 1,
+    "elapsedSeconds": 240.46,
+    "reportedTotals": {
+      "tests": 593,
+      "pass": 592,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "log": "13-npm-test-final.log"
+  },
+  "unchangedBaselineFiles": 1134,
+  "changedFiles": [
+    {
+      "path": "package.json",
+      "status": "MODIFIED",
+      "sha256Before": "e8de1b3f569ca90f8c45994429d6c86b2431b13e0a363e60f9ad65d2c3ab4d84",
+      "sha256After": "56955b66260a9f68d10f8a1af28dac8ad2a1bccffa7151c03f6296d5162c1c8b"
+    },
+    {
+      "path": "scripts/test-loader.mjs",
+      "status": "MODIFIED",
+      "sha256Before": "662604bfb21a6951ed5e3263341e2842ba0cb56dbcb5904da81a86a1f8b005fb",
+      "sha256After": "514f1e1729365e0e1925d3c0b80bb5fdb49d5f1798d8564788ec6eaff19fd2a6"
+    },
+    {
+      "path": "src/lib/core/brain-loop.ts",
+      "status": "MODIFIED",
+      "sha256Before": "1ec3bd1e69672a99f2d6d1680401c6632dbac76918463470cb3e821de9021313",
+      "sha256After": "c28913a36eb041730cd65f2ddec6b4e8489be12387a895330e72a67774c4398b"
+    },
+    {
+      "path": "src/lib/core/fk-r4-p0.test.ts",
+      "status": "ADDED",
+      "sha256Before": null,
+      "sha256After": "6d6f97acd3d7a25ef273eeee8be424f2e1063654121403a059d957dcde9caf1b"
+    },
+    {
+      "path": "src/lib/core/training-decision.test.ts",
+      "status": "MODIFIED",
+      "sha256Before": "e5de7d6877f3df5d5d5afd64c921cc189cb348126148ec7ee37fb8d9ca69d9a1",
+      "sha256After": "4998396ef210bcafb75cb927dc33468ae2203ba3ed2689970f2e1201a4b5028f"
+    },
+    {
+      "path": "src/lib/core/training-decision.ts",
+      "status": "MODIFIED",
+      "sha256Before": "37bb80118ee3bd7d239020e937cc9ea6e8b04c385389385349c42ad6f5325a34",
+      "sha256After": "74d1ff2031f9a9d57328331733a9e5040298bd4dfb6174346663551f3ce2dda7"
+    }
+  ],
+  "realAthleteDataUsed": false,
+  "uiOrAssetsModified": false,
+  "deployed": false,
+  "paidModelsCalled": false,
+  "notExecuted": [
+    "Grok独立测试",
+    "真实运动员数据/迁移验证",
+    "真机浏览器与UI复验",
+    "真实模型测试",
+    "研究资料96例的开放式问答评审"
+  ],
+  "scope": "仅R4四项P0；不代表完整教练升级或科学有效性验证",
+  "localRegressionTotals": {
+    "tests": 3297,
+    "pass": 3297,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  }
+}

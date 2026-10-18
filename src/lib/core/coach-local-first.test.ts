@@ -6,9 +6,41 @@ import { firstWeekMemory } from './coach-first-week.fixtures.ts'
 import { setStoreBackend } from './storage.ts'
 import { dispatchEvent } from './events.ts'
 import { bindTrainingStart } from './occurrence.ts'
+import { emptyDialogue } from './coach-dialogue.ts'
+import { saveWatch } from '../health/legacy-inputs.ts'
 const base = {question:'', occurrenceId:null, sources:[],sourceIds:[],sessionRpe:null,sleepHours:null,subjectiveRecovery:null,completedSetCount:null,plannedSetCount:null,pain:false,mustAsk:[], runningStructure:'UNAVAILABLE' as const,recoveryState:null,fatigueState:null,duplicateCount:0,repetitionSlots:0,continuousCount:0,durationSec:null,daysToCompetition:null,week:null,bias:null, constraints:{medicalReferral:false,increaseBlocked:false,blockReason:null}}
+test('configured health mode cannot replace load facts with a daily fatigue summary',()=>{
+ const store=firstWeekMemory();setStoreBackend(store);
+ try{
+  for(const mode of ['none','basic','pro'] as const){
+   assert.equal(saveWatch(mode),true);
+   for(const scope of ['RPE7','整课RPE7']){
+    const brief=assembleCoachBrief(null,`50分钟，${scope}，算下负荷，没有HRV数据`,null);
+    assert.equal(brief.appData?.mode.mode,mode);
+    const before=[...store.data.entries()];const a=answerLocally(brief,undefined,[],undefined,emptyDialogue());
+    assert.match(a.text,/350 AU/);assert.match(a.text,/整课/);assert.match(a.text,/未保存|不能当作已保存负荷/);
+    if(scope==='RPE7')assert.match(a.text,/若|如果|需确认|待确认/);
+    assert.doesNotMatch(a.text,/基于已保存记录的判断：/);assert.deepEqual([...store.data.entries()],before);
+   }
+  }
+ }finally{setStoreBackend(null)}
+})
+test('load routing keeps emergency and persistent medical safety ahead of arithmetic',()=>{
+ setStoreBackend(firstWeekMemory());
+ try{
+  assert.equal(saveWatch('none'),true);
+  const brief=assembleCoachBrief(null,'50分钟，整课RPE7，现在胸痛，算负荷，没有HRV数据',null);
+  assert.equal(brief.appData?.mode.mode,'none');
+  const first=answerLocally(brief,undefined,[],undefined,emptyDialogue());
+  assert.match(first.text,/120|急救/);assert.doesNotMatch(first.text,/350 AU/);
+  const follow=assembleCoachBrief(null,'50分钟，整课RPE7，算下负荷，没有HRV数据',null);
+  assert.equal(follow.appData?.mode.mode,'none');
+  const next=answerLocally(follow,undefined,[],undefined,first.dialogue);
+  assert.match(next.text,/120|急救/);assert.doesNotMatch(next.text,/350 AU/);
+ }finally{setStoreBackend(null)}
+})
 for (const [q, expected] of [['双阈值适合我吗','双阈值'],['热量缺口怎么计算','RED-S'],['铁蛋白低吃什么','铁缺乏'],['胸痛呼吸困难怎么办','急诊'],['今天训练怎么样','训练事实']]) {
- test(q,()=>{const r=answerLocally({...base,question:q} as Parameters<typeof answerLocally>[0]);assert.match(r.text,new RegExp(expected));assert.match(r.text,/没有修改计划或记录/);})
+ test(q,()=>{const r=answerLocally({...base,question:q} as Parameters<typeof answerLocally>[0]);assert.match(r.text,new RegExp(expected));if(!/胸痛/.test(q))assert.match(r.text,/没有修改计划或记录/);else {assert.match(r.text,/停止.*(?:120|急救)/);assert.equal(r.escalationAvailable,false);}})
 }
 test('no false evidence and pain safety',()=>{const r=answerLocally({...base,question:'训练',pain:true,sessionRpe:9} as Parameters<typeof answerLocally>[0]);assert.match(r.text,/RPE 9/);assert.match(r.text,/不建议.*加量/);assert.doesNotMatch(r.text,/睡眠 \d/);})
 

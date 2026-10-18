@@ -1,0 +1,39 @@
+{
+  "modified": [
+    "src/components/food-photo-review.tsx",
+    "src/components/home-dashboard.tsx",
+    "src/lib/nutrition/food-db.ts",
+    "src/lib/nutrition/log.ts",
+    "src/lib/nutrition/ui-records.ts"
+  ],
+  "added": [
+    "docs/3d-ux-v2-20261017/02-approved-characters.png",
+    "docs/3d-ux-v2-20261017/03-approved-ui-final.png",
+    "docs/3d-ux-v2-20261017/Codex交付说明.md",
+    "docs/3d-ux-v2-20261017/reference-manifest.json",
+    "docs/3d-ux-v2-20261017/screenshots/dev-five-nutrient-preview.png",
+    "docs/3d-ux-v2-20261017/screenshots/dev-nutrition-430.png",
+    "docs/3d-ux-v2-20261017/screenshots/dev-nutrition-820.png",
+    "docs/3d-ux-v2-20261017/screenshots/dev-nutrition-mobile.png",
+    "docs/3d-ux-v2-20261017/修改文件清单.json",
+    "docs/3d-ux-v2-20261017/实际结果.json",
+    "docs/3d-ux-v2-20261017/新版人物替换交接.md",
+    "docs/3d-ux-v2-20261017/替换验收矩阵.json",
+    "docs/3d-ux-v2-20261017/资产缺项与视觉标准.md",
+    "scripts/nutrition-v2-browser.mjs",
+    "src/components/food-entry-sheet.css",
+    "src/components/food-entry-sheet.tsx",
+    "src/lib/nutrition/entry-workflow.test.ts",
+    "src/lib/nutrition/entry-workflow.ts",
+    "src/lib/strength/media-v2/cache.ts",
+    "src/lib/strength/media-v2/pending-registry.json",
+    "src/lib/strength/media-v2/registry.test.ts",
+    "src/lib/strength/media-v2/registry.ts",
+    "tools/media-v2/audit_visual_routes.py",
+    "tools/media-v2/check_replacement.py",
+    "tools/media-v2/probe_glb.py",
+    "tools/media-v2/replacement-manifest.template.json",
+    "tools/media-v2/test_check_replacement.py"
+  ],
+  "deleted": []
+}

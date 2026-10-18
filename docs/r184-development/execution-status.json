@@ -1,0 +1,48 @@
+{
+  "phase1": {
+    "phase": "PHASE1_R173_ONLY",
+    "nodeVersion": "22.21.1",
+    "baselineArchive": "/workspace/fangkun/rollback/r173-before-r184-20261013.zip",
+    "baselineSha256": "35b0a67a5c7f5f48424cd8bb7fca84df2e16ec5068027b6b17cdcae9fda9bca8",
+    "syntheticTests": {
+      "command": "node --import ./scripts/test-register.mjs src/lib/core/coach-quantitative.test.ts",
+      "exitCode": 0,
+      "tests": 134,
+      "pass": 134,
+      "fail": 0,
+      "skipped": 0,
+      "log": "r173-direct.tap",
+      "logSha256": "2c6079082e48160f32d61333f588cc6d800b78ebda6169f2b9dc67fea50fc0d9"
+    },
+    "typecheck": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "exitCode": 0,
+      "diagnostics": 0,
+      "log": "typecheck-initial.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "testRunnerNote": "Initial --test invocation reported one file-level result; per-case acceptance counts are taken only from the direct node:test TAP log.",
+    "phase2RuntimeTestsAuthorized": false,
+    "realDataTestsExecuted": 0,
+    "externalModelCalls": 0,
+    "fullIntegrationTestsExecuted": 0,
+    "deployments": 0
+  },
+  "phase2": {
+    "implementation": "SOURCE_PREPARED",
+    "runtimeTests": "NOT_RUN",
+    "typecheck": "NOT_RUN_ON_PHASE2_CHANGES",
+    "build": "NOT_RUN",
+    "browserOffline": "NOT_RUN",
+    "fullIntegration": "NOT_RUN",
+    "realGarminTests": "NOT_RUN_NOT_AUTHORIZED",
+    "externalModels": "NOT_CALLED",
+    "deployment": "NOT_PERFORMED",
+    "preparedSyntheticCases": 26
+  },
+  "r173RuleCounts": {
+    "IMPLEMENTED": 92,
+    "BLOCKED": 5,
+    "NOT_APPLICABLE": 35
+  }
+}

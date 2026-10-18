@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "path": "public/fangkun-bodylab/model/avatar3d.mjs",
+      "bytes": 11093,
+      "sha256": "74415ef282c39758ea5357691cc91dad06a1e9260268e399a4ab50726207a1bf"
+    },
+    {
+      "path": "public/fangkun-bodylab/model/profile.mjs",
+      "bytes": 4028,
+      "sha256": "42331016abec6e091d2821a3d30c00c4616effc9cd770b09158ac0cdff1c53f1"
+    },
+    {
+      "path": "public/demo3d/models/human.glb",
+      "bytes": 6425196,
+      "sha256": "cbf479cf66cb281b96d83b41816b5894e4f9da9833c015821b95499c9440353c"
+    },
+    {
+      "path": "src/components/fangkun-ui/avatar.mjs",
+      "bytes": 5124,
+      "sha256": "88c59af7ad3d32e7c97671d8a15b6e04dcaab15807f3375a4a88a223095f1418"
+    },
+    {
+      "path": "src/components/fangkun-ui/bodylab-panel.tsx",
+      "bytes": 6817,
+      "sha256": "1cde4d6f71085116b3c7e79070de52298459cf3ea838112821446a4dd8882ad4"
+    }
+  ],
+  "unchangedCalculationFiles": [
+    "src/components/fangkun-ui/profile.mjs",
+    "public/fangkun-bodylab/model/profile.mjs"
+  ],
+  "bodylab": "参数化外观示意，非真实身体重建；不替换动作库原 GLB"
+}

@@ -1,0 +1,195 @@
+{
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "results": [
+    {
+      "id": "L01",
+      "turns": [
+        "我是中长跑选手",
+        "5000米PB是16分00秒",
+        "请预测3000米"
+      ],
+      "checks": [
+        {
+          "name": "type",
+          "pass": true
+        },
+        {
+          "name": "pb",
+          "pass": true
+        },
+        {
+          "name": "equivalent",
+          "pass": true
+        }
+      ],
+      "finalState": {
+        "version": 1,
+        "athleteType": "MIDDLE_LONG_DISTANCE",
+        "personalBests": [
+          {
+            "eventMeters": 5000,
+            "seconds": 960,
+            "age": "CURRENT_UNCONFIRMED"
+          }
+        ],
+        "recentTrainingStatus": "UNKNOWN",
+        "lastQuestion": "请预测3000米",
+        "observations": [
+          "用户明确报告5000米PB 16:00；未独立核验"
+        ]
+      },
+      "assessment": {
+        "intent": "PERFORMANCE_TRANSFER",
+        "safety": "NONE"
+      },
+      "historicalEquivalent": 559
+    },
+    {
+      "id": "L02",
+      "turns": [
+        "我两年前5000米PB是16分00秒",
+        "我停训半年",
+        "现在3000米能跑多少"
+      ],
+      "checks": [
+        {
+          "name": "pbAge",
+          "pass": true
+        },
+        {
+          "name": "interrupted",
+          "pass": true
+        },
+        {
+          "name": "equivalent",
+          "pass": true
+        }
+      ],
+      "finalState": {
+        "version": 1,
+        "athleteType": "UNKNOWN",
+        "personalBests": [
+          {
+            "eventMeters": 5000,
+            "seconds": 960,
+            "age": "HISTORICAL"
+          }
+        ],
+        "recentTrainingStatus": "INTERRUPTED",
+        "lastQuestion": "现在3000米能跑多少",
+        "observations": [
+          "用户明确报告5000米PB 16:00；未独立核验"
+        ]
+      },
+      "assessment": {
+        "intent": "PERFORMANCE_TRANSFER",
+        "safety": "NONE"
+      },
+      "historicalEquivalent": 559
+    },
+    {
+      "id": "L03",
+      "turns": [
+        "我今天5000米训练目标16分00秒",
+        "请预测3000米"
+      ],
+      "checks": [
+        {
+          "name": "pbCount",
+          "pass": true
+        },
+        {
+          "name": "equivalent",
+          "pass": true
+        }
+      ],
+      "finalState": {
+        "version": 1,
+        "athleteType": "UNKNOWN",
+        "personalBests": [],
+        "recentTrainingStatus": "UNKNOWN",
+        "lastQuestion": "请预测3000米",
+        "observations": []
+      },
+      "assessment": {
+        "intent": "PERFORMANCE_TRANSFER",
+        "safety": "NONE"
+      },
+      "historicalEquivalent": null
+    },
+    {
+      "id": "L04",
+      "turns": [
+        "5000米PB是16分00秒",
+        "运动中突然胸痛，我能继续跑吗"
+      ],
+      "checks": [
+        {
+          "name": "safety",
+          "pass": true
+        },
+        {
+          "name": "equivalent",
+          "pass": true
+        }
+      ],
+      "finalState": {
+        "version": 1,
+        "athleteType": "UNKNOWN",
+        "personalBests": [
+          {
+            "eventMeters": 5000,
+            "seconds": 960,
+            "age": "CURRENT_UNCONFIRMED"
+          }
+        ],
+        "recentTrainingStatus": "UNKNOWN",
+        "lastQuestion": "运动中突然胸痛，我能继续跑吗",
+        "observations": [
+          "用户明确报告5000米PB 16:00；未独立核验"
+        ]
+      },
+      "assessment": {
+        "intent": "SAFETY",
+        "safety": "EMERGENCY"
+      },
+      "historicalEquivalent": null
+    },
+    {
+      "id": "L05",
+      "turns": [
+        "我今天没有胸痛，也没有晕厥",
+        "我5000米PB是16分00秒"
+      ],
+      "checks": [
+        {
+          "name": "pb",
+          "pass": true
+        }
+      ],
+      "finalState": {
+        "version": 1,
+        "athleteType": "UNKNOWN",
+        "personalBests": [
+          {
+            "eventMeters": 5000,
+            "seconds": 960,
+            "age": "CURRENT_UNCONFIRMED"
+          }
+        ],
+        "recentTrainingStatus": "UNKNOWN",
+        "lastQuestion": "我5000米PB是16分00秒",
+        "observations": [
+          "用户明确报告5000米PB 16:00；未独立核验"
+        ]
+      },
+      "assessment": {
+        "intent": "UNKNOWN",
+        "safety": "NONE"
+      },
+      "historicalEquivalent": 559
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import { getTrainingOccurrence, listTrainingOccurrences } from "./occurrence.ts"
 import { readEnvelope, writeEnvelope } from "./storage.ts"
+import {captureCorrectionSources,auditSavedClaimsForCorrection} from './coach-p7-runtime.ts'
 
 export const TRAINING_CORRECTION_KEY = "fr255-training-correction-v1"
 
@@ -8,8 +9,6 @@ export type CorrectionKind = "FIELD" | "VOID" | "RESTORE"
 
 export type TrainingCorrection = {
   correctionId: string
-  /** Actual local submission time; absent in legacy rows. Never inferred from at. */
-  recordedAt?: string
   schemaVersion: 1
   trainingOccurrenceId: string
   kind: CorrectionKind
@@ -19,6 +18,8 @@ export type TrainingCorrection = {
   newValue: string
   reason: string
   at: string
+  /** Commit time (ported additively from K20). Never inferred from `at`; absent on legacy rows = unknown. */
+  recordedAt?: string
 }
 
 type CorrectionEvent = { event_id?: string; event_type: string; payload?: Record<string, unknown> }
@@ -61,7 +62,6 @@ export function appendCorrection(input: {
   if (input.kind === "FIELD" && !input.field) return null
   const row: TrainingCorrection = {
     correctionId: nextId(),
-    recordedAt: new Date().toISOString(),
     schemaVersion: 1,
     trainingOccurrenceId: input.trainingOccurrenceId,
     kind: input.kind,
@@ -71,8 +71,12 @@ export function appendCorrection(input: {
     newValue: input.newValue ?? "",
     reason,
     at: input.at ?? new Date().toISOString(),
+    recordedAt: new Date().toISOString(),
   }
+  let before:ReturnType<typeof captureCorrectionSources>|null=null
+  try{before=captureCorrectionSources(input.trainingOccurrenceId)}catch{/* Fact saving remains available; unverified links cannot withdraw claims. */}
   const saved = writeEnvelope(TRAINING_CORRECTION_KEY, [...loadAll(), row])
+  if(saved&&before)try{auditSavedClaimsForCorrection(row,before)}catch{/* No source or plan is rewritten if a review cannot be projected. */}
   return saved ? row : null
 }
 

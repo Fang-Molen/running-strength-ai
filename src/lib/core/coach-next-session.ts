@@ -1,3 +1,5 @@
+import { isConditionalAdvice } from './coach-claim-scope.ts'
+
 export type CoachNextSessionStatus =
   | "SELECT_TRAINING"
   | "RESOLVE_CONFLICT"
@@ -97,6 +99,7 @@ function withoutReferralOrRecordCheck(text: string): string {
 }
 
 export function nextSessionAdviceNeedsSource(view: CoachNextSessionView | undefined, rawText: string, citations: string[]): boolean {
+  if(isConditionalAdvice(rawText))return false // A candidate is not a claim that its preconditions are already met.
   const text = withoutReferralOrRecordCheck(rawText)
   if (!view || view.requiredSourceIds.length === 0 || !/(?:下一课|下一次训练|建议|保持原计划|减量|减少|恢复课|恢复训练|降低|少一组|停止)/.test(text)) return false
   return view.requiredSourceIds.some((id) => !citations.includes(id))

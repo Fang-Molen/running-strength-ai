@@ -1,0 +1,27 @@
+﻿case,name,result,evidence
+1,R184-PENDING: all 17 dictionary identities have explicit synthetic references,PASS,evidence/r184-final.tap
+2,"R184-PENDING: SPD01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+3,"R184-PENDING: SPD02 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+4,"R184-PENDING: SPD03 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+5,"R184-PENDING: SEN01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+6,"R184-PENDING: SEN02 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+7,"R184-PENDING: SEN03 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+8,"R184-PENDING: SEN04 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+9,"R184-PENDING: AER01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+10,"R184-PENDING: AER02 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+11,"R184-PENDING: AER03 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+12,"R184-PENDING: PWR01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+13,"R184-PENDING: PWR02 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+14,"R184-PENDING: PWR03 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+15,"R184-PENDING: ECO01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+16,"R184-PENDING: ECO02 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+17,"R184-PENDING: REC01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+18,"R184-PENDING: BEH01 arithmetic, source and no mutation",PASS,evidence/r184-final.tap
+19,"R184-PENDING: missing, future, other-athlete and plan facts cannot create a flying-speed measurement",PASS,evidence/r184-final.tap
+20,"R184-PENDING: no approved norm, no fabricated axis score; behavior and technique stay separate",PASS,evidence/r184-final.tap
+21,"R184-PENDING: approved scoring math has version, population and reliability gates",PASS,evidence/r184-final.tap
+22,R184-PENDING: observed changes need independent same-protocol measurements and fixed prior targets,PASS,evidence/r184-final.tap
+23,"R184-PENDING: partial split arithmetic appears in the local answer, unknown purpose is not inferred",PASS,evidence/r184-final.tap
+24,R184-PENDING: a missing source is not a refutation; an explicit source correction withdraws only its dependent hypothesis,PASS,evidence/r184-final.tap
+25,R184-PENDING: future or overlapping prediction evidence never generates a precise result,PASS,evidence/r184-final.tap
+26,"R184-PENDING: device activities preserve mixed distances, missing laps, raw rest positions and identities",PASS,evidence/r184-final.tap

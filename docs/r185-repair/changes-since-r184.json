@@ -1,0 +1,187 @@
+[
+  {
+    "path": "evaluation/r185/IndexedDB\u8fc1\u79fb\u65b9\u6848.md",
+    "change": "ADDED",
+    "sha256": "a0ff6b474303603f85246da0b13ee7c1dd97eadceed2b94a3f72b26699d25f27"
+  },
+  {
+    "path": "evaluation/r185/browser-acceptance.mjs",
+    "change": "ADDED",
+    "sha256": "4fd0596f63a569afe092772afdc031efac2c4eb78c399de142eaeea0eb8f4fd2"
+  },
+  {
+    "path": "evaluation/r185/browser-restart.mjs",
+    "change": "ADDED",
+    "sha256": "f5ce29920fb98adc568f988079bf215b0051c82cdaa31c1f35d51246a0d06768"
+  },
+  {
+    "path": "evaluation/r185/check-real-csv.py",
+    "change": "ADDED",
+    "sha256": "bf488c791399e265564a912acc8a25f5b0fe4669c89ab8a1edde1b4f703710b4"
+  },
+  {
+    "path": "evaluation/r185/replay-real-csv.ts",
+    "change": "ADDED",
+    "sha256": "b3c1834dfc8e30b5e8be05aea7515a654cff75db41acf8fcee2b35f1ee81bc5c"
+  },
+  {
+    "path": "evaluation/r185/reproduce-g1.ts",
+    "change": "ADDED",
+    "sha256": "12fe479887265da29e2ba45f9cadf81136110e7a440169c13b346193333237b0"
+  },
+  {
+    "path": "evaluation/r185/run-browser-checks.mjs",
+    "change": "ADDED",
+    "sha256": "6bf99d1cf7f9159dcbc8ec0e19ab750c7be0941ca6acbcc218545941de3c6115"
+  },
+  {
+    "path": "evaluation/r185/run-full-regression.py",
+    "change": "ADDED",
+    "sha256": "b684549908e73eaf9f3c9d7671bdbd4baea4aa369045547b55c4fe9091377ae8"
+  },
+  {
+    "path": "package.json",
+    "change": "MODIFIED",
+    "sha256": "d240276a391aa2aed693070fc0c04f70d90ef504f23343cac9b047271e53388e"
+  },
+  {
+    "path": "scripts/with-app-env.test.mjs",
+    "change": "MODIFIED",
+    "sha256": "cfd7dc1cfea3629a55cecece6f4d67eb82ae9fd4f25fa47d9eedc1ef7ca543ea"
+  },
+  {
+    "path": "src/components/coach-chat-training-panel.tsx",
+    "change": "MODIFIED",
+    "sha256": "af06241c8eb53b5bf3c01ed1e32986f3c086309ece5fae126259b747402008dd"
+  },
+  {
+    "path": "src/components/coach-saved-offline-review.tsx",
+    "change": "MODIFIED",
+    "sha256": "b96ee0d151c186af62374b747e96423de890e7b7f8ff90ec27e332565767aa7b"
+  },
+  {
+    "path": "src/components/coach-sheet.tsx",
+    "change": "MODIFIED",
+    "sha256": "0d92f1177a27468d0166b99c9e0c748ab14645ef678670e510a12fbfa33f2e4a"
+  },
+  {
+    "path": "src/components/device-center.tsx",
+    "change": "MODIFIED",
+    "sha256": "ef661310e85bddd7c8a00e29338496487612ccdd5672765e41e313efcd8880a9"
+  },
+  {
+    "path": "src/components/training-log-panel.tsx",
+    "change": "MODIFIED",
+    "sha256": "c23531f8bb4751ba1c2f0535b5d62d417adbc6707edb493c3fa16d3457de1af6"
+  },
+  {
+    "path": "src/lib/core/coach-chat-evidence.ts",
+    "change": "MODIFIED",
+    "sha256": "a02b22da09afc2fdc619b335bcdd24823502ca8e36d8cbc6f2a6c45b6d6f7daf"
+  },
+  {
+    "path": "src/lib/core/coach-curriculum.test.ts",
+    "change": "MODIFIED",
+    "sha256": "0212156d5f83458e8407d687fc063083a4e3507864631ad59455a02482bcdd7a"
+  },
+  {
+    "path": "src/lib/core/coach-development-projection.ts",
+    "change": "MODIFIED",
+    "sha256": "1798c629b24e5084dc574d40dad1c31b2090181e8641e34adcfa52dcbca50008"
+  },
+  {
+    "path": "src/lib/core/coach-dialogue.ts",
+    "change": "MODIFIED",
+    "sha256": "761c6b0cc6177621e56e8bb6c7f5ae4e2c1394e4e8857c45702c853e8deb129c"
+  },
+  {
+    "path": "src/lib/core/coach-import-evidence.ts",
+    "change": "MODIFIED",
+    "sha256": "814ad2381a74c20df445030fa19e41e58d39d2af307f01e3309c2eaebface55a"
+  },
+  {
+    "path": "src/lib/core/coach-local-first.ts",
+    "change": "MODIFIED",
+    "sha256": "2e97eeac380da2671edc1b2c40f97a3babbc680e25106dcaaa91e59d2c64e400"
+  },
+  {
+    "path": "src/lib/core/coach-offline-insights.ts",
+    "change": "MODIFIED",
+    "sha256": "1e7a0461a6d118c3706c0a2c39eb5697233eeef89a8f086997fda03bd11c0e1a"
+  },
+  {
+    "path": "src/lib/core/coach-offline-loop.test.ts",
+    "change": "MODIFIED",
+    "sha256": "2ce94686891911d700435f8aaebc85e2cf1e93ab8d648cdccb9579bfcf68a7db"
+  },
+  {
+    "path": "src/lib/core/coach-offline-loop.ts",
+    "change": "MODIFIED",
+    "sha256": "2f0030ef5f51031dba5d25a0481cc007c2fe192585a0055a7833e2f1e044119c"
+  },
+  {
+    "path": "src/lib/core/coach-offline-workspace.ts",
+    "change": "MODIFIED",
+    "sha256": "c4157ac2d79f6cc028b4b32ce56d7fcaf566cbca0e78106593c5e4bee905e560"
+  },
+  {
+    "path": "src/lib/core/coach-ordinary-discomfort.ts",
+    "change": "MODIFIED",
+    "sha256": "38a0e0770cd510812473c81de12acd645cbbe5bcf085ebb7473303bd6ab50486"
+  },
+  {
+    "path": "src/lib/core/coach-periodic-observations.test.ts",
+    "change": "ADDED",
+    "sha256": "ab99b5deb33fb51433e020ec825340d23f94ff8ec4a1ede7a433c55aa5ebec08"
+  },
+  {
+    "path": "src/lib/core/coach-periodic-observations.ts",
+    "change": "ADDED",
+    "sha256": "71b350c01a007ccb8423a86cc620655d61b58a6d203e41457fa6201c3fbf0409"
+  },
+  {
+    "path": "src/lib/core/coach-quantitative-adapter.ts",
+    "change": "ADDED",
+    "sha256": "47c36f23a9e2054211b8fba301ab35b4b80cb76a31fd8498fe24cc53d302cb13"
+  },
+  {
+    "path": "src/lib/core/coach-r14-chat.test.ts",
+    "change": "MODIFIED",
+    "sha256": "9cb23b768577e6a2e1f9045d25c2243c887bfc61a3559b0798b588d28a5c24e7"
+  },
+  {
+    "path": "src/lib/core/coach-r185-integration.test.ts",
+    "change": "ADDED",
+    "sha256": "af85b5e8c58b94d80a1d377d432f3abc9987f1a8e640b6c3b6d8eae39904ab4d"
+  },
+  {
+    "path": "src/lib/core/coach-r185-p0.test.ts",
+    "change": "ADDED",
+    "sha256": "aac863f60b2b0563f24f6504bb5773d8bfec895fd715a36ffba0bf757bfa27cb"
+  },
+  {
+    "path": "src/lib/core/coach-red-flags.ts",
+    "change": "MODIFIED",
+    "sha256": "a0fd4ae0c2a157c60025d1bdf6c872e38798dceb1dcfb365f1ca0d1f05ff1a80"
+  },
+  {
+    "path": "src/lib/core/coach-session-load.ts",
+    "change": "MODIFIED",
+    "sha256": "c1ecab10929e4815362d4eb73873d7786b428b451c7f7a61efaae9a05640fee2"
+  },
+  {
+    "path": "src/lib/core/coach-structured-candidate.test.ts",
+    "change": "MODIFIED",
+    "sha256": "62738d1fc057ff7b02ab627aa631e98a3c05c9b0a5495b40b2d5e008ccc16746"
+  },
+  {
+    "path": "src/lib/core/coach-structured-candidate.ts",
+    "change": "MODIFIED",
+    "sha256": "a5972a31f5a1a650fabee2a48475e7cc3bb3ad3972f617681264ae8d04c1ac36"
+  },
+  {
+    "path": "src/lib/core/training-import.ts",
+    "change": "MODIFIED",
+    "sha256": "b787c1df9234b446507087a7e249b92f0e429d168af17619b029efd4a6c415d6"
+  }
+]

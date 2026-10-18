@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {ACTIONS,queryActions,sectionCounts,categoryPatterns} from './action-picker';
+import {CATALOG} from './catalog';
+import {FOOT_LIBRARY} from '../body/foot-library';
+test('every existing catalog id preserved exactly once',()=>{assert.equal(ACTIONS.filter(e=>e.catalogId).length,CATALOG.length);for(const e of CATALOG)assert.equal(ACTIONS.filter(a=>a.catalogId===e.id).length,1);assert.equal(new Set(ACTIONS.map(e=>e.key)).size,ACTIONS.length)});
+test('Chinese and case insensitive English search use exact catalog ids',()=>{assert.ok(queryActions(ACTIONS,'杠铃深蹲').some(e=>e.catalogId==='back-squat'));assert.ok(queryActions(ACTIONS,'SQUAT').some(e=>e.catalogId==='back-squat'));assert.deepEqual(queryActions(ACTIONS,'unavailable-unknown-action'),[])});
+test('category and pattern filters intersect; counts conserve all entries',()=>{assert.equal(sectionCounts(ACTIONS).reduce((n,e)=>n+e.count,0),ACTIONS.length);for(const p of categoryPatterns(ACTIONS,'腿'))assert.ok(queryActions(ACTIONS,'','腿',p).every(e=>e.section==='腿'&&e.pattern===p))});
+test('foot records preserve original source and unit without prescribing dose',()=>{for(const e of FOOT_LIBRARY){const a=ACTIONS.find(a=>a.key===`foot:${e.id}`)!;assert.equal(a.unit,e.dose.unit==='秒'?'sec':'reps');assert.equal(a.catalogId,null);assert.equal('sets' in a,false)}});
+test('unknown extras never acquire catalog aliases or inferred quantities',()=>{for(const e of ACTIONS.filter(a=>a.key.startsWith('extra:'))){assert.equal(e.catalogId,null);assert.equal(e.unit,undefined)}});
+test('filtering does not mutate catalog, source or training state',()=>{const before=JSON.stringify(ACTIONS);queryActions(ACTIONS,'蹲','腿');sectionCounts(ACTIONS);categoryPatterns(ACTIONS,'核心');assert.equal(JSON.stringify(ACTIONS),before)});

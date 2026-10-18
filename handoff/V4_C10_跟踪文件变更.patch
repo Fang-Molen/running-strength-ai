@@ -1,0 +1,51 @@
+diff --git a/src/lib/core/coach-brief.ts b/src/lib/core/coach-brief.ts
+index aabaf66..e0531f7 100644
+--- a/src/lib/core/coach-brief.ts
++++ b/src/lib/core/coach-brief.ts
+@@ -1,3 +1,4 @@
++import { preserveReferral } from "./coach-referral-safety.ts"
+ import { evidenceAvailability } from "./evidence-availability.ts"
+ import { projectOccurrenceEvidence, type EvidenceGroup, type EvidenceRecord } from "./evidence.ts"
+ import { loadEvents } from "./events.ts"
+@@ -338,7 +339,7 @@ function recoveryConflictFailure(brief: CoachBrief, mode: CoachTurn["mode"], tex
+   return reject("冲突的恢复记录没有被同时追问，无法采用。")
+ }
+ 
+-export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
++function guardCoachResponseCore(brief: CoachBrief, raw: string): CoachTurn {
+   let parsed: CoachModelJson | null = null
+   try {
+     const match = raw.match(/\{[\s\S]*\}/)
+@@ -431,6 +432,11 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
+   return { mode, text, nextStep, citations, medicalReferral: brief.constraints.medicalReferral, planChanged: false }
+ }
+ 
++/** Preserve source-backed safety referral in answer, ask, and unavailable modes. */
++export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
++  return preserveReferral(guardCoachResponseCore(brief, raw), brief.constraints.medicalReferral)
++}
++
+ export function guardSubcode(turn: CoachTurn): string | null {
+   if (turn.mode !== "unavailable") return null
+   if (turn.text.includes("必须先追问尚未记录的恢复或睡眠")) return "HIGH_RPE_RECOVERY_REQUIRED"
+diff --git a/src/lib/strength/coach-pipeline.ts b/src/lib/strength/coach-pipeline.ts
+index 7dac012..3b5e5e2 100644
+--- a/src/lib/strength/coach-pipeline.ts
++++ b/src/lib/strength/coach-pipeline.ts
+@@ -7,6 +7,7 @@
+  * production configuration.
+  */
+ import { buildCurriculumModelContext, CURRICULUM_SYSTEM_BOUNDARY } from "@/lib/core/coach-curriculum";
++import { V4_C10_SYSTEM_BOUNDARY } from "@/lib/core/coach-evolution-v4-c10";
+ import { assertCoachPacket, deriveCoachBrief, guardCoachResponse, guardSubcode, highRpeRecoveryRequired, recoveryConflictApplies, sorenessBoundaryRequired, type CoachBrief, type CoachTurn } from "@/lib/core/coach-brief";
+ import { guardComparison, orientPair, pairedRunningObservations, readCompareIds } from "@/lib/core/coach-compare";
+ import { compactCoachSeriesPacket, guardSeriesResponse, projectCoachSeries, readSeriesIds, type CoachSeries } from "@/lib/core/coach-series";
+@@ -159,7 +160,7 @@ export function buildCoachModelRequest(data: AskCoachData): CoachModelRequest {
+   const basePacket = seriesPacket ?? (data.compare ? { history: data.history, newer: data.compare.left, older: data.compare.right, pairedRunning: pairedRunningObservations(data.compare.left, data.compare.right) } : compactSingleCoachPacket(data.brief, data.history, data.candidates));
+   const knowledgeContext = buildCurriculumModelContext(data.brief.question);
+   const packet = JSON.stringify({ ...basePacket, knowledgeContext });
+-  const system = coachSystemPrompt(kind, intent, recoveryConflict, highRpeGap, sorenessOnly) + CURRICULUM_SYSTEM_BOUNDARY
++  const system = coachSystemPrompt(kind, intent, recoveryConflict, highRpeGap, sorenessOnly) + CURRICULUM_SYSTEM_BOUNDARY + V4_C10_SYSTEM_BOUNDARY
+   return { kind, intent, maxTokens, packet, system, messages: [{ role: "system", content: system }, { role: "user", content: packet }], knowledgeContext }
+ }
+ 

@@ -84,7 +84,7 @@ export function toggleSeriesId(current: string[], id: string, limit = 6): string
 }
 
 function citesEveryPoint(series: CoachSeries, citations: string[]): boolean {
-  return series.points.every((point) => point.brief.sourceIds.some((id) => citations.includes(id) && !id.startsWith("context:")))
+  return series.points.every((point) => point.brief.sourceIds.some((id) => citations.includes(id) && !id.startsWith("context:") && !point.brief.sources?.some(s=>s.id===id&&s.kind==='CONTEXT')))
 }
 
 function unsupportedSeriesConclusion(text: string, hasObservation: boolean): boolean {

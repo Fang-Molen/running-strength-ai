@@ -1,0 +1,3787 @@
+{
+  "schema_version": 1,
+  "fingerprint_sha256": "64e917a2753d5857639f86e6aa23e9289680e18978c316a7ce7136ea19421e8a",
+  "files": [
+    {
+      "file": ".grok/app-env.json",
+      "bytes": 57,
+      "sha256": "c1975dc80b7b2c3b5232c63ceff2678005d98bef19fdc25718b6818e3aa9b99a",
+      "crc32": "6a671efe"
+    },
+    {
+      "file": "migrations/auth/0001_auth.sql",
+      "bytes": 2739,
+      "sha256": "f953cacc448c0c81ae4fe63e66b0e59569e840782ad279fdee201dff529363e9",
+      "crc32": "2dea2ddd"
+    },
+    {
+      "file": "package-lock.json",
+      "bytes": 584836,
+      "sha256": "2b214402a7ce11d4460c0a4d110be4bb0aff6d2bb011f3f68fe9505d23364893",
+      "crc32": "99b03e41"
+    },
+    {
+      "file": "package.json",
+      "bytes": 10918,
+      "sha256": "5c0fe6373e91ce08cc2a1b19007b3ffc260421d73f7f50481af6138b1072a621",
+      "crc32": "b08da351"
+    },
+    {
+      "file": "public/__grok/icon-180.png",
+      "bytes": 2100,
+      "sha256": "3cf5d17d294b51c6cca6c86070309b88554b7ad702b0412e8e2709a01990bc8a",
+      "crc32": "12ba7fa2"
+    },
+    {
+      "file": "public/__grok/icon-192.png",
+      "bytes": 3678,
+      "sha256": "d7276da12841765181c560e8f580abb7f7421702ce01f953cae5a3331614cd82",
+      "crc32": "002cda51"
+    },
+    {
+      "file": "public/__grok/icon-512.png",
+      "bytes": 12012,
+      "sha256": "91cb42555ec325cca9f66f3ac59b65065a55772926aaa38087efdd1031f7755f",
+      "crc32": "e665c31a"
+    },
+    {
+      "file": "public/__grok/install/assets/homescreen/glass-puzzle.svg",
+      "bytes": 1811,
+      "sha256": "a677c9356c23d1e699559ddbffac97cd135c2782cd893fb34f3738f6d11bee17",
+      "crc32": "b99b3bba"
+    },
+    {
+      "file": "public/__grok/install/assets/homescreen/glass-share.svg",
+      "bytes": 2388,
+      "sha256": "efad1b4b507a68c1f1af4aad2c93e8c24076224aa593da86677697f543d026d6",
+      "crc32": "ce2e933a"
+    },
+    {
+      "file": "public/__grok/install/assets/homescreen/logo-grok.svg",
+      "bytes": 1059,
+      "sha256": "0654e3e59cce69856f38525cbfe4ab3a9ef52d4b64c8532dd0bc1a3f34fcb5b1",
+      "crc32": "c3a177ad"
+    },
+    {
+      "file": "public/__grok/install/assets/homescreen/ob-ipad.png",
+      "bytes": 101843,
+      "sha256": "4c9b09a4660c662b394597d551a04124293b0e37a7a7c72271dd2948c4499a14",
+      "crc32": "9ec28b33"
+    },
+    {
+      "file": "public/__grok/install/assets/homescreen/ob-phone.png",
+      "bytes": 103612,
+      "sha256": "80e0a5ede614d9b920c67d7cb79c80a79134687b1fc9f560384e896a88e302db",
+      "crc32": "2577d486"
+    },
+    {
+      "file": "public/__grok/install/assets/homescreen/plus.svg",
+      "bytes": 2401,
+      "sha256": "c2c94be46aa2c3c2fda95d7c6f2fc6d0b656d1f5847828d5d95b5a81a6f4f20d",
+      "crc32": "41345f29"
+    },
+    {
+      "file": "public/__grok/install/styles.css",
+      "bytes": 6717,
+      "sha256": "7e8e881302f58e54a9c07e7be395692d3de20fdaa27ce358531cc8dcca472cb6",
+      "crc32": "f133cc7f"
+    },
+    {
+      "file": "public/demo3d/FORM-AUDIT.md",
+      "bytes": 23935,
+      "sha256": "1cd0ef31c72b75cafa4d9311c619de8deecba1f6c311aa0762dda7042b977f41",
+      "crc32": "eec3acb2"
+    },
+    {
+      "file": "public/demo3d/LICENSES.md",
+      "bytes": 2378,
+      "sha256": "df935e0433112d4ffbd3e8ee3cfa1a572fe32b4d621f8db139d34fb4df032f18",
+      "crc32": "7ab563a9"
+    },
+    {
+      "file": "public/demo3d/data.js",
+      "bytes": 131599,
+      "sha256": "c81a633d6172adc274606abcac21bc5ec79e67bd36688fd1327504cd2f096896",
+      "crc32": "119d5efa"
+    },
+    {
+      "file": "public/demo3d/icon.svg",
+      "bytes": 282,
+      "sha256": "230668a9ccee17f5f5fae6a25a337ea9d4b0c3716c5cb1d2e6d58349c8362243",
+      "crc32": "604ef912"
+    },
+    {
+      "file": "public/demo3d/models/human.glb",
+      "bytes": 6425196,
+      "sha256": "cbf479cf66cb281b96d83b41816b5894e4f9da9833c015821b95499c9440353c",
+      "crc32": "32023995"
+    },
+    {
+      "file": "public/demo3d/models/regions.png",
+      "bytes": 115321,
+      "sha256": "8865d5811229a775c78f1e4d9688b6fde95048f110780f8c9ef89e43ce37e661",
+      "crc32": "042ac136"
+    },
+    {
+      "file": "public/demo3d/motions.js",
+      "bytes": 40343,
+      "sha256": "adf1be4369953ed288debfc4d099de93ad8891721ef110ffc467f682f68c3251",
+      "crc32": "962c3840"
+    },
+    {
+      "file": "public/demo3d/musclemap.js",
+      "bytes": 3292,
+      "sha256": "1697ef5b30eda21b1ab03f905046bece5d381e516c2eb9204ccba876a9fad2db",
+      "crc32": "53a9fd31"
+    },
+    {
+      "file": "public/demo3d/muscles.js",
+      "bytes": 2090,
+      "sha256": "0a376021b9ba9dc29a3d334312b10633313ada822fcc7e3771c1ef797cdb9d88",
+      "crc32": "c81e16f0"
+    },
+    {
+      "file": "public/demo3d/muscles.json",
+      "bytes": 1890,
+      "sha256": "bce5d5133f052f68a97e2e87f3814af515e1cc090eae99883c6b724204335c78",
+      "crc32": "10904d77"
+    },
+    {
+      "file": "public/demo3d/renderer.js",
+      "bytes": 9145,
+      "sha256": "c74aef3d0ed91b025f5236aac54f276a7ed0467fd13a92ca87792fe78393a896",
+      "crc32": "67f01218"
+    },
+    {
+      "file": "public/demo3d/style.css",
+      "bytes": 5235,
+      "sha256": "1de99056581f506fdf3965aa296342525edb58fe55526747c7cf320d16b93f07",
+      "crc32": "0affd9fb"
+    },
+    {
+      "file": "public/demo3d/vendor/THREE-LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454",
+      "crc32": "717ba3a6"
+    },
+    {
+      "file": "public/demo3d/vendor/jsm/controls/OrbitControls.js",
+      "bytes": 32163,
+      "sha256": "da82486bfcbf9adf398c425713a9a68e4527fa9cd208aa5da25f4acbfa3bbde9",
+      "crc32": "4905b0ca"
+    },
+    {
+      "file": "public/demo3d/vendor/jsm/loaders/GLTFLoader.js",
+      "bytes": 110058,
+      "sha256": "152ea334ebb5f50aafe152eb13dfd5563f400f4b98e0377d383922be3321d683",
+      "crc32": "a145f6dc"
+    },
+    {
+      "file": "public/demo3d/vendor/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 31797,
+      "sha256": "135194c6d96b61b5d4f0322084b140f972a05461a6ab114c392fdcd1260136d7",
+      "crc32": "2466325b"
+    },
+    {
+      "file": "public/demo3d/vendor/jsm/utils/SkeletonUtils.js",
+      "bytes": 8831,
+      "sha256": "e5acb0513a5a35ff079e5f08f8a4d6836c3e757b02a15e980743e5b704ff6565",
+      "crc32": "9b0da25d"
+    },
+    {
+      "file": "public/demo3d/vendor/three.module.min.js",
+      "bytes": 687458,
+      "sha256": "f7cee3c7533449a1505cc12cb5128b89e3d4fd3d7ea62b05f9f5464a217472ee",
+      "crc32": "596e86d5"
+    },
+    {
+      "file": "public/demo3d/viewer3d.js",
+      "bytes": 33835,
+      "sha256": "8a0fa94a2c2f1b00fccba11bed293fade4c2cba00dc44a46c4a4fb30ccb10e49",
+      "crc32": "73536e3d"
+    },
+    {
+      "file": "public/fangshen/care-bust.png",
+      "bytes": 275353,
+      "sha256": "608da3fe02f0d208d50a08770243a522c1c11df0ebabbcdc71e7e5d76b01c7bb",
+      "crc32": "18702f5a"
+    },
+    {
+      "file": "public/fangshen/celebrate-bust.png",
+      "bytes": 275453,
+      "sha256": "d28fc8ba51697ea93a337dc979cd852144e2d5b27e6110c1d2759204a9025990",
+      "crc32": "ea922c49"
+    },
+    {
+      "file": "public/fangshen/curious-bust.png",
+      "bytes": 275618,
+      "sha256": "f136e8a8d184b957dac8a2a474fdb571c92f093e8fc3ebc09a66a46ccb194ace",
+      "crc32": "2fbdfe82"
+    },
+    {
+      "file": "public/fangshen/encourage-bust.png",
+      "bytes": 275510,
+      "sha256": "af5519ca7e54f798b315cef1cf19c21ce001327aa7f3b570e2b894c9733b7b2b",
+      "crc32": "0b7944db"
+    },
+    {
+      "file": "public/fangshen/focus-bust.png",
+      "bytes": 207517,
+      "sha256": "67ec5652cd865d3a1929bbc42671b7388d178d5375a367419979edeb9e3e1eee",
+      "crc32": "c43384fc"
+    },
+    {
+      "file": "public/fangshen/guard-bust.png",
+      "bytes": 202115,
+      "sha256": "7d5ca1f3901b8289c29528cdfc393065e11b6bb05a215d84b3d2361daf316012",
+      "crc32": "c21fea1b"
+    },
+    {
+      "file": "public/fangshen/happy-bust.png",
+      "bytes": 397674,
+      "sha256": "7e7ec2147fa6af47abbbff91e4071dfe114a9115fcd0e70769f9cc082ec05583",
+      "crc32": "7af2a9e7"
+    },
+    {
+      "file": "public/fangshen/happy.png",
+      "bytes": 703477,
+      "sha256": "661444768dc71a81953d15d76d970228c2e0c6ff163d8c287db41984129e91a4",
+      "crc32": "a94306bc"
+    },
+    {
+      "file": "public/fangshen/thinking-bust.png",
+      "bytes": 270104,
+      "sha256": "d1b4eaff8a8a1390d0381129ebe359bfd2772f3b276adfd341a4333792dd8ce7",
+      "crc32": "0a1ac357"
+    },
+    {
+      "file": "public/favicon.svg",
+      "bytes": 325,
+      "sha256": "d5167ec627e67bf2520b27ab082fa162f56eaa1afb3a996e88f4181c112fbfda",
+      "crc32": "0fb4675d"
+    },
+    {
+      "file": "public/manifest.webmanifest",
+      "bytes": 474,
+      "sha256": "88c842888053a9fd46aea1e9130837730bc8fd1bec3225a456b9a6dd748c3033",
+      "crc32": "1e70fa52"
+    },
+    {
+      "file": "public/sw.js",
+      "bytes": 3440,
+      "sha256": "973447674f96500a87c425912dbf1cec0c6b0b44d1c5213fab75a1b54fd625ed",
+      "crc32": "f3af598f"
+    },
+    {
+      "file": "scripts/app-env-plugin.mjs",
+      "bytes": 1278,
+      "sha256": "92962d2361a98413c0cef80b31266d49b063cf4ecf6421bb99f57f6eef4ed7b6",
+      "crc32": "844d8b5e"
+    },
+    {
+      "file": "scripts/brand-check.mjs",
+      "bytes": 9609,
+      "sha256": "318f33ce7b29b55c386cc8847084068777880f795a5082043229bb06686be035",
+      "crc32": "aae37dfb"
+    },
+    {
+      "file": "scripts/brand-check.test.mjs",
+      "bytes": 15115,
+      "sha256": "d564dfde7ccbd3ffdc819c1e30b00e2eb39bea5b6212909de4f7cd208eeb1cc7",
+      "crc32": "b2bc4de5"
+    },
+    {
+      "file": "scripts/browser-guard.mjs",
+      "bytes": 1724,
+      "sha256": "c6fb865defe5a37bd94e3805b00311d4e8267daf92812e39f62b1213d947265e",
+      "crc32": "38e75730"
+    },
+    {
+      "file": "scripts/browser-proxy-trust.mjs",
+      "bytes": 987,
+      "sha256": "89dffaaad840e21ca223cd1765589fdaf622e4d5bb811974ebfe60f9e214efe4",
+      "crc32": "1a37448c"
+    },
+    {
+      "file": "scripts/browser-smoke-verdict.mjs",
+      "bytes": 4663,
+      "sha256": "5699614f7fa62515e25ba9cca6397db2770cf6feb9b973f3c19f2915874c53de",
+      "crc32": "a635e2f3"
+    },
+    {
+      "file": "scripts/browser-smoke-verdict.test.mjs",
+      "bytes": 15643,
+      "sha256": "48b3924b41d606f94a9b8faae47ff350b84978fdd5ab3f6ca01640ed4c7087d7",
+      "crc32": "87985d5b"
+    },
+    {
+      "file": "scripts/browser-smoke.mjs",
+      "bytes": 6864,
+      "sha256": "0163ec4f6a13ce6d5d260a5ff837e8e4ebe34ad139ff9531f5b5962c7b982a17",
+      "crc32": "9af3987d"
+    },
+    {
+      "file": "scripts/candidate-http-smoke.mjs",
+      "bytes": 2711,
+      "sha256": "479c91236e1d744993526b47305acb33af414e42a2d5961ab2383bceeec17527",
+      "crc32": "d4072ac4"
+    },
+    {
+      "file": "scripts/check-auth-invariant.mjs",
+      "bytes": 4203,
+      "sha256": "d712203c4bc92c197c342e5c91660fc5a141a31171f22f35c505a0bff45f98ee",
+      "crc32": "aa652cc4"
+    },
+    {
+      "file": "scripts/check-auth-invariant.test.mjs",
+      "bytes": 4218,
+      "sha256": "75a58f44dffb2fc77eb47473638646f607dba26a68a6900156031c7b6227cf3c",
+      "crc32": "cc227d0e"
+    },
+    {
+      "file": "scripts/cognition-failure-probe.ts",
+      "bytes": 1678,
+      "sha256": "731d26a0eaa9db6fb1e92f87b8f8226f2ba5f45f28943679d9908dc2ed54d9fa",
+      "crc32": "9b863fc7"
+    },
+    {
+      "file": "scripts/cognition-research-workflow.ts",
+      "bytes": 807,
+      "sha256": "bade26641d98caca92d88f01920c5d54503c27f2cce6f55e471efbb34bf2c0ab",
+      "crc32": "ba7e43cb"
+    },
+    {
+      "file": "scripts/cognition-scenario-replay.ts",
+      "bytes": 2335,
+      "sha256": "ca08cf3e1cb69274a5d7e51b4ae42d76f6dfee4c250696d775db09a42268b56d",
+      "crc32": "6ad656c5"
+    },
+    {
+      "file": "scripts/curriculum-replay.mjs",
+      "bytes": 1435,
+      "sha256": "13d66b9e24a8a2ef6b224fdf39b95523a76d89721c5048026f9351c5e83931d8",
+      "crc32": "1357b388"
+    },
+    {
+      "file": "scripts/first-week-scenario-replay.ts",
+      "bytes": 5986,
+      "sha256": "375fc02ade3950bd4e73da490f3786b5b30420b38e859baf7028abfffc91ca56",
+      "crc32": "71b6e5f0"
+    },
+    {
+      "file": "scripts/grok-pwa-plugin.mjs",
+      "bytes": 6615,
+      "sha256": "36331d0bc0664debb5068bd6869d3089dc41555b7770c9ccb577d8845958835c",
+      "crc32": "9472983a"
+    },
+    {
+      "file": "scripts/grok-pwa-plugin.test.mjs",
+      "bytes": 22527,
+      "sha256": "01ef1e294141c84933c1e019633edd1f24a856900e370b7774db5829830ba7bf",
+      "crc32": "6cb3c683"
+    },
+    {
+      "file": "scripts/grok-pwa-shared.d.mts",
+      "bytes": 3206,
+      "sha256": "f4db33fcf35ef3f25fca05d1b42494b6f607c44a4d728ed3e989e65a3a1ea9d0",
+      "crc32": "66dd1769"
+    },
+    {
+      "file": "scripts/grok-pwa-shared.mjs",
+      "bytes": 18408,
+      "sha256": "17e06a4f4da4dca177082a1e9d5a1d4ee8ef159766273f8b9cb6825a5ca4b4d6",
+      "crc32": "9c190ecc"
+    },
+    {
+      "file": "scripts/install-page.html",
+      "bytes": 5658,
+      "sha256": "5f8fe91f837db8d74d68db5e057948918bd9299e097700e0bd18f1cf5f94e586",
+      "crc32": "d06bf87e"
+    },
+    {
+      "file": "scripts/knowledge/import-r167-r168.py",
+      "bytes": 2462,
+      "sha256": "057e59d00da8558c68af73afc1d5be64c0235878dbfc75c2bddb680db33f4bbb",
+      "crc32": "54ffa8c7"
+    },
+    {
+      "file": "scripts/migrate.mjs",
+      "bytes": 3181,
+      "sha256": "e1a31c8046a099df37b4bcbcafa4f4f7d7d18b1f1f0dc6d79676d41c4be976be",
+      "crc32": "269d50dc"
+    },
+    {
+      "file": "scripts/migration-plan.mjs",
+      "bytes": 1525,
+      "sha256": "9305d8cfe8cdad73671065d675c89d0f20075d18c756f9aba5043b72e7c19a0d",
+      "crc32": "b81fd811"
+    },
+    {
+      "file": "scripts/migration-plan.test.mjs",
+      "bytes": 3558,
+      "sha256": "9787b5f5f1a7057db94f0a5a8c89abf6ec569fd22d26f99be1c248a2a9f0c082",
+      "crc32": "e7125b20"
+    },
+    {
+      "file": "scripts/preview-thumbnail.mjs",
+      "bytes": 1762,
+      "sha256": "fd7263a1dd76f788c2b51e9381e1f1de1a58993fd94e01040285556cd38c0c40",
+      "crc32": "9d855af2"
+    },
+    {
+      "file": "scripts/preview-zombie.test.mjs",
+      "bytes": 487,
+      "sha256": "5fe5103146d0de0cb00fdec831e9189ffcd4b57b7107d97a6886f222c6ab2607",
+      "crc32": "4bb1cdf9"
+    },
+    {
+      "file": "scripts/preview.mjs",
+      "bytes": 11380,
+      "sha256": "4e97a669a7a2d0539a004b94abd64742ada96ed0ad9bd7b89e81dea8c88a4c13",
+      "crc32": "2269becb"
+    },
+    {
+      "file": "scripts/preview.test.mjs",
+      "bytes": 9207,
+      "sha256": "0105fe41d056ecc22c586a191a9cbd7d0e838b7c878d6993c8c9573c7ea708b1",
+      "crc32": "5d546009"
+    },
+    {
+      "file": "scripts/runtime-network-fallback.cjs",
+      "bytes": 344,
+      "sha256": "1ac268b061b1a01291b2936d9fd7675f9de727f89604a4c13b0b175f1ec0a918",
+      "crc32": "c75350fc"
+    },
+    {
+      "file": "scripts/sign-out-plan.mjs",
+      "bytes": 5971,
+      "sha256": "32ae072de23b5138bf849c344caf72ab2dab6cb4617ab9915db4e4f5b9c7e2f0",
+      "crc32": "ef41a00f"
+    },
+    {
+      "file": "scripts/sign-out-plan.test.mjs",
+      "bytes": 8659,
+      "sha256": "1942e32f4b6a9d8b62733338b0f0e1a7d84ed278b4e6c4f24fa7616a3abc694e",
+      "crc32": "9630ec06"
+    },
+    {
+      "file": "scripts/sw-archive-safety.test.mjs",
+      "bytes": 1110,
+      "sha256": "0c6881e2f721c2a1742c64324c739e2489c9c4fbbe4de0a4feb6ca880f476864",
+      "crc32": "7c20fa08"
+    },
+    {
+      "file": "scripts/sw-cache-integrity.test.mjs",
+      "bytes": 785,
+      "sha256": "15577fd61eff60d7209a6824ccd2bcc33764efdb0764ac27d727f1fa36756f22",
+      "crc32": "85ec6cd4"
+    },
+    {
+      "file": "scripts/sw-migration.test.mjs",
+      "bytes": 5128,
+      "sha256": "8f979c47f6bc8aacfc431df6ac2d435d485ae533815c96846cd4f142ac2dcb04",
+      "crc32": "72329711"
+    },
+    {
+      "file": "scripts/test-loader.mjs",
+      "bytes": 1576,
+      "sha256": "662604bfb21a6951ed5e3263341e2842ba0cb56dbcb5904da81a86a1f8b005fb",
+      "crc32": "33f6f841"
+    },
+    {
+      "file": "scripts/test-register.mjs",
+      "bytes": 86,
+      "sha256": "adeed442cacaf050ee73380058971077f22b675df58fb29a5fe2a5986c8db3b3",
+      "crc32": "a95d5f0c"
+    },
+    {
+      "file": "scripts/with-app-env.mjs",
+      "bytes": 4601,
+      "sha256": "a846b68bd3645299c23eef965d9ef226df3a500d345d7576c23f7a2b2ff643c7",
+      "crc32": "b477a4e5"
+    },
+    {
+      "file": "scripts/with-app-env.test.mjs",
+      "bytes": 4493,
+      "sha256": "cfd7dc1cfea3629a55cecece6f4d67eb82ae9fd4f25fa47d9eedc1ef7ca543ea",
+      "crc32": "0acb7b44"
+    },
+    {
+      "file": "scripts/write-atomic.mjs",
+      "bytes": 3607,
+      "sha256": "650b62e8aa38697e1b931049025afe3aac829e6761a8aadf428712faef8b1544",
+      "crc32": "fd3d97ba"
+    },
+    {
+      "file": "scripts/write-atomic.test.mjs",
+      "bytes": 7377,
+      "sha256": "b55263372830cf416dedf86b79e9ea6c660ea1d13ba538e898f3a0e23f107015",
+      "crc32": "ee38e86d"
+    },
+    {
+      "file": "server/middleware/grok-pwa.ts",
+      "bytes": 3606,
+      "sha256": "340f1fed44355a61fefdaf29a752c524ac029afb00bea3f40cc996cdb289d2f8",
+      "crc32": "4610086d"
+    },
+    {
+      "file": "server/virtual-grok-og-identity.d.ts",
+      "bytes": 262,
+      "sha256": "74847f2b2bade154ac07dabb239c4718a745c095df530e78b8f1ef9f053edfa2",
+      "crc32": "221e02f7"
+    },
+    {
+      "file": "src/components/athlete-growth-card.tsx",
+      "bytes": 1917,
+      "sha256": "9a898c48d2ba7d5a0cfcd9e647a3ca3dedd99ec931a897fe7f4fab956e1aeef8",
+      "crc32": "346c8243"
+    },
+    {
+      "file": "src/components/athlete-start-card.tsx",
+      "bytes": 1873,
+      "sha256": "660f4fc62c25aa8583d160371fe7f7f11cf5f4246a80aff1ebbe2ceab6e19e4b",
+      "crc32": "e50a394b"
+    },
+    {
+      "file": "src/components/body-center.tsx",
+      "bytes": 13567,
+      "sha256": "fd1c936ca3f0d069a9bd10a6df0fc877ec48f7a9d4fac8117d4572505771ef12",
+      "crc32": "5b278cb4"
+    },
+    {
+      "file": "src/components/body-panel.tsx",
+      "bytes": 8982,
+      "sha256": "826eaaa1bb70bd093fd8e6824a465f69b5f5174a0416e80bf1bba3c4d753f35f",
+      "crc32": "942327d8"
+    },
+    {
+      "file": "src/components/coach-ability-panel.tsx",
+      "bytes": 4790,
+      "sha256": "573abf63f9d54b7c1fea652a995d72e41c62de0278953900b4af5b41ccfef66d",
+      "crc32": "051e771c"
+    },
+    {
+      "file": "src/components/coach-answer-feedback.tsx",
+      "bytes": 2257,
+      "sha256": "584b7f0095453069515b0b708503b8b80419a9e8516f9eedf3e6fc2bf093b78a",
+      "crc32": "4f66546d"
+    },
+    {
+      "file": "src/components/coach-chat-load-panel.tsx",
+      "bytes": 3295,
+      "sha256": "cb2cfef069b04cb7b159302b25ec030e3044dac847307421aa2903746e88828c",
+      "crc32": "83a7f8b1"
+    },
+    {
+      "file": "src/components/coach-chat-training-panel.tsx",
+      "bytes": 3242,
+      "sha256": "af06241c8eb53b5bf3c01ed1e32986f3c086309ece5fae126259b747402008dd",
+      "crc32": "262cd45f"
+    },
+    {
+      "file": "src/components/coach-cognition-panel.tsx",
+      "bytes": 12596,
+      "sha256": "14bb61d1a72419b2805069829ecc813475b82a432a95a979729cf294cfc8b342",
+      "crc32": "a1af03fd"
+    },
+    {
+      "file": "src/components/coach-coordination-hub.tsx",
+      "bytes": 3722,
+      "sha256": "77d1ae51a83f183f5b8575444bf81a1b301265d2d7212263dd457aed64a98224",
+      "crc32": "493196d9"
+    },
+    {
+      "file": "src/components/coach-first-week-panel.tsx",
+      "bytes": 25247,
+      "sha256": "0c03ff3e4823249f20422e8caaf928622acb653ed80aa7c77578c238b9ed8f45",
+      "crc32": "4c0ac5ec"
+    },
+    {
+      "file": "src/components/coach-hybrid-review.tsx",
+      "bytes": 1181,
+      "sha256": "89af106f4ec1002680ebcad8b8de248b2d9586defecd5a3b38645e2fdd22cb73",
+      "crc32": "996dbd10"
+    },
+    {
+      "file": "src/components/coach-integration-panel.tsx",
+      "bytes": 8971,
+      "sha256": "58aa4871972fc1cf4bc0381d622fed024002f5c10c80cea0ae61cff6a776841e",
+      "crc32": "d72e200c"
+    },
+    {
+      "file": "src/components/coach-knowledge-panel.tsx",
+      "bytes": 1370,
+      "sha256": "73cbd6ca44041d2cccb19c6fe447f908eb7fa78b9fe21c2f103f37c7777903fb",
+      "crc32": "57970952"
+    },
+    {
+      "file": "src/components/coach-load-metrics-panel.tsx",
+      "bytes": 4141,
+      "sha256": "0cc2570d1a239d9abda2c41651e6e9249731463d6cfe78f6523f32e991ce1bd7",
+      "crc32": "08c31911"
+    },
+    {
+      "file": "src/components/coach-offline-loop-panel.tsx",
+      "bytes": 14545,
+      "sha256": "cf66f5cb9063d91d30a78c9c88e240e8eec1e7027feec126264b29ba429bd582",
+      "crc32": "4aa9b802"
+    },
+    {
+      "file": "src/components/coach-panels.tsx",
+      "bytes": 10191,
+      "sha256": "a4e4ac3d09d304479e38ad44b1558c47cc071a152817e9f0e7bf56077fb78d9c",
+      "crc32": "c5cd6844"
+    },
+    {
+      "file": "src/components/coach-plan-session-details.tsx",
+      "bytes": 1683,
+      "sha256": "71aed412f0dfbafd67bbf5cb5b0c1ccda22779a15069c14aee8d3a68dc089c81",
+      "crc32": "75804ceb"
+    },
+    {
+      "file": "src/components/coach-plan-sheet.tsx",
+      "bytes": 22693,
+      "sha256": "35cf899685beb9887f0f1a65346c7ce8538ebc439ba70994324a2101ff228227",
+      "crc32": "2a84858a"
+    },
+    {
+      "file": "src/components/coach-saved-offline-review.tsx",
+      "bytes": 1396,
+      "sha256": "b96ee0d151c186af62374b747e96423de890e7b7f8ff90ec27e332565767aa7b",
+      "crc32": "04787d85"
+    },
+    {
+      "file": "src/components/coach-sheet.tsx",
+      "bytes": 57839,
+      "sha256": "5b338da07b052a222f980b6368252d9358f8db2ba406ccb4419e47bbc69771ba",
+      "crc32": "635d8bac"
+    },
+    {
+      "file": "src/components/coach-strength-edit-panel.tsx",
+      "bytes": 5761,
+      "sha256": "3d675f790fd042d172af5b1399240e27ae68492ea70642125e33dcea8ea5b44c",
+      "crc32": "8b0a31ba"
+    },
+    {
+      "file": "src/components/day-card.tsx",
+      "bytes": 7105,
+      "sha256": "a57d7b639064763f27cdf812a4312f19211cbf7b375e0ef9895da23fc7685460",
+      "crc32": "89234c18"
+    },
+    {
+      "file": "src/components/device-center.tsx",
+      "bytes": 5939,
+      "sha256": "ef661310e85bddd7c8a00e29338496487612ccdd5672765e41e313efcd8880a9",
+      "crc32": "db421237"
+    },
+    {
+      "file": "src/components/device-evidence-import.tsx",
+      "bytes": 19167,
+      "sha256": "720d730bf5caadd80d218dfe12d6bc0710ed8a58b75cea9b92d94ddaae778e39",
+      "crc32": "f51eceb7"
+    },
+    {
+      "file": "src/components/exercise-content.tsx",
+      "bytes": 1478,
+      "sha256": "7cf6c38ccd00ad7bfa9a36e1a7f1d5d7c0c432bf7cd288d983b48c5f2018eb0c",
+      "crc32": "30c1b0dd"
+    },
+    {
+      "file": "src/components/exercise-demo.css",
+      "bytes": 6055,
+      "sha256": "bf1cd5bb6b24427bf1155f245c265e3006fe7c9dce093114f9d7e1c8d9458cf2",
+      "crc32": "7080a674"
+    },
+    {
+      "file": "src/components/exercise-demo.tsx",
+      "bytes": 6666,
+      "sha256": "e0071da45c2e7dfe6a06f1ab2366df0fb2b1b88861a52af53d7ce79c0f227f6b",
+      "crc32": "12fd1b82"
+    },
+    {
+      "file": "src/components/exercise-library.tsx",
+      "bytes": 3391,
+      "sha256": "59320cfaa8a50631553f6132d89c8c1b2e967e04b8e7d706e5a496a567205b9a",
+      "crc32": "52f7f390"
+    },
+    {
+      "file": "src/components/fang-shen.tsx",
+      "bytes": 1158,
+      "sha256": "d6875d3c2d766259b5893f40a3c420e88e12f5dcfb7effed08ab7fd911b3d1ee",
+      "crc32": "f37f7e86"
+    },
+    {
+      "file": "src/components/form-figure.tsx",
+      "bytes": 7483,
+      "sha256": "7efcbba29bc0ba395fa8447860233bae86602fdac2f42bc239f24df18440d5e8",
+      "crc32": "5f5c3981"
+    },
+    {
+      "file": "src/components/fuel-panel.tsx",
+      "bytes": 13959,
+      "sha256": "fb6d5cbe96572032c6f319ee102e993e9fbf9400243c12519c936be8c7d10586",
+      "crc32": "c34b0828"
+    },
+    {
+      "file": "src/components/goal-home.tsx",
+      "bytes": 4039,
+      "sha256": "e6f76435d321e06d69a1d96c545b8aee5afbd4f13354a5a521a3f5ad475f4e59",
+      "crc32": "fb9cc738"
+    },
+    {
+      "file": "src/components/learning-library.tsx",
+      "bytes": 4399,
+      "sha256": "c1550436b94041b4073658777143ad558e74ece47f9ddf7c401f89265cc3760b",
+      "crc32": "aaddb7d4"
+    },
+    {
+      "file": "src/components/preview-host-bridge.tsx",
+      "bytes": 668,
+      "sha256": "e4277e80ce127e7305057fb280d03d0703c5c7115b17d2e2aecf000e4867555e",
+      "crc32": "17f11e5b"
+    },
+    {
+      "file": "src/components/profile-sheet.tsx",
+      "bytes": 14736,
+      "sha256": "1dd57301e7a2e5dc79845c070eee7d777227083b95ea9c8879e1d50222284a1a",
+      "crc32": "553a8f39"
+    },
+    {
+      "file": "src/components/running-round-readout.tsx",
+      "bytes": 4443,
+      "sha256": "d04cafb8d655c13cd4883fa0be5ada1fc3bd273a58a2446438cda3faaffe2a43",
+      "crc32": "935d6b40"
+    },
+    {
+      "file": "src/components/segment-rpe-editor.tsx",
+      "bytes": 916,
+      "sha256": "d93653cc3aa0aa6612a946eb6f97af2f5d1b0b5213e9b56c009498e6110425e6",
+      "crc32": "64c33c4e"
+    },
+    {
+      "file": "src/components/session-builder.tsx",
+      "bytes": 7315,
+      "sha256": "d7e94591a3bc889ab99c3af6fb254be8257412fa009accc533cb99e362f83e6d",
+      "crc32": "bae1def7"
+    },
+    {
+      "file": "src/components/session-overview.tsx",
+      "bytes": 2341,
+      "sha256": "7f4edaf7cd6a0596add2afb66e07ed2771c398caa1d7ee22286eb85461a15bcb",
+      "crc32": "8988f36b"
+    },
+    {
+      "file": "src/components/storage-durability.tsx",
+      "bytes": 3003,
+      "sha256": "0de99e82ac551e9f5e6d52cfd9c225d3663d87f0b346386ded8b4b3295a2b3d4",
+      "crc32": "4f45a3ec"
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "bytes": 79885,
+      "sha256": "ef522ec8197e6c3915e44c977e0bdcd6fd19a168d0d189666ca1812bb3fa598c",
+      "crc32": "2ed0e25f"
+    },
+    {
+      "file": "src/components/track-session.tsx",
+      "bytes": 44521,
+      "sha256": "f715c6c16a3059399dd6e994db14d9a46e0dd11fafc77af45460e99a416aad45",
+      "crc32": "3e58757b"
+    },
+    {
+      "file": "src/components/training-decision-card.tsx",
+      "bytes": 13424,
+      "sha256": "b7240601918decfd4690c1afb6235831b2d4af72be57f27e3a85861555cd3571",
+      "crc32": "e5f23194"
+    },
+    {
+      "file": "src/components/training-followup-panel.tsx",
+      "bytes": 7017,
+      "sha256": "300238266eec4a378ad68b4a37232b3657a7305371856ca6e88fa39a1aba0531",
+      "crc32": "82f8e03d"
+    },
+    {
+      "file": "src/components/training-import-sheet.tsx",
+      "bytes": 39287,
+      "sha256": "ecf24a431118637b9961229082c85d1f7370d276e99dbbf1989d90ec475b67df",
+      "crc32": "9aefd482"
+    },
+    {
+      "file": "src/components/training-log-panel.tsx",
+      "bytes": 40351,
+      "sha256": "c23531f8bb4751ba1c2f0535b5d62d417adbc6707edb493c3fa16d3457de1af6",
+      "crc32": "9d435b19"
+    },
+    {
+      "file": "src/components/training-runner.tsx",
+      "bytes": 27519,
+      "sha256": "e0b161b35d59e8f93c8b198c142e4e97f7ef0c590feb786d2a1510eeff7e65ca",
+      "crc32": "6fd10326"
+    },
+    {
+      "file": "src/components/ui.tsx",
+      "bytes": 1113,
+      "sha256": "1abce3a3990a79d628648605cbf6846deead9a831f471d772decc9d2d9c2135c",
+      "crc32": "d955a799"
+    },
+    {
+      "file": "src/components/vitals-panel.tsx",
+      "bytes": 10898,
+      "sha256": "d5e656763c3bf5f835ec86a046d175f9e720d119aa9494cce4ad135680802132",
+      "crc32": "547e1643"
+    },
+    {
+      "file": "src/lib/app-data/app-data.test.ts",
+      "bytes": 15944,
+      "sha256": "ec0c40fdaafb4e3d551086de9f9b4a745da7c252f7fbbc5c51a8b1b0a541391e",
+      "crc32": "71e0ae08"
+    },
+    {
+      "file": "src/lib/app-data/client.server.ts",
+      "bytes": 11867,
+      "sha256": "ab544af8b5b96e16248fdcf7ce634c132ccd3659c33cf0daa22f6e74ef5a5da0",
+      "crc32": "e0f2c230"
+    },
+    {
+      "file": "src/lib/app-data/errors.ts",
+      "bytes": 1994,
+      "sha256": "8e0dd8d761b2a5a1cafcb7523e2063151f0b6677837b19c3f6d494af148f3889",
+      "crc32": "f26aede2"
+    },
+    {
+      "file": "src/lib/app-data/index.ts",
+      "bytes": 598,
+      "sha256": "72cf57dc1a863f9693d34c11772ba4bae790cc17d9efb1e8619b8a2e6247a7fa",
+      "crc32": "0576b491"
+    },
+    {
+      "file": "src/lib/app-data/login.ts",
+      "bytes": 856,
+      "sha256": "fbc723841bb67148dd9de12ed614ba6c095d799a533309857cc4d202d6be5ad9",
+      "crc32": "8e2306fc"
+    },
+    {
+      "file": "src/lib/app-data/readiness-schedule.test.ts",
+      "bytes": 1146,
+      "sha256": "97c87401c474b9f87f2e21152fb377744f353736848f0044466ba2e260b06745",
+      "crc32": "e3de978f"
+    },
+    {
+      "file": "src/lib/app-data/readiness-schedule.ts",
+      "bytes": 506,
+      "sha256": "3ea7f192220446b08747f3ef76c7d2fe150356470621f2220738b23e7976f683",
+      "crc32": "b7e62059"
+    },
+    {
+      "file": "src/lib/app-data/readiness.ts",
+      "bytes": 366,
+      "sha256": "377786c1cf739eb9dc7c8b2bdcd09991686a700375a67a0c6e73b4334d394da1",
+      "crc32": "cdb97256"
+    },
+    {
+      "file": "src/lib/app-data/server-only.ts",
+      "bytes": 476,
+      "sha256": "82821474088face6b9fcadad49793629e5f07a16386402b816262a1c070a3210",
+      "crc32": "29983462"
+    },
+    {
+      "file": "src/lib/app-data/types.ts",
+      "bytes": 1361,
+      "sha256": "65f3c7566db12661ee9d3633eaae66a85505e00f57a61c258fa72bd22881489f",
+      "crc32": "95b667d1"
+    },
+    {
+      "file": "src/lib/app-data/use-connector-readiness.ts",
+      "bytes": 3892,
+      "sha256": "57e6d2b3709be83ac2eed9c42eaa822a067fb5aa44a6098c982892c43f3a4f2f",
+      "crc32": "4d91331b"
+    },
+    {
+      "file": "src/lib/auth/client.ts",
+      "bytes": 9714,
+      "sha256": "4bca649afb627b11231a7b31acfcffe9323efddebc05944b2d769d2b8589294f",
+      "crc32": "d98cb08b"
+    },
+    {
+      "file": "src/lib/auth/email-password.ts",
+      "bytes": 442,
+      "sha256": "9b1da7c786e48adfa9a6f7c485bcf5817cf2075a601d8726a965f11171910354",
+      "crc32": "babd20cd"
+    },
+    {
+      "file": "src/lib/auth/gate-identity.server.ts",
+      "bytes": 5706,
+      "sha256": "96546b8b6910a01163c36c34a0d417d803bec222b93304be764d810838764159",
+      "crc32": "3e947d94"
+    },
+    {
+      "file": "src/lib/auth/gate-identity.test.ts",
+      "bytes": 14346,
+      "sha256": "21202fb2b56ffd10cb9b5bb7d9f305be88cce3902b858f73cea914df05ce2652",
+      "crc32": "f614c366"
+    },
+    {
+      "file": "src/lib/auth/gate-session-marker.ts",
+      "bytes": 879,
+      "sha256": "3dbf8cb789b0288f9d5c53b1515a3e87d265fcb22e11fe28dc3289c4bd7c06eb",
+      "crc32": "dc11bc59"
+    },
+    {
+      "file": "src/lib/auth/gate-session.server.ts",
+      "bytes": 11980,
+      "sha256": "68aa500523ca2f0ad5c7ba34372c10aa1851a9774f8567c6b7781af5dd6cf204",
+      "crc32": "92813029"
+    },
+    {
+      "file": "src/lib/auth/gates.tsx",
+      "bytes": 4924,
+      "sha256": "39950c211bd4ad4f7129082bf5a43a42ff23975e681b99fd7cfbce372f83a5be",
+      "crc32": "81ff0562"
+    },
+    {
+      "file": "src/lib/auth/isolation.server.ts",
+      "bytes": 2386,
+      "sha256": "a4adf6a5d548e70a0be52d7efdc7433126028908072b47bf9f92135d9ee558a0",
+      "crc32": "b650b5a7"
+    },
+    {
+      "file": "src/lib/auth/middleware.ts",
+      "bytes": 2462,
+      "sha256": "8dc37c4e9bd583f175402330d0952ef4d584c7410723cc2649c4046d5084bd80",
+      "crc32": "f65f7ac9"
+    },
+    {
+      "file": "src/lib/auth/pglite-dialect.ts",
+      "bytes": 4088,
+      "sha256": "bd66925574245cd47cdd98b5c068dd7b4ee4a51c9439e8421dc54c62fe7c4f50",
+      "crc32": "168cde2d"
+    },
+    {
+      "file": "src/lib/auth/popup.server.ts",
+      "bytes": 6133,
+      "sha256": "81f8833d9ab639f76b86f4bb23fed42a04cec4b0c6d90b7a67425a9232c9bb4a",
+      "crc32": "5f7daac0"
+    },
+    {
+      "file": "src/lib/auth/preview.ts",
+      "bytes": 1367,
+      "sha256": "f48f935bfb87be76fa392777ad0a1d51ac2813ceed1fcd53e3f0fe5721b689c8",
+      "crc32": "7d28b158"
+    },
+    {
+      "file": "src/lib/auth/provider.tsx",
+      "bytes": 593,
+      "sha256": "4cbbc7f8cc1765788ad65455a33f64dcdafc6fe4ed1d13f90ccfa0ba4c13d1f3",
+      "crc32": "0621e495"
+    },
+    {
+      "file": "src/lib/auth/providers.ts",
+      "bytes": 1486,
+      "sha256": "4acefac17931529bdeab053588a917b06e44abdb67a275a2ca1c7841080c6a78",
+      "crc32": "1fe88d91"
+    },
+    {
+      "file": "src/lib/auth/server.ts",
+      "bytes": 12511,
+      "sha256": "c73b0f274ddaacb3a9eb1ba52e0e8a1dad77583e29171835c229165070a7fe96",
+      "crc32": "ebfb63b8"
+    },
+    {
+      "file": "src/lib/auth/sign-in-gate.test.ts",
+      "bytes": 854,
+      "sha256": "2c352588cb6a8f58faf3aecc1d1f418ae827ddbb6a5eca8e56668ec72cd328d2",
+      "crc32": "583880f5"
+    },
+    {
+      "file": "src/lib/auth/sign-in-gate.ts",
+      "bytes": 332,
+      "sha256": "d2c65c20ab50ae41657ceecd61ded005fac29315deace9fc4d966cf56300754c",
+      "crc32": "48cbbc7b"
+    },
+    {
+      "file": "src/lib/auth/use-current-user.ts",
+      "bytes": 3315,
+      "sha256": "a0cc4bd74b6da5b346b6bafc1aec58b9bf5cc0278264379b737b79a5cff1e482",
+      "crc32": "7cc843ff"
+    },
+    {
+      "file": "src/lib/auth/verify.server.ts",
+      "bytes": 3874,
+      "sha256": "42a7d5c1b17027ba004d6524a7f7bb4827b908d75ee3c3aefc940fa9c891c2ee",
+      "crc32": "68e5c3be"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/diagnosis-wording.jsonl",
+      "bytes": 15190,
+      "sha256": "af6458d18d9e1aa5e3a93268fdf21821abdbebddffa61e3fa916db4abdd90c2c",
+      "crc32": "19fb4a14"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/playbook-retrieval.jsonl",
+      "bytes": 54721,
+      "sha256": "7656f17a93039e60bfc463de02dfafbecd913b29b34a55e6ae71a6d7d4eea05c",
+      "crc32": "d45caaf2"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/r173-quantitative.json",
+      "bytes": 259250,
+      "sha256": "d836fa3da57123d9e068d7c4153c24099400400ee1039d7c6967cfe13a07c4cf",
+      "crc32": "fb944884"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/cardiovascular.jsonl",
+      "bytes": 11071,
+      "sha256": "600049cdbbef91b8f81e70ef1e2c42d7b73f2a73b9f3f758e49a6b7f2797e71c",
+      "crc32": "c420cf3b"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/energy.jsonl",
+      "bytes": 10654,
+      "sha256": "e5193e1c496088f137bc16cf3d114a250e887f367c952a5c499c5e6f1521a6fc",
+      "crc32": "9412462d"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/heat.jsonl",
+      "bytes": 10435,
+      "sha256": "d512901ccbce86c724c3b61f641cdd22a7c5f4ee22e8217b11ebb654ed68cac4",
+      "crc32": "94065c14"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/neurological.jsonl",
+      "bytes": 10981,
+      "sha256": "7239a98825170be03009014f007e61289e59ef1a584183ea6b0eed6dcd8b254a",
+      "crc32": "cfa672ec"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/post_illness.jsonl",
+      "bytes": 11374,
+      "sha256": "f94d0b745797ea50e7e22b4a5789bb795b0d444918798736776997a8a49c550f",
+      "crc32": "5c4153ca"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/respiratory.jsonl",
+      "bytes": 10525,
+      "sha256": "83f420023cbe1706c00680bd09019b3024532a58fbae8cc552e9e57690d9e6da",
+      "crc32": "46dd810b"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/syncope.jsonl",
+      "bytes": 10141,
+      "sha256": "e3a1c76d5883871d7afc3ad3d1d5191988baaeb09a0d3e2b01a6189f54b75299",
+      "crc32": "dbe2e4d6"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/youth.jsonl",
+      "bytes": 10186,
+      "sha256": "df58f31545fd864b7bc887874f7d2aba9c20f831bc6d405d50786f075f9fc458",
+      "crc32": "d8f961ee"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/red-flags/youth_energy.jsonl",
+      "bytes": 10984,
+      "sha256": "693e6bd43c929a78d6dbb6c645644be3716e2f1e686155c6c39c9cc4f0a6c106",
+      "crc32": "49f0cb42"
+    },
+    {
+      "file": "src/lib/core/__fixtures__/session-load.jsonl",
+      "bytes": 5528,
+      "sha256": "981b614156b292eb7978ea085e0ec49f79bfac2396018b5b6cf06f9a2e297762",
+      "crc32": "1930536c"
+    },
+    {
+      "file": "src/lib/core/adaptive-plan-audit.test.ts",
+      "bytes": 2519,
+      "sha256": "02886265683298317143f0e7b1bd9c7b6226cfafa0c6563cb0d0a8eab2085aac",
+      "crc32": "38b3e0d6"
+    },
+    {
+      "file": "src/lib/core/adaptive-plan-audit.ts",
+      "bytes": 2844,
+      "sha256": "283558012641b62ece9aeb883b52671b1432aafed4a69fef2fd2e16a90038221",
+      "crc32": "75081e29"
+    },
+    {
+      "file": "src/lib/core/adaptive-plan-permissions.test.ts",
+      "bytes": 2003,
+      "sha256": "45a9db1add5687e0466cfc10878ae85d2e9d67ca8957a5cc4e929f920a490374",
+      "crc32": "d8d6cdd2"
+    },
+    {
+      "file": "src/lib/core/adaptive-plan-permissions.ts",
+      "bytes": 2785,
+      "sha256": "5225deed1f3005167be025416911771e7f022b94a8ea105a04e89ba933bacb0e",
+      "crc32": "3e916ffa"
+    },
+    {
+      "file": "src/lib/core/ai-access-contract.test.mjs",
+      "bytes": 1439,
+      "sha256": "a3482fabe2248d272c22ecbfa5644e458bfb8f3ade927441057dd9db703fb399",
+      "crc32": "fb27ac5f"
+    },
+    {
+      "file": "src/lib/core/ai-access-contract.ts",
+      "bytes": 2073,
+      "sha256": "3ab3a387995318ba215e8659615de81284b16d74de519bbfd8758acf44df29d6",
+      "crc32": "f4418532"
+    },
+    {
+      "file": "src/lib/core/ai-feature-policy.test.mjs",
+      "bytes": 1629,
+      "sha256": "3adea17d08bb1a0f97a3d737dcb90fabfe18ecb0dee78bb34e68b6e59a1699b1",
+      "crc32": "cbe9b2cf"
+    },
+    {
+      "file": "src/lib/core/ai-feature-policy.ts",
+      "bytes": 1821,
+      "sha256": "3e8c9b4b75e8181a015ba1e492a102599319a46b21a891f982b988114a5f00ae",
+      "crc32": "aba06a62"
+    },
+    {
+      "file": "src/lib/core/ai-task-router.test.mjs",
+      "bytes": 1638,
+      "sha256": "8484d97b96fc4d98e7a641bcb508297043f209b96542b31697976975f68ff88d",
+      "crc32": "9a5898a9"
+    },
+    {
+      "file": "src/lib/core/ai-task-router.ts",
+      "bytes": 1895,
+      "sha256": "5d97875bbc00484c5946b155cbb9b7d2c197489fb84e14cb41dd45f9dfb3ebe5",
+      "crc32": "3b2aaecf"
+    },
+    {
+      "file": "src/lib/core/athlete-baseline.mjs",
+      "bytes": 2496,
+      "sha256": "eae38ca425dce1128bdd71690bd487ad6990cb8b19ae54cd78dc54726203e669",
+      "crc32": "d0aefc55"
+    },
+    {
+      "file": "src/lib/core/athlete-baseline.test.mjs",
+      "bytes": 954,
+      "sha256": "438033d09dc38ed877945184816223d9bfc35110114f815324cdbf4b8c7acf79",
+      "crc32": "594bc624"
+    },
+    {
+      "file": "src/lib/core/athlete-evidence-audit.ts",
+      "bytes": 1697,
+      "sha256": "aa406d2ebac9602e8b7a46bb7dbf2c8facde6b037887606db01430daa09fda49",
+      "crc32": "75480742"
+    },
+    {
+      "file": "src/lib/core/athlete-evidence-readiness.test.ts",
+      "bytes": 1200,
+      "sha256": "a1118b577e133b7a2efcb939e1fe11692c6e7ba18c28b380916d331c73826f98",
+      "crc32": "39a027a8"
+    },
+    {
+      "file": "src/lib/core/athlete-evidence-readiness.ts",
+      "bytes": 1206,
+      "sha256": "0118c55e6f6c663c982178adf34f9c1f50a80ae0eb0fcdb552c502e7dad44b1d",
+      "crc32": "6cd7a286"
+    },
+    {
+      "file": "src/lib/core/athlete-longitudinal-evidence.test.ts",
+      "bytes": 2113,
+      "sha256": "bd31e9612026d83435cab4352a673f2c4ff58e0afe566ec4f331d91f12f63a2e",
+      "crc32": "02443448"
+    },
+    {
+      "file": "src/lib/core/athlete-longitudinal-evidence.ts",
+      "bytes": 1983,
+      "sha256": "4bdf1ea18814e81903dfddfed06a66022ab3497d3e3665b3e750193f649d2fc6",
+      "crc32": "b7183d83"
+    },
+    {
+      "file": "src/lib/core/athlete-seven-dimensions.mjs",
+      "bytes": 3291,
+      "sha256": "1778b098a822fcc5d995fe9fcff45946938969771b167b64bdd163826b6490c1",
+      "crc32": "4cc0534e"
+    },
+    {
+      "file": "src/lib/core/athlete-seven-dimensions.test.mjs",
+      "bytes": 2134,
+      "sha256": "0b7110b142dc2b1e645607f65686c663d45e67ed47664375cf80adf08e1584bd",
+      "crc32": "7ed97916"
+    },
+    {
+      "file": "src/lib/core/audit.ts",
+      "bytes": 956,
+      "sha256": "f188f865445e5397a6dbc98b40b55a0aee2cf7507876da2a54f36bb11b289c60",
+      "crc32": "1996c73e"
+    },
+    {
+      "file": "src/lib/core/backup-inspection.test.ts",
+      "bytes": 1084,
+      "sha256": "b922664aec55e7f01d561c75f88fad814a528c0316b739545548f223ce6e86e4",
+      "crc32": "122dea23"
+    },
+    {
+      "file": "src/lib/core/boot.ts",
+      "bytes": 913,
+      "sha256": "fd9580b44bc28a424a2c99e6b55f9e6753a463059f17ae2f81cdd4465547b0e4",
+      "crc32": "88f63bb7"
+    },
+    {
+      "file": "src/lib/core/brain-loop.test.ts",
+      "bytes": 14381,
+      "sha256": "1368a7bcc2dd0df419ac448f9991b6da93e0d0133af62d3b2c07a31250c329ee",
+      "crc32": "c31d5604"
+    },
+    {
+      "file": "src/lib/core/brain-loop.ts",
+      "bytes": 16632,
+      "sha256": "1ec3bd1e69672a99f2d6d1680401c6632dbac76918463470cb3e821de9021313",
+      "crc32": "4ce9022c"
+    },
+    {
+      "file": "src/lib/core/browser-capabilities.test.ts",
+      "bytes": 945,
+      "sha256": "b4c88ad91fbe148680ce233dbdb9f27c3bb379f49bb79cefb13dc76d68f749f3",
+      "crc32": "549043ad"
+    },
+    {
+      "file": "src/lib/core/browser-capabilities.ts",
+      "bytes": 1257,
+      "sha256": "745d26dc52bbdcf4c87d37742002491d0e80e80b77a79118f96e1cc828aa0f5f",
+      "crc32": "db4173ad"
+    },
+    {
+      "file": "src/lib/core/canonical.test.ts",
+      "bytes": 24324,
+      "sha256": "0eacf3e79558528790c8c7680efeefec4d087010c6a17219b8dee3fa04483038",
+      "crc32": "d59ad39b"
+    },
+    {
+      "file": "src/lib/core/canonical.ts",
+      "bytes": 14457,
+      "sha256": "db8787c235c2938b85f050f310c90d11799bd8fe0057f689cd267acbc98fa3c3",
+      "crc32": "e1556db7"
+    },
+    {
+      "file": "src/lib/core/coach-ability-standard.ts",
+      "bytes": 24840,
+      "sha256": "9968ccbf6e521e10cba23fa3144998f108b540629f79b71c7a8d4e3aecf3ff46",
+      "crc32": "b15ea991"
+    },
+    {
+      "file": "src/lib/core/coach-activity-watch.test.ts",
+      "bytes": 1479,
+      "sha256": "9b78a930a45f1ac307711085f149ba578f1f20f05b50637c93650870705177d9",
+      "crc32": "0ddc3c12"
+    },
+    {
+      "file": "src/lib/core/coach-activity-watch.ts",
+      "bytes": 1744,
+      "sha256": "39fb049c59da643f3fcd79f03c4759648868cb3af657b0f0d723165e9a9bb520",
+      "crc32": "518d7344"
+    },
+    {
+      "file": "src/lib/core/coach-adversarial.test.ts",
+      "bytes": 1898,
+      "sha256": "e3b7a9c977db56b9d358cf1aa0fd47f34af4efc621db9d0b6a28854b2f0b8c07",
+      "crc32": "52c0fd7c"
+    },
+    {
+      "file": "src/lib/core/coach-athlete-dialogue.ts",
+      "bytes": 3260,
+      "sha256": "9f9fc504d1baa8c42f7c3d0bb6c497254d64916455ad290a987815d92af3dc0e",
+      "crc32": "4d1aa048"
+    },
+    {
+      "file": "src/lib/core/coach-brief.test.ts",
+      "bytes": 33963,
+      "sha256": "2c45ea4425c4fd1877fb5847bbee0fac23410ab71568d97eb6aceed294805c18",
+      "crc32": "b7a1862d"
+    },
+    {
+      "file": "src/lib/core/coach-brief.ts",
+      "bytes": 44028,
+      "sha256": "cb8a4ff1adf2d1ed534c80cd61964b8a3bb5d7cb335404c37af30b4a1e2fc0ad",
+      "crc32": "ab65d07f"
+    },
+    {
+      "file": "src/lib/core/coach-calendar.ts",
+      "bytes": 639,
+      "sha256": "641796b3f26c7c15c7db39413ca1c7dc6d688dd7befe795d64fa6b8396fb8bad",
+      "crc32": "e4ecd89c"
+    },
+    {
+      "file": "src/lib/core/coach-chat-evidence.ts",
+      "bytes": 16397,
+      "sha256": "a15319b765baa68514ec7e473957508848e55f83ab0b1a849aeeecb82663f4f5",
+      "crc32": "67eff887"
+    },
+    {
+      "file": "src/lib/core/coach-chat-load.ts",
+      "bytes": 2874,
+      "sha256": "d2653058174743bbd60af7e3e68d7fcc0221a043fa05a96e3e234b81a711c743",
+      "crc32": "d2e89f85"
+    },
+    {
+      "file": "src/lib/core/coach-claim-revision.test.ts",
+      "bytes": 3147,
+      "sha256": "b5dac408ce0a3f8c286bf66f02496f0c65b160cdf678292dacbc5c65f0325d90",
+      "crc32": "8d28e403"
+    },
+    {
+      "file": "src/lib/core/coach-claim-revision.ts",
+      "bytes": 4587,
+      "sha256": "4e7292db40ba614a9ac0593a1348c62d8d92d2aad382ef549e41621f13f86eec",
+      "crc32": "6ca34044"
+    },
+    {
+      "file": "src/lib/core/coach-claim-scope.ts",
+      "bytes": 1898,
+      "sha256": "d51ae3c79666122ae958c2fb86cebd82473e415c44989f1fe5e40afab2e64839",
+      "crc32": "a6e7538c"
+    },
+    {
+      "file": "src/lib/core/coach-cognition-knowledge.ts",
+      "bytes": 7210,
+      "sha256": "8f8a612305f77349ee3ef438bd23e04327a5be16d3fda9fea22d54fe7843c194",
+      "crc32": "f5c1553e"
+    },
+    {
+      "file": "src/lib/core/coach-cognition-learning.ts",
+      "bytes": 9162,
+      "sha256": "cff37d43f33bd59fb6826ee5d4c4f31e554ea93d0c1935b191ebca60905f9d71",
+      "crc32": "8de6d398"
+    },
+    {
+      "file": "src/lib/core/coach-cognition-tools.ts",
+      "bytes": 2799,
+      "sha256": "3b9140953ea8acf45de2ce24fa0e773956636e50f2e877f0a5b6c4821b2c2530",
+      "crc32": "db6325a5"
+    },
+    {
+      "file": "src/lib/core/coach-cognition.test.ts",
+      "bytes": 18537,
+      "sha256": "566f44a94e6aa9766bb779009b7801992e7dc7ca2c899c093c7525aff03e8a23",
+      "crc32": "fb54f376"
+    },
+    {
+      "file": "src/lib/core/coach-cognition.ts",
+      "bytes": 17771,
+      "sha256": "a8ca09b002dd5fa9975a9c173b06c1e74142f16f72db268b56e3dd388e2405c1",
+      "crc32": "42da9a45"
+    },
+    {
+      "file": "src/lib/core/coach-compare.test.ts",
+      "bytes": 11787,
+      "sha256": "58193f77ed8a1c518108b1345c01304573e93ab70e75a70d940163c92e81d898",
+      "crc32": "61a8ff2e"
+    },
+    {
+      "file": "src/lib/core/coach-compare.ts",
+      "bytes": 14668,
+      "sha256": "3ece845e51b73d1bf31f361895761ca89e5b81dc45653432d5b727ecf23c3061",
+      "crc32": "d9d37473"
+    },
+    {
+      "file": "src/lib/core/coach-competency.test.ts",
+      "bytes": 7366,
+      "sha256": "8eff830bbac9e23a279a284ac3616f5f1539f0e9a68b58576b3d55c2ca8563b9",
+      "crc32": "95d5a32e"
+    },
+    {
+      "file": "src/lib/core/coach-context-memory.ts",
+      "bytes": 7935,
+      "sha256": "4847b9c5ef1f5bb764806fb3d396cdaf105dbc013c3839a1075bb56205f5e499",
+      "crc32": "e4bf4cbf"
+    },
+    {
+      "file": "src/lib/core/coach-conversation-context.test.ts",
+      "bytes": 1320,
+      "sha256": "7eaf120bd1877e331e74f690d8e994d5d6de70790085abb7141fc8e1246a592c",
+      "crc32": "b53485e0"
+    },
+    {
+      "file": "src/lib/core/coach-conversation-context.ts",
+      "bytes": 2627,
+      "sha256": "21d509c882525b8298c894e767a7461385a7dca498be22f796b2a11c1ecfdc11",
+      "crc32": "613459a3"
+    },
+    {
+      "file": "src/lib/core/coach-curriculum-data.ts",
+      "bytes": 52598,
+      "sha256": "86d13c508b0b71c023c0e06a2e30489121ed94387dfdd426fe46d4c34e789175",
+      "crc32": "34f4726f"
+    },
+    {
+      "file": "src/lib/core/coach-curriculum.test.ts",
+      "bytes": 9661,
+      "sha256": "0212156d5f83458e8407d687fc063083a4e3507864631ad59455a02482bcdd7a",
+      "crc32": "0576da98"
+    },
+    {
+      "file": "src/lib/core/coach-curriculum.ts",
+      "bytes": 11555,
+      "sha256": "5791941831706b73c459cbc530f349ca97aaf5542e2c228677389e106658cc44",
+      "crc32": "de52ddeb"
+    },
+    {
+      "file": "src/lib/core/coach-decision-calibration.test.ts",
+      "bytes": 2938,
+      "sha256": "eddc43dbd682468299d3752f27c020095e3298c1289a291d88679c75f98cbce3",
+      "crc32": "c6476da1"
+    },
+    {
+      "file": "src/lib/core/coach-decision-calibration.ts",
+      "bytes": 5499,
+      "sha256": "902a550b0667f4fbae1cf80ba6e2a6889e76ec8ae6034e706a1d2d16e30cca47",
+      "crc32": "91a74a1f"
+    },
+    {
+      "file": "src/lib/core/coach-development-projection.ts",
+      "bytes": 17606,
+      "sha256": "1798c629b24e5084dc574d40dad1c31b2090181e8641e34adcfa52dcbca50008",
+      "crc32": "bcfe4a87"
+    },
+    {
+      "file": "src/lib/core/coach-device-conflict.test.ts",
+      "bytes": 2842,
+      "sha256": "50ecd7ddfbe4825d7ca16078847e3801b04508ffbe8fe7cc76302f4858173f2e",
+      "crc32": "069161aa"
+    },
+    {
+      "file": "src/lib/core/coach-device-conflict.ts",
+      "bytes": 2410,
+      "sha256": "72ebe60a60a378ed66b008e77e1456cf8d410535b201d0966352a92d798b6035",
+      "crc32": "eb6a7237"
+    },
+    {
+      "file": "src/lib/core/coach-device-preparation.ts",
+      "bytes": 11970,
+      "sha256": "0208ae27f4a11f10b394f895a9f8e41c316e5b57eef3cbe253afe1e92df63ae5",
+      "crc32": "caad64be"
+    },
+    {
+      "file": "src/lib/core/coach-diagnosis-wording.test.ts",
+      "bytes": 1391,
+      "sha256": "808722bdb3fdb975f99b9d38ed96b4c3ad5677b27d3393e5d8dba17711803207",
+      "crc32": "654fe5db"
+    },
+    {
+      "file": "src/lib/core/coach-diagnosis-wording.ts",
+      "bytes": 4180,
+      "sha256": "d3e3e3f1f7ea282349c9d55a9f45344f06a6cda67ff47aae1e32b614ed7c74fe",
+      "crc32": "e5db7070"
+    },
+    {
+      "file": "src/lib/core/coach-dialogue.ts",
+      "bytes": 26749,
+      "sha256": "284c025b8cee76bb945dfb42ac23a0a9a40ab1ab5600957ae8d45a7073afcfb3",
+      "crc32": "2a4b3af2"
+    },
+    {
+      "file": "src/lib/core/coach-event-cards.ts",
+      "bytes": 19111,
+      "sha256": "a2fd1fa4444e78849db81f9844f29e5e2daa7ed949a068989b5e19874fa0c1a3",
+      "crc32": "57d309e1"
+    },
+    {
+      "file": "src/lib/core/coach-evolution-v4-c10.scenario.test.ts",
+      "bytes": 4678,
+      "sha256": "2943bf90e4269e30f4471375e610ccbe4a18b44cc0b36b17c75559f093b40058",
+      "crc32": "3b7f87de"
+    },
+    {
+      "file": "src/lib/core/coach-evolution-v4-c10.test.ts",
+      "bytes": 11422,
+      "sha256": "77da2f2393b1a8a7c18ed37c6bebe74cc733ae5706d62516ce10778728027d9f",
+      "crc32": "18515317"
+    },
+    {
+      "file": "src/lib/core/coach-evolution-v4-c10.ts",
+      "bytes": 17342,
+      "sha256": "22c8d0d817ccd814bf6ae68880a4ad59f34edfe3805652b4ffcf7f3c6cc73acd",
+      "crc32": "963065ae"
+    },
+    {
+      "file": "src/lib/core/coach-evolution-v4.scenario.test.ts",
+      "bytes": 3822,
+      "sha256": "d06ec04971aa435025cf6fe2ccfc783e42d284e9dff80b264e6cefabc5d4ec92",
+      "crc32": "c5af674b"
+    },
+    {
+      "file": "src/lib/core/coach-evolution-v4.test.ts",
+      "bytes": 8220,
+      "sha256": "99aaccf191025ea4d0d89c4bcc7b7a73a23b97c2b4a18110cffd5bdcf7fd0ace",
+      "crc32": "7f488a9d"
+    },
+    {
+      "file": "src/lib/core/coach-evolution-v4.ts",
+      "bytes": 18240,
+      "sha256": "1618158ba8b24d3411ce45969875688b4e19afaa6c1bdd7ea1c8b1562b2dc2c8",
+      "crc32": "4c9b4c51"
+    },
+    {
+      "file": "src/lib/core/coach-feedback.ts",
+      "bytes": 1130,
+      "sha256": "057ecee8deb25dcf351651b957a7a8e86e4c9d56dac580a5a3a38523c322a843",
+      "crc32": "ccb53a6f"
+    },
+    {
+      "file": "src/lib/core/coach-first-week.fixtures.ts",
+      "bytes": 1901,
+      "sha256": "da93d961bfc7e6cc6d4ffb8ed53ba403949df7b5de3cf07df88d9862413838b8",
+      "crc32": "72b84fec"
+    },
+    {
+      "file": "src/lib/core/coach-first-week.test.ts",
+      "bytes": 11788,
+      "sha256": "44a38a9398f4aa2fa2bc2a6f7f1e30ac220b3b287db2ce2a44a767a47b36a29a",
+      "crc32": "1de94581"
+    },
+    {
+      "file": "src/lib/core/coach-first-week.ts",
+      "bytes": 28647,
+      "sha256": "44019cbcf6f65298e4ad89244093702923722802afe8e9bc4c136de21fd4f4ea",
+      "crc32": "2c109b1f"
+    },
+    {
+      "file": "src/lib/core/coach-four-directions.test.ts",
+      "bytes": 2461,
+      "sha256": "54c1fc07b021073c7f14ce00472d8f527203973edd3aa30a90922b292e757b62",
+      "crc32": "d878afcb"
+    },
+    {
+      "file": "src/lib/core/coach-four-directions.ts",
+      "bytes": 5469,
+      "sha256": "1ba427e04f09dbeea72730cc6fdab891f624651b34c987e1f0ced42bfd4a3ffa",
+      "crc32": "b24f66c5"
+    },
+    {
+      "file": "src/lib/core/coach-fuel.test.ts",
+      "bytes": 3861,
+      "sha256": "016babdb37747b45403b4a64a1ce3166b28e183bf2bdcbbaf9f419e44c251455",
+      "crc32": "89ec0838"
+    },
+    {
+      "file": "src/lib/core/coach-fuel.ts",
+      "bytes": 3735,
+      "sha256": "d570aaba81970b63762fcfa0c89c87c85051005567cd3ae4177b3d4542be413a",
+      "crc32": "a2b42122"
+    },
+    {
+      "file": "src/lib/core/coach-guard-k13.test.ts",
+      "bytes": 8591,
+      "sha256": "c418cacb5d4a833b73c143554f2fa214ac39e839d94457cbe792ff54b6f9b84e",
+      "crc32": "cb30d7fa"
+    },
+    {
+      "file": "src/lib/core/coach-hybrid-review.ts",
+      "bytes": 2546,
+      "sha256": "e458cf76717ce99ab45e7e027ba62c513f911297dbe43ba41ad8119cf7cfc6c8",
+      "crc32": "af948aa0"
+    },
+    {
+      "file": "src/lib/core/coach-import-evidence.ts",
+      "bytes": 11506,
+      "sha256": "814ad2381a74c20df445030fa19e41e58d39d2af307f01e3309c2eaebface55a",
+      "crc32": "42fd1322"
+    },
+    {
+      "file": "src/lib/core/coach-import-rating.ts",
+      "bytes": 2211,
+      "sha256": "354d632004cfd92c31ca625c3f93d3cbd920e423d7a1d0818147b2819f63b29d",
+      "crc32": "36fc6e13"
+    },
+    {
+      "file": "src/lib/core/coach-input-summary.ts",
+      "bytes": 2199,
+      "sha256": "4df113360055349b28aacc5d7b9eade773cbfae2e3889f23fba024af118d5e66",
+      "crc32": "0084af20"
+    },
+    {
+      "file": "src/lib/core/coach-knowledge-display.test.tsx",
+      "bytes": 2159,
+      "sha256": "c9e2794897ccb9b0dc3bd14d5eb2e351fad76e0f9fc1ba69b2cb2f7b15eaaaac",
+      "crc32": "82d7dda5"
+    },
+    {
+      "file": "src/lib/core/coach-knowledge.test.ts",
+      "bytes": 4676,
+      "sha256": "d887147a640f9ec76f2789c1b8b871efdefbd4bc302aa5524f8c670eb49ed5a2",
+      "crc32": "94c4ae81"
+    },
+    {
+      "file": "src/lib/core/coach-knowledge.ts",
+      "bytes": 7463,
+      "sha256": "952ee520f0651431ed2af535358d205fb87715914c701ba739374fc2e6833900",
+      "crc32": "e24eee63"
+    },
+    {
+      "file": "src/lib/core/coach-learning-readiness.test.ts",
+      "bytes": 2126,
+      "sha256": "ac4dde4fac79f041444233747eaa3dd23a62a66cd5dc858f4375c3522231ac0b",
+      "crc32": "c468cd82"
+    },
+    {
+      "file": "src/lib/core/coach-learning-readiness.ts",
+      "bytes": 2592,
+      "sha256": "fa8e6fef333a53f3ad52be845e2dafbe72d723923b83fbd0458fb196249b0c88",
+      "crc32": "4438b67f"
+    },
+    {
+      "file": "src/lib/core/coach-linked-context.ts",
+      "bytes": 5061,
+      "sha256": "9073d41864f9b5bab2099dd5678f03728dd0cfa368228613dfbd8d579e1d85f2",
+      "crc32": "3fd94b69"
+    },
+    {
+      "file": "src/lib/core/coach-load-metrics-store.test.ts",
+      "bytes": 9685,
+      "sha256": "b96b125e1423f7c239fc52be4c24792338e2dc89deb6681d92adf4d15e0d6ae7",
+      "crc32": "9a5b92c3"
+    },
+    {
+      "file": "src/lib/core/coach-load-metrics-store.ts",
+      "bytes": 8144,
+      "sha256": "4d4baaaa7c9677941aedf3b8e25610cf44d92a37169303d770c0ba5a8ccdd832",
+      "crc32": "a5e81b80"
+    },
+    {
+      "file": "src/lib/core/coach-load-metrics.test.ts",
+      "bytes": 6078,
+      "sha256": "2548628153c3a569f353d7fbbb76d544e248706891e56e331a730e8cefe04dee",
+      "crc32": "6157051a"
+    },
+    {
+      "file": "src/lib/core/coach-load-metrics.ts",
+      "bytes": 6779,
+      "sha256": "58b7e57e33e9521690907165d2aede9ee8a1e015080bb972f133bfb983af1708",
+      "crc32": "157600c3"
+    },
+    {
+      "file": "src/lib/core/coach-local-first.test.ts",
+      "bytes": 5944,
+      "sha256": "2bc1ae36af5a39b0888dec3638b08942fe39d717f00dda9d5e0e319dd38d4d68",
+      "crc32": "493749ac"
+    },
+    {
+      "file": "src/lib/core/coach-local-first.ts",
+      "bytes": 27229,
+      "sha256": "3bb16b20b1d25d4518aaa079c45804ac7413443e3f1486e99c35d0754b82d1af",
+      "crc32": "8e94cbac"
+    },
+    {
+      "file": "src/lib/core/coach-local-safety.test.ts",
+      "bytes": 1119,
+      "sha256": "2079595e811a4a26b950474a097cf3af6fbd222b7054e65e97756e6114de6784",
+      "crc32": "b76ce09f"
+    },
+    {
+      "file": "src/lib/core/coach-local-safety.ts",
+      "bytes": 1342,
+      "sha256": "7b830e9a8ad7b9a22d2bd253375ee671b024bf96ca7f3c60e8c9255f5d4609bd",
+      "crc32": "56e7a775"
+    },
+    {
+      "file": "src/lib/core/coach-model-packet.test.ts",
+      "bytes": 3498,
+      "sha256": "d1e51894a3a3012f37be6022a597dada50e67f7e439945cbd2b5bfa60012b3c5",
+      "crc32": "03ccf080"
+    },
+    {
+      "file": "src/lib/core/coach-model-packet.ts",
+      "bytes": 4026,
+      "sha256": "da57c51e513d34a8ddefa7c27606e1fed2859af913c8962d1920e944bca01fc5",
+      "crc32": "458addf4"
+    },
+    {
+      "file": "src/lib/core/coach-module-linkage.test.ts",
+      "bytes": 9605,
+      "sha256": "2681cecdc34133e3b74041c0d78f6981e5ad9c6aa0dc8bbc79192ba632a9a71f",
+      "crc32": "c8fc444c"
+    },
+    {
+      "file": "src/lib/core/coach-network-policy.test.ts",
+      "bytes": 1724,
+      "sha256": "730af46001bea1c9aae0942f2e74d41889ad4402ecf8a1190daf0c7da4b0072d",
+      "crc32": "c11fb891"
+    },
+    {
+      "file": "src/lib/core/coach-network-policy.ts",
+      "bytes": 1802,
+      "sha256": "2a3dfd93af09e4cce094df40a0647108ddc176e961596ee1c36504408de3139c",
+      "crc32": "583e9a23"
+    },
+    {
+      "file": "src/lib/core/coach-next-session.test.ts",
+      "bytes": 3022,
+      "sha256": "76a87d650a4bd824de32b43807b09b3946eb8ca914ca0a5eff8f9a82380162cb",
+      "crc32": "07fdeb61"
+    },
+    {
+      "file": "src/lib/core/coach-next-session.ts",
+      "bytes": 6361,
+      "sha256": "9e423bfa298622e2a9e8304db331359bca36a002810262bbc4d9f72419ccb9e6",
+      "crc32": "4c23dfed"
+    },
+    {
+      "file": "src/lib/core/coach-offline-insights.ts",
+      "bytes": 7872,
+      "sha256": "1e7a0461a6d118c3706c0a2c39eb5697233eeef89a8f086997fda03bd11c0e1a",
+      "crc32": "407fb7fe"
+    },
+    {
+      "file": "src/lib/core/coach-offline-loop.test.ts",
+      "bytes": 15593,
+      "sha256": "2ce94686891911d700435f8aaebc85e2cf1e93ab8d648cdccb9579bfcf68a7db",
+      "crc32": "3f9a6196"
+    },
+    {
+      "file": "src/lib/core/coach-offline-loop.ts",
+      "bytes": 31436,
+      "sha256": "f24437fa7565d04fbbec54d0dddb93886d37bbdad23347bf11b40b7e7f06f6fd",
+      "crc32": "d3fd6960"
+    },
+    {
+      "file": "src/lib/core/coach-offline-workspace.ts",
+      "bytes": 2614,
+      "sha256": "c4157ac2d79f6cc028b4b32ce56d7fcaf566cbca0e78106593c5e4bee905e560",
+      "crc32": "a2a4c25a"
+    },
+    {
+      "file": "src/lib/core/coach-offline.ts",
+      "bytes": 18843,
+      "sha256": "65d9b8c78699b87d9ce30623b79ab072b1bafe80f833faef59db2eda74c965ac",
+      "crc32": "085b0813"
+    },
+    {
+      "file": "src/lib/core/coach-open.test.ts",
+      "bytes": 3017,
+      "sha256": "71b2803f73ec6d58537e7b08df569332b8e2425051c8c8412f7b4112ca4782a8",
+      "crc32": "91eb6075"
+    },
+    {
+      "file": "src/lib/core/coach-open.ts",
+      "bytes": 1214,
+      "sha256": "b32e2d7f5536b9d585acbd386c8b377797c57f1ed243e63bf4fcf807bb1eca9d",
+      "crc32": "ceee954a"
+    },
+    {
+      "file": "src/lib/core/coach-ordinary-discomfort.ts",
+      "bytes": 2410,
+      "sha256": "38a0e0770cd510812473c81de12acd645cbbe5bcf085ebb7473303bd6ab50486",
+      "crc32": "1a6fa82f"
+    },
+    {
+      "file": "src/lib/core/coach-output-budget.test.ts",
+      "bytes": 671,
+      "sha256": "41007ff774c3e718c70a7b9f908bf93feee16c5bd9df786ce82d4d72b512ccab",
+      "crc32": "74fae81f"
+    },
+    {
+      "file": "src/lib/core/coach-output-budget.ts",
+      "bytes": 537,
+      "sha256": "de421a6a4e5be11dab63dd61b0ba5fc6cf92a6356f3551b454b2f308b5f002e0",
+      "crc32": "81c5464c"
+    },
+    {
+      "file": "src/lib/core/coach-output-contract.ts",
+      "bytes": 1555,
+      "sha256": "87ffd8a2b5fc238b6a81df306428ac7457285b552c8b892c88c5d5f773b7fad2",
+      "crc32": "01d31e9a"
+    },
+    {
+      "file": "src/lib/core/coach-p0-p1.test.ts",
+      "bytes": 3015,
+      "sha256": "1a95e23fe083baa6b5cc97233d7295b40e62c668eaca83a07dfce74cc31d75a6",
+      "crc32": "8015bfcf"
+    },
+    {
+      "file": "src/lib/core/coach-p0-p1.ts",
+      "bytes": 7400,
+      "sha256": "088840e588ead74ed3dd4b8e150632bee048b4b966f2b30d878f18de9c14ecdc",
+      "crc32": "f0f2c20a"
+    },
+    {
+      "file": "src/lib/core/coach-p7-evaluation.test.ts",
+      "bytes": 1700,
+      "sha256": "8bfbe3c1738cc91588d44890745cb0375533058e7850a74d6d6118bf27ae0ef0",
+      "crc32": "1d80045a"
+    },
+    {
+      "file": "src/lib/core/coach-p7-evaluation.ts",
+      "bytes": 3811,
+      "sha256": "a953d2ee7e795ee68a7df03f9ffe117a3d7b65a4ee964f27b528725179ac1a84",
+      "crc32": "52dd0ff8"
+    },
+    {
+      "file": "src/lib/core/coach-p7-knowledge.test.ts",
+      "bytes": 1925,
+      "sha256": "2f8d3cbedf67b556ee630e92a911c45eea555012cab95bba9511fba53ff05c95",
+      "crc32": "6c183018"
+    },
+    {
+      "file": "src/lib/core/coach-p7-knowledge.ts",
+      "bytes": 5711,
+      "sha256": "320211dbd60d7923d2143c089a8ff6bd3f63326bdc0291ae384488aca003dc23",
+      "crc32": "e62d89a5"
+    },
+    {
+      "file": "src/lib/core/coach-p7-lifecycle.ts",
+      "bytes": 9427,
+      "sha256": "54c7121d0d49e34fa89b1533d0cc2b22a3d9acb95d92f697901d74e8e714fe9b",
+      "crc32": "4ec764c6"
+    },
+    {
+      "file": "src/lib/core/coach-p7-r187.test.ts",
+      "bytes": 2764,
+      "sha256": "6142cdd2e4fa493f7c9c5d27c520f1744a4751789c5be2ee766ccaa8fd90a070",
+      "crc32": "339aa05a"
+    },
+    {
+      "file": "src/lib/core/coach-p7-r7.test.ts",
+      "bytes": 3919,
+      "sha256": "f1d955b3e7b1ad1b1b00e70460b33afe506391fd0e03f17a8726bc0ce09b67da",
+      "crc32": "e6241f75"
+    },
+    {
+      "file": "src/lib/core/coach-p7-runtime.ts",
+      "bytes": 7051,
+      "sha256": "29f36599a84d6c6cc18b77d7a89a17d437eef74fda8b523d38750f90c14e77f9",
+      "crc32": "5dbbdd49"
+    },
+    {
+      "file": "src/lib/core/coach-period-context.ts",
+      "bytes": 3606,
+      "sha256": "9f450ba12f0ceb189491a93ca951570319bcb0ef8600035bad31ea424ed7d34d",
+      "crc32": "00d2e7b4"
+    },
+    {
+      "file": "src/lib/core/coach-period-review.ts",
+      "bytes": 9512,
+      "sha256": "59911552ce548e3c41b8d19cb343cc89d2f1fcb477512e700d39c6b76f7b3c0f",
+      "crc32": "dc5d822a"
+    },
+    {
+      "file": "src/lib/core/coach-periodic-observations.test.ts",
+      "bytes": 1603,
+      "sha256": "ab99b5deb33fb51433e020ec825340d23f94ff8ec4a1ede7a433c55aa5ebec08",
+      "crc32": "11d3d35e"
+    },
+    {
+      "file": "src/lib/core/coach-periodic-observations.ts",
+      "bytes": 4533,
+      "sha256": "71b350c01a007ccb8423a86cc620655d61b58a6d203e41457fa6201c3fbf0409",
+      "crc32": "f55ad3da"
+    },
+    {
+      "file": "src/lib/core/coach-permission-gate.ts",
+      "bytes": 2041,
+      "sha256": "1f700c5eb06b28966d3400ff19d1ef3b76b581a9cffab363ae6e453db6de671c",
+      "crc32": "6aadac67"
+    },
+    {
+      "file": "src/lib/core/coach-persona.test.ts",
+      "bytes": 1724,
+      "sha256": "ec9fab5f305471b51c3c9e48cd737bfe6f1cc02857e86bd2e87d7180479df3a6",
+      "crc32": "219a292c"
+    },
+    {
+      "file": "src/lib/core/coach-persona.ts",
+      "bytes": 3593,
+      "sha256": "cd7fe73c6ac4de9358e6768371b87e3de35fcf0f44e88242cfa3393299e35ab7",
+      "crc32": "f0f9e52c"
+    },
+    {
+      "file": "src/lib/core/coach-plan-display.test.tsx",
+      "bytes": 1990,
+      "sha256": "e7de9328fd9e6bb2586a8cca547c823f73c726316d70f834e7e54f2fb24a7268",
+      "crc32": "9a564203"
+    },
+    {
+      "file": "src/lib/core/coach-plan-governance.test.ts",
+      "bytes": 1910,
+      "sha256": "497dd51558cad8d06b6dff3df5b6ef2faad9538dbcf300978731082aa62e33c5",
+      "crc32": "30d1397b"
+    },
+    {
+      "file": "src/lib/core/coach-plan-governance.ts",
+      "bytes": 3052,
+      "sha256": "e2ae80d0daa0a7ff301e9820cce852507771eba798887bfe0c41536473138350",
+      "crc32": "523cdb4b"
+    },
+    {
+      "file": "src/lib/core/coach-plan-output.ts",
+      "bytes": 1112,
+      "sha256": "aef18e89ddf96f8831008510abb34b66825c3f4a3856effe9a0a039999a4effe",
+      "crc32": "4ad2a30a"
+    },
+    {
+      "file": "src/lib/core/coach-plan-quality.ts",
+      "bytes": 8674,
+      "sha256": "65e69e3fb50d8329d23bd53a60b02b4e3697e82292eb9f63eb7136bd96b88366",
+      "crc32": "17fab04f"
+    },
+    {
+      "file": "src/lib/core/coach-plan-recovery.ts",
+      "bytes": 969,
+      "sha256": "243b7c883e913f7d2642449a162a0bd8307dd4b3231186eb938fba1d76bd972f",
+      "crc32": "42bbc34f"
+    },
+    {
+      "file": "src/lib/core/coach-plan.test.ts",
+      "bytes": 13271,
+      "sha256": "0007f96acd74e3c554db89f77e7c4dfbaf1eefc44597bfe9013d69bf5591c3c1",
+      "crc32": "58058399"
+    },
+    {
+      "file": "src/lib/core/coach-plan.ts",
+      "bytes": 28096,
+      "sha256": "45ad375204e791e6eeae727926c5b28e9c777975fdee817fde843779e91b6600",
+      "crc32": "b86c131b"
+    },
+    {
+      "file": "src/lib/core/coach-playbook-concepts.ts",
+      "bytes": 6486,
+      "sha256": "ba95b5316056c6964fded44ac1501d8c5a0aca5f3eff2fcd9a3479e0e3235735",
+      "crc32": "d1ac82d0"
+    },
+    {
+      "file": "src/lib/core/coach-playbook-retrieval.test.ts",
+      "bytes": 1556,
+      "sha256": "fd324bd27facc3ff2c701ad30b13ee38e78e72455d92376d6019e7d6e9f02bbc",
+      "crc32": "2f438a45"
+    },
+    {
+      "file": "src/lib/core/coach-playbook-retrieval.ts",
+      "bytes": 2982,
+      "sha256": "7a1ec3ca9d918c3cd9c9c937bdb20ce21daff313c18ca3bc55719fc2ddf221a1",
+      "crc32": "81ec5211"
+    },
+    {
+      "file": "src/lib/core/coach-playbook-review.ts",
+      "bytes": 9546,
+      "sha256": "545f565fb69dbe62b99cb03847d2d42034ebfea7f192b7727871e20ab7ffd6d7",
+      "crc32": "72992b87"
+    },
+    {
+      "file": "src/lib/core/coach-playbook.ts",
+      "bytes": 18600,
+      "sha256": "269846265dbe176c049da359e63a5705488539df2722ec8315a15fc166ef61d4",
+      "crc32": "83ea018e"
+    },
+    {
+      "file": "src/lib/core/coach-preview-transaction.test.ts",
+      "bytes": 3621,
+      "sha256": "44801f7d5e084e09eb5a0ba6060dd0021bd0bc1b06f2853f0d06d654df386a96",
+      "crc32": "cfb2084e"
+    },
+    {
+      "file": "src/lib/core/coach-preview-transaction.ts",
+      "bytes": 3922,
+      "sha256": "7675ec572578419619965388f970c5e63d7db17d24a749440365df0ed0d10978",
+      "crc32": "2d58f64c"
+    },
+    {
+      "file": "src/lib/core/coach-quantitative-adapter.ts",
+      "bytes": 3419,
+      "sha256": "47c36f23a9e2054211b8fba301ab35b4b80cb76a31fd8498fe24cc53d302cb13",
+      "crc32": "35d94d86"
+    },
+    {
+      "file": "src/lib/core/coach-quantitative-math.ts",
+      "bytes": 3137,
+      "sha256": "3cb407b6326842d0dde4a1955dafa1d1e1a8956b80a7d80862159d239f0f9891",
+      "crc32": "f10ae5d0"
+    },
+    {
+      "file": "src/lib/core/coach-quantitative.test.ts",
+      "bytes": 11687,
+      "sha256": "5e1df298189e1be5c26e30043cb4d7752f7a5b2704497b9a84b7da94732b2741",
+      "crc32": "5882f528"
+    },
+    {
+      "file": "src/lib/core/coach-quantitative.ts",
+      "bytes": 44350,
+      "sha256": "4fa50849ad920c840e18c801dd999bab88b0bc8df21790ac4333277a6acab45f",
+      "crc32": "d8d7a09a"
+    },
+    {
+      "file": "src/lib/core/coach-question-reasoning.test.ts",
+      "bytes": 2579,
+      "sha256": "167a4cabee692ad68e8b7eef58e1744a49d0bf630ff676a8e47c1f46a98793d0",
+      "crc32": "73a69acf"
+    },
+    {
+      "file": "src/lib/core/coach-question-reasoning.ts",
+      "bytes": 11196,
+      "sha256": "24110943817e8001b16c90e6d41b6fc0b2ed2a545ea29470e4fd27d4f8f9847d",
+      "crc32": "6fd2864e"
+    },
+    {
+      "file": "src/lib/core/coach-r10-regression.test.ts",
+      "bytes": 6764,
+      "sha256": "ec9428d4378b92c28211dcc4c75e0f98e916e33981e30d491b11a19e1ef692ba",
+      "crc32": "dc53be3b"
+    },
+    {
+      "file": "src/lib/core/coach-r11-integrity.test.ts",
+      "bytes": 3275,
+      "sha256": "6ace5299227cabdbcb9e122a49076effadf86b33427da5a3bb42927610043cf0",
+      "crc32": "d11d7a62"
+    },
+    {
+      "file": "src/lib/core/coach-r11-mixed-session.test.ts",
+      "bytes": 2940,
+      "sha256": "4f87a7596ecf3f4f4493f413d226f56c07d8c3552b8dfca641190fb55c13dde6",
+      "crc32": "da68dc92"
+    },
+    {
+      "file": "src/lib/core/coach-r12-integration.test.ts",
+      "bytes": 13928,
+      "sha256": "6ece05ab2d531477416b0cd024d061f3eae76a55942903e38880ab96e6e3e3ef",
+      "crc32": "ffbaf615"
+    },
+    {
+      "file": "src/lib/core/coach-r13-features.test.ts",
+      "bytes": 9900,
+      "sha256": "eaabb8c38b46527ffef28ccbf76c357b30fbfb3cb0590fd14fc4a959f388af1e",
+      "crc32": "f916399d"
+    },
+    {
+      "file": "src/lib/core/coach-r13-safety.test.ts",
+      "bytes": 7455,
+      "sha256": "71d4d28353d2ec612059327fc3e5a4f49281c43a4498facce177a7f6b4f73415",
+      "crc32": "4c5de63d"
+    },
+    {
+      "file": "src/lib/core/coach-r14-chat.test.ts",
+      "bytes": 13210,
+      "sha256": "012b3c2aaeb10b7041803bcdc35040ee89ce328239f887a3e1eb47fdeb99d272",
+      "crc32": "80c55a90"
+    },
+    {
+      "file": "src/lib/core/coach-r184-preparation.test.ts",
+      "bytes": 14101,
+      "sha256": "f90dd1f08182fa595e4db7c078460f188c2a20d4d0f47883149aed8aaf2336b9",
+      "crc32": "b26d31af"
+    },
+    {
+      "file": "src/lib/core/coach-r185-integration.test.ts",
+      "bytes": 9997,
+      "sha256": "af85b5e8c58b94d80a1d377d432f3abc9987f1a8e640b6c3b6d8eae39904ab4d",
+      "crc32": "fb4b7560"
+    },
+    {
+      "file": "src/lib/core/coach-r185-p0.test.ts",
+      "bytes": 11895,
+      "sha256": "aac863f60b2b0563f24f6504bb5773d8bfec895fd715a36ffba0bf757bfa27cb",
+      "crc32": "28c31ff4"
+    },
+    {
+      "file": "src/lib/core/coach-r188.test.ts",
+      "bytes": 16360,
+      "sha256": "cbb191c58457d191543470b5e0be7871e92114e6b3c0b3fae32a6efc6676ed2c",
+      "crc32": "3ee78530"
+    },
+    {
+      "file": "src/lib/core/coach-r189.test.ts",
+      "bytes": 7002,
+      "sha256": "be03c43bfb99ebb3d2b614711f488a6f836854b158606767f206e81771f48e57",
+      "crc32": "af9e6e52"
+    },
+    {
+      "file": "src/lib/core/coach-reasoning-foundation.test.ts",
+      "bytes": 4039,
+      "sha256": "ad3118c16581f79f40200a4a6c93d107ab4bddbf191e8729c1b7d03df10a8b7d",
+      "crc32": "d5a2b543"
+    },
+    {
+      "file": "src/lib/core/coach-reasoning-r7.test.ts",
+      "bytes": 11470,
+      "sha256": "87c48920810e569b54618175eb3b13900b687b49f074cf926526a7b57b13bcb1",
+      "crc32": "c1c18436"
+    },
+    {
+      "file": "src/lib/core/coach-reasoning-r8.test.ts",
+      "bytes": 3605,
+      "sha256": "d5c32d261a651b9d48c575d710538e21c9053ef00d48edc5b4419dcaae641e21",
+      "crc32": "bc2554be"
+    },
+    {
+      "file": "src/lib/core/coach-reasoning.test.ts",
+      "bytes": 8759,
+      "sha256": "55ede0ed1410bb5abfc8f8b0f30f1c4ebcba27859575fc8b14720584616f24a7",
+      "crc32": "6fa64ba0"
+    },
+    {
+      "file": "src/lib/core/coach-reasoning.ts",
+      "bytes": 38451,
+      "sha256": "4ac68c9fae0cfcdd31c410ba99bbbe0edaa11d7caa42b32e7f6a31e4fa42bda2",
+      "crc32": "19fc24c1"
+    },
+    {
+      "file": "src/lib/core/coach-record-context.test.ts",
+      "bytes": 2253,
+      "sha256": "f25662232eca7a4a60177f4421e3bcd62890d02f927ec99fd39842085028e1af",
+      "crc32": "5728fc98"
+    },
+    {
+      "file": "src/lib/core/coach-record-context.ts",
+      "bytes": 2553,
+      "sha256": "2106380fc9429b84b1ac31106b72c765dcb7fab34643ee61ced8ff575f5d7217",
+      "crc32": "a278bec9"
+    },
+    {
+      "file": "src/lib/core/coach-red-flags.test.ts",
+      "bytes": 10796,
+      "sha256": "f5aa08d53b54566be2392d931938621a7ef96ea26214e5600426f1b46e5822d8",
+      "crc32": "20855807"
+    },
+    {
+      "file": "src/lib/core/coach-red-flags.ts",
+      "bytes": 23210,
+      "sha256": "7a612a5e59b0fc7a14a8a75b200b5c0e7ab1ef50c30b82ee905fc9695892ea39",
+      "crc32": "e1ddb181"
+    },
+    {
+      "file": "src/lib/core/coach-referral-safety.ts",
+      "bytes": 975,
+      "sha256": "2c5e78183965a0dc387f6bd60e94f5bf77a8891caf096b49490ec963be350882",
+      "crc32": "17a0d06c"
+    },
+    {
+      "file": "src/lib/core/coach-research-index.ts",
+      "bytes": 4263,
+      "sha256": "e3459cc03c7a14af045d673862ba1b87727cc39e970613adffdcf3f0ec3298c9",
+      "crc32": "1b87810f"
+    },
+    {
+      "file": "src/lib/core/coach-return.test.ts",
+      "bytes": 2162,
+      "sha256": "6d0d0542a4e757d5c757c7dbadcc52785f1ed9e977c4dd156117404c8efded8f",
+      "crc32": "e572cf81"
+    },
+    {
+      "file": "src/lib/core/coach-return.ts",
+      "bytes": 3423,
+      "sha256": "6d7f8cb93b68e2d8402d3b8ee8c08af49dd442e8b022c19907057240883bc4ee",
+      "crc32": "f9657c69"
+    },
+    {
+      "file": "src/lib/core/coach-review-workspace.ts",
+      "bytes": 2156,
+      "sha256": "b21408042e79199b54376382a0d98e2c54816631ec9c6ae44cdc05d717659222",
+      "crc32": "e38c5e9b"
+    },
+    {
+      "file": "src/lib/core/coach-series.test.ts",
+      "bytes": 9765,
+      "sha256": "ab77245e3ba2c90925bf9f59770bc2c16fd7573ec39fb25d27fee34bd0063e9d",
+      "crc32": "923e029b"
+    },
+    {
+      "file": "src/lib/core/coach-series.ts",
+      "bytes": 14623,
+      "sha256": "02bda8a4b2c6d4fb4548725b4a4e35521542939eed1150e4ffed22fa62e444ee",
+      "crc32": "a68f0ded"
+    },
+    {
+      "file": "src/lib/core/coach-session-load.test.ts",
+      "bytes": 1085,
+      "sha256": "7aa44dcd396edcc50852fab46cd0bfd93505ee46ad2a0bac35ae5c8be17384f9",
+      "crc32": "09ea4ac9"
+    },
+    {
+      "file": "src/lib/core/coach-session-load.ts",
+      "bytes": 5865,
+      "sha256": "c1ecab10929e4815362d4eb73873d7786b428b451c7f7a61efaae9a05640fee2",
+      "crc32": "3f8ad860"
+    },
+    {
+      "file": "src/lib/core/coach-specialty-analysis.ts",
+      "bytes": 7617,
+      "sha256": "3b44c123c40c3c54fb834ae7c6340fdc8a9ec2f50f570e7435252096c7555cb6",
+      "crc32": "1a23bc3b"
+    },
+    {
+      "file": "src/lib/core/coach-stream.test.ts",
+      "bytes": 2543,
+      "sha256": "ae02afc0f1e75ccc2ab7c68f24bf1e09f1485e233755a4fe0592be03f70c072b",
+      "crc32": "9f1138a1"
+    },
+    {
+      "file": "src/lib/core/coach-stream.ts",
+      "bytes": 5653,
+      "sha256": "a21ae9841a363d7a601e99914c7c2188d0de815cfcfafdca6894079342817ff9",
+      "crc32": "2944e83c"
+    },
+    {
+      "file": "src/lib/core/coach-strength-boundary.ts",
+      "bytes": 688,
+      "sha256": "4e02e198d1c9eef442a2e51f2e2e99f5d2a438c73c545f984bb82aa9fe9737f7",
+      "crc32": "600db8a5"
+    },
+    {
+      "file": "src/lib/core/coach-strength-plan-control.test.ts",
+      "bytes": 3907,
+      "sha256": "3c2a997833d14b1d4270a9beac1d415ca788cbb4f6d06bd892fe9f14d4c1974e",
+      "crc32": "7297a7c6"
+    },
+    {
+      "file": "src/lib/core/coach-strength-plan-control.ts",
+      "bytes": 4936,
+      "sha256": "d44292a365ae073edb750b80a7df3f472a6bbb6e583ce628e299248d4cd078eb",
+      "crc32": "8e417f43"
+    },
+    {
+      "file": "src/lib/core/coach-strength-plan-storage.test.ts",
+      "bytes": 2447,
+      "sha256": "5f1fdf21fa1c5285e51f1b4fb31d8258ec592b684f385ebad6aa54a5c48601cf",
+      "crc32": "f99c2137"
+    },
+    {
+      "file": "src/lib/core/coach-strength-plan-storage.ts",
+      "bytes": 1315,
+      "sha256": "05a6f401bb1c750fc2eba055b2e4bd1bf4513e31674657cb89b7d34b7ba6fa20",
+      "crc32": "075f4723"
+    },
+    {
+      "file": "src/lib/core/coach-strength-review.ts",
+      "bytes": 3671,
+      "sha256": "f76f57ee3acd02d106d6e069d2a04b31bbee8c5d07471136eb16a476bf452d2c",
+      "crc32": "549a6207"
+    },
+    {
+      "file": "src/lib/core/coach-structured-candidate.test.ts",
+      "bytes": 9149,
+      "sha256": "7223c18e6bc30a7aa3e2f75d42c624d7715f2cd32dcfb0a10fc73d4908a8ecea",
+      "crc32": "1a28679c"
+    },
+    {
+      "file": "src/lib/core/coach-structured-candidate.ts",
+      "bytes": 3572,
+      "sha256": "a5972a31f5a1a650fabee2a48475e7cc3bb3ad3972f617681264ae8d04c1ac36",
+      "crc32": "c7a5ffd1"
+    },
+    {
+      "file": "src/lib/core/coach-topic-fallback.test.ts",
+      "bytes": 1864,
+      "sha256": "fd8ac97abff17b557be649b2ba6fc4b7a9d09b06dfff7394a51ec2b8bbcd5005",
+      "crc32": "ed0b642a"
+    },
+    {
+      "file": "src/lib/core/coach-topic-fallback.ts",
+      "bytes": 3847,
+      "sha256": "f114db78de968372b84e923aff508bd798e223719c0a2891fbd0fdb7464c89fc",
+      "crc32": "7d073b8f"
+    },
+    {
+      "file": "src/lib/core/coach-training-mechanisms.test.ts",
+      "bytes": 2831,
+      "sha256": "b758beab763f26f0f7b5a682d8aa5ddcafd6daf9dfe8b08fb3926656fb4a71f3",
+      "crc32": "17fb6cd6"
+    },
+    {
+      "file": "src/lib/core/coach-training-mechanisms.ts",
+      "bytes": 5232,
+      "sha256": "8a84b126bbb91deb2585577ea0b3ed0ac1456d93938a54cf79d14a8a2ae67473",
+      "crc32": "eeabf77b"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c11-adapter.ts",
+      "bytes": 6436,
+      "sha256": "e7c10ae3f9e37e6c7d3d48a8653cc9267b67d8af423963a9a5c7533605146799",
+      "crc32": "c732a1ba"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c12-timeline.ts",
+      "bytes": 2189,
+      "sha256": "4cc4db7d9789a53dc8723c8b6314872ba1bf235e84d013fca140ff965199ffd8",
+      "crc32": "f7d73508"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c13-revision.ts",
+      "bytes": 1801,
+      "sha256": "7cabc5b75170a08b88452b1224add30e2093609cb9edfc7f577e7b9fcd00d297",
+      "crc32": "57a13573"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c14-guard.ts",
+      "bytes": 3725,
+      "sha256": "32ade5b5b593573df4c6c468d82edd579d80e1ca6a0d46ed7f63291122a77fa7",
+      "crc32": "f243bcad"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c15-exam.ts",
+      "bytes": 2405,
+      "sha256": "523977e46df8f6e2cacea2df86cb92c9fa43a5fc7415babd42241ef09a9a6cf8",
+      "crc32": "e2371373"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c15.scenario.test.ts",
+      "bytes": 4012,
+      "sha256": "a9e5027fcdf7bb911f3b12d5e1eb0a6b8ced05ef2d36af20ec545460fec1b28c",
+      "crc32": "b3299ed1"
+    },
+    {
+      "file": "src/lib/core/coach-v4-c15.test.ts",
+      "bytes": 9740,
+      "sha256": "29c313fdb05f8bb6781f4ebdff0b27535c8308fe26d193ac04a0fcf08436fc5c",
+      "crc32": "57bc47fe"
+    },
+    {
+      "file": "src/lib/core/coach-v4-computed.ts",
+      "bytes": 6616,
+      "sha256": "51b9c1308362aa47c57cbd4e4fb35f287d42e79311474fa12600d3404752eeaa",
+      "crc32": "7a3a737d"
+    },
+    {
+      "file": "src/lib/core/coach-v4-formal-rows-store.ts",
+      "bytes": 1706,
+      "sha256": "6f631575bd0f702a23e7f624ffa4df9897df13c08d470d14e832ee18f8eef925",
+      "crc32": "8187f12a"
+    },
+    {
+      "file": "src/lib/core/coach-v4-formal-rows.test.ts",
+      "bytes": 7193,
+      "sha256": "09713521b7c4a86d8e2a9c78ba7a477ecd350085831069faba26495da1a846a0",
+      "crc32": "4be492e2"
+    },
+    {
+      "file": "src/lib/core/coach-v4-formal-rows.ts",
+      "bytes": 14368,
+      "sha256": "f0fec625faae21cc2a78f9c944f8c3de08f807e49cc23014a2369653db191d14",
+      "crc32": "a804c64c"
+    },
+    {
+      "file": "src/lib/core/coach-v4-work-regression.test.ts",
+      "bytes": 2352,
+      "sha256": "33fc05a4261b908c46dd02486fc0ed3d97108a490dc0f2fcff8c5874c2bca79c",
+      "crc32": "8def1728"
+    },
+    {
+      "file": "src/lib/core/coach-view.test.tsx",
+      "bytes": 4865,
+      "sha256": "c59e818d03cc0fa2f2fbdec9c8cd6f54e571585cbb1df692489731f9e6d51fac",
+      "crc32": "b846c0f4"
+    },
+    {
+      "file": "src/lib/core/coach-view.ts",
+      "bytes": 13759,
+      "sha256": "24c2fdd9c32daf2d24bd7355df6a8895e9f9b2e589d9d3a6222aeec1be24f416",
+      "crc32": "21831501"
+    },
+    {
+      "file": "src/lib/core/control.ts",
+      "bytes": 6590,
+      "sha256": "da1d1cf047035b13cbb99c3e488c85737c5b90fca190fa48c5ab6a1e6890d9bd",
+      "crc32": "46c8546a"
+    },
+    {
+      "file": "src/lib/core/core.test.ts",
+      "bytes": 4203,
+      "sha256": "fe1b48483a2da1f95a01594bbaacb21f64de696f9ae486cef8bd10e31d62a590",
+      "crc32": "4382335e"
+    },
+    {
+      "file": "src/lib/core/decisions.ts",
+      "bytes": 2591,
+      "sha256": "4e4c2bdfb692d86f1242eab8b18d1dbda797f80da0f84be72ecb802f9a04d213",
+      "crc32": "bc94f0ba"
+    },
+    {
+      "file": "src/lib/core/device-evidence-backup.test.ts",
+      "bytes": 841,
+      "sha256": "062a90eeba49682468e0f5a4f7f4ea5447e47c7db16d85a29475aae476232358",
+      "crc32": "9ccb0aab"
+    },
+    {
+      "file": "src/lib/core/device-evidence-backup.ts",
+      "bytes": 3730,
+      "sha256": "7cb022815f6d9a61c953c2affdb8ef2c415bfb6310e9e02cfbd8a64d4c27f9e9",
+      "crc32": "a7888dd2"
+    },
+    {
+      "file": "src/lib/core/device-evidence-idb.ts",
+      "bytes": 2494,
+      "sha256": "5d01855f812e3a0db19cdc6f83ef600eeee0d988dd5d6389f6588f4b7b652e7a",
+      "crc32": "af4ff4a5"
+    },
+    {
+      "file": "src/lib/core/device-image-evidence.test.ts",
+      "bytes": 4598,
+      "sha256": "0ccfde342a2dba234927669e898f94e9d31d22ca0ca485fce766e3a61d65727c",
+      "crc32": "df728003"
+    },
+    {
+      "file": "src/lib/core/device-image-evidence.ts",
+      "bytes": 9093,
+      "sha256": "8801e56edce5be19db8dea93cb67b32bfdd8cf828f7586cadd54e48bb5b57f4d",
+      "crc32": "12891d9a"
+    },
+    {
+      "file": "src/lib/core/drafts.ts",
+      "bytes": 1523,
+      "sha256": "e5a9331b8b97a647ee791bd0be4b1cbbe252a920e7afd9402b7162d2bd223312",
+      "crc32": "92a82e85"
+    },
+    {
+      "file": "src/lib/core/events.ts",
+      "bytes": 6795,
+      "sha256": "b958b77962e555bf06c6d0eccf802dc80bfb6983d36eea0a40425f8cc2789de0",
+      "crc32": "538f93d6"
+    },
+    {
+      "file": "src/lib/core/evidence-availability.test.ts",
+      "bytes": 3404,
+      "sha256": "355e39d4b4408a9186cc514f9a79fc3b36624860271632628731c8a47cb8fa57",
+      "crc32": "3abe8f0d"
+    },
+    {
+      "file": "src/lib/core/evidence-availability.ts",
+      "bytes": 1615,
+      "sha256": "48994573e47aeaf19cf387c7b5b81f9c0787a9a36fd1f0d183ee7aed87b07b73",
+      "crc32": "4efb6ba7"
+    },
+    {
+      "file": "src/lib/core/evidence-bundle.test.ts",
+      "bytes": 4056,
+      "sha256": "0a03739b5db7a6a19c64b28070b21f65748c6940f7859ede14ec53a3b399e59f",
+      "crc32": "a5d69e7d"
+    },
+    {
+      "file": "src/lib/core/evidence-bundle.ts",
+      "bytes": 1031,
+      "sha256": "1454df0cb6b3f55122a27db7f687edff53d7105c41cce6a483140e5d416e61b7",
+      "crc32": "96c62fe3"
+    },
+    {
+      "file": "src/lib/core/evidence-consistency.test.ts",
+      "bytes": 3481,
+      "sha256": "39d537c22ed797561ab561cdbc220f963f5d8e94e61a9098f58a2627afc09eb0",
+      "crc32": "ecd75b59"
+    },
+    {
+      "file": "src/lib/core/evidence-consistency.ts",
+      "bytes": 4857,
+      "sha256": "dbbd3190291b469e4b27468522ee486812527a7775a7f15ac787b285c9d59ab5",
+      "crc32": "b87456c5"
+    },
+    {
+      "file": "src/lib/core/evidence-fatigue.test.ts",
+      "bytes": 6968,
+      "sha256": "8964542a403ad5de6095f43d0dd6a8516870cf715f44b974061a7f718d76a53f",
+      "crc32": "6dcdb19e"
+    },
+    {
+      "file": "src/lib/core/evidence-fatigue.ts",
+      "bytes": 2034,
+      "sha256": "d1daf9c7d21e148b464b8a9310ebfc82553b757641d673c9ce44edd01b9b7ad9",
+      "crc32": "f1df07f0"
+    },
+    {
+      "file": "src/lib/core/evidence-inference.test.ts",
+      "bytes": 8062,
+      "sha256": "bfa1348035a790a4c04cbcee748ae56a927612a3513a6e1552b97393713e3107",
+      "crc32": "5bde8414"
+    },
+    {
+      "file": "src/lib/core/evidence-inference.ts",
+      "bytes": 4200,
+      "sha256": "6e69b8b7ab31e0d72766294ac4ed5b240087d2963308036773be545e6f55d270",
+      "crc32": "997fbd09"
+    },
+    {
+      "file": "src/lib/core/evidence-interpretation.test.ts",
+      "bytes": 9487,
+      "sha256": "f9ffd32a953cbf6e9c86bcfa003a602270f6ac94ae642f684657e143a1007793",
+      "crc32": "92cd76bb"
+    },
+    {
+      "file": "src/lib/core/evidence-interpretation.ts",
+      "bytes": 4938,
+      "sha256": "b143190c9f8fcfa8f77c5eb1d1a40afd9189fee79fe2b23c7467fa30cabe615d",
+      "crc32": "f157230b"
+    },
+    {
+      "file": "src/lib/core/evidence-musculoskeletal.test.ts",
+      "bytes": 6782,
+      "sha256": "df597ca5c9c89f538560eb118b96aacad785de8bc10f0232c78aff781873c595",
+      "crc32": "eac2e825"
+    },
+    {
+      "file": "src/lib/core/evidence-musculoskeletal.ts",
+      "bytes": 3267,
+      "sha256": "58f993b1dc969a825fb7c30a4737990ed5eaf143b3181bbebee60dba108602de",
+      "crc32": "11677e72"
+    },
+    {
+      "file": "src/lib/core/evidence-profile.test.ts",
+      "bytes": 8204,
+      "sha256": "a5a739b75ee8a227fa96b44e4c4c66c254bc69f18e762a1d24f011096f87d8ab",
+      "crc32": "690522e7"
+    },
+    {
+      "file": "src/lib/core/evidence-profile.ts",
+      "bytes": 1442,
+      "sha256": "0502dfaf6f84e70b60b17b9fb6045a355f1ded5cc671151164048446119a9223",
+      "crc32": "ca519e10"
+    },
+    {
+      "file": "src/lib/core/evidence-provenance.test.ts",
+      "bytes": 3421,
+      "sha256": "da7a9e39ee731ef2ffae2a625b02c6e4756a126ed85ad4b2cf9735a556f6d75f",
+      "crc32": "abf3b852"
+    },
+    {
+      "file": "src/lib/core/evidence-provenance.ts",
+      "bytes": 2783,
+      "sha256": "86943a7ba46d13efa7b303290a66064f2f72b7fba0de58953bc0b0de613bd6c6",
+      "crc32": "c21e684e"
+    },
+    {
+      "file": "src/lib/core/evidence-recovery.test.ts",
+      "bytes": 8066,
+      "sha256": "302f38a1ee9784b59384bd4fdaba7eb5cc445dabf6acb144dbc516d84dafe376",
+      "crc32": "df5b6408"
+    },
+    {
+      "file": "src/lib/core/evidence-recovery.ts",
+      "bytes": 2544,
+      "sha256": "b081c66bd73e80e8b22a13dc73dfb390bb26d996162776662b0391c301ec641f",
+      "crc32": "009c30cc"
+    },
+    {
+      "file": "src/lib/core/evidence.test.ts",
+      "bytes": 6536,
+      "sha256": "e6927da2147fed29e500b9990b366a9d7399bde8ef1d50bed734e290f1ac73ec",
+      "crc32": "9f74e049"
+    },
+    {
+      "file": "src/lib/core/evidence.ts",
+      "bytes": 6225,
+      "sha256": "68328618f599cd51e05c93617b82d5fd4b81f7bf1f62224e9267514818f2a0d9",
+      "crc32": "1c000ff4"
+    },
+    {
+      "file": "src/lib/core/execution.test.ts",
+      "bytes": 8315,
+      "sha256": "3aaef5cc11326c6266ec7a3d318ec04a4bf6a8e3c299cdaf6f297028a579d368",
+      "crc32": "f318f986"
+    },
+    {
+      "file": "src/lib/core/execution.ts",
+      "bytes": 10480,
+      "sha256": "9745713f25df86ad55cba669499a0b4c0034df965adc60ec382ed36360701790",
+      "crc32": "8bc1514e"
+    },
+    {
+      "file": "src/lib/core/fact-read.test.ts",
+      "bytes": 5200,
+      "sha256": "f8b74453ab0e63864dc97783c6a44567ee01490fd99c94d8b56f2ef95e8038aa",
+      "crc32": "e60de409"
+    },
+    {
+      "file": "src/lib/core/fact-read.ts",
+      "bytes": 533,
+      "sha256": "eea1179fa954b766bc5a7a38425b59920c4e3ee877b92cafe7438d6c9b1bd4bc",
+      "crc32": "90a79402"
+    },
+    {
+      "file": "src/lib/core/historical-availability.test.ts",
+      "bytes": 4305,
+      "sha256": "6f5690fc15664c290f5900424606a9db27305313d03503bdfd8c56ccf6693793",
+      "crc32": "74e6a185"
+    },
+    {
+      "file": "src/lib/core/historical-availability.ts",
+      "bytes": 1964,
+      "sha256": "77ac1b548d4fcaa09d544f4dba77898c28794dbb86d7a4be5fa799eb2309974e",
+      "crc32": "258dfb47"
+    },
+    {
+      "file": "src/lib/core/historical-evidence.test.ts",
+      "bytes": 2892,
+      "sha256": "538e5509de1153d6cfd810f2281413777f10301a04684247eabd73a162b8b3ce",
+      "crc32": "90d87be0"
+    },
+    {
+      "file": "src/lib/core/historical-evidence.ts",
+      "bytes": 2035,
+      "sha256": "113c808ff1ad949c40e2f391a4df05ed9d957db015fa13ca40f85c753a2e95e5",
+      "crc32": "094290c0"
+    },
+    {
+      "file": "src/lib/core/historical-facts.test.ts",
+      "bytes": 2655,
+      "sha256": "8136fdc91496e6fde819566ca01b044f6c84828d060c99fbca5a2e91a481415b",
+      "crc32": "569ebb01"
+    },
+    {
+      "file": "src/lib/core/historical-facts.ts",
+      "bytes": 981,
+      "sha256": "54e9009e7d7ed6e9923c174b0a861348cd8d720ba2afe3b730879e24b86d061e",
+      "crc32": "c73144af"
+    },
+    {
+      "file": "src/lib/core/historical-occurrences.test.ts",
+      "bytes": 3798,
+      "sha256": "d122cf5a705c2142126b4d9986ff2e9af1796efc59eb12d5c445756a09345742",
+      "crc32": "acb0b532"
+    },
+    {
+      "file": "src/lib/core/historical-occurrences.ts",
+      "bytes": 1934,
+      "sha256": "46d4e0bdca5d549343ad44cec5d10ce28c493726e47444833a91d893f01f5ad9",
+      "crc32": "7cd3abe5"
+    },
+    {
+      "file": "src/lib/core/hydration.test.tsx",
+      "bytes": 3151,
+      "sha256": "a3037077b508a3a8bdde868ce526f58997ade6e70257654763de600ec9faecd3",
+      "crc32": "81416dde"
+    },
+    {
+      "file": "src/lib/core/import-completeness.test.ts",
+      "bytes": 3355,
+      "sha256": "7fe2b8182e20e091645e7bf7dff995c4e0855bb8164fe45b9e03da98e0103274",
+      "crc32": "74416629"
+    },
+    {
+      "file": "src/lib/core/import-completeness.ts",
+      "bytes": 4712,
+      "sha256": "eafa09a8349abdee1796e13ea986d9352160c9f1a61adbbbbca6fa62d95b4bb8",
+      "crc32": "becbf11c"
+    },
+    {
+      "file": "src/lib/core/import-history.test.ts",
+      "bytes": 3816,
+      "sha256": "6b0e2d7c95dc1030bc144c812191b3f4e7ad4f1962a999081155c032b2136cf1",
+      "crc32": "048090fe"
+    },
+    {
+      "file": "src/lib/core/import-history.ts",
+      "bytes": 1738,
+      "sha256": "d2b4f7bdb9b0d92ff4115663b901f018dff34657c204c8e5684a3be775cabeae",
+      "crc32": "8fd22c40"
+    },
+    {
+      "file": "src/lib/core/index.ts",
+      "bytes": 5638,
+      "sha256": "10751ab0d022debac698572303852fc4378a2e6efb2d586d97e3a84af721a2b4",
+      "crc32": "813b6e1e"
+    },
+    {
+      "file": "src/lib/core/local-ocr-policy.test.ts",
+      "bytes": 800,
+      "sha256": "e3ed7a63c0c938db523272c7a3de632386504112f6804700e12af04cde2ea3f8",
+      "crc32": "ac99cdce"
+    },
+    {
+      "file": "src/lib/core/local-ocr-policy.ts",
+      "bytes": 900,
+      "sha256": "8be5ec4d380628a121cc9c8b4123802debd92a65dbc3ab33ba60a2918df6a196",
+      "crc32": "ccdb83c7"
+    },
+    {
+      "file": "src/lib/core/migrate.ts",
+      "bytes": 1519,
+      "sha256": "604b684346c7ed13867859062703858e2aa851985eef7600219373cbfb50f210",
+      "crc32": "ca7c71df"
+    },
+    {
+      "file": "src/lib/core/nutrition-context.ts",
+      "bytes": 4946,
+      "sha256": "628c6f0cd238f4feaa0df53b17f25909f1ff7d87a13985cd6e9859042db12abc",
+      "crc32": "a002ed46"
+    },
+    {
+      "file": "src/lib/core/nutrition-reasoning.ts",
+      "bytes": 4036,
+      "sha256": "dfd919a19c21e6b8db33f9456ae816405d44e328fc2807a352b3c52ab45d0d4e",
+      "crc32": "f3905966"
+    },
+    {
+      "file": "src/lib/core/nutrition-safety.ts",
+      "bytes": 3038,
+      "sha256": "f26c748b892ffcbb3df6d2a2d14bac37a938a05ea86cd9ab0fb312cd4bed6a2a",
+      "crc32": "06ed862e"
+    },
+    {
+      "file": "src/lib/core/occurrence.test.ts",
+      "bytes": 20715,
+      "sha256": "0f2896a0cb9957f6ff9423b73ff6aaefee087da771020a26066637696d0a9999",
+      "crc32": "8c30b78e"
+    },
+    {
+      "file": "src/lib/core/occurrence.ts",
+      "bytes": 11360,
+      "sha256": "a9ff43dbfe8513ec025f1f760378ead17eb582bc39c9a516cf9517270a00cf13",
+      "crc32": "1bddd015"
+    },
+    {
+      "file": "src/lib/core/offline-training-evidence.mjs",
+      "bytes": 2033,
+      "sha256": "e286a10302e2617fa98be9f87037ae551ab1f8dbe6b88ef03f9ee9e69d7c0354",
+      "crc32": "d3d2facd"
+    },
+    {
+      "file": "src/lib/core/offline-training-evidence.test.mjs",
+      "bytes": 1774,
+      "sha256": "fd76abfc0c2a6063cdac6e4793df774c7fdf72e227109b670b2454d9dc72a3a3",
+      "crc32": "b55a3e8b"
+    },
+    {
+      "file": "src/lib/core/performance-evidence.test.ts",
+      "bytes": 7460,
+      "sha256": "221ee7d32e0f86bdbff7498728c55801ada5876fb03fa632dbff61cd31f5d9c6",
+      "crc32": "dd2fde5a"
+    },
+    {
+      "file": "src/lib/core/performance-evidence.ts",
+      "bytes": 6478,
+      "sha256": "a1477d8efe07151458bb5237a915acd4450052671c4d61290df886c0c931f44a",
+      "crc32": "4d22d49c"
+    },
+    {
+      "file": "src/lib/core/recovery-evidence.test.ts",
+      "bytes": 8149,
+      "sha256": "a051a55585a877dde3a919b0bc3e6fb4eac2456aa9632e642f99462b67ed34a7",
+      "crc32": "5183559f"
+    },
+    {
+      "file": "src/lib/core/research-cognition-bridge.test.ts",
+      "bytes": 1144,
+      "sha256": "b5a97c0d8419deabff545ada60d34d1aa540b193217270ae6791bd0c952a3969",
+      "crc32": "cb48e228"
+    },
+    {
+      "file": "src/lib/core/research-conflict-index.test.ts",
+      "bytes": 1812,
+      "sha256": "5136b7980e297338f7f3f87d191ce5aa9b5a4e2d2d23182fad36205f71e26ce5",
+      "crc32": "9ddacae3"
+    },
+    {
+      "file": "src/lib/core/research-conflict-index.ts",
+      "bytes": 5707,
+      "sha256": "201e5e4c8939bc4a943c5a5f01b63e932c2a78ce2e31d422a2ad4c2f540688ab",
+      "crc32": "f44c714a"
+    },
+    {
+      "file": "src/lib/core/research-conflict-source-audit.test.ts",
+      "bytes": 1701,
+      "sha256": "8a6e4e52e135972f7ba4720dfe902edfb174e167a436854b46c53d6eee6ee0f4",
+      "crc32": "5a9b090c"
+    },
+    {
+      "file": "src/lib/core/research-context.test.ts",
+      "bytes": 1761,
+      "sha256": "47f79ac83edee25df07cd5b61227199c2c69b96de5c9b5465578722a09dd95ea",
+      "crc32": "4bf4e5f4"
+    },
+    {
+      "file": "src/lib/core/research-context.ts",
+      "bytes": 3600,
+      "sha256": "ef1a4151d83e01a2082fbfd563a7d95b4bdafe136bab83676587ca571938b4e7",
+      "crc32": "33eaa74c"
+    },
+    {
+      "file": "src/lib/core/research-coverage-audit.test.ts",
+      "bytes": 1145,
+      "sha256": "8df04e58a1c2e4a56f3929c9c4f6e76c2cb0c4148f75bf8cdf4af448e5f9e5d3",
+      "crc32": "34c309fc"
+    },
+    {
+      "file": "src/lib/core/research-coverage-audit.ts",
+      "bytes": 2977,
+      "sha256": "0c08353c6c6f25c89a80d6542431853b6b90ac97abf7c29e749e77b27b0020d1",
+      "crc32": "8778df6c"
+    },
+    {
+      "file": "src/lib/core/research-evidence-r4-r7.test.ts",
+      "bytes": 1813,
+      "sha256": "385c72d245cf711212102807ee2ae37205d84608f66c5ee9db2135770cb6d3e6",
+      "crc32": "6541af72"
+    },
+    {
+      "file": "src/lib/core/research-evidence-r4-r7.ts",
+      "bytes": 28515,
+      "sha256": "eaf0bb40932f56c9f77bb5a0ee73f769ed3ed487fdd6bab1613fd58e16c62847",
+      "crc32": "f741fe35"
+    },
+    {
+      "file": "src/lib/core/research-history-reconciliation.test.ts",
+      "bytes": 1607,
+      "sha256": "1339024c822ea5f239fcdb6647875999a70efbbdb3d7333c4664b1bae1d54a76",
+      "crc32": "418b013f"
+    },
+    {
+      "file": "src/lib/core/research-history-reconciliation.ts",
+      "bytes": 3930,
+      "sha256": "733fa601e10c3e1514e4a12fed4ba230b1c956f6f9eac34372bafda0041b1c4d",
+      "crc32": "452326b6"
+    },
+    {
+      "file": "src/lib/core/research-k11-blind.test.ts",
+      "bytes": 1377,
+      "sha256": "4933d04128c013b949393df017060784af6faa2e427394c0bd46277d00e5b4f7",
+      "crc32": "44a9850a"
+    },
+    {
+      "file": "src/lib/core/research-k11-blind.ts",
+      "bytes": 6238,
+      "sha256": "ddbff7dd1e8c06131b2d64fb186b905b7172096e94f824591e218327326c6ca8",
+      "crc32": "974cd615"
+    },
+    {
+      "file": "src/lib/core/research-knowledge-registry.test.ts",
+      "bytes": 1361,
+      "sha256": "82ae2eaae449d9dcbe72d5f6ebe40021638f5d7769d8d90ef25b69e323dae35c",
+      "crc32": "af1e37f3"
+    },
+    {
+      "file": "src/lib/core/research-knowledge-registry.ts",
+      "bytes": 4899,
+      "sha256": "09e8b1c595906e2322bf6408984398fa745f6149edb79838b2cf63b4d0fa6206",
+      "crc32": "bf013245"
+    },
+    {
+      "file": "src/lib/core/research-methodology.test.ts",
+      "bytes": 2078,
+      "sha256": "3dd062545483ba3ba1cdff9f653b6cea65315499b4a566cbad1858a169a6cc48",
+      "crc32": "bb8fc488"
+    },
+    {
+      "file": "src/lib/core/research-methodology.ts",
+      "bytes": 3922,
+      "sha256": "9a680937d0954af0718f1a3352eb0481959bd46d943cddf43c20b98d22666736",
+      "crc32": "9f3057d9"
+    },
+    {
+      "file": "src/lib/core/research-r4-r7-data.json",
+      "bytes": 30604,
+      "sha256": "ae90b7fe188a15774e4220e29013ca905a0b3dc8d2bccb4910b5fb013d100dbb",
+      "crc32": "cf937939"
+    },
+    {
+      "file": "src/lib/core/research-r4-r7-data.ts",
+      "bytes": 30735,
+      "sha256": "3eab3abf3a1e74caeb335502802ab5fda3e46d76b213081f7026f570582d7f99",
+      "crc32": "e448659a"
+    },
+    {
+      "file": "src/lib/core/research-reasoning-audit-k10.test.ts",
+      "bytes": 2132,
+      "sha256": "38dae9146747414751129456473611b49dca2c8776d6a356c21bc38e3c4836e6",
+      "crc32": "22902ef0"
+    },
+    {
+      "file": "src/lib/core/research-reasoning-audit-k12-regression.test.ts",
+      "bytes": 2545,
+      "sha256": "d947646408fc573eb51d7e4e32e42d85353760ced15cd51d7a2a8bd444d4072c",
+      "crc32": "db96445d"
+    },
+    {
+      "file": "src/lib/core/research-reasoning-audit-k9.test.ts",
+      "bytes": 1861,
+      "sha256": "0b5ba386dafd8cb3e59041fdfe16518f4ea5d62ab10b7c1a8c33e72ba2950b9c",
+      "crc32": "478c6785"
+    },
+    {
+      "file": "src/lib/core/research-reasoning-audit.test.ts",
+      "bytes": 1990,
+      "sha256": "29df90062a9cfa208a91086912f691fc23b226e8397b809151827abda67f9fe0",
+      "crc32": "1de838b7"
+    },
+    {
+      "file": "src/lib/core/research-reasoning-audit.ts",
+      "bytes": 8403,
+      "sha256": "41e0ce357f3193e8e278d0afd9c306cba0e77e248db7746c13026c98636bc979",
+      "crc32": "9a8e930c"
+    },
+    {
+      "file": "src/lib/core/rest-clock.test.ts",
+      "bytes": 1229,
+      "sha256": "e2cd853ce59ecf694506ee54dc3994d1424611a6e9313f6387fd8c710078fa08",
+      "crc32": "b4dd06e2"
+    },
+    {
+      "file": "src/lib/core/rest-clock.ts",
+      "bytes": 1299,
+      "sha256": "56b06178ca611e7063b15eed121669bb2767668727b0cf4d6802adbf7c01ca57",
+      "crc32": "3eb61226"
+    },
+    {
+      "file": "src/lib/core/running-context-exam.test.mjs",
+      "bytes": 2398,
+      "sha256": "4534d0f538b2517fe3ebfaec9e13c13c2daf57ad28e3ac40eaeb2aa13b152955",
+      "crc32": "c3ed5ae2"
+    },
+    {
+      "file": "src/lib/core/running-context-exam.ts",
+      "bytes": 1870,
+      "sha256": "a181c5a9620346bb094fe40fb16da6e6bae59e3941155f8cdaaa4a5d9047efa5",
+      "crc32": "8de6b516"
+    },
+    {
+      "file": "src/lib/core/running-execution-rest.test.ts",
+      "bytes": 14500,
+      "sha256": "b7fe4fd7dc4457b8bd56d177ca3623ffb8a0c2d2a3097f3170c010af53436849",
+      "crc32": "0939a4db"
+    },
+    {
+      "file": "src/lib/core/running-execution.test.ts",
+      "bytes": 17255,
+      "sha256": "46649a1c987a769ea0103517c50fae3dfa86dfd03524866400b632d2201e72c7",
+      "crc32": "3e881545"
+    },
+    {
+      "file": "src/lib/core/running-execution.ts",
+      "bytes": 22200,
+      "sha256": "ee36f4e1dba72d337b8398f31274bf55fe7942c354396be0db0c8dbe9b7fd023",
+      "crc32": "fa23a4f3"
+    },
+    {
+      "file": "src/lib/core/running-log-correction.test.ts",
+      "bytes": 1988,
+      "sha256": "4023e5e926532350e55f942c2254102e7d2bc5c585a8f0d0103fc3e36b29cdda",
+      "crc32": "7f963282"
+    },
+    {
+      "file": "src/lib/core/running-log-correction.ts",
+      "bytes": 1857,
+      "sha256": "afaf35f6fdb75719a462efef03c43d3d9b36eeec07ce7c389ebcd7564e0be906",
+      "crc32": "a2d6142d"
+    },
+    {
+      "file": "src/lib/core/running-observation.test.ts",
+      "bytes": 2624,
+      "sha256": "58631b32c1e58427adf5b1f801c6cc3e2b684dc07f3924c69f68caecefee4d60",
+      "crc32": "32be9571"
+    },
+    {
+      "file": "src/lib/core/running-observation.ts",
+      "bytes": 4872,
+      "sha256": "b1faf723d9981b5fc1fc217e89e27e1cd42d261fcbd3971f7a5649edfac2db5b",
+      "crc32": "77194a5d"
+    },
+    {
+      "file": "src/lib/core/running-occurrence-context.test.mjs",
+      "bytes": 1562,
+      "sha256": "254ee27e85f4f4dc593a64dcb80fa54461379c47c17875ca3e6d1654c62988b0",
+      "crc32": "e5663cdd"
+    },
+    {
+      "file": "src/lib/core/running-occurrence-context.ts",
+      "bytes": 1697,
+      "sha256": "78431b9f112655c7aa32456859982722b52016ff6d0ad515db4b88bcfa2e035c",
+      "crc32": "2e10c414"
+    },
+    {
+      "file": "src/lib/core/running-plan.test.ts",
+      "bytes": 14533,
+      "sha256": "04780dfd3a1d81945009165163276e15c2a070fddbac114e863c566d3bdf371c",
+      "crc32": "174896c2"
+    },
+    {
+      "file": "src/lib/core/running-plan.ts",
+      "bytes": 14009,
+      "sha256": "72a5995ba823ed49a911f452bfff8e87f2b675c10aab11b65d8b66ef599cdfa2",
+      "crc32": "6d80931d"
+    },
+    {
+      "file": "src/lib/core/running-real-use.test.ts",
+      "bytes": 18866,
+      "sha256": "acd3e97072df2746d3aef56426f57a6401ee00f6ae7d8710b06a95d32e60092c",
+      "crc32": "6de87caa"
+    },
+    {
+      "file": "src/lib/core/running-reasoning-audit.test.mjs",
+      "bytes": 1485,
+      "sha256": "27bafcb8fa78637e698021f585a949e301d3396e367c3f900765ce67e42564bb",
+      "crc32": "5e4dc244"
+    },
+    {
+      "file": "src/lib/core/running-reasoning-audit.ts",
+      "bytes": 1807,
+      "sha256": "a6f3cc230f084ea42e8f77c49904e736e18c77e84fbddd7d60ff629eef7f20d4",
+      "crc32": "0af70c1c"
+    },
+    {
+      "file": "src/lib/core/running-round-analysis.test.ts",
+      "bytes": 7995,
+      "sha256": "1893942aa9d213f7c1ed1d23f5ffcdbb64c50dbf9f23c0f3ca978f93d9229bea",
+      "crc32": "57aaa409"
+    },
+    {
+      "file": "src/lib/core/running-round-analysis.ts",
+      "bytes": 7829,
+      "sha256": "c9a1cde7f6e74bc538e851ca2f8a54bdef8343f6e04cabf15345fb10b27d5caf",
+      "crc32": "0a3e7357"
+    },
+    {
+      "file": "src/lib/core/running-sequence-observation.test.mjs",
+      "bytes": 1400,
+      "sha256": "cbe9c974078defcd6ee8aee2cefc3fd24a6a15e7a73b476e2431878bb3ef01c7",
+      "crc32": "ce9fb375"
+    },
+    {
+      "file": "src/lib/core/running-sequence-observation.ts",
+      "bytes": 2624,
+      "sha256": "86a3177867e8a75eb54431f74469a24ce213277ef453b6e59da05fbdb297dcd8",
+      "crc32": "cf0fe093"
+    },
+    {
+      "file": "src/lib/core/running-session-context.test.mjs",
+      "bytes": 1724,
+      "sha256": "cfb6e07a74cdcbe3d8097a8ae3dac1f978ce00d0e9de254b1a49665273e6f303",
+      "crc32": "12884bcc"
+    },
+    {
+      "file": "src/lib/core/running-session-context.ts",
+      "bytes": 3105,
+      "sha256": "164293a80aaa077ed3151b6cbbe214d870b3d733d69dd21607a4d7bc956cc010",
+      "crc32": "160fca5f"
+    },
+    {
+      "file": "src/lib/core/running-structured-context.test.mjs",
+      "bytes": 2613,
+      "sha256": "7a78961da5cd3ddadcd1a633564ab4de0c2865b6d05a213176490833d3798c7f",
+      "crc32": "050a4f31"
+    },
+    {
+      "file": "src/lib/core/running-structured-context.ts",
+      "bytes": 3146,
+      "sha256": "664cfa6016cbf166837f781d66680e0e11bcbfd0eb19663e62c965d1041ac3dd",
+      "crc32": "ed1fd9d8"
+    },
+    {
+      "file": "src/lib/core/running-timeline-reasoning.test.mjs",
+      "bytes": 1356,
+      "sha256": "d78bd32dbcd630635c80d4c2d7e5abd8faf73d56747159586622dfbeb2c07712",
+      "crc32": "82871a16"
+    },
+    {
+      "file": "src/lib/core/running-timeline-reasoning.ts",
+      "bytes": 2716,
+      "sha256": "280f799bee01b4b2267049909044e89fe749407df350af8bc54797d7c162d1a9",
+      "crc32": "ac260f89"
+    },
+    {
+      "file": "src/lib/core/running-transaction.ts",
+      "bytes": 5942,
+      "sha256": "6e97756a43ba8b57bcaa409620cadcb1a28fbf3c31e89a88713376ed7e02d213",
+      "crc32": "5f569dc7"
+    },
+    {
+      "file": "src/lib/core/segment-rpe.test.ts",
+      "bytes": 4732,
+      "sha256": "c40ee8923a5050c10a92deba22f36de58466d5f365b12f439c2e00388d290cef",
+      "crc32": "42425779"
+    },
+    {
+      "file": "src/lib/core/segment-rpe.ts",
+      "bytes": 2782,
+      "sha256": "b629833c49285a988c5cca2838eaa44e9d83746a77b90c109ed2b320881b719e",
+      "crc32": "8418591d"
+    },
+    {
+      "file": "src/lib/core/state.ts",
+      "bytes": 10943,
+      "sha256": "7fdfd708e6b8b62e9f81038d0a784f0c4ae17e5e8396bf894e065f6b0c3ffe66",
+      "crc32": "cfcd73a4"
+    },
+    {
+      "file": "src/lib/core/storage-indexeddb.ts",
+      "bytes": 6732,
+      "sha256": "84ee84030d55de666e069036b81bd17edd32f3e17679f0f2a5e5070de9ef568f",
+      "crc32": "3da9621e"
+    },
+    {
+      "file": "src/lib/core/storage-journal.test.ts",
+      "bytes": 8551,
+      "sha256": "2b3d1655c6dda11441542f2c2b602884a9344d1cc0ded28ff9a27dcbd4fd9045",
+      "crc32": "45973eb2"
+    },
+    {
+      "file": "src/lib/core/storage-journal.ts",
+      "bytes": 2343,
+      "sha256": "a4713d1d83d5c9b4fd51627d15a2d6443e4cab3716f3fcbd96c9b6a44dab553d",
+      "crc32": "26246363"
+    },
+    {
+      "file": "src/lib/core/storage.ts",
+      "bytes": 1984,
+      "sha256": "d205b161a4c7d74b125537385ce88503bedc3a3c92475ff662d894dd7cba3ca9",
+      "crc32": "4bc73673"
+    },
+    {
+      "file": "src/lib/core/test-write",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "crc32": "00000000"
+    },
+    {
+      "file": "src/lib/core/training-coach.test.ts",
+      "bytes": 11943,
+      "sha256": "ab94111e4a25ff479095052ad80101696f4ea78275f3d3b4ff452f0a525d2355",
+      "crc32": "c5074438"
+    },
+    {
+      "file": "src/lib/core/training-coach.ts",
+      "bytes": 16945,
+      "sha256": "0ab5e30f3b63012d4fb1303ccc94e4e30ac23986c61b021cdbb8741c044f3b0f",
+      "crc32": "16d77494"
+    },
+    {
+      "file": "src/lib/core/training-correction-projection.test.ts",
+      "bytes": 21507,
+      "sha256": "693d2ac874be081bd063805dd5f748842bb21d20958dec7553360011a77be19c",
+      "crc32": "a550f8c5"
+    },
+    {
+      "file": "src/lib/core/training-correction.test.ts",
+      "bytes": 9025,
+      "sha256": "96c08941d2c45ca4f60276987b4ebbd403d857cd9b0f084425eceb1ecf21f0d1",
+      "crc32": "339490a4"
+    },
+    {
+      "file": "src/lib/core/training-correction.ts",
+      "bytes": 9938,
+      "sha256": "0857796fe8a0923563e2866a6df455132d1c63fd9231ef14e3318ec79630a8e3",
+      "crc32": "9f26e1a0"
+    },
+    {
+      "file": "src/lib/core/training-decision.test.ts",
+      "bytes": 10248,
+      "sha256": "e5de7d6877f3df5d5d5afd64c921cc189cb348126148ec7ee37fb8d9ca69d9a1",
+      "crc32": "90c1d814"
+    },
+    {
+      "file": "src/lib/core/training-decision.ts",
+      "bytes": 20970,
+      "sha256": "37bb80118ee3bd7d239020e937cc9ea6e8b04c385389385349c42ad6f5325a34",
+      "crc32": "eaea84c0"
+    },
+    {
+      "file": "src/lib/core/training-fact.test.ts",
+      "bytes": 9949,
+      "sha256": "4e6577d73359d7d1810fc98eec50d5d65086bafa60a4c6f2bed19faa4536766e",
+      "crc32": "9c79aae6"
+    },
+    {
+      "file": "src/lib/core/training-fact.ts",
+      "bytes": 5049,
+      "sha256": "822425503f8e64a4f517375579d0f3530963b463752fc595346be707dad880b3",
+      "crc32": "9819e4ff"
+    },
+    {
+      "file": "src/lib/core/training-followup-display.test.tsx",
+      "bytes": 2920,
+      "sha256": "c8cab49f9290f8384b0831ef481806fd5aa4694f1ee460e6ab1e60ca7e519b7e",
+      "crc32": "49b7f6e8"
+    },
+    {
+      "file": "src/lib/core/training-followup.test.ts",
+      "bytes": 10281,
+      "sha256": "81bc20fdd03db7202945367767981199e2ce43f5b68e0a8789d616ef4349cc67",
+      "crc32": "97748729"
+    },
+    {
+      "file": "src/lib/core/training-followup.ts",
+      "bytes": 10430,
+      "sha256": "1e556eabeb9e09d031b79198e2a9349c9a77ec3fe205e032b92e9ba701517b56",
+      "crc32": "c09bd89f"
+    },
+    {
+      "file": "src/lib/core/training-import-delete.test.ts",
+      "bytes": 1412,
+      "sha256": "47f91ad1a23c98b434deb48d6a5cab8e3c33ff6e80c856831abcd0176cc96fd3",
+      "crc32": "00757c2f"
+    },
+    {
+      "file": "src/lib/core/training-import.test.ts",
+      "bytes": 12590,
+      "sha256": "7f83e70fa54370baf10c3e6297944f11ca7b92fbd7c38e29f56987e960350401",
+      "crc32": "87d37b85"
+    },
+    {
+      "file": "src/lib/core/training-import.ts",
+      "bytes": 25208,
+      "sha256": "b787c1df9234b446507087a7e249b92f0e429d168af17619b029efd4a6c415d6",
+      "crc32": "bebc061f"
+    },
+    {
+      "file": "src/lib/core/training-model.test.ts",
+      "bytes": 4635,
+      "sha256": "4d1fb27477dd56724dd8f29b66ece3f8d08fe659bb2373249059a061f6540865",
+      "crc32": "c1302c29"
+    },
+    {
+      "file": "src/lib/core/training-model.ts",
+      "bytes": 5026,
+      "sha256": "8ff87c8cca7d5f628988963d6f48db965b9323c5dad5d3633af96ceedcfef9ee",
+      "crc32": "9ad87252"
+    },
+    {
+      "file": "src/lib/core/training-summary.test.ts",
+      "bytes": 7190,
+      "sha256": "5cb897aefccdd28f9a847b03622826683c65410be7052f788ec119c1a166edee",
+      "crc32": "4b379e22"
+    },
+    {
+      "file": "src/lib/core/training-summary.ts",
+      "bytes": 1637,
+      "sha256": "90b662869e072de074e258b7d1d01dc16eacea42f3d6ff42abe09d8a10c2335a",
+      "crc32": "2bc7c48b"
+    },
+    {
+      "file": "src/lib/core/trial.test.ts",
+      "bytes": 2644,
+      "sha256": "6f59b9867eaf3c1afc8e58da18568e5a04d8e566fd86e6468dc7bbd812db997f",
+      "crc32": "d04760a1"
+    },
+    {
+      "file": "src/lib/core/trial.ts",
+      "bytes": 6026,
+      "sha256": "3e68ad7016b1fda8e2478cf3aa4d0f9d4ad6f7787e18f0a81fb122b0569f8867",
+      "crc32": "14022758"
+    },
+    {
+      "file": "src/lib/core/types.ts",
+      "bytes": 5083,
+      "sha256": "da0c703620e6d7f8a11e23e5e20dbe7ccf4fcb7b488be3165d2cafdccc66680d",
+      "crc32": "5102d922"
+    },
+    {
+      "file": "src/lib/db.ts",
+      "bytes": 9525,
+      "sha256": "8decf7689ff4833ad2f6f263eff9041dd2a68ce923824fa1d55ad620dea72e49",
+      "crc32": "51a3b53b"
+    },
+    {
+      "file": "src/lib/env.server.ts",
+      "bytes": 477,
+      "sha256": "9b834e0978ae76332a65a05f5bc75f80684db8c6aa638916869385c12e3343d5",
+      "crc32": "220e27f0"
+    },
+    {
+      "file": "src/lib/error-component.tsx",
+      "bytes": 1029,
+      "sha256": "d219e4297409810a21bd382e60169faf69243d49dafd17cb0ea3a1888082b2f4",
+      "crc32": "0581b08e"
+    },
+    {
+      "file": "src/lib/multiplayer/index.ts",
+      "bytes": 169,
+      "sha256": "bcb96816a2135e315078e2e7d0eda5522579b0caf9e768dc6c34294e4fa49137",
+      "crc32": "af7088ea"
+    },
+    {
+      "file": "src/lib/multiplayer/p2p.ts",
+      "bytes": 20579,
+      "sha256": "4d0d2492ac249a2cf267c8d2db7688b5a2c488ab640da7727c0f1b73c2e92f60",
+      "crc32": "27f418c4"
+    },
+    {
+      "file": "src/lib/nutrition/body.ts",
+      "bytes": 4125,
+      "sha256": "cb397c1e91c6ac6db5c007395fcd2005189543cbab7427fc88797ae86b5e93e8",
+      "crc32": "a6cf9dfc"
+    },
+    {
+      "file": "src/lib/nutrition/calc.ts",
+      "bytes": 4784,
+      "sha256": "1057a5d0a7be3fbf78569a76277f76df82d341c7ed976ec855be39251ae935b3",
+      "crc32": "896c32cc"
+    },
+    {
+      "file": "src/lib/nutrition/catalog-usda.ts",
+      "bytes": 1355362,
+      "sha256": "667e1d6a797e51f9e1f18b8130e4ce1b30bb52309580383839d88e813ea680ab",
+      "crc32": "855266a3"
+    },
+    {
+      "file": "src/lib/nutrition/catalog.test.ts",
+      "bytes": 3442,
+      "sha256": "e986d5442b3d2a7d1fe955949be8882cc69d6cb7c33f2bb132c1bdc57331db3c",
+      "crc32": "d4f96128"
+    },
+    {
+      "file": "src/lib/nutrition/catalog.ts",
+      "bytes": 159908,
+      "sha256": "b4bbb876f7fa28ec0301a17c0b5fb7cd774392a112d90706e35ecce5d2e78f83",
+      "crc32": "64ca1c53"
+    },
+    {
+      "file": "src/lib/nutrition/day.ts",
+      "bytes": 3547,
+      "sha256": "bf27afc41cdf7bc1916b44505413ee30d93761a5f2e86da7afbe39eb51d86b7d",
+      "crc32": "b35ab535"
+    },
+    {
+      "file": "src/lib/nutrition/energy-source.test.ts",
+      "bytes": 942,
+      "sha256": "597d87d3d8b8d1344614602e5591b608716698a2ec02c560876f633954d544ac",
+      "crc32": "7e2de59e"
+    },
+    {
+      "file": "src/lib/nutrition/energy-source.ts",
+      "bytes": 1380,
+      "sha256": "b7e33f60f56cdd7b8cfc842d4b22bd1a509c269d1c2dd0499a53778da016ac3b",
+      "crc32": "102d5c4c"
+    },
+    {
+      "file": "src/lib/nutrition/log.ts",
+      "bytes": 3409,
+      "sha256": "d8ff86042c2a8de433cd4e410468a22bc99dd2e600623270362c3bbddbe1a57b",
+      "crc32": "181cedbb"
+    },
+    {
+      "file": "src/lib/nutrition/lookup.ts",
+      "bytes": 6756,
+      "sha256": "e16c749c3e848b7630a6bbfbee1e31f730465296c5420381d3fa99b7d55ad632",
+      "crc32": "262dce87"
+    },
+    {
+      "file": "src/lib/nutrition/timing.test.ts",
+      "bytes": 3546,
+      "sha256": "8deb644a14b0542950b08f9864b28e844fdfc7a46dd9a9486c47d472194ca311",
+      "crc32": "e87c65e8"
+    },
+    {
+      "file": "src/lib/nutrition/timing.ts",
+      "bytes": 2265,
+      "sha256": "89828ef4e8b5dd3687e2b8fd03c3f06d8d3e27081cf4eb8fb04c92df7b5aea1c",
+      "crc32": "4b99e65e"
+    },
+    {
+      "file": "src/lib/nutrition/vitals.test.ts",
+      "bytes": 4610,
+      "sha256": "dde650f5b91d660d871a1a79670969cc16443e884fd56f7a28608f0bbe0666d7",
+      "crc32": "e15f7601"
+    },
+    {
+      "file": "src/lib/nutrition/vitals.ts",
+      "bytes": 8689,
+      "sha256": "f3244c3c051116a191dfc1d1ba62fa134a197bbaf6905cdef9bad6799abc9ed6",
+      "crc32": "216c50a6"
+    },
+    {
+      "file": "src/lib/preview-embedder-origin.ts",
+      "bytes": 1855,
+      "sha256": "c2d5e1acc5653ff2abc08a5eeb5feb3331f4e3d7c751ec83d60dee83cf33a6ee",
+      "crc32": "047baa80"
+    },
+    {
+      "file": "src/lib/preview-host-bridge.ts",
+      "bytes": 9595,
+      "sha256": "63a91311378037680b6be414937295069ec2950520d1dc959741cf430ba6b38b",
+      "crc32": "1dafde87"
+    },
+    {
+      "file": "src/lib/preview-path-prefix.test.ts",
+      "bytes": 1794,
+      "sha256": "08da80da191446ed449da9a1180ccaaeebb8eaf295bf3ef9f0a5fcca51860ce1",
+      "crc32": "2ab7c0ba"
+    },
+    {
+      "file": "src/lib/preview-path-prefix.ts",
+      "bytes": 1458,
+      "sha256": "d46d4c21d47c2765198352b649037def35371c3995525cc42f5aff6a0f1519b7",
+      "crc32": "bbe5b76d"
+    },
+    {
+      "file": "src/lib/strength/agent.ts",
+      "bytes": 26539,
+      "sha256": "2685e86544e9c0c390e412a35ef5d9c5da46419fe7d922bfeb402e2a307bd62e",
+      "crc32": "ae16971d"
+    },
+    {
+      "file": "src/lib/strength/catalog.ts",
+      "bytes": 12079,
+      "sha256": "5ec7d63bba279dc5eec6dade9d903175e9c073f42f465b739d7f1a366c8ed6d0",
+      "crc32": "bdfb84d9"
+    },
+    {
+      "file": "src/lib/strength/coach-ai.ts",
+      "bytes": 12708,
+      "sha256": "13bb34c244ea0b80dbe53db632950ee0b5c6b3310f28432e0cd7b30a3637b077",
+      "crc32": "025b582d"
+    },
+    {
+      "file": "src/lib/strength/coach-explanation.test.ts",
+      "bytes": 7127,
+      "sha256": "6974f4df1ee562c8413df75cbc4433b3f9839e9d84c3033f5ba2dbca6bca6bee",
+      "crc32": "8df8b8f9"
+    },
+    {
+      "file": "src/lib/strength/coach-explanation.ts",
+      "bytes": 6551,
+      "sha256": "c163a531c93e988d419b9c6a53ced6a49bf723f6d5aebee40f2d30f847c0d92a",
+      "crc32": "9972a1e3"
+    },
+    {
+      "file": "src/lib/strength/coach-output-retry.test.ts",
+      "bytes": 920,
+      "sha256": "ccd9efc52f89379852da90feba7f001942bcb8df9ba94dce24baadd3f4cc70ab",
+      "crc32": "3fd5f214"
+    },
+    {
+      "file": "src/lib/strength/coach-output-retry.ts",
+      "bytes": 1009,
+      "sha256": "aacffa2834e2f1af8d131af6cd225eca1ecd086960dbc5d0a84587abdfc09223",
+      "crc32": "57ba55bd"
+    },
+    {
+      "file": "src/lib/strength/coach-pipeline.ts",
+      "bytes": 57612,
+      "sha256": "3e911e975087c42dcd19044e9cb59401bde17551b6b4293eb9a012770ad05558",
+      "crc32": "3d500a3a"
+    },
+    {
+      "file": "src/lib/strength/coach-plan-ai.ts",
+      "bytes": 8379,
+      "sha256": "223634e07ddf01b1e0d0ddf20fb8d24a35a57bc6cfeb92184056ed9b26f9e2c8",
+      "crc32": "aa385898"
+    },
+    {
+      "file": "src/lib/strength/coach-r12-pipeline.test.ts",
+      "bytes": 6269,
+      "sha256": "9886277b43b1147803185c3aded334f3fb0cd17530a82c669fb4b612ea78bc02",
+      "crc32": "c069d8b5"
+    },
+    {
+      "file": "src/lib/strength/coach-v4-wiring.test.ts",
+      "bytes": 16273,
+      "sha256": "57a819af26ed1b731d58d84752bd215c687342597a5ec415f2a049aa11d0f138",
+      "crc32": "e7d0b9ab"
+    },
+    {
+      "file": "src/lib/strength/coach.ts",
+      "bytes": 9782,
+      "sha256": "592bf39f853ca90dda3efc50fb886e8a632755aed005985958210bfef7ae0ec7",
+      "crc32": "27431a73"
+    },
+    {
+      "file": "src/lib/strength/cues.ts",
+      "bytes": 5423,
+      "sha256": "36524dda9c1237df4e705c198247539377309115a7a055f4bc6aa37b1be061d1",
+      "crc32": "a2f74e67"
+    },
+    {
+      "file": "src/lib/strength/demo/data.json",
+      "bytes": 176262,
+      "sha256": "3dcf60b042c2c08fd39d3a3b62d3274c5d9554d912f36945a30a057a80d9a3fe",
+      "crc32": "607f5804"
+    },
+    {
+      "file": "src/lib/strength/demo/index.ts",
+      "bytes": 3214,
+      "sha256": "6bb2cab3246a52a55b8ec4a2e7fb8ff7f66813581787580e80f8f04a1fe473a0",
+      "crc32": "122d62c0"
+    },
+    {
+      "file": "src/lib/strength/demo/musclemap.d.ts",
+      "bytes": 259,
+      "sha256": "c8a9fadd6322c75bdb9f31655c7623ca7a329629849c1bb39cb6533733ebb9d4",
+      "crc32": "a12105fe"
+    },
+    {
+      "file": "src/lib/strength/demo/musclemap.js",
+      "bytes": 3354,
+      "sha256": "f76b5c897716933373a989e95ce34f4616a1ceb1f0bb68377b1f6b39d7fd2f32",
+      "crc32": "9a087d5b"
+    },
+    {
+      "file": "src/lib/strength/demo/plan.ts",
+      "bytes": 2018,
+      "sha256": "163592bae32deab3e97910a3e3a540e8bd5d95a4ffc78cfb0445afee5b5cd9ae",
+      "crc32": "38bd85f5"
+    },
+    {
+      "file": "src/lib/strength/demo/provider.ts",
+      "bytes": 3811,
+      "sha256": "4df5be8b3cc34d306adc311c9c6e10888fb6de814af0ed06e7001a31c9bd4c3d",
+      "crc32": "b9fc0fae"
+    },
+    {
+      "file": "src/lib/strength/demo/renderer.d.ts",
+      "bytes": 756,
+      "sha256": "bbe72eee0645abbabe954abeca00ad2486c597237f7f47b78d9050a8261fa825",
+      "crc32": "d5b111ef"
+    },
+    {
+      "file": "src/lib/strength/demo/renderer.js",
+      "bytes": 9229,
+      "sha256": "3095adf364e578d319a721e6ce76fd1ec7e028165127c7131083d66acb97b103",
+      "crc32": "c431e28e"
+    },
+    {
+      "file": "src/lib/strength/demo/types.ts",
+      "bytes": 2186,
+      "sha256": "2adddb18eccfc7dc90766f176f5b2aef8554381a5fa7b3618ad4024ef365c212",
+      "crc32": "a6a105e8"
+    },
+    {
+      "file": "src/lib/strength/demo.test.ts",
+      "bytes": 4334,
+      "sha256": "af1b0f6c03dd64cbb359a9dddae27acfec7cce931e010b0890da8915ecd4b993",
+      "crc32": "2ef49f3a"
+    },
+    {
+      "file": "src/lib/strength/exercise-content.ts",
+      "bytes": 2741,
+      "sha256": "6aed6897d8ab327195d15b1f7a362628ea01d8e922cba528677f360d7014858f",
+      "crc32": "e25eb16a"
+    },
+    {
+      "file": "src/lib/strength/model-access.test.ts",
+      "bytes": 3198,
+      "sha256": "44bdeef9782a1900f00ba1c08c2ff6e89df6faf1d49a236ff27aaf45d56ffbaa",
+      "crc32": "5ab677d9"
+    },
+    {
+      "file": "src/lib/strength/model-access.ts",
+      "bytes": 3228,
+      "sha256": "6ffb62bad70c13aa5aaf9c54b7c6ac04314011715de0bfd0b3808c8cf9b9183a",
+      "crc32": "14541de9"
+    },
+    {
+      "file": "src/lib/strength/model.ts",
+      "bytes": 18468,
+      "sha256": "b2f5d2b9d08a7378d09b5ddd96d86dde4aea8a354d18515c77ebd803cd663b40",
+      "crc32": "3409f2a2"
+    },
+    {
+      "file": "src/lib/strength/persist.test.ts",
+      "bytes": 2116,
+      "sha256": "eb7371b96e8952c0697d8ea4a055fab51215c4edaef41aa41ae07811ea8bd91e",
+      "crc32": "c9303797"
+    },
+    {
+      "file": "src/lib/strength/profile.ts",
+      "bytes": 6533,
+      "sha256": "c0878ada3b224c2f825b718a4b707dcbacc599f60023cf51799af85e0e4f85bf",
+      "crc32": "adf966b9"
+    },
+    {
+      "file": "src/lib/strength/runner-input.ts",
+      "bytes": 707,
+      "sha256": "b2595faa33c0f2f425dceeefdfce8f6b70c1ab199cc6282d3cab19b001cd5869",
+      "crc32": "43b810bc"
+    },
+    {
+      "file": "src/lib/strength/session-builder.test.tsx",
+      "bytes": 11184,
+      "sha256": "c149a4d36ff87966e7ea73b438f900ead840fdee29d7e6f6423c88881e32c909",
+      "crc32": "8bc99c0a"
+    },
+    {
+      "file": "src/lib/strength/session-builder.ts",
+      "bytes": 4537,
+      "sha256": "9e7a376c296ad474015a45262ca39cfb1711bef99922d9b3261446658b4e707e",
+      "crc32": "abb74126"
+    },
+    {
+      "file": "src/lib/strength/training-import-ai.ts",
+      "bytes": 13870,
+      "sha256": "0b90665453fcf0b3b30f6619e2a9a5f30950bbf10df1548dfe42afaca1e09a9e",
+      "crc32": "f8935ffa"
+    },
+    {
+      "file": "src/lib/ui/appearance.ts",
+      "bytes": 1611,
+      "sha256": "d92d28bc24bb9c73a4b9ebae6ba66323d839e7b57180f0ea146223108e08e330",
+      "crc32": "8d8ea16d"
+    },
+    {
+      "file": "src/lib/ui/athlete-growth.test.ts",
+      "bytes": 735,
+      "sha256": "e44b882bb0314e13d55dc611aafcb5689ea8c5a6b8f22a1ccd29e48ad736fe2c",
+      "crc32": "729ff943"
+    },
+    {
+      "file": "src/lib/ui/athlete-growth.ts",
+      "bytes": 1299,
+      "sha256": "bd168ddb6f466e750976eb751f0874fb558ab902dfc897862adc836b7b5b17b9",
+      "crc32": "36333cee"
+    },
+    {
+      "file": "src/lib/ui/coach-coordination-view.ts",
+      "bytes": 2334,
+      "sha256": "81b9736b0fbeeef0fa18ac8ebaf24b2f0163da1f7190e601af300d8c068d8ce8",
+      "crc32": "12a6c2d4"
+    },
+    {
+      "file": "src/lib/ui/device-csv-preview.test.ts",
+      "bytes": 649,
+      "sha256": "4619508a83e8840089b134fa4f32977b6e7da88ca6413d7598b0e0ba5322c5f3",
+      "crc32": "bf2cc859"
+    },
+    {
+      "file": "src/lib/ui/device-csv-preview.ts",
+      "bytes": 1604,
+      "sha256": "58c71e768ea02dde491c063b7e9f4f47b87eec3e5e3e614fe4f6f23e3574b64e",
+      "crc32": "0edb6aee"
+    },
+    {
+      "file": "src/lib/ui/device-guides.test.ts",
+      "bytes": 543,
+      "sha256": "0d93883aac2245e9076e1136927320e55c842ff1e633a0f0c1a7d34d33af7ff5",
+      "crc32": "679471e6"
+    },
+    {
+      "file": "src/lib/ui/device-guides.ts",
+      "bytes": 4210,
+      "sha256": "ec14ffe853b894936fc452f1a39f66dc0a62cdecb567887b41892bf5164fc67a",
+      "crc32": "dc6c4f19"
+    },
+    {
+      "file": "src/lib/ui/device-import-contract.test.ts",
+      "bytes": 896,
+      "sha256": "1b73e27cf8162123bb0435f646c43a63909be80a87be9ef4cb75f1a927711143",
+      "crc32": "f7c81bf9"
+    },
+    {
+      "file": "src/lib/ui/device-import-contract.ts",
+      "bytes": 1590,
+      "sha256": "9bfe6a7a6d4b5195cff84f0e66b310350fbaa156e0460b1fcce5de1715d9477d",
+      "crc32": "2e1656d4"
+    },
+    {
+      "file": "src/lib/ui/goal-portfolio.test.ts",
+      "bytes": 773,
+      "sha256": "8491d04117f8f2480d02aee428d5e5c711515370b4f8701f0a183d20899ec0da",
+      "crc32": "9b6bf74e"
+    },
+    {
+      "file": "src/lib/ui/goal-portfolio.ts",
+      "bytes": 983,
+      "sha256": "0b577d7a60d97fad68e9368dddb74d1ee9d6ef5bf8ae4c5e548e95eab8c5585f",
+      "crc32": "c4a98d66"
+    },
+    {
+      "file": "src/lib/ui/onboarding.test.ts",
+      "bytes": 760,
+      "sha256": "5bd0d7b4c3a8d0e30ae60378608c2a1dfc07394ac68656657f2e23c2c6cb61ae",
+      "crc32": "6097f44b"
+    },
+    {
+      "file": "src/lib/ui/onboarding.ts",
+      "bytes": 1209,
+      "sha256": "959d05a70da97ca90d0fc6818d4cf363def3022a9e5f987cdb6c94c6b77897fe",
+      "crc32": "297ce7c0"
+    },
+    {
+      "file": "src/lib/ui/running-workouts.test.ts",
+      "bytes": 9411,
+      "sha256": "347c11b3a0b72bf603d97e932d43290dd94721161ef5facf24f48fa4e08abcd7",
+      "crc32": "a3e3af0f"
+    },
+    {
+      "file": "src/lib/ui/running-workouts.ts",
+      "bytes": 23932,
+      "sha256": "3ba55d6a4c601a38156ed94e4c4b979ac1f902c6d2f2a9a120bca9dc808cec9a",
+      "crc32": "603e25c4"
+    },
+    {
+      "file": "src/lib/ui/sport-goal.test.ts",
+      "bytes": 3817,
+      "sha256": "94ee368a280190ebe37e53bc6a45b36f80fec022512a4b7cb2c964913f47d9e5",
+      "crc32": "87d0c321"
+    },
+    {
+      "file": "src/lib/ui/sport-goal.ts",
+      "bytes": 3300,
+      "sha256": "675f05b37d10b06313e040ab048eee785df51400447cf76065b2e9904adda02b",
+      "crc32": "63ec5bf5"
+    },
+    {
+      "file": "src/lib/ui/sw-reload.test.ts",
+      "bytes": 2081,
+      "sha256": "b35f3540980a6da235f73bfe1f9691159ca2d4b25aef656a23271f3aa145cd89",
+      "crc32": "f620d795"
+    },
+    {
+      "file": "src/lib/ui/sw-reload.ts",
+      "bytes": 896,
+      "sha256": "68c0f4846a41e452982c61065d62110aab12d046346ac75d1774703947ddaf38",
+      "crc32": "a01ad01e"
+    },
+    {
+      "file": "src/lib/ui/training-log-view.test.ts",
+      "bytes": 2624,
+      "sha256": "ab946f5b431a96dfef9f1db5b737379b7aab9b8632e5157c7f14ce68f715d260",
+      "crc32": "1519a63c"
+    },
+    {
+      "file": "src/lib/ui/training-log-view.ts",
+      "bytes": 2860,
+      "sha256": "11f16456183e2579a9f8c69fd7749066bb0b178650577025f9cd5adcc3dabe41",
+      "crc32": "b48b733d"
+    },
+    {
+      "file": "src/routeTree.gen.ts",
+      "bytes": 1741,
+      "sha256": "f4a843c61899ede2abbc4a7153e6a00557765f737b724b152463c533c4e0ddb0",
+      "crc32": "f939b266"
+    },
+    {
+      "file": "src/router.tsx",
+      "bytes": 367,
+      "sha256": "0abdd838670d8c02c6c30eed98e2db3d37469ac791d5e4162ae6dcdd0fd7f4c8",
+      "crc32": "ddac6d7e"
+    },
+    {
+      "file": "src/routes/__root.tsx",
+      "bytes": 1691,
+      "sha256": "5d2e85b57791b8f3ad67375fc51bc47df7f1fd92bc3e3179d767aa9fff919e64",
+      "crc32": "216a1c46"
+    },
+    {
+      "file": "src/routes/index.tsx",
+      "bytes": 227,
+      "sha256": "d4d4195f7a07f90e5f842d90ed08bbc78a2b6310265efa21875af414cb4e6f74",
+      "crc32": "18f4b721"
+    },
+    {
+      "file": "src/safety/redflag/context.ts",
+      "bytes": 6674,
+      "sha256": "3865829bf5ba3af8126bdc4f89aaa1da090e30bbf1b0dd35a6f648bf2ab406ad",
+      "crc32": "2120bc14"
+    },
+    {
+      "file": "src/safety/redflag/rules.zh.json",
+      "bytes": 2368,
+      "sha256": "f02da433b4f1302616573439e0cc262b13c31b6841d8ce68d319f376ac479b6d",
+      "crc32": "cedffc79"
+    },
+    {
+      "file": "src/styles.css",
+      "bytes": 17446,
+      "sha256": "2eedd9b1921182a01cb749698e09c2667d25566091631118ad399aaf12b30438",
+      "crc32": "c6a736c0"
+    },
+    {
+      "file": "tsconfig.cognition.json",
+      "bytes": 257,
+      "sha256": "c12ad4b27f41b8a6a9a858bea5451c04aabb3eef9217f08c3a17f4cb34da15c6",
+      "crc32": "066a5c97"
+    },
+    {
+      "file": "tsconfig.json",
+      "bytes": 722,
+      "sha256": "8abad87a6c62322f1f4fdff02d5f3f764ea10a98c49cfafccdc288a0dced492f",
+      "crc32": "5f510167"
+    },
+    {
+      "file": "tsconfig.r7-scoped.json",
+      "bytes": 541,
+      "sha256": "62d0ff5e688313619a107bbfd4c47e0141206a9564bf62f17982715532b04c32",
+      "crc32": "e0685868"
+    },
+    {
+      "file": "vite.config.ts",
+      "bytes": 6573,
+      "sha256": "5cd01fb384efdf98cc99ab57ea3594da0d2ccb4edecdbc8ee1903083c5b05ff6",
+      "crc32": "c72dcf81"
+    }
+  ],
+  "note": "docs/evaluation are excluded so final receipts and packaging documents can be added after execution."
+}

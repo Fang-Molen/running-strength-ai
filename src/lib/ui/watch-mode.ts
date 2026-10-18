@@ -1,7 +1,8 @@
+import { healthChanged } from "@/lib/health/observation"
 /** 健康页两种模式：戴手表（只问手表测不到的）/ 不戴手表（极简手动打卡）。 */
 export const WATCH_KEY = "fk-watch-v1"
 export const WATCHES = [["none", "无手表"], ["pro", "专业运动手表"], ["basic", "普通健康手表"]] as const
-export const GROUP_HINT: Record<string, string> = { none: "每天 30 秒手动打卡", pro: "佳明 / 高驰 COROS / 颂拓 Suunto / Polar：健康 + 训练完整数据", basic: "Apple Watch / 华为 / 小米：健康指标 + 基础训练数据" }
+export const GROUP_HINT: Record<string, string> = { none: "每天 30 秒手动打卡", pro: "佳明 / 高驰 COROS / 颂拓 Suunto / Polar：可导入健康与训练明细，完整度以实际数据为准", basic: "Apple Watch / 华为 / 小米：健康指标 + 基础训练数据" }
 export const BRANDS: Record<string, readonly (readonly [string, string])[]> = { pro: [["garmin", "佳明"], ["coros", "高驰 COROS"], ["suunto", "颂拓 Suunto"], ["polar", "Polar"]], basic: [["apple", "Apple Watch"], ["huawei", "华为"], ["xiaomi", "小米"]], none: [] }
 export type WatchId = (typeof WATCHES)[number][0]
 const brandLabel = (b?: string | null) => Object.values(BRANDS).flat().find((x) => x[0] === b)?.[1]
@@ -13,7 +14,7 @@ export function loadWatch(s: KV | null = store()): WatchId | null {
   try { const v = JSON.parse(s?.getItem(WATCH_KEY) ?? "null"); return WATCHES.some((x) => x[0] === v?.watch) ? v.watch : null } catch { return null }
 }
 export function loadBrand(s: KV | null = store()): string | null { try { return JSON.parse(s?.getItem(WATCH_KEY) ?? "null")?.brand ?? null } catch { return null } }
-export function saveWatch(w: WatchId, s: KV | null = store(), brand: string | null = null) { s?.setItem(WATCH_KEY, JSON.stringify({ watch: w, tier: TIER_OF_GROUP[w], brand: BRANDS[w].some((x) => x[0] === brand) ? brand : null, at: new Date().toISOString() })) }
+export function saveWatch(w: WatchId, s: KV | null = store(), brand: string | null = null) { s?.setItem(WATCH_KEY, JSON.stringify({ watch: w, tier: TIER_OF_GROUP[w], brand: BRANDS[w].some((x) => x[0] === brand) ? brand : null, at: new Date().toISOString() })); healthChanged() }
 /** 专业表：训练完整明细；普通健康表：训练只取距离/时长/心率。 */
 export const trainingDetail = (w: WatchId | null) => (w === "pro" ? "full" : w === "basic" ? "basic" : "manual")
 
@@ -40,7 +41,7 @@ export function saveCheckin(date: string, patch: Partial<Checkin>, s: KV | null 
   const all = loadCheckins(s).filter((c) => c.date !== date)
   const prev = loadCheckins(s).find((c) => c.date === date)
   const next = { ...prev, ...patch, date, at: new Date().toISOString() } as Checkin
-  s?.setItem(CHECKIN_KEY, JSON.stringify([...all, next].slice(-120))); return next
+  s?.setItem(CHECKIN_KEY, JSON.stringify([...all, next].slice(-120))); healthChanged(); return next
 }
 export const fatigueScore = (f?: Checkin["fatigue"]) => FATIGUE.find((x) => x[0] === f)?.[2] ?? null
 

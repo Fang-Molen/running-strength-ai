@@ -1,0 +1,256 @@
+{
+  "schema": 1,
+  "purpose": "FIELDWORK V4 appearance and original human rig/motions lock; do not regenerate or substitute",
+  "files": [
+    {
+      "path": "public/demo3d/FORM-AUDIT.md",
+      "bytes": 23935,
+      "sha256": "1cd0ef31c72b75cafa4d9311c619de8deecba1f6c311aa0762dda7042b977f41"
+    },
+    {
+      "path": "public/demo3d/LICENSES.md",
+      "bytes": 2378,
+      "sha256": "df935e0433112d4ffbd3e8ee3cfa1a572fe32b4d621f8db139d34fb4df032f18"
+    },
+    {
+      "path": "public/demo3d/data.js",
+      "bytes": 131599,
+      "sha256": "c81a633d6172adc274606abcac21bc5ec79e67bd36688fd1327504cd2f096896"
+    },
+    {
+      "path": "public/demo3d/icon.svg",
+      "bytes": 282,
+      "sha256": "230668a9ccee17f5f5fae6a25a337ea9d4b0c3716c5cb1d2e6d58349c8362243"
+    },
+    {
+      "path": "public/demo3d/models/human.glb",
+      "bytes": 6425196,
+      "sha256": "cbf479cf66cb281b96d83b41816b5894e4f9da9833c015821b95499c9440353c"
+    },
+    {
+      "path": "public/demo3d/models/regions.png",
+      "bytes": 115321,
+      "sha256": "8865d5811229a775c78f1e4d9688b6fde95048f110780f8c9ef89e43ce37e661"
+    },
+    {
+      "path": "public/demo3d/motions.js",
+      "bytes": 40343,
+      "sha256": "adf1be4369953ed288debfc4d099de93ad8891721ef110ffc467f682f68c3251"
+    },
+    {
+      "path": "public/demo3d/musclemap.js",
+      "bytes": 3292,
+      "sha256": "1697ef5b30eda21b1ab03f905046bece5d381e516c2eb9204ccba876a9fad2db"
+    },
+    {
+      "path": "public/demo3d/muscles.js",
+      "bytes": 2090,
+      "sha256": "0a376021b9ba9dc29a3d334312b10633313ada822fcc7e3771c1ef797cdb9d88"
+    },
+    {
+      "path": "public/demo3d/muscles.json",
+      "bytes": 2074,
+      "sha256": "dcb74dc4a9ea76edcbb70614a2d7e3b1646d47b93170becb6679dbc8fd31fc38"
+    },
+    {
+      "path": "public/demo3d/renderer.js",
+      "bytes": 9145,
+      "sha256": "c74aef3d0ed91b025f5236aac54f276a7ed0467fd13a92ca87792fe78393a896"
+    },
+    {
+      "path": "public/demo3d/style.css",
+      "bytes": 5235,
+      "sha256": "1de99056581f506fdf3965aa296342525edb58fe55526747c7cf320d16b93f07"
+    },
+    {
+      "path": "public/demo3d/vendor/THREE-LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/controls/OrbitControls.js",
+      "bytes": 32163,
+      "sha256": "da82486bfcbf9adf398c425713a9a68e4527fa9cd208aa5da25f4acbfa3bbde9"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/loaders/GLTFLoader.js",
+      "bytes": 110058,
+      "sha256": "152ea334ebb5f50aafe152eb13dfd5563f400f4b98e0377d383922be3321d683"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 31797,
+      "sha256": "135194c6d96b61b5d4f0322084b140f972a05461a6ab114c392fdcd1260136d7"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/utils/SkeletonUtils.js",
+      "bytes": 8831,
+      "sha256": "e5acb0513a5a35ff079e5f08f8a4d6836c3e757b02a15e980743e5b704ff6565"
+    },
+    {
+      "path": "public/demo3d/vendor/three.module.min.js",
+      "bytes": 687458,
+      "sha256": "f7cee3c7533449a1505cc12cb5128b89e3d4fd3d7ea62b05f9f5464a217472ee"
+    },
+    {
+      "path": "public/demo3d/viewer3d.js",
+      "bytes": 33915,
+      "sha256": "21946af7621bf5193f435909cdd76b20f870ae6c1e4e38222851839b143fac90"
+    },
+    {
+      "path": "public/fieldwork-v4/anatomy-back.jpg",
+      "bytes": 19594,
+      "sha256": "60f9b77013b6fd563e1aa117ab55b21b39c5e306a26f9aff440984ba6e49356b"
+    },
+    {
+      "path": "public/fieldwork-v4/anatomy-front.jpg",
+      "bytes": 22640,
+      "sha256": "c9bb448f8b4565ac3d8313ac728c5404e632707cb9c4eaa52c92224bd8aaa85a"
+    },
+    {
+      "path": "public/fieldwork-v4/run-01.jpg",
+      "bytes": 4711,
+      "sha256": "ff0f1c18c7021ca7a4a881fd4ac62fed1defe15563375f616178feec10f63a9d"
+    },
+    {
+      "path": "public/fieldwork-v4/run-02.jpg",
+      "bytes": 5094,
+      "sha256": "02c85f7237bab1f73bcb1ed2684ca8f2707213c233f38a3e30135b9075a93878"
+    },
+    {
+      "path": "public/fieldwork-v4/run-03.jpg",
+      "bytes": 4855,
+      "sha256": "e08c1075a24ad7339034c3d6f0875af78aa35c1025b400e4dc2269dc64b44e63"
+    },
+    {
+      "path": "public/fieldwork-v4/run-04.jpg",
+      "bytes": 4636,
+      "sha256": "f72825cbecbed30cf579bf05ef56b3812e8b48df8279f35d6a8afdd73eaf223f"
+    },
+    {
+      "path": "public/fieldwork-v4/run-05.jpg",
+      "bytes": 4266,
+      "sha256": "346c4ce907289e080c9fb4881102f7bb10cc3872735b44301a87f45d29fb8d69"
+    },
+    {
+      "path": "public/fieldwork-v4/run-06.jpg",
+      "bytes": 4783,
+      "sha256": "db1c882903a0d13817ee2d61c3f230f90a3537f1f6bf4c68ee8d8dd866b090d7"
+    },
+    {
+      "path": "public/fieldwork-v4/run-07.jpg",
+      "bytes": 4493,
+      "sha256": "9a4c151167530a2bb5e3e55e0adc2b181943e06172ebb426b423c42f5dee5b01"
+    },
+    {
+      "path": "public/fieldwork-v4/run-08.jpg",
+      "bytes": 4948,
+      "sha256": "c8e10c9cb2abd5f22b71cc755d84d341eff2d1e518d7a3a012e8fa01f7aa0049"
+    },
+    {
+      "path": "public/fieldwork-v4/run-09.jpg",
+      "bytes": 5949,
+      "sha256": "d3c4f538610999ba936a07cdeda56217ab0747f620f816a9ade26b5c23b9039d"
+    },
+    {
+      "path": "public/fieldwork-v4/run-10.jpg",
+      "bytes": 5311,
+      "sha256": "22c54a981a55e274c14508431cace576577f4c113b5732fd09c31bb4253f6b2e"
+    },
+    {
+      "path": "public/fieldwork-v4/run-11.jpg",
+      "bytes": 5010,
+      "sha256": "b2fe415641b92573c0372866b4d2fc81ec67089cb4a36449fc6243be0e4ccc3c"
+    },
+    {
+      "path": "public/fieldwork-v4/run-12.jpg",
+      "bytes": 5067,
+      "sha256": "b73d11399280b83af72aa4de69727ea3f9f9bb686d186454f436feced05e9a7d"
+    },
+    {
+      "path": "public/fieldwork-v4/run-sequence.jpg",
+      "bytes": 44053,
+      "sha256": "7c8ddd04d57e6de43b12b915137c82555098bda28ee4140893224da1fdaa4f57"
+    },
+    {
+      "path": "public/fieldwork-v4/strength-01.jpg",
+      "bytes": 3727,
+      "sha256": "7026e3bca2d9f8cc32defefe8af5bf4c40e21cee6b5b9ba2b667d463d623d07d"
+    },
+    {
+      "path": "public/fieldwork-v4/strength-02.jpg",
+      "bytes": 3878,
+      "sha256": "13305bcafd5efc18eaefd328b4e081bb2b96b5c6469d71a485badb74d0be8e7a"
+    },
+    {
+      "path": "public/fieldwork-v4/strength-03.jpg",
+      "bytes": 3142,
+      "sha256": "625c22d4f60da301c833f66b52b7ed3bc7e6e32bdc374266db99807744df179e"
+    },
+    {
+      "path": "public/fieldwork-v4/strength-04.jpg",
+      "bytes": 3754,
+      "sha256": "2a8e55b6e57663671d24ad9d432f2e701a67f6251d9c3df06061f401abfbb6a6"
+    },
+    {
+      "path": "src/components/exercise-demo.tsx",
+      "bytes": 6736,
+      "sha256": "45cd704e6e78ed6a7b7f20c991d792b6ea6d49c7c4cd490d23e0e4771422517f"
+    },
+    {
+      "path": "src/components/fieldwork-panel.tsx",
+      "bytes": 1591,
+      "sha256": "4f4093f60cd4ab942d7ddebba49d84353cc25a208e4e55c629d452e8c1d813d8"
+    },
+    {
+      "path": "src/components/fieldwork-v4/app.d.ts",
+      "bytes": 1031,
+      "sha256": "d6f511359761fa9eaeaf7254a5330fb7ff2370e58362ed5fb34f5c0e70b58f9e"
+    },
+    {
+      "path": "src/components/fieldwork-v4/app.js",
+      "bytes": 53502,
+      "sha256": "e512c4542c8279c12379da0f694ac4d21ef3c77506043dbc38c62a05a09ac8f3"
+    },
+    {
+      "path": "src/components/fieldwork-v4/contracts.d.ts",
+      "bytes": 358,
+      "sha256": "2a1c5c316f8bc4b90a861188081a3a43a4455564ea13812205ef8d037f49d330"
+    },
+    {
+      "path": "src/components/fieldwork-v4/host.css",
+      "bytes": 3945,
+      "sha256": "e62945f795444bed007fca4d5d9e0f53c70bdb5b12c303f1ed4c8e9cf31e4cbc"
+    },
+    {
+      "path": "src/components/fieldwork-v4/styles.css",
+      "bytes": 19825,
+      "sha256": "cdded2c42fc7228003a8abdcb38b444be8e884c361fa6bd23cf29437c98e54d4"
+    },
+    {
+      "path": "src/lib/running-technique/catalogue.json",
+      "bytes": 144384,
+      "sha256": "1fdfe74c48301666e2a994e4610b1af32a1844d6d3a5a2060ac8ffd305e02c64"
+    },
+    {
+      "path": "src/lib/strength/demo/data.json",
+      "bytes": 176262,
+      "sha256": "3dcf60b042c2c08fd39d3a3b62d3274c5d9554d912f36945a30a057a80d9a3fe"
+    },
+    {
+      "path": "src/lib/strength/demo/index.ts",
+      "bytes": 3222,
+      "sha256": "7b8fa200357b416ef3200961e0724240772bbb7d2988254dc076fea4b075de6f"
+    },
+    {
+      "path": "src/lib/strength/demo/provider.ts",
+      "bytes": 4169,
+      "sha256": "5f08db33a4e180fe94b88ac734b2ab0cbf02389a1e991ab26a77205d197fd9f0"
+    },
+    {
+      "path": "src/lib/ui/fieldwork-catalogue.ts",
+      "bytes": 2461,
+      "sha256": "c415ad17a414ec2fe8057433764136d0dbd30cbd267770d76641b88f93e5c185"
+    }
+  ]
+}

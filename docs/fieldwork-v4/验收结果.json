@@ -1,0 +1,183 @@
+{
+  "version": "FIELDWORK-V4-20261016",
+  "generatedAt": "2026-10-16T01:28:09.345006+00:00",
+  "status": "TARGETED_ACCEPTANCE_COMPLETE",
+  "fullProjectRegression": "NOT_RERUN",
+  "scope": "主页、运动与力量入口、饮食健康、原人物、只读教练关联及本地保存；不是全项目或全部医学/动作专业内容验收",
+  "unitAndRegression": {
+    "pass": 638,
+    "fail": 0,
+    "skip": 0,
+    "files": 16,
+    "evidence": "final-unit/summary.json"
+  },
+  "browser": [
+    {
+      "scope": "dev",
+      "pass": 47,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser/dev.json",
+      "note": "实际浏览器检查"
+    },
+    {
+      "scope": "dev-player-historical",
+      "pass": 14,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser/dev-player.json",
+      "note": "原播放器开发版记录，早于冷加载等待修复；最终模型以prod-player-final为准"
+    },
+    {
+      "scope": "prod-pages",
+      "pass": 49,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser/prod.json",
+      "note": "实际浏览器检查"
+    },
+    {
+      "scope": "prod-player-final",
+      "pass": 15,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser/prod-player.json",
+      "note": "实际浏览器检查"
+    }
+  ],
+  "productionBrowserTotal": {
+    "pass": 64,
+    "fail": 0,
+    "skip": 0
+  },
+  "gates": {
+    "typecheck": {
+      "status": "PASS",
+      "observedExitCode": 0,
+      "log": "typecheck-model-final.log"
+    },
+    "build": {
+      "status": "PASS",
+      "observedExitCode": 0,
+      "log": "build-model-final.log"
+    },
+    "assetIntegrity": {
+      "status": "PASS",
+      "checked": 50,
+      "failed": []
+    }
+  },
+  "sourceRuntimeSha256": "10a997f6e2cdee3c7f41e1b14f804b5651573701caeec71ba5c256bed0290a22",
+  "pageBrowserSourceBoundary": {
+    "testedRuntimeSha256": "f91380f1ccbe5b65141088cf7a033044cedc705af1f2ea649279d3cebf138c97",
+    "laterRuntimeChanges": [
+      "src/lib/strength/demo/provider.ts"
+    ],
+    "explanation": "49项页面检查后仅修改3D加载预算与超时取消顺序；该模块另在最终构建做15项播放器/离线检查。未重复执行无代码变化的全套测试。"
+  },
+  "historicalEvidenceNotCounted": {
+    "r189Core": {
+      "pass": 2798,
+      "fail": 0,
+      "skip": 0,
+      "note": "上一核心基线全量结果，不是本轮全量重跑"
+    }
+  },
+  "realDataCoverage": "本轮使用合成数据与原角色资产；未重新执行Garmin真实数据测试，不含GPS/身份资料。",
+  "capabilityGraph": "不新增经验能力分；保留可靠原始指标与同协议历史、缺常模待评估的标准。",
+  "fixedProductDefects": [
+    {
+      "problem": "多轮记录核对被通用开场覆盖",
+      "fix": "显式只读记录分支并保持既往医疗/急症优先；训练对话分支也保留只读上下文",
+      "proof": "prod.json中321千卡、65.4公斤实际出现在回答；新增合成回归"
+    },
+    {
+      "problem": "原人物动态模块URL及regions图相对路径错误",
+      "fix": "同源完整模块URL和模块相对图片路径；原GLB、骨架与motions未更换",
+      "proof": "最终构建实际WebGL、四视角与离线重开"
+    },
+    {
+      "problem": "首次加载原模型超过原10秒预算",
+      "fix": "即时2D保持可用，冷加载有界等待45秒，保留取消和迟到资源清理",
+      "proof": "直接构建诊断实测约28秒；最终播放器15项"
+    },
+    {
+      "problem": "新旧页面入口与保存状态不一致风险",
+      "fix": "统一动作/饮食/恢复入口，保存必须权威回读；失败保留输入",
+      "proof": "页面跳转及存储故障注入检查"
+    }
+  ],
+  "failedRunsRetained": [
+    {
+      "logs": [
+        "browser-dev-links.log",
+        "browser/dev-before-record-route-fix.json"
+      ],
+      "reason": "真实回答缺陷，已修复"
+    },
+    {
+      "logs": [
+        "prod-player-before-build-fix.log",
+        "browser/prod-player-before-build-fix.json"
+      ],
+      "reason": "构建播放器冷加载失败，保留后复核"
+    },
+    {
+      "logs": [
+        "prod-player-before-harness-settle.log",
+        "browser/prod-player-before-harness-settle.json"
+      ],
+      "reason": "首装SW导航未稳定即点击导致测试超时；测试等待与页面验收一致的SW就绪，断言仍要求实际WebGL"
+    },
+    {
+      "logs": [
+        "record-route-test-invalid-fixture.log",
+        "typecheck-invalid-fixture.log"
+      ],
+      "reason": "新增用例曾错误以boolean代替RedFlagResult；改用真实detectRedFlags输出并保留急症断言"
+    },
+    {
+      "logs": [
+        "environment-runner-targeted-final.log"
+      ],
+      "reason": "沙箱子进程IPC EPERM，0项执行；已改为逐文件直接执行并记录真实退出码"
+    }
+  ],
+  "notExecuted": [
+    {
+      "item": "当前完整npm test全项目回归",
+      "status": "SKIP",
+      "reason": "按本轮轻量测试范围仅运行相关测试，历史全量不冒充当前全量"
+    },
+    {
+      "item": "真实iOS/Android硬件",
+      "status": "SKIP",
+      "reason": "本地Chromium移动/平板视口不等于真机"
+    },
+    {
+      "item": "真实Garmin数据全链路重验",
+      "status": "SKIP",
+      "reason": "本轮未重新执行"
+    },
+    {
+      "item": "外部模型与正式部署",
+      "status": "SKIP",
+      "reason": "本轮不调用、不部署"
+    }
+  ],
+  "remainingLimitations": [
+    "女性3D资产未提供，保留明确2D占位",
+    "53个技术动作仍待教练审核；12个分镜不是已交付动画",
+    "76个力量动作专业动作学未由本轮自动核准",
+    "六语界面已验证；日/韩专业译文未审校",
+    "没有核准常模的能力维度仍待评估，不生成0—100分"
+  ],
+  "unresolvedBlockingItemsWithinCurrentTargetedScope": [],
+  "nextStage": "可交Grok进行下一阶段独立集成审阅；不代表正式发布批准",
+  "rollback": {
+    "fullBaseline": "r190-before-fieldwork-v4.zip",
+    "sha256": "f03fb64353233e6ba048ac0e1a6ffd34b7795db5dada96a10d9c59bad63bf1c7",
+    "compactArchive": "fangkun-fieldwork-v4-code-rollback.zip",
+    "storagePolicy": "只回退代码，不清空用户存储或训练事件"
+  }
+}

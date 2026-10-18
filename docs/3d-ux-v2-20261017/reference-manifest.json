@@ -1,0 +1,14 @@
+[
+  {
+    "file": "03-approved-ui-final.png",
+    "sha256": "5c7123ed8df32bb5a02937def73b21cbfb72da6e9f815cefb14dd277627c93d5",
+    "status": "APPROVED_REFERENCE_ONLY",
+    "runtimeAsset": false
+  },
+  {
+    "file": "02-approved-characters.png",
+    "sha256": "f58224064fdf3d9dfad3d232960694219059ac95bac1bd1dca09b674d6d8e04f",
+    "status": "APPROVED_REFERENCE_ONLY",
+    "runtimeAsset": false
+  }
+]

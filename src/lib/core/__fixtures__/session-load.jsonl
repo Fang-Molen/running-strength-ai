@@ -1,0 +1,36 @@
+{"text": "整课25分钟（包括热身与整理），整课RPE 3，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 75}
+{"text": "整课40分钟（包括热身与整理），整课RPE 3，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 120}
+{"text": "整课50分钟（包括热身与整理），整课RPE 3，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 150}
+{"text": "整课60分钟（包括热身与整理），整课RPE 3，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 180}
+{"text": "整课25分钟（包括热身与整理），整课RPE 4，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 100}
+{"text": "整课40分钟（包括热身与整理），整课RPE 4，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 160}
+{"text": "整课50分钟（包括热身与整理），整课RPE 4，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 200}
+{"text": "整课60分钟（包括热身与整理），整课RPE 4，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 240}
+{"text": "整课25分钟（包括热身与整理），整课RPE 5，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 125}
+{"text": "整课40分钟（包括热身与整理），整课RPE 5，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 200}
+{"text": "整课50分钟（包括热身与整理），整课RPE 5，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 250}
+{"text": "整课60分钟（包括热身与整理），整课RPE 5，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 300}
+{"text": "整课25分钟（包括热身与整理），整课RPE 6，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 150}
+{"text": "整课40分钟（包括热身与整理），整课RPE 6，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 240}
+{"text": "整课50分钟（包括热身与整理），整课RPE 6，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 300}
+{"text": "整课60分钟（包括热身与整理），整课RPE 6，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 360}
+{"text": "整课25分钟（包括热身与整理），整课RPE 7，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 175}
+{"text": "整课40分钟（包括热身与整理），整课RPE 7，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 280}
+{"text": "整课50分钟（包括热身与整理），整课RPE 7，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 350}
+{"text": "整课60分钟（包括热身与整理），整课RPE 7，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 420}
+{"text": "整课25分钟（包括热身与整理），整课RPE 8，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 200}
+{"text": "整课40分钟（包括热身与整理），整课RPE 8，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 320}
+{"text": "整课50分钟（包括热身与整理），整课RPE 8，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 400}
+{"text": "整课60分钟（包括热身与整理），整课RPE 8，末组RPE 9；训练负荷怎么算", "rpe": null, "seconds": null, "expectStatus": "CALCULATED", "expectAU": 480}
+{"text": "整课一小时半，整课RPE 4", "expectStatus": "CALCULATED", "expectAU": 360}
+{"text": "整课半小时，整课RPE 6", "expectStatus": "CALCULATED", "expectAU": 180}
+{"text": "整课1小时20分钟，整课RPE 3", "expectStatus": "CALCULATED", "expectAU": 240}
+{"text": "最后一组RPE 9，整课50分钟", "expectStatus": "MISSING", "expectAU": null}
+{"text": "整课RPE 6，末组RPE 9", "expectStatus": "MISSING", "expectAU": null}
+{"text": "整课RPE 5，整课RPE 7，整课40分钟", "expectStatus": "CONFLICT", "expectAU": null}
+{"text": "RPE 8，整课40分钟", "expectStatus": "MISSING", "expectAU": null}
+{"text": "单段RPE 7，整课40分钟", "expectStatus": "MISSING", "expectAU": null}
+{"text": "整课RPE 5，整课40分钟", "rpe": 5, "seconds": 3600, "expectStatus": "CONFLICT", "expectAU": null}
+{"text": "整课RPE 5，整课40分钟", "rpe": 6, "seconds": 3600, "expectStatus": "CONFLICT", "expectAU": null}
+{"text": "整课RPE 5", "continuousSeconds": 1800, "expectStatus": "CONDITIONAL", "expectAU": 150}
+{"text": "整课九十分钟，整课RPE 4", "expectStatus": "CALCULATED", "expectAU": 360}

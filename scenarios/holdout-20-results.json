@@ -1,0 +1,210 @@
+{
+  "summary": {
+    "total": 20,
+    "intentMatches": 20,
+    "safetyMatches": 20,
+    "failures": []
+  },
+  "results": [
+    {
+      "id": "H1",
+      "question": "跑完一千米胸闷喘不上气，还能练吗？",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "EMERGENCY",
+      "actualIntent": "SAFETY",
+      "actualSafety": "EMERGENCY",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H2",
+      "question": "上周有胸痛，今天已经好了，明天能跑吗？",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "NONE",
+      "actualIntent": "SAFETY",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H3",
+      "question": "我没有胸痛但是今天突然晕倒了",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "EMERGENCY",
+      "actualIntent": "SAFETY",
+      "actualSafety": "EMERGENCY",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H4",
+      "question": "跑步时心脏像被压住一样痛",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "EMERGENCY",
+      "actualIntent": "SAFETY",
+      "actualSafety": "EMERGENCY",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H5",
+      "question": "800米最后200米该怎么分配速度？",
+      "expectedIntent": "RACE_STRATEGY",
+      "expectedSafety": "NONE",
+      "actualIntent": "RACE_STRATEGY",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H6",
+      "question": "我的10公里PB34分，半马大概能跑多少？",
+      "expectedIntent": "PERFORMANCE_TRANSFER",
+      "expectedSafety": "NONE",
+      "actualIntent": "PERFORMANCE_TRANSFER",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H7",
+      "question": "400米每组70秒，后两组75秒，怎么解释？",
+      "expectedIntent": "DATA_INTERPRETATION",
+      "expectedSafety": "NONE",
+      "actualIntent": "DATA_INTERPRETATION",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H8",
+      "question": "连续两周跑量增加50%，怎么安排恢复？",
+      "expectedIntent": "TRAINING_DESIGN",
+      "expectedSafety": "NONE",
+      "actualIntent": "TRAINING_DESIGN",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H9",
+      "question": "我昨天跟腱不疼，但今天肿起来了",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "MEDICAL_REVIEW",
+      "actualIntent": "SAFETY",
+      "actualSafety": "MEDICAL_REVIEW",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H10",
+      "question": "医生已经排除骨折，现在只想知道怎么做恢复训练",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "MEDICAL_REVIEW",
+      "actualIntent": "SAFETY",
+      "actualSafety": "MEDICAL_REVIEW",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H11",
+      "question": "训练时头晕但没有晕厥",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "EMERGENCY",
+      "actualIntent": "SAFETY",
+      "actualSafety": "EMERGENCY",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H12",
+      "question": "为什么我的1000米间歇越跑越慢？",
+      "expectedIntent": "DATA_INTERPRETATION",
+      "expectedSafety": "NONE",
+      "actualIntent": "DATA_INTERPRETATION",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H13",
+      "question": "有什么证据说明大重量训练改善跑步经济性？",
+      "expectedIntent": "EVIDENCE",
+      "expectedSafety": "NONE",
+      "actualIntent": "EVIDENCE",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H14",
+      "question": "最近总担心比赛失利，怎么调节？",
+      "expectedIntent": "PSYCHOLOGY",
+      "expectedSafety": "NONE",
+      "actualIntent": "PSYCHOLOGY",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H15",
+      "question": "去昆明训练两周需要注意什么？",
+      "expectedIntent": "ENVIRONMENT",
+      "expectedSafety": "NONE",
+      "actualIntent": "ENVIRONMENT",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H16",
+      "question": "马拉松赛中30公里后补给怎么安排？",
+      "expectedIntent": "NUTRITION",
+      "expectedSafety": "NONE",
+      "actualIntent": "NUTRITION",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H17",
+      "question": "教练要求我带伤冲刺，我该怎么办？",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "CAUTION",
+      "actualIntent": "SAFETY",
+      "actualSafety": "CAUTION",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H18",
+      "question": "过去有过昏厥但目前没有症状，是否需要复查？",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "NONE",
+      "actualIntent": "SAFETY",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H19",
+      "question": "3000米跑9分20，我的5000米可能多少？",
+      "expectedIntent": "PERFORMANCE_TRANSFER",
+      "expectedSafety": "NONE",
+      "actualIntent": "PERFORMANCE_TRANSFER",
+      "actualSafety": "NONE",
+      "intentMatch": true,
+      "safetyMatch": true
+    },
+    {
+      "id": "H20",
+      "question": "没有疼痛，但是脚踝明显肿胀",
+      "expectedIntent": "SAFETY",
+      "expectedSafety": "CAUTION",
+      "actualIntent": "SAFETY",
+      "actualSafety": "CAUTION",
+      "intentMatch": true,
+      "safetyMatch": true
+    }
+  ]
+}

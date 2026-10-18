@@ -1,3 +1,6 @@
+import { ImageIntake } from "./image-intake";
+import { loadTrainingActivities, activityWeeks } from "@/lib/ui/training-read-model";
+import { onAppEvent } from "@/lib/core/events";
 import { useEffect, useMemo, useRef, useState } from "react"
 import { niceTicks } from "@/components/trend-chart"
 import { Bell, Camera, ChevronRight, FileUp, Flame, Info, Plus, X } from "lucide-react"
@@ -180,7 +183,9 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
   useEffect(() => { if (open) setNotes(loadNotes()) }, [open])
   const taRef = useRef<HTMLTextAreaElement>(null), fileRef = useRef<HTMLInputElement>(null)
   useEffect(() => { const t = taRef.current; if (t) { t.style.height = "auto"; t.style.height = `${Math.min(t.scrollHeight, 260)}px` } }, [text, open])
-  const p: Parsed | null = useMemo(() => { if (!text.trim()) return null; for (const l of text.split(/\n|；|;/)) { const r = parseQuickLog(l.trim()); if (r.kind !== "unknown") return r } return null }, [text])
+  const parsedLines = useMemo(() => text.split(/\n|；|;/).map(l => parseQuickLog(l.trim())).filter(r => r.kind !== "unknown"), [text]);
+  const multipleRecords = parsedLines.length > 1;
+  const p: Parsed | null = parsedLines.length === 1 ? parsedLines[0] : null;
   const save = () => {
     if (saving.current) return
     if (!text.trim() && !atts.length) { setErr("先写点什么或加一张截图"); return }
@@ -203,16 +208,13 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
       footer={<>{err ? <p role="alert" className="keep mb-2 text-sm text-[var(--color-risk)]">{err}</p> : null}<div className="flex gap-2">
         <button type="button" className="min-h-12 rounded-xl border border-line px-4" onClick={() => setOpen(false)}>取消</button>
         <button type="button" disabled={busy} className="fk-orange-btn min-h-12 flex-1 rounded-xl text-base font-bold disabled:opacity-50" onClick={save}>{busy ? "保存中…" : "保存记录"}</button></div></>}>
-      <textarea ref={taRef} aria-label="记录内容" rows={3} value={text} onChange={(e) => { setText(e.target.value.slice(0, 2000)); setErr("") }} placeholder="记录训练、体重或身体感受……" className="fk-cell w-full resize-none whitespace-pre-wrap break-words py-2 text-base leading-relaxed" />
+      <textarea ref={taRef} aria-label="记录内容" rows={3} value={text} onChange={(e) => { setText(e.target.value.slice(0, 20000)); setErr("") }} placeholder="记录训练、体重或身体感受……" className="fk-cell w-full resize-none whitespace-pre-wrap break-words py-2 text-base leading-relaxed" />
       <div className="mt-2 flex flex-wrap gap-2">
-        <button type="button" className="fk-chip" onClick={() => fileRef.current?.click()}><Camera className="size-4" />添加截图</button>
         <button type="button" className="fk-chip" onClick={() => { setOpen(false); onFile() }}><FileUp className="size-4" />导入文件（FIT/GPX）</button>
-        <input ref={fileRef} type="file" accept="image/*" hidden onChange={async (e) => { const file = e.target.files?.[0]; e.target.value = ""; if (!file) return; if (atts.length >= 3) { setErr("最多 3 张截图"); return }
-          try { const url = await toThumb(file); setAtts((a) => [...a, { id: `a-${Date.now()}`, name: file.name, url }]) } catch { setErr("截图读取失败"); return }
-          setOcrMsg("识别中…"); const t = await ocr(file, setOcrMsg).catch(() => ""); const line = t.split("\n").find((l) => parseQuickLog(l).kind !== "unknown"); if (line) setText((x) => (x ? x + "\n" : "") + line); setOcrMsg(line ? "已从截图识别一行，请核对" : "") }} />
       </div>
-      {ocrMsg ? <p className="keep mt-1 text-xs text-muted" role="status">{ocrMsg}</p> : null}
-      {atts.length ? <div className="mt-2 flex gap-2" aria-label="附件">{atts.map((a) => <div key={a.id} className="relative"><img src={a.url} alt={a.name} className="size-20 rounded-lg border border-line object-cover" /><button type="button" aria-label={`移除${a.name}`} className="absolute -right-2 -top-2 grid size-7 place-items-center rounded-full bg-black text-white" onClick={() => setAtts(atts.filter((x) => x.id !== a.id))}><X className="size-4" /></button></div>)}</div> : null}
+      <ImageIntake title="截图完整识别" onText={(raw, file) => { setText(x => (x ? x + "\n" : "") + raw); setErr(""); if (file && atts.length < 3) void toThumb(file).then(url => setAtts(a => [...a, {id:crypto.randomUUID(),name:file.name,url}])).catch(() => setErr("文字已保留，图片附件保存失败，请重新选择。")); }} />
+      {atts.length ? <div className="mt-2 flex flex-wrap gap-2" aria-label="附件">{atts.map(a => <div key={a.id}><img src={a.url} alt={a.name} className="size-20 rounded-lg object-contain" /><button type="button" className="min-h-11 text-xs text-accent" onClick={() => setAtts(v => v.filter(x => x.id !== a.id))}>移除图片</button></div>)}</div> : null}
+      {multipleRecords ? <p className="mt-2 text-sm text-amber-400">检测到多条数据，快速记录将完整保存为笔记。请到“详细记录”逐项核对后入库，不会只记录第一条。</p> : null}
       {text.trim() ? <div className="mt-3 rounded-2xl border border-line bg-surface p-3 text-sm" aria-label="识别结果">
         {p ? <>{p.kind === "run" ? <p><b className="text-[#2182bd]">识别为跑步</b> · {p.title} · 距离 {p.km ?? "—"} 公里 · 用时 {p.minutes ?? "—"} 分{p.pace ? ` · 配速 ${p.pace}` : ""}</p>
           : p.kind === "strength" ? <p><b className="text-[#d07a2b]">识别为力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg ?? "自重"}{p.kg ? " kg" : ""}</p>
@@ -229,14 +231,20 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
 /* ---------------- 训练日志：按版本显示的指标 ---------------- */
 export function LogMetricsPanel({ today }: { today: string }) {
   const [m, setM] = useState<ReturnType<typeof logMetrics> | null>(null), [tier, setTier] = useState<Tier>("basic"), [info, setInfo] = useState(false), [count, setCount] = useState(0)
-  useEffect(() => { if (!today) return; const t = loadTier(); setTier(t); const es = loadSchedule().entries; setM(logMetrics(t, es, today)); const since = new Date(new Date(today + "T12:00:00").getTime() - 6 * 864e5).toISOString().slice(0, 10); setCount(es.filter((e) => e.actual && e.actual.outcome !== "missed" && e.date >= since && e.date <= today).length) }, [today])
+  const [missingIntensity, setMissingIntensity] = useState(false);
+  useEffect(() => {
+    if (!today) return;
+    const refresh = () => { const t = loadTier(), es = loadSchedule().entries, rows = loadTrainingActivities(); setTier(t); const metrics = logMetrics(t, es, today); setM({ ...metrics, trend: metrics.trend ? activityWeeks(rows, today) : null }); const since = new Date(new Date(today + 'T12:00:00').getTime() - 6 * 864e5).toISOString().slice(0, 10); setCount(rows.filter(r => r.date >= since && r.date <= today).length); setMissingIntensity(rows.some(r => r.date >= since && r.date <= today && r.rpe == null)); };
+    refresh(); const unsubscribe = onAppEvent(refresh); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('fk-training-activities-changed', refresh); window.addEventListener('storage', refresh); return () => { unsubscribe(); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('fk-training-activities-changed', refresh); window.removeEventListener('storage', refresh); };
+  }, [today]);
   if (!m || (!m.trend && !m.load)) return null
   const max = Math.max(1, ...(m.trend ?? []).map((x) => x.minutes))
   return <section className="fk-dash-card mx-3 mb-3 p-3 text-sm" aria-label="本周概览">
-    <div className="flex items-center justify-between gap-2"><h2 className="fk-dash-title text-base">本周概览</h2><span className="keep ml-auto text-xs text-muted">7 天 {count} 次 · {TIER_LABEL[tier]}</span><button type="button" aria-label="依据" aria-expanded={info} className="grid size-8 place-items-center" onClick={() => setInfo(!info)}><Info className="size-4 text-muted" /></button></div>
+    <div className="flex items-center justify-between gap-2"><h2 className="fk-dash-title text-base">本周概览</h2><span className="keep ml-auto text-xs text-muted">7 天 {count} 条活动记录 · {TIER_LABEL[tier]}</span><button type="button" aria-label="依据" aria-expanded={info} className="grid size-8 place-items-center" onClick={() => setInfo(!info)}><Info className="size-4 text-muted" /></button></div>
     {m.trend ? (() => { const tk = niceTicks(0, max, 3); const top = tk[tk.length - 1] || 1; return <div className="mt-2 flex gap-1"><div className="relative h-20 w-8 text-[10px] text-muted">{tk.map((v) => <span key={v} className="absolute right-1 translate-y-1/2" style={{ bottom: `${(v / top) * 100}%` }}>{v}</span>)}<span className="absolute -top-3 left-0">分钟</span></div><div className="flex-1"><div className="relative flex h-20 items-end gap-2">{tk.map((v) => <i key={v} className="absolute inset-x-0 border-t border-line" style={{ bottom: `${(v / top) * 100}%` }} />)}{m.trend.map((x) => <div key={x.week} className="relative z-10 flex-1 rounded-t bg-[#ff6a1a]" style={{ height: `${(x.minutes / top) * 100}%` }} title={`${x.minutes} 分钟`} />)}</div><div className="flex gap-2 text-[10px] text-muted">{m.trend.map((x) => <span key={x.week} className="flex-1 text-center">{x.week.slice(5)}</span>)}</div></div></div>; })() : null}
-    {m.load ? <p className="keep mt-2">负荷：近 7 天 {m.load.acute} · 前 4 周周均 {m.load.chronicWeekly}{m.load.ratio != null ? ` · 比值 ${m.load.ratio}` : ""} </p> : null}
-    {info ? <p className="keep mt-1 text-[11px] text-muted">【经验规则】负荷=时长×强度系数；近 7 天/前 4 周周均比值明显 &gt;1.5 时留意（Gabbett 2016, BJSM 50:273–280，仅作参考）</p> : null}
+    {m.load && !missingIntensity ? <p className="keep mt-2">已登记部分负荷：近 7 天 {m.load.acute} · 前 4 周周均 {m.load.chronicWeekly}{m.load.ratio != null ? ` · 比值 ${m.load.ratio}` : ""} </p> : null}
+    {missingIntensity && m.load ? <p className="keep mt-2 text-xs text-muted">部分活动缺少实际强度，暂不显示合并负荷比。</p> : null}
+    {info ? <p className="keep mt-1 text-[11px] text-muted">统计包含不同来源的活动记录；只按稳定来源身份去重，时间或距离相似不能证明同一课。活动记录数不是训练课次数；缺失时长未补零。负荷与比值仅是已登记部分的描述，不用于自动加量、减量或停训。</p> : null}
     {m.dynamics && info ? <p className="mt-1 text-xs text-muted">跑步动态（步频/触地/垂直振幅）与配速/心率区间：导入 FIT 后在每条记录里显示。</p> : null}
   </section>
 }

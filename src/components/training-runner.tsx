@@ -6,6 +6,9 @@ import { ExerciseContent } from "@/components/exercise-content"
 import { nextRunnerCursor, runnerInput } from "@/lib/strength/runner-input"
 import { displayName, type Move, type Session } from "@/lib/strength/model"
 import { decodeRest, restKey, restRemaining, type RestCheckpoint } from "@/lib/core/rest-clock"
+import { Sheet as RunnerSheet } from './sheet';
+import { runnerDraftKey } from '@/lib/ui/runner-draft-key';
+import './training-runner.css';
 
 export function completeFromRunner(input: Parameters<typeof completeTraining>[0]) {
   const event = completeTraining(input)
@@ -21,10 +24,11 @@ export function interruptFromRunner(decisionId: string, sessionId: string) {
   return closed && getTrainingOccurrence(closed.trainingOccurrenceId)?.closeEventId === event.event_id ? event : null
 }
 
-export function TrainingRunner(props: {session: Session; decisionId: string; onDone: (result: {completed:boolean; interrupted:boolean; sets:SetRecord[]; pain:boolean})=>void}) {
+export function TrainingRunner(props: {session: Session; decisionId: string; embedded?: boolean; onDone: (result: {completed:boolean; interrupted:boolean; sets:SetRecord[]; pain:boolean})=>void}) {
   const [inspect,setInspect] = useState<Move|null>(null)
   const trigger = useRef<HTMLElement|null>(null)
-  return <><div inert={inspect ? true : undefined}><TrainingRunnerInner {...props} onInspect={move=>{trigger.current=document.activeElement as HTMLElement;setInspect(move)}} /></div>{inspect?<div role="dialog" aria-modal="true" aria-label={displayName(inspect)} className="fixed inset-0 z-50 flex flex-col bg-bg"><div className="flex items-center justify-between gap-3 border-b border-line p-4"><h2 className="font-bold">{displayName(inspect)}</h2><button type="button" autoFocus className="min-h-11 px-3" onClick={()=>{setInspect(null);trigger.current?.focus()}}>返回当前组</button></div><div className="flex-1 overflow-y-auto p-4"><ExerciseContent key={inspect.id} catalogId={inspect.catalogId}/></div></div>:null}</>
+  const closeInspect = () => { setInspect(null); trigger.current?.focus(); };
+  return <div className={props.embedded ? 'fk-runner-embedded' : undefined}><div inert={inspect ? true : undefined}><TrainingRunnerInner {...props} onInspect={move=>{trigger.current=document.activeElement as HTMLElement;setInspect(move)}} /></div>{inspect ? <RunnerSheet full label={displayName(inspect)} title={displayName(inspect)} onClose={closeInspect} footer={<button type="button" className="min-h-12 w-full rounded-xl border border-line font-bold" onClick={closeInspect}>返回当前组</button>}><ExerciseContent key={inspect.id} catalogId={inspect.catalogId} /></RunnerSheet> : null}</div>
 }
 
 function TrainingRunnerInner({
@@ -88,7 +92,7 @@ function TrainingRunnerInner({
   useEffect(() => {
     const set = sets[cursor]
     if (!set) return
-    const key=`fr255-runner-draft-v1:${decisionId}:${session.id}:${setKey(set)}`
+    const key=runnerDraftKey(decisionId,session.id,setKey(set))
     let draft: {weight:string;amount:string}|null=null
     try { const raw=localStorage.getItem(key); if(raw){const parsed=JSON.parse(raw);if(typeof parsed.weight==='string' && typeof parsed.amount==='string')draft=parsed} } catch { /* invalid drafts cannot become facts */ }
     setDraftWeight(draft?.weight ?? String(set.plannedWeight))
@@ -99,7 +103,7 @@ function TrainingRunnerInner({
   useEffect(()=>{
     const set=sets[cursor]
     if(!set)return
-    const key=`fr255-runner-draft-v1:${decisionId}:${session.id}:${setKey(set)}`
+    const key=runnerDraftKey(decisionId,session.id,setKey(set))
     if(key!==draftSetKey || set.completed || set.skipped)return
     try {localStorage.setItem(key,JSON.stringify({weight:draftWeight,amount:draftAmount}))} catch {setSaveError('输入草稿暂不能恢复，尚未记录为完成。请保持此页并检查存储。')}
   },[draftWeight,draftAmount,draftSetKey,cursor,decisionId,session.id])
@@ -150,7 +154,7 @@ function TrainingRunnerInner({
   function write(next: SetRecord) {
     if (!recordSet(session.id, decisionId, next)) { setSaveError("本组没有保存，输入保留，请重试。"); saving.current=false; return null }
     setSaveError("")
-    try {localStorage.removeItem(`fr255-runner-draft-v1:${decisionId}:${session.id}:${setKey(next)}`)}catch{/* optional draft cleanup */}
+    try {localStorage.removeItem(runnerDraftKey(decisionId,session.id,setKey(next)))}catch{/* optional draft cleanup */}
     const merged = sets.map((set) => (set.moveId === next.moveId && set.setIndex === next.setIndex ? next : set))
     setSets(merged)
     return merged
@@ -224,7 +228,7 @@ function TrainingRunnerInner({
 
   if (phase === "paused") {
     return (
-      <div className="fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-4">
+      <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-4">
         <p className="text-sm text-muted">暂停</p>{saveError?<p role="alert" className="text-sm text-risk">{saveError}</p>:null}
         <h2 className="mt-2 text-2xl font-bold">{displayName(session.moves.find((move) => move.id === current.moveId) ?? session.moves[0])}</h2>
         <p className="mt-1 text-sm text-muted">第 {current.setIndex} / {moveSets.length} 组还没记完</p>
@@ -238,7 +242,7 @@ function TrainingRunnerInner({
     const clock = restSeconds ?? 0
     const over = clock === 0
     return (
-      <div className="fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-8">
+      <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-8">
         <p className="text-sm text-muted">{!over && !restRunning ? "已暂停" : "休息"}</p>
         <p className="mt-2 text-7xl font-bold tracking-tight" aria-live="polite">{over ? "休息结束" : formatClock(clock)}</p>
         {lastNote ? <p className="mt-3 text-sm text-muted">上一组和计划相差 {lastNote}</p> : null}
@@ -256,7 +260,7 @@ function TrainingRunnerInner({
 
   if (phase === "edit") {
     return (
-      <div className="fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-4">
+      <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-4">
         <p className="text-sm font-bold">修改本组</p>{saveError?<p role="alert" className="text-sm text-risk">{saveError}</p>:null}
         <label className="mt-4 text-sm text-muted">实际重量
           <input value={draftWeight} inputMode="decimal" onChange={(event) => setDraftWeight(event.target.value)} className="mt-1 h-12 w-full rounded-2xl border border-line bg-surface px-3 text-lg outline-none" />
@@ -278,7 +282,7 @@ function TrainingRunnerInner({
   if (phase === "skip-ask" || phase === "move-ask" || phase === "finish-ask") {
     const title = phase === "skip-ask" ? `跳过第 ${current.setIndex} 组？` : phase === "move-ask" ? "跳过这个动作？" : `还有 ${open} 组未处理`
     return (
-      <div className="fixed inset-0 z-40 flex flex-col justify-end bg-bg/80 px-5 pb-8">
+      <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col justify-end bg-bg/80 px-5 pb-8">
         <div className="rounded-card bg-surface p-4">
           <p className="font-bold">{title}</p>{saveError?<p role="alert" className="text-sm text-risk">{saveError}</p>:null}
           <p className="mt-1 text-sm text-muted">{phase === "finish-ask" ? "现在结束会保留已做的组，未做的组明确标为跳过；不会显示全部完成。" : "没做也会留下，不会从结果里删掉。"}</p>
@@ -303,7 +307,7 @@ function TrainingRunnerInner({
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-bg px-5 pt-4 pb-6" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
+    <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col overflow-y-auto bg-bg px-5 pt-4 pb-6" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-semibold">正在训练</p>
         <span className="text-sm text-muted" aria-live="polite">已处理 {handled} / {sets.length} 组</span>

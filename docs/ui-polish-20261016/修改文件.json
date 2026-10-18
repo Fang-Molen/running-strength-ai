@@ -1,0 +1,62 @@
+[
+  {
+    "path": "public/fangkun-bodylab/model/avatar3d.mjs",
+    "status": "MODIFIED",
+    "beforeSha256": "7ccc0a8fec4c7ca5543a95aec3cc27ec7a9e5198b214aa9aebf307554073e695",
+    "afterSha256": "74415ef282c39758ea5357691cc91dad06a1e9260268e399a4ab50726207a1bf"
+  },
+  {
+    "path": "scripts/ui-polish-browser.mjs",
+    "status": "ADDED",
+    "beforeSha256": null,
+    "afterSha256": "16da2822b4168f811d11feb7bd392706ed6a127c8cc442b7cf70b89e280b4c38"
+  },
+  {
+    "path": "src/components/fangkun-ui/atlas.css",
+    "status": "MODIFIED",
+    "beforeSha256": "1a8de71676ec573c367ce1c561cc23314fa6bb4d7eb6978f81f52457914529c0",
+    "afterSha256": "6dc396ca50577f24ad4db30cbb2ab4fd616b5bafe892970896362d057e6f29bf"
+  },
+  {
+    "path": "src/components/fangkun-ui/atlas.js",
+    "status": "MODIFIED",
+    "beforeSha256": "cead600c57f50ebd0bdfd251ff80d062082c9e1af0eb431bce40f99ff8b060a5",
+    "afterSha256": "358909853f9ac0f723e698a15208b37b508d306c15434fbc8ffa166bfe00047b"
+  },
+  {
+    "path": "src/components/fangkun-ui/avatar.mjs",
+    "status": "MODIFIED",
+    "beforeSha256": "b68337fd718feea26d9f3266a42c69fa79ea2ef0463a7edceeab0c47aeb796a5",
+    "afterSha256": "88c59af7ad3d32e7c97671d8a15b6e04dcaab15807f3375a4a88a223095f1418"
+  },
+  {
+    "path": "src/components/fangkun-ui/bodylab-panel.tsx",
+    "status": "MODIFIED",
+    "beforeSha256": "2a261a42f32167d9fdbdd1cbf05a07469c54647df1e421e6330aca73a91e3bc4",
+    "afterSha256": "1cde4d6f71085116b3c7e79070de52298459cf3ea838112821446a4dd8882ad4"
+  },
+  {
+    "path": "src/components/fangkun-ui/health-dashboard.tsx",
+    "status": "MODIFIED",
+    "beforeSha256": "0db0679b95ab5dbd132cf67d5e67ccf4b5777ce7c4b32b4852a3e908264080f1",
+    "afterSha256": "f80a1397e9a466a681fc9c941a4adbf2430481a1488428e3bd3a9d256082474c"
+  },
+  {
+    "path": "src/components/fangkun-ui/nutrition-panel.tsx",
+    "status": "MODIFIED",
+    "beforeSha256": "d985c482b7d2c91b4a07d821270806e8918760479d1a284fbb9d176fb996947b",
+    "afterSha256": "a81fde002ebc97893fb5a5762e9045aab31a0f12506ad1244add6d3facba3ce0"
+  },
+  {
+    "path": "src/components/fangkun-ui/ui.css",
+    "status": "MODIFIED",
+    "beforeSha256": "9a32b0b59c88e7244067d7ee23c1fcc1dfbb0729ade92c38c7de2fbfebfd53a6",
+    "afterSha256": "161aecda61e5457afb840dd53fc7d86d30fdad51882207a82f4adc0bed8e643b"
+  },
+  {
+    "path": "src/components/fieldwork-panel.tsx",
+    "status": "MODIFIED",
+    "beforeSha256": "ea8c983c807480d0805a5ad553baedf025d8af0876f31612ef886979a15954a5",
+    "afterSha256": "e89a00be495700d4d425f36dea2d9f20dc414e5911bfb60034d81c681a074181"
+  }
+]

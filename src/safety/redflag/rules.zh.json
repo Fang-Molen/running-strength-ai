@@ -1,0 +1,50 @@
+[
+  {
+    "id": "HEAT",
+    "summary": "热环境与神志、言语、出汗或神经异常组合",
+    "sourceUrl": "https://www.nhs.uk/conditions/heat-exhaustion-heatstroke/",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "CARDIOVASCULAR",
+    "summary": "胸部不适与放射、出汗、气短或心跳异常组合",
+    "sourceUrl": "https://www.heart.org/en/health-topics/heart-attack/warning-signs-of-a-heart-attack",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "SYNCOPE",
+    "summary": "运动中晕倒或近乎晕倒",
+    "sourceUrl": "https://www.nhs.uk/conditions/fainting/",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "NEUROLOGICAL",
+    "summary": "突发言语、单侧力量、腰背伴肢体或排泄变化",
+    "sourceUrl": "https://www.nhs.uk/conditions/stroke/symptoms/",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "RESPIRATORY",
+    "summary": "严重呼吸困难与口唇颜色、说话能力改变",
+    "sourceUrl": "https://www.nhs.uk/conditions/shortness-of-breath/",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "ENERGY",
+    "summary": "进食限制、月经或骨伤变化触发专业评估，不做诊断分级",
+    "sourceUrl": "https://bjsm.bmj.com/content/57/17/1073",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "YOUTH",
+    "summary": "未成年在通用急症规则上增加监护人参与",
+    "sourceUrl": "https://www.nhs.uk/conditions/fainting/",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  },
+  {
+    "id": "POST_ILLNESS",
+    "summary": "病后持续心跳异常或呼吸困难需停止并尽快就医",
+    "sourceUrl": "https://www.nhs.uk/conditions/heart-palpitations/",
+    "provenance": "配套清单提供，未独立复核；以自己的话实现信号筛查，不复制临床工具"
+  }
+]

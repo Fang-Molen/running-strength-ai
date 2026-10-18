@@ -27,19 +27,19 @@ export function buildReview(kind: ReviewKind, entries: ScheduleEntry[], today: s
   const greens = bands.filter((b) => b.band === "green").length; if (bands.length >= 2 && greens === bands.length) highlights.push("完成度全部在计划 ±20% 内")
   const reasons = logged.flatMap((e) => e.actual!.reasons)
   for (const r of ["tired", "short", "weather"] as const) { const n = reasons.filter((x) => x === r).length; if (n) issues.push({ text: `${REASON_LABELS[r]} ${n} 次：这是当天状态/安排，不代表能力下降`, type: "state" }) }
-  if (reasons.includes("pain")) issues.push({ text: "记录到疼痛：先处理疼痛，相关动作降强度；持续或加重请找专业人员（手册 P-03/P-07）", type: "state" })
+  if (reasons.includes("pain")) issues.push({ text: "记录到疼痛：先处理疼痛，停止诱发疼痛的动作；持续或加重请找专业人员（手册 P-03/P-07）", type: "state" })
   // 能力类结论需要至少 2 次同方向、且没有状态类原因（单次不下结论）
-  const under = logged.filter((e) => e.actual!.outcome === "different" && !e.actual!.reasons.length && (planBand(e) === "orange" || planBand(e) === "yellow") && (e.actual!.minutes ?? 0) < e.minutes)
-  if (under.length >= 2) issues.push({ text: `${under.length} 节在无特殊原因下都没完成到计划量：目标可能偏高，可考虑小步下调`, type: "ability" })
+  const under = logged.filter((e) => e.actual!.outcome === "different" && !e.actual!.reasons.length && (planBand(e) === "orange" || planBand(e) === "yellow") && e.actual!.minutes != null && e.actual!.minutes < e.minutes)
+  if (under.length >= 2) issues.push({ text: `${under.length} 节在未达到计划量且原因未填写：先核对目的、实际记录和当日条件`, type: "data" })
   else if (under.length === 1) evidence.push("有 1 节完成量偏低但没写原因：一次不下结论")
   if (open) issues.push({ text: `${open} 节还没记录实际情况`, type: "data" })
   const a = adaptation(entries, today)
   const adjustment = kind === "session" || a.mode === "none" ? null : { ...a, id: `adj-${range[0]}-${a.mode}` }
-  const verdict = !scope.length ? "这段时间没有安排或记录。" : missed > asPlanned ? "这段完成得不多，先找出能坚持的节奏。" : asPlanned === logged.length && logged.length ? "按计划完成，节奏不错。" : "大体完成，有些偏差，属正常范围。"
+  const verdict = !scope.length ? "这段时间没有安排或记录。" : !logged.length ? "尚无实际反馈，不能评价完成质量。" : missed > asPlanned ? "这段完成得不多，先找出能坚持的节奏。" : asPlanned === logged.length && logged.length ? "按计划完成，节奏不错。" : "已有部分反馈，具体偏差需要结合原计划目的核对。"
   const depth = TIERS[tier].depth
   evidence.push(`计划 ${scope.length} 节 · 已记录 ${logged.length} · 按计划 ${asPlanned} · 没练 ${missed}`)
   if (depth >= 2) evidence.push("色带阈值：绿 ±20%，黄 50–79%/121–150%，橙更偏，红没练（TrainingPeaks）")
-  if (depth >= 3) { const mins = logged.reduce((s, e) => s + (e.actual!.outcome === "missed" ? 0 : e.actual!.minutes ?? e.minutes), 0); evidence.push(`实际总时长 ${mins} 分钟`) }
+  if (depth >= 3) { const mins = logged.reduce((s, e) => s + (e.actual!.outcome === "missed" ? 0 : e.actual!.minutes ?? 0), 0); evidence.push(`已知实际时长 ${mins} 分钟；缺失时长不补计划值`) }
   return { id: `${kind}-${range[0]}-${sessionId ?? ""}-${now}`, kind, range, createdAt: now, tier, verdict, bands: depth >= 2 ? bands : [], highlights: highlights.slice(0, depth >= 2 ? 3 : 1), issues: issues.slice(0, depth >= 2 ? 3 : 2), adjustment, evidence }
 }
 type KV = { getItem(k: string): string | null; setItem(k: string, v: string): void }

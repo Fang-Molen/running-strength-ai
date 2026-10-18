@@ -1,0 +1,45 @@
+{"text": "我流感刚好，跑步后心跳忽快忽慢，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/0/0"}
+{"text": "我的队友流感刚好，跑步后心跳忽快忽慢，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/0/1"}
+{"text": "我流感刚好，跑步后心跳忽快忽慢，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/0/2"}
+{"text": "我新冠转阴后今天心扑腾，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/1/0"}
+{"text": "我的队友新冠转阴后今天心扑腾，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/1/1"}
+{"text": "我新冠转阴后今天心扑腾，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/1/2"}
+{"text": "我咳嗽还没好，训练后心慌，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/2/0"}
+{"text": "我的队友咳嗽还没好，训练后心慌，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/2/1"}
+{"text": "我咳嗽还没好，训练后心慌，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/2/2"}
+{"text": "我病刚好一跑心里扑通，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/3/0"}
+{"text": "我的队友病刚好一跑心里扑通，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/3/1"}
+{"text": "我病刚好一跑心里扑通，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/3/2"}
+{"text": "我退热后运动心跳乱，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/4/0"}
+{"text": "我的队友退热后运动心跳乱，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/4/1"}
+{"text": "我退热后运动心跳乱，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/4/2"}
+{"text": "我感染后刚练心脏漏跳，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/5/0"}
+{"text": "我的队友感染后刚练心脏漏跳，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/5/1"}
+{"text": "我感染后刚练心脏漏跳，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/5/2"}
+{"text": "我感冒后今天一直心悸，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/6/0"}
+{"text": "我的队友感冒后今天一直心悸，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/6/1"}
+{"text": "我感冒后今天一直心悸，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/6/2"}
+{"text": "我咽痛之后练跑感觉心跳不规则，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/7/0"}
+{"text": "我的队友咽痛之后练跑感觉心跳不规则，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/7/1"}
+{"text": "我咽痛之后练跑感觉心跳不规则，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/7/2"}
+{"text": "我病后跑步心突突，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/8/0"}
+{"text": "我的队友病后跑步心突突，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/8/1"}
+{"text": "我病后跑步心突突，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/8/2"}
+{"text": "我发烧好后今天心荒，该怎么处理？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/9/0"}
+{"text": "我的队友发烧好后今天心荒，我在旁边。", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "OTHER", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/9/1"}
+{"text": "我发烧好后今天心荒，休息片刻好些了，还需要处理吗？", "expectLevel": "URGENT_MEDICAL", "expectClasses": ["POST_ILLNESS", "CARDIOVASCULAR"], "subject": "SELF", "note": "Codex 自行生成，未参考外部封存题；positive/POST_ILLNESS/9/2"}
+{"text": "我现在没有病后心悸，普通散步没有不适。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "科普时请讲解病后心悸的现场应对。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "假设有人运动时病后心悸，一般如何处理？", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我去年曾经病后心悸，现在完全没有不适，想问既往记录怎么保留。", "expectLevel": "MEDICAL_REVIEW", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我今天轻松走了一会儿，只有一点普通疲倦。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我现在没有感冒，普通散步没有不适。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "科普时请讲解感冒的现场应对。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "假设有人运动时感冒，一般如何处理？", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我去年曾经感冒，现在完全没有不适，想问既往记录怎么保留。", "expectLevel": "MEDICAL_REVIEW", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我今天轻松走了一会儿，只有一点普通疲倦。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我现在没有呼吸困难，普通散步没有不适。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "科普时请讲解呼吸困难的现场应对。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "假设有人运动时呼吸困难，一般如何处理？", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我去年曾经呼吸困难，现在完全没有不适，想问既往记录怎么保留。", "expectLevel": "MEDICAL_REVIEW", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}
+{"text": "我今天轻松走了一会儿，只有一点普通疲倦。", "expectLevel": "NONE", "expectClasses": [], "subject": "UNKNOWN", "note": "Codex 自行生成，未参考外部封存题；negative/POST_ILLNESS"}

@@ -1,0 +1,522 @@
+[
+  {
+    "turn": 1,
+    "question": "600米第二组掉速，是不是专项能力不足？",
+    "asOf": "2026-10-01T11:00:00Z",
+    "activeFacts": [
+      {
+        "id": "rep1",
+        "metric": "SPLIT_SECONDS",
+        "value": 85,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "rep2",
+        "metric": "SPLIT_SECONDS",
+        "value": 91,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      }
+    ],
+    "excluded": [],
+    "corrections": [],
+    "revision": [],
+    "missing": [
+      "NO_SLEEP_RECORD",
+      "NO_SESSION_RPE",
+      "NO_REST_PROTOCOL",
+      "NO_EXPLICIT_PLAN_OR_GOAL",
+      "NO_SYMPTOM_ASSESSMENT",
+      "USER_REPORT_NEEDS_CONFIRMATION"
+    ],
+    "safety": "NONE",
+    "nextAction": "VERIFY_EVIDENCE",
+    "hypotheses": [
+      {
+        "id": "PACING_OR_REST",
+        "supports": [
+          "user:rep1",
+          "user:rep2"
+        ],
+        "challenges": [],
+        "question": "前后分段、组内和组间休息是否一致？第一组是否明显快于计划？"
+      },
+      {
+        "id": "RECOVERY",
+        "supports": [],
+        "challenges": [
+          "NO_SLEEP_DATA"
+        ],
+        "question": "最近几晚睡眠、RPE、局部不适及24/48小时恢复如何？"
+      },
+      {
+        "id": "TRAINING_SPECIFICITY",
+        "supports": [],
+        "challenges": [
+          "NO_CAUSAL_SPECIFICITY_TEST"
+        ],
+        "question": "同条件下是否反复掉速？有没有教练技术观察或视频？"
+      },
+      {
+        "id": "MEASUREMENT",
+        "supports": [],
+        "challenges": [
+          "NO_VALIDATED_MEASUREMENT_ERROR_ESTIMATE"
+        ],
+        "question": "计时设备、跑道、天气、分段起止点及更正是否一致？"
+      }
+    ],
+    "decisionAuthorized": false
+  },
+  {
+    "turn": 2,
+    "question": "昨晚只睡了5小时，重新判断。",
+    "asOf": "2026-10-02T11:00:00Z",
+    "activeFacts": [
+      {
+        "id": "rep1",
+        "metric": "SPLIT_SECONDS",
+        "value": 85,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "rep2",
+        "metric": "SPLIT_SECONDS",
+        "value": 91,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "sleep",
+        "metric": "SLEEP_HOURS",
+        "value": 5,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      }
+    ],
+    "excluded": [],
+    "corrections": [],
+    "revision": [
+      "新增当时可见的事实 sleep，需重新检验竞争假设",
+      "RECOVERY的支持/反证发生变化；不表示已证实或否定因果关系"
+    ],
+    "missing": [
+      "NO_SESSION_RPE",
+      "NO_REST_PROTOCOL",
+      "NO_EXPLICIT_PLAN_OR_GOAL",
+      "NO_SYMPTOM_ASSESSMENT",
+      "USER_REPORT_NEEDS_CONFIRMATION"
+    ],
+    "safety": "NONE",
+    "nextAction": "VERIFY_EVIDENCE",
+    "hypotheses": [
+      {
+        "id": "PACING_OR_REST",
+        "supports": [
+          "user:rep1",
+          "user:rep2"
+        ],
+        "challenges": [],
+        "question": "前后分段、组内和组间休息是否一致？第一组是否明显快于计划？"
+      },
+      {
+        "id": "RECOVERY",
+        "supports": [
+          "user:sleep"
+        ],
+        "challenges": [],
+        "question": "最近几晚睡眠、RPE、局部不适及24/48小时恢复如何？"
+      },
+      {
+        "id": "TRAINING_SPECIFICITY",
+        "supports": [],
+        "challenges": [
+          "NO_CAUSAL_SPECIFICITY_TEST"
+        ],
+        "question": "同条件下是否反复掉速？有没有教练技术观察或视频？"
+      },
+      {
+        "id": "MEASUREMENT",
+        "supports": [],
+        "challenges": [
+          "NO_VALIDATED_MEASUREMENT_ERROR_ESTIMATE"
+        ],
+        "question": "计时设备、跑道、天气、分段起止点及更正是否一致？"
+      }
+    ],
+    "decisionAuthorized": false
+  },
+  {
+    "turn": 3,
+    "question": "第二组原来记错了，实际88秒。",
+    "asOf": "2026-10-03T11:00:00Z",
+    "activeFacts": [
+      {
+        "id": "rep1",
+        "metric": "SPLIT_SECONDS",
+        "value": 85,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "rep2-fix",
+        "metric": "SPLIT_SECONDS",
+        "value": 88,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "sleep",
+        "metric": "SLEEP_HOURS",
+        "value": 5,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      }
+    ],
+    "excluded": [],
+    "corrections": [
+      {
+        "replacedId": "rep2",
+        "replacementId": "rep2-fix"
+      }
+    ],
+    "revision": [
+      "撤回或失效先前事实 rep2；不能沿用依赖它的解释",
+      "新增当时可见的事实 rep2-fix，需重新检验竞争假设",
+      "PACING_OR_REST的支持/反证发生变化；不表示已证实或否定因果关系"
+    ],
+    "missing": [
+      "NO_SESSION_RPE",
+      "NO_REST_PROTOCOL",
+      "NO_EXPLICIT_PLAN_OR_GOAL",
+      "NO_SYMPTOM_ASSESSMENT",
+      "USER_REPORT_NEEDS_CONFIRMATION"
+    ],
+    "safety": "NONE",
+    "nextAction": "VERIFY_EVIDENCE",
+    "hypotheses": [
+      {
+        "id": "PACING_OR_REST",
+        "supports": [
+          "user:rep1",
+          "user:rep2-fix"
+        ],
+        "challenges": [],
+        "question": "前后分段、组内和组间休息是否一致？第一组是否明显快于计划？"
+      },
+      {
+        "id": "RECOVERY",
+        "supports": [
+          "user:sleep"
+        ],
+        "challenges": [],
+        "question": "最近几晚睡眠、RPE、局部不适及24/48小时恢复如何？"
+      },
+      {
+        "id": "TRAINING_SPECIFICITY",
+        "supports": [],
+        "challenges": [
+          "NO_CAUSAL_SPECIFICITY_TEST"
+        ],
+        "question": "同条件下是否反复掉速？有没有教练技术观察或视频？"
+      },
+      {
+        "id": "MEASUREMENT",
+        "supports": [],
+        "challenges": [
+          "NO_VALIDATED_MEASUREMENT_ERROR_ESTIMATE"
+        ],
+        "question": "计时设备、跑道、天气、分段起止点及更正是否一致？"
+      }
+    ],
+    "decisionAuthorized": false
+  },
+  {
+    "turn": 4,
+    "question": "又有一次600米训练，感觉后程慢了。",
+    "asOf": "2026-10-04T11:00:00Z",
+    "activeFacts": [
+      {
+        "id": "rep1",
+        "metric": "SPLIT_SECONDS",
+        "value": 85,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "rep2-fix",
+        "metric": "SPLIT_SECONDS",
+        "value": 88,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "sleep",
+        "metric": "SLEEP_HOURS",
+        "value": 5,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "repeat",
+        "metric": "SPLIT_SECONDS",
+        "value": 90,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      }
+    ],
+    "excluded": [],
+    "corrections": [
+      {
+        "replacedId": "rep2",
+        "replacementId": "rep2-fix"
+      }
+    ],
+    "revision": [
+      "新增当时可见的事实 repeat，需重新检验竞争假设"
+    ],
+    "missing": [
+      "NO_SESSION_RPE",
+      "NO_REST_PROTOCOL",
+      "NO_EXPLICIT_PLAN_OR_GOAL",
+      "NO_SYMPTOM_ASSESSMENT",
+      "USER_REPORT_NEEDS_CONFIRMATION"
+    ],
+    "safety": "NONE",
+    "nextAction": "VERIFY_EVIDENCE",
+    "hypotheses": [
+      {
+        "id": "PACING_OR_REST",
+        "supports": [
+          "user:rep1",
+          "user:rep2-fix"
+        ],
+        "challenges": [],
+        "question": "前后分段、组内和组间休息是否一致？第一组是否明显快于计划？"
+      },
+      {
+        "id": "RECOVERY",
+        "supports": [
+          "user:sleep"
+        ],
+        "challenges": [],
+        "question": "最近几晚睡眠、RPE、局部不适及24/48小时恢复如何？"
+      },
+      {
+        "id": "TRAINING_SPECIFICITY",
+        "supports": [],
+        "challenges": [
+          "NO_CAUSAL_SPECIFICITY_TEST"
+        ],
+        "question": "同条件下是否反复掉速？有没有教练技术观察或视频？"
+      },
+      {
+        "id": "MEASUREMENT",
+        "supports": [],
+        "challenges": [
+          "NO_VALIDATED_MEASUREMENT_ERROR_ESTIMATE"
+        ],
+        "question": "计时设备、跑道、天气、分段起止点及更正是否一致？"
+      }
+    ],
+    "decisionAuthorized": false
+  },
+  {
+    "turn": 5,
+    "question": "跟腱疼痛3/10，明天能不能再加高强度？",
+    "asOf": "2026-10-05T11:00:00Z",
+    "activeFacts": [
+      {
+        "id": "rep1",
+        "metric": "SPLIT_SECONDS",
+        "value": 85,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "rep2-fix",
+        "metric": "SPLIT_SECONDS",
+        "value": 88,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "sleep",
+        "metric": "SLEEP_HOURS",
+        "value": 5,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "repeat",
+        "metric": "SPLIT_SECONDS",
+        "value": 90,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "pain",
+        "metric": "PAIN_SCORE",
+        "value": 3,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      }
+    ],
+    "excluded": [],
+    "corrections": [
+      {
+        "replacedId": "rep2",
+        "replacementId": "rep2-fix"
+      }
+    ],
+    "revision": [
+      "新增当时可见的事实 pain，需重新检验竞争假设",
+      "安全状态已变化；仍须独立核对风险与专业限制"
+    ],
+    "missing": [
+      "NO_SESSION_RPE",
+      "NO_REST_PROTOCOL",
+      "NO_EXPLICIT_PLAN_OR_GOAL",
+      "USER_REPORT_NEEDS_CONFIRMATION"
+    ],
+    "safety": "MEDICAL_REVIEW",
+    "nextAction": "MEDICAL_REVIEW",
+    "hypotheses": [
+      {
+        "id": "PACING_OR_REST",
+        "supports": [
+          "user:rep1",
+          "user:rep2-fix"
+        ],
+        "challenges": [],
+        "question": "前后分段、组内和组间休息是否一致？第一组是否明显快于计划？"
+      },
+      {
+        "id": "RECOVERY",
+        "supports": [
+          "user:sleep"
+        ],
+        "challenges": [],
+        "question": "最近几晚睡眠、RPE、局部不适及24/48小时恢复如何？"
+      },
+      {
+        "id": "TRAINING_SPECIFICITY",
+        "supports": [],
+        "challenges": [
+          "NO_CAUSAL_SPECIFICITY_TEST"
+        ],
+        "question": "同条件下是否反复掉速？有没有教练技术观察或视频？"
+      },
+      {
+        "id": "MEASUREMENT",
+        "supports": [],
+        "challenges": [
+          "NO_VALIDATED_MEASUREMENT_ERROR_ESTIMATE"
+        ],
+        "question": "计时设备、跑道、天气、分段起止点及更正是否一致？"
+      }
+    ],
+    "decisionAuthorized": false
+  },
+  {
+    "turn": 6,
+    "question": "请结合一周反馈复盘。",
+    "asOf": "2026-10-06T11:00:00Z",
+    "activeFacts": [
+      {
+        "id": "rep1",
+        "metric": "SPLIT_SECONDS",
+        "value": 85,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "rep2-fix",
+        "metric": "SPLIT_SECONDS",
+        "value": 88,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "sleep",
+        "metric": "SLEEP_HOURS",
+        "value": 5,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "repeat",
+        "metric": "SPLIT_SECONDS",
+        "value": 90,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      },
+      {
+        "id": "pain",
+        "metric": "PAIN_SCORE",
+        "value": 3,
+        "source": "USER_REPORT",
+        "confirmation": "USER_REPORTED"
+      }
+    ],
+    "excluded": [
+      {
+        "id": "future",
+        "reason": "NOT_KNOWN_AS_OF"
+      }
+    ],
+    "corrections": [
+      {
+        "replacedId": "rep2",
+        "replacementId": "rep2-fix"
+      }
+    ],
+    "revision": [],
+    "missing": [
+      "NO_SESSION_RPE",
+      "NO_REST_PROTOCOL",
+      "NO_EXPLICIT_PLAN_OR_GOAL",
+      "USER_REPORT_NEEDS_CONFIRMATION"
+    ],
+    "safety": "MEDICAL_REVIEW",
+    "nextAction": "MEDICAL_REVIEW",
+    "hypotheses": [
+      {
+        "id": "PACING_OR_REST",
+        "supports": [
+          "user:rep1",
+          "user:rep2-fix"
+        ],
+        "challenges": [],
+        "question": "前后分段、组内和组间休息是否一致？第一组是否明显快于计划？"
+      },
+      {
+        "id": "RECOVERY",
+        "supports": [
+          "user:sleep"
+        ],
+        "challenges": [],
+        "question": "最近几晚睡眠、RPE、局部不适及24/48小时恢复如何？"
+      },
+      {
+        "id": "TRAINING_SPECIFICITY",
+        "supports": [],
+        "challenges": [
+          "NO_CAUSAL_SPECIFICITY_TEST"
+        ],
+        "question": "同条件下是否反复掉速？有没有教练技术观察或视频？"
+      },
+      {
+        "id": "MEASUREMENT",
+        "supports": [],
+        "challenges": [
+          "NO_VALIDATED_MEASUREMENT_ERROR_ESTIMATE"
+        ],
+        "question": "计时设备、跑道、天气、分段起止点及更正是否一致？"
+      }
+    ],
+    "decisionAuthorized": false
+  }
+]

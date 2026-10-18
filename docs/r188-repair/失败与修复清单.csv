@@ -1,0 +1,11 @@
+编号,对象,实际发现,处理,当前状态,证据
+1,coach-device-preparation活动级时间,elapsed小于timer漏判,补入IMPLAUSIBLE与BLOCKED保留raw并加1合成用例,FIXED_SYNTHETIC_PASS,targeted-last-change/coach-r188.json
+2,原nutrition/catalog来源扫描,原3用例2PASS1FAIL及旧domain181文件1FAIL,仅P7描述resting Garmin HRV改wearable；DOI状态数值gate断言豁免不变,FIXED_POSTFIX_DOMAIN_PASS,domain-direct-final/source-freeze-change.json与domain-postfix-final/domain.json
+3,无批准课程下一课候选,与R188确认的保守默认决策不符,改为可撤回REST带停止条件；一处旧断言随明确产品合同改动,IMPLEMENTED_SYNTHETIC_PASS,断言变更说明.md及targeted-last-change/coach-r188.json
+4,scripts/brand-check.test.mjs,最终npm文件级FAIL,保留原测试；最小spawnSync探针输出空且EPERM,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log与environment-diagnostic/stdout-ipc.json
+5,scripts/check-auth-invariant.test.mjs,最终npm文件级FAIL,保留失败日志与原断言；未以domainPASS掩盖,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log
+6,scripts/with-app-env.test.mjs,最终npm文件级FAIL,保留R185源码与原断言；未改配置迎合环境输出,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log
+7,scripts/write-atomic.test.mjs,最终npm文件级FAIL,保留失败日志与原断言；未绕过检查,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log
+8,最终浏览器启动,listen EPERM 127.0.0.1:8086且runner exit1,记录基础设施1FAIL；实际0断言及16覆盖组SKIP；旧150不替代,BLOCKED_ENVIRONMENT,browser-final/browser-final-result.json与dev.log
+9,真实设备完整导入,缺原始FIT和新JSON格式样例及解析器,设备质量闸门已加；账号及解码映射不伪称完成,BLOCKED_MISSING_INPUT,交付报告.md
+10,封存盲测,未实际执行,需验收方独立复现且不记PASS,NOT_RUN,验收结果.json

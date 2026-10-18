@@ -1,0 +1,26 @@
+[
+  {
+    "file": "src/lib/core/coach-periodic-observations.ts",
+    "preserved": true,
+    "baseline_sha256": "71b350c01a007ccb8423a86cc620655d61b58a6d203e41457fa6201c3fbf0409",
+    "candidate_sha256": "71b350c01a007ccb8423a86cc620655d61b58a6d203e41457fa6201c3fbf0409"
+  },
+  {
+    "file": "src/lib/core/coach-quantitative-adapter.ts",
+    "preserved": true,
+    "baseline_sha256": "47c36f23a9e2054211b8fba301ab35b4b80cb76a31fd8498fe24cc53d302cb13",
+    "candidate_sha256": "47c36f23a9e2054211b8fba301ab35b4b80cb76a31fd8498fe24cc53d302cb13"
+  },
+  {
+    "file": "src/lib/core/coach-r185-p0.test.ts",
+    "preserved": true,
+    "baseline_sha256": "aac863f60b2b0563f24f6504bb5773d8bfec895fd715a36ffba0bf757bfa27cb",
+    "candidate_sha256": "aac863f60b2b0563f24f6504bb5773d8bfec895fd715a36ffba0bf757bfa27cb"
+  },
+  {
+    "file": "src/lib/core/coach-quantitative.ts",
+    "preserved": true,
+    "baseline_sha256": "4fa50849ad920c840e18c801dd999bab88b0bc8df21790ac4333277a6acab45f",
+    "candidate_sha256": "4fa50849ad920c840e18c801dd999bab88b0bc8df21790ac4333277a6acab45f"
+  }
+]

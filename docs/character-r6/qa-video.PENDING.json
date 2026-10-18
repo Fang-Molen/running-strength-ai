@@ -1,0 +1,16 @@
+{
+  "exerciseId": "back-squat",
+  "gender": "female",
+  "characterId": "fk-female-20261017",
+  "status": "PENDING",
+  "reviewer": "TODO",
+  "licenseEvidence": "docs/media-qa/squat-license.json",
+  "qaEvidence": "docs/media-qa/squat-kinematics.json",
+  "reviews": {
+    "rights": "PENDING",
+    "identity": "PENDING",
+    "biomechanics": "PENDING",
+    "equipment": "PENDING",
+    "mobile": "PENDING"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "baselineSha256": "d764ad479ff0506250013aa73e78440bbfa3c632b676e4f467e3db5157cb9e0e",
+  "files": [
+    {
+      "path": "docs/r184-phase2-verification/26项实际执行结果.csv",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "37abb5b91432f26317da954e2cf6661706068d1a92ecb45f7f32498ceb0bcb22"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/r184-final-receipt.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "748b1212fd70b6470ff5783ad2c810a6488f32fbee7ad40b5f4c342eb2e923a0"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/r184-final.tap",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "560149333e0454e0f74823562f9f850cc6c3b7bb1cdd86697a0a4e406e1d0599"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/r184-initial-receipt.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "95d312cbcc67902b9dad132bb95a9611849d321be6fdfdd127c55c19f6b21d45"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/r184-initial.tap",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "63d580e41d36d6c7877f15ecb486614fb8c1cc56810e3ba2ab50528aa3ee004f"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/typecheck-after-syntax-fix-receipt.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "571607241da2e77a60607fedd32c514200a40c3b3293de80ead1b39c55cf7915"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/typecheck-after-syntax-fix.log",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/typecheck-initial-receipt.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "41352e487b75190be3a68c8d154c2bf220efc396d12afc859814ee4ae0315b9e"
+    },
+    {
+      "path": "docs/r184-phase2-verification/evidence/typecheck-initial.log",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "209c7fb37d373646eb1474b1f5956db856c2e489a8ef16fce30cfe7b0a0b8977"
+    },
+    {
+      "path": "docs/r184-phase2-verification/execution-status.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "4085449ab5ce459f1467c5a9a49ab8f711ced7f7ff32e88d120a6de902c4c201"
+    },
+    {
+      "path": "docs/r184-phase2-verification/phase2-fix.patch",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "15fc91a6ea39309cc3cb8304fea0328e23e5ceaf87f79462b892b3e1434c52a1"
+    },
+    {
+      "path": "docs/r184-phase2-verification/r182-17-metric-test-results.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "eb01255c342777f1e8324cc1cb0ed10f2796c7a4a2dfa92941b1ff9571f16878"
+    },
+    {
+      "path": "docs/r184-phase2-verification/tested-program-manifest.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "5d5ebae7d6ca82f808c70654b5f5be3a7d82e1fcf15725f83da8dec564c6e0ec"
+    },
+    {
+      "path": "docs/r184-phase2-verification/交付报告.md",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "bbb033e23b2e36ce409665d695074f6638c349934b2aa0c3f2ad97e24e854906"
+    },
+    {
+      "path": "src/lib/core/coach-development-projection.ts",
+      "status": "MODIFIED",
+      "beforeSha256": "bc0a726516ae826edfe82e545eb3e91dcd052a3f82f2e598236f8b77ceba6043",
+      "afterSha256": "9d8ea8bec8ac3991db863cd0d571a41bc4be43921ec46b75ce97c87414b7ee54"
+    }
+  ],
+  "selfExcluded": "docs/r184-phase2-verification/modified-files.json"
+}

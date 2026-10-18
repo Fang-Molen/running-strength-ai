@@ -168,3 +168,25 @@ export function createAppEvent<T extends Record<string, unknown>>(
     schema_version: SCHEMA_VERSION,
   };
 }
+
+export type CommittedEventRecord = { event: AppEvent; recordedAt: string | null; origin: "LEGACY" | "JOURNAL" | "RUNNING_TRANSACTION" };
+/** Read-only: committed events with their journal commit time. Legacy rows have no commit time (null), never fabricated. */
+export function loadCommittedEventRecords(): CommittedEventRecord[] {
+  // Same ordering and retransmission dedupe as loadEvents(); only adds the commit time.
+  const data = readEnvelope<AppEvent[]>(EVENTS_KEY, []).data;
+  const legacy: CommittedEventRecord[] = (Array.isArray(data) ? data : []).map((event) => ({ event, recordedAt: null, origin: "LEGACY" }));
+  const seen = new Set(legacy.map((r) => JSON.stringify(r.event)));
+  const stamp = (v: unknown) => (typeof v === "string" && v.length > 0 ? v : null);
+  const committed = [
+    ...readJournal<AppEvent>(EVENT_JOURNAL_PREFIX).map((r) => ({ order: r.order, id: r.id, index: 0, rec: { event: r.data, recordedAt: stamp(r.recordedAt), origin: "JOURNAL" as const } })),
+    ...readJournal<RunningTransaction>(RUNNING_TRANSACTION_PREFIX)
+      .filter((r) => validRunningTransaction(r.data))
+      .flatMap((r) => r.data.events.map((event, index) => ({ order: r.order, id: r.id, index, rec: { event, recordedAt: stamp(r.recordedAt), origin: "RUNNING_TRANSACTION" as const } }))),
+  ].sort((a, b) => a.order - b.order || a.id.localeCompare(b.id) || a.index - b.index);
+  const extra = committed.map((r) => r.rec).filter((r) => { const key = JSON.stringify(r.event); if (seen.has(key)) return false; seen.add(key); return true; });
+  return [...legacy, ...extra];
+}
+/** Read-only accessor for the athlete id stamped on new events (used to scope V4 formal rows). */
+export function currentAthleteId(): string {
+  return athleteId;
+}

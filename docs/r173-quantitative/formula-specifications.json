@@ -1,0 +1,1391 @@
+{
+  "LOAD_SRPE": {
+    "operation": "srpe",
+    "formula": "actual_total_minutes*actual_session_rpe",
+    "unit": "AU",
+    "requiredValueFields": [
+      "minutes",
+      "rpe"
+    ],
+    "conditions": [
+      "WHOLE_SESSION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 65,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_WEEK_CHANGE": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_WEEK_WINDOWS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 66,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_RAMP_NOVICE": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_WEEK_WINDOWS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 67,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_RAMP_EXP": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_WEEK_WINDOWS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 68,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "AGE_YOUTH": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_WEEK_WINDOWS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 69,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "TISSUE_HSR": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_WEEK_WINDOWS",
+      "HSR_DEFINITION_CONFIRMED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 70,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "RTR_VOLUME": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_WEEK_WINDOWS",
+      "CLINICAL_PERMISSION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 71,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "TA_PROGRESS": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPLETE_YEAR_WINDOWS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 72,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_TAPER_VOL": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPARABLE_REFERENCE_PERIODS",
+      "DECLARED_TAPER"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 73,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_PERF_DROP": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "COMPARABLE_HISTORY",
+      "DIRECTION_DEFINED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 74,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "ABIL_PROFILE_UPDATE": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_METRIC_MODEL_VERSION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 75,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FORM_CADENCE": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "MATCHED_SPEED_GRADE_DEVICE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 76,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FORM_CADENCE_CHANGE": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "MATCHED_SPEED_GRADE_DEVICE",
+      "COMPARABLE_REFERENCE_PERIODS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 77,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FORM_VO": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "MATCHED_SPEED_GRADE_DEVICE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 78,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_PROGRESS": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_EXERCISE_ROM_EQUIPMENT"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 79,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_BLOCK_30": {
+    "operation": "percent",
+    "formula": "100*(current-reference)/reference",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_30M_TIMING_PROTOCOL",
+      "CONFIRMED_PB"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 80,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_MONOTONY": {
+    "operation": "monotony",
+    "formula": "mean(7 daily AU)/sample_sd(7 daily AU)",
+    "unit": "ratio",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 81,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_STRAIN": {
+    "operation": "strain",
+    "formula": "sum(7 daily AU)*monotony",
+    "unit": "AU",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 82,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_ACWR": {
+    "operation": "ewma28",
+    "formula": "EWMA7/EWMA28; alpha=2/(N+1); seed=first known day; coupled",
+    "unit": "ratio",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 83,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_ATL_CTL": {
+    "operation": "ewma42",
+    "formula": "ATL=EWMA7; CTL=EWMA42; TSB=CTL_previous-ATL_previous",
+    "unit": "AU",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 84,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_TSB": {
+    "operation": "tsb",
+    "formula": "100*(CTL_previous-ATL_previous)/CTL_previous",
+    "unit": "%",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 85,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_TSB_RACE": {
+    "operation": "tsb",
+    "formula": "100*(CTL_previous-ATL_previous)/CTL_previous",
+    "unit": "%",
+    "requiredValueFields": [],
+    "conditions": [
+      "RACE_DAY"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 86,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_SPIKE_SESSION": {
+    "operation": "spike",
+    "formula": "current_distance/max(prior_30_calendar_days_distances)",
+    "unit": "ratio",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 87,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_RECOVERY_WEEK": {
+    "operation": "increasingWeeks",
+    "formula": "count trailing consecutive complete weekly increases",
+    "unit": "week",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 88,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SESS_CV": {
+    "operation": "splitCv",
+    "formula": "100*sample_sd(equal_distance_seconds)/mean(seconds)",
+    "unit": "%",
+    "requiredValueFields": [],
+    "conditions": [
+      "UNIFORM_TASK",
+      "ALL_SEGMENTS_COMPLETED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 89,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SESS_FADE": {
+    "operation": "splitFade",
+    "formula": "100*(last_time-first_time)/first_time",
+    "unit": "%",
+    "requiredValueFields": [],
+    "conditions": [
+      "ALL_SEGMENTS_COMPLETED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 90,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SESS_TARGET_HIT": {
+    "operation": "target",
+    "formula": "100*(actual_seconds-planned_seconds)/planned_seconds",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 91,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SESS_HR_RECOVERY": {
+    "operation": "hrRecovery",
+    "formula": "HR_finish-HR_60seconds",
+    "unit": "bpm",
+    "requiredValueFields": [
+      "finish",
+      "after60"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 92,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SESS_RPE_CHECK": {
+    "operation": "plannedDifference",
+    "formula": "actual_session_RPE-planned_session_RPE",
+    "unit": "/10",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "WHOLE_SESSION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 93,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "LOAD_RPE_MISMATCH": {
+    "operation": "plannedDifference",
+    "formula": "actual_session_RPE-planned_session_RPE",
+    "unit": "/10",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "WHOLE_SESSION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 94,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_RIR": {
+    "operation": "plannedDifference",
+    "formula": "actual_RIR-planned_RIR",
+    "unit": "reps",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_EXERCISE_ROM_EQUIPMENT"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 95,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "TEST_TIMING": {
+    "operation": "difference",
+    "formula": "current-reference",
+    "unit": "s",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_START_TRIGGER_DEVICE_DISTANCE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 96,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_200_SPLIT": {
+    "operation": "raceSplit",
+    "formula": "second200-first200",
+    "unit": "s",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_400M_RACE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 97,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_400_FIRST200": {
+    "operation": "difference",
+    "formula": "current-reference",
+    "unit": "s",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "FIRST200_OF_400_VS_CONFIRMED_PB200"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 98,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_VL": {
+    "operation": "velocityLoss",
+    "formula": "100*(first_valid_velocity-last_valid_velocity)/first_valid_velocity",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_SET_EXERCISE_DEVICE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 99,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_DROP_STOP": {
+    "operation": "bestInSession",
+    "formula": "100*(current_equal_distance_time-best_valid_time)/best_valid_time",
+    "unit": "%",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 100,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_RHR": {
+    "operation": "baselineMedian",
+    "formula": "today_rhr-median(valid personal baseline)",
+    "unit": "bpm",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "BASELINE_VALID"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 101,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_HR_AT_PACE": {
+    "operation": "baselineMedian",
+    "formula": "HR_today-median(HR_at_matched_pace_baseline)",
+    "unit": "bpm",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "MATCHED_SPEED_GRADE_DEVICE",
+      "BASELINE_VALID"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 102,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_HRV": {
+    "operation": "hrv",
+    "formula": "ln(today_RMSSD)-mean(ln(baseline_RMSSD))",
+    "unit": "ln(ms)",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "BASELINE_VALID"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 103,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_HRV_GUIDED": {
+    "operation": "hrv",
+    "formula": "ln(today_RMSSD)-mean(ln(baseline_RMSSD))",
+    "unit": "ln(ms)",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "BASELINE_VALID"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 104,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_HRV_CV": {
+    "operation": "hrvCv",
+    "formula": "100*sample_sd(lnRMSSD_7d)/mean(lnRMSSD_7d)",
+    "unit": "%",
+    "requiredValueFields": [],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 105,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_MOOD_DROP": {
+    "operation": "zscore",
+    "formula": "(current-mean(baseline))/sample_sd(baseline)",
+    "unit": "z",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "SAME_SCALE",
+      "BASELINE_VALID"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 106,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_HOOPER": {
+    "operation": "hooper",
+    "formula": "sum(named valid Hooper items); per-item current-baseline",
+    "unit": "score",
+    "requiredValueFields": [
+      "scaleMin",
+      "scaleMax"
+    ],
+    "conditions": [
+      "SAME_SCALE",
+      "COMPLETE_ITEM_SET"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 107,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FAT_DECOUPLING": {
+    "operation": "decoupling",
+    "formula": "100*((HR_late/speed_late)/(HR_early/speed_early)-1)",
+    "unit": "%",
+    "requiredValueFields": [
+      "hrEarly",
+      "hrLate",
+      "speedEarly",
+      "speedLate"
+    ],
+    "conditions": [
+      "MATCHED_EARLY_LATE_WINDOWS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 108,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "ABIL_HRMAX": {
+    "operation": "hrmax",
+    "formula": "208-0.7*age_years",
+    "unit": "bpm",
+    "requiredValueFields": [
+      "age"
+    ],
+    "conditions": [],
+    "estimatedOutput": true,
+    "definitionLine": 109,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "AGE_HRMAX_40": {
+    "operation": "hrmax",
+    "formula": "208-0.7*age_years",
+    "unit": "bpm",
+    "requiredValueFields": [
+      "age"
+    ],
+    "conditions": [],
+    "estimatedOutput": true,
+    "definitionLine": 110,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "ABIL_CS": {
+    "operation": "cs",
+    "formula": "distance=CS*time+Dprime; ordinary least squares",
+    "unit": "m/s",
+    "requiredValueFields": [],
+    "conditions": [
+      "MAXIMAL_TESTS",
+      "SAME_TEST_PROTOCOL"
+    ],
+    "estimatedOutput": true,
+    "definitionLine": 111,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "ABIL_ASR": {
+    "operation": "asr",
+    "formula": "measured_MSS-measured_vVO2max",
+    "unit": "m/s",
+    "requiredValueFields": [
+      "mss",
+      "vvo2max"
+    ],
+    "conditions": [
+      "MEASURED_MSS",
+      "MEASURED_VVO2MAX"
+    ],
+    "estimatedOutput": true,
+    "definitionLine": 112,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "ABIL_HR_ZONES": {
+    "operation": "heartZone",
+    "formula": "HR<measured_LT1:Z1; LT1<=HR<=LT2:Z2; HR>LT2:Z3",
+    "unit": "zone",
+    "requiredValueFields": [
+      "current",
+      "lt1",
+      "lt2"
+    ],
+    "conditions": [
+      "MEASURED_LT1_LT2_SAME_PROTOCOL"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 113,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_E1RM": {
+    "operation": "epley",
+    "formula": "load_kg*(1+reps/30)",
+    "unit": "kg",
+    "requiredValueFields": [
+      "kg",
+      "reps"
+    ],
+    "conditions": [
+      "SAME_EXERCISE_ROM_EQUIPMENT",
+      "DYNAMIC_EXERCISE"
+    ],
+    "estimatedOutput": true,
+    "definitionLine": 114,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FORM_GCT_ASYM": {
+    "operation": "asymmetry",
+    "formula": "100*abs(left-right)/((left+right)/2)",
+    "unit": "%",
+    "requiredValueFields": [
+      "left",
+      "right"
+    ],
+    "conditions": [
+      "SAME_SENSOR_SPEED_GRADE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 115,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_SLEEP": {
+    "operation": "sleep",
+    "formula": "actual_sleep_minutes/60",
+    "unit": "h",
+    "requiredValueFields": [
+      "minutes"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 116,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_TRAVEL_SLEEP": {
+    "operation": "sleep",
+    "formula": "actual_sleep_minutes/60",
+    "unit": "h",
+    "requiredValueFields": [
+      "minutes"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 117,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_SLEEP_DEBT": {
+    "operation": "sleepDebt",
+    "formula": "sum(max(0,individual_need_hours-sleep_hours_day)) over 7 days",
+    "unit": "h",
+    "requiredValueFields": [
+      "needHours"
+    ],
+    "conditions": [
+      "INDIVIDUAL_SLEEP_NEED_KNOWN"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 118,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_LIFE_STRESS": {
+    "operation": "difference",
+    "formula": "current-reference",
+    "unit": "score",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "SAME_SCALE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 119,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_HARD_GAP": {
+    "operation": "interval",
+    "formula": "(end-start)/3600000",
+    "unit": "h",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "CONFIRMED_HARD_SESSION_END_AND_START"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 120,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_HARD_GAP_SPRINT": {
+    "operation": "interval",
+    "formula": "(end-start)/3600000",
+    "unit": "h",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "CONFIRMED_SPEED_SESSION_END_AND_START"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 121,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "AGE_MASTERS": {
+    "operation": "interval",
+    "formula": "(end-start)/3600000",
+    "unit": "h",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "CONFIRMED_HARD_SESSION_END_AND_START"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 122,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_CONCURRENT_GAP": {
+    "operation": "interval",
+    "formula": "(end-start)/3600000",
+    "unit": "h",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "CONFIRMED_RUN_STRENGTH_END_AND_START"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 123,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_LACTATE_REST": {
+    "operation": "interval",
+    "formula": "(end-start)/60000",
+    "unit": "min",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "SAME_SESSION_REPETITION_END_AND_START"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 124,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_REST_ACCEL": {
+    "operation": "interval",
+    "formula": "(end-start)/1000",
+    "unit": "s",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "SAME_SESSION_REPETITION_END_AND_START"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 125,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_TAPER_LEN": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)",
+    "unit": "day",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "DECLARED_TAPER_START_AND_RACE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 126,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_TAPER_SPRINT": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)",
+    "unit": "day",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "DECLARED_TAPER_START_AND_RACE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 127,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_TRANSITION": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)/7",
+    "unit": "week",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "DECLARED_TRANSITION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 128,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_COMPETE_SPACE": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)",
+    "unit": "day",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "CONFIRMED_RACE_DATES"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 129,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "TEST_RETEST": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)/7",
+    "unit": "week",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "SAME_TEST_PROTOCOL"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 130,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SEX_MC_IRREG": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)",
+    "unit": "day",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "REPORTED_MENSTRUAL_ONSETS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 131,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_PEAK_REST": {
+    "operation": "interval",
+    "formula": "calendar_days(end-start)",
+    "unit": "day",
+    "requiredValueFields": [
+      "start",
+      "end"
+    ],
+    "conditions": [
+      "CONFIRMED_HEAVY_SESSION_AND_RACE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 132,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_JETLAG": {
+    "operation": "offset",
+    "formula": "abs(destination_UTC_offset-origin_UTC_offset)",
+    "unit": "h",
+    "requiredValueFields": [
+      "origin",
+      "destination"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 133,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_TRAVEL": {
+    "operation": "offset",
+    "formula": "abs(destination_UTC_offset-origin_UTC_offset)",
+    "unit": "h",
+    "requiredValueFields": [
+      "origin",
+      "destination"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 134,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_DIST_BASE": {
+    "operation": "zoneShare",
+    "formula": "100*verified_Z1_minutes/total_classified_minutes",
+    "unit": "%",
+    "requiredValueFields": [
+      "part",
+      "total"
+    ],
+    "conditions": [
+      "MEASURED_ZONE_DEFINITION",
+      "COMPLETE_CLASSIFIED_WINDOW"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 135,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_DIST_SPEC": {
+    "operation": "zoneShare",
+    "formula": "100*verified_high_zone_minutes/total_classified_minutes",
+    "unit": "%",
+    "requiredValueFields": [
+      "part",
+      "total"
+    ],
+    "conditions": [
+      "MEASURED_ZONE_DEFINITION",
+      "COMPLETE_CLASSIFIED_WINDOW"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 136,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_HARD_PER_WEEK": {
+    "operation": "countHard",
+    "formula": "count distinct verified hard sessions in complete 7 days",
+    "unit": "session",
+    "requiredValueFields": [],
+    "conditions": [
+      "SESSION_CLASSIFICATION_CONFIRMED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 137,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_FREQ_PERIOD": {
+    "operation": "countStrength",
+    "formula": "count distinct strength sessions in complete 7 days",
+    "unit": "session",
+    "requiredValueFields": [],
+    "conditions": [
+      "SESSION_CLASSIFICATION_CONFIRMED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 138,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "TA_NOVICE": {
+    "operation": "countRun",
+    "formula": "count distinct running sessions and hard sessions in complete 7 days",
+    "unit": "session",
+    "requiredValueFields": [],
+    "conditions": [
+      "SESSION_CLASSIFICATION_CONFIRMED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 139,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_REST_DAY": {
+    "operation": "restDays",
+    "formula": "count explicit qualifying rest days in complete 14 days",
+    "unit": "day",
+    "requiredValueFields": [],
+    "conditions": [
+      "REST_DEFINITION_KNOWN"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 140,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "PER_DETRAIN": {
+    "operation": "noExposureDays",
+    "formula": "count trailing complete days without explicitly defined relevant exposure",
+    "unit": "day",
+    "requiredValueFields": [],
+    "conditions": [
+      "RELEVANT_EXPOSURE_DEFINITION"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 141,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_HARD_SAME_DAY": {
+    "operation": "sameDay",
+    "formula": "same declared local calendar day(hard_run,heavy_strength)",
+    "unit": "boolean",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "HARD_RUN_AND_HEAVY_STRENGTH",
+      "LOCAL_DAY_CONFIRMED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 142,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "STR_PLYO_CONTACTS": {
+    "operation": "sumContacts",
+    "formula": "sum(actual landing contacts)",
+    "unit": "contacts",
+    "requiredValueFields": [],
+    "conditions": [
+      "ACTUAL_CONTACTS_COUNTED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 143,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FORM_ONE_CHANGE": {
+    "operation": "countCues",
+    "formula": "count distinct simultaneously selected technical cues",
+    "unit": "count",
+    "requiredValueFields": [],
+    "conditions": [
+      "SIMULTANEOUS_CUES"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 144,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "FORM_SELFCHECK": {
+    "operation": "countFeatures",
+    "formula": "count explicitly observed features; not a diagnosis",
+    "unit": "count",
+    "requiredValueFields": [],
+    "conditions": [
+      "DEFINED_FEATURE_SET"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 145,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_MAXV_FREQ": {
+    "operation": "speedFrequency",
+    "formula": "count distinct sessions containing reps in explicit measured speed band",
+    "unit": "session",
+    "requiredValueFields": [
+      "lowerFraction",
+      "mss"
+    ],
+    "conditions": [
+      "EXPLICIT_SPEED_BAND",
+      "VERIFIED_REP_SPEEDS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 146,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_MAXV_VOL": {
+    "operation": "speedDistance",
+    "formula": "sum verified rep distance in explicit measured speed band",
+    "unit": "m",
+    "requiredValueFields": [
+      "lowerFraction",
+      "mss"
+    ],
+    "conditions": [
+      "EXPLICIT_SPEED_BAND",
+      "VERIFIED_REP_SPEEDS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 147,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_SPEEDEND_VOL": {
+    "operation": "speedDistance",
+    "formula": "sum verified rep distance in explicit measured speed band",
+    "unit": "m",
+    "requiredValueFields": [
+      "lowerFraction",
+      "upperFraction",
+      "mss"
+    ],
+    "conditions": [
+      "EXPLICIT_SPEED_BAND",
+      "VERIFIED_REP_SPEEDS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 148,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_WARMUP": {
+    "operation": "warmup",
+    "formula": "actual warmup minutes; count distinct progressive sprint records",
+    "unit": "min",
+    "requiredValueFields": [
+      "minutes"
+    ],
+    "conditions": [
+      "WARMUP_SCOPE"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 149,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "READY_MISSING": {
+    "operation": "coverage",
+    "formula": "count(valid required fields)/count(required fields)",
+    "unit": "ratio",
+    "requiredValueFields": [],
+    "conditions": [
+      "QUESTION_REQUIRED_FIELDS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 150,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "REC_ALCOHOL": {
+    "operation": "reported",
+    "formula": "reported standard drinks (standard grams explicitly recorded)",
+    "unit": "standard_drink",
+    "requiredValueFields": [
+      "current",
+      "gramsPerDrink"
+    ],
+    "conditions": [],
+    "estimatedOutput": false,
+    "definitionLine": 151,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SEX_MC_FEEL": {
+    "operation": "reported",
+    "formula": "reported NRS with function; not a training clearance",
+    "unit": "/10",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "FUNCTION_RECORDED"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 152,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SPR_BLOCK_RT": {
+    "operation": "reported",
+    "formula": "official measured reaction time",
+    "unit": "s",
+    "requiredValueFields": [
+      "current"
+    ],
+    "conditions": [
+      "OFFICIAL_REACTION_TIME"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 153,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "SEX_EA": {
+    "operation": "energyAvailability",
+    "formula": "(same_day_intake-same_day_exercise_energy)/FFM",
+    "unit": "kcal/kg FFM/day",
+    "requiredValueFields": [
+      "intake",
+      "exerciseEnergy",
+      "ffm"
+    ],
+    "conditions": [
+      "SAME_ENERGY_DAY",
+      "PROFESSIONAL_REVIEW"
+    ],
+    "estimatedOutput": true,
+    "definitionLine": 154,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "RTR_SPEED": {
+    "operation": "exposure",
+    "formula": "100*actual_speed/reference_speed; not clearance",
+    "unit": "%",
+    "requiredValueFields": [
+      "current",
+      "reference"
+    ],
+    "conditions": [
+      "CLINICAL_PERMISSION",
+      "SYMPTOMS_AND_NEXT_DAY_REVIEW"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 155,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  },
+  "TEST_SWC": {
+    "operation": "measurementChange",
+    "formula": "observed change; MDC95=1.96*sqrt(2)*SEM only with justified error model; SWC separate",
+    "unit": "input",
+    "requiredValueFields": [
+      "current",
+      "reference",
+      "pairedCount"
+    ],
+    "conditions": [
+      "SAME_TEST_PROTOCOL",
+      "PAIRED_MEASUREMENTS"
+    ],
+    "estimatedOutput": false,
+    "definitionLine": 156,
+    "version": "FK-R173-ARITHMETIC-1",
+    "programExecutionStatus": "NOT_RUN"
+  }
+}

@@ -7,42 +7,115 @@ import MUS from './muscles.js';
 import { placeRestrictedView, muscleHighlights } from './viewer-policy.js';
 
 const COL = { p: new THREE.Color('#ed7655'), s: new THREE.Color('#f0b08a') }; // Fieldwork: muted muscle overlay palette
-let baseGLTF = null, modelTask = null;
-export async function loadModel() {
-  if (baseGLTF) return baseGLTF;
-  if (!modelTask) modelTask = Promise.all([
-    new GLTFLoader().loadAsync(new URL('./models/human.glb', import.meta.url).href),
-    new THREE.TextureLoader().loadAsync(new URL('./models/regions.png', import.meta.url).href),
-  ]).then(([g, t]) => {
+const modelCache = new Map(), modelTasks = new Map(); let regionTask = null;
+export async function loadModel(model = 'human') {
+  const kind = ['athlete','athlete-male','athlete-female'].includes(model) ? model : 'human';
+  if (modelCache.has(kind)) return modelCache.get(kind);
+  if (!regionTask) regionTask = new THREE.TextureLoader().loadAsync(new URL('./models/regions.png', import.meta.url).href).then(t => {
     t.flipY = false; t.magFilter = t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; t.colorSpace = THREE.NoColorSpace;
-    REG = t; baseGLTF = g; return g;
-  }).catch(error => { modelTask = null; throw error; });
-  return modelTask;
+    REG = t; return t;
+  }).catch(error => { regionTask = null; throw error; });
+  if (!modelTasks.has(kind)) modelTasks.set(kind, Promise.all([
+    new GLTFLoader().loadAsync(new URL(`./models/${kind}.glb`, import.meta.url).href), regionTask,
+  ]).then(([g]) => { modelCache.set(kind, g); return g; }).catch(error => { modelTasks.delete(kind); throw error; }));
+  return modelTasks.get(kind);
+}
+// Explicit appearance controls only: no kg/body-fat-to-shape prediction is encoded here.
+export const APPEARANCE_CHANNELS = Object.freeze(['slender', 'lean', 'muscular', 'adipose']);
+export function normalizeAppearance(input = {}) {
+  const values = Object.fromEntries(APPEARANCE_CHANNELS.map(k => [k, Number.isFinite(input?.[k]) ? Math.min(1, Math.max(0, input[k])) : 0]));
+  const total = Object.values(values).reduce((sum, value) => sum + value, 0);
+  if (total > 1) for (const k of APPEARANCE_CHANNELS) values[k] /= total;
+  return values;
+}
+export function applyAppearance(rig, input = {}) {
+  const appearance = normalizeAppearance(input); let found = false;
+  rig.root.traverse(o => {
+    if (!o.morphTargetDictionary || !o.morphTargetInfluences) return;
+    for (const k of APPEARANCE_CHANNELS) {
+      const index = o.morphTargetDictionary[k];
+      if (index !== undefined) { o.morphTargetInfluences[index] = appearance[k]; found = true; }
+    }
+  });
+  if (!found && Object.values(appearance).some(value => value > 0)) throw new Error('此模型没有可用的体型形变');
+  rig.appearance = appearance; return { ...appearance };
 }
 // ---------- material with muscle overlay ----------
 let REG = null;
 function muscleMaterial(src, state) {
-  const m = new THREE.MeshStandardMaterial({ map: src.map, roughness: .78, metalness: 0, transparent: false, opacity: 1 });
+  // Same CC0 body/UV/weights. The kit remains a surface treatment, not a new garment mesh.
+  const m = new THREE.MeshStandardMaterial({ name: src.name, map: src.map, roughness: .56, metalness: 0,
+    side: THREE.DoubleSide, transparent: false, opacity: 1, alphaTest: 0, depthWrite: true });
   m.onBeforeCompile = sh => {
     sh.uniforms.uHi = { value: state.hi }; sh.uniforms.uBorder = { value: state }; sh.uniforms.uReg = { value: REG };
-    sh.uniforms.uSel = { value: new THREE.Color('#62a6ff') }; sh.uniforms.uShirt = { value: state.shirt === 0 ? 0 : 1 }; sh.uniforms.uP = { value: COL.p }; sh.uniforms.uS = { value: COL.s };
+    sh.uniforms.uSel = { value: new THREE.Color('#62a6ff') }; sh.uniforms.uShirt = {};
+    sh.uniforms.uKit = { value: new THREE.Color('#242629') }; sh.uniforms.uShorts = { value: new THREE.Color('#1c1e21') };
+    sh.uniforms.uP = { value: COL.p }; sh.uniforms.uS = { value: COL.s };
     Object.defineProperty(sh.uniforms.uBorder, 'value', { get: () => state.border });
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHi[40];uniform float uBorder;uniform float uShirt;uniform vec3 uP;uniform vec3 uS;uniform vec3 uSel;uniform sampler2D uReg;\nfloat hiOf(int id){ float h=0.0; for(int i=0;i<40;i++){ if(i==id) h=uHi[i]; } return h; }\nint idAt(vec2 uv){ return int(floor(texture2D(uReg,uv).r*255.0+0.5)); }')
+    Object.defineProperty(sh.uniforms.uShirt, 'value', { get: () => state.shirt === 0 ? 0 : 1 });
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+      uniform float uHi[40]; uniform float uBorder; uniform float uShirt;
+      uniform vec3 uP; uniform vec3 uS; uniform vec3 uSel; uniform vec3 uKit; uniform vec3 uShorts;
+      uniform sampler2D uReg;
+      float hiOf(int id) { float h=0.0; for(int i=0;i<40;i++) { if(i==id) h=uHi[i]; } return h; }
+      int idAt(vec2 uv) { return int(floor(texture2D(uReg,uv).r*255.0+0.5)); }
+      float kitAt(vec2 uv) {
+        float g=texture2D(uReg,uv).g;
+        return max(step(0.75,g),step(0.25,g)*step(0.5,uShirt));
+      }
+      float kitWeave(vec2 uv) {
+        vec2 thread=uv*620.0;
+        // Fade threads below pixel size so the fabric does not shimmer when zoomed out.
+        vec2 visible=1.0-smoothstep(vec2(0.25),vec2(0.95),fwidth(thread));
+        return dot(cos(thread*6.2831853)*visible,vec2(0.25));
+      }`)
       .replace('#include <map_fragment>', `#include <map_fragment>
       { vec4 rg = texture2D(uReg, vMapUv); int id = int(floor(rg.r*255.0+0.5)); float h = hiOf(id);
-        if (rg.g>0.75) diffuseColor.rgb = vec3(0.10,0.11,0.13); else if (rg.g>0.25 && uShirt>0.5) diffuseColor.rgb = vec3(0.11,0.15,0.22);
-        if (id>0 && h>0.0) { vec3 c = h>2.5 ? uSel : h>1.5 ? uP : uS; float fab = (rg.g>0.75 || (rg.g>0.25 && uShirt>0.5)) ? 0.78 : 1.0; diffuseColor.rgb = mix(diffuseColor.rgb, c, (h>1.5?0.74:0.48)*fab); }
-        else if (id>0 && uBorder>0.5 && (rg.g<0.25 || (rg.g<0.75 && uShirt<0.5))) { diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80,0.72,0.66), 0.22); }
-        if (id>0 && (h>0.0 || uBorder>0.5)) {
+        float fabric=kitAt(vMapUv); float weave=kitWeave(vMapUv); vec3 kit=mix(uKit,uShorts,step(0.75,rg.g));
+        if (fabric>0.5) {
+          float o=1.5/2048.0;
+          float seam=max(max(abs(fabric-kitAt(vMapUv+vec2(o,0.0))),abs(fabric-kitAt(vMapUv-vec2(o,0.0)))),
+                         max(abs(fabric-kitAt(vMapUv+vec2(0.0,o))),abs(fabric-kitAt(vMapUv-vec2(0.0,o)))));
+          diffuseColor.rgb=kit*(1.0+0.09*weave)*(1.0-0.16*seam);
+        }
+        if (id>0 && h>0.0) {
+          vec3 c=h>2.5 ? uSel : h>1.5 ? uP : uS;
+          float amount=fabric>0.5 ? (h>2.5 ? 0.48 : h>1.5 ? 0.34 : 0.22) : (h>1.5 ? 0.74 : 0.48);
+          diffuseColor.rgb=mix(diffuseColor.rgb,c,amount);
+        }
+        else if (id>0 && uBorder>0.5 && fabric<0.5) { diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80,0.72,0.66), 0.22); }
+        if (id>0 && (h>0.0 || (uBorder>0.5 && fabric<0.5))) {
           float o = 1.6/2048.0; float e = 0.0;
           e += float(idAt(vMapUv+vec2(o,0.))!=id); e += float(idAt(vMapUv-vec2(o,0.))!=id); e += float(idAt(vMapUv+vec2(0.,o))!=id); e += float(idAt(vMapUv-vec2(0.,o))!=id);
           float ln = clamp(e,0.,1.); if (h>0.0) ln = max(ln, rg.b*0.7);
-          diffuseColor.rgb = mix(diffuseColor.rgb, h>0.0 ? vec3(0.32,0.02,0.03) : vec3(0.35,0.25,0.22), ln*0.68);
+          diffuseColor.rgb = mix(diffuseColor.rgb, h>0.0 ? vec3(0.10,0.035,0.025) : vec3(0.35,0.25,0.22), ln*(fabric>0.5 ? 0.36 : 0.68));
         }
-        // The unlabelled covered pelvic area always remains opaque, independent of highlights/shirt mode.
-        if (rg.g>0.75 && id==0) { diffuseColor.rgb = vec3(0.10,0.11,0.13); diffuseColor.a = 1.0; }
-      }`);
+        // The unlabelled pelvic guard always stays charcoal, even in shirt-off/highlight modes.
+        if (rg.g>0.75 && id==0) diffuseColor.rgb=uShorts*(1.0+0.09*weave);
+        // Source skin-map alpha never cuts holes through the body or covered pelvis.
+        diffuseColor.a=1.0;
+      }`)
+      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+        roughnessFactor=mix(0.56,0.90+0.035*kitWeave(vMapUv),kitAt(vMapUv));`);
   };
+  m.customProgramCacheKey = () => 'fangkun-athlete-charcoal-v71';
+  return m;
+}
+function detailMaterial(src, name) {
+  const m=src.clone(); m.opacity=1; m.depthWrite=true; m.transparent=false;
+  if (/short02|eyebrow/i.test(name+' '+src.name)) {
+    // Alpha-cut strands retain their shape, with stable depth instead of blended dark halos.
+    m.alphaTest=.35; m.alphaToCoverage=true; m.roughness=/eyebrow/i.test(name) ? .86 : .76; m.metalness=0;
+    m.onBeforeCompile=sh => {
+      sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+        { float strand=clamp(dot(diffuseColor.rgb,vec3(0.2126,0.7152,0.0722))*3.0,0.0,1.0);
+          diffuseColor.rgb=vec3(0.010,0.011,0.013)+vec3(0.035,0.036,0.038)*strand; }`);
+    };
+    m.customProgramCacheKey=() => 'fangkun-black-hair-v71';
+  } else {
+    m.alphaTest=0;
+    if (/low-poly/i.test(name)) m.roughness=.24;
+  }
   return m;
 }
 export function muscleIndexFor(primary, secondary, extraPrimary = [], extraSecondary = []) {
@@ -59,7 +132,7 @@ function makeRig(gltf, state) {
     if (o.isMesh) {
       o.frustumCulled = false; o.castShadow = true;
       if (/base|body/i.test(o.name) || o.material.name === 'Human.body') { o.material = muscleMaterial(o.material, state); body = o; }
-      else { o.material = o.material.clone(); o.castShadow = true; o.material.transparent = o.material.alphaMode === 'BLEND' || /eyebrow|short/.test(o.name); o.material.alphaTest = .3; o.material.depthWrite = true; }
+      else o.material = detailMaterial(o.material,o.name);
     }
   });
   root.updateMatrixWorld(true);
@@ -74,7 +147,9 @@ function makeRig(gltf, state) {
     const d = c ? rest[c.name].wp.clone().sub(rest[n].wp).normalize() : new THREE.Vector3(0, 1, 0).applyQuaternion(rest[n].wq);
     rest[n].dir = d;
   }
-  return { root, bones, rest, body };
+  const rig = { root, bones, rest, body };
+  applyAppearance(rig, state.appearance);
+  return rig;
 }
 // direction from sagittal angle s (0 down, 90 forward, 180 up) and abduction a (deg, +outward), side +1 left / -1 right
 export function dirOf(s, a = 0, side = 1) {
@@ -220,10 +295,22 @@ export function poseAt(mo, time) {
   if (mo.travel && i === mo.frames.length - 1 && B.at) B.at = B.at.map((v, k) => v + mo.travel[k]);
   return { pose: lerpPose(A, B, ease(Math.min(1, t / mo.frames[i].dur))), phase: mo.frames[i].phase || 'hold' };
 }
+// Ground only the new unloaded preparation clips. Existing exercise solvers stay unchanged.
+export function applyMotionPose(rig, mo, pose) {
+  applyPose(rig, pose);
+  if (!mo.groundFeet) return;
+  let low = Infinity; const v = new THREE.Vector3();
+  rig.root.updateMatrixWorld(true);
+  rig.root.traverse(o => {
+    if (!o.isSkinnedMesh || !/shoe/i.test(o.name)) return;
+    for (let i = 0; i < o.geometry.attributes.position.count; i++) { o.getVertexPosition(i, v); v.applyMatrix4(o.matrixWorld); low = Math.min(low, v.y); }
+  });
+  if (Number.isFinite(low)) { rig.root.position.y += -low + Math.max(0, pose.hop || 0); rig.root.updateMatrixWorld(true); }
+}
 // ---------- stage ----------
 export async function createStage(canvas, mo, opt = {}) {
-  const gltf = await loadModel();
-  const state = { hi: opt.hi || new Array(40).fill(0), border: opt.border ? 1 : 0 };
+  const gltf = await loadModel(opt.model);
+  const state = { hi: opt.hi || new Array(40).fill(0), border: opt.border ? 1 : 0, appearance: opt.appearance };
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: !!opt.capture });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.98;
@@ -235,7 +322,7 @@ export async function createStage(canvas, mo, opt = {}) {
   const rim = new THREE.DirectionalLight(0xd4e4eb, 0.82); rim.position.set(-3, 2.5, -3); scene.add(rim);
   const floor = new THREE.Mesh(new THREE.CircleGeometry(2.4, 64), new THREE.MeshStandardMaterial({ color: 0x2a3038, roughness: .95 }));
   floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-  const rig = makeRig(gltf, state); scene.add(rig.root); applyPose(rig, { ...mo.base, ...mo.frames[0].pose });
+  const rig = makeRig(gltf, state); scene.add(rig.root); applyMotionPose(rig, mo, { ...mo.base, ...mo.frames[0].pose });
   const props = {};
   if (mo.props?.includes('barbell')) { props.bar = barbell(); scene.add(props.bar); props.bar.traverse(o => o.castShadow = true); }
   if (mo.props?.includes('block')) { const b = new THREE.Mesh(new THREE.BoxGeometry(.6, .12, .16), new THREE.MeshStandardMaterial({ color: 0x4a4f58, roughness: .8 })); b.position.set(0, .06, .035); b.castShadow = b.receiveShadow = true; scene.add(b); }
@@ -251,11 +338,12 @@ export async function createStage(canvas, mo, opt = {}) {
   if (mo.hbar) { const [len, col] = mo.hbar; const g = new THREE.Group(); const r = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, len, 16), MS(col ?? 0xb8bcc2)); r.rotation.z = Math.PI / 2; g.add(r); scene.add(g); props.hbar = g; }
   props.trk = (mo.track || []).map(t => { const g0 = t.cyl ? new THREE.CylinderGeometry(t.cyl[0], t.cyl[0], t.cyl[1], 20).rotateZ(Math.PI / 2) : new THREE.BoxGeometry(t.box[0], t.box[1], t.box[2]); const m = new THREE.Mesh(g0, new THREE.MeshStandardMaterial({ color: (t.box || t.cyl)[t.cyl ? 2 : 3] ?? 0x3b2a22, roughness: .8 })); m.castShadow = m.receiveShadow = true; scene.add(m); return m; });
   if (mo.props?.includes('bench')) { const b = new THREE.Mesh(new THREE.BoxGeometry(.3, .42, 1.2), new THREE.MeshStandardMaterial({ color: 0x3b2a22 })); b.position.y = .21; scene.add(b); props.bench = b; }
-  const ctl = new OrbitControls(cam, canvas); ctl.enableDamping = true; ctl.enablePan = false; ctl.autoRotate = false;
+  let dirty = true;
+  const ctl = new OrbitControls(cam, canvas); ctl.addEventListener('change', () => { dirty = true; }); ctl.enableDamping = true; ctl.enablePan = false; ctl.autoRotate = false;
   // Clamp: eye level to slight top-down only, ±30° around the chosen view, bounded zoom; no flipping, no view from below.
   ctl.minPolarAngle = 62 * Math.PI / 180; ctl.maxPolarAngle = 90 * Math.PI / 180; canvas.style.touchAction = 'pan-y';
   const tgt = new THREE.Vector3(...(mo.camTarget || [0, .9, 0])); ctl.target.copy(tgt);
-  const dist = mo.camDist || 3.6; ctl.minDistance = dist * 0.55; ctl.maxDistance = dist * 1.35;
+  const dist = (mo.camDist || 3.6) * (['athlete-male','athlete-female'].includes(opt.model) ? 1.12 : 1); ctl.minDistance = dist * 0.55; ctl.maxDistance = dist * 1.35;
   const VIEWS = { front: 0, side: 90, back: 180, three: 40 };
   function setView(v) { if (props.bar) props.bar.traverse(o => { if (o.material && o.material.transparent) o.material.opacity = (v === 'side') ? 0.12 : 0.42; });
     placeRestrictedView(ctl, cam, VIEWS[v] ?? 0, tgt, dist, .75); }
@@ -263,7 +351,7 @@ export async function createStage(canvas, mo, opt = {}) {
   let speed = 1, playing = true, t = 0, last = performance.now(), raf, phaseCb = opt.onPhase, lastPhase;
   const wp = n => { const x = new THREE.Vector3(); rig.bones[n].getWorldPosition(x); return x; };
   function frame(time) {
-    const { pose, phase } = poseAt(mo, time); applyPose(rig, pose);
+    const { pose, phase } = poseAt(mo, time); applyMotionPose(rig, mo, pose);
     if (mo.follow) { if (rig._fz0 === undefined) { applyPose(rig, poseAt(mo, 0).pose); rig._fz0 = wp('pelvis').z; applyPose(rig, pose); } const dz = tgt.z + wp('pelvis').z - rig._fz0 - ctl.target.z;
       cam.position.z += dz; ctl.target.z += dz; const oz = ctl.target.z - tgt.z; floor.position.z = oz; key.position.z = 3 + oz; key.target.position.z = oz; key.target.updateMatrixWorld(); }
     if (props.bar) {
@@ -282,15 +370,23 @@ export async function createStage(canvas, mo, opt = {}) {
     if (props.pull) props.pull.position.set(0, (mo.barY || 2.25), mo.barZ || 0);
     if (phase !== lastPhase) { lastPhase = phase; phaseCb && phaseCb(phase); }
   }
-  function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+  function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); dirty = true; }
   const ro = new ResizeObserver(resize); ro.observe(canvas); resize();
   let onScreen = true; const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }); io.observe(canvas);
-  function loop(now) { const dt = (now - last) / 1000; last = now; if (onScreen && !document.hidden) { if (playing) t += dt * speed; frame(t); ctl.update(); renderer.render(scene, cam); } raf = requestAnimationFrame(loop); }
+  let lastDraw = 0;
+  function loop(now) { const dt = Math.min(.1, (now - last) / 1000); last = now; if (onScreen && !document.hidden) {
+    if (playing) t += dt * speed;
+    ctl.update();
+    // Paused stages render only after a view/size/material change; avoid re-skinning every vertex at 60 Hz.
+    if ((playing || dirty) && now - lastDraw >= 1000 / 30) { if (playing || dirty) frame(t); renderer.render(scene, cam); dirty = false; lastDraw = now; }
+  } raf = requestAnimationFrame(loop); }
   raf = requestAnimationFrame(loop);
   return {
     setView, toggle() { playing = !playing; return playing; }, setSpeed(s) { speed = s; },
-    setShoes(mode) { rig.root.traverse(o => { if (o.isMesh && /shoe/i.test(o.name + (o.material?.name || ''))) { o.visible = mode !== 'off'; o.material.transparent = mode === 'clear'; o.material.opacity = mode === 'clear' ? 0.28 : 1; o.material.depthWrite = mode !== 'clear'; o.material.needsUpdate = true; } }); },
-    seek(x) { t = x; frame(t); renderer.render(scene, cam); }, setHi(h) { state.hi.splice(0, 40, ...h); },
+    setAppearance(channels) { const value = applyAppearance(rig, channels); frame(t); renderer.render(scene, cam); return value; },
+    getAppearance() { return { ...rig.appearance }; },
+    setShoes(mode) { dirty = true; rig.root.traverse(o => { if (o.isMesh && /shoe/i.test(o.name + (o.material?.name || ''))) { o.visible = mode !== 'off'; o.material.transparent = mode === 'clear'; o.material.opacity = mode === 'clear' ? 0.28 : 1; o.material.depthWrite = mode !== 'clear'; o.material.needsUpdate = true; } }); },
+    seek(x) { t = x; frame(t); renderer.render(scene, cam); }, setHi(h) { state.hi.splice(0, 40, ...h); dirty = true; },
     destroy() { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); ctl.dispose(); renderer.dispose(); },
     render() { frame(t); renderer.render(scene, cam); }, renderer, rig
   };

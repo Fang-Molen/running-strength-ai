@@ -8,8 +8,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 // @ts-expect-error JS plugin alongside the TS vite config
 import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
-// @ts-expect-error JS build adapter alongside the TS Vite config
-import { nitroPwaBundle, staticNitroBuildCompat } from "./scripts/nitro-pwa-bundle.mjs";
 // @ts-expect-error JS plugin alongside the TS vite config
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
@@ -160,8 +158,6 @@ export default defineConfig(({ command, isPreview }) => ({
   },
   resolve: { tsconfigPaths: true },
   plugins: [
-    // Compatibility for the locked Nitro beta's static-preset final build stage.
-    ...(command === "build" ? [staticNitroBuildCompat()] : []),
     pgliteBootstrapPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
@@ -170,13 +166,12 @@ export default defineConfig(({ command, isPreview }) => ({
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
-    tanstackStart({ spa: { enabled: true } }),
+    tanstackStart(),
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "static",
+            preset: "vercel",
             serverDir: "./server",
-            rolldownConfig: { plugins: [nitroPwaBundle()] },
             vercel: { functions: { maxDuration: 60 } },
           }),
         ]

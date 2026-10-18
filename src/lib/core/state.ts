@@ -39,10 +39,9 @@ function recoveryLabel(band: FatigueBand): string {
   return "高疲劳"
 }
 
-function todayUsable(aerobic: number | null, band: FatigueBand): string {
-  if (aerobic == null) return "今天的表现单独看，不改能力"
-  if (band === "tired" || band === "cooked") return `${aerobic - 8}–${aerobic - 4}，能力仍是 ${aerobic}`
-  return `接近 ${aerobic}，能力仍是 ${aerobic}`
+function todayUsable(band: FatigueBand): string {
+  if (band === "tired" || band === "cooked") return "结合已记录的疲劳和症状评估本次表现；长期能力仍需同协议数据。"
+  return "今天的表现单独看；恢复记录不能换算长期能力分。"
 }
 
 export function emptyAthleteState(): AthleteState {
@@ -175,7 +174,7 @@ export function deriveAthleteState(): AthleteState {
     }
     const stored = readEnvelope<{ ability?: AbilitySnapshot }>("fr255-memory-v1", {}).data.ability
     state.ability = stored ? { ...emptyAbility(), ...stored } : emptyAbility()
-    state.performance.todayUsable = band == null ? "疲劳未记录，不能当成恢复充分" : todayUsable(state.ability.aerobic, band)
+    state.performance.todayUsable = band == null ? "疲劳未记录，不能当成恢复充分" : todayUsable(band)
     state.performance.recentRuns = day.runs.map((run) => `${run.note ? `${run.note} ` : ""}${run.km}公里${run.seconds ? ` ${formatDuration(run.seconds)}` : ""}`).join("；")
     const timed = day.runs.find((run) => run.km > 0 && run.seconds > 0)
     if (timed) {

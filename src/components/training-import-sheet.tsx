@@ -1,3 +1,6 @@
+import {DecimalInput} from './decimal-input'
+import { VisionSettings } from "./vision-settings";
+import { extractTrainingViaVision, hasVisionAccess, prepareImage, imageDataUrl } from "@/lib/vision/client";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { AlertTriangle, Camera, Check, ChevronLeft, LoaderCircle, Plus, Trash2, X } from "lucide-react"
 import {
@@ -6,6 +9,7 @@ import {
   criticalImportGaps,
   loadConfirmedTrainingImports,
   normalizeConfirmedTrainingImport,
+  normalizeTrainingImportCandidate,
   saveTrainingImportDraft,
   type ImportField,
   type ImportedRunningSegment,
@@ -46,24 +50,9 @@ function number(text: string): number | null {
 }
 
 async function imageFromFile(file: File, index: number): Promise<TrainingImportImage> {
-  if (!/^image\/(jpeg|png)$/.test(file.type)) throw new Error("只支持 JPG 或 PNG")
-  const bitmap = await createImageBitmap(file)
-  const scale = Math.min(1, 2000 / Math.max(bitmap.width, bitmap.height))
-  const canvas = document.createElement("canvas")
-  canvas.width = Math.max(1, Math.round(bitmap.width * scale))
-  canvas.height = Math.max(1, Math.round(bitmap.height * scale))
-  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
-  bitmap.close()
-  const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg"
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, mimeType, mimeType === "image/jpeg" ? 0.88 : undefined))
-  if (!blob || blob.size > 4 * 1024 * 1024) throw new Error("压缩后仍超过 4 MB，请裁剪图片")
-  const dataUrl = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result ?? ""))
-    reader.onerror = () => reject(new Error("图片读取失败"))
-    reader.readAsDataURL(blob)
-  })
-  return { mimeType, dataUrl, bytes: blob.size, sourceId: `image-${index + 1}` as TrainingImportImage["sourceId"] }
+  const blob = await prepareImage(file, 1600);
+  return { mimeType: 'image/jpeg', dataUrl: await imageDataUrl(blob), bytes: blob.size, sourceId: `image-${index + 1}` as TrainingImportImage['sourceId'] };
+
 }
 
 function ImportedRunningReadout({ segments }: { segments: TrainingImportDraft["runningSegments"] }) {
@@ -95,6 +84,7 @@ function EvidenceLine({ item, sources }: { item: CoachEvidenceClaim; sources: Ma
 }
 
 export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
+  const editorRoot=useRef<HTMLDivElement>(null)
   const [step, setStep] = useState<Step>("input")
   const [text, setText] = useState("")
   const [images, setImages] = useState<TrainingImportImage[]>([])
@@ -104,6 +94,8 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
   const [history, setHistory] = useState<ConfirmedTrainingImport[]>([])
   useEffect(() => { setHistory(loadConfirmedTrainingImports().map(normalizeConfirmedTrainingImport).filter((record): record is ConfirmedTrainingImport => record !== null)) }, [])
   const reviewInFlight = useRef(false)
+  const extractionAbort = useRef<AbortController | null>(null);
+  useEffect(() => () => extractionAbort.current?.abort(), []);
   const extractInFlight = useRef(false)
   const confirmInFlight = useRef(false)
   const [coachAssessment, setCoachAssessment] = useState<ImportedTrainingCoachAssessment | null>(null)
@@ -131,6 +123,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
 
   async function pickImages(event: ChangeEvent<HTMLInputElement>) {
     const files = [...(event.target.files ?? [])].slice(0, 4)
+    event.target.value = ""
     setMessage("")
     try {
       const converted: TrainingImportImage[] = []
@@ -147,17 +140,19 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
     if (extractInFlight.current || busy) return
     if (!text.trim() && images.length === 0) return setMessage("请粘贴训练文字，或选择训练截图")
     extractInFlight.current = true
+    extractionAbort.current = new AbortController(); const signal = extractionAbort.current.signal;
     setBusy(true)
     setMessage("正在提取，通常十几秒。超过 50 秒会停，不会写入记录。")
     let timer: ReturnType<typeof setTimeout> | undefined
     try {
       const result = await Promise.race([
-        extractTrainingImport({ data: { text, images } }),
+        hasVisionAccess() ? extractTrainingViaVision({ text, images }, signal).then(r => r.ok ? { ...r, candidate: normalizeTrainingImportCandidate(r.candidate) } : r) : extractTrainingImport({ data: { text, images } }),
         new Promise<never>((_, reject) => {
-          timer = setTimeout(() => reject(new Error("EXTRACT_TIMEOUT")), 50_000)
+          timer = setTimeout(() => { extractionAbort.current?.abort(); reject(new Error("EXTRACT_TIMEOUT")); }, 50_000)
         }),
       ])
-      if (!result.ok) return setMessage(result.reason === "NO_KEY" ? "服务端还没有模型密钥，未生成假结果" : result.reason === "LOCKED" ? "没有调用模型：服务端安全开关未打开，或当前账号无权使用。记录没有写入。" : `没有拿到可核对的提取结果：${result.reason}。记录没有写入，可以手动重试。`)
+      if (signal.aborted) return;
+      if (!result.ok) return setMessage(result.detail || (result.reason === "NO_KEY" ? "服务端还没有模型密钥，未生成假结果" : result.reason === "LOCKED" ? "没有调用模型：服务端安全开关未打开，或当前账号无权使用。记录没有写入。" : `没有拿到可核对的提取结果：${result.reason}。记录没有写入，可以手动重试。`))
       const inputKind = images.length > 1 ? "MULTI_IMAGE" : images.length === 1 ? "IMAGE" : "TEXT"
       const inputSourceIds = [...(text.trim() ? ["text" as const] : []), ...images.map((item) => item.sourceId)]
       const next = createTrainingImportDraft(result.candidate, inputKind, inputSourceIds)
@@ -169,7 +164,6 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
       setCoachAssessment(null)
       setTrend(null)
       setConfirmedSources([])
-      setImages([])
       setStep("review")
     } catch (error) {
       setMessage(error instanceof Error && error.message === "EXTRACT_TIMEOUT" ? "提取超过 50 秒，没有写入记录。可以先去掉图片，只贴文字再试。" : "提取请求失败，没有写入记录。图片还在，可以手动重试。")
@@ -220,6 +214,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
   }
 
   async function confirm() {
+    if(editorRoot.current&&![...editorRoot.current.querySelectorAll("input")].every(e=>e.reportValidity())){setMessage("请先修正数值输入，空白不会自动替换为0。");return;}
     if (!draft || confirmInFlight.current || busy) return
     confirmInFlight.current = true
     const result = confirmTrainingImport(draft)
@@ -242,8 +237,8 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
   const phaseIndex = step === "input" ? 0 : step === "review" ? 1 : 2
   const jumpTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
 
-  return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg">
-    <header className="sticky top-0 z-10 border-b border-line bg-bg/95 px-4 py-3 backdrop-blur">
+  return <div ref={editorRoot} className="fixed inset-0 z-50 overflow-y-auto bg-bg">
+    <header className="sticky top-0 z-10 border-b border-line bg-bg/95 px-4 py-3 backdrop-blur" style={{paddingTop:"max(12px, env(safe-area-inset-top))"}}>
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
         <button type="button" disabled={busy} onClick={step === "input" ? onClose : () => setStep(step === "result" && draft ? "review" : "input")} className="grid size-11 place-items-center rounded-full border border-line disabled:opacity-50" aria-label="返回"><ChevronLeft className="size-5" /></button>
         <div className="min-w-0 flex-1"><p className="text-xs text-muted">人工确认后才分析 · 恢复许可仍需证据</p><h2 className="truncate text-lg font-bold">训练上传与复盘</h2></div>
@@ -256,7 +251,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
         {(["1 提供记录", "2 人工核对", "3 查看结果"] as const).map((label, index) => <div key={label} aria-current={phaseIndex === index ? "step" : undefined} className={`rounded-card px-2 py-3 text-center text-xs font-bold ${phaseIndex === index ? "bg-accent text-accent-fg" : phaseIndex > index ? "border border-accent/50 bg-surface text-fg" : "border border-line bg-surface text-muted"}`}>{label}</div>)}
       </nav>
       {step === "input" ? <>
-        <details className="mb-3 rounded-card border border-line bg-surface p-3"><summary className="min-h-11 cursor-pointer py-2 font-bold">不用大模型 · 设备截图与身体数据本地识别</summary><DeviceEvidenceImport /></details>
+        <VisionSettings /><details className="mb-3 rounded-card border border-line bg-surface p-3"><summary className="min-h-11 cursor-pointer py-2 font-bold">设备截图与身体数据 · 本地 / 联网识别</summary><DeviceEvidenceImport /></details>
         <section className="rounded-card border border-line bg-surface p-4">
           <h3 className="font-bold">训练文字或截图</h3>
           <p className="mt-1 text-sm text-muted">先识别成草稿。不会直接改课表、疲劳分或教练 Decision。模型提取目前关闭，点按钮也不会产生模型费用或假记录。</p>
@@ -264,7 +259,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
           <div className="mt-1 text-right text-xs text-muted">{text.length} / 6000 字 · 可以只输入文字，也可以只上传图片</div>
           <label className="mt-3 flex min-h-14 items-center justify-center gap-2 rounded-card border border-dashed border-line bg-surface-2 font-bold">
             <Camera className="size-5" />选择训练截图（最多 4 张）
-            <input type="file" accept="image/jpeg,image/png" multiple className="sr-only" onChange={pickImages} />
+            <input type="file" accept="image/*" multiple className="sr-only" onChange={pickImages} />
           </label>
           {images.length ? <p className="mt-2 text-sm text-muted">已准备 {images.length} 张，合计 {(images.reduce((sum, item) => sum + item.bytes, 0) / 1024 / 1024).toFixed(1)} MB。只用于本次服务端提取，提取后立即从页面内存清除。</p> : null}
         </section>
@@ -275,6 +270,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
       </> : null}
 
       {step === "review" && draft ? <>
+        {images.length ? <details className="mb-3 rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">对照上传截图（{images.length}张）</summary><p className="text-xs text-muted">逐项核对数字、单位和所有分段。图片仅在本次窗口中保留；需要长期保留原图可使用设备证据入口。</p>{images.map(im => <img key={im.sourceId} src={im.dataUrl} alt={im.sourceId} className="my-2 h-auto w-full rounded-lg object-contain" />)}</details> : null}
         <div className="rounded-card border border-line bg-surface p-3">
           <p className="font-bold">核对这节训练</p>
           <p className="mt-1 text-xs text-muted">识别结果只是草稿。先看基本信息和分组，再检查下方遗漏与冲突。</p>
@@ -291,18 +287,18 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
           <div className="col-span-2 flex flex-wrap gap-2"><button type="button" className="min-h-11 rounded-full border border-line px-4 text-sm" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); const offset = -d.getTimezoneOffset(); const sign = offset >= 0 ? "+" : "-"; const pad = (n: number) => String(n).padStart(2, "0"); const stamp = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T18:00:00${sign}${pad(Math.floor(Math.abs(offset)/60))}:${pad(Math.abs(offset)%60)}`; patch({ occurredAt: recorded(stamp) }) }}>设为昨天18:00（可修改）</button><span className="self-center text-xs text-muted">可补录昨天的跑步、力量或混合训练；时间按设备本地时区填写，请核对。</span></div>
           <label className="col-span-2"><FieldLabel label="训练时间" field={draft.occurredAt} /><input value={draft.occurredAt.value ?? ""} onChange={(event) => patch({ occurredAt: recorded(event.target.value || null) })} placeholder="2026-10-08T18:30:00+08:00" className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
           <label className="col-span-2"><FieldLabel label="标题" field={draft.title} /><input value={draft.title.value ?? ""} onChange={(event) => patch({ title: recorded(event.target.value || null) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
-          <label><FieldLabel label="总时长（秒）" field={draft.durationSeconds} /><input inputMode="decimal" value={draft.durationSeconds.value ?? ""} onChange={(event) => patch({ durationSeconds: recorded(number(event.target.value)) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
-          <label><FieldLabel label="总距离（米）" field={draft.totalDistanceMeters} /><input inputMode="decimal" value={draft.totalDistanceMeters.value ?? ""} onChange={(event) => patch({ totalDistanceMeters: recorded(number(event.target.value)) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
+          <label><FieldLabel label="总时长（秒）" field={draft.durationSeconds} /><DecimalInput  min={0} nullable value={draft.durationSeconds.value} onCommit={value=>patch({ durationSeconds:recorded(value) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
+          <label><FieldLabel label="总距离（米）" field={draft.totalDistanceMeters} /><DecimalInput  min={0} nullable value={draft.totalDistanceMeters.value} onCommit={value=>patch({ totalDistanceMeters:recorded(value) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
           <div className="col-span-2"><FieldLabel label="这节训练整体有多吃力？" field={draft.sessionRpe} /><EnergyGauge label="整课用力（气力槽，可留空）" mode={draft.sport === "RUNNING" ? "run" : "strength"} value={draft.sessionRpe.value ?? null} onChange={(v) => patch({ sessionRpe: sessionRpeField(v == null ? "" : String(v)) })} /></div>
           <details className="col-span-2 rounded-card bg-bg p-3 text-xs text-muted"><summary className="min-h-11 cursor-pointer py-2 font-bold text-fg">用力说明（自己选，不会自动打分）</summary><p className="mt-2">这是产品引导，不是经过验证的中文版量表，也不把分数对应到固定配速、心率或剩余次数。空白表示未记录。整课 RPE 和某一组的用力不是一回事。</p><ul className="mt-2 list-disc pl-4"><li>1–2：很轻松，呼吸平稳。</li><li>3–4：轻松，能说话。跑步像放松跑，力量留有很多余力。</li><li>5–6：中等，说话开始断续。</li><li>7–8：很吃力，只能说短句。</li><li>9–10：极吃力。10 不是必须打到，也不等于应该做到失败。</li></ul></details>
-          <label><FieldLabel label="恢复 1–10" field={draft.subjectiveRecovery} /><input inputMode="numeric" value={draft.subjectiveRecovery.value ?? ""} onChange={(event) => patch({ subjectiveRecovery: recorded(number(event.target.value)) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
+          <label><FieldLabel label="恢复 1–10" field={draft.subjectiveRecovery} /><DecimalInput  min={1} max={10} nullable integer value={draft.subjectiveRecovery.value} onCommit={value=>patch({ subjectiveRecovery:recorded(value) })} className="mt-1 h-12 w-full rounded-card border border-line bg-bg px-3" /></label>
         </section>
 
         {(draft.sport === "RUNNING" || draft.sport === "MIXED") ? <section id="import-running" className="mt-3 scroll-mt-24 rounded-card border border-line bg-surface p-3">
           <div className="flex items-center justify-between"><h3 className="font-bold">跑步实际分段</h3><button type="button" onClick={() => patch({ runningSegments: [...draft.runningSegments, { id: `run-${Date.now()}`, kind: "REPETITION", round: empty<number>(), repeat: empty<number>(), distanceMeters: empty<number>(), durationSeconds: empty<number>(), recoverySeconds: empty<number>(), completion: "NOT_RECORDED", sourceIds: ["user-edited"] }] })} className="flex h-10 items-center gap-1 rounded-full px-3 text-sm font-bold text-accent"><Plus className="size-4" />添加</button></div>
           <div className="mt-2 space-y-3">{draft.runningSegments.map((segment, index) => <div key={segment.id} className="rounded-card bg-bg p-3">
             <div className="flex justify-between"><b>分段 {index + 1}</b><button type="button" onClick={() => patch({ runningSegments: draft.runningSegments.filter((_, i) => i !== index) })} aria-label="删除分段"><Trash2 className="size-4 text-risk" /></button></div>
-            <div className="mt-2 grid grid-cols-3 gap-2"><input aria-label="轮" placeholder="轮" inputMode="numeric" value={segment.round.value ?? ""} onChange={(e) => patchRun(index, { round: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><input aria-label="次" placeholder="次" inputMode="numeric" value={segment.repeat.value ?? ""} onChange={(e) => patchRun(index, { repeat: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><select aria-label="完成状态" value={segment.completion} onChange={(e) => patchRun(index, { completion: e.target.value as ImportedRunningSegment["completion"] })} className="h-11 min-w-0 rounded-card border border-line px-1"><option value="COMPLETED">完成</option><option value="SKIPPED">跳过</option><option value="NOT_RECORDED">未记录</option></select><input aria-label="距离米" placeholder="距离m" inputMode="decimal" value={segment.distanceMeters.value ?? ""} onChange={(e) => patchRun(index, { distanceMeters: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><input aria-label="用时秒" placeholder="用时s" inputMode="decimal" value={segment.durationSeconds.value ?? ""} onChange={(e) => patchRun(index, { durationSeconds: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><input aria-label="恢复秒" placeholder="恢复s" inputMode="decimal" value={segment.recoverySeconds.value ?? ""} onChange={(e) => patchRun(index, { recoverySeconds: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /></div>
+            <div className="mt-2 grid grid-cols-3 gap-2"><DecimalInput aria-label="轮" placeholder="轮"  min={1} nullable integer value={segment.round.value} onCommit={value=>patchRun(index, { round:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="次" placeholder="次"  min={1} nullable integer value={segment.repeat.value} onCommit={value=>patchRun(index, { repeat:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><select aria-label="完成状态" value={segment.completion} onChange={(e) => patchRun(index, { completion: e.target.value as ImportedRunningSegment["completion"] })} className="h-11 min-w-0 rounded-card border border-line px-1"><option value="COMPLETED">完成</option><option value="SKIPPED">跳过</option><option value="NOT_RECORDED">未记录</option></select><DecimalInput aria-label="距离米" placeholder="距离m"  min={0} nullable value={segment.distanceMeters.value} onCommit={value=>patchRun(index, { distanceMeters:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="用时秒" placeholder="用时s"  min={0} nullable value={segment.durationSeconds.value} onCommit={value=>patchRun(index, { durationSeconds:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="恢复秒" placeholder="恢复s"  min={0} nullable value={segment.recoverySeconds.value} onCommit={value=>patchRun(index, { recoverySeconds:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /></div>
           </div>)}</div>
         </section> : null}
 
@@ -311,7 +307,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
           <div className="mt-2 space-y-3">{draft.strengthSets.map((set, index) => <div key={set.id} className="rounded-card bg-bg p-3">
             <div className="flex justify-between"><b>组 {index + 1}</b><button type="button" onClick={() => patch({ strengthSets: draft.strengthSets.filter((_, i) => i !== index) })} aria-label="删除力量组"><Trash2 className="size-4 text-risk" /></button></div>
             <input aria-label="动作" placeholder="动作名称" value={set.exerciseName.value ?? ""} onChange={(e) => patchSet(index, { exerciseName: recorded(e.target.value || null) })} className="mt-2 h-11 w-full rounded-card border border-line px-2" />
-            <div className="mt-2 grid grid-cols-3 gap-2"><input aria-label="第几组" placeholder="第几组" inputMode="numeric" value={set.setOrdinal.value ?? ""} onChange={(e) => patchSet(index, { setOrdinal: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><input aria-label="重量" placeholder="kg" inputMode="decimal" value={set.weightKg.value ?? ""} onChange={(e) => patchSet(index, { weightKg: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><input aria-label="次数" placeholder="次数" inputMode="numeric" value={set.repetitions.value ?? ""} onChange={(e) => patchSet(index, { repetitions: recorded(number(e.target.value)) })} className="h-11 min-w-0 rounded-card border border-line px-2" /></div>
+            <div className="mt-2 grid grid-cols-3 gap-2"><DecimalInput aria-label="第几组" placeholder="第几组"  min={1} nullable integer value={set.setOrdinal.value} onCommit={value=>patchSet(index, { setOrdinal:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="重量" placeholder="kg"  min={0} nullable value={set.weightKg.value} onCommit={value=>patchSet(index, { weightKg:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="次数" placeholder="次数"  min={1} nullable integer value={set.repetitions.value} onCommit={value=>patchSet(index, { repetitions:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /></div>
           </div>)}</div>
         </section> : null}
 

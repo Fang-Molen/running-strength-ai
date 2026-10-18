@@ -1,0 +1,158 @@
+TAP version 13
+# (node:3434) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: six-turn synthetic coaching review revises reasons and never prescribes
+ok 1 - six-turn synthetic coaching review revises reasons and never prescribes
+  ---
+  duration_ms: 13.14486
+  type: 'test'
+  ...
+# Subtest: prompt context does not drop safety or invent evidence under budget pressure
+ok 2 - prompt context does not drop safety or invent evidence under budget pressure
+  ---
+  duration_ms: 2.840194
+  type: 'test'
+  ...
+# Subtest: normal prompt context retains sources and marks all facts as untrusted data
+ok 3 - normal prompt context retains sources and marks all facts as untrusted data
+  ---
+  duration_ms: 0.329978
+  type: 'test'
+  ...
+# (node:3435) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: plan and goal never turn into completed splits
+ok 4 - plan and goal never turn into completed splits
+  ---
+  duration_ms: 3.156701
+  type: 'test'
+  ...
+# Subtest: later records are invisible at prior evaluation date
+ok 5 - later records are invisible at prior evaluation date
+  ---
+  duration_ms: 1.046161
+  type: 'test'
+  ...
+# Subtest: backfilled historical record cannot leak into earlier as-of review
+ok 6 - backfilled historical record cannot leak into earlier as-of review
+  ---
+  duration_ms: 0.22945
+  type: 'test'
+  ...
+# Subtest: correction replaces old evidence only when correction becomes visible
+ok 7 - correction replaces old evidence only when correction becomes visible
+  ---
+  duration_ms: 7.761628
+  type: 'test'
+  ...
+# Subtest: conflicting same id and forked corrections are quarantined
+ok 8 - conflicting same id and forked corrections are quarantined
+  ---
+  duration_ms: 0.419092
+  type: 'test'
+  ...
+# Subtest: unrelated athlete and third-party records never enter personal analysis
+ok 9 - unrelated athlete and third-party records never enter personal analysis
+  ---
+  duration_ms: 0.290001
+  type: 'test'
+  ...
+# Subtest: a missing correction target does not silently delete valid records
+ok 10 - a missing correction target does not silently delete valid records
+  ---
+  duration_ms: 0.310394
+  type: 'test'
+  ...
+# Subtest: slowdown creates multiple competing explanations, not diagnosis
+ok 11 - slowdown creates multiple competing explanations, not diagnosis
+  ---
+  duration_ms: 0.255509
+  type: 'test'
+  ...
+# Subtest: adequate sleep challenges sleep-only explanation without ruling out fatigue
+ok 12 - adequate sleep challenges sleep-only explanation without ruling out fatigue
+  ---
+  duration_ms: 0.490332
+  type: 'test'
+  ...
+# Subtest: pain overrides better splits and retains professional review
+ok 13 - pain overrides better splits and retains professional review
+  ---
+  duration_ms: 0.598952
+  type: 'test'
+  ...
+# Subtest: unselected training still detects emergency from conversation
+ok 14 - unselected training still detects emergency from conversation
+  ---
+  duration_ms: 0.556324
+  type: 'test'
+  ...
+# Subtest: new evidence updates reasoning without inventing stable adaptation
+ok 15 - new evidence updates reasoning without inventing stable adaptation
+  ---
+  duration_ms: 0.268093
+  type: 'test'
+  ...
+# Subtest: invalid dates and impossible values are not silently treated as zero
+ok 16 - invalid dates and impossible values are not silently treated as zero
+  ---
+  duration_ms: 0.139737
+  type: 'test'
+  ...
+# Subtest: pure evaluator does not mutate inputs or write plan
+ok 17 - pure evaluator does not mutate inputs or write plan
+  ---
+  duration_ms: 0.104371
+  type: 'test'
+  ...
+# Subtest: safety referral persists in ask and unavailable routes
+ok 18 - safety referral persists in ask and unavailable routes
+  ---
+  duration_ms: 0.259746
+  type: 'test'
+  ...
+# Subtest: referral is not duplicated and unrelated requests are unchanged
+ok 19 - referral is not duplicated and unrelated requests are unchanged
+  ---
+  duration_ms: 0.067297
+  type: 'test'
+  ...
+# Subtest: conflicting recovery values cannot be averaged or cherry-picked
+ok 20 - conflicting recovery values cannot be averaged or cherry-picked
+  ---
+  duration_ms: 0.171601
+  type: 'test'
+  ...
+# Subtest: conflicting symptom reports retain conservative safety review
+ok 21 - conflicting symptom reports retain conservative safety review
+  ---
+  duration_ms: 0.103446
+  type: 'test'
+  ...
+# Subtest: a later no-pain report does not silently clear an earlier professional review
+ok 22 - a later no-pain report does not silently clear an earlier professional review
+  ---
+  duration_ms: 0.160431
+  type: 'test'
+  ...
+# Subtest: future plan known now is allowed as plan, never as completed performance
+ok 23 - future plan known now is allowed as plan, never as completed performance
+  ---
+  duration_ms: 0.174529
+  type: 'test'
+  ...
+# Subtest: correction of a conflicting endpoint cannot cherry-pick one branch
+ok 24 - correction of a conflicting endpoint cannot cherry-pick one branch
+  ---
+  duration_ms: 0.128368
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 161.27244

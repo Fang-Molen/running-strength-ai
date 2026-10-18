@@ -11,6 +11,7 @@ export type TrainingFact = {
   trainingPlanSnapshotId: string | null
   startedAt: string | null
   endedAt: string | null
+  /** Elapsed milliseconds between the recorded start and end. */
   duration: number | null
   lifecycle: TrainingOccurrence["lifecycle"]
   outcome: TrainingOccurrence["outcome"]

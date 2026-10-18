@@ -1,0 +1,204 @@
+{
+  "status": "PREPARATION_COMPLETE_VISUAL_RELEASE_NOT_READY",
+  "note": "保留原23项验收编号，3项范围内通过、20项未执行；不是新版人物整体验收通过。",
+  "cases": [
+    {
+      "id": "QA-01",
+      "area": "统一入口",
+      "expected": "今日训练、计划、动作库、热身、历史记录同一 exerciseId 打开同一新版演示",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-02",
+      "area": "旧资源移除",
+      "expected": "正常、离线、加载失败均不出现线条人及旧人物",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-03",
+      "area": "3D质量",
+      "expected": "男女脸型、身材、衣物与批准参考图一致，模型无破面和穿模",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-04",
+      "area": "动作完整性",
+      "expected": "逐项核对全部现有动作及扩展动作，禁止用不相关动作代替",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-05",
+      "area": "2D一致性",
+      "expected": "同一最终人物与动作渲染2D，完整展示头脚器械",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-06",
+      "area": "详情精简",
+      "expected": "仅3D/2D展示、说明和目标肌群；无重复展示及下载管理",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-07",
+      "area": "播放",
+      "expected": "播放暂停慢放逐帧状态与实际动画一致",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-08",
+      "area": "镜头",
+      "expected": "脚部稳定落地，全身不裁切；限制俯仰缩放，无翻转或穿入身体",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-09",
+      "area": "肌肉选择",
+      "expected": "友好模型、中文肌肉标签、点击筛选动作和取消选择",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-10",
+      "area": "添加训练",
+      "expected": "日期类型保留，多选动作后设置组次重量及休息，保存刷新不丢失",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-11",
+      "area": "扩展库",
+      "expected": "名称别名部位项目器械搜索，稳定ID去重，来源及授权可追溯",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-12",
+      "area": "个人形象",
+      "expected": "外观可保存，当前目标同人物同镜头同衣着同身高",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-13",
+      "area": "体型数据",
+      "expected": "只用有效身体数据，未知保持未知；参考体型不冒充测量结果",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-14",
+      "area": "隐私遮挡",
+      "expected": "男女私密区域始终不透明覆盖，肌肉选中不移除衣物",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-15",
+      "area": "手机布局",
+      "expected": "真实iPhone Safari与桌面模式，键盘弹出后按钮可见，顶底安全区无遮挡",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-16",
+      "area": "旧数据",
+      "expected": "升级前后训练健康饮食记录和用户设置一致",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-17",
+      "area": "版本缓存",
+      "expected": "更新旧缓存、断网及WebGL失败只回退批准2D或文字待补充",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-18",
+      "area": "资源校验",
+      "expected": "GLB官方校验、贴图动画资源版本一致、无404或HTML冒充JS",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-19",
+      "area": "性能",
+      "expected": "记录实际设备首次加载、旋转播放内存表现；无崩溃",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    },
+    {
+      "id": "QA-20",
+      "area": "营养保存",
+      "expected": "名称匹配品牌产品和份量，保存营养快照；热量蛋白质碳水脂肪纤维均正确",
+      "status": "PASS",
+      "evidence": [
+        "full-extra.log",
+        "browser-nutrition-dev.json"
+      ],
+      "note": "本轮合成数据、Chromium 390/430/820。无真实健康数据；不含生产离线或 iPhone 验证。"
+    },
+    {
+      "id": "QA-21",
+      "area": "营养未知",
+      "expected": "未知字段不是0，部分合计仍显示已知量和缺失项；点击待补充定位记录",
+      "status": "PASS",
+      "evidence": [
+        "full-extra.log",
+        "browser-nutrition-dev.json"
+      ],
+      "note": "本轮合成数据、Chromium 390/430/820。无真实健康数据；不含生产离线或 iPhone 验证。"
+    },
+    {
+      "id": "QA-22",
+      "area": "营养联动",
+      "expected": "新增编辑删除换餐换日期刷新后明细与汇总一致；不重复计入",
+      "status": "PASS",
+      "evidence": [
+        "full-extra.log",
+        "browser-nutrition-dev.json"
+      ],
+      "note": "本轮合成数据、Chromium 390/430/820。无真实健康数据；不含生产离线或 iPhone 验证。"
+    },
+    {
+      "id": "QA-23",
+      "area": "最终发布",
+      "expected": "全部交付项通过并附证据后交给Grok；本包不授权立即上线",
+      "status": "SKIP",
+      "evidence": null,
+      "note": "用户最新范围为后续替换准备；实际新资产与入口切换未完成，未执行该项整体验收。"
+    }
+  ],
+  "counts": {
+    "PASS": 3,
+    "FAIL": 0,
+    "SKIP": 20
+  }
+}

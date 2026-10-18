@@ -1,0 +1,1 @@
+export const fillByLabel = async (scope, map) => { for (const [lab, v] of Object.entries(map)) { const el = scope.getByLabel(lab, { exact: false }).first(); const tag = await el.evaluate((e) => e.tagName); if (tag === "SELECT") await el.selectOption({ label: v }); else await el.fill(v) } }

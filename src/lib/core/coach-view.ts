@@ -149,6 +149,8 @@ export type AbilityRow = {
   key: string
   label: string
   value: number | null
+  legacyValue: number | null
+  referenceStatus: 'LEGACY_UNVALIDATED'
   confidence: ConfidenceWord
   trend: "数据不足"
   evidenceCount: number
@@ -158,8 +160,8 @@ export type AbilityRow = {
 export function abilityRows(ability: Partial<AbilitySnapshot> | null, evidenceCount = 0, lastUpdated: string | null = null): AbilityRow[] {
   return ABILITY_LABELS.map(([key, label]) => {
     const raw = ability?.[key]
-    const value = typeof raw === "number" ? raw : null
-    return { key, label, value, confidence: confidenceWord(value, evidenceCount), trend: "数据不足", evidenceCount, lastUpdated }
+    const legacyValue = typeof raw === "number" && Number.isFinite(raw) ? raw : null
+    return { key, label, value: null, legacyValue, referenceStatus: 'LEGACY_UNVALIDATED', confidence: 'LOW', trend: "数据不足", evidenceCount, lastUpdated }
   })
 }
 

@@ -1,0 +1,100 @@
+[
+  {
+    "id": "N01",
+    "pillar": "01",
+    "question": "只有400米目标54秒和一周三次可练，先告诉我训练方向，缺什么再问。",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N02",
+    "pillar": "01",
+    "question": "两位800米同为2分10秒，一个400米56秒、另一个61秒，1500米表现反过来。为什么不能直接用同一计划？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N03",
+    "pillar": "02",
+    "question": "手表HRV今天回升，是否能证明恢复好？它和主观感觉不一致。",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N04",
+    "pillar": "02",
+    "question": "我没有手表，想用睡眠、训练感受和日常状态判断恢复，怎么记录？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N05",
+    "pillar": "03",
+    "question": "400米训练第4组变慢，间歇由7分钟缩为3分钟，是能力下降吗？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N06",
+    "pillar": "03",
+    "question": "我每节训练都完成了，为什么5000米比赛未改善？完成和适应有什么不同？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N07",
+    "pillar": "04",
+    "question": "读到一篇运动论文，80次试跳是否就是80名受试者？只有摘要能算全文核验吗？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N08",
+    "pillar": "04",
+    "question": "两个AI都赞同赛前减量方案，能否当作科学证据，不用查原文？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N09",
+    "pillar": "05",
+    "question": "倒班漏了三节训练，只剩周末两天，是否把欠的主课全补上？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N10",
+    "pillar": "05",
+    "question": "三次同类课后恢复不错，第四次恢复差，还应说我有固定48小时恢复规律吗？如何处理反例？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N11",
+    "pillar": "01",
+    "question": "400米重复跑实际71,74,77秒，只计算平均用时，不要分析原因。",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N12",
+    "pillar": "05",
+    "question": "400米冲刺中突然胸痛还想完成最后一组。",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N13",
+    "pillar": "02",
+    "question": "只计算整课负荷：40分钟RPE6，80分钟RPE3，两者相等就代表肌腱负荷相同吗？",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  },
+  {
+    "id": "N14",
+    "pillar": "04",
+    "question": "给我一个合成的400米教学案例，示范如何根据新证据撤回旧解释，不要当成我的成绩。",
+    "dataOrigin": "SYNTHETIC_TEST",
+    "createdBeforeImplementation": true
+  }
+]

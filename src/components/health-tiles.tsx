@@ -1,3 +1,7 @@
+import { loadCheckins } from '@/lib/ui/watch-mode'
+import { buildHealthSnapshot, loadHealthSources } from "@/lib/health/snapshot"
+import { HealthSourceDetails } from "./health-source-details"
+import { valueText } from "@/lib/health/observation"
 import { useEffect, useMemo, useState } from "react"
 import { Activity, BatteryMedium, Gauge, HeartPulse, Moon, Scale, Settings2, Smile, Waves } from "lucide-react"
 import type { VitalRecord } from "@/lib/nutrition/vitals"
@@ -33,17 +37,18 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed }
   const [extras, setExtras] = useState<ExtraRow[]>([])
   useEffect(() => { setShown(loadPref()) }, [])
   useEffect(() => { setExtras(loadExtras()) }, [revision])
+  const snapshot=useMemo(()=>buildHealthSnapshot(vitals,extras,today,loadHealthSources(),loadCheckins()),[vitals,extras,today,revision])
   const series = useMemo(() => {
     const s: Record<TileId, Point[]> = { RHR: [], HRV: [], SLEEP: [], WEIGHT: [], BODY_BATTERY: [], READINESS: [], RECOVERY: [], STRESS: [] }
-    for (const v of vitals) if (v.kind !== "NIGHT_HR") s[v.kind as TileId].push({ day: v.observedOn, value: v.value, source: SRC[v.source] ?? v.source })
+    for(const view of snapshot.metrics)if(view.metric in s)for(const p of view.series)s[view.metric as TileId].push({day:p.day,value:p.value,source:p.source})
     for (const c of checks) s.WEIGHT.push({ day: c.date, value: c.weight, source: "体测" })
-    for (const e of extras) if (e.metric in s) s[e.metric as TileId].push({ day: e.day, value: e.value, source: e.source })
+
     for (const k of Object.keys(s) as TileId[]) {
       const byDay = new Map<string, Point>(); for (const p of s[k].sort((a, b) => a.day.localeCompare(b.day))) byDay.set(p.day, p)
       s[k] = [...byDay.values()]
     }
     return s
-  }, [vitals, checks, extras])
+  }, [vitals, checks, extras, snapshot])
   const save = (next: TileId[]) => { setShown(next); try { localStorage.setItem(HEALTH_TILE_PREF_KEY, JSON.stringify(next)); setStamp(Date.now()) } catch { /* ignore */ } }
   const tiles = TILES.filter((t) => shown.includes(t.id))
   return <section className="home-card px-3 py-3" aria-label="身体指标">
@@ -57,21 +62,20 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed }
     </div> : null}
     <div className="fk-tile-grid mt-3">
       {tiles.map((t) => {
+        const view=snapshot.metrics.find(m=>m.metric===t.id)
         const pts = series[t.id]; const last = pts.at(-1)
-        const recent = pts.filter((p) => p.day < (last?.day ?? "") ).slice(-7)
-        const avg = recent.length ? recent.reduce((s, p) => s + p.value, 0) / recent.length : null
-        const delta = last && avg != null ? Math.round((last.value - avg) * 10) / 10 : null
-        const good = delta == null || t.better === "none" ? null : (t.better === "up" ? delta >= 0 : delta <= 0)
+        const delta = view?.baseline ? Math.round(view.baseline.delta*10)/10 : null
+        const good = null
         const isOpen = open === t.id
         const Icon = t.icon
         const stale = last && today && last.day !== today
         return <div key={t.id} className={"fk-tile " + (isOpen ? "fk-tile-open" : "")}>
           <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : t.id)} className="w-full text-left">
             <p className="flex items-center gap-1 text-xs text-muted"><Icon className="size-3.5" />{t.name}<span className="ml-auto">{isOpen ? "收起" : "›"}</span></p>
-            <p className={last ? "mt-1.5 text-[1.6rem] font-bold leading-none" : "mt-1.5 text-base font-bold text-muted"}>{last ? last.value : "— 未记录"}{last ? <span className="ml-1 text-xs font-semibold text-muted">{t.unit}</span> : null}</p>
-            <p className="mt-1 text-[11px] text-muted">{last ? <>{stale ? `${last.day.slice(5)} · ` : "今天 · "}{delta != null ? <span className={good == null ? "" : good ? "text-[#269775]" : "text-[#c0612b]"}>较前 7 次 {delta > 0 ? "+" : ""}{delta}</span> : "首条记录"}</> : "导入或手填后显示"}</p>
+            <p className={last ? "mt-1.5 text-[1.6rem] font-bold leading-none" : "mt-1.5 text-base font-bold text-muted"}>{view?.state==='CONFLICT'?"来源待核对":last?valueText(t.id,last.value):"— 未记录"}</p>
+            <p className="mt-1 text-[11px] text-muted">{last ? <>{stale ? `${last.day.slice(5)} · ` : "今天 · "}{delta != null ? <span className={good == null ? "" : good ? "text-[#269775]" : "text-[#c0612b]"}>较前7天可比均值 {delta > 0 ? "+" : ""}{delta}</span> : "点开核对来源"}</> : "导入或手填后显示"}</p>
           </button>
-          {isOpen ? <TileDetail points={pts} unit={t.unit} onRecord={() => onJump(t.id === "WEIGHT" ? "body-measurements" : t.id === "BODY_BATTERY" || t.id === "READINESS" || t.id === "STRESS" ? "body-devices" : "body-vitals")} /> : null}
+          {isOpen ? <>{view?<HealthSourceDetails view={view}/>:null}<TileDetail points={pts} unit={t.unit} onRecord={() => onJump(t.id === "WEIGHT" ? "body-measurements" : t.id === "BODY_BATTERY" || t.id === "READINESS" || t.id === "STRESS" ? "body-devices" : "body-vitals")} /></> : null}
         </div>
       })}
     </div>

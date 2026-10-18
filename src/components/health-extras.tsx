@@ -1,21 +1,22 @@
+import { loadHealthSnapshot } from "@/lib/health/snapshot"
+import { reviewFatigue, dailyCheckin, FATIGUE_REVIEW_RULES } from "@/lib/health/analysis"
+import { healthChanged } from '@/lib/health/observation'
 import { useEffect, useState } from "react"
 import { Plus , Smile } from "lucide-react"
 import { loadVitals } from "@/lib/nutrition/vitals"
 import { loadExtras } from "@/lib/ui/device-store"
-import { VERDICT_RULES, recoveryVerdict, type RecoveryInput } from "@/lib/ui/recovery-verdict"
-import { RULES } from "@/lib/ui/day-schedule-rules"
+import { type RecoveryInput } from "@/lib/ui/recovery-verdict"
 import { SavedBadge } from "@/components/saved-badge"
 import { FATIGUE, BRANDS, GROUP_HINT, PAIN, loadBrand, saveWatch, loadTier, gateRecovery, TIERS, TIER_LABEL, SLEEP_CHIPS, WATCHES, fatigueScore, freshness, loadCheckins, saveCheckin, watchLabel, type Checkin, type WatchId } from "@/lib/ui/watch-mode"
 
 const avg = (xs: number[]) => xs.length >= 3 ? xs.reduce((a, b) => a + b, 0) / xs.length : null
 export function readRecoveryInput(today: string): RecoveryInput {
-  const v = loadVitals().records, ex = loadExtras()
-  const of = (k: string) => v.filter((r) => r.kind === k).sort((a, b) => a.observedOn.localeCompare(b.observedOn))
-  const todayVal = (k: string) => of(k).filter((r) => r.observedOn === today).at(-1)?.value ?? null
-  const base = (k: string) => avg(of(k).filter((r) => r.observedOn < today).slice(-7).map((r) => r.value))
-  const ext = (m: string) => ex.filter((e) => e.metric === m && e.day === today).at(-1)?.value ?? null
-  const ci = loadCheckins().find((c) => c.date === today)
-  return { pain: ci?.pain ?? null, readiness: ext("READINESS"), bodyBattery: ext("BODY_BATTERY"), stress: ext("STRESS"), sleepBase: base("SLEEP"), hrv: todayVal("HRV"), hrvBase: base("HRV"), rhr: todayVal("RHR"), rhrBase: base("RHR"), subjective: todayVal("RECOVERY") ?? fatigueScore(ci?.fatigue), sleepH: todayVal("SLEEP") ?? ci?.sleep ?? null }
+  const snapshot=loadHealthSnapshot(today),ci=loadCheckins().find(c=>c.date===today)
+  const view=(k:string)=>snapshot.metrics.find(m=>m.metric===k)
+  const val=(k:string)=>view(k)?.state==='AVAILABLE'?view(k)?.current?.value??null:null
+  const base=(k:string)=>view(k)?.state==='AVAILABLE'?view(k)?.baseline?.mean??null:null
+  return {pain:ci?.pain??null,readiness:val('READINESS'),bodyBattery:null,stress:val('STRESS'),sleepBase:base('SLEEP'),hrv:val('HRV'),hrvBase:base('HRV'),rhr:val('RHR'),rhrBase:base('RHR'),subjective:val('RECOVERY')??ci?.recovery??fatigueScore(ci?.fatigue),sleepH:val('SLEEP')??(view('SLEEP')?.state==='MISSING'?ci?.sleep??null:null)}
+
 }
 
 export function RecoveryVerdictCard({ today, revision, onImport, watch }: { today: string; revision: number; onImport: () => void; watch?: WatchId | null }) {
@@ -23,16 +24,18 @@ export function RecoveryVerdictCard({ today, revision, onImport, watch }: { toda
   useEffect(() => { if (today) setInput(readRecoveryInput(today)) }, [today, revision])
   if (!input) return null
   const tier = loadTier()
-  const v = recoveryVerdict(gateRecovery(tier, input))
+  const review=reviewFatigue(loadHealthSnapshot(today),dailyCheckin(today))
+  const v = {level:review.state==='PAIN_REVIEW'||review.state==='MULTI_SIGNAL'?'reduce':review.state==='WATCH'?'watch':'unknown',title:review.title,reasons:review.signals.map(s=>s.detail)}
   const depth = TIERS[tier].depth
   const tone = v.level === "go" ? "border-[#269775] bg-[#269775]/10" : v.level === "reduce" ? "border-[#e0a46b] bg-[#fdf3e8] dark:bg-transparent" : v.level === "watch" ? "border-[#e0c46b] bg-[#fdf9e8] dark:bg-transparent" : "border-line bg-surface-2"
   return <section aria-label="今日恢复" className={"mb-3 rounded-card border-2 p-4 " + tone}>
     <p className="product-eyebrow">今日恢复</p>
     <h2 className="mt-1 text-xl font-bold">{v.title}</h2>
     {depth >= 2 ? <p className="mt-1 text-sm">{v.reasons.join(" · ")}</p> : null}
+    <p className="mt-2 text-sm">{review.action}</p><p className="mt-1 text-xs text-muted">{review.followup}</p>
     <p className="keep mt-1 text-xs text-muted">{v.level === "unknown" ? <button type="button" className="fk-link ml-1" onClick={onImport}>导入手表数据 ›</button> : null}</p>
     {watch && watch !== "none" ? <SourceLine watch={watch} revision={revision} onImport={onImport} /> : null}
-    {depth >= 3 ? <p className="mt-1 text-[10px] text-muted">依据：HRV 较 7 天均值降 ≥{RULES.hrvDropPct}% 或准备度 &lt;{RULES.lowReadiness} 记为偏低；静息心率高 {VERDICT_RULES.rhrRise} 次以上、睡眠少 {RULES.sleepWorseHours} 小时以上记为留意。</p> : null}
+    {depth >= 3 ? <p className="mt-1 text-[10px] text-muted">本应用复核阈值（非疲劳诊断标准）：HRV 较7天可比记录均值降 ≥{FATIGUE_REVIEW_RULES.hrvDropFraction*100}% 记为复核信号；静息心率高 {FATIGUE_REVIEW_RULES.rhrRiseBpm} 次以上、睡眠少 {FATIGUE_REVIEW_RULES.sleepDeltaHours} 小时以上记为留意。</p> : null}
     <p className="mt-1 text-[10px] text-muted">{TIER_LABEL[tier]}</p>
   </section>
 }
@@ -44,7 +47,7 @@ export function PainLog({ today }: { today: string }) {
   const [list, setList] = useState<Pain[]>([])
   const [part, setPart] = useState(""), [score, setScore] = useState(3), [stamp, setStamp] = useState(0)
   useEffect(() => { try { setList(JSON.parse(localStorage.getItem(PAIN_KEY) ?? "[]")) } catch { setList([]) } }, [])
-  const save = (next: Pain[]) => { setList(next); try { localStorage.setItem(PAIN_KEY, JSON.stringify(next.slice(-200))); setStamp(Date.now()) } catch { /* ignore */ } }
+  const save = (next: Pain[]) => { setList(next); try { localStorage.setItem(PAIN_KEY, JSON.stringify(next.slice(-200))); setStamp(Date.now()); healthChanged() } catch { /* ignore */ } }
   const byPart = new Map<string, Pain[]>(); for (const p of list) byPart.set(p.part, [...(byPart.get(p.part) ?? []), p])
   const long = [...byPart.entries()].filter(([, ps]) => { const ds = ps.map((p) => p.date).sort(); return (Date.parse(ds.at(-1)!) - Date.parse(ds[0])) / 864e5 >= 14 && ds.at(-1)! >= today.slice(0, 8) })
   return <section className="home-card mt-3 p-4 text-sm" aria-label="疼痛与伤病">
@@ -61,14 +64,14 @@ export function PainLog({ today }: { today: string }) {
 }
 
 export function lastDeviceSync(): string | null {
-  return loadVitals().records.filter((r) => r.source === "DEVICE_CONFIRMED").map((r) => r.createdAt).sort().at(-1) ?? null
+  return [...loadVitals().records.filter((r) => r.source === "DEVICE_CONFIRMED").map((r) => r.observation?.syncedAt ?? r.createdAt), ...loadExtras().map(r=>r.observation?.syncedAt??'')].filter(Boolean).sort().at(-1) ?? null
 }
 function SourceLine({ watch, revision, onImport }: { watch: WatchId; revision: number; onImport: () => void }) {
   const [f, setF] = useState<ReturnType<typeof freshness> | null>(null)
   useEffect(() => { setF(freshness(lastDeviceSync())) }, [revision])
   if (!f) return null
   return <p className={"mt-2 text-xs " + (f.stale ? "rounded-lg bg-[#fdf3e8] p-2 text-[#9a5b1e] dark:bg-transparent" : "text-muted")}>
-    数据来自 {watchLabel(watch, loadBrand())} · {f.text}{f.stale ? <button type="button" className="fk-link ml-1 font-bold" onClick={onImport}>一键导入 ›</button> : null}
+    所选手表 {watchLabel(watch, loadBrand())} · 最近接收 {f.text}（测量日期见各指标）{f.stale ? <button type="button" className="fk-link ml-1 font-bold" onClick={onImport}>一键导入 ›</button> : null}
   </p>
 }
 
@@ -87,11 +90,13 @@ export function CheckinCard({ today, watch, onSaved, onPain }: { today: string; 
   useEffect(() => { if (today) setC(loadCheckins().find((x) => x.date === today) ?? null) }, [today])
   const set = (patch: Partial<Checkin>) => { setC(saveCheckin(today, patch)); setStamp(Date.now()); onSaved() }
   const noWatch = watch === "none"
+  const sleepMissing=loadHealthSnapshot(today).metrics.find(m=>m.metric==='SLEEP')?.state!=='AVAILABLE'
   return <section className="fk-dash-card fk-subjective w-full p-2" aria-label="主观感受">
     <div className="flex items-center justify-between"><h2 className="fk-dash-title text-sm"><Smile className="size-4" />主观感受</h2><SavedBadge stamp={stamp} /></div>
-    {noWatch ? <Row label="睡眠"><>{SLEEP_CHIPS.map(([l, v]) => <button key={l} type="button" className="fk-chip" aria-pressed={c?.sleep === v} onClick={() => set({ sleep: v })}>{l} 小时</button>)}</></Row> : null}
+    {noWatch || sleepMissing ? <Row label="自报睡眠"><>{SLEEP_CHIPS.map(([l, v]) => <button key={l} type="button" className="fk-chip" aria-pressed={c?.sleep === v} onClick={() => set({ sleep: v })}>{l} 小时</button>)}</></Row> : null}
+    {!noWatch&&sleepMissing?<p className="mt-1 text-xs text-muted">当天睡眠未导入或待核对，可先自报；来源独立保存。</p>:null}
     <Row label="疲劳"><>{FATIGUE.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.fatigue === id} onClick={() => set({ fatigue: id })}>{l}</button>)}</></Row>
-    <Row label="酸痛"><>{PAIN.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.pain === id} onClick={() => set({ pain: id })}>{l}</button>)}</></Row>
+    <Row label="疼痛"><>{PAIN.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={c?.pain === id} onClick={() => set({ pain: id })}>{l}</button>)}</></Row>
     {c?.pain && c.pain !== "none" ? <button type="button" className="fk-link mt-2 text-sm" onClick={onPain}>记下部位和程度 ›</button> : null}
   </section>
 }
@@ -102,11 +107,11 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 /** 每组一张简单的上传说明卡；组内选品牌只用于显示对应步骤。 */
 const GROUP_STEPS: Record<WatchId, { title: string; steps: string[]; note: string }> = {
   none: { title: "无手表：每天 30 秒", steps: ["在“今日恢复”点 3 下：睡眠、疲劳、疼痛", "体重在“身体指标”里记，每周 2–3 次", "跑步和力量在训练页记录"], note: "没有数据时，方坤不会假设你恢复得很好。" },
-  pro: { title: "专业运动手表：健康 + 训练完整数据", steps: [], note: "同一次活动多处导入时，按开始时间（±2 分钟）和距离（±3%）自动去重。" },
-  basic: { title: "普通健康手表：健康指标 + 基础训练", steps: ["训练只取距离、时长、心率（可导入文件或截图识别），不做配速/跑姿等细分析", "力量训练在本应用里记"], note: "同一次活动多处导入时，按开始时间（±2 分钟）和距离（±3%）自动去重。" },
+  pro: { title: "专业运动手表：健康 + 训练明细", steps: [], note: "设备导入会检查相似活动；与日程尚未关联的记录分开分析，核对后再处理。" },
+  basic: { title: "普通健康手表：健康指标 + 基础训练", steps: ["先导入已有健康和活动记录；详细分析以实际字段和质量为准，没有HRV也能使用", "力量训练在本应用里记"], note: "设备导入会检查相似活动；与日程尚未关联的记录分开分析，核对后再处理。" },
 }
 const BRAND_STEPS: Record<string, string[]> = {
-  garmin: ["Garmin Connect 网页 → 活动 → 导出原始文件（FIT），拖到下方", "账户 → 数据管理 → 导出数据（ZIP）整包导入，含睡眠/HRV/静息心率", "账号直连需佳明合作方审批，尚未开通；garmin.cn 与国际区账号不互通"],
+  garmin: ["Garmin Connect 网页 → 活动 → 导出原始文件（FIT），拖到下方", "账户 → 数据管理 → 导出数据（ZIP）整包导入，含睡眠/HRV/静息心率", "如使用本应用的佳明账号同步，请核对登录地区、同步状态及每项数据日期；选择品牌不会自动登录"],
   coros: ["高驰 App → 运动记录 → 分享/导出 .fit，拖到下方", "健康数据可用 App 截图识别"],
   suunto: ["Suunto App → 运动 → 导出 FIT（或通过 Strava 下载原始文件）", "睡眠/HRV 可用 App 截图识别"],
   polar: ["Polar Flow 网页 → 训练 → 导出 FIT/TCX", "账户可导出全部数据（ZIP）"],

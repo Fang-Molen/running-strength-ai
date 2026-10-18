@@ -1,0 +1,100 @@
+{
+  "phase": "R184_PHASE2_TARGETED_VERIFICATION",
+  "date": "2026-10-14",
+  "authorization": "2026-10-14 user 开始 after explicit proposal to execute 26 synthetic cases and TypeScript",
+  "baselineArchive": "/workspace/fangkun/rollback/r184-before-phase2-tests-20261014.zip",
+  "baselineSha256": "d764ad479ff0506250013aa73e78440bbfa3c632b676e4f467e3db5157cb9e0e",
+  "syntheticTests": {
+    "uniqueCases": 26,
+    "executions": 2,
+    "initial": {
+      "command": [
+        "/tmp/fangkun-r14-runtime/node-v22.21.1-linux-x64/bin/node",
+        "--import",
+        "./scripts/test-register.mjs",
+        "src/lib/core/coach-r184-preparation.test.ts"
+      ],
+      "startedAt": "2026-10-14T00:37:56.837173+00:00",
+      "endedAt": "2026-10-14T00:38:02.125118+00:00",
+      "exitCode": 0,
+      "log": "r184-initial.tap",
+      "sha256": "63d580e41d36d6c7877f15ecb486614fb8c1cc56810e3ba2ab50528aa3ee004f"
+    },
+    "final": {
+      "command": [
+        "/tmp/fangkun-r14-runtime/node-v22.21.1-linux-x64/bin/node",
+        "--import",
+        "./scripts/test-register.mjs",
+        "src/lib/core/coach-r184-preparation.test.ts"
+      ],
+      "startedAt": "2026-10-14T00:39:49.629536+00:00",
+      "endedAt": "2026-10-14T00:39:53.892912+00:00",
+      "exitCode": 0,
+      "log": "r184-final.tap",
+      "sha256": "560149333e0454e0f74823562f9f850cc6c3b7bb1cdd86697a0a4e406e1d0599"
+    },
+    "finalCounts": {
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "assertionsChanged": false
+  },
+  "typecheck": {
+    "initial": {
+      "command": [
+        "/tmp/fangkun-r14-runtime/node-v22.21.1-linux-x64/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "startedAt": "2026-10-14T00:37:56.891825+00:00",
+      "endedAt": "2026-10-14T00:38:02.870599+00:00",
+      "exitCode": 2,
+      "log": "typecheck-initial.log",
+      "sha256": "209c7fb37d373646eb1474b1f5956db856c2e489a8ef16fce30cfe7b0a0b8977"
+    },
+    "initialErrors": [
+      {
+        "code": "TS1109",
+        "file": "src/lib/core/coach-development-projection.ts",
+        "line": 39,
+        "message": "Expression expected."
+      }
+    ],
+    "final": {
+      "command": [
+        "/tmp/fangkun-r14-runtime/node-v22.21.1-linux-x64/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "startedAt": "2026-10-14T00:38:44.922677+00:00",
+      "endedAt": "2026-10-14T00:39:18.057270+00:00",
+      "exitCode": 0,
+      "log": "typecheck-after-syntax-fix.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "finalDiagnostics": 0
+  },
+  "programChanges": [
+    {
+      "path": "src/lib/core/coach-development-projection.ts",
+      "beforeSha256": "bc0a726516ae826edfe82e545eb3e91dcd052a3f82f2e598236f8b77ceba6043",
+      "afterSha256": "9d8ea8bec8ac3991db863cd0d571a41bc4be43921ec46b75ce97c87414b7ee54",
+      "reason": "修复来源匹配表达式多余右括号；拆分身份/时间与来源绑定检查，保留全部匹配条件"
+    }
+  ],
+  "fullRegression": "NOT_RUN",
+  "browserOfflineAndRefresh": "NOT_RUN",
+  "realGarminDataTests": "NOT_RUN",
+  "externalModelCalls": 0,
+  "deployments": 0,
+  "priorR173Tests": "134_PASS_ON_2026_10_13_NOT_RERUN",
+  "testScopeConclusion": "TARGETED_CASES_AND_TYPES_PASS_NOT_FULL_INTEGRATION_ACCEPTANCE",
+  "testLoaderNote": "Existing transpileModule test loader does not reject syntax diagnostics. Acceptance requires both synthetic TAP and the separate TypeScript gate; initial TAP alone was not treated as acceptance."
+}

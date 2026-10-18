@@ -1,0 +1,1297 @@
+{
+  "usage": "交接模板，禁止直接覆盖线上配置；现有动画键不是新资源验收证明",
+  "exercises": [
+    {
+      "exerciseId": "bb-bench",
+      "name": "杠铃卧推",
+      "existingAnimKey": "bench_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-bench",
+      "name": "哑铃卧推",
+      "existingAnimKey": "bench_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "inc-db-bench",
+      "name": "上斜哑铃卧推",
+      "existingAnimKey": "bench_inc_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "inc-bb-bench",
+      "name": "上斜杠铃卧推",
+      "existingAnimKey": "bench_inc_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "cg-bench",
+      "name": "窄距杠铃卧推",
+      "existingAnimKey": "bench_cg",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-fly",
+      "name": "哑铃飞鸟",
+      "existingAnimKey": "fly_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "cable-cross",
+      "name": "龙门架夹胸",
+      "existingAnimKey": "fly_cable",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "pushup",
+      "name": "俯卧撑",
+      "existingAnimKey": "pushup",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "knee-pushup",
+      "name": "跪姿俯卧撑",
+      "existingAnimKey": "pushup_knee",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "diamond-pushup",
+      "name": "钻石俯卧撑",
+      "existingAnimKey": "pushup_diamond",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "pullup",
+      "name": "引体向上",
+      "existingAnimKey": "pullup",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "chinup",
+      "name": "反手引体",
+      "existingAnimKey": "chinup",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "assist-chin",
+      "name": "弹力带辅助引体",
+      "existingAnimKey": "chinup",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "lat-pd",
+      "name": "高位下拉",
+      "existingAnimKey": "pulldown",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "close-lat",
+      "name": "窄距下拉",
+      "existingAnimKey": "pulldown",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-row",
+      "name": "单臂哑铃划船",
+      "existingAnimKey": "row_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bb-row",
+      "name": "反握杠铃划船",
+      "existingAnimKey": "row_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "cable-row",
+      "name": "坐姿绳索划船",
+      "existingAnimKey": "row_cable",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "face-pull",
+      "name": "面拉",
+      "existingAnimKey": "facepull",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "inv-row",
+      "name": "反向划船",
+      "existingAnimKey": "inv_row",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bb-shrug",
+      "name": "杠铃耸肩",
+      "existingAnimKey": "shrug_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-shrug",
+      "name": "哑铃耸肩",
+      "existingAnimKey": "shrug_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-ohp",
+      "name": "坐姿哑铃推举",
+      "existingAnimKey": "ohp_db_seated",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bb-ohp",
+      "name": "杠铃推举",
+      "existingAnimKey": "ohp_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "arnold",
+      "name": "阿诺德推举",
+      "existingAnimKey": "ohp_arnold",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-press",
+      "name": "哑铃过头推举",
+      "existingAnimKey": "ohp_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "lat-raise",
+      "name": "坐姿侧平举",
+      "existingAnimKey": "lat_raise",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "lean-raise",
+      "name": "哑铃侧平举",
+      "existingAnimKey": "lean_raise",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "front-raise",
+      "name": "绳索前平举",
+      "existingAnimKey": "front_raise",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bb-curl",
+      "name": "杠铃弯举",
+      "existingAnimKey": "curl_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-curl",
+      "name": "哑铃弯举",
+      "existingAnimKey": "curl_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "hammer",
+      "name": "锤式弯举",
+      "existingAnimKey": "curl_hammer",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "cable-curl",
+      "name": "绳索弯举",
+      "existingAnimKey": "curl_cable",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "pressdown",
+      "name": "绳索下压",
+      "existingAnimKey": "pressdown",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "oh-ext",
+      "name": "哑铃颈后臂屈伸",
+      "existingAnimKey": "oh_ext",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "skull",
+      "name": "仰卧臂屈伸",
+      "existingAnimKey": "skull",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bench-dip",
+      "name": "凳上臂屈伸",
+      "existingAnimKey": "bench_dip",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "dip",
+      "name": "双杠臂屈伸",
+      "existingAnimKey": "dip",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "back-squat",
+      "name": "杠铃深蹲",
+      "existingAnimKey": "squat_back",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "front-squat",
+      "name": "前蹲",
+      "existingAnimKey": "squat_front",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "goblet",
+      "name": "高脚杯深蹲",
+      "existingAnimKey": "squat_goblet",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-squat",
+      "name": "哑铃深蹲",
+      "existingAnimKey": "squat_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "leg-press",
+      "name": "腿举",
+      "existingAnimKey": "leg_press",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bb-dl",
+      "name": "杠铃硬拉",
+      "existingAnimKey": "dl_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "rdl",
+      "name": "罗马尼亚硬拉",
+      "existingAnimKey": "rdl",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-rdl",
+      "name": "单腿哑铃硬拉",
+      "existingAnimKey": "rdl_single",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "sumo",
+      "name": "相扑硬拉",
+      "existingAnimKey": "dl_sumo",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "trap-dl",
+      "name": "六角杠硬拉",
+      "existingAnimKey": "dl_trap",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "db-lunge",
+      "name": "哑铃弓步",
+      "existingAnimKey": "lunge_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "walk-lunge",
+      "name": "行走弓步",
+      "existingAnimKey": "lunge_db",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "rev-lunge",
+      "name": "杠铃后撤步弓步",
+      "existingAnimKey": "lunge_bb_rev",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bss",
+      "name": "保加利亚分腿蹲",
+      "existingAnimKey": "bss",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "leg-curl",
+      "name": "腿弯举",
+      "existingAnimKey": "leg_curl",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "good-morning",
+      "name": "早安式",
+      "existingAnimKey": "good_morning",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "calf",
+      "name": "站姿提踵",
+      "existingAnimKey": "calf",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bb-calf",
+      "name": "杠铃提踵",
+      "existingAnimKey": "calf_bb",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "seat-calf",
+      "name": "坐姿提踵",
+      "existingAnimKey": "calf_seat",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "step-up",
+      "name": "登阶",
+      "existingAnimKey": "step_up",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "hip-thrust",
+      "name": "杠铃臀推",
+      "existingAnimKey": "hip_thrust",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "glute-bridge",
+      "name": "臀桥",
+      "existingAnimKey": "bridge",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "single-hip",
+      "name": "单腿臀桥",
+      "existingAnimKey": "bridge_single",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "kb-swing",
+      "name": "壶铃摆荡",
+      "existingAnimKey": "kb_swing",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "side-leg",
+      "name": "侧卧抬腿",
+      "existingAnimKey": "side_leg",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "farmer",
+      "name": "农夫行走",
+      "existingAnimKey": "farmer",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "plank",
+      "name": "平板支撑",
+      "existingAnimKey": "plank",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "side-plank",
+      "name": "侧平板",
+      "existingAnimKey": "side_plank",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "knee-plank",
+      "name": "跪姿平板",
+      "existingAnimKey": "plank_knee",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "climber",
+      "name": "登山者",
+      "existingAnimKey": "climber",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "dead-bug",
+      "name": "死虫",
+      "existingAnimKey": "dead_bug",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "crunch",
+      "name": "卷腹",
+      "existingAnimKey": "crunch",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "bicycle",
+      "name": "自行车卷腹",
+      "existingAnimKey": "bicycle",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "russian",
+      "name": "俄罗斯转体",
+      "existingAnimKey": "russian",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "situp",
+      "name": "仰卧起坐",
+      "existingAnimKey": "situp",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "vup",
+      "name": "两头起",
+      "existingAnimKey": "vup",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "knee-raise",
+      "name": "悬垂举膝",
+      "existingAnimKey": "knee_raise",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    },
+    {
+      "exerciseId": "burpee",
+      "name": "波比跳",
+      "existingAnimKey": "burpee",
+      "resourceVersion": null,
+      "characters": {
+        "male": {
+          "glb": null,
+          "render2d": null
+        },
+        "female": {
+          "glb": null,
+          "render2d": null
+        }
+      },
+      "reviewStatus": "PENDING"
+    }
+  ]
+}

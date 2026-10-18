@@ -1,0 +1,12 @@
+{
+  "src/lib/core/coach-evolution-v4.ts": "6c4650a8caf9e58081a3a273d13e3cb5f44d21df6f626634703ae7fd0e88edd5",
+  "src/lib/core/coach-evolution-v4.test.ts": "99aaccf191025ea4d0d89c4bcc7b7a73a23b97c2b4a18110cffd5bdcf7fd0ace",
+  "src/lib/core/coach-evolution-v4.scenario.test.ts": "d06ec04971aa435025cf6fe2ccfc783e42d284e9dff80b264e6cefabc5d4ec92",
+  "src/lib/core/coach-evolution-v4-c10.ts": "34f1fa9abb221f67a828e1d1982d489fc046b93a553b65e1d84c97bbd5e4712b",
+  "src/lib/core/coach-evolution-v4-c10.test.ts": "f7157c4cf773aaa67b962c897e4d6ff1582d27bdc7471f44c7ccf7a8a77a4460",
+  "src/lib/core/coach-evolution-v4-c10.scenario.test.ts": "2943bf90e4269e30f4471375e610ccbe4a18b44cc0b36b17c75559f093b40058",
+  "src/lib/core/coach-referral-safety.ts": "2c5e78183965a0dc387f6bd60e94f5bf77a8891caf096b49490ec963be350882",
+  "src/lib/core/coach-brief.ts": "60cf729611136539a0c955bdcaee834f443246cec52eec51a80c7b5554fb5fab",
+  "src/lib/strength/coach-pipeline.ts": "f358c89d55069cbb28fc9dc38150d76d0f676ed57a1c38aac197031248c19437",
+  "v4-c10-tsconfig.json": "7499548d199da51e38f6c1274dd6ed9dfa43cbabe6c846bd9e0130fdd0d7fef7"
+}

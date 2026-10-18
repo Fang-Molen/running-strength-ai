@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditDecision, summarizeCalibration, compareBlindPairs, type DecisionSnapshot, type OutcomeSnapshot} from './coach-decision-calibration.ts';
+const d:DecisionSnapshot={id:'d1',athleteId:'a1',actor:'FANGKUN',caseId:'case1',createdAt:'2026-10-01T12:00:00Z',evidenceCutoff:'2026-10-01T11:59:00Z',sources:[{sourceId:'s1',revision:'v1'}],hypothesis:'possible pacing issue',alternative:'possible speed maintenance issue',metricId:'SPLIT',protocolKey:'track-400',unit:'s',forecastValue:57,forecastDirection:'LOWER_BETTER',observationDueAt:'2026-10-03T12:00:00Z',uncertaintyNote:'weather unknown',safetyHold:false,planWrite:false};
+const o:OutcomeSnapshot={id:'o1',athleteId:'a1',caseId:'case1',observedAt:'2026-10-02T12:00:00Z',recordedAt:'2026-10-02T12:05:00Z',source:{sourceId:'s2',revision:'v1'},metricId:'SPLIT',protocolKey:'track-400',unit:'s',value:58,measurementValid:true};
+const versions={s1:'v1',s2:'v1'};
+test('valid precommitted prediction yields numerical error',()=>{const x=auditDecision(d,o,versions);assert.equal(x.state,'EVALUABLE');assert.equal(x.error,-1)});
+test('no outcome remains pending',()=>assert.equal(auditDecision(d,null,versions).state,'PENDING'));
+test('changed evidence retracts dependent judgment',()=>assert.equal(auditDecision(d,o,{...versions,s1:'v2'}).state,'SUPERSEDED'));
+test('changed outcome version invalidates evaluation',()=>assert.equal(auditDecision(d,o,{...versions,s2:'v2'}).state,'SUPERSEDED'));
+test('other athlete is rejected',()=>assert.equal(auditDecision(d,{...o,athleteId:'a2'},versions).state,'INVALID'));
+test('different protocol is rejected',()=>assert.equal(auditDecision(d,{...o,protocolKey:'road'},versions).state,'INVALID'));
+test('post hoc decision is rejected',()=>assert.equal(auditDecision({...d,createdAt:'2026-10-03T12:00:00Z'},o,versions).state,'INVALID'));
+test('future cutoff is rejected',()=>assert.equal(auditDecision({...d,evidenceCutoff:'2026-10-04T12:00:00Z'},o,versions).state,'INVALID'));
+test('safety hold prevents performance calibration',()=>assert.equal(auditDecision({...d,safetyHold:true},o,versions).state,'INCONCLUSIVE'));
+test('no numeric forecast does not create false accuracy',()=>assert.equal(auditDecision({...d,forecastValue:null},o,versions).state,'INCONCLUSIVE'));
+test('calibration reports MAE but no autonomous update',()=>{const x=summarizeCalibration([auditDecision(d,o,versions),auditDecision(d,null,versions)]);assert.equal(x.mae,1);assert.equal(x.eligibleCount,1);assert.equal(x.autonomousRuleUpdateAuthorized,false)});
+test('paired comparison never claims superiority from a sample',()=>{const a=auditDecision(d,o,versions);const b={...a,absoluteError:2,error:2};const x=compareBlindPairs([{caseId:'case1',athleteId:'a1',fangkun:a,human:b}]);assert.equal(x.pairedN,1);assert.equal(x.meanAbsoluteErrorDifference,-1);assert.equal(x.superiorityEstablished,false)});

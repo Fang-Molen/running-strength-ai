@@ -19,3 +19,10 @@
 - MakeHuman system assets (CC0): eyebrow001, hair short02, face targets (chin/nose/eyes/cheek/mouth). https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html
 - Foot muscles (plantar fascia, intrinsic foot muscles, peroneals), sole view, hem/seam shading, calf block prop: self-made, MIT.
 - Batch 4/5 equipment (cable tower, pulley, cable line, handles and rope, pulldown/row/leg-press/leg-curl/seated-calf machines, mat): self-made procedural geometry, MIT.
+# v70 anatomical study atlas
+
+The new `anatomy/ecorche.meshopt.glb` and its mapping/geometry derivatives are
+CC BY-SA 4.0, independently of the original MakeHuman animation model below.
+Full credits, exact source and changes: [anatomy/ATTRIBUTION.md](anatomy/ATTRIBUTION.md).
+The meshoptimizer decoder is MIT (vendor/MESHOPT-LICENSE.md).
+

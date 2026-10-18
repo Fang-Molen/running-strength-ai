@@ -6,9 +6,10 @@ export type StrengthResult={ok:true;plan:Plan;reason:string}|{ok:false;plan:Plan
 const clone=<T>(v:T):T=>JSON.parse(JSON.stringify(v)) as T
 const fail=(plan:Plan,reason:string):StrengthResult=>({ok:false,plan,reason})
 export function proposeStrengthReduction(plan:Plan,sessionId:string,moveId:string):StrengthProposal|null{
+  if(plan.sessions.filter(s=>s.id===sessionId).length!==1)return null
   const session=plan.sessions.find(s=>s.id===sessionId)
   const move=session?.moves.find(m=>m.id===moveId)
-  if(!session||!move||!Number.isInteger(move.sets)||move.sets<=1)return null
+  if(!session||!move||session.moves.filter(m=>m.id===moveId).length!==1||!Number.isInteger(move.sets)||move.sets<=1)return null
   return {id:`strength:${sessionId}:${moveId}:${plan.coachEditRevision??0}`,sessionId,moveId,expectedPlanRaw:JSON.stringify(plan),beforeSets:move.sets,afterSets:move.sets-1,reason:'预览版仅减少一组；不改变重量、次数、训练历史或其他课程'}
 }
 function guard(plan:Plan,sessionId:string,control:StrengthControl):string|null{
@@ -21,6 +22,7 @@ function guard(plan:Plan,sessionId:string,control:StrengthControl):string|null{
   return null
 }
 export function applyStrengthReduction(plan:Plan,proposal:StrengthProposal,control:StrengthControl):StrengthResult{
+  if(plan.sessions.filter(s=>s.id===proposal.sessionId).length!==1||plan.sessions.find(s=>s.id===proposal.sessionId)?.moves.filter(m=>m.id===proposal.moveId).length!==1)return fail(plan,'目标编号存在歧义，不能按名称或重复编号批量修改')
   const problem=guard(plan,proposal.sessionId,control)
   if(problem)return fail(plan,problem)
   if(control.confirmedProposalId!==proposal.id)return fail(plan,'用户确认的不是当前提案')
@@ -36,6 +38,7 @@ export function applyStrengthReduction(plan:Plan,proposal:StrengthProposal,contr
 export function rollbackStrengthReduction(plan:Plan,control:StrengthControl):StrengthResult{
   const last=plan.coachEditHistory?.at(-1)
   if(!last||last.action!=='APPLY')return fail(plan,'没有可撤销的最近一次教练修改')
+  if(plan.sessions.filter(s=>s.id===last.sessionId).length!==1)return fail(plan,'课程编号存在歧义，不能撤销')
   const problem=guard(plan,last.sessionId,control)
   if(problem)return fail(plan,problem)
   const current=plan.sessions.find(s=>s.id===last.sessionId)

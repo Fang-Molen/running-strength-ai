@@ -1,3 +1,8 @@
+import { readCoachData, analysisDay, dataHasRecords, assertCoachData, type CoachDataContext } from "../health/coach-data"
+import { isConditionalAdvice, isNonFactNumber } from "./coach-claim-scope.ts"
+import { readLinkedCoachSources, attachLinkedSources } from "./coach-linked-context.ts"
+import { coachImports, importedCoachParts } from "./coach-import-evidence.ts"
+import { preserveReferral } from "./coach-referral-safety.ts"
 import { evidenceAvailability } from "./evidence-availability.ts"
 import { projectOccurrenceEvidence, type EvidenceGroup, type EvidenceRecord } from "./evidence.ts"
 import { loadEvents } from "./events.ts"
@@ -24,6 +29,7 @@ export type CoachConstraint = {
 }
 
 export type CoachBrief = {
+  appData?: CoachDataContext
   question: string
   occurrenceId: string | null
   runningStructure: "AVAILABLE" | "UNAVAILABLE"
@@ -67,6 +73,8 @@ export function assertCoachPacket(b: CoachBrief): void {
     (b.daysToCompetition !== null && (!Number.isFinite(b.daysToCompetition) || Math.abs(b.daysToCompetition) > 10000)) ||
     b.sourceIds.some((id) => typeof id !== "string" || id.length > 120 || !b.sources?.some((source) => source.id === id)) ||
     b.sources.some((source) => typeof source.id !== "string" || source.id.length > 120 || typeof source.detail !== "string" || source.detail.length > 300)) throw new Error("bad evidence packet")
+  assertCoachData(b.appData)
+  if(b.appData && (!b.sourceIds.includes(b.appData.sourceId)||!b.sources?.some(s=>s.id===b.appData!.sourceId)))throw new Error("bad app data provenance")
   assertCoachFuel(b.fuel)
   assertCoachReturn(b.returnToTraining)
   assertCoachNextSession(b.nextSession)
@@ -125,8 +133,9 @@ function uncitedBodyValue(brief: CoachBrief, text: string, citations: string[]):
   ]
   for (const { pattern, type } of claims) {
     for (const match of text.matchAll(pattern)) {
+      if(isNonFactNumber(text,match.index??0))continue
       const value = Number(match[1])
-      if (!brief.sources?.some((source) => citations.includes(source.id) && source.kind === "FACT" && source.detail.startsWith(`${type} `) && source.detail.includes(`：${value}${type === "SLEEP" ? "小时" : "/10"}`))) return true
+      if (!brief.sources?.some((source) => citations.includes(source.id) && source.kind === "FACT" && source.detail.startsWith(`${type} `) && new RegExp(`[:：]\\s*${value}${type === "SLEEP" ? "小时" : "/10"}`).test(source.detail))) return true
     }
   }
   return false
@@ -134,7 +143,7 @@ function uncitedBodyValue(brief: CoachBrief, text: string, citations: string[]):
 
 function unsupportedBodyStatement(brief: CoachBrief, text: string, citations: string[]): boolean {
   const unsupportedAbsence = text.split(/[。；\n]/).some((clause) =>
-    !/(?:不能|无法|尚不能|未能|不代表|不等于|没有证据|证据不足|不可据此|不能确认|无法确认|不确定)/.test(clause) &&
+    !/(?:不能|无法|尚不能|未能|不代表|不等于|没有证据|证据不足|不可据此|不能确认|无法确认|不确定|如果|若|前提|是否|有无|确认.{0,8}后)/.test(clause) &&
     /(?:没有|无|不存在)(?:疼痛|酸痛)(?!记录)/.test(clause),
   )
   if (unsupportedAbsence) return true
@@ -165,7 +174,9 @@ function returnAdviceNeedsBoundSource(brief: CoachBrief, text: string, citations
   return !(brief.returnToTraining?.sourceIds ?? []).some((id) => citations.includes(id))
 }
 
-export function assembleCoachBrief(plan: Plan | null, question: string, selectedOccurrenceId?: string | null): CoachBrief {
+function assembleSessionCoachBrief(plan: Plan | null, question: string, selectedOccurrenceId?: string | null): CoachBrief {
+  const imported=selectedOccurrenceId ? coachImports().find(r=>r.confirmedImportId===selectedOccurrenceId) : null
+  if(imported&&!occurrenceVoided(imported.confirmedImportId))return attachLinkedSources(deriveCoachBrief(importedCoachParts(imported,question)),readLinkedCoachSources(undefined,question))
   const events = loadEvents()
   const candidates = listTrainingOccurrences()
     .filter((item) => !occurrenceVoided(item.trainingOccurrenceId) && item.startedAt && events.some((event) => event.event_id === item.startEventId && event.event_type === "TRAINING_STARTED"))
@@ -202,6 +213,7 @@ export function assembleCoachBrief(plan: Plan | null, question: string, selected
   if (context.daysToCompetition != null) sources.push({ id: "context:competition", kind: "CONTEXT", detail: `距比赛 ${context.daysToCompetition} 天；来自当前目标，非本次训练事件` })
   if (context.week != null || context.bias) sources.push({ id: "context:cycle", kind: "CONTEXT", detail: `第 ${context.week ?? "?"} 周，${context.bias ?? "未记录"}；来自当前计划` })
   if (context.pain) sources.push({ id: "context:pain", kind: "CONTEXT", detail: "近期教练笔记或周期日志提及疼痛；未绑定为本次训练疼痛事实" })
+  sources.push(...readLinkedCoachSources(undefined,question))
   const includedSources = sources.slice(0, 100)
   return deriveCoachBrief({
     question: question.slice(0, 200),
@@ -217,7 +229,7 @@ export function assembleCoachBrief(plan: Plan | null, question: string, selected
     continuousCount: execution?.continuous.length ?? 0,
     plannedSetCount: fact?.plannedSetCount ?? null,
     completedSetCount: fact?.completedSetCount ?? null,
-    durationSec: fact?.duration ?? null,
+    durationSec: fact?.duration != null ? fact.duration / 1000 : null,
     pain: context.pain || Boolean(subjective?.pain.records.length),
     soreness: Boolean(subjective?.soreness.records.length),
     musculoskeletalState: availability?.musculoskeletal.state ?? null,
@@ -232,7 +244,22 @@ export function assembleCoachBrief(plan: Plan | null, question: string, selected
   })
 }
 
+/** Fresh local calendar context is separate from the selected occurrence and its evidence. */
+export function assembleCoachBrief(plan:Plan|null,question:string,selectedOccurrenceId?:string|null):CoachBrief{
+ const brief=assembleSessionCoachBrief(plan,question,selectedOccurrenceId)
+ if(!/健康|睡眠|hrv|静息|疲劳|恢复|均衡|这周|本周|饮食|摄入|导入|手表|下一次训练/i.test(question))return brief
+ const started=brief.occurrenceId?listTrainingOccurrences().find(o=>o.trainingOccurrenceId===brief.occurrenceId)?.startedAt??null:null
+ const appData=readCoachData(analysisDay(question,started))
+ if(!dataHasRecords(appData)&&!/健康|睡眠|hrv|静息|疲劳|均衡/i.test(question))return brief
+ if((brief.sources?.length??0)>=100)return brief // retain full source-bound training evidence
+ const source={id:appData.sourceId,kind:'CONTEXT' as const,detail:`${appData.day} 本地健康、饮食与训练日历背景；经验阈值只作复核提示，不是本次课的事实或自动处方。`}
+ const out={...brief,appData,sourceIds:[...brief.sourceIds,source.id],sources:[...brief.sources??[],source]}
+ if(appData.fatigue.state==='PAIN_REVIEW')out.constraints={...brief.constraints,increaseBlocked:true,medicalReferral:true,blockReason:'当天另有疼痛记录：先核对疼痛与功能；没有绑定为本次课疼痛事实。'}
+ return out
+}
+
 export type CoachTurn = {
+  candidate?: import('./coach-structured-candidate.ts').StructuredCoachingCandidate|null;
   mode: "ask" | "answer" | "unavailable"
   text: string
   nextStep: string | null
@@ -248,16 +275,11 @@ type CoachModelJson = { mode?: string; text?: string; citations?: string[]; next
 // is still treated as a proposal.
 const SYMPTOM_WORSENING = /(?:疼痛|酸痛|痛感|症状|不适|疼|痛|跑后|跑完|训练后|运动后|练完)(?:(?!可以|建议|下次|再|能|应)[^。；，、\n]){0,6}?加重/g
 
-// K15: a hedged causal statement ("不一定会导致体重显著增加") describes an outcome,
-// not a training proposal. Advice words inside the span keep it a proposal.
-const HEDGED_OUTCOME = /(?:不一定|未必|并不|不会|不至于|不太会)(?:会)?(?:导致|引起|造成|带来|让|使)(?:(?!可以|建议|下次|再|能|应)[^。；，\n]){0,14}?(?:增加|提高|上升|变重)/g
-
 function withoutNegatedIncrease(clause: string): string {
   // K13: "不支持/不允许/不批准/限制…增加" are prohibitions too. "限制" only counts
   // when it is not itself lifted (不再限制、解除限制、取消限制、放开限制、没有限制).
   return clause
     .replace(SYMPTOM_WORSENING, "")
-    .replace(HEDGED_OUTCOME, "")
     .replace(/(?:不要|不能|不可|不宜|不应该|不建议|不得|不会|不许|避免|禁止|别|暂缓|停止|不支持|不允许|不批准|不赞成|盲目|(?<!不再|解除|取消|放开|没有)限制|不)[^。；，、\n]{0,8}?(?:加量|加重|加(?:\d+|一|两|几)?(?:组|次|课|节)|加速|增加|提高|提升|提速|冲量|更多组|延长距离|上调负荷|冲强度)(?:[（(](?:(?!可以|建议|下次|但|而是|只|改为|换成|应|再|能)[^）)]){0,24}[）)]|(?:(?!可以|建议|下次|但|而是|只|改为|换成|应|再|能)[^。；，\n]){0,24}(?=[。；，\n]|$))?/g, "")
 }
 
@@ -297,14 +319,17 @@ function highRpeRecoveryFailure(brief: CoachBrief, mode: CoachTurn["mode"], text
   if (!highRpeRecoveryRequired(brief)) return null
   const joined = `${text} ${nextStep ?? ""}`
   const reject = (): CoachTurn => ({ mode: "unavailable", text: "高主观强度后必须先追问尚未记录的恢复或睡眠，不能直接形成训练建议。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false })
-  const missingAsKnown = joined.split(/[。；\n]/).some((clause) => !/(?:不能|无法|不是|并非|不要|不得|没有把)/.test(clause) && /(?:恢复|睡眠)[^。；\n]{0,8}(?:为|是|约)?\s*0|状态正常|恢复正常|已经恢复/.test(clause))
-  if (missingAsKnown || mode === "answer") return reject()
+  const missingAsKnown = joined.split(/[。；\n]/).some((clause) => !/(?:不能|无法|不是|并非|不要|不得|没有把|如果|若|前提|是否)/.test(clause) && /(?:恢复|睡眠)[^。；\n]{0,8}(?:为|是|约)?\s*0|状态正常|恢复正常|已经恢复/.test(clause))
+  // R3 (user-approved): an answer is no longer replaced wholesale; guardCoachResponseCore strips increase advice
+  // and appends the recovery/sleep follow-up. Stating missing recovery/sleep as known is still rejected.
+  if (missingAsKnown) return reject()
+  if (mode === "answer" || /[？?]|多少|怎样|如何|吗/.test(joined)) return null
   const citesRpe = (brief.sources ?? []).some((source) => citations.includes(source.id) && source.kind === "FACT" && source.detail.startsWith("SESSION_RPE "))
   const unrecorded = /恢复/.test(joined) && /睡眠/.test(joined) && /未记录|没有记录|还没|尚未|缺失|没记录/.test(joined)
   const asks = /[？?]|多少|怎样|如何|请问|吗/.test(joined)
   const prescribes = joined.split(/[。；，\n]/).some((clause) => !/(?:不要|不能|不可|不得|别)/.test(clause) && /保持|减量|加量|加重|提速|增加|恢复课|恢复训练/.test(clause))
   if (citesRpe && unrecorded && asks && !prescribes) return null
-  return reject()
+  return null
 }
 
 function sorenessBoundaryFailure(brief: CoachBrief, mode: CoachTurn["mode"], text: string, nextStep: string | null, citations: string[]): CoachTurn | null {
@@ -315,7 +340,7 @@ function sorenessBoundaryFailure(brief: CoachBrief, mode: CoachTurn["mode"], tex
   if (equates || unsupportedMedicalConclusion(joined)) return reject("回答把训练证据说成了确定的恢复或伤病结论，无法采用。")
   const citesSoreness = (brief.sources ?? []).some((source) => citations.includes(source.id) && source.kind === "FACT" && source.detail.startsWith("SORENESS "))
   if (citesSoreness && distinguishesSoreness(joined)) return null
-  return reject("酸痛回归没有区分酸痛和疼痛，无法采用。")
+  return reject("回归回答没有区分酸痛和疼痛或未引用绑定来源，不能由酸痛判断已经恢复。")
 }
 
 function recoveryConflictFailure(brief: CoachBrief, mode: CoachTurn["mode"], text: string, nextStep: string | null, citations: string[]): CoachTurn | null {
@@ -343,43 +368,7 @@ function recoveryConflictFailure(brief: CoachBrief, mode: CoachTurn["mode"], tex
   return reject("冲突的恢复记录没有被同时追问，无法采用。")
 }
 
-// K15: internal field names, enums and source ids must not reach the visible text.
-const INTERNAL_TERMS: [RegExp, string][] = [
-  [/\b(?:returnToTraining\.)?clearance\s*(?:为|是|=|:|：)?\s*UNKNOWN\b/g, "目前不能确认已经恢复"],
-  [/\bincreaseSupported\s*(?:为|是|=|:|：)?\s*false\b/g, "目前证据不支持加量"],
-  [/\bKEEP_OR_REDUCE_ONLY\b|\bHOLD_OR_REDUCE\b/g, "只能保持或减量"],
-  [/\bKEEP_ONLY\b/g, "只能保持原计划"],
-  [/\bRECOVERY_ONLY\b/g, "只安排恢复"],
-  [/\bASK_FOR_RECOVERY\b/g, "需要先补充恢复情况"],
-  [/\bSESSION_RPE\b/g, "主观强度"],
-  [/\bSUBJECTIVE_RECOVERY\b/g, "主观恢复"],
-  [/\bPAIN_RECORDED\b/g, "已记录疼痛"],
-  [/\bSORENESS_RECORDED\b/g, "已记录酸痛"],
-  [/\b(?:requiredSourceIds|sourceIds|occurrenceId|nextSession|returnToTraining|mustAsk|increaseBlocked|medicalReferral)\b/g, "相关记录"],
-  [/\bUNKNOWN\b/g, "未知"],
-]
-
-export function scrubInternalTerms(brief: Pick<CoachBrief, "sourceIds">, text: string): string {
-  let out = text
-  for (const [pattern, replacement] of INTERNAL_TERMS) out = out.replace(pattern, replacement)
-  for (const id of [...brief.sourceIds].sort((a, b) => b.length - a.length)) {
-    if (id.length < 4) continue
-    out = out.split(`（${id}）`).join("").split(`(${id})`).join("").split(`[${id}]`).join("").split(id).join("该记录")
-  }
-  return out.replace(/该记录(?:[、，,]\s*该记录)+/g, "相关记录").replace(/\s{2,}/g, " ").trim()
-}
-
-// K15: in ask mode nextStep is not shown, so a safe referral there is moved into the text.
-function generalOnlyReplaced(text: string): boolean {
-  return text.startsWith("请先选择一条有训练开始事件的记录") || text.startsWith("本次训练有未解决的重复记录") || text.startsWith("要建议下一课，需要先记录")
-}
-
-function referralOnly(text: string): boolean {
-  return /(?:医生|医学|医院|就医|营养师|康复|评估|专业人员)/.test(text)
-    && !/(?:下一课|下次训练|下一次训练|加量|增加|提高|提速|加组|组数|配速|跑量|间歇)/.test(withoutNegatedIncrease(text).replace(/暂停[^。；，\n]{0,10}/g, ""))
-}
-
-export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
+function guardCoachResponseCore(brief: CoachBrief, raw: string): CoachTurn {
   let parsed: CoachModelJson | null = null
   try {
     const match = raw.match(/\{[\s\S]*\}/)
@@ -392,8 +381,9 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
   }
   const citations = Array.isArray(parsed.citations) ? [...new Set(parsed.citations.filter((id): id is string => typeof id === "string" && brief.sourceIds.includes(id)))].slice(0, 8) : []
   let mode: CoachTurn["mode"] = parsed.mode === "ask" ? "ask" : "answer"
-  let text = parsed.text.trim().slice(0, 900)
-  let nextStep = typeof parsed.nextStep === "string" ? parsed.nextStep.trim().slice(0, 240) : null
+  let text = parsed.text.trim().slice(0, 2400)
+  let nextStep = typeof parsed.nextStep === "string" ? parsed.nextStep.trim().slice(0, 600) : null
+  const conditionalCandidate=isConditionalAdvice(`${text} ${nextStep??""}`)
   if (mode === "answer" && unsupportedMedicalConclusion(`${text} ${nextStep ?? ""}`)) {
     return { mode: "unavailable", text: "回答把训练证据说成了确定的恢复或伤病结论，无法采用。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false }
   }
@@ -418,15 +408,14 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
   // K13: without a selected training the model may only give general, non-personal
   // guidance. Any proposed increase or body value is replaced by the fixed prompt.
   const generalOnly = brief.mustAsk.length === 1 && brief.mustAsk[0] === "NO_TRAINING_OCCURRENCE"
-  const generalUnsafe = (candidate: string) => mentionsProposedIncrease(candidate) || stillProposesIncrease(candidate) || uncitedBodyValue(brief, candidate, []) || unsupportedBodyStatement(brief, candidate, []) || unsupportedMedicalConclusion(candidate)
+  const generalUnsafe = (candidate: string) => (!isConditionalAdvice(candidate)&&mentionsProposedIncrease(candidate)) || uncitedBodyValue(brief, candidate, []) || unsupportedBodyStatement(brief, candidate, []) || unsupportedMedicalConclusion(candidate)
   if (generalOnly && generalUnsafe(`${text} ${nextStep ?? ""}`)) {
     mode = "ask"
     nextStep = null
     text = "请先选择一条有训练开始事件的记录，我才能核对这次训练。"
   } else if (generalOnly && mode !== "ask") {
     mode = "ask"
-    nextStep = null
-    text = `${text}（以上是一般性说明，没有结合你的训练记录；如需针对你的情况，请先选择一条训练记录。）`
+    text = `${text}（以上是一般性说明，没有结合你的训练记录。）`
   } else if (brief.mustAsk.length > 0 && mode !== "ask") {
     mode = "ask"
     nextStep = null
@@ -438,7 +427,7 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
   if (mode === "answer" && unsupportedBodyStatement(brief, `${text} ${nextStep ?? ""}`, citations)) {
     return { mode: "unavailable", text: "回答把未绑定的身体反馈说成已记录，或把缺失说成正常，无法采用。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false }
   }
-  if (mode === "answer" && nextSessionAdviceNeedsSource(brief.nextSession, `${text} ${nextStep ?? ""}`, citations)) {
+  if (mode === "answer" && !conditionalCandidate && nextSessionAdviceNeedsSource(brief.nextSession, `${text} ${nextStep ?? ""}`, citations)) {
     return { mode: "unavailable", text: "下一课建议没有覆盖触发约束的训练来源，无法采用。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false }
   }
   if (mode === "answer" && returnAdviceNeedsBoundSource(brief, `${text} ${nextStep ?? ""}`, citations)) {
@@ -448,33 +437,68 @@ export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
   // source-backed pain/soreness boundary such as stopping a provoking movement
   // or keeping/reducing while current symptoms are confirmed.
   const boundedReturnAnswer = asksReturnToTraining(brief.question) && hasBoundReturnSignal(brief)
-  if (adviceGap && mode === "answer" && (proposedIncrease || nextStep && !boundedReturnAnswer)) {
+  const highRpeGap = brief.sessionRpe != null && brief.sessionRpe >= 7 && brief.sleepHours == null && brief.subjectiveRecovery == null
+  let followup: string | null = null
+  if (highRpeGap && !conditionalCandidate && mode === "answer" && (proposedIncrease || nextStep && !boundedReturnAnswer || highRpeRecoveryRequired(brief))) {
+    // R3 (user-approved): keep the analysis, forbid any load increase, append the follow-up.
+    // Strip increase ADVICE (future/prescriptive clauses); descriptive history such as "配速逐渐加快" stays.
+    const advice = /下次|下一课|下一次|下周|之后|接下来|建议|可以|应该|应当|计划|安排|尝试|不妨/
+    const forward = /提快|加快|提速|提高|加量|增加|多跑|多做|加一组|更快|延长|缩短(?:休息|恢复|间歇)/
+    const isIncrease = (clause: string) => mentionsProposedIncrease(clause) || ((stillProposesIncrease(clause) || forward.test(clause)) && advice.test(clause))
+    const kept = text.split(/(?<=[。；！？，,\n])/).filter((clause) => !isIncrease(clause)).join("").trim()
+    const step = nextStep && !isIncrease(nextStep) ? nextStep.trim() : null
+    // R4: a question-shaped nextStep is merged into the single follow-up instead of being shown as a "candidate".
+    const isQuestion = (v: string) => /[？?]|请问|是否|吗|多少|怎样|如何/.test(v)
+    const stepQuestion = step && isQuestion(step) ? step : null
+    text = [kept, step && !stepQuestion ? `下一步候选（不加量）：${step}` : ""].filter(Boolean).join(" ")
+    nextStep = null
+    // Recovery/sleep questions are already covered; any other model question (e.g. soreness) is merged as one extra clause.
+    const extraRaw = stepQuestion
+      ? stepQuestion.replace(/^请问(?:您|你)?/, "").replace(/[？?。]+$/, "").replace(/(?:你|您)?(?:最近|近期)?(?:几晚|一晚)?的?(?:睡眠|主观恢复|恢复)(?:情况|感觉|状态)?(?:如何|怎样|怎么样|是多少)?(?:以及|和|、|，)?/g, "").trim()
+      : ""
+    const extra = /[\u4e00-\u9fa5]{3,}/.test(extraRaw.replace(/^(?:身体)?(?:如何|怎样|怎么样)$/, "")) ? extraRaw : ""
+    followup = `已记录本次 RPE ${brief.sessionRpe}。在恢复情况未知前不建议增加训练量或强度；为给出下一课建议，请告诉我：你现在的主观恢复（1–10）是多少，或最近一晚睡了几小时${extra ? `；另外，${extra}` : ""}？`
+  } else if (adviceGap && !conditionalCandidate && mode === "answer" && (proposedIncrease || nextStep && !boundedReturnAnswer)) {
     mode = "ask"
-    text = "要建议下一课，需要先记录本次主观强度和恢复情况。你这次训练的 RPE 是多少，恢复感觉怎样？"
+    text += "\n" + (brief.sessionRpe == null
+      ? "要建议下一课，需要先记录本次主观强度和恢复情况。你这次训练的 RPE 是多少，恢复感觉怎样？"
+      : `已记录本次 RPE ${brief.sessionRpe}。要建议下一课，还需要了解恢复情况：你现在的主观恢复（1–10）是多少，或最近一晚睡了几小时？`)
     nextStep = null
   }
-  const increase = stillProposesIncrease(`${text} ${nextStep ?? ""}`)
-  if (brief.constraints.increaseBlocked && increase) {
+  // R3: if the kept analysis fails any later check, fall back to the fixed follow-up only (the pre-R3 outcome).
+  const failOrFollowup = (turn: CoachTurn): CoachTurn => followup ? { mode: "ask", text: followup, nextStep: null, citations, medicalReferral: brief.constraints.medicalReferral, planChanged: false } : turn
+  // In R3 follow-up mode advice clauses were already stripped; remaining matches must also not be plain
+  // descriptions of what happened (e.g. "配速从3:17逐渐加快至3:05") to count as an increase proposal.
+  const descriptive = /逐渐|逐组|越来越|依次|从.{0,24}(?:加快|提高|提升|增加)|(?:加快|提高|提升|增加)(?:了|至|到)/
+  const increase = followup
+    ? `${text} ${nextStep ?? ""}`.split(/[。；，、\n]/).some((clause) => stillProposesIncrease(clause) && !descriptive.test(clause))
+    : stillProposesIncrease(`${text} ${nextStep ?? ""}`)
+  if (brief.constraints.increaseBlocked && increase && (!conditionalCandidate||brief.pain||brief.duplicateCount>0)) {
     const referral = brief.constraints.medicalReferral ? "已有疼痛记录，必要时请做运动医学或康复评估。这不是诊断。" : ""
-    return { mode: "unavailable", text: `回答与已记录的安全约束冲突，无法采用。${referral}`, nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false }
+    return failOrFollowup({ mode: "unavailable", text: `回答与已记录的安全约束冲突，无法采用。${referral}`, nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false })
   }
-  if (mode === "answer" && brief.nextSession?.increaseSupported === false && proposedIncrease) {
-    return { mode: "unavailable", text: "当前证据只支持追问、保持、减量或恢复建议，不能据此批准增加训练。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false }
+  if (mode === "answer" && !conditionalCandidate && brief.nextSession?.increaseSupported === false && (followup ? mentionsProposedIncrease(text) : proposedIncrease)) {
+    return failOrFollowup({ mode: "unavailable", text: "当前证据只支持追问、保持、减量或恢复建议，不能据此批准增加训练。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false })
   }
   if (mode === "answer" && brief.occurrenceId && citations.length === 0) {
-    return { mode: "unavailable", text: "回答没有可核对的事实来源，无法采用。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false }
+    return failOrFollowup({ mode: "unavailable", text: "回答没有可核对的事实来源，无法采用。", nextStep: null, citations: [], medicalReferral: brief.constraints.medicalReferral, planChanged: false })
   }
   if (brief.constraints.medicalReferral && !text.includes("评估")) {
     text = `${text}已有疼痛记录，必要时请做运动医学或康复评估。这不是诊断。`
   }
   text = softenUnrecordedSets(brief, text)
-  if (mode === "ask" && nextStep && !generalOnlyReplaced(text) && referralOnly(nextStep) && !stillProposesIncrease(nextStep) && !text.includes(nextStep)) {
-    text = `${text}${/[。！？?]$/.test(text) ? "" : "。"}${nextStep}`
+  if (followup) { mode = "ask"; text = text ? `${text}\n${followup}` : followup }
+  if(mode==="ask"&&nextStep){
+    if (!/(?:下次|下一课|增加|提高|加量|提速|加组)/.test(nextStep)) text+=`\n${nextStep}`;
+    nextStep=null;
   }
-  text = scrubInternalTerms(brief, text)
-  if (mode !== "answer") nextStep = null
-  else if (nextStep) nextStep = scrubInternalTerms(brief, nextStep)
   return { mode, text, nextStep, citations, medicalReferral: brief.constraints.medicalReferral, planChanged: false }
+}
+
+/** Preserve source-backed safety referral in answer, ask, and unavailable modes. */
+export function guardCoachResponse(brief: CoachBrief, raw: string): CoachTurn {
+  const turn=preserveReferral(guardCoachResponseCore(brief, raw), brief.constraints.medicalReferral)
+  return {...turn,text:scrubInternalTerms(brief,turn.text),nextStep:turn.nextStep?scrubInternalTerms(brief,turn.nextStep):null}
 }
 
 export function guardSubcode(turn: CoachTurn): string | null {
@@ -544,3 +568,29 @@ export function recordCoachBodyEvidence(trainingOccurrenceId: string, input: { k
     : dispatchEvent("SUBJECTIVE_FEEDBACK", { ...payload, evidenceType: "SORENESS" })
   return saved ? { ok: true, reason: "已绑定到所选训练。酸痛与疼痛会分别引用，不会自动改课。" } : { ok: false, reason: "记录失败，请重试。" }
 }
+
+const INTERNAL_TERMS: [RegExp, string][] = [
+  [/\b(?:returnToTraining\.)?clearance\s*(?:为|是|=|:|：)?\s*UNKNOWN\b/g, "目前不能确认已经恢复"],
+  [/\bincreaseSupported\s*(?:为|是|=|:|：)?\s*false\b/g, "目前证据不支持加量"],
+  [/\bKEEP_OR_REDUCE_ONLY\b|\bHOLD_OR_REDUCE\b/g, "只能保持或减量"],
+  [/\bKEEP_ONLY\b/g, "只能保持原计划"],
+  [/\bRECOVERY_ONLY\b/g, "只安排恢复"],
+  [/\bASK_FOR_RECOVERY\b/g, "需要先补充恢复情况"],
+  [/\bSESSION_RPE\b/g, "主观强度"],
+  [/\bSUBJECTIVE_RECOVERY\b/g, "主观恢复"],
+  [/\bPAIN_RECORDED\b/g, "已记录疼痛"],
+  [/\bSORENESS_RECORDED\b/g, "已记录酸痛"],
+  [/\b(?:requiredSourceIds|sourceIds|occurrenceId|nextSession|returnToTraining|mustAsk|increaseBlocked|medicalReferral)\b/g, "相关记录"],
+  [/\bUNKNOWN\b/g, "未知"],
+]
+
+export function scrubInternalTerms(brief: Pick<CoachBrief, "sourceIds">, text: string): string {
+  let out = text
+  for (const [pattern, replacement] of INTERNAL_TERMS) out = out.replace(pattern, replacement)
+  for (const id of [...brief.sourceIds].sort((a, b) => b.length - a.length)) {
+    if (id.length < 4) continue
+    out = out.split(`（${id}）`).join("").split(`(${id})`).join("").split(`[${id}]`).join("").split(id).join("该记录")
+  }
+  return out.replace(/该记录(?:[、，,]\s*该记录)+/g, "相关记录").replace(/\s{2,}/g, " ").trim()
+}
+

@@ -337,11 +337,12 @@ test("high RPE without recovery must ask, and soreness return must separate pain
     sources: [{ id: "rpe", kind: "FACT", detail: "SESSION_RPE 本次主观强度：8/10" }],
   }))
   const keep = guardCoachResponse(gap, JSON.stringify({ mode: "answer", text: "下一课保持。", citations: ["rpe"], nextStep: null }))
-  assert.equal(keep.mode, "unavailable")
-  assert.equal(guardSubcode(keep), "HIGH_RPE_RECOVERY_REQUIRED")
+  // R3 (user-approved 2026-10-12): was mode "unavailable" + HIGH_RPE_RECOVERY_REQUIRED (whole answer replaced).
+  // Now the non-increase analysis is kept and the recovery/sleep follow-up appended, acknowledging the known RPE.
+  assert.equal(keep.mode, "ask"); assert.match(keep.text, /下一课保持/); assert.match(keep.text, /已记录本次 RPE 8.*主观恢复（1–10）/s); assert.equal(keep.nextStep, null)
   const reduce = guardCoachResponse(gap, JSON.stringify({ mode: "answer", text: "下一课减量。", citations: ["rpe"], nextStep: null }))
-  assert.equal(reduce.mode, "unavailable")
-  assert.equal(guardSubcode(reduce), "HIGH_RPE_RECOVERY_REQUIRED")
+  // R3: same change as above (was unavailable).
+  assert.equal(reduce.mode, "ask"); assert.match(reduce.text, /下一课减量/); assert.match(reduce.text, /主观恢复/)
   const asked = guardCoachResponse(gap, JSON.stringify({ mode: "ask", text: "恢复和睡眠都尚未记录。这次主观恢复是多少？", citations: ["rpe"], nextStep: null }))
   assert.equal(asked.mode, "ask")
   assert.equal(asked.citations.includes("rpe"), true)
@@ -411,4 +412,33 @@ test("conflicting recovery must be asked with both scores and cannot be resolved
   const negatedIncrease = guardCoachResponse(cautious && deriveCoachBrief(parts({ question: "疼痛后怎么分阶段恢复训练？", pain: true, sourceIds: ["pain"], sources: [{ id: "pain", kind: "FACT", detail: "PAIN 疼痛：4/10；部位 左膝" }] })), JSON.stringify({ mode: "answer", text: "不能批准增加距离、速度、组数、重量或强度。先停止诱发动作，只保持或减量。", citations: ["pain"], nextStep: null }))
   assert.equal(negatedIncrease.mode, "answer")
   assert.equal(guardSubcode(negatedIncrease), null)
+})
+
+import { guardCoachResponse as __g, deriveCoachBrief as __d } from "./coach-brief.ts"
+import { buildParts as __bp } from "../../../evaluation/k12/fixtures.ts"
+test("R2 wording: high-RPE recovery fallback never re-asks an already recorded RPE", () => {
+  const b = __d(__bp("整体感觉还好，RPE 7。请分析这次训练，并给出下一次训练的建议。", { occurrence: { id: "o1", startedAt: "2026-03-01T08:00:00.000Z" }, rpe: 7 }))
+  const t = __g(b, JSON.stringify({ mode: "answer", text: "本次 RPE 7/10。", citations: ["ev:o1:rpe"], nextStep: "下次保持", medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.equal(t.mode, "ask"); { assert.doesNotMatch(t.text, /RPE 是多少/); assert.match(t.text, /已记录本次 RPE 7/) }
+  const none = __d(__bp("下一课怎么安排？", { occurrence: { id: "o1", startedAt: "2026-03-01T08:00:00.000Z" } }))
+  const t2 = __g(none, JSON.stringify({ mode: "answer", text: "建议下一课保持。", citations: ["o1"], nextStep: "下次保持", medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.equal(t2.mode, "ask"); assert.match(t2.text, /RPE 是多少/)
+})
+
+test("R3: high RPE + no recovery/sleep keeps analysis, strips increase advice, appends follow-up; other checks still apply", () => {
+  const b = __d(__bp("整体感觉还好，RPE 7。请分析这次训练，并给出下一次训练的建议。", { occurrence: { id: "o1", startedAt: "2026-03-01T08:00:00.000Z" }, rpe: 7 }))
+  const t = __g(b, JSON.stringify({ mode: "answer", text: "本次主观强度 7/10，后几组逐渐加快。下次可以加两组。", citations: ["ev:o1:rpe"], nextStep: "下次提速5秒", medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.equal(t.mode, "ask"); assert.match(t.text, /后几组逐渐加快/); assert.doesNotMatch(t.text, /加两组|提速/); assert.match(t.text, /已记录本次 RPE 7/); assert.doesNotMatch(t.text, /RPE 是多少/); assert.equal(t.nextStep, null)
+  const nocite = __g(b, JSON.stringify({ mode: "answer", text: "这次练得不错。", citations: [], nextStep: null, medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.notEqual(nocite.mode, "answer"); assert.doesNotMatch(nocite.text, /练得不错/)
+  const unbound = __g(b, JSON.stringify({ mode: "answer", text: "本次主观强度 7/10，睡眠 8 小时，恢复正常。", citations: ["ev:o1:rpe"], nextStep: null, medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.notEqual(unbound.mode, "answer"); assert.doesNotMatch(unbound.text, /睡眠 8 小时/)
+})
+
+test("R4: question-shaped nextStep is merged into one follow-up (no duplicate question, no fake 'candidate')", () => {
+  const b = __d(__bp("整体感觉还好，RPE 7。请分析这次训练，并给出下一次训练的建议。", { occurrence: { id: "o1", startedAt: "2026-03-01T08:00:00.000Z" }, rpe: 7 }))
+  const t = __g(b, JSON.stringify({ mode: "answer", text: "本次主观强度 7/10。下一次训练建议保持当前强度。", citations: ["ev:o1:rpe"], nextStep: "请问您最近几晚的睡眠情况以及身体局部是否有酸痛或不适？", medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.doesNotMatch(t.text, /下一步候选/); assert.equal((t.text.match(/[？?]/g) ?? []).length, 1); assert.match(t.text, /另外，身体局部是否有酸痛或不适？$/)
+  const sleepOnly = __g(b, JSON.stringify({ mode: "answer", text: "本次主观强度 7/10。下一次训练建议保持当前强度。", citations: ["ev:o1:rpe"], nextStep: "你最近几晚的睡眠情况如何？", medicalReferral: false, compareIds: null, seriesIds: null }))
+  assert.equal((sleepOnly.text.match(/[？?]/g) ?? []).length, 1); assert.doesNotMatch(sleepOnly.text, /另外/)
 })

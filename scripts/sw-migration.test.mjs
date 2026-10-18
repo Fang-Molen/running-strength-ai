@@ -52,7 +52,7 @@ function boot() {
 }
 
 test("the shell cache version moves off fr255-shell-1 and only owns its own prefix", () => {
-  assert.match(source, /const CACHE = "fr255-shell-v69"/)
+  assert.match(source, /const CACHE = "fr255-shell-v74-fk-motion-r4"/)
   assert.doesNotMatch(source, /fr255-shell-1/)
   assert.doesNotMatch(source, /localStorage|indexedDB|sessionStorage/)
   assert.match(source, /ownedShellCache\(key\) && key !== CACHE/)
@@ -93,7 +93,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { cached = promise },
   })
   assert.equal(await (await cached).text(), "export const fresh = 1")
-  assert.equal(stores.get("fr255-shell-v69").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
+  assert.equal(stores.get("fr255-shell-v74-fk-motion-r4").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
   setFetch(async () => { throw new Error("offline") })
   let offline
   handlers.get("fetch")({
@@ -115,7 +115,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { html = promise },
   })
   await html
-  assert.equal(stores.get("fr255-shell-v69").has("https://example.test/assets/bad.js"), false)
+  assert.equal(stores.get("fr255-shell-v74-fk-motion-r4").has("https://example.test/assets/bad.js"), false)
   let intercepted = false
   handlers.get("fetch")({
     request: { url: "https://example.test/backup.zip", method: "GET", destination: "document", mode: "navigate", headers: { get: () => null } },
@@ -123,3 +123,21 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
   })
   assert.equal(intercepted, false)
 })
+
+test('legacy GLB is not intercepted by the shell and private health APIs bypass it', async()=>{
+ const {handlers}=boot();let intercepted=false;
+ const mk=url=>({url:'https://example.test'+url,method:'GET',destination:'',mode:'cors',headers:{get:()=>null}});
+ for(const url of ['/demo3d/models/athlete-female.glb','/api/health']){
+  handlers.get('fetch')({request:mk(url),respondWith:()=>{intercepted=true}})
+ }
+ assert.equal(intercepted,false)
+});
+
+test('revocable new motion manifest / models bypass stale service worker cache',()=>{
+ const {handlers}=boot();let intercepts=0;
+ const mk=(url)=>({url:'https://example.test'+url,method:'GET',destination:'',mode:'cors',headers:{get:()=>null}});
+ for(const url of ['/fangkun-motion/manifest.json','/fangkun-motion/assets/back-squat-female.glb']){
+   handlers.get('fetch')({request:mk(url),respondWith:()=>{intercepts++}})
+ }
+ assert.equal(intercepts,0)
+});

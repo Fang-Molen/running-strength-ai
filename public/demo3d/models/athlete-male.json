@@ -1,0 +1,14 @@
+{
+  "model": "athlete-male.glb",
+  "sexPresentation": "male",
+  "source": "athlete.glb",
+  "sourceSHA256": "20c3eab725e10eb32901ff8ff6982c60ad96fb9e697a7065132af10938d23738",
+  "sha256": "15ceab240aaee726419fa3000dd77eac1b36f34505ab0ce4ea2323de99a1a2b8",
+  "bytes": 5382588,
+  "license": "CC0-1.0",
+  "limitations": [
+    "Authored adult visual reference; not individual anatomy or a validated body-composition prediction.",
+    "Shared bone lengths and exercise clips; not sex-specific biomechanical certification.",
+    "Original design face identity and loose garment simulation are not reproduced."
+  ]
+}

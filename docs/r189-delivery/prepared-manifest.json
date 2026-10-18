@@ -1,0 +1,37 @@
+{
+  "mode": "PREPARED_NOT_FINAL",
+  "created_at_utc": "2026-10-15T12:59:47.425283+00:00",
+  "baseline": {
+    "file": "r188-source-before-r189.zip",
+    "bytes": 7188742,
+    "sha256": "b1fd6c2ddfd5688849c2a478b29f0dfec008f043b854e3b4e637101e08271354",
+    "zip_crc": "PASS",
+    "entry_count": 897
+  },
+  "changed_file_count": 66,
+  "runtime_fingerprint_sha256": "64e917a2753d5857639f86e6aa23e9289680e18978c316a7ce7136ea19421e8a",
+  "intake": [
+    {
+      "label": "docs",
+      "sha256": "0cf555f84fc6ff201ffdc9e4be6e1e5db01e0fa3d0657d05705dd958eb9e5056",
+      "entries": 21
+    },
+    {
+      "label": "motion",
+      "sha256": "3fef3e690050535f7ec79769a968b07b755c909fd20dc7f721d8387f1e95ff83",
+      "entries": 37
+    }
+  ],
+  "historical_reports": "Reports outside docs/r189-delivery and evidence/r189 remain historical; not current PASS evidence.",
+  "source_package_excludes": [
+    "public/demo3d (separate assets package)",
+    "node_modules",
+    "build output",
+    ".env*",
+    "raw FIT/TCX/GPX",
+    "browser storage dumps",
+    "private directories"
+  ],
+  "final_results_not_inferred": true,
+  "max_independent_zip_bytes": 8000000
+}

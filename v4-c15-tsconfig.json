@@ -1,0 +1,12 @@
+{
+ "compilerOptions": {
+  "target":"ES2022", "module":"NodeNext", "moduleResolution":"NodeNext", "strict":true,
+  "skipLibCheck":true,"noEmit":true,"allowImportingTsExtensions":true,"types":[],"lib":["ES2022","DOM"]
+ },
+ "files":[
+  "src/lib/core/coach-evolution-v4.ts", "src/lib/core/coach-evolution-v4-c10.ts",
+  "src/lib/core/coach-v4-c11-adapter.ts", "src/lib/core/coach-v4-c12-timeline.ts",
+  "src/lib/core/coach-v4-c13-revision.ts", "src/lib/core/coach-v4-c14-guard.ts",
+  "src/lib/core/coach-v4-c15-exam.ts"
+ ]
+}

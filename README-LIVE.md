@@ -1,3 +1,22 @@
+# v73 当前交接状态（2026-10-17）
+
+联网识图与交互修复已完成源码集成，见 V73-HANDOFF.md / CODEX-TASK-V73.txt。999项测试、类型检查、构建通过；真实API、原Pages部署、Safari/iPhone实测尚未执行。新增的 functions/api/vision.js 需随原项目部署并配置服务端DeepSeek密钥及识别访问码。
+
+v73继承v72热身与通用人物成果，原精细定制人物仍未完成。与线上最新工作做差异合并，不覆盖另一分支的教练逻辑。
+
+---
+以下为v72及更早的历史交接记录，当前状态以上述v73说明为准。
+
+# v72 热身与体型3D接入候选，尚未上线
+
+先读 V72-HANDOFF.md。本版热身设置、执行计时、暂停恢复、逐项实际记录和同课主训练关联已接入；健康页已接可调体型3D参考。979项测试、类型检查、生产构建通过。未进行浏览器、Safari/PWA或iPhone真机验收。
+
+原设计人物的脸型、写实发型、独立宽松服装和白鞋尚未完成；当前角色是可真实形变的通用3D，不是原立绘人物的完成版。当前/目标外形为手动视觉参考，不是56kg/60kg的身体预测。
+
+此前 fangkun-v72-codex-handoff.zip 是开发中快照，本次完成接入的源码包取代它。原v71交接说明仅作为历史记录。继续使用原 molen-fangkun.pages.dev 项目。
+
+---
+
 # 方坤 测试版 · 正式基线（canonical）
 
 线上：https://molen-fangkun.pages.dev  （Cloudflare Pages 项目 molen-fangkun，生产分支 main）
@@ -18,17 +37,18 @@
 - 同一域名 molen-fangkun.pages.dev 下的数据跨版本保留；换域名需导出→导入。
 
 ## 部署 / 更新
+本包为源码交接，不包含发布凭据，也没有执行部署。先在现有工程的独立工作分支合并并核对差异，再运行：
+
 ```bash
-export PATH=/home/box/.local/node22/bin:$PATH
-npm ci && npm test                      # 必须全绿
-# 改前端：public/sw.js 的 CACHE 版本 +1（同时改 scripts/sw-migration.test.mjs 里的名字）
-mv server/middleware/grok-pwa.ts /tmp/ && rm -rf .output && npx vite build; mv /tmp/grok-pwa.ts server/middleware/
-#  （vite build 结尾的 "SSR entry" 报错可忽略，只要 .output/public/index.html 已生成）
-printf '/* /index.html 200\n' > .output/public/_redirects
-printf '/sw.js\n  Cache-Control: no-cache\n' > .output/public/_headers
-npx wrangler pages deploy .output/public --project-name molen-fangkun --branch main --commit-dirty=true
-git commit -am "..." && git tag live-YYYYMMDD
+npm ci
+npm test
+npm run typecheck
+npm run build
 ```
+
+构建必须正常退出，不忽略SSR错误，不移动PWA/品牌中间件。静态输出为 `.output/public`，保留项目根目录 `functions/` 及构建复制的 `_headers`，沿用原项目的SPA路由回退配置。不要用旧说明里的单行文件覆盖完整响应头。
+
+由有原项目权限的发布环境沿用现有 Cloudflare Pages 流程发布；项目名仍是 `molen-fangkun`，域名仍是 `molen-fangkun.pages.dev`。发布前备份、保留线上最新差异；发布后核对动态模块、Garmin、缓存切换与手机关键流程。代码测试通过不等同于手机验收通过。
 构建为 SPA 静态（vite.config.ts：tanstackStart spa + nitro preset static），Functions 目录随部署上传。Service worker 自动更新并刷新一次（训练进行中不刷新）。
 
 ## 数据延续到正式版（必须遵守）

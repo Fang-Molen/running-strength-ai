@@ -37,13 +37,13 @@ test("first render does not depend on browser training and day records", () => {
     assert.equal(render(), serverHtml)
     assert.equal(renderToString(<StrengthApp />), serverApp)
     assert.match(serverHtml, /今天还没有跑步记录/)
-    // 健康页指标卡已换为挂载后渲染的看板，首屏不再含"暂无记录"
-    // 体重卡已移入"我的身体"详情（挂载后渲染），首屏不再含"还没有体重"
+    assert.match(serverApp, /data-ready="false"/)
+    assert.match(serverApp, /这天还没有安排/)
     assert.doesNotMatch(serverApp, /70\.5/)
     assert.doesNotMatch(serverApp, /米饭/)
     assert.doesNotMatch(serverApp, /已保存的推进课/)
     assert.doesNotMatch(serverApp, /7\.5 小时/)
-    // 饮食详情移入全屏详情页（默认关闭），首屏不再渲染"暂不可计算"
+    assert.match(serverApp, /本周计划与实际/)
   } finally {
     if (previous === undefined) delete (globalThis as { localStorage?: Storage }).localStorage
     else Object.defineProperty(globalThis, "localStorage", { configurable: true, value: previous })

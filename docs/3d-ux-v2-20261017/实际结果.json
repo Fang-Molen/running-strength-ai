@@ -1,0 +1,43 @@
+{
+  "status": "PREPARATION_COMPLETE_NOT_A_VISUAL_RELEASE",
+  "runtimeReplacementEnabled": false,
+  "baseline": "FK-V74-UI-INTEGRATED-20261017",
+  "sourceFilesBaseline": 1416,
+  "tests": {
+    "fullRegression": {
+      "PASS": 3692,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "importToolSynthetic": {
+      "PASS": 12,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "nutritionBrowserDevelopment": {
+      "PASS": 25,
+      "FAIL": 0
+    },
+    "typecheck": "PASS",
+    "productionBuild": "PASS",
+    "productionOfflineBrowser": "NOT_RUN",
+    "realIPhone": "NOT_RUN",
+    "newCharacterVisualAndMotion": "NOT_RUN"
+  },
+  "regressionNotes": "最后一轮回归在最终营养与样式修复后运行；其后仅增加只读 Python 导入检查工具、模板与文档，该工具另行通过12项测试。",
+  "safety": {
+    "coreSourceChanged": [],
+    "deployment": false,
+    "paidModelCalls": false,
+    "realHealthDataUsed": false,
+    "automaticFormalPlanChange": false
+  },
+  "remaining": [
+    "新人物与温和肌群 GLB、蒙皮/服装/形变尚未完成",
+    "代表动作和同角色2D关键帧尚未完成",
+    "统一播放器与全入口运行时迁移尚未执行，旧显示仍保留",
+    "生产离线浏览器启动调用被中断，没有执行日志；不能宣称通过",
+    "真实iPhone、安全区键盘、性能及官方GLB验证未执行"
+  ],
+  "rollback": "rollback/ 内八个原V74分包及SHA清单；无数据迁移，不清除用户数据。"
+}

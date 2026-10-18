@@ -1,0 +1,318 @@
+{
+  "scope": "R4 最新修复基线 + v74 健康事实与离线教练最小集成；不是 v74 全模块验收",
+  "unitRegression": {
+    "tests": 3359,
+    "pass": 3354,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 5,
+    "todo": 0
+  },
+  "main": {
+    "name": "10-full-npm-test",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "status": "PASS",
+    "exitCode": 0,
+    "elapsedSeconds": 324.38,
+    "counts": {
+      "tests": 2356,
+      "pass": 2351,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 5,
+      "todo": 0
+    },
+    "log": "10-full-npm-test.log"
+  },
+  "extra": {
+    "name": "16-extra-regression-recheck",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "--import",
+      "./scripts/test-register.mjs",
+      "--test",
+      "--test-reporter=tap",
+      "--test-concurrency=3",
+      "src/lib/core/adaptive-plan-audit.test.ts",
+      "src/lib/core/adaptive-plan-permissions.test.ts",
+      "src/lib/core/ai-access-contract.test.mjs",
+      "src/lib/core/ai-feature-policy.test.mjs",
+      "src/lib/core/ai-task-router.test.mjs",
+      "src/lib/core/athlete-baseline.test.mjs",
+      "src/lib/core/athlete-evidence-readiness.test.ts",
+      "src/lib/core/athlete-longitudinal-evidence.test.ts",
+      "src/lib/core/athlete-seven-dimensions.test.mjs",
+      "src/lib/core/backup-inspection.test.ts",
+      "src/lib/core/browser-capabilities.test.ts",
+      "src/lib/core/coach-activity-watch.test.ts",
+      "src/lib/core/coach-adversarial.test.ts",
+      "src/lib/core/coach-conversation-context.test.ts",
+      "src/lib/core/coach-fieldwork-context.test.ts",
+      "src/lib/core/coach-four-directions.test.ts",
+      "src/lib/core/coach-learning-readiness.test.ts",
+      "src/lib/core/coach-network-policy.test.ts",
+      "src/lib/core/coach-p0-p1.test.ts",
+      "src/lib/core/coach-periodic-observations.test.ts",
+      "src/lib/core/coach-persona.test.ts",
+      "src/lib/core/coach-plan-governance.test.ts",
+      "src/lib/core/coach-preview-transaction.test.ts",
+      "src/lib/core/coach-question-reasoning.test.ts",
+      "src/lib/core/coach-r14-chat.test.ts",
+      "src/lib/core/coach-r184-preparation.test.ts",
+      "src/lib/core/coach-r185-integration.test.ts",
+      "src/lib/core/coach-record-context.test.ts",
+      "src/lib/core/coach-strength-plan-control.test.ts",
+      "src/lib/core/coach-strength-plan-storage.test.ts",
+      "src/lib/core/coach-training-mechanisms.test.ts",
+      "src/lib/core/device-evidence-backup.test.ts",
+      "src/lib/core/device-image-evidence.test.ts",
+      "src/lib/core/execution.test.ts",
+      "src/lib/core/local-ocr-policy.test.ts",
+      "src/lib/core/offline-training-evidence.test.mjs",
+      "src/lib/core/research-cognition-bridge.test.ts",
+      "src/lib/core/research-conflict-index.test.ts",
+      "src/lib/core/research-conflict-source-audit.test.ts",
+      "src/lib/core/research-context.test.ts",
+      "src/lib/core/research-coverage-audit.test.ts",
+      "src/lib/core/research-evidence-r4-r7.test.ts",
+      "src/lib/core/research-history-reconciliation.test.ts",
+      "src/lib/core/research-k11-blind.test.ts",
+      "src/lib/core/research-knowledge-registry.test.ts",
+      "src/lib/core/research-methodology.test.ts",
+      "src/lib/core/research-reasoning-audit-k10.test.ts",
+      "src/lib/core/research-reasoning-audit-k12-regression.test.ts",
+      "src/lib/core/research-reasoning-audit-k9.test.ts",
+      "src/lib/core/research-reasoning-audit.test.ts",
+      "src/lib/core/rest-clock.test.ts",
+      "src/lib/core/running-context-exam.test.mjs",
+      "src/lib/core/running-log-correction.test.ts",
+      "src/lib/core/running-occurrence-context.test.mjs",
+      "src/lib/core/running-reasoning-audit.test.mjs",
+      "src/lib/core/running-sequence-observation.test.mjs",
+      "src/lib/core/running-session-context.test.mjs",
+      "src/lib/core/running-structured-context.test.mjs",
+      "src/lib/core/running-timeline-reasoning.test.mjs",
+      "src/lib/core/training-import-delete.test.ts",
+      "src/lib/nutrition/catalog.test.ts",
+      "src/lib/nutrition/energy-source.test.ts",
+      "src/lib/preview-path-prefix.test.ts",
+      "src/lib/running-technique/catalogue.test.ts",
+      "src/lib/strength/coach-output-retry.test.ts",
+      "src/lib/strength/demo-fieldwork.test.ts",
+      "src/lib/ui/athlete-growth.test.ts",
+      "src/lib/ui/device-csv-preview.test.ts",
+      "src/lib/ui/device-guides.test.ts",
+      "src/lib/ui/device-import-contract.test.ts",
+      "src/lib/ui/fangkun-ui-20261016.test.ts",
+      "src/lib/ui/fieldwork.test.ts",
+      "src/lib/ui/goal-portfolio.test.ts",
+      "src/lib/ui/onboarding.test.ts"
+    ],
+    "status": "PASS",
+    "exitCode": 0,
+    "elapsedSeconds": 91.18,
+    "counts": {
+      "tests": 1003,
+      "pass": 1003,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "log": "16-extra-regression-recheck.log"
+  },
+  "typecheck": {
+    "name": "17-typecheck-final",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "status": "PASS",
+    "exitCode": 0,
+    "elapsedSeconds": 82.07,
+    "counts": {
+      "tests": 0,
+      "pass": 0,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "log": "17-typecheck-final.log"
+  },
+  "build": {
+    "name": "18-build-final",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "status": "PASS",
+    "exitCode": 0,
+    "elapsedSeconds": 34.67,
+    "counts": {
+      "tests": 0,
+      "pass": 0,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "log": "18-build-final.log"
+  },
+  "browser": {
+    "dev": {
+      "mode": "dev",
+      "results": [
+        {
+          "name": "mobile home renders",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "mobile no overflow",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "UI answer uses actual sleep minutes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "next question rereads corrected value",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "browser is offline",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "offline answer completes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "reload retains health records",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "emergency overrides daily health interpretation",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "formal plan unchanged",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "no model or other POST requests",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "no browser runtime errors",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "desktop renders without overflow",
+          "status": "PASS",
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "posts": [],
+      "counts": {
+        "PASS": 12,
+        "FAIL": 0
+      },
+      "scope": "Synthetic fresh browser context; not real Garmin, iPhone or all v74 UI acceptance"
+    },
+    "production": {
+      "mode": "prod",
+      "results": [
+        {
+          "name": "mobile home renders",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "mobile no overflow",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "UI answer uses actual sleep minutes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "next question rereads corrected value",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "browser is offline",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "offline answer completes",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "offline reload preserves corrected health and chat history",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "emergency overrides daily health interpretation",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "formal plan unchanged",
+          "status": "PASS",
+          "detail": ""
+        },
+        {
+          "name": "no model or other POST requests",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "no browser runtime errors",
+          "status": "PASS",
+          "detail": "[]"
+        },
+        {
+          "name": "desktop renders without overflow",
+          "status": "PASS",
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "posts": [],
+      "counts": {
+        "PASS": 12,
+        "FAIL": 0
+      },
+      "scope": "Synthetic fresh browser context; not real Garmin, iPhone or all v74 UI acceptance"
+    }
+  },
+  "realGarminTest": "NOT_EXECUTED",
+  "realIPhoneTest": "NOT_EXECUTED",
+  "paidModelCalls": 0,
+  "deployment": "NOT_PERFORMED",
+  "nextGate": "可交给 Grok 独立测试本次健康核心集成；v74 新页面及账号同步仍未集成/验收"
+}

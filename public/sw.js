@@ -1,4 +1,5 @@
-const CACHE = "fr255-shell-v69"
+const CACHE = "fr255-shell-v74-fk-motion-r4"
+const DEMO_CACHE="fk-demo3d-v74-paired"
 const CACHE_PREFIX = "fr255-shell-"
 
 function blocked(url) {
@@ -13,8 +14,10 @@ function ownedShellCache(key) {
 }
 
 function cacheable(request, url) {
+  // An approval may be revoked: never serve a stale approval/GLB from the shell cache.
+  if (url.pathname.startsWith("/fangkun-motion/") || url.pathname.startsWith("/demo3d/models/")) return false
   // Never intercept downloadable archives or user data exports.
-  if (/\.(?:zip|tar|gz|7z|pdf|csv|jsonl?)(?:$)/i.test(url.pathname)) return false
+  if (!url.pathname.startsWith("/demo3d/") && !url.pathname.startsWith("/exercise-sources/") && !url.pathname.startsWith("/food/") && /\.(?:zip|tar|gz|7z|pdf|csv|jsonl?)(?:$)/i.test(url.pathname)) return false
   if (request.method !== "GET" || url.origin !== self.location.origin || blocked(url)) return false
   if (request.headers.get("authorization")) return false
   if (request.mode === "navigate" || request.destination === "document") return true
@@ -22,6 +25,11 @@ function cacheable(request, url) {
     || url.pathname.startsWith("/assets/")
     || url.pathname.startsWith("/__grok/")
     || url.pathname.startsWith("/fangshen/")
+    || url.pathname.startsWith("/fangkun-new-visual/")
+    || url.pathname.startsWith("/exercise-sources/")
+    || url.pathname.startsWith("/food/")
+    || url.pathname.startsWith("/demo3d/")
+    || url.pathname.startsWith("/fangkun-bodylab/")
     || url.pathname === "/favicon.svg"
     || url.pathname === "/sw.js"
 }
@@ -53,6 +61,7 @@ async function networkFirst(request) {
   } catch {
     const cache = await caches.open(CACHE)
     return (await cache.match(request, { ignoreVary: true }))
+      || (["/demo3d/", "/exercise-sources/"].some(p=>new URL(request.url).pathname.startsWith(p)) ? await (await caches.open(DEMO_CACHE)).match(request,{ignoreVary:true}) : undefined)
       || (request.mode === "navigate" ? await cache.match("/", { ignoreVary: true }) : undefined)
       || new Response("离线且没有可用缓存", {
       status: 503,

@@ -1,0 +1,261 @@
+{
+  "version": "R188",
+  "phase": "FINAL_DELIVERY",
+  "final_receipts_recorded": true,
+  "baseline": "R185 delivered source",
+  "rollback": "r185-before-r188.zip",
+  "final_full_regression": {
+    "status": "FAIL",
+    "count_unit": "FILE_LEVEL",
+    "executed": 13,
+    "pass": 9,
+    "fail": 4,
+    "skip": 0,
+    "exit_code": 1,
+    "final_frozen_source_receipt": true,
+    "reason": "Restricted child stdio/IPC; complete npm chain did not pass",
+    "failure_files": [
+      "scripts/brand-check.test.mjs",
+      "scripts/check-auth-invariant.test.mjs",
+      "scripts/with-app-env.test.mjs",
+      "scripts/write-atomic.test.mjs"
+    ],
+    "evidence": [
+      "final-npm-postfix-default/npm-test.json",
+      "final-npm-postfix-default/npm-test.log",
+      "environment-diagnostic/stdout-ipc.json"
+    ]
+  },
+  "previous_targeted_synthetic": {
+    "status": "HISTORICAL_ONLY",
+    "executed_status": "PASS",
+    "pass": 136,
+    "fail": 0,
+    "skip": 0,
+    "counted_in_final": false,
+    "scope": "4 targeted suites before final activity timing fix; not full integration",
+    "evidence": [
+      "targeted-final/results.json"
+    ]
+  },
+  "previous_typecheck": {
+    "status": "HISTORICAL_ONLY",
+    "executed_status": "PASS",
+    "exit_code": 0,
+    "counted_in_final": false,
+    "evidence": [
+      "targeted-final/typecheck.json",
+      "targeted-final/typecheck.log"
+    ]
+  },
+  "typecheck": {
+    "status": "PASS",
+    "exit_code": 0,
+    "final_frozen_source_receipt": true,
+    "evidence": [
+      "typecheck-postfix-final/typecheck.json",
+      "typecheck-postfix-final/typecheck.log"
+    ]
+  },
+  "build": {
+    "status": "PASS",
+    "exit_code": 0,
+    "final_frozen_source_receipt": true,
+    "evidence": [
+      "default-final/build.json",
+      "default-final/build.log"
+    ]
+  },
+  "browser_offline": {
+    "status": "BLOCKED",
+    "runner_exit_code": 1,
+    "reason": "listen EPERM 127.0.0.1:8086; Chromium and all final assertions did not start",
+    "infrastructure": {
+      "executed": 1,
+      "pass": 0,
+      "fail": 1,
+      "skip": 0
+    },
+    "assertions": {
+      "executed": 0,
+      "pass": 0,
+      "fail": 0,
+      "skip": 0
+    },
+    "planned_coverage_groups": {
+      "pass": 0,
+      "fail": 0,
+      "skip": 16
+    },
+    "screenshots_created": false,
+    "external_model_requests": "NOT_MEASURED_NO_BROWSER_STARTED",
+    "evidence": [
+      "browser-final/browser-final-result.json",
+      "browser-final/dev.log"
+    ]
+  },
+  "previous_browser_02": {
+    "status": "HISTORICAL_ONLY",
+    "counted_in_final": false,
+    "reason": "前版本公开浏览器证据，不能代替最终 UI 导出恢复及离线验收"
+  },
+  "sealed_blind_test": {
+    "status": "NOT_RUN",
+    "reason": "验收方独立复现，未将本地公开场景当封存盲测"
+  },
+  "real_garmin_full_acceptance": {
+    "status": "BLOCKED",
+    "reason": "未提供原始 FIT 及新 JSON/ZIP 格式可核对样例；此前周期性包只有 CSV"
+  },
+  "r173_rule_classification": {
+    "IMPLEMENTED": 92,
+    "BLOCKED": 5,
+    "NOT_APPLICABLE": 35,
+    "scientific_promotion": false
+  },
+  "deployed": false,
+  "external_model_called": false,
+  "automatic_formal_plan_write": false,
+  "overall_status": "BLOCKED_FULL_ACCEPTANCE",
+  "runtime_frozen_at": "2026-10-14T13:54:54Z",
+  "canonical_domain": {
+    "status": "PASS",
+    "count_unit": "FILE_LEVEL",
+    "executed": 181,
+    "pass": 181,
+    "fail": 0,
+    "skip": 0,
+    "internal_case_count": null,
+    "exit_code": 0,
+    "runtime_files_sha_checked": 564,
+    "runtime_drift": false,
+    "evidence": [
+      "domain-postfix-final/domain.json",
+      "domain-postfix-final/domain.log",
+      "domain-postfix-final/runtime-before.json",
+      "domain-postfix-final/runtime-after.json"
+    ]
+  },
+  "previous_canonical_domain": {
+    "status": "FAIL",
+    "count_unit": "FILE_LEVEL",
+    "executed": 181,
+    "pass": 180,
+    "fail": 1,
+    "skip": 0,
+    "exit_code": 1,
+    "reason": "Original nutrition/catalog assertion failed before final P7 description repair",
+    "evidence": [
+      "default-final/domain.json",
+      "default-final/domain.log"
+    ]
+  },
+  "supplemental_direct_domain": {
+    "status": "PASS",
+    "count_unit": "INTERNAL_TEST_CASE",
+    "files": 180,
+    "executed": 2782,
+    "pass": 2782,
+    "fail": 0,
+    "skip": 0,
+    "canonical_pass_claimed": false,
+    "version_note": "Knowledge 6 cases predate last textual repair; later 6 repeats are separately recorded. Catalog 3 ran after freeze. R18833 excluded.",
+    "evidence": [
+      "domain-direct-final/results.json",
+      "domain-direct-final/artifact-integrity.json",
+      "domain-direct-final/source-freeze-change.json"
+    ]
+  },
+  "r188_targeted_latest_activity_fix": {
+    "status": "PASS",
+    "executed": 33,
+    "pass": 33,
+    "fail": 0,
+    "skip": 0,
+    "exit_code": 0,
+    "scope": "Single-file targeted; not whole integration and not added to direct2782",
+    "evidence": [
+      "targeted-last-change/coach-r188.json",
+      "targeted-last-change/coach-r188.log"
+    ]
+  },
+  "catalog_knowledge_repair_repeat": {
+    "status": "PASS",
+    "executed": 9,
+    "pass": 9,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Focused repeated catalog3+knowledge6; not added to domain2782",
+    "evidence": [
+      "domain-direct-final/catalog-knowledge-focused-results.json",
+      "domain-direct-final/source-freeze-change.json"
+    ]
+  },
+  "environment_diagnostic": {
+    "status": "FAIL",
+    "executed": 29,
+    "pass": 22,
+    "fail": 7,
+    "skip": 0,
+    "counted_in_final_domain": false,
+    "evidence": [
+      "environment-diagnostic/brand-check-direct.json",
+      "environment-diagnostic/brand-check-direct.log",
+      "environment-diagnostic/stdout-ipc.json"
+    ]
+  },
+  "counting_note": "Separate runs and units; duplicates and historical evidence not summed into a global PASS count",
+  "previous_npm_default": {
+    "status": "HISTORICAL_ONLY",
+    "count_unit": "FILE_LEVEL",
+    "executed": 13,
+    "pass": 9,
+    "fail": 4,
+    "skip": 0,
+    "exit_code": 1,
+    "reason": "Executed at13:47 before final13:54:54 P7 description repair; original failures retained",
+    "evidence": [
+      "final-npm-default/npm-test.json",
+      "final-npm-default/npm-test.log",
+      "environment-diagnostic/stdout-ipc.json"
+    ],
+    "failure_files": [
+      "scripts/brand-check.test.mjs",
+      "scripts/check-auth-invariant.test.mjs",
+      "scripts/with-app-env.test.mjs",
+      "scripts/write-atomic.test.mjs"
+    ],
+    "executed_status": "FAIL",
+    "counted_as_final": false
+  },
+  "supplemental_domain_batches": {
+    "status": "PASS",
+    "count_unit": "INTERNAL_TEST_CASE",
+    "files": 181,
+    "executed": 2815,
+    "pass": 2815,
+    "fail": 0,
+    "skip": 0,
+    "components": {
+      "domain_direct_files": 180,
+      "domain_direct_cases": 2782,
+      "r188_single_file_cases": 33
+    },
+    "versions_qualified": true,
+    "not_canonical_internal_count": true,
+    "repeated_after_fix_9_not_added": true,
+    "diagnostic_29_not_added": true,
+    "evidence": [
+      "domain-direct-final/results.json",
+      "targeted-last-change/coach-r188.json",
+      "domain-direct-final/source-freeze-change.json"
+    ]
+  },
+  "ready_for_formal_integration_or_release": false,
+  "remaining_blockers": [
+    "npm test4 file-level failures with child stdio/IPC environment limitations",
+    "Final browser could not start local server:EPERM;0 browser assertions",
+    "Original FIT and new JSON export schema/sample missing",
+    "Sealed independent blind test not run"
+  ]
+}

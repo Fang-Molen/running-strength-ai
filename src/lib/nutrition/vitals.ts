@@ -1,3 +1,5 @@
+import { currentAthleteId } from "../core/events"
+import { healthChanged, validObservation, revisedObservation, type Observation } from "../health/observation"
 import { currentStore } from "@/lib/core/storage"
 
 export const VITALS_KEY = "fr255-vitals-v1"
@@ -9,6 +11,10 @@ export type HrvMethod = "RMSSD" | "SDNN" | "UNSPECIFIED"
 
 export type VitalRecord = {
   id: string
+  athleteId?: string
+  observation?: Observation
+  deviceLabel?: string
+  measurementMethod?: string
   kind: VitalKind
   value: number
   unit: "ms" | "bpm" | "hours" | "score"
@@ -21,6 +27,10 @@ export type VitalRecord = {
 }
 
 export type VitalDraft = {
+  athleteId?: string
+  observation?: Observation
+  deviceLabel?: string
+  measurementMethod?: string
   kind: VitalKind
   value: number
   observedOn: string
@@ -81,7 +91,8 @@ export function isVitalRecord(value: unknown): value is VitalRecord {
   const item = value as VitalRecord
   return typeof item.id === "string" && item.id.length > 0 && item.id.length <= 80
     && (VITAL_KINDS as readonly string[]).includes(item.kind)
-    && typeof item.value === "number"
+    && typeof item.value === "number" && Number.isFinite(item.value) && item.value >= RANGES[item.kind].min && item.value <= RANGES[item.kind].max
+    && validObservation(item.observation)
     && item.unit === UNITS[item.kind]
     && isDate(item.observedOn)
     && (item.observedAt === null || /^\d{2}:\d{2}$/.test(item.observedAt))
@@ -95,9 +106,9 @@ export function isVitalRecord(value: unknown): value is VitalRecord {
 export function loadVitals(): { records: VitalRecord[]; unreadable: boolean } {
   const storage = box()
   if (!storage) return { records: [], unreadable: false }
-  const raw = storage.getItem(VITALS_KEY)
-  if (!raw) return { records: [], unreadable: false }
   try {
+    const raw = storage.getItem(VITALS_KEY)
+    if (!raw) return { records: [], unreadable: false }
     const parsed = JSON.parse(raw) as { schemaVersion?: unknown; records?: unknown }
     if (!parsed || parsed.schemaVersion !== 1 || !Array.isArray(parsed.records) || parsed.records.some((item) => !isVitalRecord(item))) {
       return { records: [], unreadable: true }
@@ -109,6 +120,7 @@ export function loadVitals(): { records: VitalRecord[]; unreadable: boolean } {
 }
 
 export function validateVital(draft: VitalDraft): { ok: true; value: number; unit: VitalRecord["unit"]; hrvMethod: HrvMethod | null; observedAt: string | null; note: string } | { ok: false; reason: string } {
+  if (!validObservation(draft.observation)) return {ok:false,reason:"设备来源信息无效。"}
   if (!(VITAL_KINDS as readonly string[]).includes(draft.kind)) return { ok: false, reason: "请选择指标。" }
   if (!isDate(draft.observedOn)) return { ok: false, reason: "日期不正确。" }
   const range = RANGES[draft.kind]
@@ -124,7 +136,7 @@ export function validateVital(draft: VitalDraft): { ok: true; value: number; uni
     if (draft.hrvMethod !== "RMSSD" && draft.hrvMethod !== "SDNN" && draft.hrvMethod !== "UNSPECIFIED") return { ok: false, reason: "请选择 HRV 口径。未说明也可以。" }
     return { ok: true, value: draft.value, unit: "ms", hrvMethod: draft.hrvMethod, observedAt: clock, note }
   }
-  const value = draft.kind === "SLEEP" ? Math.round(draft.value * 10) / 10 : draft.value
+  const value = draft.kind === "SLEEP" && !draft.observation ? Math.round(draft.value * 10) / 10 : draft.value
   return { ok: true, value, unit: UNITS[draft.kind], hrvMethod: null, observedAt: clock, note }
 }
 
@@ -137,6 +149,7 @@ export function saveVital(draft: VitalDraft, id: string = crypto.randomUUID(), c
   if (!storage) return { ok: false, reason: "没有写入本机。请重试。" }
   const record: VitalRecord = {
     id,
+    athleteId:currentAthleteId(),
     kind: draft.kind,
     value: checked.value,
     unit: checked.unit,
@@ -146,13 +159,22 @@ export function saveVital(draft: VitalDraft, id: string = crypto.randomUUID(), c
     note: checked.note,
     hrvMethod: checked.hrvMethod,
     createdAt,
+    ...(draft.observation ? {observation:draft.observation} : {}),
+    ...(draft.deviceLabel?.trim()?{deviceLabel:draft.deviceLabel.trim().slice(0,60)}:{}),
+    ...(draft.measurementMethod?.trim()?{measurementMethod:draft.measurementMethod.trim().slice(0,60)}:{}),
   }
-  const records = [...current.records, record]
+  const old = draft.observation ? current.records.find(x=>(x.athleteId??'local')===currentAthleteId() && x.source==='DEVICE_CONFIRMED' && x.observation?.key===draft.observation!.key && x.observation.sourceId===draft.observation!.sourceId) : undefined
+  if(old){
+    if(old.kind!==record.kind || old.observedOn!==record.observedOn || old.hrvMethod!==record.hrvMethod || old.observation!.statistic!==draft.observation!.statistic || Date.parse(draft.observation!.syncedAt)<Date.parse(old.observation!.syncedAt))return {ok:false,reason:'来源标识冲突或收到旧版本，未覆盖。'}
+    record.id=old.id; record.createdAt=old.createdAt; record.observation=revisedObservation(draft.observation!,old,record.value)
+  }
+  const records = old ? current.records.map(x=>x===old?record:x) : [...current.records, record]
   try {
-    storage.setItem(VITALS_KEY, JSON.stringify({ schemaVersion: 1, records }))
+    const raw=JSON.stringify({schemaVersion:1,records});storage.setItem(VITALS_KEY,raw);if(storage.getItem(VITALS_KEY)!==raw)throw Error("not persisted")
   } catch {
     return { ok: false, reason: "没有写入本机。请重试。" }
   }
+  healthChanged()
   return { ok: true, records }
 }
 
@@ -164,10 +186,11 @@ export function removeVital(id: string): { ok: true; records: VitalRecord[] } | 
   const storage = box()
   if (!storage) return { ok: false, reason: "没有删除。请重试。" }
   try {
-    storage.setItem(VITALS_KEY, JSON.stringify({ schemaVersion: 1, records }))
+    const raw=JSON.stringify({schemaVersion:1,records});storage.setItem(VITALS_KEY,raw);if(storage.getItem(VITALS_KEY)!==raw)throw Error("not persisted")
   } catch {
     return { ok: false, reason: "没有删除。请重试。" }
   }
+  healthChanged()
   return { ok: true, records }
 }
 

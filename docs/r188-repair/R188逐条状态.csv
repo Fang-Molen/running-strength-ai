@@ -1,0 +1,17 @@
+﻿编号,清单要求,实现状态,当前验证状态,原因或边界
+0,R185 基线与 12 个逐文件增量,IMPLEMENTED,VERIFIED_MANIFEST,R185原副本保留；12个增量逐文件来源与最终SHA；最终diff在打包时重算
+1,npm test 与 test:domain 全链路,BLOCKED,DOMAIN_PASS_NPM_FAIL,最终domain181文件组PASS；最终npm13文件组9PASS4FAIL及IPC限制保留；不能整体PASS
+2,具体保守默认建议与批准课程确认,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,无已批准课程选择可撤回 REST；批准改动不自动写计划
+3,他人倒地 CPR AED,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,沿用并保留 R185 急症优先
+4,全身过敏 肾上腺素笔,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,急症优先不得生成普通训练候选
+5,病后胸痛 心悸,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,停练急诊与 120；就医不等于运动许可
+6,15 岁闭经 骨点压痛多轮,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,安全状态在后续对话保留
+7,多轮五步闭环,IMPLEMENTED_WITH_LIMITS,DOMAIN_PASS_BROWSER_BLOCKED,已有状态与成绩解读复用；没有批准方案时只给观察或休息不编造剂量
+8,逐组复盘优先,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,保留 R185 数值复盘和量化适配
+9,异常心率和不可能配速,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,聊天与设备质量闸门；末次修复活动 elapsed 小于 timer 漏判并加合成用例；原始设备数据保留待核
+10,条件式维持 轻松 减量 休息建议,IMPLEMENTED_WITH_LIMITS,DOMAIN_PASS_BROWSER_BLOCKED,事实量化与条件建议分层；研究经验阈值不得自动开处方
+11,动态复盘 5—6 句无代码,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,主回答使用事实目的解释反证观察；依据信息单独显示
+12,更正接 claim revision,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,同源字段核验；无关联保留；来源未知 REVIEW_REQUIRED
+13,P7 appendJournal 持久化,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,真实建议入口 LIVE 与 LEGACY 隔离；无预测不计算准确率
+14,IndexedDB 迁移及回退,IMPLEMENTED_WITH_LIMITS,BROWSER_BLOCKED_NOT_VERIFIED,镜像迁移与回退函数及UI已实现；最终浏览器未启动，未证明真实IndexedDB迁移恢复
+15,零外部请求 离线 确定性与断言原因,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,本地引擎与安全域内回归通过；浏览器零外部请求未测；旧断言变更有明确原因

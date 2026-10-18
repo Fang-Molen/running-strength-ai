@@ -1,0 +1,5822 @@
+{
+  "version": "FK-ATLAS-READY-R1",
+  "sourceCounts": {
+    "strength": 76,
+    "running": 53
+  },
+  "evidenceDisclosure": "Learning demonstrator; not a clinical, biomechanical or personal prescription validation.",
+  "exercises": [
+    {
+      "id": "bb-bench",
+      "type": "strength",
+      "name": "杠铃卧推",
+      "en": "Barbell Bench Press",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "杠铃",
+        "卧推凳"
+      ],
+      "muscles": [
+        "胸大肌",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt front"
+      ],
+      "setup": [
+        "仰卧在凳上，双眼大致在杠铃正下方",
+        "肩胛骨向后向下收紧，上背贴凳，保持自然腰弓",
+        "双脚踩实地面，臀部不离凳",
+        "握距约比肩宽一拳半"
+      ],
+      "steps": [
+        "出杠后杠铃在肩正上方",
+        "控制下放到乳头线附近，前臂大致垂直地面",
+        "脚蹬地、胸口挺住，把杠铃推回肩上方"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "肩胛没收紧、推起时耸肩",
+        "臀部离凳",
+        "杠铃落点过高（锁骨）或手腕后折",
+        "反弹借力"
+      ],
+      "safety": [
+        "大重量必须有保护者或在架内设保护杆",
+        "不要用拇指不握的“自杀式握法”",
+        "肩前侧疼痛时缩小幅度或改哑铃"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/bb-bench-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-bench",
+      "type": "strength",
+      "name": "哑铃卧推",
+      "en": "Dumbbell Bench Press",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "哑铃",
+        "卧推凳"
+      ],
+      "muscles": [
+        "胸大肌",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt front"
+      ],
+      "setup": [
+        "坐在凳端，哑铃立放大腿上，躺下时借膝盖顶起到胸旁",
+        "肩胛骨向后向下收紧，上背贴凳，保持自然腰弓",
+        "双脚踩实地面，臀部不离凳"
+      ],
+      "steps": [
+        "两只哑铃在胸上方，掌心朝脚方向",
+        "屈肘下放到胸侧，肘与身体约 45–60°",
+        "向上并略向内推回，不必让哑铃相撞"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "肘外展成 90°",
+        "两侧速度不一致",
+        "底部放松失去控制"
+      ],
+      "safety": [
+        "结束时先把哑铃放回大腿再坐起，不要从两侧直接扔下",
+        "肩不适时减小底部深度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "inc-db-bench",
+      "type": "strength",
+      "name": "上斜哑铃卧推",
+      "en": "Incline Dumbbell Bench Press",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "哑铃",
+        "可调上斜凳"
+      ],
+      "muscles": [
+        "胸大肌",
+        "delt front"
+      ],
+      "auxiliary": [
+        "肱三头肌"
+      ],
+      "setup": [
+        "凳面调到 30–45°",
+        "背、臀贴凳，双脚踩实",
+        "肩胛向后向下收紧"
+      ],
+      "steps": [
+        "哑铃从上胸两侧推起到肩正上方",
+        "控制下放到上胸外侧",
+        "保持胸口挺起"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "角度过大变成肩推",
+        "下背离凳过度拱起",
+        "耸肩"
+      ],
+      "safety": [
+        "肩痛时减小角度或重量"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "inc-bb-bench",
+      "type": "strength",
+      "name": "上斜杠铃卧推",
+      "en": "Incline Barbell Bench Press",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "杠铃",
+        "上斜卧推架"
+      ],
+      "muscles": [
+        "胸大肌",
+        "delt front"
+      ],
+      "auxiliary": [
+        "肱三头肌"
+      ],
+      "setup": [
+        "凳面 30–45°",
+        "杠铃位于眼睛上方",
+        "肩胛收紧，双脚踩实"
+      ],
+      "steps": [
+        "出杠到肩上方",
+        "下放到锁骨下方的上胸",
+        "垂直向上推回"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "落点太低到腹部",
+        "臀部离凳",
+        "腕后折"
+      ],
+      "safety": [
+        "大重量必须有保护者或在架内设保护杆",
+        "不要用拇指不握的“自杀式握法”",
+        "肩前侧疼痛时缩小幅度或改哑铃"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "cg-bench",
+      "type": "strength",
+      "name": "窄距杠铃卧推",
+      "en": "Close Grip Barbell Bench Press",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "杠铃",
+        "卧推凳"
+      ],
+      "muscles": [
+        "肱三头肌",
+        "胸大肌"
+      ],
+      "auxiliary": [
+        "delt front"
+      ],
+      "setup": [
+        "握距约与肩同宽（不要更窄，以免伤腕）",
+        "仰卧在凳上，双眼大致在杠铃正下方",
+        "肩胛骨向后向下收紧，上背贴凳，保持自然腰弓",
+        "双脚踩实地面，臀部不离凳"
+      ],
+      "steps": [
+        "下放时肘贴近身体",
+        "落点在胸骨下段",
+        "伸肘推起，感受肱三头肌发力"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "握得过窄、手腕疼",
+        "肘向外张开"
+      ],
+      "safety": [
+        "大重量必须有保护者或在架内设保护杆",
+        "不要用拇指不握的“自杀式握法”",
+        "肩前侧疼痛时缩小幅度或改哑铃",
+        "腕不适时改用 EZ 杆或哑铃"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-fly",
+      "type": "strength",
+      "name": "哑铃飞鸟",
+      "en": "Dumbbell Flye",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "哑铃",
+        "卧推凳"
+      ],
+      "muscles": [
+        "胸大肌"
+      ],
+      "auxiliary": [
+        "delt front",
+        "肱二头肌"
+      ],
+      "setup": [
+        "仰卧凳上，哑铃在胸上方，掌心相对",
+        "肘微屈并在整个动作中固定这个角度",
+        "肩胛收紧"
+      ],
+      "steps": [
+        "像抱大树一样向两侧打开下放",
+        "下到胸部有拉伸感、上臂约与身体齐平即停",
+        "用胸发力沿弧线合拢"
+      ],
+      "breathing": [
+        "打开时吸气",
+        "合拢时呼气"
+      ],
+      "mistakes": [
+        "屈肘过多变成卧推",
+        "下放过深",
+        "用太重"
+      ],
+      "safety": [
+        "重量宜轻，肩前侧疼痛立即减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "cable-cross",
+      "type": "strength",
+      "name": "龙门架夹胸",
+      "en": "Cable Crossover",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "龙门架",
+        "D 形把手"
+      ],
+      "muscles": [
+        "胸大肌"
+      ],
+      "auxiliary": [
+        "delt front"
+      ],
+      "setup": [
+        "滑轮调到高位，两手各握一个把手",
+        "一脚在前分腿站，上身略前倾",
+        "肘微屈固定"
+      ],
+      "steps": [
+        "双手从两侧向身体前下方沿弧线合拢",
+        "手在腹前相遇，挤压胸部 1 秒",
+        "控制还原到胸部拉伸位"
+      ],
+      "breathing": [
+        "还原时吸气",
+        "合拢时呼气"
+      ],
+      "mistakes": [
+        "屈伸肘代替夹胸",
+        "身体前后晃动借力",
+        "耸肩"
+      ],
+      "safety": [
+        "重量宜中轻，肩部拉伸感过强就缩小开合"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "pushup",
+      "type": "strength",
+      "name": "俯卧撑",
+      "en": "Push Up",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "无器械"
+      ],
+      "muscles": [
+        "胸大肌",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt front",
+        "腹直肌"
+      ],
+      "setup": [
+        "双手撑地，略宽于肩，手指朝前",
+        "双脚并拢或与髋同宽，身体从头到脚跟成一条直线",
+        "收紧臀部和腹部"
+      ],
+      "steps": [
+        "屈肘下放，肘与身体约成 45°",
+        "胸口下到离地一拳左右",
+        "手掌推地把身体整体推起，肩胛在顶端稍微前伸"
+      ],
+      "breathing": [
+        "下放时吸气",
+        "推起时呼气"
+      ],
+      "mistakes": [
+        "塌腰或撅臀",
+        "肘向两侧打开成 90°",
+        "只动头不动胸，幅度太小",
+        "耸肩"
+      ],
+      "safety": [
+        "手腕不适可握哑铃或用俯卧撑架保持手腕中立",
+        "肩前侧疼痛时缩小幅度、肘再收紧"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "knee-pushup",
+      "type": "strength",
+      "name": "跪姿俯卧撑",
+      "en": "Kneeling Push Up",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "胸大肌",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt front",
+        "腹直肌"
+      ],
+      "setup": [
+        "双膝跪在垫上，双手略宽于肩",
+        "从头到膝成一条直线",
+        "收紧腹部和臀部"
+      ],
+      "steps": [
+        "屈肘下放，肘与身体约 45°",
+        "胸口接近地面",
+        "推起时保持身体整体移动"
+      ],
+      "breathing": [
+        "下放吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "臀部翘起",
+        "塌腰",
+        "只低头不下胸"
+      ],
+      "safety": [
+        "膝盖下垫软垫",
+        "手腕不适用拳撑或俯卧撑架"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "diamond-pushup",
+      "type": "strength",
+      "name": "钻石俯卧撑",
+      "en": "Diamond Push Up",
+      "category": "胸",
+      "group": "胸",
+      "equipment": [
+        "无器械"
+      ],
+      "muscles": [
+        "肱三头肌",
+        "胸大肌"
+      ],
+      "auxiliary": [
+        "delt front",
+        "腹直肌"
+      ],
+      "setup": [
+        "双手在胸下方，拇指和食指相碰成菱形",
+        "双脚并拢，身体成直线"
+      ],
+      "steps": [
+        "下放时肘贴近身体向后",
+        "胸口接近手背",
+        "伸肘推起"
+      ],
+      "breathing": [
+        "下放吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "肘外张",
+        "塌腰",
+        "幅度太小"
+      ],
+      "safety": [
+        "手腕或肘部不适时把双手稍分开"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "pullup",
+      "type": "strength",
+      "name": "引体向上",
+      "en": "Pull Up",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "单杠"
+      ],
+      "muscles": [
+        "背阔肌",
+        "肱二头肌"
+      ],
+      "auxiliary": [
+        "rhomboids",
+        "delt rear",
+        "forearm",
+        "腹直肌"
+      ],
+      "setup": [
+        "正手握杠，略宽于肩",
+        "悬垂时肩胛先下沉，身体微收紧",
+        "双腿并拢或微屈交叉"
+      ],
+      "steps": [
+        "肘向下向后拉，把胸口拉向单杠",
+        "下巴过杠",
+        "控制下放到手臂几乎伸直"
+      ],
+      "breathing": [
+        "下放时吸气",
+        "上拉时呼气"
+      ],
+      "mistakes": [
+        "摆动借力（踢腿）",
+        "只拉到一半",
+        "底部完全放松、肩被挂着",
+        "耸肩把下巴往上够"
+      ],
+      "safety": [
+        "肩部疼痛或无法控制下放时改辅助版本",
+        "下杠不要直接跳落"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/pullup-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "chinup",
+      "type": "strength",
+      "name": "反手引体",
+      "en": "Close Grip Chin Up",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "单杠"
+      ],
+      "muscles": [
+        "背阔肌",
+        "肱二头肌"
+      ],
+      "auxiliary": [
+        "rhomboids",
+        "forearm",
+        "腹直肌"
+      ],
+      "setup": [
+        "反手（掌心朝自己）握杠，约与肩同宽",
+        "悬垂，肩胛下沉"
+      ],
+      "steps": [
+        "屈肘把胸口拉向杠，肘贴近身体",
+        "下巴过杠",
+        "控制下放"
+      ],
+      "breathing": [
+        "下放吸气",
+        "上拉呼气"
+      ],
+      "mistakes": [
+        "摆动借力（踢腿）",
+        "只拉到一半",
+        "底部完全放松、肩被挂着",
+        "耸肩把下巴往上够"
+      ],
+      "safety": [
+        "肘内侧不适时改中立握"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "assist-chin",
+      "type": "strength",
+      "name": "弹力带辅助引体",
+      "en": "Band Assisted Chin Up",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "单杠",
+        "弹力带"
+      ],
+      "muscles": [
+        "背阔肌",
+        "肱二头肌"
+      ],
+      "auxiliary": [
+        "rhomboids",
+        "forearm"
+      ],
+      "setup": [
+        "弹力带挂在杠上，单膝或双脚踩进带圈",
+        "反手握杠，肩胛下沉"
+      ],
+      "steps": [
+        "肘向下拉，胸口靠近杠",
+        "下巴过杠",
+        "慢慢下放，别让弹力带把你弹下去"
+      ],
+      "breathing": [
+        "下放吸气",
+        "上拉呼气"
+      ],
+      "mistakes": [
+        "完全靠弹力带弹起",
+        "底部放松"
+      ],
+      "safety": [
+        "确认弹力带挂牢、无破损",
+        "脚从带里出来时先站稳"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "lat-pd",
+      "type": "strength",
+      "name": "高位下拉",
+      "en": "Lat Pulldown",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "高位下拉器"
+      ],
+      "muscles": [
+        "背阔肌"
+      ],
+      "auxiliary": [
+        "肱二头肌",
+        "rhomboids",
+        "delt rear"
+      ],
+      "setup": [
+        "坐好并把大腿卡在护垫下",
+        "握把宽度略宽于肩",
+        "上身微后仰 10–15°，胸口挺起"
+      ],
+      "steps": [
+        "先下沉肩胛，再屈肘把横杆拉到上胸",
+        "肘向下向后，感受腋下发力",
+        "控制还原到手臂伸直"
+      ],
+      "breathing": [
+        "还原吸气",
+        "下拉呼气"
+      ],
+      "mistakes": [
+        "身体大幅后仰借力",
+        "拉到颈后",
+        "耸肩"
+      ],
+      "safety": [
+        "不要拉到颈后",
+        "重量以能控制还原为准"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "close-lat",
+      "type": "strength",
+      "name": "窄距下拉",
+      "en": "Close Grip Lat Pulldown",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "高位下拉器",
+        "窄距 V 把"
+      ],
+      "muscles": [
+        "背阔肌"
+      ],
+      "auxiliary": [
+        "肱二头肌",
+        "rhomboids"
+      ],
+      "setup": [
+        "坐好并把大腿卡在护垫下",
+        "用窄距 V 把或中立握，双手相距约 10–15 厘米",
+        "胸口挺起"
+      ],
+      "steps": [
+        "肘贴近身体向下拉",
+        "把手拉到胸骨上方",
+        "控制还原"
+      ],
+      "breathing": [
+        "还原吸气",
+        "下拉呼气"
+      ],
+      "mistakes": [
+        "身体后仰过多",
+        "手臂发力为主"
+      ],
+      "safety": [
+        "重量以能控制还原为准"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-row",
+      "type": "strength",
+      "name": "单臂哑铃划船",
+      "en": "One Arm Bent Over Row",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "哑铃",
+        "凳"
+      ],
+      "muscles": [
+        "背阔肌",
+        "rhomboids"
+      ],
+      "auxiliary": [
+        "肱二头肌",
+        "delt rear",
+        "竖脊肌"
+      ],
+      "setup": [
+        "同侧手和膝撑在凳上，另一脚踩地",
+        "背部平直，与地面接近平行",
+        "另一只手握哑铃自然下垂"
+      ],
+      "steps": [
+        "肘贴近身体，把哑铃拉向髋部",
+        "顶端肩胛内收，停 1 秒",
+        "控制下放到手臂伸直"
+      ],
+      "breathing": [
+        "下放吸气",
+        "上拉呼气"
+      ],
+      "mistakes": [
+        "躯干转动借力",
+        "耸肩向耳朵拉",
+        "背部弓起"
+      ],
+      "safety": [
+        "下背不适时缩短组数并确保撑稳"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bb-row",
+      "type": "strength",
+      "name": "反握杠铃划船",
+      "en": "Reverse Grip Barbell Row",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "杠铃"
+      ],
+      "muscles": [
+        "背阔肌",
+        "rhomboids"
+      ],
+      "auxiliary": [
+        "肱二头肌",
+        "delt rear",
+        "竖脊肌",
+        "腘绳肌"
+      ],
+      "setup": [
+        "反握（掌心朝前）杠铃，约与肩同宽",
+        "屈髋俯身到上身约 45° 或更低，膝微屈",
+        "背部平直，腹部收紧"
+      ],
+      "steps": [
+        "把杠铃拉向肚脐下方",
+        "肘贴近身体向后",
+        "控制下放，保持上身角度不变"
+      ],
+      "breathing": [
+        "下放吸气",
+        "上拉呼气"
+      ],
+      "mistakes": [
+        "起身借力",
+        "弓背",
+        "拉向胸口太高"
+      ],
+      "safety": [
+        "下背疼痛时改用胸靠凳划船",
+        "握力不足可用助力带"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/bb-row-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "cable-row",
+      "type": "strength",
+      "name": "坐姿绳索划船",
+      "en": "Seated Cable Row",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "坐姿划船器"
+      ],
+      "muscles": [
+        "背阔肌",
+        "rhomboids"
+      ],
+      "auxiliary": [
+        "肱二头肌",
+        "delt rear",
+        "竖脊肌"
+      ],
+      "setup": [
+        "坐好，双脚踩踏板，膝微屈",
+        "握把手，背部挺直，上身约垂直"
+      ],
+      "steps": [
+        "先挺胸、肩胛后收，再屈肘把手拉到腹部",
+        "肘贴近身体",
+        "控制还原，肩可略前伸"
+      ],
+      "breathing": [
+        "还原吸气",
+        "拉回呼气"
+      ],
+      "mistakes": [
+        "身体大幅前后摇摆",
+        "弓背",
+        "耸肩"
+      ],
+      "safety": [
+        "重量以上身能保持不动为准"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "face-pull",
+      "type": "strength",
+      "name": "面拉",
+      "en": "Face Pull",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "龙门架",
+        "绳索把手"
+      ],
+      "muscles": [
+        "delt rear",
+        "rhomboids"
+      ],
+      "auxiliary": [
+        "斜方肌",
+        "肱二头肌"
+      ],
+      "setup": [
+        "滑轮调到与脸同高或略高",
+        "双手握绳索两端，后退一步，手臂伸直"
+      ],
+      "steps": [
+        "肘抬高向两侧后方拉，把绳子拉向额头/眼睛",
+        "拉到底时双手分开到耳旁，像展示肌肉",
+        "控制还原"
+      ],
+      "breathing": [
+        "还原吸气",
+        "拉回呼气"
+      ],
+      "mistakes": [
+        "肘下垂变成划船",
+        "身体后仰借力",
+        "重量太大"
+      ],
+      "safety": [
+        "重量宜轻，追求控制"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "inv-row",
+      "type": "strength",
+      "name": "反向划船",
+      "en": "Modified Inverted Row",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "史密斯架或低单杠"
+      ],
+      "muscles": [
+        "背阔肌",
+        "rhomboids"
+      ],
+      "auxiliary": [
+        "肱二头肌",
+        "delt rear",
+        "腹直肌",
+        "臀大肌"
+      ],
+      "setup": [
+        "杠铃调到约腰高，仰卧在杠下",
+        "正握杠略宽于肩，脚跟着地",
+        "身体从头到脚跟成直线"
+      ],
+      "steps": [
+        "把胸口拉向杠",
+        "顶端肩胛内收",
+        "控制下放到手臂伸直"
+      ],
+      "breathing": [
+        "下放吸气",
+        "上拉呼气"
+      ],
+      "mistakes": [
+        "塌腰",
+        "只用手臂拉",
+        "下巴前伸"
+      ],
+      "safety": [
+        "确认杠铃锁牢"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bb-shrug",
+      "type": "strength",
+      "name": "杠铃耸肩",
+      "en": "Barbell Shrug",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "杠铃"
+      ],
+      "muscles": [
+        "斜方肌"
+      ],
+      "auxiliary": [
+        "forearm"
+      ],
+      "setup": [
+        "杠铃在身前，正握略宽于肩",
+        "站直，核心收紧"
+      ],
+      "steps": [
+        "肩膀垂直向上耸向耳朵",
+        "顶端停 1 秒",
+        "慢慢放下到完全放松"
+      ],
+      "breathing": [
+        "放下吸气",
+        "耸起呼气"
+      ],
+      "mistakes": [
+        "肩膀绕圈",
+        "屈肘借力",
+        "头前伸"
+      ],
+      "safety": [
+        "颈部不适时减轻重量"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-shrug",
+      "type": "strength",
+      "name": "哑铃耸肩",
+      "en": "Dumbbell Shrug",
+      "category": "背",
+      "group": "背",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "斜方肌"
+      ],
+      "auxiliary": [
+        "forearm"
+      ],
+      "setup": [
+        "双手握重量自然垂在体侧或身前",
+        "站直，核心收紧"
+      ],
+      "steps": [
+        "肩膀垂直向上耸向耳朵",
+        "顶端停 1 秒",
+        "慢慢放下到完全放松"
+      ],
+      "breathing": [
+        "放下吸气",
+        "耸起呼气"
+      ],
+      "mistakes": [
+        "肩膀绕圈",
+        "屈肘借力",
+        "头前伸"
+      ],
+      "safety": [
+        "颈部不适时减轻重量"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-ohp",
+      "type": "strength",
+      "name": "坐姿哑铃推举",
+      "en": "Seated Dumbbell Shoulder Press",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "哑铃",
+        "可调凳"
+      ],
+      "muscles": [
+        "delt front",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt side",
+        "斜方肌"
+      ],
+      "setup": [
+        "靠背调到接近垂直，坐稳",
+        "哑铃举到肩旁，掌心朝前",
+        "背贴靠背，腹部收紧"
+      ],
+      "steps": [
+        "向上推到手臂接近伸直",
+        "顶端哑铃在头的正上方",
+        "控制下放到耳朵高度附近"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "腰过度后仰",
+        "肘过度外张",
+        "推起时耸肩",
+        "只推到一半"
+      ],
+      "safety": [
+        "肩痛时改用对握或减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bb-ohp",
+      "type": "strength",
+      "name": "杠铃推举",
+      "en": "Barbell Shoulder Press",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "杠铃",
+        "深蹲架"
+      ],
+      "muscles": [
+        "delt front",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt side",
+        "斜方肌",
+        "腹直肌",
+        "臀大肌"
+      ],
+      "setup": [
+        "杠铃放在上胸/锁骨前，握距略宽于肩",
+        "双脚与髋同宽，臀和腹部收紧",
+        "前臂接近垂直"
+      ],
+      "steps": [
+        "杠铃垂直上推，头略后让",
+        "杠铃过额头后头回到中间，锁定在头正上方",
+        "控制下放回锁骨"
+      ],
+      "breathing": [
+        "推前吸气收紧",
+        "过最难点后呼气"
+      ],
+      "mistakes": [
+        "腰过度后仰",
+        "肘过度外张",
+        "推起时耸肩",
+        "只推到一半"
+      ],
+      "safety": [
+        "下背疼痛时改坐姿哑铃推举"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/bb-ohp-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "arnold",
+      "type": "strength",
+      "name": "阿诺德推举",
+      "en": "Arnold Press",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "哑铃",
+        "可调凳"
+      ],
+      "muscles": [
+        "delt front",
+        "delt side"
+      ],
+      "auxiliary": [
+        "肱三头肌"
+      ],
+      "setup": [
+        "坐姿，哑铃在胸前，掌心朝自己",
+        "背贴靠背"
+      ],
+      "steps": [
+        "边推起边旋转手腕，到顶端掌心朝前",
+        "顶端手臂接近伸直",
+        "下放时反向旋转回到起始"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "旋转太快失控",
+        "腰后仰"
+      ],
+      "safety": [
+        "肩部有撞击感时改普通推举"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-press",
+      "type": "strength",
+      "name": "哑铃过头推举",
+      "en": "Overhead Dumbbell Press",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "delt front",
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "delt side",
+        "腹直肌"
+      ],
+      "setup": [
+        "站立，双脚与髋同宽",
+        "哑铃举到肩旁，掌心朝前或相对",
+        "臀腹收紧"
+      ],
+      "steps": [
+        "向上推到头正上方",
+        "手臂接近伸直",
+        "控制下放到肩旁"
+      ],
+      "breathing": [
+        "下放（离心）时吸气",
+        "发力推起/拉起时呼气，重量大时可在最难点后再呼气"
+      ],
+      "mistakes": [
+        "腰过度后仰",
+        "肘过度外张",
+        "推起时耸肩",
+        "只推到一半"
+      ],
+      "safety": [
+        "腰部不适改坐姿"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "lat-raise",
+      "type": "strength",
+      "name": "坐姿侧平举",
+      "en": "Seated Lateral Raise",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "哑铃",
+        "凳"
+      ],
+      "muscles": [
+        "delt side"
+      ],
+      "auxiliary": [
+        "斜方肌",
+        "delt front"
+      ],
+      "setup": [
+        "坐在凳端，哑铃垂在体侧",
+        "上身挺直，肘微屈"
+      ],
+      "steps": [
+        "向两侧抬起到与肩同高",
+        "小拇指一侧略高，像倒水",
+        "慢慢放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "抬起呼气"
+      ],
+      "mistakes": [
+        "耸肩",
+        "借身体摆动",
+        "手高于肩太多",
+        "肘完全伸直锁死"
+      ],
+      "safety": [
+        "重量宜轻，肩部刺痛立即停止"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "lean-raise",
+      "type": "strength",
+      "name": "哑铃侧平举",
+      "en": "Leaning Dumbbell Lateral Raise",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "哑铃",
+        "立柱或架子"
+      ],
+      "muscles": [
+        "delt side"
+      ],
+      "auxiliary": [
+        "斜方肌"
+      ],
+      "setup": [
+        "一手扶住立柱，身体向外倾斜约 15°",
+        "另一只手握哑铃垂在体前"
+      ],
+      "steps": [
+        "向外侧抬起到与肩同高",
+        "控制放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "抬起呼气"
+      ],
+      "mistakes": [
+        "耸肩",
+        "借身体摆动",
+        "手高于肩太多",
+        "肘完全伸直锁死"
+      ],
+      "safety": [
+        "重量宜轻"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "front-raise",
+      "type": "strength",
+      "name": "绳索前平举",
+      "en": "Cable Front Raise",
+      "category": "肩",
+      "group": "肩",
+      "equipment": [
+        "龙门架",
+        "把手"
+      ],
+      "muscles": [
+        "delt front"
+      ],
+      "auxiliary": [
+        "delt side",
+        "胸大肌"
+      ],
+      "setup": [
+        "低位滑轮，背对或面对器械站立",
+        "手握把手在大腿前，肘微屈"
+      ],
+      "steps": [
+        "向前抬起到与肩同高",
+        "控制放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "抬起呼气"
+      ],
+      "mistakes": [
+        "身体后仰",
+        "抬得过高",
+        "耸肩"
+      ],
+      "safety": [
+        "重量宜轻"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bb-curl",
+      "type": "strength",
+      "name": "杠铃弯举",
+      "en": "Barbell Biceps Curl",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "杠铃或 EZ 杆"
+      ],
+      "muscles": [
+        "肱二头肌"
+      ],
+      "auxiliary": [
+        "forearm"
+      ],
+      "setup": [
+        "站直，双脚与髋同宽",
+        "上臂贴近身体两侧",
+        "反握杠铃，约与肩同宽"
+      ],
+      "steps": [
+        "只动肘关节，把杠铃弯举到胸前",
+        "顶端挤压 1 秒",
+        "慢慢放下到手臂伸直"
+      ],
+      "breathing": [
+        "放下吸气",
+        "举起呼气"
+      ],
+      "mistakes": [
+        "上臂前后摆动",
+        "身体后仰借力",
+        "下放不完全",
+        "手腕弯曲"
+      ],
+      "safety": [
+        "手腕不适改用 EZ 杆"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-curl",
+      "type": "strength",
+      "name": "哑铃弯举",
+      "en": "Standing Dumbbell Biceps Curl",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "肱二头肌"
+      ],
+      "auxiliary": [
+        "forearm"
+      ],
+      "setup": [
+        "站直，双脚与髋同宽",
+        "上臂贴近身体两侧",
+        "掌心朝前"
+      ],
+      "steps": [
+        "屈肘举起哑铃，可交替或同时",
+        "顶端挤压",
+        "控制放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "举起呼气"
+      ],
+      "mistakes": [
+        "上臂前后摆动",
+        "身体后仰借力",
+        "下放不完全",
+        "手腕弯曲"
+      ],
+      "safety": [
+        "肘部疼痛时减轻重量"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "hammer",
+      "type": "strength",
+      "name": "锤式弯举",
+      "en": "Dumbbell Hammer Curl",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "肱二头肌",
+        "forearm"
+      ],
+      "auxiliary": [],
+      "setup": [
+        "站直，双脚与髋同宽",
+        "上臂贴近身体两侧",
+        "掌心相对（中立握），像握锤子"
+      ],
+      "steps": [
+        "保持中立握屈肘上举",
+        "顶端停 1 秒",
+        "控制放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "举起呼气"
+      ],
+      "mistakes": [
+        "上臂前后摆动",
+        "身体后仰借力",
+        "下放不完全",
+        "手腕弯曲"
+      ],
+      "safety": [
+        "肘外侧不适减轻重量"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "cable-curl",
+      "type": "strength",
+      "name": "绳索弯举",
+      "en": "Cable Biceps Curl",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "龙门架",
+        "直杆或绳索"
+      ],
+      "muscles": [
+        "肱二头肌"
+      ],
+      "auxiliary": [
+        "forearm"
+      ],
+      "setup": [
+        "低位滑轮，面对器械站立",
+        "反握把手，上臂贴身"
+      ],
+      "steps": [
+        "屈肘把把手拉到胸前",
+        "顶端挤压",
+        "慢慢还原"
+      ],
+      "breathing": [
+        "还原吸气",
+        "弯举呼气"
+      ],
+      "mistakes": [
+        "上臂前后摆动",
+        "身体后仰借力",
+        "下放不完全",
+        "手腕弯曲"
+      ],
+      "safety": [
+        "重量以上臂不动为准"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "pressdown",
+      "type": "strength",
+      "name": "绳索下压",
+      "en": "Triceps Pressdown",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "龙门架",
+        "直杆或绳索"
+      ],
+      "muscles": [
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "forearm"
+      ],
+      "setup": [
+        "高位滑轮，面对器械站，上身微前倾",
+        "上臂贴住身体两侧，肘屈约 90°"
+      ],
+      "steps": [
+        "只动肘，把把手向下压到手臂伸直",
+        "底部挤压 1 秒",
+        "控制还原到肘约 90°"
+      ],
+      "breathing": [
+        "还原吸气",
+        "下压呼气"
+      ],
+      "mistakes": [
+        "肘离开身体前后移动",
+        "耸肩",
+        "身体压上去借力"
+      ],
+      "safety": [
+        "肘部疼痛时换绳索或减轻"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "oh-ext",
+      "type": "strength",
+      "name": "哑铃颈后臂屈伸",
+      "en": "Overhead Dumbbell Triceps Extension",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "哑铃",
+        "凳"
+      ],
+      "muscles": [
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "腹直肌"
+      ],
+      "setup": [
+        "坐直，双手托住一只哑铃举过头顶",
+        "上臂贴近耳朵，核心收紧"
+      ],
+      "steps": [
+        "屈肘让哑铃下放到头后",
+        "上臂保持不动",
+        "伸肘把哑铃推回头顶"
+      ],
+      "breathing": [
+        "下放吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "肘向两侧张开",
+        "腰后仰",
+        "下放太快"
+      ],
+      "safety": [
+        "肩活动度不足时改绳索下压",
+        "注意不要碰到头"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "skull",
+      "type": "strength",
+      "name": "仰卧臂屈伸",
+      "en": "Dumbbell Lying Triceps Extension",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "哑铃",
+        "卧推凳"
+      ],
+      "muscles": [
+        "肱三头肌"
+      ],
+      "auxiliary": [],
+      "setup": [
+        "仰卧凳上，双手各握哑铃举在肩上方",
+        "掌心相对"
+      ],
+      "steps": [
+        "上臂保持不动，屈肘让哑铃下放到头两侧",
+        "伸肘推回"
+      ],
+      "breathing": [
+        "下放吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "上臂前后摆动",
+        "肘外张",
+        "下放失控"
+      ],
+      "safety": [
+        "重量宜中等，别砸到头",
+        "肘疼时减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bench-dip",
+      "type": "strength",
+      "name": "凳上臂屈伸",
+      "en": "Bench Dip",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "凳"
+      ],
+      "muscles": [
+        "肱三头肌"
+      ],
+      "auxiliary": [
+        "胸大肌",
+        "delt front"
+      ],
+      "setup": [
+        "背对凳子，双手撑在凳边，手指朝前",
+        "双腿向前伸，脚跟着地（屈膝更容易）"
+      ],
+      "steps": [
+        "屈肘让身体下沉，直到上臂约与地面平行",
+        "伸肘把身体推起"
+      ],
+      "breathing": [
+        "下沉吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "下得太深",
+        "肩前耸",
+        "身体离凳太远"
+      ],
+      "safety": [
+        "肩前侧疼痛立即停止并减小深度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "dip",
+      "type": "strength",
+      "name": "双杠臂屈伸",
+      "en": "Body Weight Dip",
+      "category": "手臂",
+      "group": "手臂",
+      "equipment": [
+        "双杠"
+      ],
+      "muscles": [
+        "肱三头肌",
+        "胸大肌"
+      ],
+      "auxiliary": [
+        "delt front"
+      ],
+      "setup": [
+        "双手撑在双杠上，手臂伸直",
+        "肩胛下沉，身体微前倾"
+      ],
+      "steps": [
+        "屈肘下沉到上臂约与地面平行",
+        "伸肘撑起"
+      ],
+      "breathing": [
+        "下沉吸气",
+        "撑起呼气"
+      ],
+      "mistakes": [
+        "下得过深",
+        "耸肩",
+        "身体摆动"
+      ],
+      "safety": [
+        "肩痛立即停止",
+        "先从辅助版开始"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "back-squat",
+      "type": "strength",
+      "name": "杠铃深蹲",
+      "en": "Barbell Back Squat",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃",
+        "深蹲架"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "内收肌群",
+        "腘绳肌",
+        "竖脊肌",
+        "腹直肌"
+      ],
+      "setup": [
+        "杠铃放在斜方肌上沿（高杠）或后三角肌上（低杠），双手握紧压实",
+        "双脚略宽于肩，脚尖外转 15–30°",
+        "出杠后后退两三步站稳，全脚掌着地"
+      ],
+      "steps": [
+        "屈髋屈膝同时下蹲，膝盖跟随脚尖方向",
+        "蹲到大腿至少与地面平行，或在背不弯的前提下尽量深",
+        "脚掌发力推地站起，髋和肩同时上升"
+      ],
+      "breathing": [
+        "下蹲前深吸气、收紧腹部（腹内压）",
+        "站起过了最难点再呼气"
+      ],
+      "mistakes": [
+        "膝盖内扣",
+        "脚跟离地、重心前移到脚尖",
+        "起身时臀部先上、变成“早安式”",
+        "腰部在底部弯曲（骨盆后卷明显）"
+      ],
+      "safety": [
+        "在深蹲架内设好保护杆，高度略低于最低点",
+        "力竭前停组，不要独自做极限重量",
+        "膝、腰疼痛超过 3/10 立即停止"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/back-squat-male.webp",
+        "female": "assets/strength/back-squat-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "front-squat",
+      "type": "strength",
+      "name": "前蹲",
+      "en": "Barbell Front Squat",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃",
+        "深蹲架"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腹直肌",
+        "竖脊肌",
+        "内收肌群"
+      ],
+      "setup": [
+        "杠铃放在三角肌前束上，肘向前抬高",
+        "双脚略宽于肩，脚尖微外转"
+      ],
+      "steps": [
+        "保持肘抬高、上身直立下蹲",
+        "蹲到大腿至少平行",
+        "脚掌推地站起"
+      ],
+      "breathing": [
+        "下蹲前吸气并收紧腹部",
+        "站起过最难点后呼气"
+      ],
+      "mistakes": [
+        "膝盖内扣",
+        "脚跟离地",
+        "弓背",
+        "起身臀先上",
+        "肘下垂导致杠铃前滚"
+      ],
+      "safety": [
+        "架内设保护杆",
+        "手腕不适可用交叉握或助力带"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "goblet",
+      "type": "strength",
+      "name": "高脚杯深蹲",
+      "en": "Goblet Squat",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "哑铃或壶铃"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "内收肌群",
+        "腹直肌"
+      ],
+      "setup": [
+        "双手捧住哑铃一端或壶铃把手，贴在胸前",
+        "双脚略宽于肩，脚尖微外转"
+      ],
+      "steps": [
+        "屈髋屈膝下蹲，肘在两膝之间",
+        "上身尽量直立",
+        "脚掌推地站起"
+      ],
+      "breathing": [
+        "下蹲前吸气并收紧腹部",
+        "站起过最难点后呼气"
+      ],
+      "mistakes": [
+        "膝盖内扣",
+        "脚跟离地",
+        "弓背",
+        "起身臀先上"
+      ],
+      "safety": [
+        "膝痛时减少深度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/goblet-male.webp",
+        "female": "assets/strength/goblet-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-squat",
+      "type": "strength",
+      "name": "哑铃深蹲",
+      "en": "Dumbbell Squat",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "内收肌群",
+        "forearm"
+      ],
+      "setup": [
+        "双手各握哑铃垂在体侧",
+        "双脚与肩同宽"
+      ],
+      "steps": [
+        "下蹲到大腿接近平行",
+        "保持胸口挺起",
+        "推地站起"
+      ],
+      "breathing": [
+        "下蹲前吸气并收紧腹部",
+        "站起过最难点后呼气"
+      ],
+      "mistakes": [
+        "膝盖内扣",
+        "脚跟离地",
+        "弓背",
+        "起身臀先上"
+      ],
+      "safety": [
+        "握力先于腿疲劳时可用助力带"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "leg-press",
+      "type": "strength",
+      "name": "腿举",
+      "en": "Leg Press",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "腿举机"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "内收肌群"
+      ],
+      "setup": [
+        "背和臀贴紧靠背",
+        "双脚放在踏板中部，与髋同宽",
+        "打开安全锁前先伸腿"
+      ],
+      "steps": [
+        "屈膝让踏板下降到膝约 90°",
+        "脚掌发力推回，膝不锁死"
+      ],
+      "breathing": [
+        "下放吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "下得太深导致臀部离垫、下背卷起",
+        "膝盖锁死",
+        "膝内扣"
+      ],
+      "safety": [
+        "结束时先锁上安全锁",
+        "下背离垫立即减小深度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bb-dl",
+      "type": "strength",
+      "name": "杠铃硬拉",
+      "en": "Barbell Deadlift",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃"
+      ],
+      "muscles": [
+        "臀大肌",
+        "腘绳肌",
+        "竖脊肌"
+      ],
+      "auxiliary": [
+        "股四头肌",
+        "斜方肌",
+        "forearm",
+        "背阔肌"
+      ],
+      "setup": [
+        "杠铃在脚中线上方，双脚与髋同宽",
+        "屈髋屈膝握杠，握距在腿外侧",
+        "背平直，胸口挺起，拉紧杠铃"
+      ],
+      "steps": [
+        "脚推地，杠铃贴腿上升",
+        "杠过膝后伸髋站直",
+        "沿原路控制放回地面"
+      ],
+      "breathing": [
+        "起拉前深吸气、收紧腹部",
+        "站直后呼气，再吸气准备下一次"
+      ],
+      "mistakes": [
+        "弓背",
+        "杠离身体太远",
+        "先抬臀再抬上身",
+        "顶端过度后仰"
+      ],
+      "safety": [
+        "腰背疼痛立即停止",
+        "从合适高度开始（必要时垫高）"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/bb-dl-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "rdl",
+      "type": "strength",
+      "name": "罗马尼亚硬拉",
+      "en": "Barbell Straight Leg Deadlift",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃"
+      ],
+      "muscles": [
+        "腘绳肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "竖脊肌",
+        "forearm"
+      ],
+      "setup": [
+        "站直握杠于大腿前，膝微屈",
+        "背平直，肩胛收紧"
+      ],
+      "steps": [
+        "臀部向后推，杠铃贴腿下滑",
+        "下到腘绳肌有明显拉伸（通常过膝到小腿中段）",
+        "伸髋站直"
+      ],
+      "breathing": [
+        "下放吸气",
+        "站起呼气"
+      ],
+      "mistakes": [
+        "弓背",
+        "屈膝变成深蹲",
+        "杠离开腿"
+      ],
+      "safety": [
+        "腰部不适减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/rdl-male.webp",
+        "female": "assets/strength/rdl-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-rdl",
+      "type": "strength",
+      "name": "单腿哑铃硬拉",
+      "en": "Single Leg Romanian Deadlift With Dumbbell",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "腘绳肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "glute med",
+        "竖脊肌",
+        "腹直肌",
+        "feet"
+      ],
+      "setup": [
+        "单腿站立，支撑腿膝微屈",
+        "另一侧手握哑铃"
+      ],
+      "steps": [
+        "身体前倾，后腿向后抬，身体和后腿成一条直线",
+        "髋部保持朝下不外翻",
+        "回到站立"
+      ],
+      "breathing": [
+        "下放吸气",
+        "站起呼气"
+      ],
+      "mistakes": [
+        "髋部翻开",
+        "弓背",
+        "失去平衡快速下放"
+      ],
+      "safety": [
+        "扶墙或扶杆练平衡"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/db-rdl-male.webp",
+        "female": "assets/strength/db-rdl-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "sumo",
+      "type": "strength",
+      "name": "相扑硬拉",
+      "en": "Sumo Deadlift",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃"
+      ],
+      "muscles": [
+        "臀大肌",
+        "股四头肌",
+        "内收肌群"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "竖脊肌"
+      ],
+      "setup": [
+        "双脚宽站，脚尖外转约 45°",
+        "手在两腿内侧握杠，约与肩同宽",
+        "膝盖向外顶，背平直"
+      ],
+      "steps": [
+        "腿推地向两侧撑开站起",
+        "杠贴身体上升",
+        "伸髋站直，控制放回"
+      ],
+      "breathing": [
+        "起拉前深吸气、收紧腹部",
+        "站直后呼气，再吸气准备下一次"
+      ],
+      "mistakes": [
+        "弓背",
+        "杠离身体太远",
+        "先抬臀再抬上身",
+        "顶端过度后仰",
+        "膝盖内扣"
+      ],
+      "safety": [
+        "髋内收肌不适减小站距"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "trap-dl",
+      "type": "strength",
+      "name": "六角杠硬拉",
+      "en": "Trap Bar Deadlift",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "六角杠"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "竖脊肌",
+        "斜方肌"
+      ],
+      "setup": [
+        "站在六角杠中间，双脚与髋同宽",
+        "屈髋屈膝握住两侧把手",
+        "背平直，胸口挺起"
+      ],
+      "steps": [
+        "腿推地站起",
+        "伸髋站直",
+        "控制放回"
+      ],
+      "breathing": [
+        "起拉前深吸气、收紧腹部",
+        "站直后呼气，再吸气准备下一次"
+      ],
+      "mistakes": [
+        "弓背",
+        "膝内扣"
+      ],
+      "safety": [
+        "腰背疼痛立即停止"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "db-lunge",
+      "type": "strength",
+      "name": "哑铃弓步",
+      "en": "Dumbbell Lunge",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "哑铃"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "内收肌群",
+        "腘绳肌",
+        "glute med"
+      ],
+      "setup": [
+        "双手各握哑铃垂在体侧",
+        "站直，双脚与髋同宽"
+      ],
+      "steps": [
+        "一腿向前跨一大步",
+        "屈双膝下沉，后膝接近地面",
+        "前脚推地回到起始，换腿"
+      ],
+      "breathing": [
+        "下沉吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "前膝内扣",
+        "上身前倾过多",
+        "步幅太小导致前脚跟抬起",
+        "后膝重重砸地"
+      ],
+      "safety": [
+        "膝痛时改后撤步弓步"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/db-lunge-male.webp",
+        "female": "assets/strength/db-lunge-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "walk-lunge",
+      "type": "strength",
+      "name": "行走弓步",
+      "en": "Walking Lunge",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "无器械或哑铃"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "内收肌群",
+        "腘绳肌",
+        "glute med"
+      ],
+      "setup": [
+        "站直，确保前方有足够空间"
+      ],
+      "steps": [
+        "向前跨步下沉",
+        "后脚直接向前迈成下一步",
+        "连续行进"
+      ],
+      "breathing": [
+        "下沉吸气",
+        "起身呼气"
+      ],
+      "mistakes": [
+        "前膝内扣",
+        "上身前倾过多",
+        "步幅太小导致前脚跟抬起",
+        "后膝重重砸地",
+        "左右摇晃"
+      ],
+      "safety": [
+        "地面防滑，保持平衡"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "rev-lunge",
+      "type": "strength",
+      "name": "杠铃后撤步弓步",
+      "en": "Barbell Reverse Lunge",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃",
+        "深蹲架"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "内收肌群",
+        "腹直肌"
+      ],
+      "setup": [
+        "杠铃放在上背，出杠站稳",
+        "双脚与髋同宽"
+      ],
+      "steps": [
+        "一腿向后撤一大步",
+        "下沉到后膝接近地面",
+        "前脚推地收回，换腿"
+      ],
+      "breathing": [
+        "下沉吸气",
+        "起身呼气"
+      ],
+      "mistakes": [
+        "前膝内扣",
+        "上身前倾过多",
+        "步幅太小导致前脚跟抬起",
+        "后膝重重砸地"
+      ],
+      "safety": [
+        "平衡不好先用哑铃",
+        "架内设保护杆"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bss",
+      "type": "strength",
+      "name": "保加利亚分腿蹲",
+      "en": "Dumbbell Bulgarian Split Squat",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "凳",
+        "哑铃"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "内收肌群",
+        "腘绳肌",
+        "glute med",
+        "feet"
+      ],
+      "setup": [
+        "背对凳子，后脚脚背放在凳上",
+        "前脚向前约一大步",
+        "双手各握哑铃"
+      ],
+      "steps": [
+        "垂直下沉，前大腿接近平行",
+        "前脚推地站起",
+        "做完一侧再换"
+      ],
+      "breathing": [
+        "下沉吸气",
+        "起身呼气"
+      ],
+      "mistakes": [
+        "前脚离凳太近",
+        "前膝内扣",
+        "后腿发力"
+      ],
+      "safety": [
+        "先徒手找好距离",
+        "扶杆练平衡"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/bss-male.webp",
+        "female": "assets/strength/bss-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "leg-curl",
+      "type": "strength",
+      "name": "腿弯举",
+      "en": "Leg Curl",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "腿弯举机"
+      ],
+      "muscles": [
+        "腘绳肌"
+      ],
+      "auxiliary": [
+        "小腿三头肌"
+      ],
+      "setup": [
+        "俯卧在器械上，护垫在跟腱上方",
+        "膝盖对准器械转轴",
+        "双手握扶手"
+      ],
+      "steps": [
+        "屈膝把护垫勾向臀部",
+        "顶端停 1 秒",
+        "慢慢放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "勾起呼气"
+      ],
+      "mistakes": [
+        "臀部翘起",
+        "放下太快",
+        "甩动借力"
+      ],
+      "safety": [
+        "腘绳肌抽筋立即停止并拉伸"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "good-morning",
+      "type": "strength",
+      "name": "早安式",
+      "en": "Good Morning",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃"
+      ],
+      "muscles": [
+        "腘绳肌",
+        "竖脊肌"
+      ],
+      "auxiliary": [
+        "臀大肌"
+      ],
+      "setup": [
+        "杠铃放在上背，双脚与髋同宽",
+        "膝微屈，背平直"
+      ],
+      "steps": [
+        "臀部向后推，上身前倾到接近水平（以背不弯为准）",
+        "伸髋回到站立"
+      ],
+      "breathing": [
+        "下放吸气",
+        "站起呼气"
+      ],
+      "mistakes": [
+        "弓背",
+        "屈膝过多"
+      ],
+      "safety": [
+        "从很轻重量开始，腰背不适立即停止"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "calf",
+      "type": "strength",
+      "name": "站姿提踵",
+      "en": "Standing Calf Raise",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "稳固台阶"
+      ],
+      "muscles": [
+        "小腿三头肌"
+      ],
+      "auxiliary": [
+        "feet"
+      ],
+      "setup": [
+        "前脚掌踩在台阶边缘，脚跟悬空",
+        "手扶墙或扶手保持平衡"
+      ],
+      "steps": [
+        "脚跟慢慢下放到小腿有拉伸感",
+        "用前脚掌推起到最高",
+        "顶端停 1 秒"
+      ],
+      "breathing": [
+        "下放吸气",
+        "提踵呼气"
+      ],
+      "mistakes": [
+        "弹跳借力",
+        "幅度太小",
+        "膝盖锁死"
+      ],
+      "safety": [
+        "跟腱疼痛时只在平地做"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/calf-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bb-calf",
+      "type": "strength",
+      "name": "杠铃提踵",
+      "en": "Standing Barbell Calf Raise",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "杠铃",
+        "深蹲架"
+      ],
+      "muscles": [
+        "小腿三头肌"
+      ],
+      "auxiliary": [
+        "腹直肌",
+        "feet"
+      ],
+      "setup": [
+        "杠铃放在上背，站在架内",
+        "可站在杠铃片上增加幅度"
+      ],
+      "steps": [
+        "脚跟下放",
+        "前脚掌推起到最高",
+        "停 1 秒"
+      ],
+      "breathing": [
+        "下放吸气",
+        "提踵呼气"
+      ],
+      "mistakes": [
+        "弹跳借力",
+        "幅度太小",
+        "膝盖锁死",
+        "身体前后晃"
+      ],
+      "safety": [
+        "架内设保护杆"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "seat-calf",
+      "type": "strength",
+      "name": "坐姿提踵",
+      "en": "Seated Calf Raise",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "坐姿提踵机或凳+哑铃"
+      ],
+      "muscles": [
+        "小腿三头肌"
+      ],
+      "auxiliary": [
+        "feet"
+      ],
+      "setup": [
+        "坐姿，前脚掌踩在踏板上",
+        "护垫或重量压在膝盖上方"
+      ],
+      "steps": [
+        "脚跟下放",
+        "用前脚掌把膝盖推高",
+        "停 1 秒"
+      ],
+      "breathing": [
+        "下放吸气",
+        "提踵呼气"
+      ],
+      "mistakes": [
+        "弹跳借力",
+        "幅度太小",
+        "膝盖锁死"
+      ],
+      "safety": [
+        "跟腱疼痛时减轻"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "step-up",
+      "type": "strength",
+      "name": "登阶",
+      "en": "Step Up",
+      "category": "腿",
+      "group": "腿",
+      "equipment": [
+        "稳固台阶",
+        "哑铃（可选）"
+      ],
+      "muscles": [
+        "股四头肌",
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "glute med",
+        "小腿三头肌",
+        "feet"
+      ],
+      "setup": [
+        "面对台阶站立，台阶约膝盖高",
+        "一只脚整个放在台阶上"
+      ],
+      "steps": [
+        "上面那条腿发力把身体推上台阶站直",
+        "后脚不要蹬地借力",
+        "控制下放，做完一侧换腿"
+      ],
+      "breathing": [
+        "上台阶呼气",
+        "下放吸气"
+      ],
+      "mistakes": [
+        "后脚蹬地",
+        "膝内扣",
+        "台阶太高"
+      ],
+      "safety": [
+        "确认台阶稳固不滑"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/step-up-male.webp",
+        "female": "assets/strength/step-up-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "hip-thrust",
+      "type": "strength",
+      "name": "杠铃臀推",
+      "en": "Barbell Hip Thrust With Bench",
+      "category": "臀",
+      "group": "臀",
+      "equipment": [
+        "杠铃",
+        "凳",
+        "杠铃垫"
+      ],
+      "muscles": [
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "股四头肌",
+        "腹直肌"
+      ],
+      "setup": [
+        "上背（肩胛下缘）靠在凳边",
+        "杠铃加垫子放在髋部",
+        "双脚与髋同宽踩地，膝约 90°"
+      ],
+      "steps": [
+        "脚跟推地，伸髋把杠铃推起",
+        "顶端身体从肩到膝成一条直线，夹紧臀部",
+        "控制下放"
+      ],
+      "breathing": [
+        "下放吸气",
+        "推起呼气"
+      ],
+      "mistakes": [
+        "顶端腰过度后仰",
+        "脚离太远变腘绳肌发力",
+        "颈部过度后仰"
+      ],
+      "safety": [
+        "杠铃一定加垫",
+        "腰部不适时降低重量"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/hip-thrust-male.webp",
+        "female": "assets/strength/hip-thrust-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "glute-bridge",
+      "type": "strength",
+      "name": "臀桥",
+      "en": "Hip Raise",
+      "category": "臀",
+      "group": "臀",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "腹直肌"
+      ],
+      "setup": [
+        "仰卧屈膝，双脚与髋同宽踩地",
+        "双手放在身体两侧"
+      ],
+      "steps": [
+        "脚跟推地抬起臀部",
+        "顶端肩、髋、膝成一条直线，夹紧臀部",
+        "慢慢放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "抬起呼气"
+      ],
+      "mistakes": [
+        "腰过度后仰",
+        "脚离臀部太远"
+      ],
+      "safety": [
+        "腰痛时减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "single-hip",
+      "type": "strength",
+      "name": "单腿臀桥",
+      "en": "Single Leg Hip Raise",
+      "category": "臀",
+      "group": "臀",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "臀大肌"
+      ],
+      "auxiliary": [
+        "腘绳肌",
+        "glute med",
+        "腹直肌"
+      ],
+      "setup": [
+        "仰卧屈膝，一腿伸直抬起",
+        "双手放两侧"
+      ],
+      "steps": [
+        "支撑腿脚跟推地抬起臀部",
+        "骨盆保持水平不歪",
+        "慢慢放下，做完一侧换边"
+      ],
+      "breathing": [
+        "放下吸气",
+        "抬起呼气"
+      ],
+      "mistakes": [
+        "骨盆一侧下沉",
+        "腰后仰"
+      ],
+      "safety": [
+        "腘绳肌抽筋时缩短距离"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "kb-swing",
+      "type": "strength",
+      "name": "壶铃摆荡",
+      "en": "Kettlebell Swing",
+      "category": "臀",
+      "group": "臀",
+      "equipment": [
+        "壶铃"
+      ],
+      "muscles": [
+        "臀大肌",
+        "腘绳肌"
+      ],
+      "auxiliary": [
+        "竖脊肌",
+        "腹直肌",
+        "forearm",
+        "delt front"
+      ],
+      "setup": [
+        "双脚略宽于肩，壶铃放在前方约一脚距离",
+        "屈髋俯身握住壶铃，背平直"
+      ],
+      "steps": [
+        "把壶铃向后摆到两腿之间",
+        "臀部爆发前推，把壶铃荡到约胸口高度",
+        "手臂只是“绳子”，不主动举",
+        "壶铃回落时顺势屈髋"
+      ],
+      "breathing": [
+        "向后摆时吸气",
+        "顶端呼气"
+      ],
+      "mistakes": [
+        "用手臂举壶铃",
+        "变成深蹲",
+        "顶端后仰",
+        "弓背"
+      ],
+      "safety": [
+        "周围留出空间",
+        "先学会髋铰链再加重"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/kb-swing-male.webp",
+        "female": "assets/strength/kb-swing-female.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "side-leg",
+      "type": "strength",
+      "name": "侧卧抬腿",
+      "en": "Side Lying Leg Raise",
+      "category": "臀",
+      "group": "臀",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "glute med"
+      ],
+      "auxiliary": [
+        "腹斜肌"
+      ],
+      "setup": [
+        "侧卧，下方手臂枕头，双腿伸直叠放",
+        "身体成一条直线"
+      ],
+      "steps": [
+        "上方腿伸直向上抬起约 30–45°",
+        "脚尖朝前或略向下",
+        "慢慢放下"
+      ],
+      "breathing": [
+        "放下吸气",
+        "抬起呼气"
+      ],
+      "mistakes": [
+        "身体后翻",
+        "腿向前摆",
+        "抬得过高"
+      ],
+      "safety": [
+        "髋外侧不适时减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "farmer",
+      "type": "strength",
+      "name": "农夫行走",
+      "en": "Farmers Walk",
+      "category": "全身",
+      "group": "全身",
+      "equipment": [
+        "哑铃或壶铃"
+      ],
+      "muscles": [
+        "forearm",
+        "斜方肌"
+      ],
+      "auxiliary": [
+        "腹直肌",
+        "臀大肌",
+        "股四头肌",
+        "腹斜肌",
+        "feet"
+      ],
+      "setup": [
+        "双手各握较重的哑铃或壶铃，站直",
+        "肩胛下沉，核心收紧"
+      ],
+      "steps": [
+        "小步稳定向前走",
+        "保持身体直立不左右晃",
+        "走完距离或时间后放下"
+      ],
+      "breathing": [
+        "自然呼吸，不要憋气"
+      ],
+      "mistakes": [
+        "耸肩",
+        "身体侧弯",
+        "步子太大"
+      ],
+      "safety": [
+        "放下时屈髋屈膝，像硬拉"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "plank",
+      "type": "strength",
+      "name": "平板支撑",
+      "en": "Plank",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌"
+      ],
+      "auxiliary": [
+        "腹斜肌",
+        "delt front",
+        "臀大肌",
+        "股四头肌"
+      ],
+      "setup": [
+        "前臂撑地，肘在肩正下方",
+        "双脚并拢或与髋同宽，脚尖撑地"
+      ],
+      "steps": [
+        "收紧腹部和臀部，身体从头到脚跟成一条直线",
+        "保持规定时间"
+      ],
+      "breathing": [
+        "自然呼吸，不憋气"
+      ],
+      "mistakes": [
+        "塌腰或撅臀",
+        "憋气",
+        "耸肩",
+        "低头"
+      ],
+      "safety": [
+        "腰痛时停止并改跪姿平板"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 30,
+        "unit": "秒",
+        "restSec": 75
+      },
+      "assets": {
+        "male": "assets/strength/plank-male.webp"
+      },
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "side-plank",
+      "type": "strength",
+      "name": "侧平板",
+      "en": "Side Plank",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹斜肌"
+      ],
+      "auxiliary": [
+        "腹直肌",
+        "glute med",
+        "delt side"
+      ],
+      "setup": [
+        "侧卧，肘在肩正下方撑地",
+        "双腿伸直叠放或前后放"
+      ],
+      "steps": [
+        "抬起臀部，身体成一条直线",
+        "保持规定时间，再换边"
+      ],
+      "breathing": [
+        "自然呼吸"
+      ],
+      "mistakes": [
+        "臀部下沉",
+        "身体前后翻",
+        "耸肩"
+      ],
+      "safety": [
+        "肩部不适改屈膝版本"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 30,
+        "unit": "秒",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "knee-plank",
+      "type": "strength",
+      "name": "跪姿平板",
+      "en": "Kneeling Plank",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌"
+      ],
+      "auxiliary": [
+        "腹斜肌",
+        "delt front"
+      ],
+      "setup": [
+        "前臂撑地，肘在肩正下方",
+        "双膝着地"
+      ],
+      "steps": [
+        "收紧腹部，从头到膝成一条直线",
+        "保持规定时间"
+      ],
+      "breathing": [
+        "自然呼吸"
+      ],
+      "mistakes": [
+        "塌腰或撅臀",
+        "憋气",
+        "耸肩",
+        "低头"
+      ],
+      "safety": [
+        "膝下垫软垫"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 30,
+        "unit": "秒",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "climber",
+      "type": "strength",
+      "name": "登山者",
+      "en": "Mountain Climber",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械"
+      ],
+      "muscles": [
+        "腹直肌",
+        "髋屈肌群"
+      ],
+      "auxiliary": [
+        "delt front",
+        "股四头肌",
+        "腹斜肌"
+      ],
+      "setup": [
+        "俯卧撑顶端姿势，手在肩正下方",
+        "身体成一条直线"
+      ],
+      "steps": [
+        "一侧膝盖向胸口拉",
+        "快速换腿，像原地跑",
+        "臀部保持不抬高"
+      ],
+      "breathing": [
+        "保持节奏呼吸"
+      ],
+      "mistakes": [
+        "臀部翘起",
+        "手不在肩下方",
+        "速度太快动作变形"
+      ],
+      "safety": [
+        "手腕不适用拳撑"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "dead-bug",
+      "type": "strength",
+      "name": "死虫",
+      "en": "Dead Bug",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌"
+      ],
+      "auxiliary": [
+        "腹斜肌",
+        "髋屈肌群"
+      ],
+      "setup": [
+        "仰卧，双臂垂直伸向天花板",
+        "髋膝都屈 90°（桌面式）",
+        "下背轻压地面"
+      ],
+      "steps": [
+        "同时伸展对侧的手臂和腿，接近地面",
+        "下背不离地",
+        "回到起始，换另一侧"
+      ],
+      "breathing": [
+        "伸展时呼气",
+        "收回时吸气"
+      ],
+      "mistakes": [
+        "下背拱起",
+        "动作太快",
+        "憋气"
+      ],
+      "safety": [
+        "腰部不适时减小伸展幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "crunch",
+      "type": "strength",
+      "name": "卷腹",
+      "en": "Crunch",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌"
+      ],
+      "auxiliary": [
+        "腹斜肌"
+      ],
+      "setup": [
+        "仰卧屈膝，双脚踩地",
+        "双手轻放耳旁或胸前"
+      ],
+      "steps": [
+        "腹部发力卷起上背，肩胛离地",
+        "下背保持贴地",
+        "慢慢放下"
+      ],
+      "breathing": [
+        "卷起时呼气",
+        "放下时吸气"
+      ],
+      "mistakes": [
+        "用手抱头拉脖子",
+        "借惯性甩起",
+        "下放太快"
+      ],
+      "safety": [
+        "颈部不适时手托头但不拉"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "bicycle",
+      "type": "strength",
+      "name": "自行车卷腹",
+      "en": "Bicycle Crunch",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌",
+        "腹斜肌"
+      ],
+      "auxiliary": [
+        "髋屈肌群"
+      ],
+      "setup": [
+        "仰卧，双手轻放耳旁",
+        "双腿抬起，屈膝"
+      ],
+      "steps": [
+        "肩胛离地，一侧肘转向对侧膝",
+        "另一腿伸直，交替进行",
+        "动作像骑自行车"
+      ],
+      "breathing": [
+        "转体时呼气"
+      ],
+      "mistakes": [
+        "用手抱头拉脖子",
+        "借惯性甩起",
+        "下放太快",
+        "只动肘不转上身"
+      ],
+      "safety": [
+        "下背离地时把腿抬高一些"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "russian",
+      "type": "strength",
+      "name": "俄罗斯转体",
+      "en": "Russian Twist",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械或负重"
+      ],
+      "muscles": [
+        "腹斜肌"
+      ],
+      "auxiliary": [
+        "腹直肌",
+        "髋屈肌群"
+      ],
+      "setup": [
+        "坐在垫上，屈膝，上身后仰约 45°",
+        "双手合握在胸前"
+      ],
+      "steps": [
+        "躯干向一侧转，手靠近地面",
+        "再转向另一侧",
+        "保持胸口挺起"
+      ],
+      "breathing": [
+        "转动时呼气"
+      ],
+      "mistakes": [
+        "只摆手臂不转躯干",
+        "弓背",
+        "速度太快"
+      ],
+      "safety": [
+        "腰部不适时双脚着地、减小幅度"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "situp",
+      "type": "strength",
+      "name": "仰卧起坐",
+      "en": "Sit Up",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌",
+        "髋屈肌群"
+      ],
+      "auxiliary": [
+        "腹斜肌"
+      ],
+      "setup": [
+        "仰卧屈膝，双脚踩地（可固定）",
+        "双手交叉胸前"
+      ],
+      "steps": [
+        "腹部发力卷起，坐到上身接近直立",
+        "控制放下，一节一节贴地"
+      ],
+      "breathing": [
+        "起身呼气",
+        "放下吸气"
+      ],
+      "mistakes": [
+        "用手抱头拉脖子",
+        "借惯性甩起",
+        "下放太快"
+      ],
+      "safety": [
+        "腰痛时改卷腹"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "vup",
+      "type": "strength",
+      "name": "两头起",
+      "en": "V Up",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "无器械",
+        "垫子"
+      ],
+      "muscles": [
+        "腹直肌",
+        "髋屈肌群"
+      ],
+      "auxiliary": [
+        "腹斜肌"
+      ],
+      "setup": [
+        "仰卧，双臂伸过头顶，双腿伸直"
+      ],
+      "steps": [
+        "同时抬起上身和双腿，双手去够脚尖",
+        "身体成 V 字",
+        "控制放下"
+      ],
+      "breathing": [
+        "起时呼气",
+        "落时吸气"
+      ],
+      "mistakes": [
+        "甩动借力",
+        "腿屈太多",
+        "落地太快"
+      ],
+      "safety": [
+        "腰部不适时改屈膝两头起"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "knee-raise",
+      "type": "strength",
+      "name": "悬垂举膝",
+      "en": "Hanging Knee Raise",
+      "category": "核心",
+      "group": "核心",
+      "equipment": [
+        "单杠"
+      ],
+      "muscles": [
+        "腹直肌",
+        "髋屈肌群"
+      ],
+      "auxiliary": [
+        "forearm",
+        "背阔肌"
+      ],
+      "setup": [
+        "正握单杠悬垂，肩胛下沉",
+        "身体保持稳定不摆"
+      ],
+      "steps": [
+        "收腹把膝盖抬向胸口",
+        "骨盆微微后卷",
+        "控制放下"
+      ],
+      "breathing": [
+        "抬起时呼气"
+      ],
+      "mistakes": [
+        "身体前后荡",
+        "只抬到 90° 不卷骨盆",
+        "下放太快"
+      ],
+      "safety": [
+        "握力不足时用助力带"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "burpee",
+      "type": "strength",
+      "name": "波比跳",
+      "en": "Burpee",
+      "category": "全身",
+      "group": "全身",
+      "equipment": [
+        "无器械"
+      ],
+      "muscles": [
+        "股四头肌",
+        "胸大肌"
+      ],
+      "auxiliary": [
+        "臀大肌",
+        "腹直肌",
+        "肱三头肌",
+        "delt front",
+        "小腿三头肌"
+      ],
+      "setup": [
+        "站直，双脚与肩同宽"
+      ],
+      "steps": [
+        "下蹲双手撑地",
+        "双脚跳回成俯卧撑姿势（可加一个俯卧撑）",
+        "双脚跳回手旁",
+        "向上跳起，双手过头"
+      ],
+      "breathing": [
+        "保持节奏，落地时呼气"
+      ],
+      "mistakes": [
+        "塌腰",
+        "落地膝内扣",
+        "动作太快变形"
+      ],
+      "safety": [
+        "落地要轻，用前脚掌缓冲"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "次",
+        "restSec": 75
+      },
+      "assets": {},
+      "hasExisting3D": true,
+      "source": "preserved-existing-strength3d-data",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-001",
+      "type": "running",
+      "name": "站姿-跑姿对齐",
+      "en": "Standing Running Posture Check",
+      "category": "身体姿态与摆臂",
+      "group": "身体姿态与摆臂",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "双脚自然站立并放松肩颈",
+        "轻微提起胸廓但不挺腰",
+        "从侧面检查耳、肩、骨盆的整体关系"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "故意后仰挺腰",
+        "耸肩锁死"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-002",
+      "type": "running",
+      "name": "原地跑步摆臂",
+      "en": "Stationary Running Arm Drive",
+      "category": "身体姿态与摆臂",
+      "group": "身体姿态与摆臂",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "站立或前后错步",
+        "肘自然弯曲并以前后方向摆动",
+        "逐渐提速但肩颈保持放松"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "握拳过紧",
+        "上身左右转动"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {
+        "male": "assets/running/quick-switch-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-003",
+      "type": "running",
+      "name": "原地对侧手脚配合",
+      "en": "Contralateral Arm-Leg Coordination",
+      "category": "身体姿态与摆臂",
+      "group": "身体姿态与摆臂",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "慢速交替抬腿",
+        "对侧手臂自然向前",
+        "保持呼吸和肩膀放松"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "同侧手脚同时前摆",
+        "抬腿过高牺牲稳定"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-004",
+      "type": "running",
+      "name": "骨盆稳定行进",
+      "en": "Pelvic Control March",
+      "category": "身体姿态与摆臂",
+      "group": "身体姿态与摆臂",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "缓慢抬一侧腿到舒适高度",
+        "保持骨盆尽量平稳而非僵硬",
+        "行进时左右交替"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "骨盆过度倾斜",
+        "腰部代偿后仰"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 30
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-005",
+      "type": "running",
+      "name": "平稳头部的小步跑",
+      "en": "Quiet-Head Jog Drill",
+      "category": "身体姿态与摆臂",
+      "group": "身体姿态与摆臂",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "用轻松短步进行慢跑",
+        "观察头与肩是否有多余摆动",
+        "自然呼吸并维持稳定节奏"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "下意识憋气",
+        "为了不动而僵硬收紧"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 30
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-006",
+      "type": "running",
+      "name": "手臂节奏-慢快慢",
+      "en": "Arm Rhythm Change",
+      "category": "身体姿态与摆臂",
+      "group": "身体姿态与摆臂",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "原地摆臂10秒舒适节奏",
+        "提速5秒但不紧绷",
+        "回到舒适节奏10秒"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "快时耸肩",
+        "手越过身体中线"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-007",
+      "type": "running",
+      "name": "A式行进",
+      "en": "A-March",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "站姿自然拉高身体",
+        "交替抬膝至可控制高度并向前行进",
+        "支撑腿稳定、手脚协调"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "猛抬膝导致后仰",
+        "落脚刻意砸地"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 30
+      },
+      "assets": {
+        "male": "assets/running/a-march-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-008",
+      "type": "running",
+      "name": "A式跳步",
+      "en": "A-Skip",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做A-March",
+        "在每次换腿时加入轻微跳步",
+        "保持节奏而非追求膝盖最高"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "过度踮脚",
+        "抬膝越高越好"
+      ],
+      "safety": [
+        "近期足踝、跟腱或小腿疼痛者慎用跳步，必要时先选行进版本。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {
+        "male": "assets/running/a-skip-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-009",
+      "type": "running",
+      "name": "Running A快频",
+      "en": "Running A Fast Rhythm",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "完成A-Skip熟悉节奏",
+        "缩小动作幅度并提高交替频率",
+        "保持躯干不后仰"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "为了频率变成原地乱踩",
+        "臀部后坐"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {
+        "male": "assets/running/quick-steps-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-010",
+      "type": "running",
+      "name": "踝关节小步跑",
+      "en": "Ankling",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "以短小步幅向前移动",
+        "脚踝轻柔完成自然支撑与离地",
+        "逐步建立均匀节奏"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "刻意前脚掌一直着地",
+        "小腿紧绷"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 30
+      },
+      "assets": {
+        "male": "assets/running/quick-steps-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-011",
+      "type": "running",
+      "name": "低位运腿循环",
+      "en": "Low Dribble",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "轻微弯曲髋膝做低位循环",
+        "脚从身体附近快速回收",
+        "保持向前小步移动"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "脚离身体过远",
+        "低头追脚"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 30
+      },
+      "assets": {
+        "male": "assets/running/quick-steps-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-012",
+      "type": "running",
+      "name": "中位运腿循环",
+      "en": "Mid Dribble",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在低位运腿稳定后增加抬腿高度",
+        "保持脚在体侧附近循环",
+        "小距离连续移动"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "猛踢小腿",
+        "躯干后仰"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-013",
+      "type": "running",
+      "name": "高位运腿循环",
+      "en": "High Dribble",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从中位运腿逐步加大动作",
+        "逐渐提高速度但保持上身自然",
+        "动作质量下降即停止"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "抬腿过高导致后坐",
+        "主动向前伸小腿"
+      ],
+      "safety": [
+        "需要熟悉中位运腿且具备足够下肢耐受；避免疲劳时强行高速执行。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-014",
+      "type": "running",
+      "name": "单侧快腿交替",
+      "en": "Fast-Leg Alternations",
+      "category": "步态协调与运腿",
+      "group": "步态协调与运腿",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "慢速跑姿行进",
+        "每第三步在一侧做较快的抬回腿动作",
+        "左右各做一段并恢复正常节奏"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "左右过度不对称",
+        "上身扭转"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-015",
+      "type": "running",
+      "name": "双脚低幅弹跳",
+      "en": "Double-Leg Low Pogos",
+      "category": "支撑与足踝弹性",
+      "group": "支撑与足踝弹性",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "原地微屈膝站立",
+        "双脚以小幅连续跳跃",
+        "保持动作轻巧且膝踝自然配合"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "追求高跳",
+        "落地声音越来越重"
+      ],
+      "safety": [
+        "小腿/足跟疼痛、近期骨应力问题或不适者避免弹跳冲击；训练负荷需要累计管理。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 8,
+        "unit": "次",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-016",
+      "type": "running",
+      "name": "交替脚低幅弹跳",
+      "en": "Alternating Low Pogos",
+      "category": "支撑与足踝弹性",
+      "group": "支撑与足踝弹性",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做双脚低幅弹跳",
+        "每次轻微换重心到另一只脚",
+        "左右交替保持轻落地"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "急着加快造成外翻内翻失控",
+        "接触声变重"
+      ],
+      "safety": [
+        "足踝不稳定或跟腱/小腿疼痛者先避免。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 8,
+        "unit": "次",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-017",
+      "type": "running",
+      "name": "单脚低幅弹跳",
+      "en": "Single-Leg Low Pogos",
+      "category": "支撑与足踝弹性",
+      "group": "支撑与足踝弹性",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "单腿稳定站立",
+        "做少量低幅小跳",
+        "左右腿分别完成并观察落地控制"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "脚踝翻转失控",
+        "为了完成次数持续跳坏动作"
+      ],
+      "safety": [
+        "高足踝/小腿负荷；有疼痛、伤后未获运动许可、稳定性不足时禁用。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 8,
+        "unit": "次",
+        "restSec": 60
+      },
+      "assets": {
+        "male": "assets/running/single-hop-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-018",
+      "type": "running",
+      "name": "小跨步弹跳",
+      "en": "Low Skipping Bounds",
+      "category": "支撑与足踝弹性",
+      "group": "支撑与足踝弹性",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "向前用小距离的跳步移动",
+        "每次换脚都控制落地位置",
+        "强调顺畅节奏而非距离"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "单次跨得过远",
+        "用跺地换距离"
+      ],
+      "safety": [
+        "对足踝和小腿有一定冲击；不要接在大量高强度弹跳后额外叠加。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-019",
+      "type": "running",
+      "name": "节奏跨步跳",
+      "en": "Rhythm Bounds",
+      "category": "支撑与足踝弹性",
+      "group": "支撑与足踝弹性",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "充分热身后小距离连续跨步跳",
+        "左右交替完成推进",
+        "每一步优先保证落地控制"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "落地脚伸太远",
+        "触地时膝踝不稳"
+      ],
+      "safety": [
+        "高冲击动作，足踝/膝/髋不适者不做；需控制总接触次数。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {
+        "male": "assets/running/bounding-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-020",
+      "type": "running",
+      "name": "低强度前后跨线步",
+      "en": "Line Step Rhythm",
+      "category": "支撑与足踝弹性",
+      "group": "支撑与足踝弹性",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在地上标一条线",
+        "双脚小步前后交替跨线",
+        "保持脚下节奏均匀并自然呼吸"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "脚步越来越大",
+        "高频时踝部疼痛仍坚持"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-021",
+      "type": "running",
+      "name": "抵墙加速姿态",
+      "en": "Wall Lean Sprint Position",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "双手轻扶牢固墙面",
+        "身体从踝部形成整体倾斜",
+        "一腿支撑另一腿轻抬并保持中立"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "腰部过伸",
+        "骨盆后坐"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-022",
+      "type": "running",
+      "name": "抵墙单次换腿",
+      "en": "Wall Single Switch",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从抵墙姿态开始",
+        "一次交换两腿前后位置",
+        "每次换腿后停住检查身体整体倾斜"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "换腿时弯腰",
+        "用力蹬墙"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-023",
+      "type": "running",
+      "name": "抵墙连续换腿",
+      "en": "Wall Triple Switch",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从抵墙单次换腿开始",
+        "连续进行两至三次可控交换",
+        "停住后复位再重复"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "速度先于质量",
+        "肩肘过分用力"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-024",
+      "type": "running",
+      "name": "前倾自然起跑",
+      "en": "Falling Start",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "以双脚稳定站立",
+        "全身整体轻微前倾并自然迈出第一步",
+        "连续加速10–20米后逐渐收速"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "故意向前扑倒",
+        "前几步抬头挺直"
+      ],
+      "safety": [
+        "需足够的直线无障碍空间；跌倒风险或平衡不足者不用前倾起跑。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-025",
+      "type": "running",
+      "name": "两点站姿起跑",
+      "en": "Two-Point Start",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "一脚在前一脚在后站稳",
+        "起动时自然推进并逐步增加速度",
+        "专注前几步节奏而非立即竖直"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "急着完全抬头",
+        "过度向前迈步"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {
+        "male": "assets/running/start-drive-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-026",
+      "type": "running",
+      "name": "三点起跑",
+      "en": "Three-Point Start",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在起跑线上摆好三点姿态",
+        "起动后连续完成前3–5步",
+        "随后平顺加速与减速"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "身体重心放得太靠前失衡",
+        "第一步跨太大"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-027",
+      "type": "running",
+      "name": "平缓上坡短加速",
+      "en": "Gentle Hill Acceleration",
+      "category": "起跑与加速",
+      "group": "起跑与加速",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "选择安全、平坦脚感的缓坡",
+        "从站姿逐步加速10–20米",
+        "走回充分恢复再重复"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "坡度过陡仍追求高速",
+        "踝膝不适硬练"
+      ],
+      "safety": [
+        "坡道必须干燥防滑、坡度平缓；高强度且小腿负荷较高。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-028",
+      "type": "running",
+      "name": "渐进加速放松跑",
+      "en": "Progressive Strides",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从轻松慢跑开始",
+        "逐步在距离内提升到舒适的快速跑",
+        "后段平稳减速"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "起步就冲刺",
+        "快时耸肩憋气"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {
+        "male": "assets/running/acceleration-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-029",
+      "type": "running",
+      "name": "20米助跑+技术跑",
+      "en": "Build-Up 20m",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先轻松起跑逐步加速约20米",
+        "在末段保持流畅动作",
+        "充分减速走回"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "急加速导致僵硬",
+        "末端急刹"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {
+        "male": "assets/running/acceleration-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-030",
+      "type": "running",
+      "name": "行进间10米快速跑",
+      "en": "Flying 10m",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "助跑逐步加速约20–30米",
+        "在10米标定段快速通过",
+        "留出足够减速区并充分休息"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "把快速段前当全力硬冲",
+        "空间不足急停"
+      ],
+      "safety": [
+        "高速冲刺属高腘绳肌及肌腱负荷；热身不足、疼痛或空间不足时禁做。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 150
+      },
+      "assets": {
+        "male": "assets/running/max-speed-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-031",
+      "type": "running",
+      "name": "标志点节奏跑",
+      "en": "Wicket Rhythm Run",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "摆放软质低障碍或地面标记",
+        "从慢速助跑进入标志区",
+        "观察自然步频，逐步调间距匹配运动员"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "为了踩准强行迈大步",
+        "障碍太高影响自然跑姿"
+      ],
+      "safety": [
+        "不得固定套用精英运动员间距；确保标志点柔软、无绊倒风险。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-032",
+      "type": "running",
+      "name": "直线高频轻松跑",
+      "en": "Relaxed Fast Run",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从渐进加速进入舒适快速跑",
+        "关注手、肩、面部放松",
+        "到距离后减速走回"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "咬牙屏气",
+        "故意脚掌向下砸地"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {
+        "male": "assets/running/max-speed-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-033",
+      "type": "running",
+      "name": "快-松-快节奏切换",
+      "en": "Fast-Float-Fast",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "逐步加速进入快速跑",
+        "短距离保持流畅节奏而非突然降速",
+        "再次加速后留出充分减速区"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "放松段明显失速",
+        "第二段动作僵硬"
+      ],
+      "safety": [
+        "需有专项基础和较长跑道，避免大幅速度突变。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-034",
+      "type": "running",
+      "name": "快腿-自然跑转换",
+      "en": "Fast-Leg To Run Transition",
+      "category": "最高速度与放松",
+      "group": "最高速度与放松",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做10米低或中位运腿",
+        "逐步过渡为自然跑20米",
+        "比较过渡前后的肩臂和步频"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "运腿阶段一直停在原地",
+        "过渡时猛踩地"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-035",
+      "type": "running",
+      "name": "弯道轻松节奏跑",
+      "en": "Easy Curve Rhythm",
+      "category": "弯道技术",
+      "group": "弯道技术",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在田径场选择同一跑道",
+        "以轻松速度跑过弯道",
+        "观察是否放松且不强迫身体内倾"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "刻意把肩膀拧向内侧",
+        "向内倒得太多"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 40,
+        "unit": "m",
+        "restSec": 90
+      },
+      "assets": {
+        "male": "assets/running/curve-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-036",
+      "type": "running",
+      "name": "弯道渐进加速",
+      "en": "Curve Build-Up",
+      "category": "弯道技术",
+      "group": "弯道技术",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从弯道前端逐步加速",
+        "穿过弯道时保持自然动作",
+        "出弯后逐步减速"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "跑线突然切入",
+        "为了贴弯强行倾斜"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 40,
+        "unit": "m",
+        "restSec": 90
+      },
+      "assets": {
+        "male": "assets/running/curve-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-037",
+      "type": "running",
+      "name": "弯道接直道转换",
+      "en": "Curve-to-Straight Transition",
+      "category": "弯道技术",
+      "group": "弯道技术",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "从弯道适中速度进入直道",
+        "自然让身体对齐直线方向",
+        "对比出弯前后的摆臂与步幅节奏"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "出弯后突然大跨步",
+        "猛甩手臂"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 40,
+        "unit": "m",
+        "restSec": 90
+      },
+      "assets": {
+        "male": "assets/running/curve-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-038",
+      "type": "running",
+      "name": "200米弯道赛线熟悉",
+      "en": "Bend Lane Awareness",
+      "category": "弯道技术",
+      "group": "弯道技术",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "沿指定跑道慢速跑过弯道",
+        "注意内外边线和脚下空间",
+        "观察跑线是否稳定"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "频繁左右飘移",
+        "只顾脚下不看前方"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 40,
+        "unit": "m",
+        "restSec": 90
+      },
+      "assets": {
+        "male": "assets/running/curve-male.webp"
+      },
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-039",
+      "type": "running",
+      "name": "节拍器步频觉察",
+      "en": "Cadence Awareness with Metronome",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先在同一速度下记录自然步频",
+        "尝试很小幅度的节奏提示并观察舒适度",
+        "逐步撤去外部提示再复查"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "立刻要求所有人180步频",
+        "过度缩步变成僵硬碎步"
+      ],
+      "safety": [
+        "跑姿调整需个体化；伤病情景不替代临床评估，不强制增加固定百分比。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 100,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-040",
+      "type": "running",
+      "name": "定速100米节奏跑",
+      "en": "100m Pace Calibration",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "确定与当前能力匹配的目标时间",
+        "以几次100米练习接近目标节奏",
+        "记录偏差与RPE而非每次全力冲"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "第一段大幅快于目标",
+        "组间恢复不固定"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 100,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-041",
+      "type": "running",
+      "name": "200米配速锁定",
+      "en": "200m Pace Lock",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "以合理的当期训练目标设置200米时间",
+        "在充分恢复下重复数段",
+        "对照目标与实际偏差找规律"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "把比赛目标直接当训练速度",
+        "掉速仍盲目补跑"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 100,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-042",
+      "type": "running",
+      "name": "快慢转换节奏跑",
+      "en": "Controlled Pace Change",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先用舒适速度跑一段",
+        "短距离平稳提速后回到原节奏",
+        "观察提速后能否找回原配速"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "突然起速变冲刺",
+        "转换时抬头耸肩"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 100,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-043",
+      "type": "running",
+      "name": "800米前半程开局节奏",
+      "en": "800m Opening Rhythm",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "根据当前测试建立合理开局速度区间",
+        "以短段练习受控加速与稳定节奏",
+        "记录主观感受并与实际分段比较"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "把目标终点成绩直接转成极端开局",
+        "缺基线仍给精确成绩保证"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 100,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-044",
+      "type": "running",
+      "name": "疲劳时的放松提示复核",
+      "en": "Technique Check Under Mild Fatigue",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在正常训练的后段增加一次10–20秒录像或教练观察",
+        "仅观察一到两个事前预设指标",
+        "发现明显动作失控则结束技术任务"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "为了录像再加高强度",
+        "把单次视频判成肌无力"
+      ],
+      "safety": [
+        "不额外叠加疲劳测试；出现疼痛或明显衰竭时不继续。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 20,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-045",
+      "type": "running",
+      "name": "跑感节奏复述",
+      "en": "Pacing Sensation Recall",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "跑后不看表先口述快慢感与RPE",
+        "再查看时间或配速",
+        "记录感觉与实际的差异"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "看到成绩后倒推改写感觉",
+        "把一次误差判能力差"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 15,
+        "unit": "s",
+        "restSec": 20
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-046",
+      "type": "running",
+      "name": "热身后短加速串联",
+      "en": "Easy Run to Strides",
+      "category": "中长跑节奏与转换",
+      "group": "中长跑节奏与转换",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "轻松跑至身体活动充分",
+        "做少量逐步加速跑",
+        "每次走回恢复并结束热身"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "刚开始就全力冲",
+        "长跑后疲劳状态加高负荷"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-047",
+      "type": "running",
+      "name": "侧面跑姿录像",
+      "en": "Side-View Running Video",
+      "category": "技术观察与评估",
+      "group": "技术观察与评估",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在稳定距离和近似速度下从侧面拍摄",
+        "每次只比较一个技术线索",
+        "记录拍摄速度、机位、鞋和日期"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "不同速度视频直接比较",
+        "看一次就断定肌肉弱"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 20,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-048",
+      "type": "running",
+      "name": "正背面摆臂观察",
+      "en": "Front-Back Arm Observation",
+      "category": "技术观察与评估",
+      "group": "技术观察与评估",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在安全路段正面或背面固定机位拍摄",
+        "选择前段和后段条件相近的画面",
+        "记录可见现象与无法确认的原因"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "看到左右差异就说肌群无力",
+        "追求完全对称"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 20,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-049",
+      "type": "running",
+      "name": "新鲜与疲劳条件对照",
+      "en": "Fresh-Fatigued Technique Comparison",
+      "category": "技术观察与评估",
+      "group": "技术观察与评估",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "在正常训练开头和后段录下相似距离",
+        "尽量记录速度/坡度/机位/鞋",
+        "评价是否出现重复稳定的可见变化"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "速度差很大仍直接对比动作",
+        "由视频决定伤病诊断"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 1,
+        "amount": 20,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-050",
+      "type": "running",
+      "name": "踝步+自然跑组合",
+      "en": "Ankling-to-Run Transfer",
+      "category": "技术-专项衔接",
+      "group": "技术-专项衔接",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做踝步约10米",
+        "无停顿转入轻松跑10–20米",
+        "留意动作是否仍自然、放松"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "自然跑时仍极度踮脚",
+        "为了节奏猛踩地"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 30
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-051",
+      "type": "running",
+      "name": "A式行进+A式跳步组合",
+      "en": "March-to-Skip Progression",
+      "category": "技术-专项衔接",
+      "group": "技术-专项衔接",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做一段A-March",
+        "在质量稳定时做一段A-Skip",
+        "结束后回到自然小跑"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "连续疲劳加量",
+        "抬膝越高越好"
+      ],
+      "safety": [
+        "跳步可能增加足踝负荷；不适者停在行进版本。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-052",
+      "type": "running",
+      "name": "墙上换腿+两点起跑",
+      "en": "Wall Switch to Start",
+      "category": "技术-专项衔接",
+      "group": "技术-专项衔接",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做少量抵墙单次换腿",
+        "离墙做两点起跑并逐步加速10–20米",
+        "对比姿态线索而非照搬墙面角度"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "离墙后强迫固定同一前倾角",
+        "马上追求全速"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 3,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 60
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    },
+    {
+      "id": "fk-run-tech-053",
+      "type": "running",
+      "name": "快腿节奏+放松跑",
+      "en": "Fast-Leg to Relaxed Stride",
+      "category": "技术-专项衔接",
+      "group": "技术-专项衔接",
+      "equipment": [],
+      "muscles": [],
+      "auxiliary": [],
+      "setup": [],
+      "steps": [
+        "先做低/中位运腿10米",
+        "连续进入短距离放松跑",
+        "记录是否比普通热身更协调而非预设有效"
+      ],
+      "breathing": [],
+      "mistakes": [
+        "刻意跺地",
+        "将动作库练习当成比赛姿态本身"
+      ],
+      "safety": [
+        "常规热身后进行；动作质量下降时结束本组。"
+      ],
+      "training": {
+        "sets": 2,
+        "amount": 10,
+        "unit": "m",
+        "restSec": 45
+      },
+      "assets": {},
+      "hasExisting3D": false,
+      "source": "preserved-existing-running-technique-drills",
+      "review": "draft-review-required"
+    }
+  ]
+}

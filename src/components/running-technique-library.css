@@ -1,0 +1,26 @@
+.fk-library{padding:14px;--bg:#171a1e;--card:#20252a;--line:#3d444b;--tx:#f1efe9;--mut:#b8bcb9;--acc:#e8a18e;--p:#d65b3c;background:var(--bg);color:var(--tx)}
+.fk-library .library-tabs{display:flex;border-bottom:1px solid var(--line);gap:20px;margin-bottom:16px}
+.fk-library .library-tabs button{min-height:48px;border-bottom:3px solid transparent;padding:8px 4px;font-weight:700;color:var(--mut)}
+.fk-library .library-tabs button[aria-pressed=true]{border-color:var(--p);color:var(--tx)}
+.fk-library .fk-demo{padding:0;background:inherit;--bg:#171a1e;--card:#20252a;--line:#3d444b;--tx:#f1efe9;--mut:#b8bcb9}
+.fk-technique{padding-bottom:max(20px,env(safe-area-inset-bottom));overflow-wrap:anywhere;line-height:1.65}
+.fk-technique h2{font-size:25px;font-weight:700;margin:12px 0 4px;scroll-margin-top:12px}
+.fk-technique h3,.fk-technique summary{font-size:16px;font-weight:700;margin-bottom:8px}
+.fk-technique summary{min-height:44px;cursor:pointer;padding:8px 0}
+.fk-technique .tech-eyebrow{font-size:12px;letter-spacing:.06em;color:var(--acc);margin-top:14px}
+.fk-technique .tech-section{border-top:1px solid var(--line);margin-top:22px;padding-top:16px}
+.fk-technique p{margin:8px 0}.fk-technique .note{font-size:12px;color:var(--mut)}
+.fk-technique ol,.fk-technique ul{padding-left:22px;margin:8px 0}.fk-technique ol{list-style:decimal}.fk-technique ul{list-style:disc}.fk-technique li{margin:8px 0}
+.fk-technique a{color:var(--acc);text-decoration:underline}
+.fk-technique .tech-cue{border-left:3px solid var(--p);margin-top:22px;padding:10px 14px;background:var(--card)}
+.fk-technique .tech-search{display:block;font-size:13px;margin-top:20px;color:var(--mut)}
+.fk-technique .tech-search input{margin-top:6px;color:var(--tx)}
+.fk-technique .tech-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 18px}
+.fk-technique .tech-filters label{font-size:12px;color:var(--mut);min-width:0}
+.fk-technique select{display:block;min-height:44px;width:100%;max-width:100%;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:8px;color:var(--tx);padding:6px}
+.fk-technique .tech-item{display:flex;flex-direction:column;gap:6px;width:100%;padding:18px 0;text-align:left;border-top:1px solid var(--line);font-size:14px}
+.fk-technique .tech-item-title{display:flex;width:100%;gap:12px;justify-content:space-between;font-size:18px;font-weight:700}
+.fk-technique .tech-item-title>span{color:var(--acc)}
+.fk-technique .tech-item small{color:var(--mut);font-size:12px}
+.fk-technique .tech-dose{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.fk-technique .tech-dose dt{font-size:12px;color:var(--mut)}
+.fk-library button:focus-visible,.fk-library input:focus-visible,.fk-library select:focus-visible,.fk-library summary:focus-visible{outline:2px solid var(--acc);outline-offset:3px}

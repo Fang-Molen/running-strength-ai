@@ -12,6 +12,12 @@
   "fr255-cognition-memory-r1": "{\"messages\": [{\"id\": \"m1\", \"role\": \"user\", \"text\": \"你好\"}]}",
   "fr255-profile-v1": "{\"age\": 25}",
   "fr255-strength-plan-v3": "{\"sessions\": []}",
-  "fk-settings-v1": "{\"theme\": \"system\"}"
+  "fk-settings-v1": "{\"theme\": \"system\"}",
+  "fk-training-draft-v71": "{\"id\":\"custom:fixture\",\"date\":\"2026-10-17\",\"type\":\"strength\",\"name\":\"未保存训练草稿\",\"minutes\":\"40\",\"intensity\":\"MODERATE\",\"slot\":\"pm\",\"exercises\":[],\"betweenRest\":null,\"runMode\":\"continuous\",\"distance\":\"\",\"target\":\"\",\"repeats\":\"\",\"rounds\":\"\",\"repeatRest\":\"\",\"roundRest\":\"\"}",
+  "fk-runner-draft-v71:d:scheduled:custom:fixture:strength:m:1": "{\"weight\":\"\",\"amount\":\"8\"}",
+  "fk-warmup-records-v1": "[{\"id\": \"fixture-warmup\", \"entryId\": \"custom:fixture\", \"date\": \"2026-10-17\", \"plan\": {\"version\": 1, \"enabled\": true, \"preset\": \"easy-run\", \"steps\": [{\"id\": \"step-a\", \"actionId\": \"ankle-rock\", \"name\": \"踝关节前移\", \"sets\": 1, \"amount\": 8, \"unit\": \"reps\", \"perSide\": true, \"note\": \"\"}]}, \"status\": \"IN_PROGRESS\", \"startedAt\": \"2026-10-17T10:00:00Z\", \"endedAt\": null, \"steps\": [], \"mainOccurrenceIds\": [], \"revision\": 1}]",
+  "fk-warmup-clock-v1:fixture-warmup:step-a": "{\"version\": 1, \"recordId\": \"fixture-warmup\", \"stepId\": \"step-a\", \"elapsedMs\": 2500, \"runningSince\": null, \"started\": true}",
+  "fk-warmup-input-v1:fixture-warmup:step-a": "{\"different\": true, \"sets\": \"1\", \"amount\": \"6\", \"weight\": \"\", \"rest\": \"\"}",
+  "fk-personal-avatar-v72": "{\"version\": 1, \"base\": {\"slender\": 0.25, \"lean\": 0, \"muscular\": 0, \"adipose\": 0}, \"target\": {\"slender\": 0, \"lean\": 0, \"muscular\": 0.3, \"adipose\": 0}}"
  }
 }

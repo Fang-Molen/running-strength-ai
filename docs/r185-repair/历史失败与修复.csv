@@ -1,0 +1,28 @@
+﻿编号,文件,失败用例,实际修复,本轮结果,本轮证据
+1,scripts/with-app-env.test.mjs,the template ships auth off,按现有配置补齐 VITE_GROK_EXTENSIONS=0 精确断言。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+2,src/lib/core/coach-cognition.test.ts,safety candidate: 14岁新手每天1RM练100米,保留未成年极限测试阻断并补现场专业评估。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+3,src/lib/core/coach-curriculum.test.ts,"device audit remains, with HRV principles rather than recovery clearance",早返回同时保留 curriculum/deviceAudit 元数据；初步分析把失败字段误记为 deviceAudit，实际还包括课程元数据。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+4,src/lib/core/coach-curriculum.test.ts,"full-session calculations use question numbers, not demonstration numbers",分别用用户声明的两节课计算240 AU，不沿用示例值。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+5,src/lib/core/coach-curriculum.test.ts,"missing, OCR and invalid session inputs are not filled or computed",RPE0属于合法测量域；增加0→0AU断言，缺失/负值仍不可计算。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+6,src/lib/core/coach-local-first.test.ts,absent device metrics cannot divert an exertion decision into device audit,完整条件负荷进入回答，不被缺失的设备数据劫持。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+7,src/lib/core/coach-offline-loop.test.ts,"L3 needs actual comparable records and recorded recovery, not just two arbitrary sessions",比较样例补明确同计时方法，并新增未知方法不得升级L3的反例。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+8,src/lib/core/coach-offline-loop.test.ts,L3 reuses numerical same-protocol comparisons in text and tracks all historical evidence,可比历史数值及依赖来源进入回答与修订依据。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+9,src/lib/core/coach-offline-loop.test.ts,historical recovery corrections withdraw comparisons; feedback cannot downgrade withdrawal,历史休息的依赖纳入假设来源；更正后撤回，不让反馈覆盖撤回。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+10,src/lib/core/coach-offline-loop.test.ts,"L4 is descriptive multiday sufficiency, no readiness or ability score",保留充分性等级与能力评分隔离，比较样例补协议。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+11,src/lib/core/coach-offline-loop.test.ts,"rounds, missing slots and plan deviation remain distinct",主回答人话与完整详细结构分别验证，缺失仍保留。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+12,src/lib/core/coach-offline-loop.test.ts,effective correction changes calculation and withdraws previous dependent judgment without overwriting it,固定合成时钟及更正提交时间，保持未来信息过滤。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+13,src/lib/core/coach-offline-loop.test.ts,new evidence and explicit contradiction persist; refusal does not change plans,无独立新证据的口头反对只保留反馈；不自动削弱假设。有来源反证的正向路径单独保留。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+14,src/lib/core/coach-offline-loop.test.ts,common questions answer locally without a network call: 下一课怎么安排,针对下一课说明原计划、恢复、观察与确认条件。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+15,src/lib/core/coach-offline-loop.test.ts,common questions answer locally without a network call: 周量变化怎么看,周量给同口径变化与限制，未核准阈值不自动处方。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+16,src/lib/core/coach-r14-chat.test.ts,"at least five coaching turns retain slots, test, interpret, adjust and retest",保留五轮、数字目标、两种解释和复测条件；无批准课程时不编造剂量或复测日期。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+17,src/lib/core/coach-r14-chat.test.ts,special populations have explicit recovery spacing: 主项800米，我52岁，明天练什么,删除无核准依据的固定48小时要求，改验专业核定原计划间隔和大师组恢复条件。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+18,src/lib/core/coach-r14-chat.test.ts,special populations have explicit recovery spacing: 我是15岁，主项400米，怎么安排测试课,删除无核准依据的固定48小时要求，保留监护人与现场教练及禁连续高强度。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+19,src/lib/core/coach-reasoning-r7.test.ts,R7 spoken RPE conflicts preserved without overwriting bound score,自报RPE9与已保存RPE6同时呈现，不覆盖不平均。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+20,src/lib/core/coach-structured-candidate.test.ts,R11 confirmed slowing intervals offer exactly one reversible recovery extension in text and data,移除固定加休息30秒经验规则；必须无新增剂量并保留HOLD/批准课程条件。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+21,src/lib/core/coach-training-mechanisms.test.ts,local question answers INTERVAL_RECOVERY without automatic decisions,机制问题路由保留本地知识边界，不进入泛化兜底。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+22,src/lib/core/coach-training-mechanisms.test.ts,local question answers STRENGTH_TRANSFER without automatic decisions,测量、力量与跑步迁移解释分层，不确认因果。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+23,src/lib/core/coach-training-mechanisms.test.ts,local question answers CONCURRENT_STRESS without automatic decisions,并行训练机制回答保留课程知识与安全边界。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+24,src/lib/core/coach-training-mechanisms.test.ts,local question answers STIMULUS_SPECIFICITY without automatic decisions,专项刺激解释保留候选知识，不改课。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+25,src/lib/core/coach-training-mechanisms.test.ts,local question answers GENERAL_ADAPTATION without automatic decisions,适应机制解释保留知识边界，不改能力分。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+26,src/lib/core/running-real-use.test.ts,delayed pain feedback binds to the existing safety evidence layer and blocks performance options,疼痛早返回保留cognition对象且options为空；初步分析误记为performanceOptions，实际是cognition.options。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log
+27,src/lib/strength/coach-r12-pipeline.test.ts,local planning remembers explicit preference but does not promote it to a fact or execute it,保留显式偏好记忆，并明确没有据此自动改课。,PASS_FINAL_NPM_CHAIN,npm-full-chain-final.log

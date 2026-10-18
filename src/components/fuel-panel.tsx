@@ -16,7 +16,7 @@ export function FuelPanel({ profile, onEdit, onSaved, revision = 0 }: { profile:
   const [savedNote, setSavedNote] = useState("");
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState<FoodHit[] | null>(null);
-  useEffect(() => { setEntries(loadEntries()); }, [revision]);
+  useEffect(() => { const refresh = () => setEntries(loadEntries()); refresh(); window.addEventListener("fk-food-changed", refresh); window.addEventListener("storage", refresh); return () => { window.removeEventListener("fk-food-changed", refresh); window.removeEventListener("storage", refresh); }; }, [revision]);
   const today = todayEntries(entries);
   const eaten = todayEaten(entries);
   const protein = Math.round(today.reduce((sum, item) => sum + (item.protein ?? 0), 0));
@@ -57,7 +57,7 @@ export function FuelPanel({ profile, onEdit, onSaved, revision = 0 }: { profile:
   }
 
   function repeatFood(item: FoodEntry) {
-    const saved = addEntriesBatch([{ meal, name: item.name, grams: item.grams, kcal: item.kcal, protein: item.protein, label: item.label }]);
+    const saved = addEntriesBatch([{ meal, name: item.name, grams: item.grams, kcal: item.kcal, protein: item.protein, carb: item.carb, fat: item.fat, fiber: item.fiber, foodId: item.foodId, amount: item.amount, unit: item.unit, nutritionSource: item.nutritionSource, label: item.label }]);
     if (!saved) { setFoodError("快捷记录失败，原有记录未修改。"); return; }
     setEntries(saved);
     onSaved?.();
@@ -143,7 +143,7 @@ export function FuelPanel({ profile, onEdit, onSaved, revision = 0 }: { profile:
       {showMeals ? <ul className="mt-2 flex flex-col gap-3">
         {MEALS.map((name) => {
           const items = today.filter((item) => item.meal === name);
-          const sum = items.reduce((total, item) => total + item.kcal, 0);
+          const sum = items.reduce((total, item) => total + (item.kcal ?? 0), 0);
           return (
             <li key={name} className="rounded-card border border-line bg-surface p-3">
               <p className="text-sm font-bold">

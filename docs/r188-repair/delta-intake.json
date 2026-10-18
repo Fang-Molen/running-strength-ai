@@ -1,0 +1,74 @@
+[
+  {
+    "file": "src/lib/core/coach-claim-revision.test.ts",
+    "intake_sha256": "b5dac408ce0a3f8c286bf66f02496f0c65b160cdf678292dacbc5c65f0325d90",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-claim-revision.ts",
+    "intake_sha256": "4e7292db40ba614a9ac0593a1348c62d8d92d2aad382ef549e41621f13f86eec",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-decision-calibration.test.ts",
+    "intake_sha256": "eddc43dbd682468299d3752f27c020095e3298c1289a291d88679c75f98cbce3",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-decision-calibration.ts",
+    "intake_sha256": "902a550b0667f4fbae1cf80ba6e2a6889e76ec8ae6034e706a1d2d16e30cca47",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-evaluation.test.ts",
+    "intake_sha256": "8bfbe3c1738cc91588d44890745cb0375533058e7850a74d6d6118bf27ae0ef0",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-evaluation.ts",
+    "intake_sha256": "735611a47f01cd5fedc546523321853dbd4b9453903cb556c381da0bbe15df7b",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-knowledge.test.ts",
+    "intake_sha256": "2f8d3cbedf67b556ee630e92a911c45eea555012cab95bba9511fba53ff05c95",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-knowledge.ts",
+    "intake_sha256": "9dccc4f5ded9d3b5307865d331cea340cecd2d896aeec99f5496f31b287b346c",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-lifecycle.ts",
+    "intake_sha256": "45e1f9f399cdcc261a45636c3e851dcd271cbcc4dc087f036fca6510648954b8",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-r187.test.ts",
+    "intake_sha256": "6142cdd2e4fa493f7c9c5d27c520f1744a4751789c5be2ee766ccaa8fd90a070",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "src/lib/core/coach-p7-r7.test.ts",
+    "intake_sha256": "f1d955b3e7b1ad1b1b00e70460b33afe506391fd0e03f17a8726bc0ce09b67da",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  },
+  {
+    "file": "tsconfig.r7-scoped.json",
+    "intake_sha256": "62d0ff5e688313619a107bbfd4c47e0141206a9564bf62f17982715532b04c32",
+    "baseline_status": "NEW",
+    "initial_action": "COPIED_DELTA_ONLY"
+  }
+]

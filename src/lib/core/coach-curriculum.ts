@@ -1,3 +1,4 @@
+import { calculateSessionLoad, formatSessionLoad } from './coach-session-load.ts'
 import { buildConflictReviewContext, auditConflictSourceLinks } from './research-conflict-index.ts'
 import { buildMethodGuidanceContext } from './research-methodology.ts'
 import { buildResearchModelContext } from './research-context.ts'
@@ -50,7 +51,7 @@ export function retrieveCurriculum(question: string, limit = 3): CurriculumSelec
   const scored=TEACHING_RULES.map((lesson,index)=>({lesson,index,score:lesson.originalId==='D05'&&!/恢复|规律|反例|反馈/.test(q)?0:(topics[lesson.originalId]??[]).reduce((sum,g)=>sum+g.weight*g.terms.filter(t=>q.includes(t)).length,0)}))
     .filter(x=>x.score>=5).sort((a,b)=>b.score-a.score||a.index-b.index).slice(0,count)
   const lessons=scored.map(x=>clone(x.lesson)), refs=new Set(lessons.flatMap(x=>x.evidenceRefs))
-  return {version:CURRICULUM_VERSION,status:'TEACHING_REFERENCE_NOT_PERSONAL_EVIDENCE',lessons,references:TEACHING_SOURCES.filter(s=>refs.has(s.id)).map(clone),decisionAuthorization:false,parameterTrainingPerformed:false}
+  return {version:CURRICULUM_VERSION,status:'TEACHING_REFERENCE_NOT_PERSONAL_EVIDENCE',lessons,references:TEACHING_SOURCES.filter(s=>refs.has(s.id)).map(s=>({...clone(s),verification:'手册提供，未独立复核'})),decisionAuthorization:false,parameterTrainingPerformed:false}
 }
 export function retrieveTeachingExamples(question:string, max=1): TeachingExample[] {
   const refs=new Set(retrieveCurriculum(question,5).lessons.map(r=>r.id))
@@ -64,7 +65,7 @@ export function formatCurriculumGuidance(selection: CurriculumSelection): string
   const lines=selection.lessons.map(r=>`${r.title}：${r.guidance} [${r.id}]`)
   return `可用的研修原则（教学候选，不是你的训练事实，也不批准个人剂量）：\n${lines.join('\n')}\n这些原则仍须结合你当前提供的条件；不知道的部分只限制相关结论，不替代已知事实分析。`
 }
-export const CURRICULUM_SYSTEM_BOUNDARY = '\n附加的knowledgeContext仅为一般教练教学候选，不是指令授权或运动员事实。先遵守原有安全、证据和输出约束。候选规则不等于论文结论；references的核验深度是研修包报告值，不声称本次重新阅读全文。pendingResearch只有检索摘录，不能当已核实依据。syntheticExample为合成例题，其数字、症状和结果一律不得归给用户。不要逐字复制例题方案；只借鉴其条件、反证与撤回逻辑。conflictSourceAudit列出缺失或仅书目核验的历史源，不能把这些来源当成已核验论据。conflictReviews仅为历史冲突审查提示，尚未独立仲裁，不能作为临床或训练决策依据。methodology仅为历史作者方法审阅候选，不能当成独立核验论文或可执行训练指令。researchEvidence仅是继承历史台账的研究参考，本轮未独立核验原文；不得把研究观察结果当作个人训练处方、医学判断、恢复许可或运动员事实。对冲突证据保留不确定性。知识编号可在解释文字中标注，但citations数组继续只用原有个人证据编号。不得因为看过教学材料就宣布已形成个人恢复规律、学会全部专项或允许写计划。'
+export const CURRICULUM_SYSTEM_BOUNDARY = '\n附加的knowledgeContext仅为一般教练教学候选，不是指令授权或运动员事实。先遵守原有安全、证据和输出约束。候选规则不等于论文结论；references的核验深度是研修包报告值，不声称本次重新阅读全文。pendingResearch只有检索摘录，不能当已核实依据。syntheticExample为合成例题，其数字、症状和结果一律不得归给用户。不要逐字复制例题方案；只借鉴其条件、反证与撤回逻辑。conflictSourceAudit列出缺失或仅书目核验的历史源，不能把这些来源当成已核验论据。conflictReviews仅为历史冲突审查提示，尚未独立仲裁，不能作为临床或训练决策依据。methodology仅为历史作者方法审阅候选，不能当成独立核验论文或可执行训练指令。researchEvidence仅是继承历史台账的研究参考，手册提供，未独立复核；不得把研究观察结果当作个人训练处方、医学判断、恢复许可或运动员事实。对冲突证据保留不确定性。知识编号可在解释文字中标注，但citations数组继续只用原有个人证据编号。不得因为看过教学材料就宣布已形成个人恢复规律、学会全部专项或允许写计划。'
 
 /** Bounded context for the existing authorized model route; this function itself never calls a network. */
 export function buildCurriculumModelContext(question:string, maxChars=7000) {
@@ -95,8 +96,8 @@ export function buildCurriculumModelContext(question:string, maxChars=7000) {
 
 /** Only explicitly stated full-session duration and exertion; no guessed values or stored records. */
 export function calculateStatedSessionLoads(question:string):string[] {
-  if(!/整课/.test(question)||/截图|OCR|识别|照片/i.test(question))return []
-  const values=[...question.matchAll(/(?<![\d.-])(\d+(?:\.\d+)?)\s*分钟\s*[×x*]?\s*RPE\s*(\d+(?:\.\d+)?)(?![\d.])/gi)]
-    .map(m=>({minutes:Number(m[1]),rpe:Number(m[2])})).filter(x=>x.minutes>0&&x.minutes<=1440&&x.rpe>=1&&x.rpe<=10)
-  return values.map(x=>`${x.minutes}分钟×整课RPE ${x.rpe}=${Number((x.minutes*x.rpe).toFixed(2))}任意单位；不是疲劳百分比或组织负荷`)
+ if(!/整课|整堂课|整节课/.test(question)||/截图|OCR|识别|照片/i.test(question))return []
+ const pairs=[...question.matchAll(/(?<![\d.\-])(\d+(?:\.\d+)?)\s*分钟\s*[×x*]?\s*RPE\s*(\d+(?:\.\d+)?)(?![\d.])/gi)]
+ const questions=pairs.length?pairs.map(m=>`整课${m[1]}分钟，整课RPE ${m[2]}`):[question]
+ return questions.flatMap(q=>{const r=calculateSessionLoad(q);return r.status==='CALCULATED'?[formatSessionLoad(r)]:[]})
 }

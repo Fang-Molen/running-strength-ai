@@ -1,3 +1,4 @@
+import { currentAthleteId } from "./events.ts"
 import type { ImportCompleteness } from "./import-completeness.ts"
 import { readEnvelope, writeEnvelope } from "./storage.ts"
 
@@ -20,6 +21,9 @@ export type ImportedRunningSegment = {
   distanceMeters: ImportField<number>
   durationSeconds: ImportField<number>
   recoverySeconds: ImportField<number>
+  recoveryScope?: "AFTER_REPEAT" | "AFTER_ROUND" | "UNSPECIFIED"
+  averageHeartRateBpm?: ImportField<number>
+  heartRateMethod?: ImportField<string>
   completion: "COMPLETED" | "SKIPPED" | "NOT_RECORDED"
   sourceIds: string[]
 }
@@ -57,6 +61,8 @@ export type TrainingImportCandidate = {
 
 export type TrainingImportDraft = TrainingImportCandidate & {
   draftId: string
+  /** Optional stable device-channel identity; never proof of authorization or training structure. */
+  sourceRecordIdentity?: string
   schemaVersion: 1
   createdAt: string
   inputKind: ImportInputKind
@@ -66,6 +72,7 @@ export type TrainingImportDraft = TrainingImportCandidate & {
 }
 
 export type ConfirmedTrainingImport = Omit<TrainingImportDraft, "userConfirmed"> & {
+  athleteId?: string
   confirmedImportId: string
   confirmedAt: string
   userConfirmed: true
@@ -149,6 +156,9 @@ function runningSegment(raw: unknown, index: number): ImportedRunningSegment {
     repeat: field(item.repeat, (value) => integerValue(value, 1, 100)),
     distanceMeters: field(item.distanceMeters, (value) => numberValue(value, 0.1, 1_000_000)),
     durationSeconds: field(item.durationSeconds, (value) => numberValue(value, 0.1, 1_000_000)),
+    recoveryScope: item.recoveryScope === "AFTER_REPEAT" || item.recoveryScope === "AFTER_ROUND" ? item.recoveryScope : "UNSPECIFIED",
+    averageHeartRateBpm: field(item.averageHeartRateBpm, (value) => integerValue(value, 20, 240)),
+    heartRateMethod: field(item.heartRateMethod, (value) => stringValue(value, 60)),
     recoverySeconds: field(item.recoverySeconds, (value) => numberValue(value, 0, 100_000)),
     completion,
     sourceIds: cleanIds(item.sourceIds),
@@ -186,7 +196,7 @@ export function normalizeTrainingImportCandidate(raw: unknown): TrainingImportCa
     runningStructure,
     runningSegments,
     strengthSets,
-    sessionRpe: field(item.sessionRpe, (value) => integerValue(value, 1, 10)),
+    sessionRpe: field(item.sessionRpe, (value) => integerValue(value, 0, 10)),
     subjectiveRecovery: field(item.subjectiveRecovery, (value) => integerValue(value, 1, 10)),
     sleepHours: field(item.sleepHours, (value) => numberValue(value, 0.1, 24)),
     pain: field(item.pain, evidenceValue),
@@ -273,10 +283,11 @@ export function criticalImportGaps(input: TrainingImportDraft): string[] {
   else if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/.test(draft.occurredAt.value) || !Number.isFinite(Date.parse(draft.occurredAt.value))) gaps.push("训练时间需要有效日期、时刻和时区")
   if (draft.conflicts.length > 0) gaps.push("请先处理冲突字段")
   if ([draft.durationSeconds, draft.totalDistanceMeters, draft.sessionRpe, draft.subjectiveRecovery, draft.sleepHours, draft.pain, draft.soreness].some((item) => item.status === "CONFLICTING")) gaps.push("训练反馈仍有冲突")
-  if (draft.runningSegments.some((segment) => [segment.round, segment.repeat, segment.distanceMeters, segment.durationSeconds, segment.recoverySeconds].some((item) => item.status === "CONFLICTING"))) gaps.push("跑步分段仍有冲突")
+  if (draft.runningSegments.some((segment) => [segment.round, segment.repeat, segment.distanceMeters, segment.durationSeconds, segment.recoverySeconds, segment.averageHeartRateBpm ?? {status:"ABSENT"}, segment.heartRateMethod ?? {status:"ABSENT"}].some((item) => item.status === "CONFLICTING"))) gaps.push("跑步分段仍有冲突")
   if (draft.strengthSets.some((set) => [set.exerciseName, set.setOrdinal, set.weightKg, set.repetitions, set.durationSeconds].some((item) => item.status === "CONFLICTING"))) gaps.push("力量组仍有冲突")
   const hasRunningActual = [draft.totalDistanceMeters, draft.durationSeconds].some((item) => item.status === "RECORDED" && item.value != null) || draft.runningSegments.some((segment) => segment.completion === "COMPLETED" && [segment.distanceMeters, segment.durationSeconds].some((item) => item.status === "RECORDED" && item.value != null))
-  const hasStrengthActual = draft.strengthSets.some((set) => set.completion === "COMPLETED" && set.exerciseName.status === "RECORDED" && [set.repetitions, set.durationSeconds].some((item) => item.status === "RECORDED" && item.value != null))
+  const durationOnlyStrength = draft.sport === "STRENGTH" && draft.durationSeconds.status === "RECORDED" && draft.durationSeconds.value != null
+  const hasStrengthActual = durationOnlyStrength || draft.strengthSets.some((set) => set.completion === "COMPLETED" && set.exerciseName.status === "RECORDED" && [set.repetitions, set.durationSeconds].some((item) => item.status === "RECORDED" && item.value != null))
   if ((draft.sport === "RUNNING" || draft.sport === "MIXED") && !hasRunningActual) gaps.push("没有可确认的跑步实际记录；计划或未记录槽位不能当作实际完成")
   if ((draft.sport === "STRENGTH" || draft.sport === "MIXED") && !hasStrengthActual) gaps.push("没有可确认的力量实际记录")
   if (new Set(draft.runningSegments.map((item) => item.id)).size !== draft.runningSegments.length || new Set(draft.strengthSets.map((item) => item.id)).size !== draft.strengthSets.length) gaps.push("分段或力量组标识重复，请核对")
@@ -294,6 +305,7 @@ export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; r
   if (gaps.length) return { ok: false, reason: gaps.join("；") }
   const confirmed: ConfirmedTrainingImport = {
     ...draft,
+    athleteId: currentAthleteId(),
     confirmedImportId: `confirmed:${draft.draftId}`,
     confirmedAt: new Date().toISOString(),
     userConfirmed: true,

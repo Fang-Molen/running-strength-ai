@@ -1,3 +1,4 @@
+import {CoachSavedOfflineReview} from './coach-saved-offline-review'
 import { useEffect, useMemo, useRef, useState } from "react"
 import { TrainingRunner, resultLines } from "@/components/training-runner"
 import { executionOf, feedbackOf, painOf, emptySets, mergeSets } from "@/lib/core/execution"
@@ -25,7 +26,7 @@ const LABEL: Record<string, string> = {
   UNKNOWN: "证据不足，暂时无法判断",
 }
 
-export function TrainingDecisionCard({ plan, session, onApply, onLive }: { plan: Plan; session: Session; onApply: (session: Session) => void; onLive: (decisionId: string | null) => void }) {
+export function TrainingDecisionCard({ plan, session, onApply, onLive, planSlotId, onFinished, beforeStart, onStarted, embeddedRunner = false }: { plan: Plan; session: Session; onApply: (session: Session) => void; onLive: (decisionId: string | null) => void; planSlotId?: string; onFinished?: () => void; beforeStart?: () => string | null; onStarted?: (occurrenceId: string) => void; embeddedRunner?: boolean }) {
   const [mounted, setMounted] = useState(false)
   const signature = `${plan.cycle?.week ?? ""}:${plan.cycle?.bias ?? ""}:${session.id}:${session.moves.map((move) => `${move.sets}-${move.amount}-${move.weightKg}`).join(",")}`
   const decision = useMemo(() => {
@@ -81,6 +82,7 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive }: { plan:
 
   function begin(action: "AI_RECOMMENDED" | "ORIGINAL_PLAN" | "USER_MODIFIED") {
     if(starting.current)return
+    const blocked = beforeStart?.(); if (blocked) { setSaveError(blocked); return; }
     starting.current=true
     setSaveError("")
     chooseAction(current.decision_id, action)
@@ -94,12 +96,13 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive }: { plan:
         startEventId: started.event_id,
         startedAt: started.timestamp,
         sessionId: session.id,
-        planSlotId: session.id,
+        planSlotId: planSlotId ?? session.id,
         plan: effective,
       }) : null
     if(!started || !bound || bound.planKnowledge !== "KNOWN" || getTrainingOccurrence(bound.trainingOccurrenceId)?.planKnowledge !== "KNOWN"){setSaveError("开始事件或原计划快照未核实保存，尚不能进入执行。请查看日志后重试。");starting.current=false;return}
     markCanonicalStarted(session.id)
     setRunning(true)
+    onStarted?.(bound.trainingOccurrenceId)
     onLive(current.decision_id)
     starting.current=false
   }
@@ -165,6 +168,7 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive }: { plan:
     </section>
       {running && effectiveSession ? (
         <TrainingRunner
+          embedded={embeddedRunner}
           session={effectiveSession}
           decisionId={executionOf(session.id).open && executionOf(session.id).decisionId ? (executionOf(session.id).decisionId as string) : current.decision_id}
           onDone={(result) => {
@@ -172,10 +176,12 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive }: { plan:
             setFeedback(null)
             setRunning(false)
             onLive(null)
+            onFinished?.()
           }}
         />
       ) : null}
       {running && !effectiveSession ? <p role="alert" className="mt-3 text-sm text-risk">当前课次的原计划快照不可读，不能用修改后的课表继续记录。请核对日志与备份。</p> : null}
+      {summary&&latestOccurrence?.trainingOccurrenceId?<CoachSavedOfflineReview occurrenceId={latestOccurrence.trainingOccurrenceId}/>:null}
       {summary ? (
         <section className="mt-4 rounded-card border border-line bg-surface p-4 text-sm" aria-label="训练完成摘要">
           <h3 className="text-lg font-bold">{summary.reason === "疼痛" ? "训练结束 · 有疼痛反馈" : summary.skipped ? "部分执行已保存" : "本次训练已结束"}</h3>

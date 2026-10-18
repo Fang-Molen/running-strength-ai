@@ -1,0 +1,135 @@
+﻿id,ruleId,type,description,expected,executionStatus,observed,source
+Q-LOAD_SRPE,LOAD_SRPE,NUMERIC_REFERENCE,50 minutes * whole-session RPE 7 = 350 AU,"{""unit"": ""AU"", ""value"": 350, ""metrics"": {""minutes"": 50, ""rpe"": 7}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_WEEK_CHANGE,LOAD_WEEK_CHANGE,NUMERIC_REFERENCE,100 * (1200 - 1000) / 1000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_RAMP_NOVICE,LOAD_RAMP_NOVICE,NUMERIC_REFERENCE,100 * (12000 - 10000) / 10000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_RAMP_EXP,LOAD_RAMP_EXP,NUMERIC_REFERENCE,100 * (1200 - 1000) / 1000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-AGE_YOUTH,AGE_YOUTH,NUMERIC_REFERENCE,100 * (1200 - 1000) / 1000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-TISSUE_HSR,TISSUE_HSR,NUMERIC_REFERENCE,100 * (12000 - 10000) / 10000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-RTR_VOLUME,RTR_VOLUME,NUMERIC_REFERENCE,100 * (1200 - 1000) / 1000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-TA_PROGRESS,TA_PROGRESS,NUMERIC_REFERENCE,100 * (1200 - 1000) / 1000 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_TAPER_VOL,PER_TAPER_VOL,NUMERIC_REFERENCE,100 * (600 - 1000) / 1000 = -40%; no training threshold,"{""unit"": ""%"", ""value"": -40}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_PERF_DROP,FAT_PERF_DROP,NUMERIC_REFERENCE,"Comparable actual quantity 120 versus 100: +20%, not a training threshold","{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-ABIL_PROFILE_UPDATE,ABIL_PROFILE_UPDATE,NUMERIC_REFERENCE,100 * (12 - 10) / 10 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FORM_CADENCE,FORM_CADENCE,NUMERIC_REFERENCE,100 * (192 - 160) / 160 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FORM_CADENCE_CHANGE,FORM_CADENCE_CHANGE,NUMERIC_REFERENCE,100 * (192 - 160) / 160 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FORM_VO,FORM_VO,NUMERIC_REFERENCE,100 * (9.6 - 8) / 8 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_PROGRESS,STR_PROGRESS,NUMERIC_REFERENCE,"Comparable actual quantity 120 versus 100: +20%, not a training threshold","{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_BLOCK_30,SPR_BLOCK_30,NUMERIC_REFERENCE,100 * (4.8 - 4) / 4 = 20%; no training threshold,"{""unit"": ""%"", ""value"": 20}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_MONOTONY,LOAD_MONOTONY,NUMERIC_REFERENCE,"Seven days 100..700: mean 400, sample variance 140000/3; complete observed zero policy","{""unit"": ""ratio"", ""value"": 1.8516401995451026, ""metrics"": {""mean"": 400, ""sampleSd"": 216.0246899469287, ""weeklyAu"": 2800, ""monotony"": 1.8516401995451026}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_STRAIN,LOAD_STRAIN,NUMERIC_REFERENCE,"Seven days 100..700: mean 400, sample variance 140000/3; complete observed zero policy","{""unit"": ""AU"", ""value"": 5184.592558726287, ""metrics"": {""mean"": 400, ""sampleSd"": 216.0246899469287, ""weeklyAu"": 2800, ""monotony"": 1.8516401995451026}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_ACWR,LOAD_ACWR,NUMERIC_REFERENCE,"Constant 100 AU, final day 200: ATL 125; prior-day TSB 0 even though current-day averages diverge","{""unit"": ""ratio"", ""value"": 1.1693548387096773, ""metrics"": {""atl"": 125, ""ctl"": 106.89655172413794, ""previousAtl"": 100, ""previousCtl"": 100, ""tsb"": 0, ""seed"": 100}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_ATL_CTL,LOAD_ATL_CTL,NUMERIC_REFERENCE,"Constant 100 AU, final day 200: ATL 125; prior-day TSB 0 even though current-day averages diverge","{""unit"": ""AU"", ""value"": 0, ""metrics"": {""atl"": 125, ""ctl"": 104.65116279069767, ""previousAtl"": 100, ""previousCtl"": 100, ""tsb"": 0, ""seed"": 100}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_TSB,LOAD_TSB,NUMERIC_REFERENCE,"Constant 100 AU, final day 200: ATL 125; prior-day TSB 0 even though current-day averages diverge","{""unit"": ""%"", ""value"": 0, ""metrics"": {""atl"": 125, ""ctl"": 104.65116279069767, ""previousAtl"": 100, ""previousCtl"": 100, ""tsb"": 0, ""seed"": 100}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_TSB_RACE,LOAD_TSB_RACE,NUMERIC_REFERENCE,"Constant 100 AU, final day 200: ATL 125; prior-day TSB 0 even though current-day averages diverge","{""unit"": ""%"", ""value"": 0, ""metrics"": {""atl"": 125, ""ctl"": 104.65116279069767, ""previousAtl"": 100, ""previousCtl"": 100, ""tsb"": 0, ""seed"": 100}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_SPIKE_SESSION,LOAD_SPIKE_SESSION,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""ratio"", ""value"": 1.2, ""metrics"": {""priorMaximumMeters"": 10000}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_RECOVERY_WEEK,LOAD_RECOVERY_WEEK,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""week"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SESS_CV,SESS_CV,NUMERIC_REFERENCE,"39/38/37/36 s; sample SD sqrt(5/3), distinct time-change and speed-change denominators","{""unit"": ""%"", ""value"": 3.4426518632954815, ""metrics"": {""meanSeconds"": 37.5, ""sampleSdSeconds"": 1.2909944487358056, ""differenceSeconds"": -3, ""speedDeclinePercent"": -8.333333333333334}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SESS_FADE,SESS_FADE,NUMERIC_REFERENCE,"39/38/37/36 s; sample SD sqrt(5/3), distinct time-change and speed-change denominators","{""unit"": ""%"", ""value"": -7.6923076923076925, ""metrics"": {""meanSeconds"": 37.5, ""sampleSdSeconds"": 1.2909944487358056, ""differenceSeconds"": -3, ""speedDeclinePercent"": -8.333333333333334}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SESS_TARGET_HIT,SESS_TARGET_HIT,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 5, ""metrics"": {""differenceSeconds"": 2}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SESS_HR_RECOVERY,SESS_HR_RECOVERY,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""bpm"", ""value"": 30}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SESS_RPE_CHECK,SESS_RPE_CHECK,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""/10"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-LOAD_RPE_MISMATCH,LOAD_RPE_MISMATCH,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""/10"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_RIR,STR_RIR,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""reps"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-TEST_TIMING,TEST_TIMING,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""s"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_200_SPLIT,SPR_200_SPLIT,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""s"", ""value"": 3}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_400_FIRST200,SPR_400_FIRST200,NUMERIC_REFERENCE,First 200m of synthetic 400m race 26s minus synthetic PB200 24s = 2s,"{""unit"": ""s"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_VL,STR_VL,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 25}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_DROP_STOP,SPR_DROP_STOP,NUMERIC_REFERENCE,"Current fourth rep 39s compared only with reps already observed, best 36s: 100 * (39 - 36) / 36","{""unit"": ""%"", ""value"": 8.333333333333334}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_RHR,FAT_RHR,NUMERIC_REFERENCE,Baseline median 53 differs from arithmetic mean 54.4; current 58 -> +5 bpm,"{""unit"": ""bpm"", ""value"": 5, ""metrics"": {""baselineMedian"": 53, ""baselineSamples"": 5}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_HR_AT_PACE,FAT_HR_AT_PACE,NUMERIC_REFERENCE,Baseline median 53 differs from arithmetic mean 54.4; current 58 -> +5 bpm,"{""unit"": ""bpm"", ""value"": 5, ""metrics"": {""baselineMedian"": 53, ""baselineSamples"": 5}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_HRV,FAT_HRV,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""ln(ms)"", ""value"": 1, ""metrics"": {""baselineMeanLnRmssd"": 3, ""currentLnRmssd"": 4}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_HRV_GUIDED,FAT_HRV_GUIDED,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""ln(ms)"", ""value"": 1, ""metrics"": {""baselineMeanLnRmssd"": 3, ""currentLnRmssd"": 4}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_HRV_CV,FAT_HRV_CV,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 54.006172486732176, ""metrics"": {""meanLnRmssd"": 4, ""sampleSdLnRmssd"": 2.160246899469287}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_MOOD_DROP,FAT_MOOD_DROP,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""z"", ""value"": 0.6324555320336759, ""metrics"": {""mean"": 3, ""sampleSd"": 1.5811388300841898}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_HOOPER,FAT_HOOPER,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""score"", ""value"": 10}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FAT_DECOUPLING,FAT_DECOUPLING,NUMERIC_REFERENCE,"HR/speed 30 then 33 -> +10%, explicit R173 method, not old power/HR sign","{""unit"": ""%"", ""value"": 10}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-ABIL_HRMAX,ABIL_HRMAX,NUMERIC_REFERENCE,208 - 0.7*40 = 180 bpm; population estimate only,"{""unit"": ""bpm"", ""value"": 180}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-AGE_HRMAX_40,AGE_HRMAX_40,NUMERIC_REFERENCE,208 - 0.7*40 = 180 bpm; population estimate only,"{""unit"": ""bpm"", ""value"": 180}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-ABIL_CS,ABIL_CS,NUMERIC_REFERENCE,"Three exact points d=4t+200; CS 4 m/s, Dprime 200 m, zero residuals","{""unit"": ""m/s"", ""value"": 4, ""metrics"": {""dPrimeMeters"": 200, ""rSquared"": 1}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-ABIL_ASR,ABIL_ASR,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""m/s"", ""value"": 4}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-ABIL_HR_ZONES,ABIL_HR_ZONES,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""zone"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_E1RM,STR_E1RM,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""kg"", ""value"": 70}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FORM_GCT_ASYM,FORM_GCT_ASYM,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 9.523809523809524}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_SLEEP,REC_SLEEP,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 7.5}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_TRAVEL_SLEEP,REC_TRAVEL_SLEEP,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 7.5}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_SLEEP_DEBT,REC_SLEEP_DEBT,NUMERIC_REFERENCE,Personal need 8h: daily positive shortfalls 1+0+2+0+1+0+0 = 4h; surplus not subtracted,"{""unit"": ""h"", ""value"": 4}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_LIFE_STRESS,REC_LIFE_STRESS,NUMERIC_REFERENCE,Same-scale self report 4 minus prior 2 = 2 score units,"{""unit"": ""score"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_HARD_GAP,REC_HARD_GAP,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 2.5}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_HARD_GAP_SPRINT,REC_HARD_GAP_SPRINT,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 2.5}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-AGE_MASTERS,AGE_MASTERS,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 2.5}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_CONCURRENT_GAP,STR_CONCURRENT_GAP,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 2.5}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_LACTATE_REST,SPR_LACTATE_REST,NUMERIC_REFERENCE,Explicit repetition end/start interval: 8 min,"{""unit"": ""min"", ""value"": 8}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_REST_ACCEL,SPR_REST_ACCEL,NUMERIC_REFERENCE,Explicit repetition end/start interval: 180 s,"{""unit"": ""s"", ""value"": 180}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_TAPER_LEN,PER_TAPER_LEN,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 9}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_TAPER_SPRINT,PER_TAPER_SPRINT,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 9}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_TRANSITION,PER_TRANSITION,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""week"", ""value"": 1.2857142857142858}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_COMPETE_SPACE,PER_COMPETE_SPACE,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 9}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-TEST_RETEST,TEST_RETEST,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""week"", ""value"": 1.2857142857142858}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SEX_MC_IRREG,SEX_MC_IRREG,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 9}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_PEAK_REST,STR_PEAK_REST,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 9}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_JETLAG,REC_JETLAG,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 8}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_TRAVEL,REC_TRAVEL,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""h"", ""value"": 8}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_DIST_BASE,PER_DIST_BASE,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 60}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_DIST_SPEC,PER_DIST_SPEC,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 60}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_HARD_PER_WEEK,REC_HARD_PER_WEEK,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""session"", ""value"": 2, ""metrics"": {""running"": 2, ""hard"": 2, ""strength"": 1}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_FREQ_PERIOD,STR_FREQ_PERIOD,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""session"", ""value"": 1, ""metrics"": {""running"": 2, ""hard"": 2, ""strength"": 1}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-TA_NOVICE,TA_NOVICE,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""session"", ""value"": 2, ""metrics"": {""running"": 2, ""hard"": 2, ""strength"": 1}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_REST_DAY,REC_REST_DAY,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 4}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-PER_DETRAIN,PER_DETRAIN,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""day"", ""value"": 4}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_HARD_SAME_DAY,STR_HARD_SAME_DAY,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""boolean"", ""value"": 1}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-STR_PLYO_CONTACTS,STR_PLYO_CONTACTS,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""contacts"", ""value"": 90}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FORM_ONE_CHANGE,FORM_ONE_CHANGE,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""count"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-FORM_SELFCHECK,FORM_SELFCHECK,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""count"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_MAXV_FREQ,SPR_MAXV_FREQ,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""session"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_MAXV_VOL,SPR_MAXV_VOL,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""m"", ""value"": 400}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_SPEEDEND_VOL,SPR_SPEEDEND_VOL,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""m"", ""value"": 200}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_WARMUP,SPR_WARMUP,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""min"", ""value"": 15, ""metrics"": {""progressiveSprints"": 3}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-READY_MISSING,READY_MISSING,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""ratio"", ""value"": 0.5, ""metrics"": {""valid"": 1, ""required"": 2}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-REC_ALCOHOL,REC_ALCOHOL,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""standard_drink"", ""value"": 2}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SEX_MC_FEEL,SEX_MC_FEEL,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""/10"", ""value"": 3}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SPR_BLOCK_RT,SPR_BLOCK_RT,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""s"", ""value"": 0.18}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-SEX_EA,SEX_EA,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""kcal/kg FFM/day"", ""value"": 40}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-RTR_SPEED,RTR_SPEED,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""%"", ""value"": 80}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-TEST_SWC,TEST_SWC,NUMERIC_REFERENCE,Hand-specified arithmetic reference; NOT_EXECUTED,"{""unit"": ""s"", ""value"": -0.03, ""metrics"": {""sem"": 0.01, ""te"": 0.02, ""swc"": 0.03, ""mdc95"": 0.027718585822512663}}",NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-01,,BOUNDARY,"missing RPE is unknown, never zero",见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-02,,BOUNDARY,a planned RPE cannot masquerade as actual,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-03,,BOUNDARY,explicitly reported RPE zero is a valid zero load,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-04,,BOUNDARY,reference zero never creates Infinity or a safe-zone label,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-05,,BOUNDARY,incomplete calendar windows do not become complete by supplying totals,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-06,,BOUNDARY,unrelated units do not silently convert,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-07,,BOUNDARY,different timing protocols prohibit comparison,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-08,,BOUNDARY,two rounds are not flattened into a single CV group,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-09,,BOUNDARY,null last split does not become a faster last recorded split,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-10,,BOUNDARY,a single split cannot yield a CV,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-11,,BOUNDARY,"flat seven-day load has unavailable monotony, not zero strain",见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-12,,BOUNDARY,an omitted EWMA day cannot be padded with zero,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-13,,BOUNDARY,duplicate dates cannot masquerade as consecutive complete days,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-14,,BOUNDARY,an actual source from another athlete cannot enter a calculation,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-15,,BOUNDARY,future facts are not visible as of an earlier analysis,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-16,,BOUNDARY,absent professional permission cannot enable return-speed calculation,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-17,,BOUNDARY,an age-estimated HR threshold cannot replace measured LT1,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-18,,BOUNDARY,historical spike denominator excludes current session,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-19,,BOUNDARY,zero FFM blocks energy division,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-20,,BOUNDARY,different nutrition days cannot be combined as daily energy availability,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-21,,BOUNDARY,e1RM high-repetition data fail the documented R171 screening limit,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-22,,BOUNDARY,"CS requires three distinct durations, not duplicate tests",见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-23,,BOUNDARY,HR recovery at 45s is not relabelled as 60s,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-24,,BOUNDARY,MDC cannot be calculated from SEM without a justified error model,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-25,,BOUNDARY,unknown rules and safety routes cannot acquire training authorization,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-26,,BOUNDARY,EWMA has a first-observation seed and no pre-window padding,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-27,,BOUNDARY,"data completeness is local to the question, never a readiness score",见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-28,,BOUNDARY,same-rule correction changes calculated result and retains new source revision,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-29,,BOUNDARY,a missing upper band is not treated as an unlimited speed-endurance band,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-30,,BOUNDARY,an absent session list is not zero sessions,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-31,,BOUNDARY,complete classified records can explicitly confirm zero sessions,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-32,,BOUNDARY,missing classification is not evidence that all sessions were easy,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-33,,BOUNDARY,warmup duration remains usable when sprint count is unknown,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-34,,BOUNDARY,fractional booleans cannot be counted as warmup records,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-35,,BOUNDARY,missing structural identity blocks split calculation,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-36,,BOUNDARY,split results retain each original round and structural position,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-37,,BOUNDARY,estimated session RPE is never saved as actual load by this calculator,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-38,,BOUNDARY,future-recording errors are not silently accepted as actual evidence,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-39,,BOUNDARY,an out-of-scale Hooper item blocks the total,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-40,,BOUNDARY,one missing Hooper baseline does not fabricate a zero change,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-EDGE-41,,BOUNDARY,a repetition cannot be compared against later observations,见测试源码中的明确断言,NOT_RUN,,src/lib/core/coach-quantitative.test.ts
+Q-COVERAGE-01,,REGISTRY_COVERAGE,每个实现规则有一份唯一合成数值用例,实现 ID 与用例 ID 一一对应,NOT_RUN,,src/lib/core/coach-quantitative.test.ts

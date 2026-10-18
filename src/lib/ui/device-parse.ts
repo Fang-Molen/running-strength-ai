@@ -1,9 +1,12 @@
+import { shortHash } from '@/lib/health/observation'
 /**
  * Local-only device data parsing (FIT / GPX / TCX / CSV / Garmin export ZIP / Apple Health ZIP / OCR text).
  * Nothing here talks to a vendor API. Every parsed row must be confirmed by the user before saving.
  */
 export type DeviceActivity = {
   key: string
+  /** Verified import channel + account + stable activity ID, when actually available. */
+  sourceIdentity?: string
   source: string
   sport: "RUNNING" | "STRENGTH" | "MIXED" | "UNKNOWN"
   sportLabel: string
@@ -20,12 +23,12 @@ export type DeviceActivity = {
   sets: { name: string; reps: number | null; weightKg: number | null; durationSec: number | null }[]
 }
 export type HealthMetric = "RHR" | "HRV" | "SLEEP" | "WEIGHT" | "BODY_BATTERY" | "READINESS" | "STRESS" | "STEPS" | "SPO2" | "RESP"
-export type DeviceHealthRow = { key: string; source: string; metric: HealthMetric; day: string; value: number }
+export type DeviceHealthRow = { key: string; source: string; metric: HealthMetric; day: string; value: number; observation?: import("../health/observation").Observation; hrvMethod?: import("../nutrition/vitals").HrvMethod }
 export type DeviceParseResult = { kind: string; brand: string; activities: DeviceActivity[]; health: DeviceHealthRow[]; notes: string[] }
 
 export const METRIC_LABELS: Record<HealthMetric, string> = { RHR: "静息心率", HRV: "HRV", SLEEP: "睡眠", WEIGHT: "体重", BODY_BATTERY: "身体电量", READINESS: "训练准备度", STRESS: "压力", STEPS: "步数", SPO2: "血氧", RESP: "呼吸" }
 export const METRIC_UNITS: Record<HealthMetric, string> = { RHR: "次/分", HRV: "ms", SLEEP: "小时", WEIGHT: "kg", BODY_BATTERY: "/100", READINESS: "/100", STRESS: "/100", STEPS: "步", SPO2: "%", RESP: "次/分" }
-const RANGE: Record<HealthMetric, [number, number]> = { RHR: [30, 120], HRV: [1, 300], SLEEP: [0.5, 16], WEIGHT: [30, 250], BODY_BATTERY: [0, 100], READINESS: [0, 100], STRESS: [0, 100], STEPS: [1, 100000], SPO2: [70, 100], RESP: [4, 40] }
+const RANGE: Record<HealthMetric, [number, number]> = { RHR: [30, 120], HRV: [1, 300], SLEEP: [0.5, 16], WEIGHT: [30, 250], BODY_BATTERY: [0, 100], READINESS: [0, 100], STRESS: [0, 100], STEPS: [0, 100000], SPO2: [70, 100], RESP: [4, 40] }
 
 const r1 = (n: number) => Math.round(n * 10) / 10
 function okMetric(metric: HealthMetric, value: number | null | undefined): value is number {
@@ -426,8 +429,9 @@ export function parseAppleHealthXml(xml: string, sinceDay: string): DeviceParseR
   return res
 }
 
+export function healthPreviewKey(r:DeviceHealthRow):string{return `${r.metric}:${r.day}:${shortHash([r.observation?.sourceId??r.source,r.observation?.statistic??'',r.hrvMethod??''].join('|'))}`}
 export function dedupeHealth(rows: DeviceHealthRow[]): DeviceHealthRow[] {
-  const m = new Map<string, DeviceHealthRow>(); for (const r of rows) m.set(r.key, r); return [...m.values()].sort((a, b) => b.day.localeCompare(a.day))
+  const m = new Map<string, DeviceHealthRow>(); for (const r of rows) {const key=healthPreviewKey(r);m.set(key,{...r,key})} return [...m.values()].sort((a, b) => b.day.localeCompare(a.day))
 }
 export function mergeResults(parts: DeviceParseResult[]): DeviceParseResult {
   const acts = new Map<string, DeviceActivity>()

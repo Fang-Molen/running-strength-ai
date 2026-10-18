@@ -1,0 +1,18 @@
+{
+  "base_source_zip_sha256": "bcfe8b8fdeda748d2b898692004e030c2520bc28a39a7e8a0b024da3147553c8",
+  "base_git_head": "134456fc2495f192381c6df85a0900b493864e9d",
+  "files": {
+    "src/lib/core/coach-evolution-v4.ts": "08833f6f0a842e97987444baad213e2bfef16671cf07d89cf32013c179875c7d",
+    "src/lib/core/coach-evolution-v4.test.ts": "99aaccf191025ea4d0d89c4bcc7b7a73a23b97c2b4a18110cffd5bdcf7fd0ace",
+    "src/lib/core/coach-evolution-v4.scenario.test.ts": "d06ec04971aa435025cf6fe2ccfc783e42d284e9dff80b264e6cefabc5d4ec92",
+    "src/lib/core/coach-referral-safety.ts": "7e18c1205657a4dabbe2b58b575a76d083c80c82b2f5f48b5ed160705ef1b770",
+    "src/lib/core/coach-brief.ts": "60cf729611136539a0c955bdcaee834f443246cec52eec51a80c7b5554fb5fab",
+    "evaluation/v4-c1/README_交接与安全边界.md": "635ea3dea5d1bce30501cd4db66b209aa799900cd852996bdb2db62b199e2a28",
+    "evaluation/v4-c1/coach-brief.patch": "8687a0e6510fa1133fae542d565245eb14a8a5187aa23cd3df4026f5f9d7edb1",
+    "evaluation/v4-c1/replay.mjs": "71a67c8fde486f246c5414bb2a33c0ccf7b53123ae1ebf543259ccddcd041c98",
+    "evaluation/v4-c1/six-turn-deterministic-replay.json": "4b21e591a328ccffc0774e439e9625b871aff50a31a72ad27ce5128328aae27a",
+    "evaluation/v4-c1/replay.log": "add97d759072d3b8f918df45a3b541d8254738a9f2f656a7c576375e37acd3b2",
+    "v4-c1-test.log": "2e5be7f55c46afb699bee24917517ee660017bd8cadac758d00b824aaf1c0c21",
+    "v4-guard-integration.log": "98939bb5b4b5ab583ae50fb9b3ad994e25668841205725268add150b5c4401df"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM"], "types": [], "strict": true,
+    "noEmit": true, "skipLibCheck": true, "allowImportingTsExtensions": true
+  },
+  "files": [
+    "src/lib/core/storage.ts", "src/lib/core/storage-journal.ts",
+    "src/lib/core/coach-decision-calibration.ts", "src/lib/core/coach-p7-knowledge.ts",
+    "src/lib/core/coach-p7-evaluation.ts", "src/lib/core/coach-p7-lifecycle.ts",
+    "src/lib/core/coach-claim-revision.ts"
+  ]
+}

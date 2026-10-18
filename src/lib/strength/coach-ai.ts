@@ -1,20 +1,14 @@
+import { reviewWithOneRepair } from './coach-output-retry';
+import { DIAGNOSIS_SYSTEM_BOUNDARY } from '@/lib/core/coach-diagnosis-wording';
+import { redactCoachIdentifiers } from '@/lib/core/coach-output-contract';
 import { createServerFn } from "@tanstack/react-start";
 import { appendFileSync } from "node:fs";
 import type { FatigueBand } from "./agent";
 import type { CoachTurn } from "@/lib/core/coach-brief";
 import { sameCalendarDay } from "@/lib/core/coach-compare";
-import { buildCoachModelRequest, COACH_RESPONSE_FORMAT, interpretCoachModelOutput, normalizeAskCoachInput, type AskCoachRawInput } from "./coach-pipeline";
+import { coachLocalSafetyTurn, buildCoachModelRequest, interpretCoachModelOutput, normalizeAskCoachInput, type AskCoachRawInput } from "./coach-pipeline";
 import { consumeCoachEventStream, safeResponseHeaders, safeUpstreamError } from "@/lib/core/coach-stream";
-import { acceptExplanation } from "./coach";
-
-type ExplainInput = {
-  text: string;
-  decision: string;
-  band: FatigueBand;
-  goals: string;
-  notes: string;
-  energy: string;
-};
+import { explanationSafety,explainWithOneRepair,localSafetyForTexts,EXPLANATION_RESPONSE_FORMAT,type ExplainInput } from './coach-explanation';
 
 export const explainCoach = createServerFn({ method: "POST" })
   .validator((input: ExplainInput) => {
@@ -32,37 +26,48 @@ export const explainCoach = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data }) => {
+    const safety=explanationSafety(data);
+    if(safety)return {ok:true as const,text:safety.text};
     const access = await (await import("./model-access")).beginModelCall()
     if (!access.ok) return { ok: false as const, reason: "LOCKED" as const, detail: access.reason }
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false as const };
     const locked = data.band === "tired" || data.band === "cooked" ? "疲劳偏高，禁止建议加重、加组或改目标。" : "可以沿用规则，不要另起一个相反的结论。";
     try {
+      const checked=await explainWithOneRepair(data,async(attempt,flags)=>{
+      if(attempt===1){
+        const repairAccess=await (await import('./model-access')).beginModelCall();
+        if(!repairAccess.ok)throw Error('REPAIR_ACCESS_DENIED');
+      }
       const res = await fetch("https://api.x.ai/v1/chat/completions", {
         method: "POST",
+        signal: AbortSignal.timeout(COACH_WAIT_MS),
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
           model: "grok-4.5",
           temperature: 0.3,
-          max_tokens: 180,
+          max_tokens: 300,
+          response_format: EXPLANATION_RESPONSE_FORMAT,
           messages: [
             {
               role: "system",
               content:
-                "你是中长跑力量教练。规则已经改好课，你只把原因说清楚。用口语中文，最多四句，不要列表，不要英文术语。不要编造成绩，不要推翻规则结论。" + locked,
+                DIAGNOSIS_SYSTEM_BOUNDARY + "你是中长跑力量教练。规则已经改好课，你只把原因说清楚。用口语中文，最多四句，不要列表，不要英文术语。不要编造成绩，不要推翻规则结论。该入口没有正式训练事实来源，笔记只是描述；不要复述或新增数值、训练剂量、成绩或来源id，不批准恢复或改课。只输出JSON，text是解释正文，citations必须为空数组。" + locked,
             },
             {
               role: "user",
-              content: `运动员说：${data.text}\n规则结论：${data.decision}\n疲劳档：${data.band}\n目标：${data.goals || "未设"}\n这周记录：${data.notes || "没有"}\n热量和期限：${data.energy || "没填"}`,
+              content: redactCoachIdentifiers(`运动员说：${data.text}\n规则结论：${data.decision}\n疲劳档：${data.band}\n目标：${data.goals || "未设"}\n这周记录：${data.notes || "没有"}\n热量和期限：${data.energy || "没填"}`),
             },
+            ...(attempt===1?[{role:'user',content:'请修复一次并仅输出规定JSON。检查问题：'+flags.join(',')+'。保留解释目的，不提供诊断、无来源数字或引用。'}]:[]),
           ],
         }),
       });
-      if (!res.ok) return { ok: false as const };
+      if (!res.ok) throw Error('EXPLANATION_UPSTREAM');
       const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-      const text = acceptExplanation(body.choices?.[0]?.message?.content ?? "", data.band);
-      if (!text) return { ok: false as const };
-      return { ok: true as const, text };
+      return body.choices?.[0]?.message?.content??'';
+      });
+      phaseLog('[explainCoach] guard',JSON.stringify({flags:checked.flags,repair:checked.repair}));
+      return { ok: true as const, text:checked.text };
     } catch {
       return { ok: false as const };
     }
@@ -101,7 +106,9 @@ function readableJson(raw: string): boolean {
 
 export const askCoach = createServerFn({ method: "POST" })
   .validator((input: AskCoachRawInput) => normalizeAskCoachInput(input))
-  .handler(async ({ data }): Promise<{ ok: true; turn: CoachTurn; compareIds: [string, string] | null; seriesIds: string[] | null } | { ok: false; reason: CoachCallFailure; detail?: string }> => {
+  .handler(async ({ data }): Promise<{ ok: true; turn: CoachTurn; compareIds: [string, string] | null; seriesIds: string[] | null; analysisBasis?: import('@/lib/core/coach-reasoning').ReasoningBasis } | { ok: false; reason: CoachCallFailure; detail?: string }> => {
+    const safety=coachLocalSafetyTurn(data)??localSafetyForTexts([data.brief.question]);
+    if(safety)return {ok:true,turn:safety,compareIds:null,seriesIds:null};
     const access = await (await import("./model-access")).beginModelCall()
     if (!access.ok) return { ok: false, reason: "LOCKED", detail: access.reason }
     const apiKey = process.env.XAI_API_KEY;
@@ -127,7 +134,7 @@ export const askCoach = createServerFn({ method: "POST" })
           temperature: 0.2,
           max_tokens: maxTokens,
           stream: true,
-          response_format: COACH_RESPONSE_FORMAT,
+          response_format: request.responseFormat,
           messages: request.messages,
         }),
       });
@@ -168,9 +175,23 @@ export const askCoach = createServerFn({ method: "POST" })
         raw = body.choices?.[0]?.message?.content ?? "";
       }
       if (!readableJson(raw)) phaseLog("[askCoach] INVALID_JSON", JSON.stringify({ kind, at: new Date().toISOString(), bytes: raw.length }));
-      const { turn, compareIds, seriesIds, code, subcode } = interpretCoachModelOutput(data, raw);
+      const checked = await reviewWithOneRepair(data,raw,async flags=>{
+        const retryAccess=await (await import('./model-access')).beginModelCall();
+        if(!retryAccess.ok)throw Error('REPAIR_ACCESS_DENIED');
+        phaseLog('[askCoach] repair',JSON.stringify({kind,flags,attempt:1}));
+        const retry=await fetch('https://api.x.ai/v1/chat/completions',{
+          method:'POST',signal:AbortSignal.timeout(COACH_WAIT_MS),headers:{'Content-Type':'application/json',Authorization:`Bearer ${apiKey}`},
+          body:JSON.stringify({model:'grok-4.5',temperature:0.2,max_tokens:maxTokens,response_format:request.responseFormat,
+            messages:[...request.messages,{role:'user',content:'请重新生成一次，严格使用原事实与引用。前次检查问题：'+flags.join(',')+'。不做诊断或放行，不引用作废值；只输出符合结构的JSON。'}]})
+        });
+        if(!retry.ok)throw Error('REPAIR_UPSTREAM');
+        const body=await retry.json() as {choices?:{message?:{content?:string}}[]};
+        return body.choices?.[0]?.message?.content??'';
+      });
+      const {turn,compareIds,seriesIds,code,subcode}=checked;
+      phaseLog('[askCoach] repair_result',JSON.stringify(checked.repair));
       phaseLog("[askCoach] guard", JSON.stringify({ kind, at: new Date().toISOString(), mode: turn.mode, code, subcode }));
-      return { ok: true, turn, compareIds, seriesIds };
+      return { ok: true, turn, compareIds, seriesIds, ...(turn.mode==='answer'&&data.v4?{analysisBasis:data.v4.reasoning.basis}:{}) };
     } catch (error) {
       const failure = describeFailure(error);
       phaseLog("[askCoach] failed", JSON.stringify({ kind, stage, at: new Date().toISOString(), elapsedMs: Date.now() - started, reason: failure.reason, detail: failure.detail }));

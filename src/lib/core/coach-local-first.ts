@@ -1,3 +1,20 @@
+import { answerFromAppData } from "../health/coach-data"
+import { deliverNativeCoachDialogue } from './dialogue-e1/host.ts'
+import { topicFallback, FALLBACK_TOPICS } from './coach-topic-fallback.ts';
+import { answerDialogue, coachPrimaryIntent, type CoachDialogue } from './coach-dialogue.ts';
+import type { ChatTraining } from './coach-chat-evidence.ts';
+import { cleanAthleteText } from './coach-offline-insights.ts';
+import { enrichOfflineAnswer } from './coach-offline.ts';
+import type { OfflineReview } from './coach-offline-loop.ts';
+import { buildPeriodReview, formatPeriodReview, periodStart, type PeriodReview } from './coach-period-review.ts';
+import { calendarDay } from './coach-calendar.ts';
+import { ordinaryDiscomfortAnswer } from './coach-ordinary-discomfort.ts';
+import { boundedCoachMemory, type CoachContextMemory } from './coach-context-memory.ts';
+import { structuredCoachingCandidate, type StructuredCoachingCandidate } from './coach-structured-candidate.ts';
+import { detectRedFlags,redFlagResponse } from './coach-red-flags.ts';
+import { localPlaybookLesson, localPlaybookBoundary } from "./coach-playbook.ts";
+import { reportedSessionRpes, parseReportedRpes, sessionLoadAnswer } from "./coach-claim-scope.ts";
+import { linkedContextText } from "./coach-linked-context.ts";
 import { retrieveCurriculum, retrieveTeachingExamples, formatCurriculumGuidance, calculateStatedSessionLoads, type CurriculumSelection } from './coach-curriculum.ts';
 import { auditDeviceConflict, type DeviceConflictAudit } from "./coach-device-conflict.ts";
 import { explainRunningFeedback } from "./running-transaction.ts";
@@ -6,11 +23,20 @@ import { answerFromRecordedContext } from "./coach-record-context.ts";
 import { explainTrainingMechanism, formatTrainingMechanism } from "./coach-training-mechanisms.ts";
 import type { CoachBrief } from "./coach-brief.ts";
 import { projectCoachNextSession } from './coach-next-session.ts';
-import { classifyLocalSafety, screenLocalSafety } from "./coach-local-safety.ts";
+import { classifyLocalSafety, screenLocalSafety, localSafetyAction } from "./coach-local-safety.ts";
 import { contextualNutrition, type Event } from "./nutrition-context.ts";
+import { formatReasoningFrame, reasoningRevisionNotice, type ReasoningFrame } from './coach-reasoning.ts';
+import type { EvolutionSnapshot } from './coach-evolution-v4.ts';
+import { coachQuestionIntent } from './coach-model-packet.ts';
 
 export type LocalCoachAnswer = {
+  expression?: { version: 'E1'; coverage: 'CONFIRMED_RECORD_INSPECTION_ONLY'; sourceRevision: string };
+  dialogue?: CoachDialogue;
+  chatTraining?: ChatTraining;
   text: string;
+  offlineRuleIds?: string[];
+  offlineReview?: OfflineReview;
+  candidate?: StructuredCoachingCandidate|null;
   escalationAvailable: boolean;
   sources: string[];
   cognition?: CoachCognition;
@@ -18,9 +44,10 @@ export type LocalCoachAnswer = {
   teachingExampleIds?: string[];
   deviceAudit?: DeviceConflictAudit;
   recoveryDecision?: RecoveryDecision;
+  reasoning?: ReasoningFrame;
 };
 
-type RecoveryObservation = { kind: 'SLEEP' | 'SESSION_RPE' | 'SUBJECTIVE_RECOVERY' | 'FATIGUE'; origin: 'USER_REPORT' | 'BOUND_FACT'; value: number | null; text: string; sourceIds: string[] };
+type RecoveryObservation = { kind: 'SLEEP' | 'SESSION_RPE' | 'UNSPECIFIED_RPE' | 'SUBJECTIVE_RECOVERY' | 'FATIGUE'; origin: 'USER_REPORT' | 'BOUND_FACT'; value: number | null; text: string; sourceIds: string[] };
 type RecoveryDecision = { observations: RecoveryObservation[]; conflict: boolean; decisionAuthorization: false; executable: false };
 
 /** Apply existing next-session limits to this turn, without inventing a bound occurrence or writing evidence. */
@@ -45,6 +72,11 @@ function recoveryDecisionAnswer(brief: CoachBrief, curriculum: CurriculumSelecti
       ['SESSION_RPE',/RPE\s*(?:为|是|[:：])?\s*(\d+(?:\.\d+)?)(?![\d.])/gi],
       ['SUBJECTIVE_RECOVERY',/(?:主观恢复|恢复感)(?:评分)?\s*(?:为|是|[:：])?\s*(\d+(?:\.\d+)?)(?![\d.])/g],
     ] as const) for(const m of clause.matchAll(pattern)) {
+      if(kind==='SESSION_RPE'&&!reportedSessionRpes(clause).includes(Number(m[1]))){
+       const reading=parseReportedRpes(clause).find(r=>r.scope==='UNSPECIFIED'&&r.value===Number(m[1]));
+       if(reading&&valid('UNSPECIFIED_RPE',reading.value))observations.push({kind:'UNSPECIFIED_RPE',origin:'USER_REPORT',value:reading.value,text:clause+'（评分范围未知，需确认整课或单组）',sourceIds:[]});
+       continue;
+      }
       if(valid(kind,Number(m[1])) && !/(?:没有|未|没|不)\s*$/.test(clause.slice(0,m.index)))observations.push({kind,origin:'USER_REPORT',value:Number(m[1]),text:clause,sourceIds:[]});
     }
     const fatigue=clause.match(/疲劳明显|明显疲劳|很疲劳|腿很沉|腿沉|恢复差|尚未恢复/);
@@ -53,7 +85,7 @@ function recoveryDecisionAnswer(brief: CoachBrief, curriculum: CurriculumSelecti
   const conflict=brief.duplicateCount>0 || ['SLEEP','SESSION_RPE','SUBJECTIVE_RECOVERY'].some(kind=>
     new Set(observations.filter(o=>o.origin==='USER_REPORT'&&o.kind===kind).map(o=>o.value)).size>1);
   // Keep the unbound status: this projection is used for its existing blockers, not as permission to execute a plan.
-  const poor=observations.some(o=>o.kind==='FATIGUE' || projectCoachNextSession({...brief,occurrenceId:null,sources:[],duplicateCount:0,pain:false,
+  const poor=observations.some(o=>o.kind==='FATIGUE' || o.kind==='UNSPECIFIED_RPE'&&o.value!==null&&o.value>=7 || projectCoachNextSession({...brief,occurrenceId:null,sources:[],duplicateCount:0,pain:false,
     sleepHours:o.kind==='SLEEP'?o.value:null, sessionRpe:o.kind==='SESSION_RPE'?o.value:null,
     subjectiveRecovery:o.kind==='SUBJECTIVE_RECOVERY'?o.value:null}).blockers.some(b=>['SHORT_SLEEP','LOW_SUBJECTIVE_RECOVERY','RECOVERY_MISSING_AFTER_HIGH_RPE'].includes(b)));
   if(!poor && !conflict)return null;
@@ -61,7 +93,7 @@ function recoveryDecisionAnswer(brief: CoachBrief, curriculum: CurriculumSelecti
   const requestedPlan=q.split(/[，,。；;\n]/).find(clause=>/计划/.test(clause)&&/训练|跑|主课|间歇|力量|高强度/.test(clause));
   const lines=[`先评估${when}，原计划的强度与完成量仍待确认，不建议直接照常全做或补加量。`,
     requestedPlan?`待评估计划（不是完成事实）：${requestedPlan}；距离和组数本身不能确定实际强度。`:'',
-    ...observations.map(o=>`${o.origin==='USER_REPORT'?'本次消息自报（未保存、未绑定）':'已选训练的绑定记录'}：${o.text}${o.sourceIds.length?` [${o.sourceIds.join(',')}]`:''}。`),
+    ...observations.map(o=>`${o.origin==='USER_REPORT'?'本次消息自报（未保存、未绑定）':'已选训练的绑定记录'}：${o.origin==='USER_REPORT'&&/RPE/.test(o.kind)?`自报RPE ${o.value}；`:''}${o.text}${o.sourceIds.length?` [${o.sourceIds.join(',')}]`:''}。`),
     observations.some(o=>o.origin==='BOUND_FACT')?'绑定记录描述所选训练当时的情况；需核对与当前自报的时间和对应关系，不能覆盖或混为同一条。':'没有选定训练编号，不读取其他日期的记录；本次自报仍可用于条件分析。',
     '这些线索提高谨慎程度，但一次短睡眠或高RPE不能确诊过度训练，缺失反馈也不代表恢复正常。'];
   if(conflict)lines.push('证据存在重复或冲突：保留原值与来源，不平均、不选较好的值。先确认各条对应的训练/时间及有效记录；在解决前只暂缓高强度，不给执行剂量。');
@@ -82,8 +114,10 @@ function recoveryDecisionAnswer(brief: CoachBrief, curriculum: CurriculumSelecti
 }
 
 /** Read-only deterministic assistance. Never authorizes a training-plan or medical change. */
-export function answerLocally(brief: CoachBrief): LocalCoachAnswer {
+function legacyAnswerLocally(brief: CoachBrief): LocalCoachAnswer {
   const q = brief.question.toLowerCase();
+  const directAction=localSafetyAction(brief.question);
+  if(directAction)return {text:directAction,escalationAvailable:false,sources:[]};
   const curriculum = retrieveCurriculum(brief.question);
   let curriculumUsed = false;
   const sources = (brief.sources ?? [])
@@ -188,7 +222,7 @@ export function answerLocally(brief: CoachBrief): LocalCoachAnswer {
       "我可以核对已保存的训练事实，但不能仅凭一次表现确定阈值、疲劳或下次训练负荷。双阈值等方法需要结合长期跑量、强度分布、恢复与个体测试，不能照搬精英课表。";
   } else {
     text =
-      "我可以帮助核对训练、恢复、身体和饮食记录。请告诉我想分析的具体训练或问题；对于开放式复杂推理，可以由你主动申请线上大模型。";
+      "今天先保持熟悉、无痛且能轻松交谈的活动，明天根据恢复再决定是否增加要求。你的主项和最近一节实际训练是什么？";
   }
   if (nutrition && !danger) {
     const facts = nutrition.facts.slice(0, 2);
@@ -208,9 +242,102 @@ export function answerLocally(brief: CoachBrief): LocalCoachAnswer {
       : null,
   ].filter(Boolean);
   return {
-    text: `${text}\n${explainRunningFeedback(brief.occurrenceId ?? undefined)}\n${context}${facts.length ? ` 已记录：${facts.join("；")}。` : " 当前关联的量化证据不足。"}${sources.length ? `\n依据：${sources.join("；")}` : ""}\n本地分析仅供参考；没有修改计划或记录。`,
+    text: `${text}\n${explainRunningFeedback(brief.occurrenceId ?? undefined)}\n${context}${facts.length ? ` 已记录：${facts.join("；")}。` : " 先记录下一节熟悉训练的实际内容和感受，今天不急着加量。"}${sources.length ? `\n依据：${sources.join("；")}` : ""}\n本地分析仅供参考；没有修改计划或记录。`,
     escalationAvailable: !danger && nutrition?.safety !== "EMERGENCY",
     sources: curriculumUsed ? [...sources,...curriculum.lessons.map(r=>r.id)] : sources,
     ...(curriculumUsed ? {curriculum} : {}),
   };
+}
+/** One coordinator for local and model requests; structured snapshots are re-audited by the caller. */
+function answerLocallyCore(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapshot:EvolutionSnapshot}):LocalCoachAnswer{
+ const base=legacyAnswerLocally(brief)
+ const multipleLoads=calculateStatedSessionLoads(brief.question)
+ if(multipleLoads.length>1&&screenLocalSafety(brief.question).level==='NONE')return {text:multipleLoads.join('\n'),escalationAvailable:false,sources:[]}
+
+ const load=screenLocalSafety(brief.question).level==='NONE'&&!logic?.frame.safety.mustRetain&&logic?.frame.stage!=='RESOLVE_CONFLICT'?sessionLoadAnswer(brief.question,brief.sessionRpe,brief.durationSec,brief.continuousCount===1&&brief.repetitionSlots===0&&logic?.frame.computed.points.length===1?logic.frame.computed.points[0].seconds:null):null
+ if(load)return {text:load,escalationAvailable:false,sources:brief.sourceIds,reasoning:logic?.frame}
+ const boundary=localPlaybookBoundary(brief.question)
+ if(boundary && screenLocalSafety(brief.question).level==='NONE' && !brief.pain && !brief.constraints.medicalReferral && !logic?.frame.safety.mustRetain)
+  return {text:boundary.text,sources:boundary.sourceIds,escalationAvailable:false}
+ const lesson=localPlaybookLesson(brief.question)
+ if(lesson && !base.cognition && !explainTrainingMechanism(brief.question) && !brief.pain && !brief.constraints.medicalReferral && screenLocalSafety(brief.question).level==='NONE' && !logic?.frame.safety.mustRetain)
+  return {text:lesson.text,escalationAvailable:true,sources:lesson.sourceIds}
+ if(!logic)return base
+ const frame=logic.frame
+ if(frame.safety.mustRetain)return {...base,text:formatReasoningFrame(frame,logic.snapshot),escalationAvailable:false,reasoning:frame,sources:[]}
+ if(brief.pain||brief.constraints.medicalReferral||!base.escalationAvailable||coachQuestionIntent(brief.question)==='FUEL'){
+  const notice=reasoningRevisionNotice(frame);return {...base,text:notice?notice+'\n'+base.text:base.text,reasoning:frame}
+ }
+ const scoped=frame.scopeOccurrenceIds.includes(brief.occurrenceId??'')
+ if(!scoped||frame.task==='CALCULATE'){
+  const notice=reasoningRevisionNotice(frame);return {...base,text:notice?notice+'\n'+base.text:base.text,reasoning:frame}
+ }
+ return {...base,cognition:undefined,text:formatReasoningFrame(frame,logic.snapshot),reasoning:frame,sources:[...frame.observedSourceIds],escalationAvailable:true}
+}
+
+export function answerLocally(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapshot:EvolutionSnapshot},memory:readonly CoachContextMemory[]=[],periodReview?:PeriodReview,dialogue?:CoachDialogue):LocalCoachAnswer{
+ const original = answerLocallyBase(brief,logic,memory,periodReview,dialogue)
+ if (FALLBACK_TOPICS.INJECTION.match.test(brief.question) || detectRedFlags(brief.question).level!=='NONE'
+   || brief.pain || brief.constraints.medicalReferral || logic?.frame.safety.mustRetain
+   || original.dialogue?.emergency || original.dialogue?.medicalHold || original.chatTraining || original.candidate) return original
+ const expression = deliverNativeCoachDialogue({ question: brief.question, occurrenceId: brief.occurrenceId,
+   asOf: logic?.snapshot.asOf ?? new Date().toISOString() })
+ if (expression.status!=='DELIVERABLE_FACTS_ONLY') return original
+ return {...original,text:expression.text,sources:expression.sourceIds,
+   expression:{version:'E1',coverage:expression.trace.coverage,sourceRevision:expression.trace.sourceRevision}}
+}
+
+function answerLocallyBase(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapshot:EvolutionSnapshot},memory:readonly CoachContextMemory[]=[],periodReview?:PeriodReview,dialogue?:CoachDialogue):LocalCoachAnswer{
+ // Explicit daily questions may use health facts; never replace session replay or a medical hold.
+ const dailyPain=brief.appData?.fatigue.state==='PAIN_REVIEW'
+ // A saved health/device preference must not hijack an explicit load calculation.
+ if(coachPrimaryIntent(brief.question)!=='LOAD'&&!FALLBACK_TOPICS.INJECTION.match.test(brief.question)&&detectRedFlags(brief.question).level==='NONE'
+   &&!brief.pain&&(!brief.constraints.medicalReferral||dailyPain)&&!logic?.frame.safety.mustRetain&&!dialogue?.emergency&&!dialogue?.medicalHold){
+   const text=answerFromAppData(brief)
+   if(text)return {text,dialogue,sources:[brief.appData!.sourceId],escalationAvailable:false,candidate:null}
+ }
+ // Explicit record inspection must not be replaced by the dialogue intake fallback.
+ // These remain read-only context, and every existing medical hold takes priority.
+ const recordSources=(brief.sources??[]).filter(s=>s.kind==='CONTEXT'&&/^linked:(?:meal:|measurement:|fieldwork-draft:|fieldwork-drafts-unavailable)/.test(s.id));
+ if(recordSources.length&&/(?:核对|查看|读取|检查).*(?:饮食|营养|餐|体重|腰围|实测|待练|草稿)/.test(brief.question)
+  &&!FALLBACK_TOPICS.INJECTION.match.test(brief.question)&&detectRedFlags(brief.question).level==='NONE'
+  &&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain&&!dialogue?.emergency&&!dialogue?.medicalHold){
+  const drafts=recordSources.some(s=>s.id.startsWith('linked:fieldwork'));
+  return {dialogue,text:'先核对当前本地只读记录：\n'+recordSources.map(s=>s.detail).join('\n')+'\n'+(drafts?'下一步先确认草稿的原定训练目的、个人适用性和批准状态；数量或休息缺失时保留待确认，不补写训练剂量。':'下一步核对餐食是否记录完整及实测日期；缺失营养素仍为未记录。仅凭这些记录不能判断恢复、供能不足或训练表现原因。')+'\n没有修改正式计划或训练记录。',sources:recordSources.map(s=>s.id),escalationAvailable:false,candidate:null};
+ }
+ if(!FALLBACK_TOPICS.INJECTION.match.test(brief.question)){
+  const current=answerDialogue(brief,logic,dialogue)
+  if(current){
+   const notes=!current.dialogue.emergency&&!current.dialogue.medicalHold&&!brief.pain&&logic?boundedCoachMemory(memory,logic.snapshot.athleteId,logic.snapshot.asOf):[]
+   const [visible,...references]=current.text.split('\n依据：')
+   const recovery=!current.dialogue.emergency&&!current.dialogue.medicalHold&&detectRedFlags(brief.question).level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain?recoveryDecisionAnswer(brief,retrieveCurriculum(brief.question)):null
+   const safe=!current.dialogue.emergency&&!current.dialogue.medicalHold&&detectRedFlags(brief.question).level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain
+   const deviceAudit=safe?auditDeviceConflict(brief.question):null
+   const cognition=brief.pain?reasonCoachCognition(brief)??undefined:undefined
+   const curriculum=recovery?.curriculum??(safe?retrieveCurriculum(brief.question):undefined)
+   const recoverySummary=recovery&&!current.offlineReview?'\n恢复核对：'+recovery.recoveryDecision!.observations.map(o=>`${o.origin==='BOUND_FACT'?'绑定记录':'当前自报（未保存）'}${o.text}`).join('；')+'；先核对当前精神状态、近期负荷与周期目的，明显疲劳或不适时暂缓高强度，不能按单个数值放行。':''
+   const detail=[...references,current.offlineReview?.signals.map(s=>s.text).join('\n'),recovery?.text,deviceAudit?.text,curriculum?formatCurriculumGuidance(curriculum):null,safe&&!references.length?'知识边界：这是待核对的训练观察，不是个人诊断；没有修改计划或记录。':null].filter(Boolean).join('\n')
+   return {...current,cognition,curriculum,deviceAudit:deviceAudit??undefined,recoveryDecision:recovery?.recoveryDecision,sources:[...new Set([...current.sources,...recovery?.sources??[],...curriculum?.lessons.map(l=>l.id)??[]])],text:visible+recoverySummary+(notes.length?'\n已保存的安排偏好：'+notes.map(n=>n.text).join('；')+'；没有据此自动改课。':'')+(safe?linkedContextText(brief):'')+(detail?'\n依据：'+detail:'')}
+  }
+ }
+ const red=detectRedFlags(brief.question);
+ if(red.level==='EMERGENCY'||red.level==='URGENT_MEDICAL'||red.level==='MEDICAL_REVIEW'&&red.classes.includes('ENERGY'))return {text:redFlagResponse(red)!,escalationAvailable:false,sources:[],candidate:null};
+ if(FALLBACK_TOPICS.INJECTION.match.test(brief.question))return {text:topicFallback(brief.question).text,escalationAvailable:false,sources:[],candidate:null};
+ const ordinary=red.level==='NONE'&&!logic?.frame.safety.mustRetain&&!brief.pain&&!brief.constraints.medicalReferral?ordinaryDiscomfortAnswer(brief.question):null;
+ if(ordinary)return {text:ordinary,escalationAvailable:false,sources:[],candidate:null};
+ const mechanism=red.level==='NONE'&&!logic?.frame.safety.mustRetain&&!brief.pain&&!brief.constraints.medicalReferral?explainTrainingMechanism(brief.question):null
+ if(mechanism)return {text:cleanAthleteText(formatTrainingMechanism(mechanism))+'\n没有修改计划或记录。\n依据：'+formatTrainingMechanism(mechanism),sources:[],escalationAvailable:false,candidate:null}
+ const periodIntent = brief.question.trim().match(/^(?:请)?复盘最近\s*(7|28)\s*天[。？?]?$/);
+ if(periodIntent && logic && red.level==='NONE' && !logic.frame.safety.mustRetain && !brief.pain && !brief.constraints.medicalReferral){
+  const end=calendarDay(logic.snapshot.asOf)!;
+  const start=periodStart(end,Number(periodIntent[1]));
+  const report=periodReview?.athleteId===logic.snapshot.athleteId&&periodReview?.asOf===logic.snapshot.asOf&&periodReview.start===start&&periodReview.end===end?periodReview:buildPeriodReview(logic.snapshot,start,end,logic.frame.basis.complete?0:1);
+  return {text:formatPeriodReview(report),sources:report.sourceIds,escalationAvailable:false,candidate:null};
+ }
+ const answer=enrichOfflineAnswer(brief,answerLocallyCore(brief,logic),logic)
+ const safeContext=red.level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain;
+ const notes=safeContext&&logic&&/安排|偏好|排课|计划|记得|训练|怎么练|练什么|跑什么|时间|哪天|有空/.test(brief.question)?boundedCoachMemory(memory,logic.snapshot.athleteId,logic.snapshot.asOf):[];
+ const noteText=notes.length?'\n已保存的安排上下文（本人提供，不是表现事实）：\n'+notes.map(n=>`${n.text}${n.expiresOn?`（有效至 ${n.expiresOn}）`:''}`).join('\n')+'\n具体安排仍需结合可用日期与当前身体反馈核对；没有据此自动改课。':'';
+ // Keep preferences in the visible answer, before the UI's folded “依据” suffix.
+ return {...answer,candidate:logic?structuredCoachingCandidate(logic.frame):null,text:cleanAthleteText((noteText?noteText.trim()+'\n':'')+answer.text+(logic?.frame.safety.mustRetain||screenLocalSafety(brief.question).level==='EMERGENCY'?"":linkedContextText(brief)))}
 }

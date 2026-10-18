@@ -1,0 +1,93 @@
+[
+  {
+    "package": "R184",
+    "archive": "1-E6-96-B9-E5-9D-A4_R184_-E7-9C-9F-E5-AE-9E-E8-AE-AD-E7-BB-83-E6-95-B0-E6-8D-AE-E9-87-8F-E5-8C-96-E9-AA-8C-E8-AF-81-E5-8C-85.zip",
+    "sha256": "d182b66889e667ad005ef24a2e0ef362d986436c782e63bec6830d53ed072d39",
+    "files": [
+      {
+        "name": "CODEX_R184_真实数据验证交接.md",
+        "bytes": 1519,
+        "sha256": "cb32ebcec4aa44bdf04a5f6f875a9443ba1a36dfebcbeb6c15d32d54304620ea"
+      },
+      {
+        "name": "MANIFEST.json",
+        "bytes": 1103,
+        "sha256": "2c88224603434d3fc8106aeb467e827d381b11578a27754647f8686244263f0f"
+      },
+      {
+        "name": "R184_中文真实数据验证报告.md",
+        "bytes": 4867,
+        "sha256": "c0df9d6c971707fcdc5b7a741162cf4c38d60dbdc6578397ce1e3209cdadcf6a"
+      },
+      {
+        "name": "test_r184_reference.py",
+        "bytes": 3550,
+        "sha256": "24e8d85426c013f7e93856227be3d5b08d617e4cdf1766720b31a10479fa6faa"
+      },
+      {
+        "name": "原始可见分段_不修正.csv",
+        "bytes": 1654,
+        "sha256": "8b4a4b092d3d7a789d86c599cc0b45457ada99cf0af6fa81f494d10f6840fe91"
+      },
+      {
+        "name": "测试运行回执.txt",
+        "bytes": 2383,
+        "sha256": "ef102831439df27cf7952c0647bdcd0e23c9a9e1f3cd8cf450d5c8b2ac15ceb0"
+      },
+      {
+        "name": "第二案例_历史训练原文.json",
+        "bytes": 850,
+        "sha256": "108b046b4e8fb6a74759cf43fea1864228e23413ed574887e6077bb71d70ac86"
+      },
+      {
+        "name": "能力图验证结果_机器可读.json",
+        "bytes": 3438,
+        "sha256": "7e59d0cf5a9692c8d19d4dfb84014ee1d9989d96fcff3c7b224dd3f6797f5257"
+      }
+    ],
+    "referenceTestsExecuted": false
+  },
+  {
+    "package": "R182",
+    "archive": "2-E6-96-B9-E5-9D-A4_R182_-E7-BB-9F-E4-B8-80-E8-83-BD-E5-8A-9B-E8-AF-84-E4-BC-B0-E6-A0-87-E5-87-86_-E7-A0-94-E7-A9-B6-E4-BA-A4-E6-8E-A5-E5-8C-85.zip",
+    "sha256": "fb9dc95e761f19458e8320e1c7a7511a22ad723abd2b3a5cc65b6bb1eb59bd91",
+    "files": [
+      {
+        "name": "FK-ABILITY-STD-1.0_reference.ts",
+        "bytes": 4160,
+        "sha256": "1c3cd0f18710345d024b7cd44a4043f651fbdab0542ca69f9451aef914ddbf27"
+      },
+      {
+        "name": "MANIFEST.json",
+        "bytes": 954,
+        "sha256": "6a4a2177e30c0f1be95aa8b41647b13e48f73ec39bb071034454ce4233d24baf"
+      },
+      {
+        "name": "R182_17指标统一字典.csv",
+        "bytes": 6483,
+        "sha256": "005d68d8dc729cbd4e8b85c6ad6f8a2d7dabf9aa74a0d471ec699b30a4360e0d"
+      },
+      {
+        "name": "R182_26条统一标准.csv",
+        "bytes": 3356,
+        "sha256": "e2ac9f8d5f5eeeebb47a3349020b60cc1efeaa4a0d12f5c19404cf36e8e72fc4"
+      },
+      {
+        "name": "R182_统一标准与Codex实施说明.md",
+        "bytes": 4782,
+        "sha256": "27ead29c053909eb33a41e89638ed1fa38d0333ecb1ff7db38f0e5be366835d6"
+      },
+      {
+        "name": "R182_统一标准机器可读合同.json",
+        "bytes": 1162,
+        "sha256": "7860934edf021f5ca73369d694c224c0589b4cfe54c34424abc839f80c4e1589"
+      },
+      {
+        "name": "方坤_R182_统一能力评估标准.xlsx",
+        "bytes": 20964,
+        "sha256": "579b9cc5fde15690bcd5f9cbb4ef76827de729d6969eb5368e576cccff1704d5"
+      }
+    ],
+    "referenceTestsExecuted": false
+  }
+]

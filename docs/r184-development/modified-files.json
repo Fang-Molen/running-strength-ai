@@ -1,0 +1,199 @@
+{
+  "baselineSha256": "35b0a67a5c7f5f48424cd8bb7fca84df2e16ec5068027b6b17cdcae9fda9bca8",
+  "scope": "R184_DEVELOPMENT_CANDIDATE_PHASE2_UNTESTED",
+  "files": [
+    {
+      "path": "docs/r184-development/API与接入边界.md",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "c7d87e36d6cf708bcee2bcef45ead1e9e5a594a5900a30386c64fad3836bf7ad",
+      "bytes": 5396
+    },
+    {
+      "path": "docs/r184-development/R173-132条规则本轮结果.csv",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "bef2d857ff49a17dbebaeb98aae214eb2ac8396940042388669bdb3f0028f66f",
+      "bytes": 38602
+    },
+    {
+      "path": "docs/r184-development/R182-17指标实现范围.csv",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "84ccfd743f00082bc55b2ee0afc82567bc4a139e054cb20df659f484059dab14",
+      "bytes": 3112
+    },
+    {
+      "path": "docs/r184-development/R182-26标准逐项范围.csv",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "65456080343c255a2456e253ed878bfbeafcb4e1329aa8ea3092e2e9f7549036",
+      "bytes": 6069
+    },
+    {
+      "path": "docs/r184-development/evidence/phase1-receipt.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "09078566886e852a963371b45524c41ff84159cbbabc726bc31408fa1942c251",
+      "bytes": 1135
+    },
+    {
+      "path": "docs/r184-development/evidence/r173-direct.tap",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "2c6079082e48160f32d61333f588cc6d800b78ebda6169f2b9dc67fea50fc0d9",
+      "bytes": 31910
+    },
+    {
+      "path": "docs/r184-development/evidence/typecheck-initial.log",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/r184-development/execution-status.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "257f95a0537fbeb1c643449ac426bb8f02489a42e8daea798ad4f0390936da56",
+      "bytes": 1681
+    },
+    {
+      "path": "docs/r184-development/r173-rule-results.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "ec69fe53e4739200f56e7a95a0c84f8d0037eee34fa505e4b6e1efef05c020c2",
+      "bytes": 227802
+    },
+    {
+      "path": "docs/r184-development/r182-17-metric-status.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "858d38e81205517d695ae1ebddeedc43e08d607045a0929f707965e5009aefd1",
+      "bytes": 6086
+    },
+    {
+      "path": "docs/r184-development/r182-26-standard-status.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "12aa4c65ddbe1c5b5feebf4ab8531909f8138b19dadfa2829a5bd14da601f170",
+      "bytes": 10430
+    },
+    {
+      "path": "docs/r184-development/research-intake-manifest.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "9ba55a3ad7fe0d26a29c8a6622f8cdc4a74620867886534caaeb1b370dddea94",
+      "bytes": 3292
+    },
+    {
+      "path": "docs/r184-development/unchanged-r173-source-hashes.json",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "af4b2fa3a6e936429365ad76c6efacbc929d5deb6dfab02a877546dae52def60",
+      "bytes": 902
+    },
+    {
+      "path": "docs/r184-development/交付报告.md",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "c27a6aa71c6bb3ce20984f8d380c2569ac65b3f30d09ccb003c6dc806d068b53",
+      "bytes": 6894
+    },
+    {
+      "path": "docs/r184-development/待执行验证方案.md",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "0646cfb6e38629dd5ad22a013d9f795170cdd3ff5873f8742de9884cfc398c33",
+      "bytes": 3988
+    },
+    {
+      "path": "package.json",
+      "status": "MODIFIED",
+      "beforeSha256": "cc9c3fb26d10f406c030f35489f1fac4a45620538136f1de4bf4efd529e9ac04",
+      "afterSha256": "db7998b654dd1ecbc536000ae2b085d0164de6d14c75e5ded824f0162420da86",
+      "bytes": 9989
+    },
+    {
+      "path": "src/components/coach-ability-panel.tsx",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "573abf63f9d54b7c1fea652a995d72e41c62de0278953900b4af5b41ccfef66d",
+      "bytes": 4790
+    },
+    {
+      "path": "src/components/coach-offline-loop-panel.tsx",
+      "status": "MODIFIED",
+      "beforeSha256": "99e14e0d80b033d2a9ec2c35e50f44cbe00a1745d9960fccf4d91904fb31c7dc",
+      "afterSha256": "cf66f5cb9063d91d30a78c9c88e240e8eec1e7027feec126264b29ba429bd582",
+      "bytes": 14545
+    },
+    {
+      "path": "src/components/coach-sheet.tsx",
+      "status": "MODIFIED",
+      "beforeSha256": "6b2a5e3aefe48d70d5b18bece2cde9d4e205fcc856e6cf314ca4f34095b10795",
+      "afterSha256": "074179b2223166bf366d69684aad67beb922f64b7afa33af5da47543d298caa3",
+      "bytes": 57071
+    },
+    {
+      "path": "src/lib/core/coach-ability-standard.ts",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "9968ccbf6e521e10cba23fa3144998f108b540629f79b71c7a8d4e3aecf3ff46",
+      "bytes": 24840
+    },
+    {
+      "path": "src/lib/core/coach-development-projection.ts",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "bc0a726516ae826edfe82e545eb3e91dcd052a3f82f2e598236f8b77ceba6043",
+      "bytes": 17152
+    },
+    {
+      "path": "src/lib/core/coach-device-preparation.ts",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "f23f8c7c89c6b6a5168c98e6871f727b363a30671ba553aef8e94faeb2a5db44",
+      "bytes": 8635
+    },
+    {
+      "path": "src/lib/core/coach-offline-loop.ts",
+      "status": "MODIFIED",
+      "beforeSha256": "7979fc00700214c0151bf064a17017b65dfd75a57cea35c52a4875f88610a8aa",
+      "afterSha256": "830cb4c6a4293f2477965228e5b57e09f75ef9d7f881061c2d498041e97e14ee",
+      "bytes": 27248
+    },
+    {
+      "path": "src/lib/core/coach-offline-workspace.ts",
+      "status": "MODIFIED",
+      "beforeSha256": "05fe0cc7e5fca96450ce312f846e4cfe47810885244a0763d44c4e898b64e2c4",
+      "afterSha256": "6b1566d0f8fbc6cc1cc570bdc222f1bb9cc7598f707204b1938fb0d205c63bc7",
+      "bytes": 2321
+    },
+    {
+      "path": "src/lib/core/coach-r184-preparation.test.ts",
+      "status": "ADDED",
+      "beforeSha256": null,
+      "afterSha256": "f90dd1f08182fa595e4db7c078460f188c2a20d4d0f47883149aed8aaf2336b9",
+      "bytes": 14101
+    },
+    {
+      "path": "src/lib/core/coach-view.ts",
+      "status": "MODIFIED",
+      "beforeSha256": "1b6dd30fbece15515ab368106ecc0f7189bf524ec99a633503a3d1f7949a3959",
+      "afterSha256": "24c2fdd9c32daf2d24bd7355df6a8895e9f9b2e589d9d3a6222aeec1be24f416",
+      "bytes": 13759
+    },
+    {
+      "path": "src/lib/core/state.ts",
+      "status": "MODIFIED",
+      "beforeSha256": "2bd1c2d6422a6a63c11058af0735d9298822f11ca7cf725da10d307286109b62",
+      "afterSha256": "7fdfd708e6b8b62e9f81038d0a784f0c4ae17e5e8396bf894e065f6b0c3ffe66",
+      "bytes": 10943
+    }
+  ],
+  "manifestSelfFilesExcluded": [
+    "docs/r184-development/modified-files.json",
+    "docs/r184-development/修改文件清单.md"
+  ]
+}

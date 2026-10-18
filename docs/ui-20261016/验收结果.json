@@ -1,0 +1,52 @@
+{
+  "version": "FK-UI-20261016",
+  "status": "BUILT_WITH_TARGETED_CHECKS_NOT_FULL_ACCEPTANCE",
+  "baselineSha256": "a03e6e15dd94dfa97b20c135dad5f86930b5839beaaa56d4fb546ed233b08d3d",
+  "scope": "本轮 UI、餐食/实测、动作草稿、方坤联动的定向检查；不代表整个项目完整集成验收",
+  "unitTests": {
+    "PASS": 601,
+    "FAIL": 0,
+    "SKIP": 0,
+    "files": 12,
+    "evidence": "evidence/ui-20261016/unit/summary.json"
+  },
+  "developmentBrowser": {
+    "PASS": 36,
+    "FAIL": 0,
+    "pageErrors": [],
+    "modelCalls": [],
+    "evidence": "evidence/ui-20261016/browser-dev.json"
+  },
+  "typecheck": {
+    "status": "PASS",
+    "evidence": "evidence/ui-20261016/typecheck-04.log"
+  },
+  "build": {
+    "status": "PASS",
+    "evidence": "evidence/ui-20261016/build-final.log",
+    "note": "Vite/Nitro 构建完成；DATABASE_URL 未设置，数据库迁移按原逻辑跳过。存在依赖 use client / chunk 警告，保留原始日志。"
+  },
+  "productionOfflineBrowser": {
+    "status": "NOT_RUN",
+    "reason": "预览服务已启动；最终生产浏览器调用在执行前被中断，随后用户要求构建好即交付，无测试结果文件。不得视为 PASS。"
+  },
+  "notExecuted": [
+    "本轮全项目完整回归",
+    "最终生产版断网刷新与缓存恢复",
+    "最终生产版保存失败注入",
+    "真机 iPhone / Safari / 安装 PWA",
+    "六语新增页面完整翻译验收",
+    "本轮真实 Garmin 数据复验"
+  ],
+  "data": "仅合成数据；不包含用户健康数据、原始 Garmin、GPS 或运行时凭据",
+  "deployed": false,
+  "formalPlanAutomaticallyModified": false,
+  "knownLimitations": [
+    "女版同骨架 GLB 与部分女性跑步动作图尚缺",
+    "饮食人物侧面/背面素材未提供，按钮禁用",
+    "BodyLab 为参数化示意，不是身体扫描或生理预测",
+    "饮水、纤维和营养目标编辑未在新看板接通，显示待记录/目标待确认",
+    "新专业界面文案尚未完整六语化",
+    "完整离线生产验收尚未执行，不能承诺全部未访问资源可离线使用"
+  ]
+}

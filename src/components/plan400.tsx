@@ -66,10 +66,11 @@ export function Plan400() {
   const weeks = plan.weeks as { week: string; title: string; range: string; principle: string }[];
   const curWeek = (days.find((d) => d.date >= t) ?? days[days.length - 1])?.week;
   const doneN = Object.values(logs).filter((l) => l.done).length;
+  const shifted = days.some(d => d.orig && d.orig !== d.date);
   return <details className="home-card mb-3 px-3 py-1" aria-label="400米计划">
     <summary className="flex min-h-11 cursor-pointer items-center gap-2"><b className="min-w-0 flex-1 truncate">{plan.name}</b><span className="keep shrink-0 text-xs text-muted">{curWeek ?? ""} · 已练 {doneN}/{days.length}</span></summary>
     <div className="space-y-1 pb-2">
-    
+    {shifted ? <p className="keep rounded-xl border border-amber-500/40 p-3 text-xs text-amber-300">导入日期待核对：日程已顺延{plan.shiftDays}天，周标题与原则仍含原日期。例如W3写着10月31日测试，对应日程却为11月2日—8日。执行前请核对测试日期；这里保留原课表，未自动改期。</p> : null}
     {weeks.map((w) => { const ds = days.filter((d) => d.week === w.week); return <details key={w.week} open={w.week === curWeek} className="rounded-xl border border-line px-2">
       <summary className="flex min-h-9 items-center cursor-pointer truncate text-sm font-bold">{w.week}｜{w.title}｜{md(ds[0].date)}—{md(ds[ds.length - 1].date)}</summary>
       <details className="mb-1 text-xs text-muted"><summary className="keep cursor-pointer py-1">本周原则</summary><p className="keep">{w.principle}</p></details><div className="space-y-1">{ds.map((d) => <DayCard key={d.date} d={d} log={logs[d.date] ?? {}} onSave={(l) => save(d.date, l)} />)}</div></details>; })}

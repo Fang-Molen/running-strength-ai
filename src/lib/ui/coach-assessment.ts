@@ -6,7 +6,7 @@
 import { addDays, adaptation, weekOf, type ScheduleEntry, type Intensity } from "./day-schedule-rules.ts"
 import type { Verdict } from "./recovery-verdict.ts"
 
-export type LoggedSession = { id: string; date: string; sport: "RUNNING" | "STRENGTH" | "MIXED" | "UNKNOWN"; distanceM: number | null; durationSec: number | null; strengthVolumeKg: number; sets: number; rpe: number | null }
+export type LoggedSession = { id: string; date: string; sport: "RUNNING" | "STRENGTH" | "MIXED" | "UNKNOWN"; distanceM: number | null; durationSec: number | null; strengthVolumeKg: number | null; sets: number | null; rpe: number | null }
 export type FeedbackReason = "special" | "wrongData" | "tooConservative" | "tooAggressive" | "other"
 export const FEEDBACK_LABELS: Record<FeedbackReason, string> = { special: "那天状态特殊", wrongData: "数据不对", tooConservative: "太保守", tooAggressive: "太激进", other: "其他" }
 export type Feedback = { targetId: string; vote: "up" | "down"; reasons: FeedbackReason[]; text: string; at: string; excludeIds: string[] }
@@ -37,7 +37,7 @@ export function assess(input: { today: string; entries: ScheduleEntry[]; logs: L
   const trainedDays = new Set(logs.filter((l) => l.date >= from && l.date <= today).map((l) => l.date)).size
   records.push(`近 14 天练了 ${trainedDays} 天`)
   if (cur.some((l) => l.distanceM)) records.push(`本周跑量 ${km(cur)} km${prev.some((l) => l.distanceM) ? `（上周 ${km(prev)} km）` : ""}`)
-  const vol = sum(cur, (l) => l.strengthVolumeKg), pvol = sum(prev, (l) => l.strengthVolumeKg)
+  const vol = sum(cur, (l) => l.strengthVolumeKg ?? 0), pvol = sum(prev, (l) => l.strengthVolumeKg ?? 0)
   if (vol) records.push(`本周力量总量 ${Math.round(vol)} kg${pvol ? `（上周 ${Math.round(pvol)}）` : ""}`)
   const paced = logs.filter((l) => pace(l) != null && l.date >= prevFrom)
   const best = [...paced].sort((a, b) => pace(a)! - pace(b)!)[0]
@@ -46,7 +46,7 @@ export function assess(input: { today: string; entries: ScheduleEntry[]; logs: L
   if (longest?.distanceM) records.push(`近 14 天最长 ${(longest.distanceM / 1000).toFixed(1)} km`)
   // 计划 vs 实际
   const planned = entries.filter((e) => week.includes(e.date) && (e.status === "planned" || e.status === "done") && e.date <= today)
-  const did = planned.filter((e) => e.actual && e.actual.outcome !== "missed")
+  const did = planned.filter((e) => e.actual && e.actual.outcome !== "missed" && (!e.actual.executionState || e.actual.executionState === 'COMPLETED'))
   const reasons = planned.flatMap((e) => e.actual?.reasons ?? [])
   const stateCount = reasons.filter((r) => r === "tired" || r === "short").length, pain = reasons.includes("pain")
   if (planned.length) evidence.push(`本周到今天计划 ${planned.length} 节，完成 ${did.length} 节`)
@@ -56,7 +56,9 @@ export function assess(input: { today: string; entries: ScheduleEntry[]; logs: L
   if (aggr > 0) adjustments.push("你说过偏保守：建议会更积极一点（仍一次只改一个变量）")
   if (aggr < 0) adjustments.push("你说过偏激进：建议会更保守一点")
   // 结论（不因单次下结论）
-  const missed = planned.filter((e) => !e.actual || e.actual.outcome === "missed").length
+  const missed = planned.filter((e) => e.actual?.outcome === "missed").length
+  const unrecorded = planned.filter((e) => !e.actual).length
+  if (unrecorded) evidence.push(`${unrecorded}节未登记结果，不等于没练，未据此判断计划过满。`)
   let verdict: string
   if (!logs.filter((l) => l.date >= from).length && !did.length) verdict = "最近记录太少，暂不下结论。先坚持记录几次。"
   else if (pain) verdict = "最近记录到疼痛，先处理疼痛，再谈进阶。"

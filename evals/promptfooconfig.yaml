@@ -1,0 +1,18 @@
+description: 方坤 R11 本地确定性 dev + adversarial；无外部模型
+prompts:
+  - '{{input}}'
+providers:
+  - id: file://provider.mjs
+    label: fangkun-local-deterministic
+tests:
+  - file://cases/dev.yaml
+  - file://cases/adversarial.yaml
+defaultTest:
+  options:
+    disableVarExpansion: true
+  assert:
+    - type: javascript
+      value: file://assertions.cjs
+evaluateOptions:
+  maxConcurrency: 1
+  cache: false

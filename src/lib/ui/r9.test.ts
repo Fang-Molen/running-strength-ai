@@ -57,7 +57,7 @@ test("review: structure, state vs ability, tier depth, accepted adjustment persi
   assert.equal(r.adjustment?.mode, "shorten")
   const basic = buildReview("week", es, "2026-10-13", "basic"); assert.equal(basic.bands.length, 0); assert.ok(basic.evidence.length < r.evidence.length)
   // 能力问题需 ≥2 次无原因的未达标
-  const ab = buildReview("week", [mk("x", "2026-10-12", "different", 15), mk("y", "2026-10-13", "different", 15)], "2026-10-13", "plus"); assert.ok(ab.issues.some((i) => i.type === "ability"))
+  const ab = buildReview("week", [mk("x", "2026-10-12", "different", 15), mk("y", "2026-10-13", "different", 15)], "2026-10-13", "plus"); assert.ok(ab.issues.some((i) => i.type === "data")); assert.ok(!ab.issues.some(i=>i.type==="ability")) // Missing reasons are not evidence of an ability deficit.
   const one = buildReview("week", [mk("x", "2026-10-12", "different", 15)], "2026-10-13", "plus"); assert.ok(!one.issues.some((i) => i.type === "ability"))
   assert.equal(buildReview("session", es, "2026-10-13", "pro", "b").bands.length, 1)
   const s = mem(); assert.equal(acceptedAdaptation("2026-10-13", s), null)

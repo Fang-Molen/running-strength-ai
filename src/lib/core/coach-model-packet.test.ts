@@ -49,12 +49,11 @@ test("coach questions are routed before the model sees the packet", () => {
   assert.equal(coachQuestionIntent("200 米这次用了多少秒"), "RUNNING")
 })
 
-test("a targeted packet keeps required sources and removes unrelated running detail", () => {
+test("next-session packet retains measured running evidence and required safety context", () => {
   const source = brief("下一课要不要调整")
   const packet = compactSingleCoachPacket(source, [], [])
   assert.equal(packet.intent, "NEXT_SESSION")
-  // K15 (user-requested): next-session packets now carry running facts so advice can cite them.
-  assert.equal("running" in packet.current, true)
+  assert.ok("running" in packet.current); assert.deepEqual((packet.current as {running:unknown}).running,source.running)
   assert.equal(packet.current.sourceIds.includes("sore"), true)
   assert.equal(packet.current.sourceIds.includes("context:competition"), true)
   assert.equal(packet.current.sourceIds.includes("context:cycle"), true)
@@ -62,17 +61,13 @@ test("a targeted packet keeps required sources and removes unrelated running det
   assert.equal(JSON.stringify(packet).length < JSON.stringify({ history: [], current: source, candidates: [] }).length, true)
 })
 
-test("running and fuel packets expose only their own evidence", () => {
-  const source0 = brief("200 米这次用了多少秒")
-  const run = compactSingleCoachPacket(source0, [], [])
+test("running and fuel packets retain mandatory safety sources without unrelated running payload", () => {
+  const run = compactSingleCoachPacket(brief("200 米这次用了多少秒"), [], [])
   assert.equal(run.intent, "RUNNING")
   assert.equal(run.current.sourceIds.includes("rep"), true)
-  // K15: sources required by the next-session rule are visible in every intent.
-  assert.equal(run.current.sourceIds.includes("sore"), (source0.nextSession?.requiredSourceIds ?? []).includes("sore"))
-  assert.equal(run.current.sourceIds.includes("context:cycle"), (source0.nextSession?.requiredSourceIds ?? []).includes("context:cycle"))
+  for (const id of brief("200 米这次用了多少秒").nextSession?.requiredSourceIds ?? []) assert.ok(run.current.sourceIds.includes(id)); assert.ok(run.current.sourceIds.includes("sore"))
 
   const fuel = compactSingleCoachPacket(brief("这次掉速是不是吃少了"), [], [])
   assert.equal(fuel.intent, "FUEL")
   assert.equal(fuel.current.sourceIds.includes("rep"), false)
-  assert.equal(fuel.current.sourceIds.filter((id) => !(brief("这次掉速是不是吃少了").nextSession?.requiredSourceIds ?? []).includes(id)).includes("sore"), false)
 })

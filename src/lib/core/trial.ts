@@ -35,9 +35,13 @@ type BackupStore = {
 const supportedBackupKey = (key: string) =>
   key.startsWith("fr255-") &&
   (key.length <= 80 ||
+    (key.length <= 512 && /^fr255-fieldwork-plan-draft-v1:[a-zA-Z0-9_.~!()*'%\-]+:draft-revision-[0-9a-f-]{36}:[0-9a-f-]{36}$/.test(key)) ||
+    (key.length <= 256 && /^fr255-fieldwork-view-v1:[a-zA-Z0-9_.~!()*'%\-]+$/.test(key)) ||
+    (key.length <= 512 && /^fr255-p7(?:-claim|-claim-revision|-input)?:[a-zA-Z0-9_:#.@%\/-]+:[0-9a-f-]{36}$/.test(key)) ||
+    (key.length <= 180 && /^fr255-coach-context-memory-r12:coach-note(?:-withdraw)?:[0-9a-f-]{36}:[0-9a-f-]{36}$/.test(key)) ||
     (key.length <= 320 && /^fr255-runner-draft-v1:[a-zA-Z0-9_-]{1,80}:[a-zA-Z0-9_-]{1,80}:[a-zA-Z0-9_-]{1,80}:\d{1,5}$/.test(key)) ||
     (key.length <= 160 &&
-      /^fr255-(?:event-journal-v2|cognition-journal-r2|coach-intake-r2|running-tx-r3):[a-zA-Z0-9_-]+:[0-9a-f-]{36}$/.test(
+      /^fr255-(?:event-journal-v2|cognition-journal-r2|coach-intake-r2|running-tx-r3|coach-profile-r13|coach-review-r13):[a-zA-Z0-9_-]+:[0-9a-f-]{36}$/.test(
         key,
       )));
 

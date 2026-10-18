@@ -4,7 +4,7 @@ import { loadDay } from "@/lib/nutrition/day"
 import { loadProfile } from "@/lib/strength/profile"
 import type { Plan, Session } from "@/lib/strength/model"
 import { phaseOf } from "@/lib/strength/model"
-import { dispatchEvent, loadEvents } from "./events.ts"
+import { currentAthleteId, dispatchEvent, loadEvents } from "./events.ts"
 import { listTrainingOccurrences } from "./occurrence.ts"
 import { excludeVoidedTrainingEvents, effectiveStrengthFields } from "./training-correction.ts"
 import { readEnvelope, writeEnvelope } from "./storage.ts"
@@ -74,7 +74,7 @@ export type ContextSnapshot = {
   daysToCompetition: number | null
 }
 
-export type PlannedSet = { name: string; sets: number; amount: number; weightKg: number }
+export type PlannedSet = { name: string; sets: number; amount: number; weightKg: number; moveId?: string | null }
 
 export type TrainingAdjustment = {
   readiness: Readiness
@@ -98,6 +98,8 @@ export type TrainingDecision = TrainingAdjustment & {
   createdAt: string
   expiry: string
   target: string
+  /** Stable plan move identity. Never infer it from the displayed exercise name. */
+  targetMoveId?: string | null
 }
 
 export type OutcomeQuality = "POOR" | "ACCEPTABLE" | "GOOD" | "EXCELLENT" | "UNKNOWN"
@@ -113,15 +115,16 @@ export function evaluateTrainingReadiness(ctx: TrainingContext): Readiness {
   if ((ctx.fatigue ?? 0) >= 72) return "HIGH_FATIGUE"
   if ((ctx.fatigue ?? 0) >= 48 || (ctx.recentRunRpe ?? 0) >= 8) return "FATIGUED"
   if (ctx.fatigue == null) return "UNKNOWN"
-  if (ctx.fatigue >= 28) return "CAUTION"
-  return "READY"
+  // The legacy fatigue index is a heuristic, not evidence that recovery is confirmed.
+  // Protective HIGH_FATIGUE/FATIGUED branches above remain, but low scores cannot yield READY.
+  return "CAUTION"
 }
 
 export function generateTrainingAdjustment(ctx: TrainingContext, planned: PlannedSet): TrainingAdjustment {
   const readiness = evaluateTrainingReadiness(ctx)
   const near = ctx.daysToCompetition != null && ctx.daysToCompetition >= 0 && ctx.daysToCompetition <= 28
   const evidence: string[] = []
-  if (ctx.fatigue != null) evidence.push(`疲劳 ${ctx.fatigue}`)
+  if (ctx.fatigue != null) evidence.push(`旧版启发式疲劳指标 ${ctx.fatigue}（不能证明已恢复）`)
   if (ctx.recentRunKm != null) evidence.push(`最近跑了 ${ctx.recentRunKm} 公里`)
   if (ctx.recentRunRpe != null) evidence.push(`跑步 RPE ${ctx.recentRunRpe}`)
   if (ctx.week != null) evidence.push(`第 ${ctx.week} 周`)
@@ -135,7 +138,8 @@ export function generateTrainingAdjustment(ctx: TrainingContext, planned: Planne
     counterEvidence: ctx.previousFeel === "easy" ? ["上一节偏轻松，但开练前不因此加重量"] : [],
     monitor: MONITOR,
     interrupt: INTERRUPT,
-    confidence: ctx.fatigue == null ? 0.3 : 0.7,
+    // Display-only heuristic confidence; never represent this as empirical prediction accuracy.
+    confidence: 0.3,
   }
   if (readiness === "UNKNOWN") {
     return { ...base, change: "none", risk: "LOW", reason: "数据不够，不做激进调整。", next: "先按原计划，缺的数记上再看。" }
@@ -143,14 +147,16 @@ export function generateTrainingAdjustment(ctx: TrainingContext, planned: Planne
   if (readiness === "PAIN_REPORTED" || readiness === "REHAB") {
     return { ...base, change: "hold", risk: "CRITICAL", confidence: 0.8, reason: "有疼痛或在康复。停止普通加量，这里不诊断。", next: "不加重量、不加组。疼就停。" }
   }
-  if (readiness === "HIGH_FATIGUE" && ctx.week !== 4 && ctx.bias !== "deload") {
+  // Do not prescribe a numeric dose solely from the unvalidated legacy score.
+  // A conservative proposal is reviewable; it does not certify actual recovery or fatigue.
+  if (readiness === "HIGH_FATIGUE" && planned.sets > 1 && ctx.week !== 4 && ctx.bias !== "deload") {
     return {
       ...base,
       change: "drop-set",
-      sets: Math.max(2, planned.sets - 1),
-      risk: "LOW",
-      reason: "疲劳很高。只少一组，重量和次数不动。",
-      next: "下次先维持这个重量。",
+      sets: Math.max(1, planned.sets - 1),
+      risk: "MODERATE",
+      reason: "旧版启发式指标偏高；仅提出保护性少一组候选，不能据此确诊疲劳，须核对后确认。",
+      next: "先核对恢复及动作表现；下次维持原重量，不自动加量。",
     }
   }
   if (readiness === "FATIGUED" || readiness === "HIGH_FATIGUE" || near || ctx.bias === "hold" || ctx.bias === "deload" || ctx.week === 4) {
@@ -161,6 +167,7 @@ export function generateTrainingAdjustment(ctx: TrainingContext, planned: Planne
         : "恢复不够，不增加重量、组数或次数。"
     return { ...base, change: "hold", risk: near ? "MODERATE" : "LOW", reason: why, next: "下次维持重量。" }
   }
+  if (readiness === "CAUTION") return { ...base, change: "none", risk: "LOW", reason: "旧版疲劳分数偏低不能证明已恢复；暂不据此加量。", next: "核对近期强度、恢复反馈和动作表现后再讨论下一课。" }
   return { ...base, change: "none", risk: "LOW", reason: "状态够做原计划，所以不改。", next: "维持。" }
 }
 
@@ -187,12 +194,25 @@ export function createTrainingDecision(ctx: TrainingContext, planned: PlannedSet
     createdAt: now.toISOString(),
     expiry: new Date(now.getTime() + 18 * 3600 * 1000).toISOString(),
     target: "完成本节力量课",
+    targetMoveId: planned.moveId ?? null,
   }
 }
 
 export function applyAdjustment(session: Session, decision: TrainingDecision): Session {
   if (decision.change !== "drop-set") return session
-  return { ...session, moves: session.moves.map((move) => ({ ...move, sets: Math.max(2, move.sets - 1) })) }
+  // One-move legacy sessions are unambiguous; multi-move sessions require a stable move ID.
+  const targetId = decision.targetMoveId ?? (session.moves.length === 1 ? session.moves[0]?.id : null)
+  if (!targetId || session.moves.filter(move => move.id === targetId).length !== 1) return session
+  return {
+    ...session,
+    moves: session.moves.map(move => {
+      if (move.id !== targetId || !Number.isInteger(move.sets) || move.sets <= 1) return move
+      const proposed = Number.isInteger(decision.sets) ? decision.sets : move.sets - 1
+      if (proposed < 1 || proposed >= move.sets) return move
+      // At most one set per confirmed proposal; never raise any exercise's set count.
+      return { ...move, sets: Math.max(move.sets - 1, proposed) }
+    }),
+  }
 }
 
 export function chooseAction(decisionId: string, action: "AI_RECOMMENDED" | "ORIGINAL_PLAN" | "USER_MODIFIED") {
@@ -217,7 +237,9 @@ export function recordPain(decisionId: string, sessionId: string) {
 }
 
 function completionIdentity(sessionId: string, decisionId: string): string {
-  const rows = listTrainingOccurrences().filter((item) => item.sessionId === sessionId)
+  const starts = loadEvents().filter(event => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_STARTED" && event.payload.sessionId === sessionId)
+  const startIds = new Set(starts.map(event => event.event_id))
+  const rows = listTrainingOccurrences().filter((item) => item.sessionId === sessionId && startIds.has(item.startEventId))
   const open = [...rows].reverse().find((item) => item.lifecycle === "IN_PROGRESS")
   const target = open ?? rows.at(-1)
   return target ? `occurrence:${target.trainingOccurrenceId}` : `decision:${decisionId}:${sessionId}`
@@ -237,11 +259,13 @@ export function completeTraining(input: {
   partial?: boolean
 }) {
   const idempotencyKey = completionIdentity(input.sessionId, input.decisionId)
-  const existing = loadEvents().find((event) => event.event_type === "TRAINING_COMPLETED" && event.payload.idempotencyKey === idempotencyKey)
+  const boundOccurrenceId = idempotencyKey.startsWith("occurrence:") ? idempotencyKey.slice("occurrence:".length) : null
+  const existing = loadEvents().find((event) => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_COMPLETED" && event.payload.idempotencyKey === idempotencyKey)
   if (existing) return existing
   return dispatchEvent("TRAINING_COMPLETED", {
     decisionId: input.decisionId,
     sessionId: input.sessionId,
+    ...(boundOccurrenceId ? { trainingOccurrenceId: boundOccurrenceId } : {}),
     planned: input.planned,
     actual: input.actualSets == null ? null : { sets: input.actualSets, amount: input.actualAmount, weightKg: input.actualWeightKg },
     duration: null,
@@ -275,7 +299,7 @@ export function assessOutcome(input: { completion: boolean; interrupted: boolean
   return { assessment: "COMPLETED_WITH_MODIFICATION", quality: "ACCEPTABLE", deviation: "和原计划不一样", next: "下次维持重量。" }
 }
 
-export function recordLearning(input: { decisionId: string; prediction: string; actual: string; success: boolean }) {
+export function recordLearning(input: { decisionId: string; prediction: string; actual: string; success: boolean | null; validation?: "SUPPORTED" | "WEAKENED" | "NOT_TESTABLE" | "STALE" }) {
   const current = readEnvelope<{ notes?: unknown[]; learning?: unknown[]; ability?: unknown }>("fr255-memory-v1", { notes: [], learning: [] }).data
   const learning = Array.isArray(current.learning) ? current.learning : []
   writeEnvelope("fr255-memory-v1", {
@@ -343,18 +367,44 @@ function actualField(payload: Record<string, unknown>, field: "weight" | "reps")
   return overlay.reps.value
 }
 
+function occurrenceIdentity(value: unknown): string | null {
+  return typeof value === "string" && value.trim().length > 0 ? value : null
+}
+
+function completionOccurrence(payload: Record<string, unknown>): string | null {
+  const explicit = occurrenceIdentity(payload.trainingOccurrenceId)
+  const key = payload.idempotencyKey
+  return explicit ?? (typeof key === "string" && key.startsWith("occurrence:") ? occurrenceIdentity(key.slice("occurrence:".length)) : null)
+}
+
 function strengthSnapshot(events = excludeVoidedTrainingEvents(loadEvents())): StrengthSnapshot {
-  const sets = events.filter((event) => event.event_type === "TRAINING_SET_COMPLETED")
+  const sets = events.filter((event) => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_SET_COMPLETED")
   if (sets.length === 0) return emptyStrength()
-  const sessionId = sets.at(-1)?.payload.sessionId
-  const mine = typeof sessionId === "string" ? sets.filter((event) => event.payload.sessionId === sessionId) : sets
+  const latestSet = sets.at(-1)
+  const sessionId = latestSet?.payload.sessionId
+  const athleteId = latestSet?.athlete_id
+  const occurrenceId = occurrenceIdentity(latestSet?.payload.trainingOccurrenceId)
+  // Never merge two executions of the same plan slot. A valid occurrence ID wins.
+  // Legacy unbound sets are only shown when the session has no competing starts or bound sets.
+  const sameSession = typeof sessionId === "string" ? sets.filter(event => event.athlete_id === athleteId && event.payload.sessionId === sessionId) : []
+  const starts = typeof sessionId === "string" ? events.filter(event => event.athlete_id === athleteId && event.event_type === "TRAINING_STARTED" && event.payload.sessionId === sessionId) : []
+  const ambiguousLegacy = occurrenceId === null && (starts.length > 1 || sameSession.some(event => occurrenceIdentity(event.payload.trainingOccurrenceId) !== null))
+  if (!sessionId || ambiguousLegacy) return emptyStrength()
+  const mine = occurrenceId !== null
+    ? sameSession.filter(event => event.payload.trainingOccurrenceId === occurrenceId)
+    : sameSession
+  if (!mine.length) return emptyStrength()
   const reps = mine.filter((event) => event.payload.mode !== "seconds")
   const plannedRepValues = reps.map((event) => payloadNumber(event.payload, ["plannedAmount"]))
   const completedRepSets = reps.filter((event) => event.payload.completed === true && event.payload.skipped !== true)
   const completedRepValues = completedRepSets.map((event) => actualField(event.payload, "reps"))
   const done = mine.filter((event) => event.payload.completed === true && event.payload.skipped !== true).length
   const skipped = mine.filter((event) => event.payload.skipped === true).length
-  const finished = events.filter((event) => event.event_type === "TRAINING_COMPLETED" && (typeof sessionId !== "string" || event.payload.sessionId === sessionId)).at(-1)
+  const finished = events.filter(event => event.athlete_id === athleteId && event.event_type === "TRAINING_COMPLETED" && event.payload.sessionId === sessionId && (
+    occurrenceId !== null
+      ? completionOccurrence(event.payload) === occurrenceId
+      : starts.length <= 1 && completionOccurrence(event.payload) === null
+  )).at(-1)
   const strengthRpe = finished ? payloadNumber(finished.payload, ["rpe"]) : null
   let completionStatus: string | null = null
   if (finished?.payload.interruptions === true) completionStatus = "interrupted"
@@ -452,5 +502,5 @@ export function readTrainingContext(plan: Plan | null): TrainingContext {
 export function firstPlannedSet(session: Session | null): PlannedSet | null {
   const move = session?.moves[0]
   if (!move) return null
-  return { name: move.customName || move.catalogId || "动作", sets: move.sets, amount: move.amount, weightKg: move.weightKg }
+  return { name: move.customName || move.catalogId || "动作", moveId: move.id, sets: move.sets, amount: move.amount, weightKg: move.weightKg }
 }

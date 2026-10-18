@@ -1,0 +1,15 @@
+import test,{beforeEach,afterEach} from 'node:test'
+import assert from 'node:assert/strict'
+import {setStoreBackend} from '../core/storage'
+import {setEventContext,loadEvents} from '../core/events'
+import {loadEntries,saveEntries,recordManualFood,removeEntry,aggregate,addEntriesBatch,type FoodEntry} from './log'
+const legacyKey='fr255-food-log-v1'
+let values:Map<string,string>
+const row=(id:string,kcal:number|null=120):FoodEntry=>({id,date:'2026-10-16',meal:'午餐',name:'合成餐食',kcal,carbs:25,protein:3})
+beforeEach(()=>{values=new Map();const storage={keys:()=>[...values.keys()],getItem:(k:string)=>values.get(k)??null,setItem:(k:string,v:string)=>{values.set(k,v)},removeItem:(k:string)=>{values.delete(k)}};Object.defineProperty(globalThis,'localStorage',{configurable:true,value:storage});setStoreBackend(storage);setEventContext({athleteId:'local'})})
+afterEach(()=>{setStoreBackend(null);setEventContext({athleteId:'local'});Reflect.deleteProperty(globalThis,'localStorage')})
+test('V74 upgrade retains all V70 rows and original bytes; carbs feeds new aggregate',()=>{const old=Array.from({length:220},(_,i)=>row('old-'+i));const raw=JSON.stringify(old);values.set(legacyKey,raw);assert.equal(loadEntries().length,220);assert.equal(aggregate(loadEntries()).carb.sum,5500);assert.equal(values.get(legacyKey),raw)})
+test('V74 editing and removal append immutable evidence without rewriting legacy',()=>{values.set(legacyKey,JSON.stringify([row('old')]));const raw=values.get(legacyKey);assert.ok(saveEntries([{...row('old'),kcal:150,carb:30}]));assert.equal(aggregate(loadEntries()).carb.sum,30);assert.equal(loadEntries()[0].kcal,150);assert.ok(removeEntry('old'));assert.equal(loadEntries().length,0);assert.equal(values.get(legacyKey),raw);assert.equal(loadEvents().filter(e=>e.event_type==='NUTRITION_RECORDED').length,2)})
+test('V74 actor isolation keeps legacy local and new athlete journals separate',()=>{values.set(legacyKey,JSON.stringify([row('legacy')]));setEventContext({athleteId:'synthetic-B'});assert.equal(loadEntries().length,0);assert.ok(recordManualFood({...row('ignored'),date:'2026-10-16'}));assert.equal(loadEntries().length,1);setEventContext({athleteId:'local'});assert.deepEqual(loadEntries().map(r=>r.id),['legacy']);assert.equal(saveEntries([{...row('foreign'),athleteId:'synthetic-B'}]),false)})
+test('V74 confirmed zero is known; unestimated and absent nutrients stay unknown',()=>{const a=aggregate([{...row('zero',0),source:'MANUAL',protein:0,carbs:0}, {...row('pending',null),protein:undefined,carbs:undefined}]);assert.deepEqual(a.kcal,{sum:0,known:1,pending:1});assert.deepEqual(a.carb,{sum:0,known:1,pending:1})})
+test('V74 corrupt legacy or a failed batch never reports success or partial rows',()=>{values.set(legacyKey,'{unreadable');assert.equal(saveEntries([row('new')]),false);assert.equal(values.get(legacyKey),'{unreadable');values.delete(legacyKey);setStoreBackend({keys:()=>[],getItem:()=>null,setItem:()=>{throw new Error('synthetic quota')}});assert.equal(addEntriesBatch([row('a'),row('b')]),null);assert.equal(loadEntries().length,0)})

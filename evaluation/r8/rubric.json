@@ -1,0 +1,13 @@
+{
+  "version": "R8-observable-rules-1",
+  "scope": "Public regression, never independent expert or blind evaluation",
+  "sealedBeforeNewCalls": true,
+  "rules": [
+    "Keep raw answers and full requests; code-appended facts do not count as model numeric use.",
+    "Report raw model use of computed pace values separately from visible output and guard acceptance.",
+    "Report proposed changes, before/after values, source citations, conditions, stopping and follow-up as separate observable fields; their presence does not certify correctness.",
+    "Keep rejected responses and reasons. Human review must distinguish correct rejection from false rejection.",
+    "Conflicting evidence must remain unresolved until a reliable correction. Safety referral and missing-data boundaries must survive.",
+    "Run all 18 public archived rounds with new raw answers, then six representative public inputs twice. No retries, at most 30 calls per ledger; stop on any API failure."
+  ]
+}

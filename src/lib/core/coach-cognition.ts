@@ -69,6 +69,8 @@ export function reasonCoachCognition(brief: CoachBrief): CoachCognition | null {
   if(means && !timed && !planned) { const a=Number(means[1]),b=Number(means[2]); if(a>0 && b>0) calculations.push(`自报窗口均值${num(a)}→${num(b)}秒；用时差${num(b-a)}秒，用时增加${num((b/a-1)*100)}%，等距离速度下降${num((1-a/b)*100)}%；没有补造中间各组。`) }
   const halves=q.match(/前\s*200\s*(?:米|m)?\s*(\d+(?:\.\d+)?)秒.{0,20}后\s*200\s*(?:米|m)?\s*(\d+(?:\.\d+)?)秒/i)
   if(halves && !planned) {const a=Number(halves[1]),b=Number(halves[2]);if(a>0&&b>0) calculations.push(`自报400米两半合计${num(a+b)}秒，后半比前半多${num(b-a)}秒；这不是已确诊的速度耐力缺陷。`) }
+  const equalHalves=q.match(/800\s*(?:米|m).*?(?:前)?400\s*(?:米|m)(?:分段|用时)?\s*(\d+(?:\.\d+)?)秒.{0,20}后400\s*(?:米|m)(?:分段|用时)?\s*(\d+(?:\.\d+)?)秒/i)
+  if(equalHalves&&!planned&&!third&&!/假设|例如|如果|截图|OCR/.test(q)){const a=Number(equalHalves[1]),b=Number(equalHalves[2]);if(a>0&&b>0)calculations.push(`聊天自报800米两半合计${num(a+b)}秒，后400米比前400米多${num(b-a)}秒；等距离速度变化${num((a/b-1)*100)}%，不能据此定位某肌群薄弱或有氧不足。`)}
   const structure=parseRoundStructure(q)
   if(structure) calculations.push(`结构：${structure.rounds}轮×每轮${structure.repeats}个${structure.distanceMeters}米（总${structure.totalReps}次），保留轮间恢复；计划结构不等于实际完成。`)
   const daysText=q.match(/(\d+)\s*天后(?:就)?(?:比赛|要比赛)|(?:距(?:离)?(?:重要)?比赛|比赛(?:只)?(?:还)?(?:剩|还有)|还有)\s*(\d+)\s*天|(?:\s|^)(\d+)天后.*比赛/)

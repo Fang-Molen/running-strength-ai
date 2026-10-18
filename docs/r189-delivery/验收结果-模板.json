@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "final_receipts_recorded": false,
+  "report_finalized": false,
+  "privacy_reviewed": false,
+  "overall_status": "PENDING",
+  "runtime_fingerprint_sha256": "FILL_AFTER_FINAL_RUNTIME_CHANGES_BEFORE_ACCEPTANCE",
+  "runtime": {"node": "FILL_ACTUAL_VERSION", "browser": "FILL_ACTUAL_VERSION"},
+  "counting_note": "Gate counts can overlap. Do not add repeated or overlapping runs into a unique test total.",
+  "final_full_regression": {"status": "PENDING", "command": "npm test", "exit_code": null, "counts": null, "evidence": []},
+  "canonical_domain": {"status": "PENDING", "command": "npm run test:domain", "exit_code": null, "counts": null, "evidence": []},
+  "typecheck": {"status": "PENDING", "command": "npm run typecheck", "exit_code": null, "evidence": []},
+  "build": {"status": "PENDING", "command": "npm run build", "exit_code": null, "evidence": []},
+  "browser_offline": {"status": "PENDING", "counts": null, "evidence": []},
+  "browser_motion": {"status": "PENDING", "counts": null, "evidence": []},
+  "not_executed": [],
+  "unresolved_blockers": [],
+  "real_data_coverage": "FILL_ACTUAL_READ_ONLY_COVERAGE",
+  "scientific_boundary": "Research candidate thresholds and unapproved norms are not formal automated prescription rules."
+}

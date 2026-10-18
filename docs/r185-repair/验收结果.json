@@ -1,0 +1,199 @@
+{
+  "release": "R185-P0-REPAIR",
+  "runtime": {
+    "node": "22.22.0",
+    "npm": "10.9.4",
+    "freshInstall": true,
+    "symlinkedNodeModules": false,
+    "installedPackages": 967
+  },
+  "finalChain": {
+    "command": "npm test && npm run test:domain && npm run typecheck && npm run build",
+    "source": "/workspace/fangkun/r185-p0-clean/source",
+    "node": "v22.22.0",
+    "npm": "10.9.4",
+    "start": "2026-10-14T03:16:50.385475+00:00",
+    "end": "2026-10-14T03:25:44.808308+00:00",
+    "exitCode": 0,
+    "databaseConfigured": false,
+    "credentialsRemoved": true,
+    "localSocketPermission": true
+  },
+  "tests": {
+    "executionCountWithOverlap": 4833,
+    "pass": 4833,
+    "fail": 0,
+    "skip": 0,
+    "scopeFileCount": 192,
+    "scopeCaseCountWithoutOverlap": 3025,
+    "countEvidence": "full-regression/results.json counts; final success evidenced separately by npm-full-chain-final.log",
+    "r173SyntheticIncluded": 134
+  },
+  "typecheck": "PASS",
+  "build": "PASS",
+  "remoteDatabaseMigration": "SKIP_NO_DATABASE_URL",
+  "browsers": [
+    {
+      "scope": "dev",
+      "pass": 52,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser-final-03/dev-browser.json",
+      "persisted": null,
+      "requests": [
+        {
+          "viewport": "desktop",
+          "external": 0,
+          "models": 0,
+          "frameworkModules": 2,
+          "matchedRequests": [
+            {
+              "method": "GET",
+              "path": "/node_modules/@tanstack/start-client-core/dist/esm/client-rpc/serverFnFetcher.js",
+              "type": "script",
+              "staticModule": true
+            },
+            {
+              "method": "GET",
+              "path": "/node_modules/@tanstack/start-client-core/dist/esm/client-rpc/serverFnFetcher.js",
+              "type": "script",
+              "staticModule": true
+            }
+          ]
+        },
+        {
+          "viewport": "mobile",
+          "external": 0,
+          "models": 0,
+          "frameworkModules": 2,
+          "matchedRequests": [
+            {
+              "method": "GET",
+              "path": "/node_modules/@tanstack/start-client-core/dist/esm/client-rpc/serverFnFetcher.js",
+              "type": "script",
+              "staticModule": true
+            },
+            {
+              "method": "GET",
+              "path": "/node_modules/@tanstack/start-client-core/dist/esm/client-rpc/serverFnFetcher.js",
+              "type": "script",
+              "staticModule": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "prod",
+      "pass": 54,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser-final-02/prod-browser.json",
+      "persisted": null,
+      "requests": [
+        {
+          "viewport": "desktop",
+          "external": 0,
+          "models": 0,
+          "frameworkModules": 0,
+          "matchedRequests": []
+        },
+        {
+          "viewport": "mobile",
+          "external": 0,
+          "models": 0,
+          "frameworkModules": 0,
+          "matchedRequests": []
+        }
+      ]
+    },
+    {
+      "scope": "processRestart",
+      "pass": 12,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "browser-final-03/prod-restart-browser.json",
+      "persisted": false,
+      "requests": []
+    }
+  ],
+  "browserAssertionCount": 118,
+  "initialRenderChecks": {
+    "pass": 4,
+    "fail": 0,
+    "evidence": "browser-final/*-smoke.log"
+  },
+  "realData": {
+    "consistencyPass": 41,
+    "consistencyFail": 0,
+    "windowReplayPass": 35,
+    "windowReplayFail": 0,
+    "weeks": 137,
+    "windows": 35,
+    "activityCount": 1067,
+    "runningActivityCount": 1062,
+    "confirmedTrainingSessions": null,
+    "originalZipSha256": "febc05230c027d0c7691d50219e0cac9145d42dbb0e0cca3f58835146365907c",
+    "rawGarminCoverage": [
+      {
+        "name": "FIT_session",
+        "status": "SKIP",
+        "reason": "Original FIT/activity/identity/device data absent from supplied ZIP"
+      },
+      {
+        "name": "FIT_lap",
+        "status": "SKIP",
+        "reason": "Original FIT/activity/identity/device data absent from supplied ZIP"
+      },
+      {
+        "name": "FIT_record",
+        "status": "SKIP",
+        "reason": "Original FIT/activity/identity/device data absent from supplied ZIP"
+      },
+      {
+        "name": "activity_file_deduplication",
+        "status": "SKIP",
+        "reason": "Original FIT/activity/identity/device data absent from supplied ZIP"
+      },
+      {
+        "name": "confirmed_training_structure",
+        "status": "SKIP",
+        "reason": "Original FIT/activity/identity/device data absent from supplied ZIP"
+      },
+      {
+        "name": "athlete_device_protocol_baseline",
+        "status": "SKIP",
+        "reason": "Original FIT/activity/identity/device data absent from supplied ZIP"
+      }
+    ],
+    "abilityDimensionsAssessable": 0,
+    "abilityScores": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "ruleStatus": {
+    "IMPLEMENTED": 92,
+    "BLOCKED": 5,
+    "NOT_APPLICABLE": 35,
+    "scientificApprovalNew": 0,
+    "candidateThresholdAutomaticExecution": 0
+  },
+  "externalModelCalls": 0,
+  "deployments": 0,
+  "automaticFormalPlanWrites": 0,
+  "P7R187": "DEFERRED",
+  "storagePermission": "REQUEST_IMPLEMENTED_BROWSER_DID_NOT_GRANT; restart persistence actually passed",
+  "overall": "LOCAL_PUBLIC_SCENARIOS_PASS; RAW_GARMIN_ACCEPTANCE_BLOCKED; SEALED_BLIND_TESTS_NOT_RUN",
+  "remaining": [
+    "原始FIT、身份/设备/协议资料缺失，6类核对SKIP",
+    "封存盲测未运行",
+    "没有科学核准常模，不生成0—100能力分或精确PB",
+    "批准课程/计时协议的聊天录入绑定仍有限",
+    "IndexedDB整体迁移、iOS清理耐受及远端集成未测"
+  ],
+  "latestProgramIntegrityEvidence": "post-validation-runtime-integrity.json"
+}

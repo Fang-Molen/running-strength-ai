@@ -1,3 +1,4 @@
+import { loadHealthSnapshot } from "@/lib/health/snapshot"
 /** 方坤日程：跑步、力量、方坤安排统一放进同一份按天排期（单一数据源）。 */
 import { exerciseById } from "@/lib/strength/catalog"
 import { estimateMinutes, type Session } from "@/lib/strength/model"
@@ -21,7 +22,25 @@ export function loadSchedule(): ScheduleStore {
   return { entries: [], acks: [] }
 }
 export function saveSchedule(s: ScheduleStore): boolean {
-  try { localStorage.setItem(SCHEDULE_KEY, JSON.stringify({ entries: s.entries.slice(-400), acks: s.acks.slice(-200) })); return true } catch { return false }
+  try {
+    const existing=localStorage.getItem(SCHEDULE_KEY);
+    if(existing){const parsed=JSON.parse(existing);if(!parsed||!Array.isArray(parsed.entries))return false;}
+    if(!Array.isArray(s.entries)||new Set(s.entries.map(e=>e.id)).size!==s.entries.length)return false;
+    const raw = JSON.stringify({ entries: s.entries, acks: s.acks.slice(-200) });
+    if (localStorage.getItem(SCHEDULE_KEY) !== raw) { localStorage.setItem(SCHEDULE_KEY, raw); if (localStorage.getItem(SCHEDULE_KEY) !== raw) return false; if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed')); }
+    return true;
+  } catch { return false }
+}
+/** Merge only the edited slot into a fresh calendar. No template or past result is replaced. */
+export async function saveScheduledEntry(entry: ScheduleEntry, previous?: ScheduleEntry): Promise<{ ok: boolean; reason?: string }> {
+  const work = () => {
+    const current = loadSchedule(), old = current.entries.find(e => e.id === entry.id);
+    if (old && !previous) return JSON.stringify(old) === JSON.stringify(entry) ? { ok: true } : { ok: false, reason: '同一节训练已保存，未重复添加。请关闭后核对。' };
+    if (previous && JSON.stringify(old) !== JSON.stringify(previous)) return { ok: false, reason: '这节训练刚刚发生变化，请重新打开后修改；草稿保留。' };
+    const next = { ...current, entries: old ? current.entries.map(e => e.id === entry.id ? entry : e) : [...current.entries, entry] };
+    return saveSchedule(next) ? { ok: true } : { ok: false, reason: '本机保存失败，草稿保留。' };
+  };
+  return typeof navigator !== 'undefined' && navigator.locks?.request ? navigator.locks.request(SCHEDULE_KEY, work) : work();
 }
 
 const LOWER = new Set(["腿", "臀"]), UPPER = new Set(["胸", "背", "肩", "手臂"])
@@ -85,19 +104,11 @@ export function syncFangkun(store: ScheduleStore): ScheduleStore {
 }
 
 export function readRecovery(today: string): Recovery | null {
-  const v = loadVitals().records
-  const ex = loadExtras()
-  const series = (k: string) => v.filter((r) => r.kind === k).sort((a, b) => a.observedOn.localeCompare(b.observedOn))
-  const sleep = series("SLEEP"), hrv = series("HRV")
-  const readiness = ex.filter((e) => e.metric === "READINESS" && e.day === today).at(-1)?.value ?? null
-  const hrvToday = hrv.find((r) => r.observedOn === today)?.value ?? null
-  const hrvPrev = hrv.filter((r) => r.observedOn < today).slice(-7)
-  const sleepPrev = sleep.filter((r) => r.observedOn < addDays(today, -1)).slice(-14)
-  const r: Recovery = {
-    readiness, hrvToday, hrvBaseline: hrvPrev.length >= 3 ? hrvPrev.reduce((s, x) => s + x.value, 0) / hrvPrev.length : null,
-    sleepRecent: sleep.filter((x) => x.observedOn >= addDays(today, -1)).map((x) => x.value), sleepBaseline: sleepPrev.length >= 5 ? sleepPrev.reduce((s, x) => s + x.value, 0) / sleepPrev.length : null,
-  }
-  return r.readiness == null && r.hrvToday == null && !r.sleepRecent.length ? null : r
+  const snap=loadHealthSnapshot(today),sleep=snap.metrics.find(x=>x.metric==='SLEEP')!,hrv=snap.metrics.find(x=>x.metric==='HRV')!
+  const ready=snap.metrics.find(x=>x.metric==='READINESS')!
+  const r:Recovery={readiness:ready.state==='AVAILABLE'?ready.current!.value:null,hrvToday:hrv.state==='AVAILABLE'&&hrv.baseline?hrv.current!.value:null,hrvBaseline:hrv.state==='AVAILABLE'?hrv.baseline?.mean??null:null,sleepRecent:sleep.state==='AVAILABLE'?sleep.series.filter(p=>p.day>=addDays(today,-1)&&p.day<=today).map(p=>p.value):[],sleepBaseline:sleep.state==='AVAILABLE'?sleep.baseline?.mean??null:null}
+  return r.readiness==null&&r.hrvToday==null&&!r.sleepRecent.length?null:r
+
 }
 
 /**

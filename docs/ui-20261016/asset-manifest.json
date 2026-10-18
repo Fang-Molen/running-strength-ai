@@ -1,0 +1,496 @@
+{
+  "originalHumanUnchanged": true,
+  "atlasImagesMatchProvidedPackage": 64,
+  "files": [
+    {
+      "path": "public/demo3d/FORM-AUDIT.md",
+      "bytes": 23935,
+      "sha256": "1cd0ef31c72b75cafa4d9311c619de8deecba1f6c311aa0762dda7042b977f41"
+    },
+    {
+      "path": "public/demo3d/LICENSES.md",
+      "bytes": 2378,
+      "sha256": "df935e0433112d4ffbd3e8ee3cfa1a572fe32b4d621f8db139d34fb4df032f18"
+    },
+    {
+      "path": "public/demo3d/data.js",
+      "bytes": 131599,
+      "sha256": "c81a633d6172adc274606abcac21bc5ec79e67bd36688fd1327504cd2f096896"
+    },
+    {
+      "path": "public/demo3d/icon.svg",
+      "bytes": 282,
+      "sha256": "230668a9ccee17f5f5fae6a25a337ea9d4b0c3716c5cb1d2e6d58349c8362243"
+    },
+    {
+      "path": "public/demo3d/models/human.glb",
+      "bytes": 6425196,
+      "sha256": "cbf479cf66cb281b96d83b41816b5894e4f9da9833c015821b95499c9440353c"
+    },
+    {
+      "path": "public/demo3d/models/regions.png",
+      "bytes": 115321,
+      "sha256": "8865d5811229a775c78f1e4d9688b6fde95048f110780f8c9ef89e43ce37e661"
+    },
+    {
+      "path": "public/demo3d/motions.js",
+      "bytes": 40343,
+      "sha256": "adf1be4369953ed288debfc4d099de93ad8891721ef110ffc467f682f68c3251"
+    },
+    {
+      "path": "public/demo3d/musclemap.js",
+      "bytes": 3292,
+      "sha256": "1697ef5b30eda21b1ab03f905046bece5d381e516c2eb9204ccba876a9fad2db"
+    },
+    {
+      "path": "public/demo3d/muscles.js",
+      "bytes": 2090,
+      "sha256": "0a376021b9ba9dc29a3d334312b10633313ada822fcc7e3771c1ef797cdb9d88"
+    },
+    {
+      "path": "public/demo3d/muscles.json",
+      "bytes": 2074,
+      "sha256": "dcb74dc4a9ea76edcbb70614a2d7e3b1646d47b93170becb6679dbc8fd31fc38"
+    },
+    {
+      "path": "public/demo3d/renderer.js",
+      "bytes": 9145,
+      "sha256": "c74aef3d0ed91b025f5236aac54f276a7ed0467fd13a92ca87792fe78393a896"
+    },
+    {
+      "path": "public/demo3d/style.css",
+      "bytes": 5235,
+      "sha256": "1de99056581f506fdf3965aa296342525edb58fe55526747c7cf320d16b93f07"
+    },
+    {
+      "path": "public/demo3d/vendor/THREE-LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/controls/OrbitControls.js",
+      "bytes": 32163,
+      "sha256": "da82486bfcbf9adf398c425713a9a68e4527fa9cd208aa5da25f4acbfa3bbde9"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/loaders/GLTFLoader.js",
+      "bytes": 110058,
+      "sha256": "152ea334ebb5f50aafe152eb13dfd5563f400f4b98e0377d383922be3321d683"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 31797,
+      "sha256": "135194c6d96b61b5d4f0322084b140f972a05461a6ab114c392fdcd1260136d7"
+    },
+    {
+      "path": "public/demo3d/vendor/jsm/utils/SkeletonUtils.js",
+      "bytes": 8831,
+      "sha256": "e5acb0513a5a35ff079e5f08f8a4d6836c3e757b02a15e980743e5b704ff6565"
+    },
+    {
+      "path": "public/demo3d/vendor/three.module.min.js",
+      "bytes": 687458,
+      "sha256": "f7cee3c7533449a1505cc12cb5128b89e3d4fd3d7ea62b05f9f5464a217472ee"
+    },
+    {
+      "path": "public/demo3d/viewer3d.js",
+      "bytes": 33915,
+      "sha256": "21946af7621bf5193f435909cdd76b20f870ae6c1e4e38222851839b143fac90"
+    },
+    {
+      "path": "public/fangshen/care-bust.png",
+      "bytes": 275353,
+      "sha256": "608da3fe02f0d208d50a08770243a522c1c11df0ebabbcdc71e7e5d76b01c7bb"
+    },
+    {
+      "path": "public/fangshen/celebrate-bust.png",
+      "bytes": 275453,
+      "sha256": "d28fc8ba51697ea93a337dc979cd852144e2d5b27e6110c1d2759204a9025990"
+    },
+    {
+      "path": "public/fangshen/curious-bust.png",
+      "bytes": 275618,
+      "sha256": "f136e8a8d184b957dac8a2a474fdb571c92f093e8fc3ebc09a66a46ccb194ace"
+    },
+    {
+      "path": "public/fangshen/encourage-bust.png",
+      "bytes": 275510,
+      "sha256": "af5519ca7e54f798b315cef1cf19c21ce001327aa7f3b570e2b894c9733b7b2b"
+    },
+    {
+      "path": "public/fangshen/focus-bust.png",
+      "bytes": 207517,
+      "sha256": "67ec5652cd865d3a1929bbc42671b7388d178d5375a367419979edeb9e3e1eee"
+    },
+    {
+      "path": "public/fangshen/guard-bust.png",
+      "bytes": 202115,
+      "sha256": "7d5ca1f3901b8289c29528cdfc393065e11b6bb05a215d84b3d2361daf316012"
+    },
+    {
+      "path": "public/fangshen/happy-bust.png",
+      "bytes": 397674,
+      "sha256": "7e7ec2147fa6af47abbbff91e4071dfe114a9115fcd0e70769f9cc082ec05583"
+    },
+    {
+      "path": "public/fangshen/happy.png",
+      "bytes": 703477,
+      "sha256": "661444768dc71a81953d15d76d970228c2e0c6ff163d8c287db41984129e91a4"
+    },
+    {
+      "path": "public/fangshen/thinking-bust.png",
+      "bytes": 270104,
+      "sha256": "d1b4eaff8a8a1390d0381129ebe359bfd2772f3b276adfd341a4333792dd8ce7"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/ASSET-MANIFEST.json",
+      "bytes": 17436,
+      "sha256": "131474cb16eadd957d30e11733b3ad5731ea3feab74715c4c5597aa7c3799309"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/MAP.json",
+      "bytes": 2636,
+      "sha256": "01ffd9461c9bc7b661d6fc54d19652f6179cd4c3bdb259f32ec680fc6f225b5b"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/anatomy/female-back.webp",
+      "bytes": 22816,
+      "sha256": "15e0c0ce558ff327773cfaf67c66919d52f5ffea5bb081001a63cb246f74a319"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/anatomy/female-front.webp",
+      "bytes": 24238,
+      "sha256": "b03dc7d71a323389c530e9bbdff203509d13f035cf1fa57b4b1e120be7d01931"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/anatomy/male-back.webp",
+      "bytes": 25582,
+      "sha256": "bac6408ebfc45dcbadd5dd19db7d9cd298382f5ac6617540ff03ca1dba11f861"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/anatomy/male-front.webp",
+      "bytes": 25894,
+      "sha256": "cbc555a9a0112fb7ddf437375fbd799383962ba7bb22782d634a578131555b59"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/hero/female-alt.webp",
+      "bytes": 31360,
+      "sha256": "beebbf6f501fd82784984700700cf2ca96c7ed3544d5e661007b29abad8e3e3a"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/hero/female.webp",
+      "bytes": 54078,
+      "sha256": "eb33bbea3be507df7ed75665a1c999630c4f3cc84f965a2794870473e43c8c77"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/hero/male-alt.webp",
+      "bytes": 30016,
+      "sha256": "42f8a14a7584c1511519f589ab1c41dd0b87fea5a462ef4638d1d716c76ae717"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/hero/male.webp",
+      "bytes": 57550,
+      "sha256": "942bc516c88fbc39829dab661ab694380c570dd3e6e647bfe53301c5cf6526a4"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/reference/reference-dual-gender.webp",
+      "bytes": 224860,
+      "sha256": "1d27ad2f147014ab624005aa9e6fbeb1b5753cea32d22fe81973d72be790b7ee"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/reference/reference-female.webp",
+      "bytes": 216028,
+      "sha256": "d0b33b3df78f2df496ebcac0b19b2e582840e6ae306b6f4842f7905702415e87"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/reference/reference-male.webp",
+      "bytes": 225382,
+      "sha256": "c758b0183795b33913f579203570311a8c0bad27d7b3ab9983bac4f211c9ab4d"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/a-march-male.webp",
+      "bytes": 13130,
+      "sha256": "af172ba56f89f207d4ff442f04cff6bd977a658794b1d0341a7dee4e921d84dc"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/a-skip-male.webp",
+      "bytes": 13058,
+      "sha256": "a06bc6f035af9fa2575427cea7764879d1ee875b1428e5efc27850a0c033ad00"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/acceleration-male.webp",
+      "bytes": 13218,
+      "sha256": "562efe59f71f99db07037587aafdafeb271926bedbcfe268e75df4bcf7f384fd"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/bounding-male.webp",
+      "bytes": 11172,
+      "sha256": "3481224827887b1e4529c060c1fb0c8e27d85f358e9dac55ad01b2d8cac86840"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/curve-male.webp",
+      "bytes": 14016,
+      "sha256": "230a7919cd388070329452ec3bd73311bd2996a90832d58846d5fa3480c08979"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/heel-recovery-male.webp",
+      "bytes": 10290,
+      "sha256": "20ac0dd328a38f39c2f757cd691d38409e7ac41c3052410f8ea980ce7bc57227"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/max-speed-male.webp",
+      "bytes": 12380,
+      "sha256": "c410ef3b237148f367012f0a5ba8d2049cd41b7a29307433a6dc2aadeac089ad"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/quick-steps-male.webp",
+      "bytes": 11112,
+      "sha256": "81f488246a87fe45acafcbee8a2030159ed8184385a1356bf3a09fea5aea244e"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/quick-switch-male.webp",
+      "bytes": 11302,
+      "sha256": "1210a92c0ecf6d1a970a7ef354392f56c56fe237189df58a991491017a086d51"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/single-hop-male.webp",
+      "bytes": 11590,
+      "sha256": "875810592d0d42c02dd7645ea34b5516097bd0894e5c7a41b1aeb31738f3c9c0"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/start-drive-male.webp",
+      "bytes": 12288,
+      "sha256": "965fcde565f7f33cdadd1070497774ac3143116b8350cbfeedb55c07508463fd"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/running/straight-leg-male.webp",
+      "bytes": 9790,
+      "sha256": "203f81883028813304737a4941bca00dd190bd9c0f2813b3a7e3f09568ec05be"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-female-1.webp",
+      "bytes": 9386,
+      "sha256": "fd8cce50b019262dcfbdfd2cec34389430b7f647fb5356aa56f9e44644008030"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-female-2.webp",
+      "bytes": 9908,
+      "sha256": "b750e264da17ce5aa6b2769ea719afdb759f5d0e37d567985cd5061b9294c486"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-female-3.webp",
+      "bytes": 10254,
+      "sha256": "d0f0ea5e10760e91555dc420199b5489ee105ed75a45cff85601dd6fa3110828"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-female-4.webp",
+      "bytes": 10640,
+      "sha256": "12e8fce4500c33ae73ccdc57f04455bdf984aefddb82ad4e8bd394b10e3a4993"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-female-5.webp",
+      "bytes": 10556,
+      "sha256": "9b08d9e9a9dc49057eb6687f36e9c1696159aa563534587ad44332eb5702afd7"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-male-1.webp",
+      "bytes": 9640,
+      "sha256": "db529b0d913494aa57e1b7319b4ea8d53b2799f0dcc32444501f00fba53703bc"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-male-2.webp",
+      "bytes": 9834,
+      "sha256": "23bc8e315779d11486cb6ce5ee5c21ed5e1742c214f274b5f71fe1c239389b48"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-male-3.webp",
+      "bytes": 9704,
+      "sha256": "985ce345dba4f493f69651b1cc343a1df61c6f50336b670c10b51f820313308d"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-male-4.webp",
+      "bytes": 10210,
+      "sha256": "ebea3c743f4bfcf40b22aa881c6a996894b88ab1e5b62bdfb4f9c3d0433823ea"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/sequence/back-squat-male-5.webp",
+      "bytes": 9396,
+      "sha256": "9d9a9fc17f606cb47f12a7ed28a1fb1f71260f23562d68d6fb14539e2c56fff7"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/back-squat-female.webp",
+      "bytes": 11786,
+      "sha256": "977d07964ef26d0f057564be34ac476ffb27d7ca623178e150d2ac64f45735f5"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/back-squat-male.webp",
+      "bytes": 12458,
+      "sha256": "91a834e7c2d1815156f0447095774fcfe416179252b4b9d99b560078374138f1"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/bb-bench-male.webp",
+      "bytes": 10562,
+      "sha256": "4a52d519a5dfd562bbd86d052b0886d90cbf538ee9c7450b5792754244a31f70"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/bb-dl-male.webp",
+      "bytes": 10952,
+      "sha256": "08813509899a7af406959809311c263ead6b8c4985befebfb0f0d39678450af0"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/bb-ohp-male.webp",
+      "bytes": 8418,
+      "sha256": "c7d9b2708bedab73d86471003d0cbb5eeec1f07b56ebf77d844025b75dc50541"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/bb-row-male.webp",
+      "bytes": 10436,
+      "sha256": "dcbd598afcbf0609495f12e34d5c93e827ea7723268e9839620a52eef008ffb6"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/box-jump-female.webp",
+      "bytes": 11042,
+      "sha256": "2cbd6805187a00482ef96aa5e30c407889519702654baf5f7ed315dad89a0b4f"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/box-jump-male.webp",
+      "bytes": 12156,
+      "sha256": "59d7fade803f820f4ed99522f8b6e36839ea0b0d25ae406b576ea9cbbbe53596"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/bss-female.webp",
+      "bytes": 8844,
+      "sha256": "8ce51d505c02338f1f08f1a5d97b185455ec718cea006af9f583dd039ace013d"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/bss-male.webp",
+      "bytes": 10480,
+      "sha256": "7b27d9ba66b9778687811972fa34e1482718f1af66da2f68d142e6c6ad0d39c2"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/calf-male.webp",
+      "bytes": 7970,
+      "sha256": "553f95221784e15baff48304d356a814f4249ddd141694c629cbc236e27b31c2"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/db-lunge-female.webp",
+      "bytes": 9940,
+      "sha256": "7428ebb95fd351a917706171bf16bbc1a18d76c9d10324f0b01264e20ccf8e73"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/db-lunge-male.webp",
+      "bytes": 9978,
+      "sha256": "f41b7681fdf9894e3c63c2201705a57005843db0c35c1a31be555137f179d6a6"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/db-rdl-female.webp",
+      "bytes": 10070,
+      "sha256": "92ddaa2ed05775b99bb6a8dca62c9bb2da73de84aa4b456a3bec988cf926d5ca"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/db-rdl-male.webp",
+      "bytes": 10212,
+      "sha256": "7d891567c30ae8a61c033ff3f572f08a6665b4e9aeb5265e3ed5d09d2a72f537"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/goblet-female.webp",
+      "bytes": 8690,
+      "sha256": "f51f5c5a70e998014e5ea7c46fd7f7656fe88b6085e531aa1cb26638b40e6a1b"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/goblet-male.webp",
+      "bytes": 9580,
+      "sha256": "1769d0ff8a30a264f958d51dd78682d277c95ba418dd6ac0049f5cf8554db24c"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/hip-thrust-female.webp",
+      "bytes": 10008,
+      "sha256": "7e931ef3173fe776d7615b08a002efc7c2b7f841e6acc63c0116fbfbebabd870"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/hip-thrust-male.webp",
+      "bytes": 10942,
+      "sha256": "66c0c892e59045680040276a0fdfa5c671a07df49b08266cb37730d217a681d6"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/kb-swing-female.webp",
+      "bytes": 9164,
+      "sha256": "bed440cd025d2a7bafc7bbfc633b4ec563b7b51840afa8af93485989de637667"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/kb-swing-male.webp",
+      "bytes": 9442,
+      "sha256": "2453e80ef0e80e51d0a94d1795bb11a2128060b5623f2d1a7b5bb05c86bd53c2"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/lunge-female.webp",
+      "bytes": 9940,
+      "sha256": "7428ebb95fd351a917706171bf16bbc1a18d76c9d10324f0b01264e20ccf8e73"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/lunge-male.webp",
+      "bytes": 9978,
+      "sha256": "f41b7681fdf9894e3c63c2201705a57005843db0c35c1a31be555137f179d6a6"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/plank-male.webp",
+      "bytes": 10044,
+      "sha256": "a10e99cc44c073418ff04639d5935a656519ab2df4c88cf126e0ab7bafa27596"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/pullup-male.webp",
+      "bytes": 8158,
+      "sha256": "38e336df6ddcaf92aff5a5be485d39618092b9a5e48557d0e4800b7e45437f20"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/rdl-female.webp",
+      "bytes": 9604,
+      "sha256": "480075ecad888effc74bbadebbef432c12cacafdc3e570660abe3a33da2156e8"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/rdl-male.webp",
+      "bytes": 10516,
+      "sha256": "4ddc34d62b4edf86b6e9fd8bf2e176ed6fcf101835c637475b784f858ec29b30"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/single-rdl-female.webp",
+      "bytes": 10070,
+      "sha256": "92ddaa2ed05775b99bb6a8dca62c9bb2da73de84aa4b456a3bec988cf926d5ca"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/single-rdl-male.webp",
+      "bytes": 10212,
+      "sha256": "7d891567c30ae8a61c033ff3f572f08a6665b4e9aeb5265e3ed5d09d2a72f537"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/step-up-female.webp",
+      "bytes": 9156,
+      "sha256": "8c4c027bcb62486e4c58337ebe809a4171083dd86556cb1346051012511d6b0a"
+    },
+    {
+      "path": "public/fangkun-atlas/assets/strength/step-up-male.webp",
+      "bytes": 9706,
+      "sha256": "7ea46a99525af6c0ff831d1002c63423b986be0da84b1b47d517e1a0da608a41"
+    },
+    {
+      "path": "public/fangkun-bodylab/model/avatar3d.mjs",
+      "bytes": 9456,
+      "sha256": "7ccc0a8fec4c7ca5543a95aec3cc27ec7a9e5198b214aa9aebf307554073e695"
+    },
+    {
+      "path": "public/fangkun-bodylab/model/profile.mjs",
+      "bytes": 4028,
+      "sha256": "42331016abec6e091d2821a3d30c00c4616effc9cd770b09158ac0cdff1c53f1"
+    },
+    {
+      "path": "public/fangkun-bodylab/vendor/THREE-LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    },
+    {
+      "path": "public/fangkun-bodylab/vendor/three.module.min.js",
+      "bytes": 687458,
+      "sha256": "f7cee3c7533449a1505cc12cb5128b89e3d4fd3d7ea62b05f9f5464a217472ee"
+    }
+  ]
+}

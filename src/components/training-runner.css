@@ -1,0 +1,3 @@
+/* Embedded execution belongs to the shared safe-area/keyboard-aware sheet. */
+.fk-runner-embedded .fk-runner-screen{position:relative;inset:auto;z-index:auto;min-height:320px;max-height:none;padding:16px 0!important;overflow:visible}
+.fk-runner-embedded .fk-runner-screen input{min-width:0;font-size:16px}

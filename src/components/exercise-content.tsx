@@ -1,17 +1,19 @@
-import { useState } from 'react';
 import { exerciseContent } from '@/lib/strength/exercise-content';
-import { FormFigure } from './form-figure';
+import { ExerciseDetailBody } from './exercise-editor';
+import { demoData } from '@/lib/strength/demo/provider';
+import { useState } from 'react';
+import { characterReference, type Gender } from '@/lib/strength/approved-motion';
 
 export function ExerciseContent({catalogId}: {catalogId:string|null}) {
+  const [gender,setGender] = useState<Gender>('male');
   const content=exerciseContent(catalogId);
-  const [large,setLarge]=useState(false);
-  const [showFigure,setShowFigure]=useState(false);
+  if (catalogId && demoData.exercises.some(item => item.id === catalogId)) return <ExerciseDetailBody id={catalogId} />;
   if(!content)return <p className="text-sm text-muted">自定义动作尚无已核对说明。查看不会加入计划或记录完成。</p>;
   return <div className="space-y-4">
+    <section className="rounded-xl border border-line p-3" aria-label="新版角色形象参考"><div className="mb-2 flex gap-2">{(['male','female'] as const).map(g=><button className="fk-chip" key={g} aria-pressed={gender===g} onClick={()=>setGender(g)} type="button">{g==='male'?'男性':'女性'}</button>)}</div><img src={characterReference(gender)} className="mx-auto h-[220px] w-full object-contain" alt="新版人物外观参考，非本动作示范"/><p className="text-xs text-muted">此形象是设计参考，不代表动作标准姿势。无合格新动画时不显示旧人物。</p></section>
     <p className="text-xs text-muted">{content.id} · {content.variant} · {content.groups.join('、')}</p>
     <p className="text-sm">器材：{content.equipment.join('、')} · 难度：{content.difficulty}</p>
     <p className="text-sm text-muted">{content.imageStatus}。文字步骤始终可读。</p>
-    {content.imageAvailable&&content.cue ? <><button type="button" className="min-h-11 rounded-xl border border-line px-3 text-sm" onClick={()=>setShowFigure(x=>!x)}>{showFigure?'收起示意':'查看未审校示意'}</button>{showFigure?<><button type="button" className="min-h-11 px-3 text-sm" onClick={()=>setLarge(x=>!x)}>{large?'缩小示意':'放大示意'}</button><div className={large?'grid grid-cols-1 gap-3':'grid grid-cols-2 gap-2'}><FormFigure pose={content.cue.setupPose} caption={`${content.name} · 1 准备（示意）`} /><FormFigure pose={content.cue.effortPose} caption={`${content.name} · 2 发力（示意）`} /></div></>:null}</>:null}
     <section><h3 className="font-bold">动作步骤</h3>{content.steps.length?<ol className="mt-2 list-decimal space-y-2 pl-5 text-sm">{content.steps.map((x,i)=><li key={i}>{x}</li>)}</ol>:<p className="mt-2 text-sm text-muted">此变式的动作步骤尚未补齐，不用其他动作的说明代替。</p>}</section>
     {content.cue?<section><h3 className="font-bold">常见错误</h3><p className="mt-2 text-sm">{content.cue.avoid}</p></section>:null}
     <section><h3 className="font-bold">适用与限制</h3><p className="mt-2 text-sm text-muted">{content.applicability}</p><p className="mt-2 text-sm text-muted">替代动作尚未逐项核定，不自动替换课程。</p></section>

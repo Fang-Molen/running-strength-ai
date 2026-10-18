@@ -1,0 +1,39 @@
+TAP version 13
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-guard-k13.test.ts
+not ok 1 - src/lib/core/coach-guard-k13.test.ts
+  ---
+  duration_ms: 77.473779
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-guard-k13.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 85.039635

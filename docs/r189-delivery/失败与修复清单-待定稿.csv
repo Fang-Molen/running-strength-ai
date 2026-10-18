@@ -1,0 +1,10 @@
+编号,首次发现,类别,修复或处理,当前验收状态,初次证据,后续证据
+R189-01,JSON动作数据元组推断导致TypeScript类型错误,类型适配,通过unknown显式边界接入已定义DemoData类型,最终Node22类型检查待汇总,typecheck-01.log,typecheck-02.log
+R189-02,动作测试按对象字面量查找动作却未识别实际赋值表,测试工具缺陷,改为读取实际映射与动作帧语义验证不降低动作数量要求,Node24定向重跑通过最终Node22待汇总,demo-targeted-01.log,targeted-final.log
+R189-03,无外部请求检查把SVG标准命名空间误判为外网依赖,测试工具缺陷,限制为实际模块import或fetch或loadAsync请求路径,Node24定向重跑通过最终Node22待汇总,demo-targeted-02.log,targeted-final.log
+R189-04,逐组RPE测试使用不存在的sessionRpe.count属性,测试工具缺陷,改为核对正式projector records数组逐组RPE不计入课程RPE,Node24定向重跑通过最终Node22待汇总,segment-rpe-targeted.log,targeted-final.log
+R189-05,营养窗口错误使用occurrenceId查询计划并默认判作力量且缺少运动员和作废过滤,运行时缺陷,使用冻结running snapshot及开始事件运动员过滤并排除作废未知保留UNKNOWN混合课MIXED,5项定向PASS不冒充全量PASS,scope-audit.md,nutrition-targeted-03.log
+R189-06,力量组RPE接受作废或不可靠组身份,运行时缺陷,增加occurrenceVoided与结构投影组身份核对,修订已存在最终结果待补,scope-audit.md,待补
+R189-07,力量休息页提前返回导致刚完成组RPE编辑器不可达,UI缺陷,休息页加入最近已完成组的SegmentRpeEditor绑定稳定组身份,源码已修订浏览器结果待补,scope-audit.md,待补
+R189-08,全域首轮4项失败含急救措辞下一次建议以及LIVE日志和备份场景,回归失败,由核心修复继续核对产品合同及有效批准课程前置条件不得降低安全断言,首轮2859案例2855PASS4FAIL0SKIP最终结果待补,domain-01.log,待补
+R189-09,默认沙箱无法建立本地监听或Node测试IPC,运行环境限制,在已授权本地执行范围内使用受限额外网络权限启动本地验证,环境失败日志保留不计程序案例PASS,dev-server.log,dev-server-network.log

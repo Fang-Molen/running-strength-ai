@@ -1,0 +1,38 @@
+[
+  {
+    "path": "package.json",
+    "status": "MODIFIED",
+    "sha256Before": "e8de1b3f569ca90f8c45994429d6c86b2431b13e0a363e60f9ad65d2c3ab4d84",
+    "sha256After": "56955b66260a9f68d10f8a1af28dac8ad2a1bccffa7151c03f6296d5162c1c8b"
+  },
+  {
+    "path": "scripts/test-loader.mjs",
+    "status": "MODIFIED",
+    "sha256Before": "662604bfb21a6951ed5e3263341e2842ba0cb56dbcb5904da81a86a1f8b005fb",
+    "sha256After": "514f1e1729365e0e1925d3c0b80bb5fdb49d5f1798d8564788ec6eaff19fd2a6"
+  },
+  {
+    "path": "src/lib/core/brain-loop.ts",
+    "status": "MODIFIED",
+    "sha256Before": "1ec3bd1e69672a99f2d6d1680401c6632dbac76918463470cb3e821de9021313",
+    "sha256After": "c28913a36eb041730cd65f2ddec6b4e8489be12387a895330e72a67774c4398b"
+  },
+  {
+    "path": "src/lib/core/fk-r4-p0.test.ts",
+    "status": "ADDED",
+    "sha256Before": null,
+    "sha256After": "6d6f97acd3d7a25ef273eeee8be424f2e1063654121403a059d957dcde9caf1b"
+  },
+  {
+    "path": "src/lib/core/training-decision.test.ts",
+    "status": "MODIFIED",
+    "sha256Before": "e5de7d6877f3df5d5d5afd64c921cc189cb348126148ec7ee37fb8d9ca69d9a1",
+    "sha256After": "4998396ef210bcafb75cb927dc33468ae2203ba3ed2689970f2e1201a4b5028f"
+  },
+  {
+    "path": "src/lib/core/training-decision.ts",
+    "status": "MODIFIED",
+    "sha256Before": "37bb80118ee3bd7d239020e937cc9ea6e8b04c385389385349c42ad6f5325a34",
+    "sha256After": "74d1ff2031f9a9d57328331733a9e5040298bd4dfb6174346663551f3ce2dda7"
+  }
+]

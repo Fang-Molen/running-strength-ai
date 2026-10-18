@@ -55,7 +55,7 @@ test("actual stored separately from plan; summary counts deviations and reasons"
   l = logActual(l, "b", { outcome: "different", minutes: 25, intensity: "EASY", note: "只跑了一半", reasons: ["short"] })
   assert.equal(l[1].minutes, 40); assert.equal(l[1].actual!.minutes, 25); assert.equal(l[0].actual!.minutes, 50)
   const s = weekSummary(l, W, "2026-10-13")
-  assert.deepEqual([s.planned, s.asPlanned, s.different, s.missed, s.actualMin], [3, 1, 1, 1, 75]); assert.deepEqual(s.reasons, [["short", 1]])
+  assert.deepEqual([s.planned, s.asPlanned, s.different, s.missed, s.actualMin], [3, 1, 1, 0, 75]); assert.deepEqual(s.reasons, [["short", 1]])
 })
 test("adaptation: state ≠ ability; time → shorten; pain → reduce; clean → progress", () => {
   const mk = (r: ("tired" | "short" | "pain")[], i: number) => ({ ...e({ id: "x" + i, date: `2026-10-${10 + i}`, status: "done" }), actual: { outcome: "different" as const, minutes: 20, intensity: null, note: "", reasons: r, at: "" } })

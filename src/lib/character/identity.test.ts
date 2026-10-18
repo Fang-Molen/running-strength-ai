@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import {test} from 'node:test';
+import {ID,preview,isModel,isVideo,selectModel,selectVideo} from './identity.ts';
+const m={id:ID.female,gender:'female',url:'/fangkun-character/models/female-good.glb',status:'APPROVED',sha256:'a'.repeat(64),version:1,reviewer:'independent reviewer',licenseEvidence:'docs/media-qa/female-license.json',qaEvidence:'docs/media-qa/female-qa.json',reviews:{rights:'PASS',identity:'PASS',rig:'PASS',morph:'PASS',mobile:'PASS'}};
+const v={exerciseId:'back-squat',gender:'female',characterId:ID.female,url:'/fangkun-video/assets/back-squat-female.mp4',sha256:'b'.repeat(64),status:'APPROVED',reviewer:'independent coach',licenseEvidence:'docs/media-qa/video-license.json',qaEvidence:'docs/media-qa/video-qa.json',reviews:{rights:'PASS',identity:'PASS',biomechanics:'PASS',equipment:'PASS',mobile:'PASS'}};
+test('empty manifests preserve no legacy fallback',()=>{assert.equal(selectModel({schema:'fangkun-character-v1',assets:[]},'female'),null);assert.equal(selectVideo({schema:'fangkun-video-v2',assets:[]},'back-squat','male'),null)});
+test('final references have specific male and female paths',()=>{assert.match(preview('male','back'),/male-back.webp$/);assert.match(preview('female'),/female-front.webp$/)});
+test('approved model must be exact identity + path',()=>{assert.equal(isModel(m),true);assert.equal(isModel({...m,id:ID.male}),false);assert.equal(isModel({...m,url:'/demo3d/models/human.glb'}),false)});
+test('unreviewed model cannot enter the stage',()=>assert.equal(selectModel({schema:'fangkun-character-v1',assets:[{...m,reviews:{...m.reviews,rig:'PENDING'}}]},'female'),null));
+test('gender and action IDs always match video identity',()=>{assert.equal(isVideo(v),true);assert.equal(isVideo({...v,gender:'male'}),false);assert.equal(isVideo({...v,gender:'neutral'}),false)});
+test('no wrong-video substitute',()=>{const manifest={schema:'fangkun-video-v2',assets:[v]};assert.equal(selectVideo(manifest,'back-squat','female')?.url,v.url);assert.equal(selectVideo(manifest,'back-squat','male'),null);assert.equal(selectVideo(manifest,'pushup','female'),null)});
+test('duplicate gender source rejected',()=>assert.equal(selectModel({schema:'fangkun-character-v1',assets:[m,m]},'female'),null));

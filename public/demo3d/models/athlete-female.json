@@ -1,0 +1,14 @@
+{
+  "model": "athlete-female.glb",
+  "sexPresentation": "female",
+  "source": "athlete.glb",
+  "sourceSHA256": "20c3eab725e10eb32901ff8ff6982c60ad96fb9e697a7065132af10938d23738",
+  "sha256": "5faaf978f0573efd556a74a475880d039b006ecd769473b949cc8f81a58ba4c1",
+  "bytes": 5731508,
+  "license": "CC0-1.0",
+  "limitations": [
+    "Authored adult visual reference; not individual anatomy or a validated body-composition prediction.",
+    "Shared bone lengths and exercise clips; not sex-specific biomechanical certification.",
+    "Original design face identity and loose garment simulation are not reproduced."
+  ]
+}

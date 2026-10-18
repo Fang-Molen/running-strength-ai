@@ -1,0 +1,74 @@
+[
+  {
+    "module": "01",
+    "archive": "1-FK01_ATLAS_CODEX_SMALL.zip",
+    "sha256": "9300a53ba5df9ef1371adbc49431db908cf8da052fa388a086463f79867bd7af",
+    "files": 107
+  },
+  {
+    "module": "02",
+    "archive": "2-FANGKUN_02_-E9-A5-AE-E9-A3-9F-E4-B8-8E-E5-81-A5-E5-BA-B7_-E6-89-8B-E6-9C-BA-E4-BA-A4-E4-BA-92-E5-8C-85_20261016.zip",
+    "sha256": "7907e4b6a310961f9409baeeab4e9b588f6bccca325aba8284d90d3895d4496f",
+    "files": 28
+  },
+  {
+    "module": "03",
+    "archive": "2-FANGKUN_03_BODYLAB_-E4-BD-93-E5-9E-8B-E6-A8-A1-E6-8B-9F-E7-8B-AC-E7-AB-8B-E5-8C-85_20261016.zip",
+    "sha256": "b3c5984d9d8d775aca95e711fde9ffa63ac8e93d6c4b54892eecde26c1c1c783",
+    "files": 11
+  },
+  {
+    "module": "04",
+    "archive": "1-FANGKUN_04_-E9-A6-96-E9-A1-B5-E8-87-AA-E5-AE-9A-E4-B9-89-E6-8E-92-E5-BA-8F_20261016.zip",
+    "sha256": "672f8028b97d273ef269e26b89c95c4476316c4f06bbaa57d136ffe527abb786",
+    "files": 5
+  },
+  {
+    "module": "05A",
+    "archive": "1-FANGKUN_05A_-E5-8A-9B-E9-87-8F_-E7-94-B7-E5-A5-B3-E5-9F-BA-E7-A1-80-E4-B8-8E-E6-89-8B-E6-9C-BA_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "4ce141c49a9dd530faddb922e1dfac16600a49055b865bf1080aa9b87b729ec9",
+    "files": 5
+  },
+  {
+    "module": "05B",
+    "archive": "6-FANGKUN_05B_-E5-8A-9B-E9-87-8F_-E5-8F-8C-E4-BA-BA-E5-B8-83-E5-B1-80-E4-B8-8E-E8-A7-A3-E5-89-96_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "036d79960c67d7ee0029130ba6a590191bd761a814cbf0a32f4dedb31fada416",
+    "files": 5
+  },
+  {
+    "module": "05C",
+    "archive": "5-FANGKUN_05C_-E5-8A-9B-E9-87-8F_-E8-82-8C-E7-BE-A4-E4-B8-8E-E5-B1-95-E7-A4-BA_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "922914650819d152da688c1631f3651b8a10df3a832abc411340c4156440812b",
+    "files": 5
+  },
+  {
+    "module": "05D",
+    "archive": "2-FANGKUN_05D_-E9-A5-AE-E9-A3-9F-E5-81-A5-E5-BA-B7_-E6-89-8B-E6-9C-BA-E7-AB-96-E5-B1-8F_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "572717f2915d3ce3694b6fa01752938aeadb2d5b66ce367d549c7b5b3532d314",
+    "files": 5
+  },
+  {
+    "module": "05E",
+    "archive": "1-FANGKUN_05E_-E9-A5-AE-E9-A3-9F-E5-81-A5-E5-BA-B7_-E4-BF-A1-E6-81-AF-E4-B8-8E-E6-A8-AA-E5-B1-8F_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "1b3f41987318cfd372daba5b957cc919eae6a3df0de89fdac5d7679add24aa25",
+    "files": 6
+  },
+  {
+    "module": "05F",
+    "archive": "3-FANGKUN_05F_-E4-BA-BA-E7-89-A9_-E4-BD-93-E5-9E-8B-E5-BD-A2-E8-B1-A1_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "3a6a6bf88fdca900ede4ab6a5fa6cd1ac409d1159a10ac4cafcf512bd907f059",
+    "files": 5
+  },
+  {
+    "module": "05G",
+    "archive": "2-FANGKUN_05G_-E9-A6-96-E9-A1-B5_-E8-87-AA-E7-94-B1-E6-8E-92-E5-BA-8F_Codex-E5-8F-AF-E5-8D-95-E7-8B-AC-E4-B8-8A-E4-BC-A0.zip",
+    "sha256": "fd6282d025c3c842e006cd28909312a7b93cce587b94f75e730fba65038f356b",
+    "files": 3
+  },
+  {
+    "module": "06",
+    "archive": "3-FANGKUN_06_-E7-94-A8-E6-88-B7-E8-A7-86-E8-A7-89-E5-8F-82-E8-80-83_-E9-9D-9E-E4-BA-A7-E5-93-81-E7-B4-A0-E6-9D-90_20261016.zip",
+    "sha256": "d5967d0d4ee22e282dff83bdc1f2d36faa868a715f503bda43d294dbc8b478ca",
+    "files": 4
+  }
+]

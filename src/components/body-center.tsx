@@ -1,3 +1,6 @@
+import { loadExtras } from "@/lib/ui/device-store"
+import { HealthModeNote } from "@/components/health-mode-note"
+import { HEALTH_CHANGED } from "@/lib/health/observation"
 import { onAppEvent } from "@/lib/core/events"
 import { useEffect, useState } from "react"
 import { BodyPanel } from "@/components/body-panel"
@@ -68,10 +71,11 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
   useEffect(() => { setPane(initialPane) }, [initialPane])
   useEffect(() => { if (active) setRevision(value => value + 1) }, [active])
   useEffect(() => {
-    const refresh = () => setRevision(value => value + 1)
+    const refresh = () => {setRevision(value => value + 1);setWatch(loadWatch());setTier(loadTier())}
     const unsubscribe = onAppEvent(refresh)
     window.addEventListener("storage", refresh)
-    return () => { unsubscribe(); window.removeEventListener("storage", refresh) }
+    window.addEventListener(HEALTH_CHANGED,refresh)
+    return () => { unsubscribe(); window.removeEventListener("storage", refresh);window.removeEventListener(HEALTH_CHANGED,refresh) }
   }, [])
   const [revision, setRevision] = useState(0)
   const [checks, setChecks] = useState<BodyCheck[]>([])
@@ -94,7 +98,7 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
     }
     setHints(next)
     const rows = todayEntries()
-    setEaten(rows.length ? rows.reduce((sum, item) => sum + item.kcal, 0) : null)
+    setEaten(rows.length ? rows.reduce((sum, item) => sum + (item.kcal ?? 0), 0) : null)
     setProtein(rows.some((item) => typeof item.protein === "number") ? Math.round(rows.reduce((sum, item) => sum + (item.protein ?? 0), 0) * 10) / 10 : null)
   }, [revision])
   const weightHits = checks.filter((item) => today && (span <= 1 ? item.date === today : item.date >= shiftIso(today, -(span - 1)) && item.date <= today)).sort((a, b) => a.date.localeCompare(b.date))
@@ -123,16 +127,17 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
       {([["recovery", "今日恢复"], ["trend", "身体指标"]] as const).map(([id, label]) => <button type="button" key={id} aria-pressed={pane === id} onClick={() => setPane(id)}>{label}</button>)}
     </nav>}
     <div hidden={pane !== "recovery"}>
+      {!compact?<HealthModeNote day={today}/>:null}
       {compact ? null : <RecoveryVerdictCard today={today} revision={revision} watch={watch} onImport={() => setPane("device")} />}
       {watch && !compact ? <CheckinCard today={today} watch={watch} onSaved={() => setRevision((v) => v + 1)} onPain={() => { setPane("trend"); window.setTimeout(() => document.getElementById("pain-log")?.scrollIntoView({ block: "start" }), 40) }} /> : null}
       {watch === "none" || compact ? null : 
-      <HealthTiles allowed={tier ? TIERS[tier].tiles : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
+      <HealthTiles allowed={tier ? [...new Set([...TIERS[tier].tiles,...vitals.map(v=>v.kind),...loadExtras().map(v=>v.metric)])] : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
     <section className="px-1" data-legacy-span={span} data-legacy-metrics={metrics.length}>
     </section>
     </div>
     <section id="body-records" className="mt-3">
       <div hidden={pane !== "device"}>{watch ? <SourceGuide watch={watch} /> : null}<DeviceImport today={today} onSaved={() => setRevision((value) => value + 1)} /></div>
-      <div hidden={pane !== "recovery" || hasWatch} id="body-vitals" className="scroll-mt-6"><details className="home-card p-3" onToggle={() => undefined}><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision((value) => value + 1)} /></details></div>
+      <div hidden={pane !== "recovery"} id="body-vitals" className="scroll-mt-6"><details className="home-card p-3" onToggle={() => undefined}><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision((value) => value + 1)} /></details></div>
       <div hidden={compact || pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">{latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><div id="pain-log"><PainLog today={today} /></div></div>
       <div hidden={pane !== "device"} id="body-devices" className="scroll-mt-6"><details className="home-card mt-3 p-3"><summary className="min-h-10 cursor-pointer text-sm font-bold">其他品牌导出步骤（华为 / 小米 / COROS / Apple）</summary><DeviceCenter /></details></div>
     </section>

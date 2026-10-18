@@ -1,0 +1,240 @@
+{
+  "steps": [
+    {
+      "viewport": "desktop",
+      "name": "manual_import_ui",
+      "ok": true,
+      "detail": {
+        "modelCalls": 0,
+        "actualUI": true
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "import_select_ask_answer",
+      "ok": true,
+      "detail": {
+        "actualText": "结构：热身/连续段0，主课2，恢复0，加速跑0段（按记录标签与短段形态，目的待核对）。\n2 × 400米：3:23 → 3:25 /km；首末慢1秒\n第1个力量组 60kg × 8次；第2个力量组 60kg × 8次；第3个力量组 60kg × 8次。\n可能解释1：可能是起始速度与本课目标不匹配，后段难以维持。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若核实原计划就是减速或后段场地条件不同，则不能归因于起跑过快。\n可能解释2：实际恢复安排、当天身体反应或记录误差也可能改变用时；当前数字不能分开这些原因。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若后续在同目标、同方法与相近恢复条件下仍重复出现同样变化，则单次状态或测量波动的解释变弱。\n现在有无局部疼痛或不适，睡眠和精神状态相对平时怎样？\n下一课候选待核实：尚不能定剂量，先核对缺项、冲突、症状与恢复。若当前无不适、日常活动正常且目标仍适合，可维持原课并观察逐组表现、整课RPE和次日反馈；出现不适、动作变形或热身反应异常就停止并重新评估。不按未知数据增加训练。\n查看分段核算详情第1个力量组 60kg × 8次；第2个力量组 60kg × 8次；第3个力量组 60kg × 8次。\n2 × 400米，配速序列 3:23 → 3:25 /km；平均配速 3:24/km，逐段变慢；末段较首段慢 1秒。\n分段1：400米，81秒，配速 3:23/km。\n分段2：400米，82秒，配速 3:25/km。"
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "chat_rating_not_auto_saved",
+      "ok": true,
+      "detail": {
+        "before": 0
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "explicit_session_rating_save",
+      "ok": true,
+      "detail": {
+        "ratings": 1
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "load_missing_days_not_zero",
+      "ok": true,
+      "detail": {
+        "text": "负荷变化提示：资料不足，最近 28 天有 0 天记录完整。请先核对每天全部训练；空白日期不会自动当作休息日。"
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "saved_session_load_ewma",
+      "ok": true,
+      "detail": {
+        "text": "负荷变化提示：短期 EWMA 75.0 AU，长期 EWMA 20.7 AU，比值 3.63。仅描述已记录负荷的相对变化，不用于医疗判断、恢复结论或自动安排加量。",
+        "sessionRpe": 6,
+        "wholeSessionMinutes": 50,
+        "explicitDateCoverage": true
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "disclaimer",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "viewport": "desktop",
+      "name": "feedback_local_export_no_network",
+      "ok": true,
+      "detail": {
+        "fetchXHR": 0,
+        "exported": 1
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "first_set_correction_visible",
+      "ok": true,
+      "detail": {
+        "text": "上次分析依赖的记录已更正、撤回或无法复现，撤回相关解释，按当前证据重新核对。\n结构：热身/连续段0，主课2，恢复0，加速跑0段（按记录标签与短段形态，目的待核对）。 所选训练记录：整课RPE：6/10。\n2 × 400米：3:23 → 3:25 /km；首末慢1秒\n第1个力量组 50kg × 8次；第2个力量组 60kg × 8次；第3个力量组 60kg × 8次。\nRPE记录的发生时间与录入时间相隔超过24小时，存在回忆误差可能；先核对录入口径，不单凭这条延迟记录进阶。\n可能解释1：可能是起始速度与本课目标不匹配，后段难以维持。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若核实原计划就是减速或后段场地条件不同，则不能归因于起跑过快。\n可能解释2：实际恢复安排、当天身体反应或记录误差也可能改变用时；当前数字不能分开这些原因。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若后续在同目标、同方法与相近恢复条件下仍重复出现同样变化，则单次状态或测量波动的解释变弱。\n现在有无局部疼痛或不适，睡眠和精神状态相对平时怎样？\n下一课候选待核实：尚不能定剂量，先核对缺项、冲突、症状与恢复。若当前无不适、日常活动正常且目标仍适合，可维持原课并观察逐组表现、整课RPE和次日反馈；出现不适、动作变形或热身反应异常就停止并重新评估。不按未知数据增加训练。"
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "correction_survives_refresh",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "viewport": "desktop",
+      "name": "voided_import_not_reused",
+      "ok": true,
+      "detail": {
+        "text": "我可以核对已保存的训练事实，但不能仅凭一次表现确定阈值、疲劳或下次训练负荷。双阈值等方法需要结合长期跑量、强度分布、恢复与个体测试，不能照搬精英课表。\n训练反馈未知；缺失不代表恢复正常。\n尚未指定某次训练；不能把其他日期的记录当作本次证据。 当前关联的量化证据不足。"
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "emergency_override_no_candidate",
+      "ok": true,
+      "detail": {
+        "text": "请在场的人立即协助当事人停止运动，立即拨打120或当地急救电话，让人陪同并遵循急救调度指示。移到阴凉通风处，脱去多余衣物并用冷水、湿毛巾等积极持续降温；神志不清或吞咽异常时不要强行喂水。避免走动或搬扭身体，告知急救人员意识、言语、肢体或排泄的变化及开始时间。"
+      }
+    },
+    {
+      "viewport": "desktop",
+      "name": "emergency_no_details_or_next_card",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "viewport": "desktop",
+      "name": "viewport_no_overflow",
+      "ok": true,
+      "detail": {
+        "viewport": {
+          "name": "desktop",
+          "width": 1280,
+          "height": 900
+        }
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "manual_import_ui",
+      "ok": true,
+      "detail": {
+        "modelCalls": 0,
+        "actualUI": true
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "import_select_ask_answer",
+      "ok": true,
+      "detail": {
+        "actualText": "结构：热身/连续段0，主课2，恢复0，加速跑0段（按记录标签与短段形态，目的待核对）。\n2 × 400米：3:23 → 3:25 /km；首末慢1秒\n第1个力量组 60kg × 8次；第2个力量组 60kg × 8次；第3个力量组 60kg × 8次。\n可能解释1：可能是起始速度与本课目标不匹配，后段难以维持。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若核实原计划就是减速或后段场地条件不同，则不能归因于起跑过快。\n可能解释2：实际恢复安排、当天身体反应或记录误差也可能改变用时；当前数字不能分开这些原因。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若后续在同目标、同方法与相近恢复条件下仍重复出现同样变化，则单次状态或测量波动的解释变弱。\n现在有无局部疼痛或不适，睡眠和精神状态相对平时怎样？\n下一课候选待核实：尚不能定剂量，先核对缺项、冲突、症状与恢复。若当前无不适、日常活动正常且目标仍适合，可维持原课并观察逐组表现、整课RPE和次日反馈；出现不适、动作变形或热身反应异常就停止并重新评估。不按未知数据增加训练。\n查看分段核算详情第1个力量组 60kg × 8次；第2个力量组 60kg × 8次；第3个力量组 60kg × 8次。\n2 × 400米，配速序列 3:23 → 3:25 /km；平均配速 3:24/km，逐段变慢；末段较首段慢 1秒。\n分段1：400米，81秒，配速 3:23/km。\n分段2：400米，82秒，配速 3:25/km。"
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "chat_rating_not_auto_saved",
+      "ok": true,
+      "detail": {
+        "before": 0
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "explicit_session_rating_save",
+      "ok": true,
+      "detail": {
+        "ratings": 1
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "load_missing_days_not_zero",
+      "ok": true,
+      "detail": {
+        "text": "负荷变化提示：资料不足，最近 28 天有 0 天记录完整。请先核对每天全部训练；空白日期不会自动当作休息日。"
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "saved_session_load_ewma",
+      "ok": true,
+      "detail": {
+        "text": "负荷变化提示：短期 EWMA 75.0 AU，长期 EWMA 20.7 AU，比值 3.63。仅描述已记录负荷的相对变化，不用于医疗判断、恢复结论或自动安排加量。",
+        "sessionRpe": 6,
+        "wholeSessionMinutes": 50,
+        "explicitDateCoverage": true
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "disclaimer",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "viewport": "mobile",
+      "name": "feedback_local_export_no_network",
+      "ok": true,
+      "detail": {
+        "fetchXHR": 0,
+        "exported": 1
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "first_set_correction_visible",
+      "ok": true,
+      "detail": {
+        "text": "上次分析依赖的记录已更正、撤回或无法复现，撤回相关解释，按当前证据重新核对。\n结构：热身/连续段0，主课2，恢复0，加速跑0段（按记录标签与短段形态，目的待核对）。 所选训练记录：整课RPE：6/10。\n2 × 400米：3:23 → 3:25 /km；首末慢1秒\n第1个力量组 50kg × 8次；第2个力量组 60kg × 8次；第3个力量组 60kg × 8次。\nRPE记录的发生时间与录入时间相隔超过24小时，存在回忆误差可能；先核对录入口径，不单凭这条延迟记录进阶。\n可能解释1：可能是起始速度与本课目标不匹配，后段难以维持。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若核实原计划就是减速或后段场地条件不同，则不能归因于起跑过快。\n可能解释2：实际恢复安排、当天身体反应或记录误差也可能改变用时；当前数字不能分开这些原因。 支持：首段81秒、末段82秒；只说明这组可比记录的变化。 若后续在同目标、同方法与相近恢复条件下仍重复出现同样变化，则单次状态或测量波动的解释变弱。\n现在有无局部疼痛或不适，睡眠和精神状态相对平时怎样？\n下一课候选待核实：尚不能定剂量，先核对缺项、冲突、症状与恢复。若当前无不适、日常活动正常且目标仍适合，可维持原课并观察逐组表现、整课RPE和次日反馈；出现不适、动作变形或热身反应异常就停止并重新评估。不按未知数据增加训练。"
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "correction_survives_refresh",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "viewport": "mobile",
+      "name": "voided_import_not_reused",
+      "ok": true,
+      "detail": {
+        "text": "我可以核对已保存的训练事实，但不能仅凭一次表现确定阈值、疲劳或下次训练负荷。双阈值等方法需要结合长期跑量、强度分布、恢复与个体测试，不能照搬精英课表。\n训练反馈未知；缺失不代表恢复正常。\n尚未指定某次训练；不能把其他日期的记录当作本次证据。 当前关联的量化证据不足。"
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "emergency_override_no_candidate",
+      "ok": true,
+      "detail": {
+        "text": "请在场的人立即协助当事人停止运动，立即拨打120或当地急救电话，让人陪同并遵循急救调度指示。移到阴凉通风处，脱去多余衣物并用冷水、湿毛巾等积极持续降温；神志不清或吞咽异常时不要强行喂水。避免走动或搬扭身体，告知急救人员意识、言语、肢体或排泄的变化及开始时间。"
+      }
+    },
+    {
+      "viewport": "mobile",
+      "name": "emergency_no_details_or_next_card",
+      "ok": true,
+      "detail": {}
+    },
+    {
+      "viewport": "mobile",
+      "name": "viewport_no_overflow",
+      "ok": true,
+      "detail": {
+        "viewport": {
+          "name": "mobile",
+          "width": 390,
+          "height": 844
+        }
+      }
+    }
+  ],
+  "pageErrors": [],
+  "modelRequests": 0,
+  "modelCalls": 0,
+  "syntheticDataOnly": true,
+  "realDevices": false,
+  "pass": true
+}

@@ -13,7 +13,9 @@ export async function resolve(specifier,context,nextResolve) {
   }
 }
 export async function load(url,context,nextLoad) {
-  if(url.startsWith('file:')&&/\.css(\?.*)?$/.test(url)) return {format:'module',source:'export default {}',shortCircuit:true}
+  // SSR assertions run in Node without a CSS engine. Production styles are
+  // still loaded by Vite; only side-effect style imports are empty here.
+  if(url.startsWith('file:') && url.endsWith('.css')) return {format:'module',source:'export {}',shortCircuit:true}
   if(url.startsWith('file:')&&/\.tsx?$/.test(url)) {
     const source=await readFile(fileURLToPath(url),'utf8')
     const result=ts.transpileModule(source,{fileName:fileURLToPath(url),compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true,sourceMap:false}})

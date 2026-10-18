@@ -1,0 +1,82 @@
+{
+  "version": "fangkun-athlete-v72-1",
+  "model": "athlete.glb",
+  "sourceModel": "human.glb",
+  "sourceSHA256": "cbf479cf66cb281b96d83b41816b5894e4f9da9833c015821b95499c9440353c",
+  "modelSHA256": "20c3eab725e10eb32901ff8ff6982c60ad96fb9e697a7065132af10938d23738",
+  "bytes": 8139424,
+  "license": "CC0-1.0",
+  "rig": {
+    "jointCount": 53,
+    "boneNamesHierarchyAndBindMatricesUnchanged": true,
+    "uvAndSkinWeightsUnchanged": true,
+    "animationCompatibility": "Existing makeRig/applyPose/motions.js"
+  },
+  "channels": {
+    "slender": {
+      "range": [
+        0,
+        1
+      ],
+      "movedVertices": 4031,
+      "maximumDisplacementMetres": 0.022240277123247755,
+      "meanMovedDisplacementMetres": 0.008448330756158872,
+      "feetBelow016mMaximumDisplacement": 0.0,
+      "headAbove1735mMaximumDisplacement": 0.0
+    },
+    "lean": {
+      "range": [
+        0,
+        1
+      ],
+      "movedVertices": 4031,
+      "maximumDisplacementMetres": 0.026112002664062113,
+      "meanMovedDisplacementMetres": 0.004417279679462757,
+      "feetBelow016mMaximumDisplacement": 0.0,
+      "headAbove1735mMaximumDisplacement": 0.0
+    },
+    "muscular": {
+      "range": [
+        0,
+        1
+      ],
+      "movedVertices": 4031,
+      "maximumDisplacementMetres": 0.030761262079824176,
+      "meanMovedDisplacementMetres": 0.00871806664928404,
+      "feetBelow016mMaximumDisplacement": 0.0,
+      "headAbove1735mMaximumDisplacement": 0.0
+    },
+    "adipose": {
+      "range": [
+        0,
+        1
+      ],
+      "movedVertices": 4031,
+      "maximumDisplacementMetres": 0.0998629250216419,
+      "meanMovedDisplacementMetres": 0.01530552238440361,
+      "feetBelow016mMaximumDisplacement": 0.0,
+      "headAbove1735mMaximumDisplacement": 0.0
+    }
+  },
+  "combination": "Nonnegative weights with total <= 1; normalize if the requested total is greater than 1.",
+  "geometry": {
+    "bodyVertices": 14517,
+    "sourceTriangleCount": 26756,
+    "morphTargetCount": 4,
+    "hairCrownMovedVertices": 984,
+    "hairCrownMaximumDisplacementMetres": 0.017663521732655695,
+    "bodyHeightMetres": 2.0070703029632564
+  },
+  "appearance": {
+    "bodyAlphaMode": "OPAQUE",
+    "hairAndEyebrowsAlphaMode": "MASK",
+    "hairCrown": "Small actual geometry sweep; original topology and UVs retained",
+    "clothing": "Opaque charcoal UV surface treatment, not separate draped clothing meshes"
+  },
+  "limits": [
+    "Illustrative shape choices, not a calibrated mapping from kg, body-fat percentage or future training outcomes.",
+    "Portrait used as visual direction only; facial identity, exact hair silhouette and personal likeness are not reproduced or verified.",
+    "Skeleton lengths and feet are fixed; these controls do not simulate height or pediatric/clinical body changes.",
+    "No independent anatomical or clinical validation."
+  ]
+}

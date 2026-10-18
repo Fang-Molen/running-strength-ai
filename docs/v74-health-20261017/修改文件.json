@@ -1,0 +1,104 @@
+[
+  {
+    "path": "package.json",
+    "status": "MODIFIED",
+    "before": "56955b66260a9f68d10f8a1af28dac8ad2a1bccffa7151c03f6296d5162c1c8b",
+    "after": "d3b24a6e7dc2f3a2db3b06c0cf4940faf8da89b492a4981e6dbe13672abe83a5"
+  },
+  {
+    "path": "scripts/health-v74-browser.mjs",
+    "status": "ADDED",
+    "before": null,
+    "after": "7243c8ad1242b4a8b245f24a6bdb8c10658199a613b70c11b611b9ce5ec00fc9"
+  },
+  {
+    "path": "src/lib/core/coach-brief.ts",
+    "status": "MODIFIED",
+    "before": "418506bad4b31aa1d5becb72e445d2e5b666669823be6f0f64c8ecf90540a146",
+    "after": "2e748e2e430f7ec3c2297d5e94c27c27364533f5b722efcc273e9612880da7d7"
+  },
+  {
+    "path": "src/lib/core/coach-local-first.ts",
+    "status": "MODIFIED",
+    "before": "f21a76ecea807400896c32c45e7cc5bce6b75e3b0fae91a53bff577260f11c69",
+    "after": "d923fa34a538b164b53d010a82bb4f8c51a2af079335a8719ed2bf909bd1ba18"
+  },
+  {
+    "path": "src/lib/core/coach-model-packet.ts",
+    "status": "MODIFIED",
+    "before": "da57c51e513d34a8ddefa7c27606e1fed2859af913c8962d1920e944bca01fc5",
+    "after": "6c0c91788a7086fbc2df5560b7f2b0c37392deacc7a4ab59174386ecc5a716f5"
+  },
+  {
+    "path": "src/lib/health/analysis.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "349d46db3debb25808db7494e327e5b55f2005734d4865b7d9a47ae4106b6903"
+  },
+  {
+    "path": "src/lib/health/coach-data.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "8bd0757e091ece29e98bc658ff4035a0efd03a320918a99b694f1689edeb2364"
+  },
+  {
+    "path": "src/lib/health/device-evidence-bridge.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "a3e94c273c63508ec961a428eeda82a5502d344673ad93c493962dc094983047"
+  },
+  {
+    "path": "src/lib/health/device-store.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "5a3686f37a52d5ad9d795f6dc0aeddb00148a8a5def8a98fae613c70339a2a2d"
+  },
+  {
+    "path": "src/lib/health/garmin-health.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "a005e3933f521e228f0563b8f95fb97aa349adf9999846ead28948d196b98473"
+  },
+  {
+    "path": "src/lib/health/health-hardening.test.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "5d8413f9ffa17613040c4b51252f839e111a7b2b81bf468acd11120a098408c4"
+  },
+  {
+    "path": "src/lib/health/health-v74.test.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "d76d4636e61f1396eb70061018b053393b036a697e1b373c34d352166c1585a7"
+  },
+  {
+    "path": "src/lib/health/legacy-inputs.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "6a8d81b7728536d4e164a237e87517b9e7f14310bc3ad801cf7d5de62564e6aa"
+  },
+  {
+    "path": "src/lib/health/mode.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "715206564999ba7b744a21fc0f625ef5df3256c171b5b13721b290c4636a4f8f"
+  },
+  {
+    "path": "src/lib/health/observation.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "3df5e099ebe617c6026008e6f0b386f9295bf8c2cde8289cfe8fcb59064c3251"
+  },
+  {
+    "path": "src/lib/health/snapshot.ts",
+    "status": "ADDED",
+    "before": null,
+    "after": "e3704f57d8b7fdaff325110ebedc9a792bb0fa23ea52fc0b04b22872835b9bca"
+  },
+  {
+    "path": "src/lib/nutrition/vitals.ts",
+    "status": "MODIFIED",
+    "before": "f3244c3c051116a191dfc1d1ba62fa134a197bbaf6905cdef9bad6799abc9ed6",
+    "after": "5546ffd5256c13139941021ee36a2be7b022114bb20abaccb1c6a35be15117e2"
+  }
+]

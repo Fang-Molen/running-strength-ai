@@ -305,7 +305,8 @@ export function outcomeFeedback(decisionId: string): string | null {
   const memory = readEnvelope<{ learning?: { decisionId?: string }[]; ability?: unknown }>("fr255-memory-v1", { learning: [] }).data
   const learning = Array.isArray(memory.learning) ? memory.learning : []
   if (!learning.some((item) => item.decisionId === decisionId)) {
-    recordLearning({ decisionId, prediction: "建议不是结果", actual: assessed.assessment, success: assessed.assessment === "COMPLETED_AS_PLANNED" })
+    // Adherence is not a prospective prediction. No testable pre-registered outcome exists here.
+    recordLearning({ decisionId, prediction: "未登记可检验的事前预期", actual: assessed.assessment, success: null, validation: "NOT_TESTABLE" })
   }
   const rpe = typeof payload.rpe === "number" ? `RPE ${payload.rpe}` : "RPE 未记录。"
   const pain = payload.pain === true ? "有疼痛记录。这里不诊断。" : "疼痛未记成有。"

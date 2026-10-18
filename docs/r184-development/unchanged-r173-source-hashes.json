@@ -1,0 +1,27 @@
+[
+  {
+    "path": "src/lib/core/coach-quantitative.ts",
+    "sha256": "4fa50849ad920c840e18c801dd999bab88b0bc8df21790ac4333277a6acab45f",
+    "matchesTestedBaseline": true
+  },
+  {
+    "path": "src/lib/core/coach-quantitative-math.ts",
+    "sha256": "3cb407b6326842d0dde4a1955dafa1d1e1a8956b80a7d80862159d239f0f9891",
+    "matchesTestedBaseline": true
+  },
+  {
+    "path": "src/lib/core/coach-quantitative.test.ts",
+    "sha256": "5e1df298189e1be5c26e30043cb4d7752f7a5b2704497b9a84b7da94732b2741",
+    "matchesTestedBaseline": true
+  },
+  {
+    "path": "src/lib/core/__fixtures__/r173-quantitative.json",
+    "sha256": "d836fa3da57123d9e068d7c4153c24099400400ee1039d7c6967cfe13a07c4cf",
+    "matchesTestedBaseline": true
+  },
+  {
+    "path": "src/lib/core/coach-load-metrics.ts",
+    "sha256": "58b7e57e33e9521690907165d2aede9ee8a1e015080bb972f133bfb983af1708",
+    "matchesTestedBaseline": true
+  }
+]

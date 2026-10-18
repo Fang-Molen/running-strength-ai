@@ -1,6 +1,7 @@
 import { currentStore, type MemoryStore } from "./storage.ts";
 
-export type Entry<T> = { schemaVersion: 1; id: string; order: number; recordedAt?: string; data: T };
+/** recordedAt (ported additively from K20): wall-clock commit time. Absent on legacy entries = unknown, never inferred from order. */
+type Entry<T> = { schemaVersion: 1; id: string; order: number; data: T; recordedAt?: string };
 const clocks = new WeakMap<MemoryStore, number>();
 export function storeKeys(box: MemoryStore): string[] {
   if (box.keys) return [...box.keys()];
@@ -14,6 +15,7 @@ export function storeKeys(box: MemoryStore): string[] {
   }
   throw new Error("KEY_ENUMERATION_REQUIRED");
 }
+export type JournalEntry<T> = Entry<T>;
 export function readJournal<T>(prefix: string): Entry<T>[] {
   const box = currentStore();
   if (!box) return [];
@@ -51,7 +53,7 @@ export function appendJournal<T>(prefix: string, id: string, data: T): boolean {
     clocks.set(box, order);
     const nonce = crypto.randomUUID();
     const key = prefix + id + ":" + nonce;
-    const serialized = JSON.stringify({ schemaVersion: 1, id, order, recordedAt: new Date().toISOString(), data });
+    const serialized = JSON.stringify({ schemaVersion: 1, id, order, data, recordedAt: new Date().toISOString() });
     box.setItem(key, serialized);
     return box.getItem(key) === serialized;
   } catch {

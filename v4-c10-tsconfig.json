@@ -1,0 +1,7 @@
+{
+ "compilerOptions": {
+  "target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","strict":true,
+  "skipLibCheck":true,"noEmit":true,"allowImportingTsExtensions":true,"types":[],"lib":["ES2022","DOM"]
+ },
+ "files": ["src/lib/core/coach-evolution-v4.ts","src/lib/core/coach-evolution-v4-c10.ts","src/lib/core/coach-referral-safety.ts"]
+}

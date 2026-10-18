@@ -1,6 +1,10 @@
+import {DecimalInput} from './decimal-input'
+import { deviceEvidenceHealthRows } from "@/lib/health/device-evidence-bridge"
+import { saveDeviceRows } from "@/lib/ui/device-store"
+import { ImageIntake } from "./image-intake";
 import {validateOcrImage,mergeOcrText} from '@/lib/core/local-ocr-policy'
 import {browserCapabilities,imageEntryMode} from '@/lib/core/browser-capabilities'
-import {useEffect, useMemo, useState, type ChangeEvent} from 'react'
+import {useEffect, useMemo, useRef, useState, type ChangeEvent} from 'react'
 import {parseDeviceEvidence, validateDeviceConfirmation, makeDeviceRecord, validReading, type DeviceDraft, type DeviceMetric, type DeviceReading, type DeviceConfirmed} from '@/lib/core/device-image-evidence'
 import {storeConfirmedDeviceEvidence, listConfirmedDeviceEvidence, readConfirmedDeviceEvidence} from '@/lib/core/device-evidence-idb'
 import {exportDeviceEvidenceBackup, importDeviceEvidenceBackup, validateEvidenceBackup, type EvidenceBackup} from '@/lib/core/device-evidence-backup'
@@ -13,8 +17,10 @@ async function hashBlob(blob:Blob):Promise<string>{const bytes=await blob.arrayB
 type BrowserTextDetector={detect:(bitmap:ImageBitmap)=>Promise<Array<{rawValue?:string}>>}
 const detectorAvailable=()=>typeof window!=='undefined' && typeof (window as Window & {TextDetector?:new()=>BrowserTextDetector}).TextDetector==='function'
 
-/** Offline-first, image never leaves this browser. Imported evidence does not enter the canonical training/medical decision chain. */
+/** Offline-first with explicit optional network OCR. Imported evidence does not enter the canonical training/medical decision chain. */
 export function DeviceEvidenceImport(){
+  const panel=useRef<HTMLElement>(null)
+  const [networkUsed, setNetworkUsed] = useState(false)
   const [file,setFile]=useState<File|null>(null)
   const [capabilities,setCapabilities]=useState<ReturnType<typeof browserCapabilities>|null>(null)
   const [preview,setPreview]=useState<string|null>(null)
@@ -67,6 +73,7 @@ export function DeviceEvidenceImport(){
   }
   function addManual(){const metric=manualMetric;const item:DeviceReading={id:`manual-${crypto.randomUUID()}`,metric,value:0,unit:UNITS[metric],rawLine:'人工录入',sourceLine:0,provenance:'USER_EDITED',...(metric==='RUN_SPLIT'?{details:{distanceMeters:undefined}}:metric==='STRENGTH_SET'?{details:{exercise:'',repetitions:undefined}}:{})};setDraft(d=>({readings:[...(d?.readings??[]),item],warnings:d?.warnings??[],rawText:d?.rawText??text}));setAck(false)}
   async function confirm(){
+    if(panel.current&&![...panel.current.querySelectorAll("input")].every(e=>e.reportValidity())){setStatus("请先修正读数；无效数值不会保存。");return;}
     if(!draft||busy)return
     const problems=validateDeviceConfirmation({draft,deviceLabel,recordedAt,acknowledged:ack})
     if(problems.length)return setStatus(problems.join('；'))
@@ -74,13 +81,19 @@ export function DeviceEvidenceImport(){
     try{
       const imageSha256=file?await hashBlob(file):null
       const id=await hashBlob(new Blob([JSON.stringify({deviceLabel:deviceLabel.trim(),recordedAt,imageSha256,readings:draft.readings})],{type:'application/json'}))
-      const record=makeDeviceRecord({draft,deviceLabel,recordedAt,acknowledged:ack,imageName:file?.name??null,imageSha256,textOrigin:ocrUsed?'BROWSER_OCR_REVIEWED':'USER_TRANSCRIBED',confirmedAt:new Date().toISOString(),id})
+      const record=makeDeviceRecord({draft,deviceLabel,recordedAt,acknowledged:ack,imageName:file?.name??null,imageSha256,textOrigin:networkUsed?'NETWORK_OCR_REVIEWED':ocrUsed?'BROWSER_OCR_REVIEWED':'USER_TRANSCRIBED',confirmedAt:new Date().toISOString(),id})
       const result=await storeConfirmedDeviceEvidence(record,file)
       setHistory(await listConfirmedDeviceEvidence())
       setStatus(result==='ALREADY_EXISTS'?'这份证据已经保存过，未重复写入。':'已确认并保存到本机独立设备证据库（含原图）；尚未绑定正式训练或自动生成建议。')
       if(result==='SAVED'){setDraft(null);setFile(null);setText('');setOcrUsed(false);setAck(false)}
     }catch(e){setStatus(e instanceof Error?`保存失败：${e.message}`:'保存失败，未写入记录')}
     finally{setBusy(false)}
+  }
+  function useForHealth(record:DeviceConfirmed){
+    const rows=deviceEvidenceHealthRows(record)
+    if(!rows.length)return setStatus('此记录没有可用于健康页的睡眠、HRV、静息心率或血氧；训练明细仍在原证据库。')
+    const result=saveDeviceRows(rows,[])
+    setStatus(`健康记录：保存/更新${result.saved}条，未变化${result.skipped}条。${result.errors.join('；')} 方坤会读取已保存记录；来源冲突需在健康页核对。`)
   }
   async function exportOne(id:string,kind:'json'|'image'){
     try{const row=await readConfirmedDeviceEvidence(id);if(!row)return setStatus('记录不存在');if(kind==='image'){if(!row.originalImage)return setStatus('此记录没有原图');saveAs(row.originalImage,row.record.imageName??'device-original.png')}else saveAs(new Blob([JSON.stringify(row.record,null,2)],{type:'application/json'}),`device-evidence-${id.slice(0,12)}.json`)}catch{setStatus('导出失败，请检查浏览器存储权限')}
@@ -107,14 +120,11 @@ export function DeviceEvidenceImport(){
     catch(e){setStatus(e instanceof Error?`恢复中断：${e.message}。部分记录可能已保存，可重新导入以跳过重复。`:'恢复中断')}
     finally{setBusy(false)}
   }
-  return <section className="rounded-card border border-line bg-surface p-3 text-sm" aria-label="本地设备识图和证据校对">
-    <h3 className="font-bold">设备截图与单次训练细节 · 本地识别</h3>
+  return <section ref={panel} className="rounded-card border border-line bg-surface p-3 text-sm" aria-label="本地设备识图和证据校对">
+    <h3 className="font-bold">设备截图与单次训练细节</h3>
     <p className="mt-1 text-xs text-muted">跨浏览器入口：Safari / Chrome / Edge / Firefox 等均可使用图片选择与人工校对（实际支持由浏览器功能决定）。{capabilities?`当前能力：${imageEntryMode(capabilities)==='LOCAL_OCR'?'可尝试浏览器本地OCR':imageEntryMode(capabilities)==='MANUAL_IMAGE'?'可选图片、手动校对':'仅手动文字录入'}；${capabilities.indexedDb?'本机证据存储可检测':'本机证据存储不可检测'}。`:''}不同浏览器的本地数据不会自动同步。</p>
-    <p className="mt-1 text-xs text-muted">支持睡眠、HRV、静息/平均心率、体重、体脂、血氧、跑步分段和力量实际组。仅支持浏览器提供的本机OCR或人工转录；手写识别不保证成功。OCR置信度不可用，不等于视觉理解或医学诊断；暂不读取苹果健康或其他设备账号。</p>
-    <label className="mt-3 flex min-h-12 cursor-pointer items-center justify-center rounded-card border border-dashed border-line px-3 text-center font-bold">拍照 / 从相册或文件选择图片（本地，不上传）<input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={pick}/></label>
-    {preview?<img src={preview} alt="待核对的设备原始截图" className="mt-2 max-h-56 w-full rounded-card object-contain"/>:null}
-    {file?<p className="mt-1 break-all text-xs text-muted">原图：{file.name}，{(file.size/1024/1024).toFixed(2)}MB</p>:null}
-    <button type="button" disabled={!file||busy} onClick={()=>void tryOcr()} className="mt-2 min-h-11 w-full rounded-card border border-line px-3 font-bold disabled:opacity-50">尝试本机OCR {detectorAvailable()?'（接口可用）':'（本浏览器可能不支持）'}</button>
+    <p className="mt-1 text-xs text-muted">支持睡眠、HRV、静息/平均心率、体重、体脂、血氧、跑步分段和力量实际组。可选择本地识字、联网识别或人工转录；手写识别需核对。OCR置信度不可用，不等于视觉理解或医学诊断；暂不读取苹果健康或其他设备账号。</p>
+    <ImageIntake file={file} onFile={f=>{setFile(f);setNetworkUsed(false);setOcrUsed(false);setText('');setDraft(null);setAck(false)}} onText={(raw, _file, origin)=>{setText(raw);setNetworkUsed(origin === "network");setOcrUsed(origin === "local");setDraft(null);setAck(false);setStatus('已采用核对文字，请继续检查采集时间和各项读数。')}} />
     <label className="mt-3 block text-xs font-bold">识别文字 / 手动转录（可编辑）<textarea value={text} onChange={e=>{setText(e.target.value);setDraft(null);setAck(false)}} rows={4} maxLength={12000} placeholder={'睡眠 7小时25分\nHRV 62ms\n静息心率 49bpm\n第1段 400m 68.2s 心率168 恢复120s\n深蹲 第2组 60kg x 8次'} className="mt-1 w-full rounded-card border border-line bg-bg p-2 text-base"/></label>
     <button type="button" onClick={parse} disabled={busy||!text.trim()} className="mt-2 min-h-11 w-full rounded-card bg-accent px-3 font-bold text-accent-fg disabled:opacity-50">解析为可校对证据（免费、离线）</button>
     {draft?<div className="mt-3 space-y-3">
@@ -123,9 +133,9 @@ export function DeviceEvidenceImport(){
       {draft.readings.map((r,i)=><div key={r.id} className="rounded-card bg-bg p-2">
         <div className="flex items-center justify-between gap-2"><b>{LABELS[r.metric]}</b><button type="button" className="min-h-10 px-2 text-risk" onClick={()=>{setDraft(d=>d?{...d,readings:d.readings.filter((_,n)=>n!==i)}:d);setAck(false)}}>删除</button></div>
         <p className="text-xs text-muted">{r.sourceLine?`原文第${r.sourceLine}行`:'人工补录'} · {r.provenance==='LOCAL_PATTERN'?'规则匹配，非可信度评分':'人工修改'}：{r.rawLine}</p>
-        <label className="mt-1 block text-xs">读数（{r.unit}）<input type="number" step="any" value={Number.isFinite(r.value)?r.value:''} onChange={e=>edit(i,{value:e.target.value===''?Number.NaN:Number(e.target.value)})} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/></label>
-        {r.metric==='RUN_SPLIT'?<div className="mt-2 grid grid-cols-2 gap-2">{([['distanceMeters','距离（米）'],['recoverySeconds','恢复（秒）'],['heartRateBpm','分段心率（bpm）'],['repeat','分段编号']] as const).map(([key,label])=><label key={key} className="text-xs">{label}<input type="number" step="any" value={r.details?.[key]??''} onChange={e=>editDetail(i,key,e.target.value)} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/></label>)}</div>:null}
-        {r.metric==='STRENGTH_SET'?<div className="mt-2 grid grid-cols-2 gap-2">{([['exercise','动作'],['setOrdinal','组号'],['repetitions','次数']] as const).map(([key,label])=><label key={key} className="text-xs">{label}<input type={key==='exercise'?'text':'number'} value={r.details?.[key]??''} onChange={e=>editDetail(i,key,e.target.value)} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/></label>)}</div>:null}
+        <label className="mt-1 block text-xs">读数（{r.unit}）<DecimalInput min={0} value={r.value} onCommit={value=>{if(value!==null)edit(i,{value})}} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/></label>
+        {r.metric==='RUN_SPLIT'?<div className="mt-2 grid grid-cols-2 gap-2">{([['distanceMeters','距离（米）'],['recoverySeconds','恢复（秒）'],['heartRateBpm','分段心率（bpm）'],['repeat','分段编号']] as const).map(([key,label])=><label key={key} className="text-xs">{label}<DecimalInput min={0} integer={key==="repeat"} nullable value={r.details?.[key] as number|undefined} onCommit={v=>editDetail(i,key,v===null?"":String(v))} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/></label>)}</div>:null}
+        {r.metric==='STRENGTH_SET'?<div className="mt-2 grid grid-cols-2 gap-2">{([['exercise','动作'],['setOrdinal','组号'],['repetitions','次数']] as const).map(([key,label])=><label key={key} className="text-xs">{label}{key==='exercise'?<input value={r.details?.exercise??''} onChange={e=>editDetail(i,key,e.target.value)} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/>:<DecimalInput min={1} integer nullable value={r.details?.[key]} onCommit={v=>editDetail(i,key,v===null?'':String(v))} className="mt-1 h-11 w-full rounded-card border border-line px-2 text-base"/>}</label>)}</div>:null}
         {!validReading(r)?<p className="mt-1 text-xs text-risk">读数或必填分段字段无效，不能保存</p>:null}
       </div>)}
       <div className="flex gap-2"><select aria-label="手动添加指标" value={manualMetric} onChange={e=>setManualMetric(e.target.value as DeviceMetric)} className="min-w-0 flex-1 rounded-card border border-line px-2">{types.map(t=><option key={t} value={t}>{LABELS[t]}</option>)}</select><button type="button" className="min-h-11 rounded-card border border-line px-3" onClick={addManual}>补一条</button></div>
@@ -144,7 +154,7 @@ export function DeviceEvidenceImport(){
         <label className="flex items-start gap-2 text-xs"><input type="checkbox" checked={backupAck} onChange={e=>setBackupAck(e.target.checked)}/>我已核对备份来源、内容和隐私风险，明确同意恢复；理解中途失败可能部分成功。</label>
         <button type="button" disabled={!backupAck||busy} onClick={()=>void restoreEvidence()} className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg disabled:opacity-50">确认恢复设备证据</button></div>:null}
     </details>
-    {history.length?<details className="mt-3"><summary className="cursor-pointer font-bold">已确认设备证据 {history.length} 份 · 可导出</summary><div className="mt-2 space-y-2">{history.slice(0,20).map(r=><div key={r.id} className="rounded-card bg-bg p-2 text-xs"><b>{r.deviceLabel}</b><p>{r.recordedAt} · {r.readings.length} 条</p><div className="mt-1 flex gap-2"><button type="button" onClick={()=>void exportOne(r.id,'json')} className="min-h-10 rounded-card border border-line px-2">导出JSON</button>{r.imageName?<button type="button" onClick={()=>void exportOne(r.id,'image')} className="min-h-10 rounded-card border border-line px-2">导出原图</button>:null}</div></div>)}</div></details>:null}
-    <p className="mt-2 text-xs text-muted">隐私：不联网、不调用付费模型、不自动生成医学结论。已确认数据与原图保存在此浏览器的IndexedDB，旧版“个人与数据”备份不包含该库，请使用上方完整备份；清理浏览器数据可能丢失。</p>
+    {history.length?<details className="mt-3"><summary className="cursor-pointer font-bold">已确认设备证据 {history.length} 份 · 可导出</summary><div className="mt-2 space-y-2">{history.slice(0,20).map(r=><div key={r.id} className="rounded-card bg-bg p-2 text-xs"><b>{r.deviceLabel}</b><p>{r.recordedAt} · {r.readings.length} 条</p><div className="mt-1 flex flex-wrap gap-2"><button type="button" className="min-h-10 rounded-card border border-line px-2" onClick={()=>useForHealth(r)}>用于健康分析</button><button type="button" onClick={()=>void exportOne(r.id,'json')} className="min-h-10 rounded-card border border-line px-2">导出JSON</button>{r.imageName?<button type="button" onClick={()=>void exportOne(r.id,'image')} className="min-h-10 rounded-card border border-line px-2">导出原图</button>:null}</div></div>)}</div></details>:null}
+    <p className="mt-2 text-xs text-muted">联网识别仅在点击时发送选中图片；本地识字不发送图片，不自动生成医学结论。已确认数据与原图保存在此浏览器的IndexedDB，旧版“个人与数据”备份不包含该库，请使用上方完整备份；清理浏览器数据可能丢失。</p>
   </section>
 }

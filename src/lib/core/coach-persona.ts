@@ -44,6 +44,8 @@ const framing: Record<Exclude<CoachPersona,'balanced'>, Record<CoachReplyContext
 }
 /** Keeps the underlying answer byte-for-byte; no style can weaken warnings or grant permission. */
 export function presentCoachAnswer(answer: string, persona: CoachPersona): string {
+  // Emergency wording is already the complete 2–4 sentence product response.
+  if (/(?:拨打|打)\s*120/.test(answer) && /停止活动|停止运动|当事人/.test(answer)) return answer
   const safePersona = parsePersona(persona)
   if (safePersona === 'balanced' || !answer.trim()) return answer
   const context = classifyReplyContext(answer)

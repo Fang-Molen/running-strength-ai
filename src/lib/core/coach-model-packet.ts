@@ -13,23 +13,21 @@ export function coachQuestionIntent(question: string): CoachQuestionIntent {
 }
 
 function selectedSources(brief: CoachBrief, intent: CoachQuestionIntent) {
-  const wanted = new Set<string>()
+  const wanted = new Set<string>((brief.sources??[]).filter(s=>s.kind==="CONTEXT"&&s.id.startsWith("linked:")).map(s=>s.id))
   if (brief.occurrenceId) wanted.add(brief.occurrenceId)
-  // K15: the next-session source rule is enforced for every intent, so the sources it
-  // requires must always be visible to the model.
-  for (const id of brief.nextSession?.requiredSourceIds ?? []) wanted.add(id)
+  if (brief.appData) wanted.add(brief.appData.sourceId)
   if (intent === "RETURN" || intent === "NEXT_SESSION") {
     for (const id of brief.returnToTraining?.sourceIds ?? []) wanted.add(id)
     for (const id of brief.nextSession?.sourceIds ?? []) wanted.add(id)
     for (const id of brief.nextSession?.requiredSourceIds ?? []) wanted.add(id)
   }
-  // K15: a next-session question about a running session needs the running facts.
-  if (intent === "RUNNING" || intent === "NEXT_SESSION") {
-    for (const slot of brief.running ?? []) for (const id of slot.sourceEventIds) wanted.add(id)
-  }
   if (intent === "FUEL") {
     if (brief.fuel?.logSourceId) wanted.add(brief.fuel.logSourceId)
     if (brief.fuel?.targetSourceId) wanted.add(brief.fuel.targetSourceId)
+  }
+  for (const id of brief.nextSession?.requiredSourceIds ?? []) wanted.add(id)
+  if (intent === "RUNNING" || intent === "NEXT_SESSION") {
+    for (const slot of brief.running ?? []) for (const id of slot.sourceEventIds) wanted.add(id)
   }
   if (intent === "SERIES" || intent === "COMPARE" || intent === "GENERAL") return brief.sources ?? []
   return (brief.sources ?? []).filter((source) => wanted.has(source.id))
@@ -45,6 +43,7 @@ export function compactSingleCoachPacket(
   const sources = selectedSources(brief, intent)
   const common = {
     question: brief.question,
+    ...(brief.appData?{appData:brief.appData}:{}),
     occurrenceId: brief.occurrenceId,
     runningStructure: brief.runningStructure,
     sessionRpe: brief.sessionRpe,
@@ -66,11 +65,11 @@ export function compactSingleCoachPacket(
   const current = intent === "RETURN"
     ? { ...common, returnToTraining: brief.returnToTraining }
     : intent === "NEXT_SESSION"
-      ? { ...common, nextSession: brief.nextSession, returnToTraining: brief.returnToTraining, running: brief.running, runningTruncated: brief.runningTruncated ?? false }
+      ? { ...common, running:brief.running, runningTruncated:brief.runningTruncated??false, nextSession: brief.nextSession, returnToTraining: brief.returnToTraining }
       : intent === "FUEL"
         ? { ...common, fuel: brief.fuel }
         : intent === "RUNNING"
-          ? { ...common, plannedSetCount: brief.plannedSetCount, completedSetCount: brief.completedSetCount, durationSec: brief.durationSec, running: brief.running, runningTruncated: brief.runningTruncated ?? false, nextSession: brief.nextSession }
+          ? { ...common, plannedSetCount: brief.plannedSetCount, completedSetCount: brief.completedSetCount, durationSec: brief.durationSec, running: brief.running, runningTruncated: brief.runningTruncated ?? false }
           : common
   return { intent, history, current, candidates }
 }

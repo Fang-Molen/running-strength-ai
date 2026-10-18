@@ -1,0 +1,8 @@
+要求：Node 22.22.0 + npm 10.9.4；在独立解压目录，不覆盖用户正式版本。
+依赖安装：npm ci --ignore-scripts --no-audit --no-fund
+完整测试链：npm test && npm run test:domain && npm run typecheck && npm run build
+逐文件独立日志：R185_EVIDENCE_DIR=<日志目录> python3 evaluation/r185/run-full-regression.py
+浏览器：构建后设置 R185_EVIDENCE_DIR 与 R185_SCREEN_DIR，再运行 node evaluation/r185/run-browser-checks.mjs。需要 Playwright 和本机 Chromium，默认可执行文件 /usr/bin/chromium。
+仅运行指定浏览器项：R185_FOCUSED_ONLY=1，R185_BROWSER_TARGET 可用 both/dev/prod/restart/dev-restart。
+真实CSV测试需要用户原附件：R185_EVIDENCE_DIR=<日志目录> R185_PRIVATE_DATA_DIR=<本机私有目录> python3 evaluation/r185/check-real-csv.py <原始ZIP路径>；再以同一 R185_PRIVATE_DATA_DIR 运行 node --import ./scripts/test-register.mjs evaluation/r185/replay-real-csv.ts。浏览器真实CSV预览默认读取 /workspace/fangkun/private-r185/weekly.csv，换环境时修改该路径。
+本包不含原始健康数据或GPS。不得把缺失FIT项目写成PASS。不要配置外部模型密钥或DATABASE_URL，不部署。

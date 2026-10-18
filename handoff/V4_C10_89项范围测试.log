@@ -1,0 +1,554 @@
+TAP version 13
+# (node:4805) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: V4-C2–C10 six-turn shadow replay keeps source, revision, and safety boundaries
+ok 1 - V4-C2–C10 six-turn shadow replay keeps source, revision, and safety boundaries
+  ---
+  duration_ms: 30.56194
+  type: 'test'
+  ...
+# Subtest: V4-C7 eight-week synthetic shadow history reports observations only
+ok 2 - V4-C7 eight-week synthetic shadow history reports observations only
+  ---
+  duration_ms: 0.926968
+  type: 'test'
+  ...
+# Subtest: V4-C5 adversarial quoted safety text cannot silently authorize training
+ok 3 - V4-C5 adversarial quoted safety text cannot silently authorize training
+  ---
+  duration_ms: 0.927957
+  type: 'test'
+  ...
+# (node:4806) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: C2 rejects invalid SPLIT_SECONDS METRIC_UNIT_MISMATCH
+ok 4 - C2 rejects invalid SPLIT_SECONDS METRIC_UNIT_MISMATCH
+  ---
+  duration_ms: 6.245497
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid SESSION_RPE RPE_OUT_OF_RANGE
+ok 5 - C2 rejects invalid SESSION_RPE RPE_OUT_OF_RANGE
+  ---
+  duration_ms: 0.336234
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid PAIN_SCORE PAIN_OUT_OF_RANGE
+ok 6 - C2 rejects invalid PAIN_SCORE PAIN_OUT_OF_RANGE
+  ---
+  duration_ms: 0.248496
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid SLEEP_HOURS SLEEP_OUT_OF_RANGE
+ok 7 - C2 rejects invalid SLEEP_HOURS SLEEP_OUT_OF_RANGE
+  ---
+  duration_ms: 0.127404
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid SPLIT_SECONDS PLAN_NOT_OBSERVED_FACT
+ok 8 - C2 rejects invalid SPLIT_SECONDS PLAN_NOT_OBSERVED_FACT
+  ---
+  duration_ms: 0.233441
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid PAIN_SCORE DEVICE_CANNOT_CONFIRM_SYMPTOM
+ok 9 - C2 rejects invalid PAIN_SCORE DEVICE_CANNOT_CONFIRM_SYMPTOM
+  ---
+  duration_ms: 0.381237
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid SPLIT_SECONDS SELF_REPORT_NOT_FORMAL_FACT
+ok 10 - C2 rejects invalid SPLIT_SECONDS SELF_REPORT_NOT_FORMAL_FACT
+  ---
+  duration_ms: 0.150491
+  type: 'test'
+  ...
+# Subtest: C2 rejects invalid SPLIT_SECONDS SELF_CORRECTION
+ok 11 - C2 rejects invalid SPLIT_SECONDS SELF_CORRECTION
+  ---
+  duration_ms: 0.151741
+  type: 'test'
+  ...
+# Subtest: C2 never uses third party confirmed record
+ok 12 - C2 never uses third party confirmed record
+  ---
+  duration_ms: 0.356506
+  type: 'test'
+  ...
+# Subtest: C2 detects a reused source ID for a different fact
+ok 13 - C2 detects a reused source ID for a different fact
+  ---
+  duration_ms: 0.939437
+  type: 'test'
+  ...
+# Subtest: C2 invalid pain measurement still escalates to review, never treats as confirmed score
+ok 14 - C2 invalid pain measurement still escalates to review, never treats as confirmed score
+  ---
+  duration_ms: 0.195288
+  type: 'test'
+  ...
+# Subtest: C2 future invalid pain is not leaked into earlier decision
+ok 15 - C2 future invalid pain is not leaked into earlier decision
+  ---
+  duration_ms: 0.156105
+  type: 'test'
+  ...
+# Subtest: C2 source provenance and correction are immutable to input
+ok 16 - C2 source provenance and correction are immutable to input
+  ---
+  duration_ms: 0.357659
+  type: 'test'
+  ...
+# Subtest: C3 provides all competing hypotheses without fabricated confidence
+ok 17 - C3 provides all competing hypotheses without fabricated confidence
+  ---
+  duration_ms: 7.490933
+  type: 'test'
+  ...
+# Subtest: C3 remains conservative with no personal data
+ok 18 - C3 remains conservative with no personal data
+  ---
+  duration_ms: 0.151623
+  type: 'test'
+  ...
+# Subtest: C3 duplicate symptom conflict not used as positive proof
+ok 19 - C3 duplicate symptom conflict not used as positive proof
+  ---
+  duration_ms: 0.220891
+  type: 'test'
+  ...
+# Subtest: C4 traces corrected training fact and withdrawal
+ok 20 - C4 traces corrected training fact and withdrawal
+  ---
+  duration_ms: 0.494244
+  type: 'test'
+  ...
+# Subtest: C4 does not manufacture changes for same facts
+ok 21 - C4 does not manufacture changes for same facts
+  ---
+  duration_ms: 0.148387
+  type: 'test'
+  ...
+# Subtest: C4 refuses reversed time or cross athlete revision
+ok 22 - C4 refuses reversed time or cross athlete revision
+  ---
+  duration_ms: 0.43534
+  type: 'test'
+  ...
+# Subtest: C5 emergency from question without selected training
+ok 23 - C5 emergency from question without selected training
+  ---
+  duration_ms: 0.761241
+  type: 'test'
+  ...
+# Subtest: C5 medical referral survives refusal
+ok 24 - C5 medical referral survives refusal
+  ---
+  duration_ms: 0.246068
+  type: 'test'
+  ...
+# Subtest: C5 nonrisk turn unchanged
+ok 25 - C5 nonrisk turn unchanged
+  ---
+  duration_ms: 0.093025
+  type: 'test'
+  ...
+# Subtest: C6 never saves SAFETY_REVIEW_REQUIRED
+ok 26 - C6 never saves SAFETY_REVIEW_REQUIRED
+  ---
+  duration_ms: 0.147713
+  type: 'test'
+  ...
+# Subtest: C6 never saves INSUFFICIENT_INFORMATION
+ok 27 - C6 never saves INSUFFICIENT_INFORMATION
+  ---
+  duration_ms: 0.056293
+  type: 'test'
+  ...
+# Subtest: C6 never saves SAFETY_REVIEW_REQUIRED
+ok 28 - C6 never saves SAFETY_REVIEW_REQUIRED
+  ---
+  duration_ms: 0.048132
+  type: 'test'
+  ...
+# Subtest: C7 groups observed sessions without inventing missed days
+ok 29 - C7 groups observed sessions without inventing missed days
+  ---
+  duration_ms: 0.889732
+  type: 'test'
+  ...
+# Subtest: C7 excludes future backfill from historical review
+ok 30 - C7 excludes future backfill from historical review
+  ---
+  duration_ms: 16.918723
+  type: 'test'
+  ...
+# Subtest: C7 clamps week window to 4–8 and never estimates training load
+ok 31 - C7 clamps week window to 4–8 and never estimates training load
+  ---
+  duration_ms: 0.13261
+  type: 'test'
+  ...
+# Subtest: C8 duplicate DOI and inclusion overlap are visible
+ok 32 - C8 duplicate DOI and inclusion overlap are visible
+  ---
+  duration_ms: 0.348678
+  type: 'test'
+  ...
+# Subtest: C8 no evidence does not authorize inference
+ok 33 - C8 no evidence does not authorize inference
+  ---
+  duration_ms: 0.06602
+  type: 'test'
+  ...
+# Subtest: C9 packet budget 1000 never drops safety
+ok 34 - C9 packet budget 1000 never drops safety
+  ---
+  duration_ms: 1.914417
+  type: 'test'
+  ...
+# Subtest: C9 packet budget 1400 never drops safety
+ok 35 - C9 packet budget 1400 never drops safety
+  ---
+  duration_ms: 1.763226
+  type: 'test'
+  ...
+# Subtest: C9 packet budget 2500 never drops safety
+ok 36 - C9 packet budget 2500 never drops safety
+  ---
+  duration_ms: 1.391338
+  type: 'test'
+  ...
+# Subtest: C9 packet budget 6500 never drops safety
+ok 37 - C9 packet budget 6500 never drops safety
+  ---
+  duration_ms: 1.98276
+  type: 'test'
+  ...
+# Subtest: C9 does not smuggle scientific sources into personal facts
+ok 38 - C9 does not smuggle scientific sources into personal facts
+  ---
+  duration_ms: 0.24266
+  type: 'test'
+  ...
+# Subtest: C10 catches revoked citations and unauthorized claims
+ok 39 - C10 catches revoked citations and unauthorized claims
+  ---
+  duration_ms: 0.505198
+  type: 'test'
+  ...
+# Subtest: C10 refuses missing medical referral even in otherwise factual reply
+ok 40 - C10 refuses missing medical referral even in otherwise factual reply
+  ---
+  duration_ms: 0.274609
+  type: 'test'
+  ...
+# Subtest: C10 can accept structurally valid bounded explanation without claiming medical clearance
+ok 41 - C10 can accept structurally valid bounded explanation without claiming medical clearance
+  ---
+  duration_ms: 0.128165
+  type: 'test'
+  ...
+# Subtest: C10 model route has generic V4 guidance but no implicit athlete history injection
+ok 42 - C10 model route has generic V4 guidance but no implicit athlete history injection
+  ---
+  duration_ms: 0.323106
+  type: 'test'
+  ...
+# Subtest: C5 negated referral cannot satisfy mandatory safety language
+ok 43 - C5 negated referral cannot satisfy mandatory safety language
+  ---
+  duration_ms: 0.224297
+  type: 'test'
+  ...
+# Subtest: C5 emergency cannot be negated by mentioning the word 急救
+ok 44 - C5 emergency cannot be negated by mentioning the word 急救
+  ---
+  duration_ms: 0.125622
+  type: 'test'
+  ...
+# Subtest: C10 internal field identifiers are flagged rather than surfaced as coaching language
+ok 45 - C10 internal field identifiers are flagged rather than surfaced as coaching language
+  ---
+  duration_ms: 0.086903
+  type: 'test'
+  ...
+# (node:4807) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: six-turn synthetic coaching review revises reasons and never prescribes
+ok 46 - six-turn synthetic coaching review revises reasons and never prescribes
+  ---
+  duration_ms: 14.856461
+  type: 'test'
+  ...
+# Subtest: prompt context does not drop safety or invent evidence under budget pressure
+ok 47 - prompt context does not drop safety or invent evidence under budget pressure
+  ---
+  duration_ms: 3.494404
+  type: 'test'
+  ...
+# Subtest: normal prompt context retains sources and marks all facts as untrusted data
+ok 48 - normal prompt context retains sources and marks all facts as untrusted data
+  ---
+  duration_ms: 0.443008
+  type: 'test'
+  ...
+# (node:4838) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: plan and goal never turn into completed splits
+ok 49 - plan and goal never turn into completed splits
+  ---
+  duration_ms: 2.951949
+  type: 'test'
+  ...
+# Subtest: later records are invisible at prior evaluation date
+ok 50 - later records are invisible at prior evaluation date
+  ---
+  duration_ms: 1.120896
+  type: 'test'
+  ...
+# Subtest: backfilled historical record cannot leak into earlier as-of review
+ok 51 - backfilled historical record cannot leak into earlier as-of review
+  ---
+  duration_ms: 0.222763
+  type: 'test'
+  ...
+# Subtest: correction replaces old evidence only when correction becomes visible
+ok 52 - correction replaces old evidence only when correction becomes visible
+  ---
+  duration_ms: 7.132418
+  type: 'test'
+  ...
+# Subtest: conflicting same id and forked corrections are quarantined
+ok 53 - conflicting same id and forked corrections are quarantined
+  ---
+  duration_ms: 0.462483
+  type: 'test'
+  ...
+# Subtest: unrelated athlete and third-party records never enter personal analysis
+ok 54 - unrelated athlete and third-party records never enter personal analysis
+  ---
+  duration_ms: 0.184859
+  type: 'test'
+  ...
+# Subtest: a missing correction target does not silently delete valid records
+ok 55 - a missing correction target does not silently delete valid records
+  ---
+  duration_ms: 0.253695
+  type: 'test'
+  ...
+# Subtest: slowdown creates multiple competing explanations, not diagnosis
+ok 56 - slowdown creates multiple competing explanations, not diagnosis
+  ---
+  duration_ms: 0.253897
+  type: 'test'
+  ...
+# Subtest: adequate sleep challenges sleep-only explanation without ruling out fatigue
+ok 57 - adequate sleep challenges sleep-only explanation without ruling out fatigue
+  ---
+  duration_ms: 0.308606
+  type: 'test'
+  ...
+# Subtest: pain overrides better splits and retains professional review
+ok 58 - pain overrides better splits and retains professional review
+  ---
+  duration_ms: 0.481008
+  type: 'test'
+  ...
+# Subtest: unselected training still detects emergency from conversation
+ok 59 - unselected training still detects emergency from conversation
+  ---
+  duration_ms: 0.55807
+  type: 'test'
+  ...
+# Subtest: new evidence updates reasoning without inventing stable adaptation
+ok 60 - new evidence updates reasoning without inventing stable adaptation
+  ---
+  duration_ms: 0.387256
+  type: 'test'
+  ...
+# Subtest: invalid dates and impossible values are not silently treated as zero
+ok 61 - invalid dates and impossible values are not silently treated as zero
+  ---
+  duration_ms: 0.224817
+  type: 'test'
+  ...
+# Subtest: pure evaluator does not mutate inputs or write plan
+ok 62 - pure evaluator does not mutate inputs or write plan
+  ---
+  duration_ms: 0.611656
+  type: 'test'
+  ...
+# Subtest: safety referral persists in ask and unavailable routes
+ok 63 - safety referral persists in ask and unavailable routes
+  ---
+  duration_ms: 0.362546
+  type: 'test'
+  ...
+# Subtest: referral is not duplicated and unrelated requests are unchanged
+ok 64 - referral is not duplicated and unrelated requests are unchanged
+  ---
+  duration_ms: 0.077441
+  type: 'test'
+  ...
+# Subtest: conflicting recovery values cannot be averaged or cherry-picked
+ok 65 - conflicting recovery values cannot be averaged or cherry-picked
+  ---
+  duration_ms: 0.172893
+  type: 'test'
+  ...
+# Subtest: conflicting symptom reports retain conservative safety review
+ok 66 - conflicting symptom reports retain conservative safety review
+  ---
+  duration_ms: 0.101992
+  type: 'test'
+  ...
+# Subtest: a later no-pain report does not silently clear an earlier professional review
+ok 67 - a later no-pain report does not silently clear an earlier professional review
+  ---
+  duration_ms: 0.162172
+  type: 'test'
+  ...
+# Subtest: future plan known now is allowed as plan, never as completed performance
+ok 68 - future plan known now is allowed as plan, never as completed performance
+  ---
+  duration_ms: 0.112848
+  type: 'test'
+  ...
+# Subtest: correction of a conflicting endpoint cannot cherry-pick one branch
+ok 69 - correction of a conflicting endpoint cannot cherry-pick one branch
+  ---
+  duration_ms: 0.176142
+  type: 'test'
+  ...
+# (node:4839) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 我跑步时胸痛
+ok 70 - 我跑步时胸痛
+  ---
+  duration_ms: 1.515455
+  type: 'test'
+  ...
+# Subtest: 刚刚晕厥了
+ok 71 - 刚刚晕厥了
+  ---
+  duration_ms: 0.304978
+  type: 'test'
+  ...
+# Subtest: 现在喘不过气
+ok 72 - 现在喘不过气
+  ---
+  duration_ms: 0.13403
+  type: 'test'
+  ...
+# Subtest: 训练后尿色像可乐
+ok 73 - 训练后尿色像可乐
+  ---
+  duration_ms: 0.150592
+  type: 'test'
+  ...
+# Subtest: 今天严重头晕
+ok 74 - 今天严重头晕
+  ---
+  duration_ms: 0.097971
+  type: 'test'
+  ...
+# Subtest: 我没有胸痛
+ok 75 - 我没有胸痛
+  ---
+  duration_ms: 0.061628
+  type: 'test'
+  ...
+# Subtest: 去年胸痛过现在没有
+ok 76 - 去年胸痛过现在没有
+  ---
+  duration_ms: 0.131226
+  type: 'test'
+  ...
+# Subtest: 以前晕厥过，想了解原因
+ok 77 - 以前晕厥过，想了解原因
+  ---
+  duration_ms: 1.016505
+  type: 'test'
+  ...
+# Subtest: 血红蛋白偏低怎么办
+ok 78 - 血红蛋白偏低怎么办
+  ---
+  duration_ms: 0.323477
+  type: 'test'
+  ...
+# Subtest: 铁蛋白很低吃什么
+ok 79 - 铁蛋白很低吃什么
+  ---
+  duration_ms: 0.256975
+  type: 'test'
+  ...
+# Subtest: 我能自己吃补铁剂吗
+ok 80 - 我能自己吃补铁剂吗
+  ---
+  duration_ms: 0.092393
+  type: 'test'
+  ...
+# Subtest: 经期紊乱还要减脂吗
+ok 81 - 经期紊乱还要减脂吗
+  ---
+  duration_ms: 0.04389
+  type: 'test'
+  ...
+# Subtest: 应力性骨折后恢复
+ok 82 - 应力性骨折后恢复
+  ---
+  duration_ms: 0.031418
+  type: 'test'
+  ...
+# Subtest: 我持续疲劳
+ok 83 - 我持续疲劳
+  ---
+  duration_ms: 0.028198
+  type: 'test'
+  ...
+# Subtest: 怀疑RED-S
+ok 84 - 怀疑RED-S
+  ---
+  duration_ms: 0.02728
+  type: 'test'
+  ...
+# Subtest: 明天1500米赛前怎么吃
+ok 85 - 明天1500米赛前怎么吃
+  ---
+  duration_ms: 0.026537
+  type: 'test'
+  ...
+# Subtest: 今天力量训练后补蛋白
+ok 86 - 今天力量训练后补蛋白
+  ---
+  duration_ms: 0.027117
+  type: 'test'
+  ...
+# Subtest: 双阈值训练是什么
+ok 87 - 双阈值训练是什么
+  ---
+  duration_ms: 0.026311
+  type: 'test'
+  ...
+# Subtest: 4mmol是不是LT2
+ok 88 - 4mmol是不是LT2
+  ---
+  duration_ms: 0.027277
+  type: 'test'
+  ...
+# Subtest: 5000米配速怎么算
+ok 89 - 5000米配速怎么算
+  ---
+  duration_ms: 0.026613
+  type: 'test'
+  ...
+1..89
+# tests 89
+# suites 0
+# pass 89
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 378.150182

@@ -4,16 +4,23 @@ import { displayName, type Session } from "@/lib/strength/model"
 import { STATE_LABELS, editSet, initChecklist, loadChecklist, progress, reconcile, saveChecklist, toggleMove, toggleSet, type ChecklistState, type StateTag } from "@/lib/ui/today-checklist"
 import { SavedBadge } from "@/components/saved-badge"
 import { syncChecklistToLog } from "@/lib/ui/checklist-log"
+import { DecimalInput } from "@/components/decimal-input"
 import { EnergyGauge } from "@/components/energy-gauge"
 
 const mmss = (ms: number) => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` }
 
-export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, onOpenRun, onOpenFull, onAskCoach, bare = false, onProgress }: { slotId?: string; title?: string; session: Session | undefined; runTitle: string | null; onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void; bare?: boolean; onProgress?: (done: number, total: number) => void }) {
-  const date = useMemo(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` }, [])
+type ChecklistProps={ date?: string; slotId?: string; title?: string; session: Session | undefined; runTitle: string | null; onOpenRun: () => void; onOpenFull: () => void; onAskCoach: () => void; bare?: boolean; onProgress?: (done: number, total: number) => void }
+export function TodayChecklist(props:ChecklistProps){return <ChecklistForCourse key={`${props.date??'today'}:${props.slotId??props.session?.id??'none'}`} {...props}/>}
+function ChecklistForCourse({ date: suppliedDate, slotId, title: cardTitle, session, runTitle, onOpenRun, onOpenFull, onAskCoach, bare = false, onProgress }:ChecklistProps) {
+  const date = useMemo(() => { if(suppliedDate)return suppliedDate; const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` }, [suppliedDate])
   const sid = slotId ?? session?.id ?? "none"
   const [logNote, setLogNote] = useState("")
   const [s, setS] = useState<ChecklistState | null>(null)
   const [stamp, setStamp] = useState(0)
+  const [pendingFields,setPendingFields]=useState<Record<string,boolean>>({})
+  const pending=Object.values(pendingFields).some(Boolean)
+  const draft=(id:string,dirty:boolean)=>{setPendingFields(v=>({...v,[id]:dirty}));if(dirty)setStamp(0)}
+  const [saveError,setSaveError]=useState('')
   const [editing, setEditing] = useState<string | null>(null)
   const [now, setNow] = useState(Date.now())
   const first = useRef(true)
@@ -21,7 +28,7 @@ export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, on
     const fresh = initChecklist(date, sid, (session?.moves ?? []).map((m) => ({ id: m.id, sets: m.sets, amount: m.amount, weightKg: m.weightKg })), Boolean(runTitle))
     setS(reconcile(loadChecklist(window.localStorage, date, sid), fresh))
   }, [date, sid, session, runTitle])
-  useEffect(() => { if (!s) return; if (first.current) { first.current = false; return } if (saveChecklist(window.localStorage, s)) setStamp(Date.now())
+  useEffect(() => { if (!s) return; if (first.current) { first.current = false; return } if (!saveChecklist(window.localStorage, s)) { setStamp(0);setSaveError("保存失败，当前输入仍保留");return } setSaveError("");setStamp(Date.now())
     const p0 = progress(s); onProgress?.(p0.done, p0.total)
     const t = window.setTimeout(() => { const r = syncChecklistToLog(s, cardTitle ?? session?.name ?? runTitle ?? "训练", Object.fromEntries((session?.moves ?? []).map((m) => [m.id, displayName(m)]))); setLogNote(r.ok ? "已同步到训练日志，方坤可见" : `日志未同步：${r.reason}`) }, 1200)
     return () => window.clearTimeout(t) }, [s])
@@ -33,9 +40,9 @@ export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, on
   return <section aria-label="今日训练清单" className={bare ? "pt-1" : "home-card mb-3 px-3 py-3"}>
     {bare ? null : <div className="flex items-center justify-between gap-2 px-1">
       <div className="min-w-0"><p className="product-eyebrow">今日清单</p><h2 className="truncate text-lg font-bold">{session?.name ?? runTitle}</h2></div>
-      <div className="flex flex-col items-end"><strong className="text-lg">{p.done}/{p.total}</strong><SavedBadge stamp={stamp} /></div>
+      <div className="flex flex-col items-end"><strong className="text-lg">{p.done}/{p.total}</strong>{pending ? <span role="status">编辑中 · 待保存</span> : saveError ? <span role="alert">{saveError}</span> : <SavedBadge stamp={stamp} />}</div>
     </div>}
-    {bare ? <div className="flex items-center justify-between px-1 text-xs text-muted"><span>{p.done}/{p.total} 完成</span><SavedBadge stamp={stamp} /></div> : null}
+    {bare ? <div className="flex items-center justify-between px-1 text-xs text-muted"><span>{p.done}/{p.total} 完成</span>{pending ? <span role="status">编辑中 · 待保存</span> : saveError ? <span role="alert">{saveError}</span> : <SavedBadge stamp={stamp} />}</div> : null}
     <div className="mx-1 mt-2 h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-[#269775] transition-all" style={{ width: `${p.total ? (p.done / p.total) * 100 : 0}%` }} /></div>
     {s.startedAt || rest ? <div className="fk-timer mt-3" aria-live="polite">
       <span className="flex items-center gap-1.5 text-sm"><Timer className="size-4" />{rest ? <>组间休息 <b className="text-lg tabular-nums">{mmss(rest)}</b></> : <>已练 <b className="tabular-nums">{mmss(now - (s.startedAt ?? now))}</b></>}</span>
@@ -43,10 +50,10 @@ export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, on
     </div> : null}
     <div className="mt-1 px-1">
       {s.run ? <div className="fk-check-row">
-        <button type="button" className="fk-tick" aria-pressed={s.run.done} aria-label="完成跑步" onClick={() => upd({ ...s, run: { ...s.run!, done: !s.run!.done }, startedAt: s.startedAt ?? now, updatedAt: now })}>✓</button>
+        <button type="button" disabled={pending} className="fk-tick" aria-pressed={s.run.done} aria-label="完成跑步" onClick={() => upd({ ...s, run: { ...s.run!, done: !s.run!.done }, startedAt: s.startedAt ?? now, updatedAt: now })}>✓</button>
         <div className="min-w-0 flex-1"><p className="font-bold">{runTitle}</p>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
-            <label className="flex items-center gap-1">距离<input inputMode="decimal" value={s.run.km ?? ""} placeholder="km" onChange={(e) => upd({ ...s, run: { ...s.run!, km: e.target.value ? Number(e.target.value) : null }, updatedAt: now })} className="fk-cell w-16" /></label>
+            <label className="flex items-center gap-1">距离<DecimalInput aria-label="实际跑步距离公里" min={0} nullable value={s.run.km} placeholder="km" onDraftState={v=>draft("run-km",v)} onCommit={km => upd({ ...s, run: { ...s.run!, km }, updatedAt: Date.now() })} className="fk-cell w-16" /></label>
             <label className="flex items-center gap-1">配速<input value={s.run.pace} placeholder="5:30" onChange={(e) => upd({ ...s, run: { ...s.run!, pace: e.target.value.slice(0, 8) }, updatedAt: now })} className="fk-cell w-16" /></label>
             <button type="button" className="fk-link" onClick={onOpenRun}>分段记录 ›</button>
           </div></div>
@@ -55,12 +62,12 @@ export function TodayChecklist({ slotId, title: cardTitle, session, runTitle, on
         const sets = s.moves[m.id] ?? []
         const all = sets.length > 0 && sets.every((x) => x.done)
         return <div key={m.id} className="fk-check-row items-start">
-          <button type="button" className="fk-tick mt-0.5" aria-pressed={all} aria-label={`完成${displayName(m)}全部组`} onClick={() => upd(toggleMove(s, m.id, Date.now()))}>✓</button>
+          <button type="button" disabled={pending} className="fk-tick mt-0.5" aria-pressed={all} aria-label={`完成${displayName(m)}全部组`} onClick={() => upd(toggleMove(s, m.id, Date.now()))}>✓</button>
           <div className="min-w-0 flex-1">
-            <div className="flex items-baseline justify-between gap-2"><p className={"font-bold " + (all ? "text-muted line-through" : "")}>{displayName(m)}</p><button type="button" className="fk-link shrink-0 text-xs" onClick={() => setEditing(editing === m.id ? null : m.id)}>{editing === m.id ? "完成" : "改数"}</button></div>
+            <div className="flex items-baseline justify-between gap-2"><p className={"font-bold " + (all ? "text-muted line-through" : "")}>{displayName(m)}</p><button type="button" className="fk-link shrink-0 text-xs" disabled={pending&&editing===m.id} onClick={() => setEditing(editing === m.id ? null : m.id)}>{editing === m.id ? "完成" : "改数"}</button></div>
             <p className="text-xs text-muted">{m.sets}×{m.amount}{m.mode === "seconds" ? "秒" : "次"}{m.weightKg ? ` · ${m.weightKg}kg` : ""}{m.restSec ? ` · 休 ${m.restSec}s` : ""}</p>
             <div className="fk-set-dots">{sets.map((x, i) => editing === m.id
-              ? <span key={i} className="flex items-center gap-1 text-xs"><input inputMode="numeric" aria-label={`第${i + 1}组次数`} value={x.reps} onChange={(e) => upd(editSet(s, m.id, i, { reps: Number(e.target.value) || 0 }, Date.now()))} className="fk-cell w-11" />×<input inputMode="decimal" aria-label={`第${i + 1}组重量`} value={x.kg} onChange={(e) => upd(editSet(s, m.id, i, { kg: Number(e.target.value) || 0 }, Date.now()))} className="fk-cell w-12" />kg</span>
+              ? <span key={i} className="flex items-center gap-1 text-xs"><DecimalInput integer={m.mode!=="seconds"} min={0} aria-label={`第${i + 1}组次数`} value={x.reps} onDraftState={v=>draft(`${m.id}:${i}:reps`,v)} onCommit={v=>{if(v!==null)upd(editSet(s,m.id,i,{reps:v},Date.now()))}} className="fk-cell w-11" />×<DecimalInput min={0} aria-label={`第${i + 1}组重量`} value={x.kg} onDraftState={v=>draft(`${m.id}:${i}:kg`,v)} onCommit={v=>{if(v!==null)upd(editSet(s,m.id,i,{kg:v},Date.now()))}} className="fk-cell w-12" />kg</span>
               : <button key={i} type="button" className="fk-set" aria-pressed={x.done} onClick={() => upd(toggleSet(s, m.id, i, Date.now(), m.restSec))}>{x.done ? "✓ " : ""}{x.reps}{x.kg ? `×${x.kg}` : ""}</button>)}</div>
           </div>
         </div>

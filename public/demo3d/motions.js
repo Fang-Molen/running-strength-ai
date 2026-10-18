@@ -365,4 +365,26 @@ MO.burpee = { camTarget: [0, .9, 0], camDist: 4.4, view: 'three', base: { grip: 
   frames: [ { pose: BU_ST, dur: .3, phase: 'hold' }, { pose: BU_ST, dur: .55, phase: 'ecc' }, { pose: BU_SQ, dur: .01, phase: 'ecc' }, { pose: BU_SQH, dur: .35, phase: 'ecc' },
     { pose: BU_PL, dur: .35, phase: 'hold' }, { pose: BU_PL, dur: .35, phase: 'con' }, { pose: BU_SQH, dur: .01, phase: 'con' }, { pose: BU_SQ, dur: .5, phase: 'con' },
     { pose: BU_ST, dur: .25, phase: 'con' }, { pose: BU_JU, dur: .3, phase: 'con' } ] };
+// Optional preparation drills: unloaded, in-place demonstrations.
+// Their quantities and suitability remain editable in the warm-up panel.
+const WBASE = { ...STAND, foot: 62.85, footAb: 1.36, thighAb: 5, shinAb: 0, uarmAb: 8, farmAb: 5, grip: 10 };
+const WF = (pose, dur = .65, phase = 'con') => ({ pose, dur, phase });
+const warm = (frames, base = {}) => ({ view: 'side', camTarget: [0, .92, 0], camDist: 3.8, groundFeet: true, base: { ...WBASE, ...base }, frames });
+const wm = (left, right, arms = 28) => ({
+  thigh_l: left[0], shin_l: left[1], foot_l: left[2] ?? 63,
+  thigh_r: right[0], shin_r: right[1], foot_r: right[2] ?? 63,
+  uarm_l: -arms, farm_l: 65 - arms, uarm_r: arms, farm_r: 65 + arms,
+});
+MO.warmup_jog = warm([WF(wm([25,-55],[-12,-10]),.32), WF(wm([2,-5],[2,-5],0),.12), WF(wm([-12,-10],[25,-55],-28),.32), WF(wm([2,-5],[2,-5],0),.12)], { trunk: 176 });
+MO.warmup_ankle = warm([WF({thigh_l:30,shin_l:-10,thigh_r:-15,shin_r:-15},1), WF({thigh_l:40,shin_l:-28,thigh_r:-12,shin_r:-10},1), WF({thigh_l:30,shin_l:-10,thigh_r:-15,shin_r:-15},.5), WF({thigh_r:30,shin_r:-10,thigh_l:-15,shin_l:-15},1), WF({thigh_r:40,shin_r:-28,thigh_l:-12,shin_l:-10},1), WF({thigh_r:30,shin_r:-10,thigh_l:-15,shin_l:-15},.5)]);
+MO.warmup_leg_swing = warm([WF({thigh_l:40,shin_l:35},.8), WF({thigh_l:-28,shin_l:-25},.8), WF({},.4), WF({thigh_r:40,shin_r:35},.8), WF({thigh_r:-28,shin_r:-25},.8), WF({},.4)]);
+MO.warmup_march = warm([WF(wm([82,0],[0,0]),.7), WF(wm([0,0],[0,0],0),.25), WF(wm([0,0],[82,0],-28),.7), WF(wm([0,0],[0,0],0),.25)]);
+MO.warmup_skip = warm([WF({...wm([80,0],[0,-8]),hop:.06},.18), WF(wm([45,-5],[0,0]),.18), WF(wm([0,0],[0,0],0),.18), WF({...wm([0,-8],[80,0],-28),hop:.06},.18), WF(wm([0,0],[45,-5],-28),.18), WF(wm([0,0],[0,0],0),.18)]);
+MO.warmup_butt_kick = warm([WF(wm([0,-120],[0,0]),.3), WF(wm([0,0],[0,0],0),.18), WF(wm([0,0],[0,-120],-28),.3), WF(wm([0,0],[0,0],0),.18)]);
+MO.warmup_arm_swing = warm([WF({uarm_l:-30,farm_l:55,uarm_r:35,farm_r:115},.4), WF({uarm_l:35,farm_l:115,uarm_r:-30,farm_r:55},.4)]);
+MO.warmup_squat = warm([WF({},.4,'hold'), WF({},1.4,'ecc'), WF({...SQ_BOT,thigh:85,shin:-35,thighAb:18,shinAb:-4},.4,'hold'), WF({...SQ_BOT,thigh:85,shin:-35,thighAb:18,shinAb:-4},1.1,'con')], {thighAb:10,uarm:25,farm:85});
+MO.warmup_hinge = warm([WF({},.4,'hold'), WF({},1.5,'ecc'), WF({trunk:125,thigh:25,shin:0,neck:145,head:140,uarm:-5,farm:0},.4,'hold'), WF({trunk:125,thigh:25,shin:0,neck:145,head:140,uarm:-5,farm:0},1.2,'con')]);
+MO.warmup_stride = warm([WF(wm([55,-20],[-22,-35],38),.23), WF(wm([0,-3],[0,-3],0),.12), WF(wm([-22,-35],[55,-20],-38),.23), WF(wm([0,-3],[0,-3],0),.12)], {trunk:173});
+MO.warmup_arm_circle = warm([WF({uarm:0,farm:0,uarmAb:8,farmAb:6},.8), WF({uarm:90,farm:90,uarmAb:12,farmAb:10},.8), WF({uarm:176,farm:176,uarmAb:10,farmAb:8},.8), WF({uarm:-70,farm:-70,uarmAb:12,farmAb:10},.8)]);
+MO.warmup_arm_circle.camTarget = [0, 1.1, 0]; MO.warmup_arm_circle.camDist = 4.8;
 export default MO;

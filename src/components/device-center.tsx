@@ -12,7 +12,7 @@ export function DeviceCenter() {
   const guide = DEVICE_GUIDES.find((item) => item.id === selected) ?? DEVICE_GUIDES[0]
   return <section className="mt-4 rounded-card border border-line bg-surface p-3 text-sm" aria-labelledby="device-center-heading">
     <h2 id="device-center-heading" className="font-bold">智能设备接入指南</h2>
-    <p className="mt-1 text-muted">当前仅提供品牌操作指引。尚不支持自动同步、蓝牙连接或 FIT / TCX / GPX / 健康 ZIP 解析；选择品牌不会读取设备数据。</p>
+    <p className="mt-1 text-muted">此面板提供品牌操作指引和文件预检查；实际导入请使用上方“导入手表数据”。选择品牌不会读取设备数据，也不代表账号已经连接。</p>
     <label htmlFor="device-brand" className="mt-3 block font-bold">选择设备品牌</label>
     <select id="device-brand" value={selected} onChange={(event) => setSelected(event.target.value)} className="mt-2 min-h-12 w-full rounded-card border border-line bg-bg px-3 text-base">
       {DEVICE_GUIDES.map((item) => <option key={item.id} value={item.id}>{item.brand}</option>)}
@@ -26,7 +26,7 @@ export function DeviceCenter() {
     </div>
     <div className="mt-4 rounded-card border border-line p-3">
       <h3 className="font-bold">本地文件格式预检查（不导入）</h3>
-      <p className="mt-1 text-muted">只检查所选文件的名称和大小，不读取内容、不上传、不保存，也不生成训练记录。FIT、TCX、GPX、CSV、健康 ZIP 的实际解析尚未启用。</p>
+      <p className="mt-1 text-muted">只检查所选文件的名称和大小，不读取内容、不上传、不保存，也不生成训练记录。需要保存数据时请使用上方导入入口并核对预览结果。</p>
       <label htmlFor="device-file-preflight" className="mt-3 block font-bold">选择本地文件</label>
       <input id="device-file-preflight" type="file" accept=".fit,.tcx,.gpx,.csv,.zip" className="mt-2 block w-full max-w-full text-sm" onChange={(event) => {
         const file = event.target.files?.[0]
@@ -60,6 +60,6 @@ export function DeviceCenter() {
         <button type="button" className="mt-2 underline" onClick={() => setCsvPreview(null)}>清除预览</button>
       </div>}
     </div>
-    <p className="mt-3 text-muted">下一阶段将先验收本地解析、来源标记、重复检测和确认预览，验收前不会显示虚假的「已连接」或「导入成功」。</p>
+    <p className="mt-3 text-muted">以实际导入和授权结果为准；本面板预检查通过不等于数据已导入。</p>
   </section>
 }

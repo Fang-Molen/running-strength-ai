@@ -1,0 +1,16 @@
+{
+  "id": "fk-female-20261017",
+  "gender": "female",
+  "status": "PENDING",
+  "version": 1,
+  "reviewer": "TODO",
+  "licenseEvidence": "docs/media-qa/female-license.json",
+  "qaEvidence": "docs/media-qa/female-visual-and-rig.json",
+  "reviews": {
+    "rights": "PENDING",
+    "identity": "PENDING",
+    "rig": "PENDING",
+    "morph": "PENDING",
+    "mobile": "PENDING"
+  }
+}

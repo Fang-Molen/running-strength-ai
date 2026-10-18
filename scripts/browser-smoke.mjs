@@ -2,6 +2,7 @@
 import { mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { chromium } from "playwright";
+import { browserProxyTrustArgs } from "./browser-proxy-trust.mjs";
 import { checkedOutputPath, checkedUrl } from "./browser-guard.mjs";
 import { computeBrandWarnings } from "./brand-check.mjs";
 import {
@@ -91,8 +92,9 @@ function compareAgainstBaseline(verdict) {
 let browser = null;
 try {
   browser = await chromium.launch({
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
     headless: true,
-    args: ["--no-sandbox", "--disable-dev-shm-usage"],
+    args: ["--no-sandbox", "--disable-dev-shm-usage", ...browserProxyTrustArgs()],
   });
 
   const viewports = {};
@@ -100,6 +102,7 @@ try {
     const errors = { consoleErrors: [], pageErrors: [] };
     const page = await browser.newPage({
       viewport: { width: vp.width, height: vp.height },
+      ...(process.env.BROWSER_SMOKE_BLOCK_SW ? {serviceWorkers:"block"} : {}),
     });
     page.on("console", (msg) => {
       if (msg.type() === "error") errors.consoleErrors.push(msg.text());
@@ -110,6 +113,14 @@ try {
     const resp = await page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs });
     const status = resp?.status() ?? 0;
     await page.waitForTimeout(1000);
+    // This app exposes readiness after local storage and React hydration finish.
+    // A visible SSR shell alone cannot prove that navigation is interactive.
+    if (await page.getByTestId('training-app').count()) {
+      await page.locator('[data-testid="training-app"][data-ready="true"]').waitFor({ timeout: timeoutMs });
+    }
+    if(process.env.BROWSER_SMOKE_ABSENT_TEXT) await page.waitForFunction(
+      text => document.body.innerText.length>100 && !document.body.innerText.includes(text), process.env.BROWSER_SMOKE_ABSENT_TEXT, {timeout:timeoutMs}
+    );
 
     const title = await page.title();
     const hasCanvas = (await page.locator("canvas").count()) > 0;

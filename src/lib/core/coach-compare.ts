@@ -1,3 +1,4 @@
+import { coachImports } from './coach-import-evidence.ts'
 import type { Plan } from "@/lib/strength/model"
 import { assembleCoachBrief, deriveCoachBrief, guardCoachResponse, type CoachBrief, type CoachTurn } from "./coach-brief.ts"
 import { loadEvents } from "./events.ts"
@@ -45,12 +46,13 @@ function runningKind(trainingOccurrenceId: string): RunningKind {
 
 export function listBoundTrainings(): BoundTraining[] {
   const events = loadEvents()
-  return listTrainingOccurrences()
+  const native = listTrainingOccurrences()
     .flatMap((item) => {
       if (occurrenceVoided(item.trainingOccurrenceId) || !item.startedAt || !events.some((event) => event.event_id === item.startEventId && event.event_type === "TRAINING_STARTED")) return []
       return [{ trainingOccurrenceId: item.trainingOccurrenceId, startedAt: item.startedAt, sessionId: item.sessionId, running: runningKind(item.trainingOccurrenceId) }]
     })
-    .sort((left, right) => right.startedAt.localeCompare(left.startedAt) || right.trainingOccurrenceId.localeCompare(left.trainingOccurrenceId))
+  const imports:BoundTraining[]=coachImports().filter(r=>!occurrenceVoided(r.confirmedImportId)).map(r=>({trainingOccurrenceId:r.confirmedImportId,startedAt:r.occurredAt.value!,sessionId:r.sport==='STRENGTH'?'导入力量课':'导入跑步课',running:r.sport==='STRENGTH'?'UNAVAILABLE':r.runningSegments.some(s=>s.kind==='REPETITION')?'INTERVAL':'OTHER'}))
+  return [...native,...imports].sort((left, right) => right.startedAt.localeCompare(left.startedAt) || right.trainingOccurrenceId.localeCompare(left.trainingOccurrenceId))
 }
 
 export function resolveRecentIntervalPair(items: BoundTraining[] = listBoundTrainings()): IntervalPair {
@@ -93,7 +95,7 @@ function withoutFuel(brief: CoachBrief): CoachBrief {
 }
 
 export function citesSide(brief: CoachBrief, citations: string[]): boolean {
-  return citations.some((id) => brief.sourceIds.includes(id) && !sharedContext.has(id))
+  return citations.some((id) => brief.sourceIds.includes(id) && !sharedContext.has(id) && !brief.sources?.some(s=>s.id===id&&s.kind==='CONTEXT'))
 }
 
 export type PairedRunningObservation = {
@@ -237,7 +239,7 @@ export function separateBriefs(plan: Plan | null, question: string, newerId: str
   if (newer.occurrenceId !== newerId || older.occurrenceId !== olderId) return null
   const newerIds = new Set(newer.sourceIds)
   const sharedContext = new Set(["context:competition", "context:cycle", "context:pain"])
-  const mixed = older.sourceIds.some((id) => newerIds.has(id) && !sharedContext.has(id))
+  const mixed = older.sourceIds.some((id) => newerIds.has(id) && !sharedContext.has(id) && !(older.sources?.some(s=>s.id===id&&s.kind==='CONTEXT')&&newer.sources?.some(s=>s.id===id&&s.kind==='CONTEXT')))
   if (mixed) return null
   return { newer, older }
 }

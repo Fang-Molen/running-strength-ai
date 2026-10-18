@@ -1,0 +1,6 @@
+{
+  "runtimeFilesUnchangedSinceFinalTestChain": true,
+  "candidateAndCleanCopiesMatch": true,
+  "laterChanges": "Browser harness and delivery documentation only",
+  "sourceManifest": "verification-source-manifest.json"
+}

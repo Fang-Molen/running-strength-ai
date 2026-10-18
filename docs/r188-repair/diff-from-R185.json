@@ -1,0 +1,248 @@
+[
+  {
+    "file": "docs/r188-repair/R188逐条状态.csv",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "4a8323084f43e609bff3e85ef7a1300bed1bd13d3802db8ab67121af9f35e798"
+  },
+  {
+    "file": "docs/r188-repair/delta-intake.json",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "97189499075b04acaff4b76e10be5a1531d0adc7ba3598443b685402e355bc4e"
+  },
+  {
+    "file": "docs/r188-repair/交付报告.md",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "3553f3ce99762359fcf82ec020be94a4f4bf44844fd91e692e313d506c3ffb42"
+  },
+  {
+    "file": "docs/r188-repair/使用说明.txt",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "f44655a0bdf6468305ab5110541780b5d7ecc2ef5ad23090c63ca4d54816773b"
+  },
+  {
+    "file": "docs/r188-repair/失败与修复清单.csv",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "4699dce8979ff69c88198651bba534f4d6d2e88926064656d0558b35269e8a7a"
+  },
+  {
+    "file": "docs/r188-repair/断言变更说明.md",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "d933d81420a2e3c6f93450923eded747f1338d2f3015e145335974ea7da3d480"
+  },
+  {
+    "file": "docs/r188-repair/验收结果.json",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "c7747eb007d71fa1e03bbea0dbdb6759bad07940a199cd66c9a206dfeb8851f1"
+  },
+  {
+    "file": "evaluation/r188/acceptance-controller.mjs",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "04961c5863d3f4b9ec3ebc015c1d9dba025dad05ed0fd687fe6a1e81c2652c0c"
+  },
+  {
+    "file": "evaluation/r188/browser-acceptance.mjs",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "7d4e7d2a20e33d137c8b159b97d4807ccd626841da951e1865e6beda5ff807ca"
+  },
+  {
+    "file": "evaluation/r188/browser-restart.mjs",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "cda4b65a3a897dfeafd2e13e7315d0f903186166fed28d6c14872ee9def6bef6"
+  },
+  {
+    "file": "evaluation/r188/package-delivery.py",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "f6ce2ef14ae6e49d9677336d9bf00db653ef3dd4011dd206efe04e7a4c51bea3"
+  },
+  {
+    "file": "evaluation/r188/run-browser-checks.mjs",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "8be4d5316cb03e7cd61d9a82d6ae99b2f8468f10ef15dfc7bda86961a41baa21"
+  },
+  {
+    "file": "evaluation/r188/run-domain-direct.py",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "d01ffbdb60b551580ffe9a67828d4de206a9d28a1eb189f2530255e7e13fea14"
+  },
+  {
+    "file": "evaluation/r188/run-full-checks.mjs",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "0d6b97557c42df6286e700ec1bb4ecf282e212a093a00079cfaa643384369a91"
+  },
+  {
+    "file": "package.json",
+    "change": "MODIFIED",
+    "baseline_sha256": "d240276a391aa2aed693070fc0c04f70d90ef504f23343cac9b047271e53388e",
+    "candidate_sha256": "18da22a88fc8f037589fe7565a9a40870c8ed0190ce2bda44b64d8265436abc5"
+  },
+  {
+    "file": "src/components/coach-sheet.tsx",
+    "change": "MODIFIED",
+    "baseline_sha256": "0d92f1177a27468d0166b99c9e0c748ab14645ef678670e510a12fbfa33f2e4a",
+    "candidate_sha256": "8e9bda6e5cc0e24e6dbf140e136c30f21068a4b2ae938ebf79ece49e9f087224"
+  },
+  {
+    "file": "src/components/storage-durability.tsx",
+    "change": "MODIFIED",
+    "baseline_sha256": "6687e78fc3f8b6899bdc66aa45ba2a46d86131e0bfa063262547a40ccb3fd31b",
+    "candidate_sha256": "0de99e82ac551e9f5e6d52cfd9c225d3663d87f0b346386ded8b4b3295a2b3d4"
+  },
+  {
+    "file": "src/lib/core/coach-claim-revision.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "b5dac408ce0a3f8c286bf66f02496f0c65b160cdf678292dacbc5c65f0325d90"
+  },
+  {
+    "file": "src/lib/core/coach-claim-revision.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "4e7292db40ba614a9ac0593a1348c62d8d92d2aad382ef549e41621f13f86eec"
+  },
+  {
+    "file": "src/lib/core/coach-decision-calibration.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "eddc43dbd682468299d3752f27c020095e3298c1289a291d88679c75f98cbce3"
+  },
+  {
+    "file": "src/lib/core/coach-decision-calibration.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "902a550b0667f4fbae1cf80ba6e2a6889e76ec8ae6034e706a1d2d16e30cca47"
+  },
+  {
+    "file": "src/lib/core/coach-device-preparation.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "f23f8c7c89c6b6a5168c98e6871f727b363a30671ba553aef8e94faeb2a5db44",
+    "candidate_sha256": "0208ae27f4a11f10b394f895a9f8e41c316e5b57eef3cbe253afe1e92df63ae5"
+  },
+  {
+    "file": "src/lib/core/coach-dialogue.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "761c6b0cc6177621e56e8bb6c7f5ae4e2c1394e4e8857c45702c853e8deb129c",
+    "candidate_sha256": "930dca3d6f4e66beebd64c65104b9b239d7a1919655f2be882c605cb06750861"
+  },
+  {
+    "file": "src/lib/core/coach-local-first.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "2e97eeac380da2671edc1b2c40f97a3babbc680e25106dcaaa91e59d2c64e400",
+    "candidate_sha256": "3bb16b20b1d25d4518aaa079c45804ac7413443e3f1486e99c35d0754b82d1af"
+  },
+  {
+    "file": "src/lib/core/coach-offline-loop.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "2f0030ef5f51031dba5d25a0481cc007c2fe192585a0055a7833e2f1e044119c",
+    "candidate_sha256": "7ebfd0d71fee26f064421d94523d9d31896e74f033995c66cdc53ce4e5e8a5e8"
+  },
+  {
+    "file": "src/lib/core/coach-p7-evaluation.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "8bfbe3c1738cc91588d44890745cb0375533058e7850a74d6d6118bf27ae0ef0"
+  },
+  {
+    "file": "src/lib/core/coach-p7-evaluation.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "a953d2ee7e795ee68a7df03f9ffe117a3d7b65a4ee964f27b528725179ac1a84"
+  },
+  {
+    "file": "src/lib/core/coach-p7-knowledge.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "2f8d3cbedf67b556ee630e92a911c45eea555012cab95bba9511fba53ff05c95"
+  },
+  {
+    "file": "src/lib/core/coach-p7-knowledge.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "320211dbd60d7923d2143c089a8ff6bd3f63326bdc0291ae384488aca003dc23"
+  },
+  {
+    "file": "src/lib/core/coach-p7-lifecycle.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "54c7121d0d49e34fa89b1533d0cc2b22a3d9acb95d92f697901d74e8e714fe9b"
+  },
+  {
+    "file": "src/lib/core/coach-p7-r187.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "6142cdd2e4fa493f7c9c5d27c520f1744a4751789c5be2ee766ccaa8fd90a070"
+  },
+  {
+    "file": "src/lib/core/coach-p7-r7.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "f1d955b3e7b1ad1b1b00e70460b33afe506391fd0e03f17a8726bc0ce09b67da"
+  },
+  {
+    "file": "src/lib/core/coach-p7-runtime.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "29f36599a84d6c6cc18b77d7a89a17d437eef74fda8b523d38750f90c14e77f9"
+  },
+  {
+    "file": "src/lib/core/coach-r188.test.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "728dec0f364fd94b7c8f12ee982ae85ed323052e12070263b606404cfa975acf"
+  },
+  {
+    "file": "src/lib/core/coach-red-flags.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "a0fd4ae0c2a157c60025d1bdf6c872e38798dceb1dcfb365f1ca0d1f05ff1a80",
+    "candidate_sha256": "0cce1de5e6153f637d5228ea12d083d2e9f5fad48a6644daea70e9ba3bc23f9e"
+  },
+  {
+    "file": "src/lib/core/coach-structured-candidate.test.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "62738d1fc057ff7b02ab627aa631e98a3c05c9b0a5495b40b2d5e008ccc16746",
+    "candidate_sha256": "2941be2b018b9ba71f65758916a06a375634e48ddec29c68f980a3ea5420cf5b"
+  },
+  {
+    "file": "src/lib/core/storage-indexeddb.ts",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "84ee84030d55de666e069036b81bd17edd32f3e17679f0f2a5e5070de9ef568f"
+  },
+  {
+    "file": "src/lib/core/training-correction.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "d77acb1311513250dd89d5dc96bb99017965706cc45e801eb57e0268422f7bdd",
+    "candidate_sha256": "0857796fe8a0923563e2866a6df455132d1c63fd9231ef14e3318ec79630a8e3"
+  },
+  {
+    "file": "src/lib/core/trial.ts",
+    "change": "MODIFIED",
+    "baseline_sha256": "3a822b887c2407023e8ae37898fa8763652b735fb8ae04a1c46e9fba6aa4967d",
+    "candidate_sha256": "3e68ad7016b1fda8e2478cf3aa4d0f9d4ad6f7787e18f0a81fb122b0569f8867"
+  },
+  {
+    "file": "src/routes/__root.tsx",
+    "change": "MODIFIED",
+    "baseline_sha256": "8bfff8c01d6155b2d1926d67b2e8485bf380ae3fdc6820515a4d6281cc2307b7",
+    "candidate_sha256": "5d2e85b57791b8f3ad67375fc51bc47df7f1fd92bc3e3179d767aa9fff919e64"
+  },
+  {
+    "file": "tsconfig.r7-scoped.json",
+    "change": "ADDED",
+    "baseline_sha256": null,
+    "candidate_sha256": "62d0ff5e688313619a107bbfd4c47e0141206a9564bf62f17982715532b04c32"
+  }
+]

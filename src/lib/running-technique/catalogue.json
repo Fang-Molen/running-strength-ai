@@ -1,0 +1,4821 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_version": "1.0.0",
+  "status": "curated_draft_requires_coach_review",
+  "count": 53,
+  "categories": {
+    "posture": "身体姿态与摆臂",
+    "coordination": "步态协调与运腿",
+    "support": "支撑与足踝弹性",
+    "acceleration": "起跑与加速",
+    "maxspeed": "最高速度与放松",
+    "curve": "弯道技术",
+    "middle": "中长跑节奏与转换",
+    "observation": "技术观察与评估",
+    "transfer": "技术-专项衔接"
+  },
+  "sources": [
+    {
+      "id": "SRC-NSCA-HK",
+      "name": "NSCA High Knee Drills (2017)",
+      "url": "https://dxpprod.nsca.com/education/articles/kinetic-select/high-knee-drills/",
+      "supports": "A式行进、A式跳步与协调性练习的基本教学描述，不代表每项专项成绩收益已证实。"
+    },
+    {
+      "id": "SRC-NSCA-SPRINT",
+      "name": "NSCA Sprinting Mechanics and Technique (2018)",
+      "url": "https://www.nsca.com/education/articles/kinetic-select/sprinting-mechanics-and-technique/",
+      "supports": "起跑、加速、跑姿阶段划分等教练基础教学。"
+    },
+    {
+      "id": "SRC-GAIT-2022",
+      "name": "Doyle et al. Gait retraining meta-analysis (2022), DOI 10.2519/jospt.2022.10585",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35128941/",
+      "supports": "跑姿再训练可改变部分生物力学变量，运动表现与伤病证据有限。"
+    },
+    {
+      "id": "SRC-CADENCE-2022",
+      "name": "Anderson et al. Cadence systematic review (2022), PMID 36057913",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36057913/",
+      "supports": "步频干预对生物力学变量影响更清楚，对受伤率或成绩仍不能作确定宣称。"
+    },
+    {
+      "id": "SRC-STRENGTH-2024",
+      "name": "Strength and running economy meta-analysis (2024), PMID 38165636",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38165636/",
+      "supports": "系统力量/弹跳训练可能改善中长跑经济性；不是对单一技术动作的直接验证。"
+    }
+  ],
+  "drills": [
+    {
+      "id": "fk-run-tech-001",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "站姿-跑姿对齐",
+      "name_en": "Standing Running Posture Check",
+      "category_id": "posture",
+      "category_name": "身体姿态与摆臂",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "建立头、躯干与骨盆自然排列的感觉",
+      "steps": [
+        "双脚自然站立并放松肩颈",
+        "轻微提起胸廓但不挺腰",
+        "从侧面检查耳、肩、骨盆的整体关系"
+      ],
+      "cues": [
+        "身体高而放松",
+        "肋骨不外翻"
+      ],
+      "common_errors": [
+        "故意后仰挺腰",
+        "耸肩锁死"
+      ],
+      "correction_or_regression": "退阶：靠墙站姿感知，再离墙复现。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-01"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "shoulder_girdle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-002",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "原地跑步摆臂",
+      "name_en": "Stationary Running Arm Drive",
+      "category_id": "posture",
+      "category_name": "身体姿态与摆臂",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "学习肩部放松与前后摆臂协调",
+      "steps": [
+        "站立或前后错步",
+        "肘自然弯曲并以前后方向摆动",
+        "逐渐提速但肩颈保持放松"
+      ],
+      "cues": [
+        "手臂前后走",
+        "不要横扫身体中线"
+      ],
+      "common_errors": [
+        "握拳过紧",
+        "上身左右转动"
+      ],
+      "correction_or_regression": "退阶：坐姿摆臂，注意骨盆保持稳定。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-02"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "shoulder_girdle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-003",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "原地对侧手脚配合",
+      "name_en": "Contralateral Arm-Leg Coordination",
+      "category_id": "posture",
+      "category_name": "身体姿态与摆臂",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "建立摆臂与对侧下肢协调",
+      "steps": [
+        "慢速交替抬腿",
+        "对侧手臂自然向前",
+        "保持呼吸和肩膀放松"
+      ],
+      "cues": [
+        "自然对侧协调",
+        "先稳后快"
+      ],
+      "common_errors": [
+        "同侧手脚同时前摆",
+        "抬腿过高牺牲稳定"
+      ],
+      "correction_or_regression": "退阶：分解成慢速四拍，再连续完成。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "shoulder_girdle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-004",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "骨盆稳定行进",
+      "name_en": "Pelvic Control March",
+      "category_id": "posture",
+      "category_name": "身体姿态与摆臂",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "练习交替支撑时躯干骨盆控制",
+      "steps": [
+        "缓慢抬一侧腿到舒适高度",
+        "保持骨盆尽量平稳而非僵硬",
+        "行进时左右交替"
+      ],
+      "cues": [
+        "脚下稳",
+        "身体不大幅侧摆"
+      ],
+      "common_errors": [
+        "骨盆过度倾斜",
+        "腰部代偿后仰"
+      ],
+      "correction_or_regression": "退阶：扶墙做单腿站立，再行进。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          30,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "shoulder_girdle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-005",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "平稳头部的小步跑",
+      "name_en": "Quiet-Head Jog Drill",
+      "category_id": "posture",
+      "category_name": "身体姿态与摆臂",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "学习上身放松与身体稳定",
+      "steps": [
+        "用轻松短步进行慢跑",
+        "观察头与肩是否有多余摆动",
+        "自然呼吸并维持稳定节奏"
+      ],
+      "cues": [
+        "放松肩颈",
+        "别刻意抑制正常弹跳"
+      ],
+      "common_errors": [
+        "下意识憋气",
+        "为了不动而僵硬收紧"
+      ],
+      "correction_or_regression": "退阶：降低速度，不追求头部绝对静止。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          30,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "shoulder_girdle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-006",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "手臂节奏-慢快慢",
+      "name_en": "Arm Rhythm Change",
+      "category_id": "posture",
+      "category_name": "身体姿态与摆臂",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "在节奏变化中保持上肢协调",
+      "steps": [
+        "原地摆臂10秒舒适节奏",
+        "提速5秒但不紧绷",
+        "回到舒适节奏10秒"
+      ],
+      "cues": [
+        "节奏变化但肩放松",
+        "前后摆动"
+      ],
+      "common_errors": [
+        "快时耸肩",
+        "手越过身体中线"
+      ],
+      "correction_or_regression": "退阶：缩短快摆时间，先保证动作不僵硬。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "shoulder_girdle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-007",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "A式行进",
+      "name_en": "A-March",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "学习交替摆腿、支撑和对侧摆臂的节奏",
+      "steps": [
+        "站姿自然拉高身体",
+        "交替抬膝至可控制高度并向前行进",
+        "支撑腿稳定、手脚协调"
+      ],
+      "cues": [
+        "膝盖自然前送",
+        "站立支撑腿稳"
+      ],
+      "common_errors": [
+        "猛抬膝导致后仰",
+        "落脚刻意砸地"
+      ],
+      "correction_or_regression": "退阶：原地A式行进；进阶：A-Skip。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          30,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-03"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-008",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "A式跳步",
+      "name_en": "A-Skip",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "建立抬腿-支撑-换腿的协调节奏",
+      "steps": [
+        "先做A-March",
+        "在每次换腿时加入轻微跳步",
+        "保持节奏而非追求膝盖最高"
+      ],
+      "cues": [
+        "弹跳轻巧",
+        "手脚协调"
+      ],
+      "common_errors": [
+        "过度踮脚",
+        "抬膝越高越好"
+      ],
+      "correction_or_regression": "退阶：回到A-March；如跟腱不适减小弹跳或停止。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "近期足踝、跟腱或小腿疼痛者慎用跳步，必要时先选行进版本。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-04"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-009",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "Running A快频",
+      "name_en": "Running A Fast Rhythm",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "高频下协调腿部循环和摆臂",
+      "steps": [
+        "完成A-Skip熟悉节奏",
+        "缩小动作幅度并提高交替频率",
+        "保持躯干不后仰"
+      ],
+      "cues": [
+        "频率高但可控",
+        "脚步轻而快"
+      ],
+      "common_errors": [
+        "为了频率变成原地乱踩",
+        "臀部后坐"
+      ],
+      "correction_or_regression": "退阶：降低频率或使用A-Skip。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-010",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "踝关节小步跑",
+      "name_en": "Ankling",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "练习小幅脚踝活动与步频协调",
+      "steps": [
+        "以短小步幅向前移动",
+        "脚踝轻柔完成自然支撑与离地",
+        "逐步建立均匀节奏"
+      ],
+      "cues": [
+        "小幅、柔和",
+        "不要跺地"
+      ],
+      "common_errors": [
+        "刻意前脚掌一直着地",
+        "小腿紧绷"
+      ],
+      "correction_or_regression": "退阶：原地踝部交替抬放。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          30,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-05"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-011",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "低位运腿循环",
+      "name_en": "Low Dribble",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "用小幅度下肢循环建立连贯节奏",
+      "steps": [
+        "轻微弯曲髋膝做低位循环",
+        "脚从身体附近快速回收",
+        "保持向前小步移动"
+      ],
+      "cues": [
+        "小循环连贯",
+        "不要向前伸腿够地"
+      ],
+      "common_errors": [
+        "脚离身体过远",
+        "低头追脚"
+      ],
+      "correction_or_regression": "退阶：减少速度与动作幅度。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          30,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-06"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-012",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "中位运腿循环",
+      "name_en": "Mid Dribble",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "从低位循环进阶到较大幅度的跑步节奏",
+      "steps": [
+        "在低位运腿稳定后增加抬腿高度",
+        "保持脚在体侧附近循环",
+        "小距离连续移动"
+      ],
+      "cues": [
+        "髋膝协同",
+        "脚下动作轻快"
+      ],
+      "common_errors": [
+        "猛踢小腿",
+        "躯干后仰"
+      ],
+      "correction_or_regression": "退阶：低位运腿循环。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-013",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "高位运腿循环",
+      "name_en": "High Dribble",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "advanced",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "在较高速节奏下整合前侧运腿",
+      "steps": [
+        "从中位运腿逐步加大动作",
+        "逐渐提高速度但保持上身自然",
+        "动作质量下降即停止"
+      ],
+      "cues": [
+        "摆腿顺畅",
+        "不要抢着踩地"
+      ],
+      "common_errors": [
+        "抬腿过高导致后坐",
+        "主动向前伸小腿"
+      ],
+      "correction_or_regression": "退阶：中位运腿循环。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "需要熟悉中位运腿且具备足够下肢耐受；避免疲劳时强行高速执行。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": true
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "advanced",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-014",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "单侧快腿交替",
+      "name_en": "Fast-Leg Alternations",
+      "category_id": "coordination",
+      "category_name": "步态协调与运腿",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "改善左右腿交换节奏的可控性",
+      "steps": [
+        "慢速跑姿行进",
+        "每第三步在一侧做较快的抬回腿动作",
+        "左右各做一段并恢复正常节奏"
+      ],
+      "cues": [
+        "交换有节奏",
+        "动作回收不甩腿"
+      ],
+      "common_errors": [
+        "左右过度不对称",
+        "上身扭转"
+      ],
+      "correction_or_regression": "退阶：单侧慢速抬腿，逐步加入快腿。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-015",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "双脚低幅弹跳",
+      "name_en": "Double-Leg Low Pogos",
+      "category_id": "support",
+      "category_name": "支撑与足踝弹性",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "练习低幅弹跳的协调和落地控制",
+      "steps": [
+        "原地微屈膝站立",
+        "双脚以小幅连续跳跃",
+        "保持动作轻巧且膝踝自然配合"
+      ],
+      "cues": [
+        "轻落轻起",
+        "幅度小"
+      ],
+      "common_errors": [
+        "追求高跳",
+        "落地声音越来越重"
+      ],
+      "correction_or_regression": "退阶：提踵和轻微踮地节奏练习。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": null,
+        "duration_s": null,
+        "reps": [
+          8,
+          15
+        ],
+        "rest_s": [
+          60,
+          120
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "小腿/足跟疼痛、近期骨应力问题或不适者避免弹跳冲击；训练负荷需要累计管理。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "综合力量/弹跳训练存在一定跑步经济性证据",
+        "limits": "本条单一弹跳练习的性能收益并未经这些综述逐项直接验证。",
+        "source_ids": [
+          "SRC-STRENGTH-2024"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-07"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-016",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "交替脚低幅弹跳",
+      "name_en": "Alternating Low Pogos",
+      "category_id": "support",
+      "category_name": "支撑与足踝弹性",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "在左右支撑转换中维持弹性节奏",
+      "steps": [
+        "先做双脚低幅弹跳",
+        "每次轻微换重心到另一只脚",
+        "左右交替保持轻落地"
+      ],
+      "cues": [
+        "重心平稳",
+        "节奏可控"
+      ],
+      "common_errors": [
+        "急着加快造成外翻内翻失控",
+        "接触声变重"
+      ],
+      "correction_or_regression": "退阶：双脚低幅弹跳。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": null,
+        "duration_s": null,
+        "reps": [
+          8,
+          15
+        ],
+        "rest_s": [
+          60,
+          120
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "足踝不稳定或跟腱/小腿疼痛者先避免。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "综合力量/弹跳训练存在一定跑步经济性证据",
+        "limits": "本条单一弹跳练习的性能收益并未经这些综述逐项直接验证。",
+        "source_ids": [
+          "SRC-STRENGTH-2024"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-017",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "单脚低幅弹跳",
+      "name_en": "Single-Leg Low Pogos",
+      "category_id": "support",
+      "category_name": "支撑与足踝弹性",
+      "skill_level": "advanced",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "挑战单脚支撑下的弹性和动作控制",
+      "steps": [
+        "单腿稳定站立",
+        "做少量低幅小跳",
+        "左右腿分别完成并观察落地控制"
+      ],
+      "cues": [
+        "小幅、稳定",
+        "左右质量相近"
+      ],
+      "common_errors": [
+        "脚踝翻转失控",
+        "为了完成次数持续跳坏动作"
+      ],
+      "correction_or_regression": "退阶：交替脚低幅弹跳或双脚版本。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": null,
+        "duration_s": null,
+        "reps": [
+          8,
+          15
+        ],
+        "rest_s": [
+          60,
+          120
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "高足踝/小腿负荷；有疼痛、伤后未获运动许可、稳定性不足时禁用。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": true
+      },
+      "evidence": {
+        "classification": "综合力量/弹跳训练存在一定跑步经济性证据",
+        "limits": "本条单一弹跳练习的性能收益并未经这些综述逐项直接验证。",
+        "source_ids": [
+          "SRC-STRENGTH-2024"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "advanced",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-018",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "小跨步弹跳",
+      "name_en": "Low Skipping Bounds",
+      "category_id": "support",
+      "category_name": "支撑与足踝弹性",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "学习轻微向前弹跳与对侧摆臂协调",
+      "steps": [
+        "向前用小距离的跳步移动",
+        "每次换脚都控制落地位置",
+        "强调顺畅节奏而非距离"
+      ],
+      "cues": [
+        "小幅向前",
+        "轻落地"
+      ],
+      "common_errors": [
+        "单次跨得过远",
+        "用跺地换距离"
+      ],
+      "correction_or_regression": "退阶：A-Skip；进阶需逐步增加动作幅度。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "对足踝和小腿有一定冲击；不要接在大量高强度弹跳后额外叠加。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "综合力量/弹跳训练存在一定跑步经济性证据",
+        "limits": "本条单一弹跳练习的性能收益并未经这些综述逐项直接验证。",
+        "source_ids": [
+          "SRC-STRENGTH-2024"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-019",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "节奏跨步跳",
+      "name_en": "Rhythm Bounds",
+      "category_id": "support",
+      "category_name": "支撑与足踝弹性",
+      "skill_level": "advanced",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "在具备基础力量时练习水平推进协调",
+      "steps": [
+        "充分热身后小距离连续跨步跳",
+        "左右交替完成推进",
+        "每一步优先保证落地控制"
+      ],
+      "cues": [
+        "推地协调",
+        "别用大跨步硬够"
+      ],
+      "common_errors": [
+        "落地脚伸太远",
+        "触地时膝踝不稳"
+      ],
+      "correction_or_regression": "退阶：小跨步弹跳，必要时改跑步协调练习。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "高冲击动作，足踝/膝/髋不适者不做；需控制总接触次数。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": true
+      },
+      "evidence": {
+        "classification": "综合力量/弹跳训练存在一定跑步经济性证据",
+        "limits": "本条单一弹跳练习的性能收益并未经这些综述逐项直接验证。",
+        "source_ids": [
+          "SRC-STRENGTH-2024"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "advanced",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-020",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "低强度前后跨线步",
+      "name_en": "Line Step Rhythm",
+      "category_id": "support",
+      "category_name": "支撑与足踝弹性",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "练习快速但稳定的支撑切换",
+      "steps": [
+        "在地上标一条线",
+        "双脚小步前后交替跨线",
+        "保持脚下节奏均匀并自然呼吸"
+      ],
+      "cues": [
+        "脚下小而稳",
+        "上身放松"
+      ],
+      "common_errors": [
+        "脚步越来越大",
+        "高频时踝部疼痛仍坚持"
+      ],
+      "correction_or_regression": "退阶：慢速跨线，缩短时长。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-021",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "抵墙加速姿态",
+      "name_en": "Wall Lean Sprint Position",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "理解加速阶段身体整体前倾",
+      "steps": [
+        "双手轻扶牢固墙面",
+        "身体从踝部形成整体倾斜",
+        "一腿支撑另一腿轻抬并保持中立"
+      ],
+      "cues": [
+        "躯干整体倾",
+        "不是折腰"
+      ],
+      "common_errors": [
+        "腰部过伸",
+        "骨盆后坐"
+      ],
+      "correction_or_regression": "退阶：倾角减小，并确保墙面稳固。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-08"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-022",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "抵墙单次换腿",
+      "name_en": "Wall Single Switch",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "练习加速姿态下换腿与支撑",
+      "steps": [
+        "从抵墙姿态开始",
+        "一次交换两腿前后位置",
+        "每次换腿后停住检查身体整体倾斜"
+      ],
+      "cues": [
+        "交换后稳住",
+        "支撑脚别过度踮"
+      ],
+      "common_errors": [
+        "换腿时弯腰",
+        "用力蹬墙"
+      ],
+      "correction_or_regression": "退阶：慢速单次抬腿。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-023",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "抵墙连续换腿",
+      "name_en": "Wall Triple Switch",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "在加速姿态下协调快速步频",
+      "steps": [
+        "从抵墙单次换腿开始",
+        "连续进行两至三次可控交换",
+        "停住后复位再重复"
+      ],
+      "cues": [
+        "动作短促清楚",
+        "快而不乱"
+      ],
+      "common_errors": [
+        "速度先于质量",
+        "肩肘过分用力"
+      ],
+      "correction_or_regression": "退阶：单次换腿。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-024",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "前倾自然起跑",
+      "name_en": "Falling Start",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "intermediate",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "学习由整体倾斜进入前几步加速",
+      "steps": [
+        "以双脚稳定站立",
+        "全身整体轻微前倾并自然迈出第一步",
+        "连续加速10–20米后逐渐收速"
+      ],
+      "cues": [
+        "整体前倾",
+        "头脊柱协调"
+      ],
+      "common_errors": [
+        "故意向前扑倒",
+        "前几步抬头挺直"
+      ],
+      "correction_or_regression": "退阶：双点站姿起跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "需足够的直线无障碍空间；跌倒风险或平衡不足者不用前倾起跑。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-09"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-025",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "两点站姿起跑",
+      "name_en": "Two-Point Start",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "beginner",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "练习站姿起跑的前3–5步",
+      "steps": [
+        "一脚在前一脚在后站稳",
+        "起动时自然推进并逐步增加速度",
+        "专注前几步节奏而非立即竖直"
+      ],
+      "cues": [
+        "前几步推地协调",
+        "身体自然抬起"
+      ],
+      "common_errors": [
+        "急着完全抬头",
+        "过度向前迈步"
+      ],
+      "correction_or_regression": "退阶：快走到慢跑加速。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-026",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "三点起跑",
+      "name_en": "Three-Point Start",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "intermediate",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "练习三点支撑转入水平加速",
+      "steps": [
+        "在起跑线上摆好三点姿态",
+        "起动后连续完成前3–5步",
+        "随后平顺加速与减速"
+      ],
+      "cues": [
+        "起动连贯",
+        "不要过早抬身"
+      ],
+      "common_errors": [
+        "身体重心放得太靠前失衡",
+        "第一步跨太大"
+      ],
+      "correction_or_regression": "退阶：两点起跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": true
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-027",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "平缓上坡短加速",
+      "name_en": "Gentle Hill Acceleration",
+      "category_id": "acceleration",
+      "category_name": "起跑与加速",
+      "skill_level": "intermediate",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "用平缓坡面练习加速的整体推进节奏",
+      "steps": [
+        "选择安全、平坦脚感的缓坡",
+        "从站姿逐步加速10–20米",
+        "走回充分恢复再重复"
+      ],
+      "cues": [
+        "向前推进",
+        "步伐有力而可控"
+      ],
+      "common_errors": [
+        "坡度过陡仍追求高速",
+        "踝膝不适硬练"
+      ],
+      "correction_or_regression": "退阶：平地两点起跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "坡道必须干燥防滑、坡度平缓；高强度且小腿负荷较高。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "quadriceps_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-028",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "渐进加速放松跑",
+      "name_en": "Progressive Strides",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "学习从慢速到较快速的平顺转换",
+      "steps": [
+        "从轻松慢跑开始",
+        "逐步在距离内提升到舒适的快速跑",
+        "后段平稳减速"
+      ],
+      "cues": [
+        "速度渐进",
+        "肩与脸放松"
+      ],
+      "common_errors": [
+        "起步就冲刺",
+        "快时耸肩憋气"
+      ],
+      "correction_or_regression": "退阶：缩短距离、降低最终速度。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-10"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-029",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "20米助跑+技术跑",
+      "name_en": "Build-Up 20m",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "通过助跑进入协调的较高速跑姿",
+      "steps": [
+        "先轻松起跑逐步加速约20米",
+        "在末段保持流畅动作",
+        "充分减速走回"
+      ],
+      "cues": [
+        "速度越快越放松",
+        "动作连贯"
+      ],
+      "common_errors": [
+        "急加速导致僵硬",
+        "末端急刹"
+      ],
+      "correction_or_regression": "退阶：渐进加速放松跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-030",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "行进间10米快速跑",
+      "name_en": "Flying 10m",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "advanced",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "在充分助跑后观察接近最高速度的动作",
+      "steps": [
+        "助跑逐步加速约20–30米",
+        "在10米标定段快速通过",
+        "留出足够减速区并充分休息"
+      ],
+      "cues": [
+        "高速但不紧绷",
+        "注意安全减速"
+      ],
+      "common_errors": [
+        "把快速段前当全力硬冲",
+        "空间不足急停"
+      ],
+      "correction_or_regression": "退阶：20米助跑+技术跑。",
+      "starting_dose": {
+        "sets": [
+          2,
+          4
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          150,
+          300
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "高速冲刺属高腘绳肌及肌腱负荷；热身不足、疼痛或空间不足时禁做。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": true
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-11"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "advanced",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-031",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "标志点节奏跑",
+      "name_en": "Wicket Rhythm Run",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "用可调整间距的标志点训练步态节奏",
+      "steps": [
+        "摆放软质低障碍或地面标记",
+        "从慢速助跑进入标志区",
+        "观察自然步频，逐步调间距匹配运动员"
+      ],
+      "cues": [
+        "跨越轻松",
+        "步点不硬凑"
+      ],
+      "common_errors": [
+        "为了踩准强行迈大步",
+        "障碍太高影响自然跑姿"
+      ],
+      "correction_or_regression": "退阶：只用地面平面标记；间距须个体化。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [
+        "软质低障碍/地面标记"
+      ],
+      "safety": {
+        "caution": "不得固定套用精英运动员间距；确保标志点柔软、无绊倒风险。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-12"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-032",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "直线高频轻松跑",
+      "name_en": "Relaxed Fast Run",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "提高快跑中的肌肉放松与节奏控制",
+      "steps": [
+        "从渐进加速进入舒适快速跑",
+        "关注手、肩、面部放松",
+        "到距离后减速走回"
+      ],
+      "cues": [
+        "快但脸放松",
+        "摆臂自然"
+      ],
+      "common_errors": [
+        "咬牙屏气",
+        "故意脚掌向下砸地"
+      ],
+      "correction_or_regression": "退阶：渐进加速放松跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-033",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "快-松-快节奏切换",
+      "name_en": "Fast-Float-Fast",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "advanced",
+      "effort_band": "high",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "练习快速跑中的适度放松与重新提速",
+      "steps": [
+        "逐步加速进入快速跑",
+        "短距离保持流畅节奏而非突然降速",
+        "再次加速后留出充分减速区"
+      ],
+      "cues": [
+        "放松不等于刹车",
+        "保持向前节奏"
+      ],
+      "common_errors": [
+        "放松段明显失速",
+        "第二段动作僵硬"
+      ],
+      "correction_or_regression": "退阶：渐进加速放松跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "需有专项基础和较长跑道，避免大幅速度突变。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": true
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "advanced",
+        "high"
+      ]
+    },
+    {
+      "id": "fk-run-tech-034",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "快腿-自然跑转换",
+      "name_en": "Fast-Leg To Run Transition",
+      "category_id": "maxspeed",
+      "category_name": "最高速度与放松",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "让协调练习的节奏自然迁移到跑步",
+      "steps": [
+        "先做10米低或中位运腿",
+        "逐步过渡为自然跑20米",
+        "比较过渡前后的肩臂和步频"
+      ],
+      "cues": [
+        "自然连上跑姿",
+        "不是机械复制练习动作"
+      ],
+      "common_errors": [
+        "运腿阶段一直停在原地",
+        "过渡时猛踩地"
+      ],
+      "correction_or_regression": "退阶：低位运腿后接轻松跑。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hamstrings_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-035",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "弯道轻松节奏跑",
+      "name_en": "Easy Curve Rhythm",
+      "category_id": "curve",
+      "category_name": "弯道技术",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "200",
+        "400",
+        "800",
+        "1500"
+      ],
+      "primary_purpose": "认识弯道上身体和步频的自然适应",
+      "steps": [
+        "在田径场选择同一跑道",
+        "以轻松速度跑过弯道",
+        "观察是否放松且不强迫身体内倾"
+      ],
+      "cues": [
+        "自然随弯道调整",
+        "眼睛看前进方向"
+      ],
+      "common_errors": [
+        "刻意把肩膀拧向内侧",
+        "向内倒得太多"
+      ],
+      "correction_or_regression": "退阶：降低速度并用外道较大半径。",
+      "starting_dose": {
+        "sets": [
+          2,
+          4
+        ],
+        "distance_m": [
+          40,
+          80
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          90,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-036",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "弯道渐进加速",
+      "name_en": "Curve Build-Up",
+      "category_id": "curve",
+      "category_name": "弯道技术",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "200",
+        "400",
+        "800",
+        "1500"
+      ],
+      "primary_purpose": "练习弯道中自然加速与步频控制",
+      "steps": [
+        "从弯道前端逐步加速",
+        "穿过弯道时保持自然动作",
+        "出弯后逐步减速"
+      ],
+      "cues": [
+        "节奏连续",
+        "不要硬拧上身"
+      ],
+      "common_errors": [
+        "跑线突然切入",
+        "为了贴弯强行倾斜"
+      ],
+      "correction_or_regression": "退阶：弯道轻松节奏跑。",
+      "starting_dose": {
+        "sets": [
+          2,
+          4
+        ],
+        "distance_m": [
+          40,
+          80
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          90,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-037",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "弯道接直道转换",
+      "name_en": "Curve-to-Straight Transition",
+      "category_id": "curve",
+      "category_name": "弯道技术",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "200",
+        "400",
+        "800",
+        "1500"
+      ],
+      "primary_purpose": "练习出弯后速度和姿态连续转换",
+      "steps": [
+        "从弯道适中速度进入直道",
+        "自然让身体对齐直线方向",
+        "对比出弯前后的摆臂与步幅节奏"
+      ],
+      "cues": [
+        "出弯自然过渡",
+        "保持前进节奏"
+      ],
+      "common_errors": [
+        "出弯后突然大跨步",
+        "猛甩手臂"
+      ],
+      "correction_or_regression": "退阶：速度降低，先保证自然转场。",
+      "starting_dose": {
+        "sets": [
+          2,
+          4
+        ],
+        "distance_m": [
+          40,
+          80
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          90,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-038",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "200米弯道赛线熟悉",
+      "name_en": "Bend Lane Awareness",
+      "category_id": "curve",
+      "category_name": "弯道技术",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "200",
+        "400",
+        "800",
+        "1500"
+      ],
+      "primary_purpose": "学习在固定跑道内保持安全合理的跑线",
+      "steps": [
+        "沿指定跑道慢速跑过弯道",
+        "注意内外边线和脚下空间",
+        "观察跑线是否稳定"
+      ],
+      "cues": [
+        "安全跑线",
+        "不跨道"
+      ],
+      "common_errors": [
+        "频繁左右飘移",
+        "只顾脚下不看前方"
+      ],
+      "correction_or_regression": "退阶：低速沿跑道慢跑。",
+      "starting_dose": {
+        "sets": [
+          2,
+          4
+        ],
+        "distance_m": [
+          40,
+          80
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          90,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-039",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "节拍器步频觉察",
+      "name_en": "Cadence Awareness with Metronome",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "intermediate",
+      "effort_band": "low",
+      "event_tags": [
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "感知自己的自然步频和温和调整节奏",
+      "steps": [
+        "先在同一速度下记录自然步频",
+        "尝试很小幅度的节奏提示并观察舒适度",
+        "逐步撤去外部提示再复查"
+      ],
+      "cues": [
+        "小幅探索",
+        "保持速度近似"
+      ],
+      "common_errors": [
+        "立刻要求所有人180步频",
+        "过度缩步变成僵硬碎步"
+      ],
+      "correction_or_regression": "退阶：只观察步频不修改，症状相关调整交给专业人士。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          100,
+          200
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [
+        "手机节拍器/手表"
+      ],
+      "safety": {
+        "caution": "跑姿调整需个体化；伤病情景不替代临床评估，不强制增加固定百分比。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "步频再训练存在部分生物力学干预证据",
+        "limits": "可改变部分跑步生物力学指标；不能保证跑速提高、减少伤病或适用于所有人。",
+        "source_ids": [
+          "SRC-CADENCE-2022",
+          "SRC-GAIT-2022"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-040",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "定速100米节奏跑",
+      "name_en": "100m Pace Calibration",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000"
+      ],
+      "primary_purpose": "建立对目标速度的内部感知",
+      "steps": [
+        "确定与当前能力匹配的目标时间",
+        "以几次100米练习接近目标节奏",
+        "记录偏差与RPE而非每次全力冲"
+      ],
+      "cues": [
+        "稳定比抢快重要",
+        "记录真实分段"
+      ],
+      "common_errors": [
+        "第一段大幅快于目标",
+        "组间恢复不固定"
+      ],
+      "correction_or_regression": "退阶：降低配速强度并增加恢复。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          100,
+          200
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-041",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "200米配速锁定",
+      "name_en": "200m Pace Lock",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000"
+      ],
+      "primary_purpose": "练习反复输出接近目标的专项节奏",
+      "steps": [
+        "以合理的当期训练目标设置200米时间",
+        "在充分恢复下重复数段",
+        "对照目标与实际偏差找规律"
+      ],
+      "cues": [
+        "前后段节奏合理",
+        "不抢第一段"
+      ],
+      "common_errors": [
+        "把比赛目标直接当训练速度",
+        "掉速仍盲目补跑"
+      ],
+      "correction_or_regression": "退阶：100米定速练习。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          100,
+          200
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-042",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "快慢转换节奏跑",
+      "name_en": "Controlled Pace Change",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "学习在不同速度下保持动作协调",
+      "steps": [
+        "先用舒适速度跑一段",
+        "短距离平稳提速后回到原节奏",
+        "观察提速后能否找回原配速"
+      ],
+      "cues": [
+        "转换平顺",
+        "动作不过分放大"
+      ],
+      "common_errors": [
+        "突然起速变冲刺",
+        "转换时抬头耸肩"
+      ],
+      "correction_or_regression": "退阶：缩小速度差距。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          100,
+          200
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-043",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "800米前半程开局节奏",
+      "name_en": "800m Opening Rhythm",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000"
+      ],
+      "primary_purpose": "练习比赛开局的合理节奏而非一味加快",
+      "steps": [
+        "根据当前测试建立合理开局速度区间",
+        "以短段练习受控加速与稳定节奏",
+        "记录主观感受并与实际分段比较"
+      ],
+      "cues": [
+        "按能力设目标",
+        "不要第一段被别人带跑"
+      ],
+      "common_errors": [
+        "把目标终点成绩直接转成极端开局",
+        "缺基线仍给精确成绩保证"
+      ],
+      "correction_or_regression": "退阶：定速100米/200米练习。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          100,
+          200
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-044",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "疲劳时的放松提示复核",
+      "name_en": "Technique Check Under Mild Fatigue",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "intermediate",
+      "effort_band": "low",
+      "event_tags": [
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000"
+      ],
+      "primary_purpose": "观察轻度疲劳下技术线索是否稳定",
+      "steps": [
+        "在正常训练的后段增加一次10–20秒录像或教练观察",
+        "仅观察一到两个事前预设指标",
+        "发现明显动作失控则结束技术任务"
+      ],
+      "cues": [
+        "先观察后判断",
+        "不制造额外高疲劳"
+      ],
+      "common_errors": [
+        "为了录像再加高强度",
+        "把单次视频判成肌无力"
+      ],
+      "correction_or_regression": "退阶：只在新鲜状态录像对照。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": [
+          20,
+          40
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "不额外叠加疲劳测试；出现疼痛或明显衰竭时不继续。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-045",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "跑感节奏复述",
+      "name_en": "Pacing Sensation Recall",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "学习把主观速度感与客观成绩联系起来",
+      "steps": [
+        "跑后不看表先口述快慢感与RPE",
+        "再查看时间或配速",
+        "记录感觉与实际的差异"
+      ],
+      "cues": [
+        "先写感觉再看表",
+        "不用自责"
+      ],
+      "common_errors": [
+        "看到成绩后倒推改写感觉",
+        "把一次误差判能力差"
+      ],
+      "correction_or_regression": "退阶：仅记录RPE和主观难易，不评价。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": null,
+        "duration_s": [
+          15,
+          30
+        ],
+        "reps": null,
+        "rest_s": [
+          20,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-046",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "热身后短加速串联",
+      "name_en": "Easy Run to Strides",
+      "category_id": "middle",
+      "category_name": "中长跑节奏与转换",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "建立从慢跑到技术加速的低门槛流程",
+      "steps": [
+        "轻松跑至身体活动充分",
+        "做少量逐步加速跑",
+        "每次走回恢复并结束热身"
+      ],
+      "cues": [
+        "技术质量优先",
+        "加速渐进"
+      ],
+      "common_errors": [
+        "刚开始就全力冲",
+        "长跑后疲劳状态加高负荷"
+      ],
+      "correction_or_regression": "退阶：热身后仅做轻松节奏跑。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "trunk_stabilizers",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "hip_extensors",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-047",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "侧面跑姿录像",
+      "name_en": "Side-View Running Video",
+      "category_id": "observation",
+      "category_name": "技术观察与评估",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "观察触地位置与整体跑姿的可见线索",
+      "steps": [
+        "在稳定距离和近似速度下从侧面拍摄",
+        "每次只比较一个技术线索",
+        "记录拍摄速度、机位、鞋和日期"
+      ],
+      "cues": [
+        "同条件比较",
+        "视频不等于诊断"
+      ],
+      "common_errors": [
+        "不同速度视频直接比较",
+        "看一次就断定肌肉弱"
+      ],
+      "correction_or_regression": "退阶：只做正常训练录像，不改变技术。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": [
+          20,
+          40
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [
+        "手机/支架"
+      ],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "生物力学机制与技术教学，专项效果待验证",
+        "limits": "针对动作表现的练习假设；缺乏证明此单动作改善成绩的直接试验证据。",
+        "source_ids": [
+          "SRC-NSCA-SPRINT",
+          "SRC-GAIT-2022"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-048",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "正背面摆臂观察",
+      "name_en": "Front-Back Arm Observation",
+      "category_id": "observation",
+      "category_name": "技术观察与评估",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "观察摆臂是否明显跨中线或随疲劳改变",
+      "steps": [
+        "在安全路段正面或背面固定机位拍摄",
+        "选择前段和后段条件相近的画面",
+        "记录可见现象与无法确认的原因"
+      ],
+      "cues": [
+        "先描述现象",
+        "多角度才推理"
+      ],
+      "common_errors": [
+        "看到左右差异就说肌群无力",
+        "追求完全对称"
+      ],
+      "correction_or_regression": "退阶：仅口头记录摆臂主观感受。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": [
+          20,
+          40
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [
+        "手机/支架"
+      ],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "生物力学机制与技术教学，专项效果待验证",
+        "limits": "针对动作表现的练习假设；缺乏证明此单动作改善成绩的直接试验证据。",
+        "source_ids": [
+          "SRC-NSCA-SPRINT",
+          "SRC-GAIT-2022"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-049",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "新鲜与疲劳条件对照",
+      "name_en": "Fresh-Fatigued Technique Comparison",
+      "category_id": "observation",
+      "category_name": "技术观察与评估",
+      "skill_level": "intermediate",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "对比相似速度条件下可能出现的技术变化",
+      "steps": [
+        "在正常训练开头和后段录下相似距离",
+        "尽量记录速度/坡度/机位/鞋",
+        "评价是否出现重复稳定的可见变化"
+      ],
+      "cues": [
+        "对比条件一致",
+        "先说明不确定"
+      ],
+      "common_errors": [
+        "速度差很大仍直接对比动作",
+        "由视频决定伤病诊断"
+      ],
+      "correction_or_regression": "退阶：只做新鲜条件录像，待条件满足再比。",
+      "starting_dose": {
+        "sets": [
+          1,
+          2
+        ],
+        "distance_m": [
+          20,
+          40
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          180
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [
+        "手机/支架"
+      ],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "生物力学机制与技术教学，专项效果待验证",
+        "limits": "针对动作表现的练习假设；缺乏证明此单动作改善成绩的直接试验证据。",
+        "source_ids": [
+          "SRC-NSCA-SPRINT",
+          "SRC-GAIT-2022"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-050",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "踝步+自然跑组合",
+      "name_en": "Ankling-to-Run Transfer",
+      "category_id": "transfer",
+      "category_name": "技术-专项衔接",
+      "skill_level": "beginner",
+      "effort_band": "low",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "把踝步练习的节奏转换到自然跑",
+      "steps": [
+        "先做踝步约10米",
+        "无停顿转入轻松跑10–20米",
+        "留意动作是否仍自然、放松"
+      ],
+      "cues": [
+        "练完像正常跑",
+        "不复制夸张踝动作"
+      ],
+      "common_errors": [
+        "自然跑时仍极度踮脚",
+        "为了节奏猛踩地"
+      ],
+      "correction_or_regression": "退阶：先走10米再转慢跑。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          30,
+          60
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "low"
+      ]
+    },
+    {
+      "id": "fk-run-tech-051",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "A式行进+A式跳步组合",
+      "name_en": "March-to-Skip Progression",
+      "category_id": "transfer",
+      "category_name": "技术-专项衔接",
+      "skill_level": "beginner",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800",
+        "1500",
+        "3000",
+        "5000",
+        "10000",
+        "half_marathon",
+        "marathon"
+      ],
+      "primary_purpose": "从慢动作学习逐步过渡为连续协调",
+      "steps": [
+        "先做一段A-March",
+        "在质量稳定时做一段A-Skip",
+        "结束后回到自然小跑"
+      ],
+      "cues": [
+        "循序渐进",
+        "协调优先"
+      ],
+      "common_errors": [
+        "连续疲劳加量",
+        "抬膝越高越好"
+      ],
+      "correction_or_regression": "退阶：只做A-March。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "跳步可能增加足踝负荷；不适者停在行进版本。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": "SB-03"
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "beginner",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-052",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "墙上换腿+两点起跑",
+      "name_en": "Wall Switch to Start",
+      "category_id": "transfer",
+      "category_name": "技术-专项衔接",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "将加速静态协调与真实起跑关联",
+      "steps": [
+        "先做少量抵墙单次换腿",
+        "离墙做两点起跑并逐步加速10–20米",
+        "对比姿态线索而非照搬墙面角度"
+      ],
+      "cues": [
+        "由墙练到真正跑",
+        "起跑自然"
+      ],
+      "common_errors": [
+        "离墙后强迫固定同一前倾角",
+        "马上追求全速"
+      ],
+      "correction_or_regression": "退阶：抵墙单次换腿后改低速起步。",
+      "starting_dose": {
+        "sets": [
+          3,
+          5
+        ],
+        "distance_m": [
+          10,
+          30
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          60,
+          150
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    },
+    {
+      "id": "fk-run-tech-053",
+      "schema_version": "1.0.0",
+      "content_version": "1.0.0",
+      "kind": "running_technique",
+      "name_zh": "快腿节奏+放松跑",
+      "name_en": "Fast-Leg to Relaxed Stride",
+      "category_id": "transfer",
+      "category_name": "技术-专项衔接",
+      "skill_level": "intermediate",
+      "effort_band": "medium",
+      "event_tags": [
+        "100",
+        "200",
+        "400",
+        "800"
+      ],
+      "primary_purpose": "检验快腿协调提示能否进入自然跑",
+      "steps": [
+        "先做低/中位运腿10米",
+        "连续进入短距离放松跑",
+        "记录是否比普通热身更协调而非预设有效"
+      ],
+      "cues": [
+        "自然转换",
+        "动作幅度适中"
+      ],
+      "common_errors": [
+        "刻意跺地",
+        "将动作库练习当成比赛姿态本身"
+      ],
+      "correction_or_regression": "退阶：只做低位运腿加轻松跑。",
+      "starting_dose": {
+        "sets": [
+          2,
+          3
+        ],
+        "distance_m": [
+          10,
+          20
+        ],
+        "duration_s": null,
+        "reps": null,
+        "rest_s": [
+          45,
+          90
+        ]
+      },
+      "dose_note": "仅供教练按能力、训练日和疲劳情况调整的起始范围，非强制处方。",
+      "equipment": [],
+      "safety": {
+        "caution": "常规热身后进行；动作质量下降时结束本组。",
+        "stop_rule": "出现新发疼痛、头晕、胸痛、明显不适或动作持续失控时停止练习并评估；严重症状应及时求助医疗。",
+        "requires_supervision": false
+      },
+      "evidence": {
+        "classification": "教练常用练习／技术教学经验",
+        "limits": "可用于学习协调与技术提示，不能单独据此声称提高比赛成绩。",
+        "source_ids": [
+          "SRC-NSCA-HK",
+          "SRC-NSCA-SPRINT"
+        ]
+      },
+      "media": {
+        "status": "not_provided",
+        "type": "none",
+        "url": null,
+        "animation_storyboard_id": null
+      },
+      "body_region_roles": [
+        {
+          "region_key": "hip_flexors",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "gluteal_region",
+          "role": "anatomical_relevance_only"
+        },
+        {
+          "region_key": "calf_ankle",
+          "role": "anatomical_relevance_only"
+        }
+      ],
+      "review_status": "draft_needs_coach_review",
+      "muscle_overlay_note": "仅显示解剖关联示意，非肌电激活测量，不用于自动诊断薄弱肌群。",
+      "ui_badges": [
+        "intermediate",
+        "medium"
+      ]
+    }
+  ]
+}

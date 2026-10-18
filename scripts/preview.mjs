@@ -158,8 +158,15 @@ export function stopOutcome({ signalled, stubborn, after }) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** A zombie has no open sockets, although kill(pid, 0) still succeeds. */
+export function isZombieStat(stat) {
+  const end = String(stat).lastIndexOf(") ");
+  return end >= 0 && /^[ZX]\s/.test(String(stat).slice(end + 2));
+}
+
 function isAlive(pid) {
   try {
+    if (isZombieStat(readFileSync(`/proc/${pid}/stat`, "utf8"))) return false;
     process.kill(pid, 0);
     return true;
   } catch (err) {

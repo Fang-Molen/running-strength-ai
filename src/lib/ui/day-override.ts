@@ -22,6 +22,7 @@ export function planBand(e: ScheduleEntry, basis: "auto" | "time" | "distance" =
   if (e.actual.outcome === "missed") return "red"
   if (e.source === "custom" && e.status === "done" && e.unplanned) return "grey"
   if (e.actual.outcome === "as_planned") return "green"
+  if(e.actual.minutes==null && (bandBasisOf(e,basis)!=="distance" || e.actual.km==null)) return null
   const r = bandBasisOf(e, basis) === "distance" ? (e.actual.km ?? 0) / e.km! : (e.actual.minutes ?? 0) / Math.max(1, e.minutes)
   return r >= 0.8 && r <= 1.2 ? "green" : r >= 0.5 && r <= 1.5 ? "yellow" : "orange"
 }

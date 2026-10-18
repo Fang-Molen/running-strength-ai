@@ -1,0 +1,275 @@
+
+> test:cognition
+> node --import ./scripts/test-register.mjs --test src/lib/core/coach-cognition.test.ts src/lib/core/coach-local-first.test.ts src/lib/core/coach-local-safety.test.ts src/lib/core/coach-first-week.test.ts src/lib/core/storage-journal.test.ts src/lib/core/running-real-use.test.ts src/lib/core/coach-device-conflict.test.ts src/lib/core/coach-curriculum.test.ts src/lib/core/coach-guard-k13.test.ts
+
+TAP version 13
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-cognition.test.ts
+not ok 1 - src/lib/core/coach-cognition.test.ts
+  ---
+  duration_ms: 91.186785
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-cognition.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-curriculum.test.ts
+not ok 2 - src/lib/core/coach-curriculum.test.ts
+  ---
+  duration_ms: 93.748813
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-curriculum.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-device-conflict.test.ts
+not ok 3 - src/lib/core/coach-device-conflict.test.ts
+  ---
+  duration_ms: 81.130694
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-device-conflict.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-first-week.test.ts
+not ok 4 - src/lib/core/coach-first-week.test.ts
+  ---
+  duration_ms: 72.695216
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-first-week.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-guard-k13.test.ts
+not ok 5 - src/lib/core/coach-guard-k13.test.ts
+  ---
+  duration_ms: 71.896096
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-guard-k13.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-local-first.test.ts
+not ok 6 - src/lib/core/coach-local-first.test.ts
+  ---
+  duration_ms: 78.966821
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-local-first.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/coach-local-safety.test.ts
+not ok 7 - src/lib/core/coach-local-safety.test.ts
+  ---
+  duration_ms: 81.977032
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/coach-local-safety.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/running-real-use.test.ts
+not ok 8 - src/lib/core/running-real-use.test.ts
+  ---
+  duration_ms: 81.152923
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/running-real-use.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/run_main:123
+#     triggerUncaughtException(
+#     ^
+# Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typescript' imported from /mnt/data/fangkun-v4-candidate/scripts/test-loader.mjs
+# Did you mean to import "typescript/lib/typescript.js"?
+#     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)
+#     at packageResolve (node:internal/modules/esm/resolve:768:81)
+#     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+#     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+#     at nextResolve (node:internal/modules/esm/hooks:748:28)
+#     at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+#     at ModuleLoader.resolve (node:internal/modules/esm/loader:685:35)
+#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+#     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+#   code: 'ERR_MODULE_NOT_FOUND'
+# }
+# Node.js v22.16.0
+# Subtest: src/lib/core/storage-journal.test.ts
+not ok 9 - src/lib/core/storage-journal.test.ts
+  ---
+  duration_ms: 86.210227
+  type: 'test'
+  location: '/mnt/data/fangkun-v4-candidate/src/lib/core/storage-journal.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 0
+# fail 9
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 274.046221

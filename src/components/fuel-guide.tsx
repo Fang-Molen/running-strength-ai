@@ -1,10 +1,12 @@
-import { Model } from "@/components/bodylab/bodylab-panel"
+import { FoodPhotoReview } from "./food-photo-review";
+import { lazy, Suspense } from "react"
+const Model = lazy(() => import("@/components/bodylab/bodylab-panel").then(m => ({default:m.Model})))
 import { useEffect, useMemo, useState } from "react"
 import { Camera, ChevronDown, Droplets, Utensils } from "lucide-react"
 import type { Profile } from "@/lib/strength/profile"
 import { computePlan } from "@/lib/nutrition/calc"
 import { FuelPanel } from "@/components/fuel-panel"
-import { addEntry, loadEntries, todayEntries } from "@/lib/nutrition/log"
+import { nutrientOf, addEntry, addEntriesBatch, loadEntries, todayEntries } from "@/lib/nutrition/log"
 import { bodyTrend } from "@/lib/nutrition/body"
 import { parseFoodLine, type FoodHit } from "@/lib/nutrition/lookup"
 import { DAY_LABEL, GOAL_AIM, GOAL_EXAMPLES, GOAL_LABEL, MEAL_EXAMPLES, QUICK_FOODS, fuelFlags, goalTargets, homeTips, mealByHour, weightTrendAdvice, type FuelGoal, sessionTiming, type FuelFlag, type Tip } from "@/lib/nutrition/fuel-guide"
@@ -20,7 +22,7 @@ function loadSigns(): Signs { try { return JSON.parse(localStorage.getItem(SIGNS
 function useFuel(profile: Profile, revision = 0, goal: FuelGoal = "keep", servingAdjust = 0) {
   const [state, setState] = useState<{ sessions: ReturnType<typeof confirmedSessionsOn>; signs: Signs; logged: { kcal: number; trainingDay: boolean }[]; week: number | null }>({ sessions: [], signs: {}, logged: [], week: null })
   useEffect(() => {
-    const byDay = new Map<string, number>(); for (const e of loadEntries()) byDay.set(e.date, (byDay.get(e.date) ?? 0) + e.kcal)
+    const byDay = new Map<string, number>(); for (const e of loadEntries()) { const kcal=nutrientOf(e,"kcal"); if(kcal!==null) byDay.set(e.date, (byDay.get(e.date) ?? 0) + kcal) }
     const days = Array.from({ length: 7 }, (_, i) => localDay(new Date(Date.now() - i * 864e5)))
     setState({ sessions: confirmedSessionsOn(localDay()), signs: loadSigns(), logged: days.filter((d) => byDay.has(d)).map((d) => ({ kcal: byDay.get(d)!, trainingDay: confirmedSessionsOn(d).length > 0 })), week: bodyTrend().weekDelta })
   }, [revision])
@@ -80,20 +82,23 @@ export function QuickFoodLog({ onSaved }: { onSaved: () => void }) {
   const [hits, setHits] = useState<FoodHit[]>([])
   const [status, setStatus] = useState("")
   const [eaten, setEaten] = useState({ kcal: 0, protein: 0 })
-  useEffect(() => { const r = todayEntries(); setEaten({ kcal: r.reduce((s, e) => s + e.kcal, 0), protein: Math.round(r.reduce((s, e) => s + (e.protein ?? 0), 0)) }) }, [stamp])
-  const save = (list: FoodHit[]) => { const meal = mealByHour(new Date().getHours()); let ok = 0; for (const h of list) if (addEntry({ meal, name: h.name, grams: h.grams, kcal: h.kcal, protein: h.protein, label: h.label })) ok++; if (ok) { setStamp(Date.now()); onSaved(); setStatus(`已记入${meal} ${ok} 项`) } }
+  useEffect(() => { const update = () => setStamp(Date.now()); window.addEventListener("fk-food-changed", update); return () => window.removeEventListener("fk-food-changed", update); }, []);
+  useEffect(() => { const r = todayEntries(); setEaten({ kcal: r.reduce((s, e) => s + (e.kcal ?? 0), 0), protein: Math.round(r.reduce((s, e) => s + (e.protein ?? 0), 0)) }) }, [stamp])
+  const save = (list: FoodHit[]) => { const meal = mealByHour(new Date().getHours()); const saved = addEntriesBatch(list.map(h => ({ meal, name: h.name, grams: h.grams, kcal: h.kcal, protein: h.protein, label: h.label }))); if (!saved) { setStatus("保存失败，输入已保留。"); return false; } setStamp(Date.now()); onSaved(); setStatus(`已记入${meal} ${list.length}项`); return true; }
+
   return <section className="home-card mt-3 p-4 text-sm" aria-label="快速记饮食">
     <div className="flex items-center justify-between"><h2 className="text-base font-bold">快速记一笔</h2><SavedBadge stamp={stamp} /></div>
     <p className="mt-1 text-xs text-muted">今天已记 {eaten.kcal} kcal · 蛋白 {eaten.protein} g · 按现在时间自动归到{mealByHour(new Date().getHours())}</p>
     <div className="fk-chips mt-2 flex-wrap">{QUICK_FOODS.map((q) => <button key={q} type="button" className="fk-chip" onClick={() => save(parseFoodLine(q))}>+ {q}</button>)}</div>
     <div className="mt-2 flex gap-2">
       <input value={text} onChange={(e) => { setText(e.target.value); setHits(e.target.value.trim() ? parseFoodLine(e.target.value) : []) }} placeholder="如：牛肉面一碗，卤蛋1个" className="fk-cell min-h-11 min-w-0 flex-1" aria-label="输入吃了什么" />
-      <label className="fk-chip cursor-pointer" aria-label="截图识别"><Camera className="size-4" /><input type="file" accept="image/*" className="sr-only" onChange={async (e) => { const file = e.target.files?.[0]; e.target.value = ""; if (!file) return; try { const raw = await ocr(file, setStatus); const lines = raw.split(/\n/).map((l) => l.replace(/[¥￥]\s*[\d.]+/g, "").trim()).filter((l) => /[\u4e00-\u9fa5]{2,}/.test(l)).join("，"); const found = parseFoodLine(lines); setHits(found); setStatus(found.length ? "识别到以下食物，核对后加入" : "没认出食物名，请手动输入"); } catch (err) { setStatus(err instanceof Error ? err.message : "识别失败") } }} /></label>
+
     </div>
+    <FoodPhotoReview meal={mealByHour(new Date().getHours())} onSaved={() => { setStamp(Date.now()); onSaved(); }} />
     {hits.length ? <div className="mt-2 rounded-xl border border-line p-2"><ul className="space-y-0.5 text-xs">{hits.map((h, i) => <li key={i}>{h.name} {h.label} · {h.kcal} kcal · 蛋白 {h.protein} g</li>)}</ul>
-      <button type="button" className="fk-primary mt-2 min-h-10 w-full" onClick={() => { save(hits); setHits([]); setText("") }}>加入 {hits.length} 项</button></div> : null}
+      <button type="button" className="fk-primary mt-2 min-h-10 w-full" onClick={() => { if (save(hits)) { setHits([]); setText("") } }}>加入 {hits.length} 项</button></div> : null}
     {status ? <p className="mt-1 text-xs text-muted" role="status">{status}</p> : null}
-    <p className="mt-1 text-[11px] text-muted">热量来自内置食物库估算；外卖截图只识别菜名，份量请自己核对。</p>
+    <p className="mt-1 text-[11px] text-muted">文字快捷记录使用内置估算；照片识别需核对品牌、份量和营养后保存。</p>
   </section>
 }
 
@@ -105,7 +110,7 @@ function loadGoal(profile: Profile): GoalPref { try { const v = JSON.parse(local
 function DietFigure({ profile }: { profile: Profile }) {
   const h = Number(profile.heightCm), w = Number(profile.weightKg)
   if (!(h >= 140 && w >= 35)) return null
-  return <div className="h-56 w-full"><Model profile={{ heightCm: h, massKg: w, bodyFatPct: Number(profile.bodyFat) || (profile.sex === "female" ? 27 : 18), frame: 0, sex: profile.sex === "female" ? "female" : "male" }} yaw={0} frameHeight={h / 100} onYaw={() => {}} /></div>
+  return <div className="h-56 w-full"><Suspense fallback={<p className="keep text-xs">正在打开人物参考…</p>}><Model profile={{ heightCm: h, massKg: w, bodyFatPct: Number(profile.bodyFat) || (profile.sex === "female" ? 27 : 18), frame: 0, sex: profile.sex === "female" ? "female" : "male" }} yaw={0} frameHeight={h / 100} onYaw={() => {}} /></Suspense></div>
 }
 export function DietPage({ profile, onEditProfile, active }: { profile: Profile; onEditProfile: () => void; active: boolean }) {
   const [mounted, setMounted] = useState(false)

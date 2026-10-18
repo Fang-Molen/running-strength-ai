@@ -1,0 +1,78 @@
+方坤 R173 量化 API 与待执行验收方案
+当前状态：所有程序检查均未执行，须取得本阶段测试授权。
+
+一、调用方式
+
+导入：
+import { calculateQuantitativeRule, type QuantInput } from './coach-quantitative.ts'
+
+示例（仅调用示例，未运行；全部为合成数据）：
+const common = {
+  athleteId: 'synthetic-athlete', kind: 'SELF_REPORT' as const,
+  at: '2026-10-10T10:00:00Z', recordedAt: '2026-10-10T10:00:00Z',
+  protocol: 'whole-session-self-report', revision: 'synthetic-v1',
+}
+const input: QuantInput = {
+  athleteId: 'synthetic-athlete', asOf: '2026-10-10T10:00:00Z',
+  conditions: ['WHOLE_SESSION'], conditionSourceIds: ['synthetic-scope-confirmation'],
+  values: {
+    minutes: { ...common, id: 'synthetic-duration', value: 50, unit: 'min', sourceIds: ['synthetic-duration'] },
+    rpe: { ...common, id: 'synthetic-rpe', value: 7, unit: '/10', sourceIds: ['synthetic-rpe'] },
+  },
+}
+const result = calculateQuantitativeRule('LOAD_SRPE', input)
+// 待核对预期：AVAILABLE，350 AU；医疗许可与计划写入均为 false。
+
+所有 92 个调用示例及期望值在 src/lib/core/__fixtures__/r173-quantitative.json。逐条 API 字段、条件和实现位置见 formula-specifications.json 与 rule-status.json。定义为 BLOCKED/NOT_APPLICABLE 的规则没有数值入口，调用统一返回 UNAVAILABLE。
+
+二、输入/输出约定
+
+values 为命名事实，series 为有序原始观察。每项带运动员 ID、原值、单位、ACTUAL/SELF_REPORT/PLAN/ESTIMATE、事件时间、记录时间、来源 ID、修订版本及协议。时间须为含时区的 ISO 时间；asOf 由调用方提供，不读系统时钟。
+
+PLAN 仅用于明确的计划目标、时间参考或声明的比较区间，不能作为实际量或实际 RPE。ESTIMATE 仅在能量可用性与同版本能力模型变化中允许，并保留估算标记；其他“实际”入口拒绝估计值。估算型输出仍明确标记，不能代替实测阈值。
+
+完整窗口需 startDay/endDay/complete 和来源回执。每日 EWMA 需完整连续日；明确休息日为 0，未确认日为 UNKNOWN，不填零。周对比需相邻完整周且口径一致。历史比较需要一致协议，不能将手计、电计、不同距离等自动换算。
+
+conditions 是事实适配层确认的前提，并须带 conditionSourceIds；不是本函数自动推断的事实，也不是对用户开放的绕过安全许可开关。尤其 CLINICAL_PERMISSION 只能从原有临床许可门控传入，本函数绝不授予该许可。
+
+分段需完整结构标识和序号，一次调用只允许同一轮。ALL_SEGMENTS_COMPLETED 应由原计划槽位与实际记录对照确认；本函数不能仅从传入的若干秒数知道是否漏传最后一段。原休息字段与整个训练树继续由 Training Fact Layer 保存，不迁移至数值数组。
+
+返回中的 sourceRefs 保留来源版本；validSamples 为被读取的不同有效输入记录 ID 数，不等同于已完成训练次数。基线样本数等另列 metrics。READY_MISSING 的有效数特指当前问题已知字段数，覆盖率不是能力或医学评分。缺少 revision 会给出限制，不虚构版本。
+
+AVAILABLE 仅表示在声明前提下有计算结果，仍可能带部分缺失，如 Hooper 某项无历史基线。UNAVAILABLE 时 value=null，missing 给原因。某些已读原始或中间信息可能保留，消费者必须先检查 status，不能当作完整可用结果。
+
+使用规则：只从当前有效更正投影取值，保留全部源事实与旧修订。调用方负责去重、真实来源认证、个人基线资格、完整任务分类、测量误差与临床许可；同字符串 protocol 并非科学可比性证明。任何计算输出都不能直接调用计划写入器或改变长期能力评分。
+
+三、已准备、尚未运行的程序检查
+
+新增测试代码：src/lib/core/coach-quantitative.test.ts。
+92 个数值参考 + 41 个边界用例 + 1 个注册表覆盖用例 = 134 项。
+每个数值用例核对：数值/单位/中间量、来源与公式、输入不变、重复调用一致、计划与医疗权限始终为 false。数值容差为 max(1, abs(expected))×1e−9；sRPE 遵循旧函数两位小数输出。
+
+主要参考值：50 分钟×RPE7=350 AU；39/38/37/36 秒样本 CV≈3.44265%；42 秒对计划40秒偏差5%；前200米26秒后200米29秒相差3秒；三点线性合成 CS=4m/s、D′=200m；60kg×5 次 Epley e1RM=70kg。它们是待比对期望，不代表程序已正确输出。
+
+边界覆盖：缺失和已知零、计划/估计值冒充实际、零分母、缺日、重复日期、跨运动员、未来/倒置记录时间、单位和协议不同、跨轮/缺结构、无临床许可、SEM 条件不足、缺上界、缺分类、缺基线、来源修订。完整清单列于 待执行用例清单.csv。
+
+获授权后的建议执行顺序（当前未执行任何命令）：
+1. 记录当前源码包哈希、Node/npm 版本和实际开始时间；使用独立测试目录、合成数据与隔离存储。优先按原锁文件准备依赖，不能向共享 node_modules 链接安装。
+2. npm run test:r14-quantitative
+   该命令先跑新增量化测试及已有负荷测试，再跑现有 R14 聊天测试；包括具体计算进入中文回答的断言。也可仅用 npm run test:quantitative 做量化模块首轮检查，后续只跑尚未执行或有变更的定向项。
+3. npm run typecheck
+   记录原有与新增错误；编译错误不得标为测试通过。此检查也需本次程序检查授权。
+4. 收敛后，在完整回归获得授权且准备完成时执行一次 npm test。新的量化测试已接入 test:cognition，完整入口会包含它；不要反复跑无变化的全套。
+
+仅需一次清楚覆盖上述“定向测试+类型检查”的确认，无需对每个用例重复询问。全量回归、正式集成与部署不因数值测试通过而自动获准。本离线能力无需调用任何真实云端模型。
+
+四、后续浏览器/闭环验收计划（仅设计，未实现为本次 134 项测试）
+
+使用全新合成运动员及隔离浏览器配置，预先安装/缓存应用后断网。监控请求，确认计算、检索和基础回答无外部模型请求；不能以源码中未见 fetch 代替网络验收。
+
+保存合成训练→本地复盘→提出下一次观察→刷新→再保存可比训练→更新/削弱/撤回假设；更正旧记录后复核依赖，且正式计划内容与版本不变。重复包含 200m×4×2、两级休息、缺一段计时和多 Component 的课程。
+
+对照同一课程的明确目的、未知目的和仅周期不同情形；不凭周期造目的。核查部分数据仍有具体数字、解释与反证，不把掉速直接诊断为有氧/肌力问题。急症、疼痛、伤后回归与 REDs 应优先进入原安全路由，历史症状不能因当前一句话省略而消失。
+
+R167 的 40 个场景仅作设计引用，随包附原引用表并标记未执行；本次 134 项纯函数测试不能冒充这 40 个场景的完整通过。
+
+五、结果记录要求
+
+当前统一 NOT_RUN，observed/exitCode/startTime 留空。运行后按源码哈希记录每项真实结果、实际输出、日志路径、失败原因及复跑范围。不存在“先按期望值写 PASS”的步骤。数值测试通过也不证明研究阈值有效、临床安全已获许可或整个产品闭环完成。

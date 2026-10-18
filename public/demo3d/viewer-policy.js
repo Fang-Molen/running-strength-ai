@@ -29,3 +29,29 @@ export function muscleHighlights(muscles, primary = [], secondary = [], selected
   });
   return hi;
 }
+
+/** Fit a real bounding box at every permitted orbit angle. Unlike a hardcoded
+ * distance this also accounts for narrow/landscape canvases and head/foot room.
+ * Returns a horizontal distance for placeRestrictedView's slight elevation.
+ * @param {number[]} min @param {number[]} max @param {number} aspect
+ * @param {number} verticalFov @param {number} angle */
+export function fitAnatomyBounds(min, max, aspect, verticalFov = 30, angle = 0) {
+  const center = min.map((v, i) => (v + max[i]) / 2);
+  const tanV = Math.tan(rad(verticalFov) / 2) * .84;
+  const tanH = tanV * Math.max(.1, aspect);
+  let distance = .1;
+  for (let yaw = angle - CAMERA_LIMITS.horizontal; yaw <= angle + CAMERA_LIMITS.horizontal; yaw += 5) {
+    const a = rad(yaw), sa = Math.sin(a), ca = Math.cos(a);
+    for (let elevation = 0; elevation <= 90 - CAMERA_LIMITS.minPolar; elevation += 2) {
+      const e = rad(elevation), se = Math.sin(e), ce = Math.cos(e);
+      for (const x of [min[0], max[0]]) for (const y of [min[1], max[1]]) for (const z of [min[2], max[2]]) {
+        const p = [x - center[0], y - center[1], z - center[2]];
+        const near = p[0] * sa * ce + p[1] * se + p[2] * ca * ce;
+        const right = p[0] * ca - p[2] * sa;
+        const up = -p[0] * sa * se + p[1] * ce - p[2] * ca * se;
+        distance = Math.max(distance, near + Math.max(Math.abs(right) / tanH, Math.abs(up) / tanV));
+      }
+    }
+  }
+  return { center, distance: distance * 1.02 };
+}

@@ -1,0 +1,116 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { garminActivity, runGarminSyncJob, type GarminReply, type GarminSyncReport } from './garmin-sync-runner'
+import { saveDeviceRows, activityDraftId } from '../ui/device-store'
+import { loadConfirmedTrainingImports } from '../core/training-import'
+import { setStoreBackend } from '../core/storage'
+import { setEventContext } from '../core/events'
+import { loadTrainingActivities } from '../ui/training-read-model'
+import { garminScopeKey, garminViewKey } from './garmin-view-scope'
+import { bindGarminAccount } from './garmin-account-owner'
+
+const activity = { activityId: 123, activityType: { typeKey: 'running' }, startTimeGMT: '2026-10-17 01:02:03', duration: 1234.5, distance: 5000.25, calories: 0 }
+const status = (name = 'synthetic-user'): GarminReply => ({ status: 200, body: { loggedIn: true, region: 'cn', profile: { displayName: name } } })
+function fixture() {
+  let subject = 'synthetic', generation = 0, calls = 0
+  const saved: any[] = [], views: unknown[] = [], reports: GarminSyncReport[] = []
+  const api = async (path: string): Promise<GarminReply> => {
+    calls++
+    if (path === 'status') return status()
+    if (path.includes('activities/search')) return { status: 200, body: [activity] }
+    const day = path.match(/\d{4}-\d{2}-\d{2}/)![0]
+    return { status: 200, body: { calendarDate: day, totalSteps: 0, averageStressLevel: 0, bodyBatteryHighestValue: 0,
+      hrvSummary: { calendarDate: day, lastNightAvg: 60 }, dailySleepDTO: { calendarDate: day, sleepTimeSeconds: 23400 } } }
+  }
+  const host = { api, subject: () => subject, generation: () => generation, bindAccount: (_scope: string, _subject: string) => true, day: '2026-10-18', now: '2026-10-18T12:00:00Z',
+    save: (health: any[], activities: any[]) => { saved.push({ health, activities }); return { saved: health.length + activities.length, skipped: 0, errors: [] } },
+    saveView: (list: unknown[]) => { views.push(list) }, report: (r: GarminSyncReport) => { reports.push(structuredClone(r)) }, progress: (_message: string) => {} }
+  return { host, saved, views, reports, switchSubject: () => { subject = 'other' }, switchAccount: () => { generation++ }, calls: () => calls }
+}
+test('Garmin mapping preserves decimal units, valid zero and stable source ID', () => {
+  const a = garminActivity(activity, 'cn:synthetic')!
+  assert.equal(a.durationSec, 1234.5); assert.equal(a.distanceM, 5000.25); assert.equal(a.calories, 0)
+  assert.equal(a.startIso, '2026-10-17T01:02:03.000Z')
+  assert.equal(garminActivity({ ...activity, duration: 1300 }, 'cn:synthetic')!.sourceIdentity, a.sourceIdentity)
+  assert.notEqual(garminActivity(activity, 'com:synthetic')!.sourceIdentity, a.sourceIdentity)
+  assert.equal(garminActivity({ ...activity, startTimeGMT: 'bad' }, 'cn:synthetic'), null)
+})
+test('successful synthetic sync reports actual coverage, 6.5h sleep and zero observations', async () => {
+  const f = fixture(), r = await runGarminSyncJob(f.host)
+  assert.equal(r.status, 'ok'); assert.equal(r.coverageDays.length, 14); assert.equal(r.healthDaysRequested, 14)
+  assert.equal(r.completeHistory, false); assert.equal(r.activityRows, 1); assert.equal(f.reports.length, 1)
+  assert.equal(f.saved[0].health.find((r: any) => r.metric === 'SLEEP').value, 6.5)
+  assert.equal(f.saved[0].health.find((r: any) => r.metric === 'BODY_BATTERY').value, 0)
+})
+test('duplicate activity ID is one record, different IDs with same measurements stay separate', async () => {
+  const f = fixture(), base = f.host.api
+  f.host.api = p => p.includes('activities/search') ? Promise.resolve({ status: 200, body: [activity, activity, { ...activity, activityId: 124 }] }) : base(p)
+  const r = await runGarminSyncJob(f.host); assert.equal(r.activityRows, 2); assert.equal(f.saved[0].activities.length, 2)
+})
+test('divergent duplicate activity IDs block writes rather than select a value', async () => {
+  const f = fixture(), base = f.host.api
+  f.host.api = p => p.includes('activities/search') ? Promise.resolve({ status: 200, body: [activity, { ...activity, duration: 5 }] }) : base(p)
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'fail'); assert.equal(f.saved.length, 0); assert.equal(f.reports.length, 1)
+})
+test('partial health endpoint failure stays partial while preserving valid data', async () => {
+  const f = fixture(), base = f.host.api
+  f.host.api = p => p.includes('hrv-service') ? Promise.resolve({ status: 429, body: {} }) : base(p)
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'partial'); assert.equal(r.errors.length, 14)
+})
+test('all failed endpoints never report successful sync', async () => {
+  const f = fixture(); f.host.api = async p => p === 'status' ? status() : { status: 500, body: {} }
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'fail'); assert.equal(r.saved, 0)
+})
+test('HTTP200 with no available fields is empty, not successful record coverage', async () => {
+  const f = fixture(); f.host.api = async p => p === 'status' ? status() : p.includes('activities/search') ? { status: 200, body: [] } :
+    { status: 200, body: { calendarDate: p.match(/\d{4}-\d{2}-\d{2}/)![0] } }
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'empty'); assert.deepEqual(r.coverageDays, [])
+})
+test('login expiry produces an attempt report without writing any new data', async () => {
+  const f = fixture(), base = f.host.api
+  f.host.api = p => p.includes('hrv-service') ? Promise.resolve({ status: 401, body: {} }) : base(p)
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'auth'); assert.equal(f.saved.length, 0); assert.equal(f.reports.length, 1)
+})
+test('subject switch during sync discards rows and does not write old report into new user', async () => {
+  const f = fixture(), base = f.host.api
+  f.host.api = p => { if (p.includes('activities/search')) f.switchSubject(); return base(p) }
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'stale'); assert.equal(f.saved.length, 0); assert.equal(f.reports.length, 0)
+})
+test('logout generation change prevents late response writes', async () => {
+  const f = fixture(), base = f.host.api
+  f.host.api = p => { if (p.includes('dailySleepData')) f.switchAccount(); return base(p) }
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'stale'); assert.equal(f.views.length, 0)
+})
+test('account changes in another tab detected by final status fence', async () => {
+  const f = fixture(), base = f.host.api; let statuses = 0
+  f.host.api = p => p === 'status' ? Promise.resolve(status(++statuses === 1 ? 'synthetic-user' : 'another')) : base(p)
+  const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'stale'); assert.equal(f.saved.length, 0)
+})
+test('a known account cannot be imported into another athlete', async () => {
+  const f = fixture(); f.host.bindAccount = () => false
+  assert.equal((await runGarminSyncJob(f.host)).status, 'fail'); assert.equal(f.saved.length, 0)
+})
+test('transport and report storage failures are explicit', async () => {
+  const f = fixture(); f.host.api = async () => { throw Error('offline') }
+  assert.equal((await runGarminSyncJob(f.host)).status, 'fail'); assert.equal(f.reports.length, 1)
+  const g = fixture(); g.host.report = () => { throw Error('quota') }
+  const r = await runGarminSyncJob(g.host); assert.equal(r.status, 'fail'); assert.ok(r.errors.some(e => e.includes('报告保存失败')))
+})
+test('real local import service deduplicates stable source ID, keeps corrections, and unifies raw view identity', () => {
+  const data = new Map<string, string>(), store = { getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => { data.set(k, v) }, keys: () => [...data.keys()] }
+  setStoreBackend(store); setEventContext({ athleteId: 'synthetic' }); const old = Object.getOwnPropertyDescriptor(globalThis, 'localStorage'); Object.defineProperty(globalThis, 'localStorage', { value: store, configurable: true })
+  try {
+    assert.equal(bindGarminAccount('cn:synthetic', 'synthetic'), true)
+    assert.equal(bindGarminAccount('cn:synthetic', 'other'), false)
+    const a = garminActivity(activity, 'cn:synthetic')!
+    assert.match(activityDraftId(a), /^[\w-]{1,55}$/)
+    assert.equal(saveDeviceRows([], [a]).saved, 1); assert.equal(saveDeviceRows([], [a]).skipped, 1)
+    assert.equal(loadConfirmedTrainingImports().length, 1)
+    assert.equal(saveDeviceRows([], [{ ...a, durationSec: 999 }]).errors.length, 1)
+    assert.equal(loadConfirmedTrainingImports()[0].durationSeconds.value, 1234.5)
+    store.setItem(garminScopeKey(), 'synthetic-scope')
+    store.setItem(garminViewKey('fk-garmin-acts-v1'), JSON.stringify({ 123: { id: 123, start: a.startIso, dist: a.distanceM, dur: a.durationSec, type: 'running', sourceIdentity: a.sourceIdentity } }))
+    assert.equal(loadTrainingActivities().length, 1)
+    setEventContext({ athleteId: 'other' }); assert.equal(loadTrainingActivities().length, 0)
+  } finally { setStoreBackend(null); setEventContext({ athleteId: 'local' }); if (old) Object.defineProperty(globalThis, 'localStorage', old); else Reflect.deleteProperty(globalThis, 'localStorage') }
+})

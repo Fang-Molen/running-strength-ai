@@ -1,0 +1,5 @@
+[
+ {"id":"GAP-400-DOSE","event":"400米","question":"不同训练经验与赛期的速度耐力剂量，需要干预证据及不良事件核验","status":"GAP","url":null,"methodNotes":null,"blindTestEvidence":null,"reviewer":null,"version":1},
+ {"id":"GAP-400-TRANSFER","event":"400米→800米","question":"200米重复跑恢复是否可迁移到600米间歇，缺个人可比纵向记录","status":"GAP","url":null,"methodNotes":null,"blindTestEvidence":null,"reviewer":null,"version":1},
+ {"id":"GAP-SAFETY-LEXICON","event":"ALL","question":"中文时态、否定、急性/既往心理和躯体风险词典，需要独立专业安全审核","status":"GAP","url":null,"methodNotes":null,"blindTestEvidence":null,"reviewer":null,"version":1}
+]

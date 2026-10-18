@@ -1,4 +1,6 @@
-import { dispatchEvent } from "@/lib/core/events";
+import { dispatchEvent, loadEvents, currentAthleteId } from "@/lib/core/events";
+import { validDate } from '../ui/fieldwork-plan-drafts';
+import type { NutritionSnapshot } from './entry-workflow';
 
 export type Meal = "早餐" | "午餐" | "晚餐" | "加餐";
 
@@ -7,18 +9,29 @@ export type FoodEntry = {
   date: string;
   meal: Meal;
   name: string;
-  grams: number;
-  kcal: number;
+  grams?: number;
+  kcal: number | null;
   protein?: number;
-  label?: string;
-  photo?: string;
-  carb?: number | null;
+  carb?: number | null; fiber?: number | null; foodId?: string; amount?: number; unit?: string; photo?: string;
+  nutritionSource?: {kind:string;model?:string;at?:string;evidence:string;uncertainty:string;reviewed:boolean};
+  carbs?: number;
   fat?: number | null;
-  fiber?: number | null;
-  foodId?: string;
-  amount?: number;
-  unit?: string;
+  athleteId?: string;
+  source?: "MANUAL";
+  recordedAt?: string;
+  label?: string;
+  /** User-entered actual eating time; absent means unknown. */
+  eatenAt?: string;
+  revisionId?: string;
+  nutritionSnapshot?: NutritionSnapshot;
+  foodSnapshot?: {foodId:string;brand:string;region:string;variant:string;amount:number;unit:"g"|"份";nutrients:Record<"kcal"|"protein"|"carbs"|"fat",number|null>&{fiber?:number|null};source:{kind:string;status:string;uri:string|null;notes:string;checkedOn:string|null};note:string};
 };
+
+export function eatenAtFromClock(clock:string,day=new Date()):string|undefined{
+ const m=clock.trim().match(/^(\d{1,2}):(\d{2})$/);if(!m||!Number.isFinite(day.getTime()))return undefined
+ const h=Number(m[1]),minute=Number(m[2]);if(h>23||minute>59)return undefined
+ const d=new Date(day);d.setHours(h,minute,0,0);return d.toISOString()
+}
 
 export const MEALS: Meal[] = ["早餐", "午餐", "晚餐", "加餐"];
 
@@ -30,22 +43,37 @@ function today(): string {
 }
 
 export function loadEntries(): FoodEntry[] {
-  if (typeof localStorage === "undefined") return [];
+  let legacy: FoodEntry[] = [];
   try {
-    const parsed = JSON.parse(localStorage.getItem(KEY) || "[]") as FoodEntry[];
-    return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item.kcal === "number").slice(-200) : [];
-  } catch {
-    return [];
+    const parsed = JSON.parse(typeof localStorage === "undefined" ? "[]" : localStorage.getItem(KEY) || "[]") as FoodEntry[];
+    legacy = Array.isArray(parsed) ? parsed.filter((item) => item && validFoodEntry(item) && (item.athleteId ? item.athleteId === currentAthleteId() : currentAthleteId() === "local")) : [];
+  } catch { /* Preserve unreadable legacy storage. */ }
+  const entries = new Map(legacy.map(row => [row.id, row]));
+  for (const event of loadEvents()) {
+    if (event.event_type !== "NUTRITION_RECORDED" || event.athlete_id !== currentAthleteId()) continue;
+    const row = event.payload.foodEntry as FoodEntry | undefined;
+    if (row && validFoodEntry(row) && row.athleteId === event.athlete_id) entries.set(row.id, row);
+    for (const item of (Array.isArray(event.payload.foodEntries) ? event.payload.foodEntries : []) as FoodEntry[]) {
+      if (validFoodEntry(item) && item.athleteId === event.athlete_id) entries.set(item.id, item);
+    }
+    for (const id of (Array.isArray(event.payload.removedFoodIds) ? event.payload.removedFoodIds : [])) if (typeof id === 'string') entries.delete(id);
+    if (typeof event.payload.removedFoodId === "string") entries.delete(event.payload.removedFoodId);
   }
+  return [...entries.values()];
 }
 
+export function foodChanged() { if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-food-changed')); }
 export function saveEntries(entries: FoodEntry[]): boolean {
   try {
-    localStorage.setItem(KEY, JSON.stringify(entries.slice(-5000)));
-    return true
-  } catch {
-    return false
-  }
+    // Do not destroy a corrupt legacy store, foreign athletes or immutable corrections.
+    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(KEY);
+    if (raw) { const old = JSON.parse(raw); if (!Array.isArray(old) || old.some(r => !validFoodEntry(r))) return false; }
+    if (entries.some(r => !validFoodEntry(r) || (r.athleteId && r.athleteId !== currentAthleteId()))) return false;
+    const rows = entries.map(r => ({...r, athleteId:currentAthleteId()}));
+    const removedFoodIds = loadEntries().filter(r => !rows.some(n => n.id === r.id)).map(r => r.id);
+    if (!dispatchEvent('NUTRITION_RECORDED', {foodEntries:rows, removedFoodIds})) return false;
+    foodChanged(); return true;
+  } catch { return false; }
 }
 
 export function todayEntries(entries: FoodEntry[] = loadEntries()): FoodEntry[] {
@@ -54,40 +82,53 @@ export function todayEntries(entries: FoodEntry[] = loadEntries()): FoodEntry[] 
 }
 
 export function todayEaten(entries?: FoodEntry[]): number {
-  return todayEntries(entries).reduce((sum, item) => sum + item.kcal, 0);
+  return todayEntries(entries).reduce((sum, item) => sum + (item.kcal ?? 0), 0);
 }
 
 export function addEntry(entry: Omit<FoodEntry, "id" | "date">, date?: string): FoodEntry[] | null {
-  const row = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, date: date ?? today() }
+  if(entry.eatenAt!==undefined&&!Number.isFinite(Date.parse(entry.eatenAt)))return null
+  const row = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`, date: date ?? today(), athleteId:currentAthleteId(), recordedAt:new Date().toISOString() }
   const next = [...loadEntries(), row]
   if (!saveEntries(next)) return null
-  dispatchEvent("NUTRITION_RECORDED", { id: row.id, meal: row.meal, name: row.name, grams: row.grams, kcal: row.kcal, protein: row.protein ?? 0 })
   return next
 }
 
 export function removeEntry(id: string): FoodEntry[] | null {
-  const next = loadEntries().filter((item) => item.id !== id);
-  if (!saveEntries(next)) return null
-  return next;
+  if (!loadEntries().some(row => row.id === id)) return null;
+  if (!dispatchEvent("NUTRITION_RECORDED", { removedFoodId: id })) return null;
+  foodChanged(); return loadEntries();
 }
 
 /** Persist an entire confirmed meal in one write. No partial batch on storage failure. */
-export function addEntriesBatch(items: Array<Omit<FoodEntry, "id" | "date">>): FoodEntry[] | null {
-  if (items.length === 0 || items.length > 30 || items.some((item) => !Number.isFinite(item.kcal) || item.kcal < 0 || !Number.isFinite(item.grams) || item.grams < 0)) return null;
+export function addEntriesBatch(items: Array<Omit<FoodEntry, "id" | "date">>, date?: string): FoodEntry[] | null {
+  if (items.length === 0 || items.length > 30 || items.some((item) => item.kcal !== null && (!Number.isFinite(item.kcal) || item.kcal < 0) || item.grams!==undefined&&(!Number.isFinite(item.grams)||item.grams<0) || item.eatenAt!==undefined&&!Number.isFinite(Date.parse(item.eatenAt)))) return null;
   const stamp = Date.now();
-  const rows: FoodEntry[] = items.map((item, index) => ({ ...item, id: `${stamp}-${index}-${Math.random().toString(36).slice(2, 9)}`, date: today() }));
+  const rows: FoodEntry[] = items.map((item, index) => ({ ...item, id: `${stamp}-${index}-${Math.random().toString(36).slice(2, 9)}`, date: date ?? today(), athleteId:currentAthleteId(), recordedAt:new Date().toISOString() }));
   const next = [...loadEntries(), ...rows];
   if (!saveEntries(next)) return null;
-  for (const row of rows) dispatchEvent("NUTRITION_RECORDED", { id: row.id, meal: row.meal, name: row.name, grams: row.grams, kcal: row.kcal, protein: row.protein ?? 0 });
   return next;
+}
+
+export function validFoodEntry(row: FoodEntry): boolean {
+  return !!row && typeof row.id === "string" && typeof row.name === "string" && row.name.trim().length > 0 && validDate(row.date) && MEALS.includes(row.meal) && (row.kcal === null || Number.isFinite(row.kcal) && row.kcal >= 0) &&
+    [row.protein, row.carbs, row.carb, row.fat, row.fiber, row.grams].every(v => v == null || Number.isFinite(v) && v >= 0) &&
+    (row.eatenAt === undefined || Number.isFinite(Date.parse(row.eatenAt)));
+}
+
+/** One existing immutable event commits the meal and its provenance together. */
+export function recordManualFood(input: Omit<FoodEntry, "id" | "athleteId" | "source">): FoodEntry | null {
+  const row: FoodEntry = { ...input, id: `food-${crypto.randomUUID()}`, athleteId: currentAthleteId(), source: "MANUAL", recordedAt: new Date().toISOString() };
+  if (!validFoodEntry(row)) return null;
+  if (!dispatchEvent("NUTRITION_RECORDED", { foodEntry: row })) return null;
+  foodChanged(); return loadEntries().find(saved => saved.id === row.id) ?? null;
 }
 
 export type NutrientKey = "kcal" | "protein" | "carb" | "fat" | "fiber";
 export const PENDING_LABEL = "营养待补充";
 /** 该条目某营养素是否已知（null/未估算 ≠ 0） */
 export function nutrientOf(e: FoodEntry, k: NutrientKey): number | null {
-  if (k === "kcal") return e.label === "未估算" || e.label === PENDING_LABEL || (e.kcal === 0 && !e.foodId && e.label !== "手填") ? null : e.kcal;
-  const v = e[k]; return typeof v === "number" ? v : null;
+  if (k === "kcal") return e.label === "未估算" || e.label === PENDING_LABEL || (e.kcal === 0 && !e.foodId && e.label !== "手填" && !e.nutritionSource?.reviewed && e.source !== "MANUAL") ? null : e.kcal;
+  const v = k === "carb" ? (Object.prototype.hasOwnProperty.call(e,"carb") ? e.carb : e.carbs) : e[k]; return typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null;
 }
 export type Agg = Record<NutrientKey, { sum: number; known: number; pending: number }>;
 export function aggregate(entries: FoodEntry[]): Agg {
@@ -99,7 +140,10 @@ export function aggregate(entries: FoodEntry[]): Agg {
   }
   return out;
 }
-export function updateEntry(id: string, patch: Partial<FoodEntry>): FoodEntry[] | null {
-  const all = loadEntries(); const next = all.map((e) => (e.id === id ? { ...e, ...patch } : e));
-  return saveEntries(next) ? next : null;
+export function updateEntry(id: string, patch: Partial<FoodEntry>, expectedRevision?: string): FoodEntry[] | null {
+  const old = loadEntries().find(e => e.id === id);
+  if (!old || expectedRevision !== undefined && expectedRevision !== (old.revisionId || JSON.stringify(old))) return null;
+  const row = { ...old, ...patch, id: old.id, athleteId: currentAthleteId(), revisionId: crypto.randomUUID(), recordedAt: new Date().toISOString() };
+  if (!validFoodEntry(row) || !dispatchEvent('NUTRITION_RECORDED', { foodEntry: row, previousRevision: old.revisionId || JSON.stringify(old) })) return null;
+  foodChanged(); return loadEntries();
 }

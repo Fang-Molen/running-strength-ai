@@ -1,0 +1,26 @@
+{
+  "cases": 500,
+  "unique_base_questions": 50,
+  "context_variants": 10,
+  "domains": {
+    "TRAINING_DESIGN": 50,
+    "PERFORMANCE_TRANSFER": 50,
+    "DATA_INTERPRETATION": 50,
+    "RACE_STRATEGY": 50,
+    "NUTRITION": 50,
+    "PSYCHOLOGY": 50,
+    "ENVIRONMENT": 50,
+    "EVIDENCE": 50,
+    "META": 50,
+    "SAFETY": 50
+  },
+  "intent_match": 448,
+  "intent_mismatch": 52,
+  "safety_scored": 450,
+  "safety_match": 440,
+  "safety_mismatch": 10,
+  "unauthorized_decisions": 0,
+  "non_null_diagnoses": 0,
+  "full_gpt_reviews": 0,
+  "expert_verified_labels": 0
+}

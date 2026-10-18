@@ -13,7 +13,7 @@ export type DeviceReading = {
 export type DeviceDraft = { readings: DeviceReading[]; warnings: string[]; rawText: string }
 export type DeviceConfirmed = {
   id: string; schemaVersion: 1; deviceLabel: string; recordedAt: string; confirmedAt: string
-  imageName: string | null; imageSha256: string | null; textOrigin: 'BROWSER_OCR_REVIEWED' | 'USER_TRANSCRIBED'; rawText: string; readings: DeviceReading[]
+  imageName: string | null; imageSha256: string | null; textOrigin: 'BROWSER_OCR_REVIEWED' | 'USER_TRANSCRIBED' | 'NETWORK_OCR_REVIEWED'; rawText: string; readings: DeviceReading[]
   consent: 'USER_CONFIRMED'; destination: 'DEVICE_EVIDENCE_ONLY'
 }
 const bounds: Record<DeviceMetric, [number, number]> = {
@@ -97,7 +97,7 @@ export function validateDeviceConfirmation(args: {draft: DeviceDraft; deviceLabe
   if (new Set(signatures).size !== signatures.length) errors.push('存在疑似重复读数，请删除重复项或拆成不同采集记录')
   return errors
 }
-export function makeDeviceRecord(args: {draft: DeviceDraft; deviceLabel: string; recordedAt: string; acknowledged: boolean; imageName: string|null; imageSha256: string|null; textOrigin?: 'BROWSER_OCR_REVIEWED' | 'USER_TRANSCRIBED'; confirmedAt: string; id: string}): DeviceConfirmed {
+export function makeDeviceRecord(args: {draft: DeviceDraft; deviceLabel: string; recordedAt: string; acknowledged: boolean; imageName: string|null; imageSha256: string|null; textOrigin?: 'BROWSER_OCR_REVIEWED' | 'USER_TRANSCRIBED' | 'NETWORK_OCR_REVIEWED'; confirmedAt: string; id: string}): DeviceConfirmed {
   const errors = validateDeviceConfirmation(args)
   if (errors.length) throw new Error(errors.join('；'))
   return {id:args.id,schemaVersion:1,deviceLabel:args.deviceLabel.trim(),recordedAt:args.recordedAt,confirmedAt:args.confirmedAt,imageName:args.imageName,imageSha256:args.imageSha256,textOrigin:args.textOrigin??'USER_TRANSCRIBED',rawText:args.draft.rawText,readings:args.draft.readings.map(r=>({...r,details:r.details ? {...r.details} : undefined})),consent:'USER_CONFIRMED',destination:'DEVICE_EVIDENCE_ONLY'}

@@ -1,0 +1,27 @@
+﻿id,topic,rule,scope,forbidden,implementationStatus,implementationScope,verification
+STD-01,统一对象,Athlete/Metric/Measurement/Reference/Score/Goal/Observation各自独立,所有,不允许把比赛积分、能力分、目标进度混成一个字段,IMPLEMENTED,类型分离：Measurement/Score/Goal/Observation；比赛秒值独立于官方积分,NOT_RUN
+STD-02,指标唯一身份,metricId+formulaVersion+unit+protocolKey+athleteId,所有,同名指标不同测法不能直接合并,IMPLEMENTED,比较校验athlete/metric/variant/protocol/unit/formula；显式来源版本,NOT_RUN
+STD-03,五项竞技能力,SPD/SEN/AER/PWR/ECO是长期测量构念,雷达,REC恢复与BEH执行不得进入竞技总分,IMPLEMENTED,五个竞技轴；REC/BEH独立，无总分,NOT_RUN
+STD-04,来源时间,eventTime、recordedAt、sourceRevision分开保存,所有,不能用未来记录重算过去可见预测,IMPLEMENTED,测量发生/记录/分析时间分开；预测时间审计；读取日志commit时间；旧缺commit记录不用于回溯预测证明,NOT_RUN
+STD-05,缺失,null+原因，SKIPPED/NOT_RECORDED/UNKNOWN分开,所有,缺失不得当0、失败或最差分,IMPLEMENTED,未知null+原因；BEH分开跳过与未记录；设备适配保留缺圈,NOT_RUN
+STD-06,方向,高好/低好/情境相关，情境相关不得自动标优劣,指标,SEN03/SEN04不得仅凭正负赋好坏,IMPLEMENTED,SPD速度方向纠正；SEN03/04按情境，不按正负赋分,NOT_RUN
+STD-07,参考准入,参考来源+项目+人群+测量协议+版本+审核批准+有效锚点,能力分,没有完整参考=score null,IMPLEMENTED,评分前提校验，正式参考列表为空,NOT_RUN
+STD-08,评分计算,higher:100*clip((x-L)/(U-L));lower:100*clip((L-x)/(L-U)),能力分,不准自动选择群体极值为锚点,IMPLEMENTED,带锚点方向校验及裁剪的可调用公式；当前没有可启用常模,NOT_RUN
+STD-09,人群匹配,性别/年龄段/竞技层级/专项/规则版本应在参考覆盖范围内,能力分,跨性别、年龄和项目不能静默套用,IMPLEMENTED,sport+populationKey必须精确匹配；人群分类生成器尚未接入，默认null拒绝评分,NOT_RUN
+STD-10,参考语义,0-100仅是该版本参考尺度位置，不是生物能力百分比,能力分,不能叫绝对能力值,IMPLEMENTED,评分解释限定参考尺度位置，不是生物能力百分比,NOT_RUN
+STD-11,维度合成,只有同构念、预先权重、缺失策略和验证才允许合成,雷达,不合格只展示各子指标，不算维度总分,BLOCKED,缺少经核准的维度合成权重/策略/验证；维度score固定null,NOT_RUN
+STD-12,时间比较,相同协议/人群参考版本/算法版本才可比较分数,历史,版本变更要重算两期或显示不可比,BLOCKED,已实现原始测量同算法同协议比较；尚未实现历史能力分同参考版本重算服务,NOT_RUN
+STD-13,测量误差,报告观测差、TE/SEM、MDC与适用假设,趋势,不把SWC当MDC；无误差时不说真实提高,IMPLEMENTED,观测差/MDC95有可调用实现，需匹配SEM审阅；无误差不称真实提高,NOT_RUN
+STD-14,目标进度,100*(current-baseline)/(target-baseline)，同指标同协议固定版本,目标,基线=目标或跨协议则UNAVAILABLE,IMPLEMENTED,目标固定版本、同协议、目标建立不晚于新测量且已有基线,NOT_RUN
+STD-15,目标显示,原始进度可<0或>100；进度条裁剪仅为UI,目标,不得当能力分,IMPLEMENTED,原始进度与裁剪显示值分开，不进入能力分；目标编辑UI未接入,NOT_RUN
+STD-16,世界田联积分,官方赛事积分独立COMPETITION_POINTS字段并记录版本,比赛,不直接映射SPD/AER/PWR/ECO分,BLOCKED,比赛成绩已独立；缺少可执行官方积分表与版本，未实现世界田联积分计算,NOT_RUN
+STD-17,测试质量等级,A/B/C/D为产品数据可信度标签，不等于研究GRADE,数据,单次PB不自动A；同协议多次也未必A,BLOCKED,尚无核准A/B/C/D质量标签准则，不由单次PB或条数自动评级,NOT_RUN
+STD-18,历史新鲜度,展示实测日期；有效期需逐指标核准,历史,不能统一超过28天作废,IMPLEMENTED,保留测量日期，不统一28天作废；逐指标有效期尚无批准规则,NOT_RUN
+STD-19,参考更新,新参考版本不覆盖旧历史；保留referenceId与hash,所有,旧新分数不直接相减,IMPLEMENTED,参考ID/版本/hash随评分和复盘保留；不覆盖旧记录；无自动参考更新服务,NOT_RUN
+STD-20,安全独立,症状与专业许可优先于能力图和恢复状态,所有,高分不能放行伤后最大速度,IMPLEMENTED,复用既有安全门控；候选HOLD；评分不提供医学许可,NOT_RUN
+STD-21,专项配置,400/800/1500核心/辅助只是研究优先级，不是权重,专项,不能凭“核心”给60%权重,BLOCKED,400/800/1500优先级已阅读保留候选含义；未做专项自动优先级调度，不作为权重,NOT_RUN
+STD-22,低证据显示,显示原始数值、协议、日期、为何待评估和下次观察,UI,不得用0填满雷达多边形,IMPLEMENTED,五维原始指标卡；缺数据待评估；不画补零雷达；界面未实测,NOT_RUN
+STD-23,教练闭环,评分变化→P1假设→P2观察→P3修订→P4候选,P1-P4,不得低分自动加量,IMPLEMENTED,复用同一OfflineReview和追加日志，观察与单项假设关联；批准课程库适配尚待补齐,NOT_RUN
+STD-24,预测隔离,能力图不是P6赛绩预测模型,P6,无时间外验证不报精确PB,IMPLEMENTED,预测隔离与时间审计；无有效预测模型，秒值固定null,NOT_RUN
+STD-25,重复队列,同一研究系列/同一运动员重复成绩不可重复计独立人群,证据,不得凭记录条数虚增样本,BLOCKED,个人对比拒绝同一测量来源重修订充新样本；研究队列去重服务尚未实现,NOT_RUN
+STD-26,版本冻结,标准号、指标字典、公式、来源、参考、界面版本独立,治理,没有变更记录不静默修改分数,IMPLEMENTED,R173/R182适配/Development/OfflineReview版本分开；变更清单与哈希快照,NOT_RUN

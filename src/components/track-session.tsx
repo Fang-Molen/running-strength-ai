@@ -172,9 +172,11 @@ export function TrackStructureList({ occurrenceId }: { occurrenceId: string }) {
 export function TrackRunner({
   occurrenceId,
   onClose,
+  embedded = false,
 }: {
   occurrenceId: string;
   onClose: () => void;
+  embedded?: boolean;
 }) {
   const [tick, setTick] = useState(0);
   const [seconds, setSeconds] = useState("");
@@ -248,7 +250,7 @@ export function TrackRunner({
   }
 
   return (
-    <div className="fixed inset-0 z-40 overflow-y-auto bg-bg" data-refresh={tick}>
+    <div className={embedded ? 'relative min-w-0 bg-bg' : 'fixed inset-0 z-40 overflow-y-auto bg-bg'} data-refresh={tick}>
       <div className="mx-auto max-w-3xl px-4 pt-4 pb-28">
         <div className="flex items-center justify-between gap-3">
           <p className="font-bold">田径专项</p>

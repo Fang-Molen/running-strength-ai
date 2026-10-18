@@ -1,0 +1,26 @@
+{
+  "schema": "E1-integration-status-1",
+  "state": "IMPLEMENTED_NOT_TESTED",
+  "typecheck": "NOT_RUN",
+  "build": "NOT_RUN",
+  "regression": "NOT_RUN",
+  "browser": "NOT_RUN",
+  "publicSingleCases": 42,
+  "publicMultiTurnSequences": 6,
+  "publicMultiTurnTurns": 18,
+  "publicReplay": "NOT_RUN",
+  "nativeAdapterTests": "PREPARED_NOT_RUN",
+  "hostPublic60Replay": "BLOCKED_MISSING_CANONICAL_HOST_INPUTS_AND_APPROVALS",
+  "modelAB": "NOT_RUN",
+  "humanReview": "NOT_RUN",
+  "defaultFeatureEnabled": false,
+  "authorizedForDelivery": false,
+  "modifiesPlan": false,
+  "priorBaselineOnly": {
+    "tests": 3715,
+    "pass": 3715,
+    "fail": 0,
+    "skip": 0,
+    "appliesToE1": false
+  }
+}

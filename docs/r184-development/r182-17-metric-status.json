@@ -1,0 +1,189 @@
+[
+  {
+    "metricId": "SPD01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "30 / seconds",
+    "unit": "m/s",
+    "reason": "明确飞行30米、计时协议、实际来源；按速度值高好修正原表的方向笔误",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "SPD02",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "30 / seconds",
+    "unit": "m/s",
+    "reason": "明确30米起跑协议；均速不当成瞬时最大速度",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "SPD03",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "official actual seconds",
+    "unit": "s",
+    "reason": "独立比赛成绩，不放入COMPETITION_POINTS，不计算世界田联积分",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "SEN01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "(t400/400)/(t800/800)",
+    "unit": "ratio",
+    "reason": "官方连续成绩、同赛季计时条件，不接受间歇合计PB",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "SEN02",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "(t800/800)/(t1500/1500)",
+    "unit": "ratio",
+    "reason": "同上；不诊断供能缺陷",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "SEN03",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "second400 - first400",
+    "unit": "s",
+    "reason": "同场800米比赛、有序400米分段；STD-06优先，方向按情境处理",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "SEN04",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "R173 SESS_FADE",
+    "unit": "%",
+    "reason": "复用同轮等距离完整组校验；界面另保留不完整分段原始值，不冒充完整变化指标",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "PARTIAL_RAW_FACTS_ONLY",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "AER01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "R173 ABIL_CS",
+    "unit": "m/s",
+    "reason": ">=3有效极限测试及拟合审阅，显示模型估计；不替代LT",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "AER02",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "measured threshold speed",
+    "unit": "m/s",
+    "reason": "LT1/LT2以variant分开；测量方法必须明确",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "AER03",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "actual standardized task result",
+    "unit": "s or m",
+    "reason": "保留协议与方向情境，不自动常模评分",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "PWR01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "R173 STR_E1RM / bodyMassKg",
+    "unit": "ratio",
+    "reason": "同动作活动范围器械与1—10次；体重匹配有来源；Epley估计",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "PARTIAL_RAW_FACTS_ONLY",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "PWR02",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "measured CMJ height",
+    "unit": "cm",
+    "reason": "同跳跃协议，不能推断跑步功率或经济性",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "PWR03",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "R173 STR_FREQ_PERIOD",
+    "unit": "session",
+    "reason": "只进BEH训练执行，完整课次清单不等于设备活动清单",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "ECO01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "VO2 * 60 / speedKmh",
+    "unit": "ml/kg/km",
+    "reason": "稳态VO2及鞋/坡度/环境；缺失不以步频代替",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "ECO02",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "separate cadence / GCT / asymmetry",
+    "unit": "mixed",
+    "reason": "仅TECHNIQUE，确认设备速度坡度；不合成ECO能力分",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "REC01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "separate recovery signals",
+    "unit": "mixed",
+    "reason": "无综合恢复分；原始RPE=0与缺失null区分",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "PARTIAL_RAW_FACTS_ONLY",
+    "approvedNorms": 0
+  },
+  {
+    "metricId": "BEH01",
+    "status": "IMPLEMENTED",
+    "scope": "CALLABLE_READ_ONLY_ADAPTER",
+    "formula": "100 * completed / due",
+    "unit": "%",
+    "reason": "completed+skipped+notRecorded=due；同时算覆盖率，不将未记录当跳过",
+    "testStatus": "NOT_RUN",
+    "automaticAppInput": "REQUIRES_TYPED_FACT_ADAPTER",
+    "approvedNorms": 0
+  }
+]

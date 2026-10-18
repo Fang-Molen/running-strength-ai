@@ -1,0 +1,18 @@
+{
+  "status": "NOT_RUN",
+  "authorizationRequired": true,
+  "preparedNewCases": 134,
+  "numericReferences": 92,
+  "boundaryCases": 41,
+  "registryCoverageCases": 1,
+  "executed": 0,
+  "passed": 0,
+  "failed": null,
+  "programOutput": null,
+  "typecheck": "NOT_RUN",
+  "build": "NOT_RUN",
+  "fullRegression": "NOT_RUN",
+  "browserOffline": "NOT_RUN",
+  "realModelCalls": 0,
+  "note": "参考期望值与文件完整性检查不属于程序测试通过；旧日志不得作为本次结果。"
+}

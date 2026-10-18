@@ -1,0 +1,154 @@
+ID,类型,动作,动作英文,组别,动态模型,显示状态,主要部位,内容审核,原始来源
+bb-bench,strength,杠铃卧推,Barbell Bench Press,胸,bench_bb,3d-code-existing-unverified-runtime,chest、triceps,UNREVIEWED,v74 canonical catalog
+db-bench,strength,哑铃卧推,Dumbbell Bench Press,胸,bench_db,3d-code-existing-unverified-runtime,chest、triceps,UNREVIEWED,v74 canonical catalog
+inc-db-bench,strength,上斜哑铃卧推,Incline Dumbbell Bench Press,胸,bench_inc_db,3d-code-existing-unverified-runtime,chest、delt_front,UNREVIEWED,v74 canonical catalog
+inc-bb-bench,strength,上斜杠铃卧推,Incline Barbell Bench Press,胸,bench_inc_bb,3d-code-existing-unverified-runtime,chest、delt_front,UNREVIEWED,v74 canonical catalog
+cg-bench,strength,窄距杠铃卧推,Close Grip Barbell Bench Press,胸,bench_cg,3d-code-existing-unverified-runtime,triceps、chest,UNREVIEWED,v74 canonical catalog
+db-fly,strength,哑铃飞鸟,Dumbbell Flye,胸,fly_db,3d-code-existing-unverified-runtime,chest,UNREVIEWED,v74 canonical catalog
+cable-cross,strength,龙门架夹胸,Cable Crossover,胸,cable_cross,3d-code-existing-unverified-runtime,chest,UNREVIEWED,v74 canonical catalog
+pushup,strength,俯卧撑,Push Up,胸,pushup,3d-code-existing-unverified-runtime,chest、triceps,UNREVIEWED,v74 canonical catalog
+knee-pushup,strength,跪姿俯卧撑,Kneeling Push Up,胸,knee_pushup,3d-code-existing-unverified-runtime,chest、triceps,UNREVIEWED,v74 canonical catalog
+diamond-pushup,strength,钻石俯卧撑,Diamond Push Up,胸,diamond_pushup,3d-code-existing-unverified-runtime,triceps、chest,UNREVIEWED,v74 canonical catalog
+pullup,strength,引体向上,Pull Up,背,pullup,3d-code-existing-unverified-runtime,lats、biceps,UNREVIEWED,v74 canonical catalog
+chinup,strength,反手引体,Close Grip Chin Up,背,chinup,3d-code-existing-unverified-runtime,lats、biceps,UNREVIEWED,v74 canonical catalog
+assist-chin,strength,弹力带辅助引体,Band Assisted Chin Up,背,chinup,3d-code-existing-unverified-runtime,lats、biceps,UNREVIEWED,v74 canonical catalog
+lat-pd,strength,高位下拉,Lat Pulldown,背,lat_pd,3d-code-existing-unverified-runtime,lats,UNREVIEWED,v74 canonical catalog
+close-lat,strength,窄距下拉,Close Grip Lat Pulldown,背,close_lat,3d-code-existing-unverified-runtime,lats,UNREVIEWED,v74 canonical catalog
+db-row,strength,单臂哑铃划船,One Arm Bent Over Row,背,row_db,3d-code-existing-unverified-runtime,lats、rhomboids,UNREVIEWED,v74 canonical catalog
+bb-row,strength,反握杠铃划船,Reverse Grip Barbell Row,背,row_bb,3d-code-existing-unverified-runtime,lats、rhomboids,UNREVIEWED,v74 canonical catalog
+cable-row,strength,坐姿绳索划船,Seated Cable Row,背,cable_row,3d-code-existing-unverified-runtime,lats、rhomboids,UNREVIEWED,v74 canonical catalog
+face-pull,strength,面拉,Face Pull,背,face_pull,3d-code-existing-unverified-runtime,delt_rear、rhomboids,UNREVIEWED,v74 canonical catalog
+inv-row,strength,反向划船,Modified Inverted Row,背,inv_row,3d-code-existing-unverified-runtime,lats、rhomboids,UNREVIEWED,v74 canonical catalog
+bb-shrug,strength,杠铃耸肩,Barbell Shrug,背,bb_shrug,3d-code-existing-unverified-runtime,traps,UNREVIEWED,v74 canonical catalog
+db-shrug,strength,哑铃耸肩,Dumbbell Shrug,背,db_shrug,3d-code-existing-unverified-runtime,traps,UNREVIEWED,v74 canonical catalog
+db-ohp,strength,坐姿哑铃推举,Seated Dumbbell Shoulder Press,肩,ohp_db_seated,3d-code-existing-unverified-runtime,delt_front、triceps,UNREVIEWED,v74 canonical catalog
+bb-ohp,strength,杠铃推举,Barbell Shoulder Press,肩,ohp_bb,3d-code-existing-unverified-runtime,delt_front、triceps,UNREVIEWED,v74 canonical catalog
+arnold,strength,阿诺德推举,Arnold Press,肩,ohp_arnold,3d-code-existing-unverified-runtime,delt_front、delt_side,UNREVIEWED,v74 canonical catalog
+db-press,strength,哑铃过头推举,Overhead Dumbbell Press,肩,ohp_db,3d-code-existing-unverified-runtime,delt_front、triceps,UNREVIEWED,v74 canonical catalog
+lat-raise,strength,坐姿侧平举,Seated Lateral Raise,肩,lat_raise,3d-code-existing-unverified-runtime,delt_side,UNREVIEWED,v74 canonical catalog
+lean-raise,strength,哑铃侧平举,Leaning Dumbbell Lateral Raise,肩,lean_raise,3d-code-existing-unverified-runtime,delt_side,UNREVIEWED,v74 canonical catalog
+front-raise,strength,绳索前平举,Cable Front Raise,肩,front_raise_c,3d-code-existing-unverified-runtime,delt_front,UNREVIEWED,v74 canonical catalog
+bb-curl,strength,杠铃弯举,Barbell Biceps Curl,手臂,curl_bb,3d-code-existing-unverified-runtime,biceps,UNREVIEWED,v74 canonical catalog
+db-curl,strength,哑铃弯举,Standing Dumbbell Biceps Curl,手臂,curl_db,3d-code-existing-unverified-runtime,biceps,UNREVIEWED,v74 canonical catalog
+hammer,strength,锤式弯举,Dumbbell Hammer Curl,手臂,curl_hammer,3d-code-existing-unverified-runtime,biceps、forearm,UNREVIEWED,v74 canonical catalog
+cable-curl,strength,绳索弯举,Cable Biceps Curl,手臂,cable_curl,3d-code-existing-unverified-runtime,biceps,UNREVIEWED,v74 canonical catalog
+pressdown,strength,绳索下压,Triceps Pressdown,手臂,pressdown,3d-code-existing-unverified-runtime,triceps,UNREVIEWED,v74 canonical catalog
+oh-ext,strength,哑铃颈后臂屈伸,Overhead Dumbbell Triceps Extension,手臂,oh_ext,3d-code-existing-unverified-runtime,triceps,UNREVIEWED,v74 canonical catalog
+skull,strength,仰卧臂屈伸,Dumbbell Lying Triceps Extension,手臂,skull,3d-code-existing-unverified-runtime,triceps,UNREVIEWED,v74 canonical catalog
+bench-dip,strength,凳上臂屈伸,Bench Dip,手臂,bench_dip,3d-code-existing-unverified-runtime,triceps,UNREVIEWED,v74 canonical catalog
+dip,strength,双杠臂屈伸,Body Weight Dip,手臂,dip,3d-code-existing-unverified-runtime,triceps,UNREVIEWED,v74 canonical catalog
+back-squat,strength,杠铃深蹲,Barbell Back Squat,腿,back_squat,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+front-squat,strength,前蹲,Barbell Front Squat,腿,front_squat,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+goblet,strength,高脚杯深蹲,Goblet Squat,腿,goblet,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+db-squat,strength,哑铃深蹲,Dumbbell Squat,腿,db_squat,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+leg-press,strength,腿举,Leg Press,腿,leg_press,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+bb-dl,strength,杠铃硬拉,Barbell Deadlift,腿,deadlift,3d-code-existing-unverified-runtime,glutes、hamstrings、erectors,UNREVIEWED,v74 canonical catalog
+rdl,strength,罗马尼亚硬拉,Barbell Straight Leg Deadlift,腿,rdl,3d-code-existing-unverified-runtime,hamstrings、glutes,UNREVIEWED,v74 canonical catalog
+db-rdl,strength,单腿哑铃硬拉,Single Leg Romanian Deadlift With Dumbbell,腿,rdl_single,3d-code-existing-unverified-runtime,hamstrings、glutes,UNREVIEWED,v74 canonical catalog
+sumo,strength,相扑硬拉,Sumo Deadlift,腿,sumo,3d-code-existing-unverified-runtime,glutes、quads、adductors,UNREVIEWED,v74 canonical catalog
+trap-dl,strength,六角杠硬拉,Trap Bar Deadlift,腿,dl_trap,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+db-lunge,strength,哑铃弓步,Dumbbell Lunge,腿,lunge_db,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+walk-lunge,strength,行走弓步,Walking Lunge,腿,lunge_walk,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+rev-lunge,strength,杠铃后撤步弓步,Barbell Reverse Lunge,腿,lunge_bb_rev,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+bss,strength,保加利亚分腿蹲,Dumbbell Bulgarian Split Squat,腿,bss,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+leg-curl,strength,腿弯举,Leg Curl,腿,leg_curl,3d-code-existing-unverified-runtime,hamstrings,UNREVIEWED,v74 canonical catalog
+good-morning,strength,早安式,Good Morning,腿,good_morning,3d-code-existing-unverified-runtime,hamstrings、erectors,UNREVIEWED,v74 canonical catalog
+calf,strength,站姿提踵,Standing Calf Raise,腿,calf,3d-code-existing-unverified-runtime,calves,UNREVIEWED,v74 canonical catalog
+bb-calf,strength,杠铃提踵,Standing Barbell Calf Raise,腿,bb_calf,3d-code-existing-unverified-runtime,calves,UNREVIEWED,v74 canonical catalog
+seat-calf,strength,坐姿提踵,Seated Calf Raise,腿,seat_calf,3d-code-existing-unverified-runtime,soleus,UNREVIEWED,v74 canonical catalog
+step-up,strength,登阶,Step Up,腿,step_up,3d-code-existing-unverified-runtime,quads、glutes,UNREVIEWED,v74 canonical catalog
+hip-thrust,strength,杠铃臀推,Barbell Hip Thrust With Bench,臀,hip_thrust,3d-code-existing-unverified-runtime,glutes,UNREVIEWED,v74 canonical catalog
+glute-bridge,strength,臀桥,Hip Raise,臀,glute_bridge,3d-code-existing-unverified-runtime,glutes,UNREVIEWED,v74 canonical catalog
+single-hip,strength,单腿臀桥,Single Leg Hip Raise,臀,single_hip,3d-code-existing-unverified-runtime,glutes,UNREVIEWED,v74 canonical catalog
+kb-swing,strength,壶铃摆荡,Kettlebell Swing,臀,kb_swing,3d-code-existing-unverified-runtime,glutes、hamstrings,UNREVIEWED,v74 canonical catalog
+side-leg,strength,侧卧抬腿,Side Lying Leg Raise,臀,side_leg,3d-code-existing-unverified-runtime,glute_med,UNREVIEWED,v74 canonical catalog
+farmer,strength,农夫行走,Farmers Walk,全身,farmer,3d-code-existing-unverified-runtime,forearm、traps,UNREVIEWED,v74 canonical catalog
+plank,strength,平板支撑,Plank,核心,plank,3d-code-existing-unverified-runtime,abs,UNREVIEWED,v74 canonical catalog
+side-plank,strength,侧平板,Side Plank,核心,side_plank,3d-code-existing-unverified-runtime,obliques,UNREVIEWED,v74 canonical catalog
+knee-plank,strength,跪姿平板,Kneeling Plank,核心,knee_plank,3d-code-existing-unverified-runtime,abs,UNREVIEWED,v74 canonical catalog
+climber,strength,登山者,Mountain Climber,核心,climber,3d-code-existing-unverified-runtime,abs、hip_flexors,UNREVIEWED,v74 canonical catalog
+dead-bug,strength,死虫,Dead Bug,核心,dead_bug,3d-code-existing-unverified-runtime,abs,UNREVIEWED,v74 canonical catalog
+crunch,strength,卷腹,Crunch,核心,crunch,3d-code-existing-unverified-runtime,abs,UNREVIEWED,v74 canonical catalog
+bicycle,strength,自行车卷腹,Bicycle Crunch,核心,bicycle,3d-code-existing-unverified-runtime,abs、obliques,UNREVIEWED,v74 canonical catalog
+russian,strength,俄罗斯转体,Russian Twist,核心,russian,3d-code-existing-unverified-runtime,obliques,UNREVIEWED,v74 canonical catalog
+situp,strength,仰卧起坐,Sit Up,核心,situp,3d-code-existing-unverified-runtime,abs、hip_flexors,UNREVIEWED,v74 canonical catalog
+vup,strength,两头起,V Up,核心,vup,3d-code-existing-unverified-runtime,abs、hip_flexors,UNREVIEWED,v74 canonical catalog
+knee-raise,strength,悬垂举膝,Hanging Knee Raise,核心,knee_raise,3d-code-existing-unverified-runtime,abs、hip_flexors,UNREVIEWED,v74 canonical catalog
+burpee,strength,波比跳,Burpee,全身,burpee,3d-code-existing-unverified-runtime,quads、chest,UNREVIEWED,v74 canonical catalog
+editor:b9b84a6d9a30,strength-extra,分腿蹲,,下肢,,no-correct-3d-motion,股四头肌、臀大肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:a86cb121acbf,strength-extra,台阶上步,,下肢,step_up,alias-3d-check-pending,股四头肌、臀大肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:14906fe65951,strength-extra,深蹲,,下肢,,no-correct-3d-motion,股四头肌、臀大肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:6a453af13d3f,strength-extra,陷阱杠硬拉,,后链,dl_trap,alias-3d-check-pending,臀大肌、股四头肌、腘绳肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:7af6c18a6ef5,strength-extra,罗马尼亚硬拉 RDL,,后链,rdl,alias-3d-check-pending,腘绳肌、臀大肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:ef656c019f30,strength-extra,臀推,,后链,hip_thrust,alias-3d-check-pending,臀大肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:8bed9d7c598a,strength-extra,北欧腿弯举,,后链,,no-correct-3d-motion,腘绳肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:95f453812aaf,strength-extra,提踵,,小腿,calf,alias-3d-check-pending,腓肠肌、比目鱼肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:06823bc58cc0,strength-extra,膝屈提踵,,小腿,,no-correct-3d-motion,比目鱼肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:e4b82996d07b,strength-extra,Pallof 抗旋转,,核心,,no-correct-3d-motion,腹斜肌、腹横肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:f4ce29e10d20,strength-extra,鸟狗,,核心,,no-correct-3d-motion,竖脊肌、臀大肌、腹横肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:972b864d3812,strength-extra,侧桥,,核心,side_plank,alias-3d-check-pending,腹斜肌、臀中肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:b42992634a58,strength-extra,低量弹跳,,快速力量,,no-correct-3d-motion,小腿肌群、足部稳定肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:550e4c0700b7,strength-extra,蹲跳,,快速力量,,no-correct-3d-motion,股四头肌、臀大肌、小腿,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:8ee813aa033e,strength-extra,跳箱,,快速力量,,no-correct-3d-motion,股四头肌、臀大肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+editor:daf214eabbd1,strength-extra,药球抛,,快速力量,,no-correct-3d-motion,胸大肌、躯干稳定肌,UNREVIEWED,v74 exercise-editor.tsx EXTRA
+foot:ft-calf-2,foot,双脚提踵,,小腿,,not-provided,gastroc_med、gastroc_lat,UNREVIEWED,v74 foot-library.ts
+foot:ft-calf-1,foot,单脚提踵,,小腿,,not-provided,gastroc_med、gastroc_lat,UNREVIEWED,v74 foot-library.ts
+foot:ft-band-df,foot,弹力带踝背屈与跖屈,,踝关节,,not-provided,tibialis、soleus,UNREVIEWED,v74 foot-library.ts
+foot:ft-towel,foot,毛巾抓握,,足部与足弓,,not-provided,foot_intrinsic,UNREVIEWED,v74 foot-library.ts
+foot:ft-toe-pick,foot,脚趾抓取,,足部与足弓,,not-provided,foot_intrinsic,UNREVIEWED,v74 foot-library.ts
+foot:ft-short-foot,foot,短足练习（short foot）,,足部与足弓,,not-provided,foot_intrinsic,UNREVIEWED,v74 foot-library.ts
+foot:ft-inv-ev,foot,踝内翻/外翻（弹力带）,,踝关节,,not-provided,peroneals,UNREVIEWED,v74 foot-library.ts
+foot:ft-balance,foot,单脚平衡,,踝关节,,not-provided,peroneals、foot_intrinsic,UNREVIEWED,v74 foot-library.ts
+fk-run-tech-001,running-technique,站姿-跑姿对齐,Standing Running Posture Check,身体姿态与摆臂,,not_provided,trunk_stabilizers、shoulder_girdle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-002,running-technique,原地跑步摆臂,Stationary Running Arm Drive,身体姿态与摆臂,,not_provided,trunk_stabilizers、shoulder_girdle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-003,running-technique,原地对侧手脚配合,Contralateral Arm-Leg Coordination,身体姿态与摆臂,,not_provided,trunk_stabilizers、shoulder_girdle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-004,running-technique,骨盆稳定行进,Pelvic Control March,身体姿态与摆臂,,not_provided,trunk_stabilizers、shoulder_girdle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-005,running-technique,平稳头部的小步跑,Quiet-Head Jog Drill,身体姿态与摆臂,,not_provided,trunk_stabilizers、shoulder_girdle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-006,running-technique,手臂节奏-慢快慢,Arm Rhythm Change,身体姿态与摆臂,,not_provided,trunk_stabilizers、shoulder_girdle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-007,running-technique,A式行进,A-March,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-008,running-technique,A式跳步,A-Skip,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-009,running-technique,Running A快频,Running A Fast Rhythm,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-010,running-technique,踝关节小步跑,Ankling,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-011,running-technique,低位运腿循环,Low Dribble,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-012,running-technique,中位运腿循环,Mid Dribble,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-013,running-technique,高位运腿循环,High Dribble,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-014,running-technique,单侧快腿交替,Fast-Leg Alternations,步态协调与运腿,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-015,running-technique,双脚低幅弹跳,Double-Leg Low Pogos,支撑与足踝弹性,,not_provided,calf_ankle、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-016,running-technique,交替脚低幅弹跳,Alternating Low Pogos,支撑与足踝弹性,,not_provided,calf_ankle、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-017,running-technique,单脚低幅弹跳,Single-Leg Low Pogos,支撑与足踝弹性,,not_provided,calf_ankle、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-018,running-technique,小跨步弹跳,Low Skipping Bounds,支撑与足踝弹性,,not_provided,calf_ankle、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-019,running-technique,节奏跨步跳,Rhythm Bounds,支撑与足踝弹性,,not_provided,calf_ankle、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-020,running-technique,低强度前后跨线步,Line Step Rhythm,支撑与足踝弹性,,not_provided,calf_ankle、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-021,running-technique,抵墙加速姿态,Wall Lean Sprint Position,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-022,running-technique,抵墙单次换腿,Wall Single Switch,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-023,running-technique,抵墙连续换腿,Wall Triple Switch,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-024,running-technique,前倾自然起跑,Falling Start,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-025,running-technique,两点站姿起跑,Two-Point Start,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-026,running-technique,三点起跑,Three-Point Start,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-027,running-technique,平缓上坡短加速,Gentle Hill Acceleration,起跑与加速,,not_provided,gluteal_region、quadriceps_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-028,running-technique,渐进加速放松跑,Progressive Strides,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-029,running-technique,20米助跑+技术跑,Build-Up 20m,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-030,running-technique,行进间10米快速跑,Flying 10m,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-031,running-technique,标志点节奏跑,Wicket Rhythm Run,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-032,running-technique,直线高频轻松跑,Relaxed Fast Run,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-033,running-technique,快-松-快节奏切换,Fast-Float-Fast,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-034,running-technique,快腿-自然跑转换,Fast-Leg To Run Transition,最高速度与放松,,not_provided,hip_extensors、hamstrings_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-035,running-technique,弯道轻松节奏跑,Easy Curve Rhythm,弯道技术,,not_provided,hip_stabilizers、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-036,running-technique,弯道渐进加速,Curve Build-Up,弯道技术,,not_provided,hip_stabilizers、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-037,running-technique,弯道接直道转换,Curve-to-Straight Transition,弯道技术,,not_provided,hip_stabilizers、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-038,running-technique,200米弯道赛线熟悉,Bend Lane Awareness,弯道技术,,not_provided,hip_stabilizers、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-039,running-technique,节拍器步频觉察,Cadence Awareness with Metronome,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-040,running-technique,定速100米节奏跑,100m Pace Calibration,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-041,running-technique,200米配速锁定,200m Pace Lock,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-042,running-technique,快慢转换节奏跑,Controlled Pace Change,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-043,running-technique,800米前半程开局节奏,800m Opening Rhythm,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-044,running-technique,疲劳时的放松提示复核,Technique Check Under Mild Fatigue,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-045,running-technique,跑感节奏复述,Pacing Sensation Recall,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-046,running-technique,热身后短加速串联,Easy Run to Strides,中长跑节奏与转换,,not_provided,trunk_stabilizers、hip_extensors,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-047,running-technique,侧面跑姿录像,Side-View Running Video,技术观察与评估,,not_provided,,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-048,running-technique,正背面摆臂观察,Front-Back Arm Observation,技术观察与评估,,not_provided,,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-049,running-technique,新鲜与疲劳条件对照,Fresh-Fatigued Technique Comparison,技术观察与评估,,not_provided,,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-050,running-technique,踝步+自然跑组合,Ankling-to-Run Transfer,技术-专项衔接,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-051,running-technique,A式行进+A式跳步组合,March-to-Skip Progression,技术-专项衔接,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-052,running-technique,墙上换腿+两点起跑,Wall Switch to Start,技术-专项衔接,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json
+fk-run-tech-053,running-technique,快腿节奏+放松跑,Fast-Leg to Relaxed Stride,技术-专项衔接,,not_provided,hip_flexors、gluteal_region、calf_ankle,draft_needs_coach_review,v74 running-technique/catalogue.json

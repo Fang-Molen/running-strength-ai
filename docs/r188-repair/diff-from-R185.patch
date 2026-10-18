@@ -1,0 +1,2445 @@
+--- /dev/null
++++ R188/docs/r188-repair/R188逐条状态.csv
+@@ -0,0 +1,17 @@
++﻿编号,清单要求,实现状态,当前验证状态,原因或边界
++0,R185 基线与 12 个逐文件增量,IMPLEMENTED,VERIFIED_MANIFEST,R185原副本保留；12个增量逐文件来源与最终SHA；最终diff在打包时重算
++1,npm test 与 test:domain 全链路,BLOCKED,DOMAIN_PASS_NPM_FAIL,最终domain181文件组PASS；最终npm13文件组9PASS4FAIL及IPC限制保留；不能整体PASS
++2,具体保守默认建议与批准课程确认,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,无已批准课程选择可撤回 REST；批准改动不自动写计划
++3,他人倒地 CPR AED,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,沿用并保留 R185 急症优先
++4,全身过敏 肾上腺素笔,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,急症优先不得生成普通训练候选
++5,病后胸痛 心悸,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,停练急诊与 120；就医不等于运动许可
++6,15 岁闭经 骨点压痛多轮,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,安全状态在后续对话保留
++7,多轮五步闭环,IMPLEMENTED_WITH_LIMITS,DOMAIN_PASS_BROWSER_BLOCKED,已有状态与成绩解读复用；没有批准方案时只给观察或休息不编造剂量
++8,逐组复盘优先,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,保留 R185 数值复盘和量化适配
++9,异常心率和不可能配速,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,聊天与设备质量闸门；末次修复活动 elapsed 小于 timer 漏判并加合成用例；原始设备数据保留待核
++10,条件式维持 轻松 减量 休息建议,IMPLEMENTED_WITH_LIMITS,DOMAIN_PASS_BROWSER_BLOCKED,事实量化与条件建议分层；研究经验阈值不得自动开处方
++11,动态复盘 5—6 句无代码,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,主回答使用事实目的解释反证观察；依据信息单独显示
++12,更正接 claim revision,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,同源字段核验；无关联保留；来源未知 REVIEW_REQUIRED
++13,P7 appendJournal 持久化,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,真实建议入口 LIVE 与 LEGACY 隔离；无预测不计算准确率
++14,IndexedDB 迁移及回退,IMPLEMENTED_WITH_LIMITS,BROWSER_BLOCKED_NOT_VERIFIED,镜像迁移与回退函数及UI已实现；最终浏览器未启动，未证明真实IndexedDB迁移恢复
++15,零外部请求 离线 确定性与断言原因,IMPLEMENTED,DOMAIN_PASS_BROWSER_BLOCKED,本地引擎与安全域内回归通过；浏览器零外部请求未测；旧断言变更有明确原因
+--- /dev/null
++++ R188/docs/r188-repair/delta-intake.json
+@@ -0,0 +1,74 @@
++[
++  {
++    "file": "src/lib/core/coach-claim-revision.test.ts",
++    "intake_sha256": "b5dac408ce0a3f8c286bf66f02496f0c65b160cdf678292dacbc5c65f0325d90",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-claim-revision.ts",
++    "intake_sha256": "4e7292db40ba614a9ac0593a1348c62d8d92d2aad382ef549e41621f13f86eec",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-decision-calibration.test.ts",
++    "intake_sha256": "eddc43dbd682468299d3752f27c020095e3298c1289a291d88679c75f98cbce3",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-decision-calibration.ts",
++    "intake_sha256": "902a550b0667f4fbae1cf80ba6e2a6889e76ec8ae6034e706a1d2d16e30cca47",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-evaluation.test.ts",
++    "intake_sha256": "8bfbe3c1738cc91588d44890745cb0375533058e7850a74d6d6118bf27ae0ef0",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-evaluation.ts",
++    "intake_sha256": "735611a47f01cd5fedc546523321853dbd4b9453903cb556c381da0bbe15df7b",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-knowledge.test.ts",
++    "intake_sha256": "2f8d3cbedf67b556ee630e92a911c45eea555012cab95bba9511fba53ff05c95",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-knowledge.ts",
++    "intake_sha256": "9dccc4f5ded9d3b5307865d331cea340cecd2d896aeec99f5496f31b287b346c",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-lifecycle.ts",
++    "intake_sha256": "45e1f9f399cdcc261a45636c3e851dcd271cbcc4dc087f036fca6510648954b8",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-r187.test.ts",
++    "intake_sha256": "6142cdd2e4fa493f7c9c5d27c520f1744a4751789c5be2ee766ccaa8fd90a070",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "src/lib/core/coach-p7-r7.test.ts",
++    "intake_sha256": "f1d955b3e7b1ad1b1b00e70460b33afe506391fd0e03f17a8726bc0ce09b67da",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  },
++  {
++    "file": "tsconfig.r7-scoped.json",
++    "intake_sha256": "62d0ff5e688313619a107bbfd4c47e0141206a9564bf62f17982715532b04c32",
++    "baseline_status": "NEW",
++    "initial_action": "COPIED_DELTA_ONLY"
++  }
++]
+--- /dev/null
++++ R188/docs/r188-repair/交付报告.md
+@@ -0,0 +1,65 @@
++# 方坤 R188 本地修复交付报告
++
++本轮在 R185 最新交付源码的独立副本上修复。R1—R7 审核总包采用较旧的 R184 基线，因此只移入清单中的 12 个增量文件，未使用其 `source/` 覆盖 R185。回退点为 `r185-before-r188.zip`，SHA-256 为 `4a7af94aae8b64793b1fd2b9504cdd8b2f53a4a3ca351f8fa32f11fb34c28c99`。
++
++## 已实现的范围
++
++- 下一课没有已批准课程时，给出“休息”的具体、可撤回建议及停止条件。已有批准课程的转述保留来源，候选改动先交用户确认；医学限制优先，建议不会写入正式计划。
++- 保留 R185 逐组数值复盘、周期观察和量化适配；处理多轮年龄、闭经、骨点压痛、急症与已就医后的运动许可边界。
++- 将 P7 建议记录接到教练显示入口，使用既有 `appendJournal` 保存 LIVE 决策。历史导入与 LIVE 记录保持区分，没有数值预测的建议不计入预测准确率。
++- 保存复盘时记录假设来源，更正事件直接核对来源版本。同源相关字段更正使旧解释失效，无关字段不撤回；无法确认来源关联时保留 `REVIEW_REQUIRED`。
++- P7 判断和事件持久化，校准按运动员、指标、单位、协议分组，未来观察不得冒充已发生结果；新增知识保持候选状态。
++- 实现可选 IndexedDB 镜像迁移及回退。逐字复制现有本地值并核对一致性，保留同步 localStorage 副本；回退切换存储方式，保留新写入训练，不把旧快照覆盖回来。
++- 在现有设备准备合同加入数据质量闸门：异常心率、时间、距离、速度、平均/最大值冲突等保留原始值并阻断比较和自动导入，不能把数据质量条件当训练或医学阈值。最终审计另发现活动级 `elapsedSeconds < timerSeconds` 漏判，现已补入 IMPLAUSIBLE/BLOCKED，并新增对应合成用例；R188 专项33例及修复后完整domain均有实际收据。
++
++R173 的 92 条 IMPLEMENTED、5 条 BLOCKED、35 条 NOT_APPLICABLE 分类保持原边界。候选研究阈值未升级为减量、停训或医学回归的自动规则，能力图仍没有未经核准的 0—100 分。
++
++## 实际验证状态
++
++代码修改和本轮验证已完成，完整集成验收尚未通过。最后冻结源码的完整 domain 回归、类型检查与构建通过；完整 npm 链有环境相关失败，最终浏览器受端口权限阻断，不能声明整体 PASS。
++
++| 实际执行 | 数量及单位 | PASS / FAIL / SKIP | 结果与证据 |
++|---|---|---|---|
++| 修订前 `npm test` | 13 个文件级测试组 | 9 / 4 / 0 | exit 1；`final-npm-default/npm-test.json`；13:47 执行，早于13:54:54最后修订，属于历史证据 |
++| 最后冻结源码 `npm test` | 13 个文件级测试组 | 9 / 4 / 0 | exit 1；`final-npm-postfix-default/npm-test.json`；源码修订 SHA 前后相同，完整 npm 链没有通过 |
++| 修复前 `npm run test:domain` | 181 个文件级测试组 | 180 / 1 / 0 | exit 1；`default-final/domain.json`；保留原始 nutrition/catalog 失败 |
++| 修复后完整 `npm run test:domain` | 181 个文件级测试组 | 181 / 0 / 0 | exit 0；`domain-postfix-final/domain.json`；564 个运行文件 SHA 前后一致；内部用例数量未知 |
++| 分批直接补充 domain | 181 个原测试文件，2815 个内部用例 | 2815 / 0 / 0 | `domain-direct-final/results.json` 中180文件/2782例，加独立R188单文件33例；有跨文字修订版本说明，不等同于 canonical 内部用例数 |
++| 目录/知识卡修复验证 | 原 catalog 3 个与 knowledge 6 个用例 | 9 / 0 / 0 | `domain-direct-final/catalog-knowledge-focused-results.json`；重复验证不加到 2782 |
++| 环境故障定位 | 29 个 brand-check 内部用例 | 22 / 7 / 0 | `environment-diagnostic/stdout-ipc.json`；7 个实际失败完整保留 |
++| 最后冻结源码类型检查 | 非用例计数 | PASS，exit 0 | `typecheck-postfix-final/typecheck.json`；修订前后源码 SHA 相同 |
++| 最后冻结源码构建 | 非用例计数 | PASS，exit 0 | `default-final/build.json`；未据此声称浏览器或完整集成通过 |
++| 最终浏览器启动 | 1 个基础设施检查 | 0 / 1 / 0 | `browser-final/browser-final-result.json`；监听本地端口发生 EPERM，runner exit 1 |
++| 最终浏览器断言 | 实际执行 0 个 | 0 / 0 / 0 | Chromium、生产模式、重启均未启动，未生成最终截图 |
++| 最终浏览器计划覆盖 | 16 个覆盖组 | 0 / 0 / 16 | 覆盖组 SKIP，不能写作 16 个已执行测试用例 |
++
++以上单位和范围不同，并有重复与前版本结果，不能相加成一个“全部通过”的数字。分批 2815 例只合并180文件/2782例和此前未在其中重复执行的 R188 33 例；修复复测9例与环境诊断29例均不加到2815。量化引擎的 134 个用例、P7 的 35 个来源测试、offline-loop 的 46 个用例已包含在直接补充执行中，不额外累计。补充执行中的 knowledge 6 个用例使用修订前描述，修订后 6 个复测独立留档；catalog 3 个补充用例在最终冻结后运行。最后完整 domain 的181是文件级测试组，不是内部用例数。源码、日志 SHA 与 ZIP CRC 属于交付完整性核对，不计程序测试数量。
++
++此前 136 个定向用例及旧类型检查、`browser-02` 的 150 条浏览器断言均属于历史版本证据，不计最终 PASS。前一次类型检查跨文字修订，已由 `typecheck-postfix-final` 的新收据替代。
++
++本轮程序测试移除了外部模型凭据与数据库连接变量。最小 `spawnSync` 探针实际返回 `EPERM` 且子进程输出为空，解释了 CLI JSON 断言失败；未修改原断言绕开该限制。最终浏览器外部请求数量未测量，不能将“没有启动浏览器”写成“网络断言通过”。
++
++封存盲测需验收方独立复现，当前不能写成 PASS。
++
++## 实际缺陷与修复记录
++
++1. 设备准备只对分圈时间核对，活动总 `elapsedSeconds < timerSeconds` 仍可漏过。补入活动级 IMPLAUSIBLE/BLOCKED，并保留原输入；R188 33 个专项用例实际通过。
++2. 新 P7 DFA 知识卡将非论文的品牌说明写入通用描述，触发原目录来源扫描合同。原 catalog 3 个用例实际 2 PASS / 1 FAIL。仅将描述中的 `resting Garmin HRV` 改为 `resting wearable HRV`，DOI、候选状态、数值、安全门控、原断言及 citation 豁免均未改；原 catalog 3 个和知识卡 6 个用例复测通过。修订哈希见 `source-freeze-change.json`。
++3. 原本无批准课程不产出候选的行为与用户确认的 R188 决策不符，改为明确可撤回 REST。仅一处原测试按新产品契约改动，见断言说明；没有恢复未经批准的 +30 秒休息处方或降低医学限制。
++
++仍未解决的是执行环境的子进程 stdio/IPC 与本地端口权限限制。4 个 npm 文件组失败为 `brand-check.test.mjs`、`check-auth-invariant.test.mjs`、`with-app-env.test.mjs`、`write-atomic.test.mjs`，均保留实际日志；浏览器启动失败也保留为真实结果。尚不能将这些失败归为已经修复的软件缺陷或声称整体 PASS。
++
++## 尚未具备或未验证的内容
++
++- 新提供的 Garmin 报告是字段映射与模拟验证规格，引用的是旧 R184 基线。它没有提供可直接核对的导出 JSON/ZIP 规范样例、解析器源码或真实 FIT 文件。当前设备质量闸门已补入，但 FIT/TCX/GPX 解码、账号接入、全量跑步动态/力量/身体指标映射未完成。
++- 原周期性数据包只有 CSV。FIT session/lap/record、原始活动去重、确认训练课结构、设备协议与运动员身份的完整真实数据验收继续保持 BLOCKED/SKIP，不能把活动条数当课次数。
++- IndexedDB 采用兼容镜像方式，尚未证明取消 localStorage 副本后可以独立恢复所有历史。浏览器持久化授权与操作系统清理行为不能由桌面 Chromium 结果保证。
++- 封存盲测、真实 Garmin 新格式接入、外部模型、远程数据库和部署均不包含在本轮通过范围。
++
++## 文件与回退
++
++修改文件和哈希见 `modified-files.csv`、`diff-from-R185.json`；文本差异见 `diff-from-R185.patch`；12 文件来源见 `delta-provenance.json`；R185 关键文件保留检查见 `R185-preservation.json`。断言修改原因逐条记录在 `断言变更说明.md`。
++
++提供纯英文文件名的源码、日志证据、回退和增量独立 ZIP，每包小于 8 MB。所有包独立解压，源码包已包含增量；增量包仅供审查，不需要重复覆盖。源码回退与本地训练数据回退是不同操作，回退源码不删除训练数据。CRC 与 SHA 核验结果见 `package-checksums.json`。
++
++本轮没有部署、调用外部模型或自动修改正式训练计划。可以提交再次独立验收；需先解决完整 npm 与浏览器运行阻断，补齐真实设备数据和封存盲测。当前不可视为完整集成验收通过或正式发布许可。
+--- /dev/null
++++ R188/docs/r188-repair/使用说明.txt
+@@ -0,0 +1,13 @@
++方坤 R188 交付包
++
++fangkun-r188-source.zip：完整源码，已包含本轮增量和交付文档。
++fangkun-r188-evidence.zip：本轮测试日志、浏览器证据、截图、状态及差异清单。
++fangkun-r188-rollback-r185.zip：本轮修复前的 R185 已交付源码回退点。
++fangkun-r188-delta.zip：相对 R185 的改动，仅用于增量审查。
++
++以上各 ZIP 均独立解压。使用完整源码包时，无需再次叠加增量包。
++源码内原有 R185 文档属于历史证据；本轮范围与状态以 docs/r188-repair/交付报告.md 和验收结果.json 为准。
++回退源码不会自动删除或回退运动员本地训练数据。
++封存盲测和缺失原始 FIT 的真实 Garmin 完整验收不应读作已通过。
++最终domain、类型检查和构建通过；完整npm链仍有4个文件级失败，最终浏览器因本地端口权限未启动。整体未PASS。
++证据包内旧版本截图仅供历史审查，不代表本轮最终浏览器复测。
+--- /dev/null
++++ R188/docs/r188-repair/失败与修复清单.csv
+@@ -0,0 +1,11 @@
++编号,对象,实际发现,处理,当前状态,证据
++1,coach-device-preparation活动级时间,elapsed小于timer漏判,补入IMPLAUSIBLE与BLOCKED保留raw并加1合成用例,FIXED_SYNTHETIC_PASS,targeted-last-change/coach-r188.json
++2,原nutrition/catalog来源扫描,原3用例2PASS1FAIL及旧domain181文件1FAIL,仅P7描述resting Garmin HRV改wearable；DOI状态数值gate断言豁免不变,FIXED_POSTFIX_DOMAIN_PASS,domain-direct-final/source-freeze-change.json与domain-postfix-final/domain.json
++3,无批准课程下一课候选,与R188确认的保守默认决策不符,改为可撤回REST带停止条件；一处旧断言随明确产品合同改动,IMPLEMENTED_SYNTHETIC_PASS,断言变更说明.md及targeted-last-change/coach-r188.json
++4,scripts/brand-check.test.mjs,最终npm文件级FAIL,保留原测试；最小spawnSync探针输出空且EPERM,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log与environment-diagnostic/stdout-ipc.json
++5,scripts/check-auth-invariant.test.mjs,最终npm文件级FAIL,保留失败日志与原断言；未以domainPASS掩盖,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log
++6,scripts/with-app-env.test.mjs,最终npm文件级FAIL,保留R185源码与原断言；未改配置迎合环境输出,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log
++7,scripts/write-atomic.test.mjs,最终npm文件级FAIL,保留失败日志与原断言；未绕过检查,UNRESOLVED_ENVIRONMENT,final-npm-postfix-default/npm-test.log
++8,最终浏览器启动,listen EPERM 127.0.0.1:8086且runner exit1,记录基础设施1FAIL；实际0断言及16覆盖组SKIP；旧150不替代,BLOCKED_ENVIRONMENT,browser-final/browser-final-result.json与dev.log
++9,真实设备完整导入,缺原始FIT和新JSON格式样例及解析器,设备质量闸门已加；账号及解码映射不伪称完成,BLOCKED_MISSING_INPUT,交付报告.md
++10,封存盲测,未实际执行,需验收方独立复现且不记PASS,NOT_RUN,验收结果.json
+--- /dev/null
++++ R188/docs/r188-repair/断言变更说明.md
+@@ -0,0 +1,11 @@
++# R188 断言变更说明
++
++本轮以 R185 已交付测试为比较基线，测试改动在最终差异清单中逐文件列出。
++
++| 文件/断言 | 原行为 | 本轮行为与原因 | 保留的限制 |
++|---|---|---|---|
++| `src/lib/core/coach-structured-candidate.test.ts`，无批准课程时 `local.candidate` | 要求 `null` | 改为要求 `decision === 'CONDITIONAL_ADJUST'`、`to === 'REST'`、`changed_variable === 'next_session'`，并检查“仅建议、可撤回”文字。R188 清单第 2 项是用户已确认的产品决策：没有已批准课程仍需提供一个具体、保守、可撤回的默认建议；本轮选择休息。 | 仍不得编造间歇休息 `+30s`、轻松跑时长、减量比例或回归日期；正式计划不自动改；急症与医学限制不产生可执行候选。 |
++
++这是对应明确产品契约的行为改变，不是放宽数值正确性、安全门控或缺失处理。既有 R185 禁止未经批准延长组间休息的断言保持有效。R188 新增测试继续检查 REST 来源、停止条件、批准状态、多轮医学保留、更正关联、校准分组和设备数据阻断。
++
++最后冻结源码的完整domain实际181个文件级测试组通过；原catalog失败通过修订P7知识卡描述修复，未改其断言或citation豁免。完整npm链的4个环境相关文件级失败及最终浏览器阻断仍保留。原测试断言改动只有上表这一项，未通过减少断言要求让失败消失。
+--- /dev/null
++++ R188/docs/r188-repair/验收结果.json
+@@ -0,0 +1,261 @@
++{
++  "version": "R188",
++  "phase": "FINAL_DELIVERY",
++  "final_receipts_recorded": true,
++  "baseline": "R185 delivered source",
++  "rollback": "r185-before-r188.zip",
++  "final_full_regression": {
++    "status": "FAIL",
++    "count_unit": "FILE_LEVEL",
++    "executed": 13,
++    "pass": 9,
++    "fail": 4,
++    "skip": 0,
++    "exit_code": 1,
++    "final_frozen_source_receipt": true,
++    "reason": "Restricted child stdio/IPC; complete npm chain did not pass",
++    "failure_files": [
++      "scripts/brand-check.test.mjs",
++      "scripts/check-auth-invariant.test.mjs",
++      "scripts/with-app-env.test.mjs",
++      "scripts/write-atomic.test.mjs"
++    ],
++    "evidence": [
++      "final-npm-postfix-default/npm-test.json",
++      "final-npm-postfix-default/npm-test.log",
++      "environment-diagnostic/stdout-ipc.json"
++    ]
++  },
++  "previous_targeted_synthetic": {
++    "status": "HISTORICAL_ONLY",
++    "executed_status": "PASS",
++    "pass": 136,
++    "fail": 0,
++    "skip": 0,
++    "counted_in_final": false,
++    "scope": "4 targeted suites before final activity timing fix; not full integration",
++    "evidence": [
++      "targeted-final/results.json"
++    ]
++  },
++  "previous_typecheck": {
++    "status": "HISTORICAL_ONLY",
++    "executed_status": "PASS",
++    "exit_code": 0,
++    "counted_in_final": false,
++    "evidence": [
++      "targeted-final/typecheck.json",
++      "targeted-final/typecheck.log"
++    ]
++  },
++  "typecheck": {
++    "status": "PASS",
++    "exit_code": 0,
++    "final_frozen_source_receipt": true,
++    "evidence": [
++      "typecheck-postfix-final/typecheck.json",
++      "typecheck-postfix-final/typecheck.log"
++    ]
++  },
++  "build": {
++    "status": "PASS",
++    "exit_code": 0,
++    "final_frozen_source_receipt": true,
++    "evidence": [
++      "default-final/build.json",
++      "default-final/build.log"
++    ]
++  },
++  "browser_offline": {
++    "status": "BLOCKED",
++    "runner_exit_code": 1,
++    "reason": "listen EPERM 127.0.0.1:8086; Chromium and all final assertions did not start",
++    "infrastructure": {
++      "executed": 1,
++      "pass": 0,
++      "fail": 1,
++      "skip": 0
++    },
++    "assertions": {
++      "executed": 0,
++      "pass": 0,
++      "fail": 0,
++      "skip": 0
++    },
++    "planned_coverage_groups": {
++      "pass": 0,
++      "fail": 0,
++      "skip": 16
++    },
++    "screenshots_created": false,
++    "external_model_requests": "NOT_MEASURED_NO_BROWSER_STARTED",
++    "evidence": [
++      "browser-final/browser-final-result.json",
++      "browser-final/dev.log"
++    ]
++  },
++  "previous_browser_02": {
++    "status": "HISTORICAL_ONLY",
++    "counted_in_final": false,
++    "reason": "前版本公开浏览器证据，不能代替最终 UI 导出恢复及离线验收"
++  },
++  "sealed_blind_test": {
++    "status": "NOT_RUN",
++    "reason": "验收方独立复现，未将本地公开场景当封存盲测"
++  },
++  "real_garmin_full_acceptance": {
++    "status": "BLOCKED",
++    "reason": "未提供原始 FIT 及新 JSON/ZIP 格式可核对样例；此前周期性包只有 CSV"
++  },
++  "r173_rule_classification": {
++    "IMPLEMENTED": 92,
++    "BLOCKED": 5,
++    "NOT_APPLICABLE": 35,
++    "scientific_promotion": false
++  },
++  "deployed": false,
++  "external_model_called": false,
++  "automatic_formal_plan_write": false,
++  "overall_status": "BLOCKED_FULL_ACCEPTANCE",
++  "runtime_frozen_at": "2026-10-14T13:54:54Z",
++  "canonical_domain": {
++    "status": "PASS",
++    "count_unit": "FILE_LEVEL",
++    "executed": 181,
++    "pass": 181,
++    "fail": 0,
++    "skip": 0,
++    "internal_case_count": null,
++    "exit_code": 0,
++    "runtime_files_sha_checked": 564,
++    "runtime_drift": false,
++    "evidence": [
++      "domain-postfix-final/domain.json",
++      "domain-postfix-final/domain.log",
++      "domain-postfix-final/runtime-before.json",
++      "domain-postfix-final/runtime-after.json"
++    ]
++  },
++  "previous_canonical_domain": {
++    "status": "FAIL",
++    "count_unit": "FILE_LEVEL",
++    "executed": 181,
++    "pass": 180,
++    "fail": 1,
++    "skip": 0,
++    "exit_code": 1,
++    "reason": "Original nutrition/catalog assertion failed before final P7 description repair",
++    "evidence": [
++      "default-final/domain.json",
++      "default-final/domain.log"
++    ]
++  },
++  "supplemental_direct_domain": {
++    "status": "PASS",
++    "count_unit": "INTERNAL_TEST_CASE",
++    "files": 180,
++    "executed": 2782,
++    "pass": 2782,
++    "fail": 0,
++    "skip": 0,
++    "canonical_pass_claimed": false,
++    "version_note": "Knowledge 6 cases predate last textual repair; later 6 repeats are separately recorded. Catalog 3 ran after freeze. R18833 excluded.",
++    "evidence": [
++      "domain-direct-final/results.json",
++      "domain-direct-final/artifact-integrity.json",
++      "domain-direct-final/source-freeze-change.json"
++    ]
++  },
++  "r188_targeted_latest_activity_fix": {
++    "status": "PASS",
++    "executed": 33,
++    "pass": 33,
++    "fail": 0,
++    "skip": 0,
++    "exit_code": 0,
++    "scope": "Single-file targeted; not whole integration and not added to direct2782",
++    "evidence": [
++      "targeted-last-change/coach-r188.json",
++      "targeted-last-change/coach-r188.log"
++    ]
++  },
++  "catalog_knowledge_repair_repeat": {
++    "status": "PASS",
++    "executed": 9,
++    "pass": 9,
++    "fail": 0,
++    "skip": 0,
++    "scope": "Focused repeated catalog3+knowledge6; not added to domain2782",
++    "evidence": [
++      "domain-direct-final/catalog-knowledge-focused-results.json",
++      "domain-direct-final/source-freeze-change.json"
++    ]
++  },
++  "environment_diagnostic": {
++    "status": "FAIL",
++    "executed": 29,
++    "pass": 22,
++    "fail": 7,
++    "skip": 0,
++    "counted_in_final_domain": false,
++    "evidence": [
++      "environment-diagnostic/brand-check-direct.json",
++      "environment-diagnostic/brand-check-direct.log",
++      "environment-diagnostic/stdout-ipc.json"
++    ]
++  },
++  "counting_note": "Separate runs and units; duplicates and historical evidence not summed into a global PASS count",
++  "previous_npm_default": {
++    "status": "HISTORICAL_ONLY",
++    "count_unit": "FILE_LEVEL",
++    "executed": 13,
++    "pass": 9,
++    "fail": 4,
++    "skip": 0,
++    "exit_code": 1,
++    "reason": "Executed at13:47 before final13:54:54 P7 description repair; original failures retained",
++    "evidence": [
++      "final-npm-default/npm-test.json",
++      "final-npm-default/npm-test.log",
++      "environment-diagnostic/stdout-ipc.json"
++    ],
++    "failure_files": [
++      "scripts/brand-check.test.mjs",
++      "scripts/check-auth-invariant.test.mjs",
++      "scripts/with-app-env.test.mjs",
++      "scripts/write-atomic.test.mjs"
++    ],
++    "executed_status": "FAIL",
++    "counted_as_final": false
++  },
++  "supplemental_domain_batches": {
++    "status": "PASS",
++    "count_unit": "INTERNAL_TEST_CASE",
++    "files": 181,
++    "executed": 2815,
++    "pass": 2815,
++    "fail": 0,
++    "skip": 0,
++    "components": {
++      "domain_direct_files": 180,
++      "domain_direct_cases": 2782,
++      "r188_single_file_cases": 33
++    },
++    "versions_qualified": true,
++    "not_canonical_internal_count": true,
++    "repeated_after_fix_9_not_added": true,
++    "diagnostic_29_not_added": true,
++    "evidence": [
++      "domain-direct-final/results.json",
++      "targeted-last-change/coach-r188.json",
++      "domain-direct-final/source-freeze-change.json"
++    ]
++  },
++  "ready_for_formal_integration_or_release": false,
++  "remaining_blockers": [
++    "npm test4 file-level failures with child stdio/IPC environment limitations",
++    "Final browser could not start local server:EPERM;0 browser assertions",
++    "Original FIT and new JSON export schema/sample missing",
++    "Sealed independent blind test not run"
++  ]
++}
+--- /dev/null
++++ R188/evaluation/r188/acceptance-controller.mjs
+@@ -0,0 +1,17 @@
++// Persistent local QA worker. Commands are restricted to the existing validation runners.
++import {createInterface} from 'node:readline'
++import {spawn} from 'node:child_process'
++const env={...process.env,R185_EVIDENCE_DIR:'/workspace/fangkun/evidence/r188/browser-final',R185_SCREEN_DIR:'/workspace/screenshots/fangkun-r188-final',R185_BROWSER_TARGET:'both'}
++for(const key of ['XAI_API_KEY','GEMINI_API_KEY','OPENAI_API_KEY','ANTHROPIC_API_KEY','DATABASE_URL'])delete env[key]
++env.PATH=process.execPath.slice(0,process.execPath.lastIndexOf('/'))+':'+env.PATH
++const allowed={FULL:['evaluation/r188/run-full-checks.mjs'],BROWSER:['evaluation/r188/run-browser-checks.mjs']}
++const input=createInterface({input:process.stdin,output:process.stdout,terminal:false})
++let queue=Promise.resolve()
++console.log('READY: FULL / BROWSER / EXIT only; local validation, no model API credentials')
++input.on('line',line=>{queue=queue.then(async()=>{
++ const key=line.trim();if(key==='EXIT'){input.close();return}
++ const args=allowed[key];if(!args){console.log('REJECTED_COMMAND');return}
++ const child=spawn(process.execPath,args,{env,stdio:['ignore','inherit','inherit']})
++ const code=await new Promise(resolve=>{child.on('error',()=>resolve(127));child.on('exit',resolve)})
++ console.log(JSON.stringify({completed:key,exitCode:code}))
++})})
+--- /dev/null
++++ R188/evaluation/r188/browser-acceptance.mjs
+@@ -0,0 +1,127 @@
++import {chromium} from 'playwright'
++import {mkdirSync,writeFileSync,readFileSync} from 'node:fs'
++const url=process.argv[2],label=process.argv[3],output=process.env.R185_EVIDENCE_DIR??'/workspace/fangkun/evidence/r188/browser-final',screens=process.env.R185_SCREEN_DIR??'/workspace/screenshots/fangkun-r188-final'
++mkdirSync(screens,{recursive:true})
++const results=[],errors=[],requests=[]
++const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage']})
++for(const size of [{name:'desktop',width:1280,height:900},{name:'mobile',width:390,height:844}]){
++ const ctx=await browser.newContext({viewport:size,timezoneId:'Asia/Shanghai',serviceWorkers:label==='prod'?'allow':'block'})
++ const p=await ctx.newPage();p.setDefaultTimeout(15000)
++ let external=0,models=0,frameworkModules=0;const matchedRequests=[]
++ await ctx.route('**/*',r=>{const u=new URL(r.request().url());if(u.origin!==new URL(url).origin){external++;return r.abort()}return r.continue()})
++ ctx.on('request',r=>{if(/api\.x\.ai|generativelanguage|api\.openai|api\.anthropic|\/_server|serverFn|server-fn/.test(r.url())){const path=new URL(r.url()).pathname;const staticModule=r.method()==='GET'&&r.resourceType()==='script'&&(path==='/node_modules/@tanstack/start-client-core/dist/esm/client-rpc/serverFnFetcher.js'||/^\/@fs\/.*\/@tanstack\/start-client-core\/dist\/esm\/client-rpc\/serverFnFetcher\.js$/.test(path));if(staticModule)frameworkModules++;else models++;matchedRequests.push({method:r.method(),path,type:r.resourceType(),staticModule})}})
++ p.on('pageerror',e=>errors.push({viewport:size.name,error:String(e)}))
++ const check=(name,ok,detail='')=>{results.push({viewport:size.name,name,status:ok?'PASS':'FAIL',detail});if(!ok)throw Error(name+': '+detail)}
++ const ready=()=>p.locator('[data-testid="training-app"][data-ready="true"]').waitFor({timeout:90000})
++ const review=async()=>{await p.getByRole('button',{name:'切换到方坤',exact:true}).click();await p.getByRole('navigation',{name:'方坤工作区'}).getByRole('button',{name:'复盘',exact:true}).click()}
++ const chat=async()=>{await p.getByRole('navigation',{name:'方坤工作区'}).getByRole('button',{name:'对话',exact:true}).click()}
++ const ask=async(q)=>{const n=await p.getByTestId('coach-answer').count();await p.getByPlaceholder('输入你的问题').fill(q);await p.getByRole('button',{name:'发送',exact:true}).click();await p.waitForFunction(n=>document.querySelectorAll('[data-testid="coach-answer"]').length>n,n);return p.getByTestId('coach-answer').last().innerText()}
++ const planState=()=>p.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([k])=>/strength-plan|running-plan/.test(k)))))
++ try{
++  await p.goto(url,{waitUntil:'domcontentloaded',timeout:90000});await ready();if(label==='prod'){await p.waitForFunction(()=>!!navigator.serviceWorker.controller);try{await p.reload({waitUntil:'domcontentloaded'})}catch(e){if(!String(e).includes('ERR_ABORTED'))throw e}await ready()}await review()
++  const background=p.getByTestId('offline-profile');await background.locator('summary').click();await background.getByLabel('离线教练主项',{exact:true}).selectOption('800米');await background.getByLabel('离线教练PB秒',{exact:true}).fill('120');await background.getByRole('button',{name:'确认保存教练背景',exact:true}).click()
++  await p.getByTestId('offline-loop-answer').filter({hasText:'800米'}).waitFor();check('partial_background_facts',/120秒/.test(await p.getByTestId('offline-loop-answer').innerText()))
++  const frozen=await planState()
++  await chat();const answer=await ask('今天200米×4×2，39/38/没记/36/40/41/42/43秒，组间2分钟，轮间8分钟，整课40分钟，整课RPE6')
++  check('numeric_chat_uses_facts',/240 AU/.test(answer)&&/7\/8/.test(answer)&&/480秒/.test(answer),answer)
++  check('chat_does_not_autosave',await p.evaluate(()=>!localStorage.getItem('fr255-confirmed-training-imports-v1')))
++  const panel=p.getByTestId('chat-training-save');await panel.locator('summary').click()
++  await panel.getByLabel('自报训练实际时间').fill('2026-10-13T09:00');await panel.getByRole('checkbox').check();await panel.getByRole('button',{name:'确认保存为训练',exact:true}).click()
++  await panel.getByRole('status').filter({hasText:'已保存'}).waitFor()
++  await panel.getByTestId('saved-offline-review').waitFor()
++  check('first_save_offers_storage_persistence',await panel.getByTestId('storage-durability').isVisible())
++  const savedText=await panel.getByTestId('saved-offline-review').innerText();check('saved_review_uses_human_wording',!/UNKNOWN|confirmed:chat-|R168:/.test(savedText))
++  const migration=panel.getByTestId('storage-durability')
++  await p.evaluate(()=>localStorage.setItem('fr255-r188-future-schema',JSON.stringify({schemaVersion:99,data:{test:'synthetic'}})))
++  await migration.getByRole('button',{name:'迁移本机存储（保留原记录）',exact:true}).click()
++  await migration.getByTestId('storage-migration-state').filter({hasText:'暂不可用'}).waitFor()
++  check('R188_unknown_schema_blocks_migration_without_deletion',await p.evaluate(()=>JSON.parse(localStorage.getItem('fr255-r188-future-schema')).schemaVersion===99&&!!localStorage.getItem('fr255-confirmed-training-imports-v1')))
++  await p.evaluate(()=>localStorage.removeItem('fr255-r188-future-schema'))
++  const quotaBefore=await p.evaluate(()=>localStorage.getItem('fr255-confirmed-training-imports-v1'))
++  await p.evaluate(()=>{window.r188OriginalPut=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(){throw new DOMException('synthetic quota test','QuotaExceededError')}})
++  await migration.getByRole('button',{name:'迁移本机存储（保留原记录）',exact:true}).click()
++  await migration.getByTestId('storage-migration-state').filter({hasText:'继续使用原存储'}).waitFor()
++  check('R188_transaction_failure_keeps_original_data',await p.evaluate(before=>localStorage.getItem('fr255-confirmed-training-imports-v1')===before,quotaBefore))
++  await p.evaluate(()=>{IDBObjectStore.prototype.put=window.r188OriginalPut;delete window.r188OriginalPut})
++  const migrationBefore=await p.evaluate(()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-'))))
++  await migration.getByRole('button',{name:'迁移本机存储（保留原记录）',exact:true}).click()
++  await migration.getByTestId('storage-migration-state').filter({hasText:'已迁移并核对'}).waitFor()
++  const copied=await p.evaluate(async()=>{const request=indexedDB.open('fangkun-core-storage-v1',1);const db=await new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});return await new Promise((resolve,reject)=>{const rows={},tx=db.transaction('kv','readonly'),req=tx.objectStore('kv').openCursor();req.onsuccess=()=>{const c=req.result;if(c){rows[c.key]=c.value;c.continue()}};tx.oncomplete=()=>{db.close();resolve(rows)};tx.onerror=()=>reject(tx.error)})})
++  check('R188_migration_copies_all_existing_bytes',Object.entries(migrationBefore).every(([k,v])=>copied[k]===v))
++  await migration.getByRole('button',{name:'回退到原存储',exact:true}).click()
++  check('R188_rollback_preserves_every_existing_value',await p.evaluate(before=>Object.entries(before).every(([k,v])=>localStorage.getItem(k)===v),migrationBefore))
++  await migration.getByRole('button',{name:'迁移本机存储（保留原记录）',exact:true}).click()
++  await migration.getByTestId('storage-migration-state').filter({hasText:'已迁移并核对'}).waitFor()
++  const savedFollow=await ask('复盘刚才保存的训练');check('saved_followup_uses_receipt',!/聊天自报、未保存/.test(savedFollow)&&/39秒/.test(savedFollow))
++  check('save_preserves_rounds_rest_and_missing',await p.evaluate(()=>{const x=JSON.parse(localStorage.getItem('fr255-confirmed-training-imports-v1')).data[0];return x.runningSegments.length===8&&x.runningSegments[2].durationSeconds.value===null&&x.runningSegments[2].completion==='NOT_RECORDED'&&x.runningSegments[3].recoverySeconds.value===480&&x.runningSegments[3].recoveryScope==='AFTER_ROUND'&&x.runningSegments[7].recoverySeconds.value===null}))
++  const id=await p.evaluate(()=>JSON.parse(localStorage.getItem('fr255-confirmed-training-imports-v1')).data[0].confirmedImportId)
++  await review();await p.getByLabel('离线复盘课次').selectOption(id)
++  await p.getByTestId('offline-loop-answer').filter({hasText:'39秒'}).waitFor()
++  check('saved_actual_numbers_used_in_review',/43秒/.test(await p.getByTestId('offline-loop-answer').innerText()))
++  const ability=p.getByTestId('r184-ability-profile');check('five_axes_raw_without_scores',/五维能力/.test(await ability.innerText())&&/当前没有核准/.test(await ability.innerText())&&/待评估/.test(await ability.innerText())&&!/82分|93分/.test(await ability.innerText()))
++  check('observation_tasks_with_counterevidence',/支持条件/.test(await p.getByTestId('r184-observation-tasks').innerText())&&/削弱条件/.test(await p.getByTestId('r184-observation-tasks').innerText()))
++  await p.getByRole('button',{name:'保存本次判断与观察目标',exact:true}).click()
++  await p.getByLabel('离线判断反馈类型').selectOption('SUPPORT');await p.getByLabel('离线判断反馈内容').fill('synthetic UI feedback without linked independent evidence');await p.getByRole('button',{name:'保存观察反馈',exact:true}).click()
++  const history=p.getByTestId('offline-history');await history.locator('summary').click()
++  check('unbound_feedback_not_promoted',/待验证/.test(await history.innerText())&&!/获得支持/.test(await history.innerText()))
++  await p.getByRole('button',{name:'切换到日志',exact:true}).click()
++  await p.getByRole('button').filter({hasText:'聊天确认的训练'}).first().click()
++  const correction=p.getByTestId('import-running-correction');await correction.locator('summary').click();await correction.getByLabel('更正跑步分段',{exact:true}).selectOption('chat-2-4');await correction.getByLabel('更正后分段秒数',{exact:true}).fill('44');await correction.getByLabel('跑步分段更正原因',{exact:true}).fill('合成浏览器计时更正');await correction.getByRole('button',{name:'确认分段更正',exact:true}).click()
++  check('running_correction_visible_without_overwriting_raw',/44/.test(await p.getByTestId('import-running-facts').innerText())&&await p.evaluate(()=>JSON.parse(localStorage.getItem('fr255-confirmed-training-imports-v1')).data[0].runningSegments[7].durationSeconds.value===43))
++  await review();await p.getByLabel('离线复盘课次').selectOption(id);await p.getByTestId('offline-loop-answer').filter({hasText:'44秒'}).waitFor();await p.getByRole('button',{name:'保存本次判断与观察目标',exact:true}).click()
++  const unrelatedHistory=p.getByTestId('offline-history');if(await unrelatedHistory.getAttribute('open')===null)await unrelatedHistory.locator('summary').click();check('other_round_correction_does_not_withdraw_unrelated_hypothesis',!/旧依据已撤回/.test(await unrelatedHistory.innerText()))
++  check('next_correction_targets_actual_hypothesis_dependency',await p.evaluate(()=>Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-coach-review-r13:')).some(([,v])=>{const r=JSON.parse(v).data;return r?.kind==='ANALYSIS'&&r.review.hypotheses.some(h=>h.sourceIds.some(id=>id.endsWith(':run-4')))})))
++  await p.getByRole('button',{name:'切换到日志',exact:true}).click();await p.getByRole('button').filter({hasText:'聊天确认的训练'}).first().click()
++  const boundCorrection=p.getByTestId('import-running-correction');await boundCorrection.locator('summary').click();await boundCorrection.getByLabel('更正跑步分段',{exact:true}).selectOption('chat-1-4');await boundCorrection.getByLabel('更正后分段秒数',{exact:true}).fill('35');await boundCorrection.getByLabel('跑步分段更正原因',{exact:true}).fill('更正原假设引用的第一轮末段');await boundCorrection.getByRole('button',{name:'确认分段更正',exact:true}).click()
++  await review();await p.getByLabel('离线复盘课次').selectOption(id);await p.getByTestId('offline-loop-answer').filter({hasText:'35秒'}).waitFor();await p.getByRole('button',{name:'保存本次判断与观察目标',exact:true}).click()
++  const correctedHistory=p.getByTestId('offline-history');if(await correctedHistory.getAttribute('open')===null)await correctedHistory.locator('summary').click();check('correction_invalidates_old_judgment',/旧依据已撤回/.test(await correctedHistory.innerText()))
++  await chat();const suggestion=await ask('明天练什么')
++  check('R188_next_session_has_reversible_default',/建议休息/.test(suggestion)&&/可撤回/.test(suggestion)&&/胸闷/.test(suggestion))
++  check('R188_real_entry_commits_LIVE_without_numeric_forecast',await p.evaluate(()=>Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-p7:')).some(([,v])=>{const e=JSON.parse(v).data;return e.kind==='DECISION'&&e.commitmentKind==='LIVE'&&e.decision.forecastValue===null})))
++  check('R188_real_correction_event_audit_is_journaled',await p.evaluate(()=>Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-p7-claim-revision:')).some(([,v])=>JSON.parse(v).data.result.updateAction==='MARK_STALE')))
++  await review();await p.getByLabel('离线复盘课次').selectOption(id)
++  const journalBeforeBackup=await p.evaluate(()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-p7'))))
++  await p.getByRole('button',{name:'个人与数据',exact:true}).click();await p.getByRole('button',{name:/数据备份与恢复/}).click()
++  const settings=p.locator('#settings-backup')
++  const downloadPromise=p.waitForEvent('download');await settings.getByRole('button',{name:'下载备份',exact:true}).click();const download=await downloadPromise
++  const backupPath=`${output}/synthetic-backup-${label}-${size.name}.json`;await download.saveAs(backupPath)
++  const exported=JSON.parse(readFileSync(backupPath,'utf8'))
++  check('R188_export_includes_all_p7_journal_bytes',Object.entries(journalBeforeBackup).every(([k,v])=>exported.keys[k]===v))
++  const accept=dialog=>dialog.accept();p.on('dialog',accept)
++  const reloadPromise=p.waitForEvent('framenavigated',{predicate:frame=>frame===p.mainFrame()});await settings.getByLabel('从备份恢复').setInputFiles(backupPath);await reloadPromise;await ready();p.off('dialog',accept)
++  check('R188_UI_backup_restore_keeps_complete_p7_history',await p.evaluate(before=>Object.entries(before).every(([k,v])=>localStorage.getItem(k)===v),journalBeforeBackup))
++  check('R188_backup_restore_does_not_modify_formal_plan',await planState()===frozen)
++  await review();await p.getByLabel('离线复盘课次').selectOption(id);await p.getByTestId('offline-loop-answer').filter({hasText:'35秒'}).waitFor()
++  check('formal_plans_unchanged',await planState()===frozen)
++  check('layout_no_horizontal_overflow',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1))
++  await ability.scrollIntoViewIfNeeded();await p.screenshot({path:`${screens}/${label}-${size.name}-ability.png`})
++  if(label==='prod'){
++   await p.waitForFunction(()=>!!navigator.serviceWorker.controller)
++   await p.waitForFunction(async()=>{const c=await caches.open('fr255-shell-2');return !!await c.match('/')})
++   await ctx.setOffline(true);await p.reload({waitUntil:'domcontentloaded'});await ready();check('disconnected_full_reload_cached_shell',true)
++   await review();await p.getByLabel('离线复盘课次').selectOption(id);await p.getByTestId('offline-loop-answer').filter({hasText:'39秒'}).waitFor()
++   check('offline_facts_and_judgments_persist',await p.evaluate(()=>Object.keys(localStorage).some(k=>k.startsWith('fr255-coach-review-r13:'))))
++  }else{await p.reload({waitUntil:'domcontentloaded'});await ready();await review();check('refresh_preserves_history',await p.evaluate(()=>Object.keys(localStorage).some(k=>k.startsWith('fr255-coach-review-r13:'))))}
++  await p.getByRole('button',{name:'切换到日志',exact:true}).click()
++  await p.getByRole('button').filter({hasText:'聊天确认的训练'}).first().click()
++  await p.getByTestId('import-void-toggle').click()
++  check('void_keeps_original_record',await p.evaluate(()=>JSON.parse(localStorage.getItem('fr255-confirmed-training-imports-v1')).data.length===1))
++  await review();await p.getByRole('button',{name:'保存本次判断与观察目标',exact:true}).click()
++  const changedHistory=p.getByTestId('offline-history');await changedHistory.locator('summary').click()
++  check('void_withdraws_dependent_hypotheses_in_ui',/旧依据已撤回/.test(await changedHistory.innerText()))
++  check('void_and_review_do_not_change_formal_plan',await planState()===frozen)
++  await chat();const emergency=await ask('正在跑步，胸痛且呼吸困难');check('emergency_overrides_training',/120/.test(emergency)&&!/下一组|240 AU/.test(emergency))
++  const follow=await ask('现在好点了能继续吗');check('emergency_context_retained',/120/.test(follow)&&/停止/.test(follow))
++  // Read the supplied derived CSV only in local memory; do not create real athlete records.
++  await p.getByRole('button',{name:'切换到身体',exact:true}).click();await p.getByRole('button',{name:'设备',exact:true}).click()
++  const before=await p.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage))))
++  await p.getByLabel('选择 CSV 批量预览文件').setInputFiles(process.env.R188_PERIODIC_CSV_PATH??'/workspace/fangkun/private-r185/weekly.csv')
++  await p.getByTestId('periodic-observation-review').waitFor()
++  const real=await p.getByTestId('periodic-observation-review').innerText();check('real_csv_readonly_local_ui',/137个自然周/.test(real)&&/活动汇总1067条/.test(real)&&/活动条数不是训练课次数/.test(real))
++  check('real_csv_not_persisted',before===await p.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage)))))
++  await p.getByTestId('periodic-observation-review').scrollIntoViewIfNeeded();await p.screenshot({path:`${screens}/${label}-${size.name}-periodic.png`})
++  check('no_external_or_model_requests',external===0&&models===0,`external=${external}; models=${models}`)
++ }catch(e){errors.push({viewport:size.name,error:String(e)});results.push({viewport:size.name,name:'flow_completed',status:'FAIL',detail:String(e)});await p.screenshot({path:`${screens}/${label}-${size.name}-failure.png`}).catch(()=>{})}
++ finally{requests.push({viewport:size.name,external,models,frameworkModules,matchedRequests});await ctx.close()}
++}
++await browser.close();writeFileSync(`${output}/${label}-browser.json`,JSON.stringify({results,errors,requests},null,2));console.log(JSON.stringify({label,pass:results.filter(x=>x.status==='PASS').length,fail:results.filter(x=>x.status==='FAIL').length,errors}));if(errors.length||results.some(r=>r.status==='FAIL'))process.exitCode=1
+--- /dev/null
++++ R188/evaluation/r188/browser-restart.mjs
+@@ -0,0 +1,67 @@
++// Synthetic UI data only. Close Chromium entirely, then reopen the same profile offline.
++import {chromium} from 'playwright'
++import {mkdirSync,mkdtempSync,writeFileSync} from 'node:fs'
++import {tmpdir} from 'node:os'
++import {join} from 'node:path'
++const url=process.argv[2],dir=process.env.R185_EVIDENCE_DIR??'/workspace/fangkun/evidence/r188/browser-final'
++const screens=process.env.R185_SCREEN_DIR??'/workspace/screenshots/fangkun-r188-final'
++mkdirSync(dir,{recursive:true});mkdirSync(screens,{recursive:true})
++const profile=mkdtempSync(join(tmpdir(),'fangkun-r188-browser-'))
++const results=[],errors=[],requests=[],phases=[]
++let ctx,phase='online',persisted=null
++const check=(name,ok,detail='')=>{results.push({name,status:ok?'PASS':'FAIL',detail});if(!ok)throw Error(name+': '+detail)}
++const launch=async()=>{
++ const context=await chromium.launchPersistentContext(profile,{executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--disable-background-networking'],viewport:{width:390,height:844},timezoneId:'Asia/Shanghai',serviceWorkers:'allow'})
++ context.on('request',r=>{const u=new URL(r.url());if(u.origin!==new URL(url).origin||/api\.x\.ai|generativelanguage|api\.openai|api\.anthropic|\/_server/.test(r.url()))requests.push({phase,method:r.method(),origin:u.origin,path:u.pathname})})
++ context.on('page',p=>p.on('pageerror',e=>errors.push({phase,error:String(e)})))
++ return context
++}
++const ready=p=>p.locator('[data-testid="training-app"][data-ready="true"]').waitFor({timeout:90000})
++const section=async(p,name)=>{await p.getByRole('button',{name:'切换到方坤',exact:true}).click();await p.getByRole('navigation',{name:'方坤工作区'}).getByRole('button',{name,exact:true}).click()}
++const ask=async(p,q)=>{const n=await p.getByTestId('coach-answer').count();await p.getByPlaceholder('输入你的问题').fill(q);await p.getByRole('button',{name:'发送',exact:true}).click();await p.waitForFunction(n=>document.querySelectorAll('[data-testid="coach-answer"]').length>n,n);return p.getByTestId('coach-answer').last().innerText()}
++const plans=p=>p.evaluate(()=>JSON.stringify(Object.fromEntries(Object.entries(localStorage).filter(([k])=>/strength-plan|running-plan/.test(k)))))
++try{
++ ctx=await launch();let p=await ctx.newPage();p.setDefaultTimeout(20000)
++ await p.goto(url,{waitUntil:'domcontentloaded',timeout:90000});await ready(p)
++ await p.waitForFunction(()=>!!navigator.serviceWorker.controller)
++ try{await p.reload({waitUntil:'domcontentloaded'})}catch(e){if(!String(e).includes('ERR_ABORTED'))throw e}
++ await ready(p);await p.waitForFunction(()=>!!navigator.serviceWorker.controller)
++ const formalBefore=await plans(p)
++ await section(p,'复盘');const bg=p.getByTestId('offline-profile');await bg.locator('summary').click();await bg.getByLabel('离线教练主项',{exact:true}).selectOption('400米');await bg.getByLabel('离线教练PB秒',{exact:true}).fill('56');await bg.getByRole('button',{name:'确认保存教练背景',exact:true}).click()
++ await section(p,'对话')
++ const answer=await ask(p,'今天200米×4，30/30/31/33秒，组间3分钟，整课40分钟整课RPE6，原计划是均速，复盘。本周负荷2400AU，上周负荷2000AU')
++ check('mixed_review_before_weekly_context',/首段30秒、末段33秒/.test(answer)&&/平均31秒/.test(answer)&&/20%/.test(answer)&&answer.indexOf('首段30秒')<answer.indexOf('本周2400 AU'))
++ const panel=p.getByTestId('chat-training-save');await panel.locator('summary').click();await panel.getByLabel('自报训练实际时间').fill('2026-10-13T09:00');await panel.getByRole('checkbox').check();await panel.getByRole('button',{name:'确认保存为训练',exact:true}).click();await panel.getByRole('status').filter({hasText:'已保存'}).waitFor()
++ const durability=panel.getByTestId('storage-durability');await durability.waitFor();const request=durability.getByRole('button',{name:'申请保留本机数据',exact:true});if(await request.count())await request.click()
++ await p.waitForFunction(()=>!document.querySelector('[data-testid="storage-durability"]')?.textContent.includes('正在检查'))
++ persisted=await p.evaluate(()=>navigator.storage.persisted());check('persistence_status_truthful',/浏览器|持久存储/.test(await durability.innerText()),`browserGranted=${persisted}`)
++ await durability.getByRole('button',{name:'迁移本机存储（保留原记录）',exact:true}).click();await durability.getByTestId('storage-migration-state').filter({hasText:'已迁移并核对'}).waitFor()
++ const advice=await ask(p,'明天练什么');check('R188_default_before_restart',/建议休息/.test(advice))
++ check('R188_p7_exists_before_restart',await p.evaluate(()=>Object.keys(localStorage).some(k=>k.startsWith('fr255-p7:'))))
++ const id=await p.evaluate(()=>JSON.parse(localStorage.getItem('fr255-confirmed-training-imports-v1')).data[0].confirmedImportId)
++ await section(p,'复盘');await p.getByLabel('离线复盘课次').selectOption(id);await p.getByRole('button',{name:'保存本次判断与观察目标',exact:true}).click()
++ await p.waitForFunction(async()=>!!await (await caches.open('fr255-shell-2')).match('/'))
++ const stored=await p.evaluate(()=>({imports:localStorage.getItem('fr255-confirmed-training-imports-v1'),history:Object.fromEntries(Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-coach-review-r13:')))}))
++ check('judgment_exists_before_restart',Object.keys(stored.history).length>0)
++ phases.push('closed-first-browser');await ctx.close();ctx=null
++ phase='offline-restart';ctx=await launch();await ctx.setOffline(true);p=await ctx.newPage();p.setDefaultTimeout(20000)
++ await p.goto(url,{waitUntil:'domcontentloaded',timeout:90000});await ready(p)
++ await p.waitForFunction(()=>localStorage.getItem('fangkun-core-storage-mode-v1')==='INDEXED_DB_MIRROR')
++ check('R188_p7_persists_in_new_offline_browser',await p.evaluate(()=>Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-p7:')).some(([,v])=>JSON.parse(v).data.commitmentKind==='LIVE')))
++ check('R188_indexeddb_migration_survives_restart',await p.evaluate(async()=>{const r=indexedDB.open('fangkun-core-storage-v1');const db=await new Promise((resolve,reject)=>{r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});return await new Promise((resolve,reject)=>{const tx=db.transaction('kv','readonly'),q=tx.objectStore('kv').get('fr255-confirmed-training-imports-v1');q.onsuccess=()=>{db.close();resolve(q.result===localStorage.getItem('fr255-confirmed-training-imports-v1'))};q.onerror=()=>reject(q.error)})}))
++ check('new_browser_process_opens_offline',await p.evaluate(()=>navigator.onLine===false&&!!navigator.serviceWorker.controller))
++ const after=await p.evaluate(()=>({imports:localStorage.getItem('fr255-confirmed-training-imports-v1'),history:Object.fromEntries(Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-coach-review-r13:')))}))
++ check('raw_training_and_judgments_survive_process_restart',JSON.stringify(stored)===JSON.stringify(after))
++ await section(p,'复盘');await p.getByLabel('离线复盘课次').selectOption(id);await p.getByTestId('offline-loop-answer').filter({hasText:'33秒'}).waitFor()
++ check('offline_review_computes_saved_numbers',/平均31秒/.test(await p.getByTestId('offline-loop-answer').innerText()))
++ check('ability_has_no_invented_scores',/当前没有核准/.test(await p.getByTestId('r184-ability-profile').innerText())&&!/82分|93分/.test(await p.getByTestId('r184-ability-profile').innerText()))
++ await section(p,'对话');const follow=await ask(p,'复盘刚才保存的训练');check('dialogue_receipt_and_state_survive_restart',/33秒/.test(follow)&&!/聊天自报、未保存/.test(follow))
++ const emergency=await ask(p,'同学倒地怎么喊也不应，只有喘息');check('offline_emergency_actions',/120/.test(emergency)&&/AED/.test(emergency)&&/胸外按压/.test(emergency))
++ check('formal_plans_unchanged_after_restart',await plans(p)===formalBefore)
++ check('no_external_or_model_requests',requests.length===0,JSON.stringify(requests))
++ check('no_uncaught_browser_errors',errors.length===0,JSON.stringify(errors))
++ await p.screenshot({path:join(screens,'prod-restart-mobile.png')})
++ phases.push('completed-offline-restart')
++}catch(e){errors.push({phase,error:String(e)});results.push({name:'restart_flow_completed',status:'FAIL',detail:String(e)})}
++finally{if(ctx)await ctx.close();writeFileSync(join(dir,'prod-restart-browser.json'),JSON.stringify({results,errors,requests,phases,persisted},null,2))}
++console.log(JSON.stringify({pass:results.filter(r=>r.status==='PASS').length,fail:results.filter(r=>r.status==='FAIL').length,persisted,errors}));if(errors.length||results.some(r=>r.status==='FAIL'))process.exitCode=1
+--- /dev/null
++++ R188/evaluation/r188/package-delivery.py
+@@ -0,0 +1,139 @@
++#!/usr/bin/env python3
++"""Generate review manifests; create small, independent ZIPs only after final receipts."""
++from __future__ import annotations
++import argparse
++import csv
++import difflib
++import hashlib
++import json
++import shutil
++import zipfile
++from pathlib import Path
++
++SOURCE = Path('/workspace/fangkun/r188-candidate/source')
++BASELINE = Path('/workspace/fangkun/r185-candidate/source')
++INTAKE = Path('/workspace/fangkun/intake/r188-audit')
++EVIDENCE = Path('/workspace/fangkun/evidence/r188')
++ROLLBACK = Path('/workspace/fangkun/rollback/r185-before-r188.zip')
++DOCS = SOURCE / 'docs/r188-repair'
++SKIP_DIRS = {'.git', 'node_modules', '.output', '.vercel', '.nitro', 'dist', 'coverage', '.cache', '.vite', 'test-results', 'playwright-report', '__pycache__'}
++GENERATED = {'diff-from-R185.json', 'diff-from-R185.patch', 'modified-files.csv', 'source-manifest.json', 'delta-provenance.json', 'R185-preservation.json'}
++MAX_BYTES = 8_000_000
++
++def sha(path: Path) -> str:
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++def write_json(path: Path, data) -> None:
++    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
++
++def files(root: Path, exclude_generated=False):
++    found = {}
++    for p in sorted(root.rglob('*')):
++        rel = p.relative_to(root)
++        if not p.is_file() or p.is_symlink() or any(part in SKIP_DIRS for part in rel.parts):
++            continue
++        if p.name == '.env' or p.name.startswith('.env.') or p.suffix in {'.zip', '.pyc'}:
++            continue
++        if exclude_generated and rel.parent.as_posix() == 'docs/r188-repair' and p.name in GENERATED:
++            continue
++        found[rel.as_posix()] = p
++    return found
++
++def refresh_manifests():
++    old, new = files(BASELINE, True), files(SOURCE, True)
++    rows, patches = [], []
++    for rel in sorted(set(old) | set(new)):
++        a, b = old.get(rel), new.get(rel)
++        old_sha, new_sha = sha(a) if a else None, sha(b) if b else None
++        if old_sha == new_sha:
++            continue
++        rows.append({'file': rel, 'change': 'ADDED' if a is None else 'DELETED' if b is None else 'MODIFIED', 'baseline_sha256': old_sha, 'candidate_sha256': new_sha})
++        try:
++            left = a.read_text(encoding='utf-8').splitlines(keepends=True) if a else []
++            right = b.read_text(encoding='utf-8').splitlines(keepends=True) if b else []
++            patches.extend(difflib.unified_diff(left, right, fromfile='R185/' + rel if a else '/dev/null', tofile='R188/' + rel if b else '/dev/null'))
++        except UnicodeDecodeError:
++            patches.append(f'Binary file: {rel}; old SHA256={old_sha}; new SHA256={new_sha}\n')
++    write_json(DOCS / 'diff-from-R185.json', rows)
++    (DOCS / 'diff-from-R185.patch').write_text(''.join(patches), encoding='utf-8')
++    with (DOCS / 'modified-files.csv').open('w', encoding='utf-8-sig', newline='') as out:
++        writer = csv.DictWriter(out, fieldnames=['file', 'change', 'baseline_sha256', 'candidate_sha256'])
++        writer.writeheader()
++        writer.writerows(rows)
++    manifest = json.loads((INTAKE / 'audit/MERGE_MANIFEST.json').read_text())
++    provenance = []
++    for rel, original in sorted(manifest['added_code_and_test_files'].items()):
++        src, final = INTAKE / 'delta' / rel, SOURCE / rel
++        provenance.append({'file': rel, 'intake_sha256': sha(src), 'intake_matches_declared_sha256': sha(src) == original['sha256'], 'R185_file_existed': (BASELINE / rel).exists(), 'final_sha256': sha(final) if final.exists() else None, 'integration_action': 'COPIED_UNCHANGED' if final.exists() and sha(src) == sha(final) else 'ADAPTED_ON_R185' if final.exists() else 'MISSING'})
++    write_json(DOCS / 'delta-provenance.json', {'source_archive_sha256': json.loads((INTAKE / 'intake-manifest.json').read_text())['sha256'], 'audit_archive_baseline': 'R184 phase2; not used as source overwrite', 'delta_count': len(provenance), 'files': provenance})
++    critical = ['src/lib/core/coach-periodic-observations.ts', 'src/lib/core/coach-quantitative-adapter.ts', 'src/lib/core/coach-r185-p0.test.ts', 'src/lib/core/coach-quantitative.ts']
++    preserved = [{'file': rel, 'preserved': (SOURCE / rel).exists() and sha(BASELINE / rel) == sha(SOURCE / rel), 'baseline_sha256': sha(BASELINE / rel), 'candidate_sha256': sha(SOURCE / rel) if (SOURCE / rel).exists() else None} for rel in critical]
++    write_json(DOCS / 'R185-preservation.json', preserved)
++    if not all(r['preserved'] for r in preserved):
++        raise SystemExit('R185 critical file differs; review required before packaging.')
++    inventory = files(SOURCE)
++    inventory.pop('docs/r188-repair/source-manifest.json', None)
++    write_json(DOCS / 'source-manifest.json', {'schemaVersion': 1, 'self_manifest_excluded': True, 'files': [{'file': rel, 'bytes': p.stat().st_size, 'sha256': sha(p)} for rel, p in inventory.items()]})
++    return rows
++
++def create_zip(path: Path, entries):
++    with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
++        for name, p in entries:
++            z.write(p, name)
++    with zipfile.ZipFile(path) as z:
++        if z.testzip() is not None:
++            raise SystemExit(f'ZIP CRC check failed: {path.name}')
++    if path.stat().st_size >= MAX_BYTES:
++        path.unlink()
++        raise SystemExit(f'{path.name} exceeds the independent ZIP size limit; do not deliver a failed oversized archive.')
++    return {'file': path.name, 'bytes': path.stat().st_size, 'sha256': sha(path), 'CRC': 'PASS', 'entries': len(entries)}
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--package', action='store_true', help='Requires explicitly finalized results with actual receipts or blocker reasons; failures remain failures.')
++    parser.add_argument('--output', type=Path, default=Path('/workspace/fangkun/delivery-r188'))
++    args = parser.parse_args()
++    if args.package:
++        results = json.loads((DOCS / '验收结果.json').read_text())
++        gates = ['final_full_regression', 'canonical_domain', 'typecheck', 'build', 'browser_offline']
++        def terminal_receipt(gate):
++            gate = results.get(gate, {})
++            status = gate.get('status')
++            if status in {'PASS', 'FAIL'}:
++                return bool(gate.get('evidence'))
++            if status in {'BLOCKED', 'SKIP'}:
++                return bool(gate.get('evidence') or gate.get('reason'))
++            return False
++        if not results.get('final_receipts_recorded') or not all(terminal_receipt(g) for g in gates):
++            raise SystemExit('Final local results lack terminal receipts or blocker reasons; PENDING/RUNNING cannot be packaged as final. FAIL/BLOCKED/SKIP remain their honest declared status.')
++    rows = refresh_manifests()
++    if not args.package:
++        print(json.dumps({'mode': 'MANIFEST_ONLY', 'changed_files': len(rows), 'packaged': False}))
++        return
++    args.output.mkdir(parents=True, exist_ok=True)
++    outputs = []
++    inventory = files(SOURCE)
++    outputs.append(create_zip(args.output / 'fangkun-r188-source.zip', [('source/' + rel, p) for rel, p in inventory.items()]))
++    delta = [('source/' + r['file'], SOURCE / r['file']) for r in rows if r['change'] != 'DELETED']
++    delta += [('source/docs/r188-repair/' + name, DOCS / name) for name in sorted(GENERATED) if (DOCS / name).exists()]
++    outputs.append(create_zip(args.output / 'fangkun-r188-delta.zip', delta))
++    evidence = [('evidence/' + rel, p) for rel, p in files(EVIDENCE).items()]
++    evidence += [('docs/' + rel, p) for rel, p in files(DOCS).items()]
++    for screenshots in [Path('/workspace/screenshots/fangkun-r188'), Path('/workspace/screenshots/fangkun-r188-final')]:
++        if screenshots.exists():
++            evidence += [('screenshots/' + screenshots.name + '/' + rel, p) for rel, p in files(screenshots).items()]
++    outputs.append(create_zip(args.output / 'fangkun-r188-evidence.zip', evidence))
++    rollback_dest = args.output / 'fangkun-r188-rollback-r185.zip'
++    shutil.copyfile(ROLLBACK, rollback_dest)
++    with zipfile.ZipFile(rollback_dest) as z:
++        if z.testzip() is not None:
++            raise SystemExit('Rollback CRC failed')
++        rollback_entries = len(z.infolist())
++    if rollback_dest.stat().st_size >= MAX_BYTES or sha(rollback_dest) != '4a7af94aae8b64793b1fd2b9504cdd8b2f53a4a3ca351f8fa32f11fb34c28c99':
++        raise SystemExit('Rollback differs from the delivered R185 source or exceeds the ZIP size limit.')
++    outputs.append({'file': rollback_dest.name, 'bytes': rollback_dest.stat().st_size, 'sha256': sha(rollback_dest), 'CRC': 'PASS', 'entries': rollback_entries})
++    write_json(args.output / 'package-checksums.json', {'independent_zip_packages': True, 'size_limit_bytes': MAX_BYTES, 'packages': outputs})
++    print(json.dumps(outputs, ensure_ascii=False, indent=2))
++
++if __name__ == '__main__':
++    main()
+--- /dev/null
++++ R188/evaluation/r188/run-browser-checks.mjs
+@@ -0,0 +1,27 @@
++// Local-only R188 servers. Existing preview and released sources are untouched.
++import {spawn} from 'node:child_process'
++import {openSync,writeFileSync,mkdirSync,readFileSync} from 'node:fs'
++const dir=process.env.R185_EVIDENCE_DIR??'/workspace/fangkun/evidence/r188/browser-final'
++const screens=process.env.R185_SCREEN_DIR??'/workspace/screenshots/fangkun-r188-final'
++const env={...process.env,NODE_EXTRA_CA_CERTS:'/usr/local/share/ca-certificates/environment-proxy-ca.crt',PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH:'/usr/bin/chromium',BROWSER_SMOKE_BLOCK_SW:'1',DATABASE_URL:'',XAI_API_KEY:'',GEMINI_API_KEY:'',OPENAI_API_KEY:'',ANTHROPIC_API_KEY:''}
++const focusedOnly=process.env.R185_FOCUSED_ONLY==='1'
++const target=process.env.R185_BROWSER_TARGET??'both'
++env.PATH=process.execPath.slice(0,process.execPath.lastIndexOf('/'))+':'+env.PATH
++const results=[],servers=[]
++mkdirSync(screens,{recursive:true});mkdirSync(dir,{recursive:true})
++async function ready(url){for(let i=0;i<60;i++){try{if((await fetch(url)).ok)return}catch{}await new Promise(r=>setTimeout(r,1000))}throw Error('server unavailable: '+url)}
++async function server(name,args){const log=openSync(`${dir}/${name}.log`,'w'),p=spawn('npm',args,{stdio:['ignore',log,log],env,detached:true});servers.push(p);return p}
++async function run(name,args){const log=openSync(`${dir}/${name}.log`,'w');const p=spawn(process.execPath,args,{stdio:['ignore',log,log],env});const code=await new Promise(resolve=>p.on('exit',resolve));results.push({name,exitCode:code});writeFileSync(`${dir}/browser-runs.json`,JSON.stringify(results,null,2));return code}
++try {
++ if(['both','dev','dev-restart'].includes(target)) {await server('dev',['run','dev','--','--host','127.0.0.1','--port','8086']);await ready('http://127.0.0.1:8086/')}
++ if(['both','prod','restart','dev-restart'].includes(target)) {await server('preview',['run','preview','--','--host','127.0.0.1','--port','8087']);await ready('http://127.0.0.1:8087/')}
++ if(!focusedOnly){
++  await run('dev-smoke',['scripts/browser-smoke.mjs','http://127.0.0.1:8086/',`${screens}/dev.png`])
++  await run('prod-smoke',['scripts/browser-smoke.mjs','http://127.0.0.1:8087/',`${screens}/prod.png`,'--baseline',`${screens}/dev.json`])
++ }
++ if(['both','dev','dev-restart'].includes(target)) await run('dev-focused',['evaluation/r188/browser-acceptance.mjs','http://127.0.0.1:8086/','dev'])
++ if(['both','prod'].includes(target)) await run('prod-focused',['evaluation/r188/browser-acceptance.mjs','http://127.0.0.1:8087/','prod'])
++
++ if(['both','prod','restart','dev-restart'].includes(target)) await run('prod-restart',['evaluation/r188/browser-restart.mjs','http://127.0.0.1:8087/'])
++ if(results.some(r=>r.exitCode!==0))process.exitCode=1
++} catch(e){console.error(String(e));process.exitCode=1} finally{for(const p of servers)try{process.kill(-p.pid,'SIGTERM')}catch{}}
+--- /dev/null
++++ R188/evaluation/r188/run-domain-direct.py
+@@ -0,0 +1,124 @@
++#!/usr/bin/env python3
++"""Supplemental direct-file assertion coverage; does not claim canonical npm PASS."""
++import concurrent.futures
++import datetime
++import glob
++import hashlib
++import json
++import os
++from pathlib import Path
++import re
++import shlex
++import subprocess
++import time
++
++ROOT = Path(__file__).resolve().parents[2]
++NODE = Path('/tmp/fangkun-r185-runtime/node-v22.22.0-linux-x64/bin/node')
++EVIDENCE = Path('/workspace/fangkun/evidence/r188/domain-direct-final')
++EVIDENCE.mkdir(parents=True, exist_ok=True)
++PACKAGE = ROOT / 'package.json'
++script = json.loads(PACKAGE.read_text())['scripts']['test:domain']
++tokens = shlex.split(script)
++patterns = [token for token in tokens if '*' in token and '.test.' in token]
++files = sorted(set(path for pattern in patterns for path in glob.glob(pattern, root_dir=ROOT)))
++if not patterns or not files:
++    raise SystemExit('No exact package test:domain files found')
++
++# Root already executed these 33 cases directly while diagnosing the runner.
++# Keep it in the exact scope inventory, without re-running or adding its cases here.
++reused = {'src/lib/core/coach-r188.test.ts'}
++selected = [path for path in files if path not in reused]
++credential = re.compile(r'^(?:OPENAI(?:_|$)|ANTHROPIC(?:_|$)|CLAUDE(?:_|$)|XAI(?:_|$)|GEMINI(?:_|$)|GOOGLE_(?:AI|GENAI|API)|GROK_API|AZURE_OPENAI|DATABASE_URL$|PG(?:HOST|PORT|USER|PASSWORD|DATABASE|SSLMODE)$|NEON(?:_|$)|SUPABASE(?:_|$)|MODEL(?:_|$)|API_(?:KEY|TOKEN|URL|BASE)|LLM(?:_|$))', re.I)
++removed = sorted(key for key in os.environ if credential.match(key))
++env = {key: value for key, value in os.environ.items() if key not in removed}
++# NODE_OPTIONS can inject unapproved loaders/API setup. The exact command is the
++# existing test register loader only; no substitute mocks or test settings.
++if 'NODE_OPTIONS' in env:
++    removed.append('NODE_OPTIONS')
++    env.pop('NODE_OPTIONS')
++env['PATH'] = str(NODE.parent) + os.pathsep + env.get('PATH', '')
++
++def sha(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++inventory = {
++    'canonicalScript': script,
++    'packageSha256': sha(PACKAGE),
++    'patterns': patterns,
++    'exactDomainFileCount': len(files),
++    'files': files,
++    'selectedFileCount': len(selected),
++    'notRepeated': sorted(reused.intersection(files)),
++    'notRepeatedReason': 'Root already ran coach-r188.test.ts directly: 33 internal cases; excluded from this supplemental count.',
++    'removedEnvironmentVariableNames': sorted(set(removed)),
++    'node': str(NODE),
++    'nodeSha256': sha(NODE),
++    'testRegisterSha256': sha(ROOT / 'scripts/test-register.mjs'),
++    'execution': 'Node22 --import ./scripts/test-register.mjs <exact test file>, no --test; concurrency 3; stdout/stderr regular files.',
++    'canonicalNpmDomainPassClaimed': False,
++}
++(EVIDENCE / 'scope.json').write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + '\n')
++
++def run(path):
++    safe = path.replace('/', '__')
++    stdout_path = EVIDENCE / (safe + '.stdout.log')
++    stderr_path = EVIDENCE / (safe + '.stderr.log')
++    before = sha(ROOT / path)
++    started = datetime.datetime.now(datetime.timezone.utc).isoformat()
++    tick = time.monotonic()
++    command = [str(NODE), '--import', './scripts/test-register.mjs', path]
++    error = None
++    with stdout_path.open('wb') as out, stderr_path.open('wb') as err, open(os.devnull, 'rb') as stdin:
++        try:
++            process = subprocess.Popen(command, cwd=ROOT, env=env, stdin=stdin, stdout=out, stderr=err)
++            try:
++                code = process.wait(timeout=240)
++            except subprocess.TimeoutExpired:
++                process.kill()
++                code = process.wait()
++                error = 'TIMEOUT_240_SECONDS'
++        except Exception as exc:
++            code = None
++            error = type(exc).__name__ + ': ' + str(exc)
++    text = stdout_path.read_text(errors='replace')
++    counts = {}
++    for key in ('tests', 'suites', 'pass', 'fail', 'cancelled', 'skipped', 'todo'):
++        hits = re.findall(r'^# ' + key + r' (\d+)\s*$', text, re.MULTILINE)
++        counts[key] = int(hits[-1]) if hits else None
++    unchanged = before == sha(ROOT / path)
++    verdict = 'PASS' if code == 0 and counts['tests'] is not None and counts['fail'] == 0 and counts['cancelled'] == 0 and unchanged and not error else 'FAIL'
++    result = {
++        'file': path, 'command': command, 'startedAt': started,
++        'durationSeconds': round(time.monotonic() - tick, 3), 'exitCode': code,
++        'testSha256': before, 'unchangedAfterExecution': unchanged,
++        'stdout': str(stdout_path), 'stderr': str(stderr_path),
++        'stdoutSha256': sha(stdout_path), 'stderrSha256': sha(stderr_path),
++        'tap': counts, 'status': verdict, 'error': error,
++    }
++    (EVIDENCE / (safe + '.json')).write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
++    return result
++
++print(json.dumps({'event': 'START', 'exactDomainFiles': len(files), 'selectedFiles': len(selected), 'notRepeated': sorted(reused.intersection(files)), 'concurrency': 3}), flush=True)
++results = []
++with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
++    pending = {pool.submit(run, path): path for path in selected}
++    for future in concurrent.futures.as_completed(pending):
++        result = future.result()
++        results.append(result)
++        if result['status'] != 'PASS' or len(results) % 20 == 0 or len(results) == len(selected):
++            print(json.dumps({'event': 'PROGRESS', 'completedFiles': len(results), 'totalFiles': len(selected), 'latest': result['file'], 'latestStatus': result['status'], 'latestTap': result['tap']}), flush=True)
++        (EVIDENCE / 'progress.json').write_text(json.dumps({'completedFiles': len(results), 'selectedFileCount': len(selected), 'results': sorted(results, key=lambda item: item['file'])}, ensure_ascii=False, indent=2) + '\n')
++
++totals = {key: sum(item['tap'][key] or 0 for item in results) for key in ('tests', 'suites', 'pass', 'fail', 'cancelled', 'skipped', 'todo')}
++summary = {
++    **inventory, 'results': sorted(results, key=lambda item: item['file']),
++    'fileCounts': {status: sum(item['status'] == status for item in results) for status in ('PASS', 'FAIL')},
++    'tapTotals': totals,
++    'filesWithoutInternalTapCounts': [item['file'] for item in results if item['tap']['tests'] is None],
++    'canonicalNpmDomainPassClaimed': False,
++    'status': 'PASS' if all(item['status'] == 'PASS' for item in results) and len(results) == len(selected) else 'FAIL',
++    'scopeNote': 'Supplemental direct-file execution of unchanged domain assertions; canonical npm test:domain remains a separate acceptance result. Previously executed R188 33 cases are not repeated or added to this count.',
++}
++(EVIDENCE / 'results.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n')
++print(json.dumps({'event': 'COMPLETE', 'status': summary['status'], 'fileCounts': summary['fileCounts'], 'tapTotals': totals, 'canonicalNpmDomainPassClaimed': False}), flush=True)
++raise SystemExit(0 if summary['status'] == 'PASS' else 1)
+--- /dev/null
++++ R188/evaluation/r188/run-full-checks.mjs
+@@ -0,0 +1,19 @@
++import {spawn} from 'node:child_process'
++import {mkdirSync,openSync,writeFileSync} from 'node:fs'
++const output=process.env.R188_EVIDENCE_DIR??'/workspace/fangkun/evidence/r188'
++mkdirSync(output,{recursive:true})
++const env={...process.env}
++for(const key of ['XAI_API_KEY','GEMINI_API_KEY','OPENAI_API_KEY','ANTHROPIC_API_KEY','DATABASE_URL'])delete env[key]
++env.PATH=process.execPath.slice(0,process.execPath.lastIndexOf('/'))+':'+env.PATH
++const receipt={node:process.version,startedAt:new Date().toISOString(),commands:[],externalModelsAuthorized:false,fullChainPassed:false}
++const save=()=>writeFileSync(`${output}/full-checks-final.json`,JSON.stringify(receipt,null,2)+'\n')
++save()
++for(const args of [['test'],['run','test:domain'],['run','typecheck'],['run','build']]){
++ const label=args.join('-'),log=`${output}/${label}-final.log`,startedAt=new Date().toISOString(),fd=openSync(log,'w')
++ const child=spawn('npm',args,{env,stdio:['ignore',fd,fd]})
++ const exitCode=await new Promise(resolve=>{child.on('error',()=>resolve(127));child.on('exit',resolve)})
++ receipt.commands.push({command:'npm '+args.join(' '),log,startedAt,finishedAt:new Date().toISOString(),exitCode});save()
++ console.log(JSON.stringify(receipt.commands.at(-1)))
++ if(exitCode!==0){receipt.finishedAt=new Date().toISOString();save();process.exitCode=1;break}
++}
++if(receipt.commands.length===4&&receipt.commands.every(c=>c.exitCode===0)){receipt.fullChainPassed=true;receipt.finishedAt=new Date().toISOString();save()}
+--- R185/package.json
++++ R188/package.json
+@@ -16,7 +16,7 @@
+     "preview:stop": "node scripts/preview.mjs stop",
+     "typecheck": "tsc --noEmit",
+     "check:auth": "node scripts/check-auth-invariant.mjs",
+-    "test": "node --test --test-concurrency=3 'scripts/**/*.test.mjs' && node --experimental-strip-types --test --test-concurrency=3 src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts && node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/core.test.ts src/lib/core/canonical.test.ts src/lib/core/occurrence.test.ts src/lib/core/training-fact.test.ts src/lib/core/fact-read.test.ts src/lib/core/training-summary.test.ts src/lib/core/evidence.test.ts src/lib/core/performance-evidence.test.ts src/lib/core/recovery-evidence.test.ts src/lib/core/evidence-profile.test.ts src/lib/core/evidence-interpretation.test.ts src/lib/core/evidence-inference.test.ts src/lib/core/evidence-fatigue.test.ts src/lib/core/evidence-recovery.test.ts src/lib/core/evidence-musculoskeletal.test.ts src/lib/core/evidence-bundle.test.ts src/lib/core/evidence-provenance.test.ts src/lib/core/evidence-availability.test.ts src/lib/core/evidence-consistency.test.ts src/lib/core/historical-occurrences.test.ts src/lib/core/historical-facts.test.ts src/lib/core/historical-availability.test.ts src/lib/core/historical-evidence.test.ts src/lib/core/import-history.test.ts src/lib/core/running-plan.test.ts src/lib/core/running-execution.test.ts src/lib/core/running-execution-rest.test.ts src/lib/core/coach-brief.test.ts src/lib/core/coach-model-packet.test.ts src/lib/core/coach-output-budget.test.ts src/lib/core/coach-stream.test.ts src/lib/core/coach-open.test.ts src/lib/core/coach-fuel.test.ts src/lib/core/coach-compare.test.ts src/lib/core/coach-series.test.ts src/lib/core/coach-return.test.ts src/lib/core/coach-next-session.test.ts src/lib/core/hydration.test.tsx src/lib/core/training-decision.test.ts src/lib/core/training-correction.test.ts src/lib/core/training-correction-projection.test.ts src/lib/core/coach-view.test.tsx src/lib/core/brain-loop.test.ts src/lib/core/training-import.test.ts src/lib/core/training-coach.test.ts src/lib/core/training-model.test.ts src/lib/core/coach-plan.test.ts src/lib/core/coach-competency.test.ts src/lib/core/coach-plan-display.test.tsx src/lib/core/training-followup.test.ts src/lib/core/training-followup-display.test.tsx src/lib/core/coach-knowledge.test.ts src/lib/core/coach-knowledge-display.test.tsx src/lib/core/import-completeness.test.ts src/lib/core/running-observation.test.ts src/lib/core/running-round-analysis.test.ts src/lib/core/trial.test.ts src/lib/ui/training-log-view.test.ts src/lib/ui/sport-goal.test.ts src/lib/ui/running-workouts.test.ts src/lib/ui/sw-reload.test.ts src/lib/strength/model-access.test.ts src/lib/strength/persist.test.ts src/lib/strength/session-builder.test.tsx src/lib/nutrition/vitals.test.ts && npm run test:cognition && npm run test:v4",
++    "test": "node --test --test-concurrency=3 'scripts/**/*.test.mjs' && node --experimental-strip-types --test --test-concurrency=3 src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts && node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/core.test.ts src/lib/core/canonical.test.ts src/lib/core/occurrence.test.ts src/lib/core/training-fact.test.ts src/lib/core/fact-read.test.ts src/lib/core/training-summary.test.ts src/lib/core/evidence.test.ts src/lib/core/performance-evidence.test.ts src/lib/core/recovery-evidence.test.ts src/lib/core/evidence-profile.test.ts src/lib/core/evidence-interpretation.test.ts src/lib/core/evidence-inference.test.ts src/lib/core/evidence-fatigue.test.ts src/lib/core/evidence-recovery.test.ts src/lib/core/evidence-musculoskeletal.test.ts src/lib/core/evidence-bundle.test.ts src/lib/core/evidence-provenance.test.ts src/lib/core/evidence-availability.test.ts src/lib/core/evidence-consistency.test.ts src/lib/core/historical-occurrences.test.ts src/lib/core/historical-facts.test.ts src/lib/core/historical-availability.test.ts src/lib/core/historical-evidence.test.ts src/lib/core/import-history.test.ts src/lib/core/running-plan.test.ts src/lib/core/running-execution.test.ts src/lib/core/running-execution-rest.test.ts src/lib/core/coach-brief.test.ts src/lib/core/coach-model-packet.test.ts src/lib/core/coach-output-budget.test.ts src/lib/core/coach-stream.test.ts src/lib/core/coach-open.test.ts src/lib/core/coach-fuel.test.ts src/lib/core/coach-compare.test.ts src/lib/core/coach-series.test.ts src/lib/core/coach-return.test.ts src/lib/core/coach-next-session.test.ts src/lib/core/hydration.test.tsx src/lib/core/training-decision.test.ts src/lib/core/training-correction.test.ts src/lib/core/training-correction-projection.test.ts src/lib/core/coach-view.test.tsx src/lib/core/brain-loop.test.ts src/lib/core/training-import.test.ts src/lib/core/training-coach.test.ts src/lib/core/training-model.test.ts src/lib/core/coach-plan.test.ts src/lib/core/coach-competency.test.ts src/lib/core/coach-plan-display.test.tsx src/lib/core/training-followup.test.ts src/lib/core/training-followup-display.test.tsx src/lib/core/coach-knowledge.test.ts src/lib/core/coach-knowledge-display.test.tsx src/lib/core/import-completeness.test.ts src/lib/core/running-observation.test.ts src/lib/core/running-round-analysis.test.ts src/lib/core/trial.test.ts src/lib/ui/training-log-view.test.ts src/lib/ui/sport-goal.test.ts src/lib/ui/running-workouts.test.ts src/lib/ui/sw-reload.test.ts src/lib/strength/model-access.test.ts src/lib/strength/persist.test.ts src/lib/strength/session-builder.test.tsx src/lib/nutrition/vitals.test.ts && npm run test:cognition && npm run test:v4 && npm run test:r188",
+     "lint": "eslint .",
+     "format": "prettier --write .",
+     "test:cognition": "node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-cognition.test.ts src/lib/core/coach-local-first.test.ts src/lib/core/coach-local-safety.test.ts src/lib/core/coach-first-week.test.ts src/lib/core/storage-journal.test.ts src/lib/core/running-real-use.test.ts src/lib/core/coach-device-conflict.test.ts src/lib/core/coach-curriculum.test.ts src/lib/core/coach-guard-k13.test.ts src/lib/strength/coach-v4-wiring.test.ts src/lib/core/coach-reasoning-foundation.test.ts src/lib/core/coach-reasoning.test.ts src/lib/core/coach-reasoning-r7.test.ts src/lib/core/coach-reasoning-r8.test.ts src/lib/core/coach-module-linkage.test.ts src/lib/core/coach-r10-regression.test.ts src/lib/core/coach-red-flags.test.ts src/lib/core/coach-diagnosis-wording.test.ts src/lib/core/coach-session-load.test.ts src/lib/core/coach-playbook-retrieval.test.ts src/lib/core/coach-topic-fallback.test.ts src/lib/core/coach-r11-mixed-session.test.ts src/lib/core/coach-r11-integrity.test.ts src/lib/core/coach-structured-candidate.test.ts src/lib/core/coach-load-metrics.test.ts src/lib/core/coach-load-metrics-store.test.ts src/lib/strength/coach-explanation.test.ts src/lib/core/coach-r12-integration.test.ts src/lib/strength/coach-r12-pipeline.test.ts src/lib/core/coach-r13-safety.test.ts src/lib/core/coach-r13-features.test.ts src/lib/core/coach-offline-loop.test.ts src/lib/core/coach-quantitative.test.ts",
+@@ -35,7 +35,8 @@
+     "test:quantitative": "node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-quantitative.test.ts src/lib/core/coach-load-metrics.test.ts",
+     "test:r14-quantitative": "npm run test:quantitative && node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-r14-chat.test.ts",
+     "test:r173-authorized": "node --import ./scripts/test-register.mjs src/lib/core/coach-quantitative.test.ts",
+-    "test:r184-pending": "node --import ./scripts/test-register.mjs src/lib/core/coach-r184-preparation.test.ts"
++    "test:r184-pending": "node --import ./scripts/test-register.mjs src/lib/core/coach-r184-preparation.test.ts",
++    "test:r188": "node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-r188.test.ts src/lib/core/coach-claim-revision.test.ts src/lib/core/coach-decision-calibration.test.ts src/lib/core/coach-p7-evaluation.test.ts src/lib/core/coach-p7-knowledge.test.ts src/lib/core/coach-p7-r187.test.ts src/lib/core/coach-p7-r7.test.ts src/lib/core/coach-r185-p0.test.ts"
+   },
+   "dependencies": {
+     "@electric-sql/pglite": "^0.5.4",
+--- R185/src/components/coach-sheet.tsx
++++ R188/src/components/coach-sheet.tsx
+@@ -4,6 +4,7 @@
+ import { CoachChatLoadPanel } from '@/components/coach-chat-load-panel';
+ import { CoachChatTrainingPanel } from '@/components/coach-chat-training-panel';
+ import { emptyDialogue } from '@/lib/core/coach-dialogue';
++import {commitDisplayedCoachAdvice} from '@/lib/core/coach-p7-runtime';
+ import type { ChatTraining } from '@/lib/core/coach-chat-evidence';
+ import { chatLoadPreview } from '@/lib/core/coach-chat-load';
+ import { readCoachReviewWorkspace } from '@/lib/core/coach-review-workspace';
+@@ -254,6 +255,7 @@
+         try{periodReview=readCoachReviewWorkspace(athleteId,calendarDay(asOf)!,Number(periodIntent[1]),asOf,devices,failed).period}catch{/* Existing formal-evidence response remains available. */}
+       }
+       const local = answerLocally(brief,reviewed?{frame:reviewed.reasoning,snapshot:reviewed.review.audit.snapshot}:undefined,coachContextMemory,periodReview,memory.dialogue??emptyDialogue(athleteId));
++      if(!useCloud&&local.candidate){const savedAdvice=commitDisplayedCoachAdvice(local,value);if(!savedAdvice.ok)local.text+='\n本次建议历史保存失败，请先保留此回答；没有修改正式计划。'}
+       setChatTraining(local.chatTraining??null);
+       if(local.chatTraining)setChatLoad(null);
+     if (!useCloud) {
+--- R185/src/components/storage-durability.tsx
++++ R188/src/components/storage-durability.tsx
+@@ -1,9 +1,11 @@
+ import {useEffect,useState} from 'react'
++import {migrateCoreStorage,rollbackCoreStorage,flushCoreStorage,migrationStatus} from '@/lib/core/storage-indexeddb'
+ 
+ /** Best-effort browser persistence; never promises protection against manual deletion or OS eviction. */
+ export function StorageDurability(){
+  const [state,setState]=useState<'CHECKING'|'PERSISTED'|'VOLATILE'|'UNSUPPORTED'|'ERROR'>('CHECKING')
+  const [usage,setUsage]=useState<number|null>(null)
++ const [migration,setMigration]=useState(migrationStatus())
+  async function check(request=false){
+   try{
+    if(!navigator.storage?.persisted){setState('UNSUPPORTED');return}
+@@ -13,9 +15,13 @@
+   }catch{setState('ERROR')}
+  }
+  useEffect(()=>{void check()},[])
++ useEffect(()=>{const update=()=>setMigration(migrationStatus());window.addEventListener('fangkun:storage-migration',update);return()=>window.removeEventListener('fangkun:storage-migration',update)},[])
+  return <section data-testid="storage-durability" className="my-3 rounded-card border border-line p-3 text-sm">
+   <p role="status">{state==='PERSISTED'?'浏览器已授予持久存储':state==='VOLATILE'?'浏览器尚未授予持久存储':state==='UNSUPPORTED'?'此浏览器不支持持久存储申请':state==='ERROR'?'存储状态暂时无法读取':'正在检查本机存储'}{usage!==null?`，当前约用${(usage/1024/1024).toFixed(1)} MB`:''}。</p>
+   <p className="mt-1 text-xs text-muted">仍请定期下载备份；清除网站数据、卸载或系统清理可能删除记录，iOS也不保证永久保留。</p>
+   {state!=='PERSISTED'&&state!=='UNSUPPORTED'&&<button type="button" onClick={()=>void check(true)} className="mt-2 min-h-11 rounded-card border border-line px-3">申请保留本机数据</button>}
++  <p data-testid="storage-migration-state" className="mt-2 text-xs">{migration.state==='INDEXED_DB_MIRROR'?'本机副本已迁移并核对，原存储保留以便回退':migration.state==='COPYING'?'正在复制并核对本机数据':migration.state==='BLOCKED'?'本机存储迁移暂不可用，原记录保留':migration.state==='FALLBACK'?'副本未完成同步，继续使用原存储':'当前使用原本机存储'}。</p>
++  <button type="button" disabled={migration.state==='COPYING'} onClick={()=>void(migration.state==='INDEXED_DB_MIRROR'?flushCoreStorage():migrateCoreStorage()).then(setMigration)} className="mt-2 min-h-11 rounded-card border border-line px-3">{migration.state==='INDEXED_DB_MIRROR'?'核对并同步本机副本':'迁移本机存储（保留原记录）'}</button>
++  {migration.state==='INDEXED_DB_MIRROR'&&<button type="button" onClick={()=>void rollbackCoreStorage().then(setMigration)} className="ml-2 mt-2 min-h-11 rounded-card border border-line px-3">回退到原存储</button>}
+  </section>
+ }
+--- /dev/null
++++ R188/src/lib/core/coach-claim-revision.test.ts
+@@ -0,0 +1,42 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {auditClaimCorrection,safetyCandidateGate,type AuditedClaim,type VersionedFact,type FieldCorrection} from './coach-claim-revision.ts';
++const old:VersionedFact={sourceId:'S-250',revision:1,origin:'DEVICE',fieldPaths:['repsSeconds','recoveryMinutes','completionStatus']};
++const change:FieldCorrection={sourceId:'S-250',fromRevision:1,toRevision:2,sourceOrigin:'DEVICE',changedFieldPaths:['repsSeconds[2]']};
++const claim:AuditedClaim={claimId:'fatigue',status:'ACTIVE_HYPOTHESIS',dependencies:[{sourceId:'S-250',revision:1,fieldPaths:['repsSeconds']}],candidateIds:['add-intensity']};
++test('same-source last rep correction flags dependent hypothesis and its dose candidate only',()=>{
++ const r=auditClaimCorrection(claim,old,change);
++ assert.equal(r.status,'STALE_NEEDS_REVIEW');assert.equal(r.updateAction,'MARK_STALE');
++ assert.deepEqual(r.affectedPaths,['repsSeconds[2]']);assert.deepEqual(r.invalidatedCandidateIds,['add-intensity']);
++ assert.equal(r.planWriteAuthorized,false);
++});
++test('completions and recovery remain valid after last-rep timing correction',()=>{
++ for(const path of ['completionStatus','recoveryMinutes']){
++  const x=auditClaimCorrection({...claim,claimId:path,status:'SUPPORTED_FACT',dependencies:[{sourceId:'S-250',revision:1,fieldPaths:[path]}],candidateIds:[]},old,change);
++  assert.equal(x.updateAction,'KEEP');assert.equal(x.status,'SUPPORTED_FACT');
++ }
++});
++test('new independent race cannot revise old training and unrelated prefix paths do not match',()=>{
++ assert.equal(auditClaimCorrection(claim,old,{...change,sourceId:'S-800-NEW'}).updateAction,'REVIEW_REQUIRED');
++ const c={...claim,dependencies:[{sourceId:'S-250',revision:1,fieldPaths:['repsSecondsExtra']}]};
++ assert.equal(auditClaimCorrection(c,old,change).updateAction,'KEEP');
++});
++test('orphan correction cannot be promoted to verified device event',()=>{
++ assert.equal(auditClaimCorrection(claim,null,change).reason,'SOURCE_CHAIN_NOT_VERIFIED');
++ const report:VersionedFact={...old,origin:'USER_REPORT'};
++ assert.equal(auditClaimCorrection(claim,report,change).updateAction,'REVIEW_REQUIRED');
++});
++test('unrelated revision or malformed correction is review required',()=>{
++ assert.equal(auditClaimCorrection(claim,old,{...change,fromRevision:0}).updateAction,'REVIEW_REQUIRED');
++ assert.equal(auditClaimCorrection(claim,old,{...change,changedFieldPaths:['__proto__.x;y']}).updateAction,'REVIEW_REQUIRED');
++});
++test('already closed claim is not reactivated and safety never clears plan',()=>{
++ assert.equal(auditClaimCorrection({...claim,status:'RETRACTED'},old,change).status,'RETRACTED');
++ assert.deepEqual(safetyCandidateGate(true,['c1','c1','c2']).blockedCandidateIds,['c1','c2']);
++ assert.equal(safetyCandidateGate(false,['c1']).medicalClearanceProvided,false);
++});
++
++test('claims without dependency chains are unresolved; revisions cannot go backwards',()=>{
++ assert.equal(auditClaimCorrection({...claim,dependencies:[]},old,change).updateAction,'REVIEW_REQUIRED');
++ assert.equal(auditClaimCorrection(claim,old,{...change,toRevision:0}).updateAction,'REVIEW_REQUIRED');
++});
+--- /dev/null
++++ R188/src/lib/core/coach-claim-revision.ts
+@@ -0,0 +1,71 @@
++/** R7 field-scoped, read-only correction audit. No fact writes or plan changes. */
++export type Revision = string | number;
++export type FactOrigin = 'DEVICE' | 'USER_REPORT' | 'COACH_OBSERVATION' | 'PLAN';
++export type ClaimStatus = 'DRAFT' | 'SUPPORTED_FACT' | 'ACTIVE_HYPOTHESIS' | 'WEAKENED'
++  | 'RETRACTED' | 'SUPERSEDED' | 'STALE_NEEDS_REVIEW' | 'UNRESOLVED';
++export type UpdateAction = 'KEEP' | 'MARK_STALE' | 'REVIEW_REQUIRED' | 'BLOCK';
++export type ClaimDependency = { sourceId: string; revision: Revision; fieldPaths: readonly string[] };
++export type VersionedFact = {
++  sourceId: string; revision: Revision; origin: FactOrigin;
++  /** Paths known to exist; no inferred measurement provenance. */
++  fieldPaths: readonly string[];
++};
++export type FieldCorrection = {
++  sourceId: string; fromRevision: Revision; toRevision: Revision;
++  sourceOrigin: FactOrigin; changedFieldPaths: readonly string[];
++};
++export type AuditedClaim = {
++  claimId: string; status: ClaimStatus; dependencies: readonly ClaimDependency[];
++  candidateIds?: readonly string[];
++};
++export type ClaimCorrectionResult = {
++  claimId: string; status: ClaimStatus; updateAction: UpdateAction;
++  reason: string; affectedPaths: string[]; invalidatedCandidateIds: string[];
++  /** An audit recommendation only; never changes plan/claims itself. */
++  planWriteAuthorized: false;
++};
++const pathValid = (p: string): boolean => /^[A-Za-z_$][\w$]*(?:\[\d+\]|\.[A-Za-z_$][\w$]*)*$/.test(p);
++const overlaps = (a: string, b: string): boolean =>
++  a === b || a.startsWith(b + '.') || a.startsWith(b + '[') || b.startsWith(a + '.') || b.startsWith(a + '[');
++const same = (a: Revision, b: Revision): boolean => a === b;
++const report = (c: AuditedClaim, status: ClaimStatus, action: UpdateAction, reason: string, fields: string[] = []): ClaimCorrectionResult => ({
++  claimId: c.claimId, status, updateAction: action, reason,
++  affectedPaths: fields, invalidatedCandidateIds: action === 'MARK_STALE' ? [...new Set(c.candidateIds ?? [])] : [],
++  planWriteAuthorized: false,
++});
++/**
++ * Only a known same-source correction of an actual previous revision can
++ * invalidate claims. Unknown links stay unresolved and cannot be described as
++ * device-verified. A new session/source never rewrites an older event.
++ */
++export function auditClaimCorrection(
++  c: AuditedClaim, oldFact: VersionedFact | null, correction: FieldCorrection,
++): ClaimCorrectionResult {
++  if (!c.claimId || !correction.sourceId || !correction.changedFieldPaths.length ||
++      !c.dependencies.length || c.dependencies.some(d=>!d.sourceId||!d.fieldPaths.length||d.fieldPaths.some(p=>!pathValid(p))) ||
++      (typeof correction.fromRevision==='number' && typeof correction.toRevision==='number' && correction.toRevision<=correction.fromRevision) ||
++      correction.changedFieldPaths.some(p => !pathValid(p)) ||
++      !String(correction.toRevision).trim() || same(correction.fromRevision, correction.toRevision))
++    return report(c, 'UNRESOLVED', 'REVIEW_REQUIRED', 'MALFORMED_CORRECTION');
++  if (!oldFact || oldFact.sourceId !== correction.sourceId ||
++      !same(oldFact.revision, correction.fromRevision) || oldFact.origin !== correction.sourceOrigin ||
++      !oldFact.fieldPaths.length || correction.changedFieldPaths.some(p => !oldFact.fieldPaths.some(f => overlaps(f, p))))
++    return report(c, 'UNRESOLVED', 'REVIEW_REQUIRED', 'SOURCE_CHAIN_NOT_VERIFIED');
++  // A reported activity never becomes a device-verified activity via this audit.
++  const deps = c.dependencies.filter(d => d.sourceId === correction.sourceId &&
++    same(d.revision, correction.fromRevision));
++  const touched = [...new Set(correction.changedFieldPaths.filter(f =>
++    deps.some(d => d.fieldPaths.some(x => pathValid(x) && overlaps(x, f)))))];
++  if (!touched.length) return report(c, c.status, 'KEEP', 'NO_DEPENDENCY_ON_CHANGED_FIELD');
++  if (c.status === 'RETRACTED' || c.status === 'SUPERSEDED')
++    return report(c, c.status, 'KEEP', 'HISTORICAL_CLAIM_ALREADY_CLOSED');
++  return report(c, 'STALE_NEEDS_REVIEW', 'MARK_STALE',
++    `CORRECTED_FIELDS:${correction.sourceId}@${String(correction.fromRevision)}->${String(correction.toRevision)}`, touched);
++}
++/** Safety is an independent action gate: it blocks training candidates without
++ * rewriting historical observations or pretending to deliver medical clearance. */
++export function safetyCandidateGate(safetyHold: boolean, candidateIds: readonly string[]) {
++  return { blockedCandidateIds: safetyHold ? [...new Set(candidateIds)] : [],
++    trainingPlanWriteAuthorized: false as const,
++    medicalClearanceProvided: false as const };
++}
+--- /dev/null
++++ R188/src/lib/core/coach-decision-calibration.test.ts
+@@ -0,0 +1,18 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {auditDecision, summarizeCalibration, compareBlindPairs, type DecisionSnapshot, type OutcomeSnapshot} from './coach-decision-calibration.ts';
++const d:DecisionSnapshot={id:'d1',athleteId:'a1',actor:'FANGKUN',caseId:'case1',createdAt:'2026-10-01T12:00:00Z',evidenceCutoff:'2026-10-01T11:59:00Z',sources:[{sourceId:'s1',revision:'v1'}],hypothesis:'possible pacing issue',alternative:'possible speed maintenance issue',metricId:'SPLIT',protocolKey:'track-400',unit:'s',forecastValue:57,forecastDirection:'LOWER_BETTER',observationDueAt:'2026-10-03T12:00:00Z',uncertaintyNote:'weather unknown',safetyHold:false,planWrite:false};
++const o:OutcomeSnapshot={id:'o1',athleteId:'a1',caseId:'case1',observedAt:'2026-10-02T12:00:00Z',recordedAt:'2026-10-02T12:05:00Z',source:{sourceId:'s2',revision:'v1'},metricId:'SPLIT',protocolKey:'track-400',unit:'s',value:58,measurementValid:true};
++const versions={s1:'v1',s2:'v1'};
++test('valid precommitted prediction yields numerical error',()=>{const x=auditDecision(d,o,versions);assert.equal(x.state,'EVALUABLE');assert.equal(x.error,-1)});
++test('no outcome remains pending',()=>assert.equal(auditDecision(d,null,versions).state,'PENDING'));
++test('changed evidence retracts dependent judgment',()=>assert.equal(auditDecision(d,o,{...versions,s1:'v2'}).state,'SUPERSEDED'));
++test('changed outcome version invalidates evaluation',()=>assert.equal(auditDecision(d,o,{...versions,s2:'v2'}).state,'SUPERSEDED'));
++test('other athlete is rejected',()=>assert.equal(auditDecision(d,{...o,athleteId:'a2'},versions).state,'INVALID'));
++test('different protocol is rejected',()=>assert.equal(auditDecision(d,{...o,protocolKey:'road'},versions).state,'INVALID'));
++test('post hoc decision is rejected',()=>assert.equal(auditDecision({...d,createdAt:'2026-10-03T12:00:00Z'},o,versions).state,'INVALID'));
++test('future cutoff is rejected',()=>assert.equal(auditDecision({...d,evidenceCutoff:'2026-10-04T12:00:00Z'},o,versions).state,'INVALID'));
++test('safety hold prevents performance calibration',()=>assert.equal(auditDecision({...d,safetyHold:true},o,versions).state,'INCONCLUSIVE'));
++test('no numeric forecast does not create false accuracy',()=>assert.equal(auditDecision({...d,forecastValue:null},o,versions).state,'INCONCLUSIVE'));
++test('calibration reports MAE but no autonomous update',()=>{const x=summarizeCalibration([auditDecision(d,o,versions),auditDecision(d,null,versions)]);assert.equal(x.mae,1);assert.equal(x.eligibleCount,1);assert.equal(x.autonomousRuleUpdateAuthorized,false)});
++test('paired comparison never claims superiority from a sample',()=>{const a=auditDecision(d,o,versions);const b={...a,absoluteError:2,error:2};const x=compareBlindPairs([{caseId:'case1',athleteId:'a1',fangkun:a,human:b}]);assert.equal(x.pairedN,1);assert.equal(x.meanAbsoluteErrorDifference,-1);assert.equal(x.superiorityEstablished,false)});
+--- /dev/null
++++ R188/src/lib/core/coach-decision-calibration.ts
+@@ -0,0 +1,117 @@
++/**
++ * P7 experimental, local-only decision calibration. No automatic plan changes,
++ * no model calls, and no claims of causal training effects.
++ * Pure functions; persistence is delegated to the existing versioned journal.
++ */
++export type DecisionActor = 'FANGKUN' | 'HUMAN_COACH' | 'BASELINE';
++export type AuditState = 'INVALID' | 'PENDING' | 'EVALUABLE' | 'INCONCLUSIVE' | 'SUPERSEDED';
++export type ForecastDirection = 'LOWER_BETTER' | 'HIGHER_BETTER';
++export type SourceVersion = { sourceId: string; revision: string };
++export type DecisionSnapshot = {
++  id: string;
++  athleteId: string;
++  actor: DecisionActor;
++  caseId: string;
++  createdAt: string;
++  evidenceCutoff: string;
++  sources: SourceVersion[];
++  hypothesis: string;
++  alternative: string;
++  metricId: string;
++  protocolKey: string;
++  unit: string;
++  forecastValue: number | null;
++  forecastDirection: ForecastDirection;
++  observationDueAt: string;
++  uncertaintyNote: string;
++  safetyHold: boolean;
++  planWrite: false;
++  /** Optional R187 candidate knowledge provenance, never rule approval. */
++  knowledgeEvidenceIds?: string[];
++  knowledgeVersion?: string;
++};
++export type OutcomeSnapshot = {
++  id: string;
++  athleteId: string;
++  caseId: string;
++  observedAt: string;
++  recordedAt: string;
++  source: SourceVersion;
++  metricId: string;
++  protocolKey: string;
++  unit: string;
++  value: number | null;
++  measurementValid: boolean;
++};
++export type AuditResult = {
++  decisionId: string;
++  state: AuditState;
++  error: number | null;
++  absoluteError: number | null;
++  reason: string;
++};
++const validTime = (s: string): boolean => Number.isFinite(Date.parse(s)) && /(?:Z|[+-]\d\d:\d\d)$/.test(s);
++const finite = (x: number | null): x is number => x !== null && Number.isFinite(x);
++export function auditDecision(
++  d: DecisionSnapshot,
++  o: OutcomeSnapshot | null,
++  currentVersions: Readonly<Record<string, string>>,
++): AuditResult {
++  const result = (state: AuditState, reason: string, error: number | null = null): AuditResult =>
++    ({ decisionId: d.id, state, reason, error, absoluteError: error === null ? null : Math.abs(error) });
++  if (!d.id || !d.athleteId || !d.caseId || !d.metricId || !d.protocolKey || !d.unit ||
++      !d.hypothesis || !d.alternative || !d.sources.length || d.planWrite !== false ||
++      !validTime(d.createdAt) || !validTime(d.evidenceCutoff) || !validTime(d.observationDueAt) ||
++      Date.parse(d.evidenceCutoff) > Date.parse(d.createdAt) ||
++      Date.parse(d.observationDueAt) <= Date.parse(d.createdAt) ||
++      d.sources.some(s => !s.sourceId || !s.revision) ||
++      (d.forecastValue !== null && !Number.isFinite(d.forecastValue)))
++    return result('INVALID', 'INVALID_PRECOMMITTED_DECISION');
++  if (d.sources.some(s => currentVersions[s.sourceId] !== s.revision))
++    return result('SUPERSEDED', 'EVIDENCE_REVISION_CHANGED');
++  if (d.safetyHold) return result('INCONCLUSIVE', 'SAFETY_HOLD_NO_PERFORMANCE_EVALUATION');
++  if (!o) return result('PENDING', 'OUTCOME_NOT_RECORDED');
++  if (o.athleteId !== d.athleteId || o.caseId !== d.caseId ||
++      o.metricId !== d.metricId || o.protocolKey !== d.protocolKey || o.unit !== d.unit)
++    return result('INVALID', 'OUTCOME_BINDING_OR_PROTOCOL_MISMATCH');
++  if (!validTime(o.observedAt) || !validTime(o.recordedAt) ||
++      Date.parse(o.observedAt) <= Date.parse(d.createdAt) ||
++      Date.parse(o.recordedAt) < Date.parse(o.observedAt) ||
++      Date.parse(o.recordedAt) < Date.parse(d.createdAt))
++    return result('INVALID', 'OUTCOME_TIMELINE_INVALID');
++  if (!o.source.sourceId || currentVersions[o.source.sourceId] !== o.source.revision)
++    return result('SUPERSEDED', 'OUTCOME_SOURCE_REVISION_CHANGED');
++  if (!o.measurementValid || !finite(o.value) || !finite(d.forecastValue))
++    return result('INCONCLUSIVE', 'MISSING_VALID_NUMERIC_FORECAST_OR_OUTCOME');
++  // Signed forecast error = predicted minus observed; sign is not a quality label.
++  return result('EVALUABLE', 'MATCHED_PRECOMMITTED_FORECAST', d.forecastValue - o.value);
++}
++export type CalibrationSummary = {
++  status: 'DESCRIPTIVE_ONLY' | 'INSUFFICIENT_EVIDENCE';
++  eligibleCount: number;
++  excludedCount: number;
++  mae: number | null;
++  bias: number | null;
++  /** A descriptive error summary is never an autonomous learning/approval trigger. */
++  autonomousRuleUpdateAuthorized: false;
++};
++export function summarizeCalibration(results: readonly AuditResult[]): CalibrationSummary {
++  const good = results.filter(r => r.state === 'EVALUABLE' && finite(r.error));
++  const n = good.length;
++  return {
++    status: n > 0 ? 'DESCRIPTIVE_ONLY' : 'INSUFFICIENT_EVIDENCE',
++    eligibleCount: n, excludedCount: results.length - n,
++    mae: n ? good.reduce((s, r) => s + Math.abs(r.error!), 0) / n : null,
++    bias: n ? good.reduce((s, r) => s + r.error!, 0) / n : null,
++    autonomousRuleUpdateAuthorized: false,
++  };
++}
++export type PairedJudgment = { caseId: string; athleteId: string; fangkun: AuditResult; human: AuditResult };
++export function compareBlindPairs(pairs: readonly PairedJudgment[]) {
++  const valid = pairs.filter(p => p.fangkun.state === 'EVALUABLE' && p.human.state === 'EVALUABLE' &&
++    finite(p.fangkun.absoluteError) && finite(p.human.absoluteError));
++  const n = valid.length;
++  const meanDifference = n ? valid.reduce((s, p) => s + p.fangkun.absoluteError! - p.human.absoluteError!, 0) / n : null;
++  return { status: 'DESCRIPTIVE_ONLY' as const, pairedN: n, excludedN: pairs.length - n,
++    meanAbsoluteErrorDifference: meanDifference, superiorityEstablished: false as const };
++}
+--- R185/src/lib/core/coach-device-preparation.ts
++++ R188/src/lib/core/coach-device-preparation.ts
+@@ -30,6 +30,7 @@
+   raw: DecodedDeviceActivity; reasons: string[]; missingLapOrdinals: number[] | null
+   comparisonKey: string | null; verifiedOccurrenceId: string | null
+   automaticImport: false; planWrite: false; actualWorkoutCount: null
++  qualityIssues?: {status:'IMPLAUSIBLE';sourceId:string;field:string;reason:string}[]
+ }
+ const absent = <T>(): ImportField<T> => ({ value: null, status: 'ABSENT', sourceIds: [] })
+ const observed = <T>(value: T | null, sourceId: string): ImportField<T> => value === null ? absent<T>() : ({ value, status: sourceId ? 'RECORDED' : 'AMBIGUOUS', sourceIds: sourceId ? [sourceId] : [] })
+@@ -38,6 +39,26 @@
+ 
+ export function prepareDeviceActivity(input: DecodedDeviceActivity, asOf: string): PreparedDeviceActivity {
+   const raw = structuredClone(input), reasons: string[] = []
++  const qualityIssues:NonNullable<PreparedDeviceActivity['qualityIssues']>=[]
++  const flag=(sourceId:string,field:string,reason:string)=>qualityIssues.push({status:'IMPLAUSIBLE',sourceId,field,reason})
++  for(const [field,n] of [['totalDistanceMeters',raw.totalDistanceMeters],['timerSeconds',raw.timerSeconds],['elapsedSeconds',raw.elapsedSeconds]] as const)
++    if(n!==null&&(!Number.isFinite(n)||n<0))flag(raw.sourceId,field,'活动汇总值为负或无效，需核对来源与单位。')
++  if(raw.timerSeconds!==null&&raw.elapsedSeconds!==null&&Number.isFinite(raw.timerSeconds)&&Number.isFinite(raw.elapsedSeconds)&&raw.elapsedSeconds<raw.timerSeconds)
++    flag(raw.sourceId,'elapsedSeconds','活动经过时间短于计时时间，需核对来源与单位。')
++  // Data-review flags only. A high reading can be real; these never diagnose or stop training.
++  // Reuse the broad existing offline speed checks, rather than introduce a WR-derived dose rule.
++  for(const lap of raw.laps){
++    const distance=lap.distance?.value!==null&&lap.distance?.value!==undefined?lap.distance.value*(lap.distance.unit==='km'?1000:1):null
++    if(lap.distance&&!['m','km'].includes(lap.distance.unit))flag(lap.sourceId,'distance','距离单位未确认，不能自动换算。')
++    if(lap.timerSeconds!==null&&(!Number.isFinite(lap.timerSeconds)||lap.timerSeconds<=0))flag(lap.sourceId,'timerSeconds','计时非有效正数，需核对原文件和单位。')
++    if(lap.elapsedSeconds!==null&&(!Number.isFinite(lap.elapsedSeconds)||lap.elapsedSeconds<0||lap.timerSeconds!==null&&lap.elapsedSeconds<lap.timerSeconds))flag(lap.sourceId,'elapsedSeconds','经过时间为负、无效或短于计时时间。')
++    if(distance!==null&&(!Number.isFinite(distance)||distance<0))flag(lap.sourceId,'distance','距离为负或不是有限数值。')
++    if(lap.kind!=='RECOVERY'&&distance!==null&&distance>0&&lap.timerSeconds!==null&&lap.timerSeconds>0&&(distance/lap.timerSeconds>15||distance>=5000&&distance/lap.timerSeconds>9))flag(lap.sourceId,'timerSeconds','分段速度异常，先核对计时、距离和单位。')
++    for(const [field,n] of [['averageHeartRateBpm',lap.averageHeartRateBpm],['maximumHeartRateBpm',lap.maximumHeartRateBpm]] as const)
++      if(n!==null&&(!Number.isFinite(n)||n<=0||n>=220))flag(lap.sourceId,field,'心率读数需要核对原文件、传感器和测量条件；不作为诊断阈值。')
++    if(lap.averageHeartRateBpm!==null&&lap.maximumHeartRateBpm!==null&&lap.averageHeartRateBpm>lap.maximumHeartRateBpm)flag(lap.sourceId,'averageHeartRateBpm','平均心率高于最高心率，字段可能错位。')
++  }
++  if(qualityIssues.length)reasons.push('DEVICE_DATA_IMPLAUSIBLE_REQUIRES_REVIEW')
+   if (!raw.sourceFileHash || !raw.sourceId || !raw.activityId) reasons.push('SOURCE_IDENTITY_MISSING')
+   if (!strictIso(asOf) || !strictIso(raw.startedAt) || !strictIso(raw.recordedAt) || Date.parse(raw.startedAt) > Date.parse(raw.recordedAt) || Date.parse(raw.recordedAt) > Date.parse(asOf)) reasons.push('TIME_OR_VISIBILITY_INVALID')
+   if (!raw.identityConfirmed || !raw.athleteId) reasons.push('ATHLETE_IDENTITY_UNCONFIRMED')
+@@ -58,17 +79,18 @@
+   if (!verifiedOccurrenceId) reasons.push('ACTIVITY_NOT_BOUND_TO_CONFIRMED_TRAINING_OCCURRENCE')
+   const candidate: TrainingImportCandidate = {
+     sport: raw.sport, occurredAt: observed(raw.startedAt, raw.sourceId), title: absent(),
+-    durationSeconds: observed(positive(raw.timerSeconds), raw.sourceId), totalDistanceMeters: observed(positive(raw.totalDistanceMeters), raw.sourceId),
++    durationSeconds: qualityIssues.some(i=>i.sourceId===raw.sourceId&&i.field==='timerSeconds')?{value:null,status:'AMBIGUOUS',sourceIds:[raw.sourceId]}:observed(positive(raw.timerSeconds), raw.sourceId), totalDistanceMeters: qualityIssues.some(i=>i.sourceId===raw.sourceId&&i.field==='totalDistanceMeters')?{value:null,status:'AMBIGUOUS',sourceIds:[raw.sourceId]}:observed(positive(raw.totalDistanceMeters), raw.sourceId),
+     runningStructure: raw.laps.length && raw.laps.every(l => l.kind !== 'UNKNOWN' && l.structure) ? 'REPEATED' : 'UNAVAILABLE',
+     runningSegments: raw.laps.map((lap): ImportedRunningSegment => {
+       const rests = raw.reportedRests.filter(r => r.afterLapId === lap.id && r.scope === 'BETWEEN_REPEATS' && Number.isFinite(r.seconds) && r.seconds >= 0)
+       const distance = lap.distance && positive(lap.distance.value) !== null ? lap.distance.value * (lap.distance.unit === 'km' ? 1000 : 1) : null
++      const safeObserved=<T>(value:T|null,field:string):ImportField<T>=>qualityIssues.some(i=>i.sourceId===lap.sourceId&&i.field===field)?{value:null,status:'AMBIGUOUS',sourceIds:[lap.sourceId]}:observed(value,lap.sourceId)
+       return {
+         id: lap.id, kind: lap.kind === 'WORK' && lap.structure ? 'REPETITION' : lap.kind === 'RECOVERY' ? 'RECOVERY' : 'UNKNOWN',
+         round: observed(lap.structure?.round ?? null, lap.sourceId), repeat: observed(lap.structure?.repeat ?? null, lap.sourceId),
+-        distanceMeters: observed(distance, lap.sourceId), durationSeconds: observed(positive(lap.timerSeconds), lap.sourceId),
++        distanceMeters: safeObserved(distance,'distance'), durationSeconds: safeObserved(positive(lap.timerSeconds),'timerSeconds'),
+         recoverySeconds: rests.length === 1 ? observed(rests[0].seconds, rests[0].sourceId) : rests.length ? { value: null, status: 'CONFLICTING', sourceIds: rests.map(r => r.sourceId) } : absent(),
+-        averageHeartRateBpm: observed(positive(lap.averageHeartRateBpm), lap.sourceId), heartRateMethod: observed(lap.heartRateMethod, lap.sourceId),
++        averageHeartRateBpm: safeObserved(positive(lap.averageHeartRateBpm),'averageHeartRateBpm'), heartRateMethod: observed(lap.heartRateMethod, lap.sourceId),
+         completion: positive(lap.timerSeconds) === null ? 'NOT_RECORDED' : 'COMPLETED', sourceIds: [lap.sourceId],
+       }
+     }),
+@@ -77,7 +99,7 @@
+     warnings: ['设备活动不是训练课次；课次须单独确认绑定。', '原始距离、平均/最高心率、计时/经过时间、结构和未定位休息保存在raw；不得用间歇合计生成连续PB。', '只供后续导入审阅；尚未写入正式记录。'],
+   }
+   const comparisonKey = !reasons.length ? JSON.stringify([raw.athleteId,raw.deviceId,raw.protocolKey,raw.sport,raw.laps.map(l => [l.kind,l.timingMethod,l.distance,l.structure]),raw.reportedRests.map(r => [r.scope,r.seconds,raw.laps.find(l => l.id === r.afterLapId)?.ordinal])]) : null
+-  return { status: reasons.some(r => /INVALID|DUPLICATE|SOURCE_IDENTITY/.test(r)) ? 'BLOCKED' : 'NEEDS_REVIEW', candidate, raw, reasons, missingLapOrdinals, comparisonKey, verifiedOccurrenceId, automaticImport: false, planWrite: false, actualWorkoutCount: null }
++  return { status: reasons.some(r => /INVALID|DUPLICATE|SOURCE_IDENTITY|IMPLAUSIBLE/.test(r)) ? 'BLOCKED' : 'NEEDS_REVIEW', candidate, raw, reasons, missingLapOrdinals, comparisonKey, verifiedOccurrenceId, automaticImport: false, planWrite: false, actualWorkoutCount: null,qualityIssues }
+ }
+ 
+ /** Do not merge laps, athletes or devices. Activity count and confirmed occurrence count are different denominators. */
+--- R185/src/lib/core/coach-dialogue.ts
++++ R188/src/lib/core/coach-dialogue.ts
+@@ -1,7 +1,7 @@
+ import type {CoachBrief} from './coach-brief.ts'
+ import type {EvolutionSnapshot} from './coach-evolution-v4.ts'
+ import type {ReasoningFrame} from './coach-reasoning.ts'
+-import {detectRedFlags,redFlagResponse,type RedFlagResult} from './coach-red-flags.ts'
++import {detectRedFlags,redFlagResponse,RED_FLAG_PRIORITY,type RedFlagResult} from './coach-red-flags.ts'
+ import {parseChatTraining,chatEvolution,rounded,savedChatReceipt,type ChatTraining} from './coach-chat-evidence.ts'
+ import {readOfflineWorkspace} from './coach-offline-workspace.ts'
+ import {buildOfflineReview,emptyOfflineProfile,readOfflineProfile,type OfflineProfile,type OfflineReview} from './coach-offline-loop.ts'
+@@ -11,20 +11,21 @@
+ import {ordinaryDiscomfortAnswer} from './coach-ordinary-discomfort.ts'
+ import {explainTrainingMechanism} from './coach-training-mechanisms.ts'
+ import {calculateStatedSessionLoads} from './coach-curriculum.ts'
++import type {StructuredCoachingCandidate} from './coach-structured-candidate.ts'
+ 
+ export type CoachIntent='REVIEW'|'NEXT'|'INCREASE'|'CONFLICT'|'WEEK'|'PAIN'|'DISCOMFORT'|'ANOMALY'|'LOAD'|'TEST'|'COACHING'
+-export type CoachDialogue={version:1;athleteId:string;profile:OfflineProfile;goal:string|null;goalTarget?:{meters:number;fromSeconds:number|null;toSeconds:number;sourceText:string};pbs:{meters:number;seconds:number}[];injury:string|null;asked:string[];phase:'INTAKE'|'JUDGMENT'|'TEST'|'FEEDBACK'|'RETEST';lastTraining:ChatTraining|null;emergency:RedFlagResult|null;previousDecision:string|null;turns:number}
++export type CoachDialogue={version:1;athleteId:string;profile:OfflineProfile;goal:string|null;goalTarget?:{meters:number;fromSeconds:number|null;toSeconds:number;sourceText:string};pbs:{meters:number;seconds:number}[];injury:string|null;asked:string[];phase:'INTAKE'|'JUDGMENT'|'TEST'|'FEEDBACK'|'RETEST';lastTraining:ChatTraining|null;emergency:RedFlagResult|null;medicalHold?:RedFlagResult|null;reportedNextCourse?:{text:string;source:'USER_REPORT';recordedAt:string}|null;previousDecision:string|null;turns:number}
+ export const emptyDialogue=(athleteId='local'):CoachDialogue=>({version:1,athleteId,profile:emptyOfflineProfile(athleteId),goal:null,pbs:[],injury:null,asked:[],phase:'INTAKE',lastTraining:null,emergency:null,previousDecision:null,turns:0})
+ export function validDialogue(value:unknown):value is CoachDialogue{
+  const s=value as CoachDialogue|undefined
+- return !!s&&s.version===1&&typeof s.athleteId==='string'&&s.profile?.athleteId===s.athleteId&&Array.isArray(s.pbs)&&s.pbs.every(p=>Number.isFinite(p.meters)&&Number.isFinite(p.seconds))&&Array.isArray(s.asked)&&['INTAKE','JUDGMENT','TEST','FEEDBACK','RETEST'].includes(s.phase)&&Number.isFinite(s.turns)&&(s.emergency===null||s.emergency?.level==='EMERGENCY')&&(s.lastTraining===null||Array.isArray(s.lastTraining?.splits))
++ return !!s&&s.version===1&&typeof s.athleteId==='string'&&s.profile?.athleteId===s.athleteId&&Array.isArray(s.pbs)&&s.pbs.every(p=>Number.isFinite(p.meters)&&Number.isFinite(p.seconds))&&Array.isArray(s.asked)&&['INTAKE','JUDGMENT','TEST','FEEDBACK','RETEST'].includes(s.phase)&&Number.isFinite(s.turns)&&(s.emergency===null||s.emergency?.level==='EMERGENCY')&&(!s.medicalHold||['URGENT_MEDICAL','MEDICAL_REVIEW'].includes(s.medicalHold.level)&&Array.isArray(s.medicalHold.classes)&&Array.isArray(s.medicalHold.evidence))&&(!s.reportedNextCourse||s.reportedNextCourse.source==='USER_REPORT'&&typeof s.reportedNextCourse.text==='string'&&Number.isFinite(Date.parse(s.reportedNextCourse.recordedAt)))&&(s.lastTraining===null||Array.isArray(s.lastTraining?.splits))
+ }
+ export function coachPrimaryIntent(q:string):CoachIntent{
+  // The user's requested action outranks incidental numbers, AU and device names.
+  if(/加(?:组|量|强度|重量)|再(?:来|做|跑).{0,4}(?:组|趟)|多(?:跑|练)|加多了|是不是太多/.test(q))return /这周|本周|周量/.test(q)&&/多了|太多|加多/.test(q)?'WEEK':'INCREASE'
+  if(/听(?:手表|感觉|教练)|手表.{0,18}(?:感觉|疲劳|很累)|感觉.{0,18}(?:手表|恢复)|冲突|取舍/.test(q))return 'CONFLICT'
+  if(/复测|测试安排|测什么|怎么测|测试课|观察课/.test(q))return 'TEST'
+- if(/明天|下一课|下次(?:练|跑|怎么)|练什么|跑什么|怎么安排/.test(q))return 'NEXT'
++ if(/明天|下一课|下次(?:练|跑|怎么)|练什么|跑什么|怎么安排|下周怎么练|下周练什么/.test(q))return 'NEXT'
+  // Weekly context is secondary when the user supplies actual splits and asks for this session's review.
+  if(/复盘|练得|表现|怎么样|如何|分析/.test(q)&&parseChatTraining(q).splits.some(s=>s.seconds!==null))return 'REVIEW'
+  if(/这周|本周|周量|周负荷|急慢性/.test(q)&&/多|变化|判断|怎样|怎么样|合理|负荷|比/.test(q))return 'WEEK'
+@@ -55,6 +56,9 @@
+   if(s.profile.event===p.meters+'米')s.profile.pbSeconds=p.seconds
+  }
+  if(s.goalTarget&&s.profile.pbSeconds!==null&&s.profile.event===s.goalTarget.meters+'米')s.goalTarget={...s.goalTarget,fromSeconds:s.profile.pbSeconds}
++ const approved=q.match(/(?:教练|用户|我)(?:已经|已)?(?:明确)?批准(?:了)?(?:明天|下一课|下周)?(?:的)?(?:课程|原课|训练)?[：:，,\s]*([^。？?]{2,160})/)
++ if(approved&&!/假设|如果|没有批准|未批准|是否|撤回|取消/.test(q))s.reportedNextCourse={text:approved[1],source:'USER_REPORT',recordedAt:new Date().toISOString()}
++ if(/(?:撤回|取消).{0,10}(?:批准|下一课|明天课程)/.test(q))s.reportedNextCourse=null
+  if(/(?:没有|无)(?:伤病|疼痛)/.test(q))s.injury='未报告当前伤病'
+  else if(/(?:我|今天|现在|跑到|跑了|走路|刚|目前).{0,35}(?:拉伤|跟腱.{0,8}(?:疼|痛|僵)|膝外侧.{0,8}(?:疼|痛)|疼痛)/.test(q)&&!/假设|如果|是否|有没有|有无|那个|要紧吗/.test(q))s.injury=q.slice(0,260)
+  return s
+@@ -74,11 +78,15 @@
+  const state=updateSlots(q,stored?{...old,profile:{...stored.profile}}:old)
+  const red=detectRedFlags(q,{ageYears:state.profile.age??undefined})
+  const evaluated=/(?:已经|已|刚刚|刚)(?:去医院|到医院|就医|在急诊|经医生评估)|医生(?:已经|已)评估/.test(q)&&!/(?:没|未|没有).{0,3}(?:就医|医院|评估)|假设|如果/.test(q)
+- if(evaluated)state.emergency=null
++ if(evaluated){state.emergency=null;if(old.emergency)state.medicalHold={...old.emergency,level:'URGENT_MEDICAL'}}
+  if(red.level==='EMERGENCY')state.emergency=red
+- const response=(text:string,review?:OfflineReview,chat?:ChatTraining)=>({text:cleanAthleteText(text).replace(/。{2,}/g,'。'),sources:review?.basis.sources.map(s=>s.sourceId)??[],escalationAvailable:false,offlineRuleIds:['R14-DIALOGUE'],dialogue:state,offlineReview:review,chatTraining:chat,candidate:null})
++ if(red.level==='URGENT_MEDICAL'||red.level==='MEDICAL_REVIEW'&&red.classes.some(c=>c==='ENERGY'||c==='PAIN'))state.medicalHold=old.medicalHold?{...red,level:RED_FLAG_PRIORITY[old.medicalHold.level]>RED_FLAG_PRIORITY[red.level]?old.medicalHold.level:red.level,classes:[...new Set([...old.medicalHold.classes,...red.classes])],evidence:[...new Set([...old.medicalHold.evidence,...red.evidence])]}:red
++ // An unresolved medical concern survives ordinary follow-ups and symptom denial.
++ // It is not an exercise clearance channel, even after a medical visit.
++ const response=(text:string,review?:OfflineReview,chat?:ChatTraining,candidate:StructuredCoachingCandidate|null=null)=>({text:cleanAthleteText(text).replace(/。{2,}/g,'。'),sources:review?.basis.sources.map(s=>s.sourceId)??[],escalationAvailable:false,offlineRuleIds:['R14-DIALOGUE'],dialogue:state,offlineReview:review,chatTraining:chat,candidate})
+  if(state.emergency)return response(redFlagResponse(state.emergency)!)
+  if(evaluated&&old.emergency)return response('先按刚才就医得到的明确医嘱处理，今天不要自行恢复训练。已就医不等于已获运动许可；请核对医生给出的活动限制和复诊安排。')
++ if(state.medicalHold&&red.level==='NONE')return response('之前报告的健康线索仍需专业评估，后续成绩或一般感觉不能解除限制。'+redFlagResponse(state.medicalHold)!+'未核对专业运动许可前，不安排测试课或训练升级。')
+  if(red.level==='URGENT_MEDICAL'||red.level==='MEDICAL_REVIEW'&&red.classes.includes('ENERGY'))return response(redFlagResponse(red)!)
+  const pain=painAnswer(q);if(pain)return response(pain)
+  const chat=parseChatTraining(q),intent=coachPrimaryIntent(q)
+@@ -109,9 +117,17 @@
+  const population=state.profile.age!==null&&(state.profile.age<18||state.profile.age>=50)?`考虑到你${state.profile.age<18?'仍是青少年，安排请监护人和现场教练参与':'属于大师组，恢复节奏需更保守'}，本轮只保留一次熟悉的质量观察，质量课间隔由现场教练根据原计划、项目与恢复核定；不安排连续高强度。`:''
+  const poor=/很累|明显疲劳|疲劳明显|腿沉|没恢复|恢复差/.test(q)&&!/(?:没有|无|并不)(?:明显)?(?:疲劳|很累|腿沉)/.test(q)
+  let text=''
++ let nextCandidate:StructuredCoachingCandidate|null=null
+  if(intent==='INCREASE')text=`今天不建议加组或加量：不能仅凭这次表现批准额外刺激${/备赛|减量|比赛|赛前/.test(q+' '+state.profile.stage)?'，先核对赛前原计划目的':''}。${facts.join('；')}。${poor?'你报告的疲劳需要先核对日常活动和热身反应':'先保留原计划与本次完成量分别比较'}；增加要求只能作为待确认候选，先记录当前恢复和下一次同协议表现。`
+  else if(intent==='CONFLICT')text=`今天先听身体的疲劳反应，不用手表的“已恢复”覆盖实际不适。${facts.join('；')}。若只是一般疲劳且无痛，选择休息或熟悉的轻松活动；热身后仍沉重就结束，明天再核对感觉和同条件测量。设备可能受算法、佩戴和测量时间影响，不能据一个读数放行强度。`
+- else if(intent==='NEXT')text=`明天建议先核对已批准课程和当前恢复，再决定是否保留或提出调整候选。${facts.join('；')}。${active?`前次记录有${currentSplitCount}段用时${currentRpe!==null?`、RPE ${currentRpe}`:''}，下一次观察目标是同条件表现及次日反应`:context?'结合你已提供的背景，当前最需要核对的是下一课原定任务':'目前课程目的与剂量未确认，先补下一课原定任务'}；${poor?'若明显疲劳影响日常活动或热身反应，暂缓高强度，考虑休息或无痛轻活动的候选':'单一RPE或静息心率变化不能决定减量或休息'}，未经确认不改课。`
++ else if(intent==='NEXT'){
++  const course=state.reportedNextCourse?.recordedAt.slice(0,10)===asOf.slice(0,10)?state.reportedNextCourse:null
++  const when=/下周/.test(q)?'下周第一课':'明天'
++  text=course?`${when}建议按你明确报告已批准的原课程执行：${course.text}；这是你的批准转述，尚未升级为设备核验或医学许可。若考虑减量、换课或延长休息，先把候选改动交给你确认。`:`${when}建议休息，作为尚无已批准课程时的保守默认处方；仅建议、可撤回。${/下周/.test(q)?'先不据此编排整周剂量，第一课后按新反馈再决定下一课。':''}`
++  if(course&&poor)text=`你报告明显疲劳，${when}建议先暂缓这节原课并休息，作为仅建议、可撤回的调整候选。原已批准课程是${course.text}，是否确认本次暂缓？确认前保留正式原计划，先核对日常活动和热身反应，不顶着疲劳完成。`
++  text+=`${facts.length?facts.join('；')+'。':''}${active?`前次有效记录有${currentSplitCount}段用时${currentRpe!==null?`、RPE ${currentRpe}`:''}；`:''}下一次记录日常活动、疲劳变化和疼痛反应，以判断是否继续保留建议。疼痛加重、胸闷、头晕或日常功能异常时停止活动并按安全提示处理。单一RPE、负荷比例或未经核准的阈值不自动决定减量；正式计划未改动。`
++  if(!chat.issues.length&&!active?.issues.length)nextCandidate={decision:course&&!poor?'CONDITIONAL_REPEAT':'CONDITIONAL_ADJUST',changed_variable:course&&!poor?null:'next_session',from:course&&poor?course.text:null,to:course&&!poor?null:'REST',unchanged:['正式训练计划及已批准课程版本'],stop_conditions:['疼痛加重','胸闷或胸痛','头晕或日常功能异常'],preconditions:['仅建议、可撤回','课程转述不等于医学许可','任何原课程改动须用户确认'],rule_ids:['R188-CONSERVATIVE-DEFAULT','FK-NO-AUTO-WRITE']}
++ }
+  else if(intent==='WEEK')text=`这周先别据单个变化比例决定加量或减量。${facts.join('；')||'目前没有同口径的两周总量，暂不能计算周量变化'}。先核对记录是否齐全、增加的是距离还是强度，再对照睡眠、主观恢复和同类课表现。变化比例本身不是伤病概率，也不能单独决定维持、减量或休息；下一步记录增加集中在哪一课及次日反应，调整仅作为待确认候选。`
+  else if(intent==='LOAD'){const loads=calculateStatedSessionLoads(q);text=`${loads.length>1?loads.map((l,i)=>`第${i+1}条：${l}`).join('；'):facts.find(x=>/AU/.test(x))??'目前尚不能给出整课AU，请先确认评分范围'}。这个数只描述所报负荷，不是疲劳分、伤病概率或停训阈值；下一步确认整课口径并记录恢复。`}
+  else if(intent==='TEST'){
+@@ -120,7 +136,7 @@
+  }else if(review){
+   state.phase=old.phase==='TEST'||old.lastTraining?'FEEDBACK':'JUDGMENT'
+   text=review.text
+-  const background=signals.filter(s=>!['SPLIT_CHANGE','SPEED_CHANGE','AU'].includes(s.kind));if(background.length)text+='\n附加背景：'+background.map(s=>s.text).join('；')+'；这些记录用于核对恢复与可比条件，单独不能批准减量或停训。'
++  const background=signals.filter(s=>!['SPLIT_CHANGE','SPEED_CHANGE','AU'].includes(s.kind));if(background.length){const lines=text.split('\n');const index=lines.findIndex(l=>l.startsWith('本次事实：'));if(index>=0)lines[index]=lines[index].replace(/。$/,'')+'；附加背景：'+background.map(s=>s.text.replace(/。/g,'；')).join('；')+'；单独不能批准减量或停训。';text=lines.join('\n')}
+  }else{
+   state.phase=state.pbs.length?'JUDGMENT':'INTAKE'
+   const pb200=state.pbs.find(p=>p.meters===200),pb400=state.pbs.find(p=>p.meters===400)
+@@ -138,6 +154,6 @@
+  const knowledge=review?.knowledge??retrieveResearchIndex({question:q+' '+signalQuery(signals),step:state.phase==='TEST'?'测试性训练':state.phase==='FEEDBACK'?'反馈与观察':'初步判断',sport:state.profile.event,stage:state.profile.stage==='UNKNOWN'?null:state.profile.stage,age:state.profile.age,sex:state.profile.sex??null,experienceMonths:state.profile.experienceMonths,purpose:review?.purpose.purpose??null,safetyRestricted:false})
+  state.previousDecision=text.split('。')[0]
+  const body=[text,!review&&context?`结合你已说过的背景：${context}。`:'',population,questions.slice(0,Math.max(0,(review?1:2)-(text.match(/[？?]/g)?.length??0))).join('')].filter(Boolean).join('\n')
+- const result=response(body,review,chat.hasActual?chat:undefined)
++ const result=response(body,review,chat.hasActual?chat:undefined,nextCandidate)
+  return {...result,text:result.text+'\n依据：本地知识与教学候选仅帮助解释，没有修改计划或记录。'+(knowledge.length?'\n'+knowledge.map(k=>`${k.id}｜研究候选，未独立核验。${k.summary}；适用限制：${k.boundary}`).join('\n'):''),sources:[...result.sources,...knowledge.map(k=>k.id)]}
+ }
+--- R185/src/lib/core/coach-local-first.ts
++++ R188/src/lib/core/coach-local-first.ts
+@@ -276,14 +276,14 @@
+  if(!FALLBACK_TOPICS.INJECTION.match.test(brief.question)){
+   const current=answerDialogue(brief,logic,dialogue)
+   if(current){
+-   const notes=!current.dialogue.emergency&&!brief.pain&&logic?boundedCoachMemory(memory,logic.snapshot.athleteId,logic.snapshot.asOf):[]
++   const notes=!current.dialogue.emergency&&!current.dialogue.medicalHold&&!brief.pain&&logic?boundedCoachMemory(memory,logic.snapshot.athleteId,logic.snapshot.asOf):[]
+    const [visible,...references]=current.text.split('\n依据：')
+-   const recovery=!current.dialogue.emergency&&detectRedFlags(brief.question).level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain?recoveryDecisionAnswer(brief,retrieveCurriculum(brief.question)):null
+-   const safe=!current.dialogue.emergency&&detectRedFlags(brief.question).level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain
++   const recovery=!current.dialogue.emergency&&!current.dialogue.medicalHold&&detectRedFlags(brief.question).level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain?recoveryDecisionAnswer(brief,retrieveCurriculum(brief.question)):null
++   const safe=!current.dialogue.emergency&&!current.dialogue.medicalHold&&detectRedFlags(brief.question).level==='NONE'&&!brief.pain&&!brief.constraints.medicalReferral&&!logic?.frame.safety.mustRetain
+    const deviceAudit=safe?auditDeviceConflict(brief.question):null
+    const cognition=brief.pain?reasonCoachCognition(brief)??undefined:undefined
+    const curriculum=recovery?.curriculum??(safe?retrieveCurriculum(brief.question):undefined)
+-   const recoverySummary=recovery?'\n恢复核对：'+recovery.recoveryDecision!.observations.map(o=>`${o.origin==='BOUND_FACT'?'绑定记录':'当前自报（未保存）'}${o.text}`).join('；')+'；先核对当前精神状态、近期负荷与周期目的，明显疲劳或不适时暂缓高强度，不能按单个数值放行。':''
++   const recoverySummary=recovery&&!current.offlineReview?'\n恢复核对：'+recovery.recoveryDecision!.observations.map(o=>`${o.origin==='BOUND_FACT'?'绑定记录':'当前自报（未保存）'}${o.text}`).join('；')+'；先核对当前精神状态、近期负荷与周期目的，明显疲劳或不适时暂缓高强度，不能按单个数值放行。':''
+    const detail=[...references,current.offlineReview?.signals.map(s=>s.text).join('\n'),recovery?.text,deviceAudit?.text,curriculum?formatCurriculumGuidance(curriculum):null,safe&&!references.length?'知识边界：这是待核对的训练观察，不是个人诊断；没有修改计划或记录。':null].filter(Boolean).join('\n')
+    return {...current,cognition,curriculum,deviceAudit:deviceAudit??undefined,recoveryDecision:recovery?.recoveryDecision,sources:[...new Set([...current.sources,...recovery?.sources??[],...curriculum?.lessons.map(l=>l.id)??[]])],text:visible+recoverySummary+(notes.length?'\n已保存的安排偏好：'+notes.map(n=>n.text).join('；')+'；没有据此自动改课。':'')+(detail?'\n依据：'+detail:'')}
+   }
+--- R185/src/lib/core/coach-offline-loop.ts
++++ R188/src/lib/core/coach-offline-loop.ts
+@@ -16,6 +16,7 @@
+ import type { AbilityMetricRequest } from './coach-ability-standard.ts'
+ import {quantitativeReviewFacts} from './coach-quantitative-adapter.ts'
+ import type {QuantResult} from './coach-quantitative.ts'
++import {registerReviewClaims,readClaimRevisions} from './coach-p7-runtime.ts'
+ 
+ export const OFFLINE_LOOP_VERSION='FK-OFFLINE-LOOP-R184-1'
+ export const OFFLINE_PROFILE_PREFIX='fr255-coach-profile-r13:'
+@@ -165,7 +166,7 @@
+  // A previously saved copy can have a commit timestamp just after its analysis cutoff.
+  // It is usable for idempotency, never as future evidence for a historical revision.
+  const duplicate=knownHistory.find(r=>r.kind==='ANALYSIS'&&signature(r.review)===signature(review))
+- if(duplicate)return {ok:true,id:duplicate.id}
++ if(duplicate){registerReviewClaims(duplicate.id,review);return {ok:true,id:duplicate.id}}
+  const revisions:Extract<ReviewHistory,{kind:'ANALYSIS'}>['revisions']=[]
+  const hypothesisRevisions:HypothesisRevision[]=[]
+  for(const prior of history.filter((r):r is Extract<ReviewHistory,{kind:'ANALYSIS'}>=>r.kind==='ANALYSIS')){
+@@ -175,7 +176,9 @@
+   revisions.push({priorId:prior.id,status:allWithdrawn?'WITHDRAWN':'RETAINED_UNCONFIRMED',reason:allWithdrawn?'各项解释的来源均已明确更正；保留旧版本。':'按单项假设保留证据。未绑定新证据的反馈、缺失或首末方向反转不自动改变判断。'})
+  }
+  const id=crypto.randomUUID(),record:ReviewHistory={id,kind:'ANALYSIS',createdAt:new Date().toISOString(),athleteId:review.athleteId,review,revisions,hypothesisRevisions}
+- return {ok:appendJournal(OFFLINE_REVIEW_PREFIX,id,record),id}
++ const ok=appendJournal(OFFLINE_REVIEW_PREFIX,id,record)
++ if(ok)registerReviewClaims(id,review)
++ return {ok,id}
+ }
+ export function saveOfflineFeedback(athleteId:string,reviewId:string,verdict:'SUPPORT'|'CONTRADICT'|'UNKNOWN'|'REJECT',note:string):boolean{
+  if(!['SUPPORT','CONTRADICT','UNKNOWN','REJECT'].includes(verdict)||!note.trim()||note.length>600||!readOfflineHistory(athleteId).some(r=>r.id===reviewId&&r.kind==='ANALYSIS'))return false
+@@ -198,7 +201,7 @@
+  return {background:profile?.profile??null,judgments:analyses.map(r=>{
+   const revisions=analyses.flatMap(n=>n.revisions).filter(n=>n.priorId===r.id)
+   const linked=history.flatMap(n=>n.kind==='ANALYSIS'?n.hypothesisRevisions??[]:n.kind==='HYPOTHESIS_OBSERVATION'?[n.revision]:[]).filter(n=>n.priorReviewId===r.id)
+-  const hypothesisStates=r.review.hypotheses.map(h=>{const changes=linked.filter(n=>n.hypothesisId===h.id);const latest=changes.filter(n=>n.status!=='PENDING').at(-1);return {id:h.id,status:changes.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':latest?.status??'PENDING',changes}})
++  const hypothesisStates=r.review.hypotheses.map(h=>{const changes=linked.filter(n=>n.hypothesisId===h.id);const sourceRevisions=readClaimRevisions(r.athleteId).filter(n=>n.result.claimId===`${r.id}:${h.id}`);const stale=sourceRevisions.some(n=>n.result.updateAction==='MARK_STALE');const latest=changes.filter(n=>n.status!=='PENDING').at(-1);return {id:h.id,status:stale||changes.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':latest?.status??'PENDING',changes,sourceRevisions}})
+   const status=hypothesisStates.length&&hypothesisStates.every(h=>h.status==='WITHDRAWN')||revisions.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':hypothesisStates.some(h=>h.status==='WEAKENED')||revisions.some(n=>n.status==='WEAKENED')?'WEAKENED':hypothesisStates.some(h=>h.status==='SUPPORTED')?'SUPPORTED':'RETAINED_UNCONFIRMED'
+   return {id:r.id,occurrenceId:r.review.occurrenceId,hypotheses:r.review.hypotheses,hypothesisStates,status}
+  }),abilityScore:null,automaticPlanChanges:0}
+--- /dev/null
++++ R188/src/lib/core/coach-p7-evaluation.test.ts
+@@ -0,0 +1,16 @@
++import test from 'node:test';import assert from 'node:assert/strict';
++import {groupCalibration,strictBlindCompare,proposeRuleReview,type EvaluatedCase} from './coach-p7-evaluation.ts';
++const make=(actor:EvaluatedCase['actor'],error:number,source='o1',athlete='a'):EvaluatedCase=>({athleteId:athlete,caseId:'c1',metricId:'800m',protocolKey:'electronic',unit:'s',decisionAt:'2026-01-01T00:00:00Z',outcomeAt:'2026-01-02T00:00:00Z',actor,outcomeSourceId:source,outcomeSourceRevision:'v1',result:{decisionId:actor+athlete+source,state:'EVALUABLE',error,absoluteError:Math.abs(error),reason:'MATCHED'}});
++test('strict blind matching requires exact same outcome source',()=>{
++ assert.equal(strictBlindCompare([make('FANGKUN',1),make('HUMAN_COACH',3,'o2')]).pairs,0);
++ const v=strictBlindCompare([make('FANGKUN',1),make('HUMAN_COACH',3)]);
++ assert.equal(v.pairs,1);assert.equal(v.meanAbsoluteErrorDifference,-2);assert.equal(v.superiorityEstablished,false);
++});
++test('grouped calibration retains units and excludes invalid cases',()=>{
++ const bad={...make('FANGKUN',1),result:{...make('FANGKUN',1).result,state:'INCONCLUSIVE' as const,error:null,absoluteError:null}};
++ const v=groupCalibration([make('FANGKUN',2),bad]);assert.equal(v[0].n,1);assert.equal(v[0].excluded,1);assert.equal(v[0].mae,2);
++});
++test('proposals never automatically approve rules',()=>{
++ assert.equal(proposeRuleReview({id:'x',ruleId:'r',reason:'error',proposal:'review',supportingCaseIds:['c'],counterEvidenceCaseIds:[],sourceVersions:['v']})?.automaticApproval,false);
++ assert.equal(proposeRuleReview({id:'x',ruleId:'r',reason:'error',proposal:'review',supportingCaseIds:[],counterEvidenceCaseIds:[],sourceVersions:['v']}),null);
++});
+--- /dev/null
++++ R188/src/lib/core/coach-p7-evaluation.ts
+@@ -0,0 +1,54 @@
++/** P7 evaluation policy. Descriptive, time-respecting, no automatic rule promotion. */
++import type {AuditResult} from './coach-decision-calibration.ts';
++export type EvaluatedCase={athleteId:string;caseId:string;metricId:string;protocolKey:string;
++  unit:string;decisionAt:string;outcomeAt:string;actor:'FANGKUN'|'HUMAN_COACH'|'BASELINE';
++  result:AuditResult;outcomeSourceId:string; outcomeSourceRevision:string};
++export type GroupAudit={metricId:string;unit:string;protocolKey:string;actor:EvaluatedCase['actor'];n:number;athletes:number;
++  mae:number|null;bias:number|null;excluded:number;status:'DESCRIPTIVE_ONLY'|'INSUFFICIENT_EVIDENCE'};
++export function groupCalibration(cases:readonly EvaluatedCase[]):GroupAudit[]{
++ const groups=new Map<string,EvaluatedCase[]>();
++ for(const c of cases){const key=JSON.stringify([c.metricId,c.unit,c.protocolKey,c.actor]);groups.set(key,[...(groups.get(key)??[]),c]);}
++ return [...groups].map(([key,items])=>{
++  const [metricId,unit,protocolKey,actor]=JSON.parse(key) as [string,string,string,EvaluatedCase['actor']];
++  const valid=items.filter(x=>x.result.state==='EVALUABLE'&&x.result.error!==null&&Number.isFinite(x.result.error)&&
++    Date.parse(x.decisionAt)<Date.parse(x.outcomeAt));
++  const n=valid.length;
++  return {metricId,unit,protocolKey,actor,n,athletes:new Set(valid.map(x=>x.athleteId)).size,
++   mae:n?valid.reduce((s,x)=>s+Math.abs(x.result.error!),0)/n:null,
++   bias:n?valid.reduce((s,x)=>s+x.result.error!,0)/n:null,
++   excluded:items.length-n,status:n?'DESCRIPTIVE_ONLY':'INSUFFICIENT_EVIDENCE'};
++ });
++}
++export type BlindComparison={status:'DESCRIPTIVE_ONLY'|'NO_VALID_PAIRS';pairs:number;
++  athleteCount:number;meanAbsoluteErrorDifference:number|null;fangkunWins:number;humanWins:number;ties:number;
++  superiorityEstablished:false};
++/** Only matched same-athlete, same-outcome-source, same-unit/protocol cases can be compared. */
++export function strictBlindCompare(cases:readonly EvaluatedCase[]):BlindComparison{
++ const f=cases.filter(x=>x.actor==='FANGKUN');
++ const h=cases.filter(x=>x.actor==='HUMAN_COACH');
++ const pairs:{a:EvaluatedCase;b:EvaluatedCase}[]=[];
++ const used=new Set<string>();
++ for(const a of f){
++  if(a.result.state!=='EVALUABLE'||a.result.absoluteError===null)continue;
++  const b=h.find(x=>x.athleteId===a.athleteId&&x.caseId===a.caseId&&x.metricId===a.metricId&&
++   x.protocolKey===a.protocolKey&&x.unit===a.unit&&x.outcomeSourceId===a.outcomeSourceId&&
++   x.outcomeSourceRevision===a.outcomeSourceRevision&&x.result.state==='EVALUABLE'&&
++   x.result.absoluteError!==null&&!used.has(x.result.decisionId));
++  if(b){pairs.push({a,b});used.add(b.result.decisionId);}
++ }
++ const differences=pairs.map(({a,b})=>a.result.absoluteError!-b.result.absoluteError!);
++ return {status:pairs.length?'DESCRIPTIVE_ONLY':'NO_VALID_PAIRS',pairs:pairs.length,
++  athleteCount:new Set(pairs.map(x=>x.a.athleteId)).size,
++  meanAbsoluteErrorDifference:differences.length?differences.reduce((a,b)=>a+b,0)/differences.length:null,
++  fangkunWins:differences.filter(x=>x<0).length,humanWins:differences.filter(x=>x>0).length,
++  ties:differences.filter(x=>x===0).length,superiorityEstablished:false};
++}
++export type ImprovementCandidate={id:string;ruleId:string;reason:string;supportingCaseIds:string[];
++  counterEvidenceCaseIds:string[];proposal:string;sourceVersions:string[];
++  status:'RESEARCH_PROPOSAL';automaticApproval:false};
++export function proposeRuleReview(input:{id:string;ruleId:string;reason:string;
++ supportingCaseIds:string[];counterEvidenceCaseIds:string[];proposal:string;sourceVersions:string[]}):ImprovementCandidate|null{
++ if(!input.id||!input.ruleId||!input.reason||!input.proposal||!input.supportingCaseIds.length||
++    !input.sourceVersions.length)return null;
++ return {...input,status:'RESEARCH_PROPOSAL',automaticApproval:false};
++}
+--- /dev/null
++++ R188/src/lib/core/coach-p7-knowledge.test.ts
+@@ -0,0 +1,40 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {P7_EVIDENCE,selectP7Knowledge,distinctEvidenceGroups,knowledgeDecisionGate} from './coach-p7-knowledge.ts';
++test('R187 evidence IDs and DOI candidates are distinct',()=>{
++ assert.equal(P7_EVIDENCE.length,7);
++ assert.equal(new Set(P7_EVIDENCE.map(x=>x.id)).size,7);
++ assert.equal(new Set(P7_EVIDENCE.filter(x=>x.doi).map(x=>x.doi)).size,6);
++});
++test('no candidate evidence can score or prescribe',()=>{
++ for(const c of P7_EVIDENCE){
++  assert.equal(c.canScoreAbility,false);
++  assert.equal(c.canApproveTrainingDose,false);
++  assert.equal(c.canAuthorizeMedicalReturn,false);
++ }
++});
++test('DFA a1 never becomes resting Garmin HRV threshold',()=>{
++ const x=selectP7Knowledge({domains:['HRV'],topic:'dfa-a1-threshold',audience:'ATHLETE'});
++ assert.equal(x.length,1);
++ assert.equal(x[0].usage,'LIMITED_EXPLANATION');
++ assert.equal(knowledgeDecisionGate(x[0]).allowAutomaticDose,false);
++ assert.ok(x[0].card.forbidden.includes('resting-HRV-as-LT1'));
++});
++test('PFP overlapping reviews are not counted as independent experiments',()=>{
++ const p=selectP7Knowledge({domains:['PAIN'],topic:'patellofemoral-pain-gait-retraining',audience:'COACH'});
++ assert.equal(p.length,2);
++ assert.equal(distinctEvidenceGroups(p.map(x=>x.card)),1);
++ assert.ok(p.every(x=>!knowledgeDecisionGate(x).allowExplanation));
++});
++test('clinical hamstring evidence cannot clear sprinting',()=>{
++ const p=selectP7Knowledge({domains:['RTR'],audience:'ATHLETE'});
++ assert.equal(p.length,2);
++ assert.ok(p.every(x=>x.usage==='PROFESSIONAL_REVIEW'));
++ assert.ok(p.every(x=>!knowledgeDecisionGate(x).allowMedicalClearance));
++});
++test('ability norm not approved, radar score blocked',()=>{
++ const p=selectP7Knowledge({domains:['SPD'],audience:'COACH'});
++ assert.equal(p.length,1);
++ assert.equal(p[0].usage,'HOLD_ONLY');
++ assert.equal(knowledgeDecisionGate(p[0]).allowNumericScore,false);
++});
+--- /dev/null
++++ R188/src/lib/core/coach-p7-knowledge.ts
+@@ -0,0 +1,64 @@
++/**
++ * R187 read-only evidence candidates integrated into P7.
++ * Source: RS-DAILY-20261014 candidate audit + R182/R183 standards.
++ * This is NOT approval of thresholds, treatment, or automatic training rules.
++ */
++export type EvidenceStatus = 'QUALIFIED_INTERPRETATION'|'HOLD'|'NUMERICAL_HOLD'|'PROFESSIONAL_ONLY'|'NO_NORM_APPROVED';
++export type EvidenceTier = 'ABSTRACT'|'FULL_TEXT_SECTIONS'|'OFFICIAL'|'INHERITED';
++export type EvidenceCard = {
++ id:string; doi:string|null; domains:readonly string[]; topic:string; tier:EvidenceTier; status:EvidenceStatus;
++ scope:string; claim:string; forbidden:readonly string[]; duplicateGroup:string|null;
++ canScoreAbility:false; canApproveTrainingDose:false; canAuthorizeMedicalReturn:false;
++};
++const card=(data:Omit<EvidenceCard,'canScoreAbility'|'canApproveTrainingDose'|'canAuthorizeMedicalReturn'>):EvidenceCard=>
++ ({...data,canScoreAbility:false,canApproveTrainingDose:false,canAuthorizeMedicalReturn:false});
++export const P7_EVIDENCE_VERSION='R187-CANDIDATE-2026-10-14';
++export const P7_EVIDENCE:readonly EvidenceCard[]=[
++ card({id:'R187-E01',doi:'10.1097/JSM.0000000000001519',domains:['FORM','PAIN'],topic:'patellofemoral-pain-gait-retraining',
++  tier:'ABSTRACT',status:'HOLD',scope:'symptomatic patellofemoral pain runners, not healthy runners',
++  claim:'Scoping review of three RCTs; short-term symptom/function findings require trial and follow-up verification.',
++  forbidden:['universal cadence prescription','injury-prevention guarantee','automatic return-to-run clearance'],duplicateGroup:'PFP-GAIT-RETRAINING'}),
++ card({id:'R187-E02',doi:'10.1249/JES.0000000000000401',domains:['HRV','AER','DEVICE'],topic:'dfa-a1-threshold',
++  tier:'ABSTRACT',status:'QUALIFIED_INTERPRETATION',scope:'validated DFA a1 exercise protocols and equipment only',
++  claim:'Narrative interpretation of DFA a1 during exercise; distinct from resting wearable HRV.',
++  forbidden:['resting-HRV-as-LT1','unverified-device-threshold','automatic dose adjustment'],duplicateGroup:null}),
++ card({id:'R187-E03',doi:'10.1016/j.ptsp.2026.101989',domains:['SPR','FORM'],topic:'acceleration-deceleration-biomechanics',
++  tier:'ABSTRACT',status:'QUALIFIED_INTERPRETATION',scope:'task-specific biomechanics across sports',
++  claim:'Mechanics and actual performance outcomes must be evaluated separately.',
++  forbidden:['muscle-deficit-diagnosis-from-video','automatic race-performance-gain'],duplicateGroup:null}),
++ card({id:'R187-E04',doi:'10.2519/jospt.2026.14372',domains:['PAIN','RTR'],topic:'hamstring-rehabilitation-guideline',
++  tier:'ABSTRACT',status:'PROFESSIONAL_ONLY',scope:'clinical hamstring rehabilitation; full recommendation tables not verified',
++  claim:'GRADE-based clinical guideline exists, but precise recommendations remain unverified.',
++  forbidden:['automatic eccentric-exercise start date','return-to-sprint threshold','medical clearance'],duplicateGroup:'HAMSTRING-RETURN'}),
++ card({id:'R187-E05',doi:'10.1186/s40798-026-01051-8',domains:['FORM','PAIN'],topic:'patellofemoral-pain-gait-retraining',
++  tier:'FULL_TEXT_SECTIONS',status:'NUMERICAL_HOLD',scope:'umbrella review of overlapping secondary reviews',
++  claim:'Short-term pain/function outcomes have some support; overlap CCA numerical interpretation unresolved.',
++  forbidden:['counting overlapping reviews as independent RCTs','long-term prevention claim','universal cadence rule'],duplicateGroup:'PFP-GAIT-RETRAINING'}),
++ card({id:'R187-E06',doi:'10.1186/s12891-026-10072-z',domains:['PAIN','RTR'],topic:'hamstring-return-to-sport',
++  tier:'FULL_TEXT_SECTIONS',status:'PROFESSIONAL_ONLY',scope:'heterogeneous return-to-sport literature; not middle-distance clearance standard',
++  claim:'Multiple clinical dimensions matter; approximately 10% asymmetry is not validated as universal clearance.',
++  forbidden:['10-percent-asymmetry-clearance','automatic maximal-speed return','injury diagnosis'],duplicateGroup:'HAMSTRING-RETURN'}),
++ card({id:'R187-E07',doi:null,domains:['SPD','SEN','AER','PWR','ECO'],topic:'five-axis-ability-norms',
++  tier:'INHERITED',status:'NO_NORM_APPROVED',scope:'R182/R183 metric dictionary and measurement gates',
++  claim:'Raw measurements and trends may be described; no approved population anchors for a five-axis 0–100 radar.',
++  forbidden:['fake-ability-score','replace-strength-with-session-count','replace-economy-with-cadence'],duplicateGroup:null})
++] as const;
++export type KnowledgeQuery={domains:readonly string[];topic?:string;audience:'ATHLETE'|'COACH'|'CLINICIAN'};
++export type KnowledgeMatch={card:EvidenceCard;usage:'LIMITED_EXPLANATION'|'HOLD_ONLY'|'PROFESSIONAL_REVIEW';warning:string};
++export function selectP7Knowledge(q:KnowledgeQuery):KnowledgeMatch[]{
++ return P7_EVIDENCE.filter(c=>c.domains.some(d=>q.domains.includes(d))&&(!q.topic||q.topic===c.topic))
++  .map(c=>{const usage:KnowledgeMatch['usage']=c.status==='PROFESSIONAL_ONLY'?'PROFESSIONAL_REVIEW':
++   c.status==='HOLD'||c.status==='NUMERICAL_HOLD'||c.status==='NO_NORM_APPROVED'?'HOLD_ONLY':'LIMITED_EXPLANATION';
++   return {card:c,usage,warning:c.tier==='ABSTRACT'?'Abstract-level evidence; no detailed prescription.':
++     c.status==='NUMERICAL_HOLD'?'Numerical interpretation unresolved.':'Candidate evidence, not approved decision rule.'};
++  });
++}
++export function distinctEvidenceGroups(cards:readonly EvidenceCard[]):number{
++ return new Set(cards.map(c=>c.duplicateGroup??c.id)).size;
++}
++export function knowledgeDecisionGate(match:KnowledgeMatch):{
++ allowExplanation:boolean;allowNumericScore:false;allowAutomaticDose:false;allowMedicalClearance:false
++}{
++ return {allowExplanation:match.usage==='LIMITED_EXPLANATION',allowNumericScore:false,
++  allowAutomaticDose:false,allowMedicalClearance:false};
++}
+--- /dev/null
++++ R188/src/lib/core/coach-p7-lifecycle.ts
+@@ -0,0 +1,119 @@
++/** P7 complete local decision lifecycle adapter. No automatic decisions or network calls. */
++import { appendJournal, readJournal } from './storage-journal.ts';
++import { P7_EVIDENCE, P7_EVIDENCE_VERSION } from './coach-p7-knowledge.ts';
++import { auditDecision, summarizeCalibration, compareBlindPairs,
++  type DecisionSnapshot, type OutcomeSnapshot, type AuditResult, type PairedJudgment } from './coach-decision-calibration.ts';
++import {groupCalibration} from './coach-p7-evaluation.ts';
++
++const PREFIX = 'fr255-p7:';
++export type P7Event =
++  | { kind:'DECISION'; decision:DecisionSnapshot; commitmentKind?:'LIVE'|'LEGACY' }
++  | { kind:'OUTCOME'; outcome:OutcomeSnapshot; decisionId:string }
++  | { kind:'SOURCE_REVISION'; athleteId:string; sourceId:string; revision:string; effectiveAt:string }
++  | { kind:'REVIEW'; athleteId:string; decisionId:string; reviewedAt:string; note:string; reviewer:'HUMAN_COACH'|'ATHLETE'; action:'KEEP'|'RECONSIDER'|'DISMISS' };
++export type P7Record = {id:string; event:P7Event; committedAt?:string};
++const validTime=(s:string)=>Number.isFinite(Date.parse(s)) && /(?:Z|[+-]\d\d:\d\d)$/.test(s);
++const athleteOf=(e:P7Event)=>e.kind==='DECISION'?e.decision.athleteId:e.kind==='OUTCOME'?e.outcome.athleteId:e.athleteId;
++const unique=(id:string, records:readonly P7Record[])=>!records.some(r=>r.id===id);
++export function p7Read(athleteId:string):P7Record[] {
++  return readJournal<P7Event>(PREFIX).filter(x=>{
++    try{const e=x.data;return ['DECISION','OUTCOME','SOURCE_REVISION','REVIEW'].includes(e.kind)&&athleteOf(e)===athleteId&&
++      (e.kind!=='DECISION'||Array.isArray(e.decision.sources))&&(e.kind!=='OUTCOME'||!!e.outcome.source)}catch{return false}
++  }).map(x=>({id:x.id,event:x.data,committedAt:x.recordedAt}));
++}
++function commitDecision(d:DecisionSnapshot,commitmentKind:'LIVE'|'LEGACY'):{ok:boolean;reason:string} {
++  const records=p7Read(d.athleteId);
++  if(!unique(d.id,records))return {ok:false,reason:'DUPLICATE_ID'};
++  if(!d.id||!d.athleteId||!d.caseId||!d.metricId||!d.protocolKey||!d.unit||!d.hypothesis||!d.alternative||
++     !d.sources.length||!validTime(d.createdAt)||!validTime(d.evidenceCutoff)||!validTime(d.observationDueAt)||
++     Date.parse(d.evidenceCutoff)>Date.parse(d.createdAt)||Date.parse(d.observationDueAt)<=Date.parse(d.createdAt)||
++     d.sources.some(s=>!s.sourceId||!s.revision)||d.planWrite!==false||
++     (d.forecastValue!==null&&!Number.isFinite(d.forecastValue)))return {ok:false,reason:'INVALID_DECISION'};
++  // The host must capture at the actual pre-outcome moment, not import a retroactive prediction.
++  if(Date.parse(d.createdAt)>Date.now()+60_000)return {ok:false,reason:'FUTURE_DECISION'};
++  if(d.sources.some(s=>{const notice=records.filter(r=>r.event.kind==='SOURCE_REVISION'&&r.event.sourceId===s.sourceId).at(-1);return notice?.event.kind==='SOURCE_REVISION'&&notice.event.revision!==s.revision}))
++    return {ok:false,reason:'KNOWN_SOURCE_CONFLICT'};
++  return {ok:appendJournal(PREFIX,d.id,{kind:'DECISION',decision:d,commitmentKind}),reason:'PERSISTENCE_RESULT'};
++}
++/** Legacy research imports are never eligible for live forecast calibration. */
++export function p7CommitDecision(d:DecisionSnapshot):{ok:boolean;reason:string} {
++  return commitDecision(d,'LEGACY');
++}
++/** Live predictions must use a non-injectable wall clock at commit time. */
++export function p7CommitLiveDecision(d:DecisionSnapshot):{ok:boolean;reason:string} {
++  const nowMs=Date.now();
++  if(!Number.isFinite(nowMs)||!validTime(d.createdAt)||Math.abs(Date.parse(d.createdAt)-nowMs)>120_000||
++     !validTime(d.observationDueAt)||Date.parse(d.observationDueAt)<=nowMs)
++    return {ok:false,reason:'NOT_LIVE_PRECOMMITMENT'};
++  if(!d.knowledgeEvidenceIds?.length||d.knowledgeVersion!==P7_EVIDENCE_VERSION||
++     d.knowledgeEvidenceIds.some(id=>!P7_EVIDENCE.some(e=>e.id===id)))
++    return {ok:false,reason:'UNVERIFIED_KNOWLEDGE_PROVENANCE'};
++  return commitDecision(d,'LIVE');
++}
++export function p7CommitOutcome(decisionId:string,o:OutcomeSnapshot):{ok:boolean;reason:string} {
++  const records=p7Read(o.athleteId);
++  const decision=records.find(r=>r.id===decisionId&&r.event.kind==='DECISION');
++  if(!decision||decision.event.kind!=='DECISION')return {ok:false,reason:'DECISION_NOT_FOUND'};
++  if(!unique(o.id,records))return {ok:false,reason:'DUPLICATE_ID'};
++  const d=decision.event.decision;
++  if(!o.id||!o.source.sourceId||!o.source.revision||o.athleteId!==d.athleteId||o.caseId!==d.caseId||
++     o.metricId!==d.metricId||o.protocolKey!==d.protocolKey||o.unit!==d.unit||
++     !validTime(o.observedAt)||!validTime(o.recordedAt)||Date.parse(o.observedAt)<=Date.parse(d.createdAt)||
++     (decision.event.commitmentKind==='LIVE'&&(!decision.committedAt||Date.parse(o.observedAt)<=Date.parse(decision.committedAt)))||
++     Date.parse(o.recordedAt)<Date.parse(o.observedAt)||Date.parse(o.recordedAt)>Date.now()+60_000||
++     Date.parse(o.observedAt)>Date.now()||
++     (o.value!==null&&!Number.isFinite(o.value)))return {ok:false,reason:'INVALID_OUTCOME'};
++  return {ok:appendJournal(PREFIX,o.id,{kind:'OUTCOME',outcome:o,decisionId}),reason:'PERSISTENCE_RESULT'};
++}
++export function p7CommitSourceRevision(athleteId:string,sourceId:string,revision:string,effectiveAt:string):boolean {
++  if(!athleteId||!sourceId||!revision||!validTime(effectiveAt))return false;
++  return appendJournal(PREFIX,`source:${sourceId}:${revision}`,{kind:'SOURCE_REVISION',athleteId,sourceId,revision,effectiveAt});
++}
++export function p7CommitReview(e:P7Event&{kind:'REVIEW'}):boolean {
++  if(!e.athleteId||!e.decisionId||!validTime(e.reviewedAt)||!e.note.trim()||
++     !p7Read(e.athleteId).some(r=>r.id===e.decisionId&&r.event.kind==='DECISION'))return false;
++  return appendJournal(PREFIX,`review:${e.decisionId}:${e.reviewedAt}`,e);
++}
++export type P7Projection={decisions:DecisionSnapshot[]; results:AuditResult[];
++  calibration:ReturnType<typeof summarizeCalibration>; blindComparison:ReturnType<typeof compareBlindPairs>;
++  calibrationGroups:ReturnType<typeof groupCalibration>;
++  needsReview:string[]; autonomousRuleUpdateAuthorized:false};
++export function p7Project(athleteId:string, currentVersions:Readonly<Record<string,string>>):P7Projection {
++  const entries=p7Read(athleteId);
++  const decisions=entries.flatMap(r=>r.event.kind==='DECISION'?[r.event.decision]:[]);
++  // Never override the caller's authoritative fact revisions with unverified
++  // journal notices. Missing authoritative versions must remain unevaluable.
++  const versions={...currentVersions};
++  const results=decisions.map(d=>{
++    const own=entries.find(r=>r.event.kind==='DECISION'&&r.event.decision.id===d.id);
++    if(own?.event.kind!=='DECISION'||own.event.commitmentKind!=='LIVE')
++      return {decisionId:d.id,state:'INCONCLUSIVE' as const,error:null,absoluteError:null,reason:'LEGACY_NOT_LIVE_PRECOMMITTED'};
++    const candidates=entries.flatMap(r=>r.event.kind==='OUTCOME'&&r.event.decisionId===d.id?[r.event.outcome]:[]);
++    const latest=candidates.at(-1)??null;
++    if(latest&&(!own.committedAt||Date.parse(latest.observedAt)<=Date.parse(own.committedAt)))
++      return {decisionId:d.id,state:'INVALID' as const,error:null,absoluteError:null,reason:'OUTCOME_PRECEDES_ACTUAL_COMMIT'};
++    return auditDecision(d,latest,versions);
++  });
++  // Blind comparisons must share the exact outcome source and version, not just
++  // athlete/case/metric. A different observation is not a valid paired trial.
++  const paired:PairedJudgment[]=[];
++  const usedHuman=new Set<string>();
++  const latestOutcome=(id:string)=>entries.flatMap(r=>r.event.kind==='OUTCOME'&&r.event.decisionId===id?[r.event.outcome]:[]).at(-1)??null;
++  for(const d of decisions.filter(x=>x.actor==='FANGKUN')){
++    const a=results.find(x=>x.decisionId===d.id),oa=latestOutcome(d.id);
++    if(!a||a.state!=='EVALUABLE'||!oa)continue;
++    const other=decisions.find(x=>x.actor==='HUMAN_COACH'&&x.caseId===d.caseId&&x.metricId===d.metricId&&
++      x.protocolKey===d.protocolKey&&x.unit===d.unit&&!usedHuman.has(x.id)&&
++      latestOutcome(x.id)?.source.sourceId===oa.source.sourceId&&
++      latestOutcome(x.id)?.source.revision===oa.source.revision&&
++      results.some(r=>r.decisionId===x.id&&r.state==='EVALUABLE'));
++    const b=other&&results.find(x=>x.decisionId===other.id);
++    if(other&&b){paired.push({athleteId,caseId:d.caseId,fangkun:a,human:b});usedHuman.add(other.id);}
++  }
++  const calibrationGroups=groupCalibration(decisions.flatMap(d=>{const o=latestOutcome(d.id),result=results.find(r=>r.decisionId===d.id);return o&&result?[{athleteId,caseId:d.caseId,metricId:d.metricId,protocolKey:d.protocolKey,unit:d.unit,decisionAt:d.createdAt,outcomeAt:o.observedAt,actor:d.actor,result,outcomeSourceId:o.source.sourceId,outcomeSourceRevision:o.source.revision}]:[]}));
++  const protocols=new Set(decisions.filter(d=>results.some(r=>r.decisionId===d.id&&r.state==='EVALUABLE')).map(d=>JSON.stringify([d.metricId,d.unit,d.protocolKey,d.actor])));
++  const calibration=protocols.size>1?{status:'INSUFFICIENT_EVIDENCE' as const,eligibleCount:0,excludedCount:results.length,mae:null,bias:null,autonomousRuleUpdateAuthorized:false as const}:summarizeCalibration(results);
++  return {decisions,results,calibration,calibrationGroups,blindComparison:compareBlindPairs(paired),
++    needsReview:results.filter(r=>(r.state==='SUPERSEDED'||r.state==='INCONCLUSIVE')&&r.reason!=='LEGACY_NOT_LIVE_PRECOMMITTED').map(r=>r.decisionId),
++    autonomousRuleUpdateAuthorized:false};
++}
+--- /dev/null
++++ R188/src/lib/core/coach-p7-r187.test.ts
+@@ -0,0 +1,41 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {setStoreBackend} from './storage.ts';
++import {p7CommitLiveDecision,p7CommitDecision,p7CommitOutcome,p7Project} from './coach-p7-lifecycle.ts';
++import {P7_EVIDENCE_VERSION} from './coach-p7-knowledge.ts';
++import type {DecisionSnapshot,OutcomeSnapshot} from './coach-decision-calibration.ts';
++const db=new Map<string,string>();
++setStoreBackend({getItem:k=>db.get(k)??null,setItem:(k,v)=>{db.set(k,v)},keys:()=>[...db.keys()]});
++const now=Date.now();
++const iso=(ms:number)=>new Date(ms).toISOString();
++let counter=0;
++function make(actor:'FANGKUN'|'HUMAN_COACH', athleteId:string):DecisionSnapshot{
++ return {id:`r187-${++counter}`,athleteId,actor,caseId:'same-case',createdAt:iso(now),
++ evidenceCutoff:iso(now-1000),sources:[{sourceId:'src',revision:'v1'}],hypothesis:'uncertain performance',
++ alternative:'environment',metricId:'time',protocolKey:'electronic',unit:'s',forecastValue:110,
++ forecastDirection:'LOWER_BETTER',observationDueAt:iso(now+86400000),uncertaintyNote:'no causal claim',
++ safetyHold:false,planWrite:false,knowledgeEvidenceIds:['R187-E07'],knowledgeVersion:P7_EVIDENCE_VERSION};
++}
++function outcome(d:DecisionSnapshot,sourceId:string):OutcomeSnapshot{
++ return {id:`out-${d.id}`,athleteId:d.athleteId,caseId:d.caseId,observedAt:iso(now-86400000),
++ recordedAt:iso(now-86300000),source:{sourceId,revision:'v1'},metricId:'time',protocolKey:'electronic',
++ unit:'s',value:111,measurementValid:true};
++}
++test('new live decision refuses retrospective backfill and unknown evidence',()=>{
++ const d=make('FANGKUN','r187-live');
++ assert.equal(p7CommitLiveDecision({...d,createdAt:iso(now-86400000)}).reason,'NOT_LIVE_PRECOMMITMENT');
++ assert.equal(p7CommitLiveDecision({...d,knowledgeEvidenceIds:['invented']}).reason,'UNVERIFIED_KNOWLEDGE_PROVENANCE');
++ assert.equal(p7CommitLiveDecision(d).ok,true);
++});
++test('blind comparison refuses different outcome sources despite matching case',()=>{
++ const a={...make('FANGKUN','r187-pair'),createdAt:iso(now-172800000),evidenceCutoff:iso(now-172801000),observationDueAt:iso(now-43200000)},
++ b={...make('HUMAN_COACH','r187-pair'),createdAt:iso(now-172800000),evidenceCutoff:iso(now-172801000),observationDueAt:iso(now-43200000)};
++ assert.equal(p7CommitDecision(a).ok,true);
++ assert.equal(p7CommitDecision(b).ok,true);
++ assert.equal(p7CommitOutcome(a.id,outcome(a,'outcome-a')).ok,true);
++ assert.equal(p7CommitOutcome(b.id,outcome(b,'outcome-b')).ok,true);
++ const projection=p7Project('r187-pair',{src:'v1','outcome-a':'v1','outcome-b':'v1'});
++ assert.equal(projection.calibration.eligibleCount,0);
++ assert.ok(projection.results.every(x=>x.reason==='LEGACY_NOT_LIVE_PRECOMMITTED'));
++ assert.equal(projection.blindComparison.pairedN,0);
++});
+--- /dev/null
++++ R188/src/lib/core/coach-p7-r7.test.ts
+@@ -0,0 +1,54 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {setStoreBackend} from './storage.ts';
++import {p7CommitDecision,p7CommitLiveDecision,p7CommitOutcome,p7CommitSourceRevision,p7Project} from './coach-p7-lifecycle.ts';
++import {P7_EVIDENCE_VERSION} from './coach-p7-knowledge.ts';
++import type {DecisionSnapshot,OutcomeSnapshot} from './coach-decision-calibration.ts';
++const map=new Map<string,string>();
++setStoreBackend({getItem:k=>map.get(k)??null,setItem:(k,v)=>{map.set(k,v)},keys:()=>[...map.keys()]});
++const now=Date.now(), iso=(t:number)=>new Date(t).toISOString();
++function make(id:string):DecisionSnapshot{return {
++ id,athleteId:id,actor:'FANGKUN',caseId:'C',createdAt:iso(now),evidenceCutoff:iso(now-1000),
++ sources:[{sourceId:'old-run',revision:'v1'}],hypothesis:'fatigue',alternative:'pacing',metricId:'time',protocolKey:'photo-finish',unit:'s',forecastValue:110,
++ forecastDirection:'LOWER_BETTER',observationDueAt:iso(now+86400000),uncertaintyNote:'unvalidated',safetyHold:false,planWrite:false,
++ knowledgeEvidenceIds:['R187-E07'],knowledgeVersion:P7_EVIDENCE_VERSION
++};}
++function outcome(d:DecisionSnapshot):OutcomeSnapshot{return {id:`out-${d.id}`,athleteId:d.athleteId,caseId:d.caseId,
++ observedAt:iso(now+3600000),recordedAt:iso(now+3601000),source:{sourceId:'new-race',revision:'v1'},metricId:'time',protocolKey:'photo-finish',unit:'s',value:111,measurementValid:true};}
++test('historical decision cannot become a scored pre-outcome prediction',()=>{
++ const d=make('legacy-r7');assert.equal(p7CommitDecision(d).ok,true);
++ const a=p7Project(d.athleteId,{'old-run':'v1'});
++ assert.equal(a.results[0].reason,'LEGACY_NOT_LIVE_PRECOMMITTED');assert.equal(a.calibration.eligibleCount,0);
++});
++test('live commit uses real clock and never caller controlled timestamp',()=>{
++ const d=make('live-r7');assert.equal(p7CommitLiveDecision(d).ok,true);
++ assert.equal(p7CommitLiveDecision({...make('backdated-r7'),createdAt:iso(now-3600000)}).reason,'NOT_LIVE_PRECOMMITMENT');
++});
++test('unverified journal source revision cannot override authoritative current facts',()=>{
++ const d=make('revision-r7');assert.equal(p7CommitLiveDecision(d).ok,true);
++ assert.equal(p7CommitSourceRevision(d.athleteId,'old-run','v2',iso(now)),true);
++ assert.equal(p7Project(d.athleteId,{'old-run':'v1'}).results[0].state,'PENDING');
++ assert.equal(p7Project(d.athleteId,{'old-run':'v2'}).results[0].state,'SUPERSEDED');
++ assert.equal(p7Project(d.athleteId,{}).calibration.eligibleCount,0);
++});
++test('cannot attach an outcome that occurred before actual live commit, even within 2-minute grace',()=>{
++ const d={...make('retro-r7'),createdAt:iso(now-30000),evidenceCutoff:iso(now-31000)};
++ assert.equal(p7CommitLiveDecision(d).ok,true);
++ const retro:OutcomeSnapshot={id:'retro-out',athleteId:d.athleteId,caseId:d.caseId,
++ observedAt:iso(now-15000),recordedAt:iso(now-10000),source:{sourceId:'new-race',revision:'v1'},metricId:'time',protocolKey:d.protocolKey,unit:'s',value:109,measurementValid:true};
++ assert.equal(p7CommitOutcome(d.id,retro).reason,'INVALID_OUTCOME');
++});
++
++test('actual post-commit outcome is eligible for descriptive calibration, never auto-update',async()=>{
++ const d={...make('valid-live-r7'),createdAt:new Date().toISOString()};
++ assert.equal(p7CommitLiveDecision(d).ok,true);
++ await new Promise(resolve=>setTimeout(resolve,40));
++ const stamp=new Date().toISOString();
++ const actual:OutcomeSnapshot={id:'valid-live-outcome',athleteId:d.athleteId,caseId:d.caseId,
++  observedAt:stamp,recordedAt:stamp,source:{sourceId:'new-race',revision:'v1'},
++  metricId:d.metricId,protocolKey:d.protocolKey,unit:d.unit,value:111,measurementValid:true};
++ assert.equal(p7CommitOutcome(d.id,actual).ok,true);
++ const x=p7Project(d.athleteId,{'old-run':'v1','new-race':'v1'});
++ assert.equal(x.calibration.eligibleCount,1);assert.equal(x.calibration.mae,1);
++ assert.equal(x.autonomousRuleUpdateAuthorized,false);
++});
+--- /dev/null
++++ R188/src/lib/core/coach-p7-runtime.ts
+@@ -0,0 +1,85 @@
++/** R188 adapters for existing review/correction/coach entry points. Local journals only. */
++import {appendJournal,readJournal} from './storage-journal.ts'
++import {readFormalEvidenceRows} from './coach-v4-formal-rows-store.ts'
++import {adaptFormalEvidenceRows,type FormalEvidenceRow} from './coach-v4-c11-adapter.ts'
++import {auditClaimCorrection,type AuditedClaim,type ClaimCorrectionResult,type VersionedFact,type FactOrigin} from './coach-claim-revision.ts'
++import {p7CommitLiveDecision} from './coach-p7-lifecycle.ts'
++import {P7_EVIDENCE_VERSION} from './coach-p7-knowledge.ts'
++import type {OfflineReview} from './coach-offline-loop.ts'
++import type {TrainingCorrection} from './training-correction.ts'
++import type {LocalCoachAnswer} from './coach-local-first.ts'
++
++export const CLAIM_PREFIX='fr255-p7-claim:'
++export const CLAIM_REVISION_PREFIX='fr255-p7-claim-revision:'
++const INPUT_PREFIX='fr255-p7-input:'
++type SavedClaim={athleteId:string;reviewId:string;occurrenceId:string|null;claim:AuditedClaim}
++type RevisionRecord={athleteId:string;reviewId:string;correctionId:string;result:ClaimCorrectionResult;recordedAt:string}
++const origin=(source:string):FactOrigin=>source==='DEVICE'?'DEVICE':source==='PLAN'?'PLAN':'USER_REPORT'
++
++export function registerReviewClaims(reviewId:string,review:OfflineReview):boolean{
++ let ok=true
++ for(const h of review.hypotheses){
++  const id=`${reviewId}:${h.id}`
++  if(readJournal<SavedClaim>(CLAIM_PREFIX).some(r=>r.id===id))continue
++  const dependencies=(review.development?.dependencies??[]).filter(d=>h.sourceIds.includes(d.sourceId))
++   .map(d=>({sourceId:d.sourceId,revision:d.signature,fieldPaths:['value','context']}))
++  const claim:AuditedClaim={claimId:id,status:'ACTIVE_HYPOTHESIS',dependencies,candidateIds:review.development?[review.development.cycleCandidate.id]:[]}
++  ok=appendJournal<SavedClaim>(CLAIM_PREFIX,id,{athleteId:review.athleteId,reviewId,occurrenceId:review.occurrenceId,claim})&&ok
++ }
++ return ok
++}
++
++export function readClaimRevisions(athleteId:string,asOf=new Date().toISOString()):RevisionRecord[]{
++ return readJournal<RevisionRecord>(CLAIM_REVISION_PREFIX).filter(r=>r.recordedAt&&Date.parse(r.recordedAt)<=Date.parse(asOf)&&r.data.athleteId===athleteId).map(r=>r.data)
++}
++
++/** Capture authoritative source versions BEFORE the fact writer commits its event. */
++export function captureCorrectionSources(occurrenceId:string):Map<string,FormalEvidenceRow[]>{
++ const athletes=new Set(readJournal<SavedClaim>(CLAIM_PREFIX).filter(r=>r.data.occurrenceId===occurrenceId||r.data.claim.dependencies.length).map(r=>r.data.athleteId))
++ const result=new Map<string,FormalEvidenceRow[]>()
++ for(const id of athletes)result.set(id,readFormalEvidenceRows(id).rows)
++ return result
++}
++
++/** Projection confirms the same-source link; a caller's originalValue is never source authority. */
++export function auditSavedClaimsForCorrection(c:TrainingCorrection,before:Map<string,FormalEvidenceRow[]>):boolean{
++ const now=new Date().toISOString();let ok=true
++ for(const [athleteId,oldRows] of before){
++  const after=readFormalEvidenceRows(athleteId,now).rows
++  const oldEvidence=adaptFormalEvidenceRows(oldRows,athleteId,now).evidence
++  const changes=after.filter(r=>r.trainingOccurrenceId===c.trainingOccurrenceId&&r.supersedesRecordId&&r.sourceEventId.includes(c.correctionId))
++  const claims=readJournal<SavedClaim>(CLAIM_PREFIX).map(r=>r.data).filter(r=>r.athleteId===athleteId)
++  for(const saved of claims){
++   const previous=readClaimRevisions(athleteId).filter(r=>r.result.claimId===saved.claim.claimId).at(-1)
++   const claim={...saved.claim,status:previous?.result.status??saved.claim.status}
++   const dependencies=claim.dependencies.filter(d=>oldRows.some(r=>r.trainingOccurrenceId===c.trainingOccurrenceId&&r.sourceEventId===d.sourceId))
++   if(!dependencies.length&&saved.occurrenceId!==c.trainingOccurrenceId)continue
++   for(const dep of dependencies.length?dependencies:[null]){
++    const old=dep?oldEvidence.find(r=>r.sourceId===dep.sourceId&&JSON.stringify(r)===dep.revision):null
++    const next=old?changes.find(r=>r.supersedesRecordId===old.id):null
++    const voided=old&&c.kind==='VOID'&&after.some(r=>r.recordId===old.id&&r.status==='VOIDED')
++    if(old&&!next&&!voided&&c.kind!=='RESTORE')continue // A different field/source was changed.
++    if(c.kind==='RESTORE')continue // A restored fact never reactivates the old withdrawn explanation.
++    const verified=old&&(voided||next&&next.value!==null)
++    const fact:VersionedFact|null=verified?{sourceId:old.sourceId,revision:JSON.stringify(old),origin:origin(old.source),fieldPaths:['value','context','completionState']}:null
++    const result=auditClaimCorrection(claim,fact,{sourceId:dep?.sourceId??`unresolved:${c.trainingOccurrenceId}`,fromRevision:dep?.revision??'UNKNOWN',toRevision:next?JSON.stringify(next):`void:${c.correctionId}`,sourceOrigin:old?origin(old.source):'USER_REPORT',changedFieldPaths:c.kind==='VOID'?['value','context','completionState']:c.field==='distance'?['context']:['value']})
++    const id=`${c.correctionId}:${claim.claimId}:${dep?.sourceId??'unknown'}`
++    if(readJournal<RevisionRecord>(CLAIM_REVISION_PREFIX).some(r=>r.id===id))continue
++    ok=appendJournal<RevisionRecord>(CLAIM_REVISION_PREFIX,id,{athleteId,reviewId:saved.reviewId,correctionId:c.correctionId,result,recordedAt:now})&&ok
++   }
++  }
++ }
++ return ok
++}
++
++/** Called by the displayed local coach result; never writes the formal plan or invents a forecast. */
++export function commitDisplayedCoachAdvice(answer:LocalCoachAnswer,question:string):{ok:boolean;id:string|null;reason:string}{
++ if(!answer.candidate||!answer.dialogue||answer.dialogue.emergency||answer.dialogue.medicalHold)return {ok:false,id:null,reason:'NO_SAFE_ADVICE'}
++ const now=new Date().toISOString(),id=`advice:${crypto.randomUUID()}`
++ const sourceId=`input:${id}`,revision=JSON.stringify({question,profile:answer.dialogue.profile,candidate:answer.candidate})
++ if(!appendJournal(INPUT_PREFIX,sourceId,{athleteId:answer.dialogue.athleteId,sourceId,revision,origin:'USER_REPORT',createdAt:now}))return {ok:false,id:null,reason:'INPUT_SAVE_FAILED'}
++ const result=p7CommitLiveDecision({id,athleteId:answer.dialogue.athleteId,actor:'FANGKUN',caseId:id,createdAt:now,evidenceCutoff:now,sources:[{sourceId,revision}],hypothesis:answer.dialogue.previousDecision??answer.text.split('。')[0],alternative:'批准课程、恢复或症状新证据可能使建议撤回；先核对再调整。',metricId:'NEXT_SESSION_OBSERVATION',protocolKey:'OBSERVATION_ONLY_NO_PERFORMANCE_FORECAST',unit:'observation',forecastValue:null,forecastDirection:'LOWER_BETTER',
++  // Administrative review deadline only; never a prescribed training or return-to-sport date.
++  observationDueAt:new Date(Date.now()+7*86400000).toISOString(),uncertaintyNote:'仅记录事前建议；没有数值预测，不计入准确率。R187知识仍为候选，不能核准剂量。',safetyHold:false,planWrite:false,knowledgeEvidenceIds:['R187-E07'],knowledgeVersion:P7_EVIDENCE_VERSION})
++ return {...result,id:result.ok?id:null}
++}
+--- /dev/null
++++ R188/src/lib/core/coach-r188.test.ts
+@@ -0,0 +1,162 @@
++import test,{type TestContext} from 'node:test'
++import assert from 'node:assert/strict'
++import {answerLocally} from './coach-local-first.ts'
++import {deriveCoachBrief} from './coach-brief.ts'
++import {buildParts} from '../../../evaluation/k12/fixtures.ts'
++import {emptyDialogue} from './coach-dialogue.ts'
++import {firstWeekMemory} from './coach-first-week.fixtures.ts'
++import {setStoreBackend} from './storage.ts'
++import {currentAthleteId} from './events.ts'
++import {saveChatTraining,parseChatTraining} from './coach-chat-evidence.ts'
++import {appendCorrection} from './training-correction.ts'
++import {readOfflineWorkspace} from './coach-offline-workspace.ts'
++import {saveOfflineReview,readOfflineHistory,offlineAthletePortrait} from './coach-offline-loop.ts'
++import {readClaimRevisions,commitDisplayedCoachAdvice,registerReviewClaims} from './coach-p7-runtime.ts'
++import {p7Read,p7Project,p7CommitLiveDecision,p7CommitOutcome,p7CommitSourceRevision} from './coach-p7-lifecycle.ts'
++import {P7_EVIDENCE_VERSION} from './coach-p7-knowledge.ts'
++import type {DecisionSnapshot} from './coach-decision-calibration.ts'
++import {collectLocalBackup,inspectLocalBackup,restoreLocalBackup} from './trial.ts'
++import {prepareDeviceActivity,type DecodedDeviceActivity} from './coach-device-preparation.ts'
++const ask=(q:string,prior=emptyDialogue())=>answerLocally(deriveCoachBrief(buildParts(q,{})),undefined,[],undefined,prior)
++const visible=(r:ReturnType<typeof ask>)=>r.text.split('\n依据：')[0]
++
++for(const q of ['明天练什么','下周怎么练','下一课怎么安排'])test('R188 concrete conservative default: '+q,()=>{
++ const r=ask(q);assert.match(visible(r),/建议休息/);assert.match(visible(r),/仅建议、可撤回/)
++ assert.match(visible(r),/疼痛加重.*胸闷.*头晕/);assert.equal(r.candidate?.to,'REST')
++ assert.doesNotMatch(visible(r),/轻松跑\s*\d|减量\s*\d+%/)
++})
++test('R188 reported approval is remembered, never promoted to a verified prescription',()=>{
++ let r=ask('我已经批准明天的课程：轻松跑20分钟，明天练什么，没有疼痛')
++ assert.match(visible(r),/轻松跑20分钟/);assert.match(visible(r),/批准转述/)
++ r=ask('明天怎么练',JSON.parse(JSON.stringify(r.dialogue)))
++ assert.match(visible(r),/轻松跑20分钟/);assert.match(visible(r),/先把候选改动交给你确认/)
++ assert.equal(r.candidate?.decision,'CONDITIONAL_REPEAT')
++ r=ask('取消下一课批准，明天练什么',r.dialogue)
++ assert.match(visible(r),/建议休息/)
++})
++for(const q of ['假设教练批准明天轻松跑30分钟，明天练什么','教练没有批准明天课程，明天练什么'])test('R188 uncertain approval does not become a real course: '+q,()=>assert.match(visible(ask(q)),/建议休息/))
++for(const [intake,symptom] of [['我是15岁女生，主项400米','已经3个月没来月经了'],['我是15岁，主项800米','小腿骨点压痛']] as const)test('R188 medical restriction survives independent follow-ups: '+symptom,()=>{
++ let r=ask(intake);r=ask(symptom,r.dialogue);assert.ok(r.dialogue?.medicalHold)
++ for(const q of ['明天练什么','测试课怎么安排','今天感觉好了，没有疼痛，想加一组']){
++  r=ask(q,JSON.parse(JSON.stringify(r.dialogue)));assert.equal(r.candidate,null)
++  assert.match(visible(r),/评估/);assert.doesNotMatch(visible(r),/有条件可以做熟悉|建议按.*执行/)
++ }
++})
++test('R188 bone tenderness alone is not cleared by absent worsening',()=>assert.match(visible(ask('骨点按压痛，能跑吗')),/停止跑跳/))
++test('R188 a medical visit does not become exercise return clearance',()=>{
++ let r=ask('我运动时胸痛和心悸');assert.ok(r.dialogue?.emergency)
++ r=ask('我刚去医院，医生已经评估',r.dialogue);assert.match(visible(r),/已就医不等于已获运动许可/)
++ r=ask('教练已经批准明天冲刺课，明天练什么',JSON.parse(JSON.stringify(r.dialogue)))
++ assert.equal(r.candidate,null);assert.ok(r.dialogue?.medicalHold);assert.match(visible(r),/专业评估|医生|许可/)
++ assert.doesNotMatch(visible(r),/建议按.*执行/)
++})
++for(const q of ['队友倒地无反应，呼吸异常','蜂蜇后荨麻疹，呼吸困难，嘴唇肿胀','感冒发烧后运动胸痛和心悸'])test('R188 emergency is concise and prioritized: '+q,()=>{
++ const r=ask(q);assert.match(visible(r),/120/);assert.equal(r.candidate,null)
++ if(q.includes('队友')){assert.match(visible(r),/胸外按压/);assert.match(visible(r),/AED/)}
++ if(q.includes('蜂'))assert.match(visible(r),/肾上腺素/)
++ assert.ok(visible(r).split('。').filter(Boolean).length<=4)
++})
++
++function storeTest(name:string,fn:(t:TestContext,box:ReturnType<typeof firstWeekMemory>)=>void){
++ test(name,t=>{t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-14T08:00:00Z')});const box=firstWeekMemory();setStoreBackend(box);try{fn(t,box)}finally{setStoreBackend(null)}})
++}
++storeTest('R188 displayed advice commits LIVE journal but cannot fabricate forecast accuracy',(t,box)=>{
++ const r=ask('明天练什么',emptyDialogue(currentAthleteId()));box.setItem('fr255-original-plan','unchanged')
++ const receipt=commitDisplayedCoachAdvice(r,'明天练什么');assert.equal(receipt.ok,true)
++ const reloaded=p7Read(currentAthleteId());assert.equal(reloaded.length,1)
++ assert.equal(reloaded[0].event.kind,'DECISION');if(reloaded[0].event.kind==='DECISION'){assert.equal(reloaded[0].event.commitmentKind,'LIVE');assert.equal(reloaded[0].event.decision.forecastValue,null)}
++ assert.equal(p7Project(currentAthleteId(),{}).calibration.eligibleCount,0)
++ assert.equal(box.getItem('fr255-original-plan'),'unchanged')
++})
++storeTest('R188 real training correction immediately audits dependent claims without a new review',(t,box)=>{
++ const saved=saveChatTraining(parseChatTraining('今天200米×4，30/30/31/35秒，组间3分钟，整课RPE6'),'2026-10-13T08:00:00Z',true);assert.ok(saved.ok)
++ t.mock.timers.tick(1000)
++ const {review}=readOfflineWorkspace(null,currentAthleteId(),saved.record.confirmedImportId,'复盘本课，原计划目的是均速')
++ assert.ok(review.hypotheses.length);const receipt=saveOfflineReview(review);assert.equal(receipt.ok,true)
++ const before=readOfflineHistory(currentAthleteId()).length
++ t.mock.timers.tick(1000)
++ const c=appendCorrection({trainingOccurrenceId:saved.record.confirmedImportId,kind:'FIELD',field:'duration',setKey:'chat-1-4',originalValue:'35',newValue:'32',reason:'synthetic correction'})
++ assert.ok(c);assert.equal(readOfflineHistory(currentAthleteId()).length,before)
++ const audits=readClaimRevisions(currentAthleteId());assert.ok(audits.some(r=>r.result.updateAction==='MARK_STALE'))
++ assert.ok(audits.every(r=>r.result.planWriteAuthorized===false))
++ const portrait=offlineAthletePortrait(null,readOfflineHistory(currentAthleteId()));assert.ok(portrait.judgments[0].hypothesisStates.some(h=>h.status==='WITHDRAWN'))
++ const current=readOfflineWorkspace(null,currentAthleteId(),saved.record.confirmedImportId).review
++ assert.ok(current.metrics.points.some(p=>p.seconds===32));assert.ok(!current.metrics.points.some(p=>p.seconds===35))
++})
++storeTest('R188 correction to an unrelated feedback field retains timing claims',(t,box)=>{
++ const saved=saveChatTraining(parseChatTraining('今天200米×2，30/35秒，组间3分钟'),'2026-10-13T08:00:00Z',true);assert.ok(saved.ok)
++ t.mock.timers.tick(1000);const review=readOfflineWorkspace(null,currentAthleteId(),saved.record.confirmedImportId).review;assert.ok(saveOfflineReview(review).ok)
++ t.mock.timers.tick(1000);assert.ok(appendCorrection({trainingOccurrenceId:saved.record.confirmedImportId,kind:'FIELD',field:'weight',setKey:'unrelated-strength-set',originalValue:'40',newValue:'42',reason:'synthetic unrelated change'}))
++ assert.equal(readClaimRevisions(currentAthleteId()).filter(r=>r.result.updateAction==='MARK_STALE').length,0)
++ assert.ok(offlineAthletePortrait(null,readOfflineHistory(currentAthleteId())).judgments[0].hypothesisStates.every(h=>h.status==='PENDING'))
++})
++storeTest('R188 unknown legacy source links remain REVIEW_REQUIRED',(t,box)=>{
++ const saved=saveChatTraining(parseChatTraining('今天200米×2，30/35秒，组间3分钟'),'2026-10-13T08:00:00Z',true);assert.ok(saved.ok)
++ t.mock.timers.tick(1000);const review=readOfflineWorkspace(null,currentAthleteId(),saved.record.confirmedImportId).review
++ assert.ok(registerReviewClaims('unknown-old',{...review,development:undefined}))
++ t.mock.timers.tick(1000);assert.ok(appendCorrection({trainingOccurrenceId:saved.record.confirmedImportId,kind:'FIELD',field:'duration',setKey:'chat-1-2',originalValue:'35',newValue:'32',reason:'synthetic correction'}))
++ assert.ok(readClaimRevisions(currentAthleteId()).some(r=>r.result.updateAction==='REVIEW_REQUIRED'))
++})
++function decision(id:string,unit='s'):DecisionSnapshot{const now=new Date().toISOString();return {id,athleteId:currentAthleteId(),actor:'FANGKUN',caseId:id,createdAt:now,evidenceCutoff:now,sources:[{sourceId:'baseline',revision:'v2'}],hypothesis:'synthetic performance',alternative:'conditions',metricId:unit==='s'?'TIME':'LOAD',protocolKey:unit==='s'?'electronic':'strength-sets',unit,forecastValue:100,forecastDirection:'LOWER_BETTER',observationDueAt:new Date(Date.now()+86400000).toISOString(),uncertaintyNote:'synthetic only',safetyHold:false,planWrite:false,knowledgeEvidenceIds:['R187-E07'],knowledgeVersion:P7_EVIDENCE_VERSION}}
++storeTest('R188 future observation cannot be committed as an actual outcome',(t,box)=>{
++ const d=decision('future-outcome');assert.equal(p7CommitLiveDecision(d).ok,true)
++ const future=new Date(Date.now()+30000).toISOString()
++ assert.equal(p7CommitOutcome(d.id,{id:'future',athleteId:d.athleteId,caseId:d.caseId,observedAt:future,recordedAt:future,source:{sourceId:'future-source',revision:'v1'},metricId:d.metricId,protocolKey:d.protocolKey,unit:d.unit,value:100,measurementValid:true}).reason,'INVALID_OUTCOME')
++ assert.equal(p7Read(d.athleteId).filter(r=>r.event.kind==='OUTCOME').length,0)
++})
++storeTest('R188 old source revision notices do not poison a new corrected decision',(t,box)=>{
++ assert.ok(p7CommitSourceRevision(currentAthleteId(),'baseline','v1',new Date().toISOString()))
++ t.mock.timers.tick(1000);assert.ok(p7CommitSourceRevision(currentAthleteId(),'baseline','v2',new Date().toISOString()))
++ assert.equal(p7CommitLiveDecision(decision('corrected-new-decision')).ok,true)
++ assert.equal(p7CommitLiveDecision({...decision('stale-new-decision'),sources:[{sourceId:'baseline',revision:'v1'}]}).reason,'KNOWN_SOURCE_CONFLICT')
++})
++storeTest('R188 calibration never combines seconds and kilograms',(t,box)=>{
++ for(const unit of ['s','kg']){
++  const d=decision('metric-'+unit,unit);assert.ok(p7CommitLiveDecision(d).ok);t.mock.timers.tick(1000)
++  const now=new Date().toISOString();assert.ok(p7CommitOutcome(d.id,{id:'result-'+unit,athleteId:d.athleteId,caseId:d.caseId,observedAt:now,recordedAt:now,source:{sourceId:'result-'+unit,revision:'v1'},metricId:d.metricId,protocolKey:d.protocolKey,unit:d.unit,value:unit==='s'?101:104,measurementValid:true}).ok)
++ }
++ const r=p7Project(currentAthleteId(),{baseline:'v2','result-s':'v1','result-kg':'v1'})
++ assert.equal(r.calibration.mae,null);assert.equal(r.calibration.eligibleCount,0)
++ assert.equal(r.calibrationGroups.length,2);assert.deepEqual(r.calibrationGroups.map(g=>g.mae).sort(),[1,4])
++})
++storeTest('R188 full backup restores new P7 decision and dependent claim journals',(t,box)=>{
++ const saved=saveChatTraining(parseChatTraining('今天200米×2，30/35秒，组间3分钟'),'2026-10-13T08:00:00Z',true);assert.ok(saved.ok)
++ t.mock.timers.tick(1000);assert.ok(saveOfflineReview(readOfflineWorkspace(null,currentAthleteId(),saved.record.confirmedImportId).review).ok)
++ t.mock.timers.tick(1000);assert.ok(appendCorrection({trainingOccurrenceId:saved.record.confirmedImportId,kind:'FIELD',field:'duration',setKey:'chat-1-2',originalValue:'35',newValue:'32',reason:'synthetic corrected timing'}))
++ assert.ok(commitDisplayedCoachAdvice(ask('明天练什么',emptyDialogue(currentAthleteId())),'明天练什么').ok)
++ const p7Keys=[...box.data].filter(([k])=>k.startsWith('fr255-p7'));assert.ok(p7Keys.some(([k])=>k.length>80))
++ const raw=collectLocalBackup(box),target=firstWeekMemory();assert.ok(inspectLocalBackup(raw,target).ok);assert.ok(restoreLocalBackup(raw,target).ok)
++ for(const [k,v] of p7Keys)assert.equal(target.getItem(k),v)
++ setStoreBackend(target);assert.ok(p7Read(currentAthleteId()).length);assert.ok(readClaimRevisions(currentAthleteId()).some(r=>r.result.updateAction==='MARK_STALE'))
++})
++storeTest('R188 backup does not broaden unknown long key namespaces',(t,box)=>{
++ for(const key of ['fr255-unknown:'+('a'.repeat(180)), 'fr255-p7-unknown:'+('a'.repeat(180))]){
++  const raw=JSON.stringify({kind:'fr255-local-backup',keys:{[key]:'synthetic'}})
++  assert.equal(inspectLocalBackup(raw,box).ok,false)
++ }
++})
++function deviceFixture():DecodedDeviceActivity{return {sourceFileHash:'synthetic-only',activityId:'synthetic-activity',sourceId:'synthetic:activity',athleteId:'synthetic-athlete',identityConfirmed:true,deviceId:'synthetic-device',protocolKey:'synthetic-track-protocol',sport:'RUNNING',startedAt:'2026-10-13T08:00:00Z',recordedAt:'2026-10-13T09:00:00Z',totalDistanceMeters:400,timerSeconds:80,elapsedSeconds:260,expectedLapOrdinals:[1,2],occurrenceBinding:{occurrenceId:'synthetic-occurrence',athleteId:'synthetic-athlete',confirmed:true,sourceId:'synthetic:binding'},reportedRests:[],laps:[1,2].map(n=>({id:'lap-'+n,ordinal:n,sourceId:'synthetic:lap-'+n,kind:'WORK',distance:{value:200,unit:'m'},timerSeconds:40,elapsedSeconds:40,averageHeartRateBpm:160,maximumHeartRateBpm:180,timingMethod:'device-timer',heartRateMethod:'synthetic-chest-strap',structure:{componentId:'run',blockId:'main',stepId:'rep',round:1,repeat:n,confirmed:true}}))}}
++for(const [label,change] of [
++ ['HR260',(d:DecodedDeviceActivity)=>{d.laps[0].averageHeartRateBpm=260;d.laps[0].maximumHeartRateBpm=260}],
++ ['HR220',(d:DecodedDeviceActivity)=>{d.laps[0].averageHeartRateBpm=220;d.laps[0].maximumHeartRateBpm=225}],
++ ['200m9s',(d:DecodedDeviceActivity)=>{d.laps[0].timerSeconds=9}],
++ ['negative timing',(d:DecodedDeviceActivity)=>{d.laps[0].timerSeconds=-1}],
++ ['elapsed shorter than timer',(d:DecodedDeviceActivity)=>{d.laps[0].elapsedSeconds=30}],
++ ['activity elapsed shorter than timer',(d:DecodedDeviceActivity)=>{d.elapsedSeconds=70}],
++ ['negative distance',(d:DecodedDeviceActivity)=>{d.laps[0].distance!.value=-200}],
++ ['invalid distance unit',(d:DecodedDeviceActivity)=>{d.laps[0].distance!.unit='mi' as 'm'}],
++ ['average exceeds maximum',(d:DecodedDeviceActivity)=>{d.laps[0].averageHeartRateBpm=190}],
++ ['negative activity total',(d:DecodedDeviceActivity)=>{d.totalDistanceMeters=-400}],
++] as const)test('R188 device quality gate retains raw and blocks suspect input: '+label,()=>{
++ const d=deviceFixture();change(d);const before=structuredClone(d),r=prepareDeviceActivity(d,'2026-10-14T08:00:00Z')
++ assert.equal(r.status,'BLOCKED');assert.ok(r.qualityIssues?.length);assert.deepEqual(d,before);assert.deepEqual(r.raw,before)
++ assert.equal(r.comparisonKey,null);assert.equal(r.automaticImport,false);assert.equal(r.planWrite,false)
++ if(label.startsWith('HR')){const hr=r.candidate.runningSegments[0].averageHeartRateBpm;assert.ok(hr);assert.equal(hr.status,'AMBIGUOUS');assert.equal(hr.value,null)}
++ if(label==='200m9s')assert.equal(r.candidate.runningSegments[0].durationSeconds.status,'AMBIGUOUS')
++})
++test('R188 valid partial device data remain reviewable; no artificial RPE or automatic import',()=>{
++ const d=deviceFixture();d.laps[0].averageHeartRateBpm=null
++ const r=prepareDeviceActivity(d,'2026-10-14T08:00:00Z');assert.equal(r.status,'NEEDS_REVIEW');assert.equal(r.qualityIssues?.length,0)
++ assert.ok(r.candidate.runningSegments[0].averageHeartRateBpm);assert.equal(r.candidate.runningSegments[0].averageHeartRateBpm.status,'ABSENT');assert.equal(r.candidate.sessionRpe.status,'ABSENT')
++ assert.equal(r.candidate.runningSegments[1].durationSeconds.value,40);assert.equal(r.automaticImport,false)
++})
+--- R185/src/lib/core/coach-red-flags.ts
++++ R188/src/lib/core/coach-red-flags.ts
+@@ -123,7 +123,7 @@
+  if(has('illness'))raise(has('palpitation')||has('breath')?'URGENT_MEDICAL':'MEDICAL_REVIEW','POST_ILLNESS')
+  const intake=energyIntakeFromText(currentText)
+  if(has('energy')||(exercise&&intake!==null&&intake<1800))raise('MEDICAL_REVIEW','ENERGY')
+- if(has('pain')||has('functionalPain')||has('boneTender')&&has('worseningPain'))raise('MEDICAL_REVIEW','PAIN')
++ if(has('pain')||has('functionalPain')||has('boneTender'))raise('MEDICAL_REVIEW','PAIN')
+  if(active.some(h=>h.dimension==='review'&&!(resolvedMildDizziness&&h.text==='头晕')))raise('MEDICAL_REVIEW','OTHER')
+  if(has('danger'))raise('EMERGENCY','OTHER')
+  if(has('psychological'))raise('EMERGENCY','PSYCHOLOGICAL')
+--- R185/src/lib/core/coach-structured-candidate.test.ts
++++ R188/src/lib/core/coach-structured-candidate.test.ts
+@@ -42,7 +42,12 @@
+   assert.deepEqual(nextStepReasoningIssues(frame, text, []), [])
+   assert.deepEqual(numericReasoningIssues(frame, text), [])
+   const local = answerLocally(data.brief, { frame, snapshot: data.v4!.review.audit.snapshot })
+-  assert.equal(local.candidate, null)
++  // R188 product decision: an unapproved next session has a reversible REST default.
++  // This never authorizes the old +30 s recovery extension or rewrites the plan.
++  assert.equal(local.candidate?.decision, 'CONDITIONAL_ADJUST')
++  assert.equal(local.candidate?.to, 'REST')
++  assert.equal(local.candidate?.changed_variable, 'next_session')
++  assert.match(local.text, /仅建议、可撤回/)
+   assert.doesNotMatch(local.text, /210秒 → 240秒/)
+   const model = interpretCoachModelOutput(data, JSON.stringify({ mode: 'answer', text: '同距离工作段逐段变慢，原因需要核对。', citations: ['work1'], nextStep: null, medicalReferral: false }))
+   assert.deepEqual(model.turn.candidate, candidate)
+--- /dev/null
++++ R188/src/lib/core/storage-indexeddb.ts
+@@ -0,0 +1,114 @@
++import {setStoreBackend,type MemoryStore} from './storage.ts'
++
++/** Byte-preserving migration with a synchronous localStorage compatibility copy.
++ * A successful write always reaches localStorage before the IndexedDB mirror.
++ * Rollback changes the backend, never restores an old snapshot over new training.
++ */
++export const CORE_DB='fangkun-core-storage-v1'
++const MODE_KEY='fangkun-core-storage-mode-v1'
++export type MigrationState='LOCAL'|'COPYING'|'INDEXED_DB_MIRROR'|'FALLBACK'|'BLOCKED'
++let state:MigrationState='LOCAL',failure='',queue:Promise<void>=Promise.resolve(),database:IDBDatabase|null=null
++let busy=false
++type Snapshot=Record<string,string>
++const snapshot=(box:Storage):Snapshot=>Object.fromEntries(Object.keys(box).filter(k=>k.startsWith('fr255-')).sort().map(k=>[k,box.getItem(k)!]))
++const equal=(a:Snapshot,b:Snapshot)=>JSON.stringify(Object.entries(a).sort())===JSON.stringify(Object.entries(b).sort())
++const schemaKnown=(rows:Snapshot)=>Object.values(rows).every(raw=>{
++ try{const data=JSON.parse(raw);return !(data&&typeof data==='object'&&'schemaVersion' in data&&data.schemaVersion!==1)}catch{return true} // Opaque legacy values are copied exactly.
++})
++const statusEvent=()=>{if(typeof window!=='undefined')window.dispatchEvent(new Event('fangkun:storage-migration'))}
++const report=(s:MigrationState,reason='')=>{state=s;failure=reason;statusEvent();return migrationStatus()}
++export const migrationStatus=()=>({state,reason:failure,planWrite:false as const,originalDataDeleted:false as const})
++function open():Promise<IDBDatabase>{
++ if(database)return Promise.resolve(database)
++ return new Promise((resolve,reject)=>{
++  const request=indexedDB.open(CORE_DB,1)
++  request.onupgradeneeded=()=>{request.result.createObjectStore('kv');request.result.createObjectStore('meta')}
++  request.onsuccess=()=>{database=request.result;database.onversionchange=()=>{database?.close();database=null;setStoreBackend(null);report('FALLBACK','VERSION_CHANGED')};resolve(database)}
++  request.onerror=()=>reject(request.error??new Error('OPEN_FAILED'))
++  request.onblocked=()=>reject(new Error('DATABASE_BLOCKED'))
++ })
++}
++function transact(db:IDBDatabase,write:(tx:IDBTransaction)=>void):Promise<void>{
++ return new Promise((resolve,reject)=>{
++  const tx=db.transaction(['kv','meta'],'readwrite')
++  tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error??new Error('TRANSACTION_FAILED'));tx.onabort=()=>reject(tx.error??new Error('TRANSACTION_ABORTED'))
++  try{write(tx)}catch(e){tx.abort();reject(e)}
++ })
++}
++function readAll(db:IDBDatabase):Promise<Snapshot>{
++ return new Promise((resolve,reject)=>{
++  const tx=db.transaction('kv','readonly'),rows:Snapshot={},cursor=tx.objectStore('kv').openCursor()
++  cursor.onsuccess=()=>{const c=cursor.result;if(c){rows[String(c.key)]=String(c.value);c.continue()}}
++  tx.oncomplete=()=>resolve(rows);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)
++ })
++}
++async function digest(rows:Snapshot){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(Object.entries(rows).sort()))))).map(b=>b.toString(16).padStart(2,'0')).join('')}
++async function copy(db:IDBDatabase,rows:Snapshot,baseline:boolean){
++ const sha256=await digest(rows)
++ await transact(db,tx=>{
++  const data=tx.objectStore('kv'),meta=tx.objectStore('meta');data.clear()
++  for(const [key,value] of Object.entries(rows))data.put(value,key)
++  if(baseline){const prior=meta.get('rollback');prior.onsuccess=()=>{if(prior.result===undefined)meta.put({schemaVersion:1,rows,sha256,at:new Date().toISOString()},'rollback')}}
++  meta.put({schemaVersion:1,state:'PREPARED',count:Object.keys(rows).length,sha256},'migration')
++ })
++}
++function enqueue(key:string,value:string){
++ if(!key.startsWith('fr255-')||!database)return
++ const db=database
++ queue=queue.then(()=>transact(db,tx=>{tx.objectStore('kv').put(value,key)})).catch(()=>{setStoreBackend(null);report('FALLBACK','MIRROR_WRITE_FAILED')})
++}
++function install(db:IDBDatabase){
++ database=db
++ const box=localStorage
++ const backend:MemoryStore={getItem:key=>box.getItem(key),setItem:(key,value)=>{box.setItem(key,value);enqueue(key,value)},keys:()=>Object.keys(box)}
++ setStoreBackend(backend)
++}
++async function migrate(){
++ const db=await open(),rows=snapshot(localStorage)
++ if(!schemaKnown(rows))return report('BLOCKED','UNKNOWN_SCHEMA_VERSION')
++ report('COPYING')
++ await copy(db,rows,true)
++ const verified=await readAll(db)
++ if(!equal(rows,verified)||!equal(rows,snapshot(localStorage)))return report('FALLBACK','SOURCE_CHANGED_DURING_COPY')
++ const sha256=await digest(rows)
++ await transact(db,tx=>tx.objectStore('meta').put({schemaVersion:1,state:'VERIFIED',count:Object.keys(rows).length,sha256},'migration'))
++ localStorage.setItem(MODE_KEY,'INDEXED_DB_MIRROR')
++ install(db)
++ return report('INDEXED_DB_MIRROR')
++}
++export async function migrateCoreStorage(){
++ if(busy)return migrationStatus()
++ if(typeof indexedDB==='undefined'||typeof localStorage==='undefined')return report('BLOCKED','INDEXED_DB_UNAVAILABLE')
++ busy=true
++ try{
++  if(typeof navigator!=='undefined'&&navigator.locks)return await navigator.locks.request('fangkun-core-migration',()=>migrate())
++  return await migrate()
++ }catch{setStoreBackend(null);return report('FALLBACK','MIGRATION_FAILED_OR_QUOTA')}
++ finally{busy=false}
++}
++/** Include writers that still use native localStorage, without changing their schemas. */
++export async function flushCoreStorage(){
++ if(state!=='INDEXED_DB_MIRROR'||!database)return migrationStatus()
++ await queue
++ if(state!=='INDEXED_DB_MIRROR')return migrationStatus()
++ try{
++  const rows=snapshot(localStorage)
++  if(!schemaKnown(rows))return report('BLOCKED','UNKNOWN_SCHEMA_VERSION')
++  await copy(database,rows,false)
++  if(!equal(rows,await readAll(database))||!equal(rows,snapshot(localStorage)))return report('FALLBACK','SOURCE_CHANGED_DURING_COPY')
++  return migrationStatus()
++ }catch{setStoreBackend(null);return report('FALLBACK','FLUSH_FAILED')}
++}
++/** Leaves all newer writes and both storage copies intact; no deletion or old-snapshot overwrite. */
++export async function rollbackCoreStorage(){
++ await queue
++ setStoreBackend(null)
++ try{localStorage.setItem(MODE_KEY,'LOCAL');return report('LOCAL')}catch{return report('FALLBACK','LOCAL_STORE_UNAVAILABLE')}
++}
++export async function initializeCoreStorage(){
++ if(typeof localStorage==='undefined')return migrationStatus()
++ try{if(localStorage.getItem(MODE_KEY)!=='INDEXED_DB_MIRROR')return migrationStatus();return await migrateCoreStorage()}
++ catch{return report('FALLBACK','LOCAL_STORE_UNAVAILABLE')}
++}
++/** Read-only export for verification/backup; never pushes old values back into the fact layer. */
++export async function readIndexedDbCopy(){return readAll(await open())}
+--- R185/src/lib/core/training-correction.ts
++++ R188/src/lib/core/training-correction.ts
+@@ -1,5 +1,6 @@
+ import { getTrainingOccurrence, listTrainingOccurrences } from "./occurrence.ts"
+ import { readEnvelope, writeEnvelope } from "./storage.ts"
++import {captureCorrectionSources,auditSavedClaimsForCorrection} from './coach-p7-runtime.ts'
+ 
+ export const TRAINING_CORRECTION_KEY = "fr255-training-correction-v1"
+ 
+@@ -72,7 +73,10 @@
+     at: input.at ?? new Date().toISOString(),
+     recordedAt: new Date().toISOString(),
+   }
++  let before:ReturnType<typeof captureCorrectionSources>|null=null
++  try{before=captureCorrectionSources(input.trainingOccurrenceId)}catch{/* Fact saving remains available; unverified links cannot withdraw claims. */}
+   const saved = writeEnvelope(TRAINING_CORRECTION_KEY, [...loadAll(), row])
++  if(saved&&before)try{auditSavedClaimsForCorrection(row,before)}catch{/* No source or plan is rewritten if a review cannot be projected. */}
+   return saved ? row : null
+ }
+ 
+--- R185/src/lib/core/trial.ts
++++ R188/src/lib/core/trial.ts
+@@ -35,6 +35,7 @@
+ const supportedBackupKey = (key: string) =>
+   key.startsWith("fr255-") &&
+   (key.length <= 80 ||
++    (key.length <= 512 && /^fr255-p7(?:-claim|-claim-revision|-input)?:[a-zA-Z0-9_:#.@%\/-]+:[0-9a-f-]{36}$/.test(key)) ||
+     (key.length <= 180 && /^fr255-coach-context-memory-r12:coach-note(?:-withdraw)?:[0-9a-f-]{36}:[0-9a-f-]{36}$/.test(key)) ||
+     (key.length <= 320 && /^fr255-runner-draft-v1:[a-zA-Z0-9_-]{1,80}:[a-zA-Z0-9_-]{1,80}:[a-zA-Z0-9_-]{1,80}:\d{1,5}$/.test(key)) ||
+     (key.length <= 160 &&
+--- R185/src/routes/__root.tsx
++++ R188/src/routes/__root.tsx
+@@ -2,6 +2,13 @@
+ import { AuthProvider } from "@/lib/auth/provider";
+ import { PreviewHostBridge } from "@/components/preview-host-bridge";
+ import appCss from "../styles.css?url";
++import {useEffect} from 'react';
++import {initializeCoreStorage,flushCoreStorage} from '@/lib/core/storage-indexeddb';
++
++function LocalStorageLifecycle(){
++ useEffect(()=>{void initializeCoreStorage();const flush=()=>{void flushCoreStorage()};window.addEventListener('pagehide',flush);return()=>window.removeEventListener('pagehide',flush)},[])
++ return null;
++}
+ 
+ const APP_NAME = "跑步力量";
+ 
+@@ -31,6 +38,7 @@
+       </head>
+       <body>
+         <PreviewHostBridge />
++        <LocalStorageLifecycle />
+         <AuthProvider>
+           <Outlet />
+         </AuthProvider>
+--- /dev/null
++++ R188/tsconfig.r7-scoped.json
+@@ -0,0 +1,13 @@
++{
++  "compilerOptions": {
++    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
++    "lib": ["ES2022", "DOM"], "types": [], "strict": true,
++    "noEmit": true, "skipLibCheck": true, "allowImportingTsExtensions": true
++  },
++  "files": [
++    "src/lib/core/storage.ts", "src/lib/core/storage-journal.ts",
++    "src/lib/core/coach-decision-calibration.ts", "src/lib/core/coach-p7-knowledge.ts",
++    "src/lib/core/coach-p7-evaluation.ts", "src/lib/core/coach-p7-lifecycle.ts",
++    "src/lib/core/coach-claim-revision.ts"
++  ]
++}

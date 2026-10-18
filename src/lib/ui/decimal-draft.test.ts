@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{parseDecimalDraft as parse}from './decimal-draft';
+test('decimal intermediate sequences and precision remain unchanged',()=>{for(const [raw,n] of [['6',6],['6.',6],['6.5',6.5],['6.50',6.5],['.5',.5],['150.5',150.5],['12.125',12.125]] as const)assert.deepEqual(parse(raw),{ok:true,value:n});assert.equal(parse('.').ok,false)});
+test('comma paste is decimal, never silently stripped',()=>{assert.deepEqual(parse('6,5'),{ok:true,value:6.5});for(const s of ['1,234,567','1,234.5','6..5','5:30','1e3','Infinity','NaN'])assert.equal(parse(s).ok,false,s)});
+test('blank and zero obey individual field contracts',()=>{assert.deepEqual(parse('',{nullable:true}),{ok:true,value:null});assert.equal(parse('',{min:0}).ok,false);assert.deepEqual(parse('0',{min:0}),{ok:true,value:0});assert.equal(parse('0',{min:30}).ok,false)});
+test('integer doses are not weakened by decimal support',()=>{assert.equal(parse('2.5',{integer:true,min:1}).ok,false);assert.equal(parse('2',{integer:true,min:1}).ok,true);assert.equal(parse('-1',{min:0}).ok,false);assert.equal(parse('151',{max:150}).ok,false)});

@@ -1,0 +1,19 @@
+--- a/src/lib/core/coach-development-projection.ts
++++ b/src/lib/core/coach-development-projection.ts
+@@ -36,7 +36,15 @@
+   for(const request of input.metricRequests??[]){
+     // An adapter may annotate effective facts but cannot inject another athlete, future evidence or invented measurements.
+     const datums=[...Object.values(request.input.values??{}),...request.input.series??[]].filter((d):d is NonNullable<typeof d>=>!!d)
+-    if(request.input.athleteId!==s.athleteId||request.input.asOf!==s.asOf||datums.some(d=>!['ACTUAL','SELF_REPORT'].includes(d.kind)||!d.sourceIds.length||d.sourceIds.some(id=>!actual.some(e=>e.id===d.id&&e.sourceId===id&&e.value===d.value&&e.unit===d.unit&&e.eventAt===d.at&&e.recordedAt===d.recordedAt&&d.revision===JSON.stringify(e))))))continue
++    if(request.input.athleteId!==s.athleteId||request.input.asOf!==s.asOf)continue
++    const hasUnboundDatum=datums.some(d=>
++      !['ACTUAL','SELF_REPORT'].includes(d.kind)||!d.sourceIds.length||
++      d.sourceIds.some(id=>!actual.some(e=>
++        e.id===d.id&&e.sourceId===id&&e.value===d.value&&e.unit===d.unit&&
++        e.eventAt===d.at&&e.recordedAt===d.recordedAt&&d.revision===JSON.stringify(e)
++      ))
++    )
++    if(hasUnboundDatum)continue
+     measurements.push(calculateAbilityMetric(request))
+   }
+   const ability=buildAbilityProfile({athleteId:s.athleteId,asOf:s.asOf,sport:profile.event,populationKey:null,measurements})

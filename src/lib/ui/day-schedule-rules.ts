@@ -12,7 +12,11 @@ export type ScheduleEntry = {
   edited?: boolean; swapReason?: string
   slot?: "am" | "pm"; overrideNote?: string; unplanned?: boolean; km?: number
   actual?: Actual
-  exercises?: { name: string; sets: string; reps: string; weight: string; rpe: string; unit?: "reps" | "sec" | "m"; perSide?: boolean; restSec?: number | null; sideRestSec?: number | null }[]
+  exercises?: { id?: string; catalogId?: string | null; sourceId?: string; sourceUrl?: string; name: string; sets: string; reps: string; weight: string; rpe: string; unit?: "reps" | "sec" | "m"; perSide?: boolean; counting?: "bilateral" | "perSide" | "left" | "right"; restSec?: number | null; sideRestSec?: number | null }[]
+  /** 用户明确保存的结构；旧条目缺结构时不从标题猜测或迁移。 */
+  runComponents?: import("@/lib/core/running-plan").SessionComponent[]
+  trainingType?: "run" | "strength" | "mixed" | "other"
+  warmup?: import('./warmup').WarmupPlan
   /** 动作之间休息（null = 未设置） */ betweenRestSec?: number | null
   /** t422 一次性补的组间休息（方坤课无自定义动作时） */ restFillSec?: number | null
   /** 实际休息，与计划分开存 */ restLog?: { name: string; planned: number | null; actual: number; at: string }[]
@@ -20,7 +24,7 @@ export type ScheduleEntry = {
 export type DeviationReason = "tired" | "short" | "pain" | "weather" | "other"
 export const REASON_LABELS: Record<DeviationReason, string> = { tired: "状态差", short: "时间不够", pain: "有疼痛", weather: "天气", other: "其他" }
 /** 实际执行与计划分开存：计划字段不改，actual 只记真实发生的。 */
-export type Actual = { outcome: "as_planned" | "different" | "missed"; minutes: number | null; km?: number | null; rpe?: number | null; intensity: Intensity | null; note: string; reasons: DeviationReason[]; at: string }
+export type Actual = { outcome: "as_planned" | "different" | "missed"; minutes: number | null; km?: number | null; rpe?: number | null; intensity: Intensity | null; note: string; reasons: DeviationReason[]; at: string; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED'; occurrenceIds?: string[] }
 export type Recovery = { readiness: number | null; sleepRecent: number[]; sleepBaseline: number | null; hrvToday: number | null; hrvBaseline: number | null }
 export type ConflictAction = "postpone" | "reduce" | "keepOne" | "ack"
 export type Conflict = { id: string; date: string; level: "warn" | "info"; text: string; basis: string; entryIds: string[]; target: string | null; actions: ConflictAction[] }
@@ -112,14 +116,15 @@ export function dedupeEntries(entries: ScheduleEntry[]): { entries: ScheduleEntr
   const out = entries.filter((e) => e.status === "rejected" || keep.has(e.id))
   return { entries: out, removed: entries.length - out.length }
 }
-export type WeekSummary = { planned: number; plannedMin: number; asPlanned: number; different: number; missed: number; open: number; actualMin: number; reasons: [DeviationReason, number][]; note: string }
+export type WeekSummary = { planned: number; plannedMin: number; asPlanned: number; different: number; missed: number; open: number; unrecorded: number; partial: number; actualMin: number; reasons: [DeviationReason, number][]; note: string }
 export function weekSummary(entries: ScheduleEntry[], week: string[], today: string): WeekSummary {
   const plan = entries.filter((e) => week.includes(e.date) && (e.status === "planned" || e.status === "done"))
-  const r: WeekSummary = { planned: plan.length, plannedMin: plan.reduce((s, e) => s + e.minutes, 0), asPlanned: 0, different: 0, missed: 0, open: 0, actualMin: 0, reasons: [], note: "" }
+  const r: WeekSummary = { planned: plan.length, plannedMin: plan.reduce((s, e) => s + e.minutes, 0), asPlanned: 0, different: 0, missed: 0, open: 0, unrecorded: 0, partial: 0, actualMin: 0, reasons: [], note: "" }
   const count: Partial<Record<DeviationReason, number>> = {}
   for (const e of plan) {
-    if (!e.actual) { if (e.date < today) r.missed++; else r.open++; continue }
-    r[e.actual.outcome === "as_planned" ? "asPlanned" : e.actual.outcome === "different" ? "different" : "missed"]++
+    if (!e.actual) { if (e.date < today) r.unrecorded++; else r.open++; continue }
+    if (e.actual.executionState === 'PARTIAL' || e.actual.executionState === 'INTERRUPTED') r.partial++;
+    else r[e.actual.outcome === "as_planned" ? "asPlanned" : e.actual.outcome === "different" ? "different" : "missed"]++
     r.actualMin += e.actual.minutes ?? 0
     for (const x of e.actual.reasons) count[x] = (count[x] ?? 0) + 1
   }
