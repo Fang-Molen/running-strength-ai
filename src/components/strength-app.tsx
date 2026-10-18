@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
 import { bootCore, captureOriginalPlan, dispatchEvent } from "@/lib/core";
 import { loadEvents, onAppEvent } from "@/lib/core/events";
-import { serviceWorkerNavigationPlan, trainingExecutionOpen } from "@/lib/ui/sw-reload";
+import { offlinePrefetchUrls, serviceWorkerNavigationPlan, trainingExecutionOpen } from "@/lib/ui/sw-reload";
 import { CoachSheet } from "@/components/coach-sheet";
 import { CoachCoordinationHub } from "@/components/coach-coordination-hub";
 import {applyStrengthReduction,rollbackStrengthReduction,type StrengthProposal,type StrengthControl} from "@/lib/core/coach-strength-plan-control";
@@ -152,6 +152,7 @@ export function StrengthApp() {
   const [group, setGroup] = useState<ExerciseGroup | "全部">("全部");
   const [notice, setNotice] = useState("");
   const [offline, setOffline] = useState(false);
+  const [offlineShellState, setOfflineShellState] = useState<"preparing" | "ready" | "unavailable">("preparing");
   const [planSaveFailed, setPlanSaveFailed] = useState(false);
   const [feedback, setFeedback] = useState(false);
   const [feel, setFeel] = useState<Feel>("ok");
@@ -275,19 +276,23 @@ export function StrengthApp() {
     window.addEventListener("offline", sync);
     let registration: ServiceWorkerRegistration | null = null;
     let stopped = false;
+    let prefetchInFlight: Promise<void> | null = null;
     const prefetch = () => {
-      const urls = [...document.querySelectorAll("script[src], link[href]")]
-        .map((node) => ("src" in node && typeof node.src === "string" && node.src ? node.src : node.getAttribute("href")) || "")
-        .filter((href) => {
-          try {
-            const url = new URL(href, location.origin);
-            return url.origin === location.origin && !url.pathname.startsWith("/api") && !url.pathname.includes("/_server");
-          } catch {
-            return false;
-          }
-        });
-      urls.push(new URL("/", location.origin).href);
-      return Promise.all(urls.map((href) => fetch(href, { cache: "reload" }).catch(() => undefined)));
+      if (prefetchInFlight) return prefetchInFlight;
+      const urls = offlinePrefetchUrls(location.origin,
+        [...document.querySelectorAll("script[src], link[href]")]
+          .map((node) => ("src" in node && typeof node.src === "string" && node.src ? node.src : node.getAttribute("href")) || ""),
+        performance.getEntriesByType("resource").map(entry => entry.name),
+      );
+      prefetchInFlight = Promise.all(urls.map((href) => fetch(href, {
+        cache: "reload",
+        ...(new URL(href, location.origin).pathname === "/" ? { headers: { accept: "text/html", "x-fangkun-shell-prefetch": "1" } } : {}),
+      }).catch(() => undefined))).then(async () => {
+        const critical = urls.filter(href => {const path = new URL(href).pathname; return path === "/" || path.startsWith("/assets/") && /\.(?:m?js|css)$/.test(path)});
+        const cached = await Promise.all(critical.map(href => caches.match(href, { ignoreVary: true })));
+        if (!stopped) setOfflineShellState(cached.length > 0 && cached.every(response => response?.ok) ? "ready" : "unavailable");
+      }).catch(() => {if (!stopped) setOfflineShellState("unavailable")}).finally(() => {prefetchInFlight = null});
+      return prefetchInFlight;
     };
     const apply = () => {
       if (stopped || !("serviceWorker" in navigator) || !navigator.serviceWorker.controller) return;
@@ -311,10 +316,10 @@ export function StrengthApp() {
         void next.update().catch(() => {});
         await navigator.serviceWorker.ready;
         apply();
-      }).catch(() => {});
+      }).catch(() => {if (!stopped) setOfflineShellState("unavailable")});
       navigator.serviceWorker.addEventListener("controllerchange", apply);
-    }
-    const update = () => { if (navigator.onLine) void registration?.update(); };
+    } else setOfflineShellState("unavailable");
+    const update = () => { if (navigator.onLine) {void registration?.update(); apply()} };
     window.addEventListener("online", update);
     return () => {
       stopped = true;
@@ -497,7 +502,7 @@ export function StrengthApp() {
 
 
   return (
-    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "flex h-dvh flex-col overflow-hidden" : "min-h-screen")} data-testid="training-app" data-ready={ready} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
+    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "flex h-dvh flex-col overflow-hidden" : "min-h-screen")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
       <header className="ui03-header px-4 pt-1 pb-1">
         <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
@@ -511,7 +516,8 @@ export function StrengthApp() {
           <button type="button" onClick={() => { setSettingsPane("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
         </div>
       </header>
-      {offline ? <p className="mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已经打开过的今日、计划、日志和身体仍可使用。方坤本地问答仍可用，在线模型不可用。</p> : null}
+      {offline ? <p className="mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已缓存页面和本机记录可继续使用；方坤本地问答仍可用。</p> : null}
+      {!offline && offlineShellState !== "ready" ? <p role="status" className="mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">{offlineShellState === "preparing" ? "正在准备离线使用，首次打开请保持网络。" : "离线页面还未准备完成，联网后重新打开可重试。"}</p> : null}
       {planSaveFailed ? <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-4 pb-2 text-sm">
         <p>{planConflict || PLAN_SAVE_FAIL}</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (navigator.locks?.request) void navigator.locks.request(PLAN_KEY, () => { const result = savePlanCompared(localStorage, planRaw.current, plan); if(result.ok){planRaw.current=result.raw;setPlanSaveFailed(false);setPlanConflict("");}else setPlanConflict(result.reason); }); }}>再存一次</button>

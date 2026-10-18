@@ -141,3 +141,35 @@ test('revocable new motion manifest / models bypass stale service worker cache',
  }
  assert.equal(intercepts,0)
 });
+
+test('explicit root prefetch caches the shell before any controlled navigation', async () => {
+  const {handlers, stores, setFetch} = boot()
+  setFetch(async () => ({ok: true, type: 'basic', headers: {get: name => name === 'content-type' ? 'text/html' : ''}, clone() {return this}, text: async () => '<html>public shell</html>'}))
+  const request = {url: 'https://example.test/', method: 'GET', destination: '', mode: 'cors', headers: {get: name => ({'x-fangkun-shell-prefetch': '1', accept: 'text/html'})[name] ?? null}}
+  let response
+  handlers.get('fetch')({request, respondWith: promise => {response = promise}})
+  assert.equal(await (await response).text(), '<html>public shell</html>')
+  assert.equal(stores.get('fr255-shell-v74').get(request.url), '<html>public shell</html>')
+  setFetch(async () => {throw new Error('offline')})
+  handlers.get('fetch')({request: {...request, mode: 'navigate', destination: 'document'}, respondWith: promise => {response = promise}})
+  assert.equal(await (await response).text(), '<html>public shell</html>')
+})
+
+test('prefetch marker does not cache unmarked requests, queries, other paths, private responses or writes', async () => {
+  const {handlers, stores, setFetch} = boot()
+  const base = {url: 'https://example.test/', method: 'GET', destination: '', mode: 'cors', headers: {get: name => ({'x-fangkun-shell-prefetch': '1', accept: 'text/html'})[name] ?? null}}
+  for (const request of [
+    {...base, headers: {get: () => null}}, {...base, method: 'POST'}, {...base, url: 'https://elsewhere.test/'},
+    {...base, url: 'https://example.test/?token=x'}, {...base, url: 'https://example.test/account'}, {...base, url: 'https://example.test/api/health'},
+    {...base, headers: {get: name => name === 'authorization' ? 'Bearer private' : base.headers.get(name)}},
+  ]) {
+    let intercepted = false
+    handlers.get('fetch')({request, respondWith: () => {intercepted = true}})
+    assert.equal(intercepted, false)
+  }
+  setFetch(async () => ({ok: true, type: 'basic', headers: {get: name => name === 'content-type' ? 'text/html' : name === 'cache-control' ? 'private, no-store' : ''}, clone() {return this}, text: async () => 'private content'}))
+  let response
+  handlers.get('fetch')({request: base, respondWith: promise => {response = promise}})
+  assert.equal(await (await response).text(), 'private content')
+  assert.equal(stores.get('fr255-shell-v74').has(base.url), false)
+})

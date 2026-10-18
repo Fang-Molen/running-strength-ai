@@ -8,7 +8,12 @@ import {bindTrainingStart} from '../core/occurrence'
 import {saveRunningPlan} from '../core/running-plan'
 import {appendCorrection} from '../core/training-correction'
 const meal=(eatenAt?:string):FoodEntry=>({id:'1792054800000-created',date:'2026-10-15',meal:'午餐',name:'合成餐食',grams:100,kcal:200,...(eatenAt?{eatenAt}:{})})
-test('R189 optional eating clock rejects blank/invalid without filling logged time',()=>{assert.equal(eatenAtFromClock(''),undefined);assert.equal(eatenAtFromClock('25:00'),undefined);assert.ok(eatenAtFromClock('12:30',new Date('2026-10-15T00:00:00Z'))?.endsWith('12:30:00.000Z'))})
+test('R189 optional eating clock rejects blank/invalid and preserves local calendar date and clock time',()=>{
+ assert.equal(eatenAtFromClock(''),undefined);assert.equal(eatenAtFromClock('25:00'),undefined)
+ const day=new Date(2026,9,15,0,0,0,0),expected=new Date(2026,9,15,12,30,0,0).toISOString()
+ assert.equal(eatenAtFromClock('12:30',day),expected)
+ assert.equal(day.getHours(),0,'parsing must not mutate the supplied date')
+})
 test('R189 no end time means no invented post-session window',()=>{const r=matchSessionMeals([{id:'s',kind:'RUNNING',startAt:'2026-10-15T06:00:00Z',endAt:null}],[meal('2026-10-15T07:15:00Z'),meal()]);assert.equal(r.sessions[0].after.status,'UNKNOWN');assert.equal(r.untimed,1);assert.equal(r.sessions[0].adequacy,'UNKNOWN')})
 test('R189 run and strength keep separate actual windows; a recorded meal is not adequacy',()=>{const r=matchSessionMeals([{id:'run',kind:'RUNNING',startAt:'2026-10-15T06:00:00Z',endAt:'2026-10-15T07:00:00Z'},{id:'strength',kind:'STRENGTH',startAt:'2026-10-15T18:00:00Z',endAt:'2026-10-15T19:00:00Z'}],[meal('2026-10-15T07:30:00Z')]);assert.equal(r.sessions[0].after.meals.length,1);assert.equal(r.sessions[1].after.meals.length,0);assert.equal(r.sessions[0].adequacy,'UNKNOWN')})
 afterEach(()=>{setStoreBackend(null);setEventContext({athleteId:'local'})})

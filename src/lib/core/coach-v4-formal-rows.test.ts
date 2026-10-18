@@ -62,3 +62,16 @@ test('AI prefill / system events are not athlete facts',()=>{
  const r=buildFormalEvidenceRows({athleteId:A,asOf:ASOF,committed:[start('o1','2026-03-01T08:00:00.000Z'),rpe('e1','o1',7,'2026-03-01T09:00:00.000Z','2026-03-01T09:00:00.000Z','AI_PREFILL')],corrections:[]})
  assert.equal(r.rows.length,0);assert.equal(r.excluded[0].reason,'NOT_ATHLETE_FACT_SOURCE')
 })
+
+test('native event aliases reject a stale value, unknown event or ambiguous slot instead of guessing',()=>{
+ const committed=[start('o1','2026-03-01T08:00:00.000Z'),rep('r1','o1',90,'2026-03-01T08:10:00.000Z','2026-03-01T08:10:01.000Z'),rep('r2','o1',95,'2026-03-01T08:10:00.000Z','2026-03-01T08:10:02.000Z')]
+ for(const scenario of [{key:'run-event:r1',old:'89',ids:['r1']},{key:'run-event:unknown',old:'90',ids:['r1']},{key:'run-event:r1',old:'90',ids:['r1','r2']}]){
+  const r=buildFormalEvidenceRows({athleteId:A,asOf:ASOF,committed,running:{o1:slot('o1',scenario.ids)},corrections:[corr('native','o1','FIELD','2026-03-02T00:00:00.000Z',{field:'duration',setKey:scenario.key,originalValue:scenario.old,newValue:'85'})]})
+  assert.deepEqual(r.corrections.unmapped,['native']);assert.equal(r.rows.filter(row=>row.metric==='SPLIT_SECONDS').length,0)
+ }
+})
+
+test('a distance correction cannot borrow planned distance when no actual distance was recorded',()=>{
+ const r=buildFormalEvidenceRows({athleteId:A,asOf:ASOF,committed:[start('o1','2026-03-01T08:00:00.000Z'),rep('r1','o1',90,'2026-03-01T08:10:00.000Z','2026-03-01T08:10:01.000Z')],running:{o1:slot('o1',['r1'])},corrections:[corr('native','o1','FIELD','2026-03-02T00:00:00.000Z',{field:'distance',setKey:'run-event:r1',originalValue:'400',newValue:'399.5'})]})
+ assert.deepEqual(r.corrections.unmapped,['native']);assert.equal(r.rows.filter(row=>row.metric==='SPLIT_SECONDS').length,0)
+})

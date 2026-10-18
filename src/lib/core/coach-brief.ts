@@ -10,6 +10,9 @@ import { dispatchEvent } from "./events.ts"
 import { listTrainingOccurrences } from "./occurrence.ts"
 import { occurrenceVoided } from "./training-correction.ts"
 import { projectRunningExecution } from "./running-execution.ts"
+import { effectiveRunningRepetition } from "./running-log-correction.ts"
+import { readFormalEvidenceRows } from "./coach-v4-formal-rows-store.ts"
+import type { FormalEvidenceRow } from "./coach-v4-c11-adapter.ts"
 import { readTrainingFact } from "./fact-read.ts"
 import { readTrainingContext } from "./training-decision.ts"
 import type { Plan } from "@/lib/strength/model"
@@ -174,7 +177,7 @@ function returnAdviceNeedsBoundSource(brief: CoachBrief, text: string, citations
   return !(brief.returnToTraining?.sourceIds ?? []).some((id) => citations.includes(id))
 }
 
-function assembleSessionCoachBrief(plan: Plan | null, question: string, selectedOccurrenceId?: string | null): CoachBrief {
+function assembleSessionCoachBrief(plan: Plan | null, question: string, selectedOccurrenceId: string | null | undefined, asOf: string, formalRows?: readonly FormalEvidenceRow[]): CoachBrief {
   const imported=selectedOccurrenceId ? coachImports().find(r=>r.confirmedImportId===selectedOccurrenceId) : null
   if(imported&&!occurrenceVoided(imported.confirmedImportId))return attachLinkedSources(deriveCoachBrief(importedCoachParts(imported,question)),readLinkedCoachSources(undefined,question))
   const events = loadEvents()
@@ -185,6 +188,9 @@ function assembleSessionCoachBrief(plan: Plan | null, question: string, selected
   const occurrenceId = latest?.trainingOccurrenceId ?? null
   const subjective = occurrenceId ? projectOccurrenceEvidence(occurrenceId, events) : null
   const execution = occurrenceId ? projectRunningExecution(occurrenceId, events) : null
+  const athleteId=events.find(event=>event.event_id===occurrenceId)?.athlete_id
+  const effectiveRows=formalRows??(athleteId?readFormalEvidenceRows(athleteId,asOf).rows:[])
+  const repetitions=execution?.repetitions.map(slot=>effectiveRunningRepetition(slot,effectiveRows,asOf))??[]
   const availability = occurrenceId ? evidenceAvailability(occurrenceId) : null
   const fact = occurrenceId ? readTrainingFact(occurrenceId) : null
   const context = readTrainingContext(plan)
@@ -205,7 +211,7 @@ function assembleSessionCoachBrief(plan: Plan | null, question: string, selected
     for (const record of group.records) sources.push({ id: record.evidenceId, kind: "FACT", detail: evidenceDetail(record).slice(0, 300) })
   }
   const running: NonNullable<CoachBrief["running"]> = []
-  for (const slot of execution?.repetitions ?? []) running.push({ kind: "REPETITION", position: `${slot.componentId}/${slot.blockId}/${slot.stepId} 第${slot.roundOrdinal}轮第${slot.repeatOrdinal}次`, status: slot.status, planned: `${slot.plannedDistanceMeters ?? "?"}米/${slot.plannedDurationSeconds ?? "?"}秒`, actual: `${slot.actualDistanceMeters ?? "未记录"}米/${slot.actualDurationSeconds ?? "未记录"}秒`, sourceEventIds: slot.sourceEventIds })
+  for (const slot of repetitions) running.push({ kind: "REPETITION", position: `${slot.componentId}/${slot.blockId}/${slot.stepId} 第${slot.roundOrdinal}轮第${slot.repeatOrdinal}次`, status: slot.status, planned: `${slot.plannedDistanceMeters ?? "?"}米/${slot.plannedDurationSeconds ?? "?"}秒`, actual: `${slot.actualDistanceMeters ?? "未记录"}米/${slot.actualDurationSeconds ?? "未记录"}秒`, sourceEventIds: slot.sourceEventIds })
   for (const slot of execution?.continuous ?? []) running.push({ kind: "CONTINUOUS", position: slot.componentId, status: slot.status, planned: `${slot.plannedDistanceMeters ?? "?"}米/${slot.plannedDurationSeconds ?? "?"}秒`, actual: `${slot.actualDistanceMeters ?? "未记录"}米/${slot.actualDurationSeconds ?? "未记录"}秒`, sourceEventIds: slot.sourceEventIds })
   for (const slot of execution?.recoveries ?? []) running.push({ kind: "RECOVERY", position: `${slot.componentId}/${slot.blockId}/${slot.kind} 第${slot.roundOrdinal ?? "?"}轮`, status: slot.status, planned: `${slot.plannedRecoverySeconds ?? "未记录"}秒`, actual: `${slot.actualRecoverySeconds ?? "未记录"}秒`, sourceEventIds: slot.sourceEventIds })
   for (const slot of running) for (const id of slot.sourceEventIds) sources.push({ id, kind: "FACT", detail: `${slot.kind} ${slot.position}：${slot.status}；实际 ${slot.actual}` })
@@ -245,8 +251,8 @@ function assembleSessionCoachBrief(plan: Plan | null, question: string, selected
 }
 
 /** Fresh local calendar context is separate from the selected occurrence and its evidence. */
-export function assembleCoachBrief(plan:Plan|null,question:string,selectedOccurrenceId?:string|null):CoachBrief{
- const brief=assembleSessionCoachBrief(plan,question,selectedOccurrenceId)
+export function assembleCoachBrief(plan:Plan|null,question:string,selectedOccurrenceId?:string|null,asOf=new Date().toISOString(),formalRows?:readonly FormalEvidenceRow[]):CoachBrief{
+ const brief=assembleSessionCoachBrief(plan,question,selectedOccurrenceId,asOf,formalRows)
  if(!/健康|睡眠|hrv|静息|疲劳|恢复|均衡|这周|本周|饮食|摄入|导入|手表|下一次训练/i.test(question))return brief
  const started=brief.occurrenceId?listTrainingOccurrences().find(o=>o.trainingOccurrenceId===brief.occurrenceId)?.startedAt??null:null
  const appData=readCoachData(analysisDay(question,started))

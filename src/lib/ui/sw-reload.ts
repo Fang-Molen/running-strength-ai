@@ -18,3 +18,16 @@ export function serviceWorkerNavigationPlan(input: {
   if (!input.hasController && !input.alreadyReloaded) return { reload: true, prefetch: false }
   return { reload: false, prefetch: input.hasController }
 }
+
+/** Dynamic route chunks can finish loading before the worker controls this tab. */
+export function offlinePrefetchUrls(origin: string, documentUrls: string[], resourceUrls: string[]): string[] {
+  const parse = (value: string) => {try {return new URL(value, origin)} catch {return null}}
+  const loadedChunks = resourceUrls.filter(value => {
+    const url = parse(value)
+    return url?.origin === origin && url.pathname.startsWith('/assets/') && /\.(?:m?js|css)$/.test(url.pathname)
+  })
+  return [...new Set([...documentUrls, ...loadedChunks, '/'].flatMap(value => {
+    const url = parse(value)
+    return url?.origin === origin && !url.pathname.startsWith('/api') && !url.pathname.includes('/_server') ? [url.href] : []
+  }))]
+}
