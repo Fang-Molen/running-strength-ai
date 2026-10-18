@@ -46,7 +46,7 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive, planSlotI
   const latestOccurrence = [...listTrainingOccurrences()].reverse().find((item) => item.sessionId === session.id) ?? null
   const live = running || execution.open
   const frozen = latestOccurrence?.trainingPlanSnapshotId ? getTrainingPlanSnapshot(latestOccurrence.trainingPlanSnapshotId) : null
-  const effectiveSession = useMemo(() => frozen ? {id:session.id,name:frozen.sessionName,moves:frozen.exercises.map(x=>({id:x.moveId,catalogId:x.catalogId,customName:x.name,sets:x.sets,mode:x.mode,amount:x.amount,restSec:x.restSec,weightKg:x.weightKg,executionNote:x.executionNote}))} : null, [latestOccurrence?.trainingPlanSnapshotId, signature, live])
+  const effectiveSession = useMemo(() => frozen ? {id:session.id,name:frozen.sessionName,moves:frozen.exercises.map(x=>({id:x.moveId,catalogId:x.catalogId,customName:x.name,sets:x.sets,mode:x.mode,amount:x.amount,restSec:x.restSec,weightKg:x.weightKg,executionNote:x.executionNote,...(x.perSide?{perSide:true,sideRestSec:x.sideRestSec??null}:{}),...(x.betweenRestSec!=null?{betweenRestSec:x.betweenRestSec}:{})}))} : null, [latestOccurrence?.trainingPlanSnapshotId, signature, live])
   const settled = !live && latestOccurrence != null && latestOccurrence.lifecycle !== "IN_PROGRESS"
 
   useEffect(() => setMounted(true), [])

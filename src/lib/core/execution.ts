@@ -21,6 +21,10 @@ export type SetRecord = {
   source: SetSource | null
   timestamp: string | null
   effective?: "CORRECTED" | "UNKNOWN"
+  /** 可选：本组自评 RPE（1–10，可含小数）；未填不写入。 */
+  rpe?: number
+  /** 可选：本组完成后实际休息秒数（引导模式记录）；未填不写入。 */
+  actualRestSec?: number
 }
 
 export function emptySets(session: Session): SetRecord[] {
@@ -168,6 +172,8 @@ function asSet(payload: Record<string, unknown>): SetRecord | null {
     source: payload.source === "user_entered" || payload.source === "user_confirmed_plan" ? payload.source : null,
     timestamp: typeof payload.timestamp === "string" ? payload.timestamp : null,
     ...(effective ? { effective } : {}),
+    ...(typeof payload.rpe === "number" && Number.isFinite(payload.rpe) ? { rpe: payload.rpe } : {}),
+    ...(typeof payload.actualRestSec === "number" && Number.isFinite(payload.actualRestSec) ? { actualRestSec: payload.actualRestSec } : {}),
   }
 }
 

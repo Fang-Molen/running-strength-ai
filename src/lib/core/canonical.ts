@@ -30,6 +30,9 @@ export type PlannedExercise = {
   restSec: number
   sets: number
   executionNote?: string
+  perSide?: boolean
+  sideRestSec?: number | null
+  betweenRestSec?: number | null
 }
 
 export type PlannedSetSnapshot = {
@@ -117,6 +120,8 @@ export function buildOriginalPlanSnapshot(session: Pick<Session, "id" | "name" |
     restSec: move.restSec,
     sets: move.sets,
     ...(move.executionNote ? {executionNote:move.executionNote} : {}),
+    ...(move.perSide ? {perSide:true, sideRestSec:move.sideRestSec ?? null} : {}),
+    ...(move.betweenRestSec != null ? {betweenRestSec:move.betweenRestSec} : {}),
   }))
   const sets = exercises.flatMap((exercise) =>
     Array.from({ length: Math.max(0, exercise.sets) }, (_, index) => {

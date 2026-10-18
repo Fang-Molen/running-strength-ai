@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ExerciseEditor, PartChips, doseOf, UNIT_LABEL, type Ex } from "@/components/exercise-editor";
 import { fmtRest } from "@/lib/strength/rest";
+import { plan400StrengthEntry } from "@/lib/ui/plan400-start";
+import { loadSchedule, saveScheduledEntry } from "@/lib/ui/day-schedule";
 import plan from "../lib/plan400-v4.json" with { type: "json" };
 
 type Day = { orig: string; date: string; weekday: string; week: string; title: string; main: string[]; aux: string[]; strength: string[] };
@@ -23,11 +25,25 @@ function StrengthOverride({ d }: { d: Day }) {
   const text = d.strength.join("");
   if (/^无|^可做|^仅活动度/.test(text) && !o) return null;
   const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };
+  const [startError, setStartError] = useState("");
+  const startStrength = async () => {
+    if (!o) return;
+    const entry = plan400StrengthEntry(d.date, d.title, o, doseOf);
+    const old = loadSchedule().entries.find((e) => e.id === entry.id);
+    const same = old && JSON.stringify(old.exercises) === JSON.stringify(entry.exercises) && old.betweenRestSec === entry.betweenRestSec;
+    if (!same) {
+      const r = await saveScheduledEntry(old ? { ...entry, status: old.status === "done" ? "done" : entry.status, ...(old.actual ? { actual: old.actual } : {}) } : entry, old);
+      if (!r.ok) { setStartError(r.reason ?? "未能开始"); return; }
+    }
+    setStartError("");
+    window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: entry.id }));
+  };
   return <div className="mt-2 rounded-card border border-line p-2">
+    {startError ? <p role="alert" className="text-sm text-risk">{startError}</p> : null}
     {o && !edit ? <><p className="font-bold">我的力量安排</p><ul className="text-sm">{o.exercises.map((e, i) => <li key={i}>{e.name} {e.sets}×{e.reps}{UNIT_LABEL[e.unit ?? doseOf(e.name).unit]}{(e.perSide ?? doseOf(e.name).perSide) ? "/每侧" : ""}{e.weight ? ` @${e.weight}kg` : ""}{e.rpe ? ` RPE${e.rpe}` : ""}｜组间休息：{fmtRest(e.restSec)}</li>)}{o.betweenRestSec != null ? <li>动作之间休息：{fmtRest(o.betweenRestSec)}</li> : null}</ul></> : null}
     {edit ? <div className="space-y-2"><PartChips value={draft.parts} onChange={(parts) => setDraft({ ...draft, parts })} /><ExerciseEditor value={draft.exercises} onChange={(exercises) => setDraft({ ...draft, exercises })} parts={draft.parts} betweenRest={draft.betweenRestSec ?? null} onBetweenRest={(v) => setDraft({ ...draft, betweenRestSec: v })} />
       <div className="flex gap-2"><button type="button" className="min-h-10 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={() => save({ ...draft, savedAt: new Date().toISOString() })}>保存我的安排</button><button type="button" className="min-h-10 rounded-card border border-line px-3" onClick={() => setEdit(false)}>取消</button></div></div>
-      : <div className="mt-1 flex gap-2"><button type="button" className="min-h-10 flex-1 rounded-card border border-line" onClick={() => { setDraft(o ?? { parts: [], exercises: parseStrength(text), savedAt: "" }); setEdit(true); }}>{o ? "修改力量" : "编辑力量动作"}</button>{o ? <button type="button" className="min-h-10 rounded-card border border-line px-3" onClick={() => save(null)}>恢复原计划</button> : null}</div>}
+      : <div className="mt-1 flex gap-2">{o ? <button type="button" className="min-h-10 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={() => { void startStrength(); }}>开始力量训练</button> : null}<button type="button" className="min-h-10 flex-1 rounded-card border border-line" onClick={() => { setDraft(o ?? { parts: [], exercises: parseStrength(text), savedAt: "" }); setEdit(true); }}>{o ? "修改力量" : "编辑力量动作"}</button>{o ? <button type="button" className="min-h-10 rounded-card border border-line px-3" onClick={() => save(null)}>恢复原计划</button> : null}</div>}
   </div>;
 }
 const load = (): Record<string, Log> => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; } };

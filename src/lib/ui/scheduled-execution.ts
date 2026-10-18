@@ -29,6 +29,7 @@ export function resolveScheduledCourse(entry: ScheduleEntry, plan: Pick<Plan, 's
         const catalogId = e.catalogId && exerciseById(e.catalogId) ? e.catalogId : null;
         moves.push({ id: e.id ?? `${entry.id}:move:${i + 1}`, catalogId, customName: e.name, sets, amount,
           mode: e.unit === 'sec' ? 'seconds' : 'reps', weightKg: weight, restSec: e.restSec,
+          ...(e.perSide || e.counting === 'perSide' ? { perSide: true, sideRestSec: e.sideRestSec ?? null } : {}), ...(entry.betweenRestSec != null ? { betweenRestSec: entry.betweenRestSec } : {}),
           executionNote: [e.counting === 'left' ? '仅左侧' : e.counting === 'right' ? '仅右侧' : '', e.perSide ? `每侧${amount}${e.unit === 'sec' ? '秒' : '次'}；两侧完成后确认一组；换侧休息${e.sideRestSec == null ? '未设置' : `${e.sideRestSec}秒`}` : '', entry.betweenRestSec == null ? '' : `动作之间休息${entry.betweenRestSec}秒`, e.sourceId ? `目录：${e.sourceId}` : '', e.sourceUrl ? `来源：${e.sourceUrl}` : ''].filter(Boolean).join('；') });
       }
     } else {

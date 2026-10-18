@@ -14,6 +14,12 @@ export type Move = {
   weightKg: number;
   /** User-confirmed execution convention; no additional sets are inferred. */
   executionNote?: string;
+  /** 单侧动作：每组先左后右，两侧完成后记一组。 */
+  perSide?: boolean;
+  /** 换侧间隔（秒）；null/缺省 = 不休息直接换侧。 */
+  sideRestSec?: number | null;
+  /** 本动作最后一组之后到下一个动作的休息（秒）；缺省用组间休息。 */
+  betweenRestSec?: number | null;
 };
 
 export type Session = {

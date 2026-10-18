@@ -9,6 +9,8 @@ import { decodeRest, restKey, restRemaining, type RestCheckpoint } from "@/lib/c
 import { Sheet as RunnerSheet } from './sheet';
 import { runnerDraftKey } from '@/lib/ui/runner-draft-key';
 import './training-runner.css';
+import { afterStep, addRest, decodeGuided, firstSide, parseRpe, REST_LABEL, SIDE_LABEL, type FlowMove, type RestKind, type Side } from '@/lib/strength/guided-flow';
+const ALERT_KEY = 'fk-rest-alert-v1';
 
 export function completeFromRunner(input: Parameters<typeof completeTraining>[0]) {
   const event = completeTraining(input)
@@ -60,8 +62,30 @@ function TrainingRunnerInner({
   const [restored, setRestored] = useState(false)
   const [saveError, setSaveError] = useState("")
   const timerKey = restKey(decisionId, session.id)
+  const guidedKey = `${timerKey}:guided`
+  const [side, setSide] = useState<Side>(() => firstSide(session.moves[0]))
+  const [restKind, setRestKind] = useState<RestKind | null>(null)
+  const restSide = useRef<Side>(null)
+  const restStartedAt = useRef<number | null>(null)
+  const pendingRestSec = useRef<number | null>(null)
+  const [draftRpe, setDraftRpe] = useState("")
+  const [alertOn, setAlertOn] = useState(() => { try { return localStorage.getItem(ALERT_KEY) !== 'off' } catch { return true } })
+  const audio = useRef<AudioContext | null>(null)
+  const flowMoves: FlowMove[] = session.moves.map(m => ({ id: m.id, name: displayName(m), sets: m.sets, perSide: m.perSide, restSec: m.restSec, sideRestSec: m.sideRestSec, betweenRestSec: m.betweenRestSec }))
+  const flowSets = (rows: SetRecord[]) => rows.map(x => ({ moveId: x.moveId, setIndex: x.setIndex, done: x.completed || x.skipped }))
+  const moveOf = (set: SetRecord | undefined) => session.moves.find(m => m.id === set?.moveId)
+  function saveGuided(nextSide: Side) { try { localStorage.setItem(guidedKey, JSON.stringify({ version: 1, setKey: sets[cursor] ? setKey(sets[cursor]) : null, side: nextSide, restKind, restSide: restSide.current, restStartedAt: restStartedAt.current, pendingRestSec: pendingRestSec.current })) } catch { /* storage unavailable */ } }
+  function moveTo(index: number, nextSide?: Side) { setCursor(index); setSide(nextSide !== undefined ? nextSide : firstSide(moveOf(sets[index]))) }
+  function unlockAudio() { if (!alertOn || audio.current) return; try { const C = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext; if (C) audio.current = new C() } catch { /* optional */ } }
+  function alertRestEnd() {
+    if (!alertOn) return
+    try { navigator.vibrate?.([200, 100, 200]) } catch { /* optional */ }
+    const ctx = audio.current; if (!ctx) return
+    try { void ctx.resume(); const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 880; g.gain.value = 0.15; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.35) } catch { /* optional */ }
+  }
   const setKey = (set: SetRecord) => `${set.moveId}:${set.setIndex}`
   function clearRest() { try { window.localStorage.removeItem(timerKey) } catch { /* storage unavailable */ } }
+  function clearGuided() { try { window.localStorage.removeItem(`${timerKey}:guided`) } catch { /* storage unavailable */ } }
   function saveRest(nextSetKey: string, remainingMs: number, deadlineMs: number | null, running: boolean) {
     const snapshot: RestCheckpoint = { version: 1, decisionId, sessionId: session.id, nextSetKey, remainingMs, deadlineMs, running }
     try { window.localStorage.setItem(timerKey, JSON.stringify(snapshot)) } catch { /* storage unavailable */ }
@@ -77,7 +101,13 @@ function TrainingRunnerInner({
     let snapshot: RestCheckpoint | null = null
     try { snapshot = decodeRest(window.localStorage.getItem(timerKey), decisionId, session.id) } catch { /* storage unavailable */ }
     const target = snapshot ? merged.findIndex((set) => setKey(set) === snapshot.nextSetKey && !set.completed && !set.skipped) : -1
+    const guided = (() => { try { return decodeGuided(window.localStorage.getItem(guidedKey)) } catch { return null } })() as (ReturnType<typeof decodeGuided> & { pendingRestSec?: number | null; setKey?: string | null }) | null
+    if (guided && typeof guided.pendingRestSec === 'number') pendingRestSec.current = guided.pendingRestSec
+    if (next >= 0) setSide(guided && !snapshot && guided.setKey === setKey(merged[next]) ? guided.side : firstSide(session.moves.find(m => m.id === merged[next].moveId)))
     if (snapshot && target >= 0) {
+      restSide.current = guided ? guided.restSide : firstSide(session.moves.find(m => m.id === merged[target].moveId))
+      restStartedAt.current = guided?.restStartedAt ?? null
+      setRestKind(guided?.restKind ?? 'set')
       const remaining = restRemaining(snapshot, Date.now())
       restRemainingMs.current = remaining
       restDeadline.current = snapshot.running && remaining > 0 ? snapshot.deadlineMs : null
@@ -111,6 +141,9 @@ function TrainingRunnerInner({
   useEffect(() => {
     saving.current = false
   }, [cursor, phase])
+  useEffect(() => { saveGuided(side) }, [side, cursor, restKind]) // eslint-disable-line react-hooks/exhaustive-deps
+  // 休息到点（含锁屏/后台期间到点、刷新后已过期）自动进入下一步。
+  useEffect(() => { if (phase === "rest" && restSeconds === 0) goNext() }, [phase, restSeconds]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Wall-clock deadline survives screen lock / browser timer throttling.
   useEffect(() => {
@@ -118,7 +151,7 @@ function TrainingRunnerInner({
     const sync = () => {
       const remaining = Math.max(0, restDeadline.current! - Date.now())
       setRestSeconds(Math.ceil(remaining / 1000))
-      if (remaining === 0) { restRemainingMs.current = 0; restDeadline.current = null; setRestRunning(false); if(restTargetKey.current)saveRest(restTargetKey.current,0,null,false) }
+      if (remaining === 0) { restRemainingMs.current = 0; restDeadline.current = null; setRestRunning(false); if(restTargetKey.current)saveRest(restTargetKey.current,0,null,false); alertRestEnd() }
     }
     sync()
     const timer = window.setInterval(sync, 250)
@@ -160,30 +193,41 @@ function TrainingRunnerInner({
     return merged
   }
 
-  function finishCurrent(actualWeight: number, actualAmount: number, source: SetRecord["source"], modified: boolean) {
+  function startRest(nx: { kind: RestKind; seconds: number; cursor: number; side: Side }, rows: SetRecord[]) {
+    restRemainingMs.current = nx.seconds * 1000
+    restDeadline.current = Date.now() + restRemainingMs.current
+    restTargetKey.current = setKey(rows[nx.cursor])
+    restSide.current = nx.side
+    restStartedAt.current = Date.now()
+    setRestKind(nx.kind)
+    saveRest(restTargetKey.current, restRemainingMs.current, restDeadline.current, true)
+    setRestSeconds(nx.seconds)
+    setRestRunning(true)
+    setPhase("rest")
+  }
+
+  function finishCurrent(actualWeight: number, actualAmount: number, source: SetRecord["source"], modified: boolean, rpe: number | null = null) {
     if (saving.current) return
+    unlockAudio()
+    const move = moveOf(current)
+    if (move?.perSide && side === 'L' && !current.completed) {
+      const nx = afterStep(flowMoves, flowSets(sets), cursor, 'L')
+      if (nx.kind !== 'finish' && nx.seconds > 0) startRest(nx, sets)
+      else { setSide('R'); setPhase("work") }
+      return
+    }
     saving.current = true
-    const recorded = { ...current, actualWeight, actualAmount, completed: true, skipped: false, modified, source, timestamp: new Date().toISOString() }
+    const extra = { ...(rpe != null ? { rpe } : {}), ...(pendingRestSec.current != null ? { actualRestSec: pendingRestSec.current } : {}) }
+    const recorded = { ...current, ...extra, actualWeight, actualAmount, completed: true, skipped: false, modified, source, timestamp: new Date().toISOString() }
     const gap = deviationOf(recorded)
     setLastNote(gap.amount == null ? null : `${gap.amount > 0 ? "+" : ""}${gap.amount}`)
     const next = write(recorded)
     if (!next) return
-    const following = next.findIndex((set, index) => index > cursor && !set.completed && !set.skipped)
-    if (current.restSec > 0 && following >= 0) {
-      restRemainingMs.current = current.restSec * 1000
-      restDeadline.current = Date.now() + restRemainingMs.current
-      restTargetKey.current=setKey(next[following])
-      saveRest(restTargetKey.current, restRemainingMs.current, restDeadline.current, true)
-      setRestSeconds(current.restSec)
-      setRestRunning(true)
-      setPhase("rest")
-      return
-    }
-    if (following >= 0) setCursor(following)
-    else {
-      const firstOpen = next.findIndex((set) => !set.completed && !set.skipped)
-      if (firstOpen >= 0) setCursor(firstOpen)
-    }
+    pendingRestSec.current = null
+    setDraftRpe("")
+    const nx = afterStep(flowMoves, flowSets(next), cursor, side)
+    if (nx.kind !== 'finish' && nx.seconds > 0) { startRest(nx, next); return }
+    if (nx.kind !== 'finish') moveTo(nx.cursor, nx.side)
     setPhase("work")
   }
 
@@ -194,7 +238,7 @@ function TrainingRunnerInner({
     if (!next) return
     const following = next.findIndex((set) => !set.completed && !set.skipped)
     setPhase("work")
-    if (following >= 0) setCursor(following)
+    if (following >= 0) moveTo(following)
   }
 
   function skipMove() {
@@ -209,13 +253,16 @@ function TrainingRunnerInner({
     setSets(merged)
     const following = merged.findIndex((set) => !set.completed && !set.skipped)
     setPhase("work")
-    if (following >= 0) setCursor(following)
+    if (following >= 0) moveTo(following)
   }
 
   function goNext() {
     const following = nextRunnerCursor(sets.map(set=>({key:setKey(set),handled:set.completed||set.skipped})),cursor,restTargetKey.current)
-    if (following >= 0) setCursor(following)
+    if (restStartedAt.current != null) pendingRestSec.current = Math.max(0, Math.round((Date.now() - restStartedAt.current) / 1000))
+    if (following >= 0) moveTo(following, restSide.current !== null || restKind ? restSide.current : undefined)
     restTargetKey.current=null
+    restStartedAt.current=null
+    setRestKind(null)
     setPhase("work")
     clearRest()
     restDeadline.current = null
@@ -224,7 +271,14 @@ function TrainingRunnerInner({
     setRestSeconds(null)
   }
 
-  const planText = `${current.plannedWeight > 0 ? `${current.plannedWeight} kg × ` : "自重 × "}${current.plannedAmount}${current.mode === "seconds" ? " 秒" : ""}`
+  const curMove = moveOf(current)
+  const planText = `${current.plannedWeight > 0 ? `${current.plannedWeight} kg × ` : "自重 × "}${current.plannedAmount}${current.mode === "seconds" ? " 秒" : " 次"}${curMove?.perSide ? " / 每侧" : ""}`
+  const fmtSec = (n: number) => n >= 60 ? `${Math.floor(n / 60)}分${n % 60 ? `${n % 60}秒` : "钟"}` : `${n}秒`
+  const describeTarget = (cur: number, sd: Side) => { const t = sets[cur]; if (!t) return ""; const m = moveOf(t); const n = sets.filter(x => x.moveId === t.moveId).length; return `${t.name} · 第 ${t.setIndex} / ${n} 组${sd ? ` · ${SIDE_LABEL[sd]}` : ""} · ${t.plannedWeight > 0 ? `${t.plannedWeight} kg × ` : "自重 × "}${t.plannedAmount}${t.mode === "seconds" ? " 秒" : " 次"}${m?.perSide ? "/每侧" : ""}` }
+  const preview = afterStep(flowMoves, flowSets(sets), cursor, side)
+  const nextText = preview.kind === 'finish' ? "这是最后一组，完成后结束训练" : `${REST_LABEL[preview.kind]} ${preview.seconds ? fmtSec(preview.seconds) : "不休息"} → ${describeTarget(preview.cursor, preview.side)}`
+  const addFifteen = () => { const r = addRest(restDeadline.current, restRemainingMs.current, Date.now(), 15); restDeadline.current = r.deadlineMs; restRemainingMs.current = r.remainingMs; setRestSeconds(Math.ceil(r.remainingMs / 1000)); if (restTargetKey.current) saveRest(restTargetKey.current, r.remainingMs, r.deadlineMs, r.deadlineMs !== null) }
+  const toggleAlert = () => { const v = !alertOn; setAlertOn(v); try { localStorage.setItem(ALERT_KEY, v ? 'on' : 'off') } catch { /* optional */ } }
 
   if (phase === "paused") {
     return (
@@ -241,19 +295,25 @@ function TrainingRunnerInner({
   if (phase === "rest") {
     const clock = restSeconds ?? 0
     const over = clock === 0
+    const targetIndex = sets.findIndex(x => setKey(x) === restTargetKey.current)
     return (
-      <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col bg-bg px-5 pt-8">
-        <p className="text-sm text-muted">{!over && !restRunning ? "已暂停" : "休息"}</p>
-        <p className="mt-2 text-7xl font-bold tracking-tight" aria-live="polite">{over ? "休息结束" : formatClock(clock)}</p>
+      <div className="fk-runner-screen fixed inset-0 z-40 flex flex-col overflow-y-auto bg-bg px-5" style={{ paddingTop: "max(2rem, env(safe-area-inset-top))", paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }} data-testid="guided-rest">
+        <p className="text-sm font-bold text-accent">{restKind ? REST_LABEL[restKind] : "休息"}{!over && !restRunning ? " · 已暂停" : ""}</p>
+        <p className="mt-2 text-7xl font-bold tracking-tight" aria-live="polite" aria-label="剩余休息时间">{over ? "休息结束" : formatClock(clock)}</p>
+        <p className="mt-2 text-xs text-muted">按时间戳计时，锁屏或切到后台也不会走慢；结束后自动进入下一步。</p>
         {lastNote ? <p className="mt-3 text-sm text-muted">上一组和计划相差 {lastNote}</p> : null}
-        <p className="mt-6 text-sm text-muted">下一组</p>
-<p className="text-xl font-bold">{sets.find(x=>setKey(x)===restTargetKey.current)?.name} · {nextPlanText}</p>
-        <button type="button" className="min-h-11 text-sm" onClick={()=>onInspect(session.moves.find(m=>m.id===(sets.find(x=>setKey(x)===restTargetKey.current)?.moveId??current.moveId))!)}>查看下一组动作说明</button>
-        <button type="button" className="mt-8 h-14 rounded-2xl bg-accent text-base font-bold text-accent-fg" onClick={goNext}>下一组</button>
+        <p className="mt-6 text-sm text-muted">接下来</p>
+        <p className="text-xl font-bold" data-testid="guided-next">{targetIndex >= 0 ? describeTarget(targetIndex, restSide.current) : "所有组已处理"}</p>
+        <button type="button" className="min-h-11 text-left text-sm text-accent" onClick={()=>onInspect(session.moves.find(m=>m.id===(sets[targetIndex]?.moveId??current.moveId))!)}>查看动作说明</button>
+        <div className="mt-6 grid grid-cols-2 gap-2">
+          <button type="button" className="h-14 rounded-2xl border border-line text-base font-bold" onClick={addFifteen}>+15 秒</button>
+          <button type="button" className="h-14 rounded-2xl bg-accent text-base font-bold text-accent-fg" onClick={goNext}>跳过休息</button>
+        </div>
         <div className="mt-3 flex gap-2">
           <button type="button" className="h-12 flex-1 rounded-2xl border border-line text-sm" onClick={pauseRest} disabled={!restRunning || over}>暂停</button>
           <button type="button" className="h-12 flex-1 rounded-2xl border border-line text-sm" onClick={resumeRest} disabled={restRunning || over}>继续</button>
         </div>
+        <button type="button" className="mt-3 h-11 text-sm text-muted" aria-pressed={alertOn} onClick={toggleAlert}>休息结束提醒（震动/提示音）：{alertOn ? "开" : "关"}</button>
       </div>
     )
   }
@@ -272,7 +332,8 @@ function TrainingRunnerInner({
           const input=runnerInput(draftWeight,draftAmount,current.mode)
           if(!input){setSaveError("请填写有效的实际重量和次数/秒数，空白不是 0。");return}
           const {weight,amount}=input
-          finishCurrent(weight, amount, "user_entered", weight !== current.plannedWeight || amount !== current.plannedAmount)
+          const rpe=parseRpe(draftRpe); if(rpe==='invalid'){setSaveError("RPE 填 1–10，可带小数；不填就留空。");return}
+          finishCurrent(weight, amount, "user_entered", weight !== current.plannedWeight || amount !== current.plannedAmount, rpe)
         }}>保存</button>
         <button type="button" className="mt-2 h-11 text-sm text-muted" onClick={() => setPhase("work")}>取消</button>
       </div>
@@ -328,7 +389,8 @@ function TrainingRunnerInner({
         <p className="pb-2 text-xs text-muted">只显示已保存的力量安排。这里没有的跑步分段不会编造。返回这一页不会重写已记录的组。</p>
       </details>
       <p className="mt-5 text-sm font-bold text-accent">当前这一组</p>
-      <button type="button" className="mt-1 min-h-12 text-left text-3xl font-bold" onClick={()=>onInspect(session.moves.find(m=>m.id===current.moveId)!)}>{moveName} · 第 {current.setIndex} / {moveSets.length} 组</button>
+      <button type="button" data-testid="guided-current" className="mt-1 min-h-12 text-left text-3xl font-bold" onClick={()=>onInspect(session.moves.find(m=>m.id===current.moveId)!)}>{moveName} · 第 {current.setIndex} / {moveSets.length} 组</button>
+      {side ? <p className="mt-1"><span className="rounded-full bg-accent px-3 py-1 text-base font-bold text-accent-fg" data-testid="guided-side">{SIDE_LABEL[side]}</span><span className="ml-2 text-sm text-muted">{side === 'L' ? "做完左侧后自动换侧计时" : "右侧做完记为本组完成"}</span></p> : null}
       <p className="mt-1 text-xs text-muted">点击动作查看步骤，返回后输入与休息继续保留。</p>
       <p className="mt-2 text-sm text-muted">{session.moves.find(m=>m.id===current.moveId)?.executionNote}</p>
       {saveError?<p role="alert" className="mt-2 text-sm text-risk">{saveError}</p>:null}
@@ -343,18 +405,23 @@ function TrainingRunnerInner({
           <input aria-label={current.mode === "seconds" ? "实际秒数" : "实际次数"} value={draftAmount} inputMode="numeric" onChange={(event) => setDraftAmount(event.target.value)} className="mt-1 h-14 w-full rounded-2xl border border-line bg-surface px-3 text-2xl font-bold outline-none" />
         </label>
       </div>
+      <label className="mt-2 block text-sm text-muted">本组 RPE（可选，1–10，可带小数）
+        <input aria-label="本组RPE" value={draftRpe} inputMode="decimal" placeholder="不填就留空" onChange={(event) => setDraftRpe(event.target.value)} className="mt-1 h-12 w-full rounded-2xl border border-line bg-surface px-3 text-lg outline-none" />
+      </label>
       <p className="mt-2 text-sm text-muted">还没改的话，完成时按计划记下。空着或写错不会假装已完成。</p>
+      <p className="mt-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm" data-testid="guided-preview"><span className="text-muted">下一步：</span>{nextText}</p>
       {open === 0 ? (
         <button type="button" disabled={busy} className="mt-8 h-16 rounded-2xl bg-accent text-lg font-bold text-accent-fg disabled:opacity-60" onClick={() => finishSaved(() => ({ completed: true, interrupted: false, sets, pain }))}>{busy ? "正在保存" : "结束并保存训练"}</button>
       ) : current.completed || current.skipped ? (
-        <button type="button" className="mt-8 h-16 rounded-2xl bg-accent text-lg font-bold text-accent-fg" onClick={() => { const firstOpen = sets.findIndex((set) => !set.completed && !set.skipped); if (firstOpen >= 0) setCursor(firstOpen) }}>去未完成的组</button>
+        <button type="button" className="mt-8 h-16 rounded-2xl bg-accent text-lg font-bold text-accent-fg" onClick={() => { const firstOpen = sets.findIndex((set) => !set.completed && !set.skipped); if (firstOpen >= 0) moveTo(firstOpen) }}>去未完成的组</button>
       ) : (
         <button type="button" className="mt-8 h-16 rounded-2xl bg-accent text-lg font-bold text-accent-fg" onClick={() => {
           const input=runnerInput(draftWeight,draftAmount,current.mode)
           if(!input){setSaveError("请填写有效的实际重量和次数/秒数，空白不是 0。");return}
           const {weight,amount}=input
-          finishCurrent(weight, amount, weight === current.plannedWeight && amount === current.plannedAmount ? "user_confirmed_plan" : "user_entered", weight !== current.plannedWeight || amount !== current.plannedAmount)
-        }}>完成本组</button>
+          const rpe=parseRpe(draftRpe); if(rpe==='invalid'){setSaveError("RPE 填 1–10，可带小数；不填就留空。");return}
+          finishCurrent(weight, amount, weight === current.plannedWeight && amount === current.plannedAmount ? "user_confirmed_plan" : "user_entered", weight !== current.plannedWeight || amount !== current.plannedAmount, rpe)
+        }}>{curMove?.perSide && side === 'L' ? "完成左侧" : "完成本组"}</button>
       )}
       {open > 0 ? <div className="mt-3 grid grid-cols-3 gap-2">
         <button type="button" className="h-12 rounded-2xl border border-line text-sm" onClick={() => { setDraftWeight(String(current.actualWeight ?? current.plannedWeight)); setDraftAmount(String(current.actualAmount ?? current.plannedAmount)); setPhase("edit") }}>改记</button>
@@ -375,7 +442,7 @@ function TrainingRunnerInner({
     if(!next){saving.current=false;setBusy(false);return}
     const saved = completeFromRunner({ decisionId, sessionId: session.id, planned: null, actualSets: next.sets.filter((set) => set.completed).length, actualAmount: current.actualAmount, actualWeightKg: current.actualWeight, rpe: null, pain: next.pain, modified: next.sets.some((set) => set.modified), interrupted: false, partial: next.sets.some(set=>!set.completed || set.skipped) })
     if(!saved){setSaveError("结束事件或课次状态未核实保存，已记录组保留，请重试。");saving.current=false;setBusy(false);return}
-    clearRest()
+    clearRest(); clearGuided()
     onDone(next)
   }
 
