@@ -1,6 +1,6 @@
 /** 方坤食物库（fangkun-food-library-20261017）：public/food/cn.json 先加载，usda.json 按需加载。null = 未知，不当 0。 */
 export type N5 = [number | null, number | null, number | null, number | null, number | null]; // kcal, protein, carb, fat, fiber
-export type FoodRow = { i: string; n: string; a: string[]; g: 0 | 1 | 2; b: "g" | "serv"; p: N5 | null; s: { g: number | null; u: string; v: N5 | null }; pt: [string, number][]; src: string; st: string; br?: string; rg?: string; uri?: string };
+export type FoodRow = { i: string; n: string; a: string[]; g: 0 | 1 | 2; b: "g" | "serv"; p: N5 | null; s: { g: number | null; u: string; v: N5 | null }; pt: [string, number][]; src: string; st: string; br?: string; rg?: string; uri?: string; c?: string; lbl?: string; note?: string; ref?: string; chk?: string; cmp?: [string, number, string][] };
 export type Macros = { kcal: number | null; protein: number | null; carb: number | null; fat: number | null; fiber: number | null };
 
 let cn: FoodRow[] | null = null, us: FoodRow[] | null = null;
@@ -11,8 +11,8 @@ export function loadUsda(): Promise<FoodRow[]> { return (usP ??= get("/food/usda
 export function setRowsForTest(a: FoodRow[], b: FoodRow[] = []) { cn = a; us = b; }
 
 /** 待核：旧库未记来源、品牌待标签、演示估算 */
-export function needsCheck(r: FoodRow): boolean { return r.src === "L" || r.st === "PENDING_LABEL" || r.src === "D" || r.st === "UNVERIFIED" || r.st === "HISTORICAL_RECHECK"; }
-export function sourceLabel(r: FoodRow): string { return r.src === "U" ? "USDA SR26" : r.src === "B" ? (r.st === "HISTORICAL_RECHECK" ? "品牌官网（旧）" : "品牌官网") : r.src === "P" ? "品牌·待标签" : r.src === "D" ? "估算·待核" : "内置库·待核"; }
+export function needsCheck(r: FoodRow): boolean { return r.src === "L" || r.src === "O" || r.st === "PENDING_LABEL" || r.src === "D" || r.st === "UNVERIFIED" || r.st === "HISTORICAL_RECHECK"; }
+export function sourceLabel(r: FoodRow): string { if (r.lbl) return r.lbl; return r.src === "C" ? "中国食物成分表 第6版" : r.src === "O" ? "Open Food Facts·标签待核" : r.src === "U" ? "USDA SR26" : r.src === "B" ? (r.st === "HISTORICAL_RECHECK" ? "品牌官网（旧）" : "品牌官网") : r.src === "P" ? "品牌·待标签" : r.src === "D" ? "估算·待核" : "内置库·待核"; }
 
 export function search(q: string, limit = 8): FoodRow[] {
   const s = q.trim().toLowerCase(); if (!s) return [];
@@ -24,8 +24,10 @@ export function search(q: string, limit = 8): FoodRow[] {
     if(names.some(x=>x.includes(normalized))||tokens.length>1&&tokens.every(t=>text.includes(t)))return 2;
     return 9;
   };
+  // 同一匹配等级内：官网/成分表 > USDA/OFF > 估算 > 旧库未核 > 待补充（只改并列顺序，不改匹配规则）
+  const SRC: Record<string, number> = { B: 0, C: 0, U: 1, O: 1, D: 2, L: 3, P: 4 };
   const hits: [number, FoodRow][] = [];
-  for (const r of [...(cn ?? []), ...(us ?? [])]) { const k = rank(r); if (k < 9) hits.push([k * 10 + r.g, r]); }
+  for (const r of [...(cn ?? []), ...(us ?? [])]) { const k = rank(r); if (k < 9) hits.push([k * 100 + (SRC[r.src] ?? 3) * 10 + r.g, r]); }
   hits.sort((a, b) => a[0] - b[0] || a[1].n.length - b[1].n.length);
   return hits.slice(0, limit).map((x) => x[1]);
 }
