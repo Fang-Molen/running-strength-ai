@@ -52,7 +52,7 @@ function boot() {
 }
 
 test("the shell cache version moves off fr255-shell-1 and only owns its own prefix", () => {
-  assert.match(source, /const CACHE = "fr255-shell-v74-fk-motion-r4"/)
+  assert.match(source, /const CACHE = "fr255-shell-v74-offline-loop-r1"/)
   assert.doesNotMatch(source, /fr255-shell-1/)
   assert.doesNotMatch(source, /localStorage|indexedDB|sessionStorage/)
   assert.match(source, /ownedShellCache\(key\) && key !== CACHE/)
@@ -93,7 +93,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { cached = promise },
   })
   assert.equal(await (await cached).text(), "export const fresh = 1")
-  assert.equal(stores.get("fr255-shell-v74-fk-motion-r4").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
+  assert.equal(stores.get("fr255-shell-v74-offline-loop-r1").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
   setFetch(async () => { throw new Error("offline") })
   let offline
   handlers.get("fetch")({
@@ -115,7 +115,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { html = promise },
   })
   await html
-  assert.equal(stores.get("fr255-shell-v74-fk-motion-r4").has("https://example.test/assets/bad.js"), false)
+  assert.equal(stores.get("fr255-shell-v74-offline-loop-r1").has("https://example.test/assets/bad.js"), false)
   let intercepted = false
   handlers.get("fetch")({
     request: { url: "https://example.test/backup.zip", method: "GET", destination: "document", mode: "navigate", headers: { get: () => null } },
@@ -141,3 +141,35 @@ test('revocable new motion manifest / models bypass stale service worker cache',
  }
  assert.equal(intercepts,0)
 });
+
+test('explicit root prefetch caches the shell before any controlled navigation', async () => {
+  const {handlers, stores, setFetch} = boot()
+  setFetch(async () => ({ok: true, type: 'basic', headers: {get: name => name === 'content-type' ? 'text/html' : ''}, clone() {return this}, text: async () => '<html>public shell</html>'}))
+  const request = {url: 'https://example.test/', method: 'GET', destination: '', mode: 'cors', headers: {get: name => ({'x-fangkun-shell-prefetch': '1', accept: 'text/html'})[name] ?? null}}
+  let response
+  handlers.get('fetch')({request, respondWith: promise => {response = promise}})
+  assert.equal(await (await response).text(), '<html>public shell</html>')
+  assert.equal(stores.get('fr255-shell-v74-offline-loop-r1').get(request.url), '<html>public shell</html>')
+  setFetch(async () => {throw new Error('offline')})
+  handlers.get('fetch')({request: {...request, mode: 'navigate', destination: 'document'}, respondWith: promise => {response = promise}})
+  assert.equal(await (await response).text(), '<html>public shell</html>')
+})
+
+test('prefetch marker does not cache unmarked requests, queries, other paths, private responses or writes', async () => {
+  const {handlers, stores, setFetch} = boot()
+  const base = {url: 'https://example.test/', method: 'GET', destination: '', mode: 'cors', headers: {get: name => ({'x-fangkun-shell-prefetch': '1', accept: 'text/html'})[name] ?? null}}
+  for (const request of [
+    {...base, headers: {get: () => null}}, {...base, method: 'POST'}, {...base, url: 'https://elsewhere.test/'},
+    {...base, url: 'https://example.test/?token=x'}, {...base, url: 'https://example.test/account'}, {...base, url: 'https://example.test/api/health'},
+    {...base, headers: {get: name => name === 'authorization' ? 'Bearer private' : base.headers.get(name)}},
+  ]) {
+    let intercepted = false
+    handlers.get('fetch')({request, respondWith: () => {intercepted = true}})
+    assert.equal(intercepted, false)
+  }
+  setFetch(async () => ({ok: true, type: 'basic', headers: {get: name => name === 'content-type' ? 'text/html' : name === 'cache-control' ? 'private, no-store' : ''}, clone() {return this}, text: async () => 'private content'}))
+  let response
+  handlers.get('fetch')({request: base, respondWith: promise => {response = promise}})
+  assert.equal(await (await response).text(), 'private content')
+  assert.equal(stores.get('fr255-shell-v74-offline-loop-r1').has(base.url), false)
+})

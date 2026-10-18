@@ -170,12 +170,21 @@ export function buildFormalEvidenceRows(input:{athleteId:string;asOf:string;comm
     out.push(next);lastRow.set(rid,next);res.corrections.applied.push(c.correctionId);continue
    }
   }
-  if(c.field==='duration'&&c.setKey){
-   const rid=`${c.trainingOccurrenceId}#${c.setKey}`,prev=lastRow.get(rid),v=/^\d+(?:\.\d+)?$/.test(c.newValue.trim())?Number(c.newValue):null
-   if(prev&&prev.metric==='SPLIT_SECONDS'&&v!==null&&v>0){
-    const next:FormalEvidenceRow={...prev,recordId:`${rid}@${c.correctionId}`,sourceEventId:c.correctionId,source:'TRAINING_FACT',value:v,
+  if((c.field==='duration'||c.field==='distance')&&c.setKey){
+   // The native log binds edits to the original event; formal rows bind to the
+   // plan slot. Resolve only one observed row owned by this occurrence.
+   const native=c.setKey.startsWith('run-event:')
+   const matches=native?draft.filter(r=>r.trainingOccurrenceId===c.trainingOccurrenceId&&r.metric==='SPLIT_SECONDS'&&r.status==='OBSERVED'&&r.sourceEventId===c.setKey!.slice('run-event:'.length)):[]
+   const rid=native?(matches.length===1&&draft.filter(r=>r.recordId===matches[0].recordId).length===1?matches[0].recordId:null):`${c.trainingOccurrenceId}#${c.setKey}`
+   const prev=rid?lastRow.get(rid):null,v=/^\d+(?:\.\d+)?$/.test(c.newValue.trim())?Number(c.newValue):null
+   const oldDistance=prev?.protocol?.match(/:(\d+(?:\.\d+)?)m$/)
+   const previous=c.field==='duration'?prev?.value:oldDistance?Number(oldDistance[1]):null
+   const originalMatches=!native||(previous!==null&&Number(c.originalValue)===previous&&c.originalValue.trim()!=='')
+   if(prev&&prev.metric==='SPLIT_SECONDS'&&prev.status==='OBSERVED'&&v!==null&&Number.isFinite(v)&&v>0&&originalMatches&&(c.field==='duration'||oldDistance)){
+    const next:FormalEvidenceRow={...prev,recordId:`${rid}@${c.correctionId}`,sourceEventId:c.correctionId,source:'TRAINING_FACT',value:c.field==='duration'?v:prev.value,
+     protocol:c.field==='distance'?prev.protocol!.replace(/:\d+(?:\.\d+)?m$/,`:${v}m`):prev.protocol,
      knownAt:c.recordedAt!,supersedesRecordId:prev.recordId,verifiedByFormalProjection:true}
-    out.push(next);lastRow.set(rid,next);res.corrections.applied.push(c.correctionId);continue
+    out.push(next);lastRow.set(rid!,next);res.corrections.applied.push(c.correctionId);continue
    }
   }
   // Fields without a reliable slot binding: fail closed for that occurrence's running splits.

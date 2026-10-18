@@ -1,4 +1,5 @@
 import type React from "react"
+import { ImportLogCorrectionPanel } from './import-log-correction-panel'
 import { useMemo, useState } from "react"
 import { Activity, CalendarDays, Dumbbell } from "lucide-react"
 import { loadEvents } from "@/lib/core/events"
@@ -149,7 +150,7 @@ function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan:
           const duration = correctedRunningMetric(slot, "duration")
           return <div key={`${slot.componentId}:${slot.blockId}:${slot.stepId}:${slot.roundOrdinal}:${slot.repeatOrdinal}`} className="rounded-card border border-line p-2">
             <p>第 {slot.roundOrdinal} 轮 · 第 {slot.repeatOrdinal} 次 · {slot.status === "COMPLETED" ? "已完成" : slot.status === "SKIPPED" ? "已跳过" : slot.status === "DUPLICATE_UNRESOLVED" ? "重复待核对" : "未记录"}</p>
-            <p className="text-muted">距离 {distance.value ?? "未记录"} 米 · 用时 {duration.value ?? "未记录"} 秒{distance.corrected || duration.corrected ? " · 已纠错（仅日志视图）" : ""}</p>
+            <p className="text-muted">距离 {distance.value ?? "未记录"} 米 · 用时 {duration.value ?? "未记录"} 秒{distance.corrected || duration.corrected ? " · 已保存更正" : ""}</p>
             {runningCorrectionKey(slot) ? <button type="button" className="min-h-11 underline" onClick={() => { setRunningEdit(slot); setRunningMetric("duration"); setRunningValue(String(duration.value ?? "")); setRunningReason(""); setFail("") }}>修改本段成绩</button> : null}
           </div>
         })}
@@ -179,7 +180,7 @@ function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan:
           {bound ? <button type="button" className="ml-2 min-h-11 underline" onClick={() => { setField("weight"); setSetKey(key); setOriginalValue(typeof payload.actualWeight === "number" ? String(payload.actualWeight) : ""); setSheet("correct"); setStep("edit") }}>纠正这组</button> : null}
         </li>
       })}</ul> : <p className="text-muted">{fact?.completedSetCount == null ? "未记录" : `已记录完成 ${fact.completedSetCount} 组`}</p>}
-      {unwired ? <p className="text-muted">部分纠正仅保存了审计记录，尚未更新有效训练事实。</p> : null}
+      {unwired ? <p className="text-muted">原值和更正历史均保留；无法核实来源的更正暂不用于教练分析。</p> : null}
 
       <p>训练反馈 {feedback}</p>
       <p>RPE {rpeValue ?? "未记录"} · 疼痛 {pain}</p>
@@ -261,9 +262,10 @@ function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingImport; 
     </button>
     {open ? <div className="mt-2 space-y-2 border-t border-line pt-2">
       
-      {item.runningSegments.length ? <ul className="space-y-1">{item.runningSegments.map((segment, index) => <li key={segment.id}>跑步 {index + 1} · {segment.distanceMeters.value ?? "距离未记录"} 米 · {segment.durationSeconds.value ?? "时间未记录"} 秒 · {STATUS[segment.completion] ?? segment.completion}</li>)}</ul> : <p className="text-muted">跑步分段：未记录</p>}
-      {item.strengthSets.length ? <ul className="space-y-1">{item.strengthSets.map((set, index) => <li key={set.id}>力量 {index + 1} · {set.exerciseName.value || "动作未记录"} · {set.repetitions.value ?? "次数未记录"} · {STATUS[set.completion] ?? set.completion}</li>)}</ul> : null}
-      <button type="button" onClick={() => onAsk(null)} className="min-h-11 rounded-full border border-line px-3 font-bold">问教练</button>
+      {item.runningSegments.length ? <ul className="space-y-1">{item.runningSegments.map((segment, index) => <li key={segment.id}>原始跑步 {index + 1} · {segment.distanceMeters.value ?? "距离未记录"} 米 · {segment.durationSeconds.value ?? "时间未记录"} 秒 · {STATUS[segment.completion] ?? segment.completion}</li>)}</ul> : <p className="text-muted">跑步分段：未记录</p>}
+      {item.strengthSets.length ? <ul className="space-y-1">{item.strengthSets.map((set, index) => <li key={set.id}>原始力量 {index + 1} · {set.exerciseName.value || "动作未记录"} · {set.repetitions.value ?? "次数未记录"} · {STATUS[set.completion] ?? set.completion}</li>)}</ul> : null}
+      <ImportLogCorrectionPanel record={item} onSaved={onDeleted}/>
+      <button type="button" onClick={() => onAsk(item.confirmedImportId)} className="min-h-11 rounded-full border border-line px-3 font-bold">问教练</button>
       
       {!deleteConfirm ? <button type="button" onClick={() => { setDeleteConfirm(true); setDeleteError("") }} className="min-h-11 rounded-full border border-red-500 px-3 font-bold text-red-600">永久删除这条上传记录</button> : <div className="rounded-xl border border-red-500 p-3 space-y-2">
         <p className="font-bold">确认永久删除？</p>

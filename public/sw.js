@@ -1,4 +1,4 @@
-const CACHE = "fr255-shell-v74-fk-motion-r4"
+const CACHE = "fr255-shell-v74-offline-loop-r1"
 const DEMO_CACHE="fk-demo3d-v74-paired"
 const CACHE_PREFIX = "fr255-shell-"
 
@@ -13,6 +13,15 @@ function ownedShellCache(key) {
   return key.startsWith(CACHE_PREFIX)
 }
 
+// A browser fetch has no document destination. Only this explicit, same-origin
+// root-shell prefetch may cache HTML before the user's first online reload.
+function shellPrefetch(request, url) {
+  return request.method === "GET" && url.origin === self.location.origin
+    && url.pathname === "/" && !url.search
+    && request.headers.get("x-fangkun-shell-prefetch") === "1"
+    && /text\/html/i.test(request.headers.get("accept") || "")
+}
+
 function cacheable(request, url) {
   // An approval may be revoked: never serve a stale approval/GLB from the shell cache.
   if (url.pathname.startsWith("/fangkun-motion/") || url.pathname.startsWith("/demo3d/models/")) return false
@@ -20,7 +29,7 @@ function cacheable(request, url) {
   if (!url.pathname.startsWith("/demo3d/") && !url.pathname.startsWith("/exercise-sources/") && !url.pathname.startsWith("/food/") && /\.(?:zip|tar|gz|7z|pdf|csv|jsonl?)(?:$)/i.test(url.pathname)) return false
   if (request.method !== "GET" || url.origin !== self.location.origin || blocked(url)) return false
   if (request.headers.get("authorization")) return false
-  if (request.mode === "navigate" || request.destination === "document") return true
+  if (request.mode === "navigate" || request.destination === "document" || shellPrefetch(request, url)) return true
   return ["script", "style", "image", "font", "manifest"].includes(request.destination)
     || url.pathname.startsWith("/assets/")
     || url.pathname.startsWith("/__grok/")
@@ -37,7 +46,7 @@ function cacheable(request, url) {
 async function fromNetwork(request) {
   const cache = await caches.open(CACHE)
   const response = await fetch(request)
-  const isDoc = request.mode === "navigate" || request.destination === "document"
+  const isDoc = request.mode === "navigate" || request.destination === "document" || shellPrefetch(request, new URL(request.url))
   const htmlBody = /text\/html/i.test(response.headers.get("content-type") || "")
   // An asset URL answered with HTML is a stale/missing chunk: never cache it, surface a 404.
   if (!isDoc && htmlBody) return new Response("Not Found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } })
