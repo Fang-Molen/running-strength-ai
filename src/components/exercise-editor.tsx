@@ -116,7 +116,7 @@ export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenR
     if (isSelected(item)) { setAdded(`已在本次训练：${item.name}`); return; }
     const d = doseOf(item.name);
     commit([...current.current, { id: crypto.randomUUID(), catalogId: item.catalogId, sourceId: item.sourceId ?? undefined,
-      name: item.name, sets: '', reps: '', weight: '', rpe: '', unit: item.unit ?? d.unit, perSide: item.perSide ?? d.perSide, restSec: null }]);
+      name: item.name, sets: '', reps: '', weight: '', rpe: '', unit: item.unit ?? d.unit, perSide: item.perSide ?? d.perSide, restSec: 75 }]);
     setAdded(`已加入：${item.name}`);
   };
   const selectedKeys = value.flatMap(e => [e.catalogId ? `catalog:${e.catalogId}` : `extra:${e.name}`, ...(e.sourceId ? [e.sourceId] : []), ...(e.catalogId ? [`local:${e.catalogId}`] : [])]);
@@ -133,7 +133,7 @@ export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenR
       commit([...current.current, { id: crypto.randomUUID(), catalogId: action.catalogId, sourceId: action.id,
         sourceUrl: action.sourceUrl || undefined, name: action.name, sets: '', reps: '', weight: '', rpe: '',
         unit: action.source === 'external' ? action.unit ?? undefined : action.unit ?? d.unit,
-        perSide: action.source === 'external' ? undefined : d.perSide, restSec: null }]);
+        perSide: action.source === 'external' ? undefined : d.perSide, restSec: action.restSec ?? 75 }]);
       setAdded(`已加入：${action.name}`);
     }} /> : null}
     {demo ? <DemoSheet id={demo} onClose={() => setDemo(null)} /> : null}

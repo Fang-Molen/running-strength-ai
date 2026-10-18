@@ -956,11 +956,12 @@ export function StrengthApp() {
       {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <ChromeMetrics />
       <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " hidden" : "")} aria-label="主导航">
-        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
+        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-6">
           {(
             [
               ["today", "今日", House],
               ["plan", "计划", ClipboardList],
+              ["coach", "方坤", MessageCircle],
               ["diet", "饮食", Utensils],
               ["log", "日志", CalendarDays],
               ["body", "健康", Scale],
@@ -969,7 +970,7 @@ export function StrengthApp() {
             <button
               key={id}
               type="button"
-              onClick={() => setTab(id)}
+              onClick={() => { if (id === "coach" && tab !== "coach") { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); } setTab(id); }}
               aria-label={`切换到${label}`}
               aria-current={tab === id ? "page" : undefined}
               className={"ui03-tab flex min-h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-bold " + "" + (tab === id ? "ui03-tab-active text-accent" : "text-muted")}

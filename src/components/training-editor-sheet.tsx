@@ -19,7 +19,7 @@ export function TrainingEditorSheet({ date, initial, template, seedAction, initi
     let d = newTrainingDraft(date, `custom:${uid()}`);
     const saved=readTrainingDraft(draftStore(),date); if(saved)d={...d,...saved};
     if (initialType || openMuscleInitially) d.type = initialType ?? 'strength';
-    if (seedAction) d = { ...d, type: 'strength', exercises: d.exercises.some(e => e.sourceId === seedAction.id) ? d.exercises : [...d.exercises, { id: uid(), catalogId: seedAction.catalogId, sourceId: seedAction.id, sourceUrl: seedAction.sourceUrl ?? undefined, name: seedAction.name, sets: '', reps: '', weight: '', rpe: '', unit: seedAction.unit ?? undefined, restSec: null }] };
+    if (seedAction) d = { ...d, type: 'strength', exercises: d.exercises.some(e => e.sourceId === seedAction.id) ? d.exercises : [...d.exercises, { id: uid(), catalogId: seedAction.catalogId, sourceId: seedAction.id, sourceUrl: seedAction.sourceUrl ?? undefined, name: seedAction.name, sets: '', reps: '', weight: '', rpe: '', unit: seedAction.unit ?? undefined, restSec: seedAction.restSec ?? 75 }] };
     return d;
   });
   const [busy, setBusy] = useState(false), [notice, setNotice] = useState(''), [stored, setStored] = useState(false);
