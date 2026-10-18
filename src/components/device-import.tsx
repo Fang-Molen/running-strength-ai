@@ -3,6 +3,7 @@ import { Upload } from "lucide-react"
 import { METRIC_LABELS, METRIC_UNITS, mergeResults, paceText, parseDeviceFile, parseSummaryText, type DeviceActivity, type DeviceHealthRow, type DeviceParseResult } from "@/lib/ui/device-parse"
 import { activityDraftId, existingKeys, isDuplicate, saveDeviceRows } from "@/lib/ui/device-store"
 import { SavedBadge } from "@/components/saved-badge"
+import { DecimalInput } from "@/components/decimal-input"
 
 declare global { interface Window { Tesseract?: { createWorker: (lang: string, oem: number, opts: Record<string, unknown>) => Promise<{ recognize: (img: Blob) => Promise<{ data: { text: string } }> }> } } }
 let ocrWorker: Awaited<ReturnType<NonNullable<Window["Tesseract"]>["createWorker"]>> | null = null
@@ -80,7 +81,7 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
           <td><input type="checkbox" aria-label="保存这条" checked={pickH[h.key] ?? true} onChange={(e) => setPickH({ ...pickH, [h.key]: e.target.checked })} /></td>
           <td><input type="date" value={h.day} onChange={(e) => edit(h.key, { day: e.target.value })} className="fk-cell w-[8.5rem]" /></td>
           <td>{METRIC_LABELS[h.metric]}</td>
-          <td><input inputMode="decimal" value={h.value} onChange={(e) => edit(h.key, { value: Number(e.target.value) || 0 })} className="fk-cell w-16" /> <span className="text-muted">{METRIC_UNITS[h.metric]}</span></td>
+          <td><DecimalInput value={h.value} onValue={(n) => edit(h.key, { value: n ?? 0 })} className="fk-cell w-16" /> <span className="text-muted">{METRIC_UNITS[h.metric]}</span></td>
           <td className="text-muted">{dup.h.has(h.key) ? "已有，默认跳过" : h.source}</td></tr>)}
       </tbody></table></div> : null}
       {result.activities.length ? <div className="overflow-x-auto rounded-xl border border-line"><table className="fk-table"><thead><tr><th></th><th>时间</th><th>类型</th><th>距离</th><th>用时</th><th>配速</th><th>心率</th></tr></thead><tbody>
