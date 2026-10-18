@@ -4,6 +4,8 @@ import { HealthModeNote } from "@/components/health-mode-note";
 import { HealthSourceDetails } from "./health-source-details";
 import { buildHealthSnapshot, loadHealthSources } from "@/lib/health/snapshot";
 import { HEALTH_CHANGED, valueText } from "@/lib/health/observation";
+import { ScaleScan } from "@/components/scale-scan";
+import { RANGES, type ScaleKey } from "@/lib/body/scale-parse";
 import { BodyFigureSheet } from "@/components/body-figure-sheet";
 import { readGoalBodyFat } from "@/lib/body/goal-editor";
 import { Sheet, Toast, useToast } from "@/components/sheet";
@@ -171,6 +173,7 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mod
   useEffect(() => { if (editDate && formRef.current) { formRef.current.open = true; formRef.current.scrollIntoView({ block: "start" }); } }, [editDate]);
   const h = Number(loadProfile().heightCm) || 0;
   const [msg, setMsg] = useState("");
+  const [hit, setHit] = useState<Record<string, "ok" | "warn">>({});
   const save = () => {
     const w = Number(form.weight);
     if (!(w >= 30 && w <= 200)) { setMsg("请填体重"); return; }
@@ -178,7 +181,7 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mod
     for (const c of COMP) { const v = Number(form[c.key as string]); if (c.key !== "weight" && v > 0) (rec as Record<string, number | string>)[c.key as string] = v; }
     const old = checks.find((c) => c.date === rec.date);
     if (!upsertCheck({ ...(old ?? {}), ...rec })) { setMsg("保存失败"); return; }
-    setMsg("已保存"); setForm({ date: todayDate() }); onSaved();
+    setMsg("已保存"); setHit({}); setForm({ date: todayDate() }); onSaved();
   };
   return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="身体详情">
     <div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>{mode === "figure" ? "我的形象" : "身体数据"}</b><button type="button" className="min-h-11 px-3" onClick={onClose}>关闭</button></div>
@@ -190,8 +193,9 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mod
       <section className="fk-dash-card space-y-2 p-3"><div className="fk-dash-title text-sm"><TrendingDown className="size-4" />趋势与历史</div><WeightSheet checks={checks} onAdd={() => editAt(null)} onEdit={(d) => editAt(d)} onChanged={onSaved} /></section>
       <details ref={formRef} className="fk-dash-card px-3"><summary className="min-h-11 cursor-pointer font-bold">手动记录体脂秤数据</summary>
         <div className="grid grid-cols-2 gap-2 pb-3">
+          <ScaleScan onResult={(r) => { const f: Record<string, string> = { ...form }; const h: Record<string, "ok" | "warn"> = {}; for (const [k, v] of Object.entries(r.values)) { f[k] = String(v); h[k] = r.suspicious.includes(k as ScaleKey) ? "warn" : "ok"; } if (r.date) { f.date = r.date; h.date = "ok"; } setForm(f); setHit(h); setMsg(""); }} />
           <label className="col-span-2 text-xs">日期<input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="fk-cell mt-0.5 w-full" /></label>
-          {COMP.map((c) => <label key={c.key as string} className="text-xs">{c.label}（{c.unit}）<input inputMode="decimal" value={form[c.key as string] ?? ""} onChange={(e) => setForm({ ...form, [c.key as string]: e.target.value.replace(/[^\d.]/g, "") })} className="fk-cell mt-0.5 w-full" /></label>)}
+          {COMP.map((c) => { const k = c.key as string, st = hit[k], r = RANGES[k as ScaleKey]; const v = Number(form[k]); const bad = form[k] && r && !(v >= r[0] && v <= r[1]); return <label key={k} className={"text-xs " + (bad ? "text-red-400" : st ? "text-accent" : "")}>{c.label}（{c.unit}）{st && !bad ? " · 已识别" : ""}{bad ? " · 请检查" : ""}<input inputMode="decimal" aria-label={c.label} value={form[k] ?? ""} onChange={(e) => { setForm({ ...form, [k]: e.target.value.replace(/[^\d.]/g, "") }); setHit(({ [k]: _x, ...o }) => o); }} className={"fk-cell mt-0.5 w-full " + (bad ? "ring-2 ring-red-500" : st ? "ring-2 ring-[#ff6a1a]" : "")} /></label>; })}
           <button type="button" className="fk-orange-btn col-span-2 min-h-11 rounded-xl font-bold" onClick={save}>保存</button>
           {msg ? <p className="keep col-span-2 text-xs" aria-live="polite">{msg}</p> : null}
         </div>
