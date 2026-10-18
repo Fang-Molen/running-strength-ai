@@ -174,3 +174,9 @@
 ## v71 (2026-10-17)
 - 体脂秤拍照识别：在线识别接入 DeepSeek（经服务端代理，密钥不在 App 内）；失败自动改用本机识别。
 | 2026-10-18 | v72：跑步距离等小数输入框改为输入时保留原文（“6.”不再被吞），支持 . , ， 全角数字，失焦/保存时解析；覆盖今日跑步距离、逐组重量、训练导入（时长/总距离/分段距离/用时/恢复/重量）、设备导入数值；sw → v72 | 用户反馈 iPhone 不能输小数点 | decimal-input.tsx, today-checklist.tsx, training-import-sheet.tsx, device-import.tsx |
+
+## v74 (2026-10-18) · 合入 GPT 最新完整源码
+- 版本号与 GPT 源码对齐为 v74（跳过 v73）；sw 缓存 fr255-shell-v74。基线识别：GPT 源码基于 live-v69。
+- 合入：E1 已确认记录事实表达（answerLocally）、负荷/否定词/拒绝加量/多轮 RPE 修复、睡眠/静息心率/HRV 进入课程复盘、新营养录入、新健康页、athlete-male/female/athlete.glb 资源（人物/动作视频门控保持关闭）。
+- 保留我方 v70–v72：体脂秤拍照识别（/api/scale-ocr，仅发文字给 DeepSeek，需同意）、assets 404 函数、旧 chunk 保留、_headers、静态 SPA 构建配置（GPT 版改成 vercel 预设会导致静态站无 index.html，已改回）。小数输入采用 GPT 的 DecimalInput（失焦/回车提交，带范围校验），v72 的 decimal 工具与测试保留。
+- 回退点：tag rollback-pre-gpt-merge-20261018（= live-v72）。
