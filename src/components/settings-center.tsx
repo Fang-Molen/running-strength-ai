@@ -42,7 +42,7 @@ export function injuryText(inj: InjuryStore): string {
 
 function MenuRow({ icon: Icon, title, sub, warn, onClick, testId }: { icon: typeof Bot; title: string; sub: string; warn?: string; onClick: () => void; testId?: string }) {
   return <button type="button" data-testid={testId} onClick={onClick} className="flex min-h-[60px] w-full items-center gap-3 py-3 text-left">
-    <Icon className="size-5 shrink-0 text-accent" aria-hidden="true" />
+    <Icon className="fk-row-icon size-5 shrink-0" aria-hidden="true" />
     <span className="min-w-0 flex-1"><span className="block font-bold">{title}</span><span className="block text-xs text-muted">{sub}</span>{warn ? <span className="mt-0.5 flex items-center gap-1 text-xs font-bold text-warn"><TriangleAlert className="size-3.5" aria-hidden="true" />{warn}</span> : null}</span>
     <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden="true" />
   </button>;

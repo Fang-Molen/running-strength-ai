@@ -120,7 +120,7 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
   const bodyRecordedToday = latest?.date === today
 
 
-  if (watch === null) return <div className="mx-auto max-w-3xl px-3 pt-2 pb-nav"><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} /></div>
+  if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} /></div>
   const hasWatch = watch != null && watch !== "none"
   return <div className={compact ? "" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}>
     {compact ? null : <nav className="product-segments mb-3" aria-label="身体工作区">

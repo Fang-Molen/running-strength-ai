@@ -458,3 +458,63 @@ html, body { background: #0b0b0d; }
 .fk-log-entry .fk-log-arrow { display: inline-block; transition: transform .15s; }
 .fk-log-entry[open] .fk-log-arrow { transform: rotate(90deg); }
 .fk-log-v76 .home-card + .home-card { margin-top: .75rem; }
+
+/* ======================================================================
+ * style-r1 设计系统（单一来源，2026-10-19）
+ * 依据：首页现有样式 + GPT 交接包 docs/06 视觉规范（一级卡 14–18px 圆角、16px 边距、
+ * 低对比边框、橙色只给主操作/选中）。只改外观，不改结构/数据/逻辑。
+ * 所有一级卡片（home-card / rounded-card+border / fk-dash-card / fk-panel / 方坤 卡）
+ * 都读同一组 token；页面里不要再写一次性的颜色/圆角。
+ * ==================================================================== */
+.app-wallpaper.product-ui {
+  /* 颜色：沿用首页已用的深色 + 橙色（与 docs/06 建议值同一色系） */
+  --fk-card-bg: linear-gradient(180deg, #17191c, #121417);
+  --fk-card-border: #2a2d33;
+  --fk-inner-bg: #1f2226;          /* 卡内次级区域 = surface-2 */
+  --fk-accent: #ff6a1a;
+  --fk-success: #47c29a;
+  --fk-text-2: #a3a6ad;            /* 辅助文字，略提对比度 */
+  /* 形状与间距 */
+  --fk-card-radius: 18px;
+  --fk-inner-radius: 12px;
+  --fk-card-pad: 16px;
+  --fk-gap: 12px;
+  /* 字号层级 */
+  --fk-page-title: 22px;
+  --fk-card-title: 16px;
+  /* Tailwind rounded-card 也跟着走（按钮/输入用 rounded-xl，不受影响） */
+  --radius-card: var(--fk-card-radius);
+  --color-muted: var(--fk-text-2);
+}
+/* 一级卡片：同一背景、边框、圆角 */
+.app-wallpaper.product-ui :is(.home-card, .rounded-card.border, .fk-dash-card, .fk-panel, .rounded-2xl.border.bg-surface) {
+  background: var(--fk-card-bg);
+  border: 1px solid var(--fk-card-border);
+  border-radius: var(--fk-card-radius);
+  box-shadow: none;
+}
+.app-wallpaper.product-ui .fk-dash-card, .app-wallpaper.product-ui .fk-panel { padding: var(--fk-card-pad); }
+/* 卡套卡：内层不再画第二层同样的外框，改成平的次级底色（docs/06：不要叠多层深灰圆角框） */
+.app-wallpaper.product-ui :is(.home-card, .rounded-card.border, .fk-dash-card, .fk-panel) :is(.home-card, .fk-dash-card, .fk-panel, .rounded-card.border.bg-surface) {
+  background: var(--fk-inner-bg);
+  border-color: transparent;
+  border-radius: var(--fk-inner-radius);
+}
+/* 卡内次级区域统一圆角 */
+.app-wallpaper.product-ui :is(.home-card, .fk-dash-card, .fk-panel, .rounded-card.border) .rounded-card.bg-surface-2 { border-radius: var(--fk-inner-radius); }
+/* 底部弹层（components/sheet.tsx 的 rounded-t-3xl）与卡片同一边框色 */
+.app-wallpaper.product-ui .rounded-t-3xl { border-color: var(--fk-card-border); }
+/* 字号层级 */
+.app-wallpaper.product-ui .ui03-title { font-size: var(--fk-page-title); font-weight: 700; letter-spacing: -.01em; }
+.app-wallpaper.product-ui .fk-dash-title { font-size: var(--fk-card-title); font-weight: 700; }
+/* 橙色只给主操作 / 选中：卡片标题和列表前的装饰图标改成中性色 */
+.app-wallpaper.product-ui .fk-dash-title svg, .app-wallpaper.product-ui .fk-row-icon { color: var(--fk-text-2); }
+/* 饮食/健康旧模块（fk-new）用的另一套橙色和蓝灰边框，映射回同一组 token */
+.app-wallpaper.product-ui .fk-new { --new-orange: var(--fk-accent); --new-border: var(--fk-card-border); }
+/* 真正“已完成”用同一绿色 */
+.app-wallpaper.product-ui .text-\[\#47C29A\] { color: var(--fk-success); }
+/* 多行选项按钮（如“你的数据从哪来？”）：不再强制单行药丸，窄屏换行，用卡内圆角 */
+.app-wallpaper.product-ui .fk-chip.flex-col { white-space: normal; text-align: left; padding-block: 8px; border-radius: var(--fk-inner-radius); height: auto; }
+/* 卡片标题图标、卡内列表图标：装饰性，不用橙色 */
+.app-wallpaper.product-ui .fk-dash-card .fk-dash-title svg, .app-wallpaper.product-ui .fk-dash-card li > svg:first-child { color: var(--fk-text-2); }
+.app-wallpaper.product-ui .fk-dash-card svg.text-accent { color: var(--fk-text-2); }
