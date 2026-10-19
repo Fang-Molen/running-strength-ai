@@ -5,7 +5,8 @@ import { partLine, loadComponents } from '../ui/plan400-components-store'
 import { currentStore } from '../core/storage'
 import { garminViewKey } from '../health/garmin-view-scope'
 import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
-import { loadTrainingActivities, loadRunMatch } from '../ui/training-read-model'
+import { loadTrainingActivities, loadRunMatch, type ActivityRow } from '../ui/training-read-model'
+import type { DayComponents } from '../ui/plan400-components-store'
 import { isGarmin, recordLabel } from '../ui/log-range'
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr } from '../ui/activity-format'
 import { activityFacts, localDayOf, planFor, v4RecordLine, sportLabel, type GActivity, type GLap } from './plain-coach'
@@ -23,6 +24,19 @@ const read = <T,>(k: string, d: T): T => { try { return JSON.parse(currentStore(
 export const garminActivities = (): GActivity[] => Object.values(read<Record<string, GActivity>>(garminViewKey('fk-garmin-acts-v1'), {})).filter(a => a && typeof a.start === 'string')
 export const cachedLaps = (id: number | string): GLap[] | null => read<Record<string, GLap[]>>(garminViewKey('fk-garmin-laps-v1'), {})[String(id)] ?? null
 export function saveLaps(id: number | string, laps: GLap[]) { const k = garminViewKey('fk-garmin-laps-v1'), all = read<Record<string, GLap[]>>(k, {}); all[String(id)] = laps; try { currentStore()?.setItem(k, JSON.stringify(all)) } catch { /* ignore */ } }
+const STATE_WORD: Record<string, string> = { done: '完成', reduced: '减量完成', skipped: '跳过', partial: '有记录·未标完成', live: '进行中', candidate: '有同日手表跑步·待用户确认（未关联，不要当作这节课的跑步）', none: '未记录' }
+const pl = (n: string, p: DayComponents['running']) => { const t = partLine(n, p)?.slice(n.length + 1); return t ? `（${t}）` : '' }
+/** v83：V4 一天的统一事实行（与 App 各页同一投影）。 */
+export function v4FactLine(r: ActivityRow, c?: DayComponents): string {
+  const f = r.v4!, segs: string[] = []
+  if (f.running) segs.push(`跑步 ${STATE_WORD[f.running.state] ?? f.running.state}${pl('跑步', c?.running)}`)
+  if (f.strength) segs.push(`力量 ${STATE_WORD[f.strength.state] ?? f.strength.state}${pl('力量', c?.strength)}`)
+  if (r.runLink && r.distanceM != null) segs.push(`跑步实际 ${fmtDistance(r.distanceM) ?? ''} ${fmtDuration(r.durationSec)}（已关联佳明，同一次训练只算一次）`)
+  if (f.legacyOverall) segs.push(`历史整课记录（旧口径·仅参考，整课 RPE 不拆给跑步或力量）：${f.summary}`)
+  const legacy = v4RecordLine(r.date)
+  if (legacy && !f.legacyOverall) segs.push(`旧整课字段（仅参考）：${legacy.replace(/^V4 计划记录（[^）]*）：/, '')}`)
+  return `V4 计划记录（${r.date} ${r.title?.replace(/^V4 /, '').replace(/（.*$/, '') ?? ''}）：${segs.join('；')}`
+}
 /** 去标识化事实包。 */
 export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | null): string {
   const lines: string[] = [`今天：${day}`]
@@ -32,16 +46,17 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
   if (recent.length) lines.push('近期活动：' + recent.map(a => `${activityLocalDay(a.start) ?? '?'} ${sportLabel(a.type)} ${fmtDistance(a.dist) ?? ''} ${fmtDuration(a.dur)} 心率${fmtHr(a.avgHr) ?? '—'}`).join('；'))
   try {
     const from = new Date(Date.parse(day + 'T12:00:00Z') - 7 * 864e5).toISOString().slice(0, 10)
-    const mine = loadTrainingActivities().filter(r => r.date >= from && r.date <= day && !isGarmin(r)).slice(-12)
-    if (mine.length) lines.push('近期手机/计划记录：' + mine.map(r => `${r.date} ${recordLabel(r).replace(/^[^·]*· /, '')}${r.status === 'incomplete' ? (r.rpe != null ? '（未完成，不计入）' : '（未完成·未反馈，不计入；不要当作练过）') : ''}`).join('；'))
-    // v79：计划跑步课已关联的佳明跑步（同一条记录，只算一次）
-    try { const m = loadRunMatch().links.filter(l => l.entry.date >= from)
+    // v83（P1-10）：V4 每天只出一行统一投影（与首页/计划/日志同一个 v4DayFact）；旧整课记录标“仅参考”，不再另出“分项反馈”“旧记录”两行互相矛盾。
+    const all = loadTrainingActivities(), cd = (() => { try { return loadComponents().days } catch { return {} } })()
+    const mine = all.filter(r => r.date >= from && r.date <= day && !isGarmin(r) && !r.v4).slice(-12)
+    if (mine.length) lines.push('近期手机/计划记录：' + mine.map(r => `${r.date} ${recordLabel(r).replace(/^[^·]*· /, '')}${r.quickLog ? '（记一笔·计划外）' : ''}${r.note ? `（${r.note}）` : ''}${r.status === 'incomplete' ? (r.rpe != null ? '（未完成，不计入）' : '（未完成·未反馈，不计入；不要当作练过）') : ''}`).join('；'))
+    try { const m = loadRunMatch().links.filter(l => l.entry.date >= from && !l.entry.id.startsWith('plan400:'))
       if (m.length) lines.push('计划跑步课已关联佳明（同一次训练，只算一次）：' + m.map(l => { const c = planVsActual(l.entry, l.run); return `${l.entry.date} 计划「${l.entry.title}」${c.plan} → 实际 ${c.actual}（${c.note}）` }).join('；')) } catch { /* optional */ }
-    try { const cd = loadComponents().days, ds = Object.keys(cd).filter(d => d >= from && d <= day).sort()
-      const ls2 = ds.map(d => { const c = cd[d], parts = [partLine('跑步', c.running), partLine('力量', c.strength)].filter(Boolean); return parts.length ? `${d} ${parts.join('；')}` : null }).filter(Boolean)
-      if (ls2.length) lines.push('V4 分项反馈（跑步和力量分开；旧整课评价另算，不拆）：' + ls2.join(' | ')) } catch { /* optional */ }
-    const v4 = [act ? localDayOf(act.start) : null, day].filter((x, i, xs): x is string => !!x && xs.indexOf(x) === i).map(d => v4RecordLine(d)).filter(Boolean)
-    if (v4.length) lines.push(...(v4 as string[]))
+    const v4rows = all.filter(r => r.v4 && r.date >= from && r.date <= day)
+    const v4lines = v4rows.map(r => v4FactLine(r, cd[r.date]))
+    const seen = new Set(v4rows.map(r => r.date))
+    for (const d of [act ? localDayOf(act.start) : null, day]) { if (d && !seen.has(d)) { const l = v4RecordLine(d); if (l) { v4lines.push(l + '（历史整课记录·旧口径·仅参考）'); seen.add(d) } } }
+    if (v4lines.length) lines.push(...v4lines)
   } catch { /* optional */ }
   try { const snap = loadHealthSnapshot(day); lines.push('恢复指标：' + snap.metrics.filter(m => ['SLEEP', 'RHR', 'HRV', 'BODY_BATTERY', 'STRESS'].includes(m.metric)).map(healthSummaryLine).join('；')) } catch { /* optional */ }
   return lines.join('\n').slice(0, 7800)
