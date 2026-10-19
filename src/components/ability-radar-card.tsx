@@ -1,3 +1,4 @@
+import { activityLocalDay } from "@/lib/ui/activity-format";
 import { useEffect, useMemo, useState } from 'react'
 import { CoachAbilityPanel } from './coach-ability-panel'
 import { readOfflineWorkspace } from '@/lib/core/coach-offline-workspace'
@@ -67,7 +68,7 @@ export function AbilityRadarCard({ asOf, mode = 'full' }: { asOf: string; mode?:
     out.push({ group: '技术观察', lines: ['缺记录：可在训练记录里写跑姿/动作观察，方坤复盘时会引用'] })
     return out
   }, [date, revision])
-  let development; try { const id = listTrainingOccurrences().filter(o => o.startedAt && o.startedAt.slice(0, 10) <= date).at(-1)?.trainingOccurrenceId ?? null; development = readOfflineWorkspace(loadPlan(), currentAthleteId(), id, '查看能力原始指标', date === new Date().toISOString().slice(0, 10) ? new Date().toISOString() : date + 'T23:59:59.999Z').review.development } catch { /* pending */ }
+  let development; try { const id = listTrainingOccurrences().filter(o => o.startedAt && (activityLocalDay(o.startedAt) ?? o.startedAt.slice(0, 10)) <= date).at(-1)?.trainingOccurrenceId ?? null; development = readOfflineWorkspace(loadPlan(), currentAthleteId(), id, '查看能力原始指标', date === new Date().toISOString().slice(0, 10) ? new Date().toISOString() : date + 'T23:59:59.999Z').review.development } catch { /* pending */ }
   return <section className="text-sm" aria-label="我的能力五维指标" data-revision={revision}>
     {mode !== 'details' ? <div className="md:grid md:grid-cols-[300px_1fr] md:items-start md:gap-4">
       <div className="mx-auto max-h-[230px] max-w-[240px] md:max-h-none md:max-w-none"><AbilityRadar axes={axes} active={active} onPick={setActive} /></div>

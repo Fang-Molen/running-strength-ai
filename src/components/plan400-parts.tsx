@@ -1,9 +1,11 @@
+import { stampCN } from "@/lib/ui/activity-format";
 /* v79：V4 组合课分项反馈（fk-plan400-v4-components-v1）+ 跑步分项 ↔ 手表跑步关联 + 导入后弹窗。 */
 import { useEffect, useState } from "react"
 import { loadComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, COMPONENTS_EVT, type CompStatus, type PartFeedback, type DayComponents } from "@/lib/ui/plan400-components-store"
 import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } from "@/lib/ui/run-link"
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
-const hm = (iso: string) => { try { return new Date(iso).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Shanghai" }) } catch { return "" } }
+import type { DayParts } from "@/lib/ui/plan400-view"
+const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
 export function useParts(date: string): DayComponents | undefined {
   const [v, setV] = useState<DayComponents | undefined>(() => loadComponents().days[date])
@@ -14,6 +16,15 @@ export function useRunMatch(): ReturnType<typeof lastRunMatch> {
   const [m, setM] = useState(() => { try { return loadRunMatch() } catch { return lastRunMatch() } })
   useEffect(() => { const f = () => { try { setM(loadRunMatch()) } catch { /* keep */ } }; const ns = ["fk-run-links", COMPONENTS_EVT, "fk-training-activities-changed", "fk-garmin-synced"]; ns.forEach(n => window.addEventListener(n, f)); return () => ns.forEach(n => window.removeEventListener(n, f)) }, [])
   return m
+}
+/** 整个周期的分项 + 跑步关联（计划列表 / 首页主卡 / 进度计数共用，一次读取）。 */
+export function usePartsAll(): Record<string, DayParts> {
+  const m = useRunMatch(), [doc, setDoc] = useState(() => loadComponents())
+  useEffect(() => { const f = () => setDoc(loadComponents()); window.addEventListener(COMPONENTS_EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(COMPONENTS_EVT, f); window.removeEventListener("storage", f) } }, [])
+  const out: Record<string, DayParts> = {}
+  for (const [d, c] of Object.entries(doc.days)) out[d] = { parts: c }
+  for (const l of m.links) if (l.entry.id.startsWith("plan400:")) out[l.entry.date] = { ...(out[l.entry.date] ?? {}), runLinked: true }
+  return out
 }
 export function useV4RunLink(date: string): { link: RunLink | null; candidates: ActivityRow[] } {
   const m = useRunMatch(), id = v4RunSlotId(date)
@@ -59,8 +70,8 @@ export function PartFeedbackForm({ date, part, name }: { date: string; part: "ru
     <label className="block"><span className="text-xs text-muted">感受</span><input aria-label={`${name}感受`} className={inp} value={f.feel} onChange={e => setF({ ...f, feel: e.target.value })} /></label>
     <label className="block"><span className="text-xs text-muted">备注</span><input aria-label={`${name}备注`} className={inp} value={f.note} onChange={e => setF({ ...f, note: e.target.value })} /></label>
     <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={save}>保存{name}评价</button>
-    {msg ? <p role="status" className="keep text-xs">{msg}</p> : cur.savedAt ? <p className="keep text-xs text-muted">上次保存 {cur.savedAt.slice(5, 16).replace("T", " ")}{cur.status ? ` · ${STATUS_TEXT[cur.status]}` : ""}</p> : null}
-    {cur.corrections?.length ? <details className="text-xs" data-testid={`corrections-${part}`}><summary className="min-h-9 cursor-pointer text-muted">修改记录 · {cur.corrections.length} 次</summary><ul>{cur.corrections.map((c, i) => <li key={i} className="keep">{c.at.slice(5, 16).replace("T", " ")} {LABEL[c.field] ?? c.field}：{show(c.from)} → {show(c.to)}</li>)}</ul></details> : null}
+    {msg ? <p role="status" className="keep text-xs">{msg}</p> : cur.savedAt ? <p className="keep text-xs text-muted">上次保存 {stampCN(cur.savedAt)}{cur.status ? ` · ${STATUS_TEXT[cur.status]}` : ""}</p> : null}
+    {cur.corrections?.length ? <details className="text-xs" data-testid={`corrections-${part}`}><summary className="min-h-9 cursor-pointer text-muted">修改记录 · {cur.corrections.length} 次</summary><ul>{cur.corrections.map((c, i) => <li key={i} className="keep">{stampCN(c.at)} {LABEL[c.field] ?? c.field}：{show(c.from)} → {show(c.to)}</li>)}</ul></details> : null}
   </section>
 }
 const LABEL: Record<string, string> = { status: "状态", rpe: "RPE", pain: "疼痛", feel: "感受", note: "备注", device: "关联的手表跑步" }

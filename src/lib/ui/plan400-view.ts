@@ -3,6 +3,7 @@
  * 本机执行记录（fk-plan400-v4-log / fk-plan400-v4-overrides / fk-schedule-v1）聚合给首页与计划页同一份口径。
  * 不写任何存储、不改原课表、不改日期；冲突只报告。
  */
+import type { CompStatus, DayComponents } from './plan400-components-store'
 export type V4Day = { orig: string; date: string; weekday: string; week: string; title: string; main: string[]; aux: string[]; strength: string[] }
 export type V4Week = { week: string; title: string; range: string; principle: string }
 export type V4Plan = { name: string; shiftDays: number; weeks: V4Week[]; days: V4Day[]; final?: V4Day }
@@ -31,11 +32,25 @@ export const strengthEntryId = (date: string) => `plan400:${date}:strength`
 const RECORD_FIELDS: (keyof V4Log)[] = ['reps', 'rest', 'aux', 'strength', 'rpe', 'pain', 'note']
 export const hasRecord = (l: V4Log | undefined) => Boolean(l && RECORD_FIELDS.some(k => String(l[k] ?? '').trim()))
 
-export function dayStatus(d: V4Day, log: V4Log | undefined, today: string, strengthInProgress = false): DayStatus {
+/** v79.1：分项（fk-plan400-v4-components-v1）推出整天状态。需要的分项 = 有跑步部分的跑步 + 有力量的力量。
+ * 全部分项都有终态：都跳过 → skipped；有减量或有一项跳过 → reduced；否则 done。只要有一项有记录/关联了手表跑步 → in_progress。
+ * 手表跑步关联只算“跑步有实际记录”，不会让整天完成，也不会让力量完成。 */
+export type DayParts = { parts?: DayComponents; runLinked?: boolean }
+export const hasRunPart = (d: Pick<V4Day, 'title'>) => dayKind(d) !== 'rest' && !/^力量/.test(d.title)
+export function partsDayStatus(d: V4Day, x: DayParts | undefined): DayStatus | null {
+  const p = x?.parts; if (!p && !x?.runLinked) return null
+  const need: (CompStatus | undefined)[] = [...(hasRunPart(d) ? [p?.running?.status] : []), ...(hasStrength(d) ? [p?.strength?.status] : [])].map(v => v === 'not_recorded' ? undefined : v)
+  if (need.length && need.every(Boolean)) return need.every(v => v === 'skipped') ? 'skipped' : need.some(v => v === 'reduced' || v === 'skipped') ? 'reduced' : 'done'
+  const any = need.some(Boolean) || x?.runLinked || [p?.running, p?.strength].some(q => q && (q.rpe != null || q.feel || q.note || (q.pain && (q.pain.area || q.pain.score != null))))
+  return any ? 'in_progress' : null
+}
+export function dayStatus(d: V4Day, log: V4Log | undefined, today: string, strengthInProgress = false, extra?: DayParts): DayStatus {
   if (log?.done === 'done') return 'done'
   if (log?.done === 'reduced') return 'reduced'
   if (log?.done === 'skipped') return 'skipped'
-  if (strengthInProgress || hasRecord(log)) return 'in_progress'
+  const fromParts = partsDayStatus(d, extra)
+  if (fromParts && fromParts !== 'in_progress') return fromParts
+  if (strengthInProgress || hasRecord(log) || fromParts === 'in_progress') return 'in_progress'
   if (dayKind(d) === 'rest') return 'rest'
   if (d.date < today) return 'unrecorded'
   return d.date === today ? 'not_started' : 'upcoming'
@@ -67,14 +82,15 @@ export function weekDays(p: V4Plan, week: string): V4Day[] { return p.days.filte
 
 export type ProgressCounts = { calendarEntries: number; trainingDays: number; recoveryDays: number; restDays: number; testDays: number; recordedDays: number; completedTrainingDays: number; skippedDays: number }
 /** 「已练 0/71」的 71 是日程条目数（70 个日历日 + 1 次最终测试，含休息/恢复日），不是训练节数。 */
-export function progressCounts(p: V4Plan, logs: Record<string, V4Log>): ProgressCounts {
+export function progressCounts(p: V4Plan, logs: Record<string, V4Log>, parts: Record<string, DayParts> = {}): ProgressCounts {
   const c: ProgressCounts = { calendarEntries: p.days.length, trainingDays: 0, recoveryDays: 0, restDays: 0, testDays: 0, recordedDays: 0, completedTrainingDays: 0, skippedDays: 0 }
   for (const d of p.days) {
     const k = dayKind(d), l = logs[d.date]
     if (k === 'train') c.trainingDays++; else if (k === 'recovery') c.recoveryDays++; else if (k === 'rest') c.restDays++; else c.testDays++
-    if (l?.done || hasRecord(l)) c.recordedDays++
-    if ((k === 'train' || k === 'test') && (l?.done === 'done' || l?.done === 'reduced')) c.completedTrainingDays++
-    if (l?.done === 'skipped') c.skippedDays++
+    const ps = l?.done ? null : partsDayStatus(d, parts[d.date])
+    if (l?.done || hasRecord(l) || ps) c.recordedDays++
+    if ((k === 'train' || k === 'test') && (l?.done === 'done' || l?.done === 'reduced' || ps === 'done' || ps === 'reduced')) c.completedTrainingDays++
+    if (l?.done === 'skipped' || ps === 'skipped') c.skippedDays++
   }
   return c
 }

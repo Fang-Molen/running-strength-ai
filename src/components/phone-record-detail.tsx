@@ -1,3 +1,4 @@
+import { stampCN } from "@/lib/ui/activity-format";
 import type { ActivityRow } from "@/lib/ui/training-read-model"
 type Entry = { id: string; date: string; title?: string; refId?: string | null; actual?: { outcome?: string; minutes?: number | null; rpe?: number | null; note?: string }; restLog?: { name: string; actual: number }[]; exercises?: { name: string; sets: string; reps: string; weight: string }[] }
 type Check = { date: string; sessionId: string; moves: Record<string, { done: boolean; reps: number; kg: number }[]>; rpe: number | null }
@@ -16,7 +17,7 @@ export function PhoneRecordDetail({ row }: { row: ActivityRow }) {
     const l = read<Record<string, Record<string, string>>>("fk-plan400-v4-log", {})[p4day] ?? {}
     const F: [string, string][] = [["reps", "成绩"], ["rest", "组间休息"], ["aux", "辅助/技术"], ["strength", "力量实际"], ["rpe", "整课 RPE"], ["pain", "疼痛"], ["r24", "24 小时后"], ["r48", "48 小时后"], ["note", "备注"]]
     return <div className="keep space-y-1 rounded-card bg-surface-2 p-2 text-xs" data-testid="v4-record-detail">
-      <p><b>V4 计划记录 · {l.done === "done" ? "已完成" : l.done === "reduced" ? "已完成·减量" : "已记录未完成"}</b>{l.savedAt ? <span className="text-muted"> · 保存于 {l.savedAt.slice(5, 16).replace("T", " ")}</span> : null}</p>
+      <p><b>V4 计划记录 · {l.done === "done" ? "已完成" : l.done === "reduced" ? "已完成·减量" : "已记录未完成"}</b>{l.savedAt ? <span className="text-muted"> · 保存于 {stampCN(l.savedAt)}</span> : null}</p>
       <ul>{F.filter(([k]) => String(l[k] ?? "").trim()).map(([k, n]) => <li key={k}>{n}：{l[k]}</li>)}</ul>
       <p className="text-muted">同一天的手表活动单独列出（两者没有可靠的对应关系，不合并、不重复计入距离）。</p>
     </div>

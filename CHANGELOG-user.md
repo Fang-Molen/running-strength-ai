@@ -2,6 +2,10 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-19 | v79.1：菜品照片识别默认用 DeepSeek（deepseek-flash，复用服务端 DEEPSEEK_API_KEY；三项 VISION_* 齐全时覆盖）。本机先缩到长边 1024px，服务端 detail=low、单张 ≤1.5MB、每 IP 每分钟 6 次/每天 120 次；结果标“估算·待核”、可改；每项给出食物库最接近的一条，点“采用食物库数值”才替换 | 用户：要用 DeepSeek 识别菜品照片 | functions/api/vision.js, vision/client.ts, food-photo-review.tsx, food-entry-sheet.tsx |
+| 2026-10-19 | v79.1：V4 训练详情页顶部状态也看分项记录（跑步/力量分开的 key）：分项都完成 → 已完成；一项跳过 → 已完成·减量；有任一项记录或关联了手表跑步 → 进行中；顶部同时显示 跑步 / 力量 各自状态；首页主卡、计划列表、进度计数同一口径。手表跑步关联不会让整天或力量变成完成 | 用户：只填分项时顶部仍“未开始” | plan400-view.ts, plan400.tsx, plan400-parts.tsx |
+| 2026-10-19 | v79.1：修改记录、上次保存、快照、备份导出时间、截图记录、同意日期等一律按北京时间显示（原来直接截 UTC 时间戳，09:31 显示成 01:31）；能力图的“当天”也按北京日期 | 用户截图 | activity-format.ts（stampCN）, plan400*.tsx, phone-record-detail.tsx, garmin-sync.tsx, settings-center.tsx, r8.tsx, unmarked-plans.tsx, online-features-settings.tsx, ability-radar-card.tsx |
+| 2026-10-19 | v79.1：sw 缓存 fr255-shell-v79-1 | — | public/sw.js |
 | 2026-10-19 | v79：日程里的跑步课 ↔ 佳明跑步：同一北京日期只有一节跑步课和一条佳明跑步时自动关联（计划不改，实际 = 佳明数据），离开“还没标记的课”；同一天多条/多节或只有相邻一天有跑步时，只给“是这次吗？”一键确认；可“取消关联”（之后不再自动）。日志里只有那条佳明记录，写明“计划「轻松跑」”，点开看 计划 vs 实际（距离/时长/配速/心率 + 偏差说明）；日志、复盘、方坤都只算一次。手表跑步永远不会把力量课标成完成 | 用户 t492/t493 截图：轻松跑 10-18、跑步 8公里 10-17 明明跑了还在待标记 | run-link.ts, training-read-model.ts, training-log-v76.tsx, unmarked-plans.tsx, online-coach.ts |
 | 2026-10-19 | v79：只打开过今日清单（没勾组、没反馈）的课不再算“已记录未完成”，放在“还没标记的课”里标“未完成·未反馈”；勾过组但没完成也没反馈的，列出但标“未完成（不计入）”，不计入次数/时长/距离；方坤事实包写明“不要当作练过” | 用户 t489：10-17 那节没练，10-18 是自己新建的课 | training-read-model.ts, log-range.ts, training-log-v76.tsx, unmarked-plans.tsx |
 | 2026-10-19 | v79：V4 组合课跑步/力量分开记录（新附加 key fk-plan400-v4-components-v1，旧 fk-plan400-v4-log 原样保留，显示为“整课历史评价”，不迁移不拆）：每项单独的 完成/减量/跳过这项、RPE、疼痛部位+分数、感受、备注，改已有值留修改记录；跑步部分自动/确认关联同日佳明跑步（可取消），力量不受影响；24–72h 分项恢复；佳明同步到 V4 当天的跑步后弹一次“立即填跑步评价 / 力量另行记录 / 稍后”；日志里 V4 当天和那条佳明跑步合成一条（只算一次）并显示分项评价；方坤事实包分开写；全部数据备份自动包含新 key | 用户批准交接 V2 数据结构；合并 ui-r2（组合课分项状态、训练中分开保存、同日手表跑步候选、24–72h 去假占位与共享睡眠） | plan400-components-store.ts, plan400-parts.tsx, plan400.tsx, plan400-components.ts, training-read-model.ts, online-coach.ts |

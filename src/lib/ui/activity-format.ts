@@ -30,3 +30,12 @@ export const paceSecOf = (m: number | null | undefined, s: number | null | undef
 export const fmtPace = (m: number | null | undefined, s: number | null | undefined) => fmtPaceSec(paceSecOf(m, s))
 export const fmtHr = (hr: number | null | undefined) => hr == null || !Number.isFinite(hr) ? null : Math.round(hr)
 export const activityTs = (s: string | null | undefined) => parseActivityTime(s)?.getTime() ?? 0
+
+/** v79.1：把存下的 UTC 时间戳（ISO）按北京时间显示。"md" = MM-DD HH:mm，"ymd" = YYYY-MM-DD HH:mm，"hm" = HH:mm。解析不了就原样截短，不编造。 */
+export function stampCN(iso: string | null | undefined, form: 'md' | 'ymd' | 'hm' = 'md'): string {
+  if (!iso) return ''
+  const t = Date.parse(iso); if (!Number.isFinite(t) || !/[zZ]|[+-]\d\d:?\d\d$|T/.test(iso)) return String(iso).slice(0, 16).replace('T', ' ')
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(t)).map(x => [x.type, x.value]))
+  const hm = `${p.hour}:${p.minute}`
+  return form === 'hm' ? hm : form === 'ymd' ? `${p.year}-${p.month}-${p.day} ${hm}` : `${p.month}-${p.day} ${hm}`
+}

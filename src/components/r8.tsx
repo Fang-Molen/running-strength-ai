@@ -1,3 +1,4 @@
+import { stampCN } from "@/lib/ui/activity-format";
 import { ImageIntake } from "./image-intake";
 import { loadTrainingActivities, activityWeeks } from "@/lib/ui/training-read-model";
 import { onAppEvent } from "@/lib/core/events";
@@ -224,7 +225,7 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
           {p.kind === "run" || p.kind === "strength" ? <div className="mt-2"><EnergyGauge compact mode={p.kind === "run" ? "run" : "strength"} label="用力（可不填）" value={rpe} onChange={setRpe} /></div> : null}</>
           : <p className="text-muted">没有识别出训练或体重数据，将作为笔记保存，不会丢失。</p>}
       </div> : null}
-      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的记录</p><ul className="mt-1 divide-y divide-line">{notes.slice(0, 5).map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{n.at.slice(5, 16).replace("T", " ")}{n.atts.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}</p></div><button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => delNote(n.id)}>删除已保存记录</button></li>)}</ul></div> : null}
+      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的记录</p><ul className="mt-1 divide-y divide-line">{notes.slice(0, 5).map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{stampCN(n.at)}{n.atts.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}</p></div><button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => delNote(n.id)}>删除已保存记录</button></li>)}</ul></div> : null}
     </Sheet> : null}
   </>
 }

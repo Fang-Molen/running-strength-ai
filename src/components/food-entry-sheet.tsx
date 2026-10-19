@@ -60,8 +60,8 @@ export function FoodEntrySheet({meal,entry,initialDate,onClose,onSaved}:{meal:Me
    <div className="grid grid-cols-3 gap-1.5">{NUTRIENT_KEYS.map(k=><label key={k} className="text-[11px] text-muted">{NUTRIENT_LABELS[k]}（{unitOf(k)}）<input aria-label={'填写'+NUTRIENT_LABELS[k]} type="number" min="0" step="any" placeholder="未知" value={draft.values[k]} onChange={e=>set({values:{...draft.values,[k]:e.target.value},userEdited:[...new Set([...draft.userEdited,k])] as NutrientKey[]})} className={cell+(scanned.includes(k)?' ring-2 ring-accent':'')}/></label>)}</div></>:null}
  </section>:null}
  {!entry?<FoodLabelScan onResult={(r,filled)=>{setDraft(d=>({...emptyFoodDraft(),name:d.name.trim()||r.name||'包装食品（标签识别）',brand:r.brand||d.brand,basis:r.basis,unit:r.basis==='serv'?'份':'g',amount:r.basis==='serv'?'1':r.basis==='this'?(r.servingGrams?String(r.servingGrams):d.amount):'',values:Object.fromEntries(NUTRIENT_KEYS.map(k=>[k,r.values[k]==null?'':String(r.values[k])])) as NutritionDraft['values'],userEdited:[]}));setScanned(filled);setManual(true);setShowValues(true);setError('')}}>
-  {vision?<details className="mt-2"><summary className="min-h-10 cursor-pointer text-xs text-accent">菜品照片（没有文字）→ 识图估算</summary><FoodPhotoReview meal={mealValue} date={date} onSaved={onSaved}/></details>
-   :<p className="keep mt-2 text-xs text-muted" data-testid="dish-photo-status">菜品照片（没有文字）识别：{vision===null?'检查中…':'未配置视觉模型（DeepSeek 不支持图片）'}</p>}
+  {vision?<details className="mt-2"><summary className="min-h-10 cursor-pointer text-xs text-accent" data-testid="dish-photo-status">菜品照片（没有文字）→ 识图估算（DeepSeek，估算·待核）</summary><FoodPhotoReview meal={mealValue} date={date} onSaved={onSaved}/></details>
+   :<p className="keep mt-2 text-xs text-muted" data-testid="dish-photo-status">菜品照片（没有文字）识别：{vision===null?'检查中…':'未配置（服务端缺 DEEPSEEK_API_KEY）'}</p>}
  </FoodLabelScan>:null}
  {entry?<p className="keep text-xs text-muted">保存更正会保留原值及来源历史。</p>:null}
  </div></Sheet>

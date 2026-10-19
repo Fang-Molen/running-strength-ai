@@ -34,11 +34,12 @@ export async function prepareImage(file: Blob, max = 1600): Promise<Blob> {
 export async function imageDataUrl(blob: Blob): Promise<string> { return new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(String(r.result)); r.onerror = () => reject(Error('图片读取失败')); r.readAsDataURL(blob); }); }
 export async function recognizeImage(file: Blob, mode: VisionMode, hint: string, signal: AbortSignal): Promise<{ result: VisionResult; model: string; at: string }> {
   if (typeof navigator !== 'undefined' && navigator.onLine === false) throw Error('当前离线，可用本地识字或手动填写，联网后重试。');
-  const image = await imageDataUrl(await prepareImage(file)); signal.throwIfAborted();
+  // v79.1：菜品照片在本机先缩到长边 ≤1024px（服务端用 detail=low），省流量和费用。
+  const image = await imageDataUrl(await prepareImage(file, mode === 'food' ? 1024 : 1600)); signal.throwIfAborted();
   const r = await fetch('/api/vision', { method: 'POST', cache: 'no-store', signal, headers: { 'content-type': 'application/json'}, body: JSON.stringify({ mode, image, hint: hint.slice(0, 600) }) });
   if (!/application\/json/.test(r.headers.get('content-type') || '')) throw Error('此版本尚未部署联网识别接口。');
   const data = await r.json(); if (!r.ok || !data.ok) throw Error(typeof data.message === 'string' ? data.message : '识别失败，请重试。');
-  return { result: validateVisionResult(data.result, mode), model: String(data.model || 'DeepSeek'), at: String(data.at || '') };
+  return { result: validateVisionResult(data.result, mode), model: String(data.model || 'deepseek-flash'), at: String(data.at || '') };
 }
 export async function extractTrainingViaVision(input: { text: string; images: Array<{ dataUrl: string; sourceId: string }> }, signal?: AbortSignal): Promise<{ ok: true; candidate: unknown; model: string } | { ok: false; reason: 'NETWORK' | 'UPSTREAM'; detail?: string }> {
   const c = new AbortController(), timer = setTimeout(() => c.abort(), 48000), abort = () => c.abort(); signal?.addEventListener('abort', abort, { once: true });

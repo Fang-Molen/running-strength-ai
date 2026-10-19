@@ -1,3 +1,4 @@
+import { stampCN } from "@/lib/ui/activity-format";
 import { onAppEvent } from "@/lib/core/events";
 import { TrackRunner } from "./track-session";
 import { firstWeekOccurrences, startFirstWeekSessionSafely } from "@/lib/core/coach-first-week";
@@ -305,7 +306,7 @@ export function CoachFirstWeekPanel({
               className="min-h-12 rounded-xl border border-line px-3 text-left"
               onClick={() => setRunningId(o.trainingOccurrenceId)}
             >
-              查看/继续 · {o.startedAt?.slice(0, 16)} · {o.lifecycle} · {o.trainingOccurrenceId}
+              查看/继续 · {stampCN(o.startedAt, "ymd")} · {o.lifecycle} · {o.trainingOccurrenceId}
             </button>
           ))}
         </div>

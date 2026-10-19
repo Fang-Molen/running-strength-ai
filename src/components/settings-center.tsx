@@ -1,3 +1,4 @@
+import { stampCN } from "@/lib/ui/activity-format";
 /* R1「个人与数据」：一级三组入口 + 二级页（同步状态、备份恢复、隐私、健康）。只做展示与入口整理，存储键与业务写入沿用原实现。 */
 import { useEffect, useRef, useState } from "react";
 import { Bot, ChevronRight, Cpu, Database, FileUp, HeartPulse, Palette, ShieldCheck, Target, TriangleAlert, UserRound, Watch } from "lucide-react";
@@ -158,11 +159,11 @@ export function BackupCenter({ onNotice, legacySlot }: { onNotice: (m: string) =
       <p className="mt-1 text-xs text-muted">支持：全部数据备份、旧版训练记录备份、旧版「导出全部（JSON）」。先检查内容，确认后才写入；写入失败会自动退回。</p>
       <button type="button" className="mt-3 min-h-12 w-full rounded-xl border border-line font-bold" onClick={() => file.current?.click()}>选择备份文件并预检</button>
       <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void pick(f); }} />
-      {snaps.length ? <details className="mt-3"><summary className="min-h-10 cursor-pointer font-bold">自动快照（{snaps.length}/7，每天最多一份，存在本机）</summary>{[...snaps].reverse().map(x => <div key={x.at} className="flex min-h-11 items-center justify-between border-t border-line"><span>{x.at.slice(0, 16).replace("T", " ")} · {Object.keys(x.data).length} 项</span><button type="button" className="min-h-11 px-2 text-accent" onClick={() => pickSnap(x)}>预检</button></div>)}<p className="text-xs text-muted">快照和数据在同一个浏览器里，清除浏览器数据时会一起丢失，不能代替下载备份。</p></details> : null}
+      {snaps.length ? <details className="mt-3"><summary className="min-h-10 cursor-pointer font-bold">自动快照（{snaps.length}/7，每天最多一份，存在本机）</summary>{[...snaps].reverse().map(x => <div key={x.at} className="flex min-h-11 items-center justify-between border-t border-line"><span>{stampCN(x.at, "ymd")} · {Object.keys(x.data).length} 项</span><button type="button" className="min-h-11 px-2 text-accent" onClick={() => pickSnap(x)}>预检</button></div>)}<p className="text-xs text-muted">快照和数据在同一个浏览器里，清除浏览器数据时会一起丢失，不能代替下载备份。</p></details> : null}
     </section>
     {p ? <section className="home-card border border-accent p-4" role="dialog" aria-label="恢复预检" data-testid="restore-preview">
       <h3 className="font-bold">恢复前检查</h3>
-      <div className="mt-1"><KV k="类型" v={p.label} /><KV k="导出时间" v={p.exportedAt ? p.exportedAt.slice(0, 16).replace("T", " ") : "文件未记录"} />{p.version ? <KV k="版本" v={p.version} /> : null}<KV k="共" v={`${p.total} 项`} /><KV k="新增" v={`${p.added} 项`} /><KV k="将覆盖现有" v={`${p.overwritten} 项`} tone={p.overwritten ? "warn" : undefined} /><KV k="完全相同" v={`${p.unchanged} 项`} /><KV k="跳过（不写入）" v={`${p.skipped} 项`} /></div>
+      <div className="mt-1"><KV k="类型" v={p.label} /><KV k="导出时间" v={p.exportedAt ? stampCN(p.exportedAt, "ymd") : "文件未记录"} />{p.version ? <KV k="版本" v={p.version} /> : null}<KV k="共" v={`${p.total} 项`} /><KV k="新增" v={`${p.added} 项`} /><KV k="将覆盖现有" v={`${p.overwritten} 项`} tone={p.overwritten ? "warn" : undefined} /><KV k="完全相同" v={`${p.unchanged} 项`} /><KV k="跳过（不写入）" v={`${p.skipped} 项`} /></div>
       {p.skippedReasons.length ? <details className="mt-1 text-xs"><summary className="min-h-9 cursor-pointer">跳过原因</summary><ul className="list-disc pl-5">{p.skippedReasons.map((r, i) => <li key={i} className="break-all">{r}</li>)}</ul></details> : null}
       {p.overwritten ? <p className="mt-2 text-xs text-warn">覆盖会替换当前记录。建议先下载一份当前备份{savedCurrent ? "（本次已触发过下载）" : ""}。</p> : null}
       <div className="mt-3 grid grid-cols-2 gap-2"><button type="button" className="min-h-11 rounded-xl border border-line" onClick={() => void download()}>先下载当前备份</button><button type="button" className="min-h-11 rounded-xl bg-accent font-bold text-accent-fg" onClick={confirm}>确认恢复</button></div>
@@ -182,7 +183,7 @@ export function PrivacyPanel() {
         <li><b className="text-fg">联网功能默认全部开启</b>（你要求的，同意时间记录在本机；「AI 服务与联网功能」里可逐项关闭）。</li>
         <li><b className="text-fg">营养标签、小票、体脂秤拍照</b>：照片只在手机上识字，只把识别出的文字经方坤服务端发给 DeepSeek 整理；照片不上传。结果要你确认后才保存。</li>
         <li><b className="text-fg">没找到的食物联网估算</b>：只发送食物名称和份量给 DeepSeek，结果标“估算”，可改；不知道的项留空。</li>
-        <li><b className="text-fg">菜品照片 / 截图图片识别</b>：需要单独的视觉模型（DeepSeek 不支持图片），目前未配置，不会上传图片。配置后点识别才会把所选图片经服务端发给该视觉模型。</li>
+        <li><b className="text-fg">菜品照片 / 截图图片识别</b>：点“联网识别”时，所选图片先在本机缩小，再经方坤服务端发给 DeepSeek（deepseek-flash）；不点不上传。照片热量是估算·待核，保存前可改。</li>
         <li><b className="text-fg">方坤联网对话（默认开启，可在方坤对话页关闭）</b>：会把你的问题、最近几轮对话、计划目标、近期活动数值与分段、恢复指标（睡眠/静息心率/HRV/身体电量/压力）经方坤服务端发给 DeepSeek；不发送账号、密码、位置和活动名称。断网或关闭时用本地规则回答。</li>
       </ul></div>
     <div><h3 className="font-bold">第三方与删除范围</h3><p className="text-muted">发给 DeepSeek 的内容按 DeepSeek 的政策处理；佳明账号里的数据要在佳明那边管理。App 只能删除本机记录，不能替你删除第三方或平台日志里的数据（Cloudflare 平台层访问日志的保存策略：待核）。</p></div>
