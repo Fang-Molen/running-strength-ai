@@ -1,0 +1,28 @@
+// C03 候选：本机构建（127.0.0.1:8797）上检查复盘区的两个折叠面板 + 改课仍阻断 + 联网默认开。Playwright Chrome 390 宽，不是真机。
+import {chromium} from 'playwright'
+const base=process.argv[2]||'http://127.0.0.1:8797'; let fails=0
+const check=(n,ok,d='')=>{console.log(ok?'PASS':'FAIL',n,ok?'':String(d).slice(0,500));if(!ok)fails++}
+const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']})
+const ctx=await b.newContext({viewport:{width:390,height:844},timezoneId:'Asia/Shanghai',isMobile:true,hasTouch:true})
+let coachCalls=0; await ctx.route('**/api/coach-chat',r=>{coachCalls++;return r.fulfill({status:200,contentType:'application/json',body:'{"text":"mock"}'})})
+await ctx.route('**/api/garmin/**',r=>r.fulfill({status:200,contentType:'application/json',body:'{"loggedIn":false}'}))
+await ctx.addInitScript(()=>{localStorage.setItem('fk-onboard-v1','1')})
+const p=await ctx.newPage(); p.setDefaultTimeout(10000)
+await p.goto(base); await p.locator('[data-testid="training-app"][data-ready=true]').waitFor({timeout:60000}); await p.waitForTimeout(1500)
+await p.getByRole('button',{name:'打开方坤',exact:true}).first().click(); await p.getByPlaceholder('输入你的问题').waitFor()
+const online=await p.evaluate(()=>localStorage.getItem('fk-coach-online-v1'))
+check('联网方坤默认开启（fk-coach-online-v1.on=true）',/"on":true/.test(online||''),online)
+await p.getByRole('button',{name:'复盘',exact:true}).click(); await p.waitForTimeout(1500)
+const plan=p.locator('summary',{hasText:'调整安排与回执（待核对）'})
+check('复盘区有折叠的“调整安排与回执（待核对）”',await plan.count()===1)
+await plan.click(); await p.waitForTimeout(800)
+const txt=await p.locator('details',{has:plan}).first().innerText()
+check('改课面板写明“尚未修改”且只核对差异',/尚未修改/.test(txt)&&/不代表已生成可执行提案|只核对一个未开始分项/.test(txt),txt)
+check('“核对差异 / 生成待确认提案”在未选分项时不可点',await p.getByRole('button',{name:'核对差异 / 生成待确认提案'}).isDisabled())
+const fu=await p.getByText(/长期跟进|C03 判断/).first().innerText().catch(()=>'')
+check('C03 长期跟进区块存在（无记录时显示说明）',/长期跟进|C03/.test(fu),fu)
+await p.screenshot({path:'/workspace/out/c03-candidate/review-panels-390.png',fullPage:false})
+const idb=await p.evaluate(async()=>{const dbs=await indexedDB.databases?.()||[];const has=dbs.some(d=>d.name==='fangkun-coach-plan-execution-v1');if(!has)return {has,proposals:0};return await new Promise(res=>{const r=indexedDB.open('fangkun-coach-plan-execution-v1');r.onsuccess=()=>{const db=r.result;const names=[...db.objectStoreNames];if(!names.length)return res({has,proposals:0,names});const tx=db.transaction(names,'readonly');let n=0,pending=names.length;for(const s of names){const q=tx.objectStore(s).getAll();q.onsuccess=()=>{for(const v of q.result)n+=Object.keys(v?.proposals||{}).length+Object.keys(v?.overlays||{}).length;if(--pending===0)res({has,proposals:n,names})}}};r.onerror=()=>res({has,err:true})})})
+check('打开复盘不会写入任何提案/修订（IndexedDB 中 0 条）',!idb.proposals,JSON.stringify(idb))
+check('本检查未调用 /api/coach-chat',coachCalls===0,coachCalls)
+await b.close(); console.log(fails?`c03 review ui: ${fails} FAIL`:'c03 review ui: ALL PASS'); process.exit(fails?1:0)
