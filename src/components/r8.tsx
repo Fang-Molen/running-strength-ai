@@ -27,6 +27,7 @@ import { parseHealthParam } from "@/lib/ui/shortcut-link"
 import { saveDeviceRows } from "@/lib/ui/device-store"
 import { Sheet, Toast, useToast } from "@/components/sheet"
 import { pendingLocal, sentToday, support, SENT_KEY } from "@/lib/ui/notify"
+import { loadInjury } from "@/lib/ui/injury"
 
 const read = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d } }
 export const loadAnswers = (): (Answers & { done?: boolean }) | null => read(ONBOARD_KEY, null)
@@ -257,8 +258,10 @@ function Row({ title, sub, children, open, onToggle }: { title: string; sub: str
 function Toggle({ label, on, onChange, disabled, small }: { label: string; on: boolean; onChange: (v: boolean) => void; disabled?: boolean; small?: boolean }) {
   return <label className={"flex min-h-11 items-center justify-between gap-2 " + (disabled ? "opacity-40" : "") + (small ? " pl-4 text-xs" : "")}><span>{label}</span><input type="checkbox" role="switch" checked={on} disabled={disabled} onChange={(e) => onChange(e.target.checked)} className={small ? "size-4" : "size-5"} /></label>
 }
-export function SettingsHub({ onProfile, onDiet, onBackup }: { onProfile: () => void; onDiet: () => void; onBackup: () => void }) {
-  const [s, setS] = useState<AppSettings | null>(null), [open, setOpen] = useState<string | null>(null), [stamp, setStamp] = useState(0)
+export type HubRow = "p" | "d" | "h" | "n" | "c" | "r" | "v" | "x"
+/** only：R1 起各二级页只渲染对应行（存储与行为不变）；不传则与旧版一致全部渲染。 */
+export function SettingsHub({ onProfile, onDiet, onBackup, only, initialOpen = null }: { onProfile: () => void; onDiet: () => void; onBackup: () => void; only?: HubRow[]; initialOpen?: HubRow | null }) {
+  const [s, setS] = useState<AppSettings | null>(null), [open, setOpen] = useState<string | null>(initialOpen), [stamp, setStamp] = useState(0)
   const [w, setW] = useState<WatchId | null>(null), [tier, setT] = useState<Tier>("basic"), [ans, setAns] = useState<ReturnType<typeof loadAnswers>>(null), [sync, setSync] = useState<string | null>(null), [confirmDel, setConfirmDel] = useState(false)
   useEffect(() => { setS(loadSettings()); setW(loadWatch()); setT(loadTier()); setAns(loadAnswers()); setSync(lastDeviceSync()) }, [])
   if (!s) return null
@@ -267,37 +270,40 @@ export function SettingsHub({ onProfile, onDiet, onBackup }: { onProfile: () => 
   const unset = "未设置，点击补充"
   const stale = sync ? (Date.now() - Date.parse(sync)) / 3600e3 > 24 : true
   const exportAll = () => { const data: Record<string, unknown> = {}; for (const c of COLLECTED) data[c.key] = read(c.key, null); const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })); const el = document.createElement("a"); el.href = url; el.download = "fangkun-data.json"; el.click(); URL.revokeObjectURL(url) }
+  const has = (k: HubRow) => !only || only.includes(k)
+  const inj = loadInjury()
+  const injText = inj.items.length ? `已记录 ${inj.items.length} 处需要留意（${inj.items.map((x) => x.part + (x.kind === "current" ? "·当前疼" : "·旧伤")).join("、")}）` : inj.asked ? "未记录不适（旧版“都没有”与“以后再说”存成同一状态）" : "尚未填写"
   return <section className="home-card mt-3 px-4" aria-label="设置">
-    <div className="flex items-center justify-between pt-3"><h3 className="text-sm font-bold text-muted">设置 · 改动当场生效</h3><SavedBadge stamp={stamp} /></div>
-    <Row title="个人档案" sub={ans ? `${ans.goals.map(goalLabel).join("、")} · ${EXPERIENCE.find((x) => x[0] === ans.experience)?.[1]} · ${VENUES.find((x) => x[0] === ans.venue)?.[1]} · 每周 ${ans.days.length} 天×${ans.minutes} 分` : unset} open={open === "p"} onToggle={() => tg("p")}><button type="button" className="fk-link" onClick={onProfile}>编辑基本信息 ›</button><button type="button" className="fk-link ml-4" onClick={() => { localStorage.removeItem(ONBOARD_KEY); location.reload() }}>重新回答 5 个问题 ›</button></Row>
-    <Row title="数据来源" sub={`${w ? WATCHES.find((x) => x[0] === w)?.[1] : unset} · ${TIER_LABEL[tier]}${w && w !== "none" ? (stale ? " · 超过 24 小时未同步" : ` · 上次同步 ${new Date(sync!).toTimeString().slice(0, 5)}`) : ""}`} open={open === "d"} onToggle={() => tg("d")}>
+    <div className="flex items-center justify-between pt-3"><h3 className="text-sm font-bold text-muted">修改后立即保存到本机</h3><SavedBadge stamp={stamp} /></div>
+    {has("p") ? <Row title="训练条件（引导问卷）" sub={ans ? `${ans.goals.map(goalLabel).join("、")} · ${EXPERIENCE.find((x) => x[0] === ans.experience)?.[1]} · ${VENUES.find((x) => x[0] === ans.venue)?.[1]} · 每周可安排 ${ans.days.length} 天 × 约 ${ans.minutes} 分钟` : unset} open={open === "p"} onToggle={() => tg("p")}><p className="text-xs text-muted">「每周可安排」是你填写的可用时间，不是方坤开的训练处方，也不代表每天都练高强度。</p><button type="button" className="fk-link" onClick={onProfile}>编辑基本信息 ›</button><button type="button" className="fk-link ml-4" onClick={() => { if (window.confirm("重新回答 5 个问题？已有训练、健康记录不会删除。")) { localStorage.removeItem(ONBOARD_KEY); location.reload() } }}>重新回答 5 个问题 ›</button></Row> : null}
+    {has("d") ? <Row title="手表类型与显示版本" sub={`${w ? WATCHES.find((x) => x[0] === w)?.[1] : unset} · ${TIER_LABEL[tier]}${w && w !== "none" ? (sync ? ` · 最近收到设备数据 ${new Date(sync).toTimeString().slice(0, 5)}${stale ? "（超过 24 小时）" : ""}` : " · 暂无设备数据") : ""}`} open={open === "d"} onToggle={() => tg("d")}>
       <div className="flex flex-wrap gap-1.5">{WATCHES.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={w === id} onClick={() => { saveWatch(id, undefined, loadBrand()); setW(id); setT(loadTier()); setStamp(Date.now()) }}>{l}</button>)}</div>
       <p className="mt-2 text-xs font-bold">版本（可手动升降）</p><div className="mt-1 flex flex-wrap gap-1.5" aria-label="版本">{(Object.keys(TIERS) as Tier[]).map((id) => <button key={id} type="button" className="fk-chip" aria-pressed={tier === id} onClick={() => { saveTier(id); setT(id); setStamp(Date.now()) }}>{TIER_LABEL[id]}</button>)}</div><p className="mt-1 text-xs text-muted">{TIERS[tier].desc}</p>
-      <p className="mt-1 text-xs text-muted">佳明账号直连需要合作方审批，尚未开通；凭据不会保存在本应用里。</p><ShortcutGuide /></Row>
-    <Row title="健康与安全" sub={`伤病：用到时再问 · 安全提醒 ${s.safetyLevel === "strict" ? "严格" : "标准"}`} open={open === "h"} onToggle={() => tg("h")}><div className="flex gap-1.5">{(["standard", "strict"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.safetyLevel === k} onClick={() => up({ safetyLevel: k })}>{k === "strict" ? "严格" : "标准"}</button>)}</div><p className="mt-1 text-xs text-muted">胸痛、晕厥等红框提醒不受任何设置影响。</p></Row>
-    <Row title="饮食" sub={`目标：${({ gain: "增肌", cut: "减脂", keep: "保持", run: "跑步表现" } as Record<string, string>)[read<{ goal?: string }>("fk-diet-goal-v1", {}).goal ?? ""] ?? unset} · 忌口：${s.dietAvoid || "无"}`} open={open === "n"} onToggle={() => tg("n")}><button type="button" className="fk-link" onClick={onDiet}>改饮食目标 ›</button><input aria-label="忌口/过敏/素食" placeholder="忌口 / 过敏 / 素食（可选）" value={s.dietAvoid} onChange={(e) => up({ dietAvoid: e.target.value.slice(0, 40) })} className="fk-cell mt-2 w-full" /></Row>
-    <Row title="方坤教练" sub={`${s.coachStyle === "brief" ? "简短" : "详细"} · 数据依据${s.showEvidence ? "显示" : "收起"} · 每周评估`} open={open === "c"} onToggle={() => tg("c")}>
+      <p className="mt-1 text-xs text-muted">这里选的手表类型只决定显示哪些说明和指标，不代表设备已连接。佳明账号的连接与同步结果见「设备连接与同步」；「最近收到设备数据」包含佳明账号同步和文件导入两种来源。</p><ShortcutGuide /></Row> : null}
+    {has("h") ? <Row title="健康与安全" sub={`伤病：${injText} · 安全提醒 ${s.safetyLevel === "strict" ? "严格" : "标准"}`} open={open === "h"} onToggle={() => tg("h")}><div className="flex gap-1.5">{(["standard", "strict"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.safetyLevel === k} onClick={() => up({ safetyLevel: k })}>{k === "strict" ? "严格" : "标准"}</button>)}</div><p className="mt-1 text-xs text-muted">胸痛、晕厥等红框提醒不受任何设置影响。</p></Row> : null}
+    {has("n") ? <Row title="饮食" sub={`目标：${({ gain: "增肌", cut: "减脂", keep: "保持", run: "跑步表现" } as Record<string, string>)[read<{ goal?: string }>("fk-diet-goal-v1", {}).goal ?? ""] ?? unset} · 忌口：${s.dietAvoid || "无"}`} open={open === "n"} onToggle={() => tg("n")}><button type="button" className="fk-link" onClick={onDiet}>改饮食目标 ›</button><input aria-label="忌口/过敏/素食" placeholder="忌口 / 过敏 / 素食（可选）" value={s.dietAvoid} onChange={(e) => up({ dietAvoid: e.target.value.slice(0, 40) })} className="fk-cell mt-2 w-full" /></Row> : null}
+    {has("c") ? <Row title="方坤教练" sub={`${s.coachStyle === "brief" ? "简短" : "详细"} · 数据依据${s.showEvidence ? "显示" : "收起"} · 每周评估`} open={open === "c"} onToggle={() => tg("c")}>
       <div className="flex gap-1.5">{(["brief", "detailed"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.coachStyle === k} onClick={() => up({ coachStyle: k })}>{k === "brief" ? "简短（结论 + 最多 3 条）" : "详细"}</button>)}</div>
-      <Toggle label="显示数据依据：每条建议下展开阈值和来源" on={s.showEvidence} onChange={(v) => up({ showEvidence: v })} /><p className="text-xs text-muted">安全类提醒（红框）不受风格影响，始终完整显示。</p></Row>
-    <Row title="提醒" sub={r.master ? `已开 · 每天最多 2 条` : "已关"} open={open === "r"} onToggle={() => tg("r")}>
+      <Toggle label="显示数据依据：每条建议下展开阈值和来源" on={s.showEvidence} onChange={(v) => up({ showEvidence: v })} /><p className="text-xs text-muted">安全类提醒（红框）不受风格影响，始终完整显示。</p></Row> : null}
+    {has("r") ? <Row title="提醒" sub={r.master ? `已开 · 每天最多 2 条` : "已关"} open={open === "r"} onToggle={() => tg("r")}>
       <Toggle label="开启提醒" on={r.master} onChange={(v) => up({ reminders: { ...r, master: v } })} />
       <Toggle small label="训练提醒：上次训练约 24 小时后" on={r.training} disabled={!r.master} onChange={(v) => up({ reminders: { ...r, training: v } })} />
       <Toggle small label="晚上还没记录：21:00 提醒一次" on={r.evening} disabled={!r.master} onChange={(v) => up({ reminders: { ...r, evening: v } })} />
       <Toggle small label="待确认计划提醒" on={r.pending} disabled={!r.master} onChange={(v) => up({ reminders: { ...r, pending: v } })} />
       <Toggle small label="数据超过 24 小时未同步提醒" on={r.stale} disabled={!r.master} onChange={(v) => up({ reminders: { ...r, stale: v } })} />
       <NotifyStatus today={new Date().toISOString().slice(0, 10)} />
-      <p className="text-[11px] text-muted">生效：{(["training", "evening", "pending", "stale"] as const).filter((k) => effective(r, k)).length} 项</p></Row>
-    <Row title="显示" sub={`${s.units === "metric" ? "公里/公斤" : "英里/磅"} · 完成度色带${s.band ? `开（按${s.bandBasis === "time" ? "时长" : "距离"}）` : "关"}`} open={open === "v"} onToggle={() => tg("v")}>
+      <p className="text-[11px] text-muted">生效：{(["training", "evening", "pending", "stale"] as const).filter((k) => effective(r, k)).length} 项</p><p className="text-[11px] text-muted">红框安全提醒不受提醒开关影响。</p></Row> : null}
+    {has("v") ? <Row title="单位与完成度色带" sub={`${s.units === "metric" ? "公里/公斤" : "英里/磅"} · 完成度色带${s.band ? `开（按${s.bandBasis === "time" ? "时长" : "距离"}）` : "关"}`} open={open === "v"} onToggle={() => tg("v")}>
       <div className="flex gap-1.5">{(["metric", "imperial"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.units === k} onClick={() => up({ units: k })}>{k === "metric" ? "公里/公斤" : "英里/磅"}</button>)}</div>
       <Toggle label="显示计划 vs 实际色带" on={s.band} onChange={(v) => up({ band: v })} />
-      <div className={"flex gap-1.5 pl-4 " + (s.band ? "" : "pointer-events-none opacity-40")}>{(["time", "distance"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.bandBasis === k} onClick={() => up({ bandBasis: k })}>按{k === "time" ? "时长" : "距离（跑步）"}</button>)}</div></Row>
-    <Row title="隐私与数据" sub={`个性化建议${s.personalize ? "开" : "关"} · 数据只存本机`} open={open === "x"} onToggle={() => tg("x")}>
-      <p className="text-xs font-bold">方坤收集了什么</p>
+      <div className={"flex gap-1.5 pl-4 " + (s.band ? "" : "pointer-events-none opacity-40")}>{(["time", "distance"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.bandBasis === k} onClick={() => up({ bandBasis: k })}>按{k === "time" ? "时长" : "距离（跑步）"}</button>)}</div></Row> : null}
+    {has("x") ? <Row title="个性化与本机数据" sub={`个性化建议${s.personalize ? "开" : "关"} · 主要数据类别与删除`} open={open === "x"} onToggle={() => tg("x")}>
+      <p className="text-xs font-bold">主要数据类别（存在本机浏览器）</p>
       <div className="mt-1 overflow-x-auto"><table className="fk-table text-xs"><thead><tr><th>数据</th><th>来源</th><th>用途</th></tr></thead><tbody>{COLLECTED.map((c) => <tr key={c.key}><td>{c.item}</td><td>{c.source}</td><td>{c.use}</td></tr>)}</tbody></table></div>
-      <p className="mt-1 text-[11px] text-muted">都能删除。全部只存在这台设备的浏览器里。</p>
+      <p className="mt-1 text-[11px] text-muted">上表是主要类别，不是完整清单（另有训练正式记录、饮食记录、计划与教练记录等）。这些记录保存在当前浏览器；使用佳明同步、拍照识别、联网对话时会有数据经服务端传输，见「隐私与数据流向」。</p>
       <Toggle label="个性化建议：按你的反馈和记录调整方坤的提议" on={s.personalize} onChange={(v) => up({ personalize: v })} />
-      <div className="mt-1 flex flex-wrap gap-2"><button type="button" className="fk-chip" onClick={exportAll}>导出全部（JSON）</button><button type="button" className="fk-chip" onClick={onBackup}>备份与恢复 ›</button>
-        {!confirmDel ? <button type="button" className="fk-chip text-[var(--color-risk)]" onClick={() => setConfirmDel(true)}>删除全部数据</button> : <button type="button" className="fk-chip border-[var(--color-risk)] text-[var(--color-risk)]" onClick={() => { for (const c of COLLECTED) localStorage.removeItem(c.key); location.reload() }}>确认删除（不可恢复）</button>}</div></Row>
+      <div className="mt-1 flex flex-wrap gap-2"><button type="button" className="fk-chip" onClick={exportAll}>导出上表 8 类（JSON）</button><button type="button" className="fk-chip" onClick={onBackup}>备份与恢复 ›</button>
+        {!confirmDel ? <button type="button" className="fk-chip text-[var(--color-risk)]" onClick={() => setConfirmDel(true)}>删除上表 8 类数据</button> : <button type="button" className="fk-chip border-[var(--color-risk)] text-[var(--color-risk)]" onClick={() => { for (const c of COLLECTED) localStorage.removeItem(c.key); location.reload() }}>确认删除这 8 类（不可恢复，建议先备份）</button>}</div></Row> : null}
   </section>
 }
 

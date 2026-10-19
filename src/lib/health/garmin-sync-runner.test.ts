@@ -114,3 +114,11 @@ test('real local import service deduplicates stable source ID, keeps corrections
     setEventContext({ athleteId: 'other' }); assert.equal(loadTrainingActivities().length, 0)
   } finally { setStoreBackend(null); setEventContext({ athleteId: 'local' }); if (old) Object.defineProperty(globalThis, 'localStorage', old); else Reflect.deleteProperty(globalThis, 'localStorage') }
 })
+
+test('R1 SYNC-04: network failure on status is reported as fail (not auth) and still produces a report', async () => {
+  for (const status of [0, 503]) {
+    const f = fixture(), base = f.host.api
+    f.host.api = p => p === 'status' ? Promise.resolve({ status, body: {} }) : base(p)
+    const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'fail'); assert.equal(f.saved.length, 0); assert.equal(f.reports.length, 1); assert.match(r.errors[0], status ? /HTTP 503/ : /网络中断/)
+  }
+})

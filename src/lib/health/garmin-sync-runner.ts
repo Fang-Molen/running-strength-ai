@@ -44,6 +44,8 @@ export async function runGarminSyncJob(host: {
   try {
     const initial = await host.api('status'), account = garminAccount(initial)
     if (!unchanged()) { result.status = 'stale'; result.errors.push('账号或运动员已变化，已丢弃本次结果'); return result }
+    // R1 SYNC-04：网络中断/服务不可达不是"登录失效"，单独报告为失败，便于用户判断该重试还是重登。
+    if (!account && (initial.status === 0 || initial.status >= 404)) { result.status = 'fail'; result.errors.push(initial.status === 0 ? '网络中断或请求超时，未连接到佳明同步服务' : `佳明同步服务暂不可用（HTTP ${initial.status}）`); return result }
     if (!account) { result.status = 'auth'; result.errors.push('未登录、登录过期或账号身份不完整'); return result }
     result.accountScope = shortHash(account.scope)
     const list = await host.api('g/activitylist-service/activities/search/activities?start=0&limit=200')
