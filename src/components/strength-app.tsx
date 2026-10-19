@@ -5,7 +5,9 @@ import { GarminLog } from "@/components/garmin-log";
 import { lazy, Suspense } from "react";
 const RunningTechniqueLibrary = lazy(() => import("@/components/running-technique-library").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
-import { Plan400, Plan400Today } from "@/components/plan400";
+import { exportFeedback } from "@/components/coach-feedback";
+import { AthletePanel, BackupCenter, HealthPanel, PrivacyPanel, SettingsMenu, SyncStatusPanel, type GarminConnState, type SettingsPane } from "@/components/settings-center";
+import { Plan400Cycle, Plan400TodayCard, Plan400DayHost, TempTrainingList } from "@/components/plan400";
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
@@ -167,7 +169,10 @@ export function StrengthApp() {
   const [coachPlanOpen, setCoachPlanOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const prevTab = useRef<"today" | "plan" | "log" | "body" | "diet">("today");
-  const [settingsPane, setSettingsPane] = useState<"menu" | "goals" | "theme" | "backup">("menu");
+  const [settingsPane, setSettingsPaneRaw] = useState<SettingsPane>("menu");
+  const settingsScroll = useRef<HTMLDivElement>(null); const menuScrollTop = useRef(0);
+  const setSettingsPane = (p: SettingsPane) => { const el = settingsScroll.current; if (p !== "menu" && el) menuScrollTop.current = el.scrollTop; setSettingsPaneRaw(p); window.setTimeout(() => { if (settingsScroll.current) settingsScroll.current.scrollTop = p === "menu" ? menuScrollTop.current : 0; }, 0); };
+  const [garminConn, setGarminConn] = useState<GarminConnState>(null);
   const [weekPeek, setWeekPeek] = useState<1 | 2 | 3 | 4 | null>(null);
   const [preference, setPreference] = useState<SportGoalPreference>(DEFAULT_SPORT_GOAL);
   const [supportingGoals, setSupportingGoals] = useState<GoalId[]>([]);
@@ -514,7 +519,7 @@ export function StrengthApp() {
           <div className="flex shrink-0 items-center gap-2">
           {tab === "today" ? <button type="button" aria-label="记一笔" onClick={() => window.dispatchEvent(new Event("fk-open-quicklog"))} className="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><Plus className="size-4" />记一笔</button> : null}
           <button type="button" onClick={() => { if (tab === "coach") { setTab(prevTab.current); } else { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); } }} className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-accent bg-surface shadow-sm" aria-label={tab === "coach" ? "关闭方坤" : "打开方坤"}>{tab === "coach" ? <X className="size-5" /> : <img src="/fangshen/happy-bust.png" alt="" className="size-full object-cover object-top" />}</button>
-          <button type="button" onClick={() => { setSettingsPane("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
+          <button type="button" onClick={() => { menuScrollTop.current = 0; setSettingsPaneRaw("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
         </div>
       </header>
       {offline ? <p className="mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已缓存页面和本机记录可继续使用；方坤本地问答仍可用。</p> : null}
@@ -522,7 +527,7 @@ export function StrengthApp() {
       {planSaveFailed ? <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-4 pb-2 text-sm">
         <p>{planConflict || PLAN_SAVE_FAIL}</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (navigator.locks?.request) void navigator.locks.request(PLAN_KEY, () => { const result = savePlanCompared(localStorage, planRaw.current, plan); if(result.ok){planRaw.current=result.raw;setPlanSaveFailed(false);setPlanConflict("");}else setPlanConflict(result.reason); }); }}>再存一次</button>
-        <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => setSettingsOpen(true)}>下载备份</button>
+        <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { setSettingsPaneRaw("backup"); setSettingsOpen(true); }}>下载备份</button>
       </div> : null}
 
       <main className={"ui03-main mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "today" || tab === "plan" ? "" : " hidden")}>
@@ -530,14 +535,14 @@ export function StrengthApp() {
           <div className="flex flex-col">
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
-            <div className="mb-3 flex justify-center"><span className="rounded-full border border-line px-4 py-1.5 text-sm">{Number(todayIso.slice(5,7))}月{Number(todayIso.slice(8,10))}日 周{"日一二三四五六"[new Date(todayIso + "T12:00:00").getDay()]}</span></div><Plan400Today /><HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
-            <div style={{ order: homeLayout.order.indexOf("week") }}><TodayBoard revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso} selectedDate={selectedDate} onDateChange={setSelectedDate} onExecute={openScheduled} onEdit={editScheduled}
+            <div className="mb-3 flex justify-center"><span className="rounded-full border border-line px-4 py-1.5 text-sm">{Number(todayIso.slice(5,7))}月{Number(todayIso.slice(8,10))}日 周{"日一二三四五六"[new Date(todayIso + "T12:00:00").getDay()]}</span></div>{planSrc === "400m-v4" ? <Plan400TodayCard today={todayIso} onReview={() => setTab("log")} /> : null}<HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
+            <div style={{ order: homeLayout.order.indexOf("week") }}><TodayBoard v4={planSrc === "400m-v4"} revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso} selectedDate={selectedDate} onDateChange={setSelectedDate} onExecute={openScheduled} onEdit={editScheduled}
               onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
               onFood={() => { setTab("diet"); }}
               onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /></div>
-            <section id="detail-record" aria-label="本日训练执行入口" style={{ order: homeLayout.order.indexOf("detail") }} className="home-card mb-3 p-4">
-              <h2 className="font-bold">训练执行与计时</h2><p className="keep mt-1 text-sm text-muted">进入所选日期的同一节训练，逐组／分段记录，退出后可继续。</p><button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={openTimer}>选择训练 · 开始／继续</button>
+            <section id="detail-record" aria-label="本日训练执行入口" style={{ order: homeLayout.order.indexOf("detail") }} className="mb-3 px-1">
+              <button type="button" className="flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left text-sm" onClick={openTimer}><span><b className="block">其他训练 · 计时与逐组记录</b><span className="block text-xs text-muted">自建/方坤安排的课程，开始或继续同一节</span></span><span aria-hidden="true" className="text-muted">›</span></button>
             </section>
             <div style={{ order: 100 }} className="h-20" aria-hidden="true" />
           </div>
@@ -549,16 +554,18 @@ export function StrengthApp() {
             <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setTab("plan");}} /></details>
           </> : <p>选定课程已不存在，请重新选择。</p>}
         </section> : null}
-        {tab === "plan" ? <div className="mb-3 grid grid-cols-2 gap-3" role="group" aria-label="运动专区">
-          {([['run', '跑步运动', '跑步计划与分段训练', Footprints], ['lift', '力量训练', '肌肉3D、动作与课表', Dumbbell]] as const).map(([id, title, hint, Icon]) => <button type="button" key={id} aria-pressed={hubPane === id} onClick={() => setHubPane(id)} className={'min-h-28 rounded-2xl border p-4 text-left ' + (hubPane === id ? 'border-accent bg-accent/10' : 'border-line bg-surface')}><Icon className="mb-3 size-6 text-accent" /><b className="block text-lg">{title}</b><span className="keep mt-1 block text-xs text-muted">{hint}</span></button>)}
+        {tab === "plan" ? <div className="mb-3 grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface p-1" role="group" aria-label="运动专区">
+          {([['run', '跑步', Footprints], ['lift', '力量', Dumbbell]] as const).map(([id, title, Icon]) => <button type="button" key={id} aria-pressed={hubPane === id} onClick={() => setHubPane(id)} className={'flex min-h-11 items-center justify-center gap-1.5 rounded-lg text-sm font-bold ' + (hubPane === id ? 'bg-accent text-accent-fg' : 'text-muted')}><Icon className="size-4" />{title}</button>)}
         </div> : null}
         {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 space-y-3 p-4" aria-label="力量训练入口"><h2 className="text-lg font-black">从肌肉开始选动作</h2><button type="button" className="flex min-h-20 w-full items-center justify-between rounded-2xl border border-accent bg-accent/10 p-4 text-left text-accent" onClick={() => setTrainingEditor({ date: selectedDate, openMuscleInitially: true })}><span><b className="block">人体肌肉 3D</b><span className="keep mt-1 block text-xs">点选肌肉 → 选择动作 → 加入这节训练</span></span><span>›</span></button><div className="grid grid-cols-2 gap-2"><button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={() => setActionLibrary(true)}>动作库</button><button type="button" className="min-h-12 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => setTrainingEditor({ date: selectedDate })}>＋添加力量训练</button></div></section> : null}
-        {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 p-4" aria-label="已排力量训练"><div className="flex items-center justify-between"><h2 className="font-bold">已排训练</h2><button type="button" className="min-h-11 text-sm text-accent" onClick={() => setTab('today')}>按日期查看 ›</button></div>{calendar.filter(e => e.modality === 'strength' && ['planned', 'done'].includes(e.status)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8).map(e => <button key={e.id} type="button" className="flex min-h-16 w-full items-center justify-between gap-2 border-t border-line py-3 text-left" onClick={() => openScheduled(e)}><span><b className="block">{e.title}</b><span className="text-xs text-muted">{e.date} · {e.exercises?.length ?? '—'}个动作 · {e.status === 'done' ? '已完成' : '待执行'}</span></span><span className="text-accent">›</span></button>)}{!calendar.some(e => e.modality === 'strength' && ['planned', 'done'].includes(e.status)) ? <p className="py-3 text-sm text-muted">还没有排期，先选动作或从下方课程库添加。</p> : null}</section> : null}
+        {tab === 'plan' && hubPane === 'lift' ? <TempTrainingList entries={calendar} modality="strength" title="已排力量训练" addLabel="按日期查看" onAdd={() => setTab('today')} onOpen={openScheduled} empty="还没有排期，先选动作或从下方课程库添加。" /> : null}
         {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 p-4" aria-label="力量课程库"><h2 className="font-bold">已保存的力量课程</h2>{plan.sessions.map(s => <div key={s.id} className="flex items-center justify-between gap-3 border-t border-line py-3"><span className="min-w-0"><b className="block">{s.name}</b><span className="text-xs text-muted">{s.moves.length}个动作</span></span><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm font-bold text-accent" onClick={() => setTrainingEditor({ date: selectedDate, template: templateEntry(s.id) })}>加入训练</button></div>)}</section> : null}
-        {tab === 'plan' && hubPane === 'run' ? <section className="home-card mb-3 p-4" aria-label="跑步训练入口"><div className="flex items-center justify-between gap-2"><h2 className="font-bold">跑步训练</h2><button type="button" className="min-h-12 rounded-xl bg-accent px-4 font-bold text-accent-fg" onClick={() => setTrainingEditor({ date: selectedDate, initialType: 'run' })}>＋添加跑步</button></div>{calendar.filter(e => e.modality === 'run' && ['planned', 'done'].includes(e.status)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6).map(e => <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => openScheduled(e)}><span><b className="block">{e.title}</b><span className="text-xs text-muted">{e.date} · {e.minutes}分钟</span></span><span className="text-accent">›</span></button>)}<p className="keep mt-2 text-xs text-muted">间歇训练保留每次、每轮与休息结构；未开始的计划不会计入实际训练。</p></section> : null}
-        {tab === "plan" && hubPane === "run" ? <button type="button" className="mb-3 min-h-12 w-full rounded-xl border border-line font-bold" onClick={() => setTechniqueLibrary(true)}>跑步技术动作库 · 53 项</button> : null}
-        {tab === "plan" && hubPane === "run" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : null}
-        {tab === "plan" && hubPane === "run" && planSrc === "400m-v4" ? <Plan400 /> : null}
+        
+        {tab === "plan" && hubPane === "run" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} sourceSlot={<PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />} /> : null}
+        {tab === "plan" && hubPane === "run" && planSrc !== "400m-v4" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : null}
+        {tab === "plan" && hubPane === "run" ? <TempTrainingList entries={calendar} modality="run" title="临时 / 自建跑步训练" addLabel="＋添加跑步" onAdd={() => setTrainingEditor({ date: selectedDate, initialType: 'run' })} onOpen={openScheduled} empty="还没有临时或自建的跑步训练。" footer={<p className="keep mt-2 text-xs text-muted">与上方周期计划分开显示；只有 V4 当天课程生成的训练才算挂靠周期。间歇训练保留每次、每轮与休息结构；未开始的计划不会计入实际训练。</p>} /> : null}
+        {tab === "plan" && hubPane === "run" ? <section className="home-card mb-3 p-4" aria-label="训练资源"><h2 className="text-sm font-bold text-muted">训练资源</h2><button type="button" className="mt-2 flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left font-bold" onClick={() => setTechniqueLibrary(true)}><span>跑步技术动作库 · 53 项</span><span aria-hidden="true" className="text-muted">›</span></button></section> : null}
+        {tab === "plan" && hubPane === "lift" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} lens="lift" /> : null}
         {tab === "plan" && hubPane === "lift" ? <section className="home-card product-goal-card mb-3 p-4" aria-label="当前目标">
           <div className="product-section-heading"><div><p className="product-eyebrow">目标与约束</p><h2>{GOALS.find(goal => goal.id === preference.primaryGoal)?.label ?? "目标待确认"}</h2></div><button type="button" className="product-text-action" onClick={() => { setSettingsPane("goals"); setSettingsOpen(true); }}>修改 ›</button></div>
           <p className="mt-2 text-sm text-muted">{profileFilled(profile) ? profileSummary(profile) : "当前能力、期限、可用时间与运动限制，需进一步确认。"}</p>
@@ -817,26 +824,25 @@ export function StrengthApp() {
       </div>
       <StandaloneWelcome />
       {settingsOpen ? (
-        <div className="fixed inset-0 z-40 overflow-y-auto bg-bg">
+        <div ref={settingsScroll} className="fixed inset-0 z-40 overflow-y-auto bg-bg" data-testid="settings-overlay">
         <div className="mx-auto max-w-3xl px-4 pb-nav" style={{ paddingTop: "max(6px, env(safe-area-inset-top))" }}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-accent">RUNNING & STRENGTH</p>
-              <h2 className="text-[1.55rem] font-bold">个人与数据</h2>
+              <p className="text-[11px] font-semibold tracking-[0.16em] text-accent">{settingsPane === "menu" ? "RUNNING & STRENGTH" : "个人与设置"}</p>
+              <h2 className="text-[1.55rem] font-bold">{({ menu: "个人与设置", athlete: "运动员档案", goals: "训练目标与赛季计划", health: "健康与训练限制", sync: "设备连接与同步", import: "数据导入", backup: "备份与恢复", coach: "教练与提醒", theme: "外观与显示", ai: "AI 服务与联网功能", privacy: "隐私与数据流向" } as Record<SettingsPane, string>)[settingsPane]}</h2>
             </div>
             <button type="button" onClick={() => setSettingsOpen(false)} className="grid size-11 place-items-center rounded-full bg-surface shadow-sm" aria-label="关闭设置"><X className="size-5" /></button>
           </div>
-          {settingsPane === "menu" ? <section className="home-card mt-3 divide-y divide-line px-4">
-            <button type="button" onClick={() => setProfileOpen(true)} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><span className="chip-run grid size-10 shrink-0 place-items-center rounded-full"><UserRound className="size-4" /></span><span className="min-w-0 flex-1"><span className="block font-bold">运动员档案</span><span className="block text-xs text-muted">{profileFilled(profile) ? profileSummary(profile) : "多项目目标 · 填写后热量和教练才能读取"}</span></span><span aria-hidden="true">›</span></button>
-            <button type="button" onClick={() => setSettingsPane("goals")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Target className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">训练目标与赛季计划</span><span className="block text-xs font-normal text-muted">{SPORTS.find((item) => item.id === preference.sport)?.label ?? "项目未选"} · {GOALS.find((item) => item.id === preference.primaryGoal)?.label ?? "目标未选"}</span></span><span aria-hidden="true">›</span></button>
-            <button type="button" onClick={() => setSettingsPane("theme")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Palette className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">主题与壁纸</span><span className="block text-xs font-normal text-muted">浅色、深色、壁纸</span></span><span aria-hidden="true">›</span></button>
-            <button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { const node = document.getElementById("body-records"); if (node instanceof HTMLDetailsElement) node.open = true; document.getElementById("body-devices")?.scrollIntoView({ block: "start" }); }, 40); }} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Watch className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">运动设备</span><span className="block text-xs font-normal text-muted">导入与设备说明</span></span><span aria-hidden="true">›</span></button>
-            <button type="button" onClick={() => setSettingsPane("backup")} className="flex min-h-16 w-full items-center gap-3 py-3 text-left"><Database className="size-4 shrink-0 text-accent" /><span className="min-w-0 flex-1"><span className="block font-bold">数据备份与恢复</span><span className="block text-xs font-normal text-muted">备份、恢复、导出</span></span><span aria-hidden="true">›</span></button>
-          </section> : null}
-          {settingsPane === "menu" ? <><StorageHint /><VisionSettings /></> : null}
-          {settingsPane === "menu" ? <div className="-mx-3 mt-3"><GarminSync /><details className="home-card mx-3 my-3 p-3"><summary className="min-h-11 cursor-pointer font-bold">设备导入</summary><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></details></div> : null}
-          {settingsPane === "menu" ? <SettingsHub onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
-          {settingsPane === "menu" ? null : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">返回列表</button>}
+          {settingsPane === "menu" ? <SettingsMenu profile={profile} sportGoal={`${SPORTS.find((item) => item.id === preference.sport)?.label ?? "项目未选"} · ${GOALS.find((item) => item.id === preference.primaryGoal)?.label ?? "目标未选"}`} displayText={`${displayMode === "light" ? "浅色" : displayMode === "dark" ? "深色" : "跟随系统"} · ${WALLPAPERS.find((w) => w.id === wallpaper)?.label ?? "默认壁纸"}`} onPane={setSettingsPane} onProfile={() => setProfileOpen(true)} /> : null}
+          {settingsPane === "menu" ? <StorageHint /> : null}
+          {settingsPane === "athlete" ? <><AthletePanel profile={profile} onEdit={() => setProfileOpen(true)} /><SettingsHub only={["p", "n"]} initialOpen="p" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
+          {settingsPane === "health" ? <><HealthPanel /><SettingsHub only={["h"]} initialOpen="h" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
+          {settingsPane === "sync" ? <><SyncStatusPanel conn={garminConn} /><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
+          {settingsPane === "import" ? <><section className="home-card mt-3 p-4"><h3 className="font-bold">导入手表文件或截图</h3><p className="mt-1 text-xs text-muted">导入的数据会先给你核对，确认后才保存；与佳明账号同步分开记录来源。</p><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></section><button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { const node = document.getElementById("body-records"); if (node instanceof HTMLDetailsElement) node.open = true; document.getElementById("body-devices")?.scrollIntoView({ block: "start" }); }, 40); }} className="home-card mt-3 flex min-h-14 w-full items-center justify-between px-4 text-left text-sm"><span><b className="block">健康页 · 设备记录与说明</b><span className="text-xs text-muted">查看已导入的设备数据和各品牌导入说明</span></span><span aria-hidden="true">›</span></button></> : null}
+          {settingsPane === "coach" ? <SettingsHub only={["c", "r"]} initialOpen="c" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
+          {settingsPane === "ai" ? <><VisionSettings /><p className="mt-2 px-1 text-xs text-muted">体脂秤和营养标签拍照：照片在手机上识字，只把文字发给服务端整理，照片不上传。详细说明见「隐私与数据流向」。</p></> : null}
+          {settingsPane === "privacy" ? <><PrivacyPanel /><SettingsHub only={["x"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
+          {settingsPane === "menu" ? null : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">‹ 返回个人与设置</button>}
           {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
             <h2 className="font-bold">界面与壁纸</h2>
             
@@ -866,6 +872,7 @@ export function StrengthApp() {
               ))}
             </div>
           </section> : null}
+          {settingsPane === "theme" ? <SettingsHub only={["v"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "goals" ? <section id="settings-goals" className="home-card mt-3 p-4 text-sm">
             <h2 className="font-bold">运动项目与目标</h2>
             
@@ -904,10 +911,7 @@ export function StrengthApp() {
             </div>
             {goalSaveFailed ? <p className="mt-2 text-warn">偏好没有写入本机，原来的记录还在。</p> : <p className="mt-2 text-xs text-muted">当前首页：{variant === "track" ? "田径" : variant === "fat-loss" ? "减脂" : variant === "muscle" ? "增肌 / 力量" : "综合体能"}。刷新后会记住这个选择。</p>}
           </section> : null}
-          {settingsPane === "backup" ? <section id="settings-backup" className="home-card mt-3 p-4 text-sm">
-            <h2 className="font-bold">本机备份</h2>
-            
-            <p className="mt-1 text-xs text-muted">版本 {TRIAL_VERSION}</p>
+          {settingsPane === "backup" ? <BackupCenter onNotice={setNotice} legacySlot={<div id="settings-backup" className="text-sm"><p className="mt-1 text-xs text-muted">版本 {TRIAL_VERSION}。「全部数据备份」已覆盖这些内容，这里保留给旧流程和大陆静态版。</p>
             <button type="button" className="mt-3 h-12 w-full rounded-card border border-line font-bold" onClick={() => {
               const blob = new Blob([collectLocalBackup(localStorage)], { type: "application/json" })
               const url = URL.createObjectURL(blob)
@@ -916,11 +920,11 @@ export function StrengthApp() {
               link.download = "running-strength-backup.json"
               link.click()
               URL.revokeObjectURL(url)
-              setNotice("备份已开始下载。它不包含模型密钥。")
-            }}>下载备份</button>
+              setNotice("浏览器已开始下载训练记录备份（仅 fr255- 开头的数据，不含模型密钥）。请在“文件/下载”里确认。")
+            }}>下载训练记录备份（旧格式）</button>
             <a className="mt-2 flex h-12 w-full items-center justify-center rounded-card border border-line font-bold" href="/running-strength-cn.zip" download="跑步力量-大陆静态版.zip">下载大陆静态网页包</a>
             <label className="mt-2 flex h-12 w-full items-center justify-center rounded-card border border-line font-bold">
-              从备份恢复
+              用旧格式文件恢复（训练记录备份）
               <input type="file" accept="application/json" className="sr-only" onChange={async (event) => {
                 const file = event.target.files?.[0]
                 event.target.value = ""
@@ -941,11 +945,13 @@ export function StrengthApp() {
                 }
               }} />
             </label>
-          </section> : null}
+            <button type="button" className="mt-2 min-h-11 w-full rounded-card border border-line" onClick={exportFeedback}>导出反馈记录</button>
+          </div>} /> : null}
           {notice ? <p className="mt-3 text-sm">{notice}</p> : null}
         </div>
         </div>
       ) : null}
+      <Plan400DayHost today={todayIso} />
       {true ? <QuickLog hideFab openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}

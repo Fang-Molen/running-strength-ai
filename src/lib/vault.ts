@@ -81,23 +81,27 @@ export function needsBackupReminder(): boolean {
   return seen !== APP_MAJOR;
 }
 export function markBackedUp(): void { localStorage.setItem("fk-app-major", APP_MAJOR); localStorage.setItem("fk-last-export", new Date().toISOString()); }
-export async function exportVault(): Promise<void> {
+/** 登录凭据 / 访问令牌永不进入备份文件（R1 FK-SET-003）。格式不变，旧备份照常可导入。 */
+const credential = (k: string) => /^grok-auth\./.test(k) || /(bearer|access)[-_.]?token|secret|password|api[-_]?key/i.test(k);
+/** 返回实际发生的动作：分享面板已完成 / 浏览器已触发下载 / 用户取消。网页无法确认文件是否已存到手机。 */
+export async function exportVault(): Promise<"shared" | "download" | "cancelled"> {
   const kv = await vaultAll();
   for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) kv.set(k, localStorage.getItem(k)!); }
+  for (const k of [...kv.keys()]) if (credential(k)) kv.delete(k);
   const blob = new Blob([JSON.stringify({ format: "fangkun-vault-backup", schema: VAULT_SCHEMA, exportedAt: new Date().toISOString(), data: Object.fromEntries(kv) })], { type: "application/json" });
   const name = `fangkun-backup-${new Date().toISOString().slice(0, 10)}.json`;
   const file = typeof File === "function" ? new File([blob], name, { type: "application/json" }) : null;
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (file && nav.canShare?.({ files: [file] })) {
-    try { await nav.share({ files: [file], title: "方坤全部数据备份" }); markBackedUp(); return; } catch (e) { if ((e as Error).name === "AbortError") return; }
+    try { await nav.share({ files: [file], title: "方坤全部数据备份" }); markBackedUp(); return "shared"; } catch (e) { if ((e as Error).name === "AbortError") return "cancelled"; }
   }
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); markBackedUp();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); markBackedUp(); return "download";
 }
 export async function importVault(file: File): Promise<number> {
   const b = JSON.parse(await file.text());
   if (b?.format !== "fangkun-vault-backup" || typeof b.data !== "object") throw new Error("不是方坤备份文件");
   const kv = new Map<string, string>(Object.entries(b.data).map(([k, v]) => [k, String(v)]));
   migrateKv(kv, Number(b.schema) || 1);
-  let n = 0; for (const [k, v] of kv) { localStorage.setItem(k, v); n++; }
+  let n = 0; for (const [k, v] of kv) { if (credential(k)) continue; localStorage.setItem(k, v); n++; }
   return n;
 }

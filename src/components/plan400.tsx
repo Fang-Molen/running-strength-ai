@@ -1,31 +1,58 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDown, ChevronRight, TriangleAlert, X } from "lucide-react";
 import { ExerciseEditor, PartChips, doseOf, UNIT_LABEL, type Ex } from "@/components/exercise-editor";
 import { fmtRest } from "@/lib/strength/rest";
 import { plan400StrengthEntry } from "@/lib/ui/plan400-start";
 import { loadSchedule, saveScheduledEntry } from "@/lib/ui/day-schedule";
-import plan from "../lib/plan400-v4.json" with { type: "json" };
+import { listTrainingOccurrences } from "@/lib/core/occurrence";
+import { scheduleExecutionId } from "@/lib/ui/scheduled-execution";
+import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
+import planJson from "../lib/plan400-v4.json" with { type: "json" };
 
-type Day = { orig: string; date: string; weekday: string; week: string; title: string; main: string[]; aux: string[]; strength: string[] };
-type Log = { done?: string; reps?: string; rest?: string; aux?: string; strength?: string; rpe?: string; pain?: string; r24?: string; r48?: string; note?: string; savedAt?: string };
+/* 原课表只读：plan400-v4.json 永不写回。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
+const plan = planJson as V4Plan;
+const days = plan.days;
+type Log = V4Log;
 const KEY = "fk-plan400-v4-log";
-const days = plan.days as Day[];
 const OKEY = "fk-plan400-v4-overrides";
+const EVT = "fk-plan400-changed";
+const OPEN_EVT = "fk-open-plan400-day";
 type Override = { parts: string[]; exercises: Ex[]; savedAt: string; betweenRestSec?: number | null };
+type Tab = "plan" | "during" | "after" | "later";
 const loadO = (): Record<string, Override> => { try { return JSON.parse(localStorage.getItem(OKEY) || "{}"); } catch { return {}; } };
-export function parseStrength(text: string): Ex[] {
-  const body = text.replace(/^[A-Z]\d?：/, "").replace(/；?RPE[^、]*$/, "");
-  const out: Ex[] = [];
-  for (const m of body.matchAll(/([^、；：\d]+?)\s*(\d+(?:—\d+)?)×(\d+(?:—\d+)?(?:秒|次|触地)?(?:\/(?:腿|侧))?)/g)) { const name = m[1].trim(); const raw = m[3]; const d = doseOf(name); const unit = /秒/.test(raw) ? "sec" : d.unit; out.push({ name, sets: m[2], reps: raw.replace(/秒|次|触地|\/(腿|侧)/g, ""), weight: "", rpe: "", unit, perSide: /\/(腿|侧)/.test(raw) || d.perSide }); }
-  return out;
+const load = (): Record<string, Log> => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; } };
+/** 合并写入同一天记录；读回校验，失败不报成功。 */
+function saveLog(date: string, patch: Log): boolean {
+  try {
+    const all = load(); const next = { ...all, [date]: { ...(all[date] ?? {}), ...patch, savedAt: new Date().toISOString() } };
+    const raw = JSON.stringify(next); localStorage.setItem(KEY, raw);
+    if (localStorage.getItem(KEY) !== raw) return false;
+    window.dispatchEvent(new Event(EVT)); return true;
+  } catch { return false; }
 }
-function StrengthOverride({ d }: { d: Day }) {
+function useLogs(): Record<string, Log> {
+  const [logs, setLogs] = useState<Record<string, Log>>({});
+  useEffect(() => { const f = () => setLogs(load()); f(); window.addEventListener(EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(EVT, f); window.removeEventListener("storage", f); }; }, []);
+  return logs;
+}
+function strengthLive(date: string): boolean {
+  try { const sid = scheduleExecutionId(strengthEntryId(date), "strength"); return listTrainingOccurrences().some(o => o.lifecycle === "IN_PROGRESS" && o.sessionId === sid); } catch { return false; }
+}
+export function openPlan400Day(date: string, tab: Tab = "plan") { window.dispatchEvent(new CustomEvent(OPEN_EVT, { detail: { date, tab } })); }
+export function plan400DayFor(date: string): { title: string; kind: ReturnType<typeof dayKind>; week: string } | null { const d = dayOf(plan, date); return d ? { title: d.title, kind: dayKind(d), week: d.week } : null; }
+const md = (iso: string) => `${Number(iso.slice(5, 7))}/${Number(iso.slice(8, 10))}`;
+const STATUS_CLS: Record<DayStatus, string> = { rest: "border-line text-muted", not_started: "border-line text-fg", upcoming: "border-line text-muted", in_progress: "border-accent text-accent", done: "border-[#47C29A] text-[#47C29A]", reduced: "border-[#47C29A] text-[#47C29A]", skipped: "border-line text-muted line-through decoration-1", unrecorded: "border-warn text-warn" };
+function StatusChip({ s }: { s: DayStatus }) { return <span className={"shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-bold " + STATUS_CLS[s]}>{STATUS_LABEL[s]}</span>; }
+function KindChip({ d }: { d: V4Day }) { const k = dayKind(d); return <span className="shrink-0 rounded-full bg-surface-2 px-2 py-0.5 text-[11px] text-muted">{KIND_LABEL[k]}{hasStrength(d) && k !== "rest" ? " + 力量" : ""}</span>; }
+
+function StrengthOverride({ d }: { d: V4Day }) {
   const [o, setO] = useState<Override | null>(() => loadO()[d.date] ?? null);
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<Override>(() => o ?? { parts: [], exercises: [], savedAt: "" });
+  const [startError, setStartError] = useState("");
   const text = d.strength.join("");
   if (/^无|^可做|^仅活动度/.test(text) && !o) return null;
   const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };
-  const [startError, setStartError] = useState("");
   const startStrength = async () => {
     if (!o) return;
     const entry = plan400StrengthEntry(d.date, d.title, o, doseOf);
@@ -38,59 +65,175 @@ function StrengthOverride({ d }: { d: Day }) {
     setStartError("");
     window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: entry.id }));
   };
-  return <div className="mt-2 rounded-card border border-line p-2">
+  const live = strengthLive(d.date);
+  return <div className="mt-2 rounded-xl bg-surface-2 p-3">
     {startError ? <p role="alert" className="text-sm text-risk">{startError}</p> : null}
-    {o && !edit ? <><p className="font-bold">我的力量安排</p><ul className="text-sm">{o.exercises.map((e, i) => <li key={i}>{e.name} {e.sets}×{e.reps}{UNIT_LABEL[e.unit ?? doseOf(e.name).unit]}{(e.perSide ?? doseOf(e.name).perSide) ? "/每侧" : ""}{e.weight ? ` @${e.weight}kg` : ""}{e.rpe ? ` RPE${e.rpe}` : ""}｜组间休息：{fmtRest(e.restSec)}</li>)}{o.betweenRestSec != null ? <li>动作之间休息：{fmtRest(o.betweenRestSec)}</li> : null}</ul></> : null}
+    {o && !edit ? <><p className="text-xs font-bold text-muted">我的力量安排（修改后的执行安排，原课表不变）</p><ul className="mt-1 space-y-0.5 text-sm">{o.exercises.map((e, i) => <li key={i}>{e.name} {e.sets}×{e.reps}{UNIT_LABEL[e.unit ?? doseOf(e.name).unit]}{(e.perSide ?? doseOf(e.name).perSide) ? "/每侧" : ""}{e.weight ? ` @${e.weight}kg` : ""}{e.rpe ? ` RPE${e.rpe}` : ""}｜组间休息：{fmtRest(e.restSec)}</li>)}{o.betweenRestSec != null ? <li>动作之间休息：{fmtRest(o.betweenRestSec)}</li> : null}</ul></> : null}
     {edit ? <div className="space-y-2"><PartChips value={draft.parts} onChange={(parts) => setDraft({ ...draft, parts })} /><ExerciseEditor value={draft.exercises} onChange={(exercises) => setDraft({ ...draft, exercises })} parts={draft.parts} betweenRest={draft.betweenRestSec ?? null} onBetweenRest={(v) => setDraft({ ...draft, betweenRestSec: v })} />
-      <div className="flex gap-2"><button type="button" className="min-h-10 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={() => save({ ...draft, savedAt: new Date().toISOString() })}>保存我的安排</button><button type="button" className="min-h-10 rounded-card border border-line px-3" onClick={() => setEdit(false)}>取消</button></div></div>
-      : <div className="mt-1 flex gap-2">{o ? <button type="button" className="min-h-10 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={() => { void startStrength(); }}>开始力量训练</button> : null}<button type="button" className="min-h-10 flex-1 rounded-card border border-line" onClick={() => { setDraft(o ?? { parts: [], exercises: parseStrength(text), savedAt: "" }); setEdit(true); }}>{o ? "修改力量" : "编辑力量动作"}</button>{o ? <button type="button" className="min-h-10 rounded-card border border-line px-3" onClick={() => save(null)}>恢复原计划</button> : null}</div>}
+      <div className="flex gap-2"><button type="button" className="min-h-11 flex-1 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => save({ ...draft, savedAt: new Date().toISOString() })}>保存我的安排</button><button type="button" className="min-h-11 rounded-xl border border-line px-3" onClick={() => setEdit(false)}>取消</button></div></div>
+      : <div className="mt-2 flex flex-wrap gap-2">{o ? <button type="button" className="min-h-11 flex-1 rounded-xl border border-accent font-bold text-accent" onClick={() => { void startStrength(); }}>{live ? "继续力量部分（逐组引导）" : "开始力量部分（逐组引导）"}</button> : null}<button type="button" className="min-h-11 flex-1 rounded-xl border border-line text-sm" onClick={() => { setDraft(o ?? { parts: [], exercises: parseStrength(text), savedAt: "" }); setEdit(true); }}>{o ? "修改力量安排" : "把力量动作设为可执行"}</button>{o ? <button type="button" className="min-h-11 rounded-xl border border-line px-3 text-sm" onClick={() => { if (window.confirm("恢复为原课表的力量文字？你的修改会删除，已完成的训练记录不受影响。")) save(null); }}>恢复原计划</button> : null}</div>}
   </div>;
 }
-const load = (): Record<string, Log> => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; } };
-const bj = () => new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
-const md = (iso: string) => `${Number(iso.slice(5, 7))}/${Number(iso.slice(8, 10))}`;
-const FIELDS: [keyof Log, string, string][] = [
-  ["reps", "正式主课实际分段", "如 150m: 21.3 / 21.0 / 21.6"], ["rest", "实际组间休息", "如 7分 / 8分"], ["aux", "辅助段（单独记录）", "如 60m渐进×3 完成"],
-  ["strength", "力量实际 组×重量×次数", "如 分腿蹲 2×20kg×5/腿"], ["rpe", "整课RPE (1-10)", "7"], ["pain", "疼痛部位/程度 (0-10)", "无 / 跟腱 2"],
-  ["r24", "24小时后：睡眠·恢复1-10·酸痛·腿沉", "6.5h · 7 · 小腿酸"], ["r48", "48-72小时后：恢复·热身轻快程度", "恢复好 · 轻快"], ["note", "备注 / 天气 / 场地", ""],
-];
-function DayCard({ d, log, onSave, open }: { d: Day; log: Log; onSave: (l: Log) => void; open?: boolean }) {
+export function parseStrength(text: string): Ex[] {
+  const body = text.replace(/^[A-Z]\d?：/, "").replace(/；?RPE[^、]*$/, "");
+  const out: Ex[] = [];
+  for (const m of body.matchAll(/([^、；：\d]+?)\s*(\d+(?:—\d+)?)×(\d+(?:—\d+)?(?:秒|次|触地)?(?:\/(?:腿|侧))?)/g)) { const name = m[1].trim(); const raw = m[3]; const d = doseOf(name); const unit = /秒/.test(raw) ? "sec" : d.unit; out.push({ name, sets: m[2], reps: raw.replace(/秒|次|触地|\/(腿|侧)/g, ""), weight: "", rpe: "", unit, perSide: /\/(腿|侧)/.test(raw) || d.perSide }); }
+  return out;
+}
+
+const DURING: [keyof Log, string, string][] = [["reps", "正式主课实际分段", "如 150m: 21.3 / 21.0 / 21.6"], ["rest", "实际组间休息", "如 7分 / 8分"], ["aux", "辅助段（单独记录）", "如 60m渐进×3 完成"], ["strength", "力量实际 组×重量×次数", "如 分腿蹲 2×20kg×5/腿"]];
+const AFTER: [keyof Log, string, string][] = [["rpe", "整课 RPE (1-10)", "7"], ["pain", "疼痛部位/程度 (0-10)", "无 / 跟腱 2"], ["note", "备注 / 天气 / 场地", ""]];
+const LATER: [keyof Log, string, string][] = [["r24", "24 小时后：睡眠·恢复1-10·酸痛·腿沉", "6.5h · 7 · 小腿酸"], ["r48", "48–72 小时后：恢复·热身轻快程度", "恢复好 · 轻快"]];
+
+function Fields({ list, value, onChange }: { list: [keyof Log, string, string][]; value: Log; onChange: (l: Log) => void }) {
+  return <>{list.map(([k, label, ph]) => <label key={k} className="block"><span className="text-xs text-muted">{label}</span><input className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder={ph} value={value[k] ?? ""} onChange={(e) => onChange({ ...value, [k]: e.target.value })} /></label>)}</>;
+}
+function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; initialTab: Tab; onClose: () => void }) {
+  const logs = useLogs(); const log = logs[d.date] ?? {};
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [edit, setEdit] = useState<Log>(log);
-  const status = log.done === "done" ? "✅" : log.done === "reduced" ? "🟡" : log.done === "skipped" ? "⏭" : "";
-  return <details open={open} className="rounded-xl border border-line bg-surface px-3 py-1">
-    <summary className="flex min-h-9 cursor-pointer items-center gap-2 text-sm"><span className="w-[5.5rem] shrink-0 whitespace-nowrap font-bold">{md(d.date)} {d.weekday}</span><span className="min-w-0 flex-1 truncate">{d.title}</span><span>{status}</span></summary>
-    
-    <div className="mt-2 space-y-1 text-sm"><p className="font-bold">正式主课 / 恢复课</p>{d.main.slice(1).map((t, i) => <p key={i}>{t}</p>)}
-      <p className="pt-1 font-bold">辅助激活与技术</p><p>{d.aux.join("")}</p><p className="pt-1 font-bold">力量与核心</p><p>{d.strength.join("")}</p><StrengthOverride d={d} /></div>
-    <div className="mt-3 space-y-2 border-t border-line pt-3 text-sm">
-      <div className="flex gap-2">{[["done", "完成"], ["reduced", "减量"], ["skipped", "取消"]].map(([v, t]) => <button key={v} type="button" className={"min-h-10 flex-1 rounded-card border border-line " + (edit.done === v ? "bg-accent text-accent-fg" : "")} onClick={() => setEdit({ ...edit, done: v })}>{t}</button>)}</div>
-      {FIELDS.map(([k, label, ph]) => <label key={k} className="block"><span className="text-xs text-muted">{label}</span><input className="min-h-10 w-full rounded-card border border-line bg-surface px-2" placeholder={ph} value={edit[k] ?? ""} onChange={(e) => setEdit({ ...edit, [k]: e.target.value })} /></label>)}
-      <button type="button" className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={() => onSave({ ...edit, savedAt: new Date().toISOString() })}>保存记录</button>
-      {log.savedAt ? <p className="keep text-xs text-muted">已保存 {log.savedAt.slice(0, 16).replace("T", " ")}</p> : null}
+  const [msg, setMsg] = useState("");
+  useEffect(() => { setEdit(load()[d.date] ?? {}); }, [d.date]);
+  const status = dayStatus(d, log, today, strengthLive(d.date));
+  const week = plan.weeks.find(w => w.week === d.week);
+  const commit = (keys: (keyof Log)[], extra: Log = {}) => { const patch: Log = { ...extra }; for (const k of keys) patch[k] = edit[k] ?? ""; const ok = saveLog(d.date, patch); setMsg(ok ? `已保存 ${new Date().toTimeString().slice(0, 5)}（本机）` : "没有保存成功，原记录未改变。请检查存储空间后重试。"); };
+  const tabs: [Tab, string][] = [["plan", "课表"], ["during", "训练中"], ["after", "训练后"], ["later", "24–72h"]];
+  const later = d.date >= today;
+  return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label={`${md(d.date)} ${d.title} 训练详情`} data-testid="plan400-day-sheet">
+    <div className="sticky top-0 z-10 border-b border-line bg-bg px-4 pb-2" style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }}>
+      <div className="mx-auto flex max-w-3xl items-start justify-between gap-2">
+        <div className="min-w-0"><p className="text-xs text-muted">{d.week === "TEST" ? "最终测试" : `${d.week}${week ? `｜${week.title}` : ""}`}</p><h2 className="text-lg font-bold">{md(d.date)} {d.weekday} · {d.title}</h2><div className="mt-1 flex flex-wrap gap-1.5"><KindChip d={d} /><StatusChip s={status} /></div></div>
+        <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full bg-surface" aria-label="关闭训练详情" onClick={onClose}><X className="size-5" /></button>
+      </div>
+      <div className="mx-auto mt-2 grid max-w-3xl grid-cols-4 gap-1 rounded-xl bg-surface p-1" role="tablist" aria-label="训练详情分区">{tabs.map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={"min-h-10 rounded-lg text-sm font-bold " + (tab === id ? "bg-accent text-accent-fg" : "text-muted")}>{label}</button>)}</div>
     </div>
-  </details>;
-}
-export function Plan400Today() {
-  const [logs, setLogs] = useState(load); const t = bj(); const d = days.find((x) => x.date === t);
-  const save = (date: string, l: Log) => { const n = { ...load(), [date]: l }; localStorage.setItem(KEY, JSON.stringify(n)); setLogs(n); };
-  if (!d) { const next = days.find((x) => x.date > t); return next ? <div className="home-card mb-3 p-3 text-sm">400m计划：第1天 {md(next.date)} {next.weekday}「{next.title}」</div> : null; }
-  return <div className="mb-3"><p className="mb-1 text-sm font-bold">今日 400m 计划课</p><DayCard d={d} log={logs[d.date] ?? {}} open onSave={(l) => save(d.date, l)} /></div>;
-}
-export function Plan400() {
-  const [logs, setLogs] = useState(load); const t = bj();
-  const save = (date: string, l: Log) => { const n = { ...load(), [date]: l }; localStorage.setItem(KEY, JSON.stringify(n)); setLogs(n); };
-  const weeks = plan.weeks as { week: string; title: string; range: string; principle: string }[];
-  const curWeek = (days.find((d) => d.date >= t) ?? days[days.length - 1])?.week;
-  const doneN = Object.values(logs).filter((l) => l.done).length;
-  const shifted = days.some(d => d.orig && d.orig !== d.date);
-  return <details className="home-card mb-3 px-3 py-1" aria-label="400米计划">
-    <summary className="flex min-h-11 cursor-pointer items-center gap-2"><b className="min-w-0 flex-1 truncate">{plan.name}</b><span className="keep shrink-0 text-xs text-muted">{curWeek ?? ""} · 已练 {doneN}/{days.length}</span></summary>
-    <div className="space-y-1 pb-2">
-    {shifted ? <p className="keep rounded-xl border border-amber-500/40 p-3 text-xs text-amber-300">导入日期待核对：日程已顺延{plan.shiftDays}天，周标题与原则仍含原日期。例如W3写着10月31日测试，对应日程却为11月2日—8日。执行前请核对测试日期；这里保留原课表，未自动改期。</p> : null}
-    {weeks.map((w) => { const ds = days.filter((d) => d.week === w.week); return <details key={w.week} open={w.week === curWeek} className="rounded-xl border border-line px-2">
-      <summary className="flex min-h-9 items-center cursor-pointer truncate text-sm font-bold">{w.week}｜{w.title}｜{md(ds[0].date)}—{md(ds[ds.length - 1].date)}</summary>
-      <details className="mb-1 text-xs text-muted"><summary className="keep cursor-pointer py-1">本周原则</summary><p className="keep">{w.principle}</p></details><div className="space-y-1">{ds.map((d) => <DayCard key={d.date} d={d} log={logs[d.date] ?? {}} onSave={(l) => save(d.date, l)} />)}</div></details>; })}
-    {days.filter((d) => d.week === "TEST").map((d) => <DayCard key={d.date} d={{ ...d, main: ["", ...d.main] }} log={logs[d.date] ?? {}} onSave={(l) => save(d.date, l)} />)}
+    <div className="mx-auto max-w-3xl space-y-3 px-4 pt-3 text-sm" style={{ paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}>
+      {tab === "plan" ? <>
+        <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(d.week === "TEST" ? d.main : d.main.slice(1)) || "原课表未写"}</p></section>
+        {d.aux.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">辅助激活与技术</h3><p className="mt-1 leading-6">{joinLines(d.aux)}</p></section> : null}
+        {d.strength.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">力量与核心 · 原课表</h3><p className="mt-1 leading-6">{joinLines(d.strength)}</p><StrengthOverride d={d} /></section> : null}
+        {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{week.principle}</p></details> : null}
+        <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">原文与原日期（只读）</summary><p className="mt-1 text-xs text-muted">原课表日期 {d.orig || "未记录"} → 当前日程 {d.date}{d.orig && d.orig !== d.date ? `（顺延 ${Math.round((Date.parse(d.date) - Date.parse(d.orig)) / 864e5)} 天）` : ""}</p><pre className="mt-2 whitespace-pre-wrap break-words text-xs leading-5">{[...d.main, ...d.aux, ...d.strength].join("\n")}</pre></details>
+      </> : null}
+      {tab === "during" ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
+        <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}</p>
+        <Fields list={DURING} value={edit} onChange={setEdit} />
+        <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux", "strength"])}>保存本段记录</button>
+        {hasStrength(d) ? <p className="text-xs text-muted">力量部分可在「课表」页设为可执行后逐组引导，记录会进入训练日志。</p> : null}
+      </section> : null}
+      {tab === "after" ? <section className="home-card space-y-3 p-4" aria-label="训练后反馈">
+        <p className="text-xs font-bold text-muted">这节课的结果</p>
+        <div className="grid grid-cols-3 gap-2">{([["done", "完成"], ["reduced", "减量完成"], ["skipped", "没练/取消"]] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={edit.done === v} className={"min-h-11 rounded-xl border text-sm font-bold " + (edit.done === v ? "border-accent bg-accent/15 text-accent" : "border-line")} onClick={() => setEdit({ ...edit, done: edit.done === v ? undefined : v })}>{t}</button>)}</div>
+        <Fields list={AFTER} value={edit} onChange={setEdit} />
+        <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { if (edit.done === "skipped" && log.done !== "skipped" && !window.confirm("标记为没练/取消？原课表不会改动，之后可以改回。")) return; commit(["rpe", "pain", "note"], { done: edit.done ?? "" }); }}>保存训练后反馈</button>
+        <p className="text-xs text-muted">24 小时、48–72 小时的恢复情况不用现在填，到时在「24–72h」补录。</p>
+      </section> : null}
+      {tab === "later" ? <section className="home-card space-y-3 p-4" aria-label="恢复补录">
+        {later ? <p className="rounded-xl bg-surface-2 p-2 text-xs text-muted">这节课还没过 24 小时，可以以后再填。</p> : null}
+        <Fields list={LATER} value={edit} onChange={setEdit} />
+        <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => commit(["r24", "r48"])}>保存恢复补录</button>
+      </section> : null}
+      {msg ? <p role="status" className="text-sm">{msg}</p> : log.savedAt ? <p className="text-xs text-muted">上次保存 {log.savedAt.slice(0, 16).replace("T", " ")}</p> : null}
+      <p className="text-xs text-muted">这一页的记录存在本机「400米V4 记录」里；目前还不会自动进入日志页的方坤复盘（力量部分逐组引导的记录除外）。</p>
     </div>
-  </details>;
+  </div>;
 }
+/** 全局只挂一次：首页卡、计划页、日历都通过事件打开同一个详情（同一日期 = 同一记录）。 */
+export function Plan400DayHost({ today }: { today: string }) {
+  const [open, setOpen] = useState<{ date: string; tab: Tab } | null>(null);
+  useEffect(() => { const h = (e: Event) => { const v = (e as CustomEvent<{ date: string; tab?: Tab }>).detail; if (v?.date && dayOf(plan, v.date)) setOpen({ date: v.date, tab: v.tab ?? "plan" }); }; window.addEventListener(OPEN_EVT, h); return () => window.removeEventListener(OPEN_EVT, h); }, []);
+  const d = open ? dayOf(plan, open.date) : undefined;
+  return d && open ? <DaySheet key={open.date + open.tab} d={d} today={today} initialTab={open.tab} onClose={() => setOpen(null)} /> : null;
+}
+
+function summaryLines(d: V4Day): string[] {
+  const k = dayKind(d), main = joinLines(d.main.slice(1)).split("\n")[0];
+  const out = [main ? `主课：${main.replace(/^正式主课：/, "")}` : ""];
+  if (d.aux.length) out.push(joinLines(d.aux).replace(/^辅助：/, "辅助："));
+  if (hasStrength(d)) out.push(`力量：${joinLines(d.strength)}`);
+  return (k === "rest" ? [main || "休息"] : out).filter(Boolean).slice(0, 3);
+}
+/** 首页：今天 V4 课摘要 + 唯一主操作。 */
+export function Plan400TodayCard({ today, onReview }: { today: string; onReview?: () => void }) {
+  const logs = useLogs();
+  const [live, setLive] = useState(false);
+  useEffect(() => { setLive(strengthLive(today)); }, [today, logs]);
+  if (!today) return null;
+  const d = dayOf(plan, today);
+  if (!d) { const next = days.find((x) => x.date > today); return next ? <section className="home-card mb-3 p-4 text-sm" aria-label="400米计划"><p className="text-xs text-muted">400米 V4</p><p className="mt-1">今天不在计划日程内。下一节：{md(next.date)} {next.weekday}「{next.title}」</p><button type="button" className="mt-2 min-h-11 text-accent" onClick={() => openPlan400Day(next.date)}>查看 ›</button></section> : null; }
+  const s = dayStatus(d, logs[d.date], today, live), cta = primaryCta(s);
+  const week = plan.weeks.find(w => w.week === d.week);
+  const go = () => { if (cta.action === "start" || cta.action === "continue") openPlan400Day(d.date, "during"); else if (cta.action === "review" || cta.action === "reason" || cta.action === "backfill") openPlan400Day(d.date, "after"); else openPlan400Day(d.date, "plan"); };
+  return <section className="home-card mb-3 p-4" aria-label="今日训练主卡" data-testid="today-main-card" data-status={s}>
+    <div className="flex items-center justify-between gap-2"><p className="min-w-0 truncate text-xs text-muted">今日 · 400米 V4 · {d.week}{week ? `｜${week.title}` : ""}</p><StatusChip s={s} /></div>
+    <h2 className="mt-1 text-xl font-bold">{d.title}</h2>
+    <p className="text-xs text-muted">{md(d.date)} {d.weekday} · <KindChip d={d} /></p>
+    <ul className="mt-2 space-y-1 text-sm leading-6">{summaryLines(d).map((t, i) => <li key={i} className="line-clamp-2">{t}</li>)}</ul>
+    <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent text-base font-bold text-accent-fg" data-testid="today-primary-cta" onClick={go}>{cta.label}</button>
+    <div className="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" className="min-h-11 text-accent" onClick={() => openPlan400Day(d.date, "plan")}>完整课表 ›</button>{s === "done" || s === "reduced" ? <button type="button" className="min-h-11 text-muted" onClick={() => openPlan400Day(d.date, "later")}>补充恢复信息</button> : null}{(s === "done" || s === "reduced") && onReview ? <button type="button" className="min-h-11 text-muted" onClick={onReview}>去日志看复盘</button> : null}</div>
+  </section>;
+}
+
+function DayRow({ d, today, logs }: { d: V4Day; today: string; logs: Record<string, Log> }) {
+  const s = dayStatus(d, logs[d.date], today);
+  return <button type="button" onClick={() => openPlan400Day(d.date)} className={"flex min-h-14 w-full items-center gap-2 border-t border-line py-2 text-left " + (d.date === today ? "rounded-lg bg-accent/10 px-2" : "")} aria-label={`${md(d.date)} ${d.weekday} ${d.title} ${STATUS_LABEL[s]}`}>
+    <span className="w-[4.6rem] shrink-0 text-sm"><b>{md(d.date)}</b> <span className="text-muted">{d.weekday}</span></span>
+    <span className="min-w-0 flex-1"><span className="block truncate font-bold">{d.title}</span><span className="block text-[11px] text-muted">{KIND_LABEL[dayKind(d)]}{hasStrength(d) && dayKind(d) !== "rest" ? " + 力量" : ""}{d.date === today ? " · 今天" : ""}</span></span>
+    <StatusChip s={s} /><ChevronRight className="size-4 shrink-0 text-muted" />
+  </button>;
+}
+/** 计划页：正式导入周期（V4）。当前周默认展开，其余周折叠，W1–W10 与最终测试全部可进入详情。 */
+export function Plan400Cycle({ today, sourceSlot, lens = "run" }: { today: string; sourceSlot?: React.ReactNode; lens?: "run" | "lift" }) {
+  const logs = useLogs();
+  const [showSource, setShowSource] = useState(false);
+  const [showDiff, setShowDiff] = useState(false);
+  const cw = currentWeek(plan, today);
+  const [openWeeks, setOpenWeeks] = useState<string[]>([]);
+  useEffect(() => { setOpenWeeks([cw]); }, [cw]);
+  const counts = useMemo(() => progressCounts(plan, logs), [logs]);
+  const conflicts = useMemo(() => dateConflicts(plan), []);
+  const shift = shiftSummary(plan);
+  const cur = plan.weeks.find(w => w.week === cw);
+  const finals = days.filter(d => d.week === "TEST");
+  const filt = (ds: V4Day[]) => lens === "lift" ? ds.filter(hasStrength) : ds;
+  return <section className="home-card mb-3 p-4" aria-label="正在执行的周期计划" data-testid="plan400-cycle">
+    <p className="text-xs text-muted">正在执行的周期计划</p>
+    <div className="mt-1 flex items-start justify-between gap-2"><h2 className="min-w-0 text-lg font-bold leading-snug">{plan.name}</h2><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={showSource} onClick={() => setShowSource(!showSource)}>来源 / 切换</button></div>
+    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入 · V4</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${cur.title}` : ""}</span></div>
+    <p className="mt-2 text-xs text-muted" data-testid="plan400-progress">已记录 {counts.recordedDays}/{counts.calendarEntries} 个日程（含休息/恢复日与测试）· 训练与测试课完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
+    {showSource && sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
+    {conflicts.length || shift.shifted ? <div className="mt-3 rounded-xl border border-warn/50 p-3 text-xs" role="status" data-testid="plan400-date-warning">
+      <p className="flex gap-1.5 font-bold text-warn"><TriangleAlert className="mt-0.5 size-4 shrink-0" />日期待核对</p>
+      <p className="mt-1 leading-5">导入日程整体顺延 {shift.shiftDays} 天{conflicts.length ? `；${conflicts.map(c => `${c.week} 标题写「${c.text}」，当前周显示 ${c.shownRange}`).join("；")}` : ""}。请核对原始安排后再执行相关测试课。这里保留原课表，未自动改期。</p>
+      <button type="button" className="mt-1 min-h-10 font-bold text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button>
+      {showDiff ? <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程都按原日期 +{shift.shiftDays} 天排入；最终测试原为 {plan.final?.orig ?? "—"}，现为 {plan.final?.date ?? "—"}。</li><li>是否改测试日期需要你确认，App 不会自动修改。</li></ul> : null}
+    </div> : null}
+    <div className="mt-3">{plan.weeks.map(w => { const ds = weekDays(plan, w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
+      return <div key={w.week} className="border-t border-line first:border-t-0">
+        <button type="button" aria-expanded={isOpen} onClick={() => setOpenWeeks(isOpen ? openWeeks.filter(x => x !== w.week) : [...openWeeks, w.week])} className="flex min-h-12 w-full items-center gap-2 py-2 text-left">
+          <span className={"w-9 shrink-0 text-sm font-bold " + (w.week === cw ? "text-accent" : "")}>{w.week}</span>
+          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{w.title}</span><span className="block text-[11px] text-muted">{md(ds[0].date)}—{md(ds[ds.length - 1].date)}{w.week === cw ? " · 本周" : ""}{conflicts.some(c => c.week === w.week) ? " · ⚠ 日期待核对" : ""}</span></span>
+          <ChevronDown className={"size-4 shrink-0 text-muted transition-transform " + (isOpen ? "rotate-180" : "")} />
+        </button>
+        {isOpen ? <div className="pb-2">{shown.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} />)}</div> : null}
+      </div>; })}
+      {lens === "run" ? finals.map(d => <div key={d.date} className="border-t border-line"><DayRow d={d} today={today} logs={logs} /></div>) : null}
+    </div>
+  </section>;
+}
+
+type TempEntry = { id: string; date: string; title: string; minutes: number; source: string; status: string; unplanned?: boolean; modality: string; exercises?: unknown[] };
+/** 临时 / 自建训练：与正式周期分开展示，只按真实 id 判断是否挂靠 V4。 */
+export function TempTrainingList<E extends TempEntry>({ entries, modality, title, onOpen, onAdd, addLabel, empty, footer }: { entries: E[]; modality: "run" | "strength"; title: string; onOpen: (e: E) => void; onAdd: () => void; addLabel: string; empty: string; footer?: React.ReactNode }) {
+  const list = entries.filter(e => e.modality === modality && ["planned", "done"].includes(e.status)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+  return <section className="home-card mb-3 p-4" aria-label={title}>
+    <div className="flex items-center justify-between gap-2"><h2 className="font-bold">{title}</h2><button type="button" className="min-h-11 rounded-full border border-accent px-3 text-sm font-bold text-accent" onClick={onAdd}>{addLabel}</button></div>
+    {list.map(e => { const l = entryLinkFor(e); return <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => onOpen(e)}>
+      <span className="min-w-0"><b className="block truncate">{e.title}</b><span className="block text-xs text-muted">{e.date} · {modality === "strength" ? `${e.exercises?.length ?? "—"}个动作` : `${e.minutes}分钟`} · {e.status === "done" ? "已完成" : "待执行"}</span>
+        <span className="mt-0.5 flex flex-wrap gap-1 text-[11px]"><span className="rounded-full bg-surface-2 px-2 text-muted">{l.sourceLabel}</span>{l.linkedToV4 ? <span className="rounded-full bg-surface-2 px-2 text-muted">挂靠 V4 当天课程</span> : <span className="rounded-full bg-surface-2 px-2 text-muted">未挂靠周期</span>}{l.sameDayV4 ? <span className="rounded-full border border-warn/50 px-2 text-warn">同日有 V4「{l.sameDayV4.title}」</span> : null}</span></span>
+      <ChevronRight className="size-4 shrink-0 text-muted" /></button>; })}
+    {!list.length ? <p className="border-t border-line py-3 text-sm text-muted">{empty}</p> : null}
+    {footer}
+  </section>;
+}
+function entryLinkFor(e: TempEntry) { return entryLink(plan, e); }
