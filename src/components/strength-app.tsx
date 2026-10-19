@@ -11,6 +11,10 @@ import { AthletePanel, BackupCenter, HealthPanel, PrivacyPanel, SettingsMenu, Sy
 import { Plan400Cycle, Plan400TodayCard, Plan400DayHost, TempTrainingList, ensurePlan400Entry, PLAN400_GUIDED_EVT, openPlan400Day } from "@/components/plan400";
 import { occurrenceVoided } from "@/lib/core/training-correction";
 import { RunImportPrompt } from "@/components/plan400-parts";
+import { loadTrainingActivities } from "@/lib/ui/training-read-model";
+import { todayCoordinationParts, todayPartsText, type TodayPart } from "@/lib/ui/coach-coordination-view";
+import { dayKind, hasRunPart, hasStrength, type V4Day } from "@/lib/ui/plan400-view";
+import v4PlanJson from "@/lib/plan400-v4.json" with { type: "json" };
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
@@ -370,10 +374,21 @@ export function StrengthApp() {
   useLocalReminders(todayIso);
   const liftLogged = Boolean(session && plan.cycle?.logs.some((log) => log.sessionId === session.id));
   const courseCount = (trackHome?.planId ? 1 : 0) + (session ? 1 : 0);
-  // Part records and undated legacy feedback cannot establish whole-course completion.
-  const doneCount = 0;
+  // v83（P0-05）：今日各项状态来自统一读模型（V4 分项事实 + 日程上其他计划课），不再写死 0。
+  const [todayCoord, setTodayCoord] = useState<{ parts: TodayPart[]; unplanned: number } | null>(null);
+  useEffect(() => {
+    const refresh = () => { try {
+      const pd = planSrc === "400m-v4" ? (v4PlanJson as { days: V4Day[] }).days.find(d => d.date === todayIso) : undefined;
+      const kind = pd ? dayKind(pd) : null;
+      setTodayCoord(todayCoordinationParts(loadTrainingActivities(), loadSchedule().entries, todayIso, pd && kind !== 'rest' ? { run: hasRunPart(pd), lift: hasStrength(pd) && kind !== 'recovery' } : null));
+    } catch { setTodayCoord(null); } };
+    refresh(); const un = onAppEvent(refresh);
+    const evs = ['fk-schedule-changed', 'fk-training-activities-changed', 'fk-plan400-changed', 'fk-plan400-components', 'fk-garmin-synced', 'storage'];
+    for (const e of evs) window.addEventListener(e, refresh);
+    return () => { un(); for (const e of evs) window.removeEventListener(e, refresh); };
+  }, [todayIso, planSrc, tab]);
   const liftSummary = (session?.moves ?? []).slice(0, 4).map((move) => displayName(move)).join(" · ");
-  const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : courseCount === 0 ? "暂无安排" : "待选择课程";
+  const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : todayCoord?.parts.length ? todayPartsText(todayCoord.parts) : courseCount === 0 ? "暂无安排" : "待选择课程";
   const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI · 测试版" : tab === "diet" ? "饮食" : "健康";
   const phaseLabel = plan.cycle ? PHASES.find((item) => item.week === plan.cycle?.week)?.label ?? "" : "";
   const headerHint = tab === "today"
@@ -832,7 +847,7 @@ export function StrengthApp() {
       </main>
       {tab === "log" ? <TrainingLogPage today={todayIso} plan={plan} onNavigate={(next) => setTab(next as typeof tab)} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
-        coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
+        coordinationPanel={<CoachCoordinationHub input={{ loaded: ready && !!todayCoord, todayParts: todayCoord?.parts, todayUnplanned: todayCoord?.unplanned, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
       <div className={tab === "diet" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
       <div className={tab === "body" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
