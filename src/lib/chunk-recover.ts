@@ -14,7 +14,10 @@ export async function recoverFromChunkError(): Promise<boolean> {
 let installed = false;
 export function installChunkRecovery() {
   if (installed || typeof window === "undefined") return; installed = true;
-  window.addEventListener("vite:preloadError", (e) => { e.preventDefault(); void recoverFromChunkError(); });
+  // Only a genuine stale-chunk failure reloads. Any other dynamic-import failure (for
+  // example the 3D viewer module or WebGL failing) must reach the caller's own catch,
+  // so its offline/text fallback shows instead of a page reload that drops the screen.
+  window.addEventListener("vite:preloadError", (e) => { if (!isChunkError((e as Event & { payload?: unknown }).payload)) return; e.preventDefault(); void recoverFromChunkError(); });
   window.addEventListener("unhandledrejection", (e) => { if (isChunkError(e.reason)) void recoverFromChunkError(); });
   window.addEventListener("error", (e) => { if (isChunkError(e.message)) void recoverFromChunkError(); });
 }
