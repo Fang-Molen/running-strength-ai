@@ -118,7 +118,8 @@ export function dedupeEntries(entries: ScheduleEntry[]): { entries: ScheduleEntr
 }
 export type WeekSummary = { planned: number; plannedMin: number; asPlanned: number; different: number; missed: number; open: number; unrecorded: number; partial: number; actualMin: number; reasons: [DeviationReason, number][]; note: string }
 export function weekSummary(entries: ScheduleEntry[], week: string[], today: string): WeekSummary {
-  const plan = entries.filter((e) => week.includes(e.date) && (e.status === "planned" || e.status === "done"))
+  // v83（P0-03）：计划外（记一笔等 unplanned）不是“计划”，不计入计划数，也不算“按计划完成”
+  const plan = entries.filter((e) => week.includes(e.date) && !e.unplanned && (e.status === "planned" || e.status === "done"))
   const r: WeekSummary = { planned: plan.length, plannedMin: plan.reduce((s, e) => s + e.minutes, 0), asPlanned: 0, different: 0, missed: 0, open: 0, unrecorded: 0, partial: 0, actualMin: 0, reasons: [], note: "" }
   const count: Partial<Record<DeviationReason, number>> = {}
   for (const e of plan) {

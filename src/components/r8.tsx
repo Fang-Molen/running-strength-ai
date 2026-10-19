@@ -14,12 +14,14 @@ import { computeStreak } from "@/lib/ui/streak"
 import { OVERRIDE_KEY, type Override } from "@/lib/ui/day-override"
 import { COLLECTED, effective, loadSettings, saveSettings, type AppSettings } from "@/lib/ui/app-settings"
 import { logMetrics } from "@/lib/ui/log-metrics"
-import { syncActualToLog } from "@/lib/ui/checklist-log"
 import { recoveryVerdict } from "@/lib/ui/recovery-verdict"
 import { readRecoveryInput, lastDeviceSync } from "@/components/health-extras"
 import { loadVitals } from "@/lib/nutrition/vitals"
 import { upsertCheck } from "@/lib/nutrition/body"
-import { createTrainingImportDraft, confirmTrainingImport } from "@/lib/core/training-import"
+import { saveQuickTraining, withdrawQuickRecords, QL_PENDING, type QuickRecordRef } from "@/lib/ui/quick-log-save"
+import { loadConfirmedTrainingImports } from "@/lib/core/training-import"
+import { occurrenceVoided } from "@/lib/core/training-correction"
+import { activityLocalDay } from "@/lib/ui/activity-format"
 import { ocr } from "@/components/device-import"
 import { SavedBadge } from "@/components/saved-badge"
 import { EnergyGauge } from "@/components/energy-gauge"
@@ -93,6 +95,8 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
 }
 const pickDefault = (step: number): Partial<Answers> => [{ source: DEFAULTS.source }, { goals: DEFAULTS.goals }, { experience: DEFAULTS.experience }, { venue: DEFAULTS.venue, equipment: DEFAULTS.equipment }, { days: DEFAULTS.days, minutes: DEFAULTS.minutes, when: null }][step] ?? {}
 
+/** v83：记一笔的训练事实（不在日程里）同样算打卡 */
+function quickDays(): Set<string> { try { return new Set(loadConfirmedTrainingImports().filter(x => /^act-q-n-/.test(x.draftId) && !occurrenceVoided(x.confirmedImportId) && x.occurredAt.value).map(x => activityLocalDay(x.occurredAt.value!)).filter((d): d is string => !!d)) } catch { return new Set() } }
 /* ---------------- 2) 首页摘要：目标回响 + 连续打卡 + 基线 + 恢复一句话 + 今天临时改 ---------------- */
 export function HomeHeader({ today, revision, onRecovery, onOverride, layout, onQuick, onEdit }: { today: string; revision: number; onRecovery: () => void; onOverride: (o: Override | null) => void; layout: Layout; onQuick: (id: QuickId | "more") => void; onEdit: () => void }) {
   const [st, setSt] = useState<{ goal: string | null; done: number; planned: number; streak: ReturnType<typeof computeStreak>; baseline: number; verdict: string; reason: string; ov: Override | null } | null>(null)
@@ -102,7 +106,7 @@ export function HomeHeader({ today, revision, onRecovery, onOverride, layout, on
     const tier = loadTier(), v = recoveryVerdict(gateRecovery(tier, readRecoveryInput(today)))
     const days = new Set(loadVitals().records.map((r) => r.observedOn)); for (const c of read<{ date: string }[]>("fk-checkin-v1", [])) days.add(c.date)
     const ov = read<Override | null>(OVERRIDE_KEY, null)
-    setSt({ goal: ans?.goals?.[0] ? goalLabel(ans.goals[0]) : null, done: sum.asPlanned + sum.different, planned: sum.planned, streak: computeStreak(s.entries, today), baseline: Math.max(0, 7 - days.size), verdict: v.title, reason: v.reasons[0] ?? "", ov: ov?.date === today ? ov : null })
+    setSt({ goal: ans?.goals?.[0] ? goalLabel(ans.goals[0]) : null, done: sum.asPlanned + sum.different, planned: sum.planned, streak: computeStreak(s.entries, today, quickDays()), baseline: Math.max(0, 7 - days.size), verdict: v.title, reason: v.reasons[0] ?? "", ov: ov?.date === today ? ov : null })
   }, [today, revision])
   if (!st) return null
   const setOv = (p: Partial<Override>) => { const n = { ...(st.ov ?? { date: today }), ...p, date: today }; const val = n.short || n.home ? n : null; localStorage.setItem(OVERRIDE_KEY, JSON.stringify(val)); setSt({ ...st, ov: val }); onOverride(val) }
@@ -150,22 +154,15 @@ export function HomeEditor({ layout, onChange, onClose }: { layout: Layout; onCh
 }
 
 /* ---------------- 3) 全局“+记一笔” ---------------- */
-const f = <T,>(v: T | null) => v == null ? { value: null, status: "ABSENT", sourceIds: [] } : { value: v, status: "RECORDED", sourceIds: ["user-confirmed"] }
-function saveParsed(p: Parsed, today: string, rpe: number | null = null): string {
-  if (p.kind === "weight") return upsertCheck({ date: today, weight: p.kg } as never) ? `已记体重 ${p.kg} kg` : "保存失败"
-  if (p.kind === "unknown") return "没认出来"
-  const s = loadSchedule(), at = new Date().toISOString()
-  const id = `q-${Date.now().toString(36)}`
-  const minutes = p.kind === "run" ? p.minutes ?? 30 : Math.max(10, p.sets * 3)
-  const e: ScheduleEntry = { id, date: today, kind: p.kind === "run" ? "run" : "strength", modality: p.kind === "run" ? "run" : "strength", title: p.kind === "run" ? `${p.title}${p.km ? ` ${p.km} 公里` : ""}` : `${p.name} ${p.sets}×${p.reps}${p.kg ? ` ${p.kg}kg` : ""}`, focus: [], minutes, intensity: "EASY", lowerHeavy: false, source: "custom", refId: null, status: "done", unplanned: true, slot: p.kind === "run" ? p.when ?? undefined : undefined, actual: { outcome: "as_planned", minutes, km: p.kind === "run" ? p.km : null, rpe, intensity: null, note: "记一笔", reasons: [], at } }
-  saveSchedule({ ...s, entries: [...s.entries, e] })
-  if (p.kind === "run") { const r = syncActualToLog(e, undefined); return r.ok ? "已记入训练日志" : `日志未同步：${r.reason}` }
-  const draft = createTrainingImportDraft({ sport: "STRENGTH", occurredAt: f(at.replace(/\.\d+Z$/, "Z")), title: f(e.title), durationSeconds: f(null), totalDistanceMeters: f(null), runningStructure: "UNAVAILABLE", runningSegments: [], strengthSets: Array.from({ length: p.sets }, (_, i) => ({ id: `q${i + 1}`, exerciseName: f(p.name), setOrdinal: f(i + 1), weightKg: f(p.kg), repetitions: f(p.reps), durationSeconds: f(null), recoverySeconds: f(null), completion: "COMPLETED" })), sessionRpe: f(rpe != null && rpe >= 1 ? Math.round(rpe) : null), subjectiveRecovery: f(null), sleepHours: f(null), pain: f(null), soreness: f(null), uncertainFields: [], conflicts: [], warnings: ["记一笔"] } as never, "TEXT", ["user-confirmed"])
-  draft.draftId = `act-${id}`
-  const r = confirmTrainingImport(draft); return r.ok ? "已记入训练日志" : `日志未同步：${r.reason}`
+// v83（P0-03）：记一笔只写一条“计划外”训练事实；不造“按计划完成”的日程条目、不补默认 30 分钟、不按组数估用时。
+function saveParsed(p: Parsed, today: string, rpe: number | null, noteId: string, at: string): { msg: string; ok: boolean; soft?: boolean; ref?: QuickRecordRef } {
+  if (p.kind === "weight") return upsertCheck({ date: today, weight: p.kg } as never) ? { ok: true, msg: `已记体重 ${p.kg} kg` } : { ok: false, msg: "保存失败" }
+  if (p.kind === "unknown") return { ok: false, msg: "没认出来" }
+  const r = saveQuickTraining(p, noteId, at, rpe)
+  return r.ok ? { ok: true, msg: r.msg, ref: r.ref } : { ok: false, soft: r.soft, msg: r.msg }
 }
 type Att = { id: string; name: string; url: string };
-type Note = { id: string; date: string; at: string; text: string; atts: Att[]; parsed?: string };
+type Note = { id: string; date: string; at: string; text: string; atts: Att[]; parsed?: string; /** v83：这条笔记生成的训练事实（稳定关联；删除时可一起撤回） */ records?: QuickRecordRef[] };
 const QL_DRAFT = "fk-quicklog-draft-v1", NOTES = "fk-notes-v1";
 const loadNotes = (): Note[] => { try { const v = JSON.parse(localStorage.getItem(NOTES) || "[]"); return Array.isArray(v) ? v : [] } catch { return [] } }
 async function toThumb(file: File): Promise<string> {
@@ -193,17 +190,44 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
     if (!text.trim() && !atts.length) { setErr("先写点什么或加一张截图"); return }
     saving.current = true; setBusy(true); setErr("")
     try {
-      let parsedMsg = ""
-      if (p) { parsedMsg = saveParsed(p, today, rpe); if (!parsedMsg.startsWith("已")) throw new Error(parsedMsg) }
-      const note: Note = { id: `n-${Date.now()}`, date: today, at: new Date().toISOString(), text: text.trim(), atts, parsed: p ? parsedMsg : undefined }
-      const next = [note, ...loadNotes()]
-      try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { throw new Error("本机存储已满或被禁用（截图较大时可先移除截图）") }
+      // 幂等：上次训练已入库但笔记没存上 → 重试沿用同一个 id，不会记两条
+      const body = text.trim(), pend = (() => { try { return JSON.parse(localStorage.getItem(QL_PENDING) || "null") as { id: string; at: string; text: string } | null } catch { return null } })()
+      const id = pend?.text === body ? pend.id : `n-${Date.now()}`, at = pend?.text === body ? pend.at : new Date().toISOString()
+      let parsedMsg = "", ref: QuickRecordRef | undefined, soft = false
+      if (p) {
+        try { localStorage.setItem(QL_PENDING, JSON.stringify({ id, at, text: body })) } catch { /* 最多重试时重复检查失效 */ }
+        const r = saveParsed(p, today, rpe, id, at); parsedMsg = r.msg; ref = r.ref; soft = !!r.soft
+        if (!r.ok && !soft) throw new Error(r.msg)
+      }
+      const note: Note = { id, date: today, at, text: body, atts, parsed: p ? parsedMsg : undefined, ...(ref ? { records: [ref] } : {}) }
+      const next = [note, ...loadNotes().filter(n => n.id !== id)]
+      try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { throw new Error(ref ? "训练已记入日志，但笔记原文没存上（本机存储已满？），再点一次保存只补存笔记，不会重复记训练" : "本机存储已满或被禁用（截图较大时可先移除截图）") }
+      localStorage.removeItem(QL_PENDING)
       setNotes(next); setText(""); setAtts([]); setRpe(null); localStorage.removeItem(QL_DRAFT); onSaved()
-      setToast(p ? "已保存，并记入训练/身体数据" : "已保存为笔记")
+      if (ref) window.dispatchEvent(new Event("fk-training-activities-changed"))
+      setToast(ref ? `已保存：${parsedMsg}` : p && !soft ? "已保存，并记入身体数据" : soft ? `已保存为笔记：${parsedMsg}` : "已保存为笔记")
     } catch (e) { saving.current = false; setErr(`保存失败：${(e as Error)?.message || "未知原因"}。输入已保留。`); setBusy(false); return }
     finally { setBusy(false); if (saving.current) setTimeout(() => { saving.current = false }, 600) }
   }
-  const delNote = (id: string) => { const next = loadNotes().filter((n) => n.id !== id); try { localStorage.setItem(NOTES, JSON.stringify(next)); setNotes(next); setToast("已删除这条记录") } catch { setErr("删除失败，请重试") } }
+  // v83（P0-04）：删除笔记 ≠ 删除训练。有关联训练时让用户选；撤回 = 作废更正（日志/统计/方坤都不再算），5 秒内可撤销。
+  const [askDel, setAskDel] = useState<Note | null>(null), [undo, setUndo] = useState<{ note: Note; withdrawn: number } | null>(null)
+  const delNote = (n: Note, withdraw: boolean) => {
+    const next = loadNotes().filter((x) => x.id !== n.id)
+    try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { setErr("删除失败，请重试"); return }
+    setNotes(next); setAskDel(null)
+    const linked = n.records?.length ?? 0
+    let withdrawn = 0
+    if (withdraw && linked) { withdrawn = withdrawQuickRecords(n.records); window.dispatchEvent(new Event("fk-training-activities-changed")) }
+    setToast(!linked ? (/^已记入训练日志/.test(n.parsed ?? "") ? "已删除笔记；这是旧版本笔记，没存关联，它记的训练仍在训练日志（要撤回请在日志里点这条→作废）" : "已删除笔记（没有关联训练记录，不影响训练日志）") : withdraw ? (withdrawn === linked ? "已删除笔记，并撤回它记的训练（日志/统计不再计入）" : `笔记已删除；训练撤回 ${withdrawn}/${linked} 条，其余请到训练日志里处理`) : "已删除笔记；它记的训练仍保留在训练日志")
+    setUndo({ note: n, withdrawn }); setTimeout(() => setUndo(u => u?.note.id === n.id ? null : u), 5000)
+  }
+  const undoDel = () => {
+    if (!undo) return
+    const next = [undo.note, ...loadNotes().filter(x => x.id !== undo.note.id)].sort((a, b) => b.at.localeCompare(a.at))
+    try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { setErr("撤销失败，请重试"); return }
+    if (undo.withdrawn) { withdrawQuickRecords(undo.note.records, true); window.dispatchEvent(new Event("fk-training-activities-changed")) }
+    setNotes(next); setUndo(null); setToast("已撤销删除")
+  }
   return <>
     <Toast msg={toast} />
     {open ? <Sheet label="记一笔" title="记一笔" sub={`${Number(today.slice(5, 7))}月${Number(today.slice(8, 10))}日 · 关闭会保留草稿`} onClose={() => setOpen(false)}
@@ -225,7 +249,15 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
           {p.kind === "run" || p.kind === "strength" ? <div className="mt-2"><EnergyGauge compact mode={p.kind === "run" ? "run" : "strength"} label="用力（可不填）" value={rpe} onChange={setRpe} /></div> : null}</>
           : <p className="text-muted">没有识别出训练或体重数据，将作为笔记保存，不会丢失。</p>}
       </div> : null}
-      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的记录</p><ul className="mt-1 divide-y divide-line">{notes.slice(0, 5).map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{stampCN(n.at)}{n.atts.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}</p></div><button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => delNote(n.id)}>删除已保存记录</button></li>)}</ul></div> : null}
+      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的记录</p><ul className="mt-1 divide-y divide-line">{notes.slice(0, 5).map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{stampCN(n.at)}{n.atts.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}</p></div><button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => n.records?.length ? setAskDel(n) : delNote(n, false)}>删除已保存记录</button></li>)}</ul></div> : null}
+      {askDel ? <div role="dialog" aria-label="删除这条记录" className="mt-3 rounded-2xl border border-[var(--color-risk)] p-3 text-sm">
+        <p className="font-bold">这条笔记记过一条训练（{askDel.parsed ?? "已记入训练日志"}）</p>
+        <p className="keep mt-1 text-xs text-muted">只删笔记：训练日志里那条训练保留。删除并撤回：训练也不再计入日志、统计和方坤（可在 5 秒内撤销，之后也能在训练日志里恢复）。</p>
+        <div className="mt-2 grid gap-2">
+          <button type="button" className="min-h-11 rounded-xl border border-line" onClick={() => delNote(askDel, false)}>仅删除笔记（训练保留）</button>
+          <button type="button" className="min-h-11 rounded-xl border border-[var(--color-risk)] text-[var(--color-risk)]" onClick={() => delNote(askDel, true)}>删除并撤回这条训练</button>
+          <button type="button" className="min-h-11 text-xs text-muted" onClick={() => setAskDel(null)}>取消</button></div></div> : null}
+      {undo ? <div role="status" className="mt-2 flex items-center justify-between rounded-xl bg-surface p-2 text-sm"><span>已删除</span><button type="button" className="min-h-11 px-3 font-bold text-accent" onClick={undoDel}>撤销</button></div> : null}
     </Sheet> : null}
   </>
 }

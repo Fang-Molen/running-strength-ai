@@ -2,7 +2,9 @@
 import { addDays, weekOf, type ScheduleEntry } from "./day-schedule-rules.ts"
 import { canShow, type Tier } from "./watch-mode.ts"
 const W = { EASY: 1, MODERATE: 2, HARD: 3 } as const
-const minutesOf = (e: ScheduleEntry) => (e.actual?.outcome === "missed" ? 0 : e.actual?.outcome === "different" ? e.actual.minutes ?? 0 : e.minutes)
+// v83：旧版本“记一笔”的分钟数是默认值（跑步 30 / 力量按组数估），不是实际用时 → 不计入负荷
+const legacyQuickDefault = (e: ScheduleEntry) => !!e.unplanned && /^q-/.test(e.id) && e.actual?.note === "记一笔" && (e.modality !== "run" || e.minutes === 30)
+const minutesOf = (e: ScheduleEntry) => legacyQuickDefault(e) ? 0 : (e.actual?.outcome === "missed" ? 0 : e.actual?.outcome === "different" ? e.actual.minutes ?? 0 : e.minutes)
 const loadOf = (e: ScheduleEntry) => minutesOf(e) * W[e.actual?.intensity ?? e.intensity]
 export function weeklyMinutes(entries: ScheduleEntry[], today: string, weeks = 4): { week: string; minutes: number }[] {
   const out: { week: string; minutes: number }[] = []

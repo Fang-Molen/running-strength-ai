@@ -17,9 +17,10 @@ import type { ScheduleEntry } from './day-schedule-rules';
 import { matchRuns, v4RunSlots, allRunLinks, v4RunSlotId, type RunLink, type RunSuggestion } from './run-link';
 import { loadComponents, type DayComponents, type ComponentsDoc } from './plan400-components-store';
 import { v4DayFact, type V4Day, type V4DayFact, type V4Log } from './plan400-view';
+import { legacyQuickAudit, type LegacyQuickAudit } from './quick-log-save'
 import { v4ExecFrom, type V4Exec } from './v4-exec';
 export type RowSource = 'execution' | 'phone' | 'import' | 'garmin'
-export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents; /** v83：V4 当天课的分项事实投影（唯一口径：首页/计划/日志/方坤共用） */ v4?: V4DayFact & { date: string }; /** v83：合并进这一条的原始记录（各自来源/项目/时长），用于分项时长与追溯 */ members?: { id: string; source: RowSource; sport: LoggedSession['sport']; durationSec: number | null; status?: 'completed' | 'incomplete' }[]; /** v83：有分项缺时长，durationSec 只是已知部分之和 */ durationPartial?: boolean };
+export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents; /** v83：V4 当天课的分项事实投影（唯一口径：首页/计划/日志/方坤共用） */ v4?: V4DayFact & { date: string }; /** v83：合并进这一条的原始记录（各自来源/项目/时长），用于分项时长与追溯 */ members?: { id: string; source: RowSource; sport: LoggedSession['sport']; durationSec: number | null; status?: 'completed' | 'incomplete' }[]; /** v83：有分项缺时长，durationSec 只是已知部分之和 */ durationPartial?: boolean; /** v83：记一笔（计划外）生成 */ quickLog?: boolean; /** v83：数据口径说明（如“用时未知（旧版本可能填了默认 30 分钟）”） */ note?: string };
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
 const day = (iso: string) => activityLocalDay(iso);
 function sameActivity(a: ActivityRow, b: ActivityRow) {
@@ -91,12 +92,18 @@ export function loadTrainingActivities(): ActivityRow[] {
       strengthVolumeKg: completed.length && completed.every(s => s.mode === 'reps' && s.actualWeight != null) ? completed.reduce((sum, s) => sum + s.actualWeight! * s.actualAmount!, 0) : null,
       sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : []), ...(/^scheduled:plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(10, 28), `sched:${o.planSlotId!.slice(10).replace(/:run$/, '')}`] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
   }
+  // v83（P0-03）：旧版本记一笔的默认用时，读时如实改成“未知”（不改存储）
+  let qa = new Map<string, LegacyQuickAudit>()
+  try { qa = legacyQuickAudit(JSON.parse(localStorage.getItem('fk-schedule-v1') ?? '{}')?.entries ?? [], JSON.parse(localStorage.getItem('fk-notes-v1') ?? '[]')) } catch { /* 无日程/笔记 */ }
   for (const x of coachImports().filter(x=>!occurrenceVoided(x.confirmedImportId))) {
     if (!x.occurredAt.value || !day(x.occurredAt.value)) continue;
     const sets = x.strengthSets.filter(s => s.completion === 'COMPLETED');
     const identity = typeof x.sourceRecordIdentity === 'string' ? [x.sourceRecordIdentity] : [];
     rows.push({ id: x.draftId, startedAt: x.occurredAt.value, date: day(x.occurredAt.value)!, sport: x.sport, distanceM: x.totalDistanceMeters.value, durationSec: x.durationSeconds.value,
       strengthVolumeKg: sets.length && sets.every(s => s.weightKg.value != null && s.repetitions.value != null) ? sets.reduce((sum, s) => sum + s.weightKg.value! * s.repetitions.value!, 0) : null, sets: sets.length || null, rpe: x.sessionRpe.value, source: 'import', originIds: [x.draftId, ...identity, ...(linkedDrafts.get(x.draftId) ?? [])], title: x.title.value ?? '', importId: x.confirmedImportId, status: 'completed', appMade: /^(act-|chk-|q-)/.test(x.draftId) });
+    const q = qa.get(x.draftId), last = rows[rows.length - 1]
+    if (q) { last.durationSec = q.durationSec; last.distanceM ??= q.distanceM; last.title = q.title; if (q.note) last.note = q.note; last.quickLog = true }
+    else if (/^act-q-n-/.test(x.draftId)) last.quickLog = true
   }
   rows.push(...orphanSetRows(events, occurrences), ...phoneRows());
   try { rows.push(...garminRows(JSON.parse(localStorage.getItem(garminViewKey('fk-garmin-acts-v1')) ?? '{}'))); } catch { /* no device cache */ }
@@ -187,7 +194,7 @@ export function orphanSetRows(events: Ev[], occurrences: { trainingOccurrenceId:
     originIds: [`sets:${g.sessionId}:${g.date}`], title: sessionTitle(g.sessionId) ?? '力量训练', status: g.finished ? 'completed' as const : 'incomplete' as const }))
 }
 type V4LogLite = { done?: string; reps?: string; rest?: string; aux?: string; strength?: string; rpe?: string; pain?: string; note?: string; savedAt?: string }
-type Sched = { id: string; date: string; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[]; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' }; restLog?: unknown[]; exercises?: { sets?: string }[] }
+type Sched = { id: string; date: string; unplanned?: boolean; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; note?: string; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[]; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' }; restLog?: unknown[]; exercises?: { sets?: string }[] }
 type Check = { date?: string; sessionId?: string; moves?: Record<string, { done?: boolean }[]>; startedAt?: number | null; updatedAt?: number; rpe?: number | null; run?: { done?: boolean } | null }
 const isStrength = (e: Sched) => e.modality === 'strength' || e.kind === 'strength' || e.trainingType === 'strength' || e.trainingType === 'mixed'
 /** 日程（今日卡片、计划、+记一笔、400m 计划力量日）+ 今日逐组清单。日期 = 这节课的日期，不是保存时间。 */
@@ -210,7 +217,7 @@ export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localS
     const startedMs = c?.startedAt && day(new Date(c.startedAt).toISOString()) === e.date ? c.startedAt : null
     // v83（P0-02）：plan400:<date>:strength 只是 V4 当天的力量执行入口，不能因 trainingType=mixed 就说跑过（跑步分项另算）
     rows.push({ id: `sched:${e.id}`, startedAt: startedMs ? new Date(startedMs).toISOString() : localNoon(e.date), timeUnknown: !startedMs, date: e.date, sport: e.trainingType === 'mixed' && !e.id.startsWith('plan400:') ? 'MIXED' : 'STRENGTH', distanceM: null,
-      durationSec: a?.minutes ? a.minutes * 60 : null, strengthVolumeKg: null, sets: ci?.done || null, rpe: a?.rpe ?? c?.rpe ?? null, source: 'phone', appMade: true, title: e.title || '力量训练',
+      durationSec: a?.minutes && !(e.unplanned && /^q-/.test(e.id) && a.note === '记一笔') ? a.minutes * 60 : null, strengthVolumeKg: null, sets: ci?.done || null, rpe: a?.rpe ?? c?.rpe ?? null, source: 'phone', appMade: true, title: e.title || '力量训练',
       status: did ? 'completed' : 'incomplete',
       originIds: [`sched:${e.id}`, sanitize(`act-${e.id}`), ...(e.refId ? [sanitize(`chk-${e.date}-${e.refId}`)] : []), sanitize(`chk-${e.date}-${e.id}`), ...(e.refId ? [`sets:${e.refId}:${e.date}`, `chk:${e.date}:${e.refId}`] : []), `chk:${e.date}:${e.id}`, ...(a?.occurrenceIds ?? [])] })
   }

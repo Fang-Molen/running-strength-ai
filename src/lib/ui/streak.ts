@@ -3,17 +3,19 @@ import { weekOf, type ScheduleEntry } from "./day-schedule-rules.ts"
 export const FREEZES_PER_WEEK = 2
 const dayNum = (d: string) => Date.parse(d + "T00:00:00Z") / 864e5
 const iso = (n: number) => new Date(n * 864e5).toISOString().slice(0, 10)
-export function dayCounts(entries: ScheduleEntry[], date: string): boolean {
+/** extra：日程之外的训练事实日期（v83：记一笔只写训练事实，不再造日程条目），同样算打卡。 */
+export function dayCounts(entries: ScheduleEntry[], date: string, extra?: ReadonlySet<string>): boolean {
+  if (extra?.has(date)) return true
   return entries.some((e) => e.date === date && !!e.actual && (e.actual.outcome !== "missed" || e.actual.reasons.length > 0))
 }
 export type Streak = { days: number; frozen: string[]; todayDone: boolean; freezesLeft: number }
-export function computeStreak(entries: ScheduleEntry[], today: string): Streak {
-  const todayDone = dayCounts(entries, today)
+export function computeStreak(entries: ScheduleEntry[], today: string, extra?: ReadonlySet<string>): Streak {
+  const todayDone = dayCounts(entries, today, extra)
   let d = todayDone ? dayNum(today) : dayNum(today) - 1, days = 0
   const frozen: string[] = [], used = new Map<string, number>()
   for (let guard = 0; guard < 400; guard++, d--) {
     const date = iso(d)
-    if (dayCounts(entries, date)) { days++; continue }
+    if (dayCounts(entries, date, extra)) { days++; continue }
     const wk = weekOf(date)[0], u = used.get(wk) ?? 0
     if (u < FREEZES_PER_WEEK && hasHistoryBefore(entries, date)) { used.set(wk, u + 1); frozen.push(date); continue }
     break
