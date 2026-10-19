@@ -358,7 +358,8 @@ export function Plan400Cycle({ today, sourceSlot, lens = "run" }: { today: strin
 type TempEntry = { id: string; date: string; title: string; minutes: number; source: string; status: string; unplanned?: boolean; modality: string; exercises?: unknown[] };
 /** 临时 / 自建训练：与正式周期分开展示，只按真实 id 判断是否挂靠 V4。 */
 export function TempTrainingList<E extends TempEntry>({ entries, modality, title, onOpen, onAdd, addLabel, empty, footer }: { entries: E[]; modality: "run" | "strength"; title: string; onOpen: (e: E) => void; onAdd: () => void; addLabel: string; empty: string; footer?: React.ReactNode }) {
-  const list = entries.filter(e => e.modality === modality && ["planned", "done"].includes(e.status)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+  // v83（P2-03）：正式周期（V4 当天课程 plan400:*）只在上方周期计划里出现；计划外记录（记一笔等 unplanned）在日志里，不算“排了的训练”
+  const list = entries.filter(e => e.modality === modality && ["planned", "done"].includes(e.status) && !String(e.id).startsWith("plan400:") && !(e as { unplanned?: boolean }).unplanned).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
   return <section className="home-card mb-3 p-4" aria-label={title}>
     <div className="flex items-center justify-between gap-2"><h2 className="font-bold">{title}</h2><button type="button" className="min-h-11 rounded-full border border-accent px-3 text-sm font-bold text-accent" onClick={onAdd}>{addLabel}</button></div>
     {list.map(e => { const l = entryLinkFor(e); return <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => onOpen(e)}>
