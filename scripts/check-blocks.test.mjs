@@ -1,0 +1,23 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { readFileSync, existsSync } from 'node:fs'
+import { BLOCKS } from './blocks.mjs'
+import { checkBlock } from './check-blocks.mjs'
+test('every block passes its import boundary and lists existing tests', () => {
+  for (const name of Object.keys(BLOCKS)) {
+    assert.deepEqual(checkBlock(name), [], name)
+    for (const t of BLOCKS[name].tests) if (!t.includes('*')) assert.ok(existsSync(t), `${name}: ${t}`)
+  }
+})
+test('plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断)', () => {
+  const host = readFileSync('src/lib/coach/plan-execution/host.ts', 'utf8')
+  assert.doesNotMatch(host, /persistenceBoundary:\s*['"]COORDINATED_LOCAL['"]/)
+  assert.doesNotMatch(host, /calendarCoverage:\s*['"]COMPLETE['"]/)
+  assert.doesNotMatch(host, /['"]ALLOW_DATE_MOVE['"]/)
+})
+test('online coach stays default ON and client cap equals live server clip', () => {
+  const c = readFileSync('src/lib/coach/online-coach.ts', 'utf8'), s = readFileSync('functions/api/coach-chat.js', 'utf8')
+  assert.match(c, /on: true, consentAt: now/)
+  const cap = Number(/ONLINE_QUESTION_MAX = (\d+)/.exec(c)?.[1]), server = Number(/clip\(body\?\.question, (\d+)\)/.exec(s)?.[1])
+  assert.equal(cap, server)
+})

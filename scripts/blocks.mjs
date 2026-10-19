@@ -1,0 +1,88 @@
+// 方坤区块表（唯一出处）：docs/modules.md 的说明、npm run test:block:<名>、npm run check:blocks 都读这里。
+// files：区块源码（不含测试）；tests：只跑这些测试即可复测本区块；forbid：区块源码不得 import 的路径片段。
+export const BLOCKS = {
+  'read-model': {
+    desc: '训练读模型：各页同一份训练事实投影（V4 分项、记录合并、只算一次）',
+    files: ['src/lib/ui/training-read-model.ts', 'src/lib/ui/plan400-view.ts', 'src/lib/ui/v4-exec.ts', 'src/lib/ui/running-actual-totals.ts', 'src/lib/ui/log-range.ts'],
+    entry: 'src/lib/ui/training-read-model.ts',
+    tests: ['src/lib/ui/plan400-view.test.ts', 'src/lib/ui/v84-host-p0.test.ts', 'src/lib/ui/v84-merge.test.ts', 'src/lib/ui/v83-acceptance.test.ts', 'src/lib/ui/v82.test.ts', 'src/lib/ui/unfeedback-t489.test.ts', 'src/lib/ui/log-range.test.ts', 'src/lib/ui/training-log-view.test.ts'],
+    forbid: ['/lib/coach/', '/components/', 'online-coach', 'deepseek'],
+  },
+  'plan400-components': {
+    desc: 'V4 组合课分项存储（fk-plan400-v4-components-v1）与归属',
+    files: ['src/lib/ui/plan400-components-store.ts', 'src/lib/ui/plan400-components.ts', 'src/lib/ui/plan400-start.ts', 'src/lib/core/ownership.ts'],
+    entry: 'src/lib/ui/plan400-components-store.ts',
+    tests: ['src/lib/ui/plan400-components-store.test.ts', 'src/lib/ui/plan400-components.test.ts', 'src/lib/ui/plan400-component-owner.test.ts', 'src/lib/ui/plan400-start.test.ts', 'src/lib/ui/plan400-dates.test.ts'],
+    forbid: ['/lib/coach/', '/components/', 'training-read-model'],
+  },
+  'quick-log': {
+    desc: '记一笔：计划外快速记录（不补时长、不标按计划）',
+    files: ['src/lib/ui/quick-log.ts', 'src/lib/ui/quick-log-save.ts'],
+    entry: 'src/lib/ui/quick-log-save.ts',
+    tests: ['src/lib/ui/quick-log-v83.test.ts', 'src/lib/ui/r8.test.ts'],
+    forbid: ['/lib/coach/', '/components/', 'training-read-model'],
+  },
+  'garmin-link': {
+    desc: '计划跑步 ↔ 手表跑步关联（必须用户确认）与佳明同步',
+    files: ['src/lib/ui/run-link.ts', 'src/lib/ui/lap-structure.ts', 'src/lib/health/garmin-sync-runner.ts', 'src/lib/health/garmin-view-scope.ts', 'src/lib/health/garmin-account-owner.ts'],
+    entry: 'src/lib/ui/run-link.ts',
+    tests: ['src/lib/ui/run-link.test.ts', 'src/lib/ui/lap-structure.test.ts', 'src/lib/health/garmin-sync-runner.test.ts', 'src/lib/health/garmin-sync-status.test.ts'],
+    forbid: ['/lib/coach/', '/components/'],
+  },
+  'schedule': {
+    desc: '按天日程（fk-schedule-v1）与归属、放弃本次',
+    files: ['src/lib/ui/day-schedule.ts', 'src/lib/ui/day-schedule-rules.ts', 'src/lib/ui/guided-discard.ts', 'src/lib/ui/scheduled-execution.ts'],
+    entry: 'src/lib/ui/day-schedule.ts',
+    tests: ['src/lib/ui/day-schedule-ownership.test.ts', 'src/lib/ui/day-schedule-rules.test.ts', 'src/lib/ui/scheduled-training.test.ts'],
+    forbid: ['/lib/coach/', '/components/'],
+  },
+  'coach-local': {
+    desc: '本地方坤（规则引擎、首周计划、候选课表），不联网',
+    files: ['src/lib/coach/plain-coach.ts', 'src/lib/core/coach-local-first.ts', 'src/lib/core/coach-first-week.ts', 'src/lib/core/coach-plan.ts'],
+    entry: 'src/lib/core/coach-local-first.ts',
+    tests: ['src/lib/coach/plain-coach.test.ts', 'src/lib/core/coach-local-first.test.ts', 'src/lib/core/coach-proposal-ownership.test.ts', 'src/lib/core/coach-first-week.test.ts'],
+    forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/'],
+  },
+  'coach-online': {
+    desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
+    files: ['src/lib/coach/online-coach.ts', 'functions/api/coach-chat.js'],
+    entry: 'src/lib/coach/online-coach.ts',
+    tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts'],
+    forbid: ['/c03/', '/plan-execution/', 'server/coach-deepseek', '/components/'],
+  },
+  'c03': {
+    desc: 'C03 复盘论证：证据/两种限定解释/长期跟进 journal/保存后复核（仅本地路径）',
+    files: ['src/lib/coach/c03/argument.ts', 'src/lib/coach/c03/evidence.ts', 'src/lib/coach/c03/followup.ts', 'src/lib/coach/c03/runtime.ts'],
+    entry: 'src/lib/coach/c03/runtime.ts',
+    tests: ['src/lib/coach/c03/argument.test.ts', 'src/lib/coach/c03/evidence.test.ts', 'src/lib/coach/c03/followup.test.ts', 'src/lib/coach/c03/runtime.test.ts'],
+    forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule'],
+  },
+  'plan-execution': {
+    desc: '改课执行核心（IndexedDB 回执/撤销）。宿主固定 UNCOORDINATED：确认/撤销阻断',
+    files: ['src/lib/coach/plan-execution/core.ts', 'src/lib/coach/plan-execution/store.ts', 'src/lib/coach/plan-execution/host.ts'],
+    entry: 'src/lib/coach/plan-execution/host.ts',
+    tests: ['src/lib/coach/plan-execution/core.test.ts', 'src/lib/coach/plan-execution/host.test.ts', 'src/components/coach-plan-change-panel.test.tsx'],
+    forbid: ['/components/', 'online-coach', 'deepseek', '/c03/', 'plan400-components-store', 'quick-log'],
+  },
+  'health': {
+    desc: '健康/恢复（睡眠、HRV、主观恢复 1–10）',
+    files: ['src/lib/health/snapshot.ts', 'src/lib/health/recovery-quantitative.ts', 'src/lib/health/analysis.ts'],
+    entry: 'src/lib/health/snapshot.ts',
+    tests: ['src/lib/health/health-v74.test.ts', 'src/lib/health/health-hardening.test.ts', 'src/lib/health/recovery-quantitative.test.ts', 'src/lib/health/sync-status.test.ts'],
+    forbid: ['/lib/coach/', '/components/'],
+  },
+  'nutrition': {
+    desc: '饮食与食物库（cn.json / usda.json 资源不在精简包内）',
+    files: ['src/lib/nutrition/food-db.ts', 'src/lib/nutrition/catalog.ts', 'src/lib/nutrition/day.ts', 'src/lib/nutrition/entry-workflow.ts'],
+    entry: 'src/lib/nutrition/food-db.ts',
+    tests: ['src/lib/nutrition/*.test.ts'],
+    forbid: ['/lib/coach/', '/components/'],
+  },
+  'strength-ui': {
+    desc: '力量引导与计时（组间休息、放弃本次）',
+    files: ['src/lib/strength/guided-flow.ts', 'src/lib/strength/rest.ts', 'src/lib/ui/training-editor.ts'],
+    entry: 'src/lib/strength/guided-flow.ts',
+    tests: ['src/lib/strength/guided-flow.test.ts', 'src/lib/strength/rest.test.ts', 'src/lib/ui/strength-sources-v77.test.ts'],
+    forbid: ['/lib/coach/', 'online-coach'],
+  },
+}
