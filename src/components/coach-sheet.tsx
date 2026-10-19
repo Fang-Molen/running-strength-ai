@@ -601,7 +601,7 @@ export function CoachSheet({
                 (message.role === "user" ? "rounded-tr-md bg-accent text-accent-fg" : "rounded-tl-md stat-run text-fg")
               }
             >
-              {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
+              {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
               <span data-testid={message.role==='coach'?'coach-answer':undefined} className="whitespace-pre-wrap">{message.role==='coach'?message.text.split('\n依据：')[0]:message.text}</span>
               {message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
               {message.factDetails?<details data-testid="coach-fact-details" className="mt-2 text-xs"><summary className="min-h-8 cursor-pointer">查看分段核算详情</summary><p className="whitespace-pre-wrap break-words">{message.factDetails}</p></details>:null}
