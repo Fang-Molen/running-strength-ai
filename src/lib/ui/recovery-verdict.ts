@@ -2,7 +2,7 @@
 import { RULES } from "./day-schedule-rules.ts"
 export type RecoveryInput = { readiness: number | null; bodyBattery: number | null; sleepH: number | null; sleepBase: number | null; hrv: number | null; hrvBase: number | null; rhr: number | null; rhrBase: number | null; subjective: number | null; stress: number | null; pain?: "none" | "mild" | "sharp" | null }
 export type Verdict = { level: "go" | "watch" | "reduce" | "unknown"; title: string; reasons: string[]; note: string }
-export const VERDICT_RULES = { rhrRise: 5, lowBattery: 30, lowSubjective: 4, highStress: 75 } as const // 本应用【经验规则】
+export const VERDICT_RULES = { rhrRise: 5, lowBattery: 30, lowSubjective: 4, watchSubjective: 5, highStress: 75 } as const // 本应用【经验规则】
 export function recoveryVerdict(i: RecoveryInput): Verdict {
   const bad: string[] = [], soft: string[] = [], good: string[] = []
   if (i.readiness != null) (i.readiness < RULES.lowReadiness ? bad : good).push(`训练准备度 ${i.readiness}`)
@@ -10,7 +10,8 @@ export function recoveryVerdict(i: RecoveryInput): Verdict {
   if (i.hrv != null && i.hrvBase) (i.hrv < i.hrvBase * (1 - RULES.hrvDropPct / 100) ? bad : good).push(`HRV ${i.hrv}（平时 ${Math.round(i.hrvBase)}）`)
   if (i.rhr != null && i.rhrBase) (i.rhr >= i.rhrBase + VERDICT_RULES.rhrRise ? soft : good).push(`静息心率 ${i.rhr}（平时 ${Math.round(i.rhrBase)}）`)
   if (i.sleepH != null && i.sleepBase) (i.sleepH <= i.sleepBase - RULES.sleepWorseHours ? soft : good).push(`睡眠 ${i.sleepH} 小时（平时 ${i.sleepBase.toFixed(1)}）`)
-  if (i.subjective != null) (i.subjective <= VERDICT_RULES.lowSubjective ? bad : good).push(`主观恢复 ${i.subjective}/10`)
+  // v81：主观恢复统一 1–10（旧 1–5 已在读取时 ×2）。≤4 降强度；5 留意；≥6 正常。
+  if (i.subjective != null) (i.subjective <= VERDICT_RULES.lowSubjective ? bad : i.subjective <= VERDICT_RULES.watchSubjective ? soft : good).push(`主观恢复 ${i.subjective}/10`)
   if (i.stress != null && i.stress >= VERDICT_RULES.highStress) soft.push(`压力 ${i.stress}`)
   if (i.pain === "sharp") bad.push("明显疼痛（手册 P-03：疼痛先处理）")
   if (i.pain === "mild") soft.push("有点疼")

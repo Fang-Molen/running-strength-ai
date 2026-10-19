@@ -21,7 +21,7 @@ const localDate = () => { const d = new Date(); return `${d.getFullYear()}-${Str
 export function SchedulePicker({ date, onChoose, onClose, onAdd }: { date: string; onChoose: (e: ScheduleEntry) => void; onClose: () => void; onAdd: () => void }) {
   const entries = scheduledChoices(loadSchedule().entries, date), open = listTrainingOccurrences().filter(o => o.lifecycle === 'IN_PROGRESS');
   return <Sheet label="选择当天训练" title={`${date.slice(5).replace('-', '月')}日 · 训练计时`} sub="与首页所选日期的训练一致" onClose={onClose} footer={<button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={onAdd}>添加训练</button>}>
-    <div className="space-y-3">{entries.map(e => { const live = open.some(o => [scheduleExecutionId(e.id, 'run'), scheduleExecutionId(e.id, 'strength')].includes(o.sessionId)); return <button key={e.id} type="button" className="flex min-h-20 w-full items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 text-left" onClick={() => onChoose(e)}><span><b className="block">{e.title}</b><span className="mt-1 block text-sm text-muted">{e.date} · {e.minutes}分钟 · {e.exercises?.length ? `${e.exercises.length}个动作` : e.modality === 'run' ? '跑步' : '力量'}</span></span><span className="shrink-0 font-bold text-accent">{live ? '继续' : e.status === 'done' ? '查看' : '进入'} ›</span></button>; })}{!entries.length ? <p className="keep py-5 text-sm text-muted">这一天还没有确认的训练，请先添加。</p> : null}</div>
+    <div className="space-y-3">{entries.map(e => { const live = open.some(o => [scheduleExecutionId(e.id, 'run'), scheduleExecutionId(e.id, 'strength')].includes(o.sessionId)); return <button key={e.id} type="button" className="flex min-h-20 w-full items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 text-left" onClick={() => onChoose(e)}><span><b className="block">{e.title}</b><span className="mt-1 block text-sm text-muted">{e.date} · {e.minutes}分钟 · {e.exercises?.length ? `${e.exercises.length}个动作` : e.modality === 'run' ? '跑步' : '力量'}</span></span><span className="shrink-0 font-bold text-accent">{live ? '继续' : e.status === 'done' ? '查看' : '进入'} ›</span></button>; })}{!entries.length ? <><p className="keep pt-2 text-sm text-muted">这一天没有安排训练，下面是普通计时器（不记录训练）。</p><PlainTimer /></> : null}</div>
   </Sheet>;
 }
 
@@ -63,4 +63,19 @@ export function ScheduledTraining({ entry, plan, onClose, onEdit, onChanged, onR
     </> : null}
     <details className="mt-3 rounded-xl border border-line p-3 text-sm"><summary className="min-h-11 cursor-pointer font-bold">本节训练与已保存状态</summary><p className="keep">计划名称：{entry.title}。逐组、分段、休息与完成记录绑定本节训练。</p><p className="keep mt-2">返回后可继续未结束的训练；完成状态只依据实际保存的记录更新。</p><button type="button" className="mt-2 min-h-11 font-bold text-accent" onClick={onEdit}>编辑训练安排 ›</button><span hidden>{revision}</span></details>
   </Sheet>;
+}
+
+/** v81：当天没有训练时的普通计时器：正计时 + 常用倒计时。只在本页内计时，不写任何训练记录。 */
+export function PlainTimer() {
+  const [start, setStart] = useState<number | null>(null), [target, setTarget] = useState<number | null>(null), [now, setNow] = useState(Date.now()), [held, setHeld] = useState(0);
+  useEffect(() => { if (start == null) return; const t = setInterval(() => setNow(Date.now()), 250); return () => clearInterval(t); }, [start]);
+  const elapsed = held + (start != null ? Math.max(0, now - start) : 0), sec = Math.floor(elapsed / 1000);
+  const left = target != null ? Math.max(0, target - sec) : null, show = left != null ? left : sec;
+  const mmss = (n: number) => `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
+  return <section className="rounded-2xl border border-line p-4 text-center" aria-label="普通计时器" data-testid="plain-timer">
+    <p role="timer" className={"text-5xl font-black tabular-nums " + (left === 0 ? 'text-emerald-400' : 'text-accent')}>{mmss(show)}</p>
+    <p className="mt-1 text-xs text-muted">{target != null ? `倒计时 ${mmss(target)}${left === 0 ? ' · 到了' : ''}` : '正计时'}</p>
+    <div className="mt-3 flex flex-wrap justify-center gap-2">{[60, 90, 120, 180].map(n => <button key={n} type="button" className="fk-chip min-h-11" aria-pressed={target === n} onClick={() => { setTarget(n); setHeld(0); setStart(Date.now()); setNow(Date.now()); }}>{n}秒</button>)}<button type="button" className="fk-chip min-h-11" aria-pressed={target == null} onClick={() => { setTarget(null); setHeld(0); setStart(null); }}>正计时</button></div>
+    <div className="mt-3 flex justify-center gap-2"><button type="button" className="min-h-12 flex-1 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { if (start != null) { setHeld(elapsed); setStart(null); } else { setStart(Date.now()); setNow(Date.now()); } }}>{start != null ? '暂停' : '开始'}</button><button type="button" className="min-h-12 rounded-xl border border-line px-4" onClick={() => { setStart(null); setHeld(0); }}>归零</button></div>
+  </section>;
 }

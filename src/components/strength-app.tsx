@@ -8,7 +8,8 @@ const RunningTechniqueLibrary = lazy(() => import("@/components/running-techniqu
 const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 import { exportFeedback } from "@/components/coach-feedback";
 import { AthletePanel, BackupCenter, HealthPanel, PrivacyPanel, SettingsMenu, SyncStatusPanel, type GarminConnState, type SettingsPane } from "@/components/settings-center";
-import { Plan400Cycle, Plan400TodayCard, Plan400DayHost, TempTrainingList } from "@/components/plan400";
+import { Plan400Cycle, Plan400TodayCard, Plan400DayHost, TempTrainingList, ensurePlan400Entry, PLAN400_GUIDED_EVT, openPlan400Day } from "@/components/plan400";
+import { occurrenceVoided } from "@/lib/core/training-correction";
 import { RunImportPrompt } from "@/components/plan400-parts";
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
@@ -227,12 +228,23 @@ export function StrengthApp() {
     if (active) { setNotice('这节训练正在执行，当前组和休息已保留。请结束本课次后再修改日期、类型或训练参数。'); return; }
     setTrainingEditor({ date: entry.date, initial: entry });
   };
-  const openTimer = () => {
-    const active = listTrainingOccurrences().filter(o => o.lifecycle === 'IN_PROGRESS');
+  // v81（t510–t512）：「计时」按当天情况走同一个逐组引导：进行中的先继续；今天是 V4 课就先确保有可执行条目；
+  // 当天只有一节 → 直接打开；多节 → 让用户选；一节都没有 → 选择页里只给普通计时器。
+  const openTimer = async () => {
+    const active = listTrainingOccurrences().filter(o => o.lifecycle === 'IN_PROGRESS' && !occurrenceVoided(o.trainingOccurrenceId));
     if (active.length === 1) { resumeSession(active[0].sessionId); return; }
-    const choices = scheduledChoices(loadSchedule().entries, selectedDate);
+    if (planSrc === '400m-v4' && selectedDate === todayIso) await ensurePlan400Entry(todayIso).catch(() => null);
+    const all = loadSchedule().entries; setCalendar(all);
+    const choices = scheduledChoices(all, selectedDate);
     if (choices.length === 1) openScheduled(choices[0]); else setTimerPicker(true);
   };
+  useEffect(() => { const h = (ev: Event) => { const det = (ev as CustomEvent<{ date: string; handled: boolean }>).detail; det.handled = true; void (async () => {
+    const active = listTrainingOccurrences().filter(o => o.lifecycle === 'IN_PROGRESS' && !occurrenceVoided(o.trainingOccurrenceId) && o.sessionId.startsWith(`scheduled:plan400:${det.date}:`));
+    if (active.length) { resumeSession(active[0].sessionId); return; }
+    const r = await ensurePlan400Entry(det.date).catch(() => ({ id: null }));
+    const all = loadSchedule().entries; setCalendar(all);
+    if (r.id && all.some(e => e.id === r.id)) { setTimerPicker(false); setExecutionEntryId(r.id); } else openPlan400Day(det.date, 'during');
+  })(); }; window.addEventListener(PLAN400_GUIDED_EVT, h); return () => window.removeEventListener(PLAN400_GUIDED_EVT, h); }, []);
   const templateEntry = (id: string): ScheduleEntry | undefined => {
     const s = plan.sessions.find(s => s.id === id); if (!s) return;
     return { ...strengthEntry(s, selectedDate, 'custom'), title: s.name, exercises: s.moves.map(m => ({ id: uid(), catalogId: m.catalogId, name: displayName(m), sets: String(m.sets), reps: String(m.amount), weight: String(m.weightKg), rpe: '', unit: m.mode === 'seconds' ? 'sec' : 'reps', restSec: m.restSec })) };

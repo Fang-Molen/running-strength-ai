@@ -1,3 +1,4 @@
+import { occurrenceVoided } from "@/lib/core/training-correction"
 import {CoachSavedOfflineReview} from './coach-saved-offline-review'
 import { useEffect, useMemo, useRef, useState } from "react"
 import { TrainingRunner, resultLines } from "@/components/training-runner"
@@ -39,11 +40,12 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive, planSlotI
   const [summary, setSummary] = useState<ReturnType<typeof resultLines> | null>(null)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
+  const [discardNote, setDiscardNote] = useState("")
   const [held, setHeld] = useState(false)
   const [saveError,setSaveError]=useState("")
   const starting=useRef(false)
   const execution = executionOf(session.id)
-  const latestOccurrence = [...listTrainingOccurrences()].reverse().find((item) => item.sessionId === session.id) ?? null
+  const latestOccurrence = [...listTrainingOccurrences()].reverse().find((item) => item.sessionId === session.id && !occurrenceVoided(item.trainingOccurrenceId)) ?? null // v81：放弃（作废）的那次不算“已保存”
   const live = running || execution.open
   const frozen = latestOccurrence?.trainingPlanSnapshotId ? getTrainingPlanSnapshot(latestOccurrence.trainingPlanSnapshotId) : null
   const effectiveSession = useMemo(() => frozen ? {id:session.id,name:frozen.sessionName,moves:frozen.exercises.map(x=>({id:x.moveId,catalogId:x.catalogId,customName:x.name,sets:x.sets,mode:x.mode,amount:x.amount,restSec:x.restSec,weightKg:x.weightKg,executionNote:x.executionNote,...(x.perSide?{perSide:true,sideRestSec:x.sideRestSec??null}:{}),...(x.betweenRestSec!=null?{betweenRestSec:x.betweenRestSec}:{})}))} : null, [latestOccurrence?.trainingPlanSnapshotId, signature, live])
@@ -172,6 +174,8 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive, planSlotI
           session={effectiveSession}
           decisionId={executionOf(session.id).open && executionOf(session.id).decisionId ? (executionOf(session.id).decisionId as string) : current.decision_id}
           onDone={(result) => {
+            if (result.discarded) { setSummary(null); setFeedback(null); setRunning(false); onLive(null); setDiscardNote("已放弃本次，未记录。"); onFinished?.(); return }
+            setDiscardNote("")
             setSummary(resultLines(result.sets, result.pain))
             setFeedback(null)
             setRunning(false)
@@ -180,6 +184,7 @@ export function TrainingDecisionCard({ plan, session, onApply, onLive, planSlotI
           }}
         />
       ) : null}
+      {discardNote && !running ? <p role="status" className="mt-3 text-sm text-muted" data-testid="guided-discarded">{discardNote}</p> : null}
       {running && !effectiveSession ? <p role="alert" className="mt-3 text-sm text-risk">当前课次的原计划快照不可读，不能用修改后的课表继续记录。请核对日志与备份。</p> : null}
       {summary&&latestOccurrence?.trainingOccurrenceId?<CoachSavedOfflineReview occurrenceId={latestOccurrence.trainingOccurrenceId}/>:null}
       {summary ? (

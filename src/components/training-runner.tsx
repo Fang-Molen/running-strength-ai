@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { emptySets, deviationOf, executionOf, mainDeviation, mergeSets, outcomeReason, recordSet, setLine, stepRest, totalsOf, type SetRecord } from "@/lib/core/execution"
 import { completeTraining, interruptTraining, recordPain } from "@/lib/core/training-decision"
+import { discardGuided } from "@/lib/ui/guided-discard"
 import { getTrainingOccurrence, closeTrainingOccurrence } from "@/lib/core/occurrence"
 import { ExerciseContent } from "@/components/exercise-content"
 import { nextRunnerCursor, runnerInput } from "@/lib/strength/runner-input"
@@ -26,7 +27,7 @@ export function interruptFromRunner(decisionId: string, sessionId: string) {
   return closed && getTrainingOccurrence(closed.trainingOccurrenceId)?.closeEventId === event.event_id ? event : null
 }
 
-export function TrainingRunner(props: {session: Session; decisionId: string; embedded?: boolean; onDone: (result: {completed:boolean; interrupted:boolean; sets:SetRecord[]; pain:boolean})=>void}) {
+export function TrainingRunner(props: {session: Session; decisionId: string; embedded?: boolean; onDone: (result: {completed:boolean; interrupted:boolean; discarded?:boolean; sets:SetRecord[]; pain:boolean})=>void}) {
   const [inspect,setInspect] = useState<Move|null>(null)
   const trigger = useRef<HTMLElement|null>(null)
   const closeInspect = () => { setInspect(null); trigger.current?.focus(); };
@@ -42,7 +43,7 @@ function TrainingRunnerInner({
   onInspect: (move: Move) => void
   session: Session
   decisionId: string
-  onDone: (result: { completed: boolean; interrupted: boolean; sets: SetRecord[]; pain: boolean }) => void
+  onDone: (result: { completed: boolean; interrupted: boolean; discarded?: boolean; sets: SetRecord[]; pain: boolean }) => void
 }) {
   const [sets, setSets] = useState<SetRecord[]>(() => mergeSets(emptySets(session), executionOf(session.id).sets))
   const [cursor, setCursor] = useState(0)
@@ -62,6 +63,7 @@ function TrainingRunnerInner({
   const [restored, setRestored] = useState(false)
   const [saveError, setSaveError] = useState("")
   const timerKey = restKey(decisionId, session.id)
+  const [endAsk, setEndAsk] = useState(false)
   const guidedKey = `${timerKey}:guided`
   const [side, setSide] = useState<Side>(() => firstSide(session.moves[0]))
   const [restKind, setRestKind] = useState<RestKind | null>(null)
@@ -287,7 +289,12 @@ function TrainingRunnerInner({
         <h2 className="mt-2 text-2xl font-bold">{displayName(session.moves.find((move) => move.id === current.moveId) ?? session.moves[0])}</h2>
         <p className="mt-1 text-sm text-muted">第 {current.setIndex} / {moveSets.length} 组还没记完</p>
         <button type="button" className="mt-8 h-14 rounded-2xl bg-accent text-base font-bold text-accent-fg" onClick={() => setPhase("work")}>继续训练</button>
-        <button type="button" className="mt-3 h-11 text-sm text-risk" onClick={() => { if(!interruptFromRunner(decisionId, session.id)){setSaveError("结束未核实保存，请重试。");return;} clearRest(); onDone({ completed: false, interrupted: true, sets, pain }) }}>结束训练</button>
+        {!endAsk ? <button type="button" className="mt-3 h-11 text-sm text-risk" onClick={() => setEndAsk(true)}>结束训练</button>
+        : <div className="mt-3 grid gap-2" role="group" aria-label="结束训练方式">
+          <button type="button" className="h-12 rounded-2xl border border-line text-sm font-bold" onClick={() => { if(!interruptFromRunner(decisionId, session.id)){setSaveError("结束未核实保存，请重试。");return;} clearRest(); clearGuided(); onDone({ completed: false, interrupted: true, sets, pain }) }}>保存已做的组（记为中断）</button>
+          <button type="button" className="h-12 rounded-2xl border border-risk text-sm font-bold text-risk" onClick={() => { if (!window.confirm("放弃本次？已做的组不会保存，日志、复盘和五维都不会出现这次记录。")) return; if(!discardGuided(session.id)){setSaveError("放弃未核实保存，请重试。");return;} clearRest(); clearGuided(); onDone({ completed: false, interrupted: false, discarded: true, sets: [], pain: false }) }}>放弃本次，不记录</button>
+          <button type="button" className="h-11 text-sm text-muted" onClick={() => setEndAsk(false)}>取消</button>
+        </div>}
       </div>
     )
   }

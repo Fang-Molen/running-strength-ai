@@ -12,7 +12,8 @@ import { dayKind, type V4Day } from './plan400-view'
 export const RUN_LINKS_KEY = 'fk-run-links-v1'
 export type RunLinkStore = Record<string, { garminId?: string; by?: 'auto' | 'user'; rejected?: string[] }>
 export type RunLink = { entry: ScheduleEntry; run: ActivityRow; by: 'auto' | 'user' }
-const isRunEntry = (e: ScheduleEntry) => !!e && e.modality === 'run' && !e.actual && (e.status === 'planned' || e.status === 'proposed' || (e.status as string) === 'edited')
+// v81：plan400:<date>:… 日程条目只是 V4 当天的执行入口，跑步关联走 V4 跑步分项，不再当作另一节计划跑
+const isRunEntry = (e: ScheduleEntry) => !!e && e.modality === 'run' && !(e.id.startsWith('plan400:') && !e.id.endsWith(':running')) && !e.actual && (e.status === 'planned' || e.status === 'proposed' || (e.status as string) === 'edited')
 const isRun = (r: ActivityRow) => r.sport === 'RUNNING' && (r.source === 'garmin' || r.originIds.some(id => id.startsWith('garmin:')))
 const shift = (d: string, n: number) => { const t = new Date(d + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10) }
 export function planKm(e: ScheduleEntry): number | null {

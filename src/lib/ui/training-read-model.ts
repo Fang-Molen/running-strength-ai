@@ -35,6 +35,7 @@ export function mergeActivities(rows: ActivityRow[]): ActivityRow[] {
       if (!found.title || /佳明账号同步|^力量训练$/.test(found.title)) found.title = row.title || found.title
       found.avgHr ??= row.avgHr; found.garminId ??= row.garminId; found.importId ??= row.importId; found.occurrenceId ??= row.occurrenceId
       if (row.plan === 'v4') { found.plan = 'v4'; found.title = row.title; if (found.sport !== row.sport) found.sport = 'MIXED' }
+      else if (row.source === 'execution' && found.source === 'execution' && found.sport !== row.sport) found.sport = 'MIXED' // v81：同一节 V4 的跑步分段＋逐组力量 = 一条
       if (row.status === 'completed') found.status = 'completed'; if (row.appMade) found.appMade = true; if (found.timeUnknown && !row.timeUnknown && row.date === found.date) { found.startedAt = row.startedAt; found.timeUnknown = false }
       found.distanceM ??= row.distanceM; found.durationSec ??= row.durationSec; found.rpe ??= row.rpe; found.sets ??= row.sets
       continue;
@@ -81,7 +82,7 @@ export function loadTrainingActivities(): ActivityRow[] {
     const totals = runningActualTotals(run);
     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
       strengthVolumeKg: completed.length && completed.every(s => s.mode === 'reps' && s.actualWeight != null) ? completed.reduce((sum, s) => sum + s.actualWeight! * s.actualAmount!, 0) : null,
-      sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
+      sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : []), ...(/^scheduled:plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(10, 28), `sched:${o.planSlotId!.slice(10).replace(/:run$/, '')}`] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
   }
   for (const x of coachImports().filter(x=>!occurrenceVoided(x.confirmedImportId))) {
     if (!x.occurredAt.value || !day(x.occurredAt.value)) continue;

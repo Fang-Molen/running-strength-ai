@@ -1,6 +1,6 @@
 import { currentAthleteId } from '../core/events'
 import { currentStore } from '../core/storage'
-import { loadCheckins } from './legacy-inputs'
+import { loadCheckins, recovery10 } from './legacy-inputs'
 import type { HealthSnapshot } from './snapshot'
 import type { Checkin } from './legacy-inputs'
 import type { ScheduleEntry } from './legacy-inputs'
@@ -21,8 +21,8 @@ export function reviewFatigue(snapshot:HealthSnapshot,checkin:Checkin|null):Fati
   const view=(m:string)=>snapshot.metrics.find(x=>x.metric===m)
   const usable=(m:string)=>{const x=view(m);if(!x || x.state!=='AVAILABLE'){excluded.push(`${x?.label??m}：${x?.state==='CONFLICT'?'来源冲突':x?.state==='STALE'?'非当天数据':'缺失'}`);return null}return x}
   const sleep=usable('SLEEP'),hrv=usable('HRV'),rhr=usable('RHR'),rec=usable('RECOVERY')
-  const subjectiveKnown=!!ci?.fatigue&&['fresh','ok','tired'].includes(ci.fatigue)||Number.isFinite(ci?.recovery)&&ci!.recovery!>=1&&ci!.recovery!<=10||!!rec?.current
-  if(ci?.fatigue==='tired'||(ci?.recovery!=null&&ci.recovery>=1&&ci.recovery<=4)||rec?.current && rec.current.value<=4)signals.push({domain:'SUBJECTIVE',detail:'当天自述很累或主观恢复偏低',sourceIds:[...(ci?[`checkin:${day}`]:[]),...(rec?.current?[rec.current.id]:[])]})
+  const subjectiveKnown=!!ci?.fatigue&&['fresh','ok','tired'].includes(ci.fatigue)||recovery10(ci)!=null||!!rec?.current
+  if(ci?.fatigue==='tired'||(recovery10(ci)!=null&&recovery10(ci)!<=4)||rec?.current && rec.current.value<=4)signals.push({domain:'SUBJECTIVE',detail:'当天自述很累或主观恢复偏低',sourceIds:[...(ci?[`checkin:${day}`]:[]),...(rec?.current?[rec.current.id]:[])]})
   if(sleep?.baseline&&sleep.baseline.delta<=-FATIGUE_REVIEW_RULES.sleepDeltaHours)signals.push({domain:'SLEEP',detail:`睡眠较同来源前7天记录日均值少 ${Math.abs(sleep.baseline.delta).toFixed(1)} 小时`,sourceIds:[sleep.current!.id,...sleep.series.filter(p=>p.day>=sleep.baseline!.start&&p.day<day).map(p=>p.id)]})
   if(hrv?.baseline&&hrv.baseline.delta/hrv.baseline.mean<=-FATIGUE_REVIEW_RULES.hrvDropFraction)signals.push({domain:'AUTONOMIC',detail:'HRV低于个人近期同来源均值，需结合测量条件核对',sourceIds:[hrv.current!.id]})
   if(rhr?.baseline&&rhr.baseline.delta>=FATIGUE_REVIEW_RULES.rhrRiseBpm)signals.push({domain:'AUTONOMIC',detail:'静息心率高于个人近期同来源均值，原因尚不确定',sourceIds:[rhr.current!.id]})

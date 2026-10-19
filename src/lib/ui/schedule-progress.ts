@@ -7,10 +7,11 @@ import { loadSchedule, saveSchedule } from './day-schedule';
 import { scheduleExecutionId } from './scheduled-execution';
 import type { Actual, ScheduleEntry } from './day-schedule-rules';
 import { runningActualTotals } from './running-actual-totals';
+import { occurrenceVoided } from '@/lib/core/training-correction';
 
 /** Project only verified, closed occurrences. Planned minutes never become actual minutes. */
 export function syncScheduleProgress(): boolean {
-  const store = loadSchedule(), occurrences = listTrainingOccurrences(), events = loadEvents();
+  const store = loadSchedule(), occurrences = listTrainingOccurrences().filter(o => !occurrenceVoided(o.trainingOccurrenceId)), events = loadEvents();
   let changed = false;
   const entries = store.entries.map(entry => {
     if (entry.status === 'rejected' || entry.status === 'proposed') return entry;

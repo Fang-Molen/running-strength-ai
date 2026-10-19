@@ -2,6 +2,10 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-19 | v82：首页「计时」和「开始今日训练」都打开今天这节的同一个逐组引导（不另做新流程）：V4 课按原课表文字解析力量（× / x、/腿、2—3 取下限，如 10/19 分腿蹲2×5/腿、RDL2×5、臀推2×6、提踵2×8、抗旋2×8）和跑步（150m×3，组间6—8分钟取 6 分钟）；自定力量课保留自己的休息（如组间 75 秒、动作间 135 秒）；当天多节先选，当天没课给普通计时器（不记录）；记录只存一次 | 用户 t510/t511/t512 | plan400-start.ts, plan400.tsx, strength-app.tsx, scheduled-training.tsx, training-read-model.ts, run-link.ts |
+| 2026-10-19 | v82：逐组引导可以「放弃本次」：详情页力量进行中时给出 继续引导 / 放弃本次；引导里 结束训练 先问 保存已做的组（记为中断）还是 放弃本次，不记录（再确认）。放弃 = 追加作废更正（不删原始数据），清掉进行中状态和这次的组，力量回到未记录，日志/复盘/五维都不算 | 用户 t513 | guided-discard.ts, training-runner.tsx, training-decision-card.tsx, plan400.tsx, schedule-progress.ts |
+| 2026-10-19 | v82：恢复状态改为 1–10 分（首页、健康、方坤、阈值统一）。旧的 1–5 分记录原值不动、按 ×2 显示和判断（4 → 8/10，标“原 1–5 量表”），新记录带量表标记；阈值：≤4 偏差、5 一般、≥6 良好 | 用户 t516 | legacy-inputs.ts, home-dashboard.tsx, health-extras.tsx, analysis.ts, recovery-verdict.ts, coach-recovery-context.ts |
+| 2026-10-19 | v82：sw 缓存 fr255-shell-v82 | — | public/sw.js |
 | 2026-10-19 | v81：人体肌肉 3D 友好化——去掉头骨/牙齿/眼窝和面部肌肉，换成光滑中性头模；黑色球形护裆改成和身体贴合的哑光运动短裤（短裤下的臀大肌等仍可点选、高亮）；肌肉改低饱和暖灰哑光、骨骼和肌腱对比降低；选中肌群用方坤橙；点腹部现在选到腹直肌且能看到高亮（原来被腹外斜肌腱膜挡住）；文案按交接包。原模型文件与许可署名不变 | 用户：GPT 交接包 R1（肌肉 3D 太像解剖标本） | anatomy3d.js, anatomy-map.js, muscle-explorer.tsx, anatomy/ATTRIBUTION.md |
 | 2026-10-19 | v81：3D 模块或 WebGL 加载失败时不再整页刷新（原来任何动态加载失败都会重载页面，弹窗消失），改为显示错误、重试和按名称选择肌群 | muscle3d-r1 验收时发现（改前就有） | chunk-recover.ts |
 | 2026-10-19 | v81：sw 缓存 fr255-shell-v81 | — | public/sw.js |

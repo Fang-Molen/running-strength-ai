@@ -1,3 +1,4 @@
+import { recovery10 } from "@/lib/health/legacy-inputs";
 import { loadHealthSnapshot } from "@/lib/health/snapshot"
 import { reviewFatigue, dailyCheckin, FATIGUE_REVIEW_RULES } from "@/lib/health/analysis"
 import { healthChanged } from '@/lib/health/observation'
@@ -15,7 +16,7 @@ export function readRecoveryInput(today: string): RecoveryInput {
   const view=(k:string)=>snapshot.metrics.find(m=>m.metric===k)
   const val=(k:string)=>view(k)?.state==='AVAILABLE'?view(k)?.current?.value??null:null
   const base=(k:string)=>view(k)?.state==='AVAILABLE'?view(k)?.baseline?.mean??null:null
-  return {pain:ci?.pain??null,readiness:val('READINESS'),bodyBattery:null,stress:val('STRESS'),sleepBase:base('SLEEP'),hrv:val('HRV'),hrvBase:base('HRV'),rhr:val('RHR'),rhrBase:base('RHR'),subjective:val('RECOVERY')??ci?.recovery??fatigueScore(ci?.fatigue),sleepH:val('SLEEP')??(view('SLEEP')?.state==='MISSING'?ci?.sleep??null:null)}
+  return {pain:ci?.pain??null,readiness:val('READINESS'),bodyBattery:null,stress:val('STRESS'),sleepBase:base('SLEEP'),hrv:val('HRV'),hrvBase:base('HRV'),rhr:val('RHR'),rhrBase:base('RHR'),subjective:val('RECOVERY')??recovery10(ci)??fatigueScore(ci?.fatigue),sleepH:val('SLEEP')??(view('SLEEP')?.state==='MISSING'?ci?.sleep??null:null)}
 
 }
 

@@ -2,7 +2,7 @@ import {currentAthleteId} from './events.ts'
 import type {EvolutionSnapshot} from './coach-evolution-v4.ts'
 import type {EvidenceDependency} from './coach-development-projection.ts'
 import {loadHealthSnapshot} from '../health/snapshot.ts'
-import {loadCheckins,readArray} from '../health/legacy-inputs.ts'
+import {loadCheckins,readArray,recoveryText} from '../health/legacy-inputs.ts'
 import {localDay,shiftDay,validDay,shortHash} from '../health/observation.ts'
 import {quantifyRecoverySnapshot,type RecoveryQuantification} from '../health/recovery-quantitative.ts'
 
@@ -41,7 +41,7 @@ export function readRecoveryContext(athleteId:string,day:string|null,asOf:string
  const subjective:string[]=[],missing=[...quantitative.missing]
  if(signatures.size>1)missing.push('当天主观反馈存在冲突，未任取一条')
  if(ci?.fatigue)subjective.push(`当天自报感受：${{fresh:'轻松',ok:'一般',tired:'很累'}[ci.fatigue]}`)
- if(ci?.recovery!==undefined)subjective.push(`当天自报恢复 ${ci.recovery}/10（只保留原量表值）`)
+ if(ci?.recovery!==undefined&&recoveryText(ci))subjective.push(`当天自报恢复 ${recoveryText(ci)}`)
  if(ci?.pain)subjective.push(`当天自报疼痛：${{none:'未报告',mild:'有点疼',sharp:'明显疼'}[ci.pain]}`)
  // Legacy pain logs have no reliable knowledge time. Keep them as a separately
  // labelled present safety concern; never add them to historical quantitative evidence.

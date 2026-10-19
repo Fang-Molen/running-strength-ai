@@ -1,3 +1,4 @@
+import { recovery10 } from "@/lib/health/legacy-inputs";
 import {FoodEntrySheet} from './food-entry-sheet';
 import {missingNutrition,NUTRIENT_LABELS,NUTRIENT_KEYS} from '@/lib/nutrition/entry-workflow';
 import { HealthModeNote } from "@/components/health-mode-note";
@@ -231,9 +232,9 @@ const METRICS: MDef[] = [
   { id: "SLEEP", label: "睡眠", unit: "h", icon: Moon, fmt: (v) => f1(v) }, { id: "RHR", label: "静息心率", unit: "bpm", icon: HeartPulse }, { id: "HRV", label: "HRV", unit: "ms", icon: Activity },
   { id: "STRESS", label: "压力", unit: "", icon: Flame }, { id: "BODY_BATTERY", label: "身体电量", unit: "", icon: Sun }, { id: "RESP", label: "呼吸", unit: "次/分", icon: Leaf, fmt: (v) => f1(v) },
   { id: "SPO2", label: "血氧", unit: "%", icon: Droplet }, { id: "STEPS", label: "步数", unit: "步", icon: Activity },
-  { id: "fatigue", label: "疲劳", unit: "", icon: Moon, subj: true }, { id: "pain", label: "酸痛", unit: "", icon: HeartPulse, subj: true }, { id: "recovery", label: "恢复状态", unit: "/5", icon: Lightbulb, subj: true },
+  { id: "fatigue", label: "疲劳", unit: "", icon: Moon, subj: true }, { id: "pain", label: "酸痛", unit: "", icon: HeartPulse, subj: true }, { id: "recovery", label: "恢复状态", unit: "/10", icon: Lightbulb, subj: true },
 ];
-const SUBJ: Record<string, [string, number][]> = { fatigue: [["轻松", 1], ["一般", 2], ["很累", 3]], pain: [["不疼", 0], ["有点疼", 1], ["明显疼", 2]], recovery: [["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5]] };
+const SUBJ: Record<string, [string, number][]> = { fatigue: [["轻松", 1], ["一般", 2], ["很累", 3]], pain: [["不疼", 0], ["有点疼", 1], ["明显疼", 2]], recovery: [["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10]] };
 const TILE_KEY = "fk-health-tiles-v1";
 const DEFAULT_TILES = ["SLEEP", "RHR", "HRV", "BODY_BATTERY", "fatigue", "pain"];
 function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records"] }) {
@@ -249,7 +250,7 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
     const put = (id: string, d: string, v: number) => { (out[id] ??= []).push({ d, v }); };
     for (const view of snapshot.metrics) for (const p of view.series) put(view.metric,p.day,p.value);
     const F: Record<string, number> = { fresh: 1, ok: 2, tired: 3 }, P: Record<string, number> = { none: 0, mild: 1, sharp: 2 };
-    for (const c of loadCheckins()) { if (c.fatigue) put("fatigue", c.date, F[c.fatigue]); if (c.pain) put("pain", c.date, P[c.pain]); if (c.recovery) put("recovery", c.date, c.recovery); }
+    for (const c of loadCheckins()) { if (c.fatigue) put("fatigue", c.date, F[c.fatigue]); if (c.pain) put("pain", c.date, P[c.pain]); { const r = recovery10(c); if (r != null) put("recovery", c.date, r); } }
     for (const k in out) { const m = new Map(out[k].map((p) => [p.d, p.v])); out[k] = [...m].map(([d, v]) => ({ d, v })).sort((a, b) => a.d.localeCompare(b.d)); }
     return out;
   }, [vitals, rev, snapshot]);
@@ -257,7 +258,7 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
   const shown = avail.filter((m) => chosen.includes(m.id));
   const val = (m: MDef) => { const view=snapshot.metrics.find(x=>x.metric===m.id); if(view?.state==='CONFLICT')return {t:"来源待核对",d:view.candidates[0]?.day??""}; if(!m.subj&&view?.current)return {t:valueText(m.id,view.current.value),d:view.current.day}; const s = series[m.id]; const l = s?.[s.length - 1]; if (!l) return null; if (m.subj) return { t: SUBJ[m.id].find(([, v]) => v === l.v)?.[0] ?? String(l.v), d: l.d }; return { t: `${(m.fmt ?? ((v: number) => String(Math.round(v))))(l.v)}${m.unit && m.unit !== "步" ? " " + m.unit : ""}`, d: l.d }; };
   const rate = (id: string, v: number) => {
-    const patch = id === "fatigue" ? { fatigue: (["fresh", "ok", "tired"] as const)[v - 1] } : id === "pain" ? { pain: (["none", "mild", "sharp"] as const)[v] } : { recovery: v };
+    const patch = id === "fatigue" ? { fatigue: (["fresh", "ok", "tired"] as const)[v - 1] } : id === "pain" ? { pain: (["none", "mild", "sharp"] as const)[v] } : { recovery: v, recoveryScale: 10 as const };
     saveCheckin(today, patch); setRev((x) => x + 1);
   };
   const om = open ? METRICS.find((m) => m.id === open)! : null;

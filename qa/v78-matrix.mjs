@@ -1,6 +1,6 @@
 // v78 端到端记录矩阵：每种记录方式 × 每个页面。Asia/Shanghai + Safari 日期解析（"YYYY-MM-DD HH:MM:SS" → NaN）。
 import {chromium} from 'playwright'; import fs from 'node:fs'
-const base=process.argv[2]||'http://127.0.0.1:8795'
+const base=process.argv[2]||'http://127.0.0.1:8796'
 let fails=0;const M=[];const check=(n,ok,d='')=>{console.log(ok?'PASS':'FAIL',n,ok?'':String(d).slice(0,900));M.push(`${ok?'PASS':'FAIL'} ${n}`);if(!ok)fails++}
 const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']})
 const g=(id,name,type,gmt,local,dist,dur,hr)=>({activityId:id,activityName:name,activityType:{typeKey:type},startTimeGMT:gmt,startTimeLocal:local,distance:dist,duration:dur,averageHR:hr,maxHR:hr?hr+15:null})
@@ -75,7 +75,7 @@ try{const draft=p.getByTestId('chat-training-save');await draft.locator('summary
 await p.getByRole('button',{name:'关闭方坤',exact:true}).click().catch(()=>p.keyboard.press('Escape'))
 // ---------- 4. 首页 V4 训练详情（训练中 / 训练后）10-19 ----------
 const fill=(l,v)=>p.locator('label',{hasText:l}).first().locator('input').fill(v)
-try{await p.locator('[data-testid="today-primary-cta"]').first().click();await p.locator('[data-testid="plan400-day-sheet"]').waitFor();await p.getByRole('tab',{name:'训练后'}).click();await fill('整课 RPE','7');await p.getByRole('button',{name:'保存训练后反馈'}).click();await p.waitForTimeout(500)
+try{await p.getByRole('button',{name:'完整课表 ›'}).first().click();/* v82: 主按钮直接进逐组引导；详情走“完整课表” */await p.locator('[data-testid="plan400-day-sheet"]').waitFor();await p.getByRole('tab',{name:'训练后'}).click();await fill('整课 RPE','7');await p.getByRole('button',{name:'保存训练后反馈'}).click();await p.waitForTimeout(500)
  // ---------- 5. 逐组引导力量（同一天 V4 力量部分），完成 1 组后离开 ----------
  await p.getByRole('tab',{name:'课表'}).click();await p.waitForTimeout(400);const st=p.getByRole('button',{name:/开始力量部分|开始力量训练/});await st.first().click();await p.waitForTimeout(1200)
  {const done=new Set();for(let i=0;i<6&&!(await p.locator('[data-testid=guided-current]').count());i++){for(const n of ['本次不使用','按原计划','开始训练','开始执行','继续训练','继续']){const bt=p.getByRole('button',{name:n,exact:true});if(!done.has(n)&&await bt.count()&&await bt.first().isVisible()){done.add(n);await bt.first().click();await p.waitForTimeout(900);break}}}}
@@ -136,7 +136,7 @@ await p.screenshot({path:'/workspace/out/v78-health.png',fullPage:true});const h
 const tileT=async n=>(await p.locator('button',{hasText:n}).filter({hasText:/\d\d-\d\d|点一下/}).first().innerText()).replace(/\s+/g,' ')
 const rt=await tileT('静息心率'),rc=await tileT('恢复状态');console.log('---卡片',rt,'|',rc)
 check('健康卡片 RHR = 10-19 佳明值 53（48+19%7），与趋势同源 snapshot',/53 次\/分 10-19/.test(rt),rt)
-check('恢复状态（主观，10-18 评过）今天显示“今天未评 · 上次 4 · 10-18”，不冒充今天',/今天未评 上次 4 · 10-18/.test(rc),rc)
+check('恢复状态（主观，10-18 评过）今天显示“今天未评 · 上次 8 · 10-18”（旧 1–5 的 4 → 8/10，v82），不冒充今天',/今天未评 上次 8 · 10-18/.test(rc),rc)
 const trend=p.locator('section',{hasText:'恢复趋势'}).last()
 await trend.getByRole('button',{name:'静息心率'}).click()
 for(const [dd,first] of [[7,'10-13'],[30,'09-20'],[90,'07-22']]){await trend.getByRole('button',{name:`${dd}天`}).click();await p.waitForTimeout(300)

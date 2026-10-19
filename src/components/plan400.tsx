@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, TriangleAlert, X } from "lucide-react";
 import { ExerciseEditor, PartChips, doseOf, UNIT_LABEL, type Ex } from "@/components/exercise-editor";
 import { fmtRest } from "@/lib/strength/rest";
-import { plan400StrengthEntry } from "@/lib/ui/plan400-start";
+import { plan400TodayEntry, parseV4StrengthText } from "@/lib/ui/plan400-start";
 import { loadSchedule, saveScheduledEntry } from "@/lib/ui/day-schedule";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import { scheduleExecutionId } from "@/lib/ui/scheduled-execution";
+import { discardGuided, guidedLive, latestOccurrence } from "@/lib/ui/guided-discard";
 import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, loadDateConfirm, saveDateConfirm, clearDateConfirm, migrateUserConfirmedDates, shiftedText, DATE_CONFIRM_KEY, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
 import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor, type ComboView, type ComponentState, type DeviceRun } from "@/lib/ui/plan400-components";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
@@ -27,6 +28,17 @@ const OPEN_EVT = "fk-open-plan400-day";
 type Override = { parts: string[]; exercises: Ex[]; savedAt: string; betweenRestSec?: number | null };
 type Tab = "plan" | "during" | "after" | "later";
 const loadO = (): Record<string, Override> => { try { return JSON.parse(localStorage.getItem(OKEY) || "{}"); } catch { return {}; } };
+/** v81：今天的 V4 课 → 确保有一条可执行条目（同一 id，已存在且结构一致就原样用；已开始/已有结果的不改结构）。返回条目 id；解析不出返回 null。 */
+export async function ensurePlan400Entry(date: string): Promise<{ id: string | null; reason?: string }> {
+  const d = dayOf(plan, date); if (!d || dayKind(d) === "rest") return { id: null };
+  const want = plan400TodayEntry(d, loadO()[date] ?? null, doseOf); if (!want) return { id: null };
+  const old = loadSchedule().entries.find((e) => e.id === want.id);
+  const live = listTrainingOccurrences().some((o) => o.lifecycle === "IN_PROGRESS" && o.sessionId.startsWith(`scheduled:${want.id}:`));
+  if (old && (live || old.actual || (JSON.stringify(old.exercises) === JSON.stringify(want.exercises) && JSON.stringify(old.runComponents ?? null) === JSON.stringify(want.runComponents ?? null) && old.betweenRestSec === want.betweenRestSec))) return { id: old.id };
+  const r = await saveScheduledEntry(old ? { ...want, status: old.status === "done" ? "done" : want.status } : want, old);
+  return r.ok ? { id: want.id } : { id: null, reason: r.reason };
+}
+export const PLAN400_GUIDED_EVT = "fk-open-plan400-guided";
 const load = (): Record<string, Log> => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; } };
 /** 合并写入同一天记录；读回校验，失败不报成功。 */
 function saveLog(date: string, patch: Log): boolean {
@@ -42,8 +54,20 @@ function useLogs(): Record<string, Log> {
   useEffect(() => { const f = () => setLogs(load()); f(); window.addEventListener(EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(EVT, f); window.removeEventListener("storage", f); }; }, []);
   return logs;
 }
+/** v81（t513）：逐组引导进行中时，详情页给出口：继续引导 / 放弃本次（不记录）。 */
+function GuidedLiveActions({ date, onClose }: { date: string; onClose: () => void }) {
+  const [rev, setRev] = useState(0), [msg, setMsg] = useState("");
+  const sid = scheduleExecutionId(strengthEntryId(date), "strength");
+  let live = false; try { live = guidedLive(sid); } catch { live = false; }
+  void rev;
+  if (!live) return msg ? <p role="status" className="keep text-xs text-muted" data-testid="guided-discarded">{msg}</p> : null;
+  return <div className="flex gap-2 rounded-xl border border-accent/60 p-2" data-testid="guided-live-actions">
+    <button type="button" className="min-h-11 flex-1 rounded-xl bg-accent text-sm font-bold text-accent-fg" onClick={() => { onClose(); window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: strengthEntryId(date) })); }}>继续引导</button>
+    <button type="button" className="min-h-11 flex-1 rounded-xl border border-risk text-sm font-bold text-risk" onClick={() => { if (!window.confirm("放弃本次逐组引导？已做的组不会保存，日志、复盘和五维都不会出现这次记录。")) return; if (discardGuided(sid)) { setMsg("已放弃本次，力量回到未记录。"); setRev((n) => n + 1); } else setMsg("放弃未能核实保存，请重试。"); }}>放弃本次</button>
+  </div>;
+}
 function strengthLive(date: string): boolean {
-  try { const sid = scheduleExecutionId(strengthEntryId(date), "strength"); return listTrainingOccurrences().some(o => o.lifecycle === "IN_PROGRESS" && o.sessionId === sid); } catch { return false; }
+  try { const sid = scheduleExecutionId(strengthEntryId(date), "strength"); return guidedLive(sid); } catch { return false; }
 }
 /* ui-r2：组合课分项（只读派生，见 plan400-components.ts）。设备跑步只作同日候选，不关联、不写入任何记录。 */
 function useDeviceRuns(date: string): DeviceRun[] {
@@ -54,6 +78,8 @@ function useDeviceRuns(date: string): DeviceRun[] {
 function useCombo(d: V4Day, log: Log | undefined): ComboView & { runs: DeviceRun[]; dayParts: DayParts } {
   const runs = useDeviceRuns(d.date);
   let entry; try { entry = loadSchedule().entries.find((e) => e.id === strengthEntryId(d.date)); } catch { entry = undefined; }
+  // v81：组合课（跑步＋力量同一条目）只做完力量时，日程条目还不投影整节结果；力量分项直接看最近一次（未作废）逐组课次。
+  try { const o = latestOccurrence(scheduleExecutionId(strengthEntryId(d.date), "strength")); if (o && o.lifecycle !== "IN_PROGRESS" && !entry?.actual?.executionState) entry = { ...(entry ?? { id: strengthEntryId(d.date) }), actual: { ...(entry?.actual ?? {}), executionState: o.lifecycle === "COMPLETED" ? "COMPLETED" : "INTERRUPTED", occurrenceIds: [o.trainingOccurrenceId] } } as typeof entry; } catch { /* 读不到就按条目 */ }
   const parts = useParts(d.date), { link } = useV4RunLink(d.date);
   return { ...comboView(d, log, { deviceRuns: runs, strengthEntry: entry, strengthLive: strengthLive(d.date), parts, runLinked: !!link }), runs, dayParts: { parts, runLinked: !!link } };
 }
@@ -92,16 +118,10 @@ function StrengthOverride({ d }: { d: V4Day }) {
   if (/^无|^可做|^仅活动度/.test(text) && !o) return null;
   const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };
   const startStrength = async () => {
-    if (!o) return;
-    const entry = plan400StrengthEntry(d.date, d.title, o, doseOf);
-    const old = loadSchedule().entries.find((e) => e.id === entry.id);
-    const same = old && JSON.stringify(old.exercises) === JSON.stringify(entry.exercises) && old.betweenRestSec === entry.betweenRestSec;
-    if (!same) {
-      const r = await saveScheduledEntry(old ? { ...entry, status: old.status === "done" ? "done" : entry.status, ...(old.actual ? { actual: old.actual } : {}) } : entry, old);
-      if (!r.ok) { setStartError(r.reason ?? "未能开始"); return; }
-    }
+    const r = await ensurePlan400Entry(d.date);
+    if (!r.id) { setStartError(r.reason ?? "这节力量没有可执行的动作，请先“把力量动作设为可执行”。"); return; }
     setStartError("");
-    window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: entry.id }));
+    window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: r.id }));
   };
   const live = strengthLive(d.date);
   return <div className="mt-2 rounded-xl bg-surface-2 p-3">
@@ -113,10 +133,7 @@ function StrengthOverride({ d }: { d: V4Day }) {
   </div>;
 }
 export function parseStrength(text: string): Ex[] {
-  const body = text.replace(/^[A-Z]\d?：/, "").replace(/；?RPE[^、]*$/, "");
-  const out: Ex[] = [];
-  for (const m of body.matchAll(/([^、；：\d]+?)\s*(\d+(?:—\d+)?)×(\d+(?:—\d+)?(?:秒|次|触地)?(?:\/(?:腿|侧))?)/g)) { const name = m[1].trim(); const raw = m[3]; const d = doseOf(name); const unit = /秒/.test(raw) ? "sec" : d.unit; out.push({ name, sets: m[2], reps: raw.replace(/秒|次|触地|\/(腿|侧)/g, ""), weight: "", rpe: "", unit, perSide: /\/(腿|侧)/.test(raw) || d.perSide }); }
-  return out;
+  return parseV4StrengthText(text).map((m) => ({ name: m.name, sets: m.sets, reps: m.reps, weight: "", rpe: "", unit: m.unit === "sec" ? "sec" : doseOf(m.name).unit, perSide: m.perSide || doseOf(m.name).perSide }));
 }
 
 const DURING: [keyof Log, string, string][] = [["reps", "正式主课实际分段", "如 150m: 21.3 / 21.0 / 21.6"], ["rest", "实际组间休息", "如 7分 / 8分"], ["aux", "辅助段（单独记录）", "如 60m渐进×3 完成"], ["strength", "力量实际 组×重量×次数", "如 分腿蹲 2×20kg×5/腿"]];
@@ -154,6 +171,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
     </div>
     <div className="mx-auto max-w-3xl space-y-3 px-4 pt-3 text-sm" style={{ paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}>
       <ComboStatus v={combo} />
+      <GuidedLiveActions date={d.date} onClose={onClose} />
       {tab === "plan" ? <>
         <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(d.week === "TEST" ? d.main : d.main.slice(1)) || "原课表未写"}</p></section>
         {d.aux.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">辅助激活与技术</h3><p className="mt-1 leading-6">{joinLines(d.aux)}</p></section> : null}
@@ -235,7 +253,7 @@ export function Plan400TodayCard({ today, onReview }: { today: string; onReview?
   if (!d) { const next = days.find((x) => x.date > today); return next ? <section className="home-card mb-3 p-4 text-sm" aria-label="400米计划"><p className="text-xs text-muted">400米 V4</p><p className="mt-1">今天不在计划日程内。下一节：{md(next.date)} {next.weekday}「{next.title}」</p><button type="button" className="mt-2 min-h-11 text-accent" onClick={() => openPlan400Day(next.date)}>查看 ›</button></section> : null; }
   const s = dayStatus(d, logs[d.date], today, live, partsAll[d.date]), cta = primaryCta(s);
   const week = plan.weeks.find(w => w.week === d.week);
-  const go = () => { if (cta.action === "start" || cta.action === "continue") openPlan400Day(d.date, "during"); else if (cta.action === "review" || cta.action === "reason" || cta.action === "backfill") openPlan400Day(d.date, "after"); else openPlan400Day(d.date, "plan"); };
+  const go = () => { if ((cta.action === "start" || cta.action === "continue") && d.date === today) { const detail = { date: d.date, handled: false }; window.dispatchEvent(new CustomEvent(PLAN400_GUIDED_EVT, { detail })); if (!detail.handled) openPlan400Day(d.date, "during"); } else if (cta.action === "start" || cta.action === "continue") openPlan400Day(d.date, "during"); else if (cta.action === "review" || cta.action === "reason" || cta.action === "backfill") openPlan400Day(d.date, "after"); else openPlan400Day(d.date, "plan"); };
   return <section className="home-card mb-3 p-4" aria-label="今日训练主卡" data-testid="today-main-card" data-status={s}>
     <div className="flex items-center justify-between gap-2"><p className="min-w-0 truncate text-xs text-muted">今日 · 400米 V4 · {d.week}{week ? `｜${week.title}` : ""}</p><StatusChip s={s} /></div>
     <h2 className="mt-1 text-xl font-bold">{d.title}</h2>
