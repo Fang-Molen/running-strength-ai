@@ -152,6 +152,19 @@ function SharedSleep({ date }: { date: string }) {
 function Fields({ list, value, onChange }: { list: [keyof Log, string, string][]; value: Log; onChange: (l: Log) => void }) {
   return <>{list.map(([k, label, ph]) => <label key={k} className="block"><span className="text-xs text-muted">{label}</span><input className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder={ph} value={value[k] ?? ""} onChange={(e) => onChange({ ...value, [k]: e.target.value })} /></label>)}</>;
 }
+/** v83（P1-08/P1-09）：组合课的旧整课记录只读显示（不拆、不再编辑），没有旧记录就不显示。 */
+function LegacyReadOnly({ log, kind }: { log: Log; kind: "after" | "later" }) {
+  const t = (v: unknown) => String(v ?? "").trim();
+  const DONE: Record<string, string> = { done: "完成", reduced: "减量完成", skipped: "没练/取消" };
+  const items = kind === "after" ? [["结果", DONE[t(log.done)] ?? ""], ["整课 RPE（旧口径，不代表跑步或力量各自的强度）", t(log.rpe)], ["疼痛", t(log.pain)], ["备注", t(log.note)]] : [["24 小时（整课）", t(log.r24)], ["48–72 小时（整课）", t(log.r48)]];
+  const has = items.filter(([, v]) => v);
+  if (!has.length) return null;
+  return <section className="home-card space-y-1 p-4 text-xs" aria-label="历史整课记录（只读）" data-testid={`legacy-readonly-${kind}`}>
+    <p className="font-bold text-muted">历史整课记录（旧版本填的，只读，保留不拆）</p>
+    {has.map(([k, v]) => <p key={k} className="keep">{k}：{v}</p>)}
+    <p className="keep text-muted">现在按跑步、力量分开记：{kind === "after" ? "用上面两块评价" : "用下面的分项恢复"}。</p>
+  </section>;
+}
 function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; initialTab: Tab; onClose: () => void }) {
   const logs = useLogs(); const log = logs[d.date] ?? {};
   const [tab, setTab] = useState<Tab>(initialTab);
@@ -204,11 +217,11 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         {hasStrength(d) ? <p className="text-xs text-muted">力量部分可在「课表」页设为可执行后逐组引导，记录会进入训练日志。</p> : null}
       </section> : null}
       {tab === "after" && combo.combo ? <><PartFeedbackForm date={d.date} part="running" name="跑步" />{hasStrength(d) ? <PartFeedbackForm date={d.date} part="strength" name="力量" /> : null}</> : null}
-      {tab === "after" ? <section className="home-card space-y-3 p-4" aria-label="训练后反馈">
-        {combo.combo ? <p className="keep text-xs text-muted" data-testid="combo-parts-note">跑步、力量分开评价（下面两块，各存各的）。下面这份是整课历史评价（旧口径），保留不拆。</p> : null}
-        <p className="text-xs font-bold text-muted">{combo.combo ? "整课历史评价（旧口径，跑步与力量没分开）" : "这节课的结果"}</p>
+      {tab === "after" && combo.combo ? <LegacyReadOnly log={log} kind="after" /> : null}
+      {tab === "after" && !combo.combo ? <section className="home-card space-y-3 p-4" aria-label="训练后反馈">
+        <p className="text-xs font-bold text-muted">这节课的结果</p>
         <div className="grid grid-cols-3 gap-2">{([["done", "完成"], ["reduced", "减量完成"], ["skipped", "没练/取消"]] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={edit.done === v} className={"min-h-11 rounded-xl border text-sm font-bold " + (edit.done === v ? "border-accent bg-accent/15 text-accent" : "border-line")} onClick={() => setEdit({ ...edit, done: edit.done === v ? undefined : v })}>{t}</button>)}</div>
-        <Fields list={combo.combo ? AFTER.map(([k, l, p]) => [k, k === "rpe" ? "整课 RPE (1-10)（旧口径，不代表跑步或力量各自的强度）" : l, p] as [keyof Log, string, string]) : AFTER} value={edit} onChange={setEdit} />
+        <Fields list={AFTER} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { if (edit.done === "skipped" && log.done !== "skipped" && !window.confirm("标记为没练/取消？原课表不会改动，之后可以改回。")) return; commit(["rpe", "pain", "note"], { done: edit.done ?? "" }); }}>保存训练后反馈</button>
         <p className="text-xs text-muted">24 小时、48–72 小时的恢复情况不用现在填，到时在「24–72h」补录。</p>
       </section> : null}
@@ -216,10 +229,12 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         {later ? <p className="rounded-xl bg-surface-2 p-2 text-xs text-muted">这节课还没过 24 小时，可以以后再填。</p> : null}
         {!later && recoveryTiming(d.date, today) === "late" ? <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted">已超过 72 小时，现在填的是事后回忆，请按记得的情况写。</p> : null}
         <SharedSleep date={d.date} />
-        <Fields list={LATER} value={edit} onChange={setEdit} />
-        <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => commit(["r24", "r48"])}>保存恢复补录</button>
+        {/* v83（P1-09）：组合课只用下面“跑步/力量分开的恢复”这一套；整课的 24h/48h 旧字段只读显示，不再让你填第二遍 */}
+        {!combo.combo ? <><Fields list={LATER} value={edit} onChange={setEdit} />
+        <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => commit(["r24", "r48"])}>保存恢复补录</button></> : null}
       </section> : null}
-      {tab === "later" && combo.combo && !later ? <RecoveryParts date={d.date} late={recoveryTiming(d.date, today) === "late"} /> : null}
+      {tab === "later" && combo.combo ? <LegacyReadOnly log={log} kind="later" /> : null}
+      {tab === "later" && combo.combo && !later ? <RecoveryParts date={d.date} late={recoveryTiming(d.date, today) === "late"} daysSince={Math.round((Date.parse(today) - Date.parse(d.date)) / 864e5)} /> : null}
       {msg ? <p role="status" className="text-sm">{msg}</p> : log.savedAt ? <p className="text-xs text-muted">上次保存 {stampCN(log.savedAt, "ymd")}</p> : null}
       <p className="text-xs text-muted">这一页的记录存在本机（整课：400米V4 记录；分项：V4 分项记录），会进入日志、复盘和方坤；关联的手表跑步只算一次。</p>
     </div>

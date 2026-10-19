@@ -81,14 +81,15 @@ export function PartFeedbackForm({ date, part, name }: { date: string; part: "ru
 }
 const LABEL: Record<string, string> = { status: "状态", rpe: "RPE", pain: "疼痛", feel: "感受", note: "备注", device: "关联的手表跑步" }
 const show = (v: unknown) => v == null || v === "" ? "空" : typeof v === "object" ? [(v as { area?: string }).area, (v as { score?: number | null }).score].filter(x => x != null && x !== "").join(" ") || "空" : STATUS_TEXT[v as CompStatus] ?? String(v)
-export function RecoveryParts({ date, late }: { date: string; late: boolean }) {
+export function RecoveryParts({ date, late, daysSince = 3 }: { date: string; late: boolean; daysSince?: number }) {
   const parts = useParts(date), r = parts?.recovery ?? {}
   const [f, setF] = useState({ runLegs24: r.runLegs24 ?? "", runLegs48: r.runLegs48 ?? "", strengthSoreness24: r.strengthSoreness24 ?? "", strengthSoreness48: r.strengthSoreness48 ?? "" })
   const [msg, setMsg] = useState("")
   const F: [keyof typeof f, string][] = [["runLegs24", "24h 跑步腿感（沉/正常/轻快）"], ["strengthSoreness24", "24h 力量酸痛（部位·0–10）"], ["runLegs48", "48–72h 跑步腿感"], ["strengthSoreness48", "48–72h 力量酸痛"]]
   return <section className="home-card space-y-2 p-4" aria-label="分项恢复" data-testid="part-recovery">
     <h3 className="font-bold">跑步、力量分开的恢复</h3>
-    {F.map(([k, l]) => <label key={k} className="block"><span className="text-xs text-muted">{l}</span><input aria-label={l} className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder="没感觉就留空" value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} /></label>)}
+    {daysSince < 2 ? <p className="keep text-xs text-muted">48–72 小时的感觉到后天再填（现在填的只是 24 小时）。</p> : null}
+    {F.filter(([k]) => daysSince >= 2 || !/48/.test(k) || !!f[k]).map(([k, l]) => <label key={k} className="block"><span className="text-xs text-muted">{l}</span><input aria-label={l} className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder="没感觉就留空" value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} /></label>)}
     <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => setMsg(saveComponent(date, "recovery", { ...f, late }) ? "已保存分项恢复" : "没有保存成功")}>保存分项恢复</button>
     {msg ? <p role="status" className="keep text-xs">{msg}</p> : null}
   </section>
