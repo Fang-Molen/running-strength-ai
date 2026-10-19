@@ -589,7 +589,7 @@ export function StrengthApp() {
         </div> : null}
         {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 space-y-3 p-4" aria-label="力量训练入口"><h2 className="text-lg font-black">从肌肉开始选动作</h2><button type="button" className="flex min-h-20 w-full items-center justify-between rounded-2xl border border-accent bg-accent/10 p-4 text-left text-accent" onClick={() => setTrainingEditor({ date: selectedDate, openMuscleInitially: true })}><span><b className="block">人体肌肉 3D</b><span className="keep mt-1 block text-xs">点选肌肉 → 选择动作 → 加入这节训练</span></span><span>›</span></button><div className="grid grid-cols-2 gap-2"><button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={() => setActionLibrary(true)}>动作库</button><button type="button" className="min-h-12 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => setTrainingEditor({ date: selectedDate })}>＋添加力量训练</button></div></section> : null}
         {tab === 'plan' && hubPane === 'lift' ? <TempTrainingList entries={calendar} modality="strength" title="已排力量训练" addLabel="按日期查看" onAdd={() => setTab('today')} onOpen={openScheduled} empty="还没有排期，先选动作或从下方课程库添加。" /> : null}
-        {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 p-4" aria-label="力量课程库"><h2 className="font-bold">已保存的力量课程</h2>{plan.sessions.map(s => <div key={s.id} className="flex items-center justify-between gap-3 border-t border-line py-3"><span className="min-w-0"><b className="block">{s.name}</b><span className="text-xs text-muted">{s.moves.length}个动作</span></span><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm font-bold text-accent" onClick={() => setTrainingEditor({ date: selectedDate, template: templateEntry(s.id) })}>加入训练</button></div>)}</section> : null}
+        {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 p-4" aria-label="力量课程库"><h2 className="font-bold">已保存的力量课程</h2>{plan.sessions.map((s, i) => <div key={s.id} className="flex items-center justify-between gap-2 border-t border-line py-3"><span className="min-w-0"><b className="block">{s.name}</b><span className="text-xs text-muted">{s.moves.length}个动作{plan.cycle?.logs.some(l => l.sessionId === s.id) ? " · 已有反馈" : ""}</span></span><span className="flex shrink-0 gap-1"><button type="button" className="min-h-11 rounded-full border border-line px-3 text-sm" onClick={() => { setActive(i); setEditorOpen(true); setPlanMore(true); setTimeout(() => document.getElementById("session-editor")?.scrollIntoView({ block: "start", behavior: "smooth" }), 60); }}>编辑</button><button type="button" className="min-h-11 rounded-full border border-line px-3 text-sm font-bold text-accent" onClick={() => setTrainingEditor({ date: selectedDate, template: templateEntry(s.id) })}>加入训练</button></span></div>)}{plan.sessions.length === 0 ? <p className="py-3 text-sm text-muted">没有已保存的力量课。</p> : null}</section> : null}
         
         {tab === "plan" && hubPane === "run" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} sourceSlot={<PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />} /> : null}
         {tab === "plan" && hubPane === "run" && planSrc !== "400m-v4" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : null}
@@ -602,7 +602,7 @@ export function StrengthApp() {
           <button type="button" className="product-text-action" onClick={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }}>和方坤完善首周候选计划 ›</button>
         </section> : null}
         {tab === "plan" && hubPane === "lift" ? (
-          <details className="home-card mb-3 px-3 py-3" aria-label="力量周期工具"><summary className="min-h-12 cursor-pointer font-bold">力量课程与周期管理</summary>
+          <details className="home-card mb-3 px-3 py-3" aria-label="力量周期工具"><summary className="min-h-12 cursor-pointer font-bold">力量周期（3 周训练 + 调整周）</summary>
             <div className="flex items-center justify-between gap-2 px-1">
               <h2 className="font-bold">训练周期</h2>
               <span className="text-xs text-muted">{plan.cycle ? `3 周训练 + 调整周` : "周期未就绪"}</span>
@@ -614,28 +614,7 @@ export function StrengthApp() {
               })}
             </div>
             {weekPeek && weekPeek !== plan.cycle?.week ? <p className="mt-2 px-1 text-xs text-muted">第 {weekPeek} 周是「{PHASES.find((item) => item.week === weekPeek)?.label}」。下面仍是当前已保存的课表，不会换成示例课。</p> : null}
-            <div className="mt-3 grid grid-cols-3 gap-1 rounded-full bg-surface-2 p-1" role="group" aria-label="计划类型">
-              {([["all", "全部"], ["run", "跑步"], ["lift", "力量"]] as const).map(([id, label]) => (
-                <button key={id} type="button" aria-pressed={planLens === id} onClick={() => setPlanLens(id)} className={"min-h-9 rounded-full text-sm font-bold " + (planLens === id ? "bg-surface text-fg shadow-sm" : "text-muted")}>{label}</button>
-              ))}
-            </div>
-            <div className="mt-1">
-              {planLens !== "lift" ? (trackHome?.planId ? <button type="button" onClick={() => { const r = listTrackPlans().find(r => r.planId === trackHome!.planId); if (r) setTrainingEditor({ date: selectedDate, template: { ...runEntry(r, selectedDate, "custom"), runComponents: r.components } }); }} className="flex min-h-16 w-full items-center gap-3 border-b border-line py-2 text-left">
-                <span className="chip-run grid size-10 shrink-0 place-items-center rounded-2xl"><Activity className="size-4" /></span>
-                <span className="min-w-0 flex-1"><span className="block truncate font-bold">{trackHome.title}</span><span className="block text-xs text-muted">跑步 · 已保存计划 · {trackHome.progress}</span></span>
-                <span className="text-lg text-muted" aria-hidden="true">›</span>
-              </button> : <p className="border-b border-line py-3 text-sm text-muted">没有已保存的跑步课。</p>) : null}
-              {planLens !== "run" ? plan.sessions.map((item, index) => {
-                const rest = /恢复|休息/.test(item.name);
-                const logged = plan.cycle?.logs.some((log) => log.sessionId === item.id);
-                return <button key={item.id} type="button" aria-pressed={index === active} onClick={() => { setActive(index); setEditorOpen(true); setPlanMore(true); }} className={"flex min-h-16 w-full items-center gap-3 border-b border-line px-1 py-2 text-left last:border-b-0 " + (index === active ? "rounded-2xl bg-surface-2" : "")}>
-                  <span className={(rest ? "bg-surface text-muted" : "chip-lift") + " grid size-10 shrink-0 place-items-center rounded-2xl"}>{rest ? <Heart className="size-4" /> : <Dumbbell className="size-4" />}</span>
-                  <span className="min-w-0 flex-1"><span className="block truncate font-bold">第 {index + 1} 节 {item.name}</span><span className="block text-xs text-muted">{rest ? "恢复" : "力量"} · {item.moves.length} 个动作{logged ? " · 已有反馈" : ""}</span></span>
-                  {logged ? <span className="tone-lift text-sm font-bold">✓</span> : <span className="text-lg text-muted" aria-hidden="true">›</span>}
-                </button>;
-              }) : null}
-              {planLens === "lift" && plan.sessions.length === 0 ? <p className="py-3 text-sm text-muted">没有已保存的力量课。</p> : null}
-            </div>
+            {/* v83（P1-03）：课程清单只在上方“已保存的力量课程”出现一次（编辑/加入训练都在那里）；跑步课在“跑步”视图 */}
           </details>
         ) : null}
         {tab === "plan" && hubPane === "lift" ? <details className="home-card mt-3 px-4 py-2" open={planMore} onToggle={(event) => setPlanMore(event.currentTarget.open)}>
