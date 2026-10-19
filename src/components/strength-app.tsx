@@ -58,6 +58,7 @@ import { FangShen } from "@/components/fang-shen";
 import { ExerciseContent } from "@/components/exercise-content";
 import { SessionBuilder } from "@/components/session-builder";
 import { MuscleExplorerSheet } from "@/components/muscle-explorer";
+import { ActionPicker } from "@/components/action-picker";
 import { DemoSheet } from "@/components/exercise-editor";
 import { TrainingEditorSheet } from "@/components/training-editor-sheet";
 import { SchedulePicker, ScheduledTraining } from "@/components/scheduled-training";
@@ -147,6 +148,7 @@ export function StrengthApp() {
   const [builderOpen, setBuilderOpen] = useState(false);
   const [muscleOpen, setMuscleOpen] = useState(false), [muscleDemo, setMuscleDemo] = useState<string | null>(null);
   const [hubPane, setHubPane] = useState<"run" | "lift">("run");
+  const [pickerMuscle, setPickerMuscle] = useState(false);
   const [selectedDate, setSelectedDate] = useState(localDayIso());
   const [calendar, setCalendar] = useState<ScheduleEntry[]>([]);
   const [timerPicker, setTimerPicker] = useState(false), [executionEntryId, setExecutionEntryId] = useState<string | null>(null);
@@ -996,60 +998,12 @@ export function StrengthApp() {
 
       {picker ? (
         <Sheet title="选动作" onClose={() => setPicker(false)}>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="搜深蹲、划船、平板…"
-            className="h-12 w-full rounded-card border border-line bg-surface px-3 outline-none"
-          />
-          <div className="mt-3 flex gap-2 overflow-x-auto">
-            {(["全部", ...GROUPS] as const).map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setGroup(item)}
-                className={"h-11 shrink-0 rounded-full px-3 text-sm " + (group === item ? "bg-accent font-bold text-accent-fg" : "bg-surface text-muted")}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-          {query.trim() ? (
-            <button
-              type="button"
-              onClick={() => {
-                if (!session) return;
-                updateSession({ moves: [...session.moves, customMove(query)] });
-                setPicker(false);
-              }}
-              className="mt-3 flex h-12 w-full items-center justify-between rounded-card bg-surface-2 px-3 text-left"
-            >
-              <span>
-                用自定义名称
-                <span className="mt-0.5 block text-xs text-muted">表上显示你写的字，没有官方动画</span>
-              </span>
-              <span className="font-bold">{query.trim()}</span>
-            </button>
-          ) : null}
-          <ul className="mt-3 flex flex-col gap-2">
-            {filtered.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!session) return;
-                    updateSession({ moves: [...session.moves, moveFromCatalog(item)] });
-                    setPicker(false);
-                  }}
-                  className="flex h-14 w-full items-center justify-between rounded-card bg-surface px-3 text-left"
-                >
-                  <span className="font-bold">{item.name}</span>
-                  <span className="text-sm text-muted">{item.group}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {filtered.length === 0 ? <p className="mt-6 text-center text-sm text-muted">没有这个官方动作，可以用上面的自定义名称。</p> : null}
+          {/* v83（P2-01）：与“添加训练/组合一课”共用同一个 ActionPicker（搜索/分类/肌肉图三条路径，同一个“加入”） */}
+          <ActionPicker selectedKeys={(session?.moves ?? []).map(m => m.catalogId ? `local:${m.catalogId}` : `extra:${displayName(m)}`)}
+            onAdd={(entry) => { if (!session) return; const item = entry.catalogId ? CATALOG.find(c => c.id === entry.catalogId) : undefined; updateSession({ moves: [...session.moves, item ? moveFromCatalog(item) : customMove(entry.name)] }); setPicker(false); }}
+            onPreview={(entry) => setNotice(`${entry.name} · ${entry.section} · ${entry.pattern}（加入后可在动作卡里看说明/动画）`)}
+            onMuscle={() => setPickerMuscle(true)} />
+          {pickerMuscle ? <MuscleExplorerSheet onClose={() => setPickerMuscle(false)} onAdd={(action) => { if (!session) return; const item = action.catalogId ? CATALOG.find(c => c.id === action.catalogId) : undefined; updateSession({ moves: [...session.moves, item ? moveFromCatalog(item) : customMove(action.name)] }); setPickerMuscle(false); setPicker(false); }} /> : null}
         </Sheet>
       ) : null}
 
