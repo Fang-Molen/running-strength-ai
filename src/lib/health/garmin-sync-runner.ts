@@ -36,6 +36,8 @@ export async function runGarminSyncJob(host: {
   save: (health: DeviceHealthRow[], activities: DeviceActivity[]) => { saved: number; skipped: number; errors: string[] };
   saveView: (activities: unknown[], accountScope: string) => void;
   report: (report: GarminSyncReport) => void; progress: (message: string) => void;
+  /** v78：健康历史逐次补到 90 天。get = 已补到第几天（≥14），set 在本次保存成功后调用。 */
+  backfill?: { get: (scope: string) => number; set: (scope: string, upTo: number) => void };
 }): Promise<GarminSyncReport> {
   const subjectId = host.subject(), generation = host.generation()
   const result: GarminSyncReport = { at: host.now, status: 'fail', subjectId, accountScope: null, healthRows: 0, activityRows: 0, saved: 0, skipped: 0,
@@ -62,10 +64,13 @@ export async function runGarminSyncJob(host: {
       identities.set(a.key, a)
     }
     acts.push(...identities.values())
-    for (let i = 0; i < 14; i++) {
+    // 每次同步最近 14 天；另外往前补 14 天更早的历史，直到满 90 天（恢复趋势 30/90 天才有数据）。
+    const HIST = 90, from = Math.min(HIST, Math.max(14, host.backfill?.get(account.scope) ?? HIST)), upTo = Math.min(HIST, from + 14)
+    const offsets = [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: upTo - from }, (_, i) => from + i)]
+    for (const [n, i] of offsets.entries()) {
       if (!unchanged()) { result.status = 'stale'; return result }
       const d = shiftDay(host.day, -i)
-      host.progress(`已取得 ${acts.length} 条活动记录 · 健康 ${i + 1}/14 天`)
+      host.progress(`已取得 ${acts.length} 条活动记录 · 健康 ${n + 1}/${offsets.length} 天${i >= 14 ? '（补更早历史）' : ''}`)
       const [s, h, sl] = await Promise.all([
         host.api(`g/usersummary-service/usersummary/daily/${encodeURIComponent(account.name)}?calendarDate=${d}`),
         host.api(`g/hrv-service/hrv/${d}`), host.api(`g/wellness-service/wellness/dailySleepData/${encodeURIComponent(account.name)}?date=${d}`),
@@ -82,6 +87,7 @@ export async function runGarminSyncJob(host: {
     result.healthRows = health.length; result.activityRows = acts.length
     const saved = host.save(health, acts)
     result.saved = saved.saved; result.skipped = saved.skipped; result.errors.push(...saved.errors)
+    if (!saved.errors.length && upTo > from) host.backfill?.set(account.scope, upTo)
     // Raw activity view remains account/athlete scoped and never counts as training sessions.
     host.saveView(raw.flatMap(o => { const a = garminActivity(o, account.scope); return a ? [{ ...o, fkSourceIdentity: a.sourceIdentity, fkStartIso: a.startIso }] : [] }), result.accountScope!)
     result.status = result.errors.length ? (result.saved + result.skipped ? 'partial' : 'fail') : health.length + acts.length ? 'ok' : 'empty'

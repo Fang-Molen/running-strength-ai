@@ -122,3 +122,13 @@ test('R1 SYNC-04: network failure on status is reported as fail (not auth) and s
     const r = await runGarminSyncJob(f.host); assert.equal(r.status, 'fail'); assert.equal(f.saved.length, 0); assert.equal(f.reports.length, 1); assert.match(r.errors[0], status ? /HTTP 503/ : /网络中断/)
   }
 })
+test('v78 health history backfills 14 older days per sync until 90 days, only after a clean save', async () => {
+  const f = fixture(); let upTo = 14; const asked: string[] = []
+  const api = f.host.api; const host = { ...f.host, api: async (p: string) => { const d = p.match(/\d{4}-\d{2}-\d{2}/)?.[0]; if (d) asked.push(d); return api(p) }, backfill: { get: () => upTo, set: (_s: string, n: number) => { upTo = n } } }
+  const r = await runGarminSyncJob(host)
+  assert.equal(r.healthDaysRequested, 28); assert.equal(upTo, 28)
+  assert.ok(asked.includes('2026-10-04') && asked.includes('2026-09-21') && !asked.includes('2026-09-20'))
+  for (let i = 0; i < 6; i++) await runGarminSyncJob(host)
+  assert.equal(upTo, 90)
+  const last = await runGarminSyncJob(host); assert.equal(last.healthDaysRequested, 14)
+})

@@ -6,7 +6,7 @@ import { plan400StrengthEntry } from "@/lib/ui/plan400-start";
 import { loadSchedule, saveScheduledEntry } from "@/lib/ui/day-schedule";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import { scheduleExecutionId } from "@/lib/ui/scheduled-execution";
-import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
+import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, loadDateConfirm, saveDateConfirm, clearDateConfirm, migrateUserConfirmedDates, shiftedText, DATE_CONFIRM_KEY, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
 import planJson from "../lib/plan400-v4.json" with { type: "json" };
 
 /* 原课表只读：plan400-v4.json 永不写回。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
@@ -112,7 +112,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(d.week === "TEST" ? d.main : d.main.slice(1)) || "原课表未写"}</p></section>
         {d.aux.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">辅助激活与技术</h3><p className="mt-1 leading-6">{joinLines(d.aux)}</p></section> : null}
         {d.strength.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">力量与核心 · 原课表</h3><p className="mt-1 leading-6">{joinLines(d.strength)}</p><StrengthOverride d={d} /></section> : null}
-        {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{week.principle}</p></details> : null}
+        {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{shiftedText(plan, week.week, week.principle)}</p></details> : null}
         <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">原文与原日期（只读）</summary><p className="mt-1 text-xs text-muted">原课表日期 {d.orig || "未记录"} → 当前日程 {d.date}{d.orig && d.orig !== d.date ? `（顺延 ${Math.round((Date.parse(d.date) - Date.parse(d.orig)) / 864e5)} 天）` : ""}</p><pre className="mt-2 whitespace-pre-wrap break-words text-xs leading-5">{[...d.main, ...d.aux, ...d.strength].join("\n")}</pre></details>
       </> : null}
       {tab === "during" ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
@@ -187,6 +187,7 @@ export function Plan400Cycle({ today, sourceSlot, lens = "run" }: { today: strin
   const logs = useLogs();
   const [showSource, setShowSource] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
+  const [confirm, setConfirm] = useState(() => { migrateUserConfirmedDates(plan); return loadDateConfirm(plan); });
   const cw = currentWeek(plan, today);
   const [openWeeks, setOpenWeeks] = useState<string[]>([]);
   useEffect(() => { setOpenWeeks([cw]); }, [cw]);
@@ -199,12 +200,17 @@ export function Plan400Cycle({ today, sourceSlot, lens = "run" }: { today: strin
   return <section className="home-card mb-3 p-4" aria-label="正在执行的周期计划" data-testid="plan400-cycle">
     <p className="text-xs text-muted">正在执行的周期计划</p>
     <div className="mt-1 flex items-start justify-between gap-2"><h2 className="min-w-0 text-lg font-bold leading-snug">{plan.name}</h2><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={showSource} onClick={() => setShowSource(!showSource)}>来源 / 切换</button></div>
-    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入 · V4</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${cur.title}` : ""}</span></div>
+    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入 · V4</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${shiftedText(plan, cur.week, cur.title)}` : ""}</span></div>
     <p className="mt-2 text-xs text-muted" data-testid="plan400-progress">已记录 {counts.recordedDays}/{counts.calendarEntries} 个日程（含休息/恢复日与测试）· 训练与测试课完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
     {showSource && sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
-    {conflicts.length || shift.shifted ? <div className="mt-3 rounded-xl border border-warn/50 p-3 text-xs" role="status" data-testid="plan400-date-warning">
+    {(conflicts.length || shift.shifted) && confirm ? <details className="mt-2 text-xs text-muted" data-testid="plan400-date-confirmed"><summary className="flex min-h-9 cursor-pointer list-none items-center gap-1">✓ 日期已确认 · 整体顺延 {shift.shiftDays} 天<ChevronRight className="size-3.5" /></summary>
+      <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表 {c.originalRange} → 现 {c.shownRange}；「{c.text}」{c.matchedDay ? `的${c.matchedDay.title}现在是 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : "在日程中没有对应的课"}</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天；最终测试 {plan.final?.date ?? "—"}（原 {plan.final?.orig ?? "—"}）。导入的原课表没有改。</li><li>{confirm.by} · {confirm.at.slice(0, 10)}</li></ul>
+      <button type="button" className="min-h-10 text-accent" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + ":revoked", "1") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>
+    </details> : null}
+    {(conflicts.length || shift.shifted) && !confirm ? <div className="mt-3 rounded-xl border border-warn/50 p-3 text-xs" role="status" data-testid="plan400-date-warning">
       <p className="flex gap-1.5 font-bold text-warn"><TriangleAlert className="mt-0.5 size-4 shrink-0" />日期待核对</p>
       <p className="mt-1 leading-5">导入日程整体顺延 {shift.shiftDays} 天{conflicts.length ? `；${conflicts.map(c => `${c.week} 标题写「${c.text}」，当前周显示 ${c.shownRange}`).join("；")}` : ""}。请核对原始安排后再执行相关测试课。这里保留原课表，未自动改期。</p>
+      <button type="button" className="mt-1 mr-3 min-h-10 font-bold text-accent" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + ":revoked") } catch { /* ignore */ } setConfirm(saveDateConfirm(plan, "用户确认")); }}>日期没问题，按顺延后执行</button>
       <button type="button" className="mt-1 min-h-10 font-bold text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button>
       {showDiff ? <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程都按原日期 +{shift.shiftDays} 天排入；最终测试原为 {plan.final?.orig ?? "—"}，现为 {plan.final?.date ?? "—"}。</li><li>是否改测试日期需要你确认，App 不会自动修改。</li></ul> : null}
     </div> : null}
@@ -212,7 +218,7 @@ export function Plan400Cycle({ today, sourceSlot, lens = "run" }: { today: strin
       return <div key={w.week} className="border-t border-line first:border-t-0">
         <button type="button" aria-expanded={isOpen} onClick={() => setOpenWeeks(isOpen ? openWeeks.filter(x => x !== w.week) : [...openWeeks, w.week])} className="flex min-h-12 w-full items-center gap-2 py-2 text-left">
           <span className={"w-9 shrink-0 text-sm font-bold " + (w.week === cw ? "text-accent" : "")}>{w.week}</span>
-          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{w.title}</span><span className="block text-[11px] text-muted">{md(ds[0].date)}—{md(ds[ds.length - 1].date)}{w.week === cw ? " · 本周" : ""}{conflicts.some(c => c.week === w.week) ? " · ⚠ 日期待核对" : ""}</span></span>
+          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{shiftedText(plan, w.week, w.title)}</span><span className="block text-[11px] text-muted">{md(ds[0].date)}—{md(ds[ds.length - 1].date)}{w.week === cw ? " · 本周" : ""}{!confirm && conflicts.some(c => c.week === w.week) ? " · ⚠ 日期待核对" : ""}</span></span>
           <ChevronDown className={"size-4 shrink-0 text-muted transition-transform " + (isOpen ? "rotate-180" : "")} />
         </button>
         {isOpen ? <div className="pb-2">{shown.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} />)}</div> : null}

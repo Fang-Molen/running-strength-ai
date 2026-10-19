@@ -78,7 +78,7 @@ export function loadTrainingActivities(): ActivityRow[] {
     const totals = runningActualTotals(run);
     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
       strengthVolumeKg: completed.length && completed.every(s => s.mode === 'reps' && s.actualWeight != null) ? completed.reduce((sum, s) => sum + s.actualWeight! * s.actualAmount!, 0) : null,
-      sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
+      sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
   }
   for (const x of coachImports().filter(x=>!occurrenceVoided(x.confirmedImportId))) {
     if (!x.occurredAt.value || !day(x.occurredAt.value)) continue;

@@ -14,6 +14,7 @@ import { Utensils, UserRound, Activity, Target, ArrowRightLeft, PieChart, Trendi
 import { loadProfile } from "@/lib/strength/profile";
 import { loadEntries, removeEntry, todayEntries, aggregate, nutrientOf, MEALS, type Meal, type FoodEntry, type NutrientKey } from "@/lib/nutrition/log";
 import { loadChecks, removeCheck, upsertCheck, todayDate, type BodyCheck } from "@/lib/nutrition/body";
+import { shiftDay } from "@/lib/health/observation";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { computePlan } from "@/lib/nutrition/calc";
 import { TrendChart, MultiTrend, type Pt } from "@/components/trend-chart";
@@ -205,10 +206,12 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mod
 }
 
 const REC = [["SLEEP", "睡眠", "h"], ["RHR", "静息心率", "bpm"], ["HRV", "HRV", "ms"], ["fatigue", "疲劳", "1轻松-3很累"], ["pain", "酸痛", "0不疼-2明显"]] as const;
+const t2 = (d: string) => Date.parse(d + "T12:00:00Z");
 function RecoveryTrend({ vitals }: { vitals: ReturnType<typeof loadVitals>["records"] }) {
   const [k, setK] = useState<(typeof REC)[number][0]>("SLEEP");
   const [days, setDays] = useState(30);
-  const since = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  // 上海本地日：今天往前 days-1 天（含今天共 days 天）。旧写法用 UTC 日期，早上 8 点前会差一天。
+  const today = todayDate(), since = shiftDay(today, -(days - 1));
   const pts: Pt[] = useMemo(() => {
     if (k === "fatigue" || k === "pain") { const F: Record<string, number> = { fresh: 1, ok: 2, tired: 3 }, P: Record<string, number> = { none: 0, mild: 1, sharp: 2 }; return loadCheckins().filter((c) => c.date >= since).map((c) => ({ d: c.date, v: k === "fatigue" ? F[c.fatigue ?? ""] : P[c.pain ?? ""] })).filter((p): p is Pt => typeof p.v === "number").sort((a, b) => a.d.localeCompare(b.d)); }
     const view=buildHealthSnapshot(vitals,loadExtras(),todayDate(),loadHealthSources(),loadCheckins()).metrics.find(m=>m.metric===k);
@@ -218,7 +221,8 @@ function RecoveryTrend({ vitals }: { vitals: ReturnType<typeof loadVitals>["reco
   return <section className="fk-dash-card p-2">
     <div className="fk-dash-title text-sm"><Activity className="size-4" />恢复趋势<span className="keep ml-auto text-[10px] font-normal text-muted">{meta[2]}</span></div>
     <div className="mt-1 flex items-center gap-1 text-[11px]"><span className="flex flex-wrap rounded border border-line">{REC.map(([id, l]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)} className={"min-h-7 px-1.5 " + (k === id ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span><span className="ml-auto flex rounded border border-line">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={"min-h-7 px-1.5 " + (days === d ? "bg-accent text-accent-fg" : "")}>{d}天</button>)}</span></div>
-    {pts.length >= 2 ? <TrendChart key={`${k}-${days}`} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /> : <Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} />}
+    {pts.length >= 2 ? <><TrendChart key={`${k}-${days}`} domain={[since, today]} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} />
+      <p className="keep text-[10px] text-muted" data-testid="trend-coverage">{since.slice(5)}–{today.slice(5)} · {pts.length} 天有数据{pts[0].d > since ? `；最早 ${pts[0].d.slice(5)}，不足 ${days} 天${k === "fatigue" || k === "pain" ? "" : "（佳明每次同步会往前补 14 天，直到 90 天）"}` : ""}{pts.length < Math.round((t2(today) - t2(pts[0].d)) / 864e5) + 1 ? "；缺的天不连线" : ""}</p></> : <Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} />}
   </section>;
 }
 
@@ -261,12 +265,12 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
     <div className="flex items-center"><div className="fk-dash-title text-sm"><HeartPulse className="size-4" />健康记录</div><button type="button" className="ml-auto min-h-8 px-2 text-xs text-accent" onClick={() => setEdit(!edit)}>{edit ? "完成" : "编辑"}</button></div>
     <HealthModeNote day={today}/>
     {edit ? <div className="mt-1 grid grid-cols-2 gap-1 text-sm">{avail.map((m) => <label key={m.id} className="flex min-h-9 items-center gap-2 rounded-lg border border-line px-2"><input type="checkbox" checked={chosen.includes(m.id)} onChange={(e) => { const n = e.target.checked ? [...chosen, m.id] : chosen.filter((x) => x !== m.id); setChosen(n); localStorage.setItem(TILE_KEY, JSON.stringify(n)); }} />{m.label}</label>)}</div>
-    : shown.length ? <div className="mt-1 grid grid-cols-3 gap-1.5">{shown.map((m) => { const v = val(m); const I = m.icon; return <button key={m.id} type="button" onClick={() => setOpen(m.id)} className="rounded-xl border border-line bg-surface-2 p-2 text-left"><p className="flex items-center gap-1 whitespace-nowrap text-xs"><I className="size-3.5 shrink-0 text-accent" />{m.label}</p><p className="mt-1 text-base font-bold">{v?.t ?? (m.subj ? "点一下" : "—")}</p><p className="keep text-[10px] text-muted">{v ? v.d.slice(5) : ""}</p>{!m.subj?<p className="mt-0.5 text-[10px] text-muted">{snapshot.metrics.find(x=>x.metric===m.id)?.current?.statistic}</p>:null}</button>; })}</div> : <Empty text="点编辑选要显示的指标" />}
+    : shown.length ? <div className="mt-1 grid grid-cols-3 gap-1.5">{shown.map((m) => { const v = val(m); const I = m.icon; return <button key={m.id} type="button" onClick={() => setOpen(m.id)} className="rounded-xl border border-line bg-surface-2 p-2 text-left"><p className="flex items-center gap-1 whitespace-nowrap text-xs"><I className="size-3.5 shrink-0 text-accent" />{m.label}</p><p className="mt-1 text-base font-bold">{m.subj && v && v.d !== today ? "今天未评" : v?.t ?? (m.subj ? "点一下" : "—")}</p><p className="keep text-[10px] text-muted">{v ? (m.subj && v.d !== today ? `上次 ${v.t} · ${v.d.slice(5)}` : v.d.slice(5)) : ""}</p>{!m.subj?<p className="mt-0.5 text-[10px] text-muted">{snapshot.metrics.find(x=>x.metric===m.id)?.current?.statistic}</p>:null}</button>; })}</div> : <Empty text="点编辑选要显示的指标" />}
     {om ? <Sheet title={om.label} label="健康指标详情" footer={null} onClose={()=>setOpen(null)}>
       {!om.subj && snapshot.metrics.find(x=>x.metric===om.id) ? <HealthSourceDetails view={snapshot.metrics.find(x=>x.metric===om.id)!}/> : null}
       {om.subj ? <div className="mt-1 flex flex-wrap gap-1.5"><span className="keep self-center text-xs text-muted">今天</span>{SUBJ[om.id].map(([l, v]) => { const last = series[om.id]?.find((p) => p.d === today)?.v; return <button key={l} type="button" className="fk-chip" aria-pressed={last === v} onClick={() => rate(om.id, v)}>{l}</button>; })}</div> : null}
       <div className="mt-2 flex rounded border border-line text-xs">{[7, 30, 90, 365].map((d) => <button key={d} type="button" aria-pressed={hd === d} onClick={() => setHd(d)} className={"min-h-8 flex-1 " + (hd === d ? "bg-accent text-accent-fg" : "")}>{d === 365 ? "年" : `${d}天`}</button>)}</div>
-      {(() => { const since = new Date(Date.now() - hd * 864e5).toISOString().slice(0, 10); const ps = (series[om.id] ?? []).filter((p) => p.d >= since); return <>{ps.length >= 2 ? <TrendChart key={`${om.id}-${hd}`} points={ps} height={180} fmt={om.fmt} unit={om.subj ? "分" : om.unit} /> : <Empty text="这个时间段少于 2 天数据" />}<div className="mt-2 max-h-48 overflow-y-auto text-xs">{[...ps].reverse().map((p) => <p key={p.d} className="flex justify-between border-b border-line py-1"><span>{p.d}</span><b>{om.subj ? SUBJ[om.id].find(([, v]) => v === p.v)?.[0] ?? p.v : (om.fmt ?? ((v: number) => String(Math.round(v))))(p.v)}</b></p>)}</div></>; })()}
+      {(() => { const since = shiftDay(today, -(hd - 1)); const ps = (series[om.id] ?? []).filter((p) => p.d >= since); return <>{ps.length >= 2 ? <TrendChart key={`${om.id}-${hd}`} domain={[since, today]} points={ps} height={180} fmt={om.fmt} unit={om.subj ? "分" : om.unit} /> : <Empty text="这个时间段少于 2 天数据" />}<div className="mt-2 max-h-48 overflow-y-auto text-xs">{[...ps].reverse().map((p) => <p key={p.d} className="flex justify-between border-b border-line py-1"><span>{p.d}</span><b>{om.subj ? SUBJ[om.id].find(([, v]) => v === p.v)?.[0] ?? p.v : (om.fmt ?? ((v: number) => String(Math.round(v))))(p.v)}</b></p>)}</div></>; })()}
     </Sheet> : null}
   </section>;
 }

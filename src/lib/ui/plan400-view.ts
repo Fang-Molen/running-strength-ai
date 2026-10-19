@@ -116,3 +116,25 @@ export function entryLink(p: V4Plan, e: { id: string; date: string; source: stri
     ...(v && !linked && dayKind(v) !== 'rest' ? { sameDayV4: { title: v.title, kind: dayKind(v) } } : {}),
   }
 }
+
+/* v78：用户确认“V4 从 10/19 = W1 开始，整体顺延 7 天是对的”。只存确认，不改导入的原课表。 */
+export const DATE_CONFIRM_KEY = 'fk-plan400-dates-confirmed-v1'
+export type DateConfirm = { shiftDays: number; at: string; by: string }
+type KV = Pick<Storage, 'getItem' | 'setItem'> | null
+const kv = (): KV => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }
+export function loadDateConfirm(p: V4Plan, s: KV = kv()): DateConfirm | null {
+  try { const v = JSON.parse(s?.getItem(DATE_CONFIRM_KEY) ?? 'null'); return v && v.shiftDays === p.shiftDays && typeof v.at === 'string' ? v : null } catch { return null }
+}
+export function saveDateConfirm(p: V4Plan, by: string, s: KV = kv(), at = new Date().toISOString()): DateConfirm | null {
+  const v = { shiftDays: p.shiftDays, at, by }; try { s?.setItem(DATE_CONFIRM_KEY, JSON.stringify(v)); return v } catch { return null }
+}
+export function clearDateConfirm(s: Pick<Storage, 'removeItem'> | null = kv() as never) { try { s?.removeItem(DATE_CONFIRM_KEY) } catch { /* ignore */ } }
+/** 2026-10-19 用户（t486）确认：W1 = 10/19，+7 天日程正确。v78 升级时写一次；之后用户可在详情里撤销。 */
+export function migrateUserConfirmedDates(p: V4Plan, s: KV = kv()): void {
+  try { if (p.shiftDays === 7 && !s?.getItem(DATE_CONFIRM_KEY) && !s?.getItem(DATE_CONFIRM_KEY + ':revoked') && p.days.some(d => d.date === '2026-10-19' && d.week === 'W1')) saveDateConfirm(p, '用户确认（2026-10-19：W1 从 10/19 开始）', s, '2026-10-19T02:46:00Z') } catch { /* ignore */ }
+}
+/** 显示用：标题/原则里写的原日期（如「10月31日」）换成顺延后的日期（「11月7日」）。原数据不改。 */
+export function shiftedText(p: V4Plan, week: string, text: string): string {
+  const cs = dateConflicts(p).filter(c => c.week === week && c.matchedDay)
+  return cs.reduce((t, c) => { const [, m, d] = c.matchedDay!.date.split('-').map(Number); const rep = /月/.test(c.text) ? `${m}月${d}日` : `${m}/${d}`; return t.split(c.text).join(rep) }, text)
+}

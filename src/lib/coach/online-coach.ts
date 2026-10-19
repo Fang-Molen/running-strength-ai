@@ -30,7 +30,7 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
   if (recent.length) lines.push('近期活动：' + recent.map(a => `${activityLocalDay(a.start) ?? '?'} ${sportLabel(a.type)} ${fmtDistance(a.dist) ?? ''} ${fmtDuration(a.dur)} 心率${fmtHr(a.avgHr) ?? '—'}`).join('；'))
   try {
     const from = new Date(Date.parse(day + 'T12:00:00Z') - 7 * 864e5).toISOString().slice(0, 10)
-    const mine = loadTrainingActivities().filter(r => r.date >= from && r.date <= day && !isGarmin(r)).slice(-8)
+    const mine = loadTrainingActivities().filter(r => r.date >= from && r.date <= day && !isGarmin(r)).slice(-12)
     if (mine.length) lines.push('近期手机/计划记录：' + mine.map(r => `${r.date} ${recordLabel(r).replace(/^[^·]*· /, '')}${r.status === 'incomplete' ? '（已记录未完成）' : ''}`).join('；'))
     const v4 = [act ? localDayOf(act.start) : null, day].filter((x, i, xs): x is string => !!x && xs.indexOf(x) === i).map(d => v4RecordLine(d)).filter(Boolean)
     if (v4.length) lines.push(...(v4 as string[]))

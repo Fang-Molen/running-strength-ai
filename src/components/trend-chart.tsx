@@ -12,7 +12,8 @@ export function niceTicks(lo: number, hi: number, n = 4): number[] {
 const t = (d: string) => new Date(d + "T12:00:00").getTime();
 
 /** 轻量 SVG 折线（可多条，各自归一化）：双指缩放、单指横向拖动、点按看数值、双击复原。 */
-export function MultiTrend({ series, height = 96 }: { series: Series[]; height?: number }) {
+/** domain：x 轴固定为所选时间段（如近 90 天），不是数据首尾；相隔超过 1 天的点不连线（缺的天不画假线）。 */
+export function MultiTrend({ series, height = 96, domain }: { series: Series[]; height?: number; domain?: [string, string] }) {
   const [win, setWin] = useState<[number, number]>([0, 1]);
   const [tip, setTip] = useState<number | null>(null);
   const ref = useRef<SVGSVGElement>(null);
@@ -22,7 +23,7 @@ export function MultiTrend({ series, height = 96 }: { series: Series[]; height?:
   const all = live.flatMap((s) => s.points.map((p) => t(p.d)));
   if (live.length === 0) return null;
   if (all.length < 2 || Math.min(...all) === Math.max(...all)) { const s0 = live[0], p0 = s0.points[s0.points.length - 1]; return <div><svg viewBox="0 0 100 64" preserveAspectRatio="none" className="mt-1 w-full" style={{ height }}>{[16, 32, 48].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="#2a2b30" strokeWidth=".4" vectorEffect="non-scaling-stroke" />)}<line x1="50" x2="50" y1="31" y2="33" stroke={s0.color} strokeWidth="8" strokeLinecap="round" vectorEffect="non-scaling-stroke" /></svg><p className="keep text-center text-[11px] text-muted">{p0.d.slice(5)} {s0.label} <b>{(s0.fmt ?? ((x: number) => String(Math.round(x * 10) / 10)))(p0.v)}</b></p></div>; }
-  const t0 = Math.min(...all), t1 = Math.max(...all), T = Math.max(1, t1 - t0);
+  const t0 = domain ? Math.min(t(domain[0]), ...all) : Math.min(...all), t1 = domain ? Math.max(t(domain[1]), ...all) : Math.max(...all), T = Math.max(1, t1 - t0);
   const [a, b] = win;
   const F = (d: string) => (t(d) - t0) / T;
   const X = (d: string) => ((F(d) - a) / (b - a)) * 100;
@@ -44,7 +45,9 @@ export function MultiTrend({ series, height = 96 }: { series: Series[]; height?:
     const vis = s.points.filter((p) => F(p.d) >= a - 0.02 && F(p.d) <= b + 0.02); const vs = (vis.length ? vis : s.points).map((p) => p.v);
     const lo = Math.min(...vs), hi = Math.max(...vs); const ticks = niceTicks(lo, hi); const d0 = ticks[0], d1 = ticks[ticks.length - 1];
     const Y = (v: number) => 60 - ((v - d0) / (d1 - d0 || 1)) * 56;
-    return { s, lo, hi, Y, ticks, pts: s.points.map((p) => `${X(p.d).toFixed(2)},${Y(p.v).toFixed(2)}`).join(" ") };
+    const segs: Pt[][] = []; for (const p of s.points) { const last = segs.at(-1)?.at(-1); if (last && t(p.d) - t(last.d) <= 1.5 * 864e5) segs.at(-1)!.push(p); else segs.push([p]); }
+    const pt = (p: Pt) => `${X(p.d).toFixed(2)},${Y(p.v).toFixed(2)}`;
+    return { s, lo, hi, Y, ticks, segs, pt, pts: s.points.map(pt).join(" ") };
   });
   const near = (s: Series) => tip == null ? null : s.points.reduce((m, p) => (Math.abs(t(p.d) - tip) < Math.abs(t(m.d) - tip) ? p : m), s.points[0]);
   const tipX = tip == null ? null : ((((tip - t0) / T) - a) / (b - a)) * 100;
@@ -55,7 +58,8 @@ export function MultiTrend({ series, height = 96 }: { series: Series[]; height?:
     <div className="pointer-events-none absolute left-0 top-1 w-8 text-[10px] text-muted" style={{ height }}>{L0.ticks.map((v) => <span key={v} className="absolute right-1 -translate-y-1/2" style={{ top: `${(L0.Y(v) / 64) * 100}%` }}>{f(L0.s, v)}</span>)}{L0.s.unit ? <span className="absolute -top-3 left-0">{L0.s.unit}</span> : null}</div>
     <svg ref={ref} viewBox="0 0 100 64" preserveAspectRatio="none" className="mt-1 w-full select-none" style={{ height, touchAction: "pan-y" }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onDoubleClick={() => setWin([0, 1])}>
       {lines[0].ticks.map((v) => <line key={v} x1="0" x2="100" y1={lines[0].Y(v)} y2={lines[0].Y(v)} stroke="#2a2b30" strokeWidth=".5" vectorEffect="non-scaling-stroke" />)}
-      {lines.map(({ s, pts }, i) => <g key={s.label}>{i === 0 && live.length === 1 ? <polyline points={`${X(s.points[0].d)},64 ${pts} ${X(s.points[s.points.length - 1].d)},64`} fill={s.color} fillOpacity=".15" /> : null}<polyline points={pts} fill="none" stroke={s.color} strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></g>)}
+      {lines.map(({ s, segs, pt }, i) => <g key={s.label} data-segments={segs.length}>{segs.map((g, j) => g.length > 1 ? <g key={j}>{i === 0 && live.length === 1 ? <polyline points={`${X(g[0].d)},64 ${g.map(pt).join(" ")} ${X(g[g.length - 1].d)},64`} fill={s.color} fillOpacity=".15" /> : null}<polyline points={g.map(pt).join(" ")} fill="none" stroke={s.color} strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></g>
+        : <line key={j} x1={X(g[0].d)} x2={X(g[0].d)} y1={lines[i].Y(g[0].v)} y2={lines[i].Y(g[0].v)} stroke={s.color} strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}</g>)}
       {tipX != null ? <line x1={tipX} x2={tipX} y1="0" y2="64" stroke="#9a9ca3" strokeWidth=".6" vectorEffect="non-scaling-stroke" /> : null}
     </svg>
     <div className="keep relative h-4 text-[10px] text-muted">{[0, 0.25, 0.5, 0.75, 1].map((q) => <span key={q} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${q * 100}%`, transform: `translateX(${q === 0 ? "0" : q === 1 ? "-100%" : "-50%"})` }}>{day(t0 + (a + q * (b - a)) * T)}</span>)}</div>
@@ -63,6 +67,6 @@ export function MultiTrend({ series, height = 96 }: { series: Series[]; height?:
     {tipX != null ? <div className="pointer-events-none absolute top-0 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] shadow" style={{ left: `clamp(0px, calc(${tipX}% - 40px), calc(100% - 110px))` }}>{live.map((s) => { const p = near(s)!; return <div key={s.label}><span style={{ color: s.color }}>●</span> {p.d.slice(5)} {s.label} <b>{f(s, p.v)}</b></div>; })}</div> : null}
   </div>;
 }
-export function TrendChart({ points, fmt, height = 96, color = "#ff6a1a", unit }: { points: Pt[]; fmt?: (v: number) => string; height?: number; color?: string; unit?: string }) {
-  return <MultiTrend series={[{ label: "", color, points, fmt, unit }]} height={height} />;
+export function TrendChart({ points, fmt, height = 96, color = "#ff6a1a", unit, domain }: { points: Pt[]; fmt?: (v: number) => string; height?: number; color?: string; unit?: string; domain?: [string, string] }) {
+  return <MultiTrend series={[{ label: "", color, points, fmt, unit }]} height={height} domain={domain} />;
 }

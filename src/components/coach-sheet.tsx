@@ -617,13 +617,6 @@ export function CoachSheet({
       </div>
       <div hidden={section !== "chat"} className={"min-h-0 max-h-[50dvh] shrink-0 overflow-y-auto " + (embedded ? "pt-2" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
         {activityNotices.length ? <div className="mb-2 rounded-card border border-line p-2 text-xs" aria-live="polite"><div className="flex justify-between gap-2"><strong>方坤 · 本次打开期间的活动</strong><button type="button" onClick={() => setActivityNotices([])}>清除提示</button></div>{activityNotices.map(item => <p key={item.id} className="mt-1">{item.message}</p>)}</div> : null}
-        <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：经服务端调用 DeepSeek，只发送去标识化的训练数值、分段、恢复指标和计划目标，不发送账号或位置；离线或失败时自动用本地分析。急症/疼痛问题始终本地处理。</span></label>
-        <details className="coach-network-card mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限"><summary className="min-h-11 cursor-pointer font-bold">联网与隐私权限（按需展开）</summary>
-          <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
-          <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); try { window.localStorage.setItem(COACH_NETWORK_MODE_KEY, next); } catch { /* storage unavailable */ } }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
-          {networkMode === "public-knowledge" && <div className="mt-2 flex flex-wrap gap-2">{COACH_PUBLIC_REFERENCES.map((item) => <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="underline" onClick={(event) => { if (!authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed) event.preventDefault() }}>{item.label}</a>)}</div>}
-          <div className="mt-1 text-muted">公开链接仅供人工查阅；自动检索、内容核验和付费模型额度服务尚未接入。</div>
-        </details>
         {onlineRequest ? <div className="mb-2 flex flex-wrap items-center gap-2 text-xs"><span>复杂问题可主动尝试线上大模型（必须有服务端授权或额度；当前未实现赠送额度发放）。点击将发送问题及相关训练摘要给服务端，请先确认隐私。</span><button type="button" className="min-h-10 rounded-card border border-line px-3" disabled={sending || isOnline === false} onClick={() => void send(onlineRequest, true, true)}>{isOnline === false ? "离线不可调用" : "确认尝试线上回答"}</button><button type="button" className="min-h-10 px-2" onClick={() => setOnlineRequest(null)}>暂不使用</button></div> : null}
         {retryQuestion ? (
           <button type="button" className="mb-2 h-11 rounded-card border border-line px-3 text-sm" disabled={sending} onClick={() => void send(retryQuestion, true, true)}>
@@ -638,6 +631,14 @@ export function CoachSheet({
             <button type="button" disabled={!choiceNote.trim()} className="h-11 rounded-card border border-line px-3 text-sm disabled:opacity-50" onClick={() => { recordCoachChoice({ choice: "modify", question: turnQuestion, note: choiceNote }); setTurnId(null); setChoiceNote(""); setNotice("已记下你的修改。课表没有改。"); }}>按我的改</button>
           </div>
         ) : null}
+        <details data-testid="coach-status-row" className="mb-1 rounded-card border border-line text-xs"><summary className="flex min-h-9 cursor-pointer list-none items-center gap-2 px-3 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="px-2 pb-2">
+        <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：经服务端调用 DeepSeek，只发送去标识化的训练数值、分段、恢复指标和计划目标，不发送账号或位置；离线或失败时自动用本地分析。急症/疼痛问题始终本地处理。</span></label>
+        <details className="coach-network-card mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限"><summary className="min-h-11 cursor-pointer font-bold">联网与隐私权限（按需展开）</summary>
+          <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
+          <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); try { window.localStorage.setItem(COACH_NETWORK_MODE_KEY, next); } catch { /* storage unavailable */ } }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
+          {networkMode === "public-knowledge" && <div className="mt-2 flex flex-wrap gap-2">{COACH_PUBLIC_REFERENCES.map((item) => <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="underline" onClick={(event) => { if (!authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed) event.preventDefault() }}>{item.label}</a>)}</div>}
+          <div className="mt-1 text-muted">公开链接仅供人工查阅；自动检索、内容核验和付费模型额度服务尚未接入。</div>
+        </details>
         <details data-testid="coach-record-binding" className="mb-2 rounded-card border border-line px-3 py-2 text-xs">
           <summary className="min-h-9 cursor-pointer break-words font-bold text-fg">{link === "unbound" ? "未绑定上传，没有自动关联" : selectedOccurrenceId ? `当前关联：${coachImports().find(item=>item.confirmedImportId===selectedOccurrenceId)?.title.value ?? listBoundTrainings().find(item=>item.trainingOccurrenceId===selectedOccurrenceId)?.sessionId ?? '已选训练'}` : "尚未关联具体训练 · 按需展开"}</summary>
           <p className="mb-2 mt-1 text-muted">多节训练不会自动猜测归属；需要引用成绩、比较训练或记录身体反馈时再选择。</p>
@@ -726,12 +727,13 @@ export function CoachSheet({
           }}>确认身体反馈</button>
         </div> : null}
         </details>
-        <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
-          <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("帮我复盘这节训练，先说明已记录事实和缺失数据"); }}>分析最近训练</button>
-          <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("根据已记录的恢复、睡眠和疼痛，说明现在不能确认什么"); }}>解释恢复数据</button>
-          <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("查看我已保存的专项目标，不要假设没有写下的成绩"); }}>查看专项目标</button>
-          <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("为什么相同的400米×8，组间休息1分钟和8分钟训练刺激不同？"); }}>理解间歇原理</button>
-          <button type="button" className="min-h-10 shrink-0 rounded-full border border-line bg-surface px-3 text-sm" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
+        </div></details>
+        <div className="mb-1 flex gap-1.5 overflow-x-auto pb-0.5">
+          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("帮我复盘这节训练，先说明已记录事实和缺失数据"); }}>分析最近训练</button>
+          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("根据已记录的恢复、睡眠和疼痛，说明现在不能确认什么"); }}>解释恢复数据</button>
+          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("查看我已保存的专项目标，不要假设没有写下的成绩"); }}>查看专项目标</button>
+          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么相同的400米×8，组间休息1分钟和8分钟训练刺激不同？"); }}>理解间歇原理</button>
+          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
         </div>
         <form
           className="flex gap-2 pt-2"
