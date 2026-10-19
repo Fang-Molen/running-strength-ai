@@ -1,3 +1,4 @@
+import { currentAthleteId } from "./events.ts";
 import type { IntakeInputs, IntakeRecord } from "./coach-first-week.ts";
 export const FIRST_WEEK_TEST_DAY = "2026-10-11";
 export function firstWeekInputs(): IntakeInputs {
@@ -44,6 +45,7 @@ export function firstWeekRecords(
   sessionId = "synthetic-first-week",
 ): IntakeRecord[] {
   return (Object.keys(inputs) as (keyof IntakeInputs)[]).map((field, k) => ({
+    athleteId: currentAthleteId(),
     id: "intake-" + field,
     sessionId,
     createdAt: `2026-10-11T01:0${k}:00Z`,

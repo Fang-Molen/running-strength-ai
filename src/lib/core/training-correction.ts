@@ -77,6 +77,7 @@ export function appendCorrection(input: {
   try{before=captureCorrectionSources(input.trainingOccurrenceId)}catch{/* Fact saving remains available; unverified links cannot withdraw claims. */}
   const saved = writeEnvelope(TRAINING_CORRECTION_KEY, [...loadAll(), row])
   if(saved&&before)try{auditSavedClaimsForCorrection(row,before)}catch{/* No source or plan is rewritten if a review cannot be projected. */}
+  if(saved&&typeof window!=='undefined')try{window.dispatchEvent(new Event('fk-training-corrected'))}catch{/* Post-save review cannot block the saved correction. */}
   return saved ? row : null
 }
 

@@ -1,4 +1,7 @@
 import { loadHealthSnapshot } from "@/lib/health/snapshot"
+import { currentAthleteId } from "@/lib/core/events"
+import { currentStore } from "@/lib/core/storage"
+import { ownedBy } from "@/lib/core/ownership"
 /** 方坤日程：跑步、力量、方坤安排统一放进同一份按天排期（单一数据源）。 */
 import { exerciseById } from "@/lib/strength/catalog"
 import { estimateMinutes, type Session } from "@/lib/strength/model"
@@ -17,30 +20,61 @@ import { adaptProposal, adaptation, addDays, weekOf, type Recovery, type Schedul
 
 export const SCHEDULE_KEY = "fk-schedule-v1"
 export type ScheduleStore = { entries: ScheduleEntry[]; acks: string[] }
+type OwnedScheduleDocument = ScheduleStore & { acksByAthlete?: Record<string, string[]> }
+const ownsEntry = (entry: ScheduleEntry, athlete: string) => ownedBy(entry, athlete)
+/** Strict read is used by execution adapters: unavailable/corrupt is not an empty complete calendar. */
+export function readScheduleDocument(): { ok: true; value: OwnedScheduleDocument } | { ok: false; reason: string } {
+  try {
+    const store = currentStore(); if (!store) return { ok: false, reason: '日程存储不可用' }
+    const raw = store.getItem(SCHEDULE_KEY)
+    if (raw == null) return { ok: true, value: { entries: [], acks: [] } }
+    const v = JSON.parse(raw)
+    if (!v || !Array.isArray(v.entries) || v.entries.some((e: ScheduleEntry) => !e || typeof e.id !== 'string')) return { ok: false, reason: '日程格式需核对；未当作空日程' }
+    return { ok: true, value: { ...v, acks: Array.isArray(v.acks) ? v.acks : [] } }
+  } catch { return { ok: false, reason: '日程读取失败；未当作空日程' } }
+}
 export function loadSchedule(): ScheduleStore {
-  try { const v = JSON.parse(localStorage.getItem(SCHEDULE_KEY) ?? "null"); if (v && Array.isArray(v.entries)) return { entries: v.entries, acks: Array.isArray(v.acks) ? v.acks : [] } } catch { /* fallthrough */ }
-  return { entries: [], acks: [] }
+  const result = readScheduleDocument(), athlete = currentAthleteId()
+  if (!result.ok) return { entries: [], acks: [] }
+  const v = result.value
+  return { entries: v.entries.filter(e => ownsEntry(e, athlete)), acks: v.acksByAthlete?.[athlete] ?? (athlete === 'local' ? v.acks : []) }
 }
 export function saveSchedule(s: ScheduleStore): boolean {
   try {
-    const existing=localStorage.getItem(SCHEDULE_KEY);
-    if(existing){const parsed=JSON.parse(existing);if(!parsed||!Array.isArray(parsed.entries))return false;}
-    if(!Array.isArray(s.entries)||new Set(s.entries.map(e=>e.id)).size!==s.entries.length)return false;
-    const raw = JSON.stringify({ entries: s.entries, acks: s.acks.slice(-200) });
-    if (localStorage.getItem(SCHEDULE_KEY) !== raw) { localStorage.setItem(SCHEDULE_KEY, raw); if (localStorage.getItem(SCHEDULE_KEY) !== raw) return false; if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed')); }
+    const box = currentStore(), read = readScheduleDocument(), athlete = currentAthleteId()
+    if (!box || !read.ok || !Array.isArray(s.entries) || !Array.isArray(s.acks) || new Set(s.entries.map(e=>e.id)).size!==s.entries.length) return false
+    const original = read.value
+    // 其他运动员的行原样保留、不可被当前档案改写；当前档案（含旧的无归属本机历史，仅 local）可正常编辑。
+    const protectedRows = original.entries.filter(e => !ownsEntry(e, athlete))
+    const protectedIds = new Set(protectedRows.map(e => e.id))
+    const prevById = new Map(original.entries.map(e => [e.id, e] as const))
+    const next: ScheduleEntry[] = []
+    for (const entry of s.entries) {
+      if (entry.athleteId != null && entry.athleteId !== athlete) return false
+      if (protectedIds.has(entry.id)) return false
+      const old = prevById.get(entry.id)
+      // 旧无归属行改动时不补 athleteId（不隐式迁移）；新行显式写当前 athleteId。
+      next.push(old && old.athleteId == null && entry.athleteId == null ? entry : { ...entry, athleteId: athlete })
+    }
+    const raw = JSON.stringify({ ...original, entries: [...protectedRows, ...next], acksByAthlete: { ...original.acksByAthlete, [athlete]: s.acks.slice(-200) } })
+    if (box.getItem(SCHEDULE_KEY) !== raw) { box.setItem(SCHEDULE_KEY, raw); if (box.getItem(SCHEDULE_KEY) !== raw) return false; if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed')); }
     return true;
   } catch { return false }
 }
 /** Merge only the edited slot into a fresh calendar. No template or past result is replaced. */
 export async function saveScheduledEntry(entry: ScheduleEntry, previous?: ScheduleEntry): Promise<{ ok: boolean; reason?: string }> {
+  const ownerAtRequest = currentAthleteId()
   const work = () => {
+    if (currentAthleteId() !== ownerAtRequest) return { ok: false, reason: '当前运动员已切换，草稿未写入新的档案。请返回原档案核对。' }
     const current = loadSchedule(), old = current.entries.find(e => e.id === entry.id);
-    if (old && !previous) return JSON.stringify(old) === JSON.stringify(entry) ? { ok: true } : { ok: false, reason: '同一节训练已保存，未重复添加。请关闭后核对。' };
-    if (previous && JSON.stringify(old) !== JSON.stringify(previous)) return { ok: false, reason: '这节训练刚刚发生变化，请重新打开后修改；草稿保留。' };
+    const own = (e: ScheduleEntry) => ({ ...e, athleteId: e.athleteId ?? currentAthleteId() })
+    if (old && !previous) return JSON.stringify(own(old)) === JSON.stringify(own(entry)) ? { ok: true } : { ok: false, reason: '同一节训练已保存，未重复添加。请关闭后核对。' };
+    if (previous && (!old || JSON.stringify(own(old)) !== JSON.stringify(own(previous)))) return { ok: false, reason: '这节训练刚刚发生变化，请重新打开后修改；草稿保留。' };
     const next = { ...current, entries: old ? current.entries.map(e => e.id === entry.id ? entry : e) : [...current.entries, entry] };
     return saveSchedule(next) ? { ok: true } : { ok: false, reason: '本机保存失败，草稿保留。' };
   };
-  return typeof navigator !== 'undefined' && navigator.locks?.request ? navigator.locks.request(SCHEDULE_KEY, work) : work();
+  const result = typeof navigator !== 'undefined' && navigator.locks?.request ? await navigator.locks.request(SCHEDULE_KEY, work) : work();
+  return currentAthleteId() === ownerAtRequest ? result : { ok: false, reason: '当前运动员已切换，请返回原档案核对保存结果；不要重复提交。' }
 }
 
 const LOWER = new Set(["腿", "臀"]), UPPER = new Set(["胸", "背", "肩", "手臂"])
@@ -79,13 +113,14 @@ export function runEntry(plan: RunningPlan, date: string, source: ScheduleEntry[
 /** 把已接受的方坤计划同步进排期（幂等）。 */
 export function fangkunSessions(): ScheduleEntry[] {
   const out: ScheduleEntry[] = []
-  const choices = readJournal<{ kind: string; value: { choice?: string; draft?: FirstWeekDraft } }>(INTAKE_PREFIX).map((x) => x.data).filter((r) => (r.kind === "CHOICE" || r.kind === "EDIT") && r.value?.draft && r.value.choice !== "REJECT")
+  const athleteId = currentAthleteId()
+  const choices = readJournal<{ athleteId?: string; kind: string; value: { choice?: string; draft?: FirstWeekDraft } }>(INTAKE_PREFIX).map((x) => x.data).filter((r) => ownedBy(r, athleteId) && (r.kind === "CHOICE" || r.kind === "EDIT") && r.value?.draft && r.value.choice !== "REJECT")
   const draft = choices.at(-1)?.value.draft
   for (const s of draft?.sessions ?? []) {
     if (s.kind === "REST") continue
     out.push({ id: `fk:${draft!.id}:${s.id}`, date: s.date, kind: "coach", modality: "run", title: `方坤安排 · ${s.purpose}`.slice(0, 32), focus: [s.kind === "FAMILIAR_REPETITION" ? "重复跑" : "基础有氧"], minutes: s.estimatedMinutes, intensity: s.kind === "FAMILIAR_REPETITION" ? "HARD" : "EASY", lowerHeavy: false, source: "fangkun", refId: s.id, status: "proposed" })
   }
-  for (const cand of loadCoachPlanCandidates().filter((c) => c.status === "ACCEPTED" || c.status === "MODIFIED")) {
+  for (const cand of loadCoachPlanCandidates().filter((c) => ownedBy(c, athleteId) && (c.status === "ACCEPTED" || c.status === "MODIFIED"))) {
     const start = weekOf(cand.createdAt.slice(0, 10))[0]
     for (const s of cand.candidate.firstWeek) {
       if (s.type === "REST") continue

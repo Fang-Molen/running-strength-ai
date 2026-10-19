@@ -1,3 +1,5 @@
+import { currentAthleteId } from "./events.ts"
+import { ownedBy } from "./ownership.ts"
 import { projectPlanningRecovery } from "./coach-plan-recovery.ts"
 
 export type PlanGoal = {
@@ -89,43 +91,62 @@ export type PlanGuardResult =
   | { ok: false; reason: string; questions: string[] }
 
 export type StoredCoachPlanCandidate = {
+  /** Missing on historical records: never assigned by reading or choosing them. */
+  athleteId?: string
+  persistence?: "SAVED" | "NOT_SAVED"
   candidateId: string
   createdAt: string
-  status: "PENDING" | "ACCEPTED" | "REJECTED" | "MODIFIED"
+  status: "PENDING" | "ACCEPTED" | "REJECTED" | "MODIFIED" | "NOT_SAVED"
   candidate: CoachPlanCandidate
   modification: string | null
 }
 
 export const COACH_PLAN_CANDIDATES_KEY = "fr255-coach-plan-candidates-v1"
 
+/** Raw storage is retained on every write; the scoped display list is never a replacement database. */
+function allCoachPlanCandidates(): StoredCoachPlanCandidate[] | null {
+  const box = currentStore()
+  if (!box) return null
+  try {
+    const raw = box.getItem(COACH_PLAN_CANDIDATES_KEY)
+    if (raw == null) return []
+    const parsed = JSON.parse(raw)
+    return parsed && Array.isArray(parsed.data) ? parsed.data : null
+  } catch { return null }
+}
+const validCandidate = (item: StoredCoachPlanCandidate | null | undefined): item is StoredCoachPlanCandidate => !!item && typeof item.candidateId === 'string' && !!item.candidate
 export function loadCoachPlanCandidates(): StoredCoachPlanCandidate[] {
-  const current = readEnvelope<StoredCoachPlanCandidate[]>(COACH_PLAN_CANDIDATES_KEY, []).data
-  return Array.isArray(current) ? current.filter((item) => item?.candidateId && item?.candidate).slice(-20) : []
+  const athleteId = currentAthleteId()
+  return (allCoachPlanCandidates() ?? []).filter(validCandidate)
+    .filter(item => ownedBy(item, athleteId))
+    .slice(-20)
 }
 
 export function coachPlanPreferenceSources(): { text: string; sourceId: string }[] {
   return loadCoachPlanCandidates()
-    .filter((item) => item.status === "MODIFIED" && typeof item.modification === "string" && item.modification.trim())
+    .filter((item) => item.athleteId === currentAthleteId() && item.status === "MODIFIED" && typeof item.modification === "string" && item.modification.trim())
     .slice(-5)
     .map((item) => ({ text: item.modification!.trim().slice(0, 500), sourceId: `plan-preference:${item.candidateId}` }))
 }
 
 export function saveCoachPlanCandidate(candidate: CoachPlanCandidate): StoredCoachPlanCandidate {
-  const item: StoredCoachPlanCandidate = { candidateId: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, createdAt: new Date().toISOString(), status: "PENDING", candidate, modification: null }
-  writeEnvelope(COACH_PLAN_CANDIDATES_KEY, [...loadCoachPlanCandidates(), item].slice(-20))
-  return item
+  const item: StoredCoachPlanCandidate = { athleteId: currentAthleteId(), persistence: 'SAVED', candidateId: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, createdAt: new Date().toISOString(), status: "PENDING", candidate, modification: null }
+  const current = allCoachPlanCandidates()
+  if (!current || !writeEnvelope(COACH_PLAN_CANDIDATES_KEY, [...current, item])) return { ...item, persistence: 'NOT_SAVED', status: 'NOT_SAVED' }
+  const readBack = allCoachPlanCandidates()
+  return readBack?.some(x => JSON.stringify(x) === JSON.stringify(item)) ? item : { ...item, persistence: 'NOT_SAVED', status: 'NOT_SAVED' }
 }
 
 export function chooseCoachPlanCandidate(candidateId: string, status: "ACCEPTED" | "REJECTED" | "MODIFIED", modification?: string): StoredCoachPlanCandidate | null {
-  const current = loadCoachPlanCandidates()
-  let selected: StoredCoachPlanCandidate | null = null
-  const next = current.map((item) => {
-    if (item.candidateId !== candidateId) return item
-    selected = { ...item, status, modification: status === "MODIFIED" ? String(modification ?? "").trim().slice(0, 500) || null : null }
-    return selected
-  })
-  if (!selected || !writeEnvelope(COACH_PLAN_CANDIDATES_KEY, next)) return null
-  return selected
+  const current = allCoachPlanCandidates(), athleteId = currentAthleteId()
+  if (!current || !['ACCEPTED', 'REJECTED', 'MODIFIED'].includes(status)) return null
+  const matching = current.filter(item => validCandidate(item) && item.candidateId === candidateId && item.athleteId === athleteId && item.status !== 'NOT_SAVED')
+  if (matching.length !== 1) return null
+  const prior = matching[0]
+  const selected: StoredCoachPlanCandidate = { ...prior, persistence: 'SAVED', status, modification: status === "MODIFIED" ? String(modification ?? "").trim().slice(0, 500) || null : null }
+  const next = current.map(item => item === prior ? selected : item)
+  if (!writeEnvelope(COACH_PLAN_CANDIDATES_KEY, next)) return null
+  return allCoachPlanCandidates()?.some(x => JSON.stringify(x) === JSON.stringify(selected)) ? selected : null
 }
 
 function ids(value: unknown, allowed: Set<string>): string[] {
@@ -369,5 +390,5 @@ export function guardCoachPlan(context: PlanningContext, raw: unknown): PlanGuar
   if (!/(?:确认|接受|修改|拒绝)/.test(String(input.userControl ?? ""))) return { ok: false, reason: "USER_CONTROL_MISSING", questions: [] }
   return { ok: true, candidate: { status: "DRAFT_PENDING_CONFIRMATION", horizonWeeks, phases, firstWeek: firstWeek.sort((a, b) => a.day - b.day), assumptions, evidenceGaps, safetyBoundaries, progressionRule, deloadRule, acceptanceRequired: true } }
 }
-import { readEnvelope, writeEnvelope } from "./storage.ts"
+import { currentStore, writeEnvelope } from "./storage.ts"
 

@@ -1,3 +1,5 @@
+import { currentAthleteId, loadEvents } from "./events.ts";
+import { ownedByCurrent } from "./ownership.ts";
 import { appendJournal, readJournal } from "./storage-journal.ts";
 import { classifyLocalSafety } from "./coach-local-safety.ts";
 import { retrieveCognitionKnowledge } from "./coach-cognition-knowledge.ts";
@@ -54,6 +56,8 @@ export type IntakeInputs = {
 };
 export type IntakeField = keyof IntakeInputs;
 export type IntakeRecord = {
+  /** Missing means unassigned historical data, not the current athlete. */
+  athleteId?: string;
   id: string;
   sessionId: string;
   createdAt: string;
@@ -147,10 +151,18 @@ export function validateIntake(field: IntakeField, value: unknown): string | nul
   if ("note" in v && (typeof v.note !== "string" || v.note.length > 1200)) return "说明过长或无效";
   return null;
 }
+// 生成/采纳新课只认显式归属当前运动员的回答（安全相关，按 C03/R14 原样）；旧无归属回答对 local 仅可读。
+const ownsIntake = (r: IntakeRecord) => r.athleteId === currentAthleteId();
+const ownedStartIds = () => new Set(loadEvents().filter(e => e.event_type === "TRAINING_STARTED" && (e.athlete_id ?? "local") === currentAthleteId()).map(e => e.event_id));
+const explainOwnedRunningFeedback = () => {
+  const starts = ownedStartIds();
+  const ids = [...new Set(runningFeedback().filter(x => starts.has(x.trainingOccurrenceId)).map(x => x.trainingOccurrenceId))];
+  return ids.length ? ids.map(id => explainRunningFeedback(id)).join("；") : "当前运动员训练反馈未知；缺失不代表恢复正常。";
+};
 export function loadIntake(sessionId: string): IntakeRecord[] {
   return readJournal<IntakeRecord>(INTAKE_PREFIX)
     .map((x) => x.data)
-    .filter((x) => x.sessionId === sessionId);
+    .filter((x) => x.sessionId === sessionId && (ownsIntake(x) || ownedByCurrent(x)));
 }
 export function appendIntakeAnswer<K extends IntakeField>(
   sessionId: string,
@@ -165,11 +177,12 @@ export function appendIntakeAnswer<K extends IntakeField>(
   if (
     ids.some(
       (id) =>
-        !loadIntake(sessionId).some((x) => x.id === id && x.kind === "ANSWER" && x.field === field),
+        !loadIntake(sessionId).some((x) => ownsIntake(x) && x.id === id && x.kind === "ANSWER" && x.field === field),
     )
   )
     return { ok: false, error: "更正必须指向本次同一字段的原记录" };
   const record: IntakeRecord = {
+    athleteId: currentAthleteId(),
     id: crypto.randomUUID(),
     sessionId,
     createdAt: new Date().toISOString(),
@@ -254,6 +267,8 @@ type FirstWeekResult = {
   draft: FirstWeekDraft | null;
 };
 export function buildFirstWeek(records: IntakeRecord[], today: string): FirstWeekResult {
+  // Historical/foreign answers remain stored and readable, but cannot authorize a new dose.
+  records = records.filter(ownsIntake);
   const { inputs: i, evidenceIds, conflicts, errors } = intakeState(records);
   const ask = (f: IntakeField, issues: string[]): FirstWeekResult => ({
     status: "NEEDS_INFO",
@@ -282,8 +297,9 @@ export function buildFirstWeek(records: IntakeRecord[], today: string): FirstWee
   const limitConfirmation = records
     .filter((x) => x.kind === "ANSWER" && x.field === "limits" && evidenceIds.includes(x.id))
     .at(-1);
+  const starts = ownedStartIds();
   const recentFeedback = runningFeedback().filter(
-    (x) => Date.parse(x.recordedAt) > Date.parse(limitConfirmation?.createdAt ?? "1970-01-01"),
+    (x) => starts.has(x.trainingOccurrenceId) && Date.parse(x.recordedAt) > Date.parse(limitConfirmation?.createdAt ?? "1970-01-01"),
   );
   if (
     recentFeedback.some(
@@ -292,7 +308,7 @@ export function buildFirstWeek(records: IntakeRecord[], today: string): FirstWee
   )
     return ask("limits", [
       "已绑定训练反馈出现高RPE、疼痛或低恢复；先更新当前症状与恢复，不能沿用训练前正常自报。",
-      explainRunningFeedback(),
+      explainOwnedRunningFeedback(),
     ]);
   if (conflicts.length)
     return ask(conflicts[0], [
@@ -470,7 +486,8 @@ export function buildFirstWeek(records: IntakeRecord[], today: string): FirstWee
       reason: `由当前可轻松走跑${a.continuousEasyMinutes}分钟保守取${easy}分钟，匹配每次${v.minutes}分钟；暂不推算200/400米训练秒数`,
     };
   });
-  const learning = evaluateLearning(loadLearning(), "400米");
+  const memory = loadLearning();
+  const learning = evaluateLearning({ ...memory, records: memory.records.filter(r => ownedByCurrent(r)) }, "400米", currentAthleteId());
   const draft: FirstWeekDraft = {
     id: crypto.randomUUID(),
     version: FIRST_WEEK_VERSION,
@@ -502,7 +519,7 @@ export function buildFirstWeek(records: IntakeRecord[], today: string): FirstWee
       },
     ],
     warnings: [
-      explainRunningFeedback(),
+      explainOwnedRunningFeedback(),
       "目标可行性UNKNOWN，不承诺达标；输入为用户确认自报，未写入训练事实",
       "组次75%、秒数5%容差、时长折半、56/28天新鲜度是保守候选产品规则，不是已批准科学阈值",
       "首次周不自动增加近期训练频率，不自动复制精英剂量",
@@ -568,6 +585,7 @@ export function editFirstWeek(
 }
 /** Resume the saved modified candidate only while all its intake evidence remains current. */
 export function savedFirstWeekDraft(records: IntakeRecord[]): FirstWeekDraft | null {
+  records = records.filter(ownsIntake);
   const current = intakeState(records);
   if (current.conflicts.length || current.errors.length) return null;
   const saved = records.filter((r) => r.kind === "EDIT" || r.kind === "CHOICE").at(-1)?.value as
@@ -584,14 +602,19 @@ export function recordFirstWeekChoice(
   draft: FirstWeekDraft,
   choice: "ACCEPT" | "REJECT" | "MODIFY",
 ) {
-  const current = intakeState(loadIntake(sessionId));
+  const current = intakeState(loadIntake(sessionId).filter(ownsIntake));
   if (
-    current.conflicts.length ||
+    !["ACCEPT", "REJECT", "MODIFY"].includes(choice) ||
+    draft.version !== FIRST_WEEK_VERSION ||
+    current.conflicts.length || current.errors.length ||
+    INTAKE_FIELDS.some(f => !current.inputs[f]) ||
+    !current.evidenceIds.length ||
     current.evidenceIds.length !== draft.evidenceIds.length ||
     !current.evidenceIds.every((id) => draft.evidenceIds.includes(id))
   )
     return false;
   const record: IntakeRecord = {
+    athleteId: currentAthleteId(),
     id: crypto.randomUUID(),
     sessionId,
     createdAt: new Date().toISOString(),
@@ -619,7 +642,7 @@ export function startFirstWeekSession(
   sessionDayId: string,
   today: string,
 ) {
-  const records = loadIntake(sessionId),
+  const records = loadIntake(sessionId).filter(ownsIntake),
     draft = savedFirstWeekDraft(records);
   const latest = records.filter((x) => x.kind === "CHOICE" || x.kind === "EDIT").at(-1)?.value as
     { choice?: string; draft?: FirstWeekDraft } | undefined;
@@ -628,8 +651,9 @@ export function startFirstWeekSession(
   const day = draft.sessions.find((x) => x.id === sessionDayId);
   if (!day || day.kind === "REST") return { ok: false as const, reason: "这天是休息或不存在。" };
   const planId = `candidate-${draft.id}-${day.id}`;
+  const starts = ownedStartIds();
   const existing = listTrainingOccurrences()
-    .filter((x) => x.planSlotId === planId)
+    .filter((x) => starts.has(x.startEventId) && x.planSlotId === planId)
     .at(-1);
   if (existing) return { ok: true as const, trainingOccurrenceId: existing.trainingOccurrenceId };
   if (buildFirstWeek(records, today).status !== "READY_CANDIDATE")
@@ -700,13 +724,14 @@ export const startFirstWeekSessionSafely = (
 ) => withRunningWriteLock(() => startFirstWeekSession(sessionId, draftId, dayId, today));
 
 export function firstWeekOccurrences(records: IntakeRecord[]) {
-  const draftIds = records
+  const starts = ownedStartIds();
+  const draftIds = records.filter(ownsIntake)
     .filter((x) => x.kind === "CHOICE" || x.kind === "EDIT")
     .flatMap((x) => {
       const d = (x.value as { draft?: FirstWeekDraft })?.draft;
       return d ? [d.id] : [];
     });
-  return listTrainingOccurrences().filter((o) =>
+  return listTrainingOccurrences().filter((o) => starts.has(o.startEventId) &&
     draftIds.some((id) => o.planSlotId.startsWith(`candidate-${id}-`)),
   );
 }

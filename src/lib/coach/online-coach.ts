@@ -62,7 +62,12 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
   try { const snap = loadHealthSnapshot(day); lines.push('恢复指标：' + snap.metrics.filter(m => ['SLEEP', 'RHR', 'HRV', 'BODY_BATTERY', 'STRESS'].includes(m.metric)).map(healthSummaryLine).join('；')) } catch { /* optional */ }
   return lines.join('\n').slice(0, 7800)
 }
+/** 客户端问题上限与线上 /api/coach-chat 一致（v84 线上服务端截断到 1000 字）：超限直接拒绝、不 fetch，避免静默截断。
+ * C03/R14 包里的 200 字上限属于未启用的 server/coach-deepseek 受控入口，线上未路由，故此处不采用 200。 */
+export const ONLINE_QUESTION_MAX = 1000
 export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[] }, ms = 30000): Promise<{ text: string } | { error: string }> {
+  const q = input.question.trim()
+  if (!q || q.length > ONLINE_QUESTION_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) return { error: `问题为空、含无效字符或超过${ONLINE_QUESTION_MAX}字，已保留本地分析；没有上传数据` }
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms)
   try {
     const r = await fetch('/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...input, history: input.history.slice(-6) }), signal: ac.signal })

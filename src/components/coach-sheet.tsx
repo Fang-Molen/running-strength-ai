@@ -1,5 +1,9 @@
 import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'
 import { CoachIntegrationPanel } from '@/components/coach-integration-panel';
+import { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';
+import { CoachC03FollowupPanel } from '@/components/coach-c03-followup-panel';
+import { registerDisplayedC03Review } from '@/lib/coach/c03/runtime';
+import type { LocalCoachAnswer } from '@/lib/core/coach-local-first';
 import { readCoachMemory } from '@/lib/core/coach-context-memory';
 import { detectRedFlags } from '@/lib/core/coach-red-flags';
 import { CoachChatLoadPanel } from '@/components/coach-chat-load-panel';
@@ -107,8 +111,11 @@ export function CoachSheet({
 }) {
   const [section, setSection] = useState<"chat" | "learn" | "review">("chat");
   const [cognitionTurn, setCognitionTurn] = useState<{cognition: CoachCognition; brief: CoachBrief} | null>(null);
-  const [firstWeekGoal,setFirstWeekGoal]=useState<ReturnType<typeof firstWeekGoalFromText>>(null);
-  const [memory, setMemory] = useState<CoachMemory | null>(null);
+  const [firstWeekGoalState,setFirstWeekGoalState]=useState<{ athleteId: string; value: ReturnType<typeof firstWeekGoalFromText> } | null>(null);
+  const athleteScope = currentAthleteId();
+  const firstWeekGoal = firstWeekGoalState?.athleteId === athleteScope ? firstWeekGoalState.value : null;
+  const [storedMemory, setMemory] = useState<CoachMemory | null>(null);
+  const memory = storedMemory?.athleteId === athleteScope ? storedMemory : null;
   const [persona, setPersona] = useState<CoachPersona>("balanced");
   const [athlete, setAthlete] = useState<AthleteState | null>(null);
   const [pending, setPending] = useState<DecisionRecord | null>(null);
@@ -148,8 +155,19 @@ export function CoachSheet({
   const [fuelPreview, setFuelPreview] = useState<CoachFuel | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const memoryLoaded = useRef(false);
+  const pendingC03 = useRef<{ answer: LocalCoachAnswer; athleteId: string; messageId: string } | null>(null);
 
   useEffect(() => {
+    memoryLoaded.current = false;
+    pendingC03.current = null;
+    setFirstWeekGoalState(null);
+    setCognitionTurn(null);
+    setActivityNotices([]);
+    setChatLoad(null); setChatTraining(null);
+    setCompareA(''); setCompareB(''); setSeriesIds([]);
+    setRpeDraft(''); setRecoveryDraft(''); setBodyLocation(''); setBodyIntensity('');
+    setSending(false);
+    setOnlineRequest(null);
     setMemory(loadCoach());
     try { setNetworkMode(parseCoachNetworkMode(window.localStorage.getItem(COACH_NETWORK_MODE_KEY))); } catch { /* storage unavailable */ }
     try { setPersona(parsePersona(window.localStorage.getItem(PERSONA_KEY))); } catch { /* storage unavailable */ }
@@ -182,6 +200,7 @@ export function CoachSheet({
   }, []);
 
   useEffect(() => onAppEvent(event => {
+    if (event.athlete_id !== currentAthleteId()) return;
     setActivityNotices(current => appendCoachNotice(current, noticeForCoachEvent(event)));
     setRecordRevision(value => value + 1);
     // Do not silently bind new events to a prior session.
@@ -202,7 +221,15 @@ export function CoachSheet({
   useEffect(() => {
     if (!memory) return;
     if (!memoryLoaded.current) { memoryLoaded.current = true; return; }
-    setCoachSaveFailed(!saveCoach(memory));
+    const saved = saveCoach(memory);
+    setCoachSaveFailed(!saved);
+    const review = pendingC03.current;
+    if (saved && review && memory.athleteId === review.athleteId && currentAthleteId() === review.athleteId && memory.messages.some(m => m.id === review.messageId)) {
+      pendingC03.current = null;
+      void registerDisplayedC03Review(review.answer).then(result => {
+        if (!result.ok && currentAthleteId() === review.athleteId) setNotice('回答已保留，但长期观察依据尚未保存；原训练记录未改变。');
+      }).catch(() => { if (currentAthleteId() === review.athleteId) setNotice('长期观察待重试；原训练记录和回答仍保留。'); });
+    }
   }, [memory]);
 
   useEffect(() => {
@@ -269,6 +296,7 @@ export function CoachSheet({
     try { brief=attachLinkedSources(brief,deviceCoachSources(await listConfirmedDeviceEvidence(),new Date().toISOString())); } catch { brief=attachLinkedSources(brief,[{id:"linked:device-unreadable",kind:"CONTEXT",detail:"设备证据库读取失败，不能认为没有记录"}]); }
     }
     const priorAnalysis=latestReasoningBasis(memory.messages,athleteId,asOf,brief.occurrenceId?[brief.occurrenceId]:[]);
+    if (currentAthleteId() !== athleteId) { setSending(false); return; }
     let formal:ReturnType<typeof readFormalEvidenceRows>;
     try{formal=readFormalEvidenceRows(athleteId,asOf)}catch{
       setMemory(current=>current?{...current,messages:[...current.messages,{id:`${Date.now()}-evidence-failed`,role:'coach' as const,text:reasoningReadFailure(value,brief.pain||brief.constraints.medicalReferral)}].slice(-40)}:current);
@@ -286,13 +314,14 @@ export function CoachSheet({
         try{periodReview=readCoachReviewWorkspace(athleteId,calendarDay(asOf)!,Number(periodIntent[1]),asOf,devices,failed).period}catch{/* Existing formal-evidence response remains available. */}
       }
       const local = answerLocally(brief,reviewed?{frame:reviewed.reasoning,snapshot:reviewed.review.audit.snapshot}:undefined,coachContextMemory,periodReview,memory.dialogue??emptyDialogue(athleteId));
+      if (currentAthleteId() !== athleteId) { setSending(false); return; }
       if(!useCloud&&local.candidate){const savedAdvice=commitDisplayedCoachAdvice(local,value);if(!savedAdvice.ok)local.text+='\n本次建议历史保存失败，请先保留此回答；没有修改正式计划。'}
       setChatTraining(local.chatTraining??null);
       if(local.chatTraining)setChatLoad(null);
     if (!useCloud) {
-      if(local.offlineReview&&!local.chatTraining){const saved=saveOfflineReview(local.offlineReview);if(!saved.ok)setNotice('本地分析已生成，但判断历史未能保存；原训练记录仍保留。');}
+      if(local.offlineReview&&!local.chatTraining&&!local.c03){const saved=saveOfflineReview(local.offlineReview);if(!saved.ok)setNotice('本地分析已生成，但判断历史未能保存；原训练记录仍保留。');}
       const intakeGoal=firstWeekGoalFromText(value);
-      if(intakeGoal && local.cognition?.safety==='NONE' && !brief.pain)setFirstWeekGoal(intakeGoal);
+      if(intakeGoal && local.cognition?.safety==='NONE' && !brief.pain)setFirstWeekGoalState({ athleteId, value: intakeGoal });
       setCognitionTurn(local.cognition ? {cognition: local.cognition, brief} : null);
       const conversation = extractConversationContext(memory.messages, value);
       const contextual = detectRedFlags(value).level!=='NONE'||local.offlineRuleIds?.length||local.reasoning?.scopeOccurrenceIds.length?null:contextualFollowup(value, conversation);
@@ -309,7 +338,9 @@ export function CoachSheet({
         setNotice(linkNotice);
       }
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
-      setMemory(current => current ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: `${Date.now()}-local`, role: "coach" as const, text: shown,...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
+      const messageId = `${Date.now()}-local`;
+      if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
+      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
       setOnlineRequest(null);
       setTurnId(null);
       setFace(brief.pain ? "guard" : "focus");
@@ -375,10 +406,10 @@ export function CoachSheet({
       setTurnId(result.ok && result.turn.mode === "answer" ? coachId : null);
       setTurnQuestion(value);
       setFace(!result.ok ? "care" : guarded ? "guard" : result.turn.mode === "answer" ? "focus" : "encourage");
-      setMemory((current) => (current ? { ...current, messages: [...current.messages, { id: coachId, role: "coach" as const, text: presentCoachAnswer(reply, persona),...(result.ok&&result.analysisBasis?{analysisBasis:result.analysisBasis}:{}) }].slice(-40) } : current));
+      setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: coachId, role: "coach" as const, text: presentCoachAnswer(reply, persona),...(result.ok&&result.analysisBasis?{analysisBasis:result.analysisBasis}:{}) }].slice(-40) } : current));
     } catch {
       setFace("care");
-      setMemory((current) => (current ? { ...current, messages: [...current.messages, { id: `${Date.now()}-fallback`, role: "coach" as const, text: failure("INTERRUPTED") }].slice(-40) } : current));
+      setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: `${Date.now()}-fallback`, role: "coach" as const, text: failure("INTERRUPTED") }].slice(-40) } : current));
     } finally {
       setSending(false);
     }
@@ -410,6 +441,8 @@ export function CoachSheet({
         {section === "learn" ? <LearningLibrary onNavigate={onNavigate} publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed} /> : null}
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {coordinationPanel ?? null}
+        {section === 'review' && <CoachPlanChangePanel revision={recordRevision} />}
+        {section === 'review' && <CoachC03FollowupPanel revision={recordRevision} />}
         {section === 'review' && <CoachOfflineLoopPanel plan={plan} revision={recordRevision} />}
         {section === 'review' && <CoachIntegrationPanel revision={recordRevision} prepareInput={() => {
           const athleteId = currentAthleteId(), asOf = new Date().toISOString();
@@ -592,7 +625,7 @@ export function CoachSheet({
         <div hidden={section !== "chat"} className="space-y-3" aria-label="方坤对话区">
         <p className="product-chat-intro">说说你的目标，或选择一节训练一起看。方坤会先核对事实，再解释与建议。</p>
         <details data-testid="coach-disclaimer" className="text-xs text-muted"><summary className="min-h-8 cursor-pointer">使用说明与免责声明</summary><p>方坤提供训练分析与建议，不是医疗诊断，不能替代现场教练或医疗评估。回答可能有误，请核对关键记录；建议由你决定是否采用，接受聊天建议不会自动改课。每条回答下方可反馈问题。</p></details>
-        <details open={Boolean(firstWeekGoal)} className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">首次使用 · 目标与首周计划</summary><CoachFirstWeekPanel requestedGoal={firstWeekGoal} /></details>
+        <details open={Boolean(firstWeekGoal)} className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">首次使用 · 目标与首周计划</summary><CoachFirstWeekPanel key={athleteScope} requestedGoal={firstWeekGoal} /></details>
         {cognitionTurn && <CoachCognitionPanel key={`${cognitionTurn.brief.occurrenceId}:${cognitionTurn.brief.question}`} cognition={cognitionTurn.cognition} brief={cognitionTurn.brief} />}
         {memory?.messages.filter((message) => message.id !== "hi").map((message) => (
           <div key={message.id} className={message.role === "user" ? "flex justify-end" : "flex justify-start"}>

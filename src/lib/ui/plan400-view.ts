@@ -85,7 +85,9 @@ export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefi
   const fromParts: V4DayFact['overall'] = need.length && need.every(v => v.state === 'skipped') ? 'skipped'
     : need.length && need.every(v => v.state === 'done' || v.state === 'reduced') ? (need.some(v => v.state === 'reduced') ? 'reduced' : 'done')
     : need.some(v => v.state !== 'none' && v.state !== 'candidate') ? 'in_progress' : null
-  const split = hasEnteredPart(x)
+  // C03/R14 HOST-01：正在进行的逐组引导、已有逐组/逐段执行状态，也属于“新口径”，旧整课 done 不能盖过它。
+  // （用户确认关联的手表跑步 runLinked 仍按 v83 口径，不单独触发；见 docs/modules.md 跟进项。）
+  const split = hasEnteredPart(x) || (plannedLift && strengthLive) || !!x?.strengthExec || !!x?.runExec
   const legacyDone = l.done === 'done' || l.done === 'reduced' || l.done === 'skipped' ? l.done : null
   const legacyOverall = !split && !!legacyDone
   const overall: V4DayFact['overall'] = split ? fromParts ?? 'in_progress' : legacyDone ? legacyDone : fromParts ?? (hasRecord(l) ? 'in_progress' : null)

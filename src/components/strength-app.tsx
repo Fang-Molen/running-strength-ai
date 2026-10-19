@@ -1,4 +1,5 @@
 import { OnlineFeaturesSettings } from "./online-features-settings";
+import { startC03FollowupRuntime } from '@/lib/coach/c03/runtime';
 import { onlineFeatures } from "@/lib/ui/online-features";
 import { installChunkRecovery, isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
 import { HomeDashboard } from "@/components/home-dashboard";
@@ -23,7 +24,7 @@ import { initVault } from "@/lib/vault";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
 import { bootCore, captureOriginalPlan, dispatchEvent } from "@/lib/core";
-import { loadEvents, onAppEvent } from "@/lib/core/events";
+import { currentAthleteId, loadEvents, onAppEvent } from "@/lib/core/events";
 import { offlinePrefetchUrls, serviceWorkerNavigationPlan, trainingExecutionOpen } from "@/lib/ui/sw-reload";
 import { CoachSheet } from "@/components/coach-sheet";
 import { CoachCoordinationHub } from "@/components/coach-coordination-hub";
@@ -117,6 +118,7 @@ const FEELS: { id: Feel; label: string; hint: string }[] = [
 ];
 
 export function StrengthApp() {
+  useEffect(() => startC03FollowupRuntime(), []);
   const [bodyPane, setBodyPane] = useState<BodyPane>("recovery");
   const [, setDataRevision] = useState(0);
   useEffect(() => { try { onlineFeatures() } catch { /* storage unavailable */ } }, []); // v78 t473：联网功能默认全开，记录一次同意
@@ -1122,7 +1124,7 @@ export function StrengthApp() {
         />
       ) : null}
       {trainingImportOpen ? <TrainingImportSheet onClose={() => setTrainingImportOpen(false)} /> : null}
-      {coachPlanOpen ? <CoachPlanSheet profile={profile} onEditProfile={() => { setCoachPlanOpen(false); setProfileOpen(true); }} onClose={() => setCoachPlanOpen(false)} /> : null}
+      {coachPlanOpen ? <CoachPlanSheet key={currentAthleteId()} profile={profile} onEditProfile={() => { setCoachPlanOpen(false); setProfileOpen(true); }} onClose={() => setCoachPlanOpen(false)} /> : null}
 
     </div>
   );

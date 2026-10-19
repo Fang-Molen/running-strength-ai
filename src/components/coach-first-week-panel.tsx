@@ -1,5 +1,6 @@
 import { stampCN } from "@/lib/ui/activity-format";
 import { onAppEvent } from "@/lib/core/events";
+import { ownedByCurrent } from "@/lib/core/ownership";
 import { TrackRunner } from "./track-session";
 import { firstWeekOccurrences, startFirstWeekSessionSafely } from "@/lib/core/coach-first-week";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -109,7 +110,7 @@ export function CoachFirstWeekPanel({
   useEffect(() => {
     const latest = readJournal<IntakeRecord>(INTAKE_PREFIX)
       .map((x) => x.data)
-      .filter((x) => x.kind === "ANSWER" && x.field === "goal")
+      .filter((x) => ownedByCurrent(x) && x.kind === "ANSWER" && x.field === "goal")
       .at(-1);
     if (latest) {
       setSessionId(latest.sessionId);

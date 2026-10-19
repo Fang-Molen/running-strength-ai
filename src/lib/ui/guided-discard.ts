@@ -2,19 +2,22 @@
  * 事件日志只追加不删除：放弃 = 关闭进行中的课次（TRAINING_INTERRUPTED，payload.discarded=true，不发 AI_DECISION_INTERRUPTED）
  * ＋ 追加一条 VOID 更正（与“作废记录”同一机制；日志/复盘/五维/方坤读取都已排除作废课次）
  * ＋ 把日程条目里由这次执行投影出的 actual 清掉、状态回到 planned → 力量分项回到“未记录”。 */
-import { dispatchEvent } from '@/lib/core/events'
+import { currentAthleteId, loadEvents, dispatchEvent } from '@/lib/core/events'
 import { closeTrainingOccurrence, listTrainingOccurrences, getTrainingOccurrence } from '@/lib/core/occurrence'
 import { executionOf } from '@/lib/core/execution'
 import { appendCorrection, occurrenceVoided } from '@/lib/core/training-correction'
 import { loadSchedule, saveSchedule } from './day-schedule'
 
 export const DISCARD_REASON = '用户放弃本次（试用/误开），不记录'
-/** 这个 sessionId 最近一次、尚未作废的课次。 */
+const ownedStarts = () => new Set(loadEvents().filter(e => e.event_type === 'TRAINING_STARTED' && (e.athlete_id ?? 'local') === currentAthleteId()).map(e => e.event_id))
+/** 这个 sessionId 最近一次、归属当前运动员且尚未作废的课次。 */
 export function latestOccurrence(sessionId: string) {
-  return [...listTrainingOccurrences()].reverse().find(o => o.sessionId === sessionId && !occurrenceVoided(o.trainingOccurrenceId)) ?? null
+  const ids = ownedStarts()
+  return [...listTrainingOccurrences()].reverse().find(o => ids.has(o.startEventId) && o.sessionId === sessionId && !occurrenceVoided(o.trainingOccurrenceId)) ?? null
 }
 export function guidedLive(sessionId: string): boolean {
-  return listTrainingOccurrences().some(o => o.lifecycle === 'IN_PROGRESS' && o.sessionId === sessionId && !occurrenceVoided(o.trainingOccurrenceId))
+  const ids = ownedStarts()
+  return listTrainingOccurrences().some(o => ids.has(o.startEventId) && o.lifecycle === 'IN_PROGRESS' && o.sessionId === sessionId && !occurrenceVoided(o.trainingOccurrenceId))
 }
 /** 放弃 sessionId 当前（或刚结束的）这一次引导。返回是否已核实写入。 */
 export function discardGuided(sessionId: string): boolean {

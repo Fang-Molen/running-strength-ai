@@ -1,4 +1,5 @@
 import { recordPlanAudit } from "@/lib/core/adaptive-plan-audit"
+import { currentAthleteId } from '@/lib/core/events'
 import { arbitratePlanChange } from "@/lib/core/adaptive-plan-permissions"
 import { useMemo, useRef, useState } from "react"
 import { Check, ChevronLeft, LoaderCircle, Pencil, ShieldCheck, X } from "lucide-react"
@@ -72,8 +73,10 @@ export function CoachPlanSheet({ profile, onEditProfile, onClose }: { profile: P
   const generationInFlight = useRef(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState("")
-  const [candidate, setCandidate] = useState<CoachPlanCandidate | null>(null)
-  const [stored, setStored] = useState<StoredCoachPlanCandidate | null>(null)
+  const [candidateState, setCandidateState] = useState<{ athleteId: string; value: CoachPlanCandidate } | null>(null)
+  const candidate = candidateState?.athleteId === currentAthleteId() ? candidateState.value : null
+  const [storedValue, setStored] = useState<StoredCoachPlanCandidate | null>(null)
+  const stored = storedValue?.athleteId === currentAthleteId() ? storedValue : null
   const [modification, setModification] = useState("")
   const [support, setSupport] = useState<CoachingBackground["support"]>("NONE")
   const [shareSex, setShareSex] = useState(false)
@@ -117,15 +120,19 @@ export function CoachPlanSheet({ profile, onEditProfile, onClose }: { profile: P
     generationInFlight.current = true
     setBusy(true)
     setMessage("")
+    const requestedAthlete = currentAthleteId()
     try {
       const background: CoachingBackground = { sex: shareSex && profile.sex === "female" ? "FEMALE" : shareSex && profile.sex === "male" ? "MALE" : "UNKNOWN", support }
       const result = await generateCoachPlan({ data: { context, background } })
+      if (currentAthleteId() !== requestedAthlete) return
       if (!result.ok) {
         setMessage(result.questions?.join("；") || `没有拿到可核对的候选计划：${result.reason}${result.detail ? `（${result.detail}）` : ""}`)
         return
       }
-      setCandidate(result.candidate)
-      setStored(saveCoachPlanCandidate(result.candidate))
+      setCandidateState({ athleteId: requestedAthlete, value: result.candidate })
+      const saved = saveCoachPlanCandidate(result.candidate)
+      setStored(saved)
+      if (saved.status === 'NOT_SAVED') setMessage('候选没有保存，尚不能采纳；原课表未改变。请稍后重试保存。')
     } catch {
       setMessage("计划请求失败。没有用固定模板冒充模型计划，请手动重试。")
     } finally {
@@ -136,6 +143,7 @@ export function CoachPlanSheet({ profile, onEditProfile, onClose }: { profile: P
 
   function choose(status: "ACCEPTED" | "REJECTED" | "MODIFIED") {
     if (!stored) return
+    if (stored.status === 'NOT_SAVED') return setMessage('候选尚未保存，不能记录采纳；原课表没有改变。')
     const next = chooseCoachPlanCandidate(stored.candidateId, status, modification)
     if (!next) return setMessage("选择没有保存，请重试")
     setStored(next)
@@ -186,6 +194,7 @@ export function CoachPlanSheet({ profile, onEditProfile, onClose }: { profile: P
         </section>
         <section className="mt-3 rounded-card border border-line bg-surface p-3"><h3 className="font-bold">进阶与减量合同</h3><p className="mt-2 text-sm">{candidate.progressionRule}</p><p className="mt-2 text-sm">{candidate.deloadRule}</p></section>
         <textarea value={modification} onChange={(event) => setModification(event.target.value)} maxLength={500} placeholder="想怎么改，例如：周三不能训练、力量放周五" className="mt-3 w-full rounded-card border border-line bg-surface p-3" rows={3} />
+        {stored?.status === 'NOT_SAVED' && <button type="button" className="mt-3 min-h-11 rounded-card border border-line px-3 text-sm" onClick={() => { const saved = saveCoachPlanCandidate(candidate); setStored(saved); setMessage(saved.status === 'NOT_SAVED' ? '仍未保存，请保留当前内容；原课表未改变。' : '候选已保存在当前本机档案；采纳仍不会自动覆盖课表。') }}>重试保存候选</button>}
         <div className="mt-3 grid grid-cols-3 gap-2"><button type="button" onClick={() => choose("ACCEPTED")} className="flex min-h-12 items-center justify-center gap-1 rounded-card bg-accent px-2 text-sm font-bold text-accent-fg"><Check className="size-4" />接受方向</button><button type="button" onClick={() => choose("MODIFIED")} disabled={!modification.trim()} className="flex min-h-12 items-center justify-center gap-1 rounded-card border border-line px-2 text-sm font-bold disabled:opacity-40"><Pencil className="size-4" />按我修改</button><button type="button" onClick={() => choose("REJECTED")} className="min-h-12 rounded-card border border-line px-2 text-sm font-bold">不采用</button></div>
       </>}
       <CoachKnowledgePanel mode="PLAN" />

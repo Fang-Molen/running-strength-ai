@@ -28,3 +28,15 @@ test('coach-chat proxy: key required, size and rate limited, system prompt fixed
     assert.equal(last, 429)
   } finally { globalThis.fetch = orig }
 })
+test('C03 merge: client question cap matches live server clip (1000); over-limit or control chars never fetch', async () => {
+  const { askOnlineCoach, ONLINE_QUESTION_MAX } = await import('./online-coach.ts')
+  assert.equal(ONLINE_QUESTION_MAX, 1000)
+  const orig = globalThis.fetch; let calls = 0
+  globalThis.fetch = (async () => { calls++; return new Response(JSON.stringify({ text: 'ok' })) }) as any
+  try {
+    const base = { facts: '', local: '', history: [] }
+    assert.ok('error' in await askOnlineCoach({ ...base, question: '问'.repeat(1001) })); assert.equal(calls, 0)
+    assert.ok('error' in await askOnlineCoach({ ...base, question: 'a\u0001b' })); assert.equal(calls, 0)
+    assert.deepEqual(await askOnlineCoach({ ...base, question: '问'.repeat(1000) }), { text: 'ok' }); assert.equal(calls, 1)
+  } finally { globalThis.fetch = orig }
+})

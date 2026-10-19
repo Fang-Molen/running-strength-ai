@@ -1,4 +1,6 @@
 import { answerFromAppData } from "../health/coach-data"
+import { compileC03MetricBrief, type C03MetricBrief } from '../coach/c03/evidence.ts'
+import { buildC03ObservationReview } from '../coach/c03/argument.ts'
 import { deliverNativeCoachDialogue } from './dialogue-e1/host.ts'
 import { topicFallback, FALLBACK_TOPICS } from './coach-topic-fallback.ts';
 import { answerDialogue, coachPrimaryIntent, type CoachDialogue } from './coach-dialogue.ts';
@@ -30,6 +32,7 @@ import type { EvolutionSnapshot } from './coach-evolution-v4.ts';
 import { coachQuestionIntent } from './coach-model-packet.ts';
 
 export type LocalCoachAnswer = {
+  c03?: { brief: C03MetricBrief; review: ReturnType<typeof buildC03ObservationReview> };
   expression?: { version: 'E1'; coverage: 'CONFIRMED_RECORD_INSPECTION_ONLY'; sourceRevision: string };
   dialogue?: CoachDialogue;
   chatTraining?: ChatTraining;
@@ -279,7 +282,38 @@ export function answerLocally(brief:CoachBrief,logic?:{frame:ReasoningFrame;snap
  const original = answerLocallyBase(brief,logic,memory,periodReview,dialogue)
  if (FALLBACK_TOPICS.INJECTION.match.test(brief.question) || detectRedFlags(brief.question).level!=='NONE'
    || brief.pain || brief.constraints.medicalReferral || logic?.frame.safety.mustRetain
-   || original.dialogue?.emergency || original.dialogue?.medicalHold || original.chatTraining || original.candidate) return original
+   || original.dialogue?.emergency || original.dialogue?.medicalHold || original.chatTraining) return original
+ // Only an explicit, scoped replay reaches C03. Simple calculations, original-record
+ // inspection, teaching examples and future-course selection keep their existing path.
+ const explicitReplay = /复盘|(?:分析|解释).{0,10}(?:本次|这次|训练表现|掉速|变慢|原因)|(?:为何|为什么).{0,12}(?:掉速|变慢)|(?:掉速|变慢).{0,8}(?:原因|为何|为什么)/.test(brief.question)
+ const otherTask = /只算|仅算|计算|负荷|配速是多少|(?:查看|核对|读取|列出).{0,12}(?:实际记录|训练记录|完成记录|记录事实)|教学|合成|案例|假设|举例|下一课|明天|改期|挪到|移到|调整|安排|加量|减量|选课/.test(brief.question)
+ if (explicitReplay && !otherTask && brief.occurrenceId && logic
+   && logic.snapshot.athleteId === (original.dialogue?.athleteId ?? logic.snapshot.athleteId)
+   && logic.frame.scopeOccurrenceIds.includes(brief.occurrenceId)) {
+  const c03Brief = compileC03MetricBrief(logic.snapshot, brief.occurrenceId)
+  if (c03Brief.state !== 'BLOCKED' && c03Brief.groups.length) {
+   const purpose = original.offlineReview?.purpose
+   const review = buildC03ObservationReview(c03Brief, purpose?.purpose === 'UNKNOWN' ? null : purpose?.purpose)
+   const metricLabels: Record<string, string> = { REST_SECONDS: '实际恢复时间', STRENGTH_KG: '力量实际外加负重',
+    STRENGTH_REPS: '力量实际次数', STRENGTH_SECONDS: '力量实际持续时间', SESSION_RPE: '整课RPE',
+    SLEEP_HOURS: '睡眠记录', SUBJECTIVE_RECOVERY: '主观恢复', SORENESS: '酸痛自报', PAIN_SCORE: '疼痛自报', HR_AVG_BPM: '平均心率' }
+   const remainingFacts = c03Brief.numbers.filter(n => n.kind === 'SOURCE' && n.metric !== 'SPLIT_SECONDS')
+    .map(n => `${metricLabels[n.metric] ?? '已记录指标'}：${n.value}${n.unit === 'score' ? '/10' : ` ${n.unit}`}（来源 ${n.sourceIds.join('、')}）`)
+   const text = [
+    `本次事实：${[...review.facts, ...remainingFacts].join('\n')}`,
+    `训练目的：${review.purpose}。${purpose?.conditions ?? '先核对原计划目的、实际强度与恢复；不凭距离或课名推断。'}`,
+    ...review.explanations.map((h, i) => `可能解释${i + 1}：${h.explanation}\n支持：${h.support.join('；')}\n反证或削弱条件：${h.against.join('；')}`),
+    `不确定性：${[...review.missing, ...review.explanations.flatMap(h => h.missing)].join('；') || '观察不能证明因果或能力缺陷'}。`,
+    `下一步具体观察：${review.nextObservation}`,
+    brief.constraints.blockReason ? `现有训练限制仍保留：${brief.constraints.blockReason}` : '',
+    review.purpose === 'UNKNOWN' ? '最重要的确认：原计划或教练对这节课最重要的目的是什么？' : '',
+    '以上是本地事实与待验证解释；没有修改正式计划、训练记录或能力评分。',
+   ].filter(Boolean).join('\n')
+   return { ...original, text, candidate: null, c03: { brief: c03Brief, review },
+    sources: [...new Set(c03Brief.numbers.flatMap(n => n.sourceIds))] }
+  }
+ }
+ if (original.candidate) return original
  const expression = deliverNativeCoachDialogue({ question: brief.question, occurrenceId: brief.occurrenceId,
    asOf: logic?.snapshot.asOf ?? new Date().toISOString() })
  if (expression.status!=='DELIVERABLE_FACTS_ONLY') return original

@@ -5,6 +5,8 @@
 export type Intensity = "EASY" | "MODERATE" | "HARD"
 export type EntryKind = "run" | "strength" | "coach"
 export type ScheduleEntry = {
+  /** Explicit local ownership. Missing on old rows remains legacy/unattributed, never auto-claimed. */
+  athleteId?: string
   id: string; date: string; kind: EntryKind; modality: "run" | "strength" | "rest"
   title: string; focus: string[]; minutes: number; intensity: Intensity
   lowerHeavy: boolean; source: "fangkun" | "custom"; refId: string | null
