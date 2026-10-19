@@ -166,7 +166,9 @@ export function applyV4Fact(row: ActivityRow, f: V4DayFact & { date: string }) {
   row.v4 = f; row.plan = 'v4'
   row.sport = f.actualRun && f.actualLift ? 'MIXED' : f.actualRun ? 'RUNNING' : f.actualLift ? 'STRENGTH' : f.legacyOverall && f.overall !== 'skipped' ? (f.plannedRun && f.plannedLift ? 'MIXED' : f.plannedRun ? 'RUNNING' : 'STRENGTH') : row.sport
   const partDone = [f.running?.state, f.strength?.state].some(s => s === 'done' || s === 'reduced')
-  row.status = f.overall === 'done' || f.overall === 'reduced' || partDone ? 'completed' : 'incomplete'
+  // 手表实测的跑步（已关联）是真实发生的训练：这一条计入次数/距离（V4 分项状态仍是“有记录·未标完成”，不等于跑步完成）
+  const measured = (row.members ?? []).some(m => m.source === 'garmin' && m.status !== 'incomplete') || row.source === 'garmin'
+  row.status = f.overall === 'done' || f.overall === 'reduced' || partDone || measured ? 'completed' : 'incomplete'
   const ms = (row.members ?? []).filter(m => m.source !== 'phone' || m.durationSec != null)
   const known = ms.filter(m => m.durationSec != null)
   if (ms.length > 1) { row.durationSec = known.length ? known.reduce((s, m) => s + m.durationSec!, 0) : null; row.durationPartial = known.length > 0 && known.length < ms.length }

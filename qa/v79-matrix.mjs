@@ -30,9 +30,13 @@ await p.addInitScript(()=>{const D=window.Date;if(D.__safari)return;const bad=s=
 const ready=async()=>{await p.locator('[data-testid="training-app"][data-ready=true]').waitFor({timeout:60000});await p.waitForTimeout(6000)}
 await p.goto(base);await ready()
 // ---------- 0. 导入后弹窗（V4 10-19 跑步部分 ↔ 佳明 07:00 操场跑）----------
-const pr=p.getByTestId('run-import-prompt');await shot('01-import-prompt')
-check('同步到 V4 当天的佳明跑步 → 弹一次：立即填跑步评价 / 力量另行记录 / 稍后',await pr.isVisible().catch(()=>false)&&/速度耐力＋力量A · 跑步部分/.test(await pr.innerText())&&(await pr.getByRole('button',{name:/立即填跑步评价|力量另行记录|稍后/}).count())===3,await pr.innerText().catch(()=>'none'))
-await pr.getByRole('button',{name:'立即填跑步评价'}).click();await pr.getByLabel('跑步 RPE').fill('8');await pr.getByRole('button',{name:'保存跑步评价'}).click();await p.waitForTimeout(300);await pr.getByRole('button',{name:'完成',exact:true}).click().catch(()=>{});
+
+const pr=p.getByTestId('run-candidate-prompt');await shot('01-import-prompt')
+// v83（整改包 P1-05/IMP-01）：同日唯一手表跑步只是候选，需确认；确认前不算关联、不算完成
+check('v83 同步到 V4 当天的佳明跑步 → 先问“是这节吗”：关联到这节课 / 不是这节课 / 稍后',await pr.isVisible().catch(()=>false)&&/速度耐力＋力量A/.test(await pr.innerText())&&(await pr.getByRole('button',{name:/关联到这节课|不是这节课|稍后/}).count())===3,await pr.innerText().catch(()=>'none'))
+check('v83 确认前不写关联',!/2026-10-19/.test(await p.evaluate(()=>localStorage.getItem('fk-run-links-v1')||'')))
+await pr.getByRole('button',{name:'关联到这节课'}).click();await p.waitForTimeout(500)
+await p.evaluate(()=>window.dispatchEvent(new CustomEvent('fk-open-plan400-day',{detail:{date:'2026-10-19',tab:'after'}})));{const rf0=p.getByTestId('plan400-day-sheet').getByTestId('part-running');await rf0.getByLabel('跑步 RPE').fill('8');await rf0.getByRole('button',{name:'保存跑步评价'}).click();await p.waitForTimeout(300)}
 await p.reload();await ready()
 const tab=async n=>{await p.getByLabel('切换到'+n).click({force:true});await p.waitForTimeout(800)}
 const toLog=async()=>{await tab('日志');await p.locator('[data-testid="training-log-v76"]').waitFor()}
@@ -42,7 +46,11 @@ const summary=async()=>p.getByLabel('当前周期摘要').innerText()
 // ---------- A. 跑步课 ↔ 佳明 ----------
 await toLog()
 await p.getByTestId('unmarked-plans').scrollIntoViewIfNeeded().catch(()=>{});await shot('02-log-unmarked-suggest');let um=await unmarked(),ls=await list(),sm=await summary();console.log('---待标记\n'+um+'\n---摘要\n'+sm)
-check('同一天 1 对 1 自动关联：轻松跑 10-18、跑步 8公里 10-17 不在待标记',!/轻松跑\s*10-18|跑步 8公里/.test(um),um)
+const sug1=async t=>p.getByTestId('unmarked-plans').locator('li',{hasText:t}).getByTestId('run-suggest').count()
+check('v83 同一天 1 对 1：不自动关联，给“是这次吗？”建议（轻松跑 10-18、跑步 8公里 10-17）',(await sug1('轻松跑 60')||await sug1('轻松跑'))>=1&&await sug1('跑步 8公里')>=1,um)
+for(const t of ['跑步 8公里','轻松跑']){const li=p.getByTestId('unmarked-plans').locator('li',{hasText:t}).filter({hasNotText:'轻松跑 30'}).first();await li.getByRole('button',{name:'是，关联'}).first().click();await p.waitForTimeout(800)}
+um=await unmarked();ls=await list();sm=await summary()
+check('确认后：轻松跑 10-18、跑步 8公里 10-17 不在待标记',!/轻松跑\s*10-18|跑步 8公里/.test(um),um)
 check('力量·小腿 不会被手表跑步自动完成（仍待标记）',/力量·小腿/.test(um),um)
 check('t489：10-17 核心+下肢（只打开过清单）= 待标记·未完成·未反馈，不是记录',/力量课 · 核心\+下肢[^\n]*\n?[^\n]*未完成·未反馈/.test(um)&&!/核心\+下肢/.test(ls),um+'\n'+ls)
 check('佳明跑步行显示所关联计划',/晨跑[^\n]*计划「轻松跑」/.test(ls)&&/杭州市 跑步[^\n]*计划「跑步 8公里 ×1」/.test(ls),ls)
@@ -104,9 +112,9 @@ for(const [q,re,pick] of [['薯条',/份/,'薯条'],['可乐',/份/,'杯型未�
 await p.keyboard.press('Escape').catch(()=>{});await p.reload();await ready()
 await p.evaluate(()=>window.dispatchEvent(new CustomEvent('fk-open-plan400-day',{detail:{date:'2026-10-19',tab:'during'}})));const ds=p.getByTestId('plan400-day-sheet');await ds.waitFor()
 await shot('04-v4-during-run-link');const rl=await ds.getByTestId('v4-run-link').innerText().catch(()=>'')
-check('V4 跑步部分：已关联佳明跑步（同日唯一自动）+ 实际 3.20 km · 25 分钟 · 心率 150',/已关联佳明跑步/.test(rl)&&/自动关联/.test(rl)&&/3\.20 km · 25 分钟/.test(rl)&&/心率 150/.test(rl),rl)
+check('V4 跑步部分：已关联佳明跑步（你确认的）+ 实际 3.20 km · 25 分钟 · 心率 150',/已关联佳明跑步/.test(rl)&&!/自动关联/.test(rl)&&/3\.20 km · 25 分钟/.test(rl)&&/心率 150/.test(rl),rl)
 const cs=await ds.getByTestId('combo-status').innerText().catch(()=>'')
-check('分项状态：跑步有记录（RPE 8）、力量 尚未记录（手表跑步不完成力量）',/RPE 8|已关联佳明跑步/.test(cs)&&/力量\s*尚未记录/.test(cs),cs)
+check('分项状态：跑步有记录（RPE 8）、力量 尚未记录（手表跑步不完成力量）',/RPE 8|已关联佳明跑步|跑步有记录/.test(cs)&&/力量\s*尚未记录/.test(cs),cs)
 await ds.getByRole('tab',{name:'训练后'}).click()
 const lf=ds.getByTestId('part-strength');await lf.getByRole('button',{name:'完成',exact:true}).click();await lf.getByLabel('力量 RPE').fill('6');await lf.getByLabel('力量疼痛部位').fill('膝');await lf.getByLabel('力量疼痛分数').fill('2');await lf.getByRole('button',{name:'保存力量评价'}).click();await p.waitForTimeout(300)
 const rf=ds.getByTestId('part-running')
@@ -130,6 +138,6 @@ await p.getByTestId('v4-parts-note').scrollIntoViewIfNeeded().catch(()=>{});awai
 check('日志详情：V4 分项评价 跑步 RPE 7（改过 1 次）/ 力量 完成 RPE 6 疼痛 膝 2/10',/跑步[^\n]*RPE 7[^\n]*改过 1 次/.test(vn)&&/力量 完成，RPE 6，疼痛 膝 2\/10/.test(vn),vn)
 chats.length=0;await p.getByRole('button',{name:'打开方坤',exact:true}).click();await p.getByPlaceholder('输入你的问题').fill('今天这节课怎么样');await p.getByRole('button',{name:'发送',exact:true}).click();await p.waitForTimeout(4000)
 const f2=(chats.at(-1)||{}).facts||''
-check('方坤事实包：V4 分项反馈分开 + V4 跑步已关联佳明（只算一次）',/V4 分项反馈[^\n]*2026-10-19 跑步[^\n]*RPE 7[^\n]*力量 完成，RPE 6/.test(f2)&&/计划跑步课已关联佳明[^\n]*V4 速度耐力＋力量A · 跑步部分/.test(f2),f2.slice(0,900))
+check('v83 方坤事实包：V4 当天一行（跑步 RPE 7 / 力量 RPE 6 分开 + 跑步实际已关联佳明只算一次）',/V4 计划记录（2026-10-19 速度耐力＋力量A）：[^\n]*跑步[^\n]*RPE 7[^\n]*力量[^\n]*RPE 6[^\n]*跑步实际[^\n]*已关联佳明/.test(f2)&&!/V4 分项反馈/.test(f2),f2.slice(0,900))
 check('无页面错误',errs.length===0,errs.join(' | '))
 console.log(fails?`FAILS ${fails}`:'ALL PASS');await b.close();process.exit(fails?1:0)

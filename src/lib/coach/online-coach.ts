@@ -32,9 +32,10 @@ export function v4FactLine(r: ActivityRow, c?: DayComponents): string {
   if (f.running) segs.push(`跑步 ${STATE_WORD[f.running.state] ?? f.running.state}${pl('跑步', c?.running)}`)
   if (f.strength) segs.push(`力量 ${STATE_WORD[f.strength.state] ?? f.strength.state}${pl('力量', c?.strength)}`)
   if (r.runLink && r.distanceM != null) segs.push(`跑步实际 ${fmtDistance(r.distanceM) ?? ''} ${fmtDuration(r.durationSec)}（已关联佳明，同一次训练只算一次）`)
-  if (f.legacyOverall) segs.push(`历史整课记录（旧口径·仅参考，整课 RPE 不拆给跑步或力量）：${f.summary}`)
-  const legacy = v4RecordLine(r.date)
-  if (legacy && !f.legacyOverall) segs.push(`旧整课字段（仅参考）：${legacy.replace(/^V4 计划记录（[^）]*）：/, '')}`)
+  // 旧整课记录原样带上（成绩/组间休息/整课 RPE 都保留，不拆、不丢），只标口径
+  const legacy = v4RecordLine(r.date)?.replace(/^V4 计划记录（[^）]*）：/, '')
+  if (f.legacyOverall) segs.push(`历史整课记录（旧口径·仅参考，整课 RPE 不拆给跑步或力量）：${legacy ?? f.legacy.done ?? ''}`)
+  else if (legacy) segs.push(`旧整课字段（仅参考）：${legacy}`)
   return `V4 计划记录（${r.date} ${r.title?.replace(/^V4 /, '').replace(/（.*$/, '') ?? ''}）：${segs.join('；')}`
 }
 /** 去标识化事实包。 */
