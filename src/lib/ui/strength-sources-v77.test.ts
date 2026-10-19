@@ -42,9 +42,11 @@ test('旧版本形态：v53–v60 清单按日期为键、日程无 trainingType
   assert.equal(by['2026-10-17'].status, 'incomplete'); assert.equal(by['2026-10-17'].timeUnknown, true)
   assert.equal(by['2026-10-16'].status, 'incomplete'); assert.equal(activityLocalTime(by['2026-10-16'].startedAt), '19:00')
 })
-test('400 米计划日志填了“力量实际”→ 力量记录（计划日期）；没填力量/取消 → 不生成', () => {
+test('V4 计划日志（fk-plan400-v4-log）→ 按计划日期一条记录，不按保存时间；取消 → 不生成', () => {
   const rows = phoneRows(store({ 'fk-plan400-v4-log': { '2026-10-18': { done: 'done', strength: '分腿蹲 2×20kg×5/腿', rpe: '7', savedAt: '2026-10-19T00:10:00Z' }, '2026-10-15': { done: 'done', reps: '150m: 21.3' }, '2026-10-14': { done: 'skipped', strength: 'x' } } }), NOW)
-  assert.equal(rows.length, 1); assert.equal(rows[0].date, '2026-10-18', '按计划日期，不按保存时间 10-19'); assert.equal(rows[0].status, 'completed'); assert.equal(rows[0].rpe, 7)
+  const lift = rows.find(r => r.date === '2026-10-18')!; assert.equal(lift.sport, 'STRENGTH'); assert.equal(lift.status, 'completed'); assert.equal(lift.rpe, 7)
+  assert.ok(!rows.some(r => r.date === '2026-10-14'), '取消的不生成')
+  assert.ok(rows.some(r => r.date === '2026-10-15'), '只记了跑步成绩的 V4 日也是一条记录')
 })
 test('力量页“完成这节”（只有 TRAINING_COMPLETED，无开始事件）+ 直接记下的组 → 一条，按记录时间的本地日期', () => {
   const evs = [ev('TRAINING_SET_COMPLETED', { sessionId: 'low', completed: true }, '2026-10-17T16:30:00Z'), ev('TRAINING_SET_COMPLETED', { sessionId: 'low', completed: true }, '2026-10-17T16:40:00Z'), ev('TRAINING_COMPLETED', { sessionId: 'low', feel: 'ok' }, '2026-10-17T16:50:00Z'),
@@ -67,4 +69,11 @@ test('统一格式化：取整先总秒再拆分、Safari 空格时间、心率�
   assert.equal(fmtPace(1000, 359.6), `6'00"/km`); assert.equal(fmtPace(6010, 1898), `5'16"/km`)
   assert.equal(fmtDistance(6010), '6.01 km'); assert.equal(fmtDistance(400), '400 m'); assert.equal(fmtHr(143.6), 144)
   assert.equal(activityLocalDay('2026-10-18 07:30:00'), '2026-10-18'); assert.equal(activityLocalDay('2026-10-17T23:30:00Z'), '2026-10-18')
+})
+
+test('V4 计划日 10-19「速度耐力＋力量A」完成 → 混合课、标题来自原课表；与“开始力量训练”的日程条目按 id 合并', () => {
+  const rows = phoneRows(store({ 'fk-plan400-v4-log': { '2026-10-19': { done: 'done', reps: '150m: 21.3/21.0/21.6', rest: '7分/8分', rpe: '7', savedAt: '2026-10-19T01:00:00Z' } },
+    'fk-schedule-v1': { entries: [{ id: 'plan400:2026-10-19:strength', date: '2026-10-19', modality: 'strength', title: '力量（V4）', refId: null, status: 'done', actual: { outcome: 'as_planned', minutes: 30, rpe: 7 } }] } }), Date.parse('2026-10-19T08:00:00Z'))
+  const m = mergeActivities(rows)
+  assert.equal(m.length, 1); assert.equal(m[0].sport, 'MIXED'); assert.match(m[0].title!, /V4 速度耐力＋力量A|力量（V4）/); assert.equal(m[0].status, 'completed')
 })

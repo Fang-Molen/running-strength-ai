@@ -3,8 +3,10 @@
 import { currentStore } from '../core/storage'
 import { garminViewKey } from '../health/garmin-view-scope'
 import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
+import { loadTrainingActivities } from '../ui/training-read-model'
+import { isGarmin, recordLabel } from '../ui/log-range'
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr } from '../ui/activity-format'
-import { activityFacts, planFor, sportLabel, type GActivity, type GLap } from './plain-coach'
+import { activityFacts, localDayOf, planFor, v4RecordLine, sportLabel, type GActivity, type GLap } from './plain-coach'
 export const COACH_ONLINE_KEY = 'fk-coach-online-v1'
 export type OnlineSetting = { on: boolean; consentAt: string; by: string }
 export function onlineSetting(now = new Date().toISOString()): OnlineSetting {
@@ -26,6 +28,13 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
   if (act) lines.push('关联训练（佳明手表）：', ...activityFacts(act, laps))
   const recent = garminActivities().sort((a, b) => activityTs(b.start) - activityTs(a.start)).slice(0, 7)
   if (recent.length) lines.push('近期活动：' + recent.map(a => `${activityLocalDay(a.start) ?? '?'} ${sportLabel(a.type)} ${fmtDistance(a.dist) ?? ''} ${fmtDuration(a.dur)} 心率${fmtHr(a.avgHr) ?? '—'}`).join('；'))
+  try {
+    const from = new Date(Date.parse(day + 'T12:00:00Z') - 7 * 864e5).toISOString().slice(0, 10)
+    const mine = loadTrainingActivities().filter(r => r.date >= from && r.date <= day && !isGarmin(r)).slice(-8)
+    if (mine.length) lines.push('近期手机/计划记录：' + mine.map(r => `${r.date} ${recordLabel(r).replace(/^[^·]*· /, '')}${r.status === 'incomplete' ? '（已记录未完成）' : ''}`).join('；'))
+    const v4 = [act ? localDayOf(act.start) : null, day].filter((x, i, xs): x is string => !!x && xs.indexOf(x) === i).map(d => v4RecordLine(d)).filter(Boolean)
+    if (v4.length) lines.push(...(v4 as string[]))
+  } catch { /* optional */ }
   try { const snap = loadHealthSnapshot(day); lines.push('恢复指标：' + snap.metrics.filter(m => ['SLEEP', 'RHR', 'HRV', 'BODY_BATTERY', 'STRESS'].includes(m.metric)).map(healthSummaryLine).join('；')) } catch { /* optional */ }
   return lines.join('\n').slice(0, 7800)
 }

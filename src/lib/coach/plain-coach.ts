@@ -27,6 +27,16 @@ export function planFor(day: string) {
   return { today: d ? `${d.date} ${d.title}：${d.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${next.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, goal: '400米 53秒多（12/28 最终测试）' }
 }
 
+/** V4 计划记录（首页/计划页/训练中写的 fk-plan400-v4-log）→ 一行事实。日志页与复盘读的是同一条。 */
+export function v4RecordLine(day: string, store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage): string | null {
+  let l: Record<string, string> | undefined
+  try { l = JSON.parse(store?.getItem('fk-plan400-v4-log') ?? '{}')?.[day] } catch { l = undefined }
+  if (!l || typeof l !== 'object') return null
+  const d = days.find(x => x.date === day), st = l.done === 'done' ? '已完成' : l.done === 'reduced' ? '已完成·减量' : l.done === 'skipped' ? '取消' : '已记录未完成'
+  const F: [string, string][] = [['reps', '成绩'], ['rest', '组间休息'], ['strength', '力量实际'], ['rpe', 'RPE'], ['pain', '疼痛'], ['r24', '24小时后'], ['note', '备注']]
+  const parts = F.filter(([k]) => String(l![k] ?? '').trim()).map(([k, n]) => `${n} ${String(l![k]).trim().slice(0, 80)}`)
+  return `V4 计划记录（${day}${d ? ' ' + d.title : ''}）：${st}${parts.length ? '；' + parts.join('；') : ''}`
+}
 /** 只用运动类型，不用活动名（佳明默认活动名带城市）。 */
 export const sportLabel = (t: string) => /track/.test(t) ? '田径场跑' : /treadmill/.test(t) ? '跑步机跑' : /trail/.test(t) ? '越野跑' : /run/.test(t) ? '跑步' : /strength/.test(t) ? '力量训练' : /cycl|bik/.test(t) ? '骑行' : /swim/.test(t) ? '游泳' : t || '训练'
 /** 一次佳明跑步的事实摘要（联网和本地共用）。不含账号、位置。 */
@@ -68,6 +78,7 @@ export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string)
     why = easy ? '心率在有氧区间，主要刺激的是毛细血管、线粒体和脂肪供能，疲劳小，第二天能正常训练。' : `平均心率 ${fmtHr(a.avgHr)} 已接近乳酸阈附近，对有氧能力刺激较大，但恢复要 24–48 小时。`
   }
   lines.push(`结论：${day} ${fmtDistance(a.dist) ? fmtDistance(a.dist) + ' ' : ''}${durText(a.dur)}${runLaps.length >= 3 ? `（平均 ${paceText(pace)}，平均心率 ${fmtHr(a.avgHr) ?? '—'}）` : ''}，${verdict}`)
+  { const v4 = v4RecordLine(day); if (v4) lines.push(v4) }
   lines.push(`为什么：${why}${a.te != null ? ` 手表有氧训练效果 ${a.te}${a.ate != null ? `、无氧 ${a.ate}` : ''}。` : ''}`)
   // 对照目标
   lines.push(`对照目标（${p.goal}）：这类${easy ? '轻松' : '中等'}有氧跑是 400 米的“底座”，提高恢复能力和后程耐受；它本身不练速度，速度要靠计划里的短距离快跑课。`)

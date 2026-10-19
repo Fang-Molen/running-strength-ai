@@ -2,6 +2,10 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-19 | v77：日志读出手机上记的所有力量课——今日卡片逐组清单（含没点完成的，标“已记录未完成”）、日程完成/补记、力量页“完成这节”、直接记下的组、V4 计划记录（首页/计划页/训练中）、旧版本存储形态；日期按这节课的日期（北京时间），来源标“手机记录”，只按可靠 id 去重；周一看“本周”时提示上周有几条并可一键看近4周 | 用户反馈 10-18 力量·下肢 不在日志 | training-read-model.ts, training-log-v76.tsx, phone-record-detail.tsx, log-range.ts |
+| 2026-10-19 | v77：五维能力图移到日志最上方默认展开（手机紧凑高度，点轴看输入和算法）；其余能力详情在“能力详情”里 | 用户 t470 | training-log-v76.tsx, ability-radar-card.tsx |
+| 2026-10-19 | v77：佳明数据全 App 一致——日志列表/详情/佳明活动/方坤本地与联网事实包/复盘/五维用同一套日期与格式化（开始时间的本地日期；先取整总秒再拆分，不再出现 5'60"；心率取整；Safari 空格时间可解析）；“最近一课”复盘最近一次真实记录；训练事实画像注明同期佳明/手机记录数；方坤读取 V4 计划记录 | 用户 t471 | activity-format.ts, plain-coach.ts, online-coach.ts, garmin-log.tsx, review.ts, review-card.tsx, training-evidence-panel.tsx, ability-score-v76.ts |
+| 2026-10-19 | v77：合入 ui-r1（首页/计划 V4 同一天记录、个人与数据 R1 三组设置、同步状态、统一备份）；sw 缓存 fr255-shell-v77 | 用户批准 | 见 /workspace/out/ui-r1/README.md；public/sw.js |
 | 2026-10-16 | 测试版正式基线上线（molen-fangkun.pages.dev）：6 个标签、方坤本地引擎、反馈按钮、佳明服务端会话、IndexedDB 保险箱、400m 计划 V4（+7 天） | 用户要先用起来、存数据 | 见 README-LIVE.md，tag live-baseline-20261016 |
 | 2026-10-16 | 去掉各页的说明小字、开发备注和免责声明（约 40 处）；400m 计划去掉“日期待确认”，最终测试定在 12/28 | 用户要页面简洁；用户确认 12/28 | plan400.tsx, plan400-v4.json, garmin-sync.tsx, strength-app.tsx, coach-sheet.tsx, today-board.tsx, day-card.tsx, training-log-panel.tsx, health-extras.tsx, health-tiles.tsx, coach-panels.tsx, goal-home.tsx |
 | 2026-10-16 | 数据延续：schema 迁移只能追加；新增迁移测试（用测试版数据快照验证升级不丢）；每天自动本地快照，保留最近 7 份，可恢复；大版本更新 / 14 天没导出时提醒备份 | 正式版上线后自动带上现在的数据 | src/lib/vault.ts, src/lib/vault-migration.test.ts, src/lib/__fixtures__/vault-beta1-snapshot.json, garmin-sync.tsx, package.json |

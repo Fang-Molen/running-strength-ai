@@ -1,5 +1,6 @@
 import {coachImports} from '@/lib/core/coach-import-evidence'
 import { activityLocalDay } from './activity-format'
+import V4 from '../plan400-v4.json' with { type: 'json' }
 import {garminViewKey} from '@/lib/health/garmin-view-scope'
 import {occurrenceVoided} from '@/lib/core/training-correction'
 import {currentAthleteId} from '@/lib/core/events'
@@ -14,7 +15,7 @@ import { addDays, weekOf } from './day-schedule-rules';
 import { runningActualTotals } from './running-actual-totals';
 import type { ScheduleEntry } from './day-schedule-rules';
 export type RowSource = 'execution' | 'phone' | 'import' | 'garmin'
-export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[] };
+export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[] };
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
 const day = (iso: string) => activityLocalDay(iso);
 function sameActivity(a: ActivityRow, b: ActivityRow) {
@@ -30,6 +31,7 @@ export function mergeActivities(rows: ActivityRow[]): ActivityRow[] {
       found.originIds = [...new Set([...found.originIds, ...row.originIds])]; found.sources = [...new Set([...(found.sources ?? [found.source]), row.source])];
       if (!found.title || /佳明账号同步|^力量训练$/.test(found.title)) found.title = row.title || found.title
       found.avgHr ??= row.avgHr; found.garminId ??= row.garminId; found.importId ??= row.importId; found.occurrenceId ??= row.occurrenceId
+      if (row.plan === 'v4') { found.plan = 'v4'; found.title = row.title; if (found.sport !== row.sport) found.sport = 'MIXED' }
       if (row.status === 'completed') found.status = 'completed'; if (row.appMade) found.appMade = true; if (found.timeUnknown && !row.timeUnknown && row.date === found.date) { found.startedAt = row.startedAt; found.timeUnknown = false }
       found.distanceM ??= row.distanceM; found.durationSec ??= row.durationSec; found.rpe ??= row.rpe; found.sets ??= row.sets
       continue;
@@ -118,6 +120,7 @@ export function orphanSetRows(events: Ev[], occurrences: { trainingOccurrenceId:
   return [...groups.values()].map(g => ({ id: `sets:${g.sessionId}:${g.date}`, startedAt: g.first, date: g.date, sport: 'STRENGTH' as const, distanceM: null, durationSec: null, strengthVolumeKg: null, sets: g.done || null, rpe: null, source: 'phone' as const, appMade: true,
     originIds: [`sets:${g.sessionId}:${g.date}`], title: sessionTitle(g.sessionId) ?? '力量训练', status: g.finished ? 'completed' as const : 'incomplete' as const }))
 }
+type V4LogLite = { done?: string; reps?: string; rest?: string; aux?: string; strength?: string; rpe?: string; pain?: string; note?: string; savedAt?: string }
 type Sched = { id: string; date: string; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[] }; restLog?: unknown[]; exercises?: { sets?: string }[] }
 type Check = { date?: string; sessionId?: string; moves?: Record<string, { done?: boolean }[]>; startedAt?: number | null; updatedAt?: number; rpe?: number | null; run?: { done?: boolean } | null }
 const isStrength = (e: Sched) => e.modality === 'strength' || e.kind === 'strength' || e.trainingType === 'strength' || e.trainingType === 'mixed'
@@ -151,13 +154,22 @@ export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localS
     rows.push({ id: `chk:${c.date}:${c.sessionId}`, startedAt: c.startedAt ? new Date(c.startedAt).toISOString() : localNoon(c.date!), timeUnknown: !c.startedAt, date: c.date!, sport: 'STRENGTH', distanceM: null, durationSec: null, strengthVolumeKg: null, sets: ci.done || null, rpe: c.rpe ?? null, source: 'phone', appMade: true,
       title: sessionTitle(c.sessionId!) ?? '力量训练', status: 'incomplete', originIds: [`chk:${c.date}:${c.sessionId}`, sanitize(`chk-${c.date}-${c.sessionId}`), `sets:${c.sessionId}:${c.date}`] })
   }
-  // 400 米计划日志（fk-plan400-v4-log，按计划日期记）：填了“力量实际”的那天算一条力量记录。跑步部分不在这里生成（与手表活动没有可靠 id 关联，避免重复计数）。
-  const p4 = read<Record<string, { done?: string; strength?: string; rpe?: string; savedAt?: string }>>('fk-plan400-v4-log', {})
+  // V4 计划记录（fk-plan400-v4-log，首页/计划页/训练中都写这里，按计划日期记）：有实际记录或已完成/减量的一天 = 一条记录。
+  // 跑步部分与手表活动没有可靠 id 关联，不合并；它没有距离/时长，不会把手表数据重复计入总量。
+  const p4 = read<Record<string, V4LogLite>>('fk-plan400-v4-log', {})
   for (const [d, l] of Object.entries(p4 && typeof p4 === 'object' ? p4 : {})) {
-    if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > today || !l || typeof l.strength !== 'string' || !l.strength.trim() || l.done === 'skipped') continue
+    if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > today || !l || typeof l !== 'object' || l.done === 'skipped') continue
+    const recorded = (['reps', 'rest', 'aux', 'strength', 'rpe', 'pain', 'note'] as const).some(k => String(l[k] ?? '').trim())
+    if (!recorded && l.done !== 'done' && l.done !== 'reduced') continue
+    const pd = (V4.days as { date: string; title: string; main: string[]; strength: string[] }[]).find(x => x.date === d)
+    const strengthText = (l.strength ?? '').trim(), planStrength = pd ? pd.strength.join('') : ''
+    const hasRun = pd ? !/休息/.test(pd.title) && !/^力量/.test(pd.title) : !strengthText
+    const hasLift = !!strengthText || (!!planStrength && !/^无|^可做|^仅活动度/.test(planStrength) && (l.done === 'done' || l.done === 'reduced'))
     const rpe = Number(l.rpe)
-    rows.push({ id: `p400:${d}`, startedAt: localNoon(d), timeUnknown: true, date: d, sport: 'STRENGTH', distanceM: null, durationSec: null, strengthVolumeKg: null, sets: null, rpe: Number.isFinite(rpe) && rpe >= 1 && rpe <= 10 ? rpe : null,
-      source: 'phone', appMade: true, title: `力量（400 米计划）：${l.strength.trim().slice(0, 40)}`, status: l.done === 'done' || l.done === 'reduced' ? 'completed' : 'incomplete', originIds: [`p400:${d}`] })
+    rows.push({ id: `p400:${d}`, startedAt: localNoon(d), timeUnknown: true, date: d, sport: hasRun && hasLift ? 'MIXED' : hasRun ? 'RUNNING' : 'STRENGTH', distanceM: null, durationSec: null, strengthVolumeKg: null, sets: null,
+      rpe: Number.isFinite(rpe) && rpe >= 1 && rpe <= 10 ? rpe : null, source: 'phone', appMade: true, plan: 'v4',
+      title: `V4 ${pd?.title ?? '计划课'}${l.done === 'reduced' ? '（减量）' : ''}`, status: l.done === 'done' || l.done === 'reduced' ? 'completed' : 'incomplete',
+      originIds: [`p400:${d}`, `plan400:${d}`, `sched:plan400:${d}:strength`] })
   }
   return rows
 }

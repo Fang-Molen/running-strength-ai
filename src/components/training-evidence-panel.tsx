@@ -17,7 +17,7 @@ function OtherRecordsNote({ start, end }: { start: string; end: string }) {
   try { rows = loadTrainingActivities().filter(r => r.date >= start && r.date <= end && !(r.sources ?? [r.source]).includes('execution')) } catch { rows = [] }
   if (!rows.length) return null
   const g = rows.filter(isGarmin).length, ph = rows.filter(r => !isGarmin(r) && isPhone(r)).length, other = rows.length - g - ph
-  return <p className="text-xs text-muted">同期另有 {rows.length} 条记录不是“开始训练”生成的（{[g ? `佳明 ${g}` : '', ph ? `手机记录 ${ph}` : '', other ? `聊天/上传 ${other}` : ''].filter(Boolean).join('、')}），见上方训练记录；这里的画像不含它们。</p>
+  return <p className="keep text-xs text-muted">同期另有 {rows.length} 条记录不是“开始训练”生成的（{[g ? `佳明 ${g}` : '', ph ? `手机记录 ${ph}` : '', other ? `聊天/上传 ${other}` : ''].filter(Boolean).join('、')}），见上方训练记录；这里的画像不含它们。</p>
 }
 /** Read-only record drilldown: exact same frozen projection as the six local tools. */
 export function TrainingEvidencePanel({ today }: { today: string }) {
