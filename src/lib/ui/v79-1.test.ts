@@ -7,14 +7,14 @@ import { stampCN } from './activity-format.ts'
 const plan = JSON.parse(readFileSync(new URL('../plan400-v4.json', import.meta.url), 'utf8')) as V4Plan
 const d = plan.days.find(x => x.date === '2026-10-19')!   // 速度耐力＋力量A：跑步 + 力量
 const rest = plan.days.find(x => /休息/.test(x.title))!
-test('分项推整天状态：只有旧 log 时不变；分项都完成 → done；一项跳过 → reduced；都跳过 → skipped', () => {
+test('分项推整天状态：只有旧 log 时不变；分项都完成 → done；一项跳过 → 部分完成；都跳过 → skipped', () => {
   assert.equal(dayStatus(d, undefined, '2026-10-19'), 'not_started')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'done', rpe: 7 } } }), 'in_progress')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'done' }, strength: { status: 'done' } } }), 'done')
-  assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'done' } } }), 'reduced')
+  assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'done' } } }), 'in_progress')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'skipped' } } }), 'skipped')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { strength: { rpe: 6 } } }), 'in_progress')
-  assert.equal(dayStatus(d, { done: 'done' }, '2026-10-19', false, { parts: { running: { status: 'skipped' } } }), 'done', '旧整课标记优先，不改历史')
+  assert.equal(dayStatus(d, { done: 'done' }, '2026-10-19', false, { parts: { running: { status: 'skipped' } } }), 'in_progress', '新分项优先；旧整课历史保留但不覆盖')
 })
 test('手表跑步关联只算跑步有记录：整天 in_progress，不会 done', () => {
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { runLinked: true }), 'in_progress')

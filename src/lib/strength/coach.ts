@@ -1,3 +1,4 @@
+import { currentAthleteId } from '../core/events';
 import { energySentence } from "@/lib/nutrition/calc";
 import type { ReasoningBasis } from '@/lib/core/coach-reasoning';
 import { validDialogue, type CoachDialogue } from '@/lib/core/coach-dialogue';
@@ -22,6 +23,8 @@ export type ChatMessage = {
 };
 
 export type CoachMemory = {
+  /** Owner of this in-memory chat; legacy unscoped history belongs only to local. */
+  athleteId?: string;
   dialogue?: CoachDialogue;
   minutes: number;
   messages: ChatMessage[];
@@ -33,6 +36,7 @@ export type CoachMemory = {
 
 const STORAGE_KEY = "fr255-coach-v2";
 const OLD_KEY = "fr255-coach-v1";
+export const coachStorageKey = (athleteId = currentAthleteId()) => athleteId === "local" ? STORAGE_KEY : `${STORAGE_KEY}:${encodeURIComponent(athleteId)}`;
 
 export const GREETING =
   "可以给我目标，也可以指定一节训练。我会核对计划、实际记录与反馈，比较可能解释；资料不足时先问关键问题，调整建议由你确认。";
@@ -42,6 +46,7 @@ export const COACH_CHIPS = ["综合这次表现，下一课怎么安排？", "�
 
 export function freshMemory(): CoachMemory {
   return {
+    athleteId: currentAthleteId(),
     minutes: 30,
     messages: [{ id: "hi", role: "coach", text: GREETING }],
     fatigue: 20,
@@ -63,13 +68,16 @@ export function recordedCoachFatigue(memory: CoachMemory): number | null {
 export function loadCoach(): CoachMemory {
   if (typeof localStorage === "undefined") return freshMemory();
   try {
-    const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(OLD_KEY);
+    const athleteId = currentAthleteId();
+    const raw = localStorage.getItem(coachStorageKey(athleteId)) ?? (athleteId === "local" ? localStorage.getItem(OLD_KEY) : null);
     if (!raw) return freshMemory();
     const parsed = JSON.parse(raw) as Partial<CoachMemory>;
+    if (parsed?.athleteId && parsed.athleteId !== athleteId) return freshMemory();
     if (!parsed || !Array.isArray(parsed.messages) || parsed.messages.length === 0) return freshMemory();
     const fatigue = typeof parsed.fatigue === "number" ? parsed.fatigue : 20;
     return {
-      ...(validDialogue(parsed.dialogue)?{dialogue:parsed.dialogue}:{}),
+      athleteId,
+      ...(validDialogue(parsed.dialogue) && parsed.dialogue.athleteId === athleteId ? {dialogue:parsed.dialogue}:{}),
       minutes: parsed.minutes || 30,
       messages: parsed.messages.slice(-40).map(m=>m.id==='hi'&&m.role==='coach'&&m.text===LEGACY_GREETING?{...m,text:GREETING}:m),
       fatigue,
@@ -106,11 +114,14 @@ export function acceptExplanation(text: string, band: FatigueBand): string | nul
 }
 
 export function saveCoach(memory: CoachMemory): boolean {
-  const raw = JSON.stringify(memory)
+  const athleteId = currentAthleteId();
+  if ((memory.athleteId && memory.athleteId !== athleteId) || (!memory.athleteId && athleteId !== "local") || (memory.dialogue && memory.dialogue.athleteId !== athleteId)) return false;
+  const key = coachStorageKey(athleteId);
+  const raw = JSON.stringify({ ...memory, athleteId })
   try {
-    if (localStorage.getItem(STORAGE_KEY) === raw) return true
-    localStorage.setItem(STORAGE_KEY, raw)
-    return true
+    if (localStorage.getItem(key) === raw) return true
+    localStorage.setItem(key, raw)
+    return localStorage.getItem(key) === raw
   } catch {
     return false
   }
@@ -228,7 +239,7 @@ export function replyTo(plan: Plan, memory: CoachMemory, raw: string, activeId?:
     { id: uid(), role: "coach" as const, text: reply },
   ].slice(-40);
 
-  return { plan: next, memory: { minutes, messages, fatigue, band, goals: advice.goals, notes: advice.notes } };
+  return { plan: next, memory: { athleteId: memory.athleteId ?? currentAthleteId(), minutes, messages, fatigue, band, goals: advice.goals, notes: advice.notes } };
 }
 
 function idsAdd(target: Set<string>, source: Set<string>) {

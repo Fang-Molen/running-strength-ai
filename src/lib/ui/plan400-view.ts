@@ -32,24 +32,28 @@ export const strengthEntryId = (date: string) => `plan400:${date}:strength`
 const RECORD_FIELDS: (keyof V4Log)[] = ['reps', 'rest', 'aux', 'strength', 'rpe', 'pain', 'note']
 export const hasRecord = (l: V4Log | undefined) => Boolean(l && RECORD_FIELDS.some(k => String(l[k] ?? '').trim()))
 
-/** v79.1：分项（fk-plan400-v4-components-v1）推出整天状态。需要的分项 = 有跑步部分的跑步 + 有力量的力量。
- * 全部分项都有终态：都跳过 → skipped；有减量或有一项跳过 → reduced；否则 done。只要有一项有记录/关联了手表跑步 → in_progress。
+/** 分项推出整天状态。只有所有应练分项明确完成才完成；跳过、未记录不能补成完成。
  * 手表跑步关联只算“跑步有实际记录”，不会让整天完成，也不会让力量完成。 */
 export type DayParts = { parts?: DayComponents; runLinked?: boolean }
 export const hasRunPart = (d: Pick<V4Day, 'title'>) => dayKind(d) !== 'rest' && !/^力量/.test(d.title)
+/** 明确的「未记录」也属于新口径；设备候选、恢复问卷及保存时间不属于训练分项事实。 */
+export const hasExplicitParts = (p: DayComponents | undefined) => [p?.running, p?.strength].some(q => !!q && (q.status != null || q.rpe != null || !!q.feel || !!q.note || !!(q.pain && (q.pain.area || q.pain.score != null))))
 export function partsDayStatus(d: V4Day, x: DayParts | undefined): DayStatus | null {
   const p = x?.parts; if (!p && !x?.runLinked) return null
   const need: (CompStatus | undefined)[] = [...(hasRunPart(d) ? [p?.running?.status] : []), ...(hasStrength(d) ? [p?.strength?.status] : [])].map(v => v === 'not_recorded' ? undefined : v)
-  if (need.length && need.every(Boolean)) return need.every(v => v === 'skipped') ? 'skipped' : need.some(v => v === 'reduced' || v === 'skipped') ? 'reduced' : 'done'
+  if (need.length && need.every(v => v === 'skipped')) return 'skipped'
+  if (need.length && need.every(v => v === 'done' || v === 'reduced')) return need.includes('reduced') ? 'reduced' : 'done'
   const any = need.some(Boolean) || x?.runLinked || [p?.running, p?.strength].some(q => q && (q.rpe != null || q.feel || q.note || (q.pain && (q.pain.area || q.pain.score != null))))
   return any ? 'in_progress' : null
 }
 export function dayStatus(d: V4Day, log: V4Log | undefined, today: string, strengthInProgress = false, extra?: DayParts): DayStatus {
-  if (log?.done === 'done') return 'done'
-  if (log?.done === 'reduced') return 'reduced'
-  if (log?.done === 'skipped') return 'skipped'
   const fromParts = partsDayStatus(d, extra)
   if (fromParts && fromParts !== 'in_progress') return fromParts
+  if (!hasExplicitParts(extra?.parts) && !extra?.runLinked) {
+    if (log?.done === 'done') return 'done'
+    if (log?.done === 'reduced') return 'reduced'
+    if (log?.done === 'skipped') return 'skipped'
+  }
   if (strengthInProgress || hasRecord(log) || fromParts === 'in_progress') return 'in_progress'
   if (dayKind(d) === 'rest') return 'rest'
   if (d.date < today) return 'unrecorded'
@@ -87,10 +91,10 @@ export function progressCounts(p: V4Plan, logs: Record<string, V4Log>, parts: Re
   for (const d of p.days) {
     const k = dayKind(d), l = logs[d.date]
     if (k === 'train') c.trainingDays++; else if (k === 'recovery') c.recoveryDays++; else if (k === 'rest') c.restDays++; else c.testDays++
-    const ps = l?.done ? null : partsDayStatus(d, parts[d.date])
-    if (l?.done || hasRecord(l) || ps) c.recordedDays++
-    if ((k === 'train' || k === 'test') && (l?.done === 'done' || l?.done === 'reduced' || ps === 'done' || ps === 'reduced')) c.completedTrainingDays++
-    if (l?.done === 'skipped' || ps === 'skipped') c.skippedDays++
+    const ps = dayStatus(d, l, d.date, false, parts[d.date])
+    if (l?.done || hasRecord(l) || partsDayStatus(d, parts[d.date])) c.recordedDays++
+    if ((k === 'train' || k === 'test') && (ps === 'done' || ps === 'reduced')) c.completedTrainingDays++
+    if (ps === 'skipped') c.skippedDays++
   }
   return c
 }

@@ -6,6 +6,7 @@ import { resolveScheduledCourse, scheduleExecutionId } from './scheduled-executi
 import { loadSchedule, saveScheduledEntry } from './day-schedule';
 import { syncScheduleProgress } from './schedule-progress';
 import { loadTrainingActivities } from './training-read-model';
+import { normalizePlanSessionId } from './training-component-facts';
 import { discardGuided, guidedLive } from './guided-discard';
 import { recoveryVerdict } from './recovery-verdict';
 import { recovery10, recoveryText } from '@/lib/health/legacy-inputs';
@@ -80,8 +81,8 @@ test('放弃刚“结束”的那次（先记中断后又放弃）也会清掉�
 test('V4 当天的分段跑执行与 V4 行合并为一条（不重复计）', async () => {
   const e = plan400TodayEntry(d1019, null, dose)!;
   assert.equal(scheduleExecutionId(e.id, 'run'), 'scheduled:plan400:2026-10-19:strength:run');
-  const src = readFileSync(new URL('./training-read-model.ts', import.meta.url), 'utf8');
-  assert.match(src, /scheduled:plan400/); const rl = readFileSync(new URL('./run-link.ts', import.meta.url), 'utf8'); assert.match(rl, /plan400:.*:running/);
+  assert.equal(normalizePlanSessionId(scheduleExecutionId(e.id, 'run')), 'plan400:2026-10-19');
+  const rl = readFileSync(new URL('./run-link.ts', import.meta.url), 'utf8'); assert.match(rl, /plan400:.*:running/);
 });
 test('主观恢复统一 1–10：旧 1–5 记录读取 ×2、原值不改；阈值按 /10', () => {
   assert.equal(recovery10({ recovery: 4 }), 8); assert.equal(recovery10({ recovery: 4, recoveryScale: 5 }), 8); assert.equal(recovery10({ recovery: 4, recoveryScale: 10 }), 4);

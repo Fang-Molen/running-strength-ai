@@ -1,42 +1,107 @@
-// @ts-nocheck
-// 方坤联网分析代理：客户端发送去标识化的训练事实 + 问题，服务端用 DEEPSEEK_API_KEY 调用 DeepSeek。密钥只在服务端，不记录内容。
-// 限制：请求体 ≤ 24KB；每个 IP 每分钟 ≤ 8 次、每天 ≤ 300 次（单实例内存计数，尽力而为）。
-const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json", "cache-control": "no-store" } });
-const hits = new Map();
-function limited(ip) {
-  const now = Date.now(), h = hits.get(ip) ?? { m: [], d: 0, day: new Date().toISOString().slice(0, 10) };
-  const today = new Date().toISOString().slice(0, 10); if (h.day !== today) { h.day = today; h.d = 0; }
-  h.m = h.m.filter(t => now - t < 60000);
-  if (h.m.length >= 8 || h.d >= 300) { hits.set(ip, h); return true; }
-  h.m.push(now); h.d++; hits.set(ip, h); if (hits.size > 5000) hits.clear(); return false;
-}
-const SYSTEM = `你是“方坤”，一位经验丰富的短跑/400米专项教练，正在指导一名业余运动员（目标：400米跑进53秒多，12月28日最终测试）。
-说话规则（必须遵守）：
-1. 用平实的中文，像成熟教练当面说话。先给结论，再讲生理原因，最后给具体的下一课处方（距离×组数、配速/用时、休息、强度RPE）。
-2. 一切分析要对照目标（400米53秒多）和当前训练计划来说。
-3. 不要说“数据不足无法判断”“需要更多证据”这类空话。数据不够时，先基于已有事实给出最可能的判断，再明确说出要做什么测试、记录什么数据（例如“下次跑完记下每个400的成绩和组间休息”）。
-4. 不使用术语堆砌和免责声明；不要说“可撤回”“候选”“审计”“已批准原课程”等系统用语。
-5. 安全：出现胸痛、晕厥、呼吸困难、心悸、急性受伤或剧烈疼痛等，先让对方停止训练并就医，不给训练处方。疼痛时不建议加量。
-6. 你只给建议，不会自动修改用户的训练计划；如建议调整计划，告诉用户可以在计划页自己改。
-7. 只用下面“事实”里的数据，不编造成绩、心率或分段；回答控制在 350 字以内，分段清楚。`;
-const clip = (v, n) => typeof v === "string" ? v.slice(0, n) : "";
-export async function onRequestPost({ request, env }) {
-  if (!env.DEEPSEEK_API_KEY) return json({ error: "联网分析服务未配置" }, 503);
-  const len = Number(request.headers.get("content-length") || 0); if (len > 24000) return json({ error: "内容过长" }, 413);
-  const ip = request.headers.get("cf-connecting-ip") || "anon"; if (limited(ip)) return json({ error: "请求太频繁，请稍后再试" }, 429);
-  let body; try { const raw = await request.text(); if (raw.length > 24000) return json({ error: "内容过长" }, 413); body = JSON.parse(raw); } catch { return json({ error: "请求格式错误" }, 400); }
-  const question = clip(body?.question, 1000).trim(); if (!question) return json({ error: "没有问题" }, 400);
-  const facts = clip(body?.facts, 8000), local = clip(body?.local, 3000);
-  const history = Array.isArray(body?.history) ? body.history.slice(-6).map(m => ({ role: m?.role === "user" ? "user" : "assistant", content: clip(m?.text, 400) })).filter(m => m.content) : [];
-  const messages = [{ role: "system", content: SYSTEM },
-    ...history,
-    { role: "user", content: `事实（来自用户本机记录，已去除账号与位置）：\n${facts || "（无）"}\n\n本地规则引擎的参考结论（可采纳或修正，但不要与事实矛盾）：\n${local || "（无）"}\n\n问题：${question}` }];
+import { normalizeAskCoachInput, buildCoachModelRequest, interpretCoachModelOutput, coachLocalSafetyTurn } from '../../src/lib/strength/coach-pipeline.ts';
+import { MODEL_DEV_USER_ID } from '../../src/lib/strength/model-access.ts';
+import { assertDeepSeekNumericGrounding } from '../../src/lib/coach/deepseek-grounding.ts';
+import { selectDeepSeekRoute, estimateInputTokenUpperBound } from '../../src/lib/coach/deepseek-policy.ts';
+import { parseCoachRequest, assertSnapshotBinding, assertVerifiedPolicy, minimalCoachInput, aliasCoachInput, costMicros } from '../lib/coach-request-boundary.ts';
+import { providerReturnedModel, parseProviderUsage, validateProviderReply, boundedResponseJson } from '../lib/coach-provider-boundary.ts';
+
+/** @param {unknown} value @param {number} [status] */
+const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'} });
+/** @param {unknown} value */
+const utf8 = value => new TextEncoder().encode(JSON.stringify(value)).byteLength;
+/** @param {unknown} value */
+const digest = async value => [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(value))))].map(b=>b.toString(16).padStart(2,'0')).join('');
+/** @param {string} code @param {number} [status] */
+const failure = (code,status=503) => json({ok:false,error:code,text:'联网解释当前不可用；保留本地训练分析与原计划。'},status);
+/**
+ * Cloudflare Pages entry. context.data ports MUST be installed by trusted server middleware.
+ * Missing auth/snapshot/persistent-ledger/verified billing configuration fails closed.
+ * No IP counter, body userId, browser facts, implicit consent, retry, tool or plan write.
+ * @param {{request:Request,env?:Record<string,string|undefined>,data?:{fangkunCoachServices?:import('../lib/coach-service-contract.ts').FangkunCoachServices}}} context
+ */
+export async function onRequestPost({request,env={},data={}}) {
+  const services = data.fangkunCoachServices;
+  if (env.FANGKUN_DEEPSEEK_ENABLED !== 'true') return failure('SERVICE_DISABLED');
+  if (!services || typeof services.authenticate !== 'function' || typeof services.loadAuthorizedSnapshot !== 'function' || typeof services.getVerifiedPolicy !== 'function' || !services.ledger || typeof services.ledger.reserve !== 'function' || typeof services.ledger.markDispatched !== 'function' || typeof services.ledger.settle !== 'function') return failure('TRUSTED_BINDINGS_MISSING');
+  const now = services.now?.() ?? Date.now();
+  let subject;
+  try { subject=await services.authenticate(request); } catch { return failure('AUTH_UNAVAILABLE'); }
+  if (!subject || subject.verified !== true || typeof subject.id !== 'string' || !subject.id.trim() || subject.id.trim() === MODEL_DEV_USER_ID || !Array.isArray(subject.athleteIds) || !subject.athleteIds.length || subject.athleteIds.some(id=>typeof id!=='string'||!id)) return failure('AUTH_REQUIRED',401);
+  if (!(request.headers.get('content-type') ?? '').toLowerCase().startsWith('application/json')) return failure('CONTENT_TYPE',415);
+  if (Number(request.headers.get('content-length')??0)>4096) return failure('REQUEST_TOO_LARGE',413);
+  let refs;
+  try { refs=parseCoachRequest(await boundedResponseJson(new Response(request.body,{headers:request.headers}),4096)); } catch(error) { const tooLarge=error instanceof Error && error.message==='PROVIDER_BODY_CAP'; return failure(tooLarge?'REQUEST_TOO_LARGE':'REQUEST_INVALID',tooLarge?413:400); }
+  if (Date.parse(refs.asOf)>now) return failure('AS_OF_FUTURE',400);
+  let snapshot, canonical, aliased, modelRequest, policy, route;
   try {
-    const r = await fetch("https://api.deepseek.com/chat/completions", { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${env.DEEPSEEK_API_KEY}` },
-      body: JSON.stringify({ model: env.COACH_MODEL || "deepseek-chat", temperature: 0.4, max_tokens: 900, messages }) });
-    if (!r.ok) return json({ error: `联网分析服务返回 ${r.status}` }, 502);
-    const out = (await r.json())?.choices?.[0]?.message?.content || "";
-    if (!out.trim()) return json({ error: "联网分析没有返回内容" }, 502);
-    return json({ text: out.slice(0, 4000), model: env.COACH_MODEL || "deepseek-chat" });
-  } catch { return json({ error: "联网分析失败" }, 502); }
+    snapshot=await services.loadAuthorizedSnapshot(subject,refs);
+    assertSnapshotBinding(snapshot,subject,refs,now);
+    canonical=normalizeAskCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
+    const urgentSafety=coachLocalSafetyTurn(canonical);
+    if(urgentSafety)return json({ok:true,text:urgentSafety.text,turn:urgentSafety,model:null,route:'LOCAL',planChanged:false});
+    // Trusted snapshots can contain a stronger cross-domain gate than pain alone.
+    // Never let minimal projection/normalisation silently clear that restriction.
+    const originals=[snapshot.rawInput.brief,...(snapshot.rawInput.compare?[snapshot.rawInput.compare.left,snapshot.rawInput.compare.right]:[]),...(snapshot.rawInput.series?.points??[]).map(p=>p.brief)];
+    const projected=[canonical.brief,...(canonical.compare?[canonical.compare.left,canonical.compare.right]:[]),...(canonical.series?.points??[]).map(p=>p.brief)];
+    if(originals.some(b=>typeof b.constraints?.medicalReferral!=='boolean'||typeof b.constraints?.increaseBlocked!=='boolean'))return failure('SNAPSHOT_CONSTRAINTS_INVALID');
+    if(originals.some(b=>b.constraints.medicalReferral===true)) {
+      const turn={mode:'ask',text:'现有记录包含需要专业评估的医疗安全限制。先保留该限制并核对记录，不依据本次对话批准训练或医学回归；必要时联系运动医学或康复专业人员。这不是诊断。',nextStep:null,citations:[],medicalReferral:true,planChanged:false};
+      return json({ok:true,route:'LOCAL',model:null,text:turn.text,turn,planChanged:false});
+    }
+    if(originals.some(b=>b.constraints.increaseBlocked===true&&!projected.some(p=>p.occurrenceId===b.occurrenceId&&p.constraints.increaseBlocked===true)))return failure('CONSTRAINT_DOWNGRADE_BLOCKED',422);
+    const safety=(canonical.brief.pain ? {mode:'ask',text:canonical.brief.constraints.blockReason ?? '已有疼痛记录，停止诱发疼痛的动作，并考虑运动医学或康复评估；这不是诊断。',nextStep:null,citations:canonical.brief.returnToTraining?.sourceIds ?? [],medicalReferral:true,planChanged:false} : null);
+    if (safety) return json({ok:true,text:safety.text,turn:safety,model:null,route:'LOCAL',planChanged:false});
+    route=selectDeepSeekRoute(refs.question,{complexComparison:!!canonical.compare,hasComparableHistory:!!canonical.series,needsComplexExplanation:/解释|原因|取舍|方案|为什么/.test(refs.question)});
+    if(route.kind==='LOCAL')return json({ok:true,route:'LOCAL',model:null,text:'请查看本地训练复盘中的已核对事实；当前问题由本地计算处理。',planChanged:false});
+    policy=await services.getVerifiedPolicy(); assertVerifiedPolicy(policy,now);
+    if(typeof env.DEEPSEEK_API_KEY!=='string'||!env.DEEPSEEK_API_KEY.trim())return failure('SERVICE_KEY_MISSING');
+    aliased=aliasCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
+    modelRequest=buildCoachModelRequest(normalizeAskCoachInput(aliased.input),{profile:'minimal-transport'});
+  } catch { return failure('AUTHORIZED_CONTEXT_UNAVAILABLE'); }
+  const payload={model:policy.model,temperature:policy.temperature,messages:modelRequest.messages,max_tokens:route.outputTokenLimit,stream:false,response_format:{type:'json_object'}};
+  // Include serialized non-message options and verified chat-format overhead; never trim safety to fit.
+  const {messages,...options}=payload;
+  const inputUpper=estimateInputTokenUpperBound(messages)+utf8(options)+policy.tokenOverheadUpperBound;
+  if(inputUpper>route.inputTokenLimit)return failure('CONTEXT_BUDGET_EXCEEDED',422);
+  const worstCost=costMicros(route.inputTokenLimit,route.outputTokenLimit,policy);
+  if(typeof policy.caps.perCallCostMicros!=='string')return failure('CALL_COST_UNVERIFIED');
+  if(BigInt(worstCost)>BigInt(policy.caps.perCallCostMicros))return failure('CALL_COST_CAP',429);
+  const binding={requestId:refs.requestId,ownerId:subject.id,
+    contextHash:await digest({subject:subject.id,athlete:snapshot.athleteId,snapshot:snapshot.snapshotId,version:snapshot.version,asOf:refs.asOf,consent:refs.consentId,messages}),
+    modelHash:await digest({model:policy.model,version:policy.modelVersion}),configHash:await digest({policy,route,inputUpper})};
+  let reservation;
+  try { reservation=await services.ledger.reserve({...binding,campaignId:policy.campaignId,phase:policy.phase,day:new Date(now).toISOString().slice(0,10),worstCostMicros:worstCost,caps:policy.caps}); }
+  catch {return failure('BUDGET_RESERVATION_DENIED',429);}
+  if(reservation.status!=='RESERVED')return failure('DUPLICATE_REQUEST',409);
+  if(reservation.reservationId!==refs.requestId||reservation.state!=='RESERVED')return failure('RESERVATION_BINDING_INVALID');
+  try { await services.ledger.markDispatched(binding); } catch {return failure('DISPATCH_DENIED',409);}
+  const abort=new AbortController(); let timer;
+  let reply;
+  try {
+    const operation=(async()=>{
+      const response=await (services.fetch??globalThis.fetch)('https://api.deepseek.com/chat/completions',{method:'POST',redirect:'error',signal:abort.signal,headers:{'content-type':'application/json',authorization:`Bearer ${env.DEEPSEEK_API_KEY}`},body:JSON.stringify(payload)});
+      if(!response.ok)throw new Error('UPSTREAM_STATUS');
+      return boundedResponseJson(response);
+    })();
+    const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(new Error('UPSTREAM_TIMEOUT'));},policy.timeoutMs);});
+    reply=await Promise.race([operation,deadline]);
+  } catch {
+    try{await services.ledger.settle({...binding,outcome:'UNKNOWN',actualCostMicros:null,usageHash:null});}catch{/* Durable reservation is retained; never refund an uncertain dispatch. */}
+    return failure('UPSTREAM_UNCERTAIN',502);
+  } finally {clearTimeout(timer);}
+  const usage=parseProviderUsage(reply);
+  if(!usage){try{await services.ledger.settle({...binding,outcome:'UNKNOWN',actualCostMicros:null,usageHash:null});}catch{} return failure('PROVIDER_USAGE_UNKNOWN',502);}
+  const actualCost=costMicros(usage.promptTokens,usage.completionTokens,policy,usage.cacheHitTokens);
+  let settlement;
+  try{settlement=await services.ledger.settle({...binding,outcome:'SUCCESS',actualCostMicros:actualCost,usageHash:await digest({usage,returnedModel:providerReturnedModel(reply),requestedModel:policy.model})});}catch{return failure('BILLING_SETTLEMENT_UNAVAILABLE');}
+  if(settlement?.state!=='SETTLED'||settlement?.overrun)return failure('BILLING_REQUIRES_REVIEW');
+  let interpreted;
+  try {
+    const raw=validateProviderReply(reply,policy,route);
+    const restored=aliased.restore(raw);
+    assertDeepSeekNumericGrounding(canonical,restored);
+    interpreted=interpretCoachModelOutput(canonical,restored);
+    if(interpreted.turn.mode==='unavailable'||interpreted.turn.planChanged!==false)throw new Error('OUTPUT_GUARD');
+  } catch {return failure('OUTPUT_REJECTED',502);}
+  return json({ok:true,text:interpreted.turn.text,turn:interpreted.turn,compareIds:interpreted.compareIds,seriesIds:interpreted.seriesIds,route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false});
 }

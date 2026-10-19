@@ -3,6 +3,7 @@ import { fmtDistance, fmtDuration, fmtHr, fmtPace } from './activity-format.ts'
  * 日期 = 活动开始时间在用户时区的日期（ActivityRow.date），不是同步时间。
  * 本周 = 周一到周日（按天）；近4周 = 含本周在内的 4 个自然周（按周）。缺失的距离/时长单独计数，不当 0。 */
 import type { ActivityRow } from './training-read-model'
+import { componentCompleted } from './training-component-facts'
 export type LogRange = 'week' | '4w'
 export type LogKind = 'all' | 'run' | 'lift'
 const add = (d: string, n: number) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10)
@@ -27,8 +28,8 @@ export function filterRows(rows: ActivityRow[], range: LogRange, kind: LogKind, 
   return rows.filter(x => x.date >= r.start && x.date <= r.end && matchKind(x, kind)).sort((a, b) => b.startedAt.localeCompare(a.startedAt))
 }
 export function summarize(rows: ActivityRow[], range: LogRange, kind: LogKind, today: string) {
-  // v79（用户 t489）：没点完成、也没反馈的课（status incomplete）照样列出，但不算“记录”、不计入次数/时长/距离。
-  const r = rangeOf(range, today), all = filterRows(rows, range, kind, today), list = all.filter(x => x.status !== 'incomplete')
+  // 旧未完成草稿仍不计量；已完成分项/已确认来源的实际观测不因整课待补而丢失。课程完成另由 completedPlanIds 派生。
+  const r = rangeOf(range, today), all = filterRows(rows, range, kind, today), list = all.filter(x => x.status !== 'incomplete' || x.componentFacts?.some(componentCompleted) || isGarmin(x) || x.sources?.includes('import'))
   const runs = list.filter(x => ['run', 'mixed'].includes(kindOf(x)))
   return {
     ...r, list: all, counted: list, count: list.length, run: runs.length, lift: list.filter(x => ['lift', 'mixed'].includes(kindOf(x))).length,

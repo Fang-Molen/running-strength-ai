@@ -10,16 +10,14 @@ import { BRANDS, GROUP_HINT, TIERS, TIER_LABEL, WATCHES, gateRecovery, loadBrand
 import { loadSchedule, saveSchedule } from "@/lib/ui/day-schedule"
 import { addDays, weekOf, weekSummary, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
 import { parseQuickLog, type Parsed } from "@/lib/ui/quick-log"
+import { clearQuickLogDraft, deleteQuickLogNote, loadQuickLogDraft, loadQuickLogNotes, newQuickLogDraft, quickLogDraftForNote, saveQuickLog, saveQuickLogDraft, type QuickLogAttachment, type QuickLogDraft, type QuickLogNote } from "@/lib/ui/quick-log-store"
 import { computeStreak } from "@/lib/ui/streak"
 import { OVERRIDE_KEY, type Override } from "@/lib/ui/day-override"
 import { COLLECTED, effective, loadSettings, saveSettings, type AppSettings } from "@/lib/ui/app-settings"
 import { logMetrics } from "@/lib/ui/log-metrics"
-import { syncActualToLog } from "@/lib/ui/checklist-log"
 import { recoveryVerdict } from "@/lib/ui/recovery-verdict"
 import { readRecoveryInput, lastDeviceSync } from "@/components/health-extras"
 import { loadVitals } from "@/lib/nutrition/vitals"
-import { upsertCheck } from "@/lib/nutrition/body"
-import { createTrainingImportDraft, confirmTrainingImport } from "@/lib/core/training-import"
 import { ocr } from "@/components/device-import"
 import { SavedBadge } from "@/components/saved-badge"
 import { EnergyGauge } from "@/components/energy-gauge"
@@ -150,24 +148,8 @@ export function HomeEditor({ layout, onChange, onClose }: { layout: Layout; onCh
 }
 
 /* ---------------- 3) 全局“+记一笔” ---------------- */
-const f = <T,>(v: T | null) => v == null ? { value: null, status: "ABSENT", sourceIds: [] } : { value: v, status: "RECORDED", sourceIds: ["user-confirmed"] }
-function saveParsed(p: Parsed, today: string, rpe: number | null = null): string {
-  if (p.kind === "weight") return upsertCheck({ date: today, weight: p.kg } as never) ? `已记体重 ${p.kg} kg` : "保存失败"
-  if (p.kind === "unknown") return "没认出来"
-  const s = loadSchedule(), at = new Date().toISOString()
-  const id = `q-${Date.now().toString(36)}`
-  const minutes = p.kind === "run" ? p.minutes ?? 30 : Math.max(10, p.sets * 3)
-  const e: ScheduleEntry = { id, date: today, kind: p.kind === "run" ? "run" : "strength", modality: p.kind === "run" ? "run" : "strength", title: p.kind === "run" ? `${p.title}${p.km ? ` ${p.km} 公里` : ""}` : `${p.name} ${p.sets}×${p.reps}${p.kg ? ` ${p.kg}kg` : ""}`, focus: [], minutes, intensity: "EASY", lowerHeavy: false, source: "custom", refId: null, status: "done", unplanned: true, slot: p.kind === "run" ? p.when ?? undefined : undefined, actual: { outcome: "as_planned", minutes, km: p.kind === "run" ? p.km : null, rpe, intensity: null, note: "记一笔", reasons: [], at } }
-  saveSchedule({ ...s, entries: [...s.entries, e] })
-  if (p.kind === "run") { const r = syncActualToLog(e, undefined); return r.ok ? "已记入训练日志" : `日志未同步：${r.reason}` }
-  const draft = createTrainingImportDraft({ sport: "STRENGTH", occurredAt: f(at.replace(/\.\d+Z$/, "Z")), title: f(e.title), durationSeconds: f(null), totalDistanceMeters: f(null), runningStructure: "UNAVAILABLE", runningSegments: [], strengthSets: Array.from({ length: p.sets }, (_, i) => ({ id: `q${i + 1}`, exerciseName: f(p.name), setOrdinal: f(i + 1), weightKg: f(p.kg), repetitions: f(p.reps), durationSeconds: f(null), recoverySeconds: f(null), completion: "COMPLETED" })), sessionRpe: f(rpe != null && rpe >= 1 ? Math.round(rpe) : null), subjectiveRecovery: f(null), sleepHours: f(null), pain: f(null), soreness: f(null), uncertainFields: [], conflicts: [], warnings: ["记一笔"] } as never, "TEXT", ["user-confirmed"])
-  draft.draftId = `act-${id}`
-  const r = confirmTrainingImport(draft); return r.ok ? "已记入训练日志" : `日志未同步：${r.reason}`
-}
-type Att = { id: string; name: string; url: string };
-type Note = { id: string; date: string; at: string; text: string; atts: Att[]; parsed?: string };
-const QL_DRAFT = "fk-quicklog-draft-v1", NOTES = "fk-notes-v1";
-const loadNotes = (): Note[] => { try { const v = JSON.parse(localStorage.getItem(NOTES) || "[]"); return Array.isArray(v) ? v : [] } catch { return [] } }
+type Att = QuickLogAttachment;
+type Note = QuickLogNote;
 async function toThumb(file: File): Promise<string> {
   const { shrink } = await import("@/lib/nutrition/food-photo"); const blob = await shrink(file, 640)
   return await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = () => no(r.error); r.readAsDataURL(blob) })
@@ -177,55 +159,68 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
   const [text, setText] = useState(""), [atts, setAtts] = useState<Att[]>([])
   const [err, setErr] = useState(""), [busy, setBusy] = useState(false), [rpe, setRpe] = useState<number | null>(null), [ocrMsg, setOcrMsg] = useState("")
   const [notes, setNotes] = useState<Note[]>([]), [toast, setToast] = useToast()
-  const loaded = useRef(false), saving = useRef(false)
-  useEffect(() => { try { const d = JSON.parse(localStorage.getItem(QL_DRAFT) || "null"); if (d) { setText(d.text || ""); setAtts(d.atts || []) } } catch { /* none */ } loaded.current = true }, [])
-  useEffect(() => { if (!loaded.current) return; try { if (text || atts.length) localStorage.setItem(QL_DRAFT, JSON.stringify({ text, atts })); else localStorage.removeItem(QL_DRAFT) } catch { /* draft best-effort */ } }, [text, atts])
-  useEffect(() => { if (openWith) { setText(openWith.text); setOpen(true) } }, [openWith])
-  useEffect(() => { const h = () => setOpen(true); window.addEventListener("fk-open-quicklog", h); return () => window.removeEventListener("fk-open-quicklog", h) }, [])
-  useEffect(() => { if (open) setNotes(loadNotes()) }, [open])
+  const [ready, setReady] = useState(false), [confirmActual, setConfirmActual] = useState(false)
+  const draftRef = useRef<QuickLogDraft | null>(null), saving = useRef(false)
+  const restoreDraft = (draft: QuickLogDraft) => { draftRef.current = draft; setText(draft.text); setAtts(draft.atts); setRpe(draft.rpe); setConfirmActual(draft.confirmActual) }
+  useEffect(() => { restoreDraft(loadQuickLogDraft(today) ?? newQuickLogDraft()); setReady(true) }, [])
+  useEffect(() => {
+    if (!ready || !draftRef.current) return
+    draftRef.current = { ...draftRef.current, text, atts, rpe, confirmActual }
+    if (!saveQuickLogDraft(draftRef.current)) setErr("草稿暂未写入本机存储；输入仍保留。若已有待完成笔记，请先恢复原草稿。")
+  }, [text, atts, rpe, confirmActual, ready])
+  useEffect(() => { if (openWith) { restoreDraft({ ...newQuickLogDraft(), text: openWith.text }); setOpen(true) } }, [openWith])
+  useEffect(() => { const h = () => { if (!draftRef.current?.text.trim() && !draftRef.current?.atts.length) restoreDraft(newQuickLogDraft()); setOpen(true) }; window.addEventListener("fk-open-quicklog", h); return () => window.removeEventListener("fk-open-quicklog", h) }, [])
+  useEffect(() => { if (open) setNotes(loadQuickLogNotes()) }, [open])
   const taRef = useRef<HTMLTextAreaElement>(null), fileRef = useRef<HTMLInputElement>(null)
   useEffect(() => { const t = taRef.current; if (t) { t.style.height = "auto"; t.style.height = `${Math.min(t.scrollHeight, 260)}px` } }, [text, open])
   const parsedLines = useMemo(() => text.split(/\n|；|;/).map(l => parseQuickLog(l.trim())).filter(r => r.kind !== "unknown"), [text]);
   const multipleRecords = parsedLines.length > 1;
   const p: Parsed | null = parsedLines.length === 1 ? parsedLines[0] : null;
+  const visibleNotes = [...notes.filter(note => note.saveState === "pending"), ...notes.filter(note => note.saveState !== "pending").slice(0, 5)]
   const save = () => {
     if (saving.current) return
     if (!text.trim() && !atts.length) { setErr("先写点什么或加一张截图"); return }
     saving.current = true; setBusy(true); setErr("")
-    try {
-      let parsedMsg = ""
-      if (p) { parsedMsg = saveParsed(p, today, rpe); if (!parsedMsg.startsWith("已")) throw new Error(parsedMsg) }
-      const note: Note = { id: `n-${Date.now()}`, date: today, at: new Date().toISOString(), text: text.trim(), atts, parsed: p ? parsedMsg : undefined }
-      const next = [note, ...loadNotes()]
-      try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { throw new Error("本机存储已满或被禁用（截图较大时可先移除截图）") }
-      setNotes(next); setText(""); setAtts([]); setRpe(null); localStorage.removeItem(QL_DRAFT); onSaved()
-      setToast(p ? "已保存，并记入训练/身体数据" : "已保存为笔记")
-    } catch (e) { saving.current = false; setErr(`保存失败：${(e as Error)?.message || "未知原因"}。输入已保留。`); setBusy(false); return }
-    finally { setBusy(false); if (saving.current) setTimeout(() => { saving.current = false }, 600) }
+    const draft = { ...(draftRef.current ?? newQuickLogDraft(today)), text, atts, rpe, confirmActual }
+    draftRef.current = draft
+    const result = saveQuickLog(draft)
+    setNotes(loadQuickLogNotes())
+    if (!result.ok) {
+      setErr(result.reason)
+      if (result.generatedRecordIds.length) onSaved()
+    } else {
+      restoreDraft(newQuickLogDraft()); clearQuickLogDraft(); onSaved(); setToast(result.message)
+    }
+    setBusy(false); saving.current = false
   }
-  const delNote = (id: string) => { const next = loadNotes().filter((n) => n.id !== id); try { localStorage.setItem(NOTES, JSON.stringify(next)); setNotes(next); setToast("已删除这条记录") } catch { setErr("删除失败，请重试") } }
+  const delNote = (id: string) => {
+    const result = deleteQuickLogNote(id)
+    if (result.ok) { setNotes(loadQuickLogNotes()); setToast("仅删除了笔记；关联训练和身体数据仍保留") }
+    else setErr(result.reason)
+  }
   return <>
     <Toast msg={toast} />
-    {open ? <Sheet label="记一笔" title="记一笔" sub={`${Number(today.slice(5, 7))}月${Number(today.slice(8, 10))}日 · 关闭会保留草稿`} onClose={() => setOpen(false)}
+    {open ? <Sheet label="记一笔" title="记一笔" sub={`${Number((draftRef.current?.date ?? today).slice(5, 7))}月${Number((draftRef.current?.date ?? today).slice(8, 10))}日 · 关闭会保留草稿`} onClose={() => setOpen(false)}
       footer={<>{err ? <p role="alert" className="keep mb-2 text-sm text-[var(--color-risk)]">{err}</p> : null}<div className="flex gap-2">
         <button type="button" className="min-h-12 rounded-xl border border-line px-4" onClick={() => setOpen(false)}>取消</button>
         <button type="button" disabled={busy} className="fk-orange-btn min-h-12 flex-1 rounded-xl text-base font-bold disabled:opacity-50" onClick={save}>{busy ? "保存中…" : "保存记录"}</button></div></>}>
-      <textarea ref={taRef} aria-label="记录内容" rows={3} value={text} onChange={(e) => { setText(e.target.value.slice(0, 20000)); setErr("") }} placeholder="记录训练、体重或身体感受……" className="fk-cell w-full resize-none whitespace-pre-wrap break-words py-2 text-base leading-relaxed" />
+      <textarea ref={taRef} aria-label="记录内容" rows={3} value={text} onChange={(e) => { setText(e.target.value.slice(0, 20000)); setConfirmActual(false); setErr("") }} placeholder="记录训练、体重或身体感受……" className="fk-cell w-full resize-none whitespace-pre-wrap break-words py-2 text-base leading-relaxed" />
       <div className="mt-2 flex flex-wrap gap-2">
         <button type="button" className="fk-chip" onClick={() => { setOpen(false); onFile() }}><FileUp className="size-4" />导入文件（FIT/GPX）</button>
       </div>
-      <ImageIntake title="截图完整识别" onText={(raw, file) => { setText(x => (x ? x + "\n" : "") + raw); setErr(""); if (file && atts.length < 3) void toThumb(file).then(url => setAtts(a => [...a, {id:crypto.randomUUID(),name:file.name,url}])).catch(() => setErr("文字已保留，图片附件保存失败，请重新选择。")); }} />
+      <ImageIntake title="截图完整识别" onText={(raw, file) => { setText(x => (x ? x + "\n" : "") + raw); setConfirmActual(false); setErr(""); if (file && atts.length < 3) void toThumb(file).then(url => setAtts(a => [...a, {id:crypto.randomUUID(),name:file.name,url}])).catch(() => setErr("文字已保留，图片附件保存失败，请重新选择。")); }} />
       {atts.length ? <div className="mt-2 flex flex-wrap gap-2" aria-label="附件">{atts.map(a => <div key={a.id}><img src={a.url} alt={a.name} className="size-20 rounded-lg object-contain" /><button type="button" className="min-h-11 text-xs text-accent" onClick={() => setAtts(v => v.filter(x => x.id !== a.id))}>移除图片</button></div>)}</div> : null}
       {multipleRecords ? <p className="mt-2 text-sm text-amber-400">检测到多条数据，快速记录将完整保存为笔记。请到“详细记录”逐项核对后入库，不会只记录第一条。</p> : null}
       {text.trim() ? <div className="mt-3 rounded-2xl border border-line bg-surface p-3 text-sm" aria-label="识别结果">
-        {p ? <>{p.kind === "run" ? <p><b className="text-[#2182bd]">识别为跑步</b> · {p.title} · 距离 {p.km ?? "—"} 公里 · 用时 {p.minutes ?? "—"} 分{p.pace ? ` · 配速 ${p.pace}` : ""}</p>
-          : p.kind === "strength" ? <p><b className="text-[#d07a2b]">识别为力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg ?? "自重"}{p.kg ? " kg" : ""}</p>
+        {p ? <>{p.kind === "run" ? <p><b className="text-[#2182bd]">识别为跑步</b> · {p.title} · 距离 {p.km ?? "—"} 公里 · {p.minutes == null ? "时长未记录" : `用时 ${p.minutes} 分`}{p.pace ? ` · 配速 ${p.pace}` : ""}</p>
+          : p.kind === "strength" ? <p><b className="text-[#d07a2b]">识别为力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg == null ? "重量未记录" : `${p.kg} kg`} · 时长未记录</p>
           : p.kind === "weight" ? <p><b>识别为体重</b> · {p.kg} kg</p> : null}
-          <p className="keep mt-1 text-xs text-muted">保存后会记入数据，原文也会作为笔记保留。</p>
+          <p className="keep mt-1 text-xs text-muted">原文会作为笔记保留。训练仅登记已明确填写且再次确认的实际；未填时长、重量、强度不补全，不与原计划对照。</p>
+          {p.kind === "run" || p.kind === "strength" ? <label className="mt-2 flex items-start gap-2"><input type="checkbox" checked={confirmActual} onChange={e => setConfirmActual(e.target.checked)} className="mt-0.5 size-5" /><span>确认以上是已完成的实际训练（计划外、用户自报）；未勾选只存笔记</span></label> : null}
           {p.kind === "run" || p.kind === "strength" ? <div className="mt-2"><EnergyGauge compact mode={p.kind === "run" ? "run" : "strength"} label="用力（可不填）" value={rpe} onChange={setRpe} /></div> : null}</>
           : <p className="text-muted">没有识别出训练或体重数据，将作为笔记保存，不会丢失。</p>}
       </div> : null}
-      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的记录</p><ul className="mt-1 divide-y divide-line">{notes.slice(0, 5).map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{stampCN(n.at)}{n.atts.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}</p></div><button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => delNote(n.id)}>删除已保存记录</button></li>)}</ul></div> : null}
+      {notes.length ? <div className="mt-4"><p className="text-sm font-bold">已保存的笔记</p><p className="keep text-xs text-muted">仅删除笔记时，关联训练和身体数据仍保留。关联训练可到训练日志查看；本入口暂不支持更正或撤回关联训练。</p><ul className="mt-1 divide-y divide-line">{visibleNotes.map((n) => <li key={n.id} className="flex items-start gap-2 py-2 text-sm"><div className="min-w-0 flex-1"><p className="whitespace-pre-wrap break-words">{n.text || "（截图）"}</p><p className="keep text-[11px] text-muted">{stampCN(n.at)}{n.atts?.length ? ` · ${n.atts.length} 张截图` : ""}{n.parsed ? ` · ${n.parsed}` : ""}{n.saveState === "pending" ? " · 保存待完成，请恢复原草稿重试" : ""}</p>{n.generatedRecordIds?.length ? <p className="keep break-all text-[11px] text-muted">关联数据：{n.generatedRecordIds.join("、")} · 请按日期在训练日志/身体数据中查看</p> : null}</div>{n.saveState === "pending" ? <button type="button" className="fk-chip shrink-0" onClick={() => { restoreDraft(quickLogDraftForNote(n)); setErr("") }}>恢复原草稿</button> : <button type="button" className="min-h-9 shrink-0 rounded-lg border border-[var(--color-risk)] px-2 text-xs text-[var(--color-risk)]" onClick={() => delNote(n.id)}>仅删笔记（训练保留）</button>}</li>)}</ul></div> : null}
     </Sheet> : null}
   </>
 }

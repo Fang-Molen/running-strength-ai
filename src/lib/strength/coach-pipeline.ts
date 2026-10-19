@@ -613,8 +613,23 @@ export type CoachModelRequest = {
   knowledgeContext: ReturnType<typeof buildCurriculumModelContext>;
 };
 
-/** Builds exactly the messages the production route sends. No network. */
-export function buildCoachModelRequest(data: AskCoachData): CoachModelRequest {
+export type CoachTransportOptions = { profile?: 'standard' | 'minimal-transport' };
+
+/**
+ * A shorter representation of the same evidence contract, never a different
+ * decision engine. Interpretation still uses interpretCoachModelOutput(data).
+ * The trusted host must minimize/authorize personal fields before this builder.
+ */
+function minimalTransportSystem(kind: CoachCallKind, intent: CoachQuestionIntent): string {
+  return DIAGNOSIS_SYSTEM_BOUNDARY +
+    '你是跑步与力量教练。只解释输入中已绑定的事实，history与知识示例均未提供；不补个人目标、比赛日、阈值或剂量。缺失/UNKNOWN不是0、正常、无痛、已恢复或没做。计划不当实际；同日不同课、分项RPE与来源不混用；结构缺失不编造分段。事实、计算、解释、决策分开，相关不当因果；引用实际数值。先解释已知课程目的；未知则说明并问一个关键问题，不从距离/周期强推。解释最多两种有依据的可能，写支持/反证、未知与下一次具体观察；不足两种不编造。' +
+    '不得给伤病概率、诊断、成绩保证、能力分或疲劳分，不得改计划。疼痛停止诱发动作，急症优先就医，不给带症状加量建议；酸痛不等于疼痛或伤病；回归许可始终UNKNOWN，不得说痊愈/安全回归。遵守constraints、mustAsk、returnToTraining和nextSession；恢复/睡眠未记录不能视为正常，高RPE后缺恢复先核对。调整只讨论有条件候选，不能宣布批准，剂量仅沿用已核准课程。正文数值需有对应来源；citations仅输入source id，开始id不代替用时来源；来源id不写正文。口头更正先核对记录，不覆写。' +
+    '未选择训练时不谈个人训练结论或剂量。冲突先核对不代选。下一课引用requiredSourceIds，回归引用returnToTraining.sourceIds；饮食摄入仅同日有来源时比较，不能据记录不足诊断低能量。比较只比同协议、相同单位且两侧已记录的事实；单次/缺失/冲突不推长期能力或因果。量值用阿拉伯数字与明确单位；不输出未提供的日期、分数或新计算。' +
+    `任务${kind}/${intent}。输出JSON，字段mode(answer/ask/unavailable)、text、nextStep(string或null)、citations(string[])、medicalReferral(boolean)、planChanged(false)。`;
+}
+
+/** Builds exactly the messages the selected transport sends. No network. */
+export function buildCoachModelRequest(data: AskCoachData, options: CoachTransportOptions = {}): CoachModelRequest {
   const kind: CoachCallKind = data.series
     ? "formal-series"
     : data.compare
@@ -659,7 +674,14 @@ export function buildCoachModelRequest(data: AskCoachData): CoachModelRequest {
         ...data.v4.packet,
       }
     : undefined;
-  const packet = JSON.stringify({
+  const packet = JSON.stringify(options.profile === 'minimal-transport' ? {
+    ...basePacket,
+    history: [],
+    // Do not carry the entire knowledge catalogue or free-form memories merely
+    // to generate language. Existing local reasoning/retrieval remains intact.
+    transport: { version: 'FK-MINIMAL-1', omitted: ['chat-history', 'knowledge-catalogue', 'free-form-memory'], decisionAuthorized: false },
+    ...(v4 ? { personalEvidenceV4: v4 } : {}),
+  } : {
     ...basePacket,
     ...(data.v4 ? { history: data.history.filter((m) => m.role === "user") } : {}),
     knowledgeContext,
@@ -669,7 +691,7 @@ export function buildCoachModelRequest(data: AskCoachData): CoachModelRequest {
     ...(data.v4?.reasoning.coachingReview ? { coachingReview: data.v4.reasoning.coachingReview } : {}),
     ...(v4 ? { personalEvidenceV4: v4 } : {}),
   });
-  const system =
+  const system = options.profile === 'minimal-transport' ? minimalTransportSystem(kind, intent) :
     coachSystemPrompt(kind, intent, recoveryConflict, highRpeGap, sorenessOnly) +
     CURRICULUM_SYSTEM_BOUNDARY +
     COACH_MEMORY_BOUNDARY +
@@ -682,7 +704,7 @@ export function buildCoachModelRequest(data: AskCoachData): CoachModelRequest {
     responseFormat: data.v4 ? COACH_SCAFFOLD_RESPONSE_FORMAT : COACH_RESPONSE_FORMAT,
     kind,
     intent,
-    maxTokens,
+    maxTokens: options.profile === 'minimal-transport' ? 900 : maxTokens,
     packet,
     system,
     messages: [

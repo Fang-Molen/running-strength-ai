@@ -71,9 +71,9 @@ test('统一格式化：取整先总秒再拆分、Safari 空格时间、心率�
   assert.equal(activityLocalDay('2026-10-18 07:30:00'), '2026-10-18'); assert.equal(activityLocalDay('2026-10-17T23:30:00Z'), '2026-10-18')
 })
 
-test('V4 计划日 10-19「速度耐力＋力量A」完成 → 混合课、标题来自原课表；与“开始力量训练”的日程条目按 id 合并', () => {
+test('V4 跑步手填＋明确力量完成 → 混合实际，旧整课 done 不能补全跑步完成状态', () => {
   const rows = phoneRows(store({ 'fk-plan400-v4-log': { '2026-10-19': { done: 'done', reps: '150m: 21.3/21.0/21.6', rest: '7分/8分', rpe: '7', savedAt: '2026-10-19T01:00:00Z' } },
     'fk-schedule-v1': { entries: [{ id: 'plan400:2026-10-19:strength', date: '2026-10-19', modality: 'strength', title: '力量（V4）', refId: null, status: 'done', actual: { outcome: 'as_planned', minutes: 30, rpe: 7 } }] } }), Date.parse('2026-10-19T08:00:00Z'))
   const m = mergeActivities(rows)
-  assert.equal(m.length, 1); assert.equal(m[0].sport, 'MIXED'); assert.match(m[0].title!, /V4 速度耐力＋力量A|力量（V4）/); assert.equal(m[0].status, 'completed')
+  assert.equal(m.length, 1); assert.equal(m[0].sport, 'MIXED'); assert.match(m[0].title!, /V4 速度耐力＋力量A|力量（V4）/); assert.equal(m[0].status, 'incomplete')
 })

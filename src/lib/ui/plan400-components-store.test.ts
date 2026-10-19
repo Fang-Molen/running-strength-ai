@@ -20,18 +20,22 @@ test('跑步 RPE 8、力量 RPE 6 分开保存，互不覆盖；改值留修改�
 })
 test('跳过一项：跑步跳过、力量完成 → 日志一条力量记录', () => {
   const s = mem(); saveComponent('2026-10-19', 'running', { status: 'skipped' }, s); saveComponent('2026-10-19', 'strength', { status: 'done', rpe: 6 }, s)
-  const rows = phoneRows(s, NOW); assert.equal(rows.length, 1); assert.equal(rows[0].sport, 'STRENGTH'); assert.equal(rows[0].status, 'completed')
+  const rows = phoneRows(s, NOW); assert.equal(rows.length, 1); assert.equal(rows[0].sport, 'STRENGTH'); assert.equal(rows[0].status, 'incomplete')
 })
 const garmin = () => JSON.stringify({ a: { id: 41019, name: '操场 150m×3', type: 'track_running', start: '2026-10-19T10:00:00Z', dist: 3200, dur: 1500, avgHr: 150 } })
-test('V4 跑步部分 ↔ 同日唯一佳明跑步：自动关联，合并成一条，只算一次；力量不会因此完成', () => {
+test('V4 同日唯一佳明跑步仍是候选；用户确认归属后合并一次，力量不会因此完成', () => {
   const s = mem({ 'fk-plan400-v4-components-v1': JSON.stringify({ schemaVersion: 1, days: { '2026-10-19': { running: { rpe: 8, status: 'done' } } } }) })
   const rows = linkRuns([...phoneRows(s, NOW), ...garminRows(JSON.parse(garmin()))], s, NOW)
-  assert.equal(rows.length, 1, JSON.stringify(rows.map(r => r.id)))
-  assert.equal(rows[0].distanceM, 3200); assert.equal(rows[0].runLink?.entryId, 'plan400:2026-10-19:running'); assert.equal(rows[0].sport, 'RUNNING')
-  const sm = summarize(rows, '4w', 'all', '2026-10-19'); assert.equal(sm.count, 1); assert.equal(sm.lift, 0); assert.equal(Math.round(sm.distanceM), 3200)
-  assert.equal(lastRunMatch().links[0].by, 'auto')
+  assert.equal(rows.length, 2, JSON.stringify(rows.map(r => r.id)))
+  assert.equal(lastRunMatch().links.length, 0); assert.equal(lastRunMatch().suggestions.length, 1)
+  const id = garminRows(JSON.parse(garmin()))[0].id
+  setRunDevice('2026-10-19', { sourceIdentity: id, source: 'garmin', linkedBy: 'user' }, undefined, s)
+  const confirmed = linkRuns([...phoneRows(s, NOW), ...garminRows(JSON.parse(garmin()))], s, NOW)
+  assert.equal(confirmed.length, 1); assert.equal(confirmed[0].distanceM, 3200); assert.equal(confirmed[0].runLink?.entryId, 'plan400:2026-10-19:running'); assert.equal(confirmed[0].sport, 'RUNNING'); assert.equal(confirmed[0].status, 'incomplete')
+  const sm = summarize(confirmed, '4w', 'all', '2026-10-19'); assert.equal(sm.count, 1); assert.equal(sm.lift, 0); assert.equal(Math.round(sm.distanceM), 3200)
+  assert.equal(lastRunMatch().links[0].by, 'user')
   // 没有任何分项记录：也只有那一条佳明跑步，力量不出现
-  const only = linkRuns(garminRows(JSON.parse(garmin())), mem(), NOW); assert.equal(only.length, 1); assert.equal(only[0].sport, 'RUNNING'); assert.equal(only[0].runLink?.entryId, 'plan400:2026-10-19:running')
+  const only = linkRuns(garminRows(JSON.parse(garmin())), mem(), NOW); assert.equal(only.length, 1); assert.equal(only[0].sport, 'RUNNING'); assert.equal(only[0].runLink, undefined)
 })
 test('解除关联后不再自动关联；用户可重新确认', () => {
   const s = mem(); const id = garminRows(JSON.parse(garmin()))[0].id

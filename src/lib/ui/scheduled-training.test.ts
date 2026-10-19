@@ -5,7 +5,7 @@ import { resolveScheduledCourse, scheduledChoices, scheduleExecutionId } from '.
 import { loadSchedule, saveSchedule, saveScheduledEntry } from './day-schedule';
 import { syncScheduleProgress } from './schedule-progress';
 import { startScheduledRun, activeTrainingBlock } from './scheduled-start';
-import { mergeActivities, garminRows, loadTrainingActivities, type ActivityRow } from './training-read-model';
+import { mergeActivities, garminRows, loadTrainingActivities, completedPlanIds, type ActivityRow } from './training-read-model';
 import { assess } from './coach-assessment';
 import { weekSummary, weekOf, type ScheduleEntry } from './day-schedule-rules';
 import { setStoreBackend, type MemoryStore } from '@/lib/core/storage';
@@ -104,7 +104,9 @@ test('run execution resumes the same occurrence and closes only its calendar slo
   assert.equal(commitTrackContinuous(a.trainingOccurrenceId, 'run', '2400', '8000').ok, true);
   assert.equal(finishTrackSession(a.trainingOccurrenceId, 'COMPLETED', 4, null).ok, true); assert.equal(syncScheduleProgress(), true);
   const stored = loadSchedule().entries; assert.equal(stored[0].status, 'done'); assert.equal(stored[0].actual?.minutes, 40); assert.equal(stored[0].actual?.km, 8); assert.equal(stored[0].actual?.executionState, 'COMPLETED'); assert.equal(stored[1].actual, undefined);
-  assert.equal(loadTrainingActivities().filter(r => r.source === 'execution').length, 1);
+  const executionRows = loadTrainingActivities().filter(r => r.source === 'execution');
+  assert.equal(executionRows.length, 1); assert.equal(executionRows[0].sessionId, e.id);
+  assert.deepEqual(completedPlanIds(executionRows, executionRows[0].date), [e.id]);
 });
 test('starting another course is blocked while one part is in progress', async () => {
   const a = resolveScheduledCourse(runEntry(), plan, []).run!, b = resolveScheduledCourse(runEntry('second'), plan, []).run!;

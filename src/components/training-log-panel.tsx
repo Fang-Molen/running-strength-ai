@@ -254,10 +254,11 @@ export function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingI
   const [deleteError, setDeleteError] = useState("")
   const run = item.runningSegments.length > 0
   const lift = item.strengthSets.length > 0
+  const quickLog = item.draftId.startsWith("qlog-")
   return <article className="border-b border-line py-1 text-sm last:border-b-0">
     <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex min-h-12 w-full items-center gap-3 text-left">
       <span className={(run && !lift ? "chip-run" : "chip-lift") + " grid size-10 shrink-0 place-items-center rounded-2xl"}>{run && !lift ? <Activity className="size-4" /> : <Dumbbell className="size-4" />}</span>
-      <span className="min-w-0 flex-1"><span className="block truncate font-bold">{item.title.value || "未命名上传"}</span><span className="mt-0.5 block truncate text-xs text-muted">{formatDeviceLocal(item.occurredAt.value)} · {item.sport === "UNKNOWN" ? "证据不足" : "已确认上传"}</span></span>
+      <span className="min-w-0 flex-1"><span className="block truncate font-bold">{item.title.value || "未命名上传"}</span><span className="mt-0.5 block truncate text-xs text-muted">{quickLog ? "手机记录 · 计划外实际（用户自报）· 训练时刻未记录" : <>{formatDeviceLocal(item.occurredAt.value)} · {item.sport === "UNKNOWN" ? "证据不足" : "已确认上传"}</>}</span></span>
       <span className="text-lg text-muted" aria-hidden="true">{open ? "↑" : "›"}</span>
     </button>
     {open ? <div className="mt-2 space-y-2 border-t border-line pt-2">

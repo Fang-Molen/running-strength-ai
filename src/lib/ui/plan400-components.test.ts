@@ -17,7 +17,7 @@ test('W01/W02: same-day watch run is a candidate for Running only; Strength stay
   assert.equal(v.combo, true)
   assert.equal(v.running.tone, 'candidate')
   assert.equal(v.strength?.label, '尚未记录')
-  assert.match(v.overall, /只有跑步有记录/)
+  assert.match(v.overall, /两项都还没有记录/)
   assert.doesNotMatch(v.overall, /完成/)
   // the whole-day status is not changed by a watch run (no auto-complete)
   assert.equal(dayStatus(d1019, undefined, '2026-10-19'), 'not_started')

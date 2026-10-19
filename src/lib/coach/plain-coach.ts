@@ -1,7 +1,8 @@
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr, fmtPaceSec } from '../ui/activity-format'
-/** 方坤面向用户的“成熟教练”表达层：结论 → 生理原因 → 下一课处方；数据不够时直接说做什么测试、记什么。
- * 只读：不写计划、不改记录。内部事实/审计模型不变，这里只组织文字与联网上下文。 */
+/** 只读事实表达层：事实与可能解释分开，不由心率阈值生成医学结论或新训练剂量。 */
 import plan from '../plan400-v4.json' with { type: 'json' }
+import { loadComponents, STATUS_TEXT } from '../ui/plan400-components-store'
+import { dayStatus, STATUS_LABEL, hasRunPart, hasStrength, type V4Day } from '../ui/plan400-view'
 export type GActivity = { id: number | string; sourceIdentity?: string; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null }
 export type GLap = { i: number; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; speed: number | null }
 type Day = { date: string; title: string; main: string[]; aux: string[]; strength: string[]; week: string }
@@ -24,18 +25,27 @@ const lapPace = (l: GLap) => l.dist && l.dur && l.dist > 50 ? l.dur / (l.dist / 
 
 export function planFor(day: string) {
   const d = days.find(x => x.date === day), next = days.find(x => x.date > day)
-  return { today: d ? `${d.date} ${d.title}：${d.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${next.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, goal: '400米 53秒多（12/28 最终测试）' }
+  return { today: d ? `${d.date} ${d.title}：${d.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${next.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, goal: 'UNKNOWN（当前运动员的目标尚未在本接口确认）' }
 }
 
 /** V4 计划记录（首页/计划页/训练中写的 fk-plan400-v4-log）→ 一行事实。日志页与复盘读的是同一条。 */
 export function v4RecordLine(day: string, store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage): string | null {
   let l: Record<string, string> | undefined
   try { l = JSON.parse(store?.getItem('fk-plan400-v4-log') ?? '{}')?.[day] } catch { l = undefined }
-  if (!l || typeof l !== 'object') return null
-  const d = days.find(x => x.date === day), st = l.done === 'done' ? '已完成' : l.done === 'reduced' ? '已完成·减量' : l.done === 'skipped' ? '取消' : '已记录未完成'
-  const F: [string, string][] = [['reps', '成绩'], ['rest', '组间休息'], ['strength', '力量实际'], ['rpe', 'RPE'], ['pain', '疼痛'], ['r24', '24小时后'], ['note', '备注']]
-  const parts = F.filter(([k]) => String(l![k] ?? '').trim()).map(([k, n]) => `${n} ${String(l![k]).trim().slice(0, 80)}`)
-  return `V4 计划记录（${day}${d ? ' ' + d.title : ''}）：${st}${parts.length ? '；' + parts.join('；') : ''}`
+  const parts = loadComponents(store).days[day]
+  const explicit = !!parts && (parts.running != null || parts.strength != null)
+  if ((!l || typeof l !== 'object') && !explicit) return null
+  l = l && typeof l === 'object' ? l : {}
+  const d = days.find(x => x.date === day), status = d ? dayStatus(d as V4Day, l, day, false, { parts }) : null
+  const st = explicit ? [
+    ...(d && !hasRunPart(d as V4Day) ? [] : [`跑步 ${STATUS_TEXT[parts?.running?.status ?? 'not_recorded']}${parts?.running?.rpe != null ? ` · RPE ${parts.running.rpe}` : ''}`]),
+    ...(d && !hasStrength(d as V4Day) ? [] : [`力量 ${STATUS_TEXT[parts?.strength?.status ?? 'not_recorded']}${parts?.strength?.rpe != null ? ` · RPE ${parts.strength.rpe}` : ''}`]),
+    status ? `整课派生 ${STATUS_LABEL[status]}` : '整课状态未知',
+    ...(l.done ? [`旧整课标记 ${l.done}（历史口径，不参与新分项完成判断）`] : []),
+  ].join('；') : `历史整课口径：${l.done === 'done' ? '已完成' : l.done === 'reduced' ? '已完成·减量' : l.done === 'skipped' ? '取消' : '已记录未完成'}；不能拆成两项各自完成`
+  const F: [string, string][] = [['reps', '历史手填成绩'], ['rest', '历史组间休息'], ['strength', '历史力量手填'], ['rpe', '历史整课RPE（不可拆分）'], ['pain', '疼痛'], ['r24', '24小时后'], ['note', '备注']]
+  const legacyFields = F.filter(([k]) => String(l![k] ?? '').trim()).map(([k, n]) => `${n} ${String(l![k]).trim().slice(0, 80)}`)
+  return `V4 计划记录（${day}${d ? ' 原计划「' + d.title + '」' : ''}）：${st}${legacyFields.length ? '；' + legacyFields.join('；') : ''}`
 }
 /** 只用运动类型，不用活动名（佳明默认活动名带城市）。 */
 export const sportLabel = (t: string) => /track/.test(t) ? '田径场跑' : /treadmill/.test(t) ? '跑步机跑' : /trail/.test(t) ? '越野跑' : /run/.test(t) ? '跑步' : /strength/.test(t) ? '力量训练' : /cycl|bik/.test(t) ? '骑行' : /swim/.test(t) ? '游泳' : t || '训练'
@@ -50,43 +60,39 @@ export function activityFacts(a: GActivity, laps: GLap[] | null): string[] {
   return out
 }
 
-/** 本地“成熟教练”复盘：结论 → 原因 → 下一课怎么练；缺什么就说明去测什么。 */
+/** Read-only activity summary. Imported plans are context, never a new prescription. */
 export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string): string {
-  const day = localDayOf(a.start), pace = a.dist && a.dur ? a.dur / (a.dist / 1000) : null, p = planFor(day)
+  const day = localDayOf(a.start)
+  if (day > today) return '本次活动发生在复盘日期之后，不纳入本次判断。'
+  const pace = a.dist && a.dur ? a.dur / (a.dist / 1000) : null
   const runLaps = (laps ?? []).filter(l => lapPace(l) != null && (l.dist ?? 0) >= 400)
   const lines: string[] = []
   if (!isRun(a.type)) {
-    lines.push(`结论：${day} 这次是${a.name || '非跑步训练'}，用时 ${durText(a.dur)}${a.avgHr ? `，平均心率 ${fmtHr(a.avgHr)}` : ''}${a.sets ? `，${a.sets} 组` : ''}。`)
-    lines.push('下一步：力量课请在方坤里记下每个动作的重量×次数和RPE，我才能判断负荷是否合适。')
+    lines.push(`结论：${day} 这次是${sportLabel(a.type)}，用时 ${durText(a.dur)}${a.avgHr ? `，平均心率 ${fmtHr(a.avgHr)}` : ''}${a.sets ? `，${a.sets} 组` : ''}。`)
+    lines.push('训练目的：UNKNOWN；请确认原计划目的。下一次观察：在已有课程中记录每个动作的重量、次数、实际组数和整课RPE；不据此新增训练剂量。')
     return lines.join('\n')
   }
-  // 结论
-  let verdict = '', why = '', next = ''
-  const easy = (a.avgHr != null && a.avgHr <= 150) || (a.te != null && a.te < 3)
+  let verdict = `平均 ${paceText(pace)}、心率 ${fmtHr(a.avgHr) ?? '未知'}；平均心率不能单独确定个人强度区间。`
   if (runLaps.length >= 3) {
     const half = Math.floor(runLaps.length / 2), first = runLaps.slice(0, half), last = runLaps.slice(-half)
-    const avg = (xs: GLap[], f: (l: GLap) => number | null) => { const v = xs.map(f).filter((x): x is number => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null }
-    const p1 = avg(first, lapPace), p2 = avg(last, lapPace), h1 = avg(first, l => l.avgHr), h2 = avg(last, l => l.avgHr)
-    const drift = p1 && p2 ? p2 - p1 : 0, hrUp = h1 && h2 ? h2 - h1 : 0
-    if (drift < -5) { verdict = `越跑越快（后半程快 ${Math.round(-drift)} 秒/公里${hrUp > 0 ? `，心率后程上升 ${Math.round(hrUp)}` : ''}），属于渐加速跑，完成得不错。`; why = '后程能提速说明前段节奏留有余地，这正是有氧课该有的样子。' }
-    else if (drift <= 5 && hrUp > 5 && hrUp <= 10) { verdict = `配速很稳（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里），心率后程上升 ${Math.round(hrUp)}，属于轻度心率漂移，整体是一次合格的${easy ? '有氧跑' : '训练'}。`; why = '同样配速下心率慢慢升高，主要是体温上升、出汗失水和慢肌疲劳，30 分钟左右升 5–10 次属于正常；如果超过 10 次或越跑越吃力，说明当天配速偏快或没恢复好。' }
-    else if (drift <= 5 && hrUp <= 5) { verdict = `配速稳、心率没明显飘（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里，心率 +${Math.round(hrUp)}），这是一次合格的${easy ? '有氧/恢复跑' : '中等强度跑'}。`; why = '前后半程配速和心率基本一致，说明这个速度在你的有氧能力范围内，乳酸没有明显堆积，恢复成本低。' }
-    else if (drift > 5 && hrUp > 8) { verdict = `后半程掉速 ${Math.round(drift)} 秒/公里、心率还上升 ${Math.round(hrUp)}，这次强度对当天状态偏高。`; why = '速度降、心率反而升，是典型的心率漂移：体温和疲劳上来后，同样的速度要付出更多代价，常见原因是起步太快、睡眠/恢复不足或天气热。' }
-    else { verdict = `整体平稳，后半程配速变化 ${Math.round(drift)} 秒/公里、心率变化 ${Math.round(hrUp)}。`; why = '变化在正常范围，没有看到明显的疲劳信号。' }
-  } else {
-    verdict = `平均 ${paceText(pace)}、心率 ${fmtHr(a.avgHr) ?? '—'}，${easy ? '强度属于轻松有氧，适合作为恢复或基础课。' : '强度中等偏上，算一次质量有氧。'}`
-    why = easy ? '心率在有氧区间，主要刺激的是毛细血管、线粒体和脂肪供能，疲劳小，第二天能正常训练。' : `平均心率 ${fmtHr(a.avgHr)} 已接近乳酸阈附近，对有氧能力刺激较大，但恢复要 24–48 小时。`
+    const partPace = (xs: GLap[]) => xs.reduce((v, l) => v + l.dur!, 0) / (xs.reduce((v, l) => v + l.dist!, 0) / 1000)
+    const drift = partPace(last) - partPace(first)
+    const hrComplete = runLaps.every(l => l.avgHr != null && Number.isFinite(l.avgHr) && l.avgHr > 0)
+    const hrAvg = (xs: GLap[]) => xs.reduce((v, l) => v + l.avgHr!, 0) / xs.length
+    const hrUp = hrComplete ? hrAvg(last) - hrAvg(first) : null
+    verdict = `后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里`
+    if (hrUp == null) verdict += '；分段心率缺失或不完整，心率变化未知。'
+    else verdict += `，心率变化 ${hrUp > 0 ? '+' : ''}${Math.round(hrUp)} 次/分（分段均值之差）。`
+    if (drift > 0 && hrUp != null && hrUp > 0) verdict += ` 后半程掉速 ${Math.round(drift)} 秒/公里、心率还上升 ${Math.round(hrUp)}。`
   }
-  lines.push(`结论：${day} ${fmtDistance(a.dist) ? fmtDistance(a.dist) + ' ' : ''}${durText(a.dur)}${runLaps.length >= 3 ? `（平均 ${paceText(pace)}，平均心率 ${fmtHr(a.avgHr) ?? '—'}）` : ''}，${verdict}`)
+  lines.push(`结论：${day} ${fmtDistance(a.dist) ? fmtDistance(a.dist) + ' ' : ''}${durText(a.dur)}（平均 ${paceText(pace)}，平均心率 ${fmtHr(a.avgHr) ?? '未知'}），${verdict}`)
   { const v4 = v4RecordLine(day); if (v4) lines.push(v4) }
-  lines.push(`为什么：${why}${a.te != null ? ` 手表有氧训练效果 ${a.te}${a.ate != null ? `、无氧 ${a.ate}` : ''}。` : ''}`)
-  // 对照目标
-  lines.push(`对照目标（${p.goal}）：这类${easy ? '轻松' : '中等'}有氧跑是 400 米的“底座”，提高恢复能力和后程耐受；它本身不练速度，速度要靠计划里的短距离快跑课。`)
-  next = p.next ? `按计划 ${p.next}。` : '下一课：安排一次专项速度课。'
-  if (!easy) next += ' 今天这次强度不低，下一课开始前如果腿沉或静息心率比平时高 5 次以上，先把快跑段减 1 组。'
-  lines.push(`下一课怎么练：${next}`)
-  if (!runLaps.length) lines.push('想看得更细：在日志里点开这次活动加载分段（或下次跑完同步一次），我就能看前后半程配速和心率漂移。')
-  if (a.rpe == null) lines.push('另外：跑完在手表上给这次打个主观强度（RPE），负荷统计就能算出来。')
+  lines.push('训练目的：UNKNOWN；仅凭距离、课程名称或平均心率不能确定。最重要的问题：这节课原计划希望训练什么？')
+  lines.push('为什么：现有计时数据只能说明配速变化，不能据此确认心率稳定、乳酸变化或恢复状态。可能解释一是前段配速及各段任务不同；可能解释二是天气、路线或近期疲劳等背景不同。若原任务本来安排渐快/渐慢，或环境与个人状态不一致，就不能把变化归为能力短板。')
+  if (a.te != null || a.ate != null) lines.push(`设备估计（非能力诊断）：有氧训练效果 ${a.te ?? '未知'}、无氧 ${a.ate ?? '未知'}。`)
+  lines.push('下一次观察：继续已有且适用的批准课程，记录各段成绩、距离、组间休息、整课RPE和环境；与同协议历史比较。只有配速、休息和环境可比时，重复出现的变化才支持后程保持问题；任务或环境改变会削弱该解释。不自动减组、停训或新增测试；出现疼痛或急症先走安全处理。')
+  if (!runLaps.length) lines.push('想看得更细：在日志里加载分段；未知的休息和心率继续保留未知。')
+  if (a.rpe == null) lines.push('整课RPE尚未记录；训练负荷仅在实际时长和整课RPE都有效时计算，不用默认值补齐。')
   return lines.join('\n')
 }
 
@@ -98,22 +104,17 @@ export function intervalRestAnswer(q: string): string | null {
   if (!/区别|不同|差别|差异|vs|哪个|还是|有什么用|怎么选|作用|练什么/i.test(q)) return null
   if (/实际|完成了?|\d+\s*\/\s*\d+|\d+秒[，,、]\s*\d+/.test(q)) return null
   return [
-    '结论：同样是 400米×8，休 1 分钟和休 8 分钟是两种完全不同的课。',
-    '· 休 1 分钟（不完全恢复）：练的是乳酸耐受和速度耐力。每组开始时心率和血乳酸都还没降下来，后几组是在“酸”的状态下维持速度，提高的是身体缓冲酸、清除乳酸、带着疲劳保持动作的能力。代价是配速只能跑到比赛配速的 85–90% 左右（例如 400 目标 53 秒，这类课每组大约 62–68 秒）。',
-    '· 休 8 分钟（接近完全恢复）：练的是速度质量和比赛配速。磷酸原系统基本恢复，每组都能跑到接近或达到比赛配速（53–56 秒），练的是高速下的跑姿、步频和神经肌肉募集，让“目标速度”变得熟悉、轻松。代价是总刺激量小，对耐乳酸帮助有限。',
-    '为什么：休息长短决定下一组开始时的身体状态——短休让疲劳累积，刺激偏代谢；长休让每组都“新鲜”，刺激偏速度和神经。',
-    '怎么用：备战 400 米两种都要。离比赛远（现在到 11 月中）以短休/中休的速度耐力为主，每周 1 次；离比赛 4–6 周开始加长休息的比赛配速课，每周 1 次；两种课之间至少隔 48 小时。8 分钟长休的那节，每组成绩差超过 1.5 秒就停，不要硬凑组数。',
-    '想确认哪种你更需要：做一次 300 米全力计时（记成绩），隔 10 分钟再做一次 300 米（记成绩）。第二次比第一次慢超过 2 秒，说明速度耐力是短板，多练短休；差得少但两次都慢，说明绝对速度是短板，多练长休快跑。',
+    '结论：同一间歇结构中，休息长短会改变下一组开始时的恢复程度，但不能只凭休息时长确定训练目的。',
+    '较短休息可能让前组影响延续，较长休息通常更利于保持单组速度质量；实际效果还取决于配速、组数、恢复方式和个人背景。短休不能直接等同乳酸耐受，长休也不证明已完全恢复。',
+    '怎么用：优先保留原教练目的和已批准课程，不从这道原理题另配400米次数、比赛配速或全力测试。',
+    '下一次观察：在原有课程中记录每组实际成绩、组间休息、RPE及环境，核对目标是否完成；如果任务、配速或休息不一致，就不能把成绩差异直接判为速度或速度耐力短板。',
+    '最重要的问题：你是在比较已有课程，还是想了解原教练为什么安排这段休息？',
   ].join('\n')
 }
 
-/** 联网系统提示：用户的教练标准。 */
-export const COACH_SYSTEM_PROMPT = `你是“方坤”，一位经验丰富的短跑/400米专项教练，正在指导一名业余运动员（目标：400米跑进53秒多，12月28日最终测试）。
-说话规则（必须遵守）：
-1. 用平实的中文，像成熟教练当面说话。先给结论，再讲生理原因，最后给具体的下一课处方（距离×组数、配速/用时、休息、强度RPE）。
-2. 一切分析要对照目标（400米53秒多）和当前训练计划来说。
-3. 不要说“数据不足无法判断”“需要更多证据”这类空话。数据不够时，先基于已有事实给出最可能的判断，再明确说出要做什么测试、记录什么数据（例如“下次跑完记下每个400的成绩和组间休息”）。
-4. 不使用术语堆砌和免责声明；不要说“可撤回”“候选”“审计”“已批准原课程”等系统用语。
-5. 安全：出现胸痛、晕厥、呼吸困难、心悸、急性受伤或剧烈疼痛等，先让对方停止训练并就医，不给训练处方。疼痛时不建议加量。
-6. 你只给建议，不会自动修改用户的训练计划；如建议调整计划，告诉用户可以在计划页自己改。
-7. 只用下面“事实”里的数据，不编造成绩、心率或分段；回答控制在 350 字以内，分段清楚。`
+/** Legacy export retained for compatibility; live prompt policy belongs to the trusted server. */
+export const COACH_SYSTEM_PROMPT = `你是方坤。先用可核对的本地计算事实，再说明课程目的、最多两种有依据的解释及反证、缺失数据和下一次观察。
+未知目标、训练目的或数据保留UNKNOWN；不预设项目、成绩、比赛日、个人心率区间或恢复时限。
+只读当前运动员、当前as-of范围内的有效证据。研究候选阈值不能决定减量、停训或医学回归。
+仅提出有依据的观察或适用的已批准课程候选，不编造剂量，不修改正式计划。
+胸痛、晕厥、呼吸困难、急性损伤等优先走现有安全规则，不给普通训练处方。`

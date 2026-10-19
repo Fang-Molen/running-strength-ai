@@ -59,6 +59,10 @@ import { TrainingEditorSheet } from "@/components/training-editor-sheet";
 import { SchedulePicker, ScheduledTraining } from "@/components/scheduled-training";
 import { MuscleActionList } from "@/components/muscle-action-list";
 import { loadSchedule, saveScheduledEntry, strengthEntry, runEntry } from "@/lib/ui/day-schedule";
+import { loadTrainingActivities } from "@/lib/ui/training-read-model";
+import { deriveCoordinationCounts } from "@/lib/ui/coach-coordination-facts";
+import { COMPONENTS_EVT } from "@/lib/ui/plan400-components-store";
+import v4CoordinationPlan from "@/lib/plan400-v4.json";
 import { syncScheduleProgress } from "@/lib/ui/schedule-progress";
 import { scheduleExecutionId, scheduledChoices } from "@/lib/ui/scheduled-execution";
 import type { ScheduleEntry } from "@/lib/ui/day-schedule-rules";
@@ -210,8 +214,9 @@ export function StrengthApp() {
   useEffect(() => {
     const refresh = () => { syncScheduleProgress(); setCalendar(loadSchedule().entries); setHomeRev(n => n + 1); };
     refresh(); const unsubscribe = onAppEvent(refresh);
-    window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh);
-    return () => { unsubscribe(); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); };
+    const changes = ['fk-schedule-changed', 'storage', COMPONENTS_EVT, 'fk-run-links', 'fk-training-activities-changed'];
+    for (const event of changes) window.addEventListener(event, refresh);
+    return () => { unsubscribe(); for (const event of changes) window.removeEventListener(event, refresh); };
   }, []);
   const openScheduled = (entry: ScheduleEntry) => { setCalendar(loadSchedule().entries); setTimerPicker(false); setExecutionEntryId(entry.id); };
   useEffect(() => { const h = (ev: Event) => { const id = (ev as CustomEvent<string>).detail; const all = loadSchedule().entries; if (all.some(e => e.id === id)) { setCalendar(all); setTimerPicker(false); setExecutionEntryId(id); } }; window.addEventListener("fk-open-scheduled", h); return () => window.removeEventListener("fk-open-scheduled", h); }, []);
@@ -370,8 +375,8 @@ export function StrengthApp() {
   useLocalReminders(todayIso);
   const liftLogged = Boolean(session && plan.cycle?.logs.some((log) => log.sessionId === session.id));
   const courseCount = (trackHome?.planId ? 1 : 0) + (session ? 1 : 0);
-  // Part records and undated legacy feedback cannot establish whole-course completion.
-  const doneCount = 0;
+  const coordination = ready ? deriveCoordinationCounts({ date: todayIso, entries: calendar, rows: loadTrainingActivities(), v4Day: planSrc === '400m-v4' ? v4CoordinationPlan.days.find(d => d.date === todayIso) : null }) : { planned: 0, completed: 0 };
+  const doneCount = coordination.completed;
   const liftSummary = (session?.moves ?? []).slice(0, 4).map((move) => displayName(move)).join(" · ");
   const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : courseCount === 0 ? "暂无安排" : "待选择课程";
   const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI · 测试版" : tab === "diet" ? "饮食" : "健康";
@@ -832,7 +837,7 @@ export function StrengthApp() {
       </main>
       {tab === "log" ? <TrainingLogPage today={todayIso} plan={plan} onNavigate={(next) => setTab(next as typeof tab)} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
-        coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
+        coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: coordination.planned, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
       <div className={tab === "diet" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
       <div className={tab === "body" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>

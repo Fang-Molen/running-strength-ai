@@ -7,7 +7,7 @@
 import { activityLocalDay, activityLocalTime, fmtDistance, fmtDuration, fmtHr, fmtPace } from './activity-format'
 import { dayKind, hasStrength, type V4Day, type V4Log } from './plan400-view'
 import { STATUS_TEXT, type DayComponents, type PartFeedback } from './plan400-components-store'
-const partState = (p: PartFeedback | undefined): ComponentState | null => !p?.status || p.status === 'not_recorded' ? null : { label: STATUS_TEXT[p.status] + (p.rpe != null ? ` · RPE ${p.rpe}` : ''), tone: p.status === 'skipped' ? 'skipped' : p.status === 'done' ? 'done' : 'partial' }
+const partState = (p: PartFeedback | undefined): ComponentState | null => !p?.status ? null : { label: STATUS_TEXT[p.status] + (p.rpe != null ? ` · RPE ${p.rpe}` : ''), tone: p.status === 'not_recorded' ? 'none' : p.status === 'skipped' ? 'skipped' : p.status === 'done' ? 'done' : 'partial' }
 
 export type DeviceRun = { id: string; source: 'garmin' | 'import'; sourceLabel: string; startedAt: string; distanceM: number | null; durationSec: number | null; avgHr: number | null; title: string }
 export type ComponentTone = 'none' | 'candidate' | 'partial' | 'live' | 'done' | 'skipped'
@@ -55,7 +55,7 @@ export function comboView(d: V4Day, log: V4Log | undefined, opts: { deviceRuns: 
     else strength = { label: '尚未记录', tone: 'none' }
   }
   const legacy = { done: filled(l.done) ? String(l.done) : null, rpe: filled(l.rpe) ? String(l.rpe) : null, pain: filled(l.pain) ? String(l.pain) : null }
-  const runHas = running.tone !== 'none', liftHas = !!strength && strength.tone !== 'none'
+  const runHas = ['partial', 'live', 'done'].includes(running.tone), liftHas = !!strength && ['partial', 'live', 'done'].includes(strength.tone)
   const overall = !combo ? '' : runHas && liftHas ? '跑步、力量都有记录（各自状态见下）' : runHas ? '只有跑步有记录 · 力量待记录' : liftHas ? '只有力量有记录 · 跑步待记录' : '两项都还没有记录'
   return { combo, running, strength, legacy, overall }
 }
