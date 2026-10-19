@@ -52,7 +52,8 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
     setUndo({ entries: prev, id: e.id, label: entries.find((x) => x.id === e.id)?.actual ? "已记录" : "已改回待做" })
     const r = syncActualToLog(entries.find((x) => x.id === e.id)!, sessionOf(e)); setNote(r.ok ? (r.reason ?? (actual?.outcome === "missed" ? "已记下没练，原因会给方坤参考。" : "已记入训练日志，方坤可见。")) : `日志未同步：${r.reason}`)
   }
-  const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e)), override)
+  // v83（P1-01）：V4 当天的执行条目（plan400:<date>:strength）由上方今日主卡 / 下方 V4 行代表，不再另出一张卡和第二组“按计划完成”按钮
+  const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e) && !(v4 && e.id.startsWith("plan400:") && v4Day(e.date))), override)
   const sloted = list.some((e) => e.slot)
   const [inj, setInj] = useState<InjuryStore>({ asked: true, items: [] })
   useEffect(() => { setInj(loadInjury()) }, [revision])
@@ -85,9 +86,10 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
         onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
         onEdit={onEdit ? () => onEdit(e) : undefined} onOpenRun={() => onExecute ? onExecute(e) : e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { if (onExecute) { onExecute(e); return; } const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}</div> : null)}
       {(() => { const v = v4Day(day); if (!v) return !list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null
+        if (day === today) return null // 今天的 V4 课只在上方今日主卡出现一次（一个主操作）
         return <button type="button" data-testid="board-v4-row" onClick={() => openPlan400Day(day)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3 text-left">
-          <span className="min-w-0 flex-1"><span className="block text-[11px] text-muted">400米 V4 · {v.week} · {v.kind === "rest" ? "休息日" : v.kind === "recovery" ? "恢复" : v.kind === "test" ? "测试" : "训练课"}{day === today ? "（同上方今日主卡）" : ""}</span><span className="block truncate font-bold">{v.title}</span></span><span aria-hidden="true" className="text-muted">›</span></button> })()}
-      {!list.length && v4Day(day) ? <p className="px-1 text-xs text-muted">这天还没有安排自建或方坤的训练。</p> : null}
+          <span className="min-w-0 flex-1"><span className="block text-[11px] text-muted">400米 V4 · {v.week} · {v.kind === "rest" ? "休息日" : v.kind === "recovery" ? "恢复" : v.kind === "test" ? "测试" : "训练课"}</span><span className="block truncate font-bold">{v.title}</span></span><span aria-hidden="true" className="text-muted">›</span></button> })()}
+      {!list.length && v4Day(day) ? <p className="px-1 text-xs text-muted">{day === today ? "今天的 V4 课见上方主卡；没有其他自建或方坤的训练。" : "这天还没有安排自建或方坤的训练。"}</p> : null}
       {undo ? <div role="status" className="fixed inset-x-3 bottom-24 z-40 mx-auto flex max-w-md items-center justify-between rounded-card bg-fg px-4 py-3 text-sm text-bg shadow-lg"><span>{undo.label}</span><button type="button" className="font-bold underline" onClick={restore}>撤销</button></div> : null}
     </div>
     <div className="mt-2 flex flex-wrap gap-3 px-1">
