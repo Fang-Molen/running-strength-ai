@@ -27,11 +27,25 @@ Structure metadata: [structures.json](structures.json).
 The distributed compressed GLB and structure metadata are unchanged.
 The viewer clones the model, grounds it at y=0, merges supporting bones for
 fewer draw calls, uses a silver muscle palette with primary/auxiliary/selected
-highlights, adds an opaque pelvic guard, and limits the camera.
+highlights, adds an opaque pelvic guard (since R1: integrated shorts, see below), and limits the camera.
 The muscle aliases linking this teaching asset to the existing exercise
 catalogue are in ../anatomy-map.js. The model, runtime geometry adaptations,
 mapping data and offline geometry renders are distributed under CC BY-SA 4.0.
 This does not change the separate license or ownership of the app code or user data.
+
+### R1 friendly display (2026-10-19)
+
+Runtime-only changes; the GLB and structures.json above are still byte-identical
+(the SHA-256 is unchanged):
+- the cranial/facial skeleton, teeth, eyes, nose/ear cartilage and facial expression
+  muscles are not rendered (filtered before the supporting skeleton is merged) and are
+  replaced by a generated, featureless neutral head and neck core;
+- the former spherical pelvic guard is replaced by shader-painted, opaque sports shorts
+  on the pelvic muscle/bone surfaces plus a small opaque crotch panel of the same colour;
+- matte low-saturation grey materials with reduced tendon/bone contrast;
+- a tap on the external-oblique aponeurosis over the rectus sheath selects the rectus
+  abdominis beneath it, and selecting the rectus hides the overlying external oblique.
+These adaptations are distributed under CC BY-SA 4.0 like the rest of this derivative.
 
 There are 634 source structure meshes, including 362 named muscle meshes.
 This is a static adult male anatomy study asset: it has no animation rig,

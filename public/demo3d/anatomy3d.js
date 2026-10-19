@@ -17,37 +17,109 @@ export function loadAnatomyModel() {
   return modelTask;
 }
 
-function muscleMaterial() {
-  const material = new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: .62, metalness: .08, side: THREE.DoubleSide });
+// R1 friendly palette: low-saturation matte warm grey with low tendon contrast.
+// Selection/role tints are unchanged in meaning; only the neutral base is softer.
+const PALETTE = { muscle: '#b3b4b1', tendon: '#c6c5c0', bone: '#8e8e8a', head: '#bebdb8', shorts: '#4a5058' };
+
+/** Paints the pelvic region as integrated, opaque sports shorts in the shader, so
+ * the glute/hip/thigh meshes underneath stay individually pickable and can still
+ * be highlighted (a highlight is mixed on top of the shorts colour). */
+function shortsUniforms() {
+  return { fkShorts: { value: new THREE.Vector4(0, 0, 0, 0) }, fkShortsX: { value: 0 }, fkShortsColor: { value: new THREE.Color(PALETTE.shorts) } };
+}
+const SHORTS_GLSL = `uniform vec4 fkShorts; uniform float fkShortsX; uniform vec3 fkShortsColor; varying vec3 vFkPos;
+float fkInShorts() {
+  float ax = abs(vFkPos.x);
+  float leg = mix(fkShorts.x, fkShorts.y, smoothstep(0.02, 0.15, ax));
+  return smoothstep(leg - 0.002, leg + 0.002, vFkPos.y) * (1.0 - smoothstep(fkShorts.z - 0.002, fkShorts.z + 0.002, vFkPos.y))
+    * (1.0 - smoothstep(fkShortsX - 0.004, fkShortsX, ax)) * fkShorts.w;
+}`;
+function injectShorts(shader, shorts) {
+  Object.assign(shader.uniforms, shorts);
+  if (shader.vertexShader) shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vFkPos;')
+    .replace('#include <project_vertex>', '#include <project_vertex>\nvFkPos = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+  shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\n' + SHORTS_GLSL);
+}
+
+function muscleMaterial(shorts = shortsUniforms()) {
+  const material = new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: .9, metalness: 0, side: THREE.DoubleSide });
   const tint = { value: new THREE.Color('#ec7956') }, amount = { value: 0 };
+  const base = { value: new THREE.Color(PALETTE.muscle) }, tendonColor = { value: new THREE.Color(PALETTE.tendon) };
   material.userData.tint = tint; material.userData.amount = amount;
   material.onBeforeCompile = shader => {
-    shader.uniforms.fkTint = tint; shader.uniforms.fkAmount = amount;
-    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 fkTint; uniform float fkAmount;')
+    injectShorts(shader, shorts);
+    shader.uniforms.fkTint = tint; shader.uniforms.fkAmount = amount; shader.uniforms.fkBase = base; shader.uniforms.fkTendonColor = tendonColor;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 fkTint; uniform float fkAmount; uniform vec3 fkBase; uniform vec3 fkTendonColor;')
       .replace('#include <color_fragment>', `#include <color_fragment>
       { float hi = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b));
         float lo = min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b));
         float tendon = 1.0-smoothstep(0.08,0.20,hi-lo);
-        float shade = clamp(hi*1.3,0.4,1.0);
-        diffuseColor.rgb = mix(vec3(0.42,0.46,0.52),vec3(0.78,0.80,0.82),tendon)*shade;
-        diffuseColor.rgb = mix(diffuseColor.rgb,fkTint*shade,fkAmount*(1.0-0.25*tendon)); }
+        float shade = mix(0.82, 1.0, clamp(hi*1.3, 0.0, 1.0));
+        float pants = fkInShorts();
+        diffuseColor.rgb = mix(mix(fkBase, fkTendonColor, tendon) * shade, fkShortsColor, pants);
+        diffuseColor.rgb = mix(diffuseColor.rgb, fkTint*mix(shade, 1.0, pants), fkAmount*(1.0-0.25*tendon*(1.0-pants))); }
       `);
   };
-  material.customProgramCacheKey = () => 'fangkun-anatomy-v70';
+  material.customProgramCacheKey = () => 'fangkun-anatomy-r1';
   return material;
+}
+
+function skeletonMaterial(shorts) {
+  const material = new THREE.MeshStandardMaterial({ color: PALETTE.bone, roughness: .95, metalness: 0 });
+  material.onBeforeCompile = shader => {
+    injectShorts(shader, shorts);
+    shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, fkShortsColor, fkInShorts());');
+  };
+  material.customProgramCacheKey = () => 'fangkun-anatomy-bone-r1';
+  return material;
+}
+
+// Cranial/facial skeleton, teeth, eyes, nose/ear cartilage and facial expression
+// muscles are replaced by one smooth neutral head. They are filtered out BEFORE
+// the supporting skeleton is merged, because a merged mesh cannot be hidden per part.
+const SKULL = /\b(frontal bone|parietal bone|occipital bone|temporal bone|sphenoid|ethmoid|nasal bone|nasal concha|nasal cartilage|alar cartilage|lacrimal|zygomatic bone|maxilla|mandible|palatine|vomer|external ear|sclera|cornea)\b/i;
+const FACE_MUSCLE = /(corrugator|masseter|pterygoid|depressor anguli|depressor labii|frontalis|levator labii|mentalis|nasalis|orbicularis o(ris|culi)|procerus|risorius|temporalis|zygomaticus)/i;
+export const isHeadSkeleton = data => /tooth|eye/.test(data.tissue || '') || SKULL.test(data.name || '');
+export const isFaceMuscle = data => FACE_MUSCLE.test(data.name || '');
+
+/** Low-detail, featureless head: a rounded cranium with a softly narrower jaw,
+ * a tapered neck core, and no eyes, nose, mouth, teeth or skull detail. */
+function neutralHeadGeometry(box) {
+  const geometry = new THREE.SphereGeometry(1, 40, 28), position = geometry.getAttribute('position');
+  for (let i = 0; i < position.count; i++) {
+    const x = position.getX(i), y = position.getY(i), z = position.getZ(i);
+    const low = Math.max(0, -y), jaw = 1 - .28 * low * low;
+    // The chin sits slightly forward of the cranium, as in a natural profile.
+    position.setXYZ(i, x * jaw, y, z * jaw * (z < 0 ? 1 - .12 * low : 1) + .1 * low);
+  }
+  const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
+  geometry.scale(size.x * .47, size.y * .47, size.z * .44); geometry.translate(center.x, center.y, center.z - size.z * .07);
+  // The neck core starts inside the head so no rim is visible; neck muscles stay outside it.
+  const neckTop = center.y, neckBottom = box.min.y - size.y * .38, neck = new THREE.CylinderGeometry(1, 1.12, 1, 24, 1, true);
+  neck.scale(size.x * .26, neckTop - neckBottom, size.z * .21); neck.translate(center.x, (neckTop + neckBottom) / 2, center.z - size.z * .12);
+  const merged = mergeGeometries([geometry.toNonIndexed(), neck.toNonIndexed()]);
+  geometry.dispose(); neck.dispose(); merged.computeVertexNormals();
+  return merged;
 }
 
 /** Kept independent of WebGL for asset/grounding/selection contract checks. */
 export function prepareAnatomyModel(source) {
-  const root = source.scene.clone(true), muscles = [], boneGeometry = [];
+  const root = source.scene.clone(true), muscles = [], boneGeometry = [], hiddenHead = [];
+  const shorts = shortsUniforms(), headBox = new THREE.Box3();
   root.updateMatrixWorld(true);
   const inverse = root.matrixWorld.clone().invert();
   root.traverse(object => {
     if (!object.isMesh) return;
     const meta = anatomyMeta(object.userData);
     if (meta) {
-      object.userData.fk = meta; object.material = muscleMaterial();
+      object.userData.fk = meta; object.material = muscleMaterial(shorts);
+      // Facial muscles stay in the list (names/ids unchanged) but are never shown or picked.
+      if (isFaceMuscle(object.userData)) { meta.hiddenHead = true; object.visible = false; hiddenHead.push(object); }
       object.frustumCulled = false; muscles.push(object);
+    } else if (isHeadSkeleton(object.userData)) {
+      object.geometry.computeBoundingBox();
+      headBox.union(object.geometry.boundingBox.clone().applyMatrix4(inverse.clone().multiply(object.matrixWorld)));
+      object.visible = false; hiddenHead.push(object);
     } else {
       // The supporting skeleton needs one draw call instead of hundreds.
       // Quantized positions/normals must be expanded before applying matrices.
@@ -64,8 +136,12 @@ export function prepareAnatomyModel(source) {
   });
   const skeletonGeometry = mergeGeometries(boneGeometry);
   boneGeometry.forEach(geometry => geometry.dispose());
-  const skeleton = new THREE.Mesh(skeletonGeometry, new THREE.MeshStandardMaterial({ color: '#a4aaa8', vertexColors: true, roughness: .8 }));
+  const skeleton = new THREE.Mesh(skeletonGeometry, skeletonMaterial(shorts));
   skeleton.name = 'Fangkun supporting skeleton'; root.add(skeleton);
+  // Slightly larger than the removed skull so no facial structure can show through.
+  headBox.expandByVector(headBox.getSize(new THREE.Vector3()).multiplyScalar(.02));
+  const head = new THREE.Mesh(neutralHeadGeometry(headBox), new THREE.MeshStandardMaterial({ color: PALETTE.head, roughness: .92, metalness: 0 }));
+  head.name = 'Fangkun neutral head'; head.userData.fkHead = true; root.add(head);
   root.updateMatrixWorld(true);
   const bounds = new THREE.Box3().setFromObject(root, true), center = bounds.getCenter(new THREE.Vector3());
   root.position.sub(new THREE.Vector3(center.x, bounds.min.y, center.z)); root.updateMatrixWorld(true);
@@ -79,17 +155,20 @@ export function prepareAnatomyModel(source) {
       if (point.y <= height * .13) foci.foot.expandByPoint(point);
     }
   }
-  // The asset includes no skin, genitalia or organs. This independent, opaque
-  // central cover also blocks the pubic/perineal opening in the study view.
-  const cover = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 24), new THREE.MeshStandardMaterial({ color: '#252b32', roughness: .95, side: THREE.DoubleSide }));
-  cover.name = 'Fangkun opaque pelvic guard'; cover.scale.set(height * .051, height * .061, height * .072);
-  cover.position.set(0, height * .48, 0); cover.userData.fkCover = true; root.add(cover);
-  return { root, muscles, skeleton, cover, bounds: grounded, foci };
+  // The asset includes no skin, genitalia or organs. The pelvic region is shown as
+  // integrated sports shorts (shader paint on the real muscle/bone surfaces), and a
+  // small opaque crotch panel of the same matte colour fills the pubic/perineal gap
+  // between the thighs. It still blocks picking through the opening.
+  shorts.fkShorts.value.set(height * .447, height * .468, height * .57, 1); shorts.fkShortsX.value = height * .118;
+  const cover = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 24), new THREE.MeshStandardMaterial({ color: PALETTE.shorts, roughness: .95, metalness: 0 }));
+  cover.name = 'Fangkun opaque pelvic guard'; cover.scale.set(height * .02, height * .036, height * .034);
+  cover.position.set(0, height * .477, -height * .012); cover.userData.fkCover = true; root.add(cover);
+  return { root, muscles, skeleton, head, cover, hiddenHead, shorts, bounds: grounded, foci };
 }
 
 export async function createMuscleExplorer(canvas, opt = {}) {
   const source = await loadAnatomyModel(), prepared = prepareAnatomyModel(source);
-  const { root, muscles, skeleton, cover, foci } = prepared;
+  const { root, muscles, skeleton, head, cover, foci } = prepared;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: !!opt.capture });
   renderer.setPixelRatio(Math.min(globalThis.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .95;
@@ -105,7 +184,8 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   canvas.style.touchAction = 'pan-y'; controls.rotateSpeed = .55;
   let view = 'front', focus = 'body', selected = null, selectedMesh = null, deep = false;
   let disposed = false, raf = 0, visible = true, lastFit = null;
-  const selectable = [...muscles, skeleton, cover];
+  // The neutral head, skeleton and crotch panel are opaque blockers, never selectable.
+  const selectable = [...muscles, skeleton, head, cover], selectedTint = opt.selectedTint || '#62a6ff';
   function invalidate() { if (!disposed && !raf && visible && !document.hidden) raf = requestAnimationFrame(draw); }
   function draw() { raf = 0; if (disposed) return; controls.update(); renderer.render(scene, camera); }
   controls.addEventListener('change', invalidate);
@@ -116,10 +196,10 @@ export async function createMuscleExplorer(canvas, opt = {}) {
     for (const object of muscles) {
       const meta = object.userData.fk, picked = selectedMesh ? object === selectedMesh : matchesMuscle(meta, selected);
       const role = muscleRole(meta, opt.primary || [], opt.secondary || []);
-      object.visible = !(deep ? meta.layer === 'superficial muscles' && !picked : meta.layer === 'deep muscles' && !picked);
+      object.visible = !meta.hiddenHead && !(deep ? meta.layer === 'superficial muscles' && !picked : meta.layer === 'deep muscles' && !picked);
       if (hide.some(k => matchesMuscle(meta, k))) object.visible = false;
       object.material.userData.amount.value = picked ? .95 : role === 'main' ? .88 : role === 'aux' ? .65 : 0;
-      object.material.userData.tint.value.set(picked ? '#62a6ff' : role === 'aux' ? '#f3b997' : '#f17650');
+      object.material.userData.tint.value.set(picked ? selectedTint : role === 'aux' ? '#f3b997' : '#f17650');
     }
     invalidate();
   }
@@ -145,7 +225,13 @@ export async function createMuscleExplorer(canvas, opt = {}) {
     const rect = canvas.getBoundingClientRect(); if (!rect.width || !rect.height) return null;
     pointer.set((x - rect.left) / rect.width * 2 - 1, -(y - rect.top) / rect.height * 2 + 1); ray.setFromCamera(pointer, camera);
     // Include the opaque guard and skeleton as blockers; never pick through them.
-    const hit = ray.intersectObjects(selectable.filter(object => object.visible), false)[0];
+    const hits = ray.intersectObjects(selectable.filter(object => object.visible), false), hit = hits[0];
+    // A tap on the front abdomen lands on the external-oblique aponeurosis that overlies
+    // the rectus sheath; prefer the rectus abdominis directly beneath it (≤2 cm).
+    if (hit?.object.userData.fk?.k === 'ext_oblique') {
+      const abs = hits.find(h => h.object.userData.fk?.k === 'abs' && h.distance - hit.distance < .02);
+      if (abs) return abs.object;
+    }
     return hit?.object.userData.fk ? hit.object : null;
   }
   const pointerDown = event => { touches.add(event.pointerId); down = touches.size === 1 ? [event.clientX, event.clientY] : null; };
@@ -172,7 +258,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
       disposed = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); controls.dispose();
       document.removeEventListener('visibilitychange', visibility);
       canvas.removeEventListener('pointerdown', pointerDown); canvas.removeEventListener('pointerup', pointerUp); canvas.removeEventListener('pointercancel', pointerCancel);
-      muscles.forEach(object => object.material.dispose()); skeleton.geometry.dispose(); skeleton.material.dispose(); cover.geometry.dispose(); cover.material.dispose(); floor.geometry.dispose(); floor.material.dispose(); renderer.dispose();
+      muscles.forEach(object => object.material.dispose()); skeleton.geometry.dispose(); skeleton.material.dispose(); head.geometry.dispose(); head.material.dispose(); cover.geometry.dispose(); cover.material.dispose(); floor.geometry.dispose(); floor.material.dispose(); renderer.dispose();
     }
   };
 }

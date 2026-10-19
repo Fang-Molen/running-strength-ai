@@ -19,11 +19,13 @@ function Viewer3D({ onPick, apiRef }: { onPick: (p: Pick) => void; apiRef: React
     let dead = false, api: Explorer | null = null; setErr(""); setReady(false);
     const url = new URL("/demo3d/anatomy3d.js", location.origin).href;
     const t = setTimeout(() => { if (!api && !dead) setErr("加载超时（网络慢或离线）"); }, 45000);
-    import(/* @vite-ignore */ url).then(async M => { if (dead || !cv.current) return; api = await M.createMuscleExplorer(cv.current, { onPick }); if (dead) { api?.destroy(); return; } apiRef.current = api; Object.assign(cv.current, { __fk: api }); setReady(true); setErr(""); })
+    import(/* @vite-ignore */ url).then(async M => { if (dead || !cv.current) return; // Selection uses the app's existing accent token (方坤橙), not a separate palette.
+      const selectedTint = getComputedStyle(cv.current).getPropertyValue("--color-accent").trim() || "#ee7046";
+      api = await M.createMuscleExplorer(cv.current, { onPick, selectedTint }); if (dead) { api?.destroy(); return; } apiRef.current = api; Object.assign(cv.current, { __fk: api }); setReady(true); setErr(""); })
       .catch((e: Error) => { if (!dead) setErr(`3D 模型加载失败：${e?.message || "未知错误"}`); });
     return () => { dead = true; clearTimeout(t); api?.destroy(); apiRef.current = null; };
   }, [tries]);
-  const btn = (on: boolean) => `min-h-10 rounded-full border px-3 text-sm ${on ? "border-accent bg-accent/15 font-bold" : "border-line"}`;
+  const btn = (on: boolean) => `min-h-11 min-w-11 rounded-full border px-3 text-sm ${on ? "border-accent bg-accent/15 font-bold" : "border-line"}`;
   return <div>
     <div className="relative overflow-hidden rounded-card border border-line bg-[#171a1e]" style={{ height: 380 }}>
       <canvas ref={cv} aria-label="人体肌群3D" className="block h-full w-full" />
@@ -33,7 +35,8 @@ function Viewer3D({ onPick, apiRef }: { onPick: (p: Pick) => void; apiRef: React
           <p className="keep mt-2 text-xs text-muted">可先从下方选择肌群，查看名称与相关动作。</p></div></div> : null}
     </div>
     {err ? <div className="mt-2 flex max-h-36 flex-wrap gap-1 overflow-y-auto" aria-label="备用肌群列表">{MUS.map((m, index) => <button key={m.k} type="button" className="min-h-9 rounded-full border border-line px-2 text-xs" onClick={() => onPick({ id: index + 1, k: m.k, zh: m.zh, g: m.g })}>{m.zh}</button>)}</div> : null}
-    <p className="keep mt-1 text-[11px] text-muted">独立肌肉网格 · 左右拖动（限 ±30°）· 点选肌肉查看动作</p>
+    <p className="keep mt-1 text-[11px] text-muted">拖动查看不同角度（左右限 ±30°），点选肌群</p>
+    <p className="keep text-[11px] text-muted">橙色表示所选肌群，不代表实际肌电活动</p>
     <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label="视角">
       {([["front", "正面"], ["left", "左侧"], ["right", "右侧"], ["back", "背面"]] as const).map(([v, l]) => <button key={v} type="button" aria-pressed={view === v} className={btn(view === v)} onClick={() => { setView(v); apiRef.current?.setView(v); }}>{l}</button>)}
     </div>
@@ -79,10 +82,10 @@ export function MuscleExplorerSheet({ onClose, onAdd, onShow, selected = [] }: {
   const [pick, setPick] = useState<Pick>(null), api = useRef<Explorer | null>(null);
   const actionAnchor = useRef<HTMLDivElement>(null);
   const [cat, setCat] = useState(FOOT_CATEGORIES[0]);
-  return <Sheet full label="人体肌群3D" title="人体肌肉 3D" sub="点选肌肉，再从下方相关动作中选择" onClose={onClose} footer={<button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={onClose}>{selected.length ? `返回训练 · 已选${selected.length}个动作` : '完成查看'}</button>}>
+  return <Sheet full label="人体肌群3D" title="人体肌肉 3D" sub="点击身体上的肌群，查看对应训练动作" onClose={onClose} footer={<button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={onClose}>{selected.length ? `返回训练 · 已选${selected.length}个动作` : '完成查看'}</button>}>
     <Viewer3D onPick={setPick} apiRef={api} />
     {pick ? <div className="sticky top-0 z-10 mt-2 flex items-center justify-between gap-2 rounded-xl border border-accent bg-[#171a1e] p-3"><b className="text-sm text-accent">已选：{pick.zh}</b><button type="button" className="min-h-11 shrink-0 rounded-full bg-accent px-3 text-sm font-bold text-accent-fg" onClick={() => actionAnchor.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })}>查看相关动作 ↓</button></div> : null}
-    <details className="mt-2 rounded-xl border border-line p-2"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">按肌肉名称选择</summary><div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">{MUS.map((m, index) => <button type="button" key={m.k} className="fk-chip" aria-pressed={pick?.k === m.k} onClick={() => { setPick({ id: index + 1, k: m.k, zh: m.zh, g: m.g }); api.current?.selectKey(m.k); }}>{m.zh}</button>)}</div></details>
+    <details className="mt-2 rounded-xl border border-line p-2"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">按名称选择肌群</summary><div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">{MUS.map((m, index) => <button type="button" key={m.k} className="fk-chip" aria-pressed={pick?.k === m.k} onClick={() => { setPick({ id: index + 1, k: m.k, zh: m.zh, g: m.g }); api.current?.selectKey(m.k); }}>{m.zh}</button>)}</div></details>
     <section aria-label="肌群信息" className="mt-3 rounded-card border border-line p-3">
       {pick ? <><h3 className="text-lg font-black">{pick.zh}</h3><p className="mt-1 text-sm">功能：{MUSCLE_FN[pick.k] ?? "待核"}</p>
         </>

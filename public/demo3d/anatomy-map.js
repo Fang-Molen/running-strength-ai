@@ -50,7 +50,8 @@ export function muscleRole(meta, primary = [], secondary = []) {
 /** A catalogue group selection can disclose its deep members by removing the
  * named overlying structures, without rendering muscle through opaque tissue. */
 export function coveringGroups(key) {
-  return ({ soleus: ['gastroc_med', 'gastroc_lat'], rhomboids: ['trap_upper', 'trap_mid', 'trap_lower'],
+  // The external-oblique mesh includes the anterior aponeurosis over the rectus sheath.
+  return ({ abs: ['ext_oblique'], soleus: ['gastroc_med', 'gastroc_lat'], rhomboids: ['trap_upper', 'trap_mid', 'trap_lower'],
     erectors: ['lats', 'trap_mid', 'trap_lower'], vastus_intermedius: ['rectus_fem'],
     iliopsoas: ['abs', 'ext_oblique'], transversus: ['abs', 'ext_oblique', 'internal_oblique'] })[key] || [];
 }
