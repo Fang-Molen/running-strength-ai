@@ -15,7 +15,7 @@ test('default link: most recent, or the asked day', () => {
 })
 test('review is conclusion-first, plain, with reason and next-session prescription, no stock hedging', () => {
   const t = reviewActivity(run, null, '2026-10-19')
-  assert.match(t, /^结论：2026-10-18 6\.01km 31:38/); assert.match(t, /5'16"\/km/); assert.match(t, /心率 144/)
+  assert.match(t, /^结论：2026-10-18 6\.01 km 31:38/); assert.match(t, /5'16"\/km/); assert.match(t, /心率 144/)
   assert.match(t, /为什么：/); assert.match(t, /下一课怎么练：按计划 2026-10-19 速度耐力＋力量A：正式主课：150m×3/)
   assert.match(t, /400米 53秒多/)
   assert.doesNotMatch(t, /尚无可核对|尚未关联|可撤回|已批准原课程|还需证据|无法判断|UNKNOWN/)
@@ -25,7 +25,7 @@ test('review with laps reads pace drift and HR drift', () => {
   const laps = [1, 2, 3, 4, 5, 6].map(i => ({ i, dist: 1000, dur: 300 + (i > 3 ? 20 : 0), avgHr: 140 + (i > 3 ? 12 : 0), maxHr: 160, cad: 170, elev: 0, speed: null }))
   const t = reviewActivity(run, laps, '2026-10-19')
   assert.match(t, /后半程掉速 20 秒\/公里、心率还上升 12/); assert.match(t, /心率漂移/)
-  assert.match(activityFacts(run, laps).join('\n'), /第4段 1\.00km 5'20"\/km 心率152/)
+  assert.match(activityFacts(run, laps).join('\n'), /第4段 1\.00 km 5'20"\/km 心率152/)
 })
 test('400m×8 1min vs 8min: clear physiological contrast and how to use, plus a concrete test', () => {
   const t = intervalRestAnswer('400米×8，组间休息1分钟和8分钟有什么区别？')!
