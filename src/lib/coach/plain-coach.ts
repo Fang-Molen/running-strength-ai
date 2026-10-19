@@ -54,6 +54,7 @@ export function activityFacts(a: GActivity, laps: GLap[] | null): string[] {
 /** 本地“成熟教练”复盘：结论 → 原因 → 下一课怎么练；缺什么就说明去测什么。 */
 export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string): string {
   const day = localDayOf(a.start), pace = a.dist && a.dur ? a.dur / (a.dist / 1000) : null, p = planFor(day)
+  if (day > today) return '这次活动在复盘日期之后，不纳入这次判断。'
   const runLaps = (laps ?? []).filter(l => lapPace(l) != null && (l.dist ?? 0) >= 400)
   const lines: string[] = []
   if (!isRun(a.type)) {
@@ -67,9 +68,13 @@ export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string)
   if (runLaps.length >= 3) {
     const half = Math.floor(runLaps.length / 2), first = runLaps.slice(0, half), last = runLaps.slice(-half)
     const avg = (xs: GLap[], f: (l: GLap) => number | null) => { const v = xs.map(f).filter((x): x is number => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null }
-    const p1 = avg(first, lapPace), p2 = avg(last, lapPace), h1 = avg(first, l => l.avgHr), h2 = avg(last, l => l.avgHr)
+    // v84（合入 Codex 1019y）：分段心率缺失/为 0/不完整时心率变化是“未知”，不能当作 0（以前会说成“心率没明显飘”）
+    const hrOk = (l: GLap) => typeof l.avgHr === 'number' && Number.isFinite(l.avgHr) && l.avgHr > 0
+    const hrComplete = runLaps.every(hrOk)
+    const p1 = avg(first, lapPace), p2 = avg(last, lapPace), h1 = hrComplete ? avg(first, l => l.avgHr) : null, h2 = hrComplete ? avg(last, l => l.avgHr) : null
     const drift = p1 && p2 ? p2 - p1 : 0, hrUp = h1 && h2 ? h2 - h1 : 0
-    if (drift < -5) { verdict = `越跑越快（后半程快 ${Math.round(-drift)} 秒/公里${hrUp > 0 ? `，心率后程上升 ${Math.round(hrUp)}` : ''}），属于渐加速跑，完成得不错。`; why = '后程能提速说明前段节奏留有余地，这正是有氧课该有的样子。' }
+    if (!hrComplete) { verdict = `后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里；分段心率缺失或不完整，心率变化未知。`; why = '只有配速数据，看不出心率漂移；配速变化可能来自分段任务不同、天气路线或疲劳，需要结合这节课原本的安排判断。' }
+    else if (drift < -5) { verdict = `越跑越快（后半程快 ${Math.round(-drift)} 秒/公里${hrUp > 0 ? `，心率后程上升 ${Math.round(hrUp)}` : ''}），属于渐加速跑，完成得不错。`; why = '后程能提速说明前段节奏留有余地，这正是有氧课该有的样子。' }
     else if (drift <= 5 && hrUp > 5 && hrUp <= 10) { verdict = `配速很稳（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里），心率后程上升 ${Math.round(hrUp)}，属于轻度心率漂移，整体是一次合格的${easy ? '有氧跑' : '训练'}。`; why = '同样配速下心率慢慢升高，主要是体温上升、出汗失水和慢肌疲劳，30 分钟左右升 5–10 次属于正常；如果超过 10 次或越跑越吃力，说明当天配速偏快或没恢复好。' }
     else if (drift <= 5 && hrUp <= 5) { verdict = `配速稳、心率没明显飘（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里，心率 +${Math.round(hrUp)}），这是一次合格的${easy ? '有氧/恢复跑' : '中等强度跑'}。`; why = '前后半程配速和心率基本一致，说明这个速度在你的有氧能力范围内，乳酸没有明显堆积，恢复成本低。' }
     else if (drift > 5 && hrUp > 8) { verdict = `后半程掉速 ${Math.round(drift)} 秒/公里、心率还上升 ${Math.round(hrUp)}，这次强度对当天状态偏高。`; why = '速度降、心率反而升，是典型的心率漂移：体温和疲劳上来后，同样的速度要付出更多代价，常见原因是起步太快、睡眠/恢复不足或天气热。' }

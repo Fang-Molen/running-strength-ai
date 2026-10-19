@@ -2,11 +2,10 @@ import {coachImports} from '@/lib/core/coach-import-evidence'
 import { activityLocalDay } from './activity-format'
 import V4 from '../plan400-v4.json' with { type: 'json' }
 import {garminViewKey} from '@/lib/health/garmin-view-scope'
-import {occurrenceVoided} from '@/lib/core/training-correction'
+import {occurrenceVoided, effectiveStrengthFields} from '@/lib/core/training-correction'
 import {currentAthleteId} from '@/lib/core/events'
 import { loadConfirmedTrainingImports } from '@/lib/core/training-import';
 import { listTrainingOccurrences } from '@/lib/core/occurrence';
-import { executionOf } from '@/lib/core/execution';
 import { projectRunningExecution } from '@/lib/core/running-execution';
 import { loadEvents } from '@/lib/core/events';
 import { readTrainingFact } from '@/lib/core/fact-read';
@@ -58,7 +57,7 @@ export function activityWeeks(rows: LoggedSession[], today: string, weeks = 4) {
 export function garminRows(raw: unknown): ActivityRow[] {
   if (!raw || typeof raw !== 'object') return [];
   return Object.values(raw as Record<string, Record<string, unknown>>).flatMap(g => {
-    if (!g || typeof g.start !== 'string' || !day(g.start) || !g.id) return [];
+    if (!g || typeof g.start !== 'string' || !day(g.start) || !g.id || (g.athleteId != null && g.athleteId !== currentAthleteId())) return [];
     const sport = /run|track|treadmill/.test(String(g.type)) ? 'RUNNING' as const : /strength|weight|fitness|training/.test(String(g.type)) ? 'STRENGTH' as const : 'UNKNOWN' as const;
     if (sport === 'UNKNOWN') return [];
     const identity = typeof g.sourceIdentity === 'string' ? g.sourceIdentity : `garmin:${g.id}`;
@@ -77,8 +76,8 @@ export function loadTrainingActivities(): ActivityRow[] {
   } catch { /* no explicit schedule provenance */ }
   for (const o of occurrences) {
     if (!o.startedAt || !day(o.startedAt)) continue;
-    const latest = [...occurrences].reverse().find(x => x.sessionId === o.sessionId)?.trainingOccurrenceId === o.trainingOccurrenceId;
-    const fact = readTrainingFact(o.trainingOccurrenceId), state = executionOf(o.sessionId), completed = latest ? state.sets.filter(s => s.completed && !s.skipped && s.actualAmount != null) : [];
+    // v84（合入 Codex 1019y）：重量×次数只取这一次训练自己的组（含更正覆盖），不再借用同模板“最新一次执行”的组
+    const fact = readTrainingFact(o.trainingOccurrenceId), own = occurrenceStrengthTotals(events, o.trainingOccurrenceId);
     const run = projectRunningExecution(o.trainingOccurrenceId, events), slots = [...run.repetitions, ...run.continuous].filter(s => s.status === 'COMPLETED');
     const isRun = run.availability === 'AVAILABLE' && slots.length > 0;
     // A start alone is not evidence that any work was performed; but recorded sets (even not finished) are shown as 已记录未完成.
@@ -89,7 +88,7 @@ export function loadTrainingActivities(): ActivityRow[] {
     const elapsed = o.endedAt ? (Date.parse(o.endedAt) - Date.parse(o.startedAt)) / 1000 : null;
     const totals = runningActualTotals(run);
     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
-      strengthVolumeKg: completed.length && completed.every(s => s.mode === 'reps' && s.actualWeight != null) ? completed.reduce((sum, s) => sum + s.actualWeight! * s.actualAmount!, 0) : null,
+      strengthVolumeKg: isRun ? null : own.volumeKg,
       sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : []), ...(/^scheduled:plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(10, 28), `sched:${o.planSlotId!.slice(10).replace(/:run$/, '')}`] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
   }
   // v83（P0-03）：旧版本记一笔的默认用时，读时如实改成“未知”（不改存储）
@@ -186,6 +185,20 @@ function sessionTitle(sessionId: string): string | undefined {
   try { const plan = JSON.parse(localStorage.getItem('fr255-strength-plan-v3') ?? 'null'); const s = (plan?.data ?? plan)?.sessions?.find((x: { id?: string }) => x?.id === sessionId); return typeof s?.name === 'string' && s.name ? s.name : undefined } catch { return undefined }
 }
 type Ev = ReturnType<typeof loadEvents>[number]
+/** v84（合入 Codex 1019y）：组归属于记录它的那一次训练，不归属于同模板最近一次执行；更正覆盖生效；未知重量/次数保持未知。 */
+export function occurrenceStrengthTotals(events: readonly Ev[], occurrenceId: string): { sets: number; volumeKg: number | null } {
+  const sets = new Map<string, { mode: unknown; amount: number | null; weight: number | null; completed: boolean }>()
+  for (const e of events) {
+    const p = e.payload as Record<string, unknown>
+    if (e.event_type !== 'TRAINING_SET_COMPLETED' || p.trainingOccurrenceId !== occurrenceId || typeof p.moveId !== 'string' || typeof p.setIndex !== 'number') continue
+    const overlay = effectiveStrengthFields(p)
+    const amount = p.mode === 'seconds' ? finite(p.actualAmount) : overlay.reps.status === 'UNKNOWN' ? null : finite(overlay.reps.value)
+    const weight = overlay.weight.status === 'UNKNOWN' ? null : finite(overlay.weight.value)
+    sets.set(`${p.moveId}:${p.setIndex}`, { mode: p.mode, amount, weight, completed: p.completed === true && p.skipped !== true })
+  }
+  const done = [...sets.values()].filter(s => s.completed && s.amount != null)
+  return { sets: done.length, volumeKg: done.length && done.every(s => s.mode === 'reps' && s.amount != null && s.weight != null) ? done.reduce((sum, s) => sum + s.amount! * s.weight!, 0) : null }
+}
 /** 没有“开始训练”事件、直接记下的组（旧版本/今日卡片快速记录）：按动作所属课 + 组的记录日期（用户时区）归成一条。 */
 export function orphanSetRows(events: Ev[], occurrences: { trainingOccurrenceId: string }[]): ActivityRow[] {
   const occ = new Set(occurrences.map(o => o.trainingOccurrenceId)), groups = new Map<string, { sessionId: string; date: string; first: string; done: number; total: number; finished: boolean }>()
@@ -206,7 +219,7 @@ export function orphanSetRows(events: Ev[], occurrences: { trainingOccurrenceId:
     originIds: [`sets:${g.sessionId}:${g.date}`], title: sessionTitle(g.sessionId) ?? '力量训练', status: g.finished ? 'completed' as const : 'incomplete' as const }))
 }
 type V4LogLite = { done?: string; reps?: string; rest?: string; aux?: string; strength?: string; rpe?: string; pain?: string; note?: string; savedAt?: string }
-type Sched = { id: string; date: string; unplanned?: boolean; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; note?: string; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[]; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' }; restLog?: unknown[]; exercises?: { sets?: string }[] }
+type Sched = { id: string; date: string; unplanned?: boolean; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; note?: string; km?: number | null; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[]; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' }; restLog?: unknown[]; exercises?: { sets?: string }[] }
 type Check = { date?: string; sessionId?: string; moves?: Record<string, { done?: boolean }[]>; startedAt?: number | null; updatedAt?: number; rpe?: number | null; run?: { done?: boolean } | null }
 const isStrength = (e: Sched) => e.modality === 'strength' || e.kind === 'strength' || e.trainingType === 'strength' || e.trainingType === 'mixed'
 /** 日程（今日卡片、计划、+记一笔、400m 计划力量日）+ 今日逐组清单。日期 = 这节课的日期，不是保存时间。 */
@@ -220,18 +233,23 @@ export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localS
   const sched = read<{ entries?: Sched[] }>('fk-schedule-v1', {}).entries ?? []
   for (const e of sched) {
     if (!e || typeof e.id !== 'string' || !/^\d{4}-\d\d-\d\d$/.test(e.date ?? '') || e.date > today || !isStrength(e)) continue
-    const a = e.actual, c = checks.find(x => x.date === e.date && (x.sessionId === e.refId || x.sessionId === e.id)), ci = c ? checkInfo(c) : null
+    // v84（合入 Codex 1019y）：同一天两节课用同一个模板时，按模板 id 找清单/组会把两节课认成一条（少记一条），只有模板在当天唯一时才按模板关联
+    const uniqueRef = !!e.refId && sched.filter(x => x && x.date === e.date && x.refId === e.refId).length === 1
+    const a = e.actual, c = checks.find(x => x.date === e.date && (x.sessionId === e.id || (uniqueRef && x.sessionId === e.refId))), ci = c ? checkInfo(c) : null
     const did = (a && a.outcome && a.outcome !== 'missed') || e.status === 'done'
-    const touched = !!(e.restLog?.length) || !!(ci && (ci.done || ci.touched))
+    const touched = !!(e.restLog?.length) || !!(ci && (ci.done || ci.touched)) || !!c?.run?.done
     if (!did && !touched) continue
     if (a?.outcome === 'missed' && !touched) continue
     if (c) used.add(`${c.date}|${c.sessionId}`)
     const startedMs = c?.startedAt && day(new Date(c.startedAt).toISOString()) === e.date ? c.startedAt : null
     // v83（P0-02）：plan400:<date>:strength 只是 V4 当天的力量执行入口，不能因 trainingType=mixed 就说跑过（跑步分项另算）
-    rows.push({ id: `sched:${e.id}`, startedAt: startedMs ? new Date(startedMs).toISOString() : localNoon(e.date), timeUnknown: !startedMs, date: e.date, sport: e.trainingType === 'mixed' && !e.id.startsWith('plan400:') ? 'MIXED' : 'STRENGTH', distanceM: null,
+    // v84（合入 Codex 1019y）：普通日程的“跑+力量”只是计划元数据；实际项目看证据（勾过的组＝力量，跑步打勾/填了公里＝跑步）。两样都没有细节的旧整课完成照旧显示“跑+力量”（只读历史）。
+    const mixedRun = !!c?.run?.done || (a?.km != null && a.km > 0), mixedLift = !!ci?.done
+    const sport: ActivityRow['sport'] = e.trainingType !== 'mixed' || e.id.startsWith('plan400:') ? 'STRENGTH' : mixedRun && mixedLift ? 'MIXED' : mixedRun ? 'RUNNING' : mixedLift ? 'STRENGTH' : 'MIXED'
+    rows.push({ id: `sched:${e.id}`, startedAt: startedMs ? new Date(startedMs).toISOString() : localNoon(e.date), timeUnknown: !startedMs, date: e.date, sport, distanceM: null,
       durationSec: a?.minutes && !(e.unplanned && /^q-/.test(e.id) && a.note === '记一笔') ? a.minutes * 60 : null, strengthVolumeKg: null, sets: ci?.done || null, rpe: a?.rpe ?? c?.rpe ?? null, source: 'phone', appMade: true, title: e.title || '力量训练',
       status: did ? 'completed' : 'incomplete',
-      originIds: [`sched:${e.id}`, sanitize(`act-${e.id}`), ...(e.refId ? [sanitize(`chk-${e.date}-${e.refId}`)] : []), sanitize(`chk-${e.date}-${e.id}`), ...(e.refId ? [`sets:${e.refId}:${e.date}`, `chk:${e.date}:${e.refId}`] : []), `chk:${e.date}:${e.id}`, ...(a?.occurrenceIds ?? [])] })
+      originIds: [`sched:${e.id}`, sanitize(`act-${e.id}`), ...(uniqueRef ? [sanitize(`chk-${e.date}-${e.refId}`)] : []), sanitize(`chk-${e.date}-${e.id}`), ...(uniqueRef ? [`sets:${e.refId}:${e.date}`, `chk:${e.date}:${e.refId}`] : []), `chk:${e.date}:${e.id}`, ...(a?.occurrenceIds ?? [])] })
   }
   for (const c of checks) {
     if (used.has(`${c.date}|${c.sessionId}`) || !/^\d{4}-\d\d-\d\d$/.test(c.date!) || c.date! > today) continue

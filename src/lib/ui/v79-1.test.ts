@@ -7,11 +7,11 @@ import { stampCN } from './activity-format.ts'
 const plan = JSON.parse(readFileSync(new URL('../plan400-v4.json', import.meta.url), 'utf8')) as V4Plan
 const d = plan.days.find(x => x.date === '2026-10-19')!   // 速度耐力＋力量A：跑步 + 力量
 const rest = plan.days.find(x => /休息/.test(x.title))!
-test('分项推整天状态：只有旧 log 时不变；分项都完成 → done；一项跳过 → reduced；都跳过 → skipped', () => {
+test('分项推整天状态：只有旧 log 时不变；分项都完成 → done；一项跳过 → 部分完成（进行中，v84）；都跳过 → skipped', () => {
   assert.equal(dayStatus(d, undefined, '2026-10-19'), 'not_started')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'done', rpe: 7 } } }), 'in_progress')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'done' }, strength: { status: 'done' } } }), 'done')
-  assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'done' } } }), 'reduced')
+  assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'done' } } }), 'in_progress', 'v84：一项跳过＋一项完成 ≠ 整课完成')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'skipped' } } }), 'skipped')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { strength: { rpe: 6 } } }), 'in_progress')
   // v83（P0-01，整改包 A01/N08）：用户填过分项后，分项优先；旧整课 done 不再盖掉“跑步跳过 + 力量未记录”。纯旧记录仍按旧口径（见 v83 测试）。

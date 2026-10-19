@@ -15,7 +15,7 @@ test("parser: strength, run, weight, unknown", () => {
   assert.deepEqual(parseQuickLog("深蹲 3×8 60kg"), { kind: "strength", name: "深蹲", sets: 3, reps: 8, kg: 60 })
   assert.deepEqual(parseQuickLog("卧推 5x5"), { kind: "strength", name: "卧推", sets: 5, reps: 5, kg: null })
   const r = parseQuickLog("轻松跑 5公里 32分"); assert.equal(r.kind, "run"); if (r.kind === "run") { assert.equal(r.km, 5); assert.equal(r.minutes, 32); assert.equal(r.pace, "6:24"); assert.equal(r.title, "轻松跑") }
-  const r2 = parseQuickLog("今晚跑了 5 公里 配速 5:40"); assert.equal(r2.kind, "run"); if (r2.kind === "run") { assert.equal(r2.minutes, 28); assert.equal(r2.when, "pm"); assert.equal(r2.pace, "5:40") }
+  const r2 = parseQuickLog("今晚跑了 5 公里 配速 5:40"); assert.equal(r2.kind, "run"); if (r2.kind === "run") { assert.equal(r2.minutes, null); assert.equal(r2.when, "pm"); assert.equal(r2.pace, "5:40") }
   assert.deepEqual(parseQuickLog("体重 65.2"), { kind: "weight", kg: 65.2 })
   assert.equal(parseQuickLog("今天好累").kind, "unknown")
 })

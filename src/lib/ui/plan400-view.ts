@@ -50,7 +50,6 @@ const userStatus = (p: PartFeedback | undefined): Exclude<CompStatus, 'not_recor
 const partFeedback = (p: PartFeedback | undefined) => !!p && (p.rpe != null || !!p.feel || !!p.note || !!p.pain?.area || p.pain?.score != null)
 /** 用户明确填过的分项信息（状态/RPE/疼痛/感受/备注）。设备关联、逐组执行不算“用户分项决定”。 */
 export const hasEnteredPart = (x: DayParts | undefined): boolean => [x?.parts?.running, x?.parts?.strength].some(p => !!userStatus(p) || partFeedback(p))
-const TERMINAL: PartState[] = ['done', 'reduced', 'skipped']
 const ACTUAL: PartState[] = ['done', 'reduced', 'partial']
 export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefined = {}, strengthLive = false): V4DayFact {
   const l = log ?? {}, p = x?.parts
@@ -82,7 +81,9 @@ export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefi
       : { state: 'none', label: '尚未记录', source: null, rpe: null }
   }
   const need = [running, strength].filter((v): v is PartFact => !!v)
-  const fromParts: V4DayFact['overall'] = need.length && need.every(v => TERMINAL.includes(v.state)) ? (need.every(v => v.state === 'skipped') ? 'skipped' : need.some(v => v.state === 'reduced' || v.state === 'skipped') ? 'reduced' : 'done')
+  // v84（合入 Codex 1019y）：组合课一项跳过、另一项完成 ≠ 整课完成（以前算“已完成·减量”），按“进行中/部分完成”显示，不计入完成课次；全部跳过＝跳过；全部完成/减量＝完成/减量
+  const fromParts: V4DayFact['overall'] = need.length && need.every(v => v.state === 'skipped') ? 'skipped'
+    : need.length && need.every(v => v.state === 'done' || v.state === 'reduced') ? (need.some(v => v.state === 'reduced') ? 'reduced' : 'done')
     : need.some(v => v.state !== 'none' && v.state !== 'candidate') ? 'in_progress' : null
   const split = hasEnteredPart(x)
   const legacyDone = l.done === 'done' || l.done === 'reduced' || l.done === 'skipped' ? l.done : null
