@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Check, Sparkles, ThumbsDown, ThumbsUp } from "lucide-react"
-import { buildReview, loadReviews, upsertReview, type Review, type ReviewKind } from "@/lib/ui/review"
+import { buildRecordReview, buildReview, loadReviews, upsertReview, type Review, type ReviewKind } from "@/lib/ui/review"
 import { BAND_COLOR } from "@/lib/ui/day-override"
 import { loadSchedule } from "@/lib/ui/day-schedule"
 import { loadTier } from "@/lib/ui/watch-mode"
@@ -8,12 +8,14 @@ import { loadSettings } from "@/lib/ui/app-settings"
 import { type FeedbackReason } from "@/lib/ui/coach-assessment"
 import { loadFeedback, saveFeedback } from "@/lib/ui/assessment-store"
 import { SavedBadge } from "@/components/saved-badge"
+import { recordLabel } from "@/lib/ui/log-range";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model"
 import type { RecordRef } from "@/lib/ui/review"
 const REVIEW_REASONS: [FeedbackReason, string][] = [["wrongData", "数据错误"], ["conclusion" as FeedbackReason, "结论不符"], ["advice" as FeedbackReason, "建议不适用"]]
 export const openLogRecord = (date: string, ids: string[]) => window.dispatchEvent(new CustomEvent("fk-log-focus", { detail: { date, ids } }))
 const stamp16 = (iso: string) => { const d = new Date(iso); return Number.isFinite(d.getTime()) ? `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}` : iso.slice(5, 16) }
-export function recordRefs(): RecordRef[] { try { return loadTrainingActivities().map((r) => ({ id: r.id, date: r.date, sport: r.sport, label: `${r.source === "garmin" ? "佳明" : r.source === "import" ? "上传" : "方坤记录"} ${r.sport === "RUNNING" ? "跑步" : r.sport === "STRENGTH" ? "力量" : "训练"}${r.distanceM ? ` ${(r.distanceM / 1000).toFixed(2)}km` : ""}${r.durationSec ? ` ${Math.round(r.durationSec / 60)}分钟` : ""}` })) } catch { return [] } }
+export function recordRefs(rows = safeRows()): RecordRef[] { return rows.map((r) => ({ id: r.id, date: r.date, sport: r.sport, label: recordLabel(r) })) }
+const safeRows = () => { try { return loadTrainingActivities() } catch { return [] } }
 
 const KIND: Record<ReviewKind, string> = { day: "今日复盘", week: "本周复盘", session: "单课复盘" }
 const ISSUE: Record<string, string> = { state: "状态", ability: "能力", data: "数据" }
@@ -52,7 +54,9 @@ export function ReviewPanel({ today, title = "复盘" }: { today: string; title?
   const make = (kind: ReviewKind) => {
     const entries = loadSchedule().entries
     const last = kind === "session" ? entries.filter((e) => e.actual && e.date <= today).sort((a, b) => (a.actual!.at < b.actual!.at ? 1 : -1))[0] : undefined
-    const r = buildReview(kind, entries, today, loadTier(), last?.id, new Date().toISOString(), recordRefs()); setCur(r); setList(upsertReview(r))
+    const rows = safeRows(), rec = kind === "session" ? rows.filter((x) => x.date <= today).sort((x, y) => (x.date === y.date ? y.startedAt.localeCompare(x.startedAt) : y.date.localeCompare(x.date)))[0] : undefined
+    const r = rec && (!last || rec.date > last.date) ? buildRecordReview({ id: rec.id, date: rec.date, label: `${rec.date.slice(5)} ${recordLabel(rec)}`, rpe: rec.rpe, incomplete: rec.status === "incomplete", running: rec.sport === "RUNNING" }, loadTier())
+      : buildReview(kind, entries, today, loadTier(), last?.id, new Date().toISOString(), recordRefs(rows)); setCur(r); setList(upsertReview(r))
   }
   return <section className="fk-dash-card space-y-2 p-3" aria-label="复盘">
     <h2 className="fk-dash-title text-base"><Sparkles className="size-5" />{title}</h2>

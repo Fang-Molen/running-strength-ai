@@ -50,7 +50,7 @@ export function loadAbilityInput(asOf: string) {
   const bw = Number(p.weightKg)
   return { asOf, marks: p.marks.map(m => ({ meters: m.meters, recentSec: clockSeconds(m.recent ?? ''), goalSec: clockSeconds(m.goal ?? '') })), acts: garminActivities(), laps, lifts: liftSets(), bodyWeightKg: Number.isFinite(bw) && bw > 25 && bw < 250 ? bw : null }
 }
-export function AbilityRadarCard({ asOf }: { asOf: string }) {
+export function AbilityRadarCard({ asOf, mode = 'full' }: { asOf: string; mode?: 'full' | 'chart' | 'details' }) {
   const [revision, refresh] = useState(0)
   useEffect(() => { const update = () => refresh(n => n + 1), off = onAppEvent(update); for (const n of ['storage', 'fk-schedule-changed', 'fk-garmin-synced']) window.addEventListener(n, update); return () => { off(); for (const n of ['storage', 'fk-schedule-changed', 'fk-garmin-synced']) window.removeEventListener(n, update) } }, [])
   const date = /^\d{4}-\d{2}-\d{2}$/.test(asOf) ? asOf : new Date().toISOString().slice(0, 10)
@@ -69,18 +69,18 @@ export function AbilityRadarCard({ asOf }: { asOf: string }) {
   }, [date, revision])
   let development; try { const id = listTrainingOccurrences().filter(o => o.startedAt && o.startedAt.slice(0, 10) <= date).at(-1)?.trainingOccurrenceId ?? null; development = readOfflineWorkspace(loadPlan(), currentAthleteId(), id, '查看能力原始指标', date === new Date().toISOString().slice(0, 10) ? new Date().toISOString() : date + 'T23:59:59.999Z').review.development } catch { /* pending */ }
   return <section className="text-sm" aria-label="我的能力五维指标" data-revision={revision}>
-    <div className="md:grid md:grid-cols-[300px_1fr] md:items-start md:gap-4">
-      <AbilityRadar axes={axes} active={active} onPick={setActive} />
+    {mode !== 'details' ? <div className="md:grid md:grid-cols-[300px_1fr] md:items-start md:gap-4">
+      <div className="mx-auto max-h-[230px] max-w-[240px] md:max-h-none md:max-w-none"><AbilityRadar axes={axes} active={active} onPick={setActive} /></div>
       {d ? <div className="mt-1 rounded-card bg-surface-2 p-3" aria-live="polite" aria-label="维度详情">
         <div className="flex items-baseline justify-between gap-2"><strong className="text-base">{d.label}</strong>{d.score != null ? <strong className="text-lg">{d.score}<span className="ml-1 text-xs font-normal text-muted">/100</span></strong> : <span className="text-xs text-muted">待评估 · {d.reason}</span>}</div>
         {d.inputs.length ? <ul className="keep mt-2 space-y-1 text-xs">{d.inputs.map(x => <li key={x}>· 输入：{x}</li>)}</ul> : null}
         <p className="keep mt-2 text-xs text-muted">算法：{d.method}</p>
         {d.score == null ? <p className="keep mt-1 text-xs">{d.reasonText}</p> : null}
       </div> : null}
-    </div>
-    {pending.length ? <details className="mt-2"><summary className="min-h-10 cursor-pointer content-center text-xs font-bold">待评估 {pending.length} 项（{pending.map(p => p.label).join('、')}）</summary><ul className="keep space-y-1 text-xs">{pending.map(p => <li key={p.key}><b>{p.label}</b> · {p.reason}：{p.reasonText}</li>)}</ul></details> : null}
+    </div> : null}
+    {mode === 'chart' ? null : <>{pending.length ? <details className="mt-2"><summary className="min-h-10 cursor-pointer content-center text-xs font-bold">待评估 {pending.length} 项（{pending.map(p => p.label).join('、')}）</summary><ul className="keep space-y-1 text-xs">{pending.map(p => <li key={p.key}><b>{p.label}</b> · {p.reason}：{p.reasonText}</li>)}</ul></details> : null}
     <p className="keep mt-2 text-[11px] text-muted">分数只用你自己的成绩和训练数据算出，点每一维能看到输入和算法；没数据的维度不打分。</p>
     <div className="mt-3 grid gap-2 sm:grid-cols-2" aria-label="其他指标（不计入五维）">{others.map(o => <div key={o.group} className="rounded-card bg-surface-2 p-2 text-xs"><b className="block">{o.group}</b>{o.lines.map(l => <span key={l} className="keep block text-muted">{l}</span>)}</div>)}</div>
-    {development ? <details className="mt-2"><summary className="min-h-10 cursor-pointer content-center text-xs font-bold">方坤能力原始指标</summary><CoachAbilityPanel development={development} /></details> : null}
+    {development ? <details className="mt-2"><summary className="min-h-10 cursor-pointer content-center text-xs font-bold">方坤能力原始指标</summary><CoachAbilityPanel development={development} /></details> : null}</>}
   </section>
 }

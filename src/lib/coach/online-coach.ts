@@ -3,6 +3,7 @@
 import { currentStore } from '../core/storage'
 import { garminViewKey } from '../health/garmin-view-scope'
 import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
+import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr } from '../ui/activity-format'
 import { activityFacts, planFor, sportLabel, type GActivity, type GLap } from './plain-coach'
 export const COACH_ONLINE_KEY = 'fk-coach-online-v1'
 export type OnlineSetting = { on: boolean; consentAt: string; by: string }
@@ -23,8 +24,8 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
   const lines: string[] = [`今天：${day}`]
   const p = planFor(day); lines.push(`目标：${p.goal}`); if (p.today) lines.push(`今天计划：${p.today}`); if (p.next) lines.push(`下一节计划：${p.next}`)
   if (act) lines.push('关联训练（佳明手表）：', ...activityFacts(act, laps))
-  const recent = garminActivities().sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).slice(0, 7)
-  if (recent.length) lines.push('近期活动：' + recent.map(a => `${a.start.slice(0, 10)} ${sportLabel(a.type)} ${a.dist != null ? (a.dist / 1000).toFixed(1) + 'km' : ''} ${a.dur != null ? Math.round(a.dur / 60) + '分钟' : ''} 心率${a.avgHr ?? '—'}`).join('；'))
+  const recent = garminActivities().sort((a, b) => activityTs(b.start) - activityTs(a.start)).slice(0, 7)
+  if (recent.length) lines.push('近期活动：' + recent.map(a => `${activityLocalDay(a.start) ?? '?'} ${sportLabel(a.type)} ${fmtDistance(a.dist) ?? ''} ${fmtDuration(a.dur)} 心率${fmtHr(a.avgHr) ?? '—'}`).join('；'))
   try { const snap = loadHealthSnapshot(day); lines.push('恢复指标：' + snap.metrics.filter(m => ['SLEEP', 'RHR', 'HRV', 'BODY_BATTERY', 'STRESS'].includes(m.metric)).map(healthSummaryLine).join('；')) } catch { /* optional */ }
   return lines.join('\n').slice(0, 7800)
 }

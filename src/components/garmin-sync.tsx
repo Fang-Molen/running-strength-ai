@@ -47,8 +47,9 @@ async function prefetchRecentLaps() {
   try {
     const { garminActivities, cachedLaps, saveLaps } = await import("@/lib/coach/online-coach");
     const { fetchLaps } = await import("@/components/garmin-log");
+    const { activityTs } = await import("@/lib/ui/activity-format");
     const cutoff = Date.now() - 10 * 864e5;
-    const todo = garminActivities().filter(a => /run|track|treadmill/.test(a.type) && Date.parse(a.start) >= cutoff && !cachedLaps(a.id)).sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).slice(0, 8);
+    const todo = garminActivities().filter(a => /run|track|treadmill/.test(a.type) && activityTs(a.start) >= cutoff && !cachedLaps(a.id)).sort((a, b) => activityTs(b.start) - activityTs(a.start)).slice(0, 8);
     for (const a of todo) { const l = await fetchLaps(Number(a.id)).catch(() => null); if (l) saveLaps(a.id, l); }
   } catch { /* optional */ }
 }

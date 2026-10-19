@@ -64,6 +64,7 @@ import type { Plan } from "@/lib/strength/model";
 import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";
 import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps, buildFacts, askOnlineCoach } from "@/lib/coach/online-coach";
 import { fetchLaps } from "@/components/garmin-log";
+import { activityLocalDay, fmtDistance } from "@/lib/ui/activity-format";
 
 function latestSessionRpe(events: { event_type: string; payload: Record<string, unknown> }[]): number | null {
   for (const event of [...events].reverse()) {
@@ -244,7 +245,7 @@ export function CoachSheet({
       if (linkedAct && !manual) {
         const imp = coachImports().find(i => i.sourceRecordIdentity && i.sourceRecordIdentity === linkedAct!.sourceIdentity);
         if (imp) { effectiveSelected = imp.confirmedImportId; autoLinkedRef.current = imp.confirmedImportId; setSelectedOccurrenceId(imp.confirmedImportId); }
-        linkNotice = (`已默认关联最近一次训练：${linkedAct.start.slice(5, 10)} ${linkedAct.name || linkedAct.type}${linkedAct.dist ? ` ${(linkedAct.dist / 1000).toFixed(2)}km` : ""}（可在下方“本次问答关联训练”改选）`); setNotice(linkNotice);
+        linkNotice = (`已默认关联最近一次训练：${(activityLocalDay(linkedAct.start) ?? '').slice(5)} ${linkedAct.name || linkedAct.type}${linkedAct.dist ? ` ${fmtDistance(linkedAct.dist)}` : ""}（可在下方“本次问答关联训练”改选）`); setNotice(linkNotice);
       }
       if (linkedAct) { linkedLaps = cachedLaps(linkedAct.id); if (!linkedLaps && /run|track|treadmill/.test(linkedAct.type) && navigator.onLine) { const l = await fetchLaps(Number(linkedAct.id)).catch(() => null); if (l) { linkedLaps = l; saveLaps(linkedAct.id, l); } } }
     }

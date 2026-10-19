@@ -4,11 +4,21 @@ import { onAppEvent } from '@/lib/core/events'
 import { HEALTH_CHANGED } from '@/lib/health/observation'
 import { periodStart, validDay } from '@/lib/core/coach-period-review'
 import { parseDecimalDraft } from '@/lib/ui/decimal-draft'
+import { loadTrainingActivities } from '@/lib/ui/training-read-model'
+import { isGarmin, isPhone } from '@/lib/ui/log-range'
 
 type Tools = ReturnType<typeof openCoachEvidenceTools>
 type View = Extract<ReturnType<Tools['readView']>, { ok: true }>['data']
 const metricNames: Record<string, string> = { SPLIT_SECONDS: '实际分段用时', STRENGTH_KG: '实际外加重量', STRENGTH_REPS: '实际次数', STRENGTH_SECONDS: '实际持续时间', REST_SECONDS: '实际休息', SESSION_RPE: '整课用力感', PAIN_SCORE: '疼痛自报', SLEEP_HOURS: '睡眠', SUBJECTIVE_RECOVERY: '主观恢复', SORENESS: '酸痛', HR_AVG_BPM: '平均心率' }
 
+/** v77：画像只统计“开始训练”生成的执行记录；同一时段的佳明/手机记录来自同一读模型，这里明确列出数量，避免和日志列表对不上。 */
+function OtherRecordsNote({ start, end }: { start: string; end: string }) {
+  let rows: ReturnType<typeof loadTrainingActivities> = []
+  try { rows = loadTrainingActivities().filter(r => r.date >= start && r.date <= end && !(r.sources ?? [r.source]).includes('execution')) } catch { rows = [] }
+  if (!rows.length) return null
+  const g = rows.filter(isGarmin).length, ph = rows.filter(r => !isGarmin(r) && isPhone(r)).length, other = rows.length - g - ph
+  return <p className="text-xs text-muted">同期另有 {rows.length} 条记录不是“开始训练”生成的（{[g ? `佳明 ${g}` : '', ph ? `手机记录 ${ph}` : '', other ? `聊天/上传 ${other}` : ''].filter(Boolean).join('、')}），见上方训练记录；这里的画像不含它们。</p>
+}
 /** Read-only record drilldown: exact same frozen projection as the six local tools. */
 export function TrainingEvidencePanel({ today }: { today: string }) {
   const [range, setRange] = useState('7'), [start, setStart] = useState(periodStart(today, 7)), [end, setEnd] = useState(today)
@@ -47,7 +57,8 @@ export function TrainingEvidencePanel({ today }: { today: string }) {
     {range === 'custom' && <div className="flex flex-wrap gap-2"><label>起日<input aria-label="画像起日" type="date" value={start} max={end} onChange={e => setStart(e.target.value)} className="block min-h-11 bg-bg" /></label><label>止日<input aria-label="画像止日" type="date" value={end} max={today} onChange={e => setEnd(e.target.value)} className="block min-h-11 bg-bg" /></label></div>}
     {error && <p role="alert">{error}</p>}
     {view && <>
-      <p>{view.profile.start}—{view.profile.end} · 有执行记录 {view.profile.recordedSessions} 课 / {view.profile.recordedDays} 天</p>
+      <p>{view.profile.start}—{view.profile.end} · 方坤执行记录 {view.profile.recordedSessions} 课 / {view.profile.recordedDays} 天</p>
+      <OtherRecordsNote start={view.profile.start} end={view.profile.end} />
       <p className="text-xs text-muted">北京时间归属；当前范围可能未记全。跑步 {view.profile.runningSessions} 课、力量 {view.profile.strengthSessions} 课；混合课分别出现，不相加作总课数。</p>
       <div className="mt-2"><button type="button" aria-expanded={expanded} className="min-h-11 py-2 text-left font-bold" onClick={() => setExpanded(value => !value)}>核对事实、数据缺口与原记录</button>
       {expanded && <div>

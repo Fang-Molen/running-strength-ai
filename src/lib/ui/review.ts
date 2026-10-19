@@ -51,6 +51,16 @@ export function buildReview(kind: ReviewKind, entries: ScheduleEntry[], today: s
   if (depth >= 3) { const mins = logged.reduce((s, e) => s + (e.actual!.outcome === "missed" ? 0 : e.actual!.minutes ?? 0), 0); evidence.push(`已知实际时长 ${mins} 分钟；缺失时长不补计划值`) }
   return { id: `${kind}-${range[0]}-${sessionId ?? ""}-${now}`, kind, range, createdAt: now, tier, verdict, bands: depth >= 2 ? bands : [], highlights: highlights.slice(0, depth >= 2 ? 3 : 1), issues: issues.slice(0, depth >= 2 ? 3 : 2), adjustment, evidence, trainingDates: [...new Set(logged.map((e) => e.date))].sort(), linked }
 }
+/** v77：最近一课 = 最近一次真实记录（佳明/手机）。比日程里最近一次反馈更新时，直接复盘这条记录（数值来自同一读模型）。 */
+export function buildRecordReview(rec: { id: string; date: string; label: string; rpe: number | null; incomplete: boolean; running: boolean }, tier: Tier, now = new Date().toISOString()): Review {
+  const issues: Issue[] = []
+  if (rec.incomplete) issues.push({ text: "这节已记录但没点完成：回到当天卡片点完成，或在记录里补实际用时", type: "data" })
+  if (rec.rpe == null) issues.push({ text: "没有主观强度（RPE）：手表结束训练时给 RPE，或在记录里补，下次才能判断强度是否合适", type: "data" })
+  return { id: `session-${rec.date}-${rec.id}-${now}`, kind: "session", range: [rec.date, rec.date], createdAt: now, tier,
+    verdict: `${rec.label}。这是实际记录，没有对应的计划课可对照完成度；${rec.running ? "配速、心率、分段的具体分析点“让方坤复盘这次”。" : "动作和组数的具体分析点“让方坤复盘这次”。"}`,
+    bands: [], highlights: [], issues, adjustment: null, evidence: [rec.label], trainingDates: [rec.date],
+    linked: [{ entryId: rec.id, date: rec.date, title: rec.label, recordIds: [rec.id], recordLabels: [rec.label], quality: true }] }
+}
 type KV = { getItem(k: string): string | null; setItem(k: string, v: string): void }
 const st = (): KV | null => (typeof localStorage === "undefined" ? null : localStorage)
 export function loadReviews(s: KV | null = st()): Review[] { try { const v = JSON.parse(s?.getItem(REVIEWS_KEY) ?? "[]"); return Array.isArray(v) ? v : [] } catch { return [] } }

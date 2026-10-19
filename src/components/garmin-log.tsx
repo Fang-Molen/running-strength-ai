@@ -4,6 +4,7 @@ import { shortHash } from '@/lib/health/observation';
 import { currentStore } from '@/lib/core/storage';
 import { currentAthleteId } from '@/lib/core/events';
 import { useEffect, useMemo, useState } from "react";
+import { fmtDistance, fmtDuration, fmtPace, parseActivityTime } from "@/lib/ui/activity-format";
 import { Dumbbell, Footprints, Activity } from "lucide-react";
 
 export const GACTS_KEY = "fk-garmin-acts-v1";
@@ -27,9 +28,9 @@ export function saveGarminActivities(list: unknown[], accountScope?: string): vo
   if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-training-activities-changed'));
 }
 export const kindOf = (t: string) => /run|track|treadmill/.test(t) ? "run" : /strength|fitness|weight|hiit|training/.test(t) ? "strength" : "other";
-const fmtDur = (s: number | null) => s == null ? "—" : `${Math.floor(s / 3600) ? Math.floor(s / 3600) + ":" : ""}${String(Math.floor((s % 3600) / 60)).padStart(Math.floor(s / 3600) ? 2 : 1, "0")}:${String(Math.round(s % 60)).padStart(2, "0")}`;
-const pace = (dist: number | null, dur: number | null) => !dist || !dur ? null : (() => { const p = dur / (dist / 1000); return `${Math.floor(p / 60)}'${String(Math.round(p % 60)).padStart(2, "0")}"/km`; })();
-const km = (m: number | null) => m == null ? null : m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`;
+const fmtDur = (s: number | null) => fmtDuration(s);
+const pace = (dist: number | null, dur: number | null) => fmtPace(dist, dur);
+const km = (m: number | null) => fmtDistance(m);
 function weekKey(iso: string) { const d = new Date(iso.slice(0, 10) + "T00:00:00Z"); const wd = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - wd); return d.toISOString().slice(0, 10); }
 
 export async function fetchLaps(id: number): Promise<Lap[] | null> {
@@ -50,8 +51,8 @@ export async function fetchLaps(id: number): Promise<Lap[] | null> {
 }
 
 export const garminById = (id: number | string): G | null => load<Record<string, G>>(garminViewKey(GACTS_KEY), {})[String(id)] ?? null;
-const localStamp = (iso: string) => { const d = new Date(iso.includes('T') || iso.includes(' ') ? iso.replace(' ', 'T') : iso); return Number.isFinite(d.getTime()) ? `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : iso.slice(5, 16).replace('T', ' ') };
-const localDate = (iso: string) => { const d = new Date(iso.replace(' ', 'T')); return Number.isFinite(d.getTime()) ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : iso.slice(0, 10) };
+const localStamp = (iso: string) => { const d = parseActivityTime(iso) ?? new Date(NaN); return Number.isFinite(d.getTime()) ? `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : iso.slice(5, 16).replace('T', ' ') };
+const localDate = (iso: string) => { const d = parseActivityTime(iso) ?? new Date(NaN); return Number.isFinite(d.getTime()) ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : iso.slice(0, 10) };
 export function GarminActivityRow({ g, defaultOpen = false, detailOnly = false }: { g: G; defaultOpen?: boolean; detailOnly?: boolean }) { return <Row g={g} defaultOpen={defaultOpen} detailOnly={detailOnly} /> }
 function Row({ g, defaultOpen = false, detailOnly = false }: { g: G; defaultOpen?: boolean; detailOnly?: boolean }) {
   const [open, setOpen] = useState(defaultOpen || detailOnly);

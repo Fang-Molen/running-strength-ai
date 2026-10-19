@@ -1,3 +1,4 @@
+import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr, fmtPaceSec } from '../ui/activity-format'
 /** 方坤面向用户的“成熟教练”表达层：结论 → 生理原因 → 下一课处方；数据不够时直接说做什么测试、记什么。
  * 只读：不写计划、不改记录。内部事实/审计模型不变，这里只组织文字与联网上下文。 */
 import plan from '../plan400-v4.json' with { type: 'json' }
@@ -7,18 +8,18 @@ type Day = { date: string; title: string; main: string[]; aux: string[]; strengt
 const days = (plan as { days: Day[] }).days
 
 export const isReviewAsk = (q: string) => /复盘|这节|这次训练|这次跑|今天.{0,3}(?:跑|练)得|昨天.{0,6}(?:跑|练|训练)|上一?次.{0,4}(?:跑|训练|课)|刚才.{0,4}(?:跑|练)|跑得怎么样|练得怎么样/.test(q)
-export const localDayOf = (iso: string) => { const d = new Date(iso); return Number.isFinite(d.getTime()) ? new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10) : iso.slice(0, 10) }
+export const localDayOf = (iso: string) => activityLocalDay(iso) ?? iso.slice(0, 10)
 const shift = (day: string, n: number) => new Date(Date.parse(day + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10)
 
 /** 默认关联：问“昨天/今天”就取那天最后一次；否则取最近一次。只在用户没手动选、也没选“不绑定”时使用。 */
 export function pickDefaultActivity<T extends { start: string }>(question: string, rows: T[], today: string): T | null {
-  const sorted = rows.filter(r => r.start && localDayOf(r.start) <= today).sort((a, b) => Date.parse(b.start) - Date.parse(a.start))
+  const sorted = rows.filter(r => r.start && localDayOf(r.start) <= today).sort((a, b) => activityTs(b.start) - activityTs(a.start))
   const want = /昨天/.test(question) ? shift(today, -1) : /前天/.test(question) ? shift(today, -2) : /今天/.test(question) ? today : null
   return want ? sorted.find(r => localDayOf(r.start) === want) ?? null : sorted[0] ?? null
 }
 const isRun = (t: string) => /run|track|treadmill/.test(t)
-export const paceText = (sec: number | null) => sec == null || !Number.isFinite(sec) ? '—' : `${Math.floor(sec / 60)}'${String(Math.round(sec % 60)).padStart(2, '0')}"/km`
-const durText = (s: number | null) => s == null ? '—' : `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+export const paceText = (sec: number | null) => fmtPaceSec(sec) ?? '—'
+const durText = (s: number | null) => fmtDuration(s)
 const lapPace = (l: GLap) => l.dist && l.dur && l.dist > 50 ? l.dur / (l.dist / 1000) : null
 
 export function planFor(day: string) {
@@ -32,10 +33,10 @@ export const sportLabel = (t: string) => /track/.test(t) ? '田径场跑' : /tre
 export function activityFacts(a: GActivity, laps: GLap[] | null): string[] {
   const out: string[] = []
   const pace = a.dist && a.dur ? a.dur / (a.dist / 1000) : null
-  out.push(`${localDayOf(a.start)} ${sportLabel(a.type)}：${a.dist != null ? (a.dist / 1000).toFixed(2) + ' km' : '距离未知'}，用时 ${durText(a.dur)}，平均配速 ${paceText(pace)}，平均心率 ${a.avgHr ?? '—'}，最高心率 ${a.maxHr ?? '—'}${a.cad ? `，步频 ${Math.round(a.cad)}` : ''}${a.elev != null ? `，爬升 ${Math.round(a.elev)} m` : ''}`)
+  out.push(`${localDayOf(a.start)} ${sportLabel(a.type)}：${fmtDistance(a.dist) ?? '距离未知'}，用时 ${durText(a.dur)}，平均配速 ${paceText(pace)}，平均心率 ${fmtHr(a.avgHr) ?? '—'}，最高心率 ${fmtHr(a.maxHr) ?? '—'}${a.cad ? `，步频 ${Math.round(a.cad)}` : ''}${a.elev != null ? `，爬升 ${Math.round(a.elev)} m` : ''}`)
   if (a.te != null || a.tl != null || a.ate != null) out.push(`手表训练效果：有氧 ${a.te ?? '—'}，无氧 ${a.ate ?? '—'}，训练负荷 ${a.tl != null ? Math.round(a.tl) : '—'}${a.rpe != null ? `，手表上记的RPE ${a.rpe / 10}` : ''}`)
   const runLaps = (laps ?? []).filter(l => lapPace(l) != null)
-  if (runLaps.length) out.push('分段：' + runLaps.slice(0, 20).map(l => `第${l.i}段 ${l.dist != null ? (l.dist / 1000).toFixed(2) : '?'}km ${paceText(lapPace(l))} 心率${l.avgHr ?? '—'}`).join('；'))
+  if (runLaps.length) out.push('分段：' + runLaps.slice(0, 20).map(l => `第${l.i}段 ${fmtDistance(l.dist) ?? '?'} ${paceText(lapPace(l))} 心率${fmtHr(l.avgHr) ?? '—'}`).join('；'))
   return out
 }
 
@@ -45,7 +46,7 @@ export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string)
   const runLaps = (laps ?? []).filter(l => lapPace(l) != null && (l.dist ?? 0) >= 400)
   const lines: string[] = []
   if (!isRun(a.type)) {
-    lines.push(`结论：${day} 这次是${a.name || '非跑步训练'}，用时 ${durText(a.dur)}${a.avgHr ? `，平均心率 ${a.avgHr}` : ''}${a.sets ? `，${a.sets} 组` : ''}。`)
+    lines.push(`结论：${day} 这次是${a.name || '非跑步训练'}，用时 ${durText(a.dur)}${a.avgHr ? `，平均心率 ${fmtHr(a.avgHr)}` : ''}${a.sets ? `，${a.sets} 组` : ''}。`)
     lines.push('下一步：力量课请在方坤里记下每个动作的重量×次数和RPE，我才能判断负荷是否合适。')
     return lines.join('\n')
   }
@@ -57,16 +58,16 @@ export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string)
     const avg = (xs: GLap[], f: (l: GLap) => number | null) => { const v = xs.map(f).filter((x): x is number => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null }
     const p1 = avg(first, lapPace), p2 = avg(last, lapPace), h1 = avg(first, l => l.avgHr), h2 = avg(last, l => l.avgHr)
     const drift = p1 && p2 ? p2 - p1 : 0, hrUp = h1 && h2 ? h2 - h1 : 0
-    if (drift <= 5 && hrUp > 5 && hrUp <= 10) { verdict = `配速很稳（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里），心率后程上升 ${Math.round(hrUp)}，属于轻度心率漂移，整体是一次合格的${easy ? '有氧跑' : '训练'}。`; why = '同样配速下心率慢慢升高，主要是体温上升、出汗失水和慢肌疲劳，30 分钟左右升 5–10 次属于正常；如果超过 10 次或越跑越吃力，说明当天配速偏快或没恢复好。' }
+    if (drift < -5) { verdict = `越跑越快（后半程快 ${Math.round(-drift)} 秒/公里${hrUp > 0 ? `，心率后程上升 ${Math.round(hrUp)}` : ''}），属于渐加速跑，完成得不错。`; why = '后程能提速说明前段节奏留有余地，这正是有氧课该有的样子。' }
+    else if (drift <= 5 && hrUp > 5 && hrUp <= 10) { verdict = `配速很稳（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里），心率后程上升 ${Math.round(hrUp)}，属于轻度心率漂移，整体是一次合格的${easy ? '有氧跑' : '训练'}。`; why = '同样配速下心率慢慢升高，主要是体温上升、出汗失水和慢肌疲劳，30 分钟左右升 5–10 次属于正常；如果超过 10 次或越跑越吃力，说明当天配速偏快或没恢复好。' }
     else if (drift <= 5 && hrUp <= 5) { verdict = `配速稳、心率没明显飘（后半程比前半程${drift <= 0 ? '快' : '慢'} ${Math.abs(Math.round(drift))} 秒/公里，心率 +${Math.round(hrUp)}），这是一次合格的${easy ? '有氧/恢复跑' : '中等强度跑'}。`; why = '前后半程配速和心率基本一致，说明这个速度在你的有氧能力范围内，乳酸没有明显堆积，恢复成本低。' }
     else if (drift > 5 && hrUp > 8) { verdict = `后半程掉速 ${Math.round(drift)} 秒/公里、心率还上升 ${Math.round(hrUp)}，这次强度对当天状态偏高。`; why = '速度降、心率反而升，是典型的心率漂移：体温和疲劳上来后，同样的速度要付出更多代价，常见原因是起步太快、睡眠/恢复不足或天气热。' }
-    else if (drift < -5) { verdict = `越跑越快（后半程快 ${Math.round(-drift)} 秒/公里），属于渐加速跑，完成得不错。`; why = '后程能提速说明前段节奏留有余地，这正是有氧课该有的样子。' }
     else { verdict = `整体平稳，后半程配速变化 ${Math.round(drift)} 秒/公里、心率变化 ${Math.round(hrUp)}。`; why = '变化在正常范围，没有看到明显的疲劳信号。' }
   } else {
-    verdict = `平均 ${paceText(pace)}、心率 ${a.avgHr ?? '—'}，${easy ? '强度属于轻松有氧，适合作为恢复或基础课。' : '强度中等偏上，算一次质量有氧。'}`
-    why = easy ? '心率在有氧区间，主要刺激的是毛细血管、线粒体和脂肪供能，疲劳小，第二天能正常训练。' : `平均心率 ${a.avgHr} 已接近乳酸阈附近，对有氧能力刺激较大，但恢复要 24–48 小时。`
+    verdict = `平均 ${paceText(pace)}、心率 ${fmtHr(a.avgHr) ?? '—'}，${easy ? '强度属于轻松有氧，适合作为恢复或基础课。' : '强度中等偏上，算一次质量有氧。'}`
+    why = easy ? '心率在有氧区间，主要刺激的是毛细血管、线粒体和脂肪供能，疲劳小，第二天能正常训练。' : `平均心率 ${fmtHr(a.avgHr)} 已接近乳酸阈附近，对有氧能力刺激较大，但恢复要 24–48 小时。`
   }
-  lines.push(`结论：${day} ${a.dist != null ? (a.dist / 1000).toFixed(2) + 'km ' : ''}${durText(a.dur)}，${verdict}`)
+  lines.push(`结论：${day} ${fmtDistance(a.dist) ? fmtDistance(a.dist) + ' ' : ''}${durText(a.dur)}${runLaps.length >= 3 ? `（平均 ${paceText(pace)}，平均心率 ${fmtHr(a.avgHr) ?? '—'}）` : ''}，${verdict}`)
   lines.push(`为什么：${why}${a.te != null ? ` 手表有氧训练效果 ${a.te}${a.ate != null ? `、无氧 ${a.ate}` : ''}。` : ''}`)
   // 对照目标
   lines.push(`对照目标（${p.goal}）：这类${easy ? '轻松' : '中等'}有氧跑是 400 米的“底座”，提高恢复能力和后程耐受；它本身不练速度，速度要靠计划里的短距离快跑课。`)

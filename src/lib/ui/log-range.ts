@@ -1,3 +1,4 @@
+import { fmtDistance, fmtDuration, fmtHr, fmtPace } from './activity-format.ts'
 /** 训练日志 v76：范围、类型筛选和摘要共用一套规则。
  * 日期 = 活动开始时间在用户时区的日期（ActivityRow.date），不是同步时间。
  * 本周 = 周一到周日（按天）；近4周 = 含本周在内的 4 个自然周（按周）。缺失的距离/时长单独计数，不当 0。 */
@@ -12,6 +13,13 @@ export function rangeOf(range: LogRange, today: string) {
   const start = add(mon, -21)
   return { start, end: add(mon, 6), buckets: Array.from({ length: 4 }, (_, i) => { const s = add(start, 7 * i); return { start: s, end: add(s, 6), label: `${s.slice(5)}起` } }) }
 }
+const srcs = (x: ActivityRow) => x.sources ?? [x.source]
+export const isGarmin = (x: ActivityRow) => srcs(x).includes('garmin') || x.originIds.some(id => id.startsWith('garmin:'))
+/** 手机记录 = 在方坤里记的（开始训练/逐组清单/今日卡片/+记一笔/按计划完成）。 */
+export const isPhone = (x: ActivityRow) => srcs(x).some(s => s === 'execution' || s === 'phone') || !!x.appMade
+export const sourceLabels = (x: ActivityRow) => [...(isPhone(x) ? ['手机记录'] : []), ...(isGarmin(x) ? ['佳明'] : []), ...(!isPhone(x) && !isGarmin(x) ? ['聊天/上传'] : [])]
+/** 单一记录标签：复盘依据/列表/方坤共用同一套格式化（activity-format）。 */
+export const recordLabel = (x: ActivityRow) => [sourceLabels(x).join('+'), x.title || (x.sport === 'RUNNING' ? '跑步' : x.sport === 'STRENGTH' ? '力量' : '训练'), fmtDistance(x.distanceM), x.durationSec ? fmtDuration(x.durationSec) : null, x.sport === 'RUNNING' ? fmtPace(x.distanceM, x.durationSec) : null, x.avgHr ? `心率 ${fmtHr(x.avgHr)}` : null, x.sets ? `${x.sets} 组` : null].filter(Boolean).join(' · ')
 export const kindOf = (r: ActivityRow) => r.sport === 'RUNNING' ? 'run' : r.sport === 'STRENGTH' ? 'lift' : r.sport === 'MIXED' ? 'mixed' : 'other'
 export const matchKind = (r: ActivityRow, k: LogKind) => k === 'all' || (k === 'run' ? ['run', 'mixed'].includes(kindOf(r)) : ['lift', 'mixed'].includes(kindOf(r)))
 export function filterRows(rows: ActivityRow[], range: LogRange, kind: LogKind, today: string) {
@@ -25,7 +33,7 @@ export function summarize(rows: ActivityRow[], range: LogRange, kind: LogKind, t
     ...r, list, count: list.length, run: runs.length, lift: list.filter(x => ['lift', 'mixed'].includes(kindOf(x))).length,
     distanceM: runs.reduce((s, x) => s + (x.distanceM ?? 0), 0), missingDistance: runs.filter(x => x.distanceM == null).length,
     durationSec: list.reduce((s, x) => s + (x.durationSec ?? 0), 0), missingDuration: list.filter(x => x.durationSec == null).length,
-    bySource: { garmin: list.filter(x => (x.sources ?? [x.source]).includes('garmin')).length, app: list.filter(x => (x.sources ?? [x.source]).includes('execution')).length, upload: list.filter(x => x.source === 'import' && !(x.sources ?? []).includes('garmin') && !x.originIds.some(id => id.startsWith('garmin:'))).length },
+    bySource: { garmin: list.filter(isGarmin).length, app: list.filter(isPhone).length, upload: list.filter(x => !isGarmin(x) && !isPhone(x)).length }, incomplete: list.filter(x => x.status === 'incomplete').length,
     bars: r.buckets.map(b => { const inB = list.filter(x => x.date >= b.start && x.date <= b.end); return { ...b, minutes: Math.round(inB.reduce((s, x) => s + (x.durationSec ?? 0), 0) / 60), count: inB.length, unknown: inB.filter(x => x.durationSec == null).length, future: b.start > today } }),
   }
 }
