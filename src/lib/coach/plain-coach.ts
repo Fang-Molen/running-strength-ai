@@ -1,4 +1,5 @@
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr, fmtPaceSec } from '../ui/activity-format'
+import { loadComponents, hasFeedback } from '../ui/plan400-components-store'
 /** 方坤面向用户的“成熟教练”表达层：结论 → 生理原因 → 下一课处方；数据不够时直接说做什么测试、记什么。
  * 只读：不写计划、不改记录。内部事实/审计模型不变，这里只组织文字与联网上下文。 */
 import plan from '../plan400-v4.json' with { type: 'json' }
@@ -78,7 +79,7 @@ export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string)
     why = easy ? '心率在有氧区间，主要刺激的是毛细血管、线粒体和脂肪供能，疲劳小，第二天能正常训练。' : `平均心率 ${fmtHr(a.avgHr)} 已接近乳酸阈附近，对有氧能力刺激较大，但恢复要 24–48 小时。`
   }
   lines.push(`结论：${day} ${fmtDistance(a.dist) ? fmtDistance(a.dist) + ' ' : ''}${durText(a.dur)}${runLaps.length >= 3 ? `（平均 ${paceText(pace)}，平均心率 ${fmtHr(a.avgHr) ?? '—'}）` : ''}，${verdict}`)
-  { const v4 = v4RecordLine(day); if (v4) lines.push(v4) }
+  { const v4 = v4RecordLine(day); if (v4) { let split = false; try { const c = loadComponents().days[day]; split = hasFeedback(c?.running) || hasFeedback(c?.strength) } catch { /* none */ } lines.push(split ? `${v4}（旧整课记录，仅参考；跑步、力量以分项记录为准）` : v4) } }
   lines.push(`为什么：${why}${a.te != null ? ` 手表有氧训练效果 ${a.te}${a.ate != null ? `、无氧 ${a.ate}` : ''}。` : ''}`)
   // 对照目标
   lines.push(`对照目标（${p.goal}）：这类${easy ? '轻松' : '中等'}有氧跑是 400 米的“底座”，提高恢复能力和后程耐受；它本身不练速度，速度要靠计划里的短距离快跑课。`)
