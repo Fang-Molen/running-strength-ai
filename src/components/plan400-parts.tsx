@@ -6,7 +6,7 @@ import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } fro
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
 import type { DayParts, V4Day, V4Log } from "@/lib/ui/plan400-view"
 import { pendingFeedback, type PendingItem } from "@/lib/ui/pending-feedback"
-import V4Json from "@/lib/plan400-v4.json" with { type: "json" }
+import V4Json from "../lib/plan400-v4.json" with { type: "json" }
 const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
 export function useParts(date: string): DayComponents | undefined {

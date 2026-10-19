@@ -14,7 +14,7 @@ import { RunImportPrompt } from "@/components/plan400-parts";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
 import { todayCoordinationParts, todayPartsText, type TodayPart } from "@/lib/ui/coach-coordination-view";
 import { dayKind, hasRunPart, hasStrength, type V4Day } from "@/lib/ui/plan400-view";
-import v4PlanJson from "@/lib/plan400-v4.json" with { type: "json" };
+import v4PlanJson from "../lib/plan400-v4.json" with { type: "json" };
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";

@@ -38,7 +38,7 @@ test("first render does not depend on browser training and day records", () => {
     assert.equal(renderToString(<StrengthApp />), serverApp)
     assert.match(serverHtml, /今天还没有跑步记录/)
     assert.match(serverApp, /data-ready="false"/)
-    assert.match(serverApp, /这天还没有安排/)
+    assert.match(serverApp, /这天还没有安排|没有其他自建或方坤的训练/) // v83 P1-01：今天的 V4 只在主卡出现一次
     assert.doesNotMatch(serverApp, /70\.5/)
     assert.doesNotMatch(serverApp, /米饭/)
     assert.doesNotMatch(serverApp, /已保存的推进课/)
