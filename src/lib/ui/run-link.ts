@@ -11,6 +11,7 @@ import { dayKind, type V4Day } from './plan400-view'
  * - 关联是派生的：日志里只有那条佳明记录（计划不生成第二条），所以各处只算一次。
  * - 只处理跑步课；手表跑步永远不会把力量课标成完成。
  */
+import { plannedRepsFromText } from './lap-structure'
 export const RUN_LINKS_KEY = 'fk-run-links-v1'
 export type RunLinkStore = Record<string, { garminId?: string; by?: 'auto' | 'user'; rejected?: string[] }>
 export type RunLink = { entry: ScheduleEntry; run: ActivityRow; by: 'auto' | 'user' }
@@ -31,7 +32,7 @@ export const v4RunSlotId = (date: string) => `plan400:${date}:running`
 /** V4 课里有跑步部分的日子（到今天为止）→ 当作“计划跑步课”参与同一套匹配。 */
 export function v4RunSlots(days: readonly V4Day[], today: string, comps: ComponentsDoc = { schemaVersion: 1, days: {} }): ScheduleEntry[] {
   return days.filter(d => d.date <= today && dayKind(d) !== 'rest' && !/^力量/.test(d.title) && comps.days[d.date]?.running?.status !== 'skipped')
-    .map(d => ({ id: v4RunSlotId(d.date), date: d.date, kind: 'run', modality: 'run', trainingType: 'run', title: `V4 ${d.title} · 跑步部分`, focus: [], minutes: 0, intensity: 'MODERATE', lowerHeavy: false, source: 'fangkun', refId: null, status: 'planned' }) as unknown as ScheduleEntry)
+    .map(d => ({ v4Intervals: (() => { const p = plannedRepsFromText(d.main.slice(1).join('')); return p ? `${p.distanceM}m×${p.reps}${p.rounds ? `×${p.rounds}` : ''}` : undefined })(), id: v4RunSlotId(d.date), date: d.date, kind: 'run', modality: 'run', trainingType: 'run', title: `V4 ${d.title} · 跑步部分`, focus: [], minutes: 0, intensity: 'MODERATE', lowerHeavy: false, source: 'fangkun', refId: null, status: 'planned' }) as unknown as ScheduleEntry)
 }
 /** 日程跑步课的关联（fk-run-links-v1）+ V4 跑步分项的关联（fk-plan400-v4-components-v1 running.device / deviceRejected）。 */
 export function allRunLinks(comps: ComponentsDoc = loadComponents(), base: RunLinkStore = loadRunLinks()): RunLinkStore {
@@ -57,6 +58,9 @@ export function matchRuns(entries: ScheduleEntry[], rows: ActivityRow[], links: 
   // 2) 候选：同一天恰好 1 对 1 = likely（仍需用户确认）；同一天多条/多节，或相邻一天 = 普通候选
   const suggestions: RunSuggestion[] = rest.map(e => {
     const same = free(e, e.date), sameDayEntries = rest.filter(x => x.date === e.date)
+    const iv = (e as { v4Intervals?: string }).v4Intervals
+    // 分段课（如 150m×3）：总距离/总时间证明不了做了分段，不说“很可能”，只作普通候选（A07/N14）
+    if (same.length === 1 && sameDayEntries.length === 1 && iv) return { entry: e, runs: same, basis: `同一天只有这一条手表跑步，但这节是分段课（${iv}），只凭日期和总距离不能确认做的是这节` }
     if (same.length === 1 && sameDayEntries.length === 1) return { entry: e, runs: same, likely: true, basis: '同一天只有这一节跑步课和这一条手表跑步' }
     const runsFor = same.length ? same : [...free(e, shift(e.date, -1)), ...free(e, shift(e.date, 1))]
     return { entry: e, runs: runsFor, basis: same.length ? `同一天有 ${same.length} 条手表跑步` : '只有相邻一天有手表跑步' }

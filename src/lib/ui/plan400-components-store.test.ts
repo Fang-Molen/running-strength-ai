@@ -27,7 +27,7 @@ test('v83（P1-05）：V4 跑步部分 ↔ 同日唯一佳明跑步：先是候�
   const s = mem({ 'fk-plan400-v4-components-v1': JSON.stringify({ schemaVersion: 1, days: { '2026-10-19': { running: { rpe: 8, status: 'done' } } } }) })
   const before = linkRuns([...phoneRows(s, NOW), ...garminRows(JSON.parse(garmin()))], s, NOW)
   assert.equal(before.length, 2, '未确认：手表跑步与计划记录各一条，不合并'); assert.ok(before.every(r => !r.runLink))
-  assert.equal(lastRunMatch().suggestions.find(x => x.entry.id === 'plan400:2026-10-19:running')?.likely, true)
+  const sg = lastRunMatch().suggestions.find(x => x.entry.id === 'plan400:2026-10-19:running'); assert.ok(sg && !sg.likely, 'A07：分段课（150m×3）只凭同日+总距离不说“很可能”'); assert.match(sg!.basis ?? '', /分段课（150m×3）/)
   const gid = garminRows(JSON.parse(garmin()))[0].id
   setRunDevice('2026-10-19', { sourceIdentity: gid, source: 'garmin', linkedBy: 'user' }, undefined, s)
   const rows = linkRuns([...phoneRows(s, NOW), ...garminRows(JSON.parse(garmin()))], s, NOW)

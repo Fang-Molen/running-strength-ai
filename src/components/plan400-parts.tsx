@@ -109,7 +109,7 @@ export function RunImportPrompt({ today }: { today: string }) {
     const recent = (d: string) => Date.parse(today) - Date.parse(d) <= 3 * 864e5 && d <= today
     const due = m.links.find(l => l.entry.id.startsWith("plan400:") && !seen.has(`${l.entry.date}|${l.run.id}`) && !hasFeedback(doc.days[l.entry.date]?.running) && recent(l.entry.date))
     if (due) { setOpen({ kind: "link", l: due }); return }
-    const cand = m.suggestions.find(x => x.entry.id.startsWith("plan400:") && x.likely && x.runs.length === 1 && !seen.has(`${x.entry.date}|${x.runs[0].id}`) && recent(x.entry.date))
+    const cand = m.suggestions.find(x => x.entry.id.startsWith("plan400:") && x.runs.length === 1 && x.runs[0].date === x.entry.date && !seen.has(`${x.entry.date}|${x.runs[0].id}`) && recent(x.entry.date))
     if (cand) setOpen({ kind: "cand", entry: cand.entry, run: cand.runs[0], basis: cand.basis })
   }, [m, today, open])
   if (!open) return null
