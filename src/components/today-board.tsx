@@ -22,7 +22,8 @@ const ACT: Record<ConflictAction, string> = { postpone: "顺延一天", reduce: 
 const dot = (e: ScheduleEntry) => e.modality === "run" ? "bg-[#2182bd]" : "bg-[#d07a2b]"
 const shown = (e: ScheduleEntry) => e.status !== "rejected"
 
-export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExecute, onEdit, onDateChange, selectedDate, onAskCoach, onFood, revision = 0, override = null, band = true }: { plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onExecute?: (entry: ScheduleEntry) => void; onEdit?: (entry: ScheduleEntry) => void; onDateChange?: (date: string) => void; selectedDate?: string; onAskCoach: () => void; onFood?: () => void; revision?: number; override?: Override | null; band?: boolean }) {
+export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExecute, onEdit, onDateChange, selectedDate, onAskCoach, onFood, revision = 0, override = null, band = true, v4 = true }: { v4?: boolean; plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onExecute?: (entry: ScheduleEntry) => void; onEdit?: (entry: ScheduleEntry) => void; onDateChange?: (date: string) => void; selectedDate?: string; onAskCoach: () => void; onFood?: () => void; revision?: number; override?: Override | null; band?: boolean }) {
+  const v4Day = (d: string) => (v4 ? plan400DayFor(d) : null)
   const [store, setStore] = useState<ScheduleStore>({ entries: [], acks: [] })
   const [day, setDay] = useState(today)
   const [open, setOpen] = useState<string | null>(null)
@@ -66,7 +67,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
       {week.map((d, i) => { const es = store.entries.filter((e) => e.date === d && (e.status === "planned" || e.status === "done" || e.status === "proposed")); const warn = conflicts.some((c) => c.date === d && c.level === "warn")
         return <button key={d} type="button" role="tab" aria-selected={d === day} onClick={() => { setDay(d); setOpen(null); onDateChange?.(d); }} className={"flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs " + (d === day ? "border-accent bg-accent text-accent-fg" : d === today ? "border-accent" : "border-line bg-surface-2")}>
           <span className="opacity-80">{d === today ? "今天" : `周${WD[i]}`}</span><b className="text-sm">{+d.slice(8)}</b>
-          <span className="mt-0.5 flex h-2 gap-0.5">{(() => { const v = plan400DayFor(d); return v && v.kind !== "rest" ? <i className={"size-1.5 rounded-full ring-1 " + (d === day ? "bg-accent-fg ring-accent-fg" : "bg-accent ring-accent")} title={`V4：${v.title}`} /> : null })()}{es.slice(0, 3).map((e) => <i key={e.id} className={"size-1.5 rounded-full " + dot(e) + (e.status === "proposed" ? " opacity-40" : "")} />)}{warn ? <i className="size-1.5 rounded-full bg-[#c0392b]" /> : null}</span>
+          <span className="mt-0.5 flex h-2 gap-0.5">{(() => { const v = v4Day(d); return v && v.kind !== "rest" ? <i className={"size-1.5 rounded-full ring-1 " + (d === day ? "bg-accent-fg ring-accent-fg" : "bg-accent ring-accent")} title={`V4：${v.title}`} /> : null })()}{es.slice(0, 3).map((e) => <i key={e.id} className={"size-1.5 rounded-full " + dot(e) + (e.status === "proposed" ? " opacity-40" : "")} />)}{warn ? <i className="size-1.5 rounded-full bg-[#c0392b]" /> : null}</span>
         </button> })}
     </div>
     {proposals.length ? <p className="mt-2 px-1 text-xs text-muted">方坤本周有 {proposals.length} 节建议待你确认（浅色点）。</p> : null}
@@ -83,10 +84,10 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
         onRest={(r) => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, restLog: [...(x.restLog ?? []), r] } : x))}
         onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
         onEdit={onEdit ? () => onEdit(e) : undefined} onOpenRun={() => onExecute ? onExecute(e) : e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { if (onExecute) { onExecute(e); return; } const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}</div> : null)}
-      {(() => { const v = plan400DayFor(day); if (!v) return !list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null
+      {(() => { const v = v4Day(day); if (!v) return !list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null
         return <button type="button" data-testid="board-v4-row" onClick={() => openPlan400Day(day)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3 text-left">
           <span className="min-w-0 flex-1"><span className="block text-[11px] text-muted">400米 V4 · {v.week} · {v.kind === "rest" ? "休息日" : v.kind === "recovery" ? "恢复" : v.kind === "test" ? "测试" : "训练课"}{day === today ? "（同上方今日主卡）" : ""}</span><span className="block truncate font-bold">{v.title}</span></span><span aria-hidden="true" className="text-muted">›</span></button> })()}
-      {!list.length && plan400DayFor(day) ? <p className="px-1 text-xs text-muted">这天没有其他自建或方坤安排的训练。</p> : null}
+      {!list.length && v4Day(day) ? <p className="px-1 text-xs text-muted">这天还没有安排自建或方坤的训练。</p> : null}
       {undo ? <div role="status" className="fixed inset-x-3 bottom-24 z-40 mx-auto flex max-w-md items-center justify-between rounded-card bg-fg px-4 py-3 text-sm text-bg shadow-lg"><span>{undo.label}</span><button type="button" className="font-bold underline" onClick={restore}>撤销</button></div> : null}
     </div>
     <div className="mt-2 flex flex-wrap gap-3 px-1">
