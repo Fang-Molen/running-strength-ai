@@ -237,3 +237,23 @@ test('multi-file preview preserves different health sources before any storage w
  assert.equal(result.health.length,2);assert.notEqual(result.health[0].key,result.health[1].key)
  saveDeviceRows(result.health,[]);assert.equal(metric(loadHealthSnapshot(day),'HRV').state,'CONFLICT')
 })
+
+test('v76: Garmin 204/empty day is no-data, not a sync failure; Body Battery uses most recent like Connect',()=>{
+ const x=garminHealthDay(day,'a',{status:200,body:{calendarDate:day,restingHeartRate:50,bodyBatteryHighestValue:95,bodyBatteryMostRecentValue:41}},{status:204,body:{}},{status:200,body:{}},at)
+ assert.equal(x.failures.length,0)
+ const bb=x.rows.find(r=>r.metric==='BODY_BATTERY')!; assert.equal(bb.value,41); assert.equal(bb.observation!.statistic,'同步时最近值')
+ assert.equal(x.rows.some(r=>r.metric==='HRV'||r.metric==='SLEEP'),false)
+ const bad=garminHealthDay(day,'a',{status:500,body:{}},{status:204,body:{}},{status:204,body:{}},at); assert.equal(bad.failures.length,1)
+})
+test('v76: same day manual/legacy + Garmin sync → Garmin (latest sync) is shown everywhere; explicit source choice still wins',()=>{
+ assert.equal(saveVital({kind:'SLEEP',value:8,observedOn:day,source:'MANUAL'}).ok,true)
+ const g=garminHealthDay(day,'acct',{status:200,body:{calendarDate:day,bodyBatteryHighestValue:90}},{status:200,body:{hrvSummary:{calendarDate:day,lastNightAvg:48}}},{status:200,body:{dailySleepDTO:{calendarDate:day,sleepTimeSeconds:6.5*3600}}},at)
+ saveDeviceRows(g.rows,[])
+ const later=garminHealthDay(day,'acct',{status:200,body:{calendarDate:day,bodyBatteryHighestValue:90,bodyBatteryMostRecentValue:35}},{status:204,body:{}},{status:204,body:{}},day+'T12:00:00Z')
+ saveDeviceRows(later.rows,[])
+ const s=loadHealthSnapshot(day), sleep=metric(s,'SLEEP'), bb=metric(s,'BODY_BATTERY')
+ assert.equal(sleep.state,'AVAILABLE'); assert.equal(sleep.current!.value,6.5); assert.equal(sleep.candidates.length,2)
+ assert.equal(bb.current!.value,35)
+ const manual=sleep.candidates.find(p=>p.value===8)!; saveHealthSource('SLEEP',manual.stream)
+ assert.equal(metric(loadHealthSnapshot(day),'SLEEP').current!.value,8)
+})

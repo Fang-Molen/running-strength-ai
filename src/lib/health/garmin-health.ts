@@ -11,10 +11,12 @@ export function garminHealthDay(day:string,account:string,s:ResponsePart,h:Respo
     if(typeof value!=='number' || !Number.isFinite(value) || value<min || value>max)return
     rows.push({key:`${metric}:${day}`,source:'佳明账号同步',metric,day,value,observation:{key:`${sourceId}:${metric}:${statistic}:${day}`,sourceId,statistic,syncedAt,rawValue:rawValue??value,rawUnit}})
   }
-  const usable=(part:ResponsePart,label:string)=>{ const b=part.body; if(part.status!==200 || !b || typeof b!=='object' || Array.isArray(b) || b.ok===false || b.error){failures.push(`${day} ${label} HTTP ${part.status}`);return false} const claimed=b.calendarDate??b.hrvSummary?.calendarDate??b.dailySleepDTO?.calendarDate; if(!claimed || claimed!==day){failures.push(`${day} ${label} 返回日期缺失或不一致`);return false}return true }
+  const usable=(part:ResponsePart,label:string)=>{ const b=part.body; if(part.status===204||(part.status===200&&b&&typeof b==='object'&&!Array.isArray(b)&&!Object.keys(b).length))return false /* 当天无此数据，不算失败 */; if(part.status!==200 || !b || typeof b!=='object' || Array.isArray(b) || b.ok===false || b.error){failures.push(`${day} ${label} HTTP ${part.status}`);return false} const claimed=b.calendarDate??b.hrvSummary?.calendarDate??b.dailySleepDTO?.calendarDate; if(!claimed || claimed!==day){failures.push(`${day} ${label} 返回日期缺失或不一致`);return false}return true }
   if(usable(s,'每日汇总')) {
     add('RHR',s.body.restingHeartRate,'日静息心率',30,120)
-    add('BODY_BATTERY',s.body.bodyBatteryHighestValue,'当日最高（非当前值）',0,100)
+    // 与佳明 Connect 首页一致：用同步时的最近值；旧接口没有最近值时才退回当日最高（标明非当前值）。
+    if(typeof s.body.bodyBatteryMostRecentValue==='number')add('BODY_BATTERY',s.body.bodyBatteryMostRecentValue,'同步时最近值',0,100)
+    else add('BODY_BATTERY',s.body.bodyBatteryHighestValue,'当日最高（非当前值）',0,100)
     add('STRESS',s.body.averageStressLevel,'当日平均',0,100)
     add('STEPS',s.body.totalSteps,'当日累计',0,100000)
     add('SPO2',s.body.averageSpo2,'当日平均',70,100)

@@ -2,6 +2,7 @@ import { runGarminSyncJob, garminStorageKey } from "@/lib/health/garmin-sync-run
 import { currentAthleteId } from "@/lib/core/events";
 import { bindGarminAccount } from "@/lib/health/garmin-account-owner";
 import { localDay, shiftDay, healthChanged } from "@/lib/health/observation";
+import { readGarminSyncStatus, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { useEffect, useRef, useState } from "react";
 import { saveDeviceRows } from "@/lib/ui/device-store";
 import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
@@ -29,14 +30,27 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
         localStorage.setItem(key("fk-garmin-last-attempt"), report.at);
         localStorage.setItem(key("fk-garmin-sync-report"), raw);
         if (localStorage.getItem(key("fk-garmin-sync-report")) !== raw) throw Error('REPORT_SAVE_FAILED');
-        if (report.status === 'ok') localStorage.setItem(key("fk-garmin-last-sync"), report.at);
+        // 部分同步但已取得数据也算一次有效同步（避免每次打开都重拉、设置页显示过期时间）。
+        if (report.status === 'ok' || (report.status === 'partial' && report.saved + report.skipped > 0)) localStorage.setItem(key("fk-garmin-last-sync"), report.at);
+        if (report.status === 'ok') localStorage.setItem(key("fk-garmin-last-full-ok"), report.at); // 契约：最后完整成功（garmin-sync-status.ts）
         healthChanged(); window.dispatchEvent(new Event("fk-garmin-synced"));
       },
     });
     const label = { ok: '同步完成', partial: '部分同步', empty: '本次未取得可用记录', auth: '登录失效或身份不完整', fail: '同步失败', stale: '账号或运动员变化，已丢弃本次结果' }[result.status];
+    if (result.status === 'ok' || result.status === 'partial') void prefetchRecentLaps();
     setMsg(`${label}：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
     return result.status === 'empty' || result.status === 'stale' ? 'fail' : result.status;
   } finally { running = false; }
+}
+/** 同步后预取最近 10 天跑步的分段（最多 8 条未缓存的），复盘时可直接用真实分段。失败不影响同步结果。 */
+async function prefetchRecentLaps() {
+  try {
+    const { garminActivities, cachedLaps, saveLaps } = await import("@/lib/coach/online-coach");
+    const { fetchLaps } = await import("@/components/garmin-log");
+    const cutoff = Date.now() - 10 * 864e5;
+    const todo = garminActivities().filter(a => /run|track|treadmill/.test(a.type) && Date.parse(a.start) >= cutoff && !cachedLaps(a.id)).sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).slice(0, 8);
+    for (const a of todo) { const l = await fetchLaps(Number(a.id)).catch(() => null); if (l) saveLaps(a.id, l); }
+  } catch { /* optional */ }
 }
 const syncKey = (key: string) => garminStorageKey(key, currentAthleteId());
 const AUTO_MS = 5 * 60e3;
@@ -51,10 +65,26 @@ export async function maybeAutoGarminSync(): Promise<void> {
   const st = await api("status", undefined, 10000);
   if (!st.body?.loggedIn) return;
   const r = await runGarminSync(() => {}, st.body?.profile?.displayName);
-  if (r === "ok") localStorage.removeItem(syncKey("fk-garmin-auto-fail")); else if (r !== "busy") localStorage.setItem(syncKey("fk-garmin-auto-fail"), new Date().toISOString());
+  if (r === "ok" || r === "partial") localStorage.removeItem(syncKey("fk-garmin-auto-fail")); else if (r !== "busy") localStorage.setItem(syncKey("fk-garmin-auto-fail"), new Date().toISOString());
   window.dispatchEvent(new Event("fk-garmin-synced"));
 }
 
+/** 状态契约视图：连接状态 / 最近尝试 / 最后完整成功 / 部分失败 / 导入范围 + 详情（数据见 lib/health/garmin-sync-status.ts）。 */
+export function GarminSyncStatusView() {
+  const [s, setS] = useState(() => readGarminSyncStatus(currentAthleteId()));
+  useEffect(() => subscribeGarminSyncStatus(() => setS(readGarminSyncStatus(currentAthleteId()))), []);
+  const t = (iso: string | null) => iso ? new Date(iso).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
+  return <div className="keep rounded-card bg-surface-2 p-2 text-xs" aria-label="佳明同步状态">
+    <dl className="grid grid-cols-[6.5em_1fr] gap-x-2 gap-y-0.5">
+      <dt className="text-muted">连接状态</dt><dd>{s.connectionLabel}</dd>
+      <dt className="text-muted">最近尝试</dt><dd>{s.lastAttemptLabel}</dd>
+      <dt className="text-muted">最后完整成功</dt><dd>{t(s.lastFullSuccessAt)}</dd>
+      {s.partialFailure ? <><dt className="text-muted">部分失败</dt><dd>{s.partialFailure.errors.length ? s.partialFailure.errors.slice(0, 2).join("；") : "部分日期没取到"}</dd></> : null}
+      <dt className="text-muted">导入范围</dt><dd>{s.importRange?.label ?? "还没同步过"}</dd>
+    </dl>
+    <details className="mt-1"><summary className="min-h-9 cursor-pointer content-center text-muted">详情</summary><ul className="space-y-0.5">{s.details.map((d) => <li key={d}>{d}</li>)}</ul></details>
+  </div>;
+}
 export function GarminSync() {
   const [st, setSt] = useState<{ loggedIn: boolean; profile?: { displayName?: string; fullName?: string } | null } | null>(null);
   const [form, setForm] = useState({ region: "cn", username: "", password: "" });
@@ -93,7 +123,7 @@ export function GarminSync() {
     <p className="keep text-xs text-muted">在线且页面运行时同步；关闭或挂起后不保证后台同步{lastSync && !st?.loggedIn ? ` · 上次同步 ${lastSync}` : ""}</p>
     {st?.loggedIn ? <>
       <p className="text-muted">已登录 {st.profile?.fullName || st.profile?.displayName || ""} · 上次同步 {lastSync || "无"}</p>
-      {lastPartial ? <p role="status" className="text-sm text-muted">最近一次未完整成功，请查看同步结果并核对缺失指标。</p> : null}
+      <GarminSyncStatusView />
       <div className="flex gap-2"><button type="button" disabled={busy} className="min-h-11 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={sync}>同步最近活动和健康数据</button><button type="button" className="min-h-11 rounded-card border border-line px-3" onClick={async () => { accountGeneration++; await api("logout"); await refresh(); }}>退出</button></div>
     </> : mfa ? <div className="flex gap-2"><input className={input} inputMode="numeric" placeholder="验证码" value={code} onChange={(e) => setCode(e.target.value)} /><button type="button" disabled={busy} className="rounded-card bg-accent px-4 font-bold text-accent-fg" onClick={sendMfa}>确认</button></div> : <>
       <select className={input} value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}><option value="cn">佳明中国（garmin.cn）</option><option value="com">佳明国际（garmin.com）</option></select>
@@ -102,7 +132,7 @@ export function GarminSync() {
       <button type="button" disabled={busy || !form.username || !form.password} className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={login}>登录佳明</button>
     </>}
     {msg ? <p className="text-accent">{msg}</p> : null}
-    <p className="text-xs text-muted">活动仅请求最近最多200条，活动条数不是训练课次数，也不代表全部历史。健康数据按页面所在时区请求最近14个日历日；与手表日期不一致时先核对两端时区。身体电量为当日最高值，HRV为昨夜平均；均非实时值。同步报告会列出未完成项。</p>
+    <p className="text-xs text-muted">活动仅请求最近最多200条，活动条数不是训练课次数，也不代表全部历史。健康数据按页面所在时区请求最近14个日历日；与手表日期不一致时先核对两端时区。身体电量取同步时佳明给出的最近值（没有时才用当日最高并注明），HRV为昨夜平均；同步后才更新，不是实时值。同步报告会列出未完成项。</p>
     <h2 className="pt-2 font-bold">全部数据备份</h2>
     
     {remind ? <p className="rounded-card bg-accent/10 p-2 text-accent">建议现在导出一份备份{needsBackupReminder() ? "（版本大更新）" : ""}</p> : null}

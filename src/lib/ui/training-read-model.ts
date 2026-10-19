@@ -12,7 +12,7 @@ import type { LoggedSession } from './coach-assessment';
 import { addDays, weekOf } from './day-schedule-rules';
 import { runningActualTotals } from './running-actual-totals';
 import type { ScheduleEntry } from './day-schedule-rules';
-export type ActivityRow = LoggedSession & { startedAt: string; source: 'execution' | 'import' | 'garmin'; originIds: string[] };
+export type ActivityRow = LoggedSession & { startedAt: string; source: 'execution' | 'import' | 'garmin'; originIds: string[]; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: ('execution' | 'import' | 'garmin')[] };
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
 const day = (iso: string) => { const d = new Date(iso.replace(' ', 'T')); return Number.isFinite(d.getTime()) ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null; };
 function sameActivity(a: ActivityRow, b: ActivityRow) {
@@ -24,8 +24,14 @@ export function mergeActivities(rows: ActivityRow[]): ActivityRow[] {
   const result: ActivityRow[] = [], rank = { execution: 0, import: 1, garmin: 2 };
   for (const row of [...rows].sort((a, b) => rank[a.source] - rank[b.source])) {
     const found = result.find(r => sameActivity(r, row));
-    if (found) { found.originIds = [...new Set([...found.originIds, ...row.originIds])]; continue; }
-    result.push({ ...row, originIds: [...row.originIds] });
+    if (found) {
+      found.originIds = [...new Set([...found.originIds, ...row.originIds])]; found.sources = [...new Set([...(found.sources ?? [found.source]), row.source])];
+      if (!found.title || /佳明账号同步/.test(found.title)) found.title = row.title || found.title
+      found.avgHr ??= row.avgHr; found.garminId ??= row.garminId; found.importId ??= row.importId; found.occurrenceId ??= row.occurrenceId
+      found.distanceM ??= row.distanceM; found.durationSec ??= row.durationSec; found.rpe ??= row.rpe; found.sets ??= row.sets
+      continue;
+    }
+    result.push({ ...row, originIds: [...row.originIds], sources: [row.source] });
   }
   return result.sort((a, b) => a.startedAt.localeCompare(b.startedAt));
 }
@@ -39,7 +45,7 @@ export function garminRows(raw: unknown): ActivityRow[] {
     const sport = /run|track|treadmill/.test(String(g.type)) ? 'RUNNING' as const : /strength|weight|fitness|training/.test(String(g.type)) ? 'STRENGTH' as const : 'UNKNOWN' as const;
     if (sport === 'UNKNOWN') return [];
     const identity = typeof g.sourceIdentity === 'string' ? g.sourceIdentity : `garmin:${g.id}`;
-    return [{ id: identity, startedAt: g.start, date: day(g.start)!, sport, distanceM: finite(g.dist), durationSec: finite(g.dur), strengthVolumeKg: null, sets: finite(g.sets), rpe: null, source: 'garmin' as const, originIds: [identity] }];
+    return [{ id: identity, startedAt: g.start, date: day(g.start)!, sport, distanceM: finite(g.dist), durationSec: finite(g.dur), strengthVolumeKg: null, sets: finite(g.sets), rpe: garminRpe(g.rpe), source: 'garmin' as const, originIds: [identity], title: typeof g.name === 'string' ? g.name : '', avgHr: finite(g.avgHr), garminId: g.id as number }];
   });
 }
 export function loadTrainingActivities(): ActivityRow[] {
@@ -64,15 +70,17 @@ export function loadTrainingActivities(): ActivityRow[] {
     const totals = runningActualTotals(run);
     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
       strengthVolumeKg: completed.length && completed.every(s => s.mode === 'reps' && s.actualWeight != null) ? completed.reduce((sum, s) => sum + s.actualWeight! * s.actualAmount!, 0) : null,
-      sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId] });
+      sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId], occurrenceId: o.trainingOccurrenceId });
   }
   for (const x of coachImports().filter(x=>!occurrenceVoided(x.confirmedImportId))) {
     if (!x.occurredAt.value || !day(x.occurredAt.value)) continue;
     const sets = x.strengthSets.filter(s => s.completion === 'COMPLETED');
     const identity = typeof x.sourceRecordIdentity === 'string' ? [x.sourceRecordIdentity] : [];
     rows.push({ id: x.draftId, startedAt: x.occurredAt.value, date: day(x.occurredAt.value)!, sport: x.sport, distanceM: x.totalDistanceMeters.value, durationSec: x.durationSeconds.value,
-      strengthVolumeKg: sets.length && sets.every(s => s.weightKg.value != null && s.repetitions.value != null) ? sets.reduce((sum, s) => sum + s.weightKg.value! * s.repetitions.value!, 0) : null, sets: sets.length || null, rpe: x.sessionRpe.value, source: 'import', originIds: [x.draftId, ...identity, ...(linkedDrafts.get(x.draftId) ?? [])] });
+      strengthVolumeKg: sets.length && sets.every(s => s.weightKg.value != null && s.repetitions.value != null) ? sets.reduce((sum, s) => sum + s.weightKg.value! * s.repetitions.value!, 0) : null, sets: sets.length || null, rpe: x.sessionRpe.value, source: 'import', originIds: [x.draftId, ...identity, ...(linkedDrafts.get(x.draftId) ?? [])], title: x.title.value ?? '', importId: x.confirmedImportId });
   }
   try { rows.push(...garminRows(JSON.parse(localStorage.getItem(garminViewKey('fk-garmin-acts-v1')) ?? '{}'))); } catch { /* no device cache */ }
   return mergeActivities(rows);
 }
+/** 佳明“训练后自评强度”directWorkoutRpe 为 10–100（10 = RPE1）；换算成 1–10。 */
+export function garminRpe(v: unknown): number | null { const n = typeof v === 'number' && Number.isFinite(v) ? v : null; return n == null ? null : n >= 10 && n <= 100 ? Math.round(n / 10) : n >= 1 && n <= 10 ? n : null }

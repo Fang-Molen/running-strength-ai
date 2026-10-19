@@ -23,7 +23,7 @@ import {commitControlledStrengthPlan} from "@/lib/core/coach-strength-plan-stora
 import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
 import { readWallpaper, writeWallpaper, WALLPAPERS, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
-import { TrainingLogPanel } from "@/components/training-log-panel";
+import { TrainingLogPage } from "@/components/training-log-v76";
 import { TrainingEvidencePanel } from "@/components/training-evidence-panel";
 import { AbilityRadarCard } from "@/components/ability-radar-card";
 import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, Footprints, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Utensils, Watch, X } from "lucide-react";
@@ -177,7 +177,7 @@ export function StrengthApp() {
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
   useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem("fk-vault-restored")) { sessionStorage.setItem("fk-vault-restored", "1"); location.reload(); } }).catch(() => {}); }, []);
   const [dietSheet, setDietSheet] = useState(false);
-  useEffect(() => { const go = () => { if (document.visibilityState === "visible") window.setTimeout(() => void maybeAutoGarminSync().catch(() => {}), 1500); }; go(); document.addEventListener("visibilitychange", go); const iv = window.setInterval(() => { if (document.visibilityState === "visible") void maybeAutoGarminSync().catch(() => {}); }, 2 * 3600e3 + 5000); return () => { document.removeEventListener("visibilitychange", go); window.clearInterval(iv); }; }, []);
+  useEffect(() => { const go = () => { if (document.visibilityState === "visible") window.setTimeout(() => void maybeAutoGarminSync().catch(() => {}), 1500); }; go(); document.addEventListener("visibilitychange", go); window.addEventListener("pageshow", go); window.addEventListener("online", go); const iv = window.setInterval(() => { if (document.visibilityState === "visible") void maybeAutoGarminSync().catch(() => {}); }, 2 * 3600e3 + 5000); return () => { document.removeEventListener("visibilitychange", go); window.removeEventListener("pageshow", go); window.removeEventListener("online", go); window.clearInterval(iv); }; }, []);
   const [planSrc, setPlanSrc] = useState<string>("400m-v4");
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}").active; if (v) setPlanSrc(v); } catch { /* keep default */ } }, []);
   const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}"); localStorage.setItem("fk-plan-source-v1", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };
@@ -808,12 +808,7 @@ export function StrengthApp() {
 
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
-      {tab === "log" ? <div className="mx-auto max-w-3xl px-3 pt-2"><AbilityRadarCard asOf={todayIso} /></div> : null}
-      {tab === "log" ? <TrainingEvidencePanel today={todayIso} /> : null}
-      {tab === "log" ? <div className="pt-2"><LogMetricsPanel today={todayIso} /></div> : null}
-      {tab === "log" ? <GarminLog /> : null}
-      {tab === "log" ? <TrainingLogPanel reviewSlot={<div className="mt-3"><ReviewPanel today={todayIso} title="方坤复盘" /></div>} plan={plan} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
-      {tab === "log" ? <div className="px-3 pt-2 pb-nav"><AssessmentPanel /></div> : null}
+      {tab === "log" ? <TrainingLogPage today={todayIso} plan={plan} onNavigate={(next) => setTab(next as typeof tab)} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready, todayPlanned: courseCount, todayMarkedDone: doneCount, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}

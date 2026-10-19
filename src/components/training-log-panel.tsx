@@ -37,7 +37,7 @@ function textOf(value: unknown): string {
   return typeof value === "string" && value.trim() ? value.trim() : ""
 }
 
-function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan: Plan; onAsk: (occurrenceId: string | null) => void }) {
+export function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan: Plan; onAsk: (occurrenceId: string | null) => void }) {
   const [open, setOpen] = useState(false)
   const [more, setMore] = useState(false)
   const [sheet, setSheet] = useState<null | "correct" | "void" | "restore" | "undo" | "history">(null)
@@ -248,7 +248,7 @@ function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence; plan:
   </article>
 }
 
-function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingImport; onAsk: (occurrenceId: string | null) => void; onDeleted: () => void }) {
+export function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingImport; onAsk: (occurrenceId: string | null) => void; onDeleted: () => void }) {
   const [open, setOpen] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [deleteError, setDeleteError] = useState("")

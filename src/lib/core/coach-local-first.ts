@@ -326,7 +326,7 @@ function answerLocallyBase(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapsho
  const ordinary=red.level==='NONE'&&!logic?.frame.safety.mustRetain&&!brief.pain&&!brief.constraints.medicalReferral?ordinaryDiscomfortAnswer(brief.question):null;
  if(ordinary)return {text:ordinary,escalationAvailable:false,sources:[],candidate:null};
  const mechanism=red.level==='NONE'&&!logic?.frame.safety.mustRetain&&!brief.pain&&!brief.constraints.medicalReferral?explainTrainingMechanism(brief.question):null
- if(mechanism)return {text:cleanAthleteText(formatTrainingMechanism(mechanism))+'\n没有修改计划或记录。\n依据：'+formatTrainingMechanism(mechanism),sources:[],escalationAvailable:false,candidate:null}
+ if(mechanism)return {text:cleanAthleteText(formatTrainingMechanism(mechanism))+'\n没有修改计划或记录。',sources:[],escalationAvailable:false,candidate:null}
  const periodIntent = brief.question.trim().match(/^(?:请)?复盘最近\s*(7|28)\s*天[。？?]?$/);
  if(periodIntent && logic && red.level==='NONE' && !logic.frame.safety.mustRetain && !brief.pain && !brief.constraints.medicalReferral){
   const end=calendarDay(logic.snapshot.asOf)!;

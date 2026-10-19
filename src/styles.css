@@ -453,3 +453,8 @@ html, body { background: #0b0b0d; }
 .fk-detail .fk-src { font-size: 13px !important; color: #9a9ca3; white-space: normal; }
 .fk-detail details, .fk-detail .rounded-xl.border { margin-top: 14px; }
 .fk-detail .grid p { font-size: inherit; line-height: 1.3; }
+/* v76 训练日志：入口箭头 + 无默认三角 */
+.fk-log-entry > summary::-webkit-details-marker { display: none; }
+.fk-log-entry .fk-log-arrow { display: inline-block; transition: transform .15s; }
+.fk-log-entry[open] .fk-log-arrow { transform: rotate(90deg); }
+.fk-log-v76 .home-card + .home-card { margin-top: .75rem; }

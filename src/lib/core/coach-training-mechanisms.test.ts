@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { explainTrainingMechanism, formatTrainingMechanism } from './coach-training-mechanisms.ts';
+import { explainTrainingMechanism, formatTrainingMechanism, formatTrainingMechanismAudit } from './coach-training-mechanisms.ts';
 import { answerLocally } from './coach-local-first.ts';
 
 const brief = {question:'', occurrenceId:null, sources:[],sourceIds:[],sessionRpe:null,sleepHours:null,subjectiveRecovery:null,completedSetCount:null,plannedSetCount:null,pain:false,mustAsk:[], runningStructure:'UNAVAILABLE' as const,recoveryState:null,fatigueState:null,duplicateCount:0,repetitionSlots:0,continuousCount:0,durationSec:null,daysToCompetition:null,week:null,bias:null, constraints:{medicalReferral:false,increaseBlocked:false,blockReason:null}};
@@ -16,13 +16,15 @@ for (const [question, kind] of questions) {
     const result = explainTrainingMechanism(question);
     assert.equal(result?.kind,kind);
     assert.ok(result?.missingEvidence.length);
-    assert.match(formatTrainingMechanism(result!),/UNKNOWN/);
+    assert.match(formatTrainingMechanism(result!),/^结论：[\s\S]*\n为什么：[\s\S]*\n怎么用：[\s\S]*\n想知道你自己适合哪种：/);
+    assert.doesNotMatch(formatTrainingMechanism(result!),/UNKNOWN|还需证据|判断边界|可撤回/);
+    assert.match(formatTrainingMechanismAudit(result!),/个人适应结论：UNKNOWN/);
     assert.doesNotMatch(formatTrainingMechanism(result!),/应该增加20%|保证提升|已确认你/);
   });
   test(`local question answers ${kind} without automatic decisions`,()=>{
     const a=answerLocally({...brief,question} as Parameters<typeof answerLocally>[0]);
-    assert.match(a.text,/事实与概念|训练共通原理/);
-    assert.match(a.text,/个人适应结论：UNKNOWN/);
+    assert.match(a.text,/^结论：/);
+    assert.doesNotMatch(a.text,/个人适应结论：UNKNOWN|事实与概念/);
     assert.match(a.text,/没有修改计划或记录/);
   });
 }
@@ -34,9 +36,13 @@ test('unrelated and underspecified requests are not guessed',()=>{
 test('urgent symptoms keep local safety priority over mechanism explanation',()=>{
   const a=answerLocally({...brief,question:'我现在胸痛，为什么深蹲训练影响400米跑步？'} as Parameters<typeof answerLocally>[0]);
   assert.match(a.text,/紧急评估|急诊/);
-  assert.doesNotMatch(a.text,/个人适应结论：UNKNOWN/);
+  assert.doesNotMatch(a.text,/个人适应结论：UNKNOWN|^结论：/);
 });
 test('health constraints are retained with mechanism explanation',()=>{
   const a=answerLocally({...brief,question:'为什么深蹲提高不一定让400米跑步更快',pain:true} as Parameters<typeof answerLocally>[0]);
   assert.match(a.text,/不建议.*加量/);
+});
+test('400m×8 1min vs 8min reads like a coach: short rest = 乳酸耐受/速度耐力, long rest = 速度质量/比赛配速',()=>{
+  const a=answerLocally({...brief,question:'400米×8，组间休息1分钟和8分钟有什么区别？'} as Parameters<typeof answerLocally>[0]);
+  for(const re of [/^结论：/,/乳酸耐受/,/速度耐力/,/不完全恢复/,/速度质量/,/比赛配速/,/接近完全恢复/,/怎么用：/,/300 米全力计时/,/没有修改计划或记录/])assert.match(a.text,re);
 });

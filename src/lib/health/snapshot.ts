@@ -20,6 +20,8 @@ export function healthPoints(vitals:VitalRecord[],extras:ExtraRow[]):HealthPoint
   for(const [i,e] of extras.entries()){if(!e || typeof e.source!=='string' || typeof e.metric!=='string')continue;const statistic=e.observation?.statistic??legacyStat(e.metric,e.source);out.push({id:e.observation?.key??`extra:${i}`,metric:e.metric,day:e.day,value:e.value,source:e.source,method:'',statistic,stream:`${e.observation?.sourceId??`legacy:${shortHash(e.source)}`}|${statistic}|`,updatedAt:e.observation?.syncedAt??'',measuredAt:e.observation?.measuredAt??null,legacy:!e.observation})}
   return out.filter(p=>Number.isFinite(p.value)&&validDay(p.day)&&p.metric in HEALTH_LABELS)
 }
+/** 佳明账号同步写入的带观测元数据的读数（sourceId = garmin:<账号哈希>）。 */
+export const isGarminSync=(p:HealthPoint)=>!p.legacy&&p.stream.startsWith('garmin:')
 /** UI and coach share this read-only projection. No source averaging or date backfill. */
 export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:string,preferred:Record<string,string>={},checkins:Checkin[]=[]):HealthSnapshot{
   if(!validDay(asOf))asOf=localDay()
@@ -35,8 +37,11 @@ export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:
     const groups=new Map<string,HealthPoint[]>();for(const p of eligible){const key=`${p.stream}:${p.day}`;groups.set(key,[...groups.get(key)??[],p])}
     const daily=[...groups.values()].flatMap(rows=>new Set(rows.map(p=>p.value)).size===1?[rows.at(-1)!]:rows)
     const candidates=daily.filter(p=>p.day===lastDay)
-    const conflict=candidates.length>1
-    const current=conflict?null:candidates[0]??null
+    // 用户未指定来源时：同日有佳明账号同步（非旧格式）读数，默认以最新一次佳明同步为准，其余来源保留在 candidates 里可切换。
+    const garmin=selectedSource?[]:candidates.filter(isGarminSync).sort((a,b)=>(Date.parse(a.updatedAt)||0)-(Date.parse(b.updatedAt)||0))
+    const preferredGarmin=candidates.length>1&&garmin.length?garmin.at(-1)!:null
+    const conflict=candidates.length>1&&!preferredGarmin
+    const current=preferredGarmin??(conflict?null:candidates[0]??null)
     const series=current?[...groups.values()].filter(rows=>rows[0].stream===current.stream&&new Set(rows.map(p=>p.value)).size===1).map(rows=>rows.at(-1)!).sort((a,b)=>a.day.localeCompare(b.day)):[]
     const reference=current?.day??asOf, start=shiftDay(reference,-7)
     const prior=series.filter(p=>p.day>=start&&p.day<reference)
@@ -44,6 +49,7 @@ export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:
     const comparable=metric!=='HRV'||current?.method==='RMSSD'||current?.method==='SDNN'
     const baseline=current&&prior.length>=3&&comparable?{mean:prior.reduce((s,p)=>s+p.value,0)/prior.length,count:prior.length,delta:current.value-prior.reduce((s,p)=>s+p.value,0)/prior.length,start,end:shiftDay(reference,-1)}:null
     const notes:string[]=[]
+    if(preferredGarmin)notes.push(`同日另有 ${candidates.length-1} 个读数（其他来源或旧口径），默认以最新佳明同步为准；可在来源中切换。`)
     if(conflict)notes.push('同一天存在多个来源、统计口径或独立观测冲突，未取平均；请选择来源并核对原始记录。')
     if(selectedSource&&!eligible.length)notes.push('所选来源暂无该日期前的数据，未自动切换其他来源。')
     if(current?.day!==asOf&&current)notes.push(`历史值 ${current.day}，不能当作今天状态。`)

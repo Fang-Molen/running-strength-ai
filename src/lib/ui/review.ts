@@ -10,10 +10,13 @@ export type Review = {
   id: string; kind: ReviewKind; range: [string, string]; createdAt: string; tier: Tier
   verdict: string; bands: { id: string; title: string; band: Band }[]; highlights: string[]; issues: Issue[]
   adjustment: (Adaptation & { id: string }) | null; evidence: string[]
+  /** v76：训练日期与复盘生成时间分开显示；linked = 每节对应的真实记录（可打开） */
+  trainingDates?: string[]; linked?: { entryId: string; date: string; title: string; recordIds: string[]; recordLabels: string[]; quality: boolean }[]
   feedback?: { vote: "up" | "down"; reasons: FeedbackReason[]; text: string; at: string }; accepted?: boolean
 }
 const lab = (e: ScheduleEntry) => `${e.date.slice(5)} ${e.title}`
-export function buildReview(kind: ReviewKind, entries: ScheduleEntry[], today: string, tier: Tier, sessionId?: string, now = new Date().toISOString()): Review {
+export type RecordRef = { id: string; date: string; sport: 'RUNNING' | 'STRENGTH' | 'MIXED' | 'UNKNOWN'; label: string }
+export function buildReview(kind: ReviewKind, entries: ScheduleEntry[], today: string, tier: Tier, sessionId?: string, now = new Date().toISOString(), records: RecordRef[] = []): Review {
   const range: [string, string] = kind === "week" ? [weekOf(today)[0], today] : [today, today]
   const scope = kind === "session" ? entries.filter((e) => e.id === sessionId) : entries.filter((e) => e.date >= range[0] && e.date <= range[1] && e.status !== "rejected" && e.status !== "proposed")
   const logged = scope.filter((e) => e.actual)
@@ -21,8 +24,13 @@ export function buildReview(kind: ReviewKind, entries: ScheduleEntry[], today: s
   const asPlanned = logged.filter((e) => e.actual!.outcome === "as_planned").length
   const missed = logged.filter((e) => e.actual!.outcome === "missed").length
   const open = scope.filter((e) => !e.actual && e.date <= today).length
+  // 只有“按计划完成”标记、没有实际数值也没有对应记录 → 不能评价质量。对应记录只按明确绑定或同一天同类型的真实记录列出（列出≠认定是同一节）。
+  const sportOf = (e: ScheduleEntry) => e.modality === 'run' ? 'RUNNING' : e.modality === 'strength' ? 'STRENGTH' : 'UNKNOWN'
+  const linked = logged.map((e) => { const a = e.actual!, bound = a.occurrenceIds ?? [], refs = records.filter((r) => bound.includes(r.id) || (r.date === e.date && (r.sport === sportOf(e) || r.sport === 'MIXED')))
+    return { entryId: e.id, date: e.date, title: e.title, recordIds: refs.map((r) => r.id), recordLabels: refs.map((r) => r.label), quality: bound.length > 0 || a.minutes != null || a.km != null || a.rpe != null || refs.length > 0 } })
+  const flagOnly = linked.filter((l) => !l.quality).length
   const highlights: string[] = [], issues: Issue[] = [], evidence: string[] = []
-  if (asPlanned) highlights.push(`${asPlanned} 节按计划完成`)
+  if (asPlanned) highlights.push(`${asPlanned} 节标记为按计划完成`)
   const unplanned = logged.filter((e) => e.unplanned).length; if (unplanned) highlights.push(`主动加练 ${unplanned} 次`)
   const greens = bands.filter((b) => b.band === "green").length; if (bands.length >= 2 && greens === bands.length) highlights.push("完成度全部在计划 ±20% 内")
   const reasons = logged.flatMap((e) => e.actual!.reasons)
@@ -35,12 +43,13 @@ export function buildReview(kind: ReviewKind, entries: ScheduleEntry[], today: s
   if (open) issues.push({ text: `${open} 节还没记录实际情况`, type: "data" })
   const a = adaptation(entries, today)
   const adjustment = kind === "session" || a.mode === "none" ? null : { ...a, id: `adj-${range[0]}-${a.mode}` }
-  const verdict = !scope.length ? "这段时间没有安排或记录。" : !logged.length ? "尚无实际反馈，不能评价完成质量。" : missed > asPlanned ? "这段完成得不多，先找出能坚持的节奏。" : asPlanned === logged.length && logged.length ? "按计划完成，节奏不错。" : "已有部分反馈，具体偏差需要结合原计划目的核对。"
+  const verdict = !scope.length ? "这段时间没有安排或记录。" : !logged.length ? "尚无实际反馈，不能评价完成质量。" : missed > asPlanned ? "这段完成得不多，先找出能坚持的节奏。" : asPlanned === logged.length && logged.length ? (flagOnly === logged.length ? "已标记按计划完成，训练质量依据不足。" : flagOnly ? `已标记按计划完成；${logged.length - flagOnly} 节有实际记录可核对，${flagOnly} 节只有完成标记，质量依据不足。` : "按计划完成，每节都有实际记录可核对（质量看下方记录）。") : "已有部分反馈，具体偏差需要结合原计划目的核对。"
   const depth = TIERS[tier].depth
+  if (flagOnly) evidence.push(`${flagOnly} 节只有“按计划完成”标记，没有实际用时/距离/RPE，也没有对应的训练记录`)
   evidence.push(`计划 ${scope.length} 节 · 已记录 ${logged.length} · 按计划 ${asPlanned} · 没练 ${missed}`)
   if (depth >= 2) evidence.push("色带阈值：绿 ±20%，黄 50–79%/121–150%，橙更偏，红没练（TrainingPeaks）")
   if (depth >= 3) { const mins = logged.reduce((s, e) => s + (e.actual!.outcome === "missed" ? 0 : e.actual!.minutes ?? 0), 0); evidence.push(`已知实际时长 ${mins} 分钟；缺失时长不补计划值`) }
-  return { id: `${kind}-${range[0]}-${sessionId ?? ""}-${now}`, kind, range, createdAt: now, tier, verdict, bands: depth >= 2 ? bands : [], highlights: highlights.slice(0, depth >= 2 ? 3 : 1), issues: issues.slice(0, depth >= 2 ? 3 : 2), adjustment, evidence }
+  return { id: `${kind}-${range[0]}-${sessionId ?? ""}-${now}`, kind, range, createdAt: now, tier, verdict, bands: depth >= 2 ? bands : [], highlights: highlights.slice(0, depth >= 2 ? 3 : 1), issues: issues.slice(0, depth >= 2 ? 3 : 2), adjustment, evidence, trainingDates: [...new Set(logged.map((e) => e.date))].sort(), linked }
 }
 type KV = { getItem(k: string): string | null; setItem(k: string, v: string): void }
 const st = (): KV | null => (typeof localStorage === "undefined" ? null : localStorage)
