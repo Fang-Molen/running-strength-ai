@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import { loadComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, COMPONENTS_EVT, type CompStatus, type PartFeedback, type DayComponents } from "@/lib/ui/plan400-components-store"
 import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } from "@/lib/ui/run-link"
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
-import type { DayParts } from "@/lib/ui/plan400-view"
+import type { DayParts, V4Day, V4Log } from "@/lib/ui/plan400-view"
+import { pendingFeedback, type PendingItem } from "@/lib/ui/pending-feedback"
+import V4Json from "@/lib/plan400-v4.json" with { type: "json" }
 const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
 export function useParts(date: string): DayComponents | undefined {
@@ -17,13 +19,13 @@ export function useRunMatch(): ReturnType<typeof lastRunMatch> {
   useEffect(() => { const f = () => { try { setM(loadRunMatch()) } catch { /* keep */ } }; const ns = ["fk-run-links", COMPONENTS_EVT, "fk-training-activities-changed", "fk-garmin-synced"]; ns.forEach(n => window.addEventListener(n, f)); return () => ns.forEach(n => window.removeEventListener(n, f)) }, [])
   return m
 }
-/** 整个周期的分项 + 跑步关联（计划列表 / 首页主卡 / 进度计数共用，一次读取）。 */
+/** 整个周期的分项输入（分项反馈 + 已确认关联 + 同日候选 + 逐组/逐段执行），来自读模型同一次计算：计划列表 / 首页主卡 / 进度计数 / 日志共用。 */
 export function usePartsAll(): Record<string, DayParts> {
   const m = useRunMatch(), [doc, setDoc] = useState(() => loadComponents())
   useEffect(() => { const f = () => setDoc(loadComponents()); window.addEventListener(COMPONENTS_EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(COMPONENTS_EVT, f); window.removeEventListener("storage", f) } }, [])
-  const out: Record<string, DayParts> = {}
-  for (const [d, c] of Object.entries(doc.days)) out[d] = { parts: c }
-  for (const l of m.links) if (l.entry.id.startsWith("plan400:")) out[l.entry.date] = { ...(out[l.entry.date] ?? {}), runLinked: true }
+  const out: Record<string, DayParts> = { ...(m.v4Parts ?? {}) }
+  // 分项反馈刚保存、读模型还没刷新时，以最新分项为准（其余输入沿用）
+  for (const [d, c] of Object.entries(doc.days)) out[d] = { ...(out[d] ?? {}), parts: c }
   return out
 }
 export function useV4RunLink(date: string): { link: RunLink | null; candidates: ActivityRow[] } {
@@ -32,19 +34,22 @@ export function useV4RunLink(date: string): { link: RunLink | null; candidates: 
 }
 /** 跑步部分：关联状态 + 计划 vs 实际；歧义时“是这次吗？” */
 export function RunLinkPanel({ date, fallback }: { date: string; fallback: React.ReactNode }) {
-  const { link, candidates } = useV4RunLink(date)
+  const { link, candidates } = useV4RunLink(date), m0 = useRunMatch()
   if (link) { const c = planVsActual(link.entry, link.run)
     return <div className="rounded-xl border border-line p-2.5 text-xs leading-5" data-testid="v4-run-link">
-      <p className="keep"><b>已关联佳明跑步</b>{link.by === "auto" ? "（同一天只有这一条，自动关联）" : "（你确认的）"}：{link.run.title || "跑步"} · {hm(link.run.startedAt)}</p>
+      <p className="keep"><b>已关联佳明跑步</b>{link.by === "auto" ? "（旧版本自动关联的；不对就点“取消关联”）" : "（你确认的）"}：{link.run.title || "跑步"} · {hm(link.run.startedAt)}</p>
       <p className="keep">实际 {c.actual}</p>
       <p className="keep text-muted">这是同一条记录：日志/复盘/方坤只算一次；力量部分不会因此算完成。</p>
       <button type="button" className="mt-1 min-h-9 font-bold text-accent underline" onClick={() => saveRunLink(link.entry.id, { rejected: [...(allRunLinks()[link.entry.id]?.rejected ?? []), link.run.id] })}>取消关联</button>
     </div> }
-  if (candidates.length) return <div className="space-y-1 rounded-xl border border-warn/50 p-2.5 text-xs" data-testid="v4-run-suggest">
-    <p className="keep font-bold">是这次吗？{candidates.length > 1 ? `（${candidates.length} 条，选一条）` : ""}</p>
-    {candidates.map(r => <p key={r.id} className="keep flex items-center justify-between gap-2"><span>{r.date.slice(5)} {hm(r.startedAt)} · {r.title || "跑步"} · {km(r.distanceM)}{r.durationSec ? ` · ${Math.round(r.durationSec / 60)} 分钟` : ""}</span>
-      <button type="button" className="fk-chip min-h-9" onClick={() => saveRunLink(v4RunSlotId(date), { garminId: r.id, by: "user" })}>是，关联</button></p>)}
-  </div>
+  if (candidates.length) { const sug = m0.suggestions.find(x => x.entry.id === v4RunSlotId(date))
+    const reject = (id: string) => saveRunLink(v4RunSlotId(date), { rejected: [...(allRunLinks()[v4RunSlotId(date)]?.rejected ?? []), id] })
+    return <div className="space-y-1 rounded-xl border border-warn/50 p-2.5 text-xs" data-testid="v4-run-suggest">
+    <p className="keep font-bold">{sug?.likely ? "很可能是这条手表跑步，确认一下" : "是这次吗？"}{candidates.length > 1 ? `（${candidates.length} 条，选一条）` : ""}</p>
+    {sug?.basis ? <p className="keep text-muted">依据：{sug.basis}。确认前不算关联，也不算跑步完成。</p> : null}
+    {candidates.map(r => <div key={r.id} className="keep flex flex-wrap items-center justify-between gap-2"><span>{r.date.slice(5)} {hm(r.startedAt)} · {r.title || "跑步"} · {km(r.distanceM)}{r.durationSec ? ` · ${Math.round(r.durationSec / 60)} 分钟` : ""}</span>
+      <span className="flex gap-1"><button type="button" className="fk-chip min-h-9" onClick={() => saveRunLink(v4RunSlotId(date), { garminId: r.id, by: "user" })}>是，关联</button><button type="button" className="fk-chip min-h-9" onClick={() => reject(r.id)}>不是这节</button></span></div>)}
+  </div> }
   return <>{fallback}</>
 }
 const STATUSES: [CompStatus, string][] = [["done", "完成"], ["reduced", "减量完成"], ["skipped", "跳过这项"]]
@@ -88,28 +93,66 @@ export function RecoveryParts({ date, late }: { date: string; late: boolean }) {
     {msg ? <p role="status" className="keep text-xs">{msg}</p> : null}
   </section>
 }
-/** 导入/同步到一条关联到 V4 跑步部分的手表跑步后弹一次：立即填跑步评价 / 力量另行记录 / 稍后。 */
+/**
+ * 导入/同步手表跑步后弹一次（v83 P1-07）：
+ * - 同日候选（未确认）→ 关联到这节课 / 不是这节课（作为计划外保留） / 稍后；
+ * - 已关联但没评价 → 立即填跑步评价 / 力量另行记录 / 稍后。
+ * “稍后”只是不再弹窗：这一项留在日志顶部“待补反馈”里，填完评价或做了确认才消失。
+ */
 export function RunImportPrompt({ today }: { today: string }) {
-  const m = useRunMatch(), [open, setOpen] = useState<RunLink | null>(null), [fill, setFill] = useState(false)
+  const m = useRunMatch()
+  const [open, setOpen] = useState<{ kind: "link"; l: RunLink } | { kind: "cand"; entry: RunLink["entry"]; run: ActivityRow; basis?: string } | null>(null), [fill, setFill] = useState(false)
   useEffect(() => {
     if (open) return
     const doc = loadComponents(), seen = new Set(doc.prompted ?? [])
-    const due = m.links.find(l => l.entry.id.startsWith("plan400:") && !seen.has(`${l.entry.date}|${l.run.id}`) && !hasFeedback(doc.days[l.entry.date]?.running) && Date.parse(today) - Date.parse(l.entry.date) <= 3 * 864e5)
-    if (due) setOpen(due)
+    const recent = (d: string) => Date.parse(today) - Date.parse(d) <= 3 * 864e5 && d <= today
+    const due = m.links.find(l => l.entry.id.startsWith("plan400:") && !seen.has(`${l.entry.date}|${l.run.id}`) && !hasFeedback(doc.days[l.entry.date]?.running) && recent(l.entry.date))
+    if (due) { setOpen({ kind: "link", l: due }); return }
+    const cand = m.suggestions.find(x => x.entry.id.startsWith("plan400:") && x.likely && x.runs.length === 1 && !seen.has(`${x.entry.date}|${x.runs[0].id}`) && recent(x.entry.date))
+    if (cand) setOpen({ kind: "cand", entry: cand.entry, run: cand.runs[0], basis: cand.basis })
   }, [m, today, open])
   if (!open) return null
-  const done = () => { markPrompted(`${open.entry.date}|${open.run.id}`); setOpen(null); setFill(false) }
-  const c = planVsActual(open.entry, open.run)
+  const date = open.kind === "link" ? open.l.entry.date : open.entry.date, run = open.kind === "link" ? open.l.run : open.run
+  const later = () => { markPrompted(`${date}|${run.id}`); setOpen(null); setFill(false) }
+  if (open.kind === "cand") {
+    const c = planVsActual(open.entry, open.run)
+    return <div className="fixed inset-0 z-[60] flex items-end bg-black/50" role="dialog" aria-label="同日手表跑步待确认" data-testid="run-candidate-prompt">
+      <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-bg p-4">
+        <p className="font-bold">这条手表跑步是 {date.slice(5)}「{open.entry.title}」的跑步部分吗？</p>
+        <p className="keep text-xs text-muted">{run.title || "跑步"} · {hm(run.startedAt)} · 实际 {c.actual}{open.basis ? `。依据：${open.basis}` : ""}。确认前不算关联、不算跑步完成。</p>
+        <div className="mt-3 grid gap-2">
+          <button type="button" className="min-h-12 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { saveRunLink(v4RunSlotId(date), { garminId: run.id, by: "user" }); markPrompted(`${date}|${run.id}`); setOpen(null) }}>关联到这节课</button>
+          <button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={() => { saveRunLink(v4RunSlotId(date), { rejected: [...(allRunLinks()[v4RunSlotId(date)]?.rejected ?? []), run.id] }); markPrompted(`${date}|${run.id}`); setOpen(null) }}>不是这节课（作为计划外保留）</button>
+          <button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={later}>稍后（留在待补里）</button>
+        </div>
+      </div>
+    </div>
+  }
+  const c = planVsActual(open.l.entry, open.l.run)
   return <div className="fixed inset-0 z-[60] flex items-end bg-black/50" role="dialog" aria-label="手表跑步已导入" data-testid="run-import-prompt">
     <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-bg p-4">
-      <p className="font-bold">佳明跑步已关联到 {open.entry.date.slice(5)}「{open.entry.title}」</p>
+      <p className="font-bold">佳明跑步已关联到 {date.slice(5)}「{open.l.entry.title}」</p>
       <p className="keep text-xs text-muted">实际 {c.actual}。只关联跑步部分；力量部分不会因此算完成。</p>
-      {fill ? <><PartFeedbackForm date={open.entry.date} part="running" name="跑步" /><button type="button" className="mt-2 min-h-11 w-full rounded-xl border border-line font-bold" onClick={done}>完成</button></> :
+      {fill ? <><PartFeedbackForm date={date} part="running" name="跑步" /><button type="button" className="mt-2 min-h-11 w-full rounded-xl border border-line font-bold" onClick={later}>完成</button></> :
         <div className="mt-3 grid gap-2">
           <button type="button" className="min-h-12 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => setFill(true)}>立即填跑步评价</button>
-          <button type="button" className="min-h-12 rounded-xl border border-accent font-bold text-accent" onClick={() => { done(); window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: open.entry.date, tab: "during" } })) }}>力量另行记录</button>
-          <button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={done}>稍后</button>
+          <button type="button" className="min-h-12 rounded-xl border border-accent font-bold text-accent" onClick={() => { later(); window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date, tab: "during" } })) }}>力量另行记录</button>
+          <button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={later}>稍后（留在待补里）</button>
         </div>}
     </div>
   </div>
+}
+/** v83（P1-07 / P1-04）：待补反馈（由事实推出；稍后过的也在这里）。点一项打开当天对应页。 */
+export function PendingFeedbackList({ today, compact = false }: { today: string; compact?: boolean }) {
+  const parts = usePartsAll(), [logs, setLogs] = useState<Record<string, V4Log>>({}), [prompted, setPrompted] = useState<string[]>([])
+  useEffect(() => { const f = () => { try { setLogs(JSON.parse(localStorage.getItem("fk-plan400-v4-log") || "{}") ?? {}) } catch { setLogs({}) } setPrompted(loadComponents().prompted ?? []) }; f()
+    const ns = ["fk-plan400-changed", COMPONENTS_EVT, "storage"]; ns.forEach(n => window.addEventListener(n, f)); return () => ns.forEach(n => window.removeEventListener(n, f)) }, [])
+  const items = today ? pendingFeedback((V4Json as { days: V4Day[] }).days, parts, logs, today, prompted) : []
+  if (!items.length) return null
+  const open = (it: PendingItem) => window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: it.date, tab: it.kind === "confirm_run" ? "during" : "after" } }))
+  if (compact) return <button type="button" className="mt-1 min-h-11 text-sm text-warn" data-testid="pending-feedback-compact" onClick={() => open(items[0])}>待补反馈 {items.length} 项 ›</button>
+  return <section className="home-card mb-3 p-3" aria-label="待补反馈" data-testid="pending-feedback">
+    <p className="text-sm font-bold">待补反馈 · {items.length} 项</p>
+    <ul className="mt-1 divide-y divide-line">{items.map(it => <li key={`${it.date}|${it.kind}`}><button type="button" className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm" onClick={() => open(it)}><span className="min-w-0"><b>{Number(it.date.slice(5, 7))}月{Number(it.date.slice(8, 10))}日</b> {it.text}{it.deferred ? <span className="text-xs text-muted">（你点过稍后）</span> : null}</span><span className="shrink-0 text-accent">去补 ›</span></button></li>)}</ul>
+  </section>
 }

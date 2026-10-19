@@ -5,7 +5,7 @@
  *  - 整课标记 done/rpe/pain 是旧口径（跑步与力量没分开），只原样显示为“整课（旧口径）”，绝不拆给两个分项。
  * 规则：设备跑步永远不能让力量变成“已完成”；只有一个分项有记录时，总览不显示“整课完成”。 */
 import { activityLocalDay, activityLocalTime, fmtDistance, fmtDuration, fmtHr, fmtPace } from './activity-format'
-import { v4DayFact, type PartFact, type PartState, type V4Day, type V4Log } from './plan400-view'
+import { v4DayFact, type DayParts, type PartFact, type PartState, type V4Day, type V4Log } from './plan400-view'
 import type { DayComponents } from './plan400-components-store'
 
 export type DeviceRun = { id: string; source: 'garmin' | 'import'; sourceLabel: string; startedAt: string; distanceM: number | null; durationSec: number | null; avgHr: number | null; title: string }
@@ -35,10 +35,12 @@ export function deviceRunFacts(r: DeviceRun): string[] {
 const TONE: Record<PartState, ComponentTone> = { done: 'done', reduced: 'partial', skipped: 'skipped', partial: 'partial', live: 'live', candidate: 'candidate', none: 'none' }
 const toState = (f: PartFact): ComponentState => ({ label: f.label, tone: TONE[f.state], ...(f.detail ? { detail: f.detail } : {}) })
 const phrase = (n: string, f: PartFact) => f.state === 'done' ? `${n}完成` : f.state === 'reduced' ? `${n}减量完成` : f.state === 'skipped' ? `${n}跳过` : f.state === 'partial' ? `${n}有记录·未标完成` : f.state === 'live' ? `${n}进行中` : f.state === 'candidate' ? `${n}有同日手表记录·待确认` : `${n}待记录`
-export function comboView(d: V4Day, log: V4Log | undefined, opts: { deviceRuns: DeviceRun[]; strengthEntry: StrengthEntryLite; strengthLive: boolean; parts?: DayComponents; runLinked?: boolean }): ComboView {
+export function comboView(d: V4Day, log: V4Log | undefined, opts: { deviceRuns: DeviceRun[]; strengthEntry: StrengthEntryLite; strengthLive: boolean; parts?: DayComponents; runLinked?: boolean; /** v83：读模型给的同一份分项输入（有就用它，保证与日志/首页一致） */ shared?: DayParts }): ComboView {
   const a = opts.strengthEntry?.actual
   const ex = a?.executionState === 'COMPLETED' || a?.executionState === 'PARTIAL' || a?.executionState === 'INTERRUPTED' ? a.executionState : null
-  const f = v4DayFact(d, log, { parts: opts.parts, runLinked: opts.runLinked, runCandidates: opts.runLinked ? 0 : opts.deviceRuns.length, strengthExec: ex, strengthMarked: !ex && a?.outcome ? a.outcome as 'as_planned' | 'different' | 'missed' : null }, opts.strengthLive)
+  const own: DayParts = { parts: opts.parts, runLinked: opts.runLinked, runCandidates: opts.runLinked ? 0 : opts.deviceRuns.length, strengthExec: ex, strengthMarked: !ex && a?.outcome ? a.outcome as 'as_planned' | 'different' | 'missed' : null }
+  const x: DayParts = opts.shared ? { ...opts.shared, parts: opts.parts ?? opts.shared.parts, strengthExec: opts.shared.strengthExec ?? ex, strengthMarked: opts.shared.strengthMarked ?? own.strengthMarked } : own
+  const f = v4DayFact(d, log, x, opts.strengthLive)
   const combo = f.combo
   const running: ComponentState = f.running ? toState(f.running) : { label: '未记录', tone: 'none' }
   const strength = f.strength ? toState(f.strength) : null

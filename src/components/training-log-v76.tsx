@@ -11,6 +11,7 @@ import { activityLocalTime, fmtDistance, fmtDuration, fmtHr, fmtPace } from "@/l
 import { PhoneRecordDetail } from "@/components/phone-record-detail"
 import { UnmarkedPlans, unmarkedEntries } from "@/components/unmarked-plans"
 import { partLine } from "@/lib/ui/plan400-components-store"
+import { PendingFeedbackList } from "@/components/plan400-parts"
 import { allRunLinks, saveRunLink, planVsActual, type RunLink } from "@/lib/ui/run-link"
 import { loadSchedule } from "@/lib/ui/day-schedule"
 import { OccurrenceCard, ImportRow } from "@/components/training-log-panel"
@@ -48,7 +49,7 @@ function Entry({ title, summary, children, id, open, onToggle }: { title: string
 function RunLinkNote({ link }: { link: RunLink }) {
   const c = planVsActual(link.entry, link.run)
   return <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="run-link">
-    <p className="keep"><b>已关联佳明跑步</b> · 计划「{link.entry.title}」{link.by === "auto" ? "（同一天自动关联）" : ""}</p>
+    <p className="keep"><b>已关联佳明跑步</b> · 计划「{link.entry.title}」{link.by === "auto" ? "（旧版本自动关联的，不对可取消）" : "（你确认的）"}</p>
     <p className="keep text-muted">计划 {c.plan} → 实际 {c.actual}</p>
     <p className="keep">{c.note}</p>
     <button type="button" className="mt-1 min-h-9 text-xs font-bold text-accent underline" onClick={() => { const cur = allRunLinks()[link.entry.id]; saveRunLink(link.entry.id, { rejected: [...(cur?.rejected ?? []), link.run.id] }) }}>取消关联</button>
@@ -61,7 +62,7 @@ function RecordRow({ r, plan, onAsk, open, onOpen, link }: { r: ActivityRow; pla
   const imp = r.importId && !g ? loadConfirmedTrainingImports().find(i => i.confirmedImportId === r.importId) ?? null : null
   const name = r.title && !/佳明账号同步/.test(r.title) ? r.title : k === "run" ? "跑步" : k === "lift" ? "力量训练" : "训练"
   // 方坤里记录的训练：直接用原来的记录卡（含分段、更正、作废），只加来源标签，不另造一行。
-  if (imp && !occ) return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line py-1 last:border-b-0"><span className="keep block text-[11px] text-muted">{r.date.slice(5)} {hm(r.startedAt)} · {sourcesOf(r).join(" + ")}</span><ImportRow item={imp} onAsk={onAsk} onDeleted={() => window.dispatchEvent(new Event("fk-training-activities-changed"))} /></li>
+  if (imp && !occ) return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line py-1 last:border-b-0"><span className="keep block text-[11px] text-muted">{r.date.slice(5)} {hm(r.startedAt)} · {sourcesOf(r).join(" + ")}{r.quickLog ? " · 记一笔（计划外）" : ""}</span>{r.note ? <span className="keep block text-[11px] font-bold text-warn" data-testid="row-note">{r.note}：下面原记录里的分钟数不计入统计</span> : null}<ImportRow item={imp} onAsk={onAsk} onDeleted={() => window.dispatchEvent(new Event("fk-training-activities-changed"))} /></li>
   if (occ && !g) return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line py-1 last:border-b-0"><span className="keep block text-[11px] text-muted">{r.date.slice(5)} {hm(r.startedAt)} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? ` · ${r.rpe != null ? "未完成" : "未完成·未反馈"}（不计入）` : ""}</span><OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /></li>
   return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line last:border-b-0">
     <button type="button" aria-expanded={open} onClick={() => onOpen(!open)} className="flex min-h-14 w-full items-center gap-3 py-2 text-left">
@@ -69,12 +70,13 @@ function RecordRow({ r, plan, onAsk, open, onOpen, link }: { r: ActivityRow; pla
       <span className="min-w-0 flex-1">
         <span className="block truncate font-bold">{name}{link ? <span className="ml-1 text-xs font-normal text-muted">· 计划「{link.entry.title}」</span> : null}</span>
         <span className="keep block truncate text-xs text-muted">{r.date.slice(5)}{r.timeUnknown ? "" : ` ${hm(r.startedAt)}`} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? <b className="ml-1 rounded bg-amber-100 px-1 text-amber-800">{r.rpe != null ? "未完成" : "未完成·未反馈"}（不计入）</b> : null}</span>
-        <span className="keep block truncate text-xs">{k === "lift" ? [dur(r.durationSec), r.sets ? `${r.sets} 组` : null].filter(Boolean).join(" · ") : `${km(r.distanceM) ?? "距离—"} · ${dur(r.durationSec)}`}<span className="text-muted">{k !== "lift" ? ` · 配速 ${pace(r.distanceM, r.durationSec) ?? "—"}` : ""}{r.avgHr ? ` · 心率 ${fmtHr(r.avgHr)} 次/分` : ""}</span></span>
+        <span className="keep block truncate text-xs">{k === "lift" ? [dur(r.durationSec) + (r.durationPartial ? "（部分）" : ""), r.sets ? `${r.sets} 组` : null].filter(Boolean).join(" · ") : `${km(r.distanceM) ?? "距离—"} · ${dur(r.durationSec)}${r.durationPartial ? "（部分）" : ""}`}<span className="text-muted">{k !== "lift" ? ` · 配速 ${pace(r.distanceM, r.durationSec) ?? "—"}` : ""}{r.avgHr ? ` · 心率 ${fmtHr(r.avgHr)} 次/分` : ""}</span></span>
       </span>
       <span className="text-muted" aria-hidden="true">{open ? "▾" : "›"}</span>
     </button>
     {open ? <div className="mb-3 space-y-2">
       {link ? <RunLinkNote link={link} /> : null}
+      {r.v4 ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-fact-note"><p className="keep font-bold">V4 这节课</p>{r.v4.running ? <p className="keep">跑步：{r.v4.running.label}{r.v4.running.detail ? ` · ${r.v4.running.detail}` : ""}</p> : null}{r.v4.strength ? <p className="keep">力量：{r.v4.strength.label}</p> : null}{r.v4.legacyOverall ? <p className="keep text-muted">历史整课记录（旧口径，只读；整课 RPE 不拆给跑步或力量）</p> : null}</div> : null}
       {r.v4parts ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-parts-note"><p className="keep font-bold">V4 分项评价</p>{[partLine("跑步", r.v4parts.running), partLine("力量", r.v4parts.strength)].map((x, i) => x ? <p key={i} className="keep">{x}</p> : null)}{!partLine("跑步", r.v4parts.running) && !partLine("力量", r.v4parts.strength) ? <p className="keep text-muted">还没有分项评价</p> : null}</div> : null}
       {g ? <GarminActivityRow g={g} detailOnly /> : null}
       {occ ? <OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /> : null}
@@ -122,7 +124,8 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
   const undatedImports = loadConfirmedTrainingImports().filter(i => !calendarDayShanghai(i.occurredAt.value) && !String(i.title.value ?? "").includes("佳明账号同步"))
   const undatedOcc = listTrainingOccurrences().filter(o => !calendarDayShanghai(o.startedAt))
   return <div className="fk-log-v76 mx-auto max-w-3xl px-3 pt-2 pb-nav" data-testid="training-log-v76">
-    <section className="home-card px-3 py-2" aria-label="五维能力图（置顶）"><div className="flex items-baseline justify-between"><h2 className="text-base font-bold">我的能力</h2><span className="keep text-xs text-muted">点各维看输入和算法</span></div><AbilityRadarCard asOf={today} mode="chart" /></section>
+    {/* v83（P1-04）：先看“待补什么、最近练了什么”；五维能力图下移到记录之后 */}
+    <PendingFeedbackList today={today} />
     <section className="home-card px-3 py-3" aria-label="日期与类型筛选">
       <h2 className="px-1 text-base font-bold">训练记录</h2>
       <div className="mt-2 grid grid-cols-3 gap-1 rounded-full bg-surface-2 p-1" role="group" aria-label="训练类型筛选">
@@ -157,6 +160,7 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
     <div className="mt-3"><ReviewPanel today={today} title="方坤复盘" /></div>
     <Entry id="log-ability" title="能力详情" summary={axes.length ? `五维 已评 ${axes.filter(a => a.score != null).length} 项 · 待评估 ${axes.filter(a => a.score == null).length} 项` : "五维能力图"} open={entry.ability} onToggle={o => setEntry(e => ({ ...e, ability: o }))}>{entry.ability ? <AbilityRadarCard asOf={today} mode="details" /> : null}</Entry>
     <Entry id="log-trend" title="详细趋势" summary="训练负荷 · 记录依据查询" open={entry.trend} onToggle={o => setEntry(e => ({ ...e, trend: o }))}>{entry.trend ? <><LogMetricsPanel today={today} loadOnly /><TrainingEvidencePanel today={today} /></> : null}</Entry>
+    <section className="home-card mt-3 px-3 py-2" aria-label="五维能力图" data-testid="log-radar"><div className="flex items-baseline justify-between"><h2 className="text-base font-bold">我的能力</h2><span className="keep text-xs text-muted">点各维看输入和算法</span></div><AbilityRadarCard asOf={today} mode="chart" /></section>
     <Entry id="log-history" title="本周评估与建议" summary="方坤按本周记录给的建议，可标说得对/不准" open={entry.history} onToggle={o => setEntry(e => ({ ...e, history: o }))}>{entry.history ? <AssessmentPanel /> : null}</Entry>
     <Entry id="log-feel" title="本周感受与成长" summary={feelLogs.length ? `已记 ${feelLogs.length} 条感受 · 最近：${FEEL[feelLogs.at(-1)!.feel] ?? feelLogs.at(-1)!.feel}` : "还没记录感受，点开填写"} open={entry.feel} onToggle={o => setEntry(e => ({ ...e, feel: o }))}>
       {feelLogs.length ? <ul className="space-y-1">{feelLogs.map(log => <li key={log.sessionId}>{plan.sessions.find(x => x.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <div className="keep text-sm"><p>本周还没有记录主观感受。训练结束后在“今日”给这节课选“轻松/正好/吃力/有不适”，方坤复盘会用它判断状态。</p><button type="button" className="mt-2 min-h-11 rounded-full border border-line px-3 font-bold" onClick={() => onNavigate?.("today")}>去今日记录感受</button></div>}

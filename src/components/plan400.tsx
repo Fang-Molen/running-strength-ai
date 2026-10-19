@@ -11,7 +11,7 @@ import { discardGuided, guidedLive, latestOccurrence } from "@/lib/ui/guided-dis
 import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, loadDateConfirm, saveDateConfirm, clearDateConfirm, migrateUserConfirmedDates, shiftedText, DATE_CONFIRM_KEY, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
 import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor, type ComboView, type ComponentState, type DeviceRun } from "@/lib/ui/plan400-components";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
-import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink, usePartsAll } from "@/components/plan400-parts";
+import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink, usePartsAll, PendingFeedbackList } from "@/components/plan400-parts";
 import type { DayParts } from "@/lib/ui/plan400-view";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { currentAthleteId } from "@/lib/core/events";
@@ -80,8 +80,11 @@ function useCombo(d: V4Day, log: Log | undefined): ComboView & { runs: DeviceRun
   let entry; try { entry = loadSchedule().entries.find((e) => e.id === strengthEntryId(d.date)); } catch { entry = undefined; }
   // v81：组合课（跑步＋力量同一条目）只做完力量时，日程条目还不投影整节结果；力量分项直接看最近一次（未作废）逐组课次。
   try { const o = latestOccurrence(scheduleExecutionId(strengthEntryId(d.date), "strength")); if (o && o.lifecycle !== "IN_PROGRESS" && !entry?.actual?.executionState) entry = { ...(entry ?? { id: strengthEntryId(d.date) }), actual: { ...(entry?.actual ?? {}), executionState: o.lifecycle === "COMPLETED" ? "COMPLETED" : "INTERRUPTED", occurrenceIds: [o.trainingOccurrenceId] } } as typeof entry; } catch { /* 读不到就按条目 */ }
-  const parts = useParts(d.date), { link } = useV4RunLink(d.date);
-  return { ...comboView(d, log, { deviceRuns: runs, strengthEntry: entry, strengthLive: strengthLive(d.date), parts, runLinked: !!link }), runs, dayParts: { parts, runLinked: !!link } };
+  const parts = useParts(d.date), { link } = useV4RunLink(d.date), shared = usePartsAll()[d.date];
+  const live = strengthLive(d.date);
+  const v = comboView(d, log, { deviceRuns: runs, strengthEntry: entry, strengthLive: live, parts, runLinked: !!link, shared: shared ? { ...shared, runLinked: !!link } : undefined });
+  // v83：DaySheet 的状态与计划列表/首页/日志用同一份分项输入
+  return { ...v, runs, dayParts: { ...(shared ?? {}), parts, runLinked: !!link } };
 }
 const TONE_CLS: Record<ComponentState["tone"], string> = { none: "border-line text-muted", candidate: "border-warn/60 text-warn", partial: "border-accent/60 text-accent", live: "border-accent text-accent", done: "border-[#47C29A] text-[#47C29A]", skipped: "border-line text-muted" };
 function CompChip({ s }: { s: ComponentState }) { return <span className={"shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-bold " + TONE_CLS[s.tone]}>{s.label}</span>; }
@@ -99,7 +102,7 @@ function DeviceRunList({ runs }: { runs: DeviceRun[] }) {
   return <div className="space-y-2" data-testid="device-run-candidates">
     <p className="keep text-xs text-muted">同日手表跑步{runs.length > 1 ? `（${runs.length} 条，未判断是哪一条）` : ""} · 只显示设备给出的字段，未关联到这节课</p>
     {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-xs leading-5"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p><p className="keep text-muted">没有圈段/分段数据，150m 各组成绩和组间休息不能从这条记录得出，请按实际手填。</p></div>)}
-    <p className="keep text-[11px] text-muted">把手表记录关联到这节课的跑步部分、并自动整理成“跑步实际”，需要新增一份关联记录（数据结构调整），等你确认后再做。</p>
+    <p className="keep text-[11px] text-muted">这些手表跑步不是这节课的候选（你标过“不是这节”，或已关联到别的计划课），作为计划外记录保留在日志里。</p>
   </div>;
 }
 export function openPlan400Day(date: string, tab: Tab = "plan") { window.dispatchEvent(new CustomEvent(OPEN_EVT, { detail: { date, tab } })); }
@@ -262,6 +265,7 @@ export function Plan400TodayCard({ today, onReview }: { today: string; onReview?
     <HomeComboLine d={d} log={logs[d.date]} />
     <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent text-base font-bold text-accent-fg" data-testid="today-primary-cta" onClick={go}>{cta.label}</button>
     <div className="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" className="min-h-11 text-accent" onClick={() => openPlan400Day(d.date, "plan")}>完整课表 ›</button>{s === "done" || s === "reduced" ? <button type="button" className="min-h-11 text-muted" onClick={() => openPlan400Day(d.date, "later")}>补充恢复信息</button> : null}{(s === "done" || s === "reduced") && onReview ? <button type="button" className="min-h-11 text-muted" onClick={onReview}>去日志看复盘</button> : null}</div>
+    <PendingFeedbackList today={today} compact />
   </section>;
 }
 

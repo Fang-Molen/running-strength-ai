@@ -16,7 +16,7 @@ import { runningActualTotals } from './running-actual-totals';
 import type { ScheduleEntry } from './day-schedule-rules';
 import { matchRuns, v4RunSlots, allRunLinks, v4RunSlotId, type RunLink, type RunSuggestion } from './run-link';
 import { loadComponents, type DayComponents, type ComponentsDoc } from './plan400-components-store';
-import { v4DayFact, type V4Day, type V4DayFact, type V4Log } from './plan400-view';
+import { v4DayFact, type DayParts, type V4Day, type V4DayFact, type V4Log } from './plan400-view';
 import { legacyQuickAudit, type LegacyQuickAudit } from './quick-log-save'
 import { v4ExecFrom, type V4Exec } from './v4-exec';
 export type RowSource = 'execution' | 'phone' | 'import' | 'garmin'
@@ -111,7 +111,9 @@ export function loadTrainingActivities(): ActivityRow[] {
   try { exec = v4ExecFrom(listTrainingOccurrences().filter(o => ids.has(o.trainingOccurrenceId)), events, occurrenceVoided) } catch { exec = {} }
   return linkRuns(rows, typeof localStorage === 'undefined' ? null : localStorage, Date.now(), exec);
 }
-let lastMatch: { links: RunLink[]; suggestions: RunSuggestion[] } = { links: [], suggestions: [] }
+/** v83：v4Parts = 每个 V4 日期送进 v4DayFact 的同一份分项输入（首页主卡/计划/日志/方坤共用，避免各算各的） */
+export type V4DayInput = DayParts & { strengthLive?: boolean }
+let lastMatch: { links: RunLink[]; suggestions: RunSuggestion[]; v4Parts?: Record<string, V4DayInput> } = { links: [], suggestions: [], v4Parts: {} }
 /** v79：上一次 loadTrainingActivities 算出的 计划跑步课 ↔ 手表跑步 关联（日志、方坤、计划页共用同一份）。 */
 export function loadRunMatch() { loadTrainingActivities(); return lastMatch }
 export const lastRunMatch = () => lastMatch
@@ -137,18 +139,26 @@ export function linkRuns(rows: ActivityRow[], store: Pick<Storage, 'getItem'> | 
     const e = exec[d]; if (!e?.strength && !e?.run && !v4Linked.has(d)) continue
     rows.push({ id: `p400:${d}`, startedAt: localNoon(d), timeUnknown: true, date: d, sport: 'STRENGTH', distanceM: null, durationSec: null, strengthVolumeKg: null, sets: null, rpe: null, source: 'phone', appMade: true, plan: 'v4', title: `V4 ${pd.title}`, status: 'incomplete', originIds: [`p400:${d}`, `plan400:${d}`, `sched:plan400:${d}:strength`] })
   }
+  const v4Parts: Record<string, V4DayInput> = {}
+  const v4Dates = new Set([...Object.keys(comps.days ?? {}), ...Object.keys(exec), ...v4Linked.keys(), ...Object.keys(p4 ?? {}),
+    ...match.suggestions.filter(s => s.entry.id.startsWith('plan400:')).map(s => s.entry.date), ...sched.filter(e => typeof e?.id === 'string' && e.id.startsWith('plan400:')).map(e => e.date)])
+  for (const d of v4Dates) {
+    if (!/^\d{4}-\d\d-\d\d$/.test(d)) continue
+    const se = sched.find(e => e?.id === `plan400:${d}:strength`)?.actual
+    v4Parts[d] = { parts: comps.days?.[d], runLinked: v4Linked.has(d), runCandidates: v4Linked.has(d) ? 0 : match.suggestions.find(s => s.entry.id === v4RunSlotId(d))?.runs.length ?? 0,
+      strengthExec: exec[d]?.strength ?? (se?.executionState ?? null), runExec: exec[d]?.run ?? null, strengthMarked: se && !se.executionState ? se.outcome : null, strengthLive: !!exec[d]?.strengthLive }
+  }
   for (const [d, l] of v4Linked) { const p = rows.find(r => r.id === `p400:${d}`); if (p) p.originIds = [...new Set([...p.originIds, ...l.run.originIds])] }
   const merged = mergeActivities(rows)
   for (const l of match.links) { const row = merged.find(r => r.originIds.some(id => l.run.originIds.includes(id))); if (row) row.runLink = { entryId: l.entry.id, title: l.entry.title, by: l.by } }
   for (const row of merged) {
     const d = row.originIds.map(id => /^plan400:(\d{4}-\d\d-\d\d)$/.exec(id)?.[1]).find(Boolean); if (!d) continue
     const pd = (V4.days as V4Day[]).find(x => x.date === d); if (!pd) continue
-    const cands = match.suggestions.find(s => s.entry.id === v4RunSlotId(d))?.runs.length ?? 0
-    const se = sched.find(e => e?.id === `plan400:${d}:strength`)?.actual
-    const f = v4DayFact(pd, p4[d], { parts: comps.days[d], runLinked: v4Linked.has(d), runCandidates: cands, strengthExec: exec[d]?.strength ?? (se?.executionState ?? null), runExec: exec[d]?.run ?? null, strengthMarked: se && !se.executionState ? se.outcome : null }, !!exec[d]?.strengthLive)
+    const x = v4Parts[d] ?? {}
+    const f = v4DayFact(pd, p4[d], x, !!x.strengthLive)
     applyV4Fact(row, { ...f, date: d })
   }
-  lastMatch = match
+  lastMatch = { ...match, v4Parts }
   return merged
 }
 /** v83：V4 投影行的项目/状态/时长只由分项事实决定（不由计划标题、不由“合并里有一条完成”决定）。 */
