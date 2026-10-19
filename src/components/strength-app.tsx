@@ -581,7 +581,7 @@ export function StrengthApp() {
           <div className="flex items-center justify-between gap-2"><h2 className="font-bold">当前课程 · {courseChoice.startsWith("run:") ? courseChoice.slice(4) : session?.name}</h2><button type="button" className="min-h-11 text-sm" onClick={()=>{if(trainingDecision.current){setNotice("请先在执行页暂停或结束当前力量课，再选择其他课程。");return;}setWorkspaceOpen(false);}}>返回课程选择</button></div>
           {courseChoice.startsWith("run:") ? <TrackSessionPanel selectedPlanId={courseChoice.slice(4)} onLog={()=>setTab("log")} /> : session ? <>
             <TrainingDecisionCard key={session.id} plan={plan} session={session} onApply={next=>updateSession(next)} onLive={id=>{trainingDecision.current=id;}} />
-            <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setTab("plan");}} /></details>
+            <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setHubPane("lift");setTab("plan");}} /></details>
           </> : <p>选定课程已不存在，请重新选择。</p>}
         </section> : null}
         {tab === "plan" ? <div className="mb-3 grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface p-1" role="group" aria-label="运动专区">
@@ -729,8 +729,8 @@ export function StrengthApp() {
         </details> : null}
 
 
-        {tab === "plan" ? <button type="button" className="mt-4 min-h-12 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={()=>setBuilderOpen(true)}>按多个部位组合一课</button> : null}
-        {tab === "plan" ? <details id="session-editor" open={editorOpen} onToggle={(event) => setEditorOpen(event.currentTarget.open)} className="mt-5 rounded-card border border-line bg-surface p-3">
+        {tab === "plan" && hubPane === "lift" ? <button type="button" className="mt-4 min-h-12 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={()=>setBuilderOpen(true)}>按多个部位组合一课</button> : null}
+        {tab === "plan" && hubPane === "lift" ? <details id="session-editor" open={editorOpen} onToggle={(event) => setEditorOpen(event.currentTarget.open)} className="mt-5 rounded-card border border-line bg-surface p-3">
           <summary className="cursor-pointer text-sm font-bold">调整这节课</summary>
           <div className="mt-3 flex items-center gap-2 overflow-x-auto">
             {plan.sessions.map((item, index) => (
