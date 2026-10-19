@@ -21,7 +21,7 @@ check('改课面板写明“尚未修改”且只核对差异',/尚未修改/.te
 check('“核对差异 / 生成待确认提案”在未选分项时不可点',await p.getByRole('button',{name:'核对差异 / 生成待确认提案'}).isDisabled())
 const fu=await p.getByText(/长期跟进|C03 判断/).first().innerText().catch(()=>'')
 check('C03 长期跟进区块存在（无记录时显示说明）',/长期跟进|C03/.test(fu),fu)
-await p.screenshot({path:'/workspace/out/c03-candidate/review-panels-390.png',fullPage:false})
+await p.screenshot({path:process.argv[3]||'/workspace/out/c03-review-390.png',fullPage:false})
 const idb=await p.evaluate(async()=>{const dbs=await indexedDB.databases?.()||[];const has=dbs.some(d=>d.name==='fangkun-coach-plan-execution-v1');if(!has)return {has,proposals:0};return await new Promise(res=>{const r=indexedDB.open('fangkun-coach-plan-execution-v1');r.onsuccess=()=>{const db=r.result;const names=[...db.objectStoreNames];if(!names.length)return res({has,proposals:0,names});const tx=db.transaction(names,'readonly');let n=0,pending=names.length;for(const s of names){const q=tx.objectStore(s).getAll();q.onsuccess=()=>{for(const v of q.result)n+=Object.keys(v?.proposals||{}).length+Object.keys(v?.overlays||{}).length;if(--pending===0)res({has,proposals:n,names})}}};r.onerror=()=>res({has,err:true})})})
 check('打开复盘不会写入任何提案/修订（IndexedDB 中 0 条）',!idb.proposals,JSON.stringify(idb))
 check('本检查未调用 /api/coach-chat',coachCalls===0,coachCalls)
