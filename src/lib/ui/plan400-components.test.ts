@@ -17,7 +17,8 @@ test('W01/W02: same-day watch run is a candidate for Running only; Strength stay
   assert.equal(v.combo, true)
   assert.equal(v.running.tone, 'candidate')
   assert.equal(v.strength?.label, '尚未记录')
-  assert.match(v.overall, /只有跑步有记录/)
+  // v83（P1-05/N14）：同日未确认的手表跑步只是候选，不算“跑步有记录”
+  assert.match(v.overall, /待确认/); assert.doesNotMatch(v.overall, /跑步有记录/)
   assert.doesNotMatch(v.overall, /完成/)
   // the whole-day status is not changed by a watch run (no auto-complete)
   assert.equal(dayStatus(d1019, undefined, '2026-10-19'), 'not_started')
@@ -43,7 +44,7 @@ test('Asia/Shanghai day attribution: 23:30 local on 10/18 (UTC 15:30) is not 10/
 })
 test('W04/W05: running and strength states are independent', () => {
   const liftDone = comboView(d1019, {}, { ...noEntry, strengthEntry: { id: 'plan400:2026-10-19:strength', actual: { outcome: 'as_planned', executionState: 'COMPLETED' } } })
-  assert.equal(liftDone.strength?.tone, 'done'); assert.equal(liftDone.running.tone, 'none'); assert.match(liftDone.overall, /只有力量/)
+  assert.equal(liftDone.strength?.tone, 'done'); assert.equal(liftDone.running.tone, 'none'); assert.match(liftDone.overall, /力量完成/); assert.match(liftDone.overall, /跑步待记录/)
   const runHand = comboView(d1019, { reps: '21.3/21.0/21.6' }, noEntry)
   assert.equal(runHand.running.tone, 'partial'); assert.equal(runHand.strength?.tone, 'none')
   const live = comboView(d1019, {}, { ...noEntry, strengthLive: true })

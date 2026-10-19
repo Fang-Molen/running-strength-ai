@@ -14,7 +14,9 @@ test('分项推整天状态：只有旧 log 时不变；分项都完成 → done
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'done' } } }), 'reduced')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { running: { status: 'skipped' }, strength: { status: 'skipped' } } }), 'skipped')
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { parts: { strength: { rpe: 6 } } }), 'in_progress')
-  assert.equal(dayStatus(d, { done: 'done' }, '2026-10-19', false, { parts: { running: { status: 'skipped' } } }), 'done', '旧整课标记优先，不改历史')
+  // v83（P0-01，整改包 A01/N08）：用户填过分项后，分项优先；旧整课 done 不再盖掉“跑步跳过 + 力量未记录”。纯旧记录仍按旧口径（见 v83 测试）。
+  assert.equal(dayStatus(d, { done: 'done' }, '2026-10-19', false, { parts: { running: { status: 'skipped' } } }), 'in_progress', '分项优先于旧整课')
+  assert.equal(dayStatus(d, { done: 'done' }, '2026-10-19'), 'done', '只有旧整课记录：历史口径不变')
 })
 test('手表跑步关联只算跑步有记录：整天 in_progress，不会 done', () => {
   assert.equal(dayStatus(d, undefined, '2026-10-19', false, { runLinked: true }), 'in_progress')

@@ -5,9 +5,8 @@
  *  - 整课标记 done/rpe/pain 是旧口径（跑步与力量没分开），只原样显示为“整课（旧口径）”，绝不拆给两个分项。
  * 规则：设备跑步永远不能让力量变成“已完成”；只有一个分项有记录时，总览不显示“整课完成”。 */
 import { activityLocalDay, activityLocalTime, fmtDistance, fmtDuration, fmtHr, fmtPace } from './activity-format'
-import { dayKind, hasStrength, type V4Day, type V4Log } from './plan400-view'
-import { STATUS_TEXT, type DayComponents, type PartFeedback } from './plan400-components-store'
-const partState = (p: PartFeedback | undefined): ComponentState | null => !p?.status || p.status === 'not_recorded' ? null : { label: STATUS_TEXT[p.status] + (p.rpe != null ? ` · RPE ${p.rpe}` : ''), tone: p.status === 'skipped' ? 'skipped' : p.status === 'done' ? 'done' : 'partial' }
+import { v4DayFact, type PartFact, type PartState, type V4Day, type V4Log } from './plan400-view'
+import type { DayComponents } from './plan400-components-store'
 
 export type DeviceRun = { id: string; source: 'garmin' | 'import'; sourceLabel: string; startedAt: string; distanceM: number | null; durationSec: number | null; avgHr: number | null; title: string }
 export type ComponentTone = 'none' | 'candidate' | 'partial' | 'live' | 'done' | 'skipped'
@@ -15,7 +14,6 @@ export type ComponentState = { label: string; tone: ComponentTone; detail?: stri
 export type StrengthEntryLite = { id: string; status?: string; actual?: { outcome?: string; executionState?: string; occurrenceIds?: string[] } | null } | undefined
 export type ComboView = { combo: boolean; running: ComponentState; strength: ComponentState | null; legacy: { done: string | null; rpe: string | null; pain: string | null }; overall: string }
 
-const filled = (v: unknown) => String(v ?? '').trim().length > 0
 /** 同一天（用户时区）的设备跑步；只认有来源 id 的佳明/文件导入行，不按标题或时长猜。 */
 export function deviceRunsOn(date: string, rows: readonly { id: string; source: string; sport: string; startedAt: string; date: string; distanceM: number | null; durationSec: number | null; avgHr?: number | null; title?: string; sources?: string[] }[]): DeviceRun[] {
   return rows.filter(r => r.sport === 'RUNNING' && activityLocalDay(r.startedAt) === date && (r.source === 'garmin' || r.source === 'import' || r.sources?.some(s => s === 'garmin' || s === 'import')))
@@ -32,32 +30,20 @@ export function deviceRunFacts(r: DeviceRun): string[] {
   const hr = fmtHr(r.avgHr); if (hr != null) out.push(`平均心率 ${hr}`)
   return out
 }
+/** v83：组合课展示 = v4DayFact（plan400-view，唯一分项投影）的展示适配；不在这里另判状态。
+ * 同日手表跑步未确认 → candidate（“待你确认”），不算“有记录”。 */
+const TONE: Record<PartState, ComponentTone> = { done: 'done', reduced: 'partial', skipped: 'skipped', partial: 'partial', live: 'live', candidate: 'candidate', none: 'none' }
+const toState = (f: PartFact): ComponentState => ({ label: f.label, tone: TONE[f.state], ...(f.detail ? { detail: f.detail } : {}) })
+const phrase = (n: string, f: PartFact) => f.state === 'done' ? `${n}完成` : f.state === 'reduced' ? `${n}减量完成` : f.state === 'skipped' ? `${n}跳过` : f.state === 'partial' ? `${n}有记录·未标完成` : f.state === 'live' ? `${n}进行中` : f.state === 'candidate' ? `${n}有同日手表记录·待确认` : `${n}待记录`
 export function comboView(d: V4Day, log: V4Log | undefined, opts: { deviceRuns: DeviceRun[]; strengthEntry: StrengthEntryLite; strengthLive: boolean; parts?: DayComponents; runLinked?: boolean }): ComboView {
-  const l = log ?? {}
-  const combo = dayKind(d) !== 'rest' && dayKind(d) !== 'recovery' && hasStrength(d)
-  const runHand = filled(l.reps) || filled(l.rest) || filled(l.aux)
-  // v79：分项反馈（附加 key）优先；关联了手表跑步 = 跑步有实际记录（只影响跑步，不碰力量）
-  const runPart = partState(opts.parts?.running)
-  const running: ComponentState = runPart ? (opts.runLinked ? { ...runPart, detail: '已关联佳明跑步' } : runPart) : opts.runLinked ? { label: '已关联佳明跑步 · 待评价', tone: 'partial' } : runHand
-    ? { label: '已手填跑步记录', tone: 'partial', ...(opts.deviceRuns.length ? { detail: `另有 ${opts.deviceRuns.length} 条同日手表跑步（未关联）` } : {}) }
-    : opts.deviceRuns.length ? { label: opts.deviceRuns.length === 1 ? '有同日手表跑步 · 未关联' : `有 ${opts.deviceRuns.length} 条同日手表跑步 · 未关联`, tone: 'candidate' }
-    : { label: '未记录', tone: 'none' }
-  let strength: ComponentState | null = null
-  if (hasStrength(d)) {
-    const a = opts.strengthEntry?.actual
-    const liftPart = partState(opts.parts?.strength)
-    if (opts.strengthLive) strength = { label: '逐组引导进行中', tone: 'live' }
-    else if (liftPart) strength = liftPart
-    else if (a?.executionState === 'COMPLETED') strength = { label: '逐组记录已完成', tone: 'done' }
-    else if (a?.executionState === 'PARTIAL' || a?.executionState === 'INTERRUPTED') strength = { label: '逐组记录未做完', tone: 'partial' }
-    else if (a?.outcome === 'missed') strength = { label: '标记没练', tone: 'skipped' }
-    else if (filled(l.strength)) strength = { label: '已手填力量记录', tone: 'partial' }
-    else strength = { label: '尚未记录', tone: 'none' }
-  }
-  const legacy = { done: filled(l.done) ? String(l.done) : null, rpe: filled(l.rpe) ? String(l.rpe) : null, pain: filled(l.pain) ? String(l.pain) : null }
-  const runHas = running.tone !== 'none', liftHas = !!strength && strength.tone !== 'none'
-  const overall = !combo ? '' : runHas && liftHas ? '跑步、力量都有记录（各自状态见下）' : runHas ? '只有跑步有记录 · 力量待记录' : liftHas ? '只有力量有记录 · 跑步待记录' : '两项都还没有记录'
-  return { combo, running, strength, legacy, overall }
+  const a = opts.strengthEntry?.actual
+  const ex = a?.executionState === 'COMPLETED' || a?.executionState === 'PARTIAL' || a?.executionState === 'INTERRUPTED' ? a.executionState : null
+  const f = v4DayFact(d, log, { parts: opts.parts, runLinked: opts.runLinked, runCandidates: opts.runLinked ? 0 : opts.deviceRuns.length, strengthExec: ex, strengthMarked: !ex && a?.outcome ? a.outcome as 'as_planned' | 'different' | 'missed' : null }, opts.strengthLive)
+  const combo = f.combo
+  const running: ComponentState = f.running ? toState(f.running) : { label: '未记录', tone: 'none' }
+  const strength = f.strength ? toState(f.strength) : null
+  const overall = !combo ? '' : f.legacyOverall ? f.summary : f.overall === 'done' ? '跑步、力量都完成' : f.overall === 'reduced' ? '已结束：有减量或跳过（各自状态见下）' : f.overall === 'skipped' ? '跑步、力量都跳过' : `${phrase('跑步', f.running!)} · ${phrase('力量', f.strength!)}`
+  return { combo, running, strength, legacy: f.legacy, overall }
 }
 /** 24–72h：训练当晚的睡眠在健康页只有一条（第二天日期），这里只引用，不再让用户填第二次。 */
 export function sharedSleepFor(date: string, records: readonly { kind: string; value: number; observedOn: string; source?: string; deviceLabel?: string; note?: string; createdAt?: string; athleteId?: string }[], athlete = 'local'): { hours: number; day: string; source: string } | null {

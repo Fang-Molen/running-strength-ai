@@ -3,7 +3,7 @@
  * 本机执行记录（fk-plan400-v4-log / fk-plan400-v4-overrides / fk-schedule-v1）聚合给首页与计划页同一份口径。
  * 不写任何存储、不改原课表、不改日期；冲突只报告。
  */
-import type { CompStatus, DayComponents } from './plan400-components-store'
+import type { CompStatus, DayComponents, PartFeedback } from './plan400-components-store'
 export type V4Day = { orig: string; date: string; weekday: string; week: string; title: string; main: string[]; aux: string[]; strength: string[] }
 export type V4Week = { week: string; title: string; range: string; principle: string }
 export type V4Plan = { name: string; shiftDays: number; weeks: V4Week[]; days: V4Day[]; final?: V4Day }
@@ -32,25 +32,78 @@ export const strengthEntryId = (date: string) => `plan400:${date}:strength`
 const RECORD_FIELDS: (keyof V4Log)[] = ['reps', 'rest', 'aux', 'strength', 'rpe', 'pain', 'note']
 export const hasRecord = (l: V4Log | undefined) => Boolean(l && RECORD_FIELDS.some(k => String(l[k] ?? '').trim()))
 
-/** v79.1：分项（fk-plan400-v4-components-v1）推出整天状态。需要的分项 = 有跑步部分的跑步 + 有力量的力量。
- * 全部分项都有终态：都跳过 → skipped；有减量或有一项跳过 → reduced；否则 done。只要有一项有记录/关联了手表跑步 → in_progress。
- * 手表跑步关联只算“跑步有实际记录”，不会让整天完成，也不会让力量完成。 */
-export type DayParts = { parts?: DayComponents; runLinked?: boolean }
+/** v83（P0-01/P0-02）：V4 一天 = 一节课（Session）＋ 计划里应练的分项（跑步 / 力量，Component）。
+ * 这里是唯一的分项事实投影：首页主卡、计划页周列表/进度、日志、方坤事实包都从这里派生，不各自猜。
+ * 层次：计划（应练哪些分项）→ 观测/证据（手填、逐组/逐段执行、用户确认关联的手表跑步）→ 用户明确终态（完成/减量/跳过）。
+ * - 候选手表跑步（同日但未确认）只是 candidate，不算记录、不算完成；用户确认关联也只是“跑步有实测”，不等于跑步完成。
+ * - 用户填过分项（状态/RPE/疼痛/感受/备注）后，整天只由分项派生；旧整课 done 不再覆盖。
+ * - 只有旧整课记录（fk-plan400-v4-log.done）时，整天按旧口径显示并标“历史整课”，绝不拆成两项各自完成，也不复制 RPE。 */
+export type ExecState = 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' | null
+export type DayParts = { parts?: DayComponents; runLinked?: boolean; runCandidates?: number; strengthExec?: ExecState; runExec?: ExecState; strengthMissed?: boolean; /** 日程条目 plan400:<date>:strength 上用户手动标的结果（按计划完成/实际不同/没练），没有逐组执行时才用 */ strengthMarked?: 'as_planned' | 'different' | 'missed' | null }
 export const hasRunPart = (d: Pick<V4Day, 'title'>) => dayKind(d) !== 'rest' && !/^力量/.test(d.title)
+export type PartState = 'done' | 'reduced' | 'skipped' | 'partial' | 'live' | 'candidate' | 'none'
+export type PartFact = { state: PartState; label: string; source: 'user' | 'execution' | 'device' | 'hand' | 'feedback' | 'candidate' | null; rpe: number | null; detail?: string }
+export type V4DayFact = { plannedRun: boolean; plannedLift: boolean; combo: boolean; running: PartFact | null; strength: PartFact | null; split: boolean; legacy: { done: string | null; rpe: string | null; pain: string | null }; legacyOverall: boolean; overall: 'done' | 'reduced' | 'skipped' | 'in_progress' | null; actualRun: boolean; actualLift: boolean; summary: string }
+const PART_TEXT: Record<CompStatus, string> = { done: '完成', reduced: '减量完成', skipped: '跳过（没做）', not_recorded: '未记录' }
+const filledV = (v: unknown) => String(v ?? '').trim().length > 0
+const userStatus = (p: PartFeedback | undefined): Exclude<CompStatus, 'not_recorded'> | null => p?.status && p.status !== 'not_recorded' ? p.status : null
+const partFeedback = (p: PartFeedback | undefined) => !!p && (p.rpe != null || !!p.feel || !!p.note || !!p.pain?.area || p.pain?.score != null)
+/** 用户明确填过的分项信息（状态/RPE/疼痛/感受/备注）。设备关联、逐组执行不算“用户分项决定”。 */
+export const hasEnteredPart = (x: DayParts | undefined): boolean => [x?.parts?.running, x?.parts?.strength].some(p => !!userStatus(p) || partFeedback(p))
+const TERMINAL: PartState[] = ['done', 'reduced', 'skipped']
+const ACTUAL: PartState[] = ['done', 'reduced', 'partial']
+export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefined = {}, strengthLive = false): V4DayFact {
+  const l = log ?? {}, p = x?.parts
+  const plannedRun = hasRunPart(d), plannedLift = hasStrength(d) && dayKind(d) !== 'rest'
+  const withRpe = (label: string, q: PartFeedback | undefined) => label + (q?.rpe != null ? ` · RPE ${q.rpe}` : '')
+  let running: PartFact | null = null, strength: PartFact | null = null
+  if (plannedRun) {
+    const q = p?.running, us = userStatus(q), linked = !!x?.runLinked
+    running = us ? { state: us, label: withRpe(PART_TEXT[us], q), source: 'user', rpe: q?.rpe ?? null, ...(linked ? { detail: '已关联手表跑步（你确认的）' } : {}) }
+      : x?.runExec === 'COMPLETED' ? { state: 'done', label: '逐段记录已完成', source: 'execution', rpe: q?.rpe ?? null }
+      : x?.runExec === 'PARTIAL' || x?.runExec === 'INTERRUPTED' ? { state: 'partial', label: '逐段记录未做完', source: 'execution', rpe: q?.rpe ?? null }
+      : linked ? { state: 'partial', label: '已关联手表跑步 · 待评价', source: 'device', rpe: q?.rpe ?? null }
+      : filledV(l.reps) || filledV(l.rest) || filledV(l.aux) ? { state: 'partial', label: '已手填跑步记录', source: 'hand', rpe: q?.rpe ?? null, ...(x?.runCandidates ? { detail: `另有 ${x.runCandidates} 条同日手表跑步（未关联）` } : {}) }
+      : partFeedback(q) ? { state: 'partial', label: withRpe('有评价 · 未标完成', q), source: 'feedback', rpe: q?.rpe ?? null }
+      : x?.runCandidates ? { state: 'candidate', label: x.runCandidates === 1 ? '有同日手表跑步 · 待你确认' : `有 ${x.runCandidates} 条同日手表跑步 · 待你确认`, source: 'candidate', rpe: null }
+      : { state: 'none', label: '未记录', source: null, rpe: null }
+  }
+  if (plannedLift) {
+    const q = p?.strength, us = userStatus(q)
+    strength = strengthLive ? { state: 'live', label: '逐组引导进行中', source: 'execution', rpe: null }
+      : us ? { state: us, label: withRpe(PART_TEXT[us], q), source: 'user', rpe: q?.rpe ?? null }
+      : x?.strengthExec === 'COMPLETED' ? { state: 'done', label: '逐组记录已完成', source: 'execution', rpe: q?.rpe ?? null }
+      : x?.strengthExec === 'PARTIAL' || x?.strengthExec === 'INTERRUPTED' ? { state: 'partial', label: '逐组记录未做完', source: 'execution', rpe: q?.rpe ?? null }
+      : x?.strengthMissed || x?.strengthMarked === 'missed' ? { state: 'skipped', label: '标记没练', source: 'user', rpe: null }
+      : x?.strengthMarked === 'as_planned' ? { state: 'done', label: '已标按计划完成', source: 'user', rpe: q?.rpe ?? null }
+      : x?.strengthMarked === 'different' ? { state: 'done', label: '已记录（实际与计划不同）', source: 'user', rpe: q?.rpe ?? null }
+      : filledV(l.strength) ? { state: 'partial', label: '已手填力量记录', source: 'hand', rpe: q?.rpe ?? null }
+      : partFeedback(q) ? { state: 'partial', label: withRpe('有评价 · 未标完成', q), source: 'feedback', rpe: q?.rpe ?? null }
+      : { state: 'none', label: '尚未记录', source: null, rpe: null }
+  }
+  const need = [running, strength].filter((v): v is PartFact => !!v)
+  const fromParts: V4DayFact['overall'] = need.length && need.every(v => TERMINAL.includes(v.state)) ? (need.every(v => v.state === 'skipped') ? 'skipped' : need.some(v => v.state === 'reduced' || v.state === 'skipped') ? 'reduced' : 'done')
+    : need.some(v => v.state !== 'none' && v.state !== 'candidate') ? 'in_progress' : null
+  const split = hasEnteredPart(x)
+  const legacyDone = l.done === 'done' || l.done === 'reduced' || l.done === 'skipped' ? l.done : null
+  const legacyOverall = !split && !!legacyDone
+  const overall: V4DayFact['overall'] = split ? fromParts ?? 'in_progress' : legacyDone ? legacyDone : fromParts ?? (hasRecord(l) ? 'in_progress' : null)
+  const actualRun = !!running && ACTUAL.includes(running.state), actualLift = !!strength && ACTUAL.includes(strength.state)
+  const combo = plannedRun && plannedLift && dayKind(d) !== 'recovery'
+  const summary = legacyOverall ? `历史整课记录（旧口径，跑步与力量没分开）：${legacyDone === 'done' ? '完成' : legacyDone === 'reduced' ? '减量完成' : '没练/取消'}`
+    : !combo ? (running ? `跑步：${running.label}` : strength ? `力量：${strength.label}` : '')
+    : `跑步：${running!.label} · 力量：${strength!.label}`
+  return { plannedRun, plannedLift, combo, running, strength, split, legacy: { done: filledV(l.done) ? String(l.done) : null, rpe: filledV(l.rpe) ? String(l.rpe) : null, pain: filledV(l.pain) ? String(l.pain) : null }, legacyOverall, overall, actualRun, actualLift, summary }
+}
+/** 兼容旧调用：只看分项（不看旧整课）推出的整天状态。 */
 export function partsDayStatus(d: V4Day, x: DayParts | undefined): DayStatus | null {
-  const p = x?.parts; if (!p && !x?.runLinked) return null
-  const need: (CompStatus | undefined)[] = [...(hasRunPart(d) ? [p?.running?.status] : []), ...(hasStrength(d) ? [p?.strength?.status] : [])].map(v => v === 'not_recorded' ? undefined : v)
-  if (need.length && need.every(Boolean)) return need.every(v => v === 'skipped') ? 'skipped' : need.some(v => v === 'reduced' || v === 'skipped') ? 'reduced' : 'done'
-  const any = need.some(Boolean) || x?.runLinked || [p?.running, p?.strength].some(q => q && (q.rpe != null || q.feel || q.note || (q.pain && (q.pain.area || q.pain.score != null))))
-  return any ? 'in_progress' : null
+  if (!x) return null
+  return v4DayFact(d, undefined, x).overall
 }
 export function dayStatus(d: V4Day, log: V4Log | undefined, today: string, strengthInProgress = false, extra?: DayParts): DayStatus {
-  if (log?.done === 'done') return 'done'
-  if (log?.done === 'reduced') return 'reduced'
-  if (log?.done === 'skipped') return 'skipped'
-  const fromParts = partsDayStatus(d, extra)
-  if (fromParts && fromParts !== 'in_progress') return fromParts
-  if (strengthInProgress || hasRecord(log) || fromParts === 'in_progress') return 'in_progress'
+  const f = v4DayFact(d, log, extra, strengthInProgress)
+  if (f.overall) return f.overall
+  if (strengthInProgress) return 'in_progress'
   if (dayKind(d) === 'rest') return 'rest'
   if (d.date < today) return 'unrecorded'
   return d.date === today ? 'not_started' : 'upcoming'
@@ -87,10 +140,10 @@ export function progressCounts(p: V4Plan, logs: Record<string, V4Log>, parts: Re
   for (const d of p.days) {
     const k = dayKind(d), l = logs[d.date]
     if (k === 'train') c.trainingDays++; else if (k === 'recovery') c.recoveryDays++; else if (k === 'rest') c.restDays++; else c.testDays++
-    const ps = l?.done ? null : partsDayStatus(d, parts[d.date])
-    if (l?.done || hasRecord(l) || ps) c.recordedDays++
-    if ((k === 'train' || k === 'test') && (l?.done === 'done' || l?.done === 'reduced' || ps === 'done' || ps === 'reduced')) c.completedTrainingDays++
-    if (l?.done === 'skipped' || ps === 'skipped') c.skippedDays++
+    const f = v4DayFact(d, l, parts[d.date])
+    if (f.overall || hasRecord(l) || f.actualRun || f.actualLift) c.recordedDays++
+    if ((k === 'train' || k === 'test') && (f.overall === 'done' || f.overall === 'reduced')) c.completedTrainingDays++
+    if (f.overall === 'skipped') c.skippedDays++
   }
   return c
 }
