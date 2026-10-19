@@ -2,6 +2,9 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-19 | v85：合入 Codex C03/R14 包（按差异三方合并到 v84）。方坤“复盘”页新增两块折叠区：长期跟进（复盘判断可查看、可撤回，原训练记录不变）和调整安排与回执（只显示日期差异；**改课确认/撤销仍阻断**，宿主固定 UNCOORDINATED）；明确说“复盘/分析本次/为何掉速”并选中课次时，本地方坤给出事实、两种限定解释、反证和下次观察 | Codex C03/R14 包；用户 10-19 “上线v85” | coach-local-first.ts, lib/coach/c03/*, lib/coach/plan-execution/*, coach-sheet.tsx |
+| 2026-10-19 | v85：同一天正在做力量引导或已有逐组执行时，旧“整课完成”不再盖过“进行中”；新记录写明归属，旧无归属记录仍属本机、可照常修改；联网方坤保持默认开，问题超过 1000 字不发送 | C03/R14 HOST-01/03 | plan400-view.ts, ownership.ts, day-schedule.ts, plan400-components-store.ts, online-coach.ts |
+| 2026-10-19 | v85：代码按区块划分（docs/modules.md、scripts/blocks.mjs），可 npm run test:block:<区块> 单独复测；sw 缓存 fr255-shell-v85 | 用户 10-19 要求按区块改、按区块测 | docs/modules.md, scripts/*, public/sw.js |
 | 2026-10-19 | v84：合入 Codex 1019y 包（按差异，三方合并 base=v82/ours=v83/theirs=包）。组合课一项跳过＋另一项完成不再算“已完成·减量”，显示进行中（跑步跳过／力量完成），不计入完成课次；普通日程“跑+力量”按实际证据显示项目（只勾了力量组＝力量，只填公里＝跑步）；同一天两节课用同一模板不再被合成一条；力量重量×次数只算这一次训练自己的组（含更正）；其他运动员的佳明活动不进当前记录；训练实例的组归属更严格（来自包的 training-fact.ts） | Codex 1019y 包 P0 | plan400-view.ts, training-read-model.ts, training-fact.ts |
 | 2026-10-19 | v84：方坤复盘手表跑步时，分段心率缺失/为 0/不完整 → 写“心率变化未知”，不再说成“心率没明显飘”；复盘日期之后的活动不纳入；联网事实包的“近期活动”不含问题日期之后的活动；记一笔只写配速时不再推算时长（时长未知），“配速5分30”不再被当成 5 分钟 | Codex 1019y 包 | plain-coach.ts, online-coach.ts, quick-log.ts |
 | 2026-10-19 | v84：方坤聊天记录按运动员分开存（本机用户 local 的 key 不变，旧聊天照常显示）；DeepSeek 受信快照/预算账本控制器作为休眠代码收在 server/coach-deepseek/（不部署、不接线；用户决定暂不设费用上限，线上 /api/coach-chat 保持 v83：按 IP 限流、无费用上限）；migrations/coach/001_deepseek_budget.sql 为可选，未执行 | Codex 1019y 包；用户 10-19 决定 | coach.ts, coach-pipeline.ts, server/coach-deepseek/* |
