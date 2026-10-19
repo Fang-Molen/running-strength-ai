@@ -12,12 +12,16 @@ const lift = { id: 'lift-1018', date: '2026-10-18', kind: 'strength', modality: 
 // 用户形态：佳明 10-18 07:30 上海（10-17 23:30Z）6.01km；10-17 晚 6.37km
 const g = garminRows({ a: { id: 31018, name: '晨跑', type: 'running', start: '2026-10-17T23:30:00Z', dist: 6010, dur: 1897.6, avgHr: 143.6 }, b: { id: 31017, name: '杭州市 跑步', type: 'running', start: '2026-10-17T10:30:00Z', dist: 6370, dur: 2050, avgHr: 144 } })
 const rows = mergeActivities(g)
-test('同一北京日期 1 对 1 → 自动关联；计划不改；力量课不受影响', () => {
+test('v83（整改包 P1-05/IMP-01）：同一北京日期 1 对 1 → 只是“很可能是这条”的候选，要你点一下确认才算关联；计划不改；力量课不受影响', () => {
   const m = matchRuns([easy, k8, lift], rows, {}, '2026-10-19')
-  assert.deepEqual(m.links.map(l => [l.entry.id, l.run.date, l.by]).sort(), [['run-1017', '2026-10-17', 'auto'], ['run-1018', '2026-10-18', 'auto']])
-  assert.equal(m.suggestions.length, 0)
-  assert.ok(!m.links.some(l => l.entry.id === 'lift-1018'))
+  assert.equal(m.links.length, 0, '没有确认前不算关联')
+  assert.deepEqual(m.suggestions.map(s => [s.entry.id, s.runs.map(r => r.date), s.likely]).sort(), [['run-1017', ['2026-10-17'], true], ['run-1018', ['2026-10-18'], true]])
+  assert.ok(m.suggestions.every(s => /同一天/.test(s.basis ?? '')))
+  assert.ok(!m.suggestions.some(s => s.entry.id === 'lift-1018'))
   assert.equal((easy as { status: string }).status, 'planned')
+  // 用户确认后才是关联（by:user）；历史上存下的 auto 关联照旧有效
+  const ok = matchRuns([easy], rows, { 'run-1018': { garminId: m.suggestions.find(s => s.entry.id === 'run-1018')!.runs[0].id, by: 'user' } }, '2026-10-19')
+  assert.equal(ok.links[0].by, 'user'); assert.equal(ok.suggestions.length, 0)
 })
 test('只算一次：日志/统计里只有 2 条佳明跑步，计划课不生成第二条', () => {
   const all = mergeActivities([...g, ...phoneRows({ getItem: k => k === 'fk-schedule-v1' ? JSON.stringify({ entries: [easy, k8] }) : null }, Date.parse('2026-10-19T01:30:00Z'))])
@@ -25,7 +29,7 @@ test('只算一次：日志/统计里只有 2 条佳明跑步，计划课不生�
 })
 test('同一天两条跑步 / 只有相邻一天 → 只给“是这次吗？”建议，不自动', () => {
   const two = mergeActivities([...g, ...garminRows({ c: { id: 31019, name: '夜跑', type: 'running', start: '2026-10-18T12:00:00Z', dist: 3000, dur: 900 } })])
-  const m = matchRuns([easy], two, {}, '2026-10-19'); assert.equal(m.links.length, 0); assert.equal(m.suggestions[0].runs.length, 2)
+  const m = matchRuns([easy], two, {}, '2026-10-19'); assert.equal(m.links.length, 0); assert.equal(m.suggestions[0].runs.length, 2); assert.ok(!m.suggestions[0].likely)
   const adj = matchRuns([E({ id: 'r16', date: '2026-10-16', title: '轻松跑', minutes: 40, source: 'custom' })], rows, {}, '2026-10-19')
   assert.equal(adj.links.length, 0); assert.equal(adj.suggestions[0].runs[0].date, '2026-10-17')
 })
