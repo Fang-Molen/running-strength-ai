@@ -22,3 +22,9 @@ test('未来日期、14 天外不进列表', () => {
   assert.equal(pendingFeedback(days, { '2026-10-21': { runLinked: true } }, {}, T).length, 0)
   assert.equal(pendingFeedback(days, { '2026-10-19': { runLinked: true } }, {}, '2026-11-20').length, 0)
 })
+
+test('v83: 跑步已手动评价但同日手表跑步未确认 → 仍待确认', () => {
+  const d = (V4.days as V4Day[]).find(x => x.date === '2026-10-19')!
+  const items = pendingFeedback([d], { '2026-10-19': { parts: { running: { status: 'done', rpe: 8 } } as never, runCandidates: 1 } }, {}, '2026-10-19')
+  assert.deepEqual(items.map(i => i.kind), ['confirm_run'])
+})

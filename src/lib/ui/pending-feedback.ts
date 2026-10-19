@@ -19,7 +19,8 @@ export function pendingFeedback(days: V4Day[], parts: Record<string, DayParts>, 
     const x = parts[d.date]; if (!x) continue
     const f = v4DayFact(d, logs[d.date], x), deferred = prompted.some(p => p.startsWith(`${d.date}|`))
     const r = f.running, s = f.strength, c = x.parts
-    if (r?.state === 'candidate') out.push({ date: d.date, part: 'running', kind: 'confirm_run', text: '跑步：有同日手表跑步，确认是不是这节', deferred })
+    // 已手动评价了跑步、但同日手表跑步还没确认/否认的，也要确认（否则计划外与计划课可能重复计）
+    if (r?.state === 'candidate' || (r && !x.runLinked && (x.runCandidates ?? 0) > 0)) out.push({ date: d.date, part: 'running', kind: 'confirm_run', text: '跑步：有同日手表跑步，确认是不是这节', deferred })
     else if (r && (r.source === 'device' || r.source === 'execution') && !fb(c?.running)) out.push({ date: d.date, part: 'running', kind: 'rate_run', text: r.source === 'device' ? '跑步：已关联手表·待评价' : '跑步：逐段已记·待评价', deferred })
     if (s && s.source === 'execution' && (s.state === 'done' || s.state === 'partial') && !fb(c?.strength)) out.push({ date: d.date, part: 'strength', kind: 'rate_lift', text: '力量：逐组已记·待评价', deferred })
   }
