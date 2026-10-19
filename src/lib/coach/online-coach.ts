@@ -67,6 +67,7 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
 export const ONLINE_QUESTION_MAX = 1000
 export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[] }, ms = 30000): Promise<{ text: string } | { error: string }> {
   const q = input.question.trim()
+  // eslint-disable-next-line no-control-regex -- 有意拒绝控制字符
   if (!q || q.length > ONLINE_QUESTION_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) return { error: `问题为空、含无效字符或超过${ONLINE_QUESTION_MAX}字，已保留本地分析；没有上传数据` }
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms)
   try {

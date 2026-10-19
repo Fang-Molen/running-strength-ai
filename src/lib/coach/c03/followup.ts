@@ -67,6 +67,7 @@ export type C03FollowupRecord = Shell & (
 export type C03WriteResult = { ok: true; id: string; duplicate: boolean } | { ok: false; reason: string }
 type RecordBody<T = C03FollowupRecord> = T extends Shell ? Omit<T, keyof Shell> & { id: string } : never
 const text = (x: unknown): x is string => typeof x === 'string' && x.trim().length > 0 && x.length <= 4000
+// eslint-disable-next-line no-control-regex -- 有意拒绝控制字符
 const id = (x: unknown): x is string => text(x) && x.length <= 240 && !/[\u0000-\u001f]/.test(x)
 const time = (x: unknown): x is number => typeof x === 'number' && Number.isSafeInteger(x) && x >= 0
 const version = (x: unknown): x is number => typeof x === 'number' && Number.isSafeInteger(x) && x > 0
