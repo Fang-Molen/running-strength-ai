@@ -11,6 +11,8 @@ import { discardGuided, guidedLive, latestOccurrence } from "@/lib/ui/guided-dis
 import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, loadDateConfirm, saveDateConfirm, clearDateConfirm, migrateUserConfirmedDates, shiftedText, DATE_CONFIRM_KEY, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
 import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor, type ComboView, type ComponentState, type DeviceRun } from "@/lib/ui/plan400-components";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
+import { matchLaps, plannedRepsFromText } from "@/lib/ui/lap-structure";
+import { cachedLaps } from "@/lib/coach/online-coach";
 import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink, usePartsAll, PendingFeedbackList } from "@/components/plan400-parts";
 import type { DayParts } from "@/lib/ui/plan400-view";
 import { loadVitals } from "@/lib/nutrition/vitals";
@@ -101,7 +103,7 @@ function DeviceRunList({ runs }: { runs: DeviceRun[] }) {
   if (!runs.length) return <p className="keep text-xs text-muted">这天没有手表跑步记录。佳明账号同步只在打开 App / 手动同步时拉取；也可以在「健康 › 导入」导入 FIT/TCX/GPX 文件。</p>;
   return <div className="space-y-2" data-testid="device-run-candidates">
     <p className="keep text-xs text-muted">同日手表跑步{runs.length > 1 ? `（${runs.length} 条，未判断是哪一条）` : ""} · 只显示设备给出的字段，未关联到这节课</p>
-    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-xs leading-5"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p><p className="keep text-muted">没有圈段/分段数据，150m 各组成绩和组间休息不能从这条记录得出，请按实际手填。</p></div>)}
+    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-xs leading-5"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p><p className="keep text-muted">没有确认是这节课的跑步前，不拿它的圈段对照；各组成绩和组间休息请按实际手填，没填就保持未知。</p></div>)}
     <p className="keep text-[11px] text-muted">这些手表跑步不是这节课的候选（你标过“不是这节”，或已关联到别的计划课），作为计划外记录保留在日志里。</p>
   </div>;
 }
@@ -152,6 +154,20 @@ function SharedSleep({ date }: { date: string }) {
 function Fields({ list, value, onChange }: { list: [keyof Log, string, string][]; value: Log; onChange: (l: Log) => void }) {
   return <>{list.map(([k, label, ph]) => <label key={k} className="block"><span className="text-xs text-muted">{label}</span><input className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder={ph} value={value[k] ?? ""} onChange={(e) => onChange({ ...value, [k]: e.target.value })} /></label>)}</>;
 }
+/** v83（P1-06）：已确认关联的手表跑步有圈段 → 识别值（待确认）；点“填入”才放进下面的输入框，再点保存才写入。 */
+function LapSuggest({ d, onFill }: { d: V4Day; onFill: (reps: string, rest: string) => void }) {
+  const { link } = useV4RunLink(d.date);
+  if (!link) return null;
+  const gid = link.run.garminId;
+  const m = matchLaps(gid != null ? cachedLaps(gid) : null, plannedRepsFromText(d.main.slice(1).join("")));
+  if (m.status !== "matched") return <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted" data-testid="lap-unknown">圈段对照：{m.reason}{gid != null && !cachedLaps(gid) ? "（圈段还没下载：在日志里打开这条佳明跑步可加载）" : ""}</p>;
+  return <div className="rounded-xl border border-accent/50 p-2.5 text-xs leading-5" data-testid="lap-match">
+    <p className="font-bold">识别值（待确认）· 来源 {m.source}</p>
+    <p className="keep">逐组：{m.repsText}</p><p className="keep">休息：{m.restText}</p>
+    <p className="keep text-muted">原始圈段保留不改；确认无误再填入，然后点“保存跑步记录”。</p>
+    <button type="button" className="mt-1 min-h-10 rounded-lg border border-accent px-3 font-bold text-accent" onClick={() => onFill(m.repsText, m.restText)}>填入下面（还没保存）</button>
+  </div>;
+}
 /** v83（P1-08/P1-09）：组合课的旧整课记录只读显示（不拆、不再编辑），没有旧记录就不显示。 */
 function LegacyReadOnly({ log, kind }: { log: Log; kind: "after" | "later" }) {
   const t = (v: unknown) => String(v ?? "").trim();
@@ -200,6 +216,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
           <h3 className="font-bold">跑步部分</h3>
           <p className="keep text-xs text-muted">目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}。没做的项留空（不会记成 0）。</p>
           <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} />
+          <LapSuggest d={d} onFill={(reps, rest) => setEdit(e => ({ ...e, reps, rest }))} />
           <Fields list={DURING.slice(0, 3)} value={edit} onChange={setEdit} />
           <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux"])}>保存跑步记录</button>
         </section>
