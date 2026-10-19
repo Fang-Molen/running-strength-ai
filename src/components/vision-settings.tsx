@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { hasVisionAccess, setVisionAccess, visionStatus } from '@/lib/vision/client';
+import { useEffect, useState } from 'react';
+import { visionInfo, type VisionStatus } from '@/lib/vision/client';
+/** v78：不再填访问码。只如实显示图片识别（视觉模型）是否已在服务端配置。 */
 export function VisionSettings() {
-  const [code, setCode] = useState(''), [message, setMessage] = useState(''), [ready, setReady] = useState(hasVisionAccess), [busy, setBusy] = useState(false);
-  return <details className="my-3 rounded-xl border border-line p-3 text-sm"><summary className="min-h-10 cursor-pointer font-bold">联网图片识别 · DeepSeek{ready ? ' · 已填访问码' : ''}</summary><p className="text-xs text-muted">访问码由部署者设置，仅在本次打开期间使用。API密钥保存在服务器；这里只填写访问码。点击识别才发送所选图片。</p><div className="mt-2 flex gap-2"><input type="password" autoComplete="off" value={code} aria-label="识别服务访问码" onChange={e => setCode(e.target.value)} className="fk-cell min-h-11 min-w-0 flex-1 text-base" placeholder="填写识别访问码" /><button type="button" disabled={!code.trim()} className="fk-chip" onClick={() => { setVisionAccess(code); setCode(''); setReady(true); setMessage('已用于本次打开，尚未调用识别服务。'); }}>使用</button></div><div className="mt-2 flex gap-2"><button type="button" className="fk-chip min-h-11" disabled={busy} onClick={async () => { setBusy(true); const c = new AbortController(), t = setTimeout(() => c.abort(), 5000); try { setMessage(await visionStatus(c.signal) ? '识别接口已配置。实际识别时再验证访问码和模型额度。' : '识别接口尚未部署或配置。'); } catch { setMessage('暂时连接不上，请稍后重试。'); } finally { clearTimeout(t); setBusy(false); } }}>{busy ? '检查中…' : '检查服务状态'}</button><button type="button" className="fk-chip min-h-11" onClick={() => { setVisionAccess(''); setReady(false); setMessage('本次访问码已清除。'); }}>清除访问码</button></div>{message ? <p className="mt-2 text-xs" role="status">{message}</p> : null}</details>;
+  const [v, setV] = useState<VisionStatus | null>(null);
+  useEffect(() => { const c = new AbortController(); void visionInfo(c.signal).then(setV); return () => c.abort(); }, []);
+  return <p className="keep my-3 rounded-xl border border-line p-3 text-xs text-muted" data-testid="vision-status">{v == null ? '图片识别：检查中…' : v.configured ? `图片识别已配置（${v.provider ?? ''} ${v.model ?? ''}），点识别才上传所选图片。` : '图片识别未配置：DeepSeek 接口不支持图片，截图会先用本机识字再提取。'}</p>;
 }

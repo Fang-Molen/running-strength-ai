@@ -14,8 +14,11 @@ import type { LoggedSession } from './coach-assessment';
 import { addDays, weekOf } from './day-schedule-rules';
 import { runningActualTotals } from './running-actual-totals';
 import type { ScheduleEntry } from './day-schedule-rules';
+import { matchRuns, v4RunSlots, allRunLinks, type RunLink } from './run-link';
+import { loadComponents, hasFeedback, type DayComponents, type ComponentsDoc } from './plan400-components-store';
+import type { V4Day } from './plan400-view';
 export type RowSource = 'execution' | 'phone' | 'import' | 'garmin'
-export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[] };
+export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents };
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
 const day = (iso: string) => activityLocalDay(iso);
 function sameActivity(a: ActivityRow, b: ActivityRow) {
@@ -89,7 +92,31 @@ export function loadTrainingActivities(): ActivityRow[] {
   }
   rows.push(...orphanSetRows(events, occurrences), ...phoneRows());
   try { rows.push(...garminRows(JSON.parse(localStorage.getItem(garminViewKey('fk-garmin-acts-v1')) ?? '{}'))); } catch { /* no device cache */ }
-  return mergeActivities(rows);
+  return linkRuns(rows);
+}
+let lastMatch: { links: RunLink[]; suggestions: { entry: ScheduleEntry; runs: ActivityRow[] }[] } = { links: [], suggestions: [] }
+/** v79：上一次 loadTrainingActivities 算出的 计划跑步课 ↔ 手表跑步 关联（日志、方坤、计划页共用同一份）。 */
+export function loadRunMatch() { loadTrainingActivities(); return lastMatch }
+export const lastRunMatch = () => lastMatch
+/** 计划跑步课（日程 + V4 跑步部分）↔ 手表跑步：关联后 V4 那天与这条跑步合并成一条记录；日程跑步课本来就不生成记录。只算一次。 */
+export function linkRuns(rows: ActivityRow[], store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now()): ActivityRow[] {
+  const merged0 = mergeActivities(rows), today = day(new Date(now).toISOString())!
+  let match: typeof lastMatch = { links: [], suggestions: [] }
+  try {
+    const comps = loadComponents(store), sched = (JSON.parse(store?.getItem('fk-schedule-v1') ?? '{}')?.entries ?? []) as ScheduleEntry[]
+    const base = (() => { try { return JSON.parse(store?.getItem('fk-run-links-v1') ?? '{}') ?? {} } catch { return {} } })()
+    match = matchRuns([...sched, ...v4RunSlots(V4.days as V4Day[], today, comps)], merged0, allRunLinks(comps, base), today)
+  } catch { /* 没有日程/关联：不关联 */ }
+  const v4 = match.links.filter(l => l.entry.id.startsWith('plan400:'))
+  let merged = merged0
+  if (v4.length) {
+    let changed = false
+    for (const l of v4) { const p = rows.find(r => r.id === `p400:${l.entry.date}`); if (p) { p.originIds = [...new Set([...p.originIds, ...l.run.originIds])]; changed = true } }
+    if (changed) merged = mergeActivities(rows)
+  }
+  for (const l of match.links) { const row = merged.find(r => r.originIds.some(id => l.run.originIds.includes(id))); if (row) row.runLink = { entryId: l.entry.id, title: l.entry.title, by: l.by } }
+  lastMatch = match
+  return merged
 }
 /** 佳明“训练后自评强度”directWorkoutRpe 为 10–100（10 = RPE1）；换算成 1–10。 */
 export function garminRpe(v: unknown): number | null { const n = typeof v === 'number' && Number.isFinite(v) ? v : null; return n == null ? null : n >= 10 && n <= 100 ? Math.round(n / 10) : n >= 1 && n <= 10 ? n : null }
@@ -129,7 +156,8 @@ export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localS
   const read = <T,>(k: string, d: T): T => { try { const v = JSON.parse(store?.getItem(k) ?? 'null'); return v ?? d } catch { return d } }
   const today = day(new Date(now).toISOString())!
   const checks = Object.values(read<Record<string, Check>>('fk-today-checklist-v1', {})).filter(c => c && typeof c.date === 'string' && typeof c.sessionId === 'string')
-  const checkInfo = (c: Check) => { const sets = Object.values(c.moves ?? {}).flat(); return { done: sets.filter(x => x?.done).length, touched: (c.updatedAt ?? 0) > 0 || c.startedAt != null || c.rpe != null } }
+  // v79（t489）：只打开/动过清单（updatedAt/startedAt）不是训练证据；要勾过组或给过反馈（RPE）才算“记过”。
+  const checkInfo = (c: Check) => { const sets = Object.values(c.moves ?? {}).flat(); return { done: sets.filter(x => x?.done).length, touched: c.rpe != null } }
   const used = new Set<string>(), rows: ActivityRow[] = []
   const sched = read<{ entries?: Sched[] }>('fk-schedule-v1', {}).entries ?? []
   for (const e of sched) {
@@ -156,19 +184,24 @@ export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localS
   }
   // V4 计划记录（fk-plan400-v4-log，首页/计划页/训练中都写这里，按计划日期记）：有实际记录或已完成/减量的一天 = 一条记录。
   // 跑步部分与手表活动没有可靠 id 关联，不合并；它没有距离/时长，不会把手表数据重复计入总量。
-  const p4 = read<Record<string, V4LogLite>>('fk-plan400-v4-log', {})
-  for (const [d, l] of Object.entries(p4 && typeof p4 === 'object' ? p4 : {})) {
-    if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > today || !l || typeof l !== 'object' || l.done === 'skipped') continue
-    const recorded = (['reps', 'rest', 'aux', 'strength', 'rpe', 'pain', 'note'] as const).some(k => String(l[k] ?? '').trim())
+  const p4 = read<Record<string, V4LogLite>>('fk-plan400-v4-log', {}), comps = read<ComponentsDoc>('fk-plan400-v4-components-v1', { schemaVersion: 1, days: {} })
+  const p4days = new Set([...Object.keys(p4 && typeof p4 === 'object' ? p4 : {}), ...Object.keys(comps?.days ?? {})])
+  for (const d of p4days) {
+    const l = (p4?.[d] ?? {}) as V4LogLite, c = comps?.days?.[d] as DayComponents | undefined
+    const runFb = hasFeedback(c?.running) && c?.running?.status !== 'skipped', liftFb = hasFeedback(c?.strength) && c?.strength?.status !== 'skipped'
+    const partDone = [c?.running?.status, c?.strength?.status].some(x => x === 'done' || x === 'reduced')
+    if (!/^\d{4}-\d\d-\d\d$/.test(d) || d > today || !l || typeof l !== 'object' || (l.done === 'skipped' && !runFb && !liftFb)) continue
+    const recorded = (['reps', 'rest', 'aux', 'strength', 'rpe', 'pain', 'note'] as const).some(k => String(l[k] ?? '').trim()) || runFb || liftFb
     if (!recorded && l.done !== 'done' && l.done !== 'reduced') continue
     const pd = (V4.days as { date: string; title: string; main: string[]; strength: string[] }[]).find(x => x.date === d)
     const strengthText = (l.strength ?? '').trim(), planStrength = pd ? pd.strength.join('') : ''
-    const hasRun = pd ? !/休息/.test(pd.title) && !/^力量/.test(pd.title) : !strengthText
-    const hasLift = !!strengthText || (!!planStrength && !/^无|^可做|^仅活动度/.test(planStrength) && (l.done === 'done' || l.done === 'reduced'))
+    // v79：分项跳过的那一项不算；手表跑步不会让力量变成有记录
+    const hasRun = c?.running?.status === 'skipped' ? false : pd ? !/休息/.test(pd.title) && !/^力量/.test(pd.title) : !strengthText
+    const hasLift = c?.strength?.status === 'skipped' ? false : !!strengthText || liftFb || (!!planStrength && !/^无|^可做|^仅活动度/.test(planStrength) && (l.done === 'done' || l.done === 'reduced'))
     const rpe = Number(l.rpe)
-    rows.push({ id: `p400:${d}`, startedAt: localNoon(d), timeUnknown: true, date: d, sport: hasRun && hasLift ? 'MIXED' : hasRun ? 'RUNNING' : 'STRENGTH', distanceM: null, durationSec: null, strengthVolumeKg: null, sets: null,
+    rows.push({ id: `p400:${d}`, startedAt: localNoon(d), timeUnknown: true, date: d, sport: hasRun && hasLift ? 'MIXED' : hasRun ? 'RUNNING' : hasLift ? 'STRENGTH' : 'RUNNING', distanceM: null, durationSec: null, strengthVolumeKg: null, sets: null,
       rpe: Number.isFinite(rpe) && rpe >= 1 && rpe <= 10 ? rpe : null, source: 'phone', appMade: true, plan: 'v4',
-      title: `V4 ${pd?.title ?? '计划课'}${l.done === 'reduced' ? '（减量）' : ''}`, status: l.done === 'done' || l.done === 'reduced' ? 'completed' : 'incomplete',
+      title: `V4 ${pd?.title ?? '计划课'}${l.done === 'reduced' ? '（减量）' : ''}`, status: l.done === 'done' || l.done === 'reduced' || partDone ? 'completed' : 'incomplete', ...(c ? { v4parts: c } : {}),
       originIds: [`p400:${d}`, `plan400:${d}`, `sched:plan400:${d}:strength`] })
   }
   return rows

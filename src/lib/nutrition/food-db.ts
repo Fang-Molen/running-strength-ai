@@ -12,7 +12,7 @@ export function setRowsForTest(a: FoodRow[], b: FoodRow[] = []) { cn = a; us = b
 
 /** 待核：旧库未记来源、品牌待标签、演示估算 */
 export function needsCheck(r: FoodRow): boolean { return r.src === "L" || r.src === "O" || r.st === "PENDING_LABEL" || r.src === "D" || r.st === "UNVERIFIED" || r.st === "HISTORICAL_RECHECK"; }
-export function sourceLabel(r: FoodRow): string { if (r.lbl) return r.lbl; return r.src === "C" ? "中国食物成分表 第6版" : r.src === "O" ? "Open Food Facts·标签待核" : r.src === "U" ? "USDA SR26" : r.src === "B" ? (r.st === "HISTORICAL_RECHECK" ? "品牌官网（旧）" : "品牌官网") : r.src === "P" ? "品牌·待标签" : r.src === "D" ? "估算·待核" : "内置库·待核"; }
+export function sourceLabel(r: FoodRow): string { if (r.lbl) return r.lbl; return r.src === "C" ? "中国食物成分表 第6版" : r.src === "O" ? "Open Food Facts·标签待核" : r.src === "U" ? "USDA SR26" : r.src === "B" ? (r.st === "HISTORICAL_RECHECK" ? "品牌官网（旧）" : "品牌官网") : r.src === "P" ? "品牌·待标签" : r.src === "D" ? "估算·待核" : "来源不明（旧库）"; }
 
 export function search(q: string, limit = 8): FoodRow[] {
   const s = q.trim().toLowerCase(); if (!s) return [];
@@ -24,12 +24,33 @@ export function search(q: string, limit = 8): FoodRow[] {
     if(names.some(x=>x.includes(normalized))||tokens.length>1&&tokens.every(t=>text.includes(t)))return 2;
     return 9;
   };
-  // 同一匹配等级内：官网/成分表 > USDA/OFF > 估算 > 旧库未核 > 待补充（只改并列顺序，不改匹配规则）
+  // 有来源的行（官网/成分表 > USDA/OFF > 估算）排在来源不明的旧库行和待补充行前面；同一组内再按匹配等级。
+  // 例：霸王茶姬 旧库 60kcal/100g（来源不明）vs 伯牙绝弦 品牌公布 130kcal/杯 → 品牌行在前，旧行保留并标“来源不明”。
   const SRC: Record<string, number> = { B: 0, C: 0, U: 1, O: 1, D: 2, L: 3, P: 4 };
   const hits: [number, FoodRow][] = [];
-  for (const r of [...(cn ?? []), ...(us ?? [])]) { const k = rank(r); if (k < 9) hits.push([k * 100 + (SRC[r.src] ?? 3) * 10 + r.g, r]); }
+  for (const r of [...(cn ?? []), ...(us ?? [])]) { const k = rank(r); if (k < 9) { const src = SRC[r.src] ?? 3; hits.push([(src >= 3 ? 1000 : 0) + k * 100 + src * 10 + r.g, r]); } }
   hits.sort((a, b) => a[0] - b[0] || a[1].n.length - b[1].n.length);
   return hits.slice(0, limit).map((x) => x[1]);
+}
+/** 没搜到时的兜底：库里 ≥3 个字的名称/别名，若整个出现在输入里，按长度从长到短给出（“妈妈做的灌汤小笼包” → 灌汤小笼包）。结果只当“相近食物”。 */
+export function similarFoods(q: string, limit = 5): FoodRow[] {
+  const s = q.trim().toLocaleLowerCase().normalize('NFKC'); if (s.length < 3) return [];
+  const SRC: Record<string, number> = { B: 0, C: 0, U: 1, O: 1, D: 2, L: 3, P: 4 };
+  const out: [number, number, FoodRow][] = [], seen = new Set<string>();
+  for (const r of [...(cn ?? []), ...(us ?? [])]) {
+    if (r.src === 'P' || seen.has(r.i)) continue
+    let best = 0; for (const x of [r.n, ...r.a]) { const t = x.toLocaleLowerCase().normalize('NFKC').replace(/（.*?）|\(.*?\)/g, '').trim(); if (t.length >= 3 && t.length > best && s.includes(t)) best = t.length }
+    if (best) { seen.add(r.i); out.push([best, SRC[r.src] ?? 3, r]) }
+  }
+  out.sort((a, b) => b[0] - a[0] || a[1] - b[1] || a[2].n.length - b[2].n.length);
+  return out.slice(0, limit).map(x => x[2]);
+}
+/** 份量单位：每100g的行用 pt 里的常用单位（份/个/碗/杯…≈克数）；按份的行用它自己的份名（笼/杯/份）。 */
+export function portionUnits(r: FoodRow): { label: string; grams: number | null }[] {
+  if (r.b === 'serv') { const u = (r.s.u.match(/^\d*\s*([^\d（(\s])/)?.[1]) || '份'; return [{ label: u, grams: r.s.g }] }
+  const seen = new Set<string>(), out: { label: string; grams: number | null }[] = []
+  for (const [label, g] of r.pt ?? []) if (label && g > 0 && !seen.has(label)) { seen.add(label); out.push({ label, grams: g }) }
+  return out
 }
 const mul = (v: N5 | null, k: number): Macros => ({ kcal: v?.[0] == null ? null : Math.round(v[0] * k), protein: v?.[1] == null ? null : Math.round(v[1] * k * 10) / 10, carb: v?.[2] == null ? null : Math.round(v[2] * k * 10) / 10, fat: v?.[3] == null ? null : Math.round(v[3] * k * 10) / 10, fiber: v?.[4] == null ? null : Math.round(v[4] * k * 10) / 10 });
 /** 每100g食物按克；按份食物只按份数，不做克换算 */

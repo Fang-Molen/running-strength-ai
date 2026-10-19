@@ -108,7 +108,9 @@ const verify=async(tag)=>{
   const total=Number((s.match(/(\d+) 条记录/)||[])[1]),headSum=Object.keys(days).length?Object.values(days).length:0
   const dayCounts=[...list.matchAll(/^\d\d-\d\d 周.? · (\d+) 条/gm)].reduce((a,m)=>a+Number(m[1]),0)
   check(`${tag} 日志 ${kind}/${range}：每条恰好一次、日期正确`,!bad.length,bad.join('；')+'\n'+list.slice(0,1500))
-  check(`${tag} 日志 ${kind}/${range}：摘要条数 = 列表条数 (${total}=${dayCounts})`,total===dayCounts,s)
+  // v79（t489）：没完成也没反馈的课照样列出，但不计入条数
+  const notCounted=(list.match(/未完成(·未反馈)?（不计入）/g)||[]).length
+  check(`${tag} 日志 ${kind}/${range}：摘要条数 + 未计入 = 列表条数 (${total}+${notCounted}=${dayCounts})`,total+notCounted===dayCounts,s)
  }
  // 10-10 旧版清单（近4周 全部里）
  const all=dump['all/4w'];check(`${tag} v53–v72 旧清单 10-10 → 日志 10-10`,/10-10 周六 · 1 条/.test(all),all.slice(0,200))
@@ -117,7 +119,7 @@ const verify=async(tag)=>{
 await verify('首次')
 // 状态
 const st=dump['all/4w'];check('10-18 力量·小腿 标记后 = 已完成（不是已记录未完成），日期 10-18',/力量·小腿\n[^\n]*10-18[^\n]*手机记录/.test(st)&&!/力量·小腿\n[^\n]*已记录未完成/.test(st),st)
-check('10-17 核心+下肢 = 10-17 00:09 已记录未完成（不是 10-18 那节）',/力量课 · 核心\+下肢\n[^\n]*10-17 00:09[^\n]*已记录未完成/.test(st),st)
+check('10-17 核心+下肢（勾过 1 组、没完成没反馈）= 10-17 00:09 未完成·未反馈（不计入）',/力量课 · 核心\+下肢\n[^\n]*10-17 00:09[^\n]*未完成·未反馈（不计入）/.test(st),st)
 check('10-15 实际不同 → 25:00',/力量课 · 上肢[\s\S]{0,80}25:00/.test(st),st)
 um=await p.getByTestId('unmarked-plans').innerText().catch(()=>'');check('标记后待标记清空',!/力量·小腿/.test(um),um)
 // 复盘

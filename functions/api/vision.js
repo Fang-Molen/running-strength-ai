@@ -5,7 +5,13 @@ import { validateVisionResult, VISION_PROMPT } from '../../src/lib/vision/contra
 const MAX_BODY = 4 * 1024 * 1024;
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' } });
 const fail = (message, status) => json({ ok: false, message }, status);
-function configured(env) { return env.VISION_ENABLED === 'true' && Boolean(env.DEEPSEEK_API_KEY?.trim()) && (env.VISION_ACCESS_TOKEN?.length ?? 0) >= 24; }
+// v78：DeepSeek 接口不支持图片输入，图片识别需要单独的视觉模型（OpenAI 兼容 chat/completions + image_url），例如阿里云百炼 qwen-vl。
+// 需要服务端配置：VISION_API_KEY（密钥）、VISION_BASE_URL（https，例如 https://dashscope.aliyuncs.com/compatible-mode/v1）、VISION_MODEL（例如 qwen-vl-max）。
+// 不再使用访问码；同源 + 每 IP 限频 + 体积上限。
+function configured(env) { return Boolean(env.VISION_API_KEY?.trim()) && /^https:\/\/[^/]+/.test(env.VISION_BASE_URL || '') && Boolean(env.VISION_MODEL?.trim()); }
+const visionHits = new Map();
+function limited(ip, now = Date.now()) { const h = (visionHits.get(ip) || []).filter(t => now - t < 864e5); const minute = h.filter(t => now - t < 6e4).length; if (minute >= 6 || h.length >= 120) { visionHits.set(ip, h); return true; } h.push(now); visionHits.set(ip, h); return false; }
+const endpoint = (env) => env.VISION_BASE_URL.replace(/\/+$/, '') + '/chat/completions';
 async function boundedText(stream, limit) {
   if (!stream) throw Error('EMPTY');
   const reader = stream.getReader(), parts = []; let bytes = 0;
@@ -22,10 +28,10 @@ function imageOK(url) {
 export async function handleVision(request, env, fetcher = fetch) {
   const origin = request.headers.get('origin');
   if (origin && origin !== new URL(request.url).origin) return fail('请从方坤页面发起识别。', 403);
-  if (request.method === 'GET') return json({ ok: true, configured: configured(env), provider: 'DeepSeek', model: env.DEEPSEEK_VISION_MODEL || 'deepseek-flash' });
+  if (request.method === 'GET') return json({ ok: true, configured: configured(env), provider: configured(env) ? (env.VISION_PROVIDER_NAME || new URL(env.VISION_BASE_URL).hostname) : null, model: configured(env) ? env.VISION_MODEL : null, needs: configured(env) ? [] : ['VISION_API_KEY', 'VISION_BASE_URL', 'VISION_MODEL'], note: 'DeepSeek 接口不支持图片输入；图片识别需单独配置视觉模型。' });
   if (request.method !== 'POST') return fail('不支持的请求。', 405);
-  if (!configured(env)) return fail('联网识别尚未配置。可先使用本地识字或手动记录。', 503);
-  if (request.headers.get('authorization') !== `Bearer ${env.VISION_ACCESS_TOKEN}`) return fail('请填写正确的识别访问码（不是API密钥）。', 401);
+  if (!configured(env)) return fail('图片识别需配置视觉模型（DeepSeek 不支持图片）。可先用本机识字，或输入菜名用联网估算。', 503);
+  if (limited(request.headers.get('cf-connecting-ip') || 'anon')) return fail('识别次数过多，请稍后再试。', 429);
   if (!/application\/json/i.test(request.headers.get('content-type') || '')) return fail('请求格式错误。', 415);
   if (Number(request.headers.get('content-length')) > MAX_BODY) return fail('图片过大，请裁剪后重试。', 413);
   let input;
@@ -41,14 +47,14 @@ export async function handleVision(request, env, fetcher = fetch) {
   const stop = () => controller.abort(); request.signal.addEventListener('abort', stop, { once: true });
   try {
     if (request.signal.aborted) controller.abort();
-    const r = await fetcher('https://api.deepseek.com/chat/completions', { method: 'POST', redirect: 'error', signal: controller.signal, headers: { 'content-type': 'application/json', authorization: `Bearer ${env.DEEPSEEK_API_KEY}` }, body: JSON.stringify({ model: env.DEEPSEEK_VISION_MODEL || 'deepseek-flash', stream: false, thinking: {type:'disabled'}, temperature: 0.1, max_tokens: 6000, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: training ? TRAINING_IMAGE_PROMPT : VISION_PROMPT }, { role: 'user', content }] }) });
+    const r = await fetcher(endpoint(env), { method: 'POST', redirect: 'error', signal: controller.signal, headers: { 'content-type': 'application/json', authorization: `Bearer ${env.VISION_API_KEY}` }, body: JSON.stringify({ model: env.VISION_MODEL, stream: false, temperature: 0.1, max_tokens: 6000, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: training ? TRAINING_IMAGE_PROMPT : VISION_PROMPT }, { role: 'user', content }] }) });
     if (!r.ok) { await r.body?.cancel(); return fail(r.status === 429 ? '服务繁忙或额度不足，请稍后重试。' : r.status === 401 || r.status === 402 ? '识别服务的密钥或余额需管理员检查。' : '识别服务暂不可用，请稍后重试。', 502); }
     const envelope = JSON.parse(await boundedText(r.body, 150000));
     const c = envelope.choices?.[0]; if (c?.finish_reason !== 'stop' || typeof c.message?.content !== 'string') return fail('结果未完整返回，请缩小图片范围重试。', 502);
     const raw = JSON.parse(c.message.content);
-    if (training) { if (!validTrainingOutput(raw)) return fail('训练提取不完整，请缩小范围重试。', 502); return json({ok:true,candidate:raw,model:env.DEEPSEEK_VISION_MODEL || 'deepseek-flash'}); }
+    if (training) { if (!validTrainingOutput(raw)) return fail('训练提取不完整，请缩小范围重试。', 502); return json({ok:true,candidate:raw,model:env.VISION_MODEL}); }
     const result = validateVisionResult(raw, input.mode);
-    return json({ ok: true, result, provider: 'DeepSeek', model: env.DEEPSEEK_VISION_MODEL || 'deepseek-flash', at: new Date().toISOString() });
+    return json({ ok: true, result, provider: env.VISION_PROVIDER_NAME || 'vision', model: env.VISION_MODEL, at: new Date().toISOString() });
   } catch { return fail(controller.signal.aborted ? '识别已取消或超时，尚未保存任何记录。' : '没有拿到完整可信的识别结果，请重试或手动填写。', 502); }
   finally { clearTimeout(timer); request.signal.removeEventListener('abort', stop); }
 }

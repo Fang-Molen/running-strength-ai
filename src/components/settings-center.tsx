@@ -74,7 +74,7 @@ export function SettingsMenu({ profile, sportGoal, displayText, onPane, onProfil
     <Group title="应用与隐私">
       <MenuRow icon={Bot} title="教练与提醒" sub={extra.coach} onClick={() => onPane("coach")} />
       <MenuRow icon={Palette} title="外观与显示" sub={displayText} onClick={() => onPane("theme")} />
-      <MenuRow icon={Cpu} title="AI 服务与联网功能" sub="拍照识别 · 联网图片识别" onClick={() => onPane("ai")} />
+      <MenuRow icon={Cpu} title="AI 服务与联网功能" sub="全部联网功能（默认开启，可逐项关）" onClick={() => onPane("ai")} />
       <MenuRow icon={ShieldCheck} title="隐私与数据流向" sub="哪些存在本机、哪些会经服务端" onClick={() => onPane("privacy")} testId="menu-privacy" />
     </Group>
     <button type="button" className="mt-3 min-h-11 w-full text-sm text-muted" onClick={onProfile}>直接编辑基本信息 ›</button>
@@ -179,8 +179,10 @@ export function PrivacyPanel() {
     <div><h3 className="font-bold">只有使用这些功能时，数据才会经过服务端</h3>
       <ul className="mt-1 list-disc space-y-1.5 pl-5 text-muted">
         <li><b className="text-fg">佳明账号同步</b>：账号密码经方坤服务端转发给佳明登录；同步时佳明返回的活动和健康数据经服务端中转后保存到本机。服务端代码不保存、不记录这些内容；会话令牌加密放在网页脚本读不到的 Cookie 里。</li>
-        <li><b className="text-fg">体脂秤拍照、营养标签拍照</b>：照片先在手机上识别文字，只把识别出的文字经方坤服务端发给 DeepSeek 整理成数值；照片本身不上传。结果要你确认后才保存。</li>
-        <li><b className="text-fg">联网图片识别（DeepSeek，需访问码）</b>：会把你选择的图片经方坤服务端发给 DeepSeek 识别。访问码只放在内存里，不进本机存储和备份。不点识别就不会发送。</li>
+        <li><b className="text-fg">联网功能默认全部开启</b>（你要求的，同意时间记录在本机；「AI 服务与联网功能」里可逐项关闭）。</li>
+        <li><b className="text-fg">营养标签、小票、体脂秤拍照</b>：照片只在手机上识字，只把识别出的文字经方坤服务端发给 DeepSeek 整理；照片不上传。结果要你确认后才保存。</li>
+        <li><b className="text-fg">没找到的食物联网估算</b>：只发送食物名称和份量给 DeepSeek，结果标“估算”，可改；不知道的项留空。</li>
+        <li><b className="text-fg">菜品照片 / 截图图片识别</b>：需要单独的视觉模型（DeepSeek 不支持图片），目前未配置，不会上传图片。配置后点识别才会把所选图片经服务端发给该视觉模型。</li>
         <li><b className="text-fg">方坤联网对话（默认开启，可在方坤对话页关闭）</b>：会把你的问题、最近几轮对话、计划目标、近期活动数值与分段、恢复指标（睡眠/静息心率/HRV/身体电量/压力）经方坤服务端发给 DeepSeek；不发送账号、密码、位置和活动名称。断网或关闭时用本地规则回答。</li>
       </ul></div>
     <div><h3 className="font-bold">第三方与删除范围</h3><p className="text-muted">发给 DeepSeek 的内容按 DeepSeek 的政策处理；佳明账号里的数据要在佳明那边管理。App 只能删除本机记录，不能替你删除第三方或平台日志里的数据（Cloudflare 平台层访问日志的保存策略：待核）。</p></div>

@@ -1,4 +1,5 @@
-import { VisionSettings } from "./vision-settings";
+import { OnlineFeaturesSettings } from "./online-features-settings";
+import { onlineFeatures } from "@/lib/ui/online-features";
 import { installChunkRecovery, isChunkError, recoverFromChunkError } from "@/lib/chunk-recover";
 import { HomeDashboard } from "@/components/home-dashboard";
 import { GarminLog } from "@/components/garmin-log";
@@ -8,6 +9,7 @@ const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel").cat
 import { exportFeedback } from "@/components/coach-feedback";
 import { AthletePanel, BackupCenter, HealthPanel, PrivacyPanel, SettingsMenu, SyncStatusPanel, type GarminConnState, type SettingsPane } from "@/components/settings-center";
 import { Plan400Cycle, Plan400TodayCard, Plan400DayHost, TempTrainingList } from "@/components/plan400";
+import { RunImportPrompt } from "@/components/plan400-parts";
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
@@ -111,6 +113,7 @@ const FEELS: { id: Feel; label: string; hint: string }[] = [
 export function StrengthApp() {
   const [bodyPane, setBodyPane] = useState<BodyPane>("recovery");
   const [, setDataRevision] = useState(0);
+  useEffect(() => { try { onlineFeatures() } catch { /* storage unavailable */ } }, []); // v78 t473：联网功能默认全开，记录一次同意
   useEffect(() => {
     const refresh = () => setDataRevision(value => value + 1);
     const unsubscribe = onAppEvent(refresh);
@@ -840,7 +843,7 @@ export function StrengthApp() {
           {settingsPane === "sync" ? <><SyncStatusPanel conn={garminConn} /><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "import" ? <><section className="home-card mt-3 p-4"><h3 className="font-bold">导入手表文件或截图</h3><p className="mt-1 text-xs text-muted">导入的数据会先给你核对，确认后才保存；与佳明账号同步分开记录来源。</p><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></section><button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { const node = document.getElementById("body-records"); if (node instanceof HTMLDetailsElement) node.open = true; document.getElementById("body-devices")?.scrollIntoView({ block: "start" }); }, 40); }} className="home-card mt-3 flex min-h-14 w-full items-center justify-between px-4 text-left text-sm"><span><b className="block">健康页 · 设备记录与说明</b><span className="text-xs text-muted">查看已导入的设备数据和各品牌导入说明</span></span><span aria-hidden="true">›</span></button></> : null}
           {settingsPane === "coach" ? <SettingsHub only={["c", "r"]} initialOpen="c" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
-          {settingsPane === "ai" ? <><VisionSettings /><p className="mt-2 px-1 text-xs text-muted">体脂秤和营养标签拍照：照片在手机上识字，只把文字发给服务端整理，照片不上传。详细说明见「隐私与数据流向」。</p></> : null}
+          {settingsPane === "ai" ? <OnlineFeaturesSettings /> : null}
           {settingsPane === "privacy" ? <><PrivacyPanel /><SettingsHub only={["x"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "menu" ? null : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">‹ 返回个人与设置</button>}
           {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
@@ -952,6 +955,7 @@ export function StrengthApp() {
         </div>
       ) : null}
       <Plan400DayHost today={todayIso} />
+      <RunImportPrompt today={todayIso} />
       {true ? <QuickLog hideFab openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}

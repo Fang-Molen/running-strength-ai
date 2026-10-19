@@ -7,6 +7,11 @@ import { loadSchedule, saveScheduledEntry } from "@/lib/ui/day-schedule";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import { scheduleExecutionId } from "@/lib/ui/scheduled-execution";
 import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, progressCounts, shiftSummary, loadDateConfirm, saveDateConfirm, clearDateConfirm, migrateUserConfirmedDates, shiftedText, DATE_CONFIRM_KEY, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
+import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor, type ComboView, type ComponentState, type DeviceRun } from "@/lib/ui/plan400-components";
+import { loadTrainingActivities } from "@/lib/ui/training-read-model";
+import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink } from "@/components/plan400-parts";
+import { loadVitals } from "@/lib/nutrition/vitals";
+import { currentAthleteId } from "@/lib/core/events";
 import planJson from "../lib/plan400-v4.json" with { type: "json" };
 
 /* 原课表只读：plan400-v4.json 永不写回。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
@@ -37,6 +42,37 @@ function useLogs(): Record<string, Log> {
 }
 function strengthLive(date: string): boolean {
   try { const sid = scheduleExecutionId(strengthEntryId(date), "strength"); return listTrainingOccurrences().some(o => o.lifecycle === "IN_PROGRESS" && o.sessionId === sid); } catch { return false; }
+}
+/* ui-r2：组合课分项（只读派生，见 plan400-components.ts）。设备跑步只作同日候选，不关联、不写入任何记录。 */
+function useDeviceRuns(date: string): DeviceRun[] {
+  const [runs, setRuns] = useState<DeviceRun[]>([]);
+  useEffect(() => { const f = () => { try { setRuns(deviceRunsOn(date, loadTrainingActivities())); } catch { setRuns([]); } }; f(); window.addEventListener("fk-training-activities-changed", f); window.addEventListener("storage", f); return () => { window.removeEventListener("fk-training-activities-changed", f); window.removeEventListener("storage", f); }; }, [date]);
+  return runs;
+}
+function useCombo(d: V4Day, log: Log | undefined): ComboView & { runs: DeviceRun[] } {
+  const runs = useDeviceRuns(d.date);
+  let entry; try { entry = loadSchedule().entries.find((e) => e.id === strengthEntryId(d.date)); } catch { entry = undefined; }
+  const parts = useParts(d.date), { link } = useV4RunLink(d.date);
+  return { ...comboView(d, log, { deviceRuns: runs, strengthEntry: entry, strengthLive: strengthLive(d.date), parts, runLinked: !!link }), runs };
+}
+const TONE_CLS: Record<ComponentState["tone"], string> = { none: "border-line text-muted", candidate: "border-warn/60 text-warn", partial: "border-accent/60 text-accent", live: "border-accent text-accent", done: "border-[#47C29A] text-[#47C29A]", skipped: "border-line text-muted" };
+function CompChip({ s }: { s: ComponentState }) { return <span className={"shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-bold " + TONE_CLS[s.tone]}>{s.label}</span>; }
+function ComboStatus({ v }: { v: ComboView }) {
+  if (!v.combo) return null;
+  return <section className="home-card p-3" aria-label="组合课分项状态" data-testid="combo-status">
+    <p className="keep text-xs text-muted">组合课分两项记录 · {v.overall}</p>
+    <div className="mt-2 grid gap-1.5"><div className="flex items-center justify-between gap-2"><span className="font-bold">跑步</span><CompChip s={v.running} /></div>{v.running.detail ? <p className="keep text-[11px] text-muted">{v.running.detail}</p> : null}
+      {v.strength ? <div className="flex items-center justify-between gap-2"><span className="font-bold">力量</span><CompChip s={v.strength} /></div> : null}</div>
+    {v.legacy.done ? <p className="keep mt-2 text-[11px] text-muted">整课标记（旧口径，跑步与力量没分开）：{v.legacy.done === "done" ? "完成" : v.legacy.done === "reduced" ? "减量完成" : v.legacy.done === "skipped" ? "没练/取消" : v.legacy.done}</p> : null}
+  </section>;
+}
+function DeviceRunList({ runs }: { runs: DeviceRun[] }) {
+  if (!runs.length) return <p className="keep text-xs text-muted">这天没有手表跑步记录。佳明账号同步只在打开 App / 手动同步时拉取；也可以在「健康 › 导入」导入 FIT/TCX/GPX 文件。</p>;
+  return <div className="space-y-2" data-testid="device-run-candidates">
+    <p className="keep text-xs text-muted">同日手表跑步{runs.length > 1 ? `（${runs.length} 条，未判断是哪一条）` : ""} · 只显示设备给出的字段，未关联到这节课</p>
+    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-xs leading-5"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p><p className="keep text-muted">没有圈段/分段数据，150m 各组成绩和组间休息不能从这条记录得出，请按实际手填。</p></div>)}
+    <p className="keep text-[11px] text-muted">把手表记录关联到这节课的跑步部分、并自动整理成“跑步实际”，需要新增一份关联记录（数据结构调整），等你确认后再做。</p>
+  </div>;
 }
 export function openPlan400Day(date: string, tab: Tab = "plan") { window.dispatchEvent(new CustomEvent(OPEN_EVT, { detail: { date, tab } })); }
 export function plan400DayFor(date: string): { title: string; kind: ReturnType<typeof dayKind>; week: string } | null { const d = dayOf(plan, date); return d ? { title: d.title, kind: dayKind(d), week: d.week } : null; }
@@ -83,7 +119,13 @@ export function parseStrength(text: string): Ex[] {
 
 const DURING: [keyof Log, string, string][] = [["reps", "正式主课实际分段", "如 150m: 21.3 / 21.0 / 21.6"], ["rest", "实际组间休息", "如 7分 / 8分"], ["aux", "辅助段（单独记录）", "如 60m渐进×3 完成"], ["strength", "力量实际 组×重量×次数", "如 分腿蹲 2×20kg×5/腿"]];
 const AFTER: [keyof Log, string, string][] = [["rpe", "整课 RPE (1-10)", "7"], ["pain", "疼痛部位/程度 (0-10)", "无 / 跟腱 2"], ["note", "备注 / 天气 / 场地", ""]];
-const LATER: [keyof Log, string, string][] = [["r24", "24 小时后：睡眠·恢复1-10·酸痛·腿沉", "6.5h · 7 · 小腿酸"], ["r48", "48–72 小时后：恢复·热身轻快程度", "恢复好 · 轻快"]];
+/* ui-r2：占位符不再写成像答案的样子（原来的“6.5h · 7 · 小腿酸”“恢复好 · 轻快”看起来像已填）。 */
+const LATER: [keyof Log, string, string][] = [["r24", "24 小时后：恢复1-10·酸痛部位·腿沉（睡眠见上方，不用重复填）", "按实际填写，没感觉就留空"], ["r48", "48–72 小时后：恢复·热身轻快程度", "按实际填写，没感觉就留空"]];
+function SharedSleep({ date }: { date: string }) {
+  const [s, setS] = useState<ReturnType<typeof sharedSleepFor>>(null);
+  useEffect(() => { try { setS(sharedSleepFor(date, loadVitals().records, currentAthleteId())); } catch { setS(null); } }, [date]);
+  return <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted" data-testid="shared-sleep">{s ? `训练当晚睡眠 ${s.hours} 小时（${s.day} · ${s.source}）。这是健康页的同一条记录，跑步和力量共用，不再重复填。` : "训练当晚的睡眠还没有记录。睡眠在健康页记一次就行，跑步和力量共用同一条。"}</p>;
+}
 
 function Fields({ list, value, onChange }: { list: [keyof Log, string, string][]; value: Log; onChange: (l: Log) => void }) {
   return <>{list.map(([k, label, ph]) => <label key={k} className="block"><span className="text-xs text-muted">{label}</span><input className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder={ph} value={value[k] ?? ""} onChange={(e) => onChange({ ...value, [k]: e.target.value })} /></label>)}</>;
@@ -95,6 +137,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
   const [msg, setMsg] = useState("");
   useEffect(() => { setEdit(load()[d.date] ?? {}); }, [d.date]);
   const status = dayStatus(d, log, today, strengthLive(d.date));
+  const combo = useCombo(d, log);
   const week = plan.weeks.find(w => w.week === d.week);
   const commit = (keys: (keyof Log)[], extra: Log = {}) => { const patch: Log = { ...extra }; for (const k of keys) patch[k] = edit[k] ?? ""; const ok = saveLog(d.date, patch); setMsg(ok ? `已保存 ${new Date().toTimeString().slice(0, 5)}（本机）` : "没有保存成功，原记录未改变。请检查存储空间后重试。"); };
   const tabs: [Tab, string][] = [["plan", "课表"], ["during", "训练中"], ["after", "训练后"], ["later", "24–72h"]];
@@ -108,6 +151,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       <div className="mx-auto mt-2 grid max-w-3xl grid-cols-4 gap-1 rounded-xl bg-surface p-1" role="tablist" aria-label="训练详情分区">{tabs.map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={"min-h-10 rounded-lg text-sm font-bold " + (tab === id ? "bg-accent text-accent-fg" : "text-muted")}>{label}</button>)}</div>
     </div>
     <div className="mx-auto max-w-3xl space-y-3 px-4 pt-3 text-sm" style={{ paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}>
+      <ComboStatus v={combo} />
       {tab === "plan" ? <>
         <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(d.week === "TEST" ? d.main : d.main.slice(1)) || "原课表未写"}</p></section>
         {d.aux.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">辅助激活与技术</h3><p className="mt-1 leading-6">{joinLines(d.aux)}</p></section> : null}
@@ -115,26 +159,46 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{shiftedText(plan, week.week, week.principle)}</p></details> : null}
         <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">原文与原日期（只读）</summary><p className="mt-1 text-xs text-muted">原课表日期 {d.orig || "未记录"} → 当前日程 {d.date}{d.orig && d.orig !== d.date ? `（顺延 ${Math.round((Date.parse(d.date) - Date.parse(d.orig)) / 864e5)} 天）` : ""}</p><pre className="mt-2 whitespace-pre-wrap break-words text-xs leading-5">{[...d.main, ...d.aux, ...d.strength].join("\n")}</pre></details>
       </> : null}
-      {tab === "during" ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
+      {tab === "during" && combo.combo ? <>
+        <section className="home-card space-y-3 p-4" aria-label="跑步实际记录" data-testid="during-running">
+          <h3 className="font-bold">跑步部分</h3>
+          <p className="keep text-xs text-muted">目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}。没做的项留空（不会记成 0）。</p>
+          <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} />
+          <Fields list={DURING.slice(0, 3)} value={edit} onChange={setEdit} />
+          <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux"])}>保存跑步记录</button>
+        </section>
+        <section className="home-card space-y-3 p-4" aria-label="力量实际记录" data-testid="during-strength">
+          <h3 className="font-bold">力量部分</h3>
+          <p className="keep text-xs text-muted">手表跑步不会把力量算作完成。可以在「课表」把力量设为可执行后逐组引导；或在这里简单手填。</p>
+          <Fields list={DURING.slice(3)} value={edit} onChange={setEdit} />
+          <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => commit(["strength"])}>保存力量记录</button>
+        </section>
+      </> : null}
+      {tab === "during" && !combo.combo ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
         <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}</p>
         <Fields list={DURING} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux", "strength"])}>保存本段记录</button>
         {hasStrength(d) ? <p className="text-xs text-muted">力量部分可在「课表」页设为可执行后逐组引导，记录会进入训练日志。</p> : null}
       </section> : null}
+      {tab === "after" && combo.combo ? <><PartFeedbackForm date={d.date} part="running" name="跑步" />{hasStrength(d) ? <PartFeedbackForm date={d.date} part="strength" name="力量" /> : null}</> : null}
       {tab === "after" ? <section className="home-card space-y-3 p-4" aria-label="训练后反馈">
-        <p className="text-xs font-bold text-muted">这节课的结果</p>
+        {combo.combo ? <p className="keep text-xs text-muted" data-testid="combo-parts-note">跑步、力量分开评价（下面两块，各存各的）。下面这份是整课历史评价（旧口径），保留不拆。</p> : null}
+        <p className="text-xs font-bold text-muted">{combo.combo ? "整课历史评价（旧口径，跑步与力量没分开）" : "这节课的结果"}</p>
         <div className="grid grid-cols-3 gap-2">{([["done", "完成"], ["reduced", "减量完成"], ["skipped", "没练/取消"]] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={edit.done === v} className={"min-h-11 rounded-xl border text-sm font-bold " + (edit.done === v ? "border-accent bg-accent/15 text-accent" : "border-line")} onClick={() => setEdit({ ...edit, done: edit.done === v ? undefined : v })}>{t}</button>)}</div>
-        <Fields list={AFTER} value={edit} onChange={setEdit} />
+        <Fields list={combo.combo ? AFTER.map(([k, l, p]) => [k, k === "rpe" ? "整课 RPE (1-10)（旧口径，不代表跑步或力量各自的强度）" : l, p] as [keyof Log, string, string]) : AFTER} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { if (edit.done === "skipped" && log.done !== "skipped" && !window.confirm("标记为没练/取消？原课表不会改动，之后可以改回。")) return; commit(["rpe", "pain", "note"], { done: edit.done ?? "" }); }}>保存训练后反馈</button>
         <p className="text-xs text-muted">24 小时、48–72 小时的恢复情况不用现在填，到时在「24–72h」补录。</p>
       </section> : null}
       {tab === "later" ? <section className="home-card space-y-3 p-4" aria-label="恢复补录">
         {later ? <p className="rounded-xl bg-surface-2 p-2 text-xs text-muted">这节课还没过 24 小时，可以以后再填。</p> : null}
+        {!later && recoveryTiming(d.date, today) === "late" ? <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted">已超过 72 小时，现在填的是事后回忆，请按记得的情况写。</p> : null}
+        <SharedSleep date={d.date} />
         <Fields list={LATER} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => commit(["r24", "r48"])}>保存恢复补录</button>
       </section> : null}
+      {tab === "later" && combo.combo && !later ? <RecoveryParts date={d.date} late={recoveryTiming(d.date, today) === "late"} /> : null}
       {msg ? <p role="status" className="text-sm">{msg}</p> : log.savedAt ? <p className="text-xs text-muted">上次保存 {log.savedAt.slice(0, 16).replace("T", " ")}</p> : null}
-      <p className="text-xs text-muted">这一页的记录存在本机「400米V4 记录」里；目前还不会自动进入日志页的方坤复盘（力量部分逐组引导的记录除外）。</p>
+      <p className="text-xs text-muted">这一页的记录存在本机（整课：400米V4 记录；分项：V4 分项记录），会进入日志、复盘和方坤；关联的手表跑步只算一次。</p>
     </div>
   </div>;
 }
@@ -153,6 +217,12 @@ function summaryLines(d: V4Day): string[] {
   if (hasStrength(d)) out.push(`力量：${joinLines(d.strength)}`);
   return (k === "rest" ? [main || "休息"] : out).filter(Boolean).slice(0, 3);
 }
+/** ui-r2：首页主卡上的分项状态（组合课才显示；只有记录后才出现，避免训练前多一行噪音）。 */
+function HomeComboLine({ d, log }: { d: V4Day; log: Log | undefined }) {
+  const v = useCombo(d, log);
+  if (!v.combo || (v.running.tone === "none" && (!v.strength || v.strength.tone === "none"))) return null;
+  return <p className="mt-2 flex flex-wrap items-center gap-1.5 text-xs" data-testid="home-combo-line"><span className="text-muted">跑步</span><CompChip s={v.running} /><span className="ml-1 text-muted">力量</span>{v.strength ? <CompChip s={v.strength} /> : null}</p>;
+}
 /** 首页：今天 V4 课摘要 + 唯一主操作。 */
 export function Plan400TodayCard({ today, onReview }: { today: string; onReview?: () => void }) {
   const logs = useLogs();
@@ -169,6 +239,7 @@ export function Plan400TodayCard({ today, onReview }: { today: string; onReview?
     <h2 className="mt-1 text-xl font-bold">{d.title}</h2>
     <p className="text-xs text-muted">{md(d.date)} {d.weekday} · <KindChip d={d} /></p>
     <ul className="mt-2 space-y-1 text-sm leading-6">{summaryLines(d).map((t, i) => <li key={i} className="line-clamp-2">{t}</li>)}</ul>
+    <HomeComboLine d={d} log={logs[d.date]} />
     <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent text-base font-bold text-accent-fg" data-testid="today-primary-cta" onClick={go}>{cta.label}</button>
     <div className="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" className="min-h-11 text-accent" onClick={() => openPlan400Day(d.date, "plan")}>完整课表 ›</button>{s === "done" || s === "reduced" ? <button type="button" className="min-h-11 text-muted" onClick={() => openPlan400Day(d.date, "later")}>补充恢复信息</button> : null}{(s === "done" || s === "reduced") && onReview ? <button type="button" className="min-h-11 text-muted" onClick={onReview}>去日志看复盘</button> : null}</div>
   </section>;

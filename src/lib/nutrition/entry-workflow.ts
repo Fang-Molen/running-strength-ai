@@ -6,9 +6,9 @@ import {loadEntries,recordManualFood,updateEntry,nutrientOf,type FoodEntry,type 
 import {defaultAmount,sourceLabel,needsCheck,type FoodRow,type Macros} from './food-db';
 export const NUTRIENT_KEYS: NutrientKey[]=['kcal','protein','carb','fat','fiber'];
 export const NUTRIENT_LABELS={kcal:'热量',protein:'蛋白质',carb:'碳水',fat:'脂肪',fiber:'膳食纤维'};
-export const FOOD_DATA_VERSION='fangkun-food-library-20261017';
+export const FOOD_DATA_VERSION='fangkun-food-library-20261019-r3';
 export type NutritionSnapshot={version:1;dataVersion:string;foodId:string|null;name:string;brand:string;region:string;basis:'100g'|'serv'|'this';base:Macros;total:Macros;amount:number;unit:'g'|'份';grams:number|null;source:{label:string;uri:string|null;status:string;estimated:boolean};userEdited:NutrientKey[];confirmedAt:string};
-export type NutritionDraft={name:string;brand:string;selected:FoodRow|null;amount:string;unit:'g'|'份';basis:NutritionSnapshot['basis'];values:Record<NutrientKey,string>;userEdited:NutrientKey[];retained?:NutritionSnapshot;quantityReference?:{amount:number;values:Record<NutrientKey,string>}};
+export type NutritionDraft={name:string;brand:string;selected:FoodRow|null;amount:string;unit:'g'|'份';basis:NutritionSnapshot['basis'];values:Record<NutrientKey,string>;userEdited:NutrientKey[];retained?:NutritionSnapshot;quantityReference?:{amount:number;values:Record<NutrientKey,string>};/** v79：估算来源（相近食物 / 联网估算），保存时标“估算” */estimateSource?:string;portion?:{label:string;grams:number|null;count:string}};
 export const emptyFoodDraft=():NutritionDraft=>({name:'',brand:'',selected:null,amount:'',unit:'g',basis:'this',values:{kcal:'',protein:'',carb:'',fat:'',fiber:''},userEdited:[]});
 export function draftFromProduct(food:FoodRow):NutritionDraft{
  const base=food.b==='g'?food.p:food.s.v;
@@ -46,7 +46,7 @@ export function commitFoodDraft(input:FoodSaveInput):{ok:true;row:FoodEntry}|{ok
   const prior=input.entryId?loadEntries().find(r=>r.id===input.entryId):null;
   if(input.entryId&&(!prior||(prior.revisionId||JSON.stringify(prior))!==input.expectedRevision))throw Error('记录已变化，请重新打开后更正。');
   const p=foodPreview(d),date=new Date().toISOString(),product=d.selected,retained=d.retained;
-  const originalSource=product?{label:sourceLabel(product),uri:product.uri||null,status:product.st,estimated:needsCheck(product)}:retained?.source??{label:'用户手填',uri:null,status:'USER_REPORTED',estimated:true};
+  const originalSource=d.estimateSource?{label:d.estimateSource,uri:product?.uri||null,status:'ESTIMATED',estimated:true}:product?{label:sourceLabel(product),uri:product.uri||null,status:product.st,estimated:needsCheck(product)}:retained?.source??{label:'用户手填',uri:null,status:'USER_REPORTED',estimated:true};
   const source={...originalSource,estimated:originalSource.estimated||d.userEdited.length>0};
   const snapshot:NutritionSnapshot={version:1,dataVersion:product?FOOD_DATA_VERSION:retained?.dataVersion||'user-entry-v1',foodId:product?.i??retained?.foodId??null,name:d.name.trim(),brand:d.brand.trim(),region:product?.rg||retained?.region||'',basis:d.basis,...p,amount:Number(d.amount),unit:d.unit,source:{...source},userEdited:[...d.userEdited],confirmedAt:date};
   const patch={name:snapshot.name,date:input.date,meal:input.meal,amount:snapshot.amount,unit:d.unit,grams:p.grams??undefined,kcal:p.total.kcal,protein:p.total.protein??undefined,carb:p.total.carb,carbs:undefined,fat:p.total.fat,fiber:p.total.fiber,foodId:snapshot.foodId??undefined,foodSnapshot:undefined,nutritionSnapshot:snapshot,

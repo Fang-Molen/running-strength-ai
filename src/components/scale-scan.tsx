@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { ocr } from "@/components/device-import";
 import { fromJson, parseScaleText, type ScaleResult } from "@/lib/body/scale-parse";
+import { isOnlineOn } from "@/lib/ui/online-features";
 
 /** Re-encode through a canvas: drops EXIF/GPS metadata and downsizes to ≤1600px. */
 async function cleanImage(file: File): Promise<Blob> {
@@ -12,7 +13,7 @@ async function cleanImage(file: File): Promise<Blob> {
 const toDataUrl = (b: Blob) => new Promise<string>((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = () => bad(r.error); r.readAsDataURL(b); });
 
 export function ScaleScan({ onResult }: { onResult: (r: ScaleResult, how: string) => void }) {
-  const [consent, setConsent] = useState(false), [online, setOnline] = useState(true), [busy, setBusy] = useState(false), [msg, setMsg] = useState("");
+  const online = isOnlineOn("ocrText"), [busy, setBusy] = useState(false), [msg, setMsg] = useState("");
   const inp = useRef<HTMLInputElement>(null);
   const run = async (file: File) => {
     setBusy(true); setMsg("处理图片…");
@@ -31,11 +32,9 @@ export function ScaleScan({ onResult }: { onResult: (r: ScaleResult, how: string
     } catch (e) { setMsg(`识别失败：${(e as Error)?.message || "未知错误"}；表单内容已保留`); } finally { setBusy(false); if (inp.current) inp.current.value = ""; }
   };
   return <div className="col-span-2 rounded-xl border border-line p-2 text-xs" aria-label="拍照识别">
-    <p className="keep text-xs text-muted">拍照/上传体脂秤App截图或秤的显示屏照片，自动填入下方表单；不会自动保存。图片只在本机识别文字，不会上传；处理时去掉拍摄信息（EXIF）。</p>
-    <label className="mt-1 flex items-start gap-1.5"><input type="checkbox" checked={online} onChange={e => setOnline(e.target.checked)} className="mt-0.5" /><span>使用在线整理（只把本机识别出的文字发送到 DeepSeek 用于对应数值，不发送图片、不保存）。不勾选则只在本机解析。</span></label>
-    <label className="mt-1 flex items-start gap-1.5"><input type="checkbox" aria-label="同意识别说明" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-0.5" /><span>我已了解以上说明。</span></label>
+    <p className="keep text-xs text-muted">拍秤的屏幕或App截图，自动填入下方；照片只在本机识字{online ? "，文字联网整理" : ""}，不上传。可在设置里关联网。</p>
     <input ref={inp} type="file" accept="image/*" aria-label="选择体脂秤图片" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) run(f); }} />
-    <button type="button" disabled={!consent || busy} onClick={() => inp.current?.click()} className="mt-2 min-h-11 w-full rounded-xl border border-accent font-bold text-accent disabled:opacity-40">{busy ? "识别中…" : "拍照/上传识别"}</button>
+    <button type="button" disabled={busy} onClick={() => inp.current?.click()} className="mt-2 min-h-11 w-full rounded-xl border border-accent font-bold text-accent disabled:opacity-40">{busy ? "识别中…" : "拍照/上传识别"}</button>
     {msg ? <p className="keep mt-1 text-xs" aria-live="polite">{msg}</p> : null}
   </div>;
 }

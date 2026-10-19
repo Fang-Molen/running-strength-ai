@@ -12,7 +12,7 @@ const shot=n=>page.screenshot({path:resolve(screens,mode+'-'+n+'.png'),fullPage:
 const ready=()=>page.locator('[data-testid="training-app"][data-ready=true]').waitFor({timeout:120000});
 const latest=async(name)=>page.evaluate(n=>Object.entries(localStorage).filter(([k])=>k.startsWith('fr255-event-journal-v2:')).map(([,v])=>JSON.parse(v)).sort((a,b)=>a.order-b.order).map(e=>e.data?.payload?.foodEntry).filter(r=>r?.name===n).at(-1),name);
 const openFood=async()=>{await page.getByRole('button',{name:'记录饮食',exact:true}).click();return page.getByRole('dialog',{name:'登记饮食',exact:true})};
-const save=async(d,edit=false)=>{await d.getByLabel('确认食物与营养',{exact:true}).check();await d.getByRole('button',{name:edit?'确认保存更正':'确认保存饮食',exact:true}).click();await d.waitFor({state:'hidden'})};
+const save=async(d,edit=false)=>{await d.getByRole('button',{name:edit?'确认保存更正':'确认保存饮食',exact:true}).click();await d.waitFor({state:'hidden'})};
 const close=async d=>{await d.getByRole('button',{name:'关闭',exact:true}).click();await d.waitFor({state:'hidden'})};
 const ringTotal=()=>page.locator('svg').filter({hasText:/kcal/}).locator('text').first().textContent();
 const diet=async()=>{await page.getByRole('button',{name:'切换到饮食',exact:true}).click();await page.getByLabel('查看饮食日期',{exact:true}).waitFor()};
@@ -34,7 +34,7 @@ try{
  let d=await openFood();await d.getByLabel('吃了什么',{exact:true}).fill('合成燕麦');await d.getByRole('button',{name:/合成燕麦.*合成甲/}).click();await d.getByLabel('份量',{exact:true}).fill('150');await d.getByLabel('饮食餐次').selectOption('午餐');
  check('150g preview shows all five calculated values',await d.getByLabel('本次营养预览').innerText().then(t=>['600 kcal','18 g','90 g','12 g','15 g'].every(v=>t.includes(v))));
  check('phone input touch target is at least 44px',await d.getByLabel('份量',{exact:true}).evaluate(el=>el.getBoundingClientRect().height>=44));
- check('confirmation required before saving',await d.getByRole('button',{name:'确认保存饮食',exact:true}).isDisabled());await shot('five-nutrient-preview');await save(d);
+ check('single confirm, no checkbox wall',await d.getByRole('button',{name:'确认保存饮食',exact:true}).isEnabled()&&await d.getByRole('checkbox').count()===0);await shot('five-nutrient-preview');await save(d);
  let row=await latest('合成燕麦');check('saved exact product and all five values',row?.nutritionSnapshot?.foodId==='synthetic-cereal'&&JSON.stringify(row.nutritionSnapshot.total)===JSON.stringify({kcal:600,protein:18,carb:90,fat:12,fiber:15}));
  check('new meal updates known total to 700',await ringTotal()==='700');
  await page.getByRole('button',{name:/午餐\s*已记录/}).click();let meal=page.getByRole('dialog',{name:'午餐明细',exact:true});await meal.getByRole('button',{name:'编辑',exact:true}).click();d=page.getByRole('dialog',{name:'编辑饮食记录',exact:true});await d.getByLabel('份量',{exact:true}).fill('200');await save(d,true);row=await latest('合成燕麦');check('edit resizes every nutrient from frozen base',row.kcal===800&&row.protein===24&&row.carb===120&&row.fat===16&&row.fiber===20);await close(meal);

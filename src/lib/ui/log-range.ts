@@ -27,13 +27,14 @@ export function filterRows(rows: ActivityRow[], range: LogRange, kind: LogKind, 
   return rows.filter(x => x.date >= r.start && x.date <= r.end && matchKind(x, kind)).sort((a, b) => b.startedAt.localeCompare(a.startedAt))
 }
 export function summarize(rows: ActivityRow[], range: LogRange, kind: LogKind, today: string) {
-  const r = rangeOf(range, today), list = filterRows(rows, range, kind, today)
+  // v79（用户 t489）：没点完成、也没反馈的课（status incomplete）照样列出，但不算“记录”、不计入次数/时长/距离。
+  const r = rangeOf(range, today), all = filterRows(rows, range, kind, today), list = all.filter(x => x.status !== 'incomplete')
   const runs = list.filter(x => ['run', 'mixed'].includes(kindOf(x)))
   return {
-    ...r, list, count: list.length, run: runs.length, lift: list.filter(x => ['lift', 'mixed'].includes(kindOf(x))).length,
+    ...r, list: all, counted: list, count: list.length, run: runs.length, lift: list.filter(x => ['lift', 'mixed'].includes(kindOf(x))).length,
     distanceM: runs.reduce((s, x) => s + (x.distanceM ?? 0), 0), missingDistance: runs.filter(x => x.distanceM == null).length,
     durationSec: list.reduce((s, x) => s + (x.durationSec ?? 0), 0), missingDuration: list.filter(x => x.durationSec == null).length,
-    bySource: { garmin: list.filter(isGarmin).length, app: list.filter(isPhone).length, upload: list.filter(x => !isGarmin(x) && !isPhone(x)).length }, incomplete: list.filter(x => x.status === 'incomplete').length,
+    bySource: { garmin: list.filter(isGarmin).length, app: list.filter(isPhone).length, upload: list.filter(x => !isGarmin(x) && !isPhone(x)).length }, incomplete: all.filter(x => x.status === 'incomplete').length,
     bars: r.buckets.map(b => { const inB = list.filter(x => x.date >= b.start && x.date <= b.end); return { ...b, minutes: Math.round(inB.reduce((s, x) => s + (x.durationSec ?? 0), 0) / 60), count: inB.length, unknown: inB.filter(x => x.durationSec == null).length, future: b.start > today } }),
   }
 }

@@ -1,7 +1,11 @@
 import { validateVisionResult, type VisionMode, type VisionResult } from './contract';
-let accessCode = ''; // Memory only: excluded from localStorage, backups and static builds.
-export const setVisionAccess = (value: string) => { accessCode = value.trim(); };
-export const hasVisionAccess = () => Boolean(accessCode);
+// v78：不再需要访问码（服务端同源 + 限频）。保留这两个导出以兼容旧调用，访问码不再使用、不存储。
+export const setVisionAccess = (_value: string) => { void _value; };
+export const hasVisionAccess = () => true;
+export type VisionStatus = { configured: boolean; provider: string | null; model: string | null; needs: string[] };
+export async function visionInfo(signal?: AbortSignal): Promise<VisionStatus> {
+  try { const r = await fetch('/api/vision', { cache: 'no-store', signal }); if (!r.ok || !/application\/json/.test(r.headers.get('content-type') || '')) return { configured: false, provider: null, model: null, needs: [] }; const j = await r.json(); return { configured: j.configured === true, provider: j.provider ?? null, model: j.model ?? null, needs: Array.isArray(j.needs) ? j.needs : [] } } catch { return { configured: false, provider: null, model: null, needs: [] } }
+}
 export async function visionStatus(signal?: AbortSignal): Promise<boolean> {
   const r = await fetch('/api/vision', { cache: 'no-store', signal });
   if (!r.ok || !/application\/json/.test(r.headers.get('content-type') || '')) return false;
@@ -29,22 +33,20 @@ export async function prepareImage(file: Blob, max = 1600): Promise<Blob> {
 }
 export async function imageDataUrl(blob: Blob): Promise<string> { return new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(String(r.result)); r.onerror = () => reject(Error('图片读取失败')); r.readAsDataURL(blob); }); }
 export async function recognizeImage(file: Blob, mode: VisionMode, hint: string, signal: AbortSignal): Promise<{ result: VisionResult; model: string; at: string }> {
-  if (!hasVisionAccess()) throw Error('请先填写识别访问码。');
   if (typeof navigator !== 'undefined' && navigator.onLine === false) throw Error('当前离线，可用本地识字或手动填写，联网后重试。');
   const image = await imageDataUrl(await prepareImage(file)); signal.throwIfAborted();
-  const r = await fetch('/api/vision', { method: 'POST', cache: 'no-store', signal, headers: { 'content-type': 'application/json', authorization: `Bearer ${accessCode}` }, body: JSON.stringify({ mode, image, hint: hint.slice(0, 600) }) });
+  const r = await fetch('/api/vision', { method: 'POST', cache: 'no-store', signal, headers: { 'content-type': 'application/json'}, body: JSON.stringify({ mode, image, hint: hint.slice(0, 600) }) });
   if (!/application\/json/.test(r.headers.get('content-type') || '')) throw Error('此版本尚未部署联网识别接口。');
   const data = await r.json(); if (!r.ok || !data.ok) throw Error(typeof data.message === 'string' ? data.message : '识别失败，请重试。');
   return { result: validateVisionResult(data.result, mode), model: String(data.model || 'DeepSeek'), at: String(data.at || '') };
 }
 export async function extractTrainingViaVision(input: { text: string; images: Array<{ dataUrl: string; sourceId: string }> }, signal?: AbortSignal): Promise<{ ok: true; candidate: unknown; model: string } | { ok: false; reason: 'NETWORK' | 'UPSTREAM'; detail?: string }> {
-  if (!accessCode) return { ok: false, reason: 'UPSTREAM', detail: '请填写识别访问码。' };
   const c = new AbortController(), timer = setTimeout(() => c.abort(), 48000), abort = () => c.abort(); signal?.addEventListener('abort', abort, { once: true });
   try {
     if (signal?.aborted) c.abort();
     const body = JSON.stringify({ mode: 'training', text: input.text.slice(0, 6000), images: input.images.map(x => ({ image: x.dataUrl, sourceId: x.sourceId })) });
     if (new TextEncoder().encode(body).length > 4 * 1024 * 1024) return { ok: false, reason: 'UPSTREAM', detail: '图片合计过大，请减少图片或裁剪后重试。' };
-    const r = await fetch('/api/vision', { method: 'POST', cache: 'no-store', signal: c.signal, headers: { 'content-type': 'application/json', authorization: `Bearer ${accessCode}` }, body });
+    const r = await fetch('/api/vision', { method: 'POST', cache: 'no-store', signal: c.signal, headers: { 'content-type': 'application/json'}, body });
     if (!/application\/json/.test(r.headers.get('content-type') || '')) return { ok: false, reason: 'UPSTREAM', detail: '此版本尚未部署联网识别接口。' };
     const data = await r.json(); if (!r.ok || !data.ok) return { ok: false, reason: 'UPSTREAM', detail: data.message || '识别失败。' };
     return { ok: true, candidate: data.candidate, model: data.model };

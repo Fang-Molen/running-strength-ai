@@ -1,6 +1,6 @@
 import {DecimalInput} from './decimal-input'
 import { VisionSettings } from "./vision-settings";
-import { extractTrainingViaVision, hasVisionAccess, prepareImage, imageDataUrl } from "@/lib/vision/client";
+import { extractTrainingViaVision, visionStatus, prepareImage, imageDataUrl } from "@/lib/vision/client";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import { AlertTriangle, Camera, Check, ChevronLeft, LoaderCircle, Plus, Trash2, X } from "lucide-react"
 import {
@@ -146,7 +146,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
     let timer: ReturnType<typeof setTimeout> | undefined
     try {
       const result = await Promise.race([
-        hasVisionAccess() ? extractTrainingViaVision({ text, images }, signal).then(r => r.ok ? { ...r, candidate: normalizeTrainingImportCandidate(r.candidate) } : r) : extractTrainingImport({ data: { text, images } }),
+        (await visionStatus().catch(() => false)) ? extractTrainingViaVision({ text, images }, signal).then(r => r.ok ? { ...r, candidate: normalizeTrainingImportCandidate(r.candidate) } : r) : extractTrainingImport({ data: { text, images } }),
         new Promise<never>((_, reject) => {
           timer = setTimeout(() => { extractionAbort.current?.abort(); reject(new Error("EXTRACT_TIMEOUT")); }, 50_000)
         }),

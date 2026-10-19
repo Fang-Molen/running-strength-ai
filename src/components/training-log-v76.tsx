@@ -5,11 +5,13 @@ import { onAppEvent } from "@/lib/core/events"
 import { listTrainingOccurrences } from "@/lib/core/occurrence"
 import { loadConfirmedTrainingImports } from "@/lib/core/training-import"
 import { calendarDayShanghai } from "@/lib/ui/training-log-view"
-import { loadTrainingActivities, type ActivityRow } from "@/lib/ui/training-read-model"
+import { loadTrainingActivities, lastRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
 import { summarize, outsideHint, rangeOf, kindOf, sourceLabels, type LogKind, type LogRange } from "@/lib/ui/log-range"
 import { activityLocalTime, fmtDistance, fmtDuration, fmtHr, fmtPace } from "@/lib/ui/activity-format"
 import { PhoneRecordDetail } from "@/components/phone-record-detail"
 import { UnmarkedPlans, unmarkedEntries } from "@/components/unmarked-plans"
+import { partLine } from "@/lib/ui/plan400-components-store"
+import { allRunLinks, saveRunLink, planVsActual, type RunLink } from "@/lib/ui/run-link"
 import { loadSchedule } from "@/lib/ui/day-schedule"
 import { OccurrenceCard, ImportRow } from "@/components/training-log-panel"
 import { GarminActivityRow, GarminLog, garminById } from "@/components/garmin-log"
@@ -42,7 +44,17 @@ function Entry({ title, summary, children, id, open, onToggle }: { title: string
   </details>
 }
 
-function RecordRow({ r, plan, onAsk, open, onOpen }: { r: ActivityRow; plan: Plan; onAsk: (id: string | null) => void; open: boolean; onOpen: (v: boolean) => void }) {
+/** v79：计划跑步课 ↔ 这条佳明跑步（同一条记录，计划不另算一条）。 */
+function RunLinkNote({ link }: { link: RunLink }) {
+  const c = planVsActual(link.entry, link.run)
+  return <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="run-link">
+    <p className="keep"><b>已关联佳明跑步</b> · 计划「{link.entry.title}」{link.by === "auto" ? "（同一天自动关联）" : ""}</p>
+    <p className="keep text-muted">计划 {c.plan} → 实际 {c.actual}</p>
+    <p className="keep">{c.note}</p>
+    <button type="button" className="mt-1 min-h-9 text-xs font-bold text-accent underline" onClick={() => { const cur = allRunLinks()[link.entry.id]; saveRunLink(link.entry.id, { rejected: [...(cur?.rejected ?? []), link.run.id] }) }}>取消关联</button>
+  </div>
+}
+function RecordRow({ r, plan, onAsk, open, onOpen, link }: { r: ActivityRow; plan: Plan; onAsk: (id: string | null) => void; open: boolean; onOpen: (v: boolean) => void; link?: RunLink }) {
   const k = kindOf(r), Icon = k === "run" ? Footprints : k === "lift" ? Dumbbell : Activity
   const g = r.garminId != null ? garminById(r.garminId) : null
   const occ = r.occurrenceId ? listTrainingOccurrences().find(o => o.trainingOccurrenceId === r.occurrenceId) ?? null : null
@@ -50,18 +62,20 @@ function RecordRow({ r, plan, onAsk, open, onOpen }: { r: ActivityRow; plan: Pla
   const name = r.title && !/佳明账号同步/.test(r.title) ? r.title : k === "run" ? "跑步" : k === "lift" ? "力量训练" : "训练"
   // 方坤里记录的训练：直接用原来的记录卡（含分段、更正、作废），只加来源标签，不另造一行。
   if (imp && !occ) return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line py-1 last:border-b-0"><span className="keep block text-[11px] text-muted">{r.date.slice(5)} {hm(r.startedAt)} · {sourcesOf(r).join(" + ")}</span><ImportRow item={imp} onAsk={onAsk} onDeleted={() => window.dispatchEvent(new Event("fk-training-activities-changed"))} /></li>
-  if (occ && !g) return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line py-1 last:border-b-0"><span className="keep block text-[11px] text-muted">{r.date.slice(5)} {hm(r.startedAt)} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? " · 已记录未完成" : ""}</span><OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /></li>
+  if (occ && !g) return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line py-1 last:border-b-0"><span className="keep block text-[11px] text-muted">{r.date.slice(5)} {hm(r.startedAt)} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? ` · ${r.rpe != null ? "未完成" : "未完成·未反馈"}（不计入）` : ""}</span><OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /></li>
   return <li id={`log-rec-${encodeURIComponent(r.id)}`} className="scroll-mt-24 border-b border-line last:border-b-0">
     <button type="button" aria-expanded={open} onClick={() => onOpen(!open)} className="flex min-h-14 w-full items-center gap-3 py-2 text-left">
       <span className={(k === "run" ? "chip-run" : "chip-lift") + " grid size-9 shrink-0 place-items-center rounded-full"}><Icon className="size-4" /></span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate font-bold">{name}</span>
-        <span className="keep block truncate text-xs text-muted">{r.date.slice(5)}{r.timeUnknown ? "" : ` ${hm(r.startedAt)}`} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? <b className="ml-1 rounded bg-amber-100 px-1 text-amber-800">已记录未完成</b> : null}</span>
+        <span className="block truncate font-bold">{name}{link ? <span className="ml-1 text-xs font-normal text-muted">· 计划「{link.entry.title}」</span> : null}</span>
+        <span className="keep block truncate text-xs text-muted">{r.date.slice(5)}{r.timeUnknown ? "" : ` ${hm(r.startedAt)}`} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? <b className="ml-1 rounded bg-amber-100 px-1 text-amber-800">{r.rpe != null ? "未完成" : "未完成·未反馈"}（不计入）</b> : null}</span>
         <span className="keep block truncate text-xs">{k === "lift" ? [dur(r.durationSec), r.sets ? `${r.sets} 组` : null].filter(Boolean).join(" · ") : `${km(r.distanceM) ?? "距离—"} · ${dur(r.durationSec)}`}<span className="text-muted">{k !== "lift" ? ` · 配速 ${pace(r.distanceM, r.durationSec) ?? "—"}` : ""}{r.avgHr ? ` · 心率 ${fmtHr(r.avgHr)} 次/分` : ""}</span></span>
       </span>
       <span className="text-muted" aria-hidden="true">{open ? "▾" : "›"}</span>
     </button>
     {open ? <div className="mb-3 space-y-2">
+      {link ? <RunLinkNote link={link} /> : null}
+      {r.v4parts ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-parts-note"><p className="keep font-bold">V4 分项评价</p>{[partLine("跑步", r.v4parts.running), partLine("力量", r.v4parts.strength)].map((x, i) => x ? <p key={i} className="keep">{x}</p> : null)}{!partLine("跑步", r.v4parts.running) && !partLine("力量", r.v4parts.strength) ? <p className="keep text-muted">还没有分项评价</p> : null}</div> : null}
       {g ? <GarminActivityRow g={g} detailOnly /> : null}
       {occ ? <OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /> : null}
       {imp ? <ImportRow item={imp} onAsk={onAsk} onDeleted={() => window.dispatchEvent(new Event("fk-training-activities-changed"))} /> : null}
@@ -78,16 +92,18 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
   const [openId, setOpenId] = useState<string | null>(null)
   const [focusDay, setFocusDay] = useState<string | null>(null)
   const [entry, setEntry] = useState<Record<string, boolean>>({})
-  useEffect(() => { const up = () => setRev(n => n + 1), off = onAppEvent(up); const names = ["fk-training-activities-changed", "storage", "fk-garmin-synced", "fk-schedule-changed", "fk-plan400-changed", "focus", "pageshow"]; for (const n of names) window.addEventListener(n, up); return () => { off(); for (const n of names) window.removeEventListener(n, up) } }, [])
+  useEffect(() => { const up = () => setRev(n => n + 1), off = onAppEvent(up); const names = ["fk-training-activities-changed", "fk-run-links", "fk-plan400-components", "storage", "fk-garmin-synced", "fk-schedule-changed", "fk-plan400-changed", "focus", "pageshow"]; for (const n of names) window.addEventListener(n, up); return () => { off(); for (const n of names) window.removeEventListener(n, up) } }, [])
   const setFilter = (next: Partial<typeof f>) => { const v = { ...f, ...next }; setF(v); setFocusDay(null); try { localStorage.setItem(FILTER_KEY, JSON.stringify(v)) } catch { /* session only */ } }
   const rows = useMemo(() => { try { return loadTrainingActivities() } catch { return [] } }, [rev])
   const s = useMemo(() => summarize(rows, f.range, f.kind, today), [rows, f, today])
   const list = focusDay ? rows.filter(r => r.date === focusDay) : s.list
   const hint = !focusDay && s.count === 0 ? outsideHint(rows, f.range, f.kind, today) : null
   const otherCount = f.kind === "all" ? 0 : summarize(rows, f.range, "all", today).count - s.count
-  const unmarked = useMemo(() => { if (focusDay) return []; try { const ids = new Set(rows.flatMap(r => r.originIds)); return unmarkedEntries(loadSchedule().entries, s.start, s.end < today ? s.end : today, today, f.kind, ids) } catch { return [] } }, [rows, s.start, s.end, today, f.kind, focusDay])
+  const runMatch = useMemo(() => { void rows; return lastRunMatch() }, [rows])
+  const linkByRow = useMemo(() => new Map(rows.flatMap(r => { const l = r.runLink && runMatch.links.find(x => x.entry.id === r.runLink!.entryId); return l ? [[r.id, l] as const] : [] })), [rows, runMatch])
+  const unmarked = useMemo(() => { if (focusDay) return []; try { const ids = new Set([...rows.flatMap(r => r.originIds), ...runMatch.links.map(l => `sched:${l.entry.id}`)]); return unmarkedEntries(loadSchedule().entries, s.start, s.end < today ? s.end : today, today, f.kind, ids) } catch { return [] } }, [rows, s.start, s.end, today, f.kind, runMatch, focusDay])
   // 周一为一周开始：周一打开“本周”看不到昨天（周日）。明确告诉上周有几条，一键切近4周。
-  const prevWeek = (() => { if (focusDay || f.range !== "week") return null; const st = rangeOf("week", today).start, d = new Date(st + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 7); const ps = d.toISOString().slice(0, 10), pw = summarize(rows, "week", f.kind, ps); return pw.count ? { start: pw.start, end: pw.end, count: pw.count, incomplete: pw.incomplete } : null })()
+  const prevWeek = (() => { if (focusDay || f.range !== "week") return null; const st = rangeOf("week", today).start, d = new Date(st + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 7); const ps = d.toISOString().slice(0, 10), pw = summarize(rows, "week", f.kind, ps); return pw.count || pw.incomplete ? { start: pw.start, end: pw.end, count: pw.count, incomplete: pw.incomplete } : null })()
   useEffect(() => {
     const onFocus = (e: Event) => {
       const { date, ids } = (e as CustomEvent<{ date: string; ids: string[] }>).detail ?? {}
@@ -119,8 +135,8 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
     <section className="home-card mt-3 px-3 py-3" aria-label="当前周期摘要">
       {focusDay ? <p className="keep text-sm font-bold">{focusDay} 的记录（从复盘打开）<button type="button" className="fk-link ml-2 text-xs" onClick={() => setFocusDay(null)}>回到{f.range === "week" ? "本周" : "近4周"}</button></p> : <>
         {f.kind !== "all" ? <p className="keep mb-1 flex items-center justify-between rounded-lg bg-accent/15 px-2 py-1 text-xs font-bold text-accent" data-testid="active-filter">只看{f.kind === "run" ? "跑步" : "力量"}{otherCount ? ` · 另有 ${otherCount} 条${f.kind === "run" ? "力量" : "跑步"}没显示` : ""}<button type="button" className="underline" onClick={() => setFilter({ kind: "all" })}>看全部</button></p> : null}
-        <p className="keep text-sm"><b>{s.start.slice(5)} – {s.end.slice(5)}</b> · {f.kind === "all" ? "全部" : f.kind === "run" ? "跑步" : "力量"} {s.count} 条记录{f.kind === "all" ? `（跑步 ${s.run} · 力量 ${s.lift}${s.run + s.lift > s.count ? `，其中 ${s.run + s.lift - s.count} 条是跑+力量同一课` : ""}）` : ""}</p>
-        <p className="keep mt-1 text-xs text-muted">{f.kind !== "lift" ? `跑步 ${(s.distanceM / 1000).toFixed(2)} km${s.missingDistance ? `（${s.missingDistance} 条缺距离，未计入）` : ""} · ` : ""}时长 {s.durationSec ? durTotal(s.durationSec) : s.missingDuration ? "—" : "0分钟"}{s.missingDuration ? `（${s.missingDuration} 条缺时长，未计入）` : ""} · 来源 手机记录 {s.bySource.app} · 佳明 {s.bySource.garmin}{s.bySource.upload ? ` · 聊天/上传 ${s.bySource.upload}` : ""}{s.incomplete ? ` · ${s.incomplete} 条已记录未完成` : ""}</p>
+        <p className="keep text-sm"><b>{s.start.slice(5)} – {s.end.slice(5)}</b> · {f.kind === "all" ? "全部" : f.kind === "run" ? "跑步" : "力量"} {s.count} 条记录{f.kind === "all" ? `（跑步 ${s.run} · 力量 ${s.lift}${s.run + s.lift > s.count ? `，其中 ${s.run + s.lift - s.count} 条是跑+力量同一课` : ""}）` : ""}{s.incomplete ? ` · 另有 ${s.incomplete} 条未完成（不计入）` : ""}</p>
+        <p className="keep mt-1 text-xs text-muted">{f.kind !== "lift" ? `跑步 ${(s.distanceM / 1000).toFixed(2)} km${s.missingDistance ? `（${s.missingDistance} 条缺距离，未计入）` : ""} · ` : ""}时长 {s.durationSec ? durTotal(s.durationSec) : s.missingDuration ? "—" : "0分钟"}{s.missingDuration ? `（${s.missingDuration} 条缺时长，未计入）` : ""} · 来源 手机记录 {s.bySource.app} · 佳明 {s.bySource.garmin}{s.bySource.upload ? ` · 聊天/上传 ${s.bySource.upload}` : ""}</p>
         <div className="mt-2 flex items-end gap-1.5" aria-label={f.range === "week" ? "本周每天训练分钟" : "近4周每周训练分钟"}>
           {s.bars.map(b => <div key={b.start} className="flex flex-1 flex-col items-center gap-0.5">
             <span className="keep text-[10px] text-muted">{b.future ? "" : b.count ? `${b.minutes}′${b.unknown ? "+?" : ""}` : "—"}</span>
@@ -133,11 +149,11 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
     <section className="home-card mt-3 px-3 py-2" aria-label="训练记录列表">
       {days.length ? days.map(([d, rs]) => <div key={d} id={`log-day-${d}`} className="scroll-mt-24">
         <h3 className="keep pt-2 text-xs font-bold text-muted">{d.slice(5)} 周{"日一二三四五六"[new Date(d + "T00:00:00Z").getUTCDay()]} · {rs.length} 条</h3>
-        <ul>{rs.map(r => <RecordRow key={r.id} r={r} plan={plan} onAsk={onAsk} open={openId === r.id} onOpen={v => setOpenId(v ? r.id : null)} />)}</ul>
+        <ul>{rs.map(r => <RecordRow key={r.id} r={r} plan={plan} link={linkByRow.get(r.id)} onAsk={onAsk} open={openId === r.id} onOpen={v => setOpenId(v ? r.id : null)} />)}</ul>
       </div>) : <p className="keep py-2 text-sm text-muted">{hint ?? `${s.start.slice(5)}–${s.end.slice(5)} 还没有${f.kind === "run" ? "跑步" : f.kind === "lift" ? "力量" : "训练"}记录。`}</p>}
-      {prevWeek ? <p className="keep pt-1 text-xs text-muted">上周（{prevWeek.start.slice(5)}–{prevWeek.end.slice(5)}）有 {prevWeek.count} 条{f.kind === "run" ? "跑步" : f.kind === "lift" ? "力量" : ""}记录{prevWeek.incomplete ? `（${prevWeek.incomplete} 条已记录未完成）` : ""}。<button type="button" className="ml-1 font-bold text-accent underline" onClick={() => setFilter({ range: "4w" })}>看近4周</button></p> : null}
+      {prevWeek ? <p className="keep pt-1 text-xs text-muted">上周（{prevWeek.start.slice(5)}–{prevWeek.end.slice(5)}）有 {prevWeek.count} 条{f.kind === "run" ? "跑步" : f.kind === "lift" ? "力量" : ""}记录{prevWeek.incomplete ? `（另有 ${prevWeek.incomplete} 条未完成，不计入）` : ""}。<button type="button" className="ml-1 font-bold text-accent underline" onClick={() => setFilter({ range: "4w" })}>看近4周</button></p> : null}
     </section>
-    <UnmarkedPlans items={unmarked} plan={plan} onChanged={() => setRev(n => n + 1)} />
+    <UnmarkedPlans items={unmarked} plan={plan} suggestions={runMatch.suggestions} onChanged={() => setRev(n => n + 1)} />
     <div className="mt-3"><ReviewPanel today={today} title="方坤复盘" /></div>
     <Entry id="log-ability" title="能力详情" summary={axes.length ? `五维 已评 ${axes.filter(a => a.score != null).length} 项 · 待评估 ${axes.filter(a => a.score == null).length} 项` : "五维能力图"} open={entry.ability} onToggle={o => setEntry(e => ({ ...e, ability: o }))}>{entry.ability ? <AbilityRadarCard asOf={today} mode="details" /> : null}</Entry>
     <Entry id="log-trend" title="详细趋势" summary="训练负荷 · 记录依据查询" open={entry.trend} onToggle={o => setEntry(e => ({ ...e, trend: o }))}>{entry.trend ? <><LogMetricsPanel today={today} loadOnly /><TrainingEvidencePanel today={today} /></> : null}</Entry>
