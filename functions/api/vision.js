@@ -4,14 +4,14 @@ import { TRAINING_IMAGE_PROMPT, validTrainingOutput } from '../../src/lib/vision
 import { validateVisionResult, VISION_PROMPT } from '../../src/lib/vision/contract.ts';
 const MAX_BODY = 4 * 1024 * 1024;
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' } });
-const fail = (message, status) => json({ ok: false, message }, status);
+const fail = (message, status, stage) => json(stage ? { ok: false, message, stage } : { ok: false, message }, status);
 // v79.1：默认用 DeepSeek 视觉（deepseek-flash，OpenAI 兼容 /chat/completions + image_url，图片只放 user 消息），复用服务端 DEEPSEEK_API_KEY。
 // 三个 VISION_*（VISION_API_KEY、VISION_BASE_URL https、VISION_MODEL）都配置时整体覆盖。密钥只在服务端；同源 + 每 IP 限频 + 体积上限。
 const DEEPSEEK_BASE = 'https://api.deepseek.com', DEEPSEEK_VISION_MODEL = 'deepseek-flash';
 function visionOverride(env) { return Boolean(env.VISION_API_KEY?.trim()) && /^https:\/\/[^/]+/.test(env.VISION_BASE_URL || '') && Boolean(env.VISION_MODEL?.trim()); }
 export function visionConfig(env) {
   if (visionOverride(env)) return { key: env.VISION_API_KEY.trim(), base: env.VISION_BASE_URL, model: env.VISION_MODEL.trim(), provider: env.VISION_PROVIDER_NAME || new URL(env.VISION_BASE_URL).hostname };
-  if (env.DEEPSEEK_API_KEY?.trim()) return { key: env.DEEPSEEK_API_KEY.trim(), base: DEEPSEEK_BASE, model: DEEPSEEK_VISION_MODEL, provider: 'DeepSeek' };
+  if (env.DEEPSEEK_API_KEY?.trim()) return { key: env.DEEPSEEK_API_KEY.trim(), base: DEEPSEEK_BASE, model: DEEPSEEK_VISION_MODEL, provider: 'DeepSeek' }; // 不开思考模式：默认开启会把 max_tokens 耗在 reasoning 上（实测 finish:length）
   return null;
 }
 // 菜品照片：客户端已缩到 ≤1024px；单张 data URL 上限 1.5MB（训练截图仍按整体 4MB）。
@@ -53,17 +53,22 @@ export async function handleVision(request, env, fetcher = fetch) {
   if (env.VISION_RATE_LIMITER) { try { const r = await env.VISION_RATE_LIMITER.limit({ key: 'fangkun-vision' }); if (!r.success) return fail('识别次数过多，请稍后再试。', 429); } catch { return fail('识别额度检查暂不可用。', 503); } }
   const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 45000);
   const stop = () => controller.abort(); request.signal.addEventListener('abort', stop, { once: true });
+  let stage = 'fetch';
   try {
     if (request.signal.aborted) controller.abort();
-    const r = await fetcher(endpoint(cfg), { method: 'POST', redirect: 'error', signal: controller.signal, headers: { 'content-type': 'application/json', authorization: `Bearer ${cfg.key}` }, body: JSON.stringify({ model: cfg.model, stream: false, temperature: 0.1, max_tokens: training ? 6000 : 2500, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: training ? TRAINING_IMAGE_PROMPT : VISION_PROMPT }, { role: 'user', content }] }) });
-    if (!r.ok) { await r.body?.cancel(); return fail(r.status === 429 ? '服务繁忙或额度不足，请稍后重试。' : r.status === 401 || r.status === 402 ? '识别服务的密钥或余额需管理员检查。' : '识别服务暂不可用，请稍后重试。', 502); }
+    const r = await fetcher(endpoint(cfg), { method: 'POST', redirect: 'manual', signal: controller.signal, headers: { 'content-type': 'application/json', authorization: `Bearer ${cfg.key}` }, body: JSON.stringify({ model: cfg.model, stream: false, temperature: 0.1, max_tokens: training ? 6000 : 2500, response_format: { type: 'json_object' }, ...(cfg.provider === 'DeepSeek' ? { thinking: { type: 'disabled' } } : {}), messages: [{ role: 'system', content: training ? TRAINING_IMAGE_PROMPT : VISION_PROMPT }, { role: 'user', content }] }) });
+    // Cloudflare Workers 的 fetch 不支持 redirect:'error'（直接抛错）；用 manual，3xx 一律当失败、不跟随。
+    if (!r.ok) { await r.body?.cancel(); return fail(r.status === 429 ? '服务繁忙或额度不足，请稍后重试。' : r.status === 401 || r.status === 402 ? '识别服务的密钥或余额需管理员检查。' : '识别服务暂不可用，请稍后重试。', 502, 'upstream:' + r.status); }
+    stage = 'envelope';
     const envelope = JSON.parse(await boundedText(r.body, 150000));
-    const c = envelope.choices?.[0]; if (c?.finish_reason !== 'stop' || typeof c.message?.content !== 'string') return fail('结果未完整返回，请缩小图片范围重试。', 502);
-    const raw = JSON.parse(c.message.content);
+    const c = envelope.choices?.[0]; if (c?.finish_reason !== 'stop' || typeof c.message?.content !== 'string') return fail('结果未完整返回，请缩小图片范围重试。', 502, 'finish:' + String(c?.finish_reason).slice(0, 20));
+    stage = 'parse';
+    const raw = JSON.parse(c.message.content.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''));
+    stage = 'validate';
     if (training) { if (!validTrainingOutput(raw)) return fail('训练提取不完整，请缩小范围重试。', 502); return json({ok:true,candidate:raw,model:cfg.model}); }
     const result = validateVisionResult(raw, input.mode);
     return json({ ok: true, result, provider: cfg.provider, model: cfg.model, usage: envelope.usage ? { prompt: envelope.usage.prompt_tokens ?? null, completion: envelope.usage.completion_tokens ?? null } : null, at: new Date().toISOString() });
-  } catch { return fail(controller.signal.aborted ? '识别已取消或超时，尚未保存任何记录。' : '没有拿到完整可信的识别结果，请重试或手动填写。', 502); }
+  } catch (e) { return fail(controller.signal.aborted ? '识别已取消或超时，尚未保存任何记录。' : '没有拿到完整可信的识别结果，请重试或手动填写。', 502, controller.signal.aborted ? 'timeout' : stage + (stage === 'validate' && e instanceof Error ? ':' + e.message.slice(0, 60) : '')); }
   finally { clearTimeout(timer); request.signal.removeEventListener('abort', stop); }
 }
 export const onRequest = ({ request, env }) => handleVision(request, env);

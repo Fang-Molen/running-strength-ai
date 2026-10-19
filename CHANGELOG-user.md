@@ -2,7 +2,7 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
-| 2026-10-19 | v79.1：菜品照片识别默认用 DeepSeek（deepseek-flash，复用服务端 DEEPSEEK_API_KEY；三项 VISION_* 齐全时覆盖）。本机先缩到长边 1024px，服务端 detail=low、单张 ≤1.5MB、每 IP 每分钟 6 次/每天 120 次；结果标“估算·待核”、可改；每项给出食物库最接近的一条，点“采用食物库数值”才替换 | 用户：要用 DeepSeek 识别菜品照片 | functions/api/vision.js, vision/client.ts, food-photo-review.tsx, food-entry-sheet.tsx |
+| 2026-10-19 | v79.1：菜品照片识别默认用 DeepSeek（deepseek-flash，复用服务端 DEEPSEEK_API_KEY；三项 VISION_* 齐全时覆盖）。本机先缩到长边 1024px，服务端 detail=low、单张 ≤1.5MB、每 IP 每分钟 6 次/每天 120 次；结果标“估算·待核”、可改；每项给出食物库最接近的一条，点“采用食物库数值”才替换。修复：Workers 不支持 fetch redirect:'error'（改 manual）；DeepSeek 关闭思考模式（否则 finish:length）；照片也要给出 kcal/蛋白/碳水/脂肪粗估 | 用户：要用 DeepSeek 识别菜品照片 | functions/api/vision.js, vision/client.ts, food-photo-review.tsx, food-entry-sheet.tsx |
 | 2026-10-19 | v79.1：V4 训练详情页顶部状态也看分项记录（跑步/力量分开的 key）：分项都完成 → 已完成；一项跳过 → 已完成·减量；有任一项记录或关联了手表跑步 → 进行中；顶部同时显示 跑步 / 力量 各自状态；首页主卡、计划列表、进度计数同一口径。手表跑步关联不会让整天或力量变成完成 | 用户：只填分项时顶部仍“未开始” | plan400-view.ts, plan400.tsx, plan400-parts.tsx |
 | 2026-10-19 | v79.1：修改记录、上次保存、快照、备份导出时间、截图记录、同意日期等一律按北京时间显示（原来直接截 UTC 时间戳，09:31 显示成 01:31）；能力图的“当天”也按北京日期 | 用户截图 | activity-format.ts（stampCN）, plan400*.tsx, phone-record-detail.tsx, garmin-sync.tsx, settings-center.tsx, r8.tsx, unmarked-plans.tsx, online-features-settings.tsx, ability-radar-card.tsx |
 | 2026-10-19 | v79.1：sw 缓存 fr255-shell-v79-1 | — | public/sw.js |

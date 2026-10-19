@@ -32,4 +32,4 @@ JSON格式：{"text":"逐行抄录可见文字，保留所有分段、单位、�
 text模式只抄录，foods必须空数组。看不清写[看不清]，缺失不能猜成0，计划不代表已完成，不能把多次训练合并。不要猜日期、设备来源或身体状态。
 food模式识别一张图内的食物（最多12项）。每项格式：{"name":"名称","brand":"可见品牌或空串","amount":null,"unit":"g或份","basis":"100g或portion","nutrients":{"kcal":null,"protein":null,"carb":null,"fat":null,"fiber":null},"source":"label或estimate","evidence":"实际依据","uncertainty":"份量、油量、品牌等不确定之处"}。
 清晰包装标签用label，完整抄录每100g营养时basis=100g、unit=g，实际吃的克数未知则amount=null。kJ必须除4.184转kcal并在evidence写明。每份标签用portion、unit=份、amount未知则null。无法从标签读出的营养素保持null。
-普通食物照片可以估算但source必须estimate；按照片所示一份估算用portion、unit=份、amount=1，evidence写估计份量依据，uncertainty写清只能粗估，不能把重量和品牌猜测当事实。不能冒充品牌官网、联网检索或实测；无把握的营养素保持null。不同品牌汉堡不得互换。只有菜名没有份量时可保持营养未知。不能识别食物就foods=[]并说明。`;
+普通食物照片（菜品、盖饭、烤串、饮料等）要给出粗估：source=estimate，按照片所示份量用portion、unit=份、amount=1（多串/多个就按图中看到的总量算一份），nutrients里kcal、protein、carb、fat都填常见做法下的估算数字（不要因为不精确就留null），fiber没把握可null；evidence写估计的克数/个数依据，uncertainty写清油量、糖量、份量只能粗估。看不清是什么或完全无法判断时才留null。罐装/瓶装饮料没拍到营养表时按常见规格估算并在uncertainty写明规格与是否无糖未确认。不能冒充品牌官网、联网检索或实测，不能把重量和品牌猜测当事实。不同品牌汉堡不得互换。只有菜名没有份量时可保持营养未知。不能识别食物就foods=[]并说明。`;
