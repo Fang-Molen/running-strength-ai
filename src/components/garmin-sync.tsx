@@ -10,6 +10,7 @@ import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui
 import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
 import { exportFeedback } from "@/components/coach-feedback";
 import { saveGarminActivities } from "@/components/garmin-log";
+import { saveIntraday, intradayComplete } from "@/lib/health/intraday-store";
 
 const api = async (p: string, init?: RequestInit, ms = 20000) => {
   const ac = new AbortController(); const t = setTimeout(() => ac.abort(), ms);
@@ -25,6 +26,7 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
     const result = await runGarminSyncJob({ api, subject: currentAthleteId, generation: () => accountGeneration,
       day: localDay(), now: new Date().toISOString(), progress: setMsg,
       save: saveDeviceRows, saveView: saveGarminActivities, bindAccount: bindGarminAccount,
+      intraday: { complete: d => intradayComplete(d), save: days => saveIntraday(days) },
       backfill: { get: scope => { try { return Number(localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 90 } }, set: (scope, n) => { try { localStorage.setItem(`fk-garmin-health-backfill:${scope}`, String(n)) } catch { /* 下次再补 */ } } },
       report: report => {
         const key = (name: string) => garminStorageKey(name, report.subjectId);

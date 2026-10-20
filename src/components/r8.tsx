@@ -31,6 +31,7 @@ import { saveDeviceRows } from "@/lib/ui/device-store"
 import { Sheet, Toast, useToast } from "@/components/sheet"
 import { pendingLocal, sentToday, support, SENT_KEY } from "@/lib/ui/notify"
 import { loadInjury } from "@/lib/ui/injury"
+import { IntradayTodayLine } from "@/components/intraday-panel"
 
 const read = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d } }
 export const loadAnswers = (): (Answers & { done?: boolean }) | null => read(ONBOARD_KEY, null)
@@ -121,6 +122,7 @@ export function HomeHeader({ today, revision, onRecovery, onOverride, layout, on
       <b className="shrink-0 text-[#1d7a5e]">恢复</b><span className="min-w-0 flex-1 truncate">{st.verdict}{st.reason ? ` · ${st.reason}` : ""}</span>
       {st.baseline ? <span className="shrink-0 text-[11px] text-muted">还需 {st.baseline} 天建立基线</span> : null}<ChevronRight className="size-4 shrink-0 text-muted" />
     </button> : null}
+    {vis("recovery") ? <div style={ord("recovery")}><IntradayTodayLine today={today} onOpen={() => window.dispatchEvent(new CustomEvent("fk-open-intraday"))} /></div> : null}
     {vis("override") ? <div style={ord("override")} className="mb-2 flex flex-wrap items-center gap-1.5 px-1" aria-label="今天临时改"><span className="text-xs text-muted">今天临时改：</span>
       <button type="button" className="fk-chip" aria-pressed={!!st.ov?.short} onClick={() => setOv({ short: !st.ov?.short })}>只有 20 分钟</button>
       <button type="button" className="fk-chip" aria-pressed={!!st.ov?.home} onClick={() => setOv({ home: !st.ov?.home })}>今天在家</button>

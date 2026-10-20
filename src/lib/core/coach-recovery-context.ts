@@ -6,11 +6,15 @@ import {loadCheckins,readArray,recoveryText} from '../health/legacy-inputs.ts'
 import {localDay,shiftDay,validDay,shortHash} from '../health/observation.ts'
 import {quantifyRecoverySnapshot,type RecoveryQuantification} from '../health/recovery-quantitative.ts'
 import {readRestHistory,restContextLines} from '../health/rest-store.ts'
+import {intradayDay} from '../health/intraday-store.ts'
+import {summarizeDay,intradayContextLine} from '../health/garmin-intraday.ts'
 
 export type RecoveryContext={
  scope:'DAY_CONTEXT';athleteId:string;day:string;asOf:string;sourceId:string;
  quantitative:RecoveryQuantification;subjective:string[];missing:string[];
  safetyHold:boolean;safetyNotes:string[];dependency:EvidenceDependency|null;planWrite:false;diagnosis:false;
+ /** v88.3：手表日内摘要，仅作背景（不是训练许可）；只收分析时点之前已同步的。 */
+ device?:string[];
 }
 const time=(value:string)=>/T.*(?:Z|[+-]\d\d:\d\d)$/.test(value)&&Number.isFinite(Date.parse(value))
 
@@ -46,6 +50,8 @@ export function readRecoveryContext(athleteId:string,day:string|null,asOf:string
  const restRows=rest.state==='AVAILABLE' ? rest.selection?.records.filter(r=>r.contextDay===day)??[] : []
  if(rest.state==='CORRUPT')missing.push('独立休息记录有冲突或读取失败，未用于推断恢复')
  if(restRows.length)subjective.push(...restContextLines(day,Date.parse(asOf)))
+ const intra=intradayDay(day,athleteId),intraKnown=intra&&Date.parse(intra.fetchedAt)<=Date.parse(asOf)?intra:null
+ const device=intradayContextLine(summarizeDay(intraKnown)),deviceLines=device?[device]:[]
  if(signatures.size>1)missing.push('当天主观反馈存在冲突，未任取一条')
  if(ci?.fatigue)subjective.push(`当天自报感受：${{fresh:'轻松',ok:'一般',tired:'很累'}[ci.fatigue]}`)
  if(ci?.recovery!==undefined&&recoveryText(ci))subjective.push(`当天自报恢复 ${recoveryText(ci)}`)
@@ -68,18 +74,18 @@ export function readRecoveryContext(athleteId:string,day:string|null,asOf:string
  const safetyHold=checkins.some(c=>c.pain==='mild'||c.pain==='sharp')||safetyNotes.length>0
  const sourceId=`health-context:${shortHash(athleteId)}:${day}`
  const points=snapshot.metrics.flatMap(m=>[...m.series,...m.candidates,...(m.current?[m.current]:[])])
- const times=[...points.filter(p=>quantitative.sourceIds.includes(p.id)&&time(p.updatedAt)&&Date.parse(p.updatedAt)<=Date.parse(asOf)).map(p=>p.updatedAt),...(ci?[ci.at]:[]),...restRows.map(r=>new Date(r.knownAt).toISOString())]
- const signature=JSON.stringify({scope:'DAY_CONTEXT',athleteId,day,quantitative:quantitative.revision,checkin:ci??null,checkinConflict:signatures.size>1,rest:restRows.map(r=>[r.originEventId,r.revision,r.knownAt,r.kind,r.duration])})
- const dependency:EvidenceDependency|null=!snapshot.unreadable&&times.length&&(quantitative.facts.length||subjective.length)?{
+ const times=[...points.filter(p=>quantitative.sourceIds.includes(p.id)&&time(p.updatedAt)&&Date.parse(p.updatedAt)<=Date.parse(asOf)).map(p=>p.updatedAt),...(ci?[ci.at]:[]),...restRows.map(r=>new Date(r.knownAt).toISOString()),...(device&&intraKnown?[new Date(intraKnown.fetchedAt).toISOString()]:[])]
+ const signature=JSON.stringify({scope:'DAY_CONTEXT',athleteId,day,quantitative:quantitative.revision,checkin:ci??null,checkinConflict:signatures.size>1,rest:restRows.map(r=>[r.originEventId,r.revision,r.knownAt,r.kind,r.duration]),...(device?{device:[device,intraKnown?.fetchedAt]}:{})})
+ const dependency:EvidenceDependency|null=!snapshot.unreadable&&times.length&&(quantitative.facts.length||subjective.length||deviceLines.length)?{
   id:sourceId,sourceId,occurrenceId:`health-day:${day}`,signature,eventAt:new Date(`${day}T00:00:00`).toISOString(),recordedAt:times.sort((a,b)=>Date.parse(a)-Date.parse(b)).at(-1)!,
  }:null
- return {scope:'DAY_CONTEXT',athleteId,day,asOf,sourceId,quantitative,subjective,missing,safetyHold,safetyNotes:[...new Set(safetyNotes)],dependency,planWrite:false,diagnosis:false}
+ return {scope:'DAY_CONTEXT',athleteId,day,asOf,sourceId,quantitative,subjective,missing,safetyHold,safetyNotes:[...new Set(safetyNotes)],dependency,planWrite:false,diagnosis:false,...(deviceLines.length?{device:deviceLines}:{})}
 }
 
 export function recoveryContextLines(context:RecoveryContext):string[]{
  const facts=context.quantitative.facts
  const selected=[...facts.filter(f=>['SLEEP','FAT_RHR','FAT_HRV'].includes(f.metric)),...facts.filter(f=>['RHR','HRV'].includes(f.metric)&&!facts.some(x=>x.metric===(f.metric==='RHR'?'FAT_RHR':'FAT_HRV')))]
- return [...selected.map(f=>f.text),...context.subjective]
+ return [...selected.map(f=>f.text),...context.subjective,...(context.device??[])]
 }
 
 export function validRecoveryContext(context:RecoveryContext|undefined,snapshot:EvolutionSnapshot):context is RecoveryContext{

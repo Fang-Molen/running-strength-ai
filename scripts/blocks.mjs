@@ -71,6 +71,13 @@ export const BLOCKS = {
     tests: ['src/lib/coach/knowledge/complete.test.ts', 'src/lib/coach/knowledge/entry.test.ts', 'src/lib/coach/knowledge/approval.test.ts', 'src/lib/coach/knowledge/approval-integrity.test.ts', 'src/lib/coach/knowledge/scope.test.ts'],
     forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', '/stated/', 'day-schedule'],
   },
+  'health-intraday': {
+    desc: 'v88.3 手表日内（佳明 dailyHeartRate / dailyStress 身体电量）：解析、日期归属（calendarDate 必须等于请求日）、7 天有界存储、日摘要（不是训练许可）；健康页曲线与今日一行摘要只读它',
+    files: ['src/lib/health/garmin-intraday.ts', 'src/lib/health/intraday-store.ts'],
+    entry: 'src/lib/health/garmin-intraday.ts',
+    tests: ['src/lib/health/garmin-intraday.test.ts', 'src/lib/health/garmin-sync-runner.test.ts', 'src/lib/core/coach-recovery-rest-v88.test.ts'],
+    forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule', 'schedule-writer'],
+  },
   'health-rest': {
     desc: 'U01 无手表午睡/安静休息：独立追加式记录、版本更正、身份隔离、失败重试；不并入夜间睡眠；本地教练恢复上下文按知晓时间读取（不上传联网模型）',
     files: ['src/lib/health/rest-store.ts', 'src/lib/health/intraday/sleep.ts', 'src/lib/health/intraday/common.ts'],

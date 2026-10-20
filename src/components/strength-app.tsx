@@ -222,6 +222,7 @@ export function StrengthApp() {
     return () => { unsubscribe(); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); };
   }, []);
   const openScheduled = (entry: ScheduleEntry) => { setCalendar(loadSchedule().entries); setTimerPicker(false); setExecutionEntryId(entry.id); };
+  useEffect(() => { const h = () => { setTab("body"); setTimeout(() => document.getElementById("fk-intraday")?.scrollIntoView({ block: "start", behavior: "smooth" }), 120); }; window.addEventListener("fk-open-intraday", h); return () => window.removeEventListener("fk-open-intraday", h); }, []);
   useEffect(() => { const h = (ev: Event) => { const id = (ev as CustomEvent<string>).detail; const all = loadSchedule().entries; if (all.some(e => e.id === id)) { setCalendar(all); setTimerPicker(false); setExecutionEntryId(id); } }; window.addEventListener("fk-open-scheduled", h); return () => window.removeEventListener("fk-open-scheduled", h); }, []);
   const resumeSession = (id: string) => {
     const e = loadSchedule().entries.find(e => [scheduleExecutionId(e.id, 'strength'), scheduleExecutionId(e.id, 'run')].includes(id));
