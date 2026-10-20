@@ -65,7 +65,7 @@ function MetricCard({ d, kind, onOpen }: { d: IntradayDay; kind: Kind; onOpen: (
       {st ? <span className="ml-auto text-xs text-muted">最新 <b className="text-base text-fg" style={{ color: m.color }}>{st.latest[1]}</b>{kind === "bb" ? "/100" : " 次/分"} · {clock(st.latest[0], d.offsetMin)}</span> : <span className="ml-auto text-xs text-muted">无样本</span>}
       <ChevronRight className="size-4 shrink-0 text-muted" />
     </button>
-    {st ? <p className="mt-0.5 text-[11px] text-muted">最低 {st.min} · 最高 {st.max}{kind === "hr" && d.restingHr != null ? ` · 静息 ${d.restingHr}` : ""}</p> : null}
+    {st ? <p className="keep mt-0.5 text-[11px] text-muted">最低 {st.min} · 最高 {st.max}{kind === "hr" && d.restingHr != null ? ` · 静息 ${d.restingHr}` : ""}</p> : null}
     <IntradayChart d={d} kind={kind} height={92} />
   </div>;
 }
@@ -78,12 +78,12 @@ function Detail({ d, kind, onClose, onDay, days }: { d: IntradayDay; kind: Kind;
     <DaySwitch day={d.day} days={days} onDay={onDay} prev={i > 0 ? days[i - 1] : null} next={i >= 0 && i < days.length - 1 ? days[i + 1] : null} />
     <div className="mt-2 rounded-2xl bg-surface-2 p-2"><IntradayChart d={d} kind={kind} height={210} /><Legend d={d} /></div>
     {st ? <div className="mt-2 grid grid-cols-4 gap-1.5 text-center">
-      {([["最新", `${st.latest[1]}`, clock(st.latest[0], d.offsetMin)], ["最低", `${st.min}`, ""], ["最高", `${st.max}`, ""], kind === "hr" ? ["静息", d.restingHr != null ? `${d.restingHr}` : "—", "佳明当天"] : ["变化", `${st.latest[1] - pts[0][1] >= 0 ? "+" : ""}${st.latest[1] - pts[0][1]}`, "较当天首个"]] as const).map(([k, v, sub]) => <div key={k} className="rounded-xl bg-surface-2 p-2"><p className="text-[11px] text-muted">{k}</p><p className="text-lg font-black" style={k === "最新" ? { color: m.color } : undefined}>{v}</p><p className="text-[10px] text-muted">{sub || m.unit}</p></div>)}
+      {([["最新", `${st.latest[1]}`, clock(st.latest[0], d.offsetMin)], ["最低", `${st.min}`, ""], ["最高", `${st.max}`, ""], kind === "hr" ? ["静息", d.restingHr != null ? `${d.restingHr}` : "—", "佳明当天"] : ["变化", `${st.latest[1] - pts[0][1] >= 0 ? "+" : ""}${st.latest[1] - pts[0][1]}`, "较当天首个"]] as const).map(([k, v, sub]) => <div key={k} className="rounded-xl bg-surface-2 p-2"><p className="keep text-[11px] text-muted">{k}</p><p className="text-lg font-black" style={k === "最新" ? { color: m.color } : undefined}>{v}</p><p className="keep text-[10px] text-muted">{sub || m.unit}</p></div>)}
     </div> : <p className="mt-2 text-sm text-muted">这天没有{m.label}样本。</p>}
     {hours.length ? <details className="mt-2 rounded-xl border border-line p-2 text-xs"><summary className="cursor-pointer font-bold">逐小时范围（{pts.length} 个样本）</summary>
       <div className="mt-1 grid grid-cols-3 gap-1">{hours.map(h => <span key={h.h} className="rounded bg-surface-2 px-1.5 py-1">{String(h.h).padStart(2, "0")}时 {h.lo === h.hi ? h.lo : `${h.lo}–${h.hi}`}</span>)}</div></details> : null}
     <p className="keep mt-2 text-xs text-muted">{kind === "bb" ? "身体电量是佳明根据心率变异等估算的设备读数，仅供参考，不是训练许可；是否训练仍看疼痛、疲劳和热身感受。" : "全天心率来自手表光学心率，佩戴松紧、运动和环境都会影响读数；不是诊断依据。"}</p>
-    <p className="mt-1 text-[11px] text-muted">同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", { hour12: false })}{d.offsetMin != null ? ` · 时间按手表当地时区（UTC${d.offsetMin >= 0 ? "+" : "-"}${Math.abs(d.offsetMin / 60)}）` : ""}</p>
+    <p className="keep mt-1 text-[11px] text-muted">同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", { hour12: false })}{d.offsetMin != null ? ` · 时间按手表当地时区（UTC${d.offsetMin >= 0 ? "+" : "-"}${Math.abs(d.offsetMin / 60)}）` : ""}</p>
   </Sheet>;
 }
 
@@ -107,7 +107,7 @@ export function IntradayPanel({ today }: { today: string }) {
       {days.length > 1 ? <div className="mt-1"><DaySwitch day={d.day} days={days} onDay={setDay} prev={i > 0 ? days[i - 1] : null} next={i < days.length - 1 ? days[i + 1] : null} /></div> : null}
       <div className="mt-1.5 grid gap-1.5"><MetricCard d={d} kind="hr" onOpen={() => setOpen("hr")} /><MetricCard d={d} kind="bb" onOpen={() => setOpen("bb")} /></div>
       <Legend d={d} />
-      {d.day !== today ? <p className="mt-1 text-[11px] text-muted">今天还没有日内样本，显示的是最近一天。</p> : null}
+      {d.day !== today ? <p className="keep mt-1 text-[11px] text-muted">今天还没有日内样本，显示的是最近一天。</p> : null}
       <p className="keep mt-1 text-[11px] text-muted">身体电量只是设备读数，不是训练许可。</p>
     </>}
     {d && open ? <Detail d={d} kind={open} days={days} onDay={setDay} onClose={() => setOpen(null)} /> : null}
