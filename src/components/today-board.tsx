@@ -30,13 +30,13 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
   const [adding, setAdding] = useState(false)
   const [stamp, setStamp] = useState(0)
   const [note, setNote] = useState("")
-  useEffect(() => { const refresh = () => setStore(loadSchedule()); const s = syncFangkun(loadSchedule()); setStore(s); saveSchedule(s); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh); return () => { window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); }; }, [revision])
+  useEffect(() => { const refresh = () => setStore(loadSchedule()); const s = syncFangkun(loadSchedule()); setStore(s); saveSchedule(s, 'today-board-sync'); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh); return () => { window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); }; }, [revision])
   useEffect(() => { setDay(today) }, [today])
   useEffect(() => { if (selectedDate) setDay(selectedDate); }, [selectedDate]);
   const week = useMemo(() => weekOf(day || today), [day, today])
   const conflicts = useMemo(() => findConflicts(store.entries, week, today, readRecovery(today), store.acks), [store, week, today])
   const summary = useMemo(() => weekSummary(store.entries, week, today), [store, week, today])
-  const commit = (next: ScheduleStore) => { if (!saveSchedule(next)) { setNote("保存失败，原记录仍保留。请检查本机存储后重试。"); return false; } setStore(next); setStamp(Date.now()); return true; }
+  const commit = (next: ScheduleStore) => { if (!saveSchedule(next, 'today-board')) { setNote("保存失败，原记录仍保留。请检查本机存储后重试。"); return false; } setStore(next); setStamp(Date.now()); return true; }
   const setEntries = (entries: ScheduleEntry[]) => commit({ ...store, entries })
   const act = (c: Conflict, a: ConflictAction) => commit(a === "ack" ? { ...store, acks: [...store.acks, c.id] } : { ...store, entries: applyAction(store.entries, c, a) })
   const sessionOf = (e: ScheduleEntry) => e.modality === "strength" ? plan.sessions.find((s) => s.id === e.refId) : undefined

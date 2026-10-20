@@ -1,4 +1,4 @@
-import { statedFactsSection } from '../coach/stated/compose.ts'
+import { statedFactsSection, statedDirectAnswer } from '../coach/stated/compose.ts'
 import { answerFromAppData } from "../health/coach-data"
 import { compileC03MetricBrief, type C03MetricBrief } from '../coach/c03/evidence.ts'
 import { buildC03ObservationReview } from '../coach/c03/argument.ts'
@@ -31,8 +31,15 @@ import { contextualNutrition, type Event } from "./nutrition-context.ts";
 import { formatReasoningFrame, reasoningRevisionNotice, type ReasoningFrame } from './coach-reasoning.ts';
 import type { EvolutionSnapshot } from './coach-evolution-v4.ts';
 import { coachQuestionIntent } from './coach-model-packet.ts';
+import { answerCompleteKnowledgePreview, formalKnowledgeSection, type CompleteKnowledgeSelection, type CompleteKnowledgeUse } from '../coach/knowledge/complete.ts';
 
 export type LocalCoachAnswer = {
+  /** v87：用户明确要求“预览知识卡/查看研究资料”时的只读待审资料预览；不是处方依据。 */
+  knowledgePreview?: CompleteKnowledgeSelection;
+  /** v87：本回答用到的“经受信回执批准”的知识卡（含版本与内容哈希）；随消息保存，知识变化后据此复核。 */
+  knowledgeUses?: CompleteKnowledgeUse[];
+  /** v87：只在本地展示的回答（待审资料预览、单纯换算、无候选的剩余任务）。联网方坤不替换、不发送。 */
+  localOnly?: 'KNOWLEDGE_PREVIEW'|'DIRECT_CALCULATION'|'REMAINING_WORK_NO_CANDIDATE';
   c03?: { brief: C03MetricBrief; review: ReturnType<typeof buildC03ObservationReview> };
   expression?: { version: 'E1'; coverage: 'CONFIRMED_RECORD_INSPECTION_ONLY'; sourceRevision: string };
   dialogue?: CoachDialogue;
@@ -281,9 +288,27 @@ function answerLocallyCore(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapsho
 
 /** v86（R1.1）：题面里给出的数字和否定条件由 coach-stated 区块统一核算，所有非急救回答都先列出这些事实。
  * 急救回答保持原样（不分散注意力）；医疗/疼痛安全回答在前，事实在后。只读，不写存储。 */
+/** v87：这类回答不联网、不被其他本地复盘替换。 */
+export const answerStaysLocal=(a:Pick<LocalCoachAnswer,'localOnly'>|null|undefined)=>!!a?.localOnly
+
 export function answerLocally(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapshot:EvolutionSnapshot},memory:readonly CoachContextMemory[]=[],periodReview?:PeriodReview,dialogue?:CoachDialogue):LocalCoachAnswer{
- const answer=answerLocallyR(brief,logic,memory,periodReview,dialogue)
  const red=detectRedFlags(brief.question)
+ // v87 知识区块：只有明确的“预览知识卡/查看研究资料”才展示待审资料；急症、疼痛、医疗限制、注入一律优先。
+ const previewSafe=red.level==='NONE'&&!FALLBACK_TOPICS.INJECTION.match.test(brief.question)&&!brief.pain&&!brief.constraints.medicalReferral
+  &&!logic?.frame.safety.mustRetain&&!dialogue?.emergency&&!dialogue?.medicalHold
+ const preview=previewSafe?answerCompleteKnowledgePreview(brief.question,logic?.snapshot.asOf):null
+ if(preview)return {text:preview.text,knowledgePreview:preview.selection,localOnly:'KNOWLEDGE_PREVIEW',dialogue,sources:[],candidate:null,escalationAvailable:false}
+ const direct=previewSafe?statedDirectAnswer(brief.question):null
+ if(direct)return {text:direct.text,localOnly:direct.kind,dialogue,sources:[],candidate:null,escalationAvailable:false}
+ const stated=answerLocallyStated(brief,logic,memory,periodReview,dialogue,red)
+ if(!previewSafe||stated.dialogue?.emergency||stated.dialogue?.medicalHold||stated.localOnly)return stated
+ // v87：正式分析只接受经受信回执批准的知识（当前 0 张 → 回答不变），放在“依据”里。
+ const formal=formalKnowledgeSection(brief.question,logic?.snapshot.asOf)
+ if(!formal)return stated
+ return {...stated,knowledgeUses:formal.uses,text:stated.text+(stated.text.includes('\n依据：')?'\n':'\n依据：')+formal.text}
+}
+function answerLocallyStated(brief:CoachBrief,logic:{frame:ReasoningFrame;snapshot:EvolutionSnapshot}|undefined,memory:readonly CoachContextMemory[],periodReview:PeriodReview|undefined,dialogue:CoachDialogue|undefined,red:ReturnType<typeof detectRedFlags>):LocalCoachAnswer{
+ const answer=answerLocallyR(brief,logic,memory,periodReview,dialogue)
  if(red.level==='EMERGENCY'||answer.dialogue?.emergency||FALLBACK_TOPICS.INJECTION.match.test(brief.question))return answer
  // 可疑数据（单位/GPS跳点/心率伪影）已由对话层保留原值并排除后核算；这里不再拿可疑值重算一遍。
  if(/这个数据可能有问题/.test(answer.text))return answer

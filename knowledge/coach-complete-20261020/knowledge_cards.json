@@ -1,0 +1,1469 @@
+[
+  {
+    "id": "P01",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "目标、阶段和优先级",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan",
+      "review"
+    ],
+    "required_fact_keys": [
+      "goal",
+      "phase"
+    ],
+    "proposed_application": "先读取当前有效目标、期限及阶段；解释本课与该目标的关系。目标未填时只描述实际结构，保留目的未知。",
+    "not_supported": "不得把示范人物目标写进用户档案；不从距离反推唯一训练目的。",
+    "smallest_useful_question": "这堂课原本希望重点练什么？仅在记录没有答案且影响判断时问。",
+    "revisit_trigger": "目标、比赛日期或阶段被更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P02",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "计划、实际与训练效果",
+    "source_ids": [
+      "S14"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "compare"
+    ],
+    "required_fact_keys": [
+      "planned",
+      "actual",
+      "completion"
+    ],
+    "proposed_application": "分开输出计划、已完成分项及观察结果；完成数量不能替代质量和效果判断。",
+    "not_supported": "跑步完成不证明力量完成；计划量不作为实际负荷。",
+    "smallest_useful_question": "未记录的力量部分是没做，还是还没登记？",
+    "revisit_trigger": "执行事件或完成状态更新。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P03",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "渐进变化的依据",
+    "source_ids": [
+      "S01",
+      "S02"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan"
+    ],
+    "required_fact_keys": [
+      "comparable_history",
+      "response",
+      "approved_candidates"
+    ],
+    "proposed_application": "解释候选方案如何改变已有刺激，并检查最近实际完成、反应和宿主批准范围。",
+    "not_supported": "不能固定每周加10%；不能只凭一次感觉轻松自动加量。",
+    "smallest_useful_question": "现有记录不足以选候选时，补最近同类课实际完成情况。",
+    "revisit_trigger": "连续可比表现或恢复反应改变。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P04",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "周内安排与相邻课程",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan"
+    ],
+    "required_fact_keys": [
+      "calendar_scope",
+      "remaining_components",
+      "approved_candidates"
+    ],
+    "proposed_application": "先核对受影响日期的完整安排；改期预览列出冲突、保留分项和被替代内容。",
+    "not_supported": "不把只含跑步的日历当全部训练；不因当前空闲自动补课。",
+    "smallest_useful_question": "该日期是否还有未同步的训练？只在日历覆盖不完整时问。",
+    "revisit_trigger": "日程版本或可用时间变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P05",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "比赛前调整",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan"
+    ],
+    "required_fact_keys": [
+      "event_date",
+      "recent_actual",
+      "approved_candidates"
+    ],
+    "proposed_application": "以已有批准比赛安排为候选，说明保留目的、调整内容及观察条件。",
+    "not_supported": "不从通用文章直接套减量比例；不承诺成绩提升。",
+    "smallest_useful_question": "确认比赛日期和当前已批准安排中的缺项。",
+    "revisit_trigger": "比赛改期、训练中断或状态限制变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P06",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "跑步力量并行",
+    "source_ids": [
+      "S01",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "components",
+      "component_actual",
+      "goal"
+    ],
+    "proposed_application": "分别评价跑步与力量，再检查两者在目标、时间和下一课约束上的关系。",
+    "not_supported": "不把两类数量强行折成同一疲劳分；整体RPE不证明每个分项实际执行。",
+    "smallest_useful_question": "只补尚不清楚且影响当前决定的分项状态。",
+    "revisit_trigger": "新增分项结果或调整优先级。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P07",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "有限时间下的完整方案",
+    "source_ids": [
+      "S14"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan"
+    ],
+    "required_fact_keys": [
+      "time_budget",
+      "approved_candidates",
+      "remaining_components"
+    ],
+    "proposed_application": "总时间包含准备、工作、休息、转换；优先选择可完成且保留目标的批准候选，说明取舍。",
+    "not_supported": "不能只缩短休息凑时长；没有可行候选时不编造压缩版。",
+    "smallest_useful_question": "今天实际还有多少分钟可用于训练？",
+    "revisit_trigger": "时间预算或已完成内容变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "P08",
+    "version": 1,
+    "domain": "PROGRAMMING",
+    "domain_label": "训练原理与周期",
+    "title": "个人偏好与执行障碍",
+    "source_ids": [
+      "S15"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan",
+      "memory"
+    ],
+    "required_fact_keys": [
+      "preferences",
+      "equipment",
+      "available_days"
+    ],
+    "proposed_application": "把器材、时间、偏好作为方案约束；给出可行选择，接受后按原流程保存。",
+    "not_supported": "偏好不是身体能力事实；暂时出差不写成永久限制。",
+    "smallest_useful_question": "这项限制只适用于本周，还是以后也适用？",
+    "revisit_trigger": "偏好过期、撤回或持久化失败。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R01",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "课次目的与间歇结构",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "compare"
+    ],
+    "required_fact_keys": [
+      "segments",
+      "rest_protocol",
+      "purpose"
+    ],
+    "proposed_application": "保留每段距离、时长、组内恢复、轮间恢复和轮次；根据已知目的评价对应指标。",
+    "not_supported": "同样4×200米不必是相同训练；未知目的不强制分类。",
+    "smallest_useful_question": "组间和轮间各休息多久？仅问缺失的关键部分。",
+    "revisit_trigger": "结构或恢复被更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R02",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "加速与途中跑测量",
+    "source_ids": [
+      "S02"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "compare",
+      "capability"
+    ],
+    "required_fact_keys": [
+      "start_method",
+      "timing_method",
+      "measured_section"
+    ],
+    "proposed_application": "把站立起跑、蹲踞、助跑后的测量分开；相同协议内看变化。",
+    "not_supported": "手计与电计、含加速与飞跑不能直接解释为能力提升。",
+    "smallest_useful_question": "计时从哪里开始、用了什么方法？",
+    "revisit_trigger": "测量方法或起点确认。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R03",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "平均表现与后程保持",
+    "source_ids": [
+      "S02"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "compare"
+    ],
+    "required_fact_keys": [
+      "segment_times",
+      "segment_distances"
+    ],
+    "proposed_application": "分别报告均值、首尾差和极差，说明各自对应的问题；数值由工具计算。",
+    "not_supported": "不能用极差冒充首尾掉速；没有等距条件不直接比较分段秒数。",
+    "smallest_useful_question": "不为已能计算的问题追加无关健康问卷。",
+    "revisit_trigger": "分段数字或距离更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R04",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "800与1500的能力观察",
+    "source_ids": [
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "capability",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "goal",
+      "comparable_performance",
+      "training_history"
+    ],
+    "proposed_application": "按目标组织速度、持续表现等不同证据，不让单项结果覆盖整个能力判断。",
+    "not_supported": "不能从一次间歇确定运动员类型或精确比赛成绩。",
+    "smallest_useful_question": "优先查询既有比赛和同类课；再问最关键的协议缺项。",
+    "revisit_trigger": "新增比赛、可比课次或目标变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R05",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "场地与环境条件",
+    "source_ids": [
+      "S02"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "compare"
+    ],
+    "required_fact_keys": [
+      "surface",
+      "environment",
+      "timing_method"
+    ],
+    "proposed_application": "呈现环境和测量差异，区分记录差值与可解释的能力变化。",
+    "not_supported": "缺少验证模型时不自行扣除天气影响后报精准能力。",
+    "smallest_useful_question": "两次是否在相同场地和相近条件完成？",
+    "revisit_trigger": "场地、风向或温度记录补全。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R06",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "配速与强度口径",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "calculate",
+      "review"
+    ],
+    "required_fact_keys": [
+      "distance",
+      "time",
+      "intensity_definition"
+    ],
+    "proposed_application": "统一单位后计算实际配速；目标速度百分比与目标用时百分比分别定义。",
+    "not_supported": "速度提高10%不等于用时减少10%；没有口径不自动生成目标强度。",
+    "smallest_useful_question": "这里的百分比指速度、最大心率，还是别的指标？",
+    "revisit_trigger": "单位或强度定义改变。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R07",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "跑前准备与专项衔接",
+    "source_ids": [
+      "S02"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan"
+    ],
+    "required_fact_keys": [
+      "session_purpose",
+      "time_budget",
+      "approved_candidates"
+    ],
+    "proposed_application": "热身候选按本课目的、场地和可用时间选择；5、15、30–40分钟是产品时间入口，实际内容以批准模板为准。",
+    "not_supported": "时间档不是充分准备的保证；不得把力量准备直接替代高速跑准备。",
+    "smallest_useful_question": "缺少合适模板时询问本课类型或器材，不强塞通用热身。",
+    "revisit_trigger": "主课、天气、时间或身体限制变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "R08",
+    "version": 1,
+    "domain": "RUNNING",
+    "domain_label": "跑步专项",
+    "title": "比赛表现、预测与短板",
+    "source_ids": [
+      "S02",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "capability"
+    ],
+    "required_fact_keys": [
+      "verified_results",
+      "protocols",
+      "model_validation"
+    ],
+    "proposed_application": "比赛事实、模型估计和暂时假设分别显示；无验证模型时给出能力证据和缺口。",
+    "not_supported": "不能由1堂训练生成精准PB预测或永久短板；不把速度差直接归因于某块肌肉弱。",
+    "smallest_useful_question": "当前最想判断哪个项目或哪个阶段的表现？",
+    "revisit_trigger": "新比赛或反证改变既有假设。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S01",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "动作目的与模式",
+    "source_ids": [
+      "S01",
+      "S11"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "action",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "goal",
+      "exercise_variant",
+      "equipment"
+    ],
+    "proposed_application": "先确定目标和动作模式，再筛选动作；肌群是检索维度之一。",
+    "not_supported": "点某块肌肉不代表适合所有关联动作；不能推断疼痛原因。",
+    "smallest_useful_question": "当前目标及可用器材，优先读取已有记录。",
+    "revisit_trigger": "目标、器材或动作限制变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S02",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "肌肉作用与展示",
+    "source_ids": [
+      "S11"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "action",
+      "review"
+    ],
+    "required_fact_keys": [
+      "exercise_variant",
+      "muscle_mapping"
+    ],
+    "proposed_application": "分别标明主要、辅助和稳定作用；高亮按经过审核的动作映射显示。",
+    "not_supported": "不将颜色面积或强弱解释为实测激活、肌力或损伤程度。",
+    "smallest_useful_question": "映射不确定时说明范围，不要求用户自行填解剖知识。",
+    "revisit_trigger": "动作版本或映射审核更新。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S03",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "组次重量与幅度",
+    "source_ids": [
+      "S01"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "compare",
+      "review"
+    ],
+    "required_fact_keys": [
+      "sets",
+      "reps",
+      "load_definition",
+      "range_of_motion"
+    ],
+    "proposed_application": "比较同一动作版本和计重口径下的实际组次、重量与幅度；遗漏项清楚标记。",
+    "not_supported": "重量增加不能独立证明全面力量提高；单只与两只总重量不混用。",
+    "smallest_useful_question": "这个重量是单只还是总重量？",
+    "revisit_trigger": "计重或动作幅度更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S04",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "休息与用力记录",
+    "source_ids": [
+      "S01",
+      "S12"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan",
+      "review"
+    ],
+    "required_fact_keys": [
+      "rest_protocol",
+      "effort_scope",
+      "approved_candidates"
+    ],
+    "proposed_application": "记录计划与实际组间休息；区分整堂RPE、单组用力和剩余次数口径。",
+    "not_supported": "不得混加不同量表；不为全部动作统一填任意休息时间。",
+    "smallest_useful_question": "这次用力评分对应整堂课还是这一组？仅在口径缺失时问。",
+    "revisit_trigger": "休息或量表范围被补全。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S05",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "替代动作的约束",
+    "source_ids": [
+      "S01",
+      "S11"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "action",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "goal",
+      "equipment",
+      "restrictions",
+      "approved_candidates"
+    ],
+    "proposed_application": "候选逐项比较目的、器材、动作模式及限制，使用宿主批准的参数引用。",
+    "not_supported": "杠铃重量不能原样复制为每只哑铃重量；同肌群不等于同训练刺激。",
+    "smallest_useful_question": "现有候选不能区分时，问器材或动作限制。",
+    "revisit_trigger": "候选版本或器材改变。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S06",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "力量对专项的迁移",
+    "source_ids": [
+      "S01",
+      "S03"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "capability",
+      "review"
+    ],
+    "required_fact_keys": [
+      "strength_actual",
+      "running_outcomes",
+      "observation_window"
+    ],
+    "proposed_application": "分别追踪力量表现与专项结果，说明迁移是待观察关系。",
+    "not_supported": "深蹲进步不能自动证明800米必然进步；不能给迁移率。",
+    "smallest_useful_question": "已有专项观察不足时，使用未来批准课次观察，不临时追加测试。",
+    "revisit_trigger": "出现专项表现支持或反证。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S07",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "肌群覆盖与去重",
+    "source_ids": [
+      "S11"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "calculate"
+    ],
+    "required_fact_keys": [
+      "completed_set_ids",
+      "muscle_mapping",
+      "coverage"
+    ],
+    "proposed_application": "按实际组ID统计；展示各部位参与及记录完整度；全身总组数去重。",
+    "not_supported": "一组涉及多个肌群不变成多组总量；数量相等不证明均衡。",
+    "smallest_useful_question": "未记录部分仅问是否漏记，不补造完成组。",
+    "revisit_trigger": "组记录或肌群映射更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "S08",
+    "version": 1,
+    "domain": "STRENGTH",
+    "domain_label": "力量与动作",
+    "title": "足踝训练与动作扩展",
+    "source_ids": [
+      "S01",
+      "S11"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "action",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "goal",
+      "equipment",
+      "restrictions",
+      "approved_candidates"
+    ],
+    "proposed_application": "动作库扩展支持足趾、踝跖屈、背屈、平衡等标签；选择经过审核且适合目标的候选。",
+    "not_supported": "标签不能推出康复处方；脚部外观或3D模型不能测出个人肌力。",
+    "smallest_useful_question": "训练目的、已有足踝不适及可用器材中，只补影响选择的缺项。",
+    "revisit_trigger": "症状、候选审核或器材变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F01",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "多种状态观察",
+    "source_ids": [
+      "S04",
+      "S05"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "recovery",
+      "review"
+    ],
+    "required_fact_keys": [
+      "subjective",
+      "performance",
+      "recent_actual"
+    ],
+    "proposed_application": "并列查看主观状态、实际表现及健康观察，说明一致和矛盾之处。",
+    "not_supported": "不能把设备多项同源分数当多份独立证据；不单项确诊疲劳。",
+    "smallest_useful_question": "今天主观感觉与平时相比怎样？已有记录则不重复问。",
+    "revisit_trigger": "新状态或表现出现。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F02",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "HRV的个人可比序列",
+    "source_ids": [
+      "S05",
+      "S10"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "recovery",
+      "compare"
+    ],
+    "required_fact_keys": [
+      "metric_definition",
+      "protocol",
+      "device",
+      "history"
+    ],
+    "proposed_application": "仅在定义和测量协议可比时描述个人趋势；换设备或测量方法时标记断点。",
+    "not_supported": "不能把一次低值确认为过度训练；不同HRV定义不直接平均。",
+    "smallest_useful_question": "这是夜间还是晨起测量，设备是否改变？",
+    "revisit_trigger": "设备、协议或原始值更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F03",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "睡眠观察",
+    "source_ids": [
+      "S06"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "recovery"
+    ],
+    "required_fact_keys": [
+      "sleep_definition",
+      "sleep_date",
+      "source",
+      "subjective"
+    ],
+    "proposed_application": "睡眠日期按既有宿主定义绑定；区分睡眠时长、卧床时间及自我感受。",
+    "not_supported": "不凭单晚分期百分比判断训练能力；不把设备估计当临床睡眠检查。",
+    "smallest_useful_question": "记录与感受矛盾时，只补是否漏戴或睡眠中断。",
+    "revisit_trigger": "同步补传或日期修正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F04",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "静息心率与条件变化",
+    "source_ids": [
+      "S04",
+      "S05"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "recovery",
+      "compare"
+    ],
+    "required_fact_keys": [
+      "metric_definition",
+      "measurement_context",
+      "history"
+    ],
+    "proposed_application": "在相同定义下查看趋势，并列记录旅行、压力或近期不适等已知条件。",
+    "not_supported": "不能用日间平均心率替代静息心率；不直接指定唯一生理原因。",
+    "smallest_useful_question": "只补影响本次比较的测量条件。",
+    "revisit_trigger": "测量口径或相关背景变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F05",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "酸痛、疼痛与当前限制",
+    "source_ids": [
+      "S04"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "recovery",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "symptom_time",
+      "symptom_activity",
+      "current_restrictions"
+    ],
+    "proposed_application": "保留用户原话中的部位、时间、动作、否定与变化；调用既有健康限制，不用训练分数覆盖。",
+    "not_supported": "走路不痛不能改写成走路仍痛，也不能推出跑跳可安全恢复。",
+    "smallest_useful_question": "哪种动作会出现不适、现在是否仍有？",
+    "revisit_trigger": "症状更新或专业限制更新。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F06",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "单次波动与持续反应",
+    "source_ids": [
+      "S04",
+      "S05"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "recovery",
+      "memory"
+    ],
+    "required_fact_keys": [
+      "observation_window",
+      "history",
+      "performance"
+    ],
+    "proposed_application": "将一次变化保留为观察，连续资料用于修订假设；分开当前状态与长期能力。",
+    "not_supported": "不得把一次异常记成永久体质或短板；不把恢复好等同能力已提升。",
+    "smallest_useful_question": "已有数据不足时说明不足，选下次自然出现的批准观察。",
+    "revisit_trigger": "新可比观察或异常解释出现。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F07",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "生活与非训练压力",
+    "source_ids": [
+      "S04",
+      "S06"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "recovery",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "life_constraints",
+      "subjective",
+      "calendar_scope"
+    ],
+    "proposed_application": "将已知出差、工作与睡眠条件作为背景解释和安排约束。",
+    "not_supported": "不从疲劳一句话推测疾病、情绪障碍或生活事件。",
+    "smallest_useful_question": "你提到的时间限制会持续到哪天？",
+    "revisit_trigger": "背景结束、期限更正或训练反应改变。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "F08",
+    "version": 1,
+    "domain": "RECOVERY",
+    "domain_label": "疲劳与恢复",
+    "title": "疾病与回归训练边界",
+    "source_ids": [
+      "S08"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "plan",
+      "recovery"
+    ],
+    "required_fact_keys": [
+      "current_restrictions",
+      "symptoms",
+      "approved_candidates"
+    ],
+    "proposed_application": "当前疾病或伤病问题使用现有专业限制和回归安排；可继续整理事实和解释缺口。",
+    "not_supported": "本知识库不诊断、不生成药物或自行解除医学限制；不靠好看的HRV抵消限制。",
+    "smallest_useful_question": "缺少必要指导时说明需要什么专业评估，不自动开康复剂量。",
+    "revisit_trigger": "获得新的专业指导或限制解除证据。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M01",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "来源、定义和时间窗",
+    "source_ids": [
+      "S10",
+      "S15"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "calculate",
+      "compare",
+      "review"
+    ],
+    "required_fact_keys": [
+      "source",
+      "metric_definition",
+      "event_time",
+      "known_at"
+    ],
+    "proposed_application": "同一指标保留单位、来源、事件时间与获知时间；原始值与派生值分开。",
+    "not_supported": "同名不一定同定义；未来补录不能进入过去当时可用的证据。",
+    "smallest_useful_question": "只有定义影响结论且无法从来源查到时才问。",
+    "revisit_trigger": "原始值、时区或定义变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M02",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "确定性统计与单位",
+    "source_ids": [
+      "S14"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "calculate",
+      "compare"
+    ],
+    "required_fact_keys": [
+      "numeric_inputs",
+      "units",
+      "statistic_definition"
+    ],
+    "proposed_application": "换算、均值、首尾差、极差、配速通过确定性工具完成，输出单位及分母。",
+    "not_supported": "不让语言模型凭感觉补数；0、缺失、未记录不混同。",
+    "smallest_useful_question": "简单计算输入够时直接回答。",
+    "revisit_trigger": "输入或统计口径更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M03",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "测量噪声与实际变化",
+    "source_ids": [
+      "S02",
+      "S10"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "compare",
+      "capability"
+    ],
+    "required_fact_keys": [
+      "protocol",
+      "repeat_measurements",
+      "measurement_error"
+    ],
+    "proposed_application": "先给实际差值；只有已验证的误差依据才判断变化是否超出可分辨范围。",
+    "not_supported": "没有重测资料时不发明最小有意义变化阈值或进步百分比。",
+    "smallest_useful_question": "是否换计时方式或设备？优先查记录。",
+    "revisit_trigger": "重测或协议信息补全。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M04",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "缺失、零和覆盖率",
+    "source_ids": [
+      "S14",
+      "S15"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "review",
+      "calculate"
+    ],
+    "required_fact_keys": [
+      "coverage",
+      "record_status"
+    ],
+    "proposed_application": "未填为未知，真实零为零；部分记录保留已知合计和覆盖范围。",
+    "not_supported": "没有RPE的课不记零负荷；只记早餐不代表一天低摄入。",
+    "smallest_useful_question": "是否还有未录入内容？仅当影响当前问题。",
+    "revisit_trigger": "记录补全、删除或同步失败恢复。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M05",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "观察关系与因果",
+    "source_ids": [
+      "S09",
+      "S14"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "cause",
+      "memory"
+    ],
+    "required_fact_keys": [
+      "timeline",
+      "execution",
+      "alternatives"
+    ],
+    "proposed_application": "陈列支持、反对及其他变化；建议实际执行后才进入效果观察，仍区分关联和因果。",
+    "not_supported": "时间先后、相关系数或主观改善不足以证明建议奏效。",
+    "smallest_useful_question": "建议实际做了哪些、同时还有什么变化？",
+    "revisit_trigger": "出现反证、未执行或同时变化的资料。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M06",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "分母、窗口与环比",
+    "source_ids": [
+      "S09"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "calculate",
+      "review"
+    ],
+    "required_fact_keys": [
+      "window",
+      "coverage",
+      "denominator",
+      "formula_version"
+    ],
+    "proposed_application": "明确天均、训练日均、课均及同期窗口；不同口径不能直接相除解释风险。",
+    "not_supported": "7天合计不能直接与28天日均比较；部分周不冒充完整周。",
+    "smallest_useful_question": "窗口已有记录时直接说明，不追问无关项目。",
+    "revisit_trigger": "窗口边界、覆盖率或公式版本变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M07",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "负荷描述的适用范围",
+    "source_ids": [
+      "S09",
+      "S12"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "calculate",
+      "review"
+    ],
+    "required_fact_keys": [
+      "load_definition",
+      "effort_scope",
+      "duration",
+      "coverage"
+    ],
+    "proposed_application": "只按已批准的定义计算；显示数值、单位、覆盖和方法。",
+    "not_supported": "sRPE、设备负荷、吨位不相加；ACWR不直接转伤病概率或通用安全区。",
+    "smallest_useful_question": "这次RPE对应整堂课吗？口径已知则不问。",
+    "revisit_trigger": "定义、时长或主观评分更正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "M08",
+    "version": 1,
+    "domain": "MEASUREMENT",
+    "domain_label": "测量与统计",
+    "title": "重复来源与指标冲突",
+    "source_ids": [
+      "S10",
+      "S15"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "compare",
+      "review"
+    ],
+    "required_fact_keys": [
+      "origin_refs",
+      "metric_definition",
+      "source_policy"
+    ],
+    "proposed_application": "去重同一底层记录；冲突保留双方与来源，按明确有效来源政策显示。",
+    "not_supported": "高相关不等于设备可互换；不能无声取平均或覆盖手工更正。",
+    "smallest_useful_question": "无法按现有政策解决时，询问希望采用的记录并保留追踪。",
+    "revisit_trigger": "来源政策、设备或更正回执变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N01",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "食物匹配与份量",
+    "source_ids": [
+      "S07"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "calculate"
+    ],
+    "required_fact_keys": [
+      "food_identity",
+      "portion",
+      "unit",
+      "nutrient_basis"
+    ],
+    "proposed_application": "先匹配食品与规格，再按每100克或每份口径缩放，区分用户确认及估计。",
+    "not_supported": "菜名或照片不能直接证明准确克重；同名品牌不同规格不混用。",
+    "smallest_useful_question": "缺少份量时问大约多少克或哪一份。",
+    "revisit_trigger": "食品、份量或营养来源修正。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N02",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "营养完整度",
+    "source_ids": [
+      "S07"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "review"
+    ],
+    "required_fact_keys": [
+      "meal_coverage",
+      "nutrient_status"
+    ],
+    "proposed_application": "已知合计和缺失项目分开展示；未知碳水、脂肪、纤维保持未知。",
+    "not_supported": "有热量不能推回唯一三大营养素；仅部分餐次不能判断全天够不够。",
+    "smallest_useful_question": "还有哪些餐没有登记？",
+    "revisit_trigger": "补餐或补充营养字段。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N03",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "训练前后的饮食场景",
+    "source_ids": [
+      "S07"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "session_purpose",
+      "meal_timing",
+      "tolerance",
+      "approved_candidates"
+    ],
+    "proposed_application": "按训练时间、已知耐受与现有批准饮食选择说明候选，不把所有项目用同一提示。",
+    "not_supported": "不从通用建议自行开精确补给剂量；不忽略用户不耐受。",
+    "smallest_useful_question": "距离训练还有多久？已有时间信息则不重复问。",
+    "revisit_trigger": "训练时间或饮食耐受变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N04",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "补液与环境",
+    "source_ids": [
+      "S07"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "environment",
+      "session_duration",
+      "tolerance",
+      "approved_candidates"
+    ],
+    "proposed_application": "说明补液选择依赖场景，按宿主批准方案和已有个体信息提供选择。",
+    "not_supported": "不能按手表消耗直接算精确补液；没有测量就不报个人汗率。",
+    "smallest_useful_question": "只补当前选择所需的环境或时长。",
+    "revisit_trigger": "环境、时长或专业补液指导变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N05",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "体重目标与身体组成",
+    "source_ids": [
+      "S01",
+      "S07"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "capability"
+    ],
+    "required_fact_keys": [
+      "body_measurement",
+      "measurement_method",
+      "goal",
+      "history"
+    ],
+    "proposed_application": "区分测量体重、身体组成估计和外观模拟；用趋势讨论目标而非单日变动。",
+    "not_supported": "增加4公斤不等于增加4公斤肌肉；3D体型不能反推真实肌肉量。",
+    "smallest_useful_question": "目标是体重、表现还是其他？",
+    "revisit_trigger": "测量方法、目标或长期趋势变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N06",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "摄入不足线索与专业转介",
+    "source_ids": [
+      "S08"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "recovery"
+    ],
+    "required_fact_keys": [
+      "coverage",
+      "symptoms",
+      "current_restrictions"
+    ],
+    "proposed_application": "资料不足时指出具体缺口；存在相关健康担忧时使用专业评估路径。",
+    "not_supported": "不从一次低热量记录、体重或体脂率诊断REDs；不生成限制饮食处方。",
+    "smallest_useful_question": "先确认记录是否完整，避免把漏记解释为真实限制摄入。",
+    "revisit_trigger": "完整记录或专业评估更新。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N07",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "食物替代与现实条件",
+    "source_ids": [
+      "S07"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition",
+      "plan"
+    ],
+    "required_fact_keys": [
+      "preferences",
+      "budget",
+      "allergies",
+      "food_candidates"
+    ],
+    "proposed_application": "在已知过敏、预算、获取条件和偏好内筛选食物；营养值保留来源及估计状态。",
+    "not_supported": "不能从便宜推断营养等效；不可忽略过敏或将未核对菜品称绝对安全。",
+    "smallest_useful_question": "哪些食品不能吃、当前可获得哪些？优先读档案。",
+    "revisit_trigger": "过敏、偏好、价格或可获得性变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  },
+  {
+    "id": "N08",
+    "version": 1,
+    "domain": "NUTRITION",
+    "domain_label": "营养与执行条件",
+    "title": "补剂信息与证据等级",
+    "source_ids": [
+      "S07",
+      "S08"
+    ],
+    "source_relationship": "QUALITATIVE_BACKGROUND; APPLICATION_RULE_IS_ORIGINAL_PROPOSAL",
+    "task_tags": [
+      "nutrition"
+    ],
+    "required_fact_keys": [
+      "product_identity",
+      "goal",
+      "current_restrictions"
+    ],
+    "proposed_application": "提供已核对产品信息及证据范围，竞技用户额外核对现行反兴奋剂规则和批次检测信息。",
+    "not_supported": "本包不输出补剂剂量，不保证产品无污染；不把营销文案作为研究证据。",
+    "smallest_useful_question": "产品全名和使用目的；药物相关问题转合适专业人员。",
+    "revisit_trigger": "产品、规则、检测或健康指导变化。",
+    "source_status": "LIMITED_SOURCE_CHECK_COMPLETED",
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "allowed_mode": "RESEARCH_PREVIEW",
+    "dose_policy": "HOST_APPROVED_PARAMETERS_ONLY",
+    "created_on": "2026-10-20"
+  }
+]

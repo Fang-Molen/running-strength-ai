@@ -36,6 +36,13 @@ export const BLOCKS = {
     tests: ['src/lib/ui/day-schedule-ownership.test.ts', 'src/lib/ui/day-schedule-rules.test.ts', 'src/lib/ui/scheduled-training.test.ts'],
     forbid: ['/lib/coach/', '/components/'],
   },
+  'schedule-writer': {
+    desc: 'fk-schedule-v1 写入闸口：所有写入方经 saveSchedule → 修订号（fk-schedule-v1-rev）+ 写入方标记；异步写入与改课执行器共用一把锁',
+    files: ['src/lib/ui/schedule-writer.ts'],
+    entry: 'src/lib/ui/schedule-writer.ts',
+    tests: ['src/lib/ui/schedule-writer.test.ts', 'src/lib/coach/plan-execution/loop-v87.test.ts'],
+    forbid: ['/lib/coach/', '/components/', 'day-schedule', 'online-coach'],
+  },
   'coach-local': {
     desc: '本地方坤（规则引擎、首周计划、候选课表），不联网',
     files: ['src/lib/coach/plain-coach.ts', 'src/lib/core/coach-local-first.ts', 'src/lib/core/coach-first-week.ts', 'src/lib/core/coach-plan.ts'],
@@ -47,8 +54,15 @@ export const BLOCKS = {
     desc: '本地解析并核算用户这次说出的数字（分段/计划与实际/休息/RPE/疼痛/晨脉HRV/睡眠/否定症状），只读不保存',
     files: ['src/lib/coach/stated/parse.ts', 'src/lib/coach/stated/compute.ts', 'src/lib/coach/stated/compose.ts'],
     entry: 'src/lib/coach/stated/compose.ts',
-    tests: ['src/lib/coach/stated/stated.test.ts', 'src/lib/coach/stated/r11-behavior.test.ts'],
+    tests: ['src/lib/coach/stated/stated.test.ts', 'src/lib/coach/stated/r11-behavior.test.ts', 'src/lib/coach/stated/direct-v87.test.ts'],
     forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', 'storage'],
+  },
+  'coach-knowledge': {
+    desc: '知识完整包（48 张待审卡/16 来源/16 推理方法）+ 受信签名回执审批（产品受信名单为空=0 批准）+ 正式分析只用已批准卡 + 知识变化后历史回答复核（C03 比较器）',
+    files: ['src/lib/coach/knowledge/complete.ts', 'src/lib/coach/knowledge/approval.ts', 'src/lib/coach/knowledge/approval-store.ts', 'src/lib/coach/knowledge/history.ts'],
+    entry: 'src/lib/coach/knowledge/complete.ts',
+    tests: ['src/lib/coach/knowledge/complete.test.ts', 'src/lib/coach/knowledge/entry.test.ts', 'src/lib/coach/knowledge/approval.test.ts'],
+    forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', '/stated/', 'day-schedule'],
   },
   'coach-online': {
     desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
@@ -68,7 +82,7 @@ export const BLOCKS = {
     desc: '改课执行核心（IndexedDB 回执/撤销）。宿主固定 UNCOORDINATED：确认/撤销阻断',
     files: ['src/lib/coach/plan-execution/core.ts', 'src/lib/coach/plan-execution/store.ts', 'src/lib/coach/plan-execution/host.ts'],
     entry: 'src/lib/coach/plan-execution/host.ts',
-    tests: ['src/lib/coach/plan-execution/core.test.ts', 'src/lib/coach/plan-execution/host.test.ts', 'src/components/coach-plan-change-panel.test.tsx'],
+    tests: ['src/lib/coach/plan-execution/core.test.ts', 'src/lib/coach/plan-execution/host.test.ts', 'src/lib/coach/plan-execution/loop-v87.test.ts', 'src/components/coach-plan-change-panel.test.tsx'],
     forbid: ['/components/', 'online-coach', 'deepseek', '/c03/', 'plan400-components-store', 'quick-log'],
   },
   'health': {

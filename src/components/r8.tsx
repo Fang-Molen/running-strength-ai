@@ -49,7 +49,7 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
     saveWatch(a.source, undefined, brand)
     const s = loadSchedule(); const ids = new Set(s.entries.map((e) => e.id))
     const add = preview.filter((e) => !ids.has(e.id)).map(({ why, ...e }) => ({ ...e, status: accept ? "planned" : "proposed", swapReason: why } as ScheduleEntry))
-    saveSchedule({ ...s, entries: [...s.entries, ...add] })
+    saveSchedule({ ...s, entries: [...s.entries, ...add] }, 'onboarding-r8')
     localStorage.setItem(ONBOARD_KEY, JSON.stringify({ ...a, done: true, at: new Date().toISOString() }))
     setAccepted(true)
   }

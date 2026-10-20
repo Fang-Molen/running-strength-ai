@@ -20,6 +20,8 @@ export type ChatMessage = {
   text: string;
   analysisBasis?: ReasoningBasis;
   factDetails?: string;
+  /** v87：本回答用过的经批准知识卡（版本+内容哈希），用于知识变化后复核。 */
+  knowledgeUses?: import('@/lib/coach/knowledge/complete').CompleteKnowledgeUse[];
 };
 
 export type CoachMemory = {

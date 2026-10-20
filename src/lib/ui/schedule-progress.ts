@@ -49,5 +49,5 @@ export function syncScheduleProgress(): boolean {
     if (JSON.stringify(entry.actual) === JSON.stringify(actual)) return entry;
     changed = true; return { ...entry, actual, status: complete ? 'done' as const : 'planned' as const };
   });
-  return !changed || saveSchedule({ ...store, entries });
+  return !changed || saveSchedule({ ...store, entries }, 'schedule-progress');
 }

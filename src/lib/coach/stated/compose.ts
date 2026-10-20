@@ -6,6 +6,23 @@ import { setStats, planActualStats, baselineStats, distanceTimeStats, strengthVo
 export { parseStatedFacts, hasStatedNumbers, type StatedFacts }
 const s1 = (n: number) => `${r1(n)}`
 const dist = (m: number) => `${m}米`
+/** 1536 → “1536秒 = 25分36秒（25.6分钟）” */
+export const secondsAsMinutes = (sec: number) => { const m = Math.floor(sec / 60), rest = r2(sec - m * 60); return `${sec}秒 = ${m}分${rest}秒（${r2(sec / 60)}分钟）` }
+
+/** v87：只问一个单位换算时直接给结果，不套通用问卷；只问“只剩N分钟怎么安排”时不编剂量。
+ * 其余情况返回 null，由 statedFactsSection 照常并入回答。安全判断由调用方先做。 */
+export function statedDirectAnswer(question: string): { kind: 'DIRECT_CALCULATION' | 'REMAINING_WORK_NO_CANDIDATE'; text: string } | null {
+  const q = question.normalize('NFKC').trim(), f = parseStatedFacts(q)
+  if (f.secondsToMinutes !== null && q.length <= 40 && !f.sets.length && !f.planActual.length && !f.distanceTimes.length && !f.rounds && !f.strength.length)
+    return { kind: 'DIRECT_CALCULATION', text: `${secondsAsMinutes(f.secondsToMinutes)}。` }
+  if (f.remainingMinutes !== null && !f.sets.length && !f.planActual.length && !f.strength.length)
+    return { kind: 'REMAINING_WORK_NO_CANDIDATE', text: [`你说现在只剩${f.remainingMinutes}分钟。目前没有经批准的剩余课程候选，我不自己编新的组数、重量或替代动作。`,
+      '· 原计划里没做的部分如实记为未完成，不当作已练；',
+      `· 如果要用这${f.remainingMinutes}分钟补练，先从原计划里选定要做的那一项，由你或教练核准后再做；`,
+      '· 时间不够就今天到此为止，下次按原计划补上。',
+      '没有修改计划或记录。'].join('\n') }
+  return null
+}
 
 export function statedFactsSection(question: string): { text: string | null; facts: StatedFacts; numbers: boolean } {
   const f = parseStatedFacts(question), lines: string[] = [], reads: string[] = []
@@ -38,7 +55,7 @@ export function statedFactsSection(question: string): { text: string | null; fac
   if (f.priorLast) { const last = f.sets.map(setStats).find(Boolean)?.last; if (last != null) lines.push(`· 此前同协议末段${f.priorLast.join('、')}秒，本次末段${last}秒：比此前${f.priorLast.map(p => signed(last - p)).join('/')}秒。`) }
   if (f.corrected) { const a = distanceTimeStats({ meters: f.corrected.meters, seconds: f.corrected.from }), b = distanceTimeStats({ meters: f.corrected.meters, seconds: f.corrected.to }); lines.push(`· ${f.corrected.meters}米：原值${f.corrected.from}秒（${pace(a.pacePerKm)}）→ 当前值${f.corrected.to}秒（${pace(b.pacePerKm)}，${r2(b.mps)}米/秒）；按当前值计算，原值派生的配速作废但历史保留。`) }
   if (f.budget) { const b = f.budget, over = (b.cap !== null && b.estimate > b.cap) || (b.remaining !== null && b.estimate > b.remaining); lines.push(`· 预估${b.estimate}${b.cap !== null ? `，单次上限${b.cap}` : ''}${b.remaining !== null ? `，剩余${b.remaining}` : ''}：${over ? '超出额度，应阻断这次请求' : '在额度内，按额度规则可放行'}（这里只是按你给的数比较，本地回答没有发出任何网络请求）。`) }
-  if (f.secondsToMinutes !== null) lines.push(`· ${f.secondsToMinutes}秒 = ${r2(f.secondsToMinutes / 60)}分钟。`)
+  if (f.secondsToMinutes !== null) lines.push(`· ${secondsAsMinutes(f.secondsToMinutes)}。`)
   if (f.strength.length) {
     // 不同日期的组各算各的，不合成一个数
     const days = [...new Set(f.strength.map(s => s.date ?? ''))]

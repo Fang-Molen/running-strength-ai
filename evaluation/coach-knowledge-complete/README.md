@@ -1,0 +1,1 @@
+开发合成资料：24个新案例、26个R1案例、6条轨迹。全部PENDING/production_eligible=false。未导入运行时或模型提示，不是隐藏验收集或专业标准答案。实际程序测试另见交付evidence。

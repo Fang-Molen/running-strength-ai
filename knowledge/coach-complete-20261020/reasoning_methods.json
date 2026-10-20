@@ -1,0 +1,259 @@
+[
+  {
+    "id": "L01",
+    "name": "任务分流",
+    "use_when": "每次请求",
+    "steps": [
+      "区分计算、复盘、比较、原因、改课、记忆或知识解释",
+      "读取当前明确问题，不让通用模板覆盖"
+    ],
+    "output": "taskType与所需工具",
+    "limits": "纯计算不强制生成竞争原因。",
+    "source_ids": [
+      "S14"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L02",
+    "name": "事实绑定",
+    "use_when": "取证之后",
+    "steps": [
+      "绑定主体、课次、分项、事件时间、来源、版本",
+      "本轮明确陈述可作为会话事实，保存状态另列"
+    ],
+    "output": "factRefs与已知／未知范围",
+    "limits": "不能把旧摘要或检索文档当最新用户事实。",
+    "source_ids": [
+      "S14",
+      "S15"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L03",
+    "name": "条件可比性",
+    "use_when": "比较或能力判断",
+    "steps": [
+      "按欲回答的问题确定必要协议",
+      "分为可比较、仅描述差异、资料不足"
+    ],
+    "output": "comparisonClass与差异原因",
+    "limits": "不因为缺HRV拒绝时间换算。",
+    "source_ids": [
+      "S02",
+      "S10"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L04",
+    "name": "数值外置",
+    "use_when": "存在可确定计算",
+    "steps": [
+      "工具校验输入与单位",
+      "分别计算均值、首尾差、极差",
+      "生成只引用回执值"
+    ],
+    "output": "metricReceipt",
+    "limits": "不能把格式校验当专业判断正确。",
+    "source_ids": [
+      "S14"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L05",
+    "name": "竞争解释",
+    "use_when": "因果或原因问题",
+    "steps": [
+      "列最相关且有证据入口的解释",
+      "分别列支持、反对和关键缺口",
+      "说明哪些解释暂不能区分"
+    ],
+    "output": "hypothesisComparisons",
+    "limits": "不为每题硬凑两个原因，不编无关病因。",
+    "source_ids": [
+      "S09",
+      "S14"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L06",
+    "name": "因果边界",
+    "use_when": "建议效果或原因归属",
+    "steps": [
+      "核对先后、实际执行和对照条件",
+      "列同时变化、测量变化与选择偏差",
+      "使用观察性表述"
+    ],
+    "output": "associationOnly与替代解释",
+    "limits": "自然日志关系不自动升级为因果作用。",
+    "source_ids": [
+      "S09"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L07",
+    "name": "证据更新",
+    "use_when": "收到相关新记录或更正",
+    "steps": [
+      "找到依赖该事实的判断",
+      "重算受影响结果",
+      "提出支持、削弱、撤回或保持及原因"
+    ],
+    "output": "revisionProposal",
+    "limits": "不能按出现次数机械增加信心；重叠观察去重。",
+    "source_ids": [
+      "S15"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L08",
+    "name": "条件改变分析",
+    "use_when": "用户提出如果／没时间／换器材",
+    "steps": [
+      "保持目标及未改变事实",
+      "只替换明确条件",
+      "重新核对可行候选"
+    ],
+    "output": "changedAssumptions与候选差异",
+    "limits": "不将假设情境写入实际记录。",
+    "source_ids": [
+      "S14"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L09",
+    "name": "约束下选择",
+    "use_when": "下一步安排",
+    "steps": [
+      "先过滤身份、版本、医学限制、器材、日程和时间",
+      "比较保留目标、改变内容与用户偏好",
+      "显示具体预览"
+    ],
+    "output": "candidateIds与取舍",
+    "limits": "无候选就解释冲突，模型不能伪造批准状态。",
+    "source_ids": [
+      "S14"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L10",
+    "name": "高价值追问",
+    "use_when": "关键决定仍有缺口",
+    "steps": [
+      "先查询可用工具",
+      "列每个问题改变哪个分支",
+      "优先问负担小且会改变当前判断的一项"
+    ],
+    "output": "oneUsefulQuestion",
+    "limits": "不把所有未知字段变成问卷。",
+    "source_ids": [
+      "S14"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L11",
+    "name": "行动与效果分开",
+    "use_when": "记录建议之后",
+    "steps": [
+      "分别跟踪提出、接受、执行和结果",
+      "只对实际执行且条件可比的观察谈效果线索"
+    ],
+    "output": "actionOutcomeLinks",
+    "limits": "用户点赞不等于有效；没执行不能记成功。",
+    "source_ids": [
+      "S15"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L12",
+    "name": "不确定性表达",
+    "use_when": "证据有限或冲突",
+    "steps": [
+      "说明能确认的事实",
+      "说明尚不能区分什么及原因",
+      "指出可改变判断的下一条证据"
+    ],
+    "output": "boundedConclusion",
+    "limits": "不生成未经校准的87%信心或伤病概率。",
+    "source_ids": [
+      "S09",
+      "S15"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L13",
+    "name": "知识适用与冲突",
+    "use_when": "专业知识检索之后",
+    "steps": [
+      "核对来源、版本、研究人群、任务及限制",
+      "冲突时分别呈现适用差异",
+      "尚未审核材料只进入研究预览"
+    ],
+    "output": "knowledgeUseRecord",
+    "limits": "相关性分数不能覆盖人群或专业限制。",
+    "source_ids": [
+      "S13"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L14",
+    "name": "依赖失效与重放",
+    "use_when": "用户更正、设备更换或记录删除",
+    "steps": [
+      "事实不覆盖历史版本",
+      "标记依赖旧版本的结论待复核",
+      "按事件时间和获知时间重放"
+    ],
+    "output": "invalidationAndRevision",
+    "limits": "更正一条事实不自动证明相反结论。",
+    "source_ids": [
+      "S15"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L15",
+    "name": "定向修订",
+    "use_when": "初稿引用或表达有具体错误",
+    "steps": [
+      "根据工具回执和证据检查数字、对象、否定和单位",
+      "针对发现的错误修订一次",
+      "仍不确定则降级相应结论"
+    ],
+    "output": "checkedAnswer",
+    "limits": "自我评价不能替代专家评审或真实工具。",
+    "source_ids": [
+      "S16"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  },
+  {
+    "id": "L16",
+    "name": "知识与个人经验分层",
+    "use_when": "新经验形成时",
+    "steps": [
+      "来源研究保留通用范围",
+      "本人日志形成有时效的个人观察",
+      "经过审核的规则版本独立管理"
+    ],
+    "output": "separateKnowledgeMemoryRules",
+    "limits": "不在线自动改模型权重，不从单个人推广到所有用户。",
+    "source_ids": [
+      "S13",
+      "S15"
+    ],
+    "kind": "ORIGINAL_ENGINEERING_PROPOSAL"
+  }
+]

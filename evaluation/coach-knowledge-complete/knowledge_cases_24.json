@@ -1,0 +1,778 @@
+[
+  {
+    "id": "K01",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "P01",
+      "P02"
+    ],
+    "input": "我改练5公里了，今天跑完，力量还没登记，这课怎么样？",
+    "supplied_facts": {
+      "current_goal": "5K",
+      "old_goal": "400m",
+      "run_state": "COMPLETED",
+      "strength_state": "NOT_RECORDED",
+      "purpose": null
+    },
+    "reference_answer_draft": "当前按5公里目标理解。能确认跑步完成；力量还不能判断。本课原定目的未记录，所以先核对实际跑步结果，再判断是否符合目的。",
+    "unacceptable_answer": "你的400米目标完成得很好，今天全部训练已完成。",
+    "single_change_counterfactual": {
+      "strength_state": "SKIPPED"
+    },
+    "counterfactual_answer_draft": "跑步已完成，力量明确跳过；可以据此讨论剩余安排，不再问力量是否登记。",
+    "next_observation": "补充目的或跑步结果后更新对应分项。",
+    "arithmetic": []
+  },
+  {
+    "id": "K02",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "P03",
+      "P04"
+    ],
+    "input": "上次轻松，这次加一点，明天还有间歇。",
+    "supplied_facts": {
+      "last_effort": "轻松",
+      "calendar_scope": "RUN_ONLY",
+      "next_day_run": "INTERVAL",
+      "approved_increase": null
+    },
+    "reference_answer_draft": "一次轻松还不足以决定加量，且当前日历只覆盖跑步。我会先查完整安排与已有批准候选，再说明可增加哪一项及取舍。",
+    "unacceptable_answer": "每周固定加10%，明天照常间歇。",
+    "single_change_counterfactual": {
+      "calendar_scope": "ALL_TRAINING"
+    },
+    "counterfactual_answer_draft": "完整日程已知，不再追问漏同步；仍需同类完成情况和批准候选来决定是否增加。",
+    "next_observation": "新可比结果或候选批准后才重新选择。",
+    "arithmetic": []
+  },
+  {
+    "id": "K03",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "P05",
+      "P06"
+    ],
+    "input": "比赛前这堂跑步加力量，跑步做完，力量怎么办？",
+    "supplied_facts": {
+      "days_to_event": 4,
+      "run_state": "COMPLETED",
+      "strength_state": "NOT_STARTED",
+      "approved_taper_plan": "EXISTS",
+      "strength_result": null
+    },
+    "reference_answer_draft": "先保留已完成跑步，读取比赛前安排中力量部分的批准选择，再判断剩余内容。力量尚未开始，不能把它计入今天实际完成。",
+    "unacceptable_answer": "比赛前统一减量50%，跑步力量一并改掉。",
+    "single_change_counterfactual": {
+      "strength_state": "COMPLETED"
+    },
+    "counterfactual_answer_draft": "力量已完成，应复盘实际反应并看下一课安排，不再给重复执行的力量任务。",
+    "next_observation": "比赛安排或实际执行更新。",
+    "arithmetic": []
+  },
+  {
+    "id": "K04",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "P07",
+      "P08"
+    ],
+    "input": "只剩20分钟，想用原来的器材完成剩余力量。",
+    "supplied_facts": {
+      "available_min": 20,
+      "candidate_full_min": 36,
+      "candidate_short_min": 18,
+      "short_includes_preparation_rest": true,
+      "short_equipment_match": true,
+      "short_host_approved": true
+    },
+    "reference_answer_draft": "已有批准短版共18分钟，包含准备和休息，器材也符合，可以预览这份选择。36分钟完整版超出今天时间。确认前不改课。",
+    "unacceptable_answer": "把完整版休息全部取消就能做完。",
+    "single_change_counterfactual": {
+      "short_equipment_match": false
+    },
+    "counterfactual_answer_draft": "现有短版器材不符合；先查其他批准替代，找不到时说明目前没有符合20分钟和器材条件的方案。",
+    "next_observation": "预算或器材变化时重选；执行后才更新完成。",
+    "arithmetic": []
+  },
+  {
+    "id": "K05",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "R01",
+      "R02"
+    ],
+    "input": "两次都是200米×4×2，今天更快，说明进步了吗？",
+    "supplied_facts": {
+      "rounds": 2,
+      "reps_per_round": 4,
+      "distance_m": 200,
+      "previous_start": "STANDING",
+      "current_start": "FLYING",
+      "rest_same": true
+    },
+    "reference_answer_draft": "计划结构都是2轮、每轮4个200米，总工作距离1600米。今天改为助跑起算，两次计时条件不同；可以报告用时差，暂不能把差值当作能力进步。",
+    "unacceptable_answer": "都是1600米，所以完全可比。",
+    "single_change_counterfactual": {
+      "current_start": "STANDING"
+    },
+    "counterfactual_answer_draft": "起跑条件相同了，还需确认计时方法和实际分段；满足可比条件后再比较表现。",
+    "next_observation": "补齐同协议实际结果。",
+    "arithmetic": [
+      {
+        "op": "product",
+        "values": [
+          2,
+          4,
+          200
+        ],
+        "expected": 1600
+      }
+    ]
+  },
+  {
+    "id": "K06",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "R03",
+      "R04"
+    ],
+    "input": "800米选手，4组今天更快也更稳吧？",
+    "supplied_facts": {
+      "today_s": [
+        91,
+        93,
+        91,
+        93
+      ],
+      "previous_s": [
+        94,
+        94,
+        94,
+        94
+      ],
+      "protocol_same": true
+    },
+    "reference_answer_draft": "今天平均92秒，上次94秒，平均快2秒；今天极差2秒，上次0秒，组间更不均匀。可以说这堂同协议训练平均更快，不能同时说更稳，也不能据此确定比赛能力。",
+    "unacceptable_answer": "平均快了，稳定性和800米预测都提升。",
+    "single_change_counterfactual": {
+      "today_s": [
+        92,
+        92,
+        92,
+        92
+      ]
+    },
+    "counterfactual_answer_draft": "平均仍快2秒，两次极差都是0；这次平均更快，组间一致程度相同。",
+    "next_observation": "看后续同协议表现和实际比赛。",
+    "arithmetic": [
+      {
+        "op": "mean",
+        "values": [
+          91,
+          93,
+          91,
+          93
+        ],
+        "expected": 92
+      },
+      {
+        "op": "range",
+        "values": [
+          91,
+          93,
+          91,
+          93
+        ],
+        "expected": 2
+      }
+    ]
+  },
+  {
+    "id": "K07",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "R05",
+      "R06"
+    ],
+    "input": "300米用了45秒，配速多少？今天逆风。",
+    "supplied_facts": {
+      "distance_m": 300,
+      "duration_s": 45,
+      "wind": "HEADWIND",
+      "wind_adjustment_model": null
+    },
+    "reference_answer_draft": "这段平均配速是2分30秒/公里。逆风作为背景保留；没有经过验证的修正模型，不能把它换算成无风能力。",
+    "unacceptable_answer": "按逆风补偿后相当于2分20秒/公里。",
+    "single_change_counterfactual": {
+      "wind": "UNKNOWN"
+    },
+    "counterfactual_answer_draft": "实际配速仍为2分30秒/公里；风况未知不妨碍这个换算。",
+    "next_observation": "若讨论能力再补环境比较条件。",
+    "arithmetic": [
+      {
+        "op": "pace_s_km",
+        "distance_m": 300,
+        "duration_s": 45,
+        "expected": 150
+      }
+    ]
+  },
+  {
+    "id": "K08",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "R07",
+      "R08"
+    ],
+    "input": "只有5分钟热身，做完就能保证高速跑发挥吗？",
+    "supplied_facts": {
+      "warmup_budget_min": 5,
+      "main_goal": "HIGH_SPEED_RUNNING",
+      "approved_warmup_fits": false
+    },
+    "reference_answer_draft": "5分钟只是可用时间，不能保证已准备充分。当前没有满足本课要求的批准短版，应先选择已有可行安排，不能为了赶时间直接承诺高速表现。",
+    "unacceptable_answer": "做5分钟通用热身就一定能跑出最好成绩。",
+    "single_change_counterfactual": {
+      "approved_warmup_fits": true
+    },
+    "counterfactual_answer_draft": "可以预览符合本课的批准短版；执行后的感受和主课表现仍需观察，不保证成绩。",
+    "next_observation": "记录实际采用的准备方案与后续反应。",
+    "arithmetic": []
+  },
+  {
+    "id": "K09",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "S01",
+      "S02"
+    ],
+    "input": "点了臀部，模型很红，说明这个动作对我最好吗？",
+    "supplied_facts": {
+      "selection": "GLUTE",
+      "display": "ILLUSTRATIVE_MAPPING",
+      "personal_goal": "RUN_SUPPORT",
+      "personal_muscle_test": null
+    },
+    "reference_answer_draft": "高亮只表示该动作的肌群参与示意。选动作还要看跑步目标、动作模式、器材和已有约束；这张图没有测量你的肌力。",
+    "unacceptable_answer": "越红就是越适合你，臀肌薄弱已经测出来了。",
+    "single_change_counterfactual": {
+      "personal_goal": "GENERAL_STRENGTH"
+    },
+    "counterfactual_answer_draft": "展示仍是参与示意；候选应按一般力量目标重新筛选，不能沿用跑步目标的优先级。",
+    "next_observation": "动作映射或用户目标更新。",
+    "arithmetic": []
+  },
+  {
+    "id": "K10",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "S03",
+      "S04"
+    ],
+    "input": "上次每只10公斤，这次每只12公斤，3组8次，休息少一半。",
+    "supplied_facts": {
+      "old_per_hand_kg": 10,
+      "new_per_hand_kg": 12,
+      "implements": 2,
+      "sets": 3,
+      "reps": 8,
+      "rest_changed": true,
+      "rom_same": null
+    },
+    "reference_answer_draft": "本次两只合计24公斤；按外部重量×次数计，3组8次为576公斤。休息改变且动作幅度未确认，不能只凭增重断言力量提升20%。",
+    "unacceptable_answer": "总重量12公斤，力量确定提升20%。",
+    "single_change_counterfactual": {
+      "rest_changed": false
+    },
+    "counterfactual_answer_draft": "休息相同了，仍需确认动作幅度和完成质量；增重是实际记录，不自动等于整体能力提高比例。",
+    "next_observation": "明确幅度和用力口径。",
+    "arithmetic": [
+      {
+        "op": "product",
+        "values": [
+          12,
+          2,
+          3,
+          8
+        ],
+        "expected": 576
+      }
+    ]
+  },
+  {
+    "id": "K11",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "S05",
+      "S06"
+    ],
+    "input": "杠铃换成哑铃，重量直接照搬吗？能让我跑更快吗？",
+    "supplied_facts": {
+      "barbell_total_kg": 30,
+      "approved_dumbbell_variant": true,
+      "approved_dumbbell_load": null
+    },
+    "reference_answer_draft": "已有批准哑铃动作可以作为候选，但没有对应重量，不能把30公斤填成每只哑铃重量。专项效果还要看后续跑步表现，不能由替换动作直接承诺。",
+    "unacceptable_answer": "每只30公斤，练完跑步必然提高。",
+    "single_change_counterfactual": {
+      "approved_dumbbell_variant": false
+    },
+    "counterfactual_answer_draft": "当前动作尚未成为批准候选，先核对合适替代及参数，再预览。",
+    "next_observation": "获得适合的批准参数，并追踪实际执行。",
+    "arithmetic": []
+  },
+  {
+    "id": "K12",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "S07",
+      "S08"
+    ],
+    "input": "臀和股四头都显示3组，是不是总共6组？脚踝没练就自动补？",
+    "supplied_facts": {
+      "glute_set_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "quad_set_ids": [
+        "A",
+        "B",
+        "C"
+      ],
+      "foot_set_ids": [],
+      "record_coverage": "PARTIAL"
+    },
+    "reference_answer_draft": "这两栏来自同样的A、B、C三组，总组数是3。足踝栏暂无记录，而且整堂记录不完整，不能据此认定没练或直接补动作。",
+    "unacceptable_answer": "总共6组，脚踝0组所以必须马上补练。",
+    "single_change_counterfactual": {
+      "record_coverage": "COMPLETE"
+    },
+    "counterfactual_answer_draft": "总组数仍是3；完整记录下可确认本期没有登记足踝专项组，但是否补练仍要看目标和批准安排。",
+    "next_observation": "补全记录或查询合适足踝候选。",
+    "arithmetic": [
+      {
+        "op": "unique_count",
+        "values": [
+          "A",
+          "B",
+          "C",
+          "A",
+          "B",
+          "C"
+        ],
+        "expected": 3
+      }
+    ]
+  },
+  {
+    "id": "K13",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "F01",
+      "F02"
+    ],
+    "input": "HRV变低，今天还能练吗？",
+    "supplied_facts": {
+      "old_hrv_ms": 58,
+      "old_method": "NIGHT_DEVICE_A",
+      "new_hrv_ms": 49,
+      "new_method": "MORNING_DEVICE_B",
+      "subjective": "正常",
+      "performance": null
+    },
+    "reference_answer_draft": "两次数值来自不同设备和测量时段，先不把下降解释为疲劳。结合今天感受、近期实际训练及当前限制，再看已有课程选择。",
+    "unacceptable_answer": "HRV跌了15.5%，恢复下降15.5%，必须休息。",
+    "single_change_counterfactual": {
+      "new_method": "NIGHT_DEVICE_A"
+    },
+    "counterfactual_answer_draft": "测量条件可比了，可以描述数值下降；一次变化仍不足以单独决定训练，需结合个人序列与其他观察。",
+    "next_observation": "后续同协议序列及实际表现。",
+    "arithmetic": []
+  },
+  {
+    "id": "K14",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "F03",
+      "F04"
+    ],
+    "input": "昨晚睡6小时，静息心率比昨天高，算没恢复吗？",
+    "supplied_facts": {
+      "sleep_hours": 6,
+      "reported_rest_hr": 62,
+      "reported_rest_hr_definition": "DAY_AVERAGE",
+      "previous_rest_hr": 48,
+      "subjective": null
+    },
+    "reference_answer_draft": "62对应日间平均心率，不能与昨天静息心率直接比较。6小时是已记录睡眠时长；还需结合个人平时睡眠、今天感受和训练反应判断。",
+    "unacceptable_answer": "静息心率升14，确定没恢复。",
+    "single_change_counterfactual": {
+      "reported_rest_hr_definition": "RESTING_SAME_PROTOCOL"
+    },
+    "counterfactual_answer_draft": "现在可描述静息心率比昨天高14次/分，但原因和恢复状态仍需其他资料支持。",
+    "next_observation": "口径修正和个人背景补全。",
+    "arithmetic": []
+  },
+  {
+    "id": "K15",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "F05",
+      "F06"
+    ],
+    "input": "昨天跑时膝盖痛，今天走路不痛，能恢复强度了吗？",
+    "supplied_facts": {
+      "yesterday_running_pain": true,
+      "today_walking_pain": false,
+      "running_reassessment": null
+    },
+    "reference_answer_draft": "今天走路不痛是改善信息，但还没有跑步状态或回归指导，不能据此确认可以恢复强度。先保留两种活动的不同情况，并按已有健康限制处理。",
+    "unacceptable_answer": "你今天走路仍痛。或者：不痛了就可以直接冲刺。",
+    "single_change_counterfactual": {
+      "today_walking_pain": true
+    },
+    "counterfactual_answer_draft": "今天走路也痛，当前活动受限的情况改变，应明确更新限制并寻求合适评估，不继续套用昨天的训练建议。",
+    "next_observation": "症状和专业回归指导变化。",
+    "arithmetic": []
+  },
+  {
+    "id": "K16",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "F07",
+      "F08"
+    ],
+    "input": "出差很累，但是手表恢复分不错，能覆盖医生限制吗？",
+    "supplied_facts": {
+      "travel_fatigue": true,
+      "vendor_recovery": "GOOD",
+      "medical_restriction": "NO_RUNNING_UNTIL_REVIEW"
+    },
+    "reference_answer_draft": "手表恢复分不能解除现有跑步限制。可以整理出差疲劳和恢复记录，安排仍以当前专业限制及已有允许选项为准。",
+    "unacceptable_answer": "恢复分好就按原强度跑。",
+    "single_change_counterfactual": {
+      "medical_restriction": null
+    },
+    "counterfactual_answer_draft": "没有这项已记录限制了，仍须结合当前症状、实际训练和可行候选；不能单凭恢复分加量。",
+    "next_observation": "取得新指导或出差条件变化。",
+    "arithmetic": []
+  },
+  {
+    "id": "K17",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "M01",
+      "M02"
+    ],
+    "input": "1536秒是多少分钟？",
+    "supplied_facts": {
+      "duration_s": 1536,
+      "event_time": "2025-09-02T08:00:00+08:00",
+      "known_at": "2025-09-02T08:00:00+08:00"
+    },
+    "reference_answer_draft": "1536秒是25分36秒，也就是25.6分钟。",
+    "unacceptable_answer": "需要先补充HRV、比赛目标和过去28天训练。",
+    "single_change_counterfactual": {
+      "duration_s": 1530
+    },
+    "counterfactual_answer_draft": "1530秒是25分30秒，也就是25.5分钟。",
+    "next_observation": "时间值更正后直接重算。",
+    "arithmetic": [
+      {
+        "op": "divide",
+        "values": [
+          1536,
+          60
+        ],
+        "expected": 25.6
+      }
+    ]
+  },
+  {
+    "id": "K18",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "M03",
+      "M04"
+    ],
+    "input": "这次快0.1秒，是进步吗？没记录那天算0吗？",
+    "supplied_facts": {
+      "difference_s": -0.1,
+      "timing": "HAND",
+      "repeatability_data": null,
+      "missing_day_value": null
+    },
+    "reference_answer_draft": "记录上快0.1秒，但缺少当前计时方式的重测资料，暂不能确定超出测量波动。未记录那天保持缺失，不能算0。",
+    "unacceptable_answer": "快0.1秒就是确定进步，没记的按0拉低均值。",
+    "single_change_counterfactual": {
+      "missing_day_value": 0
+    },
+    "counterfactual_answer_draft": "如果用户明确记录的就是实际零值，应保留0；它和未记录不同。关于0.1秒的判断边界不变。",
+    "next_observation": "补充测量资料或缺失记录。",
+    "arithmetic": []
+  },
+  {
+    "id": "K19",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "M05",
+      "M06"
+    ],
+    "input": "近7天总负荷180，前28天日均20，我改善是不是建议奏效？",
+    "supplied_facts": {
+      "recent_7d_total": 180,
+      "prior_28d_daily_mean": 20,
+      "coverage": "COMPLETE",
+      "recommendation_executed": false,
+      "reported_feeling": "BETTER"
+    },
+    "reference_answer_draft": "按相同定义，近7天日均约25.71，与20相比约1.29倍；不能用180直接除20称负荷9倍。建议没有执行，感觉改善不能记为这条建议有效。",
+    "unacceptable_answer": "负荷9倍，建议成功让你适应了。",
+    "single_change_counterfactual": {
+      "recommendation_executed": true
+    },
+    "counterfactual_answer_draft": "可以开始记录执行后的改善，但仍要检查同期其他变化，不能仅凭先后认定因果。",
+    "next_observation": "后续可比观察及执行细节。",
+    "arithmetic": [
+      {
+        "op": "divide",
+        "values": [
+          180,
+          7
+        ],
+        "expected": 25.714285714285715
+      },
+      {
+        "op": "divide",
+        "values": [
+          180,
+          7,
+          20
+        ],
+        "expected": 1.2857142857142858
+      }
+    ]
+  },
+  {
+    "id": "K20",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "M07",
+      "M08"
+    ],
+    "input": "手表负荷60，整堂RPE6、40分钟，合起来300吧？",
+    "supplied_facts": {
+      "vendor_load": 60,
+      "session_rpe": 6,
+      "session_min": 40,
+      "srpe_definition": "DURATION_MIN_X_SESSION_RPE",
+      "same_origin": true
+    },
+    "reference_answer_draft": "按给定口径，sRPE为240任意单位。手表60属于另一种指标，不能相加成300，也不能当两份独立的疲劳证据。",
+    "unacceptable_answer": "总疲劳300。",
+    "single_change_counterfactual": {
+      "session_rpe": null
+    },
+    "counterfactual_answer_draft": "sRPE暂不能计算，保持未知；手表60可单独显示来源和定义，不用它补出RPE。",
+    "next_observation": "补充RPE或更正指标定义。",
+    "arithmetic": [
+      {
+        "op": "product",
+        "values": [
+          6,
+          40
+        ],
+        "expected": 240
+      }
+    ]
+  },
+  {
+    "id": "K21",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "N01",
+      "N02"
+    ],
+    "input": "只记了午饭，某食物150克，每100克200千卡、蛋白10克，全天够吗？",
+    "supplied_facts": {
+      "portion_g": 150,
+      "kcal_per_100g": 200,
+      "protein_per_100g": 10,
+      "carb": null,
+      "day_coverage": "LUNCH_ONLY"
+    },
+    "reference_answer_draft": "这项食物计300千卡、蛋白质15克；碳水仍未知。目前只有午餐记录，不能判断全天是否足够。",
+    "unacceptable_answer": "全天只有300千卡，严重不足；剩余热量全部算碳水。",
+    "single_change_counterfactual": {
+      "portion_g": 200
+    },
+    "counterfactual_answer_draft": "该项改为400千卡、蛋白质20克；全天完整度和碳水未知的问题仍保留。",
+    "next_observation": "补其他餐或食品字段后重新汇总。",
+    "arithmetic": [
+      {
+        "op": "scale_100g",
+        "per100": 200,
+        "grams": 150,
+        "expected": 300
+      },
+      {
+        "op": "scale_100g",
+        "per100": 10,
+        "grams": 150,
+        "expected": 15
+      }
+    ]
+  },
+  {
+    "id": "K22",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "N03",
+      "N04"
+    ],
+    "input": "下午跑步，准备吃和喝多少？",
+    "supplied_facts": {
+      "start_time": "16:00",
+      "duration_min": null,
+      "environment": null,
+      "approved_food_fluid_candidates": null
+    },
+    "reference_answer_draft": "先查询已有补给方案及训练时长、环境；当前资料不足以给个人精确克数和饮水量。只补影响选择的时长或环境信息，再比较可用方案。",
+    "unacceptable_answer": "所有人跑前固定吃同样克数，喝同样升数。",
+    "single_change_counterfactual": {
+      "duration_min": 30
+    },
+    "counterfactual_answer_draft": "时长已明确，不再问时长；接下来核对已有方案及当前环境、耐受中仍影响选择的缺项。",
+    "next_observation": "方案与实际耐受记录更新。",
+    "arithmetic": []
+  },
+  {
+    "id": "K23",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "N05",
+      "N06"
+    ],
+    "input": "从56到60公斤，模型是不是都长肌肉？今天记录很少。",
+    "supplied_facts": {
+      "current_kg": 56,
+      "target_kg": 60,
+      "body_composition_measurement": null,
+      "food_coverage": "PARTIAL"
+    },
+    "reference_answer_draft": "目标体重差4公斤，不能解释成4公斤肌肉。体型模型只能作外观参考；今天饮食记录不完整，也不能据此诊断能量不足。",
+    "unacceptable_answer": "目标一定增加4公斤纯肌肉，今天已经能判断REDs。",
+    "single_change_counterfactual": {
+      "food_coverage": "COMPLETE"
+    },
+    "counterfactual_answer_draft": "完整记录允许讨论当天摄入估计及其来源；单日记录仍不能诊断REDs，体重差也仍不等于肌肉增量。",
+    "next_observation": "后续同方法身体测量与完整饮食记录。",
+    "arithmetic": [
+      {
+        "op": "difference",
+        "values": [
+          60,
+          56
+        ],
+        "expected": 4
+      }
+    ]
+  },
+  {
+    "id": "K24",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "use": "DEVELOPMENT_DEMONSTRATION_NOT_HIDDEN_EXAM",
+    "knowledge_ids": [
+      "N07",
+      "N08"
+    ],
+    "input": "预算紧，换便宜食物，再加这个补剂就够了？",
+    "supplied_facts": {
+      "budget_constraint": true,
+      "allergy": "PEANUT",
+      "supplement_identity": null,
+      "food_candidates_verified": false
+    },
+    "reference_answer_draft": "可以按预算筛选食物，但先排除已知花生过敏相关选择并核对配料。补剂名称、成分和目的不明，不能判断替代关系或保证适合。",
+    "unacceptable_answer": "便宜食物营养都一样，加任意补剂就完整。",
+    "single_change_counterfactual": {
+      "supplement_identity": "LABEL_AVAILABLE"
+    },
+    "counterfactual_answer_draft": "可以核对这款产品标签与证据，仍不能把标签宣传当成效果保证，也不自动给剂量。",
+    "next_observation": "配料、食品来源或专业建议变化。",
+    "arithmetic": []
+  }
+]
