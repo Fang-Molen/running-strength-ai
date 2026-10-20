@@ -25,6 +25,7 @@ npm run check:blocks              # 只查所有区块的 import 边界
 | coach-stated | `src/lib/coach/stated/parse.ts`、`compute.ts`、`compose.ts` | compose.ts | online-coach、deepseek、plan-execution、components、storage（只读、不保存） |
 | coach-online | `src/lib/coach/online-coach.ts`、`functions/api/coach-chat.js` | online-coach.ts | c03、plan-execution、server/coach-deepseek |
 | c03 | `src/lib/coach/c03/{argument,evidence,followup,runtime}.ts` | runtime.ts | components、online-coach、deepseek、plan-execution、day-schedule |
+| review-view | `src/lib/coach/review-view/{session-option,plain-review,host}.ts`、`components/coach-review-plain.tsx`（复盘页 `coach-offline-loop-panel.tsx` 只调用它） | plain-review.ts | online-coach、deepseek、plan-execution、c03、day-schedule、storage-journal（只读、不保存） |
 | plan-execution（**阻断**） | `src/lib/coach/plan-execution/{core,store,host}.ts` | host.ts | components、online-coach、deepseek、c03、分项存储、记一笔 |
 | health | `src/lib/health/snapshot.ts`、`recovery-quantitative.ts` | snapshot.ts | lib/coach、components |
 | nutrition | `src/lib/nutrition/*` | food-db.ts | lib/coach、components |

@@ -64,6 +64,13 @@ export const BLOCKS = {
     tests: ['src/lib/coach/c03/argument.test.ts', 'src/lib/coach/c03/evidence.test.ts', 'src/lib/coach/c03/followup.test.ts', 'src/lib/coach/c03/runtime.test.ts'],
     forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule'],
   },
+  'review-view': {
+    desc: '复盘页人话版：选课标签（日期/类型/距离/用时/配速/计划名）+ 四段式结果（怎么样/为什么/下次怎么练/还需补什么），依据折叠',
+    files: ['src/lib/coach/review-view/session-option.ts', 'src/lib/coach/review-view/plain-review.ts', 'src/lib/coach/review-view/host.ts', 'src/components/coach-review-plain.tsx'],
+    entry: 'src/lib/coach/review-view/plain-review.ts',
+    tests: ['src/lib/coach/review-view/review-view.test.ts', 'src/components/coach-review-plain.test.tsx'],
+    forbid: ['online-coach', 'deepseek', '/plan-execution/', '/c03/', 'day-schedule', 'storage-journal'],
+  },
   'plan-execution': {
     desc: '改课执行核心（IndexedDB 回执/撤销）。宿主固定 UNCOORDINATED：确认/撤销阻断',
     files: ['src/lib/coach/plan-execution/core.ts', 'src/lib/coach/plan-execution/store.ts', 'src/lib/coach/plan-execution/host.ts'],
