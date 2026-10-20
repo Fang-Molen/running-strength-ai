@@ -27,9 +27,9 @@ test("3D detail: no one-off reds, overlays read the brand-orange token", () => {
   assert.match(src("src/components/exercise-demo.css"), /--p:var\(--fk-brand-orange/)
   assert.match(src("public/demo3d/anatomy3d.js"), /fkToken\('--fk-brand-orange'/)
 })
-test("settings sheet: sticky header carries the safe-area padding and the close button", () => {
+test("settings sheet: sticky, opaque header carries the safe-area padding and the close button", () => {
   const s = src("src/components/strength-app.tsx")
-  assert.match(s, /data-testid="settings-header" className="sticky top-0[^"]*"[^>]*paddingTop: "max\(6px, env\(safe-area-inset-top\)\)"/)
+  assert.match(s, /data-testid="settings-header" className="sticky top-0[^"]* bg-bg[ "][^"]*"[^>]*paddingTop: "max\(6px, env\(safe-area-inset-top\)\)"/)
 })
 test("方坤 answer: conclusion first, next session, reasoning collapsed; every sentence still in the DOM", () => {
   const text = "先看事实：上次 400米×8 平均 82 秒。\n结论：这次是有氧耐力课，不是速度课。\n原因是休息 1 分钟。\n下一课：400米×6，休 2 分钟。"
