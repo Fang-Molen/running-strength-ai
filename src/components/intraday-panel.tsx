@@ -23,6 +23,7 @@ export function useIntraday(): Record<string, IntradayDay> {
 export function IntradayChart({ d, kind, height = 96, interactive = true, axis = true }: { d: IntradayDay; kind: Kind; height?: number; interactive?: boolean; axis?: boolean }) {
   const m = META[kind], pts = kind === "hr" ? d.hr : d.bb;
   const [pick, setPick] = useState<Sample | null>(null);
+  useEffect(() => setPick(null), [d.day, kind]);
   const ref = useRef<SVGSVGElement>(null);
   const top = 14, bottom = axis ? 16 : 4, H = height, ph = H - top - bottom;
   const vals = pts.map(p => p[1]);
@@ -45,7 +46,7 @@ export function IntradayChart({ d, kind, height = 96, interactive = true, axis =
       <circle cx={x(last[0])} cy={y(last[1])} r="5" fill={m.color} opacity="0.25" /><circle cx={x(last[0])} cy={y(last[1])} r="2.6" fill={m.color} data-testid="latest-dot" />
       {pick ? <g data-testid="pick"><line x1={x(pick[0])} x2={x(pick[0])} y1={top} y2={top + ph} stroke="var(--color-fg)" strokeWidth="0.8" /><circle cx={x(pick[0])} cy={y(pick[1])} r="3.4" fill="var(--color-fg)" /></g> : null}
     </svg>
-    {pick ? <div className="pointer-events-none absolute top-0 rounded-lg border border-line bg-surface-2 px-2 py-0.5 text-[11px] font-bold" style={{ left: `clamp(0px, calc(${x(pick[0]) / W * 100}% - 40px), calc(100% - 84px))` }} data-testid="pick-label">{clock(pick[0], d.offsetMin)} · {pick[1]}{m.unit === "/100" ? "" : " "}{m.unit}</div> : null}
+    {pick ? <div className="pointer-events-none absolute top-0 whitespace-nowrap rounded-lg border border-line bg-surface-2 px-2 py-0.5 text-[11px] font-bold" style={{ left: `clamp(0px, calc(${x(pick[0]) / W * 100}% - 40px), calc(100% - 84px))` }} data-testid="pick-label">{clock(pick[0], d.offsetMin)} · {pick[1]}{m.unit === "/100" ? "" : " "}{m.unit}</div> : null}
   </div>;
 }
 
@@ -82,7 +83,7 @@ function Detail({ d, kind, onClose, onDay, days }: { d: IntradayDay; kind: Kind;
     </div> : <p className="mt-2 text-sm text-muted">这天没有{m.label}样本。</p>}
     {hours.length ? <details className="mt-2 rounded-xl border border-line p-2 text-xs"><summary className="cursor-pointer font-bold">逐小时范围（{pts.length} 个样本）</summary>
       <div className="mt-1 grid grid-cols-3 gap-1">{hours.map(h => <span key={h.h} className="rounded bg-surface-2 px-1.5 py-1">{String(h.h).padStart(2, "0")}时 {h.lo === h.hi ? h.lo : `${h.lo}–${h.hi}`}</span>)}</div></details> : null}
-    <p className="keep mt-2 text-xs text-muted">{kind === "bb" ? "身体电量是佳明根据心率变异等估算的设备读数，仅供参考，不是训练许可；是否训练仍看疼痛、疲劳和热身感受。" : "全天心率来自手表光学心率，佩戴松紧、运动和环境都会影响读数；不是诊断依据。"}</p>
+    {kind === "bb" ? <p className="keep mt-2 text-xs text-muted">身体电量是佳明根据心率变异等估算的设备读数，仅供参考，不是训练许可；是否训练仍看疼痛、疲劳和热身感受。</p> : <p className="mt-2 text-xs text-muted">全天心率来自手表光学心率，佩戴松紧、运动和环境都会影响读数；不是诊断依据。</p>}
     <p className="keep mt-1 text-[11px] text-muted">同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", { hour12: false })}{d.offsetMin != null ? ` · 时间按手表当地时区（UTC${d.offsetMin >= 0 ? "+" : "-"}${Math.abs(d.offsetMin / 60)}）` : ""}</p>
   </Sheet>;
 }
