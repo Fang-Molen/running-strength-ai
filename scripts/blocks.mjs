@@ -29,6 +29,13 @@ export const BLOCKS = {
     tests: ['src/lib/ui/run-link.test.ts', 'src/lib/ui/lap-structure.test.ts', 'src/lib/health/garmin-sync-runner.test.ts', 'src/lib/health/garmin-sync-status.test.ts'],
     forbid: ['/lib/coach/', '/components/'],
   },
+  'training-import': {
+    desc: '已确认导入（佳明同步/设备导入/记一笔导入）存储与保留：按训练时间保留最新，同一来源只存一次',
+    files: ['src/lib/core/import-retention.ts', 'src/lib/core/training-import.ts'],
+    entry: 'src/lib/core/import-retention.ts',
+    tests: ['src/lib/core/import-retention.test.ts', 'src/lib/core/training-import.test.ts'],
+    forbid: ['/lib/coach/', '/components/', 'training-read-model'],
+  },
   'schedule': {
     desc: '按天日程（fk-schedule-v1）与归属、放弃本次',
     files: ['src/lib/ui/day-schedule.ts', 'src/lib/ui/day-schedule-rules.ts', 'src/lib/ui/guided-discard.ts', 'src/lib/ui/scheduled-execution.ts'],

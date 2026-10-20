@@ -20,6 +20,7 @@ npm run check:blocks              # 只查所有区块的 import 边界
 | plan400-components | `src/lib/ui/plan400-components-store.ts`、`plan400-start.ts`、`src/lib/core/ownership.ts` | plan400-components-store.ts | lib/coach、components、read-model |
 | quick-log | `src/lib/ui/quick-log.ts`、`quick-log-save.ts` | quick-log-save.ts | lib/coach、components、read-model |
 | garmin-link | `src/lib/ui/run-link.ts`、`lap-structure.ts`、`src/lib/health/garmin-*` | run-link.ts | lib/coach（类型除外）、components |
+| training-import | `src/lib/core/import-retention.ts`、`training-import.ts` | import-retention.ts | lib/coach、components、read-model |
 | schedule | `src/lib/ui/day-schedule*.ts`、`guided-discard.ts`、`scheduled-execution.ts` | day-schedule.ts | lib/coach、components |
 | coach-local | `src/lib/coach/plain-coach.ts`、`src/lib/core/coach-local-first.ts`、`coach-first-week.ts`、`coach-plan.ts` | coach-local-first.ts | online-coach、deepseek、plan-execution |
 | coach-stated | `src/lib/coach/stated/parse.ts`、`compute.ts`、`compose.ts` | compose.ts | online-coach、deepseek、plan-execution、components、storage（只读、不保存） |

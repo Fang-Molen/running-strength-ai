@@ -1,6 +1,7 @@
 import { currentAthleteId } from "./events.ts"
 import type { ImportCompleteness } from "./import-completeness.ts"
 import { readEnvelope, writeEnvelope } from "./storage.ts"
+import { appendRetained, retainNewest, MAX_CONFIRMED_IMPORTS } from "./import-retention.ts"
 
 export type ImportFieldStatus = "RECORDED" | "ABSENT" | "AMBIGUOUS" | "CONFLICTING"
 export type ImportSport = "RUNNING" | "STRENGTH" | "MIXED" | "UNKNOWN"
@@ -97,7 +98,6 @@ export const TRAINING_IMPORT_DRAFTS_KEY = "fr255-training-import-drafts-v1"
 export const CONFIRMED_TRAINING_IMPORTS_KEY = "fr255-confirmed-training-imports-v1"
 
 const MAX_DRAFTS = 20
-const MAX_CONFIRMED = 100
 
 function id(prefix: string): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") return `${prefix}-${crypto.randomUUID()}`
@@ -235,7 +235,7 @@ export function discardTrainingImportDraft(draftId: string): boolean {
 
 export function loadConfirmedTrainingImports(): ConfirmedTrainingImport[] {
   const data = readEnvelope<ConfirmedTrainingImport[]>(CONFIRMED_TRAINING_IMPORTS_KEY, []).data
-  return Array.isArray(data) ? data.filter((item) => item?.schemaVersion === 1 && item.userConfirmed === true).slice(-MAX_CONFIRMED) : []
+  return Array.isArray(data) ? data.filter((item) => item?.schemaVersion === 1 && item.userConfirmed === true) : []
 }
 
 /** Permanently remove one confirmed, standalone import. Never touches canonical sessions or other imports. */
@@ -316,7 +316,9 @@ export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; r
   }
   confirmed.sources = trainingImportSources(draft)
   confirmed.sourceIds = confirmed.sources.map((item) => item.id)
-  const next = [...loadConfirmedTrainingImports(), confirmed].slice(-MAX_CONFIRMED)
+  // v86.2：按训练发生时间保留最新的（旧版按写入顺序截取，佳明“新的在前”导致最新活动被挤掉）
+  const next = appendRetained(retainNewest(loadConfirmedTrainingImports()), confirmed)
+  if (!next) return { ok: false, reason: `早于保留范围（只保留最近 ${MAX_CONFIRMED_IMPORTS} 条导入），未保存` }
   if (!writeEnvelope(CONFIRMED_TRAINING_IMPORTS_KEY, next)) return { ok: false, reason: "确认记录保存失败，请重试" }
   discardTrainingImportDraft(draft.draftId)
   return { ok: true, record: confirmed, duplicate: false }
