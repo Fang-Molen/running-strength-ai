@@ -25,6 +25,6 @@ const opts=await p.getByLabel('离线复盘课次').locator('option').allInnerTe
 console.log('复盘选课:',JSON.stringify(opts), opts[0]?.startsWith('10-18')?'PASS':'FAIL')
 const plain=await p.getByTestId('review-plain').count()
 console.log('复盘摘要卡片:',plain?'PASS':'FAIL')
-await p.screenshot({path:shotDir+'/v87-review-390.png'})
+await p.getByLabel('离线复盘课次').evaluate(e=>{let n=e.parentElement;while(n){if(n.scrollHeight>n.clientHeight+10&&/auto|scroll/.test(getComputedStyle(n).overflowY)){n.scrollTop+=e.getBoundingClientRect().top-n.getBoundingClientRect().top-90;break}n=n.parentElement}});await p.waitForTimeout(600);await p.screenshot({path:shotDir+'/v87-review-390.png'})
 console.log('coach-chat 调用（已拦截）:',calls)
 await b.close()
