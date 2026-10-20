@@ -2,6 +2,12 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-20 | UI-R5（基于 v86）：逐组引导最后一组后点「结束并保存训练」没反应 → 修好（防连点锁在最后一组不再卡住），保存后刷新仍在 | 用户 R5 UI 优化 | src/components/training-runner.tsx |
+| 2026-10-20 | UI-R5：3D 动作详情的红色（主要参与肌肉、图例、肌群标签、演示按钮）统一改为品牌橙，读同一个色值 --fk-brand-orange；「已选中」仍为蓝色 | 用户 R5 UI 优化 | src/styles.css, exercise-demo.css, muscle-target-card.css, public/demo3d/* |
+| 2026-10-20 | UI-R5：「个人与设置」顶栏固定在刘海下方，长页面滚动时标题和关闭按钮一直可点 | 用户 R5 UI 优化 | src/components/strength-app.tsx |
+| 2026-10-20 | UI-R5：方坤回答先给一句结论＋「下一课」，理由折叠可展开；原文一句不删 | 用户 R5 UI 优化 | coach-answer-view.tsx, lib/ui/coach-answer-digest.ts, coach-sheet.tsx |
+| 2026-10-20 | UI-R5：手填正式主课分段新增「按目标填充」：一键填满每组目标秒数（课表参考秒数，没有就用同距离上次平均），只改跑偏的组；仍写进原“实际分段”，不自动保存 | 用户 R5 UI 优化 | plan400.tsx, lib/ui/split-fill.ts |
+| 2026-10-20 | UI-R5：sw 缓存 fr255-shell-v86-1 | — | public/sw.js |
 | 2026-10-20 | v86：联网方坤不再把内置课表和“400米53秒/12月28日”当成你的事实或目标发出——目标只用你在资料里填的“目标成绩”或在聊天里明确说的，没有就写“未知”；V4 课表只有本机真有 V4 记录时才作为“你在用的计划”发出；服务端提示词去掉写死目标，改为：用户给的数字先算清楚、不编分段/RPE含义、数据不够就说做什么测试记什么、不说“记下了/已记住”、“只改一项”真的只改一项 | R1.1 离线/联网测评；用户 10-20 “我同意” | online-coach.ts, plain-coach.ts, functions/api/coach-chat.js, coach-sheet.tsx |
 | 2026-10-20 | v86：本地方坤读懂你这次说的数字：分段、计划vs实际、休息、RPE、疼痛0–10、准备度、晨脉/HRV较基线、睡眠，算出均值/首末差/波动/偏差并写进回答（只在本次回答里核算，不保存）；“无发热”“疼痛0”“没有晕厥胸痛”“走路不痛”不再触发急症/疼痛门，真的胸痛/晕厥仍立即停训；给了分段不再说“分段未记录”；计划用时与实际用时分开算（B06）；每组目标（如5×400目标86秒）不再被记成比赛目标（C05）；新区块 coach-stated | R1.1 | lib/coach/stated/*, coach-chat-evidence.ts, coach-dialogue.ts, coach-first-week.ts, coach-local-first.ts, safety/redflag/context.ts |
 | 2026-10-20 | v86：关闭“联网分析”后，askOnlineCoach 自己也拒绝发请求（不只靠界面判断）；sw 缓存 fr255-shell-v86 | R1.1 G04 | online-coach.ts, public/sw.js |

@@ -12,6 +12,7 @@ import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, e
 import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor, type ComboView, type ComponentState, type DeviceRun } from "@/lib/ui/plan400-components";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
 import { matchLaps, plannedRepsFromText } from "@/lib/ui/lap-structure";
+import { fillFromTarget, lastSplitTarget, splitsFromText, splitsToText, targetSecFromText } from "@/lib/ui/split-fill";
 import { cachedLaps } from "@/lib/coach/online-coach";
 import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink, usePartsAll, PendingFeedbackList } from "@/components/plan400-parts";
 import type { DayParts } from "@/lib/ui/plan400-view";
@@ -168,6 +169,23 @@ function LapSuggest({ d, onFill }: { d: V4Day; onFill: (reps: string, rest: stri
     <button type="button" className="mt-1 min-h-10 rounded-lg border border-accent px-3 font-bold text-accent" onClick={() => onFill(m.repsText, m.restText)}>填入下面（还没保存）</button>
   </div>;
 }
+/** R5：手填分段——「按目标填充」一键填满每组，只改偏离的那几组；结果仍写进下面的“实际分段”文字框（不自动保存）。 */
+function SplitGrid({ d, value, logs, onChange }: { d: V4Day; value: string | undefined; logs: Record<string, Log>; onChange: (reps: string) => void }) {
+  const text = d.main.slice(1).join("");
+  const plan = plannedRepsFromText(text);
+  if (!plan) return null;
+  const vals = splitsFromText(value, plan);
+  const target = targetSecFromText(text) ?? lastSplitTarget(logs as Record<string, { reps?: string }>, plan, d.date);
+  const set = (i: number, v: string) => { const next = [...vals]; next[i] = v; onChange(splitsToText(next, plan)); };
+  return <div className="rounded-xl border border-line p-2.5" data-testid="split-grid">
+    <div className="flex items-center justify-between gap-2">
+      <p className="text-xs font-bold">{plan.distanceM}m × {plan.reps}{plan.rounds ? ` × ${plan.rounds}轮` : ""} · 每组秒数</p>
+      <button type="button" data-testid="split-fill-target" disabled={!target} onClick={() => target && onChange(splitsToText(fillFromTarget(vals, target.sec), plan))} className="min-h-10 shrink-0 rounded-lg border border-accent px-3 text-xs font-bold text-accent disabled:border-line disabled:text-muted">按目标填充</button>
+    </div>
+    <p className="keep mt-1 text-[11px] text-muted">{target ? `目标 ${target.sec} 秒（${target.source}）。只填空着的组，已填的不覆盖；填好后改掉跑偏的那几组。` : "课表没写目标秒数，也没有同距离旧记录：先手填。"}</p>
+    <div className="mt-2 grid grid-cols-4 gap-1.5 sm:grid-cols-6">{vals.map((v, i) => <label key={i} className="block"><span className="text-[10px] text-muted">{plan.rounds ? `${Math.floor(i / plan.reps) + 1}-${i % plan.reps + 1}` : `第${i + 1}组`}</span><input data-testid={`split-rep-${i}`} inputMode="decimal" className={"mt-0.5 min-h-11 w-full rounded-lg border bg-surface px-2 text-center text-base " + (target && v && v !== "—" && Math.abs(Number(v) - target.sec) >= 0.05 ? "border-accent" : "border-line")} value={v === "—" ? "" : v} placeholder="—" onChange={(e) => set(i, e.target.value)} /></label>)}</div>
+  </div>;
+}
 /** v83（P1-08/P1-09）：组合课的旧整课记录只读显示（不拆、不再编辑），没有旧记录就不显示。 */
 function LegacyReadOnly({ log, kind }: { log: Log; kind: "after" | "later" }) {
   const t = (v: unknown) => String(v ?? "").trim();
@@ -217,6 +235,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
           <p className="keep text-xs text-muted">目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}。没做的项留空（不会记成 0）。</p>
           <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} />
           <LapSuggest d={d} onFill={(reps, rest) => setEdit(e => ({ ...e, reps, rest }))} />
+          <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
           <Fields list={DURING.slice(0, 3)} value={edit} onChange={setEdit} />
           <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux"])}>保存跑步记录</button>
         </section>
@@ -229,6 +248,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       </> : null}
       {tab === "during" && !combo.combo ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
         <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}</p>
+        <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
         <Fields list={DURING} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux", "strength"])}>保存本段记录</button>
         {hasStrength(d) ? <p className="text-xs text-muted">力量部分可在「课表」页设为可执行后逐组引导，记录会进入训练日志。</p> : null}

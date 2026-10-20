@@ -140,9 +140,12 @@ function TrainingRunnerInner({
     try {localStorage.setItem(key,JSON.stringify({weight:draftWeight,amount:draftAmount}))} catch {setSaveError('输入草稿暂不能恢复，尚未记录为完成。请保持此页并检查存储。')}
   },[draftWeight,draftAmount,draftSetKey,cursor,decisionId,session.id])
 
+  // R5: release the double-tap guard after every committed change, including the
+  // last set (cursor/phase stay the same there, so the old [cursor, phase] reset never
+  // fired and 「结束并保存训练」 silently did nothing).
   useEffect(() => {
     saving.current = false
-  }, [cursor, phase])
+  }, [cursor, phase, sets, side])
   useEffect(() => { saveGuided(side) }, [side, cursor, restKind]) // eslint-disable-line react-hooks/exhaustive-deps
   // 休息到点（含锁屏/后台期间到点、刷新后已过期）自动进入下一步。
   useEffect(() => { if (phase === "rest" && restSeconds === 0) goNext() }, [phase, restSeconds]) // eslint-disable-line react-hooks/exhaustive-deps

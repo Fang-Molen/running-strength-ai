@@ -63,7 +63,7 @@ export const SEG_MUSCLE = {
 };
 export function drawFrame(svg, anim, time, opt = {}) {
   const { pose, phase } = poseAt(anim, time); const J = solve(pose);
-  const C = opt.colors || { body: '#cfd6df', far: '#6b7480', p: '#ff5a3c', s: '#ffb199', prop: '#8a93a0', ground: '#2a3038' };
+  const C = opt.colors || { body: '#cfd6df', far: '#6b7480', p: '#ff6a1a', s: '#ffb084', prop: '#8a93a0', ground: '#2a3038' };
   const pri = new Set(opt.primary || []), sec = new Set(opt.secondary || []);
   const active = phase !== 'ecc' || opt.always; const glow = m => (SEG_MUSCLE[m] || []).some(x => pri.has(x)) ? C.p : (SEG_MUSCLE[m] || []).some(x => sec.has(x)) ? C.s : null;
   svg.textContent = '';

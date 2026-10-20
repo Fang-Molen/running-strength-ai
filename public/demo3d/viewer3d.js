@@ -6,7 +6,8 @@ import * as SkeletonUtils from './vendor/jsm/utils/SkeletonUtils.js';
 import MUS from './muscles.js';
 import { placeRestrictedView, muscleHighlights } from './viewer-policy.js';
 
-const COL = { p: new THREE.Color('#ed7655'), s: new THREE.Color('#f0b08a') }; // Fieldwork: muted muscle overlay palette
+const fkToken = (name, fallback) => { try { return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback; } catch { return fallback; } };
+const COL = { p: new THREE.Color(fkToken('--fk-brand-orange', '#ff6a1a')), s: new THREE.Color(fkToken('--fk-brand-orange-soft', '#ffb084')) }; // Fieldwork: muted muscle overlay palette
 const modelCache = new Map(), modelTasks = new Map(); let regionTask = null;
 export async function loadModel(model = 'human') {
   const kind = ['athlete','athlete-male','athlete-female'].includes(model) ? model : 'human';

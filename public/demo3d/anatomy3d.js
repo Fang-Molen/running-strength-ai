@@ -41,9 +41,11 @@ function injectShorts(shader, shorts) {
   shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\n' + SHORTS_GLSL);
 }
 
+const fkToken = (name, fallback) => { try { return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback; } catch { return fallback; } };
+
 function muscleMaterial(shorts = shortsUniforms()) {
   const material = new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: .9, metalness: 0, side: THREE.DoubleSide });
-  const tint = { value: new THREE.Color('#ec7956') }, amount = { value: 0 };
+  const tint = { value: new THREE.Color(fkToken('--fk-brand-orange', '#ff6a1a')) }, amount = { value: 0 };
   const base = { value: new THREE.Color(PALETTE.muscle) }, tendonColor = { value: new THREE.Color(PALETTE.tendon) };
   material.userData.tint = tint; material.userData.amount = amount;
   material.onBeforeCompile = shader => {
@@ -186,6 +188,8 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   let disposed = false, raf = 0, visible = true, lastFit = null;
   // The neutral head, skeleton and crotch panel are opaque blockers, never selectable.
   const selectable = [...muscles, skeleton, head, cover], selectedTint = opt.selectedTint || '#62a6ff';
+  // R5: main/aux overlay = FIELDWORK brand orange token (was one-off red #f17650).
+  const mainTint = opt.mainTint || fkToken('--fk-brand-orange', '#ff6a1a'), auxTint = opt.auxTint || fkToken('--fk-brand-orange-soft', '#ffb084');
   function invalidate() { if (!disposed && !raf && visible && !document.hidden) raf = requestAnimationFrame(draw); }
   function draw() { raf = 0; if (disposed) return; controls.update(); renderer.render(scene, camera); }
   controls.addEventListener('change', invalidate);
@@ -199,7 +203,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
       object.visible = !meta.hiddenHead && !(deep ? meta.layer === 'superficial muscles' && !picked : meta.layer === 'deep muscles' && !picked);
       if (hide.some(k => matchesMuscle(meta, k))) object.visible = false;
       object.material.userData.amount.value = picked ? .95 : role === 'main' ? .88 : role === 'aux' ? .65 : 0;
-      object.material.userData.tint.value.set(picked ? selectedTint : role === 'aux' ? '#f3b997' : '#f17650');
+      object.material.userData.tint.value.set(picked ? selectedTint : role === 'aux' ? auxTint : mainTint);
     }
     invalidate();
   }

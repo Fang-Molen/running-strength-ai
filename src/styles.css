@@ -435,6 +435,8 @@ body { min-height: 100dvh; overscroll-behavior-y: none; }
 @media all and (display-mode: standalone) { .product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 6px) !important; } }
 /* v46 iPhone chrome: single safe-area source, content clears real nav + FAB */
 :root { --fk-nav-h: calc(64px + env(safe-area-inset-bottom)); }
+/* R5: single brand-orange token (FIELDWORK). 3D overlays, legends and chips read it instead of one-off reds. */
+:root { --fk-brand-orange: #ff6a1a; --fk-brand-orange-soft: #ffb084; }
 html, body { background: #0b0b0d; }
 .product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 4px) !important; padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
 .pb-nav { padding-bottom: calc(var(--fk-nav-h) + 24px) !important; }
@@ -474,7 +476,7 @@ html, body { background: #0b0b0d; }
   --fk-card-bg: linear-gradient(180deg, #17191c, #121417);
   --fk-card-border: #2a2d33;
   --fk-inner-bg: #1f2226;          /* 卡内次级区域 = surface-2 */
-  --fk-accent: #ff6a1a;
+  --fk-accent: var(--fk-brand-orange);
   --fk-success: #47c29a;
   --fk-text-2: #a3a6ad;            /* 辅助文字，略提对比度 */
   /* 形状与间距 */

@@ -838,8 +838,9 @@ export function StrengthApp() {
       <StandaloneWelcome />
       {settingsOpen ? (
         <div ref={settingsScroll} className="fixed inset-0 z-40 overflow-y-auto bg-bg" data-testid="settings-overlay">
-        <div className="mx-auto max-w-3xl px-4 pb-nav" style={{ paddingTop: "max(6px, env(safe-area-inset-top))" }}>
-          <div className="flex items-center justify-between">
+        <div className="mx-auto max-w-3xl px-4 pb-nav">
+          {/* R5: sticky header — title + close stay reachable below the iPhone notch while long panes scroll. */}
+          <div data-testid="settings-header" className="sticky top-0 z-20 -mx-4 flex items-center justify-between border-b border-line/60 bg-bg/95 px-4 pb-2 backdrop-blur" style={{ paddingTop: "max(6px, env(safe-area-inset-top))" }}>
             <div>
               <p className="text-[11px] font-semibold tracking-[0.16em] text-accent">{settingsPane === "menu" ? "RUNNING & STRENGTH" : "个人与设置"}</p>
               <h2 className="text-[1.55rem] font-bold">{({ menu: "个人与设置", athlete: "运动员档案", goals: "训练目标与赛季计划", health: "健康与训练限制", sync: "设备连接与同步", import: "数据导入", backup: "备份与恢复", coach: "教练与提醒", theme: "外观与显示", ai: "AI 服务与联网功能", privacy: "隐私与数据流向" } as Record<SettingsPane, string>)[settingsPane]}</h2>

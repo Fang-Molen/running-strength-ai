@@ -23,7 +23,7 @@ const B = {
 const SIL = 'M50 5a11 11 0 1 1-.01 0ZM45 27h10v6l15 5 6 12-2 30 4 30-6 2-6-30 0-25-2 40 4 12-2 40-4 22 2 20h-8l-2-20-2-45-2-20-2 20-2 45-2 20h-8l2-20-4-22-2-40 4-12-2-40 0 25-6 30-6-2 4-30-2-30 6-12 15-5Z';
 export function muscleMapSVG(view, primary = [], secondary = [], opt = {}) {
   const shapes = view === 'back' ? B : F, P = new Set(primary), S = new Set(secondary), sel = new Set(opt.selected || []);
-  const c = opt.colors || { base: '#3a414c', p: '#ff5a3c', s: '#ffb199', sil: '#232830', sel: '#4da3ff' };
+  const c = opt.colors || { base: '#3a414c', p: '#ff6a1a', s: '#ffb084', sil: '#232830', sel: '#4da3ff' };
   let out = `<svg viewBox="0 0 100 205" class="mmap" role="img" aria-label="${view === 'back' ? '背面' : '正面'}肌肉图"><path d="${SIL}" fill="${c.sil}"/>`;
   for (const [id, pts] of Object.entries(shapes)) {
     const fill = P.has(id) ? c.p : S.has(id) ? c.s : sel.has(id) ? c.sel : c.base;

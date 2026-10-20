@@ -36,20 +36,20 @@ h1{font-size:22px;margin:6px 0 12px}h2{font-size:17px;margin:20px 0 8px}
 .selbar button{background:none;border:0;color:var(--acc);font-size:14px}
 .alabs{position:absolute;inset:0;pointer-events:none;font-size:11px}
 .alab{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;padding:1px 5px;border-radius:8px;background:rgba(17,20,24,.78);color:#fff;border:1px solid #ff9a6a}
-.alab.p{border-color:#e8202a;background:rgba(160,10,16,.85);font-weight:600}
+.alab.p{border-color:#ff6a1a;background:rgba(160,10,16,.85);font-weight:600}
 .stage3{position:relative;width:100%;aspect-ratio:1/1.05;max-height:72vh;border-radius:14px;overflow:hidden;background:#1a1e24}
 .stage3 canvas{width:100%;height:100%;display:block;touch-action:none}
 .stage3 .phase{position:absolute;left:12px;top:10px;font-weight:600;color:#ffb199}
 .stage3 .hint{position:absolute;right:10px;bottom:8px;font-size:11px;color:#8a93a0}
 .stage3 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#9aa3ad}
-.ctrl button.on{background:#e8202a;color:#fff}
+.ctrl button.on{background:#ff6a1a;color:#fff}
 .anat{position:relative;width:100%;aspect-ratio:1/0.95;background:#14171c;border-radius:14px;overflow:hidden;margin-top:8px}
 .anat canvas{width:100%;height:100%;display:block}
 .anat .al{position:absolute;bottom:6px;font-size:12px;color:#8a93a0}.anat .al.l{left:22%}.anat .al.r{right:22%}
-.b3{font-style:normal;font-size:10px;background:#e8202a;color:#fff;border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:2px}
+.b3{font-style:normal;font-size:10px;background:#ff6a1a;color:#fff;border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:2px}
 .only3d{display:block;margin:6px 0;font-size:13px;color:#c9d0d8}
 .aleads{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.aleads polyline{fill:none;stroke:#ff9a6a;stroke-width:.35;vector-effect:non-scaling-stroke}.aleads polyline.p{stroke:#ff4a4a;stroke-width:1.2}
+.aleads polyline{fill:none;stroke:#ff9a6a;stroke-width:.35;vector-effect:non-scaling-stroke}.aleads polyline.p{stroke:#ff6a1a;stroke-width:1.2}
 .aleads circle{fill:#fff}
 .alab{transform:translate(0,-50%)}.alab.rt{transform:translate(-100%,-50%)}.alab.x{border-color:#4da3ff}
 .anat{aspect-ratio:1/1.12}
