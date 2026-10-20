@@ -31,7 +31,7 @@ import { contextualNutrition, type Event } from "./nutrition-context.ts";
 import { formatReasoningFrame, reasoningRevisionNotice, type ReasoningFrame } from './coach-reasoning.ts';
 import type { EvolutionSnapshot } from './coach-evolution-v4.ts';
 import { coachQuestionIntent } from './coach-model-packet.ts';
-import { answerCompleteKnowledgePreview, formalKnowledgeSection, type CompleteKnowledgeSelection, type CompleteKnowledgeUse } from '../coach/knowledge/complete.ts';
+import { answerCompleteKnowledgePreview, answerApprovedKnowledgeEducation, type CompleteKnowledgeSelection, type CompleteKnowledgeUse } from '../coach/knowledge/complete.ts';
 
 export type LocalCoachAnswer = {
   /** v87：用户明确要求“预览知识卡/查看研究资料”时的只读待审资料预览；不是处方依据。 */
@@ -39,7 +39,7 @@ export type LocalCoachAnswer = {
   /** v87：本回答用到的“经受信回执批准”的知识卡（含版本与内容哈希）；随消息保存，知识变化后据此复核。 */
   knowledgeUses?: CompleteKnowledgeUse[];
   /** v87：只在本地展示的回答（待审资料预览、单纯换算、无候选的剩余任务）。联网方坤不替换、不发送。 */
-  localOnly?: 'KNOWLEDGE_PREVIEW'|'DIRECT_CALCULATION'|'REMAINING_WORK_NO_CANDIDATE';
+  localOnly?: 'APPROVED_KNOWLEDGE_EDUCATION'|'KNOWLEDGE_PREVIEW'|'DIRECT_CALCULATION'|'REMAINING_WORK_NO_CANDIDATE';
   c03?: { brief: C03MetricBrief; review: ReturnType<typeof buildC03ObservationReview> };
   expression?: { version: 'E1'; coverage: 'CONFIRMED_RECORD_INSPECTION_ONLY'; sourceRevision: string };
   dialogue?: CoachDialogue;
@@ -300,12 +300,9 @@ export function answerLocally(brief:CoachBrief,logic?:{frame:ReasoningFrame;snap
  if(preview)return {text:preview.text,knowledgePreview:preview.selection,localOnly:'KNOWLEDGE_PREVIEW',dialogue,sources:[],candidate:null,escalationAvailable:false}
  const direct=previewSafe?statedDirectAnswer(brief.question):null
  if(direct)return {text:direct.text,localOnly:direct.kind,dialogue,sources:[],candidate:null,escalationAvailable:false}
- const stated=answerLocallyStated(brief,logic,memory,periodReview,dialogue,red)
- if(!previewSafe||stated.dialogue?.emergency||stated.dialogue?.medicalHold||stated.localOnly)return stated
- // v87：正式分析只接受经受信回执批准的知识（当前 0 张 → 回答不变），放在“依据”里。
- const formal=formalKnowledgeSection(brief.question,logic?.snapshot.asOf)
- if(!formal)return stated
- return {...stated,knowledgeUses:formal.uses,text:stated.text+(stated.text.includes('\n依据：')?'\n':'\n依据：')+formal.text}
+ const education=previewSafe?answerApprovedKnowledgeEducation(brief.question,logic?.snapshot.asOf):null
+ if(education)return {text:education.text,knowledgeUses:education.uses,localOnly:'APPROVED_KNOWLEDGE_EDUCATION',dialogue,sources:[],candidate:null,escalationAvailable:false}
+ return answerLocallyStated(brief,logic,memory,periodReview,dialogue,red)
 }
 function answerLocallyStated(brief:CoachBrief,logic:{frame:ReasoningFrame;snapshot:EvolutionSnapshot}|undefined,memory:readonly CoachContextMemory[],periodReview:PeriodReview|undefined,dialogue:CoachDialogue|undefined,red:ReturnType<typeof detectRedFlags>):LocalCoachAnswer{
  const answer=answerLocallyR(brief,logic,memory,periodReview,dialogue)

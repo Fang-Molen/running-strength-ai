@@ -52,7 +52,8 @@ import { readFormalEvidenceRows } from "@/lib/core/coach-v4-formal-rows-store";
 import { buildCoachModelRequest, normalizeAskCoachInput, normalizeV4 } from '@/lib/strength/coach-pipeline';
 import { latestReasoningBasis, reasoningReadFailure } from '@/lib/core/coach-reasoning';
 import { answerLocally, answerStaysLocal } from "@/lib/core/coach-local-first";
-import { loadInstalledKnowledgeLedger } from "@/lib/coach/knowledge/approval-store";
+import { loadInstalledKnowledgeLedger, KNOWLEDGE_APPROVALS_KEY } from "@/lib/coach/knowledge/approval-store";
+import { subscribeKnowledgeLedger } from "@/lib/coach/knowledge/approval";
 import { reviewKnowledgeJudgments } from "@/lib/coach/knowledge/history";
 import { isNativeRecordInspection } from '@/lib/core/dialogue-e1';
 import { offlineCapability, localModelFallback, type CoachFailure } from "@/lib/core/coach-offline";
@@ -131,7 +132,14 @@ export function CoachSheet({
   useEffect(()=>{if(questionDraft){setSection('chat');setDraft(questionDraft);onQuestionDraftConsumed?.()}},[questionDraft]);
   // v87：载入本机受信知识回执并重新验证（生产没有受信审核人 → 0 批准）。
   const [knowledgeLedgerAt, setKnowledgeLedgerAt] = useState(0);
-  useEffect(()=>{void loadInstalledKnowledgeLedger().then(()=>setKnowledgeLedgerAt(Date.now())).catch(()=>{})},[]);
+  useEffect(()=>{
+    const unsubscribe = subscribeKnowledgeLedger(()=>setKnowledgeLedgerAt(n=>n+1));
+    const reload = ()=>{void loadInstalledKnowledgeLedger().catch(()=>{})};
+    const onStorage = (event: StorageEvent)=>{if(event.key === null || event.key === KNOWLEDGE_APPROVALS_KEY) reload()};
+    window.addEventListener('storage', onStorage);
+    reload();
+    return ()=>{unsubscribe();window.removeEventListener('storage', onStorage)};
+  },[]);
   const [sending, setSending] = useState(false);
   const [onlineRequest, setOnlineRequest] = useState<string | null>(null);
   const [activityNotices, setActivityNotices] = useState<CoachActivityNotice[]>([]);

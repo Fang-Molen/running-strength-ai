@@ -7,7 +7,7 @@ export { parseStatedFacts, hasStatedNumbers, type StatedFacts }
 const s1 = (n: number) => `${r1(n)}`
 const dist = (m: number) => `${m}米`
 /** 1536 → “1536秒 = 25分36秒（25.6分钟）” */
-export const secondsAsMinutes = (sec: number) => { const m = Math.floor(sec / 60), rest = r2(sec - m * 60); return `${sec}秒 = ${m}分${rest}秒（${r2(sec / 60)}分钟）` }
+export const secondsAsMinutes = (sec: number) => { const rounded = r2(sec), m = Math.floor(rounded / 60), rest = r2(rounded - m * 60); return `${sec}秒 = ${m}分${rest}秒（${r2(sec / 60)}分钟）` }
 
 /** v87：只问一个单位换算时直接给结果，不套通用问卷；只问“只剩N分钟怎么安排”时不编剂量。
  * 其余情况返回 null，由 statedFactsSection 照常并入回答。安全判断由调用方先做。 */
@@ -19,7 +19,7 @@ export function statedDirectAnswer(question: string): { kind: 'DIRECT_CALCULATIO
     return { kind: 'REMAINING_WORK_NO_CANDIDATE', text: [`你说现在只剩${f.remainingMinutes}分钟。目前没有经批准的剩余课程候选，我不自己编新的组数、重量或替代动作。`,
       '· 原计划里没做的部分如实记为未完成，不当作已练；',
       `· 如果要用这${f.remainingMinutes}分钟补练，先从原计划里选定要做的那一项，由你或教练核准后再做；`,
-      '· 时间不够就今天到此为止，下次按原计划补上。',
+      '· 时间不够可以结束本次训练；未完成部分不自动形成补课，下一次按当时计划和恢复情况重新安排。',
       '没有修改计划或记录。'].join('\n') }
   return null
 }

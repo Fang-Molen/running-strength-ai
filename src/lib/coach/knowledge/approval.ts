@@ -19,7 +19,7 @@ export type TrustedReviewerKey = {
 export type KnowledgeApprovalReceipt = {
   schema: typeof KNOWLEDGE_APPROVAL_SCHEMA; receiptId: string; catalog: typeof KNOWLEDGE_CATALOG
   cardId: string; cardVersion: number; contentSha256: string; sourceSha256: Record<string, string>
-  decision: 'APPROVED' | 'REVOKED'; scope: { population: string; note: string }
+  decision: 'APPROVED' | 'REVOKED'; scope: { population: string; note: string; usage?: 'GENERAL_EDUCATION' | 'PERSONAL_ANALYSIS' }
   reviewer: { id: string; role: 'HUMAN_PROFESSIONAL' | 'TRUSTED_ADMIN' }
   reviewedAt: string; keyId: string; signature: string
 }
@@ -27,11 +27,14 @@ export type KnowledgeApprovalReceipt = {
  * 增加审核人需要改代码并重新发布（不是运行时开关，也不能由数据或模型写入）。 */
 export const PRODUCTION_TRUSTED_REVIEWER_KEYS: readonly TrustedReviewerKey[] = Object.freeze([])
 
-type Approved = { cardId: string; cardVersion: number; contentSha256: string; receiptId: string; reviewedAt: string; reviewerId: string }
+type Approved = Readonly<{ cardId: string; cardVersion: number; contentSha256: string; receiptId: string; reviewedAt: string; reviewerId: string; validUntil: string | null; scope: Readonly<KnowledgeApprovalReceipt['scope']> }>
 export type VerifiedKnowledgeLedger = {
   readonly verifiedAt: string; readonly approved: ReadonlyMap<string, Approved>
   readonly rejected: readonly { receiptId: string; reason: string }[]
 }
+// Authorization state never escapes this module. A caller may mutate its own
+// inspection Map, but neither Map mutations nor value mutations affect authority.
+const authority = new WeakMap<object, ReadonlyMap<string, Approved>>()
 const brand = new WeakSet<object>()
 export const isVerifiedKnowledgeLedger = (x: unknown): x is VerifiedKnowledgeLedger => !!x && typeof x === 'object' && brand.has(x)
 const cards = rawCards as { id: string; version: number; source_ids: string[] }[]
@@ -49,9 +52,13 @@ function shapeProblem(r: KnowledgeApprovalReceipt, keys: readonly TrustedReviewe
   if (typeof r.receiptId !== 'string' || !r.receiptId || typeof r.signature !== 'string' || typeof r.keyId !== 'string') return 'SCHEMA'
   if (!['APPROVED', 'REVOKED'].includes(r.decision)) return 'DECISION'
   if (!r.reviewer || !['HUMAN_PROFESSIONAL', 'TRUSTED_ADMIN'].includes(r.reviewer.role) || typeof r.reviewer.id !== 'string' || MODEL_REVIEWER.test(r.reviewer.id)) return 'REVIEWER_NOT_HUMAN_OR_TRUSTED_ADMIN'
+  if (r.scope?.usage !== undefined && !['GENERAL_EDUCATION', 'PERSONAL_ANALYSIS'].includes(r.scope.usage)) return 'SCOPE_INVALID'
   const key = keys.find(k => k.keyId === r.keyId)
   if (!key) return 'UNTRUSTED_KEY'
   if (key.reviewerId !== r.reviewer.id || key.role !== r.reviewer.role) return 'REVIEWER_KEY_MISMATCH'
+  if (!r.scope || typeof r.scope.population !== 'string' || !r.scope.population.trim() || typeof r.scope.note !== 'string') return 'SCOPE_INVALID'
+  if (!Number.isFinite(Date.parse(key.validFrom)) || key.validUntil !== null && !Number.isFinite(Date.parse(key.validUntil))) return 'KEY_TIME_INVALID'
+  if (Date.parse(key.validFrom) > asOf || key.validUntil !== null && Date.parse(key.validUntil) < asOf) return 'KEY_NOT_ACTIVE'
   const at = Date.parse(r.reviewedAt)
   if (!Number.isFinite(at) || at > asOf || at < Date.parse(key.validFrom) || (key.validUntil !== null && at > Date.parse(key.validUntil))) return 'REVIEW_TIME_INVALID'
   if (at < Date.parse(registry.importedAt)) return 'BEFORE_IMPORT'
@@ -65,10 +72,23 @@ function shapeProblem(r: KnowledgeApprovalReceipt, keys: readonly TrustedReviewe
 }
 /** 验证一批回执（来自本机受信管理员导入或受信服务端），返回只能由本函数生成的账本。 */
 export async function verifyKnowledgeApprovals(receipts: readonly unknown[], options: { trustedKeys?: readonly TrustedReviewerKey[]; asOf?: string } = {}): Promise<VerifiedKnowledgeLedger> {
-  const keys = options.trustedKeys ?? PRODUCTION_TRUSTED_REVIEWER_KEYS, asOfIso = options.asOf ?? new Date().toISOString(), asOf = Date.parse(asOfIso)
+  const keys = structuredClone(options.trustedKeys ?? PRODUCTION_TRUSTED_REVIEWER_KEYS), asOfIso = options.asOf ?? new Date().toISOString(), asOf = Date.parse(asOfIso)
   const rejected: { receiptId: string; reason: string }[] = [], valid: KnowledgeApprovalReceipt[] = []
-  for (const raw of Array.isArray(receipts) ? receipts : []) {
+  // Snapshot before the first await: callers cannot alter a signed receipt
+  // between validation and installation.
+  let input: unknown[] = []
+  try { input = structuredClone(Array.isArray(receipts) ? receipts : []) } catch { /* invalid input grants nothing */ }
+  const seen = new Map<string, string>(), conflicts = new Set<string>()
+  for (const item of input) {
+    const r = item as KnowledgeApprovalReceipt
+    if (typeof r?.receiptId !== 'string') continue
+    const value = canonical(r)
+    if (seen.has(r.receiptId) && seen.get(r.receiptId) !== value) conflicts.add(r.receiptId)
+    seen.set(r.receiptId, value)
+  }
+  for (const raw of input) {
     const r = raw as KnowledgeApprovalReceipt, id = typeof r?.receiptId === 'string' ? r.receiptId : '?'
+    if (conflicts.has(id)) { rejected.push({ receiptId: id, reason: 'RECEIPT_ID_CONFLICT' }); continue }
     const problem = Number.isFinite(asOf) && asOf <= Date.now() + 60_000 ? shapeProblem(r, keys, asOf) : 'CLOCK'
     if (problem) { rejected.push({ receiptId: id, reason: problem }); continue }
     let ok = false
@@ -82,26 +102,37 @@ export async function verifyKnowledgeApprovals(receipts: readonly unknown[], opt
   }
   // 每张卡以最新的有效回执为准；撤销回执会移除批准。
   const approved = new Map<string, Approved>()
-  for (const r of [...valid].sort((a, b) => Date.parse(a.reviewedAt) - Date.parse(b.reviewedAt) || a.receiptId.localeCompare(b.receiptId))) {
+  for (const r of [...valid].sort((a, b) => Date.parse(a.reviewedAt) - Date.parse(b.reviewedAt) || Number(a.decision === 'REVOKED') - Number(b.decision === 'REVOKED') || a.receiptId.localeCompare(b.receiptId))) {
     const h = handle(r.cardId, r.cardVersion)
     if (r.decision === 'REVOKED') approved.delete(h)
-    else approved.set(h, { cardId: r.cardId, cardVersion: r.cardVersion, contentSha256: r.contentSha256, receiptId: r.receiptId, reviewedAt: r.reviewedAt, reviewerId: r.reviewer.id })
+    else approved.set(h, Object.freeze({ cardId: r.cardId, cardVersion: r.cardVersion, contentSha256: r.contentSha256, receiptId: r.receiptId, reviewedAt: r.reviewedAt, reviewerId: r.reviewer.id, validUntil: keys.find(k => k.keyId === r.keyId)!.validUntil, scope: Object.freeze({ ...r.scope }) }))
   }
-  const ledger: VerifiedKnowledgeLedger = Object.freeze({ verifiedAt: asOfIso, approved, rejected: Object.freeze(rejected) })
+  const ledger: VerifiedKnowledgeLedger = Object.freeze({ verifiedAt: asOfIso, get approved() { return new Map(approved) }, rejected: Object.freeze(rejected.map(r => Object.freeze({ ...r }))) })
+  authority.set(ledger, approved)
   brand.add(ledger)
   return ledger
 }
 /** 某个卡版本+内容哈希是否被这个（经验证的）账本批准。非账本对象一律 false。 */
-export function ledgerApproves(ledger: unknown, cardId: string, cardVersion: number, contentSha256: string): Approved | null {
+export function ledgerApproves(ledger: unknown, cardId: string, cardVersion: number, contentSha256: string, asOf = new Date().toISOString()): Approved | null {
   if (!isVerifiedKnowledgeLedger(ledger)) return null
-  const a = ledger.approved.get(handle(cardId, cardVersion))
-  return a && a.contentSha256 === contentSha256 ? a : null
+  const time = Date.parse(asOf)
+  if (!Number.isFinite(time) || time > Date.now() + 60_000) return null
+  const a = authority.get(ledger)?.get(handle(cardId, cardVersion))
+  return a && a.contentSha256 === contentSha256 && Date.parse(a.reviewedAt) <= time
+    && (a.validUntil === null || time <= Date.parse(a.validUntil)) ? a : null
 }
 
 // 当前会话使用的账本：只接受 verifyKnowledgeApprovals 生成的对象；默认没有（= 0 批准）。
 let installed: VerifiedKnowledgeLedger | null = null
+const ledgerListeners = new Set<() => void>()
+export function subscribeKnowledgeLedger(listener: () => void): () => void {
+  ledgerListeners.add(listener)
+  return () => { ledgerListeners.delete(listener) }
+}
 export function installKnowledgeLedger(ledger: VerifiedKnowledgeLedger | null): boolean {
   if (ledger !== null && !isVerifiedKnowledgeLedger(ledger)) return false
-  installed = ledger; return true
+  installed = ledger
+  for (const listener of ledgerListeners) { try { listener() } catch { /* UI cannot veto revocation */ } }
+  return true
 }
 export const currentKnowledgeLedger = (): VerifiedKnowledgeLedger | null => installed

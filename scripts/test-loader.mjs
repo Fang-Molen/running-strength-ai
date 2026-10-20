@@ -18,7 +18,9 @@ export async function load(url,context,nextLoad) {
   if(url.startsWith('file:') && url.endsWith('.css')) return {format:'module',source:'export {}',shortCircuit:true}
   if(url.startsWith('file:')&&/\.tsx?$/.test(url)) {
     const source=await readFile(fileURLToPath(url),'utf8')
-    const result=ts.transpileModule(source,{fileName:fileURLToPath(url),compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true,sourceMap:false}})
+    const result=ts.transpileModule(source,{fileName:fileURLToPath(url),reportDiagnostics:true,compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true,sourceMap:false}})
+    const errors=(result.diagnostics??[]).filter(d=>d.category===ts.DiagnosticCategory.Error)
+    if(errors.length)throw new SyntaxError(ts.formatDiagnosticsWithColorAndContext(errors,{getCanonicalFileName:f=>f,getCurrentDirectory:()=>root,getNewLine:()=> '\n'}))
     return {format:'module',source:result.outputText,shortCircuit:true}
   }
   return nextLoad(url,context)

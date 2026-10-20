@@ -5,6 +5,7 @@
  */
 export const SCHEDULE_DOC_KEY = 'fk-schedule-v1'
 export const SCHEDULE_REVISION_KEY = 'fk-schedule-v1-rev'
+export const SCHEDULE_PENDING_WRITE_KEY = 'fk-schedule-v1-pending-write'
 /** 与 src/lib/coach/plan-execution/core.ts 的 PLAN_EXECUTION_LOCK 同名（测试锁定一致）。 */
 export const SCHEDULE_WRITE_LOCK = 'fangkun-plan-execution-v1'
 export type ScheduleWriter = 'today-board' | 'today-board-sync' | 'onboarding-r8' | 'unmarked-plans' | 'schedule-progress' | 'guided-discard' | 'scheduled-entry' | 'plan-execution' | 'unknown'
@@ -17,14 +18,45 @@ export function readScheduleRevision(box: Box | null | undefined): ScheduleRevis
 }
 /** 同步写入（单页内一次完成读改写）。expectedRev 给出时做 CAS：修订号不一致就不写。 */
 export function commitScheduleRaw(box: Box, raw: string, writer: ScheduleWriter, expectedRev?: number): { ok: true; rev: number } | { ok: false; reason: 'VERSION_CONFLICT' | 'WRITE_FAILED' } {
+ try {
+  // A failed metadata write must never be reported as a committed revision.
+  // Keep the intent so a retry can finish metadata, without rewriting training.
+  const pendingRaw = box.getItem(SCHEDULE_PENDING_WRITE_KEY)
+  if (pendingRaw && pendingRaw !== 'null') {
+    const pending = JSON.parse(pendingRaw)
+    if (!pending || pending.schema !== 1 || typeof pending.after !== 'string' || (pending.before !== null && typeof pending.before !== 'string') || typeof pending.revision !== 'string') return { ok: false, reason: 'WRITE_FAILED' }
+    const value = box.getItem(SCHEDULE_DOC_KEY)
+    if (value === pending.after) {
+      const currentRevision = box.getItem(SCHEDULE_REVISION_KEY)
+      if (currentRevision !== pending.previousRevision && currentRevision !== pending.revision) return { ok: false, reason: 'VERSION_CONFLICT' }
+      box.setItem(SCHEDULE_REVISION_KEY, pending.revision)
+      if (box.getItem(SCHEDULE_REVISION_KEY) !== pending.revision) return { ok: false, reason: 'WRITE_FAILED' }
+    } else if (value !== pending.before) return { ok: false, reason: 'VERSION_CONFLICT' }
+    box.setItem(SCHEDULE_PENDING_WRITE_KEY, 'null')
+    if (box.getItem(SCHEDULE_PENDING_WRITE_KEY) !== 'null') return { ok: false, reason: 'WRITE_FAILED' }
+  }
+  const revisionRaw = box.getItem(SCHEDULE_REVISION_KEY)
+  if (revisionRaw !== null) {
+    const parsed = JSON.parse(revisionRaw)
+    if (!parsed || !Number.isSafeInteger(parsed.rev) || parsed.rev < 0) return { ok: false, reason: 'WRITE_FAILED' }
+  }
   const cur = readScheduleRevision(box)
   if (expectedRev !== undefined && cur.rev !== expectedRev) return { ok: false, reason: 'VERSION_CONFLICT' }
   if (box.getItem(SCHEDULE_DOC_KEY) === raw) return { ok: true, rev: cur.rev }
+  if (!Number.isSafeInteger(cur.rev + 1)) return { ok: false, reason: 'WRITE_FAILED' }
+  const rev = cur.rev + 1
+  const revision = JSON.stringify({ rev, writer, at: new Date().toISOString() })
+  const intent = JSON.stringify({ schema: 1, before: box.getItem(SCHEDULE_DOC_KEY), after: raw, previousRevision: revisionRaw, revision })
+  box.setItem(SCHEDULE_PENDING_WRITE_KEY, intent)
+  if (box.getItem(SCHEDULE_PENDING_WRITE_KEY) !== intent) return { ok: false, reason: 'WRITE_FAILED' }
   box.setItem(SCHEDULE_DOC_KEY, raw)
   if (box.getItem(SCHEDULE_DOC_KEY) !== raw) return { ok: false, reason: 'WRITE_FAILED' }
-  const rev = cur.rev + 1
-  try { box.setItem(SCHEDULE_REVISION_KEY, JSON.stringify({ rev, writer, at: new Date().toISOString() })) } catch { /* 修订号写失败不回滚日程；下次读取仍可比对内容哈希 */ }
+  box.setItem(SCHEDULE_REVISION_KEY, revision)
+  if (box.getItem(SCHEDULE_REVISION_KEY) !== revision) return { ok: false, reason: 'WRITE_FAILED' }
+  box.setItem(SCHEDULE_PENDING_WRITE_KEY, 'null')
+  if (box.getItem(SCHEDULE_PENDING_WRITE_KEY) !== 'null') return { ok: false, reason: 'WRITE_FAILED' }
   return { ok: true, rev }
+ } catch { return { ok: false, reason: 'WRITE_FAILED' } }
 }
 let tail: Promise<unknown> = Promise.resolve()
 /** 共享写锁。coordinated=false 表示只在本页内互斥（没有 Web Locks）。 */

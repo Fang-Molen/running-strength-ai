@@ -36,7 +36,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
   const week = useMemo(() => weekOf(day || today), [day, today])
   const conflicts = useMemo(() => findConflicts(store.entries, week, today, readRecovery(today), store.acks), [store, week, today])
   const summary = useMemo(() => weekSummary(store.entries, week, today), [store, week, today])
-  const commit = (next: ScheduleStore) => { if (!saveSchedule(next, 'today-board')) { setNote("保存失败，原记录仍保留。请检查本机存储后重试。"); return false; } setStore(next); setStamp(Date.now()); return true; }
+  const commit = (next: ScheduleStore) => { if (!saveSchedule(next, 'today-board')) { setNote("保存结果尚未核实，请刷新核对当前记录后再重试。"); return false; } setStore(next); setStamp(Date.now()); return true; }
   const setEntries = (entries: ScheduleEntry[]) => commit({ ...store, entries })
   const act = (c: Conflict, a: ConflictAction) => commit(a === "ack" ? { ...store, acks: [...store.acks, c.id] } : { ...store, entries: applyAction(store.entries, c, a) })
   const sessionOf = (e: ScheduleEntry) => e.modality === "strength" ? plan.sessions.find((s) => s.id === e.refId) : undefined

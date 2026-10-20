@@ -36,6 +36,7 @@ export function CoachPlanChangePanel({ revision }: { revision: number | string }
   }, [revision])
   const current = snapshot?.host.actor?.athleteId === currentAthleteId() ? snapshot : null
   const choice = current?.choices.find(row => row.key === selected) ?? null
+  const executionReady = !!current && current.host.persistenceBoundary === 'COORDINATED_LOCAL' && current.host.calendarCoverage === 'COMPLETE' && current.host.readState === 'AVAILABLE' && current.host.safety === 'ALLOW_DATE_MOVE'
   const pending = current && document && document.athleteId === current.host.actor?.athleteId ? Object.values(document.proposals).filter(row => row.actor.athleteId === current.host.actor?.athleteId && row.state === 'PENDING') : []
   const receipts = current && document && document.athleteId === current.host.actor?.athleteId ? Object.values(document.receipts).filter(row => row.actor.athleteId === current.host.actor?.athleteId) : []
   async function action(run: () => Promise<{ ok: boolean; message?: string; code?: string }>, success: string) {
@@ -44,7 +45,7 @@ export function CoachPlanChangePanel({ revision }: { revision: number | string }
     try {
       const result = await run()
       if (owner !== currentAthleteId()) { await refresh(true); return }
-      setMessage(result.ok ? success : '尚未修改。尚无法可靠核对完整安排与最新状态，请先保留原安排。')
+      setMessage(result.ok ? success : result.message ?? '保存结果尚未核实，请刷新查看回执后再操作。')
       await refresh()
     } catch { if (owner === currentAthleteId()) setMessage('操作或回执读取失败，尚未确认修改；请刷新核对。') }
     finally { setBusy(false) }
@@ -70,7 +71,7 @@ export function CoachPlanChangePanel({ revision }: { revision: number | string }
         <input aria-label="拟调整到的日期" type="date" min={current?.host.today} value={toDate} disabled={busy || !current} onChange={e => { setToDate(e.target.value); setMessage('') }} className="mt-1 min-h-12 w-full rounded-card border border-line bg-bg px-2" />
       </label>
       {choice && toDate ? <p className="rounded-card bg-bg p-2 text-sm">待核对差异：{choice.date} 移出这一个分项，{toDate} 加入同一分项。相邻安排尚未完整核定，不代表已生成可执行提案。</p> : null}
-      <button type="button" className={button} disabled={busy || !choice?.identityResolved || choice.state !== 'NOT_STARTED' || !toDate} onClick={preview}>核对差异 / 生成待确认提案</button>
+      <button type="button" className={button} disabled={busy || !executionReady || !choice?.identityResolved || choice.state !== 'NOT_STARTED' || !toDate} onClick={preview}>核对差异 / 生成待确认提案</button>
       <button type="button" className={button} disabled={busy} onClick={() => { void refresh(true) }}>刷新本机提案与回执</button>
     </div>
     {message ? <p role="status" className="mt-3 break-words text-sm">{message}</p> : null}
@@ -80,10 +81,10 @@ export function CoachPlanChangePanel({ revision }: { revision: number | string }
       {current.choices.filter(row => row.reason).map(row => <p key={`reason:${row.key}`} className="keep mt-2 text-xs text-muted" data-keep="plan-change">{row.title}：{row.identityResolved ? '已有开始、完成或不明执行状态，不能按未开始分项移动。' : '尚不能可靠定位到单独分项，请先核对原训练安排。'}</p>)}
     </> : <p className="keep mt-3 text-xs text-muted" data-keep="plan-change">尚无法核对当前本机档案与记录归属，旧记录不会自动认领为本人。</p>}
     <details className="mt-3"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">本机待确认提案（{pending.length}）</summary>
-      {pending.length ? pending.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-sm"><p>{row.move.fromDate} → {row.move.toDate}，仅这一分项。</p><p className="keep mt-1 text-xs text-muted" data-keep="plan-change">尚未生效；仍需核对完整安排与最新状态。有效至 {row.expiresAt}</p><button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => confirm(row)}>确认这次调整（暂不可提交）</button></div>) : <p className="text-sm text-muted">没有已核实可展示的待确认提案；暂时无法读取时会提示刷新核对。</p>}
+      {pending.length ? pending.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-sm"><p>{row.move.fromDate} → {row.move.toDate}，仅这一分项。</p><p className="keep mt-1 text-xs text-muted" data-keep="plan-change">尚未生效；仍需核对完整安排与最新状态。有效至 {row.expiresAt}</p><button type="button" className={`${button} mt-2`} disabled={busy || !executionReady} onClick={() => confirm(row)}>确认这次调整（暂不可提交）</button></div>) : <p className="text-sm text-muted">没有已核实可展示的待确认提案；暂时无法读取时会提示刷新核对。</p>}
     </details>
     <details className="mt-3"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">本机调整记录与撤销（{receipts.length}）</summary>
-      {receipts.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-xs"><p>{row.appliedAt} · {row.kind === 'UNDO' ? '撤销修订' : '日期修订'} · {row.move.fromDate} → {row.move.toDate}</p><p className="mt-1 text-muted">仅本机回执，未声明云端同步；训练实际记录不变。</p>{row.kind === 'MOVE' ? <button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => undo(row)}>明确撤销这次调整（当前受阻）</button> : null}</div>)}
+      {receipts.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-xs"><p>{row.appliedAt} · {row.kind === 'UNDO' ? '撤销修订' : '日期修订'} · {row.move.fromDate} → {row.move.toDate}</p><p className="mt-1 text-muted">仅本机回执，未声明云端同步；训练实际记录不变。</p>{row.kind === 'MOVE' ? <button type="button" className={`${button} mt-2`} disabled={busy || !executionReady} onClick={() => undo(row)}>明确撤销这次调整（当前受阻）</button> : null}</div>)}
     </details>
   </details>
 }

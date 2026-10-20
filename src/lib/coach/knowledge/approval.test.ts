@@ -4,7 +4,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import registry from '../../../../knowledge/coach-complete-20261020/registry.json' with { type: 'json' }
 import rawCards from '../../../../knowledge/coach-complete-20261020/knowledge_cards.json' with { type: 'json' }
-import { verifyKnowledgeApprovals, approvalSigningPayload, installKnowledgeLedger, PRODUCTION_TRUSTED_REVIEWER_KEYS, ledgerApproves,
+import { verifyKnowledgeApprovals, approvalSigningPayload, installKnowledgeLedger, currentKnowledgeLedger, subscribeKnowledgeLedger, PRODUCTION_TRUSTED_REVIEWER_KEYS, ledgerApproves,
   type KnowledgeApprovalReceipt, type TrustedReviewerKey } from './approval.ts'
 import { selectCompleteKnowledge, formalKnowledgeSection, completeKnowledgeInventory } from './complete.ts'
 import { reviewKnowledgeJudgments } from './history.ts'
@@ -27,7 +27,7 @@ async function testReviewer(reviewerId = 'test-coach-reviewer', role: TrustedRev
 const receipt = (over: Partial<KnowledgeApprovalReceipt> = {}): Omit<KnowledgeApprovalReceipt, 'signature'> => ({
   schema: 'FK-KNOWLEDGE-APPROVAL-1', receiptId: 'rcpt-R03-1', catalog: 'FK-COACH-KNOWLEDGE-COMPLETE-20261020', cardId: 'R03', cardVersion: R03.version,
   contentSha256: cardSha.R03, sourceSha256: Object.fromEntries(R03.source_ids.map(id => [id, sourceSha[id]])), decision: 'APPROVED',
-  scope: { population: '成年业余跑者（测试）', note: 'test fixture only' }, reviewer: { id: 'test-coach-reviewer', role: 'HUMAN_PROFESSIONAL' },
+  scope: { population: '成年业余跑者（测试）', note: 'test fixture only', usage: 'GENERAL_EDUCATION' }, reviewer: { id: 'test-coach-reviewer', role: 'HUMAN_PROFESSIONAL' },
   reviewedAt: new Date(Date.now() - 60_000).toISOString(), keyId: 'TEST-test-coach-reviewer', ...over,
 })
 
@@ -80,8 +80,8 @@ function ask(q: string) {
   const box = firstWeekMemory(); setStoreBackend(box)
   try { return answerLocally(assembleCoachBrief(null, q, null), undefined, [], undefined, emptyDialogue()) } finally { setStoreBackend(null) }
 }
-test('formal analysis uses only approved knowledge, in the 依据 section, and records versioned uses', async () => {
-  const q = '我的400米分段均值和首尾差该怎么看？'
+test('approved general education is selected before answering; personal review never gets a post-hoc appendix', async () => {
+  const q = '解释跑步分段均值和首尾差'
   installKnowledgeLedger(null)
   const before = ask(q)
   assert.equal(before.knowledgeUses, undefined); assert.doesNotMatch(before.text, /已审核的通用知识/)
@@ -91,8 +91,9 @@ test('formal analysis uses only approved knowledge, in the 依据 section, and r
   try {
     const after = ask(q)
     assert.deepEqual(after.knowledgeUses?.map(u => [u.cardId, u.version, u.contentSha256]), [['R03', R03.version, cardSha.R03]])
-    const [visible, basis] = after.text.split('\n依据：')
-    assert.doesNotMatch(visible, /已审核的通用知识/); assert.match(basis, /已审核的通用知识（不是你的个人证据，不授权剂量）：R03/)
+    assert.match(after.text, /已审核的通用知识（不是你的个人证据，不授权剂量）：R03/)
+    assert.equal(after.localOnly, 'APPROVED_KNOWLEDGE_EDUCATION')
+    assert.equal(ask('我的400米分段均值和首尾差该怎么看？').knowledgeUses, undefined)
     // emergency still wins, no knowledge appended
     assert.equal(ask('我现在胸痛快晕倒了，均值和首尾差怎么看').knowledgeUses, undefined)
     // preview remains preview, not formal
@@ -126,4 +127,36 @@ test('local trusted-admin import stores raw receipts, re-verifies on load, and p
     assert.equal((await loadInstalledKnowledgeLedger({ trustedKeys: [key] })).approved.size, 1)
     assert.equal((await loadInstalledKnowledgeLedger()).approved.size, 0, 'production key list approves nothing')
   } finally { installKnowledgeLedger(null); setStoreBackend(null) }
+})
+
+test('import snapshots callers and revocation updates active consumers immediately', async () => {
+ const box=firstWeekMemory();setStoreBackend(box)
+ let updates=0;const unsubscribe=subscribeKnowledgeLedger(()=>updates++)
+ try {
+  const {key,sign}=await testReviewer()
+  const good=await sign(receipt())
+  const pending=importKnowledgeApprovalReceipts([good],{trustedKeys:[key]})
+  good.scope.population='tampered while import queued'
+  const result=await pending
+  assert.ok(result.ok && result.accepted===1)
+  assert.ok(ledgerApproves(currentKnowledgeLedger(),'R03',R03.version,cardSha.R03))
+  assert.notEqual(JSON.parse(box.getItem(KNOWLEDGE_APPROVALS_KEY)!)[0].scope.population,good.scope.population)
+  const revoke=await sign(receipt({receiptId:'revoke-live',decision:'REVOKED',reviewedAt:new Date(Date.now()-500).toISOString()}))
+  assert.ok((await importKnowledgeApprovalReceipts([revoke],{trustedKeys:[key]})).ok)
+  assert.equal(ledgerApproves(currentKnowledgeLedger(),'R03',R03.version,cardSha.R03),null)
+  assert.equal(updates,2)
+ } finally {unsubscribe();installKnowledgeLedger(null);setStoreBackend(null)}
+})
+test('corrupt approval storage cannot be overwritten by an import or retain active approval',async()=>{
+ const box=firstWeekMemory();setStoreBackend(box)
+ try {
+  const {key,sign}=await testReviewer()
+  installKnowledgeLedger(await verifyKnowledgeApprovals([await sign(receipt())],{trustedKeys:[key]}))
+  box.setItem(KNOWLEDGE_APPROVALS_KEY,'{bad')
+  const result=await importKnowledgeApprovalReceipts([],{trustedKeys:[key]})
+  assert.ok(!result.ok && result.reason==='STORE_UNREADABLE')
+  assert.equal(box.getItem(KNOWLEDGE_APPROVALS_KEY),'{bad')
+  await assert.rejects(loadInstalledKnowledgeLedger({trustedKeys:[key]}))
+  assert.equal(currentKnowledgeLedger(),null)
+ }finally{installKnowledgeLedger(null);setStoreBackend(null)}
 })

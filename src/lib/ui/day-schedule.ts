@@ -59,7 +59,9 @@ export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown
       next.push(old && old.athleteId == null && entry.athleteId == null ? entry : { ...entry, athleteId: athlete })
     }
     const raw = JSON.stringify({ ...original, entries: [...protectedRows, ...next], acksByAthlete: { ...original.acksByAthlete, [athlete]: s.acks.slice(-200) } })
-    if (box.getItem(SCHEDULE_KEY) !== raw) { if (!commitScheduleRaw(box, raw, writer).ok) return false; if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed')); }
+    const changed = box.getItem(SCHEDULE_KEY) !== raw
+    if (!commitScheduleRaw(box, raw, writer).ok) return false
+    if (changed && typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed'));
     return true;
   } catch { return false }
 }

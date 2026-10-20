@@ -68,7 +68,7 @@ export const BLOCKS = {
     desc: '知识完整包（48 张待审卡/16 来源/16 推理方法）+ 受信签名回执审批（产品受信名单为空=0 批准）+ 正式分析只用已批准卡 + 知识变化后历史回答复核（C03 比较器）',
     files: ['src/lib/coach/knowledge/complete.ts', 'src/lib/coach/knowledge/approval.ts', 'src/lib/coach/knowledge/approval-store.ts', 'src/lib/coach/knowledge/history.ts'],
     entry: 'src/lib/coach/knowledge/complete.ts',
-    tests: ['src/lib/coach/knowledge/complete.test.ts', 'src/lib/coach/knowledge/entry.test.ts', 'src/lib/coach/knowledge/approval.test.ts'],
+    tests: ['src/lib/coach/knowledge/complete.test.ts', 'src/lib/coach/knowledge/entry.test.ts', 'src/lib/coach/knowledge/approval.test.ts', 'src/lib/coach/knowledge/approval-integrity.test.ts', 'src/lib/coach/knowledge/scope.test.ts'],
     forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', '/stated/', 'day-schedule'],
   },
   'coach-online': {

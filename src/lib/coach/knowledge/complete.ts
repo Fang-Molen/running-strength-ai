@@ -36,7 +36,7 @@ export type CompleteKnowledgeUse = {
   missingPrerequisites:string[]; sourceIds:string[]; sourceRefs:{id:string;contentSha256:string;title:string;url:string;readLevel:string;limits:string}[];
   applicationProposal:string; unsupported:string; smallestUsefulQuestion:string; revisitTrigger:string;
   knownAt:string; sourceVerification:'SUPPLIER_REPORTED_NOT_REVERIFIED';
-  prescriptionAuthorized:false; personalEvidence:false; approvalReceiptId:string|null;
+  prescriptionAuthorized:false; personalEvidence:false; approvalReceiptId:string|null; approvalScope?:Readonly<{population:string;note:string;usage?:'GENERAL_EDUCATION'|'PERSONAL_ANALYSIS'}>;
 }
 export type CompleteKnowledgeSelection = {
   version:typeof COMPLETE_KNOWLEDGE_VERSION; mode:CompleteKnowledgeMode;
@@ -67,7 +67,7 @@ export function selectCompleteKnowledge(input:{task:CompleteKnowledgeTask;domain
     .sort((a,b)=>input.cardIds?input.cardIds.indexOf(a.id)-input.cardIds.indexOf(b.id):0)
   result.matched=matching.length
   const ledger=input.ledger===undefined?currentKnowledgeLedger():input.ledger
-  const receiptOf=(c:Card)=>ledgerApproves(ledger,c.id,c.version,cardHash(c.id)??'')
+  const receiptOf=(c:Card)=>ledgerApproves(ledger,c.id,c.version,cardHash(c.id)??'',asOf)
   const eligible=matching.filter(c=>mode==='RESEARCH_PREVIEW'||approvedCardVersions.has(handle(c))||!!receiptOf(c))
   result.held=matching.length-eligible.length
   result.status=mode==='PRODUCTION'?(eligible.length?'APPROVED_BY_TRUSTED_RECEIPT':'NO_APPROVED_KNOWLEDGE'):'RESEARCH_PREVIEW_ONLY'
@@ -82,7 +82,8 @@ export function selectCompleteKnowledge(input:{task:CompleteKnowledgeTask;domain
         return {id:`${COMPLETE_KNOWLEDGE_VERSION}:SOURCE:${id}`,contentSha256:sourceHash(id)!,title:s.title,url:s.url,readLevel:s.read_level,limits:s.limits}
       }),applicationProposal:c.proposed_application,unsupported:c.not_supported,smallestUsefulQuestion:c.smallest_useful_question,
       revisitTrigger:c.revisit_trigger,knownAt:hashes.importedAt,sourceVerification:'SUPPLIER_REPORTED_NOT_REVERIFIED',
-      prescriptionAuthorized:false,personalEvidence:false,approvalReceiptId:mode==='PRODUCTION'?receiptOf(c)?.receiptId??null:null}
+      prescriptionAuthorized:false,personalEvidence:false,approvalReceiptId:mode==='PRODUCTION'?receiptOf(c)?.receiptId??null:null,
+      ...(mode==='PRODUCTION'&&receiptOf(c)?{approvalScope:receiptOf(c)!.scope}:{})}
   })
   return result
 }
@@ -90,8 +91,8 @@ export function selectCompleteKnowledge(input:{task:CompleteKnowledgeTask;domain
 export function completeKnowledgeInventory() {
   return {version:COMPLETE_KNOWLEDGE_VERSION,importedAt:hashes.importedAt,cards:cards.length,sources:sources.length,methods:methods.length,
     domains:domains.map(domain=>({domain,count:cards.filter(c=>c.domain===domain).length})),
-    professionalReview:'PENDING' as const,approvedForProduction:0,developmentCases:50,developmentTrajectories:6,
-    examplesUsedInRuntime:0,independentLiteratureReviewPerformed:false,approvalIngress:'NOT_CONNECTED' as const}
+    professionalReview:'PENDING' as const,approvedForProduction:cards.filter(c=>!!ledgerApproves(currentKnowledgeLedger(),c.id,c.version,cardHash(c.id)??'')).length,developmentCases:50,developmentTrajectories:6,
+    examplesUsedInRuntime:0,independentLiteratureReviewPerformed:false,approvalIngress:'SIGNED_RECEIPTS_ONLY' as const}
 }
 
 const domainTerms:Record<CompleteKnowledgeDomain,RegExp>={
@@ -165,14 +166,31 @@ export function reviewCompleteKnowledgeUses(saved:readonly CompleteKnowledgeUse[
 }
 
 
-/** v87 正式分析入口：只取经受信回执批准的卡（默认 0 张 → 返回 null，回答不变）。
- * 输出进入回答的“依据”段，标明是通用知识、不是个人证据、不授权剂量；uses 随消息保存，用于日后复核。 */
-export function formalKnowledgeSection(question:string,asOf?:string,ledger?:VerifiedKnowledgeLedger|null):{text:string;uses:CompleteKnowledgeUse[]}|null {
-  const q=typeof question==='string'?question.normalize('NFKC').slice(0,2000):''
-  if (!q||isCompleteKnowledgePreviewRequest(q)) return null
-  const selected=completeKnowledgeDomains(q); if (!selected.length) return null
-  const sel=selectCompleteKnowledge({task:'knowledge',domains:selected,mode:'PRODUCTION',asOf,maxRefs:2,...(ledger!==undefined?{ledger}:{})})
-  const uses=sel.uses.filter(u=>u.productionEligible&&u.approvalReceiptId)
-  if (!uses.length) return null
-  return {uses,text:'已审核的通用知识（不是你的个人证据，不授权剂量）：'+uses.map(u=>`${u.cardId} v${u.version}｜${u.title}：${u.applicationProposal}（边界：${u.unsupported}）`).join('；')}
+/** Pre-analysis retrieval. Host supplies purpose, population and verified field
+ * keys. Unknown applicability never becomes approved personal advice. */
+export type KnowledgeAnalysisContext = {
+ purpose:'GENERAL_EDUCATION'|'PERSONAL_ANALYSIS'; population:string|null;
+ task:CompleteKnowledgeTask; verifiedFactKeys:readonly string[];
+}
+export function formalKnowledgeSection(question:string,asOf?:string,ledger?:VerifiedKnowledgeLedger|null,context?:KnowledgeAnalysisContext):{text:string;uses:CompleteKnowledgeUse[]}|null {
+ const q=typeof question==='string'?question.normalize('NFKC').slice(0,2000):''
+ if(!q||!context||isCompleteKnowledgePreviewRequest(q))return null
+ const selected=completeKnowledgeDomains(q);if(!selected.length)return null
+ const sel=selectCompleteKnowledge({task:context.task,domains:selected,mode:'PRODUCTION',asOf,maxRefs:4,declaredFactKeys:context.verifiedFactKeys,...(ledger!==undefined?{ledger}:{})})
+ const uses=sel.uses.filter(u=>{
+  if(!u.productionEligible||!u.approvalReceiptId||!u.approvalScope)return false
+  if(context.purpose==='GENERAL_EDUCATION')return u.approvalScope.usage==='GENERAL_EDUCATION'
+  return u.approvalScope.usage==='PERSONAL_ANALYSIS'&&!!context.population&&u.approvalScope.population===context.population&&u.missingPrerequisites.length===0
+ })
+ if(!uses.length)return null
+ return {uses,text:'已审核的通用知识（不是你的个人证据，不授权剂量）：'+uses.map(u=>`${u.cardId} v${u.version}｜${u.title}：${u.applicationProposal}（边界：${u.unsupported}）`).join('；')}
+}
+/** Answer an explicit general-education request from applicable approved cards
+ * before the generic local answer is generated. Personal review/plan requests
+ * remain on the fact-based host path; no post-hoc knowledge appendix. */
+export function answerApprovedKnowledgeEducation(question:string,asOf?:string){
+ if(!/^(?:请)?(?:解释|介绍|科普|讲解|说明|什么是|如何理解)/.test(question.trim())||/我(?:的|今天|昨天|最近)|帮我|给我安排|怎么练|该不该/.test(question))return null
+ const result=formalKnowledgeSection(question,asOf,undefined,{purpose:'GENERAL_EDUCATION',population:null,task:'knowledge',verifiedFactKeys:[]})
+ if(!result)return null
+ return {text:result.text,uses:result.uses}
 }

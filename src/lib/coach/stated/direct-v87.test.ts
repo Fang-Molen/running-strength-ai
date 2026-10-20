@@ -5,6 +5,7 @@ import { statedDirectAnswer, statedFactsSection, secondsAsMinutes } from './comp
 test('seconds to minutes is exact and bounded', () => {
   assert.equal(secondsAsMinutes(1536), '1536秒 = 25分36秒（25.6分钟）')
   assert.equal(secondsAsMinutes(1500), '1500秒 = 25分0秒（25分钟）')
+  assert.equal(secondsAsMinutes(59.999), '59.999秒 = 1分0秒（1分钟）')
   assert.deepEqual(statedDirectAnswer('1536秒是多少分钟？'), { kind: 'DIRECT_CALCULATION', text: '1536秒 = 25分36秒（25.6分钟）。' })
   assert.match(statedFactsSection('实际时长1530秒，输入单位明确是秒。请换算成分钟，不增加其他判断').text!, /1530秒 = 25分30秒（25\.5分钟）/)
 })
