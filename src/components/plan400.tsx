@@ -1,3 +1,4 @@
+import { sleepHoursText } from "@/lib/health/observation";
 import { stampCN } from "@/lib/ui/activity-format";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, TriangleAlert, X } from "lucide-react";
@@ -152,7 +153,7 @@ const LATER: [keyof Log, string, string][] = [["r24", "24 小时后：恢复1-10
 function SharedSleep({ date }: { date: string }) {
   const [s, setS] = useState<ReturnType<typeof sharedSleepFor>>(null);
   useEffect(() => { try { setS(sharedSleepFor(date, loadVitals().records, currentAthleteId())); } catch { setS(null); } }, [date]);
-  return <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted" data-testid="shared-sleep">{s ? `训练当晚睡眠 ${s.hours} 小时（${s.day} · ${s.source}）。这是健康页的同一条记录，跑步和力量共用，不再重复填。` : "训练当晚的睡眠还没有记录。睡眠在健康页记一次就行，跑步和力量共用同一条。"}</p>;
+  return <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted" data-testid="shared-sleep">{s ? `训练当晚睡眠 ${sleepHoursText(s.hours)}（${s.day} · ${s.source}）。这是健康页的同一条记录，跑步和力量共用，不再重复填。` : "训练当晚的睡眠还没有记录。睡眠在健康页记一次就行，跑步和力量共用同一条。"}</p>;
 }
 
 function Fields({ list, value, onChange }: { list: [keyof Log, string, string][]; value: Log; onChange: (l: Log) => void }) {

@@ -1,3 +1,4 @@
+import { sleepHoursText } from '../health/observation'
 import { currentAthleteId } from "./events.ts"
 import type { ImportCompleteness } from "./import-completeness.ts"
 import { readEnvelope, writeEnvelope } from "./storage.ts"
@@ -260,7 +261,7 @@ export function trainingImportSources(record: TrainingImportDraft | ConfirmedTra
   push("distance", `已确认总距离 ${record.totalDistanceMeters.value} 米`, record.totalDistanceMeters)
   push("rpe", `已确认 RPE ${record.sessionRpe.value}/10`, record.sessionRpe)
   push("recovery", `已确认主观恢复 ${record.subjectiveRecovery.value}/10`, record.subjectiveRecovery)
-  push("sleep", `已确认睡眠 ${record.sleepHours.value} 小时`, record.sleepHours)
+  push("sleep", `已确认睡眠 ${record.sleepHours.value == null ? "未知" : sleepHoursText(record.sleepHours.value)}`, record.sleepHours)
   push("pain", `已确认疼痛 ${record.pain.value?.location ?? ""} ${record.pain.value?.intensity ?? "程度未记录"}`, record.pain)
   push("soreness", `已确认酸痛 ${record.soreness.value?.location ?? ""} ${record.soreness.value?.intensity ?? "程度未记录"}`, record.soreness)
   for (const [index, segment] of record.runningSegments.entries()) {

@@ -1,3 +1,4 @@
+import { sleepHoursText } from '../health/observation'
 import { readEnvelope, writeEnvelope } from "./storage.ts"
 import { loadConfirmedTrainingImports, normalizeConfirmedTrainingImport, type ConfirmedTrainingImport } from "./training-import.ts"
 import type { CoachEvidenceClaim } from "./training-coach.ts"
@@ -107,7 +108,7 @@ export function assessImportedFollowups(record: ConfirmedTrainingImport, now = n
     const elapsed = `${Math.floor(row.elapsedSeconds / 3600)}小时${Math.floor(row.elapsedSeconds % 3600 / 60)}分钟`
     const parts = [`${FOLLOWUP_WINDOW_LABELS[row.window]}：观察时间 ${row.observedAt}，距已确认训练时间 ${elapsed}`]
     if (row.recoveryScore != null) parts.push(`主观恢复 ${row.recoveryScore}/10`)
-    if (row.sleepHours != null) parts.push(`本次反馈睡眠 ${row.sleepHours} 小时`)
+    if (row.sleepHours != null) parts.push(`本次反馈睡眠 ${sleepHoursText(row.sleepHours)}`)
     for (const [name, body] of [["疼痛", row.pain], ["酸痛", row.soreness]] as const) {
       if (body.state === "PRESENT") parts.push(`报告${body.location}${name} ${body.intensity}/10`)
       else if (body.state === "ABSENT") parts.push(`本次明确表示当前没有${name}`)

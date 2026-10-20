@@ -1,3 +1,4 @@
+import { sleepHoursText } from '../health/observation'
 import type { ConfirmedTrainingImport, ImportedRunningSegment } from "./training-import.ts"
 
 export type CoachEvidenceClaim = {
@@ -104,7 +105,7 @@ export function assessImportedTraining(record: ConfirmedTrainingImport): Importe
   const sleep = recorded(record.sleepHours) ? record.sleepHours.value : null
   if (rpe != null) facts.push(claim(`本次已记录 RPE ${rpe}/10。`, [sourceId(record, "rpe")], "FACT"))
   if (recovery != null) facts.push(claim(`本次已记录主观恢复 ${recovery}/10。`, [sourceId(record, "recovery")], "FACT"))
-  if (sleep != null) facts.push(claim(`已记录睡眠 ${sleep} 小时；单次记录不能确定训练表现的原因。`, [sourceId(record, "sleep")], "FACT"))
+  if (sleep != null) facts.push(claim(`已记录睡眠 ${sleepHoursText(sleep)}；单次记录不能确定训练表现的原因。`, [sourceId(record, "sleep")], "FACT"))
   if (recorded(record.pain)) {
     const severity = record.pain.value.intensity == null ? "程度未记录" : `${record.pain.value.intensity}/10`
     observations.push(claim(`已记录${record.pain.value.location}疼痛 ${severity}；这里不作伤病诊断。`, [sourceId(record, "pain")], "OBSERVATION"))

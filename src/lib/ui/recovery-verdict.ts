@@ -1,4 +1,5 @@
 /** 今日恢复一句话结论。只描述“今天的状态”，不评价能力（手册：状态≠能力，一次不判定；数据缺失不推断恢复良好 S-05）。 */
+import { sleepHoursText } from '../health/observation'
 import { RULES } from "./day-schedule-rules.ts"
 export type RecoveryInput = { readiness: number | null; bodyBattery: number | null; sleepH: number | null; sleepBase: number | null; hrv: number | null; hrvBase: number | null; rhr: number | null; rhrBase: number | null; subjective: number | null; stress: number | null; pain?: "none" | "mild" | "sharp" | null }
 export type Verdict = { level: "go" | "watch" | "reduce" | "unknown"; title: string; reasons: string[]; note: string }
@@ -9,7 +10,7 @@ export function recoveryVerdict(i: RecoveryInput): Verdict {
   if (i.bodyBattery != null) (i.bodyBattery < VERDICT_RULES.lowBattery ? soft : good).push(`身体电量 ${i.bodyBattery}`)
   if (i.hrv != null && i.hrvBase) (i.hrv < i.hrvBase * (1 - RULES.hrvDropPct / 100) ? bad : good).push(`HRV ${i.hrv}（平时 ${Math.round(i.hrvBase)}）`)
   if (i.rhr != null && i.rhrBase) (i.rhr >= i.rhrBase + VERDICT_RULES.rhrRise ? soft : good).push(`静息心率 ${i.rhr}（平时 ${Math.round(i.rhrBase)}）`)
-  if (i.sleepH != null && i.sleepBase) (i.sleepH <= i.sleepBase - RULES.sleepWorseHours ? soft : good).push(`睡眠 ${i.sleepH} 小时（平时 ${i.sleepBase.toFixed(1)}）`)
+  if (i.sleepH != null && i.sleepBase) (i.sleepH <= i.sleepBase - RULES.sleepWorseHours ? soft : good).push(`睡眠 ${sleepHoursText(i.sleepH)}（平时 ${i.sleepBase.toFixed(1)}）`)
   // v81：主观恢复统一 1–10（旧 1–5 已在读取时 ×2）。≤4 降强度；5 留意；≥6 正常。
   if (i.subjective != null) (i.subjective <= VERDICT_RULES.lowSubjective ? bad : i.subjective <= VERDICT_RULES.watchSubjective ? soft : good).push(`主观恢复 ${i.subjective}/10`)
   if (i.stress != null && i.stress >= VERDICT_RULES.highStress) soft.push(`压力 ${i.stress}`)

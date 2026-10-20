@@ -43,3 +43,15 @@ test('v87.1: 组合课的旧整课分不复制给分项 → 仍待分项评价',
   const d = (V4.days as V4Day[]).find(x => x.date === '2026-10-19')!
   assert.equal(pendingFeedback([d], { '2026-10-19': { runLinked: true } }, { '2026-10-19': { rpe: '7' } }, T).length, 1)
 })
+
+test('v88.1: 组合课跑步已关联、没填 RPE，但 24h 跑步腿感填了“无” → 不再待补；只填力量酸痛 → 跑步仍待补；48–72h 从不进列表', async () => {
+  const { pendingLabel } = await import('./pending-feedback.ts')
+  const d = (V4.days as V4Day[]).find(x => x.date === '2026-10-19')!
+  const base = { runLinked: true, strengthExec: 'COMPLETED' as const, parts: { strength: { status: 'done' as const, rpe: 3 } } }
+  const a = pendingFeedback([d], { '2026-10-19': base }, {}, T)
+  assert.deepEqual(a.map(i => i.kind), ['rate_run'])
+  assert.equal(pendingLabel(a[0], d.title), '10月19日「速度耐力＋力量A」 跑步：已关联手表·待评价')
+  assert.equal(pendingFeedback([d], { '2026-10-19': { ...base, parts: { ...base.parts, recovery: { runLegs24: '无' } } } as never }, {}, T).length, 0)
+  assert.equal(pendingFeedback([d], { '2026-10-19': { ...base, parts: { ...base.parts, recovery: { strengthSoreness24: '无' } } } as never }, {}, T).length, 1)
+  assert.ok(pendingFeedback([d], { '2026-10-19': { ...base, parts: { ...base.parts, running: { rpe: 4 } } } }, {}, '2026-10-21').every(i => !/48|72/.test(i.text)))
+})

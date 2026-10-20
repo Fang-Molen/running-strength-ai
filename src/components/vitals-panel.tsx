@@ -1,3 +1,4 @@
+import { sleepHoursText } from "@/lib/health/observation";
 import { useEffect, useState } from "react"
 import { historyOf, HRV_METHOD_LABELS, latestOnDay, loadVitals, removeVital, saveVital, trendPoints, VITAL_KINDS, VITAL_LABELS, type HrvMethod, type VitalKind, type VitalRecord, type VitalSource } from "@/lib/nutrition/vitals"
 
@@ -6,7 +7,7 @@ export type ImportHint = { kind: "SLEEP" | "RECOVERY"; value: number; observedOn
 const inputClass = "h-12 w-full min-w-0 max-w-full rounded-card border border-line bg-bg px-3 text-fg outline-none"
 
 function formatValue(record: VitalRecord): string {
-  if (record.kind === "SLEEP") return `${record.value} 小时`
+  if (record.kind === "SLEEP") return sleepHoursText(record.value)
   if (record.kind === "RECOVERY") return `${record.value} / 10`
   if (record.kind === "HRV") return `${record.value} 毫秒`
   return `${record.value} 次/分`
@@ -139,7 +140,7 @@ export function VitalsPanel({ revision, importHints, onSaved }: { revision: numb
       <h3 className="font-bold">已确认训练里的数字</h3>
       <p className="mt-1 text-muted">这些还不是监测记录。只有按下按钮才会另存一条。</p>
       {importHints.map((hint) => <button key={`${hint.kind}-${hint.observedOn ?? "none"}`} type="button" onClick={() => copyHint(hint)} className="mt-2 min-h-12 w-full rounded-card border border-line px-3 text-left font-bold">
-        把{hint.kind === "SLEEP" ? `睡眠 ${hint.value} 小时` : `主观恢复 ${hint.value}/10`}抄成监测记录
+        把{hint.kind === "SLEEP" ? `睡眠 ${sleepHoursText(hint.value)}` : `主观恢复 ${hint.value}/10`}抄成监测记录
       </button>)}
     </div> : null}
     <div className="mt-4 border-t border-line pt-3">

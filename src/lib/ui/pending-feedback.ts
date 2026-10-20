@@ -7,6 +7,8 @@ import { v4DayFact, type DayParts, type V4Day, type V4Log } from './plan400-view
 import type { DayComponents } from './plan400-components-store'
 export type PendingKind = 'confirm_run' | 'rate_run' | 'rate_lift'
 export type PendingItem = { date: string; part: 'running' | 'strength'; kind: PendingKind; text: string; deferred: boolean }
+/** v88.1：首页一行说清是哪天哪节哪一项（不只写“1 项”）。48–72h 恢复补填从不进待补列表。 */
+export function pendingLabel(it: PendingItem, title?: string): string { return `${Number(it.date.slice(5, 7))}月${Number(it.date.slice(8, 10))}日${title ? `「${title}」` : ''} ${it.text}` }
 const fb = (p: DayComponents[keyof DayComponents] | undefined) => {
   const q = p as { status?: string; rpe?: number | null; feel?: string; note?: string; pain?: unknown } | undefined
   return !!q && ((!!q.status && q.status !== 'not_recorded') || q.rpe != null || !!q.feel || !!q.note)
@@ -18,6 +20,9 @@ export const legacyRated = (log: V4Log | undefined) => !!log && LEGACY_FB.some(k
 /** 这一天的这个分项是否已有用户评价（任何保存路径：分项表 / 非组合课整课表）。待补列表与导入弹窗共用这一个判断。 */
 export function partRated(d: V4Day, x: DayParts | undefined, log: V4Log | undefined, part: 'running' | 'strength'): boolean {
   if (fb(x?.parts?.[part])) return true
+  // v88.1（用户 10-20）：在「24–72h」里填过这一项的恢复（跑步腿感 / 力量酸痛，哪怕填“无”）也是给过反馈，不再催
+  const rec = x?.parts?.recovery as Record<string, unknown> | undefined
+  if (rec && (part === 'running' ? ['runLegs24', 'runLegs48'] : ['strengthSoreness24', 'strengthSoreness48']).some(k => String(rec[k] ?? '').trim())) return true
   return !v4DayFact(d, log, x ?? {}).combo && legacyRated(log)
 }
 export function pendingFeedback(days: V4Day[], parts: Record<string, DayParts>, logs: Record<string, V4Log>, today: string, prompted: string[] = [], windowDays = 14, movedOriginalDates: ReadonlySet<string> = new Set()): PendingItem[] {

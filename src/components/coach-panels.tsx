@@ -1,3 +1,4 @@
+import { sleepHoursText } from "@/lib/health/observation";
 import { useState } from "react"
 import type { AbilityRow, SessionView, Tone } from "@/lib/core/coach-view"
 import { inboxCopy } from "@/lib/core/brain-loop"
@@ -80,7 +81,7 @@ export function TodayState({
         <p className="mt-1">规则带 {recovery} · 规则分 {fatigue == null ? "未记录" : fatigue}。来源是教练记忆里已有的反馈，时间以那些记录为准。</p>
       )}
       {uncalibrated && fatigue === 20 ? <p className="mt-1">默认疲劳 20 不是已记录的恢复正常，也不代表今天状态良好。</p> : null}
-      <p className="text-muted">睡眠 {sleep == null ? "未记录" : `${sleep} 小时`} · 笔记疼痛 {painNoted ? "出现过，不代表伤情结论" : "未见"} · 整课 RPE {sessionRpe == null ? "未记录" : sessionRpe}</p>
+      <p className="text-muted">睡眠 {sleep == null ? "未记录" : sleepHoursText(sleep)} · 笔记疼痛 {painNoted ? "出现过，不代表伤情结论" : "未见"} · 整课 RPE {sessionRpe == null ? "未记录" : sessionRpe}</p>
       <p className="text-muted">整课 RPE 不等于这个规则分，也不等于某一组的用力。本次表现 {usable}</p>
     </section>
   )

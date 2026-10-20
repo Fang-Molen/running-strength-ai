@@ -1,3 +1,4 @@
+import { sleepHoursText } from '../health/observation'
 import { statedFactsSection, statedDirectAnswer } from '../coach/stated/compose.ts'
 import { answerFromAppData } from "../health/coach-data"
 import { compileC03MetricBrief, type C03MetricBrief } from '../coach/c03/evidence.ts'
@@ -246,7 +247,7 @@ function legacyAnswerLocally(brief: CoachBrief): LocalCoachAnswer {
     text += " 已有疼痛或安全限制：不建议在此基础上自动加量，必要时咨询运动医学专业人员。";
   const facts = [
     brief.sessionRpe != null ? `本次 RPE ${brief.sessionRpe}/10` : null,
-    brief.sleepHours != null ? `睡眠 ${brief.sleepHours} 小时` : null,
+    brief.sleepHours != null ? `睡眠 ${sleepHoursText(brief.sleepHours)}` : null,
     brief.subjectiveRecovery != null ? `主观恢复 ${brief.subjectiveRecovery}/10` : null,
     brief.completedSetCount != null && brief.plannedSetCount != null
       ? `力量完成组 ${brief.completedSetCount}/${brief.plannedSetCount}`

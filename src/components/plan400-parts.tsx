@@ -5,7 +5,7 @@ import { loadComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, 
 import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } from "@/lib/ui/run-link"
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
 import type { DayParts, V4Day, V4Log } from "@/lib/ui/plan400-view"
-import { pendingFeedback, partRated, type PendingItem } from "@/lib/ui/pending-feedback"
+import { pendingFeedback, partRated, pendingLabel, type PendingItem } from "@/lib/ui/pending-feedback"
 import { loadSchedule } from "@/lib/ui/day-schedule"
 import { v4MovedOut } from "@/lib/ui/v4-effective-move"
 import V4Json from "../lib/plan400-v4.json" with { type: "json" }
@@ -171,7 +171,8 @@ export function PendingFeedbackList({ today, compact = false }: { today: string;
   const items = today ? pendingFeedback((V4Json as { days: V4Day[] }).days, parts, logs, today, prompted, 14, movedDates) : []
   if (!items.length) return null
   const open = (it: PendingItem) => window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: it.date, tab: it.kind === "confirm_run" ? "during" : "after" } }))
-  if (compact) return <button type="button" className="mt-1 min-h-11 text-sm text-warn" data-testid="pending-feedback-compact" onClick={() => open(items[0])}>待补反馈 {items.length} 项 ›</button>
+  const titleOf = (d: string) => (V4Json as { days: V4Day[] }).days.find(x => x.date === d)?.title
+  if (compact) return <button type="button" className="mt-1 min-h-11 text-left text-sm text-warn" data-testid="pending-feedback-compact" onClick={() => open(items[0])}>待补反馈：{pendingLabel(items[0], titleOf(items[0].date))}{items.length > 1 ? ` 等 ${items.length} 项` : ""} · 去评价 ›</button>
   return <section className="home-card mb-3 p-3" aria-label="待补反馈" data-testid="pending-feedback">
     <p className="text-sm font-bold">待补反馈 · {items.length} 项</p>
     <ul className="mt-1 divide-y divide-line">{items.map(it => <li key={`${it.date}|${it.kind}`}><button type="button" className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm" onClick={() => open(it)}><span className="min-w-0"><b>{Number(it.date.slice(5, 7))}月{Number(it.date.slice(8, 10))}日</b> {it.text}{it.deferred ? <span className="text-xs text-muted">（你点过稍后）</span> : null}</span><span className="shrink-0 text-accent">去补 ›</span></button></li>)}</ul>

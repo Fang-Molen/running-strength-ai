@@ -20,6 +20,8 @@ export function validObservation(v: Observation | undefined): boolean {
 export function revisedObservation(next: Observation, old: {value:number; observation?:Observation} | undefined, value:number): Observation {
   return {...next, previous:[...(old?.observation?.previous??[]), ...(old && old.value!==value ? [{value:old.value,syncedAt:old.observation?.syncedAt??''}] : [])]}
 }
+/** v88.1：睡眠时长唯一文字格式。最多一位小数的原样（“7.5 小时”）；同步来的长小数（5.783333…）换成“5小时47分”。 */
+export function sleepHoursText(h:number):string { return Number.isInteger(Math.round(h*1000)/100) ? `${h} 小时` : valueText('SLEEP',h) }
 export function valueText(metric:string,value:number):string {
   if(metric==='SLEEP') { const mins=Math.round(value*60); return `${Math.floor(mins/60)}小时${mins%60}分` }
   return `${Math.round(value*100)/100}${({HRV:' ms',RHR:' 次/分',NIGHT_HR:' 次/分',RECOVERY:' /10',WEIGHT:' kg',BODY_BATTERY:' /100',READINESS:' /100',STRESS:' /100',STEPS:' 步',SPO2:'%',RESP:' 次/分'} as Record<string,string>)[metric]??''}`

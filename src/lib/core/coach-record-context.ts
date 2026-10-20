@@ -1,3 +1,4 @@
+import { sleepHoursText } from '../health/observation'
 import type { CoachBrief } from "./coach-brief.ts"
 
 /** Only restates existing, provenance-backed facts. No diagnosis, completeness assumption, or plan changes. */
@@ -12,7 +13,7 @@ export function answerFromRecordedContext(brief: CoachBrief): string | null {
     else {
       lines.push(`已关联训练编号：${brief.occurrenceId}。`)
       if (brief.sessionRpe !== null) lines.push(`本次记录 RPE ${brief.sessionRpe}/10。`)
-      if (brief.sleepHours !== null) lines.push(`本次绑定睡眠 ${brief.sleepHours} 小时。`)
+      if (brief.sleepHours !== null) lines.push(`本次绑定睡眠 ${sleepHoursText(brief.sleepHours)}。`)
       if (brief.subjectiveRecovery != null) lines.push(`本次绑定主观恢复 ${brief.subjectiveRecovery}/10。`)
       if (brief.plannedSetCount != null && brief.completedSetCount != null) lines.push(`力量组数：已完成 ${brief.completedSetCount}/${brief.plannedSetCount}。`)
       if (lines.length === 1) lines.push("本次可引用的量化数据不足。")
