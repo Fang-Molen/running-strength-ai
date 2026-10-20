@@ -546,3 +546,19 @@ body { min-height: 100dvh; background: #0b0b0d; }
 .product-ui .ui03-header { background: rgba(11, 11, 13, .72) !important; -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-bottom: .5px solid rgba(255, 255, 255, .06); }
 .product-ui .ui03-dock { background: rgba(11, 11, 13, .72) !important; -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-top: .5px solid rgba(255, 255, 255, .08) !important; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .product-ui .ui03-header, .product-ui .ui03-dock { background: rgba(11, 11, 13, .96) !important; } }
+/* v88.5 顶部单一安全区来源：只有半透明顶栏自己用 env(safe-area-inset-top)，紧贴状态栏下沿（+2px），顶栏更矮；
+   内容从 y=0 开始在顶栏下面滚过（顶栏 sticky 于 0，背景延伸到状态栏后面）。 */
+.product-ui .ui03-header { padding-top: calc(env(safe-area-inset-top) + 2px) !important; padding-bottom: 2px !important; background: rgba(11, 11, 13, .6) !important; -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); }
+.product-ui .ui03-header-inner { min-height: 44px !important; }
+.product-ui .ui03-dock { background: rgba(11, 11, 13, .6) !important; -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); }
+/* 方坤对话页：顶栏 + 三段切换叠在对话区上面（半透明），消息从顶部一直滚到状态栏后面；高度由 JS 量出（--fk-head-h / --fk-coach-bar-h） */
+.fk-coach-shell { position: fixed; }
+.fk-coach-shell > .ui03-header { position: absolute !important; inset-inline: 0; top: 0; z-index: 31; }
+.product-ui .ui03-header.fk-coach-head .ui03-header-inner { min-height: 38px !important; }
+.app-wallpaper.product-ui .ui03-header.fk-coach-head .ui03-title { font-size: 17px; }
+.fk-coach-shell .fk-coach-sheet .fk-coach-bar { position: absolute; inset-inline: 0; top: var(--fk-head-h, 0px); z-index: 30; padding: 2px 12px 6px; background: rgba(11, 11, 13, .6); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); }
+.fk-coach-shell [data-testid="coach-messages"] { padding-top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px) + 8px) !important; scroll-padding-top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px)); }
+.fk-coach-shell > header ~ p, .fk-coach-shell .fk-coach-sheet > .mx-4.mb-2 { position: absolute; inset-inline: 0; top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px)); z-index: 29; margin: 0; padding: 4px 16px; background: rgba(11, 11, 13, .85); }
+.product-ui .ui03-header.fk-coach-head button.size-11 { width: 2.25rem; height: 2.25rem; }
+.fk-coach-shell .fk-coach-sheet .fk-coach-bar { padding: 0 12px 4px; }
+.fk-coach-shell .fk-coach-bar > span.size-9 { width: 2rem; height: 2rem; }

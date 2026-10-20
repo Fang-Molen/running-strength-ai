@@ -222,6 +222,17 @@ export function StrengthApp() {
     return () => { unsubscribe(); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); };
   }, []);
   const openScheduled = (entry: ScheduleEntry) => { setCalendar(loadSchedule().entries); setTimerPicker(false); setExecutionEntryId(entry.id); };
+  // v88.5：量顶栏/方坤切换栏高度给 CSS（内容在半透明顶栏下滚动时留出位置）。
+  useEffect(() => {
+    const root = document.documentElement, ro = new ResizeObserver(() => {
+      const h = document.querySelector<HTMLElement>(".ui03-header"), b = document.querySelector<HTMLElement>(".fk-coach-shell .fk-coach-bar");
+      root.style.setProperty("--fk-head-h", `${Math.round(h?.getBoundingClientRect().height ?? 0)}px`);
+      root.style.setProperty("--fk-coach-bar-h", `${Math.round(b?.getBoundingClientRect().height ?? 0)}px`);
+    });
+    const watch = () => { ro.disconnect(); document.querySelectorAll<HTMLElement>(".ui03-header, .fk-coach-shell .fk-coach-bar").forEach(e => ro.observe(e)); };
+    watch(); const t = setTimeout(watch, 300);
+    return () => { clearTimeout(t); ro.disconnect(); };
+  }, [tab]);
   useEffect(() => { const h = () => { setTab("body"); setTimeout(() => document.getElementById("fk-intraday")?.scrollIntoView({ block: "start", behavior: "smooth" }), 120); }; window.addEventListener("fk-open-intraday", h); return () => window.removeEventListener("fk-open-intraday", h); }, []);
   useEffect(() => { const h = (ev: Event) => { const id = (ev as CustomEvent<string>).detail; const all = loadSchedule().entries; if (all.some(e => e.id === id)) { setCalendar(all); setTimerPicker(false); setExecutionEntryId(id); } }; window.addEventListener("fk-open-scheduled", h); return () => window.removeEventListener("fk-open-scheduled", h); }, []);
   const resumeSession = (id: string) => {
