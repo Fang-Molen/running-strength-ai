@@ -5,6 +5,7 @@ import {loadHealthSnapshot} from '../health/snapshot.ts'
 import {loadCheckins,readArray,recoveryText} from '../health/legacy-inputs.ts'
 import {localDay,shiftDay,validDay,shortHash} from '../health/observation.ts'
 import {quantifyRecoverySnapshot,type RecoveryQuantification} from '../health/recovery-quantitative.ts'
+import {readRestHistory,restContextLines} from '../health/rest-store.ts'
 
 export type RecoveryContext={
  scope:'DAY_CONTEXT';athleteId:string;day:string;asOf:string;sourceId:string;
@@ -39,6 +40,12 @@ export function readRecoveryContext(athleteId:string,day:string|null,asOf:string
  const signatures=new Set(checkins.map(c=>JSON.stringify([c.fatigue??null,c.pain??null,c.recovery??null])))
  const ci=signatures.size===1?checkins.at(-1):null
  const subjective:string[]=[],missing=[...quantitative.missing]
+ // U01->V88: self-reported naps/quiet rest are separate events, never silently added
+ // to overnight sleep or interpreted as device-measured recovery.
+ const rest=readRestHistory(undefined,Date.parse(asOf))
+ const restRows=rest.state==='AVAILABLE' ? rest.selection?.records.filter(r=>r.contextDay===day)??[] : []
+ if(rest.state==='CORRUPT')missing.push('独立休息记录有冲突或读取失败，未用于推断恢复')
+ if(restRows.length)subjective.push(...restContextLines(day,Date.parse(asOf)))
  if(signatures.size>1)missing.push('当天主观反馈存在冲突，未任取一条')
  if(ci?.fatigue)subjective.push(`当天自报感受：${{fresh:'轻松',ok:'一般',tired:'很累'}[ci.fatigue]}`)
  if(ci?.recovery!==undefined&&recoveryText(ci))subjective.push(`当天自报恢复 ${recoveryText(ci)}`)
@@ -61,8 +68,8 @@ export function readRecoveryContext(athleteId:string,day:string|null,asOf:string
  const safetyHold=checkins.some(c=>c.pain==='mild'||c.pain==='sharp')||safetyNotes.length>0
  const sourceId=`health-context:${shortHash(athleteId)}:${day}`
  const points=snapshot.metrics.flatMap(m=>[...m.series,...m.candidates,...(m.current?[m.current]:[])])
- const times=[...points.filter(p=>quantitative.sourceIds.includes(p.id)&&time(p.updatedAt)&&Date.parse(p.updatedAt)<=Date.parse(asOf)).map(p=>p.updatedAt),...(ci?[ci.at]:[])]
- const signature=JSON.stringify({scope:'DAY_CONTEXT',athleteId,day,quantitative:quantitative.revision,checkin:ci??null,checkinConflict:signatures.size>1})
+ const times=[...points.filter(p=>quantitative.sourceIds.includes(p.id)&&time(p.updatedAt)&&Date.parse(p.updatedAt)<=Date.parse(asOf)).map(p=>p.updatedAt),...(ci?[ci.at]:[]),...restRows.map(r=>new Date(r.knownAt).toISOString())]
+ const signature=JSON.stringify({scope:'DAY_CONTEXT',athleteId,day,quantitative:quantitative.revision,checkin:ci??null,checkinConflict:signatures.size>1,rest:restRows.map(r=>[r.originEventId,r.revision,r.knownAt,r.kind,r.duration])})
  const dependency:EvidenceDependency|null=!snapshot.unreadable&&times.length&&(quantitative.facts.length||subjective.length)?{
   id:sourceId,sourceId,occurrenceId:`health-day:${day}`,signature,eventAt:new Date(`${day}T00:00:00`).toISOString(),recordedAt:times.sort((a,b)=>Date.parse(a)-Date.parse(b)).at(-1)!,
  }:null

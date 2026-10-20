@@ -71,6 +71,20 @@ export const BLOCKS = {
     tests: ['src/lib/coach/knowledge/complete.test.ts', 'src/lib/coach/knowledge/entry.test.ts', 'src/lib/coach/knowledge/approval.test.ts', 'src/lib/coach/knowledge/approval-integrity.test.ts', 'src/lib/coach/knowledge/scope.test.ts'],
     forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', '/stated/', 'day-schedule'],
   },
+  'health-rest': {
+    desc: 'U01 无手表午睡/安静休息：独立追加式记录、版本更正、身份隔离、失败重试；不并入夜间睡眠；本地教练恢复上下文按知晓时间读取（不上传联网模型）',
+    files: ['src/lib/health/rest-store.ts', 'src/lib/health/intraday/sleep.ts', 'src/lib/health/intraday/common.ts'],
+    entry: 'src/lib/health/rest-store.ts',
+    tests: ['src/lib/health/rest-v88.test.ts', 'src/lib/core/coach-recovery-rest-v88.test.ts', 'src/lib/ui/recovery-verdict.test.ts'],
+    forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule', 'schedule-writer'],
+  },
+  'u07-u08-readonly': {
+    desc: 'U07 日内指标口径/时效只读投影（无连续样本不画曲线）+ U08 结构化证据只读审查（复用签名知识审批，不接线上模型、不改处方）',
+    files: ['src/lib/core/u07-pilot.ts', 'src/lib/health/u07-v88-host.ts', 'src/lib/core/coach-u08-audit.ts'],
+    entry: 'src/lib/health/u07-v88-host.ts',
+    tests: ['src/lib/core/u07-pilot.test.ts', 'src/lib/health/u07-v88-host.test.ts', 'src/lib/core/coach-u08-audit.test.ts'],
+    forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule', 'schedule-writer'],
+  },
   'health-stats': {
     desc: 'U09 个人统计（只读）：同协议可比序列、描述统计/趋势/留出回测，健康页折叠卡与方坤事实行；不给训练许可、不改课表',
     files: ['src/lib/core/personal-uncertainty.ts', 'src/lib/core/personal-forecast-decision-bridge.ts', 'src/lib/health/personal-statistics-adapter.ts', 'src/lib/health/personal-statistics-view.ts', 'src/lib/health/personal-stats-host.ts'],
