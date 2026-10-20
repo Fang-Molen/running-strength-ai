@@ -142,7 +142,7 @@ export function HomeEditor({ layout, onChange, onClose }: { layout: Layout; onCh
   const up = (l: Layout) => { saveLayout(l); onChange(l); setStamp(Date.now()) }
   const name = Object.fromEntries(HOME_CARDS) as Record<CardId, string>
   return <div className="fixed inset-0 z-40 flex items-end bg-black/30 md:items-center" onClick={onClose}>
-    <section role="dialog" aria-label="编辑首页" onClick={(e) => e.stopPropagation()} className="mx-auto max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-bg p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:rounded-3xl">
+    <section role="dialog" aria-label="编辑首页" onClick={(e) => e.stopPropagation()} className="mx-auto max-h-[85dvh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-bg p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:rounded-3xl">
       <div className="flex items-center justify-between"><h2 className="text-lg font-bold">编辑首页</h2><SavedBadge stamp={stamp} /><button type="button" aria-label="关闭" onClick={onClose} className="grid size-10 place-items-center"><X className="size-5" /></button></div>
       <p className="text-xs text-muted">改动当场生效。“本周训练”是首页主体，不能隐藏。</p>
       <ul className="mt-2 divide-y divide-line rounded-2xl bg-surface px-3">{layout.order.map((id, i) => <li key={id} className="flex min-h-12 items-center gap-2">
@@ -346,7 +346,7 @@ export function SettingsHub({ onProfile, onDiet, onBackup, only, initialOpen = n
 export function HealthLinkSheet({ text, onClose }: { text: string; onClose: (saved: boolean) => void }) {
   const r = useMemo(() => parseHealthParam(text), [text])
   const [msg, setMsg] = useState("")
-  return <div className="fixed inset-0 z-40 flex items-end bg-black/30 md:items-center"><section role="dialog" aria-label="来自快捷指令的健康数据" className="mx-auto max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-bg p-4 md:rounded-3xl">
+  return <div className="fixed inset-0 z-40 flex items-end bg-black/30 md:items-center"><section role="dialog" aria-label="来自快捷指令的健康数据" className="mx-auto max-h-[85dvh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-bg p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:rounded-3xl">
     <h2 className="text-lg font-bold">来自快捷指令的健康数据</h2><p className="text-xs text-muted">核对后保存；同一天同一指标已存在的会跳过。</p>
     <div className="mt-2 overflow-x-auto"><table className="fk-table text-xs"><thead><tr><th>指标</th><th>日期</th><th>数值</th></tr></thead><tbody>{r.rows.slice(0, 60).map((x) => <tr key={x.key}><td>{x.metric}</td><td>{x.day}</td><td>{x.value}</td></tr>)}</tbody></table></div>
     {r.errors.length ? <p className="mt-1 text-xs text-[var(--color-risk)]">{r.errors.length} 行无法识别，已忽略。</p> : null}

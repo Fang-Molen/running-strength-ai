@@ -4,7 +4,7 @@
 .fk4 button,.fk4 input,.fk4 select{font:inherit}
 .fk4 button{color:inherit;cursor:pointer;background:transparent;border:0}
 .fk4 button:focus-visible,.fk4 input:focus-visible,.fk4 select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.fk4 .app-shell{max-width:1180px;margin:0 auto;min-height:100vh;padding:0 28px 120px}
+.fk4 .app-shell{max-width:1180px;margin:0 auto;min-height:100vh;min-height:100dvh;padding:0 28px 120px}
 .fk4 .topline{display:flex;justify-content:space-between;align-items:center;padding:25px 0 20px;border-bottom:1px solid #313338;gap:16px}
 .fk4 .brand{display:flex;gap:13px;align-items:center}
 .fk4 .brand-mark{width:36px;height:36px;border:1px solid #686763;display:grid;place-items:center;border-radius:10px;font-weight:900;font-size:19px;letter-spacing:-.08em;color:var(--accent)}

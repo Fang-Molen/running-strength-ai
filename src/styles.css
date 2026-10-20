@@ -540,3 +540,9 @@ html, body { background: #0b0b0d; }
 /* 输入时（键盘弹出）收起状态和快捷问题这一行；状态面板展开时保留 */
 .fk-kb .fk-coach-quick, .fk-kb .fk-coach-dock:not(:has(.fk-coach-status[open])) { display: none; }
 @media (min-width: 768px) { .fk-coach-sheet { width: 100%; max-width: 48rem; margin-inline: auto; } }
+/* v88.4 全屏沉浸（类 ChatGPT iOS）：背景铺满状态栏/Home 条；顶栏、底栏半透明毛玻璃，内容从下面滚过；安全区由 env() 统一提供 */
+html { background: #0b0b0d; min-height: 100%; }
+body { min-height: 100dvh; background: #0b0b0d; }
+.product-ui .ui03-header { background: rgba(11, 11, 13, .72) !important; -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-bottom: .5px solid rgba(255, 255, 255, .06); }
+.product-ui .ui03-dock { background: rgba(11, 11, 13, .72) !important; -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-top: .5px solid rgba(255, 255, 255, .08) !important; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .product-ui .ui03-header, .product-ui .ui03-dock { background: rgba(11, 11, 13, .96) !important; } }

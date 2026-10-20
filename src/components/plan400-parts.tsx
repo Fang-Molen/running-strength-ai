@@ -135,7 +135,7 @@ export function RunImportPrompt({ today }: { today: string }) {
   if (open.kind === "cand") {
     const c = planVsActual(open.entry, open.run)
     return <div className="fixed inset-0 z-[60] flex items-end bg-black/50" role="dialog" aria-label="同日手表跑步待确认" data-testid="run-candidate-prompt">
-      <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-bg p-4">
+      <div className="max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl bg-bg p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <p className="font-bold">这条手表跑步是 {date.slice(5)}「{open.entry.title}」的跑步部分吗？</p>
         <p className="keep text-xs text-muted">{run.title || "跑步"} · {hm(run.startedAt)} · 实际 {c.actual}{open.basis ? `。依据：${open.basis}` : ""}。确认前不算关联、不算跑步完成。</p>
         <div className="mt-3 grid gap-2">
@@ -148,7 +148,7 @@ export function RunImportPrompt({ today }: { today: string }) {
   }
   const c = planVsActual(open.l.entry, open.l.run)
   return <div className="fixed inset-0 z-[60] flex items-end bg-black/50" role="dialog" aria-label="手表跑步已导入" data-testid="run-import-prompt">
-    <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-bg p-4">
+    <div className="max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl bg-bg p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <p className="font-bold">佳明跑步已关联到 {date.slice(5)}「{open.l.entry.title}」</p>
       <p className="keep text-xs text-muted">实际 {c.actual}。只关联跑步部分；力量部分不会因此算完成。</p>
       {fill ? <><PartFeedbackForm date={date} part="running" name="跑步" /><button type="button" className="mt-2 min-h-11 w-full rounded-xl border border-line font-bold" onClick={later}>完成</button></> :

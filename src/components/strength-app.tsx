@@ -543,7 +543,7 @@ export function StrengthApp() {
 
 
   return (
-    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-screen")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
+    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-dvh")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
       <header className={"ui03-header px-4 pt-1 pb-1" + (tab === "coach" ? " fk-coach-head" : "")}>
         <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
