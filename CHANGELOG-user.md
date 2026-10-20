@@ -2,6 +2,7 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-19 | v85.1：修复“说明小字一律隐藏”误伤状态提示——操作结果/状态（role=status、role=alert）不再隐藏；方坤复盘页的“长期跟进”空状态、改课面板的归属/读取截止/不能解除医疗限制说明、普通计时器“正计时/倒计时”、组间休息计划值与实际记录、佳明同步失败的处理提示现在可见；其余说明小字仍按 10-16 要求隐藏；sw → v85-1 | 用户批准 v85.1；v85 截图发现这些提示 display:none | styles.css, coach-c03-followup-panel.tsx, coach-plan-change-panel.tsx, scheduled-training.tsx, rest-timer.tsx, settings-center.tsx, qa/c03-review-ui.mjs, sw.js |
 | 2026-10-19 | v85：合入 Codex C03/R14 包（按差异三方合并到 v84）。方坤“复盘”页新增两块折叠区：长期跟进（复盘判断可查看、可撤回，原训练记录不变）和调整安排与回执（只显示日期差异；**改课确认/撤销仍阻断**，宿主固定 UNCOORDINATED）；明确说“复盘/分析本次/为何掉速”并选中课次时，本地方坤给出事实、两种限定解释、反证和下次观察 | Codex C03/R14 包；用户 10-19 “上线v85” | coach-local-first.ts, lib/coach/c03/*, lib/coach/plan-execution/*, coach-sheet.tsx |
 | 2026-10-19 | v85：同一天正在做力量引导或已有逐组执行时，旧“整课完成”不再盖过“进行中”；新记录写明归属，旧无归属记录仍属本机、可照常修改；联网方坤保持默认开，问题超过 1000 字不发送 | C03/R14 HOST-01/03 | plan400-view.ts, ownership.ts, day-schedule.ts, plan400-components-store.ts, online-coach.ts |
 | 2026-10-19 | v85：代码按区块划分（docs/modules.md、scripts/blocks.mjs），可 npm run test:block:<区块> 单独复测；sw 缓存 fr255-shell-v85 | 用户 10-19 要求按区块改、按区块测 | docs/modules.md, scripts/*, public/sw.js |

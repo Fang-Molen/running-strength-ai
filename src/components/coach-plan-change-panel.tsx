@@ -58,7 +58,7 @@ export function CoachPlanChangePanel({ revision }: { revision: number | string }
   return <details className="mt-3 rounded-card border border-line bg-surface p-3">
     <summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">调整安排与回执（待核对）</summary>
     <p className="mt-2 text-sm text-muted">尚无法可靠核对完整安排与最新状态，尚未修改。这里只核对一个未开始分项的日期差异，原课表和实际训练记录保留。</p>
-    <p className="mt-2 text-xs text-muted">仅使用当前本机档案的记录。一次确认只对应这一份差异，不代表开始或完成训练，也不能解除医疗限制。</p>
+    <p className="keep mt-2 text-xs text-muted" data-keep="plan-change">仅使用当前本机档案的记录。一次确认只对应这一份差异，不代表开始或完成训练，也不能解除医疗限制。</p>
     <div className="mt-3 grid gap-3">
       <label className="min-w-0 text-sm">选择日程分项
         <select aria-label="待调整的日程分项" className="mt-1 min-h-12 w-full rounded-card border border-line bg-bg px-2" value={selected} disabled={busy || !current} onChange={e => { setSelected(e.target.value); setMessage('') }}>
@@ -75,12 +75,12 @@ export function CoachPlanChangePanel({ revision }: { revision: number | string }
     </div>
     {message ? <p role="status" className="mt-3 break-words text-sm">{message}</p> : null}
     {current ? <>
-      <p className="mt-3 text-xs text-muted">读取截止：{current.asOf}。已明确归属的日程 {current.coverage.ownedEntries} 条，不等于实际完成课次；完整安排仍待核对。</p>
-      {current.coverage.unattributedEntries ? <p className="mt-2 text-xs text-muted">另有 {current.coverage.unattributedEntries} 条旧记录尚未确认归属，未自动加入本机档案。</p> : null}
-      {current.choices.filter(row => row.reason).map(row => <p key={`reason:${row.key}`} className="mt-2 text-xs text-muted">{row.title}：{row.identityResolved ? '已有开始、完成或不明执行状态，不能按未开始分项移动。' : '尚不能可靠定位到单独分项，请先核对原训练安排。'}</p>)}
-    </> : <p className="mt-3 text-xs text-muted">尚无法核对当前本机档案与记录归属，旧记录不会自动认领为本人。</p>}
+      <p className="keep mt-3 text-xs text-muted" data-keep="plan-change">读取截止：{current.asOf}。已明确归属的日程 {current.coverage.ownedEntries} 条，不等于实际完成课次；完整安排仍待核对。</p>
+      {current.coverage.unattributedEntries ? <p className="keep mt-2 text-xs text-muted" data-keep="plan-change">另有 {current.coverage.unattributedEntries} 条旧记录尚未确认归属，未自动加入本机档案。</p> : null}
+      {current.choices.filter(row => row.reason).map(row => <p key={`reason:${row.key}`} className="keep mt-2 text-xs text-muted" data-keep="plan-change">{row.title}：{row.identityResolved ? '已有开始、完成或不明执行状态，不能按未开始分项移动。' : '尚不能可靠定位到单独分项，请先核对原训练安排。'}</p>)}
+    </> : <p className="keep mt-3 text-xs text-muted" data-keep="plan-change">尚无法核对当前本机档案与记录归属，旧记录不会自动认领为本人。</p>}
     <details className="mt-3"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">本机待确认提案（{pending.length}）</summary>
-      {pending.length ? pending.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-sm"><p>{row.move.fromDate} → {row.move.toDate}，仅这一分项。</p><p className="mt-1 text-xs text-muted">尚未生效；仍需核对完整安排与最新状态。有效至 {row.expiresAt}</p><button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => confirm(row)}>确认这次调整（暂不可提交）</button></div>) : <p className="text-sm text-muted">没有已核实可展示的待确认提案；暂时无法读取时会提示刷新核对。</p>}
+      {pending.length ? pending.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-sm"><p>{row.move.fromDate} → {row.move.toDate}，仅这一分项。</p><p className="keep mt-1 text-xs text-muted" data-keep="plan-change">尚未生效；仍需核对完整安排与最新状态。有效至 {row.expiresAt}</p><button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => confirm(row)}>确认这次调整（暂不可提交）</button></div>) : <p className="text-sm text-muted">没有已核实可展示的待确认提案；暂时无法读取时会提示刷新核对。</p>}
     </details>
     <details className="mt-3"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">本机调整记录与撤销（{receipts.length}）</summary>
       {receipts.map(row => <div key={row.id} className="mt-2 rounded-card bg-bg p-2 text-xs"><p>{row.appliedAt} · {row.kind === 'UNDO' ? '撤销修订' : '日期修订'} · {row.move.fromDate} → {row.move.toDate}</p><p className="mt-1 text-muted">仅本机回执，未声明云端同步；训练实际记录不变。</p>{row.kind === 'MOVE' ? <button type="button" className={`${button} mt-2`} disabled={busy} onClick={() => undo(row)}>明确撤销这次调整（当前受阻）</button> : null}</div>)}

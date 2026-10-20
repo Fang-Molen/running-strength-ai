@@ -107,7 +107,7 @@ export function SyncStatusPanel({ conn }: { conn: GarminConnState }) {
     <details id="sync-report" className="mt-3 rounded-xl bg-surface-2 p-3" open={bad} data-testid="sync-report">
       <summary className="min-h-10 cursor-pointer font-bold">同步报告{g.errors.length ? `（${g.errors.length} 项未完成）` : ""}</summary>
       {g.errors.length ? <ul className="mt-1 list-disc space-y-1 pl-5 text-xs">{g.errors.slice(0, 4).map((e, i) => <li key={i}>{e.message}</li>)}{g.errors.length > 4 ? <li className="text-muted">另有 {g.errors.length - 4} 项{(() => { const c = [...new Set(g.errors.map((e) => /HTTP \d+/.exec(e.message)?.[0] ?? "其他"))]; return c.length === 1 && c[0] !== "其他" ? `，均为 ${c[0]}（佳明服务暂不可用时常见，稍后重试）` : ""; })()}</li> : null}</ul> : <p className="mt-1 text-xs text-muted">{g.status === "never" ? "还没有同步记录。" : "最近一次没有报告缺失项。"}</p>}
-      {bad ? <p className="mt-2 text-xs text-muted">处理：{g.status === "auth" ? "在下方重新登录佳明后再同步。" : "已保存的数据不受影响；缺失项可稍后重试同步，或用「数据导入」补文件。未收到的数据不会记成 0 或“无训练”。"}</p> : null}
+      {bad ? <p role="status" className="mt-2 text-xs text-muted">处理：{g.status === "auth" ? "在下方重新登录佳明后再同步。" : "已保存的数据不受影响；缺失项可稍后重试同步，或用「数据导入」补文件。未收到的数据不会记成 0 或“无训练”。"}</p> : null}
     </details>
     <p className="mt-2 text-xs text-muted">{AUTO_SYNC_RULE}</p>
     <p className="mt-1 text-xs text-muted">健康数据按页面所在时区取最近 14 个日历日；身体电量为当日最高值，HRV 为昨夜平均，都不是实时值。</p>

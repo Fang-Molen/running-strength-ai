@@ -385,8 +385,11 @@ textarea {
 .fk-risk-head { display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--color-risk); margin-bottom: 4px; }
 @media (min-width: 900px) { .fk-two-col { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: start; } }
 
-/* 用户要求：隐藏全站说明小字（状态值加 .keep 保留） */
-.product-ui p.text-xs.text-muted:not(.keep), .product-ui p[class*="text-[10px]"]:not(.keep), .product-ui p[class*="text-[11px]"]:not(.keep) { display: none; }
+/* 用户要求（2026-10-16）：隐藏全站说明小字，只留状态值。状态值加 .keep 保留。
+ * v85.1：操作结果/状态提示（role="status" / role="alert"）本来就是“状态值”，不再被这条规则藏掉（以前“已保存/保存失败”等反馈看不见）。 */
+.product-ui p.text-xs.text-muted:not(.keep):not([role="status"]):not([role="alert"]),
+.product-ui p[class*="text-[10px]"]:not(.keep):not([role="status"]):not([role="alert"]),
+.product-ui p[class*="text-[11px]"]:not(.keep):not([role="status"]):not([role="alert"]) { display: none; }
 
 /* ===== 2026-10-16 设计稿主题：深色 + 橙色（design-ref/home.jpg） ===== */
 .app-wallpaper.product-ui, .app-wallpaper.product-ui[data-theme], .app-wallpaper.product-ui[data-theme][data-wallpaper] {

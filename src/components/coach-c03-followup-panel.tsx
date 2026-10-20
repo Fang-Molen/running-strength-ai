@@ -11,11 +11,11 @@ export function CoachC03FollowupPanel({ revision = 0 }: { revision?: number }) {
     window.addEventListener(C03_FOLLOWUP_CHANGED_EVENT, refresh); window.addEventListener('storage', refresh)
     return () => { window.removeEventListener(C03_FOLLOWUP_CHANGED_EVENT, refresh); window.removeEventListener('storage', refresh) }
   }, [revision])
-  if (!view || view.status !== 'AVAILABLE') return <p className="text-xs text-muted">长期跟进暂不可读；原训练记录不受影响。</p>
-  if (!view.hypotheses.length) return <p className="text-xs text-muted">有明确课次来源的复盘展示后，才保存待验证解释；目前没有已登记的 C03 判断。</p>
+  if (!view || view.status !== 'AVAILABLE') return <p role="status" data-testid="c03-followups-unavailable" className="text-xs text-muted">长期跟进暂不可读；原训练记录不受影响。</p>
+  if (!view.hypotheses.length) return <p role="status" data-testid="c03-followups-empty" className="text-xs text-muted">长期跟进：有明确课次来源的复盘展示后，才保存待验证解释；目前没有已登记的 C03 判断。</p>
   return <details className="rounded-card border border-line p-3" data-testid="c03-followups">
     <summary className="cursor-pointer text-sm font-bold">长期跟进 · {view.hypotheses.length} 项判断记录</summary>
-    <p className="mt-2 text-xs text-muted">保留原依据与反证；采纳不代表执行，不自动修改计划或能力分。</p>
+    <p className="keep mt-2 text-xs text-muted">保留原依据与反证；采纳不代表执行，不自动修改计划或能力分。</p>
     {view.hypotheses.map(h => <article className="mt-3 border-t border-line pt-3 text-xs leading-5" key={`${h.id}:${h.revision}`}>
       <p className="font-bold">{statusText[h.status] ?? h.status} · 版本 {h.revision}</p>
       <p>{h.explanation}</p>

@@ -74,7 +74,7 @@ export function PlainTimer() {
   const mmss = (n: number) => `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
   return <section className="rounded-2xl border border-line p-4 text-center" aria-label="普通计时器" data-testid="plain-timer">
     <p role="timer" className={"text-5xl font-black tabular-nums " + (left === 0 ? 'text-emerald-400' : 'text-accent')}>{mmss(show)}</p>
-    <p className="mt-1 text-xs text-muted">{target != null ? `倒计时 ${mmss(target)}${left === 0 ? ' · 到了' : ''}` : '正计时'}</p>
+    <p className="keep mt-1 text-xs text-muted">{target != null ? `倒计时 ${mmss(target)}${left === 0 ? ' · 到了' : ''}` : '正计时'}</p>
     <div className="mt-3 flex flex-wrap justify-center gap-2">{[60, 90, 120, 180].map(n => <button key={n} type="button" className="fk-chip min-h-11" aria-pressed={target === n} onClick={() => { setTarget(n); setHeld(0); setStart(Date.now()); setNow(Date.now()); }}>{n}秒</button>)}<button type="button" className="fk-chip min-h-11" aria-pressed={target == null} onClick={() => { setTarget(null); setHeld(0); setStart(null); }}>正计时</button></div>
     <div className="mt-3 flex justify-center gap-2"><button type="button" className="min-h-12 flex-1 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { if (start != null) { setHeld(elapsed); setStart(null); } else { setStart(Date.now()); setNow(Date.now()); } }}>{start != null ? '暂停' : '开始'}</button><button type="button" className="min-h-12 rounded-xl border border-line px-4" onClick={() => { setStart(null); setHeld(0); }}>归零</button></div>
   </section>;
