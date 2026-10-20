@@ -9,8 +9,14 @@ import { buildPersonalStatisticsCard, type PersonalStatisticsCard } from './pers
 export const U09_METRICS = ['RHR', 'HRV', 'SLEEP'] as const
 const NAME: Record<(typeof U09_METRICS)[number], string> = { RHR: '静息心率', HRV: 'HRV', SLEEP: '睡眠' }
 export type U09Card = PersonalStatisticsCard & { metric: (typeof U09_METRICS)[number]; name: string }
-export function personalStatsCards(snapshot: HealthSnapshot, athleteId: string, asOf: string): U09Card[] {
-  const out: U09Card[] = []
+/** U09 要求 asOf 为带时区的 ISO 时间；宿主传本地日期/无时区时间时，按本机时区换成 ISO（否则 U09 判为无效输入）。 */
+export function u09AsOf(v: string): string {
+  const s = /^\d{4}-\d\d-\d\d$/.test(v) ? `${v}T23:59:59` : v
+  if (/(Z|[+-]\d\d:\d\d)$/.test(s)) return s
+  const t = new Date(s); return Number.isFinite(t.getTime()) ? t.toISOString() : v
+}
+export function personalStatsCards(snapshot: HealthSnapshot, athleteId: string, asOfIn: string): U09Card[] {
+  const out: U09Card[] = [], asOf = u09AsOf(asOfIn)
   for (const metric of U09_METRICS) {
     try { const c = buildPersonalStatisticsCard(comparableHealthSeries({ snapshot, athleteId, metric, asOf })); out.push({ ...c, metric, name: NAME[metric], title: `${NAME[metric]} · 个人趋势` }) } catch { /* 单项失败不影响其他 */ }
   }

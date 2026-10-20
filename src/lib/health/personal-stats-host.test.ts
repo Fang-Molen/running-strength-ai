@@ -24,3 +24,9 @@ test('旧手工记录（统计口径未提供）→ 不当成可比序列，不�
   const rhr = personalStatsCards(buildHealthSnapshot(days.map(d => legacy(d, 53)) as never, [], '2026-10-20'), 'local', '2026-10-20T12:00:00Z').find(c => c.metric === 'RHR')!
   assert.equal(rhr.status, 'NEED_MORE_DATA')
 })
+test('宿主传本地日期/无时区时间也能用（不误报“冲突”）', () => {
+  for (const asOf of ['2026-10-20', '2026-10-20T23:59:59']) {
+    const cards = personalStatsCards(buildHealthSnapshot([], [], '2026-10-20'), 'local', asOf)
+    assert.ok(cards.every(c => c.status === 'NEED_MORE_DATA'), asOf + ' ' + cards.map(c => c.status).join())
+  }
+})
