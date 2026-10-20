@@ -11,9 +11,10 @@ import { loadHealthSnapshot, type HealthMetricView } from "@/lib/health/snapshot
 import { reviewFatigue, dailyCheckin } from "@/lib/health/analysis"
 import { onAppEvent, currentAthleteId } from "@/lib/core/events"
 import { clock, minuteOfDay, type IntradayDay, type Sample } from "@/lib/health/garmin-intraday"
-import { intradayRecoveryFromStore } from "@/lib/health/intraday-recovery-bridge-v89"
+import { intradayRecoveryFromStore, typicalDay, type TypicalHour } from "@/lib/health/intraday-recovery-bridge-v89"
 import type { View as U10View, Metric as U10Metric } from "@/lib/health/intraday-recovery-u10"
 import { readRestHistory, REST_LABELS } from "@/lib/health/rest-store"
+import { garminStorageKey } from "@/lib/health/garmin-sync-runner"
 import { todayDate } from "@/lib/nutrition/body"
 import "./health-v89.css"
 
@@ -85,8 +86,14 @@ function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): T
       tiles.push({ key, label, value: val == null ? null : fmt(val), unit, sub: p ? p.source : fallback != null ? "佳明日内" : "暂无", delta: dv == null ? null : `较昨日 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${dfmt(Math.abs(dv))}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
     }
     daily("RHR", "RHR", "静息心率", "bpm", x => String(Math.round(x)), x => String(Math.round(x)), d?.restingHr ?? null)
-    daily("SLEEP", "SLEEP", "睡眠时长", "", hm, hmDelta)
-    daily("HRV", "HRV", "HRV", "ms", x => String(Math.round(x)), x => `${Math.round(x)} ms`)
+    // v89.1：佳明的睡眠/HRV 记在“醒来那天”。今天还没睡醒前（如凌晨）没有今天的值，显示最近一晚（昨天日期）并注明。
+    const night = (key: string, metric: string, label: string, unit: string, fmt: (x: number) => string, dfmt: (x: number) => string) => {
+      if (onDay(v(metric), day) || day !== todayDate()) return daily(key, metric, label, unit, fmt, dfmt)
+      const p = onDay(v(metric), yday), q = onDay(v(metric), shiftDay(day, -2)), dv = p && q && p.stream === q.stream ? p.value - q.value : null
+      tiles.push({ key, label, value: p ? fmt(p.value) : null, unit, sub: p ? `最近一晚 ${yday.slice(5)}` : "暂无", delta: p ? `最近一晚 ${yday.slice(5)}${dv == null ? "" : ` ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${dfmt(Math.abs(dv))}`}` : null, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
+    }
+    night("SLEEP", "SLEEP", "睡眠时长", "", hm, hmDelta)
+    night("HRV", "HRV", "HRV", "ms", x => String(Math.round(x)), x => `${Math.round(x)} ms`)
     return tiles
   }, [day, rev, all])
 }
@@ -133,9 +140,11 @@ const META: Record<"bb" | "hr" | "st", { label: string; unit: string; color: str
 type K = keyof typeof META
 function AllDayTrend({ day, d, view }: { day: string; d: IntradayDay | null; view: U10View | null }) {
   const kinds: K[] = d ? (["bb", "hr", ...(d.st?.length ? ["st" as const] : [])] as K[]).filter(k => (k === "bb" ? d.bb : k === "hr" ? d.hr : d.st ?? []).length) : []
-  const [main, setMain] = useState<K>("bb"), [detail, setDetail] = useState<"hr" | "bb" | null>(null)
+  const [main, setMain] = useState<K>("bb"), [detail, setDetail] = useState<"hr" | "bb" | null>(null), [detailDay, setDetailDay] = useState<string | null>(null)
   const all = useIntraday(), days = Object.keys(all).sort()
   useEffect(() => { const f = (e: Event) => { const k = (e as CustomEvent).detail; if (d && (k === "hr" || k === "bb")) setDetail(k) }; window.addEventListener("fk-h89-detail", f); window.addEventListener("fk-open-intraday-detail", f); return () => { window.removeEventListener("fk-h89-detail", f); window.removeEventListener("fk-open-intraday-detail", f) } }, [d])
+  const typs = useMemo(() => ({ bb: typicalDay(all, day, "bb"), hr: typicalDay(all, day, "hr"), st: typicalDay(all, day, "st") }), [all, day])
+  const typ = (k: K) => typs[k]
   const cur: K = kinds.includes(main) ? main : kinds[0] ?? "bb"
   const second: K | null = cur === "hr" ? (kinds.includes("bb") ? "bb" : null) : kinds.includes("hr") ? "hr" : null
   return <section id="fk-intraday" className="fk-h89-card" data-testid="h89-trend">
@@ -143,24 +152,33 @@ function AllDayTrend({ day, d, view }: { day: string; d: IntradayDay | null; vie
       {kinds.length ? <div className="fk-h89-seg ml-auto" role="group" aria-label="趋势指标">{kinds.map(k => <button key={k} type="button" aria-pressed={cur === k} onClick={() => setMain(k)}>{META[k].label}</button>)}</div> : null}
     </div>
     {!d ? <p className="keep mt-2 text-sm text-muted" data-testid="intraday-empty">{mdCN(day)}暂无手表逐时样本。连上佳明同步后，这里显示全天身体电量和心率；没有样本就不画曲线，也不拿日汇总拼曲线。</p> : <>
-      <DayChart d={d} view={view} k={cur} height={150} bandLabels />
-      {second ? <><p className="mt-2 text-sm font-bold">{META[second].label}<span className="ml-1 text-[11px] font-normal text-muted">（{META[second].unit}）</span></p><DayChart d={d} view={view} k={second} height={104} /></> : null}
-      <Legend d={d} view={view} k={cur} />
+      <DayChart d={d} view={view} k={cur} height={150} bandLabels typ={typ(cur)} />
+      {second ? <><p className="mt-2 text-sm font-bold">{META[second].label}<span className="ml-1 text-[11px] font-normal text-muted">（{META[second].unit}）</span></p><DayChart d={d} view={view} k={second} height={104} typ={typ(second)} /></> : null}
+      <Legend k={cur} typ={typ(cur)} />
       <div className="mt-1 flex gap-3 text-xs">{(["bb", "hr"] as const).filter(k => kinds.includes(k)).map(k => <button key={k} type="button" className="fk-link" onClick={() => setDetail(k)}>{META[k].label}详情 ›</button>)}</div>
       {view?.warnings.filter(w => /冲突/.test(w)).map(w => <p key={w} className="keep text-xs text-amber-400">{w}</p>)}
+      <SyncNote />
       <p className="keep mt-1 text-[11px] text-muted">设备读数，仅供参考，不是训练许可；身体电量回升不能证明午睡或肌肉已恢复。</p>
     </>}
-    {d && detail ? <IntradayDetail d={d} kind={detail} days={days} onDay={() => undefined} onClose={() => setDetail(null)} /> : null}
+    {/* v89.1：详情里切日期要真的换数据（v89 这里是空函数，点 10月20日 仍显示当天，看起来像“前几天没数据”） */}
+    {d && detail ? <IntradayDetail d={all[detailDay ?? d.day] ?? d} kind={detail} days={days} onDay={setDetailDay} onClose={() => { setDetail(null); setDetailDay(null) }} /> : null}
   </section>
 }
 
+/** v89.1：日内补取失败不再静默——显示上次同步的日内结果。 */
+function SyncNote() {
+  const r = useMemo(() => { try { return JSON.parse(localStorage.getItem(garminStorageKey("fk-garmin-sync-report", currentAthleteId())) ?? "null")?.intraday as { requested: number; saved: number; failed: string[]; throttled: boolean } | undefined } catch { return undefined } }, [])
+  if (!r || (!r.failed.length && !r.throttled)) return null
+  return <p className="keep mt-1 text-xs text-amber-400" data-testid="h89-sync-note">上次同步日内：取 {r.requested} 天，存 {r.saved} 天{r.throttled ? "；佳明限流，剩下的下次同步再补" : ""}{r.failed.length ? `；${r.failed.slice(0, 2).join("；")}` : ""}</p>
+}
 const W = 360
-function DayChart({ d, view, k, height, bandLabels = false }: { d: IntradayDay; view: U10View | null; k: K; height: number; bandLabels?: boolean }) {
+function DayChart({ d, view, k, height, bandLabels = false, typ }: { d: IntradayDay; view: U10View | null; k: K; height: number; bandLabels?: boolean; typ?: { hours: TypicalHour[] } }) {
   const m = META[k], pts = (k === "bb" ? d.bb : k === "hr" ? d.hr : d.st) ?? []
   const ref = useRef<SVGSVGElement>(null), [pick, setPick] = useState<Sample | null>(null)
   useEffect(() => setPick(null), [d.day, k])
   const top = bandLabels ? 26 : 8, bottom = 16, left = 24, ph = height - top - bottom, pw = W - left - 4
-  const refRows = view?.metrics[m.metric]?.reference ?? []
+  // v89.1：图上画“方坤估算·个人常态”（全天 24 小时，近 28 天同钟点），U10 的同情境参考区间仍给方坤做事实。
+  const refRows = typ?.hours ?? []
   const vals = [...pts.map(p => p[1]), ...refRows.flatMap(r => [r.p25, r.p75])]
   const lo = k === "hr" ? Math.max(30, Math.floor((Math.min(...vals) - 5) / 20) * 20) : 0, hi = k === "hr" ? Math.ceil((Math.max(...vals) + 5) / 20) * 20 : 100
   const x = (t: number) => left + Math.max(0, Math.min(pw, minuteOfDay(t, d.day, d.offsetMin) / 1440 * pw)), xh = (h: number) => left + h / 24 * pw
@@ -181,8 +199,8 @@ function DayChart({ d, view, k, height, bandLabels = false }: { d: IntradayDay; 
       {trainEv.map(e => <g key={e.eventId}><rect x={xh(e.startHour)} y={top} width={Math.max(2, xh(e.endHour) - xh(e.startHour))} height={ph} fill="#ff6a1a" opacity=".28" data-testid="shade-training" />{bandLabels ? <text x={(xh(e.startHour) + xh(e.endHour)) / 2} y={10} fontSize="8.5" textAnchor="middle" fill="#ff9a5a">{e.kind === "RUN" ? "跑步" : e.kind === "STRENGTH" ? "力量" : "训练"}</text> : null}</g>)}
       {ticks.map(v => <g key={v}><line x1={left} x2={W - 4} y1={y(v)} y2={y(v)} stroke="var(--color-line)" strokeWidth=".5" /><text x={left - 3} y={y(v) + 3} fontSize="8" textAnchor="end" fill="var(--color-muted)">{v}</text></g>)}
       {[0, 6, 12, 18, 24].map(h => <text key={h} x={xh(h)} y={height - 4} fontSize="8.5" textAnchor={h === 0 ? "start" : h === 24 ? "end" : "middle"} fill="var(--color-muted)">{String(h).padStart(2, "0")}:00</text>)}
-      {refRows.length ? <g data-testid="h89-reference">{refRows.map(r => <rect key={r.hour} x={xh(r.hour)} y={y(r.p75)} width={pw / 24} height={Math.max(1, y(r.p25) - y(r.p75))} fill="#8b93a7" opacity=".22" />)}
-        <path d={refRows.slice().sort((a, b) => a.hour - b.hour).map((r, i, a) => `${i && a[i - 1].hour === r.hour - 1 ? "L" : "M"}${(xh(r.hour) + pw / 48).toFixed(1)},${y(r.median).toFixed(1)}`).join("")} fill="none" stroke="#c9ced8" strokeWidth="1" strokeDasharray="3 3" /></g> : null}
+      {refRows.length ? <g data-testid="h89-reference">{refRows.map(r => <rect key={r.hour} x={xh(r.hour)} y={y(r.p75)} width={pw / 24} height={Math.max(1, y(r.p25) - y(r.p75))} fill="#b49cff" opacity=".16" />)}
+        <path data-testid="h89-estimate" d={refRows.slice().sort((a, b) => a.hour - b.hour).map((r, i, a) => `${i && a[i - 1].hour === r.hour - 1 ? "L" : "M"}${(xh(r.hour) + pw / 48).toFixed(1)},${y(r.median).toFixed(1)}`).join("")} fill="none" stroke="#c4b2ff" strokeWidth="1.4" strokeDasharray="4 3" /></g> : null}
       {area ? <path d={area} fill={m.color} opacity=".16" /> : null}
       <path d={path} fill="none" stroke={m.color} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
       <circle cx={x(pts[pts.length - 1][0])} cy={y(pts[pts.length - 1][1])} r="2.8" fill={m.color} data-testid="latest-dot" />
@@ -192,12 +210,12 @@ function DayChart({ d, view, k, height, bandLabels = false }: { d: IntradayDay; 
   </div>
 }
 
-function Legend({ d, view, k }: { d: IntradayDay; view: U10View | null; k: K }) {
-  const refRows = view?.metrics[META[k].metric]?.reference ?? [], refDays = refRows.length ? Math.min(...refRows.map(r => r.days)) : 0
-  const daysStored = Object.keys(useIntraday()).filter(x => x < d.day).length
-  return <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted">
+function Legend({ k, typ }: { k: K; typ: { hours: TypicalHour[]; historyDays: number } }) {
+  const n = typ.hours.length ? Math.min(...typ.hours.map(r => r.days)) : 0
+  return <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted" data-testid="h89-legend">
     <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3" style={{ background: META[k].color }} />手表{META[k].label}</span>
-    {refRows.length ? <span className="flex items-center gap-1"><i className="inline-block h-2 w-3 bg-[#8b93a7]/40" />个人参考区间（近14天同时段，≥{refDays}天）</span> : <span>个人参考区间：需≥7天同来源可比样本（现有{daysStored}天），暂不显示</span>}
+    {typ.hours.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed border-[#c4b2ff]" />方坤估算·个人常态（近{typ.historyDays}天同钟点中位，≥{n}天；阴影为四分位）</span>
+      : <span>方坤估算：需≥7天历史，现有{typ.historyDays}天；下次同步自动补到28天</span>}
     <span className="flex items-center gap-1"><i className="inline-block size-2.5 rounded-sm bg-[#4a5cff]/50" />睡眠</span>
     <span className="flex items-center gap-1"><i className="inline-block size-2.5 rounded-sm bg-[#ff6a1a]/50" />训练</span>
   </div>
@@ -222,19 +240,19 @@ function EventCards({ day, d, view, rev }: { day: string; d: IntradayDay | null;
 
 function SleepTab({ day, rev, rest, trend }: { day: string; rev: number; rest: ReactNode; trend: ReactNode }) {
   const all = useIntraday(), d = all[day]
-  const p = useMemo(() => { void rev; return onDay(loadHealthSnapshot(day).metrics.find(m => m.metric === "SLEEP"), day) }, [day, rev])
+  const p = useMemo(() => { void rev; const v = loadHealthSnapshot(day).metrics.find(m => m.metric === "SLEEP"); return onDay(v, day) ?? (day === todayDate() ? onDay(v, shiftDay(day, -1)) : null) }, [day, rev])
   return <div className="space-y-3">
     <section className="fk-h89-card"><p className="keep text-xs text-muted">{mdCN(day)} 睡眠时长</p><p className="text-2xl font-black">{p ? hm(p.value) : "暂无"}</p>
-      <p className="keep text-xs text-muted">{p ? `${p.source} · ${p.statistic}` : "这天没有睡眠记录"}{d?.sleep ? ` · 手表睡眠时段 ${clock(d.sleep[0], d.offsetMin)}–${clock(d.sleep[1], d.offsetMin)}` : ""}</p>
+      <p className="keep text-xs text-muted">{p ? `${p.day !== day ? `最近一晚 ${p.day.slice(5)} · ` : ""}${p.source} · ${p.statistic}` : "这天没有睡眠记录"}{d?.sleep ? ` · 手表睡眠时段 ${clock(d.sleep[0], d.offsetMin)}–${clock(d.sleep[1], d.offsetMin)}` : ""}</p>
       {rest}</section>
     {trend}
   </div>
 }
 function MetricTab({ day, rev, metric, trend, note }: { day: string; rev: number; metric: string; trend: ReactNode; note: string }) {
   const view = useMemo(() => { void rev; return loadHealthSnapshot(day).metrics.find(m => m.metric === metric) }, [day, rev, metric])
-  const p = onDay(view, day)
+  const p = onDay(view, day) ?? (metric === "HRV" && day === todayDate() ? onDay(view, shiftDay(day, -1)) : null)
   return <div className="space-y-3">
-    <section className="fk-h89-card"><p className="keep text-xs text-muted">{mdCN(day)} {view?.label ?? metric}</p><p className="text-2xl font-black">{p ? valueText(metric, p.value) : "暂无"}</p>
+    <section className="fk-h89-card"><p className="keep text-xs text-muted">{mdCN(day)} {view?.label ?? metric}{p && p.day !== day ? `（最近一晚 ${p.day.slice(5)}）` : ""}</p><p className="text-2xl font-black">{p ? valueText(metric, p.value) : "暂无"}</p>
       <p className="keep text-xs text-muted">{p ? `${p.source} · ${p.statistic}${p.method ? ` · ${p.method}` : ""}` : "这天没有记录"}{view?.baseline && p?.day === view.current?.day ? ` · 较前7天可比均值 ${view.baseline.delta >= 0 ? "+" : ""}${Math.round(view.baseline.delta)}` : ""}</p>
       <p className="keep mt-1 text-xs text-muted">{note}</p></section>
     {trend}
@@ -245,7 +263,7 @@ function StressTab({ day, rev, trend }: { day: string; rev: number; trend: React
   const view = useMemo(() => intradayRecoveryFromStore(all, currentAthleteId(), day, new Date().toISOString()), [all, day])
   return <div className="space-y-3">
     <MetricTab day={day} rev={rev} metric="STRESS" trend={null} note="压力是佳明按心率变异估算的设备读数，不是心理诊断。" />
-    <section className="fk-h89-card"><b>全天压力</b>{d?.st?.length ? <DayChart d={d} view={view} k="st" height={130} bandLabels /> : <p className="keep mt-1 text-sm text-muted">暂无逐时压力样本（同步后才有；字段待核真实账号）。</p>}</section>
+    <section className="fk-h89-card"><b>全天压力</b>{d?.st?.length ? <DayChart d={d} view={view} k="st" height={130} bandLabels typ={typicalDay(all, day, "st")} /> : <p className="keep mt-1 text-sm text-muted">暂无逐时压力样本（同步后才有；字段待核真实账号）。</p>}</section>
     {trend}
   </div>
 }

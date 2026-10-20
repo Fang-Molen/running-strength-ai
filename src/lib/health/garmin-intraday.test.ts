@@ -43,11 +43,15 @@ test('tidy is bounded and ordered', () => {
   const rows = Array.from({ length: 3000 }, (_, i) => [3000 - i, i] as [number, number]); const t = tidy(rows)
   assert.ok(t.length <= 720); assert.ok(t.every((p, i) => !i || p[0] > t[i - 1][0]))
 })
-test('store: per athlete, newest 14 days kept (v89), same day replaced, completeness', () => {
+test('store: per athlete, newest 28 days kept (v89.1), old days compacted, completeness needs samples + local day end', () => {
   setStoreBackend(mem()); setEventContext({ athleteId: 'local' })
-  for (let i = 1; i <= 20; i++) { const d = `2026-10-${String(i).padStart(2, '0')}`; saveIntraday([buildIntradayDay({ day: d, now: `2026-10-${String(i + 1).padStart(2, '0')}T20:00:00Z`, hr: ok(fixtureHeartRate(d, 2)), stress: ok(fixtureStress(d, 2)) }).day!]) }
-  const all = loadIntraday(); assert.equal(Object.keys(all).length, KEEP_DAYS); assert.ok(!all['2026-10-06'] && all['2026-10-07'] && all['2026-10-20'])
-  assert.equal(intradayComplete('2026-10-19'), true)
+  const days = Array.from({ length: 31 }, (_, i) => `2026-10-${String(i + 1).padStart(2, '0')}`)
+  for (const d of days) saveIntraday([buildIntradayDay({ day: d, now: new Date(Date.parse(d + 'T20:00:00Z') + 864e5).toISOString(), hr: ok(fixtureHeartRate(d)), stress: ok(fixtureStress(d)) }).day!])
+  const all = loadIntraday(); assert.equal(Object.keys(all).length, KEEP_DAYS); assert.ok(!all['2026-10-03'] && all['2026-10-04'] && all['2026-10-31'])
+  assert.ok(all['2026-10-10'].hr.length <= 288 && all['2026-10-31'].hr.length > 288, 'older days compacted, recent days full')
+  assert.equal(intradayComplete('2026-10-30'), true)
+  saveIntraday([buildIntradayDay({ day: '2026-10-31', now: '2026-10-31T02:00:00Z', hr: ok(fixtureHeartRate('2026-10-31', 2)), stress: ok(fixtureStress('2026-10-31', 2)) }).day!])
+  assert.equal(intradayComplete('2026-10-31'), false, 'fetched before local day end → refetch')
   assert.deepEqual(loadIntraday('other'), {})
 })
 test('sync runner: fetches dailyHeartRate/dailyStress for recent days only, saves after fence, failures non-fatal', async () => {
@@ -63,7 +67,7 @@ test('sync runner: fetches dailyHeartRate/dailyStress for recent days only, save
   }
   const r = await runGarminSyncJob({ api, subject: () => 'synthetic', generation: () => 0, bindAccount: () => true, day: D, now: D + 'T12:00:00Z',
     save: (h, a) => ({ saved: h.length + a.length, skipped: 0, errors: [] }), saveView: () => {}, report: () => {}, progress: () => {},
-    intraday: { complete: d => d < '2026-10-16', save: days => { saved.push(...days); return days.length } } })
+    intraday: { complete: d => d < '2026-10-16', save: days => { saved.push(...days); return days.length } }, sleep: async () => {} })
   assert.equal(r.status, 'ok')
   const hrDays = paths.filter(p => p.includes('dailyHeartRate')).map(p => p.match(/\d{4}-\d{2}-\d{2}/)![0])
   assert.deepEqual(hrDays, ['2026-10-20', '2026-10-19', '2026-10-18', '2026-10-17', '2026-10-16'])
@@ -89,4 +93,25 @@ test('v89 stress: stressValuesArray parsed, negative (no reading) dropped, optio
   const r = parseBodyBattery(D, ok({ calendarDate: D, bodyBatteryValuesArray: [[1, 'M', 60, 2]], stressValuesArray: [[1, 25], [2, -1], [3, -2], [4, 80]] }))!
   assert.deepEqual(r.st, [[1, 25], [4, 80]])
   assert.equal(summarizeDay({ schemaVersion: 1, day: D, source: 'garmin', fetchedAt: D + 'T12:00:00Z', offsetMin: 480, hr: [], bb: [], restingHr: null, sleep: null, training: [] })!.st, null)
+})
+
+test('v89.1 runner: empty intraday history → 28 days requested (incl. days outside the 14-day daily window); 429 stops intraday only', async () => {
+  const mk = (limitAfter: number) => { const paths: string[] = []; let hr = 0
+    const api = async (p: string): Promise<GarminReply> => { paths.push(p)
+      if (p === 'status') return ok({ loggedIn: true, region: 'cn', profile: { displayName: 'synthetic-user' } })
+      if (p.includes('activities/search')) return ok([])
+      const day = p.match(/\d{4}-\d{2}-\d{2}/)![0]
+      if (p.includes('dailyHeartRate')) { hr++; return hr > limitAfter ? { status: 429, body: {} } : ok(fixtureHeartRate(day, 2)) }
+      if (p.includes('dailyStress')) return ok(fixtureStress(day, 2))
+      return ok({ calendarDate: day, hrvSummary: { calendarDate: day, lastNightAvg: 60 }, dailySleepDTO: { calendarDate: day, sleepTimeSeconds: 23400 } }) }
+    return { paths, api } }
+  const run = (api: (p: string) => Promise<GarminReply>, saved: any[]) => runGarminSyncJob({ api, subject: () => 'synthetic', generation: () => 0, bindAccount: () => true, day: D, now: D + 'T12:00:00Z',
+    save: (h, a) => ({ saved: h.length + a.length, skipped: 0, errors: [] }), saveView: () => {}, report: () => {}, progress: () => {},
+    backfill: { get: () => 90, set: () => {} }, sleep: async () => {}, intraday: { complete: () => false, save: days => { saved.push(...days); return days.length } } })
+  const a = mk(1e9), sa: any[] = [], r = await run(a.api, sa)
+  assert.equal(r.status, 'ok'); assert.equal(new Set(a.paths.filter(p => p.includes('dailyHeartRate')).map(p => p.match(/\d{4}-\d{2}-\d{2}/)![0])).size, 28)
+  assert.equal(sa.length, 28); assert.equal(r.intraday!.saved, 28); assert.deepEqual(r.intraday!.failed, [])
+  const b = mk(3), sb: any[] = [], r2 = await run(b.api, sb)
+  assert.equal(r2.status, 'ok', 'daily summaries unaffected'); assert.equal(r2.intraday!.throttled, true); assert.ok(r2.intraday!.failed.some(f => /429/.test(f)))
+  assert.ok(b.paths.filter(p => p.includes('dailyHeartRate')).length <= 5)
 })

@@ -4,10 +4,15 @@ import { shortHash, shiftDay } from './observation'
 import type { DeviceActivity, DeviceHealthRow } from '../ui/device-parse'
 
 export type GarminReply = { status: number; body: any }
+/** v89.1：日内样本取 28 天；补取的旧日子之间停顿 350ms，避免触发佳明限流。 */
+export const INTRADAY_DAYS = 28, INTRADAY_GAP_MS = 350
+const defaultSleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
 export type GarminSyncReport = {
   at: string; status: 'ok' | 'partial' | 'empty' | 'auth' | 'fail' | 'stale'; subjectId: string; accountScope: string | null;
   healthRows: number; activityRows: number; saved: number; skipped: number; errors: string[];
   healthDaysRequested: number; coverageDays: string[]; activityLimit: 200; completeHistory: false;
+  /** v89.1：日内样本单独计数，失败不再静默（不影响日汇总状态）。 */
+  intraday?: { requested: number; saved: number; failed: string[]; throttled: boolean };
 }
 export function garminAccount(reply: GarminReply): { scope: string; name: string } | null {
   const b = reply.body
@@ -41,6 +46,8 @@ export async function runGarminSyncJob(host: {
   backfill?: { get: (scope: string) => number; set: (scope: string, upTo: number) => void };
   /** v88.3：最近 7 天日内心率/身体电量（今天、昨天每次都取；更早的已完整就跳过）。失败不影响日汇总同步结果。 */
   intraday?: { complete: (day: string) => boolean; save: (days: IntradayDay[]) => number };
+  /** 测试可注入；默认真实等待（节流）。 */
+  sleep?: (ms: number) => Promise<void>;
 }): Promise<GarminSyncReport> {
   const subjectId = host.subject(), generation = host.generation()
   const result: GarminSyncReport = { at: host.now, status: 'fail', subjectId, accountScope: null, healthRows: 0, activityRows: 0, saved: 0, skipped: 0,
@@ -70,24 +77,51 @@ export async function runGarminSyncJob(host: {
     // 每次同步最近 14 天；另外往前补 14 天更早的历史，直到满 90 天（恢复趋势 30/90 天才有数据）。
     const HIST = 90, from = Math.min(HIST, Math.max(14, host.backfill?.get(account.scope) ?? HIST)), upTo = Math.min(HIST, from + 14)
     const offsets = [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: upTo - from }, (_, i) => from + i)]
+    // v89.1：日内样本首次/历史不足时补到 28 天。今天、昨天每次都重取；更早的只取还没取全的日子。
+    // 不在本次日汇总范围内的日子（第 14–27 天）单独逐天取，每天之间停顿，遇到 429 立即停止日内补取（日汇总照常）。
+    let throttled = false
+    const intradayStat = { requested: 0, saved: 0, failed: [] as string[], throttled: false }
+    const takeIntraday = (d: string, ihr: GarminReply | undefined, ist: GarminReply | undefined, sl?: GarminReply) => {
+      intradayStat.requested++
+      if ([ihr, ist].some(r => r?.status === 429)) { throttled = intradayStat.throttled = true; intradayStat.failed.push(`${d} 佳明限流（429），稍后再同步补取`); return }
+      if (!ihr && !ist) { intradayStat.failed.push(`${d} 日内请求失败（网络）`); return }
+      const built = buildIntradayDay({ day: d, now: host.now, hr: ihr, stress: ist, sleep: sl, activities: acts })
+      if (built.day) intraday.push(built.day); else if (built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
+    }
     for (const [n, i] of offsets.entries()) {
       if (!unchanged()) { result.status = 'stale'; return result }
       const d = shiftDay(host.day, -i)
       host.progress(`已取得 ${acts.length} 条活动记录 · 健康 ${n + 1}/${offsets.length} 天${i >= 14 ? '（补更早历史）' : ''}`)
-      const wantIntraday = !!host.intraday && i < 14 && (i < 2 || !host.intraday.complete(d))
+      const wantIntraday = !!host.intraday && !throttled && i < INTRADAY_DAYS && (i < 2 || !host.intraday.complete(d))
       const none = Promise.resolve(undefined)
+      if (wantIntraday && i >= 2) await (host.sleep ?? defaultSleep)(INTRADAY_GAP_MS)
       const [s, h, sl, ihr, ist] = await Promise.all([
         host.api(`g/usersummary-service/usersummary/daily/${encodeURIComponent(account.name)}?calendarDate=${d}`),
         host.api(`g/hrv-service/hrv/${d}`), host.api(`g/wellness-service/wellness/dailySleepData/${encodeURIComponent(account.name)}?date=${d}`),
         wantIntraday ? host.api(`g/wellness-service/wellness/dailyHeartRate/${encodeURIComponent(account.name)}?date=${d}`).catch(() => undefined) : none,
         wantIntraday ? host.api(`g/wellness-service/wellness/dailyStress/${d}`).catch(() => undefined) : none,
       ])
-      if (wantIntraday) { const built = buildIntradayDay({ day: d, now: host.now, hr: ihr, stress: ist, sleep: sl, activities: acts }); if (built.day) intraday.push(built.day) }
+      if (wantIntraday) takeIntraday(d, ihr, ist, sl)
       result.healthDaysRequested++
       if ([s, h, sl].some(r => [401, 403].includes(r.status))) { result.status = 'auth'; result.errors.push('同步期间登录过期，未写入本次结果'); return result }
       const parsed = garminHealthDay(d, account.scope, s, h, sl, host.now)
       health.push(...parsed.rows); result.errors.push(...parsed.failures)
       if (parsed.rows.length) result.coverageDays.push(d)
+    }
+    if (host.intraday) {
+      const extra = Array.from({ length: INTRADAY_DAYS }, (_, i) => i).filter(i => !offsets.includes(i)).map(i => shiftDay(host.day, -i)).filter(d => !host.intraday!.complete(d))
+      for (const [n, d] of extra.entries()) {
+        if (throttled || !unchanged()) break
+        host.progress(`补取日内心率/身体电量/压力 ${n + 1}/${extra.length} 天`)
+        await (host.sleep ?? defaultSleep)(INTRADAY_GAP_MS)
+        const [ihr, ist, sl] = await Promise.all([
+          host.api(`g/wellness-service/wellness/dailyHeartRate/${encodeURIComponent(account.name)}?date=${d}`).catch(() => undefined),
+          host.api(`g/wellness-service/wellness/dailyStress/${d}`).catch(() => undefined),
+          host.api(`g/wellness-service/wellness/dailySleepData/${encodeURIComponent(account.name)}?date=${d}`).catch(() => undefined),
+        ])
+        if ([ihr, ist, sl].some(r => r && [401, 403].includes(r.status))) { result.status = 'auth'; result.errors.push('同步期间登录过期，未写入本次结果'); return result }
+        takeIntraday(d, ihr, ist, sl)
+      }
     }
     const final = garminAccount(await host.api('status'))
     if (!unchanged() || !final || final.scope !== account.scope) { result.status = 'stale'; result.errors.push('账号或运动员变化，未写入本次结果'); return result }
@@ -95,7 +129,8 @@ export async function runGarminSyncJob(host: {
     result.healthRows = health.length; result.activityRows = acts.length
     const saved = host.save(health, acts)
     result.saved = saved.saved; result.skipped = saved.skipped; result.errors.push(...saved.errors)
-    if (intraday.length) { try { host.intraday?.save(intraday) } catch { /* 日内样本是附加数据，失败不影响日汇总 */ } }
+    if (intraday.length) { try { intradayStat.saved = host.intraday?.save(intraday) ?? 0; if (!intradayStat.saved) intradayStat.failed.push('日内样本本机保存失败（空间不足？）') } catch { intradayStat.failed.push('日内样本本机保存失败') } }
+    if (host.intraday) result.intraday = intradayStat
     if (!saved.errors.length && upTo > from) host.backfill?.set(account.scope, upTo)
     // Raw activity view remains account/athlete scoped and never counts as training sessions.
     host.saveView(raw.flatMap(o => { const a = garminActivity(o, account.scope); return a ? [{ ...o, fkSourceIdentity: a.sourceIdentity, fkStartIso: a.startIso }] : [] }), result.accountScope!)

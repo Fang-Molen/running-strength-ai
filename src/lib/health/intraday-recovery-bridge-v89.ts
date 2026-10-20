@@ -29,3 +29,26 @@ export function intradayRecoveryFromStore(days: Record<string, IntradayDay>, ath
   if (!days[day]) return null
   try { return buildIntradayRecovery(intradayInput(days, athleteId, day, now)) } catch { return null }
 }
+
+/** v89.1 方坤估算·个人常态曲线：用这一天之前（≤28 天）同一来源的手表样本，按当地钟点算“每天该小时的中位数”，
+ *  再取各天的中位数与四分位。某小时可比天数 <minDays 就不出该小时。只描述你自己的历史常态，不是预测、不是训练许可。 */
+export type TypicalHour = { hour: number; median: number; p25: number; p75: number; days: number }
+export function typicalDay(days: Record<string, IntradayDay>, day: string, kind: 'hr' | 'bb' | 'st', minDays = 7, window = 28): { hours: TypicalHour[]; historyDays: number } {
+  const start = new Date(Date.parse(day + 'T12:00:00Z') - window * 864e5).toISOString().slice(0, 10)
+  const prior = Object.values(days).filter(d => d.day < day && d.day >= start)
+  const byHour = new Map<number, number[]>()
+  let historyDays = 0
+  const med = (xs: number[]) => { const a = [...xs].sort((x, y) => x - y), n = a.length; return n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2 }
+  const q = (xs: number[], p: number) => { const a = [...xs].sort((x, y) => x - y), k = (a.length - 1) * p, i = Math.floor(k), j = Math.ceil(k); return a[i] + (a[j] - a[i]) * (k - i) }
+  for (const d of prior) {
+    const rows = (kind === 'hr' ? d.hr : kind === 'bb' ? d.bb : d.st) ?? []
+    if (!rows.length) continue
+    historyDays++
+    const offset = d.offsetMin ?? -new Date(rows[0][0]).getTimezoneOffset(), base = Date.parse(d.day + 'T00:00:00Z') - offset * 60e3
+    const hours = new Map<number, number[]>()
+    for (const [t, v] of rows) { const h = Math.floor((t - base) / 3600e3); if (h >= 0 && h < 24) hours.set(h, [...(hours.get(h) ?? []), v]) }
+    for (const [h, vs] of hours) byHour.set(h, [...(byHour.get(h) ?? []), med(vs)])
+  }
+  const hours = [...byHour].filter(([, vs]) => vs.length >= minDays).sort((a, b) => a[0] - b[0]).map(([hour, vs]) => ({ hour, median: med(vs), p25: q(vs, .25), p75: q(vs, .75), days: vs.length }))
+  return { hours, historyDays }
+}

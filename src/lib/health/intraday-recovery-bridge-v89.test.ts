@@ -22,3 +22,9 @@ test('reference band appears only with ≥7 prior comparable days; samples carry
 test('no stored day → null (UI shows 暂无, never stitches daily summaries)', () => {
   assert.equal(intradayRecoveryFromStore(store(3), 'local', '2026-10-01', '2026-10-20T23:00:00Z'), null)
 })
+import { typicalDay } from './intraday-recovery-bridge-v89'
+test('v89.1 typical-day estimate: full 24h from ≥7 prior days, none from sparse history, excludes the day itself', () => {
+  const t = typicalDay(store(10), '2026-10-20', 'hr')
+  assert.equal(t.historyDays, 9); assert.equal(t.hours.length, 24); assert.ok(t.hours.every(h => h.days === 9 && h.p25 <= h.median && h.median <= h.p75))
+  const sparse = typicalDay(store(5), '2026-10-20', 'hr'); assert.equal(sparse.hours.length, 0); assert.equal(sparse.historyDays, 4)
+})
