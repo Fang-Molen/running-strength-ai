@@ -1,5 +1,3 @@
-// DORMANT (v84): Codex 1019y 受信快照+预算账本版 coach-chat 控制器，仅作参考与单测，不在 functions/ 下、不会部署成路由。
-// 线上 /api/coach-chat 仍是 functions/api/coach-chat.js（v83 口径，按 IP 限流，无费用上限——用户 10-19 决定）。
 import { normalizeAskCoachInput, buildCoachModelRequest, interpretCoachModelOutput, coachLocalSafetyTurn } from '../../src/lib/strength/coach-pipeline.ts';
 import { MODEL_DEV_USER_ID } from '../../src/lib/strength/model-access.ts';
 import { assertDeepSeekNumericGrounding } from '../../src/lib/coach/deepseek-grounding.ts';

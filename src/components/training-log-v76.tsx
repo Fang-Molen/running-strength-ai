@@ -17,8 +17,7 @@ import { loadSchedule } from "@/lib/ui/day-schedule"
 import { OccurrenceCard, ImportRow } from "@/components/training-log-panel"
 import { GarminActivityRow, GarminLog, garminById } from "@/components/garmin-log"
 import { ReviewPanel } from "@/components/review-card"
-import { AbilityRadarCard, loadAbilityInput } from "@/components/ability-radar-card"
-import { scoreAbilities } from "@/lib/ui/ability-score-v76"
+import { AbilityRadarCard } from "@/components/ability-radar-card"
 import { TrainingEvidencePanel } from "@/components/training-evidence-panel"
 import { LogMetricsPanel } from "@/components/r8"
 import { AssessmentPanel } from "@/components/assessment-panel"
@@ -118,7 +117,6 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
     window.addEventListener("fk-log-focus", onFocus); return () => window.removeEventListener("fk-log-focus", onFocus)
   }, [today])
   const days = useMemo(() => { const m = new Map<string, ActivityRow[]>(); for (const r of list) m.set(r.date, [...(m.get(r.date) ?? []), r]); return [...m] }, [list])
-  const axes = useMemo(() => { try { return scoreAbilities(loadAbilityInput(today)) } catch { return [] } }, [today, rev])
   const max = Math.max(1, ...s.bars.map(b => b.minutes))
   const feelLogs = plan.cycle?.logs ?? []
   const undatedImports = loadConfirmedTrainingImports().filter(i => !calendarDayShanghai(i.occurredAt.value) && !String(i.title.value ?? "").includes("佳明账号同步"))
@@ -142,7 +140,7 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
         <p className="keep mt-1 text-xs text-muted">{f.kind !== "lift" ? `跑步 ${(s.distanceM / 1000).toFixed(2)} km${s.missingDistance ? `（${s.missingDistance} 条缺距离，未计入）` : ""} · ` : ""}时长 {s.durationSec ? durTotal(s.durationSec) : s.missingDuration ? "—" : "0分钟"}{s.missingDuration ? `（${s.missingDuration} 条缺时长，未计入）` : ""} · 来源 手机记录 {s.bySource.app} · 佳明 {s.bySource.garmin}{s.bySource.upload ? ` · 聊天/上传 ${s.bySource.upload}` : ""}</p>
         <div className="mt-2 flex items-end gap-1.5" aria-label={f.range === "week" ? "本周每天训练分钟" : "近4周每周训练分钟"}>
           {s.bars.map(b => <div key={b.start} className="flex flex-1 flex-col items-center gap-0.5">
-            <span className="keep text-[10px] text-muted">{b.future ? "" : b.count ? `${b.minutes}′${b.unknown ? "+?" : ""}` : "—"}</span>
+            <span className="keep text-xs text-muted">{b.future ? "" : b.count ? `${b.minutes}′${b.unknown ? "+?" : ""}` : "—"}</span>
             <div className={"w-full rounded-t " + (b.future ? "bg-line/40" : "bg-[#ff6a1a]")} style={{ height: `${Math.max(b.count ? 4 : 1, (b.minutes / max) * 56)}px` }} title={`${b.start}${b.end !== b.start ? `–${b.end}` : ""}：${b.count} 条，${b.minutes} 分钟${b.unknown ? `，${b.unknown} 条缺时长` : ""}`} />
             <span className={"keep text-[10px] " + (today >= b.start && today <= b.end ? "font-bold text-fg" : "text-muted")}>{b.label}</span>
           </div>)}
@@ -158,13 +156,17 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
     </section>
     <UnmarkedPlans items={unmarked} plan={plan} suggestions={runMatch.suggestions} onChanged={() => setRev(n => n + 1)} />
     <div className="mt-3"><ReviewPanel today={today} title="方坤复盘" /></div>
-    <Entry id="log-ability" title="能力详情" summary={axes.length ? `五维 已评 ${axes.filter(a => a.score != null).length} 项 · 待评估 ${axes.filter(a => a.score == null).length} 项` : "五维能力图"} open={entry.ability} onToggle={o => setEntry(e => ({ ...e, ability: o }))}>{entry.ability ? <AbilityRadarCard asOf={today} mode="details" /> : null}</Entry>
     <Entry id="log-trend" title="详细趋势" summary="训练负荷 · 记录依据查询" open={entry.trend} onToggle={o => setEntry(e => ({ ...e, trend: o }))}>{entry.trend ? <><LogMetricsPanel today={today} loadOnly /><TrainingEvidencePanel today={today} /></> : null}</Entry>
     <section className="home-card mt-3 px-3 py-2" aria-label="我的能力（五维）" data-testid="log-radar"><div className="flex items-baseline justify-between"><h2 className="text-base font-bold">我的能力</h2><span className="keep text-xs text-muted">点各维看输入和算法</span></div><AbilityRadarCard asOf={today} mode="chart" /></section>
-    <Entry id="log-history" title="本周评估与建议" summary="方坤按本周记录给的建议，可标说得对/不准" open={entry.history} onToggle={o => setEntry(e => ({ ...e, history: o }))}>{entry.history ? <AssessmentPanel /> : null}</Entry>
-    <Entry id="log-feel" title="本周感受与成长" summary={feelLogs.length ? `已记 ${feelLogs.length} 条感受 · 最近：${FEEL[feelLogs.at(-1)!.feel] ?? feelLogs.at(-1)!.feel}` : "还没记录感受，点开填写"} open={entry.feel} onToggle={o => setEntry(e => ({ ...e, feel: o }))}>
-      {feelLogs.length ? <ul className="space-y-1">{feelLogs.map(log => <li key={log.sessionId}>{plan.sessions.find(x => x.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <div className="keep text-sm"><p>本周还没有记录主观感受。训练结束后在“今日”给这节课选“轻松/正好/吃力/有不适”，方坤复盘会用它判断状态。</p><button type="button" className="mt-2 min-h-11 rounded-full border border-line px-3 font-bold" onClick={() => onNavigate?.("today")}>去今日记录感受</button></div>}
-      <AthleteGrowthCard plan={plan} />
+    <Entry id="log-week-review" title="本周复盘与感受" summary={feelLogs.length ? `感受 ${feelLogs.length} 条 · 查看建议与反馈` : "查看本周建议，按需补充感受"} open={entry.history || entry.feel} onToggle={o => setEntry(e => ({ ...e, history: o, feel: o }))}>
+      {entry.history || entry.feel ? <>
+        <AssessmentPanel />
+        <div className="mt-3 border-t border-line pt-3 text-sm">
+          <h3 className="font-bold">本周感受与成长</h3>
+          {feelLogs.length ? <ul className="mt-2 space-y-1">{feelLogs.map(log => <li key={log.sessionId}>{plan.sessions.find(x => x.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <div className="mt-2 text-sm"><p>尚无本周主观感受。训练后评分填写一次即可，日志不重复要求填写。</p><button type="button" className="mt-2 min-h-11 rounded-full border border-line px-3 font-bold" onClick={() => onNavigate?.("today")}>前往今日反馈</button></div>}
+          <AthleteGrowthCard plan={plan} />
+        </div>
+      </> : null}
     </Entry>
     <Entry id="log-garmin" title="佳明活动" summary={`共 ${garminActivities().length} 条 · 原始列表`} open={entry.garmin} onToggle={o => setEntry(e => ({ ...e, garmin: o }))}>{entry.garmin ? <GarminLog range={{ start: s.start, end: s.end }} /> : null}</Entry>
     {undatedImports.length || undatedOcc.length ? <Entry id="log-undated" title="没有可用日期的记录" summary={`${undatedImports.length + undatedOcc.length} 条`}>

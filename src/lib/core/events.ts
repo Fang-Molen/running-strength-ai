@@ -56,15 +56,20 @@ function refreshFromStorage(change: StorageEvent) {
 let contextProvider: () => Record<string, unknown> = () => ({});
 let athleteId = "local";
 let cycleId = "local-cycle";
+/** A scope change invalidates cached read models; it is not a training event. */
+export const ATHLETE_SCOPE_CHANGED = "fk-athlete-scope-changed";
 
 export function setEventContext(input: {
   athleteId?: string;
   cycleId?: string;
   context?: () => Record<string, unknown>;
 }) {
+  const previous = athleteId;
   if (input.athleteId) athleteId = input.athleteId;
   if (input.cycleId) cycleId = input.cycleId;
   if (input.context) contextProvider = input.context;
+  if (athleteId !== previous && typeof window !== "undefined")
+    window.dispatchEvent(new Event(ATHLETE_SCOPE_CHANGED));
 }
 
 export function onAppEvent(listener: Listener): () => void {

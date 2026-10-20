@@ -75,7 +75,7 @@ try{const draft=p.getByTestId('chat-training-save');await draft.locator('summary
 await p.getByRole('button',{name:'关闭方坤',exact:true}).click().catch(()=>p.keyboard.press('Escape'))
 // ---------- 4. 首页 V4 训练详情（训练中 / 训练后）10-19 ----------
 const fill=(l,v)=>p.locator('label',{hasText:l}).first().locator('input').fill(v)
-try{await p.getByRole('button',{name:'完整课表 ›'}).first().click();/* v82: 主按钮直接进逐组引导；详情走“完整课表” */await p.locator('[data-testid="plan400-day-sheet"]').waitFor();await p.getByRole('tab',{name:'训练后'}).click();/* v83 P1-08：组合课只填分项评价 */{const rf=p.getByTestId('part-running');await rf.getByLabel('跑步 RPE').fill('7');await rf.getByRole('button',{name:'保存跑步评价'}).click();await p.waitForTimeout(500)}
+try{await p.getByRole('button',{name:'完整课表 ›'}).first().click();/* v82: 主按钮直接进逐组引导；详情走“完整课表” */await p.locator('[data-testid="plan400-day-sheet"]').waitFor();await p.getByRole('tab',{name:'训练后'}).click();await fill('整课 RPE','7');await p.getByRole('button',{name:'保存训练后反馈'}).click();await p.waitForTimeout(500)
  // ---------- 5. 逐组引导力量（同一天 V4 力量部分），完成 1 组后离开 ----------
  await p.getByRole('tab',{name:'课表'}).click();await p.waitForTimeout(400);const st=p.getByRole('button',{name:/开始力量部分|开始力量训练/});await st.first().click();await p.waitForTimeout(1200)
  {const done=new Set();for(let i=0;i<6&&!(await p.locator('[data-testid=guided-current]').count());i++){for(const n of ['本次不使用','按原计划','开始训练','开始执行','继续训练','继续']){const bt=p.getByRole('button',{name:n,exact:true});if(!done.has(n)&&await bt.count()&&await bt.first().isVisible()){done.add(n);await bt.first().click();await p.waitForTimeout(900);break}}}}
@@ -149,7 +149,7 @@ for(const [dd,first] of [[7,'10-13'],[30,'09-20'],[90,'07-22']]){await trend.get
 const bf=await p.evaluate(()=>Object.entries(localStorage).filter(([k])=>k.startsWith('fk-garmin-health-backfill')).map(([k,v])=>v))
 check('健康历史逐次补到 90 天：本次额外请求 14 天更早数据（09-22..10-05）',bf[0]==='28'&&healthAsked.has('2026-09-22')&&!healthAsked.has('2026-09-21'),JSON.stringify({bf,asked:[...healthAsked].sort().slice(0,3)}))
 // 今日 / 计划 记录状态
-check('v83 今日：记一笔是计划外记录，不再在今日清单里标“✓ 按计划”；V4 主卡 进行中',!/深蹲 3×8 60kg[\s\S]{0,60}✓ 按计划/.test(td)&&!/跑步 5 公里[\s\S]{0,60}✓ 按计划/.test(td)&&/10月19日 周一\n进行中/.test(td),td.slice(0,400))
+check('今日：记一笔两条 ✓ 按计划；V4 主卡 进行中',/深蹲 3×8 60kg[\s\S]{0,60}✓ 按计划/.test(td)&&/跑步 5 公里[\s\S]{0,60}✓ 按计划/.test(td)&&/10月19日 周一\n进行中/.test(td),td.slice(0,400))
 check('计划：V4 日期已确认（用户 t486），大警告卡收起为一行；W3 标题显示 11月7日',/✓ 日期已确认 · 整体顺延 7 天/.test(pl)&&!/日期待核对/.test(pl)&&/11月7日/.test(pl)&&!/10月31日/.test(pl),pl.slice(0,700))
 check('计划：10/19 V4 课 进行中',/10\/19 周一\n速度耐力＋力量A\n[^\n]*\n进行中/.test(pl),pl.slice(0,600))
 // 方坤上下文（联网事实包）

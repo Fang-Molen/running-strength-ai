@@ -7,6 +7,7 @@ import { BodyPanel } from "@/components/body-panel"
 import { DeviceCenter } from "@/components/device-center"
 import { DeviceImport } from "@/components/device-import"
 import { HealthTiles } from "@/components/health-tiles"
+import { UnifiedRecoveryHostU11 } from "@/components/unified-recovery-host-u11"
 import { SourceGuide, CheckinCard, WatchQuestion, PainLog, RecoveryVerdictCard } from "@/components/health-extras"
 import { FuelPanel } from "@/components/fuel-panel"
 import { VitalsPanel, type ImportHint } from "@/components/vitals-panel"
@@ -120,7 +121,12 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
   const bodyRecordedToday = latest?.date === today
 
 
-  if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} /></div>
+  const openVitals = () => {
+    const details=document.querySelector<HTMLDetailsElement>("#body-vitals details")
+    if(details)details.open=true
+    document.getElementById("body-vitals")?.scrollIntoView({block:"start"})
+  }
+  if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} /><UnifiedRecoveryHostU11 day={today} onRecord={openVitals}/><div id="body-vitals"><details className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={()=>setRevision(v=>v+1)}/></details></div></div>
   const hasWatch = watch != null && watch !== "none"
   return <div className={compact ? "" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}>
     {compact ? null : <nav className="product-segments mb-3" aria-label="身体工作区">
@@ -130,8 +136,9 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
       {!compact?<HealthModeNote day={today}/>:null}
       {compact ? null : <RecoveryVerdictCard today={today} revision={revision} watch={watch} onImport={() => setPane("device")} />}
       {watch && !compact ? <CheckinCard today={today} watch={watch} onSaved={() => setRevision((v) => v + 1)} onPain={() => { setPane("trend"); window.setTimeout(() => document.getElementById("pain-log")?.scrollIntoView({ block: "start" }), 40) }} /> : null}
+      <UnifiedRecoveryHostU11 day={today} onRecord={openVitals}/>
       {watch === "none" || compact ? null : 
-      <HealthTiles allowed={tier ? [...new Set([...TIERS[tier].tiles,...vitals.map(v=>v.kind),...loadExtras().map(v=>v.metric)])] : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
+      <HealthTiles excluded={["RHR","BODY_BATTERY"]} allowed={tier ? [...new Set([...TIERS[tier].tiles,...vitals.map(v=>v.kind),...loadExtras().map(v=>v.metric)])] : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
     <section className="px-1" data-legacy-span={span} data-legacy-metrics={metrics.length}>
     </section>
     </div>

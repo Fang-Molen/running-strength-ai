@@ -20,6 +20,11 @@ export function loadComponents(store: Pick<Storage, 'getItem'> | null = ls()): C
   try { const v = JSON.parse(store?.getItem(COMPONENTS_KEY) ?? 'null'); if (v && v.schemaVersion === 1 && v.days && typeof v.days === 'object') return v } catch { /* 坏数据不覆盖：只读为空 */ }
   return { schemaVersion: 1, days: {} }
 }
+/** Read projection only; writers retain the full document and foreign rows. */
+export function loadOwnedComponents(store: Pick<Storage, 'getItem'> | null = ls()): ComponentsDoc {
+  const doc = loadComponents(store), athlete = currentAthleteId()
+  return { ...doc, days: Object.fromEntries(Object.entries(doc.days).filter(([, row]) => ownedBy(row, athlete))) }
+}
 function write(doc: ComponentsDoc, store: KV | null): boolean {
   try { if (!store) return false; const raw = JSON.stringify(doc); store.setItem(COMPONENTS_KEY, raw); if (store.getItem(COMPONENTS_KEY) !== raw) return false
     if (typeof window !== 'undefined') window.dispatchEvent(new Event(COMPONENTS_EVT)); return true } catch { return false }

@@ -28,8 +28,8 @@ function loadPref(): TileId[] {
 }
 const SRC: Record<string, string> = { MANUAL: "手工", IMAGE_CONFIRMED: "对照截图", DEVICE_CONFIRMED: "设备导入" }
 
-export function HealthTiles({ vitals, checks, today, revision, onJump, allowed }: { vitals: VitalRecord[]; checks: BodyCheck[]; today: string; revision: number; onJump: (target: string) => void; allowed?: string[] }) {
-  const TILES = allowed ? ALL_TILES.filter((t) => allowed.includes(t.id)) : ALL_TILES
+export function HealthTiles({ vitals, checks, today, revision, onJump, allowed, excluded=[] }: { vitals: VitalRecord[]; checks: BodyCheck[]; today: string; revision: number; onJump: (target: string) => void; allowed?: string[]; excluded?: string[] }) {
+  const TILES = ALL_TILES.filter(t=>(!allowed||allowed.includes(t.id))&&!excluded.includes(t.id))
   const [shown, setShown] = useState<TileId[]>(DEFAULT_SHOWN)
   const [open, setOpen] = useState<TileId | null>(null)
   const [editing, setEditing] = useState(false)
@@ -73,7 +73,7 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed }
           <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : t.id)} className="w-full text-left">
             <p className="flex items-center gap-1 text-xs text-muted"><Icon className="size-3.5" />{t.name}<span className="ml-auto">{isOpen ? "收起" : "›"}</span></p>
             <p className={last ? "mt-1.5 text-[1.6rem] font-bold leading-none" : "mt-1.5 text-base font-bold text-muted"}>{view?.state==='CONFLICT'?"来源待核对":last?valueText(t.id,last.value):"— 未记录"}</p>
-            <p className="mt-1 text-[11px] text-muted">{last ? <>{stale ? `${last.day.slice(5)} · ` : "今天 · "}{delta != null ? <span className={good == null ? "" : good ? "text-[#269775]" : "text-[#c0612b]"}>较前7天可比均值 {delta > 0 ? "+" : ""}{delta}</span> : "点开核对来源"}</> : "导入或手填后显示"}</p>
+            <p className="mt-1 text-xs text-muted">{last ? <>{stale ? `${last.day.slice(5)} · ` : "今天 · "}{delta != null ? <span className={good == null ? "" : good ? "text-[#269775]" : "text-[#c0612b]"}>较前7天可比均值 {delta > 0 ? "+" : ""}{delta}</span> : "点开核对来源"}</> : "导入或手填后显示"}</p>
           </button>
           {isOpen ? <>{view?<HealthSourceDetails view={view}/>:null}<TileDetail points={pts} unit={t.unit} onRecord={() => onJump(t.id === "WEIGHT" ? "body-measurements" : t.id === "BODY_BATTERY" || t.id === "READINESS" || t.id === "STRESS" ? "body-devices" : "body-vitals")} /></> : null}
         </div>

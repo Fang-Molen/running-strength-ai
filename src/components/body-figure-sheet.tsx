@@ -39,10 +39,13 @@ export function BodyFigureSheet({ sex, kg, bf, targetKg, targetBf, onClose, onDa
       <img src={characterReference(appearanceSex)} alt="方坤标准角色插画，非实测体型" />
       <div><span className="text-xs text-muted">当前体重</span><p className="keep text-2xl font-black">{kg ?? "—"}<small className="ml-1 text-sm font-normal">kg</small></p>
         <p className="keep mt-1 text-sm text-muted">体脂率 {bf === null ? "未记录" : `${bf}%`}</p>
-        <p className="keep mt-3 text-xs text-muted">形象参考图<br />新版人物3D待外观与动作验收</p></div>
+        <p className="keep mt-2 text-sm text-muted">形象仅供参考，不代表体脂实测。</p></div>
     </section>
     <div className="mt-3 flex gap-2" role="group" aria-label="体型参考人物">{(['male','female'] as const).map(value=><button type="button" className="fk-chip" key={value} aria-pressed={appearanceSex===value} onClick={()=>setAppearanceSex(value)}>{value==='male'?'男性参考':'女性参考'}</button>)}</div>
-    <ShapeSim3D key={appearanceSex} sex={appearanceSex} cur={{kg,bf}} tgt={typeof parsed==='string'?null:parsed}/>
+    <details className="mt-3 rounded-xl border border-line p-3" aria-label="3D体型参考">
+      <summary className="min-h-11 cursor-pointer content-center text-sm font-bold">查看3D体型参考（选看）</summary>
+      <div className="mt-2"><p className="keep mb-2 text-sm text-muted">新版人物3D待外观与动作验收</p><ShapeSim3D key={appearanceSex} sex={appearanceSex} cur={{kg,bf}} tgt={typeof parsed==='string'?null:parsed}/></div>
+    </details>
 
     <section className="mt-3 rounded-2xl border border-line p-3 text-sm" aria-label="当前与目标数据对比"><h3 className="font-bold">当前与目标</h3><div className="mt-2 grid grid-cols-3 gap-2 text-center"><span className="text-muted">指标</span><b>当前记录</b><b className="text-accent">设定目标</b><span>体重</span><span>{kg ?? '—'} kg</span><span>{typeof parsed === 'string' ? '未设置' : parsed.kg + ' kg'}</span><span>体脂率</span><span>{bf == null ? '未记录' : bf + '%'}</span><span>{typeof parsed !== 'string' && parsed.bf != null ? parsed.bf + '%' : '未设置'}</span></div></section>
     <form id={formId} className="fk-figure-goal" onSubmit={e => { e.preventDefault(); submit(); }} noValidate>

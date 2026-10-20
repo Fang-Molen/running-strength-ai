@@ -540,3 +540,9 @@ html, body { background: #0b0b0d; }
 /* 输入时（键盘弹出）收起状态和快捷问题这一行；状态面板展开时保留 */
 .fk-kb .fk-coach-quick, .fk-kb .fk-coach-dock:not(:has(.fk-coach-status[open])) { display: none; }
 @media (min-width: 768px) { .fk-coach-sheet { width: 100%; max-width: 48rem; margin-inline: auto; } }
+
+/* V89 global readable typography. Only visual rem units change; iOS input min 16px is preserved. */
+html[data-fk-font-scale="standard"]{font-size:16px}
+html[data-fk-font-scale="large"]{font-size:17px}
+html[data-fk-font-scale="extra"]{font-size:18px}
+@media(max-width:390px){.fk-log-v76,.fk-coach-sheet,.fk-figure-goal{overflow-wrap:anywhere}}

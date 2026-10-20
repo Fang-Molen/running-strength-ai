@@ -33,6 +33,7 @@ import {commitControlledStrengthPlan} from "@/lib/core/coach-strength-plan-stora
 import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
 import { readWallpaper, writeWallpaper, WALLPAPERS, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
+import { readFontScale, writeFontScale, type FontScale } from "@/lib/ui/font-scale-v89";
 import { TrainingLogPage } from "@/components/training-log-v76";
 import { TrainingEvidencePanel } from "@/components/training-evidence-panel";
 import { AbilityRadarCard } from "@/components/ability-radar-card";
@@ -132,16 +133,28 @@ export function StrengthApp() {
   const [plan, setPlan] = useState<Plan>(starter);
   const [wallpaper, setWallpaper] = useState<WallpaperId>("plain");
   const [displayMode, setDisplayMode] = useState<DisplayMode>("light");
+  const [fontScale, setFontScale] = useState<FontScale>("standard");
   const [systemDark, setSystemDark] = useState(false);
   useEffect(() => {
     setWallpaper(readWallpaper(window.localStorage));
     setDisplayMode(readDisplayMode(window.localStorage));
+    setFontScale(readFontScale(window.localStorage));
     const media = window.matchMedia?.("(prefers-color-scheme: dark)");
     if (!media) return;
     const update = () => setSystemDark(media.matches);
     update();
     media.addEventListener?.("change", update);
     return () => media.removeEventListener?.("change", update);
+  }, []);
+  useEffect(() => {
+    document.documentElement.dataset.fkFontScale = fontScale;
+    return () => { delete document.documentElement.dataset.fkFontScale; };
+  }, [fontScale]);
+  useEffect(() => {
+    const refresh = () => setFontScale(readFontScale(window.localStorage));
+    window.addEventListener('storage', refresh);
+    window.addEventListener('pageshow', refresh);
+    return () => { window.removeEventListener('storage', refresh); window.removeEventListener('pageshow', refresh); };
   }, []);
   const [active, setActive] = useState(0);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
@@ -829,7 +842,7 @@ export function StrengthApp() {
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
       {tab === "log" ? <TrainingLogPage today={todayIso} plan={plan} onNavigate={(next) => setTab(next as typeof tab)} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
-      {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next === "body" ? "diet" : next); }}
+      {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready && !!todayCoord, todayParts: todayCoord?.parts, todayUnplanned: todayCoord?.unplanned, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
       <div className={tab === "diet" ? "" : "hidden"}><div className="px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
@@ -847,7 +860,7 @@ export function StrengthApp() {
             </div>
             <button type="button" onClick={() => setSettingsOpen(false)} className="grid size-11 place-items-center rounded-full bg-surface shadow-sm" aria-label="关闭设置"><X className="size-5" /></button>
           </div>
-          {settingsPane === "menu" ? <SettingsMenu profile={profile} sportGoal={`${SPORTS.find((item) => item.id === preference.sport)?.label ?? "项目未选"} · ${GOALS.find((item) => item.id === preference.primaryGoal)?.label ?? "目标未选"}`} displayText={`${displayMode === "light" ? "浅色" : displayMode === "dark" ? "深色" : "跟随系统"} · ${WALLPAPERS.find((w) => w.id === wallpaper)?.label ?? "默认壁纸"}`} onPane={setSettingsPane} onProfile={() => setProfileOpen(true)} /> : null}
+          {settingsPane === "menu" ? <SettingsMenu profile={profile} sportGoal={`${SPORTS.find((item) => item.id === preference.sport)?.label ?? "项目未选"} · ${GOALS.find((item) => item.id === preference.primaryGoal)?.label ?? "目标未选"}`} displayText={`${displayMode === "light" ? "浅色" : displayMode === "dark" ? "深色" : "跟随系统"} · 字体${fontScale === "standard" ? "标准" : fontScale === "large" ? "大" : "特大"}`} onPane={setSettingsPane} onProfile={() => setProfileOpen(true)} /> : null}
           {settingsPane === "menu" ? <StorageHint /> : null}
           {settingsPane === "athlete" ? <><AthletePanel profile={profile} onEdit={() => setProfileOpen(true)} /><SettingsHub only={["p", "n"]} initialOpen="p" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "health" ? <><HealthPanel /><SettingsHub only={["h"]} initialOpen="h" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
@@ -872,6 +885,17 @@ export function StrengthApp() {
                     className={"min-h-11 rounded-card border px-2 text-sm font-bold " + (displayMode === id ? "border-accent bg-bg" : "border-line")}>{label}</button>
                 ))}
               </div>
+            </div>
+            <div className="mt-3" role="group" aria-label="全局字体大小">
+              <p className="mb-2 text-sm font-bold">全局字体大小</p>
+              <div className="grid grid-cols-3 gap-2">
+                {([['standard','标准'],['large','大'],['extra','特大']] as const).map(([id,label]) =>
+                  <button key={id} type="button" aria-pressed={fontScale===id} onClick={() => {
+                    if (writeFontScale(window.localStorage,id)) setFontScale(id);
+                    else setNotice('字体设置保存失败，训练数据未修改。');
+                  }} className={'min-h-11 rounded-card border px-2 text-sm font-bold '+(fontScale===id?'border-accent bg-bg':'border-line')}>{label}</button>)}
+              </div>
+              <p className="mt-1 text-sm text-muted">聊天、训练、健康和弹窗共同使用；字号变大时可滚动，不缩小关键信息。</p>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {WALLPAPERS.map((item) => (

@@ -7,6 +7,10 @@ import { v4DayFact, type DayParts, type V4Day, type V4Log } from './plan400-view
 import type { DayComponents } from './plan400-components-store'
 export type PendingKind = 'confirm_run' | 'rate_run' | 'rate_lift'
 export type PendingItem = { date: string; part: 'running' | 'strength'; kind: PendingKind; text: string; deferred: boolean }
+/** Shared logical identity across home, log and coach. Never use array position. */
+export function pendingTaskId(item: PendingItem, athleteId: string): string {
+  return `feedback:${encodeURIComponent(athleteId)}:v4:${item.date}:${item.part}:${item.kind}`
+}
 /** v88.1：首页一行说清是哪天哪节哪一项（不只写“1 项”）。48–72h 恢复补填从不进待补列表。 */
 export function pendingLabel(it: PendingItem, title?: string): string { return `${Number(it.date.slice(5, 7))}月${Number(it.date.slice(8, 10))}日${title ? `「${title}」` : ''} ${it.text}` }
 const fb = (p: DayComponents[keyof DayComponents] | undefined) => {

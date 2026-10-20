@@ -1,4 +1,5 @@
 import { recovery10 } from "@/lib/health/legacy-inputs";
+import { currentAthleteId } from "@/lib/core/events"
 import { loadHealthSnapshot } from "@/lib/health/snapshot"
 import { reviewFatigue, dailyCheckin, FATIGUE_REVIEW_RULES } from "@/lib/health/analysis"
 import { healthChanged } from '@/lib/health/observation'
@@ -43,12 +44,15 @@ export function RecoveryVerdictCard({ today, revision, onImport, watch }: { toda
 
 /** 疼痛/伤病记录：部位、0–10、日期；P-03/P-07 提示。 */
 const PAIN_KEY = "fk-pain-log-v1"
-type Pain = { id: string; date: string; part: string; score: number; note: string }
+type Pain = { id: string; date: string; part: string; score: number; note: string; athleteId?: string; occurredAt?: string; recordedAt?: string }
 export function PainLog({ today }: { today: string }) {
   const [list, setList] = useState<Pain[]>([])
   const [part, setPart] = useState(""), [score, setScore] = useState(3), [stamp, setStamp] = useState(0)
-  useEffect(() => { try { setList(JSON.parse(localStorage.getItem(PAIN_KEY) ?? "[]")) } catch { setList([]) } }, [])
-  const save = (next: Pain[]) => { setList(next); try { localStorage.setItem(PAIN_KEY, JSON.stringify(next.slice(-200))); setStamp(Date.now()); healthChanged() } catch { /* ignore */ } }
+  useEffect(() => { try { setList(JSON.parse(localStorage.getItem(PAIN_KEY) ?? "[]").filter((p:Pain)=>(p.athleteId??'local')===currentAthleteId())) } catch { setList([]) } }, [])
+  const save = (next: Pain[]) => { try { const all=JSON.parse(localStorage.getItem(PAIN_KEY)??'[]') as Pain[]; if(!Array.isArray(all))return
+    const raw=JSON.stringify([...all.filter(p=>(p.athleteId??'local')!==currentAthleteId()),...next]);localStorage.setItem(PAIN_KEY,raw)
+    if(localStorage.getItem(PAIN_KEY)!==raw)return
+    setList(next);setStamp(Date.now());healthChanged() } catch { /* Preserve old data on failed persistence. */ } }
   const byPart = new Map<string, Pain[]>(); for (const p of list) byPart.set(p.part, [...(byPart.get(p.part) ?? []), p])
   const long = [...byPart.entries()].filter(([, ps]) => { const ds = ps.map((p) => p.date).sort(); return (Date.parse(ds.at(-1)!) - Date.parse(ds[0])) / 864e5 >= 14 && ds.at(-1)! >= today.slice(0, 8) })
   return <section className="home-card mt-3 p-4 text-sm" aria-label="疼痛与伤病">
@@ -56,7 +60,7 @@ export function PainLog({ today }: { today: string }) {
     <div className="mt-2 flex flex-wrap items-center gap-2">
       <input value={part} onChange={(e) => setPart(e.target.value.slice(0, 12))} placeholder="部位，如 左膝外侧" className="fk-cell min-h-10 min-w-0 flex-1" aria-label="疼痛部位" />
       <label className="flex items-center gap-1 text-xs">程度<input type="range" min={0} max={10} value={score} onChange={(e) => setScore(+e.target.value)} aria-label="疼痛程度" /><b className="w-5">{score}</b></label>
-      <button type="button" disabled={!part.trim()} className="fk-chip" onClick={() => { save([...list, { id: Math.random().toString(36).slice(2), date: today, part: part.trim(), score, note: "" }]); setPart("") }}><Plus className="size-3.5" />记下</button>
+      <button type="button" disabled={!part.trim()} className="fk-chip" onClick={() => { const now=new Date(),day=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;save([...list, { id: Math.random().toString(36).slice(2), date: today, part: part.trim(), score, note: "",athleteId:currentAthleteId(),recordedAt:now.toISOString(),...(day===today?{occurredAt:now.toISOString()}: {}) }]); setPart("") }}><Plus className="size-3.5" />记下</button>
     </div>
     {score > 3 && part ? <p className="mt-1 text-xs text-[var(--color-risk)]">疼痛 &gt;3/10 或改变跑姿：停止引起疼痛的训练，48 小时内不做引起疼痛的动作；不缓解请就医。（手册 P-03【经验规则】）</p> : null}
     {long.map(([p]) => <p key={p} className="mt-1 rounded-lg border border-[var(--color-risk)] p-2 text-xs text-[var(--color-risk)]">「{p}」记录跨度已超过 14 天，建议找运动医学/康复专业人员检查。（手册 P-07）</p>)}

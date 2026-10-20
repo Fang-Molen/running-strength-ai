@@ -14,6 +14,7 @@ import { readTrainingFact } from '../core/fact-read'
 import { loadCheckins } from './legacy-inputs'
 import type { ScheduleEntry } from './legacy-inputs'
 import type { CoachBrief } from '../core/coach-brief'
+import { readRecoveryProjection, recoveryExplanation } from './recovery-host-u11'
 
 const S=z.string().max(500),N=z.number().finite().nonnegative()
 const DataSchema=z.object({
@@ -25,7 +26,8 @@ const DataSchema=z.object({
   coreActual:z.object({sessions:N,knownMinutes:N,unknownMinutes:N,sourceIds:z.array(z.string().max(120)).max(100)}),
   nutrition:z.object({count:N,knownKcal:N,pending:N}),
   imports:z.object({count:N,unknownDate:N,latest:z.array(z.object({id:z.string().max(120),day:z.string().max(10),title:z.string().max(120),sport:z.string().max(15),distanceM:N.nullable(),durationSec:N.nullable()})).max(8)}),
-  subjective:z.string().max(200),warnings:z.array(S).max(15),planChanged:z.literal(false)
+  subjective:z.string().max(200),warnings:z.array(S).max(15),planChanged:z.literal(false),
+  muscleRecovery:z.object({revision:z.string(),summary:z.string(),explanation:z.string(),hasEvidence:z.boolean(),hasObservedRegions:z.boolean(),unreadable:z.boolean()}).optional()
 })
 export type CoachDataContext=z.infer<typeof DataSchema>
 export function assertCoachData(v:unknown){if(v!=null)DataSchema.parse(v)}
@@ -54,11 +56,18 @@ export function readCoachData(day=localDay()):CoachDataContext{
   const all=coachImports().filter(i=>!occurrenceVoided(i.confirmedImportId)),unknownDate=all.filter(i=>i.occurredAt.status!=='RECORDED'||!i.occurredAt.value).length
   const imports=all.filter(i=>i.occurredAt.status==='RECORDED'&&i.occurredAt.value&&Number.isFinite(Date.parse(i.occurredAt.value))).map(i=>({i,day:localDay(new Date(i.occurredAt.value!))})).filter(x=>x.day>=shiftDay(day,-27)&&x.day<=day).sort((a,b)=>b.day.localeCompare(a.day))
   const result:CoachDataContext={mode:healthModeSummary(loadWatch(currentStore()),snap),day,sourceId:`appdata:${day}`,health:snap.metrics.map(v=>({metric:v.metric,state:v.state,detail:healthSummaryLine(v).slice(0,500)})),fatigue:{ruleStatus:fatigue.ruleStatus,automaticPrescription:false,state:fatigue.state,title:fatigue.title,reasons:fatigue.signals.map(s=>s.detail),excluded:fatigue.excluded,action:fatigue.action,followup:fatigue.followup},balance:{from:balance.from,to:balance.to,plannedRun:balance.planned.run,plannedStrength:balance.planned.strength,actualSessions:balance.actual.sessions,knownMinutes:balance.actual.knownMinutes,unknownMinutes:balance.actual.unknownMinutes,knownRunKm:balance.actual.knownRunKm,unknownRunKm:balance.actual.unknownRunKm,groups:balance.planned.muscleGroups,observations:balance.observations.slice(0,20),gaps:balance.gaps,action:balance.action},coreActual:coreActual(day),nutrition:{count:foods.length,knownKcal:agg.kcal.sum,pending:agg.kcal.pending},imports:{count:imports.length,unknownDate,latest:imports.slice(0,8).map(({i,day})=>({id:i.confirmedImportId.slice(0,120),day,title:String(i.title.value??'未命名训练').slice(0,120),sport:i.sport,distanceM:i.totalDistanceMeters.status==='RECORDED'&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='distance')?i.totalDistanceMeters.value:null,durationSec:i.durationSeconds.status==='RECORDED'&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='duration')?i.durationSeconds.value:null}))},subjective:ci?`当天感受：${({fresh:'轻松',ok:'一般',tired:'很累'} as Record<string,string>)[ci.fatigue??'']??'疲劳未填'}；疼痛：${({none:'不疼',mild:'有点疼',sharp:'明显疼'} as Record<string,string>)[ci.pain??'']??'未填'}；主观恢复：${ci.recovery??'未填'}`:'当天主观感受未记录',warnings:[...(scheduleUnreadable()?['兼容日程无法读取，零汇总不能解释为没有训练']:[]),...(snap.unreadable?['健康存储无法读取；未当作没有健康记录']:[]),'这些为日历日背景，不自动绑定某次训练。','经验阈值尚未科学核准，只作复核提示，不决定减量、停训或医学回归。','已确认导入与日程实际明细可能重叠，分开列示，不重复累加。','导入距离/时长有更正时，日汇总暂不引用旧总量；请进入对应训练核对更正后的明细。','独立截图证据需选择“用于健康分析”后进入健康记录；待核对图片不参与分析。'],planChanged:false}
+  const recovery=readRecoveryProjection(day)
+  result.muscleRecovery={revision:recovery.revision,summary:recovery.review.summary,explanation:recoveryExplanation(recovery),
+    hasEvidence:recovery.sources.length>0||recovery.review.gaps.length>0,hasObservedRegions:recovery.review.regions.some(r=>r.state!=='UNKNOWN'),unreadable:recovery.unreadable}
   result.sourceId+=':'+shortHash(JSON.stringify(result));return result
 }
 export function dataHasRecords(d:CoachDataContext):boolean{return d.mode.mode!=='unset'||d.warnings.some(x=>x.includes('无法读取'))||d.health.some(x=>x.state!=='MISSING')||d.nutrition.count>0||d.imports.count>0||d.balance.actualSessions>0||d.coreActual.sessions>0||d.balance.plannedRun+d.balance.plannedStrength>0||!d.subjective.includes('未记录')}
 export function answerFromAppData(brief:CoachBrief):string|null{
-  const q=brief.question,d=brief.appData;if(!d||!dataHasRecords(d))return null
+  const q=brief.question,d=brief.appData;if(!d)return null
+  // Session-specific reviews and medical triage retain their established routes.
+  if(/肌群|肌肉参与|训练反应|肌肉恢复/.test(q) && !/本次|这次|疼|痛|受伤|不舒服|朋友|队友|假设|科普/.test(q) && d.muscleRecovery)
+    return `分析日期：${d.day}（本机记录，只读）。\n${d.muscleRecovery.explanation}`
+  if(!dataHasRecords(d))return null
   if(/本次|这次|那次|上次|这节|这堂|掉速|分段|配速|组间|大组|休息时间/.test(q))return null
   if(/朋友|队友|假设|举例|案例|他人|科普|解释|原理|是什么|什么意思|疼|痛|受伤|不舒服/.test(q))return null
   const health=/健康|手表|睡眠|hrv|静息|身体电量|疲劳|恢复|健康数据|连接/i.test(q)
@@ -70,6 +79,7 @@ export function answerFromAppData(brief:CoachBrief):string|null{
   if(health){lines.push(...d.health.filter(x=>x.state!=='MISSING'&&['SLEEP','HRV','RHR','BODY_BATTERY','RECOVERY','READINESS'].includes(x.metric)).map(x=>x.detail),d.subjective,`基于已保存记录的判断：${d.fatigue.title}。`,...d.fatigue.reasons,`建议：${d.fatigue.action}`,`跟进：${d.fatigue.followup}`);if(d.fatigue.excluded.length)lines.push(`暂不采用：${d.fatigue.excluded.slice(0,4).join('；')}。`)}
   if(balance){const b=d.balance;lines.push(`近7天（${b.from}—${b.to}）课表：跑步 ${b.plannedRun} 节、力量 ${b.plannedStrength} 节；实际反馈 ${b.actualSessions} 节，已知时长 ${b.knownMinutes} 分钟${b.unknownMinutes?`，另${b.unknownMinutes}节时长未填`:''}。`,`已识别计划肌群：${b.groups.join('、')||'动作信息不足'}。`,...b.observations,...b.gaps,`建议：${b.action}`)}
   if(balance)lines.push(`训练事实层：近7天已完成 ${d.coreActual.sessions} 次，已记录用时 ${Number(d.coreActual.knownMinutes.toFixed(2))} 分钟，${d.coreActual.unknownMinutes} 次用时未知；与导入活动、兼容日程分别列示，未相加。`)
+  if((health||balance)&&d.muscleRecovery?.hasEvidence)lines.push(`肌群依据：${d.muscleRecovery.explanation}`)
   if(health||balance)lines.push('阈值状态：研究候选，只作复核提示，不是已验证的训练处方。')
   if(balance&&!health)lines.push(`当天恢复复核：${d.fatigue.title}。${d.fatigue.action}`)
   if(food)lines.push(`${d.day} 饮食 ${d.nutrition.count} 条，已知热量合计 ${Math.round(d.nutrition.knownKcal)} kcal，${d.nutrition.pending} 项热量待补；未确认全天记录完整，不能据此判断吃得不足。`)

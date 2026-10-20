@@ -195,7 +195,7 @@ export function startC03FollowupRuntime(): () => void {
   const enqueue = () => { if (stopped || timer !== null) return; const athlete = currentAthleteId()
     timer = setTimeout(() => { timer = null; if (!stopped && currentAthleteId() === athlete) void recheckC03Followups().catch(() => {}) }, 0) }
   const unsubscribe = onAppEvent(event => { if (event.athlete_id === currentAthleteId()) enqueue() })
-  const changes = ['fk-training-activities-changed', 'fk-plan400-components', 'fk-run-links', 'fk-training-corrected', 'storage', 'pageshow']
+  const changes = ['fk-training-activities-changed', 'fk-plan400-components', 'fk-run-links', 'fk-training-corrected', 'fk-health-changed', 'fk-athlete-scope-changed', 'storage', 'pageshow']
   if (typeof window !== 'undefined') changes.forEach(name => window.addEventListener(name, enqueue))
   enqueue()
   return () => { stopped = true; if (timer !== null) clearTimeout(timer); unsubscribe();

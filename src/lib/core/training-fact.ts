@@ -49,7 +49,7 @@ type FactInput = { occurrence: TrainingOccurrence; snapshot: OriginalPlanSnapsho
 const ownsField = (event: FactEvent) => Object.prototype.hasOwnProperty.call(event.payload ?? {}, 'trainingOccurrenceId')
 const sameOwner = (event: FactEvent, athlete: string, session: string) => (event.athlete_id ?? 'local') === athlete && event.payload?.sessionId === session
 /** Legacy sets are attributable only while one verified start is active. Explicit foreign IDs never become legacy sets. */
-function occurrenceAttempts(input: FactInput, startAt: number, endAt: number, athlete: string): { attempts: FactEvent[]; ambiguous: boolean } {
+export function occurrenceAttempts(input: FactInput, startAt: number, endAt: number, athlete: string): { attempts: FactEvent[]; ambiguous: boolean } {
   const { occurrence, events } = input, occurrences = [occurrence, ...(input.siblingOccurrences ?? [])]
   const aliases = new Map<string, string>(), closes = new Map<string, string>(), active = new Set<string>(), attempts: FactEvent[] = []
   for (const item of occurrences) {
