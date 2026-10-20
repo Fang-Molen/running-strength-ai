@@ -2,6 +2,7 @@ import { recovery10 } from "@/lib/health/legacy-inputs";
 import {FoodEntrySheet} from './food-entry-sheet';
 import {missingNutrition,NUTRIENT_LABELS,NUTRIENT_KEYS} from '@/lib/nutrition/entry-workflow';
 import { HealthModeNote } from "@/components/health-mode-note";
+import { PersonalStatsPanel } from "@/components/personal-stats-panel";
 import { HealthSourceDetails } from "./health-source-details";
 import { buildHealthSnapshot, loadHealthSources } from "@/lib/health/snapshot";
 import { HEALTH_CHANGED, valueText } from "@/lib/health/observation";
@@ -267,6 +268,7 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
     <HealthModeNote day={today}/>
     {edit ? <div className="mt-1 grid grid-cols-2 gap-1 text-sm">{avail.map((m) => <label key={m.id} className="flex min-h-9 items-center gap-2 rounded-lg border border-line px-2"><input type="checkbox" checked={chosen.includes(m.id)} onChange={(e) => { const n = e.target.checked ? [...chosen, m.id] : chosen.filter((x) => x !== m.id); setChosen(n); localStorage.setItem(TILE_KEY, JSON.stringify(n)); }} />{m.label}</label>)}</div>
     : shown.length ? <div className="mt-1 grid grid-cols-3 gap-1.5">{shown.map((m) => { const v = val(m); const I = m.icon; return <button key={m.id} type="button" onClick={() => setOpen(m.id)} className="rounded-xl border border-line bg-surface-2 p-2 text-left"><p className="flex items-center gap-1 whitespace-nowrap text-xs"><I className="size-3.5 shrink-0 text-accent" />{m.label}</p><p className="mt-1 text-base font-bold">{m.subj && v && v.d !== today ? "今天未评" : v?.t ?? (m.subj ? "点一下" : "—")}</p><p className="keep text-[10px] text-muted">{v ? (m.subj && v.d !== today ? `上次 ${v.t} · ${v.d.slice(5)}` : v.d.slice(5)) : ""}</p>{!m.subj?<p className="mt-0.5 text-[10px] text-muted">{snapshot.metrics.find(x=>x.metric===m.id)?.current?.statistic}</p>:null}</button>; })}</div> : <Empty text="点编辑选要显示的指标" />}
+    <PersonalStatsPanel day={today} className="mt-2 rounded-xl border border-line p-2" />
     {om ? <Sheet title={om.label} label="健康指标详情" footer={null} onClose={()=>setOpen(null)}>
       {!om.subj && snapshot.metrics.find(x=>x.metric===om.id) ? <HealthSourceDetails view={snapshot.metrics.find(x=>x.metric===om.id)!}/> : null}
       {om.subj ? <div className="mt-1 flex flex-wrap gap-1.5"><span className="keep self-center text-xs text-muted">今天</span>{SUBJ[om.id].map(([l, v]) => { const last = series[om.id]?.find((p) => p.d === today)?.v; return <button key={l} type="button" className="fk-chip" aria-pressed={last === v} onClick={() => rate(om.id, v)}>{l}</button>; })}</div> : null}

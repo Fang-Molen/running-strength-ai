@@ -1,4 +1,4 @@
-// v88：U09 个人趋势统计（只读）折叠卡。健康页与饮食页健康记录共用这一个组件。
+// v88：U09 个人趋势统计（只读）折叠卡，只放在健康页「健康记录」卡里（一处）。
 import { loadHealthSnapshot } from "@/lib/health/snapshot"
 import { currentAthleteId } from "@/lib/core/events"
 import { personalStatsCards } from "@/lib/health/personal-stats-host"

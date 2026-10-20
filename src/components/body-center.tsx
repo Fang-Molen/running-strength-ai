@@ -1,6 +1,5 @@
 import { loadExtras } from "@/lib/ui/device-store"
 import { HealthModeNote } from "@/components/health-mode-note"
-import { PersonalStatsPanel } from "@/components/personal-stats-panel"
 import { HEALTH_CHANGED } from "@/lib/health/observation"
 import { onAppEvent } from "@/lib/core/events"
 import { useEffect, useState } from "react"
@@ -133,7 +132,6 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
       {watch && !compact ? <CheckinCard today={today} watch={watch} onSaved={() => setRevision((v) => v + 1)} onPain={() => { setPane("trend"); window.setTimeout(() => document.getElementById("pain-log")?.scrollIntoView({ block: "start" }), 40) }} /> : null}
       {watch === "none" || compact ? null : 
       <HealthTiles allowed={tier ? [...new Set([...TIERS[tier].tiles,...vitals.map(v=>v.kind),...loadExtras().map(v=>v.metric)])] : undefined} vitals={vitals} checks={checks} today={today} revision={revision} onJump={(target) => { if (target === "body-vitals") { const d = document.querySelector("#body-vitals details"); if (d instanceof HTMLDetailsElement) d.open = true } if (target === "body-devices") setPane("device"); else if (target === "body-measurements") setPane("trend"); window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: "start" }), 40) }} />}
-    {compact ? null : <PersonalStatsPanel day={today} revision={revision} />}
     <section className="px-1" data-legacy-span={span} data-legacy-metrics={metrics.length}>
     </section>
     </div>
