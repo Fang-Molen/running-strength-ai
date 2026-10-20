@@ -22,6 +22,7 @@ npm run check:blocks              # 只查所有区块的 import 边界
 | garmin-link | `src/lib/ui/run-link.ts`、`lap-structure.ts`、`src/lib/health/garmin-*` | run-link.ts | lib/coach（类型除外）、components |
 | schedule | `src/lib/ui/day-schedule*.ts`、`guided-discard.ts`、`scheduled-execution.ts` | day-schedule.ts | lib/coach、components |
 | coach-local | `src/lib/coach/plain-coach.ts`、`src/lib/core/coach-local-first.ts`、`coach-first-week.ts`、`coach-plan.ts` | coach-local-first.ts | online-coach、deepseek、plan-execution |
+| coach-stated | `src/lib/coach/stated/parse.ts`、`compute.ts`、`compose.ts` | compose.ts | online-coach、deepseek、plan-execution、components、storage（只读、不保存） |
 | coach-online | `src/lib/coach/online-coach.ts`、`functions/api/coach-chat.js` | online-coach.ts | c03、plan-execution、server/coach-deepseek |
 | c03 | `src/lib/coach/c03/{argument,evidence,followup,runtime}.ts` | runtime.ts | components、online-coach、deepseek、plan-execution、day-schedule |
 | plan-execution（**阻断**） | `src/lib/coach/plan-execution/{core,store,host}.ts` | host.ts | components、online-coach、deepseek、c03、分项存储、记一笔 |

@@ -628,9 +628,11 @@ export function recordFirstWeekChoice(
 }
 export function firstWeekGoalFromText(q: string): IntakeInputs["goal"] | null {
   if (!/400\s*(?:米|m)/i.test(q) || !/目标|跑到|跑进|希望|计划|安排|怎么练/.test(q)) return null;
-  const m = q.match(
-    /(?:目标|跑到|跑进|希望)\s*(?:400\s*(?:米|m)\s*)?(?:跑到|跑进)?\s*(\d+(?:\.\d+)?)\s*秒/i,
-  );
+  // v86 (R1.1 C05): a per-rep session target such as “5×400目标86秒” is not the athlete's 400 m goal.
+  const reps = /\d+\s*[×x*]\s*\d+(?:\.\d+)?\s*(?:米|m)?\s*(?:的)?$/i;
+  const m = [...q.matchAll(/(?:目标|跑到|跑进|希望)\s*(?:400\s*(?:米|m)\s*)?(?:跑到|跑进)?\s*(\d+(?:\.\d+)?)\s*秒/gi)]
+    .find((x) => !reps.test(q.slice(Math.max(0, (x.index ?? 0) - 14), x.index)));
+  if (!m && !/(?<![×x*]\s*)400\s*(?:米|m)/i.test(q)) return null;
   return { event: "400米", targetSeconds: m ? Number(m[1]) : null };
 }
 

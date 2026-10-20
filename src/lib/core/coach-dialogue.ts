@@ -15,6 +15,7 @@ import {calculateStatedSessionLoads} from './coach-curriculum.ts'
 import type {StructuredCoachingCandidate} from './coach-structured-candidate.ts'
 import {clarifyChatRpe,requestedActionText,type PendingCoachQuestion} from './coach-dialogue-understanding.ts'
 import {readRecoveryContext,recoveryDayForReview} from './coach-recovery-context.ts'
+import {parseStatedFacts,hasStatedNumbers} from '../coach/stated/parse.ts'
 
 export type CoachIntent='REVIEW'|'NEXT'|'INCREASE'|'CONFLICT'|'WEEK'|'PAIN'|'DISCOMFORT'|'ANOMALY'|'LOAD'|'TEST'|'COACHING'
 export type CoachDialogue={version:1;athleteId:string;profile:OfflineProfile;goal:string|null;goalTarget?:{meters:number;fromSeconds:number|null;toSeconds:number;sourceText:string};pbs:{meters:number;seconds:number}[];injury:string|null;asked:string[];phase:'INTAKE'|'JUDGMENT'|'TEST'|'FEEDBACK'|'RETEST';lastTraining:ChatTraining|null;lastPurpose?:{trainingId:string;text:string;sourceId:string};pendingQuestion?:PendingCoachQuestion;emergency:RedFlagResult|null;medicalHold?:RedFlagResult|null;reportedNextCourse?:{text:string;source:'USER_REPORT';recordedAt:string}|null;previousDecision:string|null;turns:number}
@@ -58,8 +59,11 @@ function updateSlots(q:string,prior:CoachDialogue){
  const event=profileText.match(/(?:主项|专项|目标项目|练的是|跑的是)\s*(60|100|200|400|800|1500|3000|5000|10000)(?!\d)\s*(?:米|m)?/i)??(/^\s*(?:是|我练)?\s*(60|100|200|400|800|1500|3000|5000|10000)\s*(?:米|m)?[。！!]?\s*$/i.test(profileText)?profileText.match(/(60|100|200|400|800|1500|3000|5000|10000)/):null)
  if(event){const nextEvent=event[1]+'米';if(nextEvent!==s.profile.event)s.profile.pbSeconds=s.pbs.find(p=>p.meters===Number(event[1]))?.seconds??null;s.profile.event=nextEvent}
  // A recall question is not a new goal or an injury assertion.
- const goal=profileText.match(/(?:目标(?:是|为)?|想跑进|希望跑进|想达到)\s*(?:(60|100|200|400|800|1500)\s*(?:米|m)\s*)?(\d+(?:\.\d+)?)\s*秒/i)
- if(goal){const meters=Number(goal[1]??s.profile.event?.match(/\d+/)?.[0]);if(meters>0){s.goalTarget={meters,fromSeconds:s.pbs.find(p=>p.meters===meters)?.seconds??s.profile.pbSeconds,toSeconds:Number(goal[2]),sourceText:goal[0]};s.goal=`目标${meters}米${goal[2]}秒`}}
+ // v86 (R1.1 C05): a per-rep session target (“5×400目标86秒”, “目标均260秒”) is not a season goal, and the goal
+ // distance is never borrowed from the main event. Only an explicit “目标/想跑进 + 距离 + 秒” self-report is kept.
+ const goal=[...profileText.matchAll(/(?:目标(?:是|为)?|想跑进|希望跑进|想达到)\s*(?:(60|100|200|400|800|1500)\s*(?:米|m)\s*)?(\d+(?:\.\d+)?)\s*秒/gi)]
+  .find(m=>!!m[1]&&!/(?:\d+\s*[×x*]\s*\d+(?:\.\d+)?\s*(?:米|m|公里|km)?|课|本课|每段|每次|每组|各|均)\s*$/i.test(profileText.slice(Math.max(0,(m.index??0)-14),m.index)))
+ if(goal){const meters=Number(goal[1]);if(meters>0){s.goalTarget={meters,fromSeconds:s.pbs.find(p=>p.meters===meters)?.seconds??s.profile.pbSeconds,toSeconds:Number(goal[2]),sourceText:goal[0]};s.goal=`目标${meters}米${goal[2]}秒`}}
  const stage=profileText.match(/储备(?:期)?|基础期|冬训(?:期)?|专项准备期|备赛期|减量期|比赛期|过渡期/)
  if(stage)s.profile.stage=({'储备':'储备/基础期','储备期':'储备/基础期','基础期':'储备/基础期','冬训':'冬训期','冬训期':'冬训期','减量期':'备赛期/减量','备赛期':'备赛期/减量'} as Record<string,OfflineProfile['stage']>)[stage[0]]??stage[0] as OfflineProfile['stage']
  if(/(?:本|这个)?赛季(?:刚|已经|已)?结束|赛后过渡/.test(profileText)&&!/假设|如果|还没|尚未|没有结束/.test(profileText))s.profile.stage='过渡期'
@@ -135,7 +139,7 @@ export function answerDialogue(brief:CoachBrief,logic:{frame:ReasoningFrame;snap
  const ordinary=!chat.splits.some(s=>s.seconds!==null)?ordinaryDiscomfortAnswer(q):null;if(ordinary)return response(ordinary)
  if(!chat.hasActual&&explainTrainingMechanism(q))return null
  if(!chat.hasActual&&/节奏跑/.test(q)&&/感受|累|喘|难|轻松|怎么样|复盘/.test(q))return response('节奏跑的感受需要结合原定强度评价，单说累不能判定有氧不足或训练无效。先看是否按目标完成、后段是否变慢，以及休息后能否恢复日常活动；下一次原课程记录用时与整课感受，先不据此改课。这节课实际配速和原定目标相差多少？')
- if(!chat.hasActual&&/力量|深蹲|硬拉/.test(q)&&/感受|累|吃力|轻松|怎么样|复盘/.test(q))return response('力量课先看同动作的实际重量、完成组次和动作质量，练得累不等于力量已提高。可能是本次动作或负荷较陌生，也可能是近期恢复影响表现；下一次原课程保留同动作记录与次日反应，不能据单次感受判断跑步迁移。最吃力的一组实际重量和完成次数是多少？')
+ if(!chat.hasActual&&/力量|深蹲|硬拉/.test(q)&&/感受|累|吃力|轻松|怎么样|复盘/.test(q))return response(parseStatedFacts(q).strength.length?'力量部分按上面写明的重量×次数×组数核算；练得累不等于力量已提高，下一次同动作保留同样记录（重量、次数、组数、组间休息、动作深度）和次日反应，再比较。跑步与力量分开评价，不合成一个总负荷分。':'力量课先看同动作的实际重量、完成组次和动作质量，练得累不等于力量已提高。可能是本次动作或负荷较陌生，也可能是近期恢复影响表现；下一次原课程保留同动作记录与次日反应，不能据单次感受判断跑步迁移。最吃力的一组实际重量和完成次数是多少？')
  if(!chat.hasActual&&!chat.issues.length&&!contextPresent&&!['INCREASE','NEXT','CONFLICT','WEEK','PAIN','DISCOMFORT','ANOMALY','TEST'].includes(intent))return null
  let review:OfflineReview|undefined
  const active=chat.hasActual?chat:explicitlyReviewsRecord(q)?old.lastTraining:null
@@ -190,7 +194,7 @@ export function answerDialogue(brief:CoachBrief,logic:{frame:ReasoningFrame;snap
   const pb200=state.pbs.find(p=>p.meters===200),pb400=state.pbs.find(p=>p.meters===400)
   const stated=state.pbs.map(p=>`${p.meters}米${rounded(p.seconds)}秒（自报，时间和计时方式待核对）`).join('、')
   const frequency=q.match(/每周(?:训练|练|跑)?\s*(\d+)\s*(?:次|天|课)/)?.[1]
-  const comparison=pb200?`你给的200米${pb200.seconds}秒，等速两倍是400米${rounded(pb200.seconds*2)}秒，仅是算术参照，不是400米预测或可执行配速${pb400?`；与已报400米${pb400.seconds}秒相差${rounded(pb400.seconds-pb200.seconds*2)}秒`:''}。一种解释是速度储备与目标有差距，另一种解释是后程节奏、恢复或动作保持影响表现；需要同协议400米分段区分，不能从单个200米给出可信成绩区间。`:state.goalTarget?`已记住目标：${state.goalTarget.meters}米${state.goalTarget.fromSeconds!==null?`从${state.goalTarget.fromSeconds}秒到`:''}${state.goalTarget.toSeconds}秒；这是目标，不是已经达到的能力。`:state.pbs.length?`已知${stated}${frequency?`，每周${frequency}次训练`:''}；先用原始成绩描述起点，不生成经验能力分。速度与后程保持需要分别观察：如果同协议前段节奏改变后后段改善，支持配速解释；如果前段一致仍连续变慢，则应核对恢复、环境和动作控制，仍不能诊断生理缺陷。`:'目前尚无可核对的近期实际表现；先在已批准原课程记录一项具体指标，例如首末用时差或同重量完成次数，作为可撤回判断的起点。'
+  const comparison=pb200?`你给的200米${pb200.seconds}秒，等速两倍是400米${rounded(pb200.seconds*2)}秒，仅是算术参照，不是400米预测或可执行配速${pb400?`；与已报400米${pb400.seconds}秒相差${rounded(pb400.seconds-pb200.seconds*2)}秒`:''}。一种解释是速度储备与目标有差距，另一种解释是后程节奏、恢复或动作保持影响表现；需要同协议400米分段区分，不能从单个200米给出可信成绩区间。`:state.goalTarget?`已记住目标：${state.goalTarget.meters}米${state.goalTarget.fromSeconds!==null?`从${state.goalTarget.fromSeconds}秒到`:''}${state.goalTarget.toSeconds}秒；这是目标，不是已经达到的能力。`:state.pbs.length?`已知${stated}${frequency?`，每周${frequency}次训练`:''}；先用原始成绩描述起点，不生成经验能力分。速度与后程保持需要分别观察：如果同协议前段节奏改变后后段改善，支持配速解释；如果前段一致仍连续变慢，则应核对恢复、环境和动作控制，仍不能诊断生理缺陷。`:(hasStatedNumbers(parseStatedFacts(q))?'上面的数字来自你这次的描述（只在本次回答里核算，没有保存为训练记录）。':'目前尚无可核对的近期实际表现；先在已批准原课程记录一项具体指标，例如首末用时差或同重量完成次数，作为可撤回判断的起点。')
   text=comparison+'下一次在一节已批准的原课程中，保留实际分段、休息与整课感受；若同条件后段改善，节奏或恢复解释得到支持，若仍变慢，则需核对计时、环境和动作观察。'
  }
  if(/就说|行不行|能跑完吗|能继续吗/.test(q)&&!chat.hasActual)text='有条件可以做熟悉的轻活动：无痛、日常活动正常且热身不加重；今天不加组、不顶着疲劳跑完，出现不适立即停止。'+text

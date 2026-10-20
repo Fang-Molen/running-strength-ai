@@ -43,11 +43,18 @@ export const BLOCKS = {
     tests: ['src/lib/coach/plain-coach.test.ts', 'src/lib/core/coach-local-first.test.ts', 'src/lib/core/coach-proposal-ownership.test.ts', 'src/lib/core/coach-first-week.test.ts'],
     forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/'],
   },
+  'coach-stated': {
+    desc: '本地解析并核算用户这次说出的数字（分段/计划与实际/休息/RPE/疼痛/晨脉HRV/睡眠/否定症状），只读不保存',
+    files: ['src/lib/coach/stated/parse.ts', 'src/lib/coach/stated/compute.ts', 'src/lib/coach/stated/compose.ts'],
+    entry: 'src/lib/coach/stated/compose.ts',
+    tests: ['src/lib/coach/stated/stated.test.ts', 'src/lib/coach/stated/r11-behavior.test.ts'],
+    forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', 'storage'],
+  },
   'coach-online': {
     desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
     files: ['src/lib/coach/online-coach.ts', 'functions/api/coach-chat.js'],
     entry: 'src/lib/coach/online-coach.ts',
-    tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts'],
+    tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts', 'src/lib/coach/online-facts-v86.test.ts'],
     forbid: ['/c03/', '/plan-execution/', 'server/coach-deepseek', '/components/'],
   },
   'c03': {

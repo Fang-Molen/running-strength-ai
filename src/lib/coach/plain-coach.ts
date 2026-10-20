@@ -1,5 +1,6 @@
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr, fmtPaceSec } from '../ui/activity-format'
 import { loadComponents, hasFeedback } from '../ui/plan400-components-store'
+import { currentStore } from '../core/storage'
 /** 方坤面向用户的“成熟教练”表达层：结论 → 生理原因 → 下一课处方；数据不够时直接说做什么测试、记什么。
  * 只读：不写计划、不改记录。内部事实/审计模型不变，这里只组织文字与联网上下文。 */
 import plan from '../plan400-v4.json' with { type: 'json' }
@@ -23,9 +24,34 @@ export const paceText = (sec: number | null) => fmtPaceSec(sec) ?? '—'
 const durText = (s: number | null) => fmtDuration(s)
 const lapPace = (l: GLap) => l.dist && l.dur && l.dist > 50 ? l.dur / (l.dist / 1000) : null
 
-export function planFor(day: string) {
-  const d = days.find(x => x.date === day), next = days.find(x => x.date > day)
-  return { today: d ? `${d.date} ${d.title}：${d.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${next.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, goal: '400米 53秒多（12/28 最终测试）' }
+type Store = Pick<Storage, 'getItem'> | null
+const browserStore = (): Store => currentStore() as Store
+/** v86（R1.1）：内置 V4 课表只有在用户真的在用（本机有 V4 记录或分项记录）时才算“用户的计划”；
+ * 新用户/别的运动员没有这份计划，不能把它当事实发出去或拿来对照。 */
+export function plan400Active(store: Store = browserStore()): boolean {
+  const has = (k: string, pick: (v: any) => unknown) => { try { const v = JSON.parse(store?.getItem(k) ?? 'null'); const x = v && pick(v); return !!x && typeof x === 'object' && Object.keys(x).length > 0 } catch { return false } }
+  return has('fk-plan400-v4-log', v => v) || has('fk-plan400-v4-components-v1', v => v.days)
+}
+const mmss = (s: number) => s >= 60 ? `${Math.floor(s / 60)}分${String(Math.round((s % 60) * 100) / 100).padStart(2, '0')}秒` : `${s}秒`
+/** v86：目标只来自用户自己的设置（资料“目标成绩”）或用户在聊天里明确说过的目标；没有就返回 null（= 未知），绝不用内置课表名里的成绩。 */
+export function userGoal(chatGoal?: { meters: number; toSeconds: number } | null, store: Store = browserStore()): string | null {
+  const goals: string[] = []
+  try {
+    const marks = (JSON.parse(store?.getItem('fr255-profile-v1') ?? 'null')?.marks ?? []) as { meters?: number; goal?: string; deadline?: string }[]
+    for (const m of Array.isArray(marks) ? marks : []) if (m && typeof m.goal === 'string' && m.goal.trim() && Number(m.meters) > 0) goals.push(`${m.meters}米 ${m.goal.trim()}${m.deadline ? `（日期 ${m.deadline}）` : ''}（用户在资料里设定）`)
+  } catch { /* unreadable profile → unknown */ }
+  if (chatGoal && Number.isFinite(chatGoal.meters) && Number.isFinite(chatGoal.toSeconds)) goals.push(`${chatGoal.meters}米 ${mmss(chatGoal.toSeconds)}（用户在聊天中明确说过）`)
+  return goals.length ? goals.join('；') : null
+}
+/** 用户自己的 PB（资料“最近成绩”）。没有就是空。 */
+export function userMarks(store: Store = browserStore()): string[] {
+  try { const marks = (JSON.parse(store?.getItem('fr255-profile-v1') ?? 'null')?.marks ?? []) as { meters?: number; recent?: string }[]
+    return (Array.isArray(marks) ? marks : []).filter(m => m && typeof m.recent === 'string' && m.recent.trim() && Number(m.meters) > 0).map(m => `${m.meters}米 最近成绩 ${m.recent!.trim()}（用户在资料里填写）`) } catch { return [] }
+}
+export function planFor(day: string, store: Store = browserStore(), chatGoal?: { meters: number; toSeconds: number } | null) {
+  const active = plan400Active(store)
+  const d = active ? days.find(x => x.date === day) : undefined, next = active ? days.find(x => x.date > day) : undefined
+  return { today: d ? `${d.date} ${d.title}：${d.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${next.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, goal: userGoal(chatGoal, store), active }
 }
 
 /** V4 计划记录（首页/计划页/训练中写的 fk-plan400-v4-log）→ 一行事实。日志页与复盘读的是同一条。 */
@@ -87,8 +113,8 @@ export function reviewActivity(a: GActivity, laps: GLap[] | null, today: string)
   { const v4 = v4RecordLine(day); if (v4) { let split = false; try { const c = loadComponents().days[day]; split = hasFeedback(c?.running) || hasFeedback(c?.strength) } catch { /* none */ } lines.push(split ? `${v4}（旧整课记录，仅参考；跑步、力量以分项记录为准）` : v4) } }
   lines.push(`为什么：${why}${a.te != null ? ` 手表有氧训练效果 ${a.te}${a.ate != null ? `、无氧 ${a.ate}` : ''}。` : ''}`)
   // 对照目标
-  lines.push(`对照目标（${p.goal}）：这类${easy ? '轻松' : '中等'}有氧跑是 400 米的“底座”，提高恢复能力和后程耐受；它本身不练速度，速度要靠计划里的短距离快跑课。`)
-  next = p.next ? `按计划 ${p.next}。` : '下一课：安排一次专项速度课。'
+  lines.push(p.goal ? `对照目标（${p.goal}）：这类${easy ? '轻松' : '中等'}有氧跑是有氧“底座”，提高恢复能力和后程耐受；它本身不直接练速度。` : '目标：你还没有在资料里设定目标成绩，这次只按这次跑步本身评价，不对照任何目标。')
+  next = p.next ? `按你在用的计划：${p.next}。` : '按你自己的计划安排；这里不替你编新课。'
   if (!easy) next += ' 今天这次强度不低，下一课开始前如果腿沉或静息心率比平时高 5 次以上，先把快跑段减 1 组。'
   lines.push(`下一课怎么练：${next}`)
   if (!runLaps.length) lines.push('想看得更细：在日志里点开这次活动加载分段（或下次跑完同步一次），我就能看前后半程配速和心率漂移。')
@@ -105,21 +131,12 @@ export function intervalRestAnswer(q: string): string | null {
   if (/实际|完成了?|\d+\s*\/\s*\d+|\d+秒[，,、]\s*\d+/.test(q)) return null
   return [
     '结论：同样是 400米×8，休 1 分钟和休 8 分钟是两种完全不同的课。',
-    '· 休 1 分钟（不完全恢复）：练的是乳酸耐受和速度耐力。每组开始时心率和血乳酸都还没降下来，后几组是在“酸”的状态下维持速度，提高的是身体缓冲酸、清除乳酸、带着疲劳保持动作的能力。代价是配速只能跑到比赛配速的 85–90% 左右（例如 400 目标 53 秒，这类课每组大约 62–68 秒）。',
-    '· 休 8 分钟（接近完全恢复）：练的是速度质量和比赛配速。磷酸原系统基本恢复，每组都能跑到接近或达到比赛配速（53–56 秒），练的是高速下的跑姿、步频和神经肌肉募集，让“目标速度”变得熟悉、轻松。代价是总刺激量小，对耐乳酸帮助有限。',
+    '· 休 1 分钟（不完全恢复）：练的是乳酸耐受和速度耐力。每组开始时心率和血乳酸都还没降下来，后几组是在“酸”的状态下维持速度，提高的是身体缓冲酸、清除乳酸、带着疲劳保持动作的能力。代价是每组只能跑到明显慢于比赛配速。',
+    '· 休 8 分钟（接近完全恢复）：练的是速度质量和比赛配速。磷酸原系统基本恢复，每组都能跑到接近比赛配速，练的是高速下的跑姿、步频和神经肌肉募集，让“目标速度”变得熟悉。代价是总刺激量小，对耐乳酸帮助有限。',
     '为什么：休息长短决定下一组开始时的身体状态——短休让疲劳累积，刺激偏代谢；长休让每组都“新鲜”，刺激偏速度和神经。',
-    '怎么用：备战 400 米两种都要。离比赛远（现在到 11 月中）以短休/中休的速度耐力为主，每周 1 次；离比赛 4–6 周开始加长休息的比赛配速课，每周 1 次；两种课之间至少隔 48 小时。8 分钟长休的那节，每组成绩差超过 1.5 秒就停，不要硬凑组数。',
+    '怎么用：两种课针对的能力不同，具体用哪种、什么时候用，要看你的项目、比赛日期和现在所处阶段（这些我这里没有，不替你假设）。通常离比赛远时偏速度耐力，临近比赛再加长休息的比赛配速课；两种高强度课之间留出恢复。长休那节如果后面几组明显掉速，就停，不要硬凑组数。',
     '想确认哪种你更需要：做一次 300 米全力计时（记成绩），隔 10 分钟再做一次 300 米（记成绩）。第二次比第一次慢超过 2 秒，说明速度耐力是短板，多练短休；差得少但两次都慢，说明绝对速度是短板，多练长休快跑。',
   ].join('\n')
 }
 
-/** 联网系统提示：用户的教练标准。 */
-export const COACH_SYSTEM_PROMPT = `你是“方坤”，一位经验丰富的短跑/400米专项教练，正在指导一名业余运动员（目标：400米跑进53秒多，12月28日最终测试）。
-说话规则（必须遵守）：
-1. 用平实的中文，像成熟教练当面说话。先给结论，再讲生理原因，最后给具体的下一课处方（距离×组数、配速/用时、休息、强度RPE）。
-2. 一切分析要对照目标（400米53秒多）和当前训练计划来说。
-3. 不要说“数据不足无法判断”“需要更多证据”这类空话。数据不够时，先基于已有事实给出最可能的判断，再明确说出要做什么测试、记录什么数据（例如“下次跑完记下每个400的成绩和组间休息”）。
-4. 不使用术语堆砌和免责声明；不要说“可撤回”“候选”“审计”“已批准原课程”等系统用语。
-5. 安全：出现胸痛、晕厥、呼吸困难、心悸、急性受伤或剧烈疼痛等，先让对方停止训练并就医，不给训练处方。疼痛时不建议加量。
-6. 你只给建议，不会自动修改用户的训练计划；如建议调整计划，告诉用户可以在计划页自己改。
-7. 只用下面“事实”里的数据，不编造成绩、心率或分段；回答控制在 350 字以内，分段清楚。`
+/** 联网系统提示只有一份，在服务端 functions/api/coach-chat.js（客户端不再保留副本，避免两份规则不一致）。 */

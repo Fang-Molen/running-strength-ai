@@ -9,7 +9,7 @@ import { loadTrainingActivities, loadRunMatch, type ActivityRow } from '../ui/tr
 import type { DayComponents } from '../ui/plan400-components-store'
 import { isGarmin, recordLabel } from '../ui/log-range'
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr } from '../ui/activity-format'
-import { activityFacts, localDayOf, planFor, v4RecordLine, sportLabel, type GActivity, type GLap } from './plain-coach'
+import { activityFacts, localDayOf, planFor, userMarks, v4RecordLine, sportLabel, type GActivity, type GLap } from './plain-coach'
 export const COACH_ONLINE_KEY = 'fk-coach-online-v1'
 export type OnlineSetting = { on: boolean; consentAt: string; by: string }
 export function onlineSetting(now = new Date().toISOString()): OnlineSetting {
@@ -38,10 +38,16 @@ export function v4FactLine(r: ActivityRow, c?: DayComponents): string {
   else if (legacy) segs.push(`旧整课字段（仅参考）：${legacy}`)
   return `V4 计划记录（${r.date} ${r.title?.replace(/^V4 /, '').replace(/（.*$/, '') ?? ''}）：${segs.join('；')}`
 }
-/** 去标识化事实包。 */
-export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | null): string {
+/** 去标识化事实包。v86（R1.1）：只发用户自己的数据——目标来自资料“目标成绩”或聊天里明确说过的目标，没有就写“未知”；
+ * 内置 V4 课表只有用户真的在用（本机有 V4 记录）时才作为“用户在用的计划”发出，不再给新用户/合成学员套用。 */
+export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | null, known: { goalTarget?: { meters: number; toSeconds: number } | null } = {}): string {
   const lines: string[] = [`今天：${day}`]
-  const p = planFor(day); lines.push(`目标：${p.goal}`); if (p.today) lines.push(`今天计划：${p.today}`); if (p.next) lines.push(`下一节计划：${p.next}`)
+  const store = currentStore() as Pick<Storage, 'getItem'> | null
+  const p = planFor(day, store, known.goalTarget ?? null)
+  lines.push(`目标：${p.goal ?? '未知（用户没有设定具体成绩目标；不要假设任何目标）'}`)
+  const marks = userMarks(store); if (marks.length) lines.push(`用户资料成绩：${marks.join('；')}`)
+  if (p.today) lines.push(`用户在用的计划·今天（计划，不是实际）：${p.today}`); if (p.next) lines.push(`用户在用的计划·下一节（计划，不是实际）：${p.next}`)
+  if (!p.active) lines.push('训练计划：本机没有用户在用的课表记录（不要引用或编造任何课表、日期或课次）')
   if (act) lines.push('关联训练（佳明手表）：', ...activityFacts(act, laps))
   const recent = garminActivities().filter(a => localDayOf(a.start) <= day).sort((a, b) => activityTs(b.start) - activityTs(a.start)).slice(0, 7)
   if (recent.length) lines.push('近期活动：' + recent.map(a => `${activityLocalDay(a.start) ?? '?'} ${sportLabel(a.type)} ${fmtDistance(a.dist) ?? ''} ${fmtDuration(a.dur)} 心率${fmtHr(a.avgHr) ?? '—'}`).join('；'))
@@ -66,6 +72,8 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
  * C03/R14 包里的 200 字上限属于未启用的 server/coach-deepseek 受控入口，线上未路由，故此处不采用 200。 */
 export const ONLINE_QUESTION_MAX = 1000
 export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[] }, ms = 30000): Promise<{ text: string } | { error: string }> {
+  // v86（R1.1 G04）：开关在这里再查一次——用户关掉联网后，任何调用方都不能再发出请求（不只靠界面判断）。
+  if (!onlineSetting().on) return { error: '联网分析已关闭，已保留本地分析；没有上传数据' }
   const q = input.question.trim()
   // eslint-disable-next-line no-control-regex -- 有意拒绝控制字符
   if (!q || q.length > ONLINE_QUESTION_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) return { error: `问题为空、含无效字符或超过${ONLINE_QUESTION_MAX}字，已保留本地分析；没有上传数据` }

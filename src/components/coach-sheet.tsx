@@ -333,7 +333,7 @@ export function CoachSheet({
       let label = "本地分析";
       if (!redFlag && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
-        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps), local: shown, history: memory.messages.slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
+        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, { goalTarget: memory.dialogue?.goalTarget ?? null }), local: shown, history: memory.messages.slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
         if ("text" in r) { shown = r.text; label = "联网分析"; } else { label = `本地分析 · 联网失败（${r.error}）`; }
         setNotice(linkNotice);
       }

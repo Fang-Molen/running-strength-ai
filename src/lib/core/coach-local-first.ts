@@ -1,3 +1,4 @@
+import { statedFactsSection } from '../coach/stated/compose.ts'
 import { answerFromAppData } from "../health/coach-data"
 import { compileC03MetricBrief, type C03MetricBrief } from '../coach/c03/evidence.ts'
 import { buildC03ObservationReview } from '../coach/c03/argument.ts'
@@ -278,7 +279,22 @@ function answerLocallyCore(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapsho
  return {...base,cognition:undefined,text:formatReasoningFrame(frame,logic.snapshot),reasoning:frame,sources:[...frame.observedSourceIds],escalationAvailable:true}
 }
 
+/** v86（R1.1）：题面里给出的数字和否定条件由 coach-stated 区块统一核算，所有非急救回答都先列出这些事实。
+ * 急救回答保持原样（不分散注意力）；医疗/疼痛安全回答在前，事实在后。只读，不写存储。 */
 export function answerLocally(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapshot:EvolutionSnapshot},memory:readonly CoachContextMemory[]=[],periodReview?:PeriodReview,dialogue?:CoachDialogue):LocalCoachAnswer{
+ const answer=answerLocallyR(brief,logic,memory,periodReview,dialogue)
+ const red=detectRedFlags(brief.question)
+ if(red.level==='EMERGENCY'||answer.dialogue?.emergency||FALLBACK_TOPICS.INJECTION.match.test(brief.question))return answer
+ // 可疑数据（单位/GPS跳点/心率伪影）已由对话层保留原值并排除后核算；这里不再拿可疑值重算一遍。
+ if(/这个数据可能有问题/.test(answer.text))return answer
+ const stated=statedFactsSection(brief.question)
+ if(!stated.text)return answer
+ const [visible,...rest]=answer.text.split('\n依据：')
+ const safetyFirst=red.level!=='NONE'||brief.pain||!!answer.dialogue?.medicalHold||!!logic?.frame.safety.mustRetain
+ const text=(safetyFirst?visible+'\n'+stated.text:stated.text+'\n'+visible)+(rest.length?'\n依据：'+rest.join('\n依据：'):'')
+ return {...answer,text}
+}
+function answerLocallyR(brief:CoachBrief,logic?:{frame:ReasoningFrame;snapshot:EvolutionSnapshot},memory:readonly CoachContextMemory[]=[],periodReview?:PeriodReview,dialogue?:CoachDialogue):LocalCoachAnswer{
  const original = answerLocallyBase(brief,logic,memory,periodReview,dialogue)
  if (FALLBACK_TOPICS.INJECTION.match.test(brief.question) || detectRedFlags(brief.question).level!=='NONE'
    || brief.pain || brief.constraints.medicalReferral || logic?.frame.safety.mustRetain

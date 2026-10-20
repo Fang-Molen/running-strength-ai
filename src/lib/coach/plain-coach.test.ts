@@ -16,10 +16,20 @@ test('default link: most recent, or the asked day', () => {
 test('review is conclusion-first, plain, with reason and next-session prescription, no stock hedging', () => {
   const t = reviewActivity(run, null, '2026-10-19')
   assert.match(t, /^结论：2026-10-18 6\.01 km 31:38/); assert.match(t, /5'16"\/km/); assert.match(t, /心率 144/)
-  assert.match(t, /为什么：/); assert.match(t, /下一课怎么练：按计划 2026-10-19 速度耐力＋力量A：正式主课：150m×3/)
-  assert.match(t, /400米 53秒多/)
+  assert.match(t, /为什么：/)
+  // v86（R1.1）：没有用户在用的计划/目标时，不再套内置 V4 课表和“400米53秒”目标。
+  assert.doesNotMatch(t, /53秒|12\/28|按你在用的计划/); assert.match(t, /还没有在资料里设定目标成绩/); assert.match(t, /下一课怎么练：按你自己的计划安排/)
   assert.doesNotMatch(t, /尚无可核对|尚未关联|可撤回|已批准原课程|还需证据|无法判断|UNKNOWN/)
   assert.match(t, /加载分段/)
+})
+test('v86: review uses the V4 plan and the profile goal only when they are the user\'s own', async () => {
+  const { setStoreBackend } = await import('../core/storage.ts')
+  const m = new Map<string, string>([['fk-plan400-v4-log', JSON.stringify({ '2026-10-18': { done: 'done' } })], ['fr255-profile-v1', JSON.stringify({ marks: [{ meters: 400, goal: '58', recent: '', deadline: '' }] })]])
+  setStoreBackend({ getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => { m.set(k, v) } })
+  try {
+    const t = reviewActivity(run, null, '2026-10-19')
+    assert.match(t, /下一课怎么练：按你在用的计划：2026-10-19 速度耐力＋力量A：正式主课：150m×3/); assert.match(t, /对照目标（400米 58/); assert.doesNotMatch(t, /53秒/)
+  } finally { setStoreBackend(null) }
 })
 test('review with laps reads pace drift and HR drift', () => {
   const laps = [1, 2, 3, 4, 5, 6].map(i => ({ i, dist: 1000, dur: 300 + (i > 3 ? 20 : 0), avgHr: 140 + (i > 3 ? 12 : 0), maxHr: 160, cad: 170, elev: 0, speed: null }))

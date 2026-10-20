@@ -30,7 +30,7 @@ function distanceTimePairs(text:string):Array<[number,number]>{
  return out
 }
 function rest(text:string,round=false){
- const re=round?/(?:轮间|大组间|大组|两轮之间)(?:休息|间歇|恢复)?\s*(\d+(?:\.\d+)?)\s*(分钟|分|秒)/:/(?:组间|趟间|每组间|间歇|休息|恢复)(?:休息|恢复|为|是|约)?\s*(\d+(?:\.\d+)?)\s*(分钟|分|秒)/
+ const re=round?/(?:轮间|大组间|大组|两轮之间)(?:休息|间歇|恢复|只休一次|只休|休)?\s*(\d+(?:\.\d+)?)\s*(分钟|分|秒)/:/(?:组间|趟间|每组间|间歇|休息|恢复|实休|趟休|组休|(?<![轮])休)(?:休息|恢复|为|是|约|均|各|均为)?\s*(\d+(?:\.\d+)?)\s*(分钟|分|秒)/
  const source=round?text:text.replace(/(?:轮间|大组间|大组|两轮之间)(?:休息|间歇|恢复)?\s*\d+(?:\.\d+)?\s*(?:分钟|分|秒)/g,'');const m=source.match(re);return m?Number(m[1])*(m[2]==='秒'?1:60):null
 }
 /** Plan/future clauses are not completion assertions, regardless of their sentence position. */
@@ -54,7 +54,8 @@ function planningOnly(text:string){
 export function parseChatTraining(input:string):ChatTraining{
  const raw=input.normalize('NFKC').slice(0,8000),q=raw.toLowerCase()
  const result:ChatTraining={id:'chat-'+hash(raw),raw,planned:null,rounds:1,perRound:null,splits:[],restSeconds:rest(q),roundRestSeconds:rest(q,true),minutes:statedSessionMinutes(q),rpe:null,rpeAssumed:false,issues:[],hasActual:false}
- if(/假设|假如|举例|例如|朋友|队友|同伴|学员|别人/.test(q)||planningOnly(q))return {...result,minutes:null}
+ // v86: “我是（合成）学员X” is a self-identification, not someone else's numbers.
+ if(/假设|假如|举例|例如|朋友|队友|同伴|学员|别人/.test(q.replace(/我是(?:合成)?学员/g,'我是'))||planningOnly(q))return {...result,minutes:null}
  const rpes=parseReportedRpes(q),explicit=rpes.filter(r=>r.scope==='SESSION_RPE'),unqualified=rpes.filter(r=>r.scope==='UNSPECIFIED')
  const ratings=explicit.length?explicit:unqualified
  if(new Set(ratings.map(r=>r.value)).size===1){result.rpe=ratings[0].value;result.rpeAssumed=!explicit.length}
@@ -63,17 +64,18 @@ export function parseChatTraining(input:string):ChatTraining{
  if(invalid.length){result.rpe=null;result.issues.push('RPE超出0—10范围，本次不据此计算负荷。')}
  const structure=q.match(/(\d+(?:\.\d+)?)\s*(米|m|公里|km)\s*[×x*]\s*(\d+)(?:\s*[×x*]\s*(\d+))?/)
  const reverse=q.match(/(\d+)\s*(?:组|趟|次|个)\s*(\d+(?:\.\d+)?)\s*(米|m|公里|km)/)
- const reverseTimes=q.match(/(\d+)\s*[×x*]\s*(\d+(?:\.\d+)?)(?![\d.])\s*(米|m|公里|km)?(?=[，,\s]|$)/)
+ const reverseTimes=q.match(/(\d+)\s*[×x*]\s*(\d+(?:\.\d+)?)(?![\d.])\s*(米|m|公里|km)?(?=[，,\s]|$)/)??[...q.matchAll(/(\d{1,2})\s*[×x*]\s*(\d{2,5}(?:\.\d+)?)(?![\d.])\s*(米|m|公里|km)?(?!\s*(?:kg|公斤|次|组|\/|秒))/g)].find(m=>m[3]||Number(m[2])>=50)??null
  const measured=q.match(/(?:测了|跑了|完成了?)\s*([一二两三四五六七八九十\d]+)\s*(?:个|次|趟)\s*(\d+(?:\.\d+)?)(?![\d.])\s*(?:米|m)?/)
  let meters:number|null=null,tail=q
  if(structure){meters=Number(structure[1])*(/公里|km/.test(structure[2])?1000:1);result.perRound=Number(structure[3]);result.rounds=Number(structure[4]??1);tail=q.slice(structure.index!+structure[0].length)}
  else if(reverse||reverseTimes){const m=(reverse??reverseTimes)!;meters=Number(m[2])*(/公里|km/.test(m[3])?1000:1);result.perRound=Number(m[1]);tail=q.slice(m.index!+m[0].length)}
  else if(measured){const words:Record<string,number>={一:1,二:2,两:2,三:3,四:4,五:5,六:6,七:7,八:8,九:9,十:10};meters=Number(measured[2]);result.perRound=words[measured[1]]??Number(measured[1]);tail=q.slice(measured.index!+measured[0].length).replace(/和|与/g,'、')}
  if(result.perRound){result.planned=result.perRound*result.rounds;if(result.planned>80||result.rounds>20){result.issues.push('所述组数过大，请核对训练结构。');return result}}
- const kmSplits=q.match(/(?:公里分段|每公里|每千米|公里用时|千米分段|km分段)[：:\s]*(.*)/)
+ // v86: “每公里更快” is not a km-split list; the marker must be followed by times.
+ const kmSplits=q.match(/(?:公里分段|每公里|每千米|公里用时|千米分段|km分段)[：:\s]*(?=\d)(.*)/)
  if(kmSplits){meters=1000;tail=kmSplits[1]}
  const distanceList=q.match(/距离(?:依次|分别)?[为是：:\s]*([\d.、，,\s]+)\s*(米|m|公里|km)(?=[，,。；;\s]|$)/)
- const timingList=q.match(/(?:用时|时间)(?:依次|分别)?[为是：:\s]*([\d.:′'、，,\s]+)\s*(秒|s|分钟|分)(?=[，,。；;\s]|$)/)
+ const timingList=q.match(/(?<!计划|目标|计划的|目标的)(?:用时|时间)(?:依次|分别)?[为是：:\s]*([\d.:′'、，,\s]+)\s*(秒|s|分钟|分)(?=[，,。；;\s]|$)/)
  if(distanceList&&timingList){
   const ds=distanceList[1].trim().split(/[、，,\s]+/).map(Number),timeTokens=timingList[1].trim().split(/[、，,\s]+/),ts=timeTokens.map(secondsToken)
   if(ds.length!==ts.length||ds.some(n=>!Number.isFinite(n)||n<=0)||ts.some(n=>n===null))result.issues.push('距离与时间序列条数不一致或值无效；未猜配分段。')
@@ -82,7 +84,10 @@ export function parseChatTraining(input:string):ChatTraining{
  }
  if(meters){
   // Rest, RPE and HR numbers cannot become split times.
-  const actualTail=tail.split(/(?:实际(?:用时|成绩)?|成绩依次|分别(?:为|是)|用时依次)[：:\s]*/).at(-1)!
+  // v86 (R1.1 G01/C05): only an “实际/实/成绩依次…” marker that is followed by numbers starts the actual times;
+  // a later “实际走了哪条路径” must not discard them, and “实86/87/…” is also an actual marker.
+  const marker=[...tail.matchAll(/(?:实际(?:用时|成绩)?|(?<![实])实(?=\s*\d)|成绩依次|分别(?:为|是)|用时依次)[：:为是\s]*(?=\d|\[)/g)][0]
+  const actualTail=marker?tail.slice(marker.index!+marker[0].length):tail
   const timeText=actualTail.split(/组间|轮间|大组|休息|恢复|间歇|rpe|心率|总时长|整课|训练时长|用时共|目标|计划|打算|准备|明天|后天|下次|下一课|下周/)[0]
   const average=timeText.match(/平均(?:用时|每组|每趟)?[为是：:\s]*(\d+(?:[:.′']\d{1,2})?)\s*(?:秒|s)?/)
   if(average&&result.planned){const meanSeconds=secondsToken(average[1]);if(meanSeconds!==null)result.aggregate={meters,count:result.planned,meanSeconds}}
@@ -101,6 +106,9 @@ export function parseChatTraining(input:string):ChatTraining{
  if(!result.splits.length){
   const continuous=q.match(/(?:实际|今天|刚刚|跑了|跑完|完成|轻松跑)[^。；;]{0,16}?(\d+(?:\.\d+)?)\s*(公里|km|米|m)[，,\s]*(?:用时|用了|时间)?\s*(\d+(?:\.\d+)?)\s*(分钟|分|秒)/)
   if(continuous&&!/计划|打算|准备|假设/.test(q.slice(0,continuous.index!))){const m=continuous;result.splits.push({round:1,repeat:1,meters:Number(m[1])*(/公里|km/.test(m[2])?1000:1),seconds:Number(m[3])*(m[4]==='秒'?1:60),heartRate:null,excluded:null})}
+  // v86 (R1.1 B06): “计划(用时)X秒，实际Y秒” keeps plan and actual apart; only Y is the actual.
+  const planned=q.match(/(\d+(?:\.\d+)?)\s*(米|m|公里|km)[^。；;]{0,12}?(?:计划|目标)(?:用时|时间)?\s*(\d+[:′']\d{1,2}(?:\.\d+)?|\d+(?:\.\d+)?)\s*(秒)?[，,、\s]*实际(?:用时)?\s*(\d+[:′']\d{1,2}(?:\.\d+)?|\d+(?:\.\d+)?)\s*(秒)?/)
+  if(!result.splits.length&&planned){const seconds=secondsToken(planned[5]);if(seconds!==null)result.splits.push({round:1,repeat:1,meters:Number(planned[1])*(/公里|km/.test(planned[2])?1000:1),seconds,heartRate:null,excluded:null})}
   const single=q.match(/(\d+(?:\.\d+)?)\s*(米|m|公里|km)\s*(?:跑了|跑完用了|用了|用时|成绩是)\s*(\d+[:′']\d{1,2}(?:\.\d+)?|\d+(?:\.\d+)?)\s*(秒|分钟|分)?/)
   if(!result.splits.length&&single){const seconds=secondsToken(single[3]);if(seconds!==null)result.splits.push({round:1,repeat:1,meters:Number(single[1])*(/公里|km/.test(single[2])?1000:1),seconds:seconds*(/分钟|分/.test(single[4]??'')&&!/[:′']/.test(single[3])?60:1),heartRate:null,excluded:null})}
  }

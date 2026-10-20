@@ -65,8 +65,10 @@ export function negatedAt(clause:string,index:number,length:number):boolean {
  const before=clause.slice(0,index),after=clause.slice(index+length)
  // Pseudo-negations are not negation triggers. A later actual "没有" still applies.
  const scope=before.replace(/非常|未来|不一定|不得不|没事儿/g,'')
- return (clause.slice(index,index+length)==='疼痛'&&/^(?:程度|评分|分数|强度)?[:：]?0(?:\.0+)?(?:\/10|分|级)(?![\d.])/.test(after))
-  || /(?:没有|并无|并没有|否认|从没|不曾|未曾|未|没|无|不)(?:任何|明显|严重|特别|持续|反复|运动后|病后|出现|发生|过|有|觉得|感到|感觉){0,3}(?:[、和及或也不]*(?:胸痛|胸闷|气短|心悸|头晕|疼痛|发热|麻木|晕倒|意识不清|呼吸困难|口齿不清|单侧无力|喉咙发紧|嘴唇肿胀))*[、和及或也]*$/.test(scope)
+ // v86: a pain score of 0 negates the pain mention ("疼痛0", "走路疼痛0/10", "疼痛评分0分"); 1–10 stays a real report.
+ return (/(?:痛|疼)$/.test(clause.slice(index,index+length))&&/^(?:程度|评分|分数|强度)?\s*(?:为|是)?[:：]?\s*0(?:\.0+)?(?:\s*\/\s*10|分|级)?(?![\d./])/.test(after))
+  // v86: one negator covers an enumerated symptom list, with or without separators ("无胸痛晕厥发热", "没有晕厥胸痛或急性骨痛").
+  || /(?:没有|并无|并没有|否认|从没|不曾|未曾|未|没|无|不)(?:任何|明显|严重|特别|持续|反复|运动后|病后|出现|发生|过|有|觉得|感到|感觉){0,3}(?:[、和及或也不]*(?:胸痛|胸闷|胸口压迫|气短|气促|心悸|头晕|疼痛|发热|发烧|麻木|晕厥|昏厥|晕倒|冷汗|意识不清|呼吸困难|口齿不清|单侧无力|喉咙发紧|嘴唇肿胀|急性骨痛|骨痛|畸形|急症))*[、和及或也]*(?:急性|明显)?$/.test(scope)
   || /^(?:不存在|已排除|没有发生|并没有)/.test(after)
 }
 
