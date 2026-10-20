@@ -523,3 +523,20 @@ html, body { background: #0b0b0d; }
 /* 卡片标题图标、卡内列表图标：装饰性，不用橙色 */
 .app-wallpaper.product-ui .fk-dash-card .fk-dash-title svg, .app-wallpaper.product-ui .fk-dash-card li > svg:first-child { color: var(--fk-text-2); }
 .app-wallpaper.product-ui .fk-dash-card svg.text-accent { color: var(--fk-text-2); }
+/* R6 方坤对话页：紧凑顶栏 + 单行状态/快捷问题，让对话区占满屏幕；高度跟随 visualViewport（键盘弹出时输入框不被遮挡） */
+.fk-coach-shell { position: fixed; inset-inline: 0; top: var(--fk-vvtop, 0px); height: var(--fk-vvh, 100dvh); }
+@supports not (height: 100dvh) { .fk-coach-shell { height: var(--fk-vvh, 100vh); } }
+.product-ui .ui03-header.fk-coach-head { padding-bottom: 0; }
+.product-ui .ui03-header.fk-coach-head .ui03-header-inner { min-height: 40px; }
+.app-wallpaper.product-ui .ui03-header.fk-coach-head .ui03-title { font-size: 18px; line-height: 1.2; }
+.product-ui .ui03-header.fk-coach-head button.size-11 { width: 2.5rem; height: 2.5rem; }
+.fk-coach-tabs.product-segments { padding: 3px; border-radius: 12px; }
+.fk-coach-tabs.product-segments button { min-height: 30px; padding: 3px 8px; border-radius: 9px; }
+.fk-coach-sheet .product-chat-intro { padding: 8px 4px; }
+.fk-coach-quick { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.fk-coach-quick::-webkit-scrollbar { display: none; }
+.fk-coach-status[open] { flex-basis: 100%; border-radius: var(--radius-card, 14px); }
+.fk-coach-status > summary::-webkit-details-marker { display: none; }
+/* 输入时（键盘弹出）收起状态和快捷问题这一行；状态面板展开时保留 */
+.fk-kb .fk-coach-quick, .fk-kb .fk-coach-dock:not(:has(.fk-coach-status[open])) { display: none; }
+@media (min-width: 768px) { .fk-coach-sheet { width: 100%; max-width: 48rem; margin-inline: auto; } }

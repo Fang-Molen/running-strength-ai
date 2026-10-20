@@ -420,25 +420,22 @@ export function CoachSheet({
   const statusLine = !memory || (memory.notes.length === 0 && memory.fatigue === 20 && memory.messages.every((item) => item.role !== "user")) ? "方坤本地常驻 · 公开知识参考可选 · 大模型需服务端授权" : "训练反馈已保留 · 恢复状态待评估";
 
   return (
-    <div className={embedded ? "flex min-h-0 flex-1 flex-col px-3 pb-[calc(4.75rem+var(--fk-safe-bottom))]" : "fixed inset-0 z-30 flex flex-col bg-bg"}>
-      <div className="flex items-center gap-3 py-2">
-        <span className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-surface">
-          <span className="origin-center scale-[0.7]"><FangShen face={sending ? "thinking" : face} motion={motion} /></span>
+    <div className={embedded ? "fk-coach-sheet flex min-h-0 flex-1 flex-col px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "fixed inset-0 z-30 flex flex-col bg-bg"}>
+      {/* R6：头像、状态和三段切换合成一行紧凑顶栏，把高度让给对话区 */}
+      <div className={"fk-coach-bar flex items-center gap-2 pb-1 pt-0.5" + (embedded ? "" : " px-4")}>
+        <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-surface" title={`方坤 · ${statusLine} · ${connectivity}`}>
+          <span className="origin-center scale-[0.62]"><FangShen face={sending ? "thinking" : face} motion={motion} /></span>
         </span>
-        <div className="min-w-0 flex-1">
-          <h2 className="truncate text-base font-bold">方坤</h2>
-          <p className="truncate text-xs text-muted">{statusLine} · {connectivity}</p>
-        </div>
+        <nav className="product-segments fk-coach-tabs min-w-0 flex-1" aria-label="方坤工作区">
+          {([["chat", "对话"], ["learn", "学习"], ["review", "复盘"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={section === id} onClick={() => setSection(id)}>{label}</button>)}
+        </nav>
         {embedded ? null : <button type="button" onClick={onClose} className="grid size-10 shrink-0 place-items-center" aria-label="关闭"><X className="size-5" /></button>}
       </div>
       {coachSaveFailed ? <div className="mx-4 mb-2 flex flex-wrap items-center gap-2 text-sm">
         <p>教练记录没有写入本机，原来的记录还在。</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (memory && saveCoach(memory)) setCoachSaveFailed(false); }}>再存一次</button>
       </div> : null}
-      <nav className="product-segments mb-2" aria-label="方坤工作区">
-        {([["chat", "对话"], ["learn", "学习"], ["review", "复盘"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={section === id} onClick={() => setSection(id)}>{label}</button>)}
-      </nav>
-      <div className={"min-h-0 flex-1 space-y-3 overflow-y-auto py-2 " + (embedded ? "px-0.5" : "px-4")}>
+      <div data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
         {section === "learn" ? <LearningLibrary onNavigate={onNavigate} publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed} /> : null}
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {coordinationPanel ?? null}
@@ -649,7 +646,7 @@ export function CoachSheet({
         <div ref={bottom} />
         </div>
       </div>
-      <div hidden={section !== "chat"} className={"min-h-0 max-h-[50dvh] shrink-0 overflow-y-auto " + (embedded ? "pt-2" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
+      <div hidden={section !== "chat"} className={"min-h-0 max-h-[50dvh] shrink-0 overflow-y-auto " + (embedded ? "pt-1" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
         {activityNotices.length ? <div className="mb-2 rounded-card border border-line p-2 text-xs" aria-live="polite"><div className="flex justify-between gap-2"><strong>方坤 · 本次打开期间的活动</strong><button type="button" onClick={() => setActivityNotices([])}>清除提示</button></div>{activityNotices.map(item => <p key={item.id} className="mt-1">{item.message}</p>)}</div> : null}
         {onlineRequest ? <div className="mb-2 flex flex-wrap items-center gap-2 text-xs"><span>复杂问题可主动尝试线上大模型（必须有服务端授权或额度；当前未实现赠送额度发放）。点击将发送问题及相关训练摘要给服务端，请先确认隐私。</span><button type="button" className="min-h-10 rounded-card border border-line px-3" disabled={sending || isOnline === false} onClick={() => void send(onlineRequest, true, true)}>{isOnline === false ? "离线不可调用" : "确认尝试线上回答"}</button><button type="button" className="min-h-10 px-2" onClick={() => setOnlineRequest(null)}>暂不使用</button></div> : null}
         {retryQuestion ? (
@@ -665,7 +662,9 @@ export function CoachSheet({
             <button type="button" disabled={!choiceNote.trim()} className="h-11 rounded-card border border-line px-3 text-sm disabled:opacity-50" onClick={() => { recordCoachChoice({ choice: "modify", question: turnQuestion, note: choiceNote }); setTurnId(null); setChoiceNote(""); setNotice("已记下你的修改。课表没有改。"); }}>按我的改</button>
           </div>
         ) : null}
-        <details data-testid="coach-status-row" className="mb-1 rounded-card border border-line text-xs"><summary className="flex min-h-9 cursor-pointer list-none items-center gap-2 px-3 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="px-2 pb-2">
+        <div className="fk-coach-dock flex flex-wrap items-center gap-1.5">
+        <details data-testid="coach-status-row" className="fk-coach-status shrink-0 rounded-full border border-line text-xs"><summary className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 px-2.5 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="max-h-[45dvh] overflow-y-auto px-2 pb-2">
+        <p className="mb-2 px-1 text-muted">{statusLine} · {connectivity}</p>
         <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：经服务端调用 DeepSeek，只发送去标识化的训练数值、分段、恢复指标和计划目标，不发送账号或位置；离线或失败时自动用本地分析。急症/疼痛问题始终本地处理。</span></label>
         <details className="coach-network-card mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限"><summary className="min-h-11 cursor-pointer font-bold">联网与隐私权限（按需展开）</summary>
           <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
@@ -762,15 +761,16 @@ export function CoachSheet({
         </div> : null}
         </details>
         </div></details>
-        <div className="mb-1 flex gap-1.5 overflow-x-auto pb-0.5">
-          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("帮我复盘这节训练，先说明已记录事实和缺失数据"); }}>分析最近训练</button>
-          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("根据已记录的恢复、睡眠和疼痛，说明现在不能确认什么"); }}>解释恢复数据</button>
-          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("查看我已保存的专项目标，不要假设没有写下的成绩"); }}>查看专项目标</button>
-          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么相同的400米×8，组间休息1分钟和8分钟训练刺激不同？"); }}>理解间歇原理</button>
-          <button type="button" className="min-h-9 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
+        <div className={"fk-coach-quick min-w-0 flex-1 gap-1.5 overflow-x-auto " + (draft.trim() ? "hidden" : "flex")}>
+          <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("帮我复盘这节训练，先说明已记录事实和缺失数据"); }}>分析最近训练</button>
+          <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("根据已记录的恢复、睡眠和疼痛，说明现在不能确认什么"); }}>解释恢复数据</button>
+          <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("查看我已保存的专项目标，不要假设没有写下的成绩"); }}>查看专项目标</button>
+          <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么相同的400米×8，组间休息1分钟和8分钟训练刺激不同？"); }}>理解间歇原理</button>
+          <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
+        </div>
         </div>
         <form
-          className="flex gap-2 pt-2"
+          className="flex gap-2 pt-1.5"
           onSubmit={(event) => {
             event.preventDefault();
             send(draft);
@@ -781,9 +781,10 @@ export function CoachSheet({
             onChange={(event) => setDraft(event.target.value)}
             onFocus={(event) => event.currentTarget.scrollIntoView({ block: "nearest" })}
             placeholder="输入你的问题"
-            className="h-12 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 outline-none"
+            enterKeyHint="send"
+            className="h-11 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 outline-none"
           />
-          <button type="submit" disabled={sending} aria-label="发送" className="grid size-12 shrink-0 place-items-center rounded-full bg-[#183f56] text-white disabled:opacity-50">
+          <button type="submit" disabled={sending} aria-label="发送" className="grid size-11 shrink-0 place-items-center rounded-full bg-[#183f56] text-white disabled:opacity-50">
             <Send className="size-4" />
           </button>
         </form>

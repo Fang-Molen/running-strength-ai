@@ -542,13 +542,13 @@ export function StrengthApp() {
 
 
   return (
-    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "flex h-dvh flex-col overflow-hidden" : "min-h-screen")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
-      <header className="ui03-header px-4 pt-1 pb-1">
+    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-screen")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
+      <header className={"ui03-header px-4 pt-1 pb-1" + (tab === "coach" ? " fk-coach-head" : "")}>
         <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
             {tab === "today" ? <><h1 className="text-[1.6rem] font-black italic leading-none tracking-wide">FANGKUN</h1><p className="text-sm font-bold">更好的你</p></> : <>
             <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
-            <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p></>}
+            {tab === "coach" ? null : <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>}</>}
           </div>
           <div className="flex shrink-0 items-center gap-2">
           {tab === "today" ? <button type="button" aria-label="记一笔" onClick={() => window.dispatchEvent(new Event("fk-open-quicklog"))} className="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><Plus className="size-4" />记一笔</button> : null}
@@ -1284,7 +1284,7 @@ function ChromeMetrics() {
   useEffect(() => {
     const root = document.documentElement; const nav = document.querySelector<HTMLElement>(".ui03-dock");
     const navH = () => { const h = nav && getComputedStyle(nav).display !== "none" ? nav.getBoundingClientRect().height : 0; root.style.setProperty("--fk-nav-h", `${Math.round(h)}px`); };
-    const kb = () => { const vv = window.visualViewport; const ae = document.activeElement as HTMLElement | null; const typing = !!ae && (ae.tagName === "INPUT" && !["range", "checkbox", "radio", "button", "file"].includes((ae as HTMLInputElement).type) || ae.tagName === "TEXTAREA" || ae.isContentEditable); root.classList.toggle("fk-kb", typing || (!!vv && vv.height < window.innerHeight * 0.75)); if (vv) { root.style.setProperty("--fk-kb-h", `${Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))}px`); root.style.setProperty("--fk-vvh", `${Math.round(vv.height)}px`); } };
+    const kb = () => { const vv = window.visualViewport; const ae = document.activeElement as HTMLElement | null; const typing = !!ae && (ae.tagName === "INPUT" && !["range", "checkbox", "radio", "button", "file"].includes((ae as HTMLInputElement).type) || ae.tagName === "TEXTAREA" || ae.isContentEditable); root.classList.toggle("fk-kb", typing || (!!vv && vv.height < window.innerHeight * 0.75)); if (vv) { root.style.setProperty("--fk-kb-h", `${Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))}px`); root.style.setProperty("--fk-vvh", `${Math.round(vv.height)}px`); root.style.setProperty("--fk-vvtop", `${Math.max(0, Math.round(vv.offsetTop))}px`); } };
     window.visualViewport?.addEventListener("scroll", kb);
     const sheet = () => root.classList.toggle("fk-sheet", !!document.querySelector('[role="dialog"]'));
     const ro = nav ? new ResizeObserver(navH) : null; if (nav && ro) ro.observe(nav);
