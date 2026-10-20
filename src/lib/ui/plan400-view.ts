@@ -4,6 +4,7 @@
  * 不写任何存储、不改原课表、不改日期；冲突只报告。
  */
 import type { CompStatus, DayComponents, PartFeedback } from './plan400-components-store'
+import { madeUpOn, makeupText } from './makeup'
 export type V4Day = { orig: string; date: string; weekday: string; week: string; title: string; main: string[]; aux: string[]; strength: string[] }
 export type V4Week = { week: string; title: string; range: string; principle: string }
 export type V4Plan = { name: string; shiftDays: number; weeks: V4Week[]; days: V4Day[]; final?: V4Day }
@@ -39,11 +40,11 @@ export const hasRecord = (l: V4Log | undefined) => Boolean(l && RECORD_FIELDS.so
  * - 用户填过分项（状态/RPE/疼痛/感受/备注）后，整天只由分项派生；旧整课 done 不再覆盖。
  * - 只有旧整课记录（fk-plan400-v4-log.done）时，整天按旧口径显示并标“历史整课”，绝不拆成两项各自完成，也不复制 RPE。 */
 export type ExecState = 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' | null
-export type DayParts = { parts?: DayComponents; runLinked?: boolean; runCandidates?: number; strengthExec?: ExecState; runExec?: ExecState; strengthMissed?: boolean; /** 日程条目 plan400:<date>:strength 上用户手动标的结果（按计划完成/实际不同/没练），没有逐组执行时才用 */ strengthMarked?: 'as_planned' | 'different' | 'missed' | null }
+export type DayParts = { parts?: DayComponents; runLinked?: boolean; runCandidates?: number; strengthExec?: ExecState; runExec?: ExecState; strengthMissed?: boolean; /** 日程条目 plan400:<date>:strength 上用户手动标的结果（按计划完成/实际不同/没练），没有逐组执行时才用 */ strengthMarked?: 'as_planned' | 'different' | 'missed' | null; /** v87.2：逐组力量 / 逐段跑步 / 关联手表跑步 的实际日期（用于补练判断，见 makeup.ts） */ strengthOn?: string; runOn?: string }
 export const hasRunPart = (d: Pick<V4Day, 'title'>) => dayKind(d) !== 'rest' && !/^力量/.test(d.title)
 export type PartState = 'done' | 'reduced' | 'skipped' | 'partial' | 'live' | 'candidate' | 'none'
 export type PartFact = { state: PartState; label: string; source: 'user' | 'execution' | 'device' | 'hand' | 'feedback' | 'candidate' | null; rpe: number | null; detail?: string }
-export type V4DayFact = { plannedRun: boolean; plannedLift: boolean; combo: boolean; running: PartFact | null; strength: PartFact | null; split: boolean; legacy: { done: string | null; rpe: string | null; pain: string | null }; legacyOverall: boolean; overall: 'done' | 'reduced' | 'skipped' | 'in_progress' | null; actualRun: boolean; actualLift: boolean; summary: string }
+export type V4DayFact = { plannedRun: boolean; plannedLift: boolean; combo: boolean; running: PartFact | null; strength: PartFact | null; split: boolean; legacy: { done: string | null; rpe: string | null; pain: string | null }; legacyOverall: boolean; overall: 'done' | 'reduced' | 'skipped' | 'in_progress' | null; actualRun: boolean; actualLift: boolean; summary: string; /** v87.2：不在计划当天做的分项 → 实际日期 */ madeUp: { running: string | null; strength: string | null } }
 const PART_TEXT: Record<CompStatus, string> = { done: '完成', reduced: '减量完成', skipped: '跳过（没做）', not_recorded: '未记录' }
 const filledV = (v: unknown) => String(v ?? '').trim().length > 0
 const userStatus = (p: PartFeedback | undefined): Exclude<CompStatus, 'not_recorded'> | null => p?.status && p.status !== 'not_recorded' ? p.status : null
@@ -81,6 +82,10 @@ export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefi
       : partFeedback(q) ? { state: 'partial', label: withRpe('有评价 · 未标完成', q), source: 'feedback', rpe: q?.rpe ?? null }
       : { state: 'none', label: '尚未记录', source: null, rpe: null }
   }
+  // v87.2：补练——分项照算（计划这天不算缺），标出实际日期
+  const madeUp = { running: running && ACTUAL.includes(running.state) ? madeUpOn(d.date, 'running', x) : null, strength: strength && ACTUAL.includes(strength.state) ? madeUpOn(d.date, 'strength', x) : null }
+  if (running && madeUp.running) running = { ...running, label: `${running.label}（${makeupText(d.date, madeUp.running)}）` }
+  if (strength && madeUp.strength) strength = { ...strength, label: `${strength.label}（${makeupText(d.date, madeUp.strength)}）` }
   const need = [running, strength].filter((v): v is PartFact => !!v)
   // v84（合入 Codex 1019y）：组合课一项跳过、另一项完成 ≠ 整课完成（以前算“已完成·减量”），按“进行中/部分完成”显示，不计入完成课次；全部跳过＝跳过；全部完成/减量＝完成/减量
   const fromParts: V4DayFact['overall'] = need.length && need.every(v => v.state === 'skipped') ? 'skipped'
@@ -97,7 +102,7 @@ export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefi
   const summary = legacyOverall ? `历史整课记录（旧口径，跑步与力量没分开）：${legacyDone === 'done' ? '完成' : legacyDone === 'reduced' ? '减量完成' : '没练/取消'}`
     : !combo ? (running ? `跑步：${running.label}` : strength ? `力量：${strength.label}` : '')
     : `跑步：${running!.label} · 力量：${strength!.label}`
-  return { plannedRun, plannedLift, combo, running, strength, split, legacy: { done: filledV(l.done) ? String(l.done) : null, rpe: filledV(l.rpe) ? String(l.rpe) : null, pain: filledV(l.pain) ? String(l.pain) : null }, legacyOverall, overall, actualRun, actualLift, summary }
+  return { plannedRun, plannedLift, combo, running, strength, split, legacy: { done: filledV(l.done) ? String(l.done) : null, rpe: filledV(l.rpe) ? String(l.rpe) : null, pain: filledV(l.pain) ? String(l.pain) : null }, legacyOverall, overall, actualRun, actualLift, summary, madeUp }
 }
 /** 兼容旧调用：只看分项（不看旧整课）推出的整天状态。 */
 export function partsDayStatus(d: V4Day, x: DayParts | undefined): DayStatus | null {

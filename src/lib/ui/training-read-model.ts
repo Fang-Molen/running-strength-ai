@@ -18,8 +18,9 @@ import { loadComponents, type DayComponents, type ComponentsDoc } from './plan40
 import { v4DayFact, type DayParts, type V4Day, type V4DayFact, type V4Log } from './plan400-view';
 import { legacyQuickAudit, type LegacyQuickAudit } from './quick-log-save'
 import { v4ExecFrom, type V4Exec } from './v4-exec';
+import { mdCN } from './makeup';
 export type RowSource = 'execution' | 'phone' | 'import' | 'garmin'
-export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents; /** v83：V4 当天课的分项事实投影（唯一口径：首页/计划/日志/方坤共用） */ v4?: V4DayFact & { date: string }; /** v83：合并进这一条的原始记录（各自来源/项目/时长），用于分项时长与追溯 */ members?: { id: string; source: RowSource; sport: LoggedSession['sport']; durationSec: number | null; status?: 'completed' | 'incomplete' }[]; /** v83：有分项缺时长，durationSec 只是已知部分之和 */ durationPartial?: boolean; /** v83：记一笔（计划外）生成 */ quickLog?: boolean; /** v83：数据口径说明（如“用时未知（旧版本可能填了默认 30 分钟）”） */ note?: string };
+export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents; /** v83：V4 当天课的分项事实投影（唯一口径：首页/计划/日志/方坤共用） */ v4?: V4DayFact & { date: string }; /** v83：合并进这一条的原始记录（各自来源/项目/时长），用于分项时长与追溯 */ members?: { id: string; source: RowSource; sport: LoggedSession['sport']; durationSec: number | null; status?: 'completed' | 'incomplete' }[]; /** v83：有分项缺时长，durationSec 只是已知部分之和 */ durationPartial?: boolean; /** v83：记一笔（计划外）生成 */ quickLog?: boolean; /** v87.2：补练/提前练——这条是 V4 计划 makeupOf 那天的分项，实际在本条日期做 */ makeupOf?: string; /** v83：数据口径说明（如“用时未知（旧版本可能填了默认 30 分钟）”） */ note?: string };
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
 const day = (iso: string) => activityLocalDay(iso);
 function sameActivity(a: ActivityRow, b: ActivityRow) {
@@ -90,6 +91,7 @@ export function loadTrainingActivities(): ActivityRow[] {
     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
       strengthVolumeKg: isRun ? null : own.volumeKg,
       sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : []), ...(/^scheduled:plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(10, 28), `sched:${o.planSlotId!.slice(10).replace(/:run$/, '')}`] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
+    detachMakeup(rows[rows.length - 1], o.planSlotId);
   }
   // v83（P0-03）：旧版本记一笔的默认用时，读时如实改成“未知”（不改存储）
   let qa = new Map<string, LegacyQuickAudit>()
@@ -109,6 +111,13 @@ export function loadTrainingActivities(): ActivityRow[] {
   let exec: Record<string, V4Exec> = {}
   try { exec = v4ExecFrom(listTrainingOccurrences().filter(o => ids.has(o.trainingOccurrenceId)), events, occurrenceVoided) } catch { exec = {} }
   return linkRuns(rows, typeof localStorage === 'undefined' ? null : localStorage, Date.now(), exec);
+}
+const makeupTitle = (planDate: string, on: string, sport: ActivityRow['sport']) => { const pd = (V4.days as V4Day[]).find(x => x.date === planDate); return `V4 ${pd?.title ?? '计划课'} · ${sport === 'RUNNING' ? '跑步' : '力量'}（${on > planDate ? '补练' : '提前练'}·原定 ${mdCN(planDate)}）` }
+/** v87.2：V4 计划某天的执行（逐组力量/逐段跑步）不在计划当天做 = 补练：记录留在实际那天，不并进计划那天的一条（否则整节课被挪到一天、或另一天的跑步被带走）；makeupOf 指回原计划。 */
+export function detachMakeup(row: ActivityRow, planSlotId: string | null | undefined) {
+  const m = /^(?:scheduled:)?plan400:(\d{4}-\d\d-\d\d)/.exec(planSlotId ?? ''); if (!m || m[1] === row.date) return
+  if (!(V4.days as V4Day[]).some(x => x.date === m[1])) return
+  row.originIds = row.originIds.filter(id => !id.includes(`plan400:${m[1]}`)); row.makeupOf = m[1]; row.title = makeupTitle(m[1], row.date, row.sport)
 }
 /** v83：v4Parts = 每个 V4 日期送进 v4DayFact 的同一份分项输入（首页主卡/计划/日志/方坤共用，避免各算各的） */
 export type V4DayInput = DayParts & { strengthLive?: boolean }
@@ -144,10 +153,26 @@ export function linkRuns(rows: ActivityRow[], store: Pick<Storage, 'getItem'> | 
   for (const d of v4Dates) {
     if (!/^\d{4}-\d\d-\d\d$/.test(d)) continue
     const se = sched.find(e => e?.id === `plan400:${d}:strength`)?.actual
-    v4Parts[d] = { parts: comps.days?.[d], runLinked: v4Linked.has(d), runCandidates: v4Linked.has(d) ? 0 : match.suggestions.find(s => s.entry.id === v4RunSlotId(d))?.runs.length ?? 0,
+    const linkedOn = v4Linked.get(d)?.run.date
+    v4Parts[d] = { ...(exec[d]?.strengthOn ? { strengthOn: exec[d].strengthOn } : {}), ...(exec[d]?.runOn ?? linkedOn ? { runOn: exec[d]?.runOn ?? linkedOn } : {}), parts: comps.days?.[d], runLinked: v4Linked.has(d), runCandidates: v4Linked.has(d) ? 0 : match.suggestions.find(s => s.entry.id === v4RunSlotId(d))?.runs.length ?? 0,
       strengthExec: exec[d]?.strength ?? (se?.executionState ?? null), runExec: exec[d]?.run ?? null, strengthMarked: se && !se.executionState ? se.outcome : null, strengthLive: !!exec[d]?.strengthLive }
   }
-  for (const [d, l] of v4Linked) { const p = rows.find(r => r.id === `p400:${d}`); if (p) p.originIds = [...new Set([...p.originIds, ...l.run.originIds])] }
+  // v87.2：关联的手表跑步不在计划当天 = 补练：不并进计划那天，留在实际那天并指回原计划
+  for (const [d, l] of v4Linked) {
+    if (l.run.date !== d) { for (const r of rows) if (r.originIds.some(id => l.run.originIds.includes(id))) { r.makeupOf = d; r.title = makeupTitle(d, r.date, 'RUNNING') } continue }
+    const p = rows.find(r => r.id === `p400:${d}`); if (p) p.originIds = [...new Set([...p.originIds, ...l.run.originIds])]
+  }
+  // v87.2：手动记的补练（分项评价里填了实际日期，没有逐组/手表记录）→ 在实际那天给一条，指回原计划；已有执行/手表记录的不再生成（只算一次）
+  for (const d of v4Dates) {
+    const pd = (V4.days as V4Day[]).find(x => x.date === d), x = v4Parts[d]; if (!pd || !x) continue
+    const f = v4DayFact(pd, p4[d], x, !!x.strengthLive)
+    for (const part of ['running', 'strength'] as const) {
+      const on = f.madeUp[part], sport = part === 'running' ? 'RUNNING' as const : 'STRENGTH' as const, st = f[part]?.state
+      if (!on || on > today || rows.some(r => r.makeupOf === d && r.sport === sport)) continue
+      rows.push({ id: `p400mk:${d}:${part}`, startedAt: localNoon(on), timeUnknown: true, date: on, sport, distanceM: null, durationSec: null, strengthVolumeKg: null, sets: null, rpe: x.parts?.[part]?.rpe ?? null, source: 'phone', appMade: true, makeupOf: d,
+        title: makeupTitle(d, on, sport), status: st === 'done' || st === 'reduced' ? 'completed' : 'incomplete', originIds: [`p400mk:${d}:${part}`] })
+    }
+  }
   const merged = mergeActivities(rows)
   for (const l of match.links) { const row = merged.find(r => r.originIds.some(id => l.run.originIds.includes(id))); if (row) row.runLink = { entryId: l.entry.id, title: l.entry.title, by: l.by } }
   for (const row of merged) {
@@ -163,17 +188,20 @@ export function linkRuns(rows: ActivityRow[], store: Pick<Storage, 'getItem'> | 
 /** v83：V4 投影行的项目/状态/时长只由分项事实决定（不由计划标题、不由“合并里有一条完成”决定）。 */
 export function applyV4Fact(row: ActivityRow, f: V4DayFact & { date: string }) {
   row.v4 = f; row.plan = 'v4'
-  row.sport = f.actualRun && f.actualLift ? 'MIXED' : f.actualRun ? 'RUNNING' : f.actualLift ? 'STRENGTH' : f.legacyOverall && f.overall !== 'skipped' ? (f.plannedRun && f.plannedLift ? 'MIXED' : f.plannedRun ? 'RUNNING' : 'STRENGTH') : row.sport
-  const partDone = [f.running?.state, f.strength?.state].some(s => s === 'done' || s === 'reduced')
+  // v87.2：补练的分项记在实际那天的那一条，计划这天这条不再按它计项目/次数（只算一次）
+  const runHere = f.actualRun && !f.madeUp?.running, liftHere = f.actualLift && !f.madeUp?.strength
+  row.sport = runHere && liftHere ? 'MIXED' : runHere ? 'RUNNING' : liftHere ? 'STRENGTH' : f.legacyOverall && f.overall !== 'skipped' ? (f.plannedRun && f.plannedLift ? 'MIXED' : f.plannedRun ? 'RUNNING' : 'STRENGTH') : row.sport
+  const partDone = [!f.madeUp?.running && f.running?.state, !f.madeUp?.strength && f.strength?.state].some(s => s === 'done' || s === 'reduced')
   // 手表实测的跑步（已关联）是真实发生的训练：这一条计入次数/距离（V4 分项状态仍是“有记录·未标完成”，不等于跑步完成）
   const measured = (row.members ?? []).some(m => m.source === 'garmin' && m.status !== 'incomplete') || row.source === 'garmin'
-  row.status = f.overall === 'done' || f.overall === 'reduced' || partDone || measured ? 'completed' : 'incomplete'
+  row.status = (f.overall === 'done' || f.overall === 'reduced') && (!f.madeUp || !f.madeUp.running && !f.madeUp.strength) || partDone || measured ? 'completed' : 'incomplete'
   const ms = (row.members ?? []).filter(m => m.source !== 'phone' || m.durationSec != null)
   const known = ms.filter(m => m.durationSec != null)
   if (ms.length > 1) { row.durationSec = known.length ? known.reduce((s, m) => s + m.durationSec!, 0) : null; row.durationPartial = known.length > 0 && known.length < ms.length }
   const tag = f.legacyOverall ? '（历史整课）' : f.combo && f.overall !== 'done' && f.overall !== 'skipped' && (f.actualRun || f.actualLift) ? `（${f.actualRun && f.running?.state !== 'partial' ? '跑步完成' : f.actualRun ? '跑步有记录' : '跑步' + (f.running?.state === 'skipped' ? '跳过' : '待补')}／${f.actualLift && f.strength?.state !== 'partial' ? '力量完成' : f.actualLift ? '力量有记录' : '力量' + (f.strength?.state === 'skipped' ? '跳过' : '待补')}）` : ''
   const pd = (V4.days as V4Day[]).find(x => x.date === f.date)
-  row.title = `V4 ${pd?.title ?? '计划课'}${f.overall === 'reduced' ? '（减量）' : ''}${tag}`
+  const mk = [f.madeUp?.running ? `跑步${f.madeUp.running > f.date ? '补练于' : '提前于'} ${mdCN(f.madeUp.running)}` : '', f.madeUp?.strength ? `力量${f.madeUp.strength > f.date ? '补练于' : '提前于'} ${mdCN(f.madeUp.strength)}` : ''].filter(Boolean).join('，')
+  row.title = `V4 ${pd?.title ?? '计划课'}${f.overall === 'reduced' ? '（减量）' : ''}${tag}${mk ? `（${mk}）` : ''}`
 }
 /** 佳明“训练后自评强度”directWorkoutRpe 为 10–100（10 = RPE1）；换算成 1–10。 */
 export function garminRpe(v: unknown): number | null { const n = typeof v === 'number' && Number.isFinite(v) ? v : null; return n == null ? null : n >= 10 && n <= 100 ? Math.round(n / 10) : n >= 1 && n <= 10 ? n : null }

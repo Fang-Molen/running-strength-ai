@@ -6,7 +6,8 @@ import { occurrenceVoided } from '@/lib/core/training-correction'
 import { loadEvents } from '@/lib/core/events'
 import { projectRunningExecution } from '@/lib/core/running-execution'
 import type { ExecState } from './plan400-view'
-export type V4Exec = { strength?: ExecState; run?: ExecState; strengthLive?: boolean }
+import { activityLocalDay } from './activity-format'
+export type V4Exec = { strength?: ExecState; run?: ExecState; strengthLive?: boolean; /** v87.2：执行的实际日期（开始时间的本地日期） */ strengthOn?: string; runOn?: string }
 const SID = /^scheduled:plan400:(\d{4}-\d\d-\d\d):strength:(strength|run)$/
 export function v4ExecFrom(occ: readonly TrainingOccurrence[], events: ReturnType<typeof loadEvents>, voided: (id: string) => boolean): Record<string, V4Exec> {
   const latest = new Map<string, TrainingOccurrence>()
@@ -21,7 +22,8 @@ export function v4ExecFrom(occ: readonly TrainingOccurrence[], events: ReturnTyp
     else { try { const r = projectRunningExecution(o.trainingOccurrenceId, events); evidence = r.availability === 'AVAILABLE' && [...r.repetitions, ...r.continuous].some(s => s.status === 'COMPLETED') } catch { evidence = false } }
     if (!evidence) continue
     const st: ExecState = o.lifecycle === 'COMPLETED' ? 'COMPLETED' : 'INTERRUPTED'
-    if (part === 'strength') cur.strength = st; else cur.run = st
+    const on = activityLocalDay(o.startedAt) ?? undefined
+    if (part === 'strength') { cur.strength = st; if (on) cur.strengthOn = on } else { cur.run = st; if (on) cur.runOn = on }
   }
   return out
 }

@@ -1,4 +1,4 @@
-import { stampCN } from "@/lib/ui/activity-format";
+import { stampCN, activityLocalDay } from "@/lib/ui/activity-format";
 /* v79：V4 组合课分项反馈（fk-plan400-v4-components-v1）+ 跑步分项 ↔ 手表跑步关联 + 导入后弹窗。 */
 import { useEffect, useState } from "react"
 import { loadComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, COMPONENTS_EVT, type CompStatus, type PartFeedback, type DayComponents } from "@/lib/ui/plan400-components-store"
@@ -59,17 +59,25 @@ export function PartFeedbackForm({ date, part, name }: { date: string; part: "ru
   const [f, setF] = useState({ status: cur.status ?? "", rpe: cur.rpe != null ? String(cur.rpe) : "", area: cur.pain?.area ?? "", score: cur.pain?.score != null ? String(cur.pain.score) : "", feel: cur.feel ?? "", note: cur.note ?? "" })
   useEffect(() => { setF({ status: cur.status ?? "", rpe: cur.rpe != null ? String(cur.rpe) : "", area: cur.pain?.area ?? "", score: cur.pain?.score != null ? String(cur.pain.score) : "", feel: cur.feel ?? "", note: cur.note ?? "" }) }, [cur.savedAt]) // eslint-disable-line react-hooks/exhaustive-deps
   const [msg, setMsg] = useState("")
+  // v87.2：过了计划日才记的，可以写实际哪天练的（补练）；记录与周统计按实际日期算，计划这天显示“补练于…”
+  const todayL = activityLocalDay(new Date().toISOString()) ?? "", past = !!todayL && date < todayL
+  const [on, setOn] = useState(cur.doneOn || date)
+  useEffect(() => { setOn(cur.doneOn || date) }, [cur.savedAt, date]) // eslint-disable-line react-hooks/exhaustive-deps
   const num = (v: string, lo: number, hi: number) => { const n = Number(v); return v.trim() && Number.isFinite(n) && n >= lo && n <= hi ? n : null }
   const save = () => {
     const rpe = num(f.rpe, 1, 10), score = num(f.score, 0, 10)
     if (f.rpe.trim() && rpe == null) { setMsg("RPE 要在 1–10 之间"); return }
-    const ok = saveComponent(date, part, { status: (f.status || undefined) as CompStatus | undefined, rpe, pain: f.area.trim() || score != null ? { area: f.area.trim(), score } : null, feel: f.feel.trim(), note: f.note.trim() })
+    if (past && (!/^\d{4}-\d\d-\d\d$/.test(on) || on > todayL)) { setMsg("实际日期不能晚于今天"); return }
+    const ok = saveComponent(date, part, { ...(past || cur.doneOn ? { doneOn: past && on !== date ? on : "" } : {}), status: (f.status || undefined) as CompStatus | undefined, rpe, pain: f.area.trim() || score != null ? { area: f.area.trim(), score } : null, feel: f.feel.trim(), note: f.note.trim() })
     setMsg(ok ? `${name}已保存（只改${name}，另一项不动）` : "没有保存成功，原记录未改变")
   }
   const inp = "mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base"
   return <section className="home-card space-y-2 p-4" aria-label={`${name}评价`} data-testid={`part-${part}`}>
     <h3 className="font-bold">{name}评价</h3>
     <div className="grid grid-cols-3 gap-2" role="group" aria-label={`${name}状态`}>{STATUSES.map(([v, t]) => <button key={v} type="button" aria-pressed={f.status === v} onClick={() => setF({ ...f, status: f.status === v ? "" : v })} className={"min-h-11 rounded-xl border text-sm font-bold " + (f.status === v ? "border-accent bg-accent/15 text-accent" : "border-line")}>{t}</button>)}</div>
+    {past ? <div className="space-y-1" data-testid={`doneon-${part}`}><span className="text-xs text-muted">{name}实际哪天练的（补练就选那天）</span>
+      <div className="grid grid-cols-3 gap-2"><button type="button" aria-pressed={on === date} className={"min-h-11 rounded-xl border text-sm font-bold " + (on === date ? "border-accent bg-accent/15 text-accent" : "border-line")} onClick={() => setOn(date)}>计划当天</button><button type="button" aria-pressed={on === todayL} className={"min-h-11 rounded-xl border text-sm font-bold " + (on === todayL ? "border-accent bg-accent/15 text-accent" : "border-line")} onClick={() => setOn(todayL)}>今天补练</button><input type="date" aria-label={`${name}实际日期`} className="min-h-11 rounded-xl border border-line bg-surface px-1 text-sm" min={date} max={todayL} value={on} onChange={e => setOn(e.target.value)} /></div>
+      <p className="keep text-xs text-muted">有逐组/手表记录的，以记录的时间为准。</p></div> : null}
     <label className="block"><span className="text-xs text-muted">{name} RPE（1–10，只算{name}）</span><input inputMode="numeric" aria-label={`${name} RPE`} className={inp} value={f.rpe} onChange={e => setF({ ...f, rpe: e.target.value })} /></label>
     <div className="grid grid-cols-2 gap-2"><label className="block"><span className="text-xs text-muted">疼痛部位</span><input aria-label={`${name}疼痛部位`} className={inp} value={f.area} onChange={e => setF({ ...f, area: e.target.value })} /></label><label className="block"><span className="text-xs text-muted">疼痛 0–10</span><input inputMode="numeric" aria-label={`${name}疼痛分数`} className={inp} value={f.score} onChange={e => setF({ ...f, score: e.target.value })} /></label></div>
     <label className="block"><span className="text-xs text-muted">感受</span><input aria-label={`${name}感受`} className={inp} value={f.feel} onChange={e => setF({ ...f, feel: e.target.value })} /></label>
@@ -79,7 +87,7 @@ export function PartFeedbackForm({ date, part, name }: { date: string; part: "ru
     {cur.corrections?.length ? <details className="text-xs" data-testid={`corrections-${part}`}><summary className="min-h-9 cursor-pointer text-muted">修改记录 · {cur.corrections.length} 次</summary><ul>{cur.corrections.map((c, i) => <li key={i} className="keep">{stampCN(c.at)} {LABEL[c.field] ?? c.field}：{show(c.from)} → {show(c.to)}</li>)}</ul></details> : null}
   </section>
 }
-const LABEL: Record<string, string> = { status: "状态", rpe: "RPE", pain: "疼痛", feel: "感受", note: "备注", device: "关联的手表跑步" }
+const LABEL: Record<string, string> = { doneOn: "实际日期", status: "状态", rpe: "RPE", pain: "疼痛", feel: "感受", note: "备注", device: "关联的手表跑步" }
 const show = (v: unknown) => v == null || v === "" ? "空" : typeof v === "object" ? [(v as { area?: string }).area, (v as { score?: number | null }).score].filter(x => x != null && x !== "").join(" ") || "空" : STATUS_TEXT[v as CompStatus] ?? String(v)
 export function RecoveryParts({ date, late, daysSince = 3 }: { date: string; late: boolean; daysSince?: number }) {
   const parts = useParts(date), r = parts?.recovery ?? {}

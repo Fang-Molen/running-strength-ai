@@ -9,7 +9,7 @@ export const COMPONENTS_KEY = 'fk-plan400-v4-components-v1'
 export const COMPONENTS_EVT = 'fk-plan400-components'
 export type CompStatus = 'done' | 'reduced' | 'skipped' | 'not_recorded'
 export type Correction = { field: string; from: unknown; to: unknown; at: string }
-export type PartFeedback = { status?: CompStatus; rpe?: number | null; pain?: { area: string; score: number | null } | null; feel?: string; note?: string; savedAt?: string; corrections?: Correction[] }
+export type PartFeedback = { /** v87.2：实际训练日期（补练/提前练；空 = 计划当天） */ doneOn?: string; status?: CompStatus; rpe?: number | null; pain?: { area: string; score: number | null } | null; feel?: string; note?: string; savedAt?: string; corrections?: Correction[] }
 export type RunningPart = PartFeedback & { device?: { sourceIdentity: string; source: 'garmin' | 'import'; linkedAt: string; linkedBy: 'user' | 'auto' } | null; deviceRejected?: string[] }
 export type RecoveryPart = { runLegs24?: string; runLegs48?: string; strengthSoreness24?: string; strengthSoreness48?: string; savedAt?: string; late?: boolean; corrections?: Correction[] }
 export type DayComponents = { athleteId?: string; running?: RunningPart; strength?: PartFeedback; recovery?: RecoveryPart }
@@ -24,7 +24,7 @@ function write(doc: ComponentsDoc, store: KV | null): boolean {
   try { if (!store) return false; const raw = JSON.stringify(doc); store.setItem(COMPONENTS_KEY, raw); if (store.getItem(COMPONENTS_KEY) !== raw) return false
     if (typeof window !== 'undefined') window.dispatchEvent(new Event(COMPONENTS_EVT)); return true } catch { return false }
 }
-const FIELDS = { running: ['status', 'rpe', 'pain', 'feel', 'note'], strength: ['status', 'rpe', 'pain', 'feel', 'note'], recovery: ['runLegs24', 'runLegs48', 'strengthSoreness24', 'strengthSoreness48'] } as const
+const FIELDS = { running: ['status', 'rpe', 'pain', 'feel', 'note', 'doneOn'], strength: ['status', 'rpe', 'pain', 'feel', 'note', 'doneOn'], recovery: ['runLegs24', 'runLegs48', 'strengthSoreness24', 'strengthSoreness48'] } as const
 const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null)
 const blank = (v: unknown) => v == null || v === '' || (typeof v === 'object' && v !== null && !Array.isArray(v) && Object.values(v).every(x => x == null || x === ''))
 /** 存一个分项；只写这个分项，另一项不动。改已有值 → corrections 记一条。 */
