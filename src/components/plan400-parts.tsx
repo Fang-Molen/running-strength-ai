@@ -6,6 +6,8 @@ import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } fro
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
 import type { DayParts, V4Day, V4Log } from "@/lib/ui/plan400-view"
 import { pendingFeedback, partRated, type PendingItem } from "@/lib/ui/pending-feedback"
+import { loadSchedule } from "@/lib/ui/day-schedule"
+import { v4MovedOut } from "@/lib/ui/v4-effective-move"
 import V4Json from "../lib/plan400-v4.json" with { type: "json" }
 const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
@@ -80,8 +82,13 @@ export function PartFeedbackForm({ date, part, name }: { date: string; part: "ru
       <p className="keep text-xs text-muted">有逐组/手表记录的，以记录的时间为准。</p></div> : null}
     <label className="block"><span className="text-xs text-muted">{name} RPE（1–10，只算{name}）</span><input inputMode="numeric" aria-label={`${name} RPE`} className={inp} value={f.rpe} onChange={e => setF({ ...f, rpe: e.target.value })} /></label>
     <div className="grid grid-cols-2 gap-2"><label className="block"><span className="text-xs text-muted">疼痛部位</span><input aria-label={`${name}疼痛部位`} className={inp} value={f.area} onChange={e => setF({ ...f, area: e.target.value })} /></label><label className="block"><span className="text-xs text-muted">疼痛 0–10</span><input inputMode="numeric" aria-label={`${name}疼痛分数`} className={inp} value={f.score} onChange={e => setF({ ...f, score: e.target.value })} /></label></div>
-    <label className="block"><span className="text-xs text-muted">感受</span><input aria-label={`${name}感受`} className={inp} value={f.feel} onChange={e => setF({ ...f, feel: e.target.value })} /></label>
-    <label className="block"><span className="text-xs text-muted">备注</span><input aria-label={`${name}备注`} className={inp} value={f.note} onChange={e => setF({ ...f, note: e.target.value })} /></label>
+    <details className="rounded-xl border border-line px-3 py-2" open={!!(cur.feel || cur.note) || undefined} data-testid={`part-${part}-more`}>
+      <summary className="min-h-9 cursor-pointer text-sm text-muted">更多反馈（感受、备注，可选）</summary>
+      <div className="mt-2 space-y-2">
+        <label className="block"><span className="text-xs text-muted">感受</span><input aria-label={`${name}感受`} className={inp} value={f.feel} onChange={e => setF({ ...f, feel: e.target.value })} /></label>
+        <label className="block"><span className="text-xs text-muted">备注</span><input aria-label={`${name}备注`} className={inp} value={f.note} onChange={e => setF({ ...f, note: e.target.value })} /></label>
+      </div>
+    </details>
     <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={save}>保存{name}评价</button>
     {msg ? <p role="status" className="keep text-xs">{msg}</p> : cur.savedAt ? <p className="keep text-xs text-muted">上次保存 {stampCN(cur.savedAt)}{cur.status ? ` · ${STATUS_TEXT[cur.status]}` : ""}</p> : null}
     {cur.corrections?.length ? <details className="text-xs" data-testid={`corrections-${part}`}><summary className="min-h-9 cursor-pointer text-muted">修改记录 · {cur.corrections.length} 次</summary><ul>{cur.corrections.map((c, i) => <li key={i} className="keep">{stampCN(c.at)} {LABEL[c.field] ?? c.field}：{show(c.from)} → {show(c.to)}</li>)}</ul></details> : null}
@@ -156,9 +163,12 @@ export function RunImportPrompt({ today }: { today: string }) {
 /** v83（P1-07 / P1-04）：待补反馈（由事实推出；稍后过的也在这里）。点一项打开当天对应页。 */
 export function PendingFeedbackList({ today, compact = false }: { today: string; compact?: boolean }) {
   const parts = usePartsAll(), [logs, setLogs] = useState<Record<string, V4Log>>({}), [prompted, setPrompted] = useState<string[]>([])
-  useEffect(() => { const f = () => { try { setLogs(JSON.parse(localStorage.getItem("fk-plan400-v4-log") || "{}") ?? {}) } catch { setLogs({}) } setPrompted(loadComponents().prompted ?? []) }; f()
-    const ns = ["fk-plan400-changed", COMPONENTS_EVT, "storage"]; ns.forEach(n => window.addEventListener(n, f)); return () => ns.forEach(n => window.removeEventListener(n, f)) }, [])
-  const items = today ? pendingFeedback((V4Json as { days: V4Day[] }).days, parts, logs, today, prompted) : []
+  const [movedDates, setMovedDates] = useState<Set<string>>(new Set())
+  useEffect(() => { const f = () => { try { setLogs(JSON.parse(localStorage.getItem("fk-plan400-v4-log") || "{}") ?? {}) } catch { setLogs({}) } setPrompted(loadComponents().prompted ?? [])
+      // v88（R1 改期）：原日期已改期 → 不在原日期催评分（有真实训练除外）
+      try { const sch = loadSchedule().entries; setMovedDates(new Set((V4Json as { days: V4Day[] }).days.filter(d => !!v4MovedOut(d.date, sch)).map(d => d.date))) } catch { setMovedDates(new Set()) } }; f()
+    const ns = ["fk-plan400-changed", COMPONENTS_EVT, "fk-schedule-changed", "storage"]; ns.forEach(n => window.addEventListener(n, f)); return () => ns.forEach(n => window.removeEventListener(n, f)) }, [])
+  const items = today ? pendingFeedback((V4Json as { days: V4Day[] }).days, parts, logs, today, prompted, 14, movedDates) : []
   if (!items.length) return null
   const open = (it: PendingItem) => window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: it.date, tab: it.kind === "confirm_run" ? "during" : "after" } }))
   if (compact) return <button type="button" className="mt-1 min-h-11 text-sm text-warn" data-testid="pending-feedback-compact" onClick={() => open(items[0])}>待补反馈 {items.length} 项 ›</button>

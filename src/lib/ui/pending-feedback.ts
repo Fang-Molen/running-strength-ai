@@ -20,13 +20,15 @@ export function partRated(d: V4Day, x: DayParts | undefined, log: V4Log | undefi
   if (fb(x?.parts?.[part])) return true
   return !v4DayFact(d, log, x ?? {}).combo && legacyRated(log)
 }
-export function pendingFeedback(days: V4Day[], parts: Record<string, DayParts>, logs: Record<string, V4Log>, today: string, prompted: string[] = [], windowDays = 14): PendingItem[] {
+export function pendingFeedback(days: V4Day[], parts: Record<string, DayParts>, logs: Record<string, V4Log>, today: string, prompted: string[] = [], windowDays = 14, movedOriginalDates: ReadonlySet<string> = new Set()): PendingItem[] {
   const from = new Date(Date.parse(`${today}T12:00:00Z`) - windowDays * 864e5).toISOString().slice(0, 10)
   const out: PendingItem[] = []
   for (const d of days) {
     if (d.date > today || d.date < from) continue
     const x = parts[d.date]; if (!x) continue
     const f = v4DayFact(d, logs[d.date], x), deferred = prompted.some(p => p.startsWith(`${d.date}|`))
+    // v88（R1 改期）：原日期已改期且没有实际 → 不再催原日确认/评分；有真实训练仍保留
+    if (movedOriginalDates.has(d.date) && !f.actualRun && !f.actualLift) continue
     const r = f.running, s = f.strength
     // 已手动评价了跑步、但同日手表跑步还没确认/否认的，也要确认（否则计划外与计划课可能重复计）
     if (r?.state === 'candidate' || (r && !x.runLinked && (x.runCandidates ?? 0) > 0)) out.push({ date: d.date, part: 'running', kind: 'confirm_run', text: '跑步：有同日手表跑步，确认是不是这节', deferred })

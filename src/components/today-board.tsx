@@ -53,7 +53,7 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
     const r = syncActualToLog(entries.find((x) => x.id === e.id)!, sessionOf(e)); setNote(r.ok ? (r.reason ?? (actual?.outcome === "missed" ? "已记下没练，原因会给方坤参考。" : "已记入训练日志，方坤可见。")) : `日志未同步：${r.reason}`)
   }
   // v83（P1-01）：V4 当天的执行条目（plan400:<date>:strength）由上方今日主卡 / 下方 V4 行代表，不再另出一张卡和第二组“按计划完成”按钮
-  const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e) && !(v4 && e.id.startsWith("plan400:") && v4Day(e.date))), override)
+  const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e) && !(v4 && e.id === `plan400:${e.date}:strength` && v4Day(e.date))), override)
   const sloted = list.some((e) => e.slot)
   const [inj, setInj] = useState<InjuryStore>({ asked: true, items: [] })
   useEffect(() => { setInj(loadInjury()) }, [revision])

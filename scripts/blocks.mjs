@@ -5,7 +5,7 @@ export const BLOCKS = {
     desc: '训练读模型：各页同一份训练事实投影（V4 分项、记录合并、只算一次）',
     files: ['src/lib/ui/training-read-model.ts', 'src/lib/ui/plan400-view.ts', 'src/lib/ui/v4-exec.ts', 'src/lib/ui/running-actual-totals.ts', 'src/lib/ui/log-range.ts', 'src/lib/ui/pending-feedback.ts', 'src/lib/ui/makeup.ts'],
     entry: 'src/lib/ui/training-read-model.ts',
-    tests: ['src/lib/ui/plan400-view.test.ts', 'src/lib/ui/v84-host-p0.test.ts', 'src/lib/ui/v84-merge.test.ts', 'src/lib/ui/v83-acceptance.test.ts', 'src/lib/ui/v82.test.ts', 'src/lib/ui/unfeedback-t489.test.ts', 'src/lib/ui/log-range.test.ts', 'src/lib/ui/training-log-view.test.ts', 'src/lib/ui/pending-feedback.test.ts', 'src/lib/ui/v79-1.test.ts', 'src/lib/ui/makeup.test.ts'],
+    tests: ['src/lib/ui/plan400-view.test.ts', 'src/lib/ui/v84-host-p0.test.ts', 'src/lib/ui/v84-merge.test.ts', 'src/lib/ui/v83-acceptance.test.ts', 'src/lib/ui/v82.test.ts', 'src/lib/ui/unfeedback-t489.test.ts', 'src/lib/ui/log-range.test.ts', 'src/lib/ui/training-log-view.test.ts', 'src/lib/ui/pending-feedback.test.ts', 'src/lib/ui/v79-1.test.ts', 'src/lib/ui/makeup.test.ts', 'src/lib/ui/combo-parts-v88.test.ts'],
     forbid: ['/lib/coach/', '/components/', 'online-coach', 'deepseek'],
   },
   'plan400-components': {
@@ -38,9 +38,9 @@ export const BLOCKS = {
   },
   'schedule': {
     desc: '按天日程（fk-schedule-v1）与归属、放弃本次',
-    files: ['src/lib/ui/day-schedule.ts', 'src/lib/ui/day-schedule-rules.ts', 'src/lib/ui/guided-discard.ts', 'src/lib/ui/scheduled-execution.ts'],
+    files: ['src/lib/ui/day-schedule.ts', 'src/lib/ui/day-schedule-rules.ts', 'src/lib/ui/guided-discard.ts', 'src/lib/ui/scheduled-execution.ts', 'src/lib/ui/v4-effective-move.ts'],
     entry: 'src/lib/ui/day-schedule.ts',
-    tests: ['src/lib/ui/day-schedule-ownership.test.ts', 'src/lib/ui/day-schedule-rules.test.ts', 'src/lib/ui/scheduled-training.test.ts'],
+    tests: ['src/lib/ui/day-schedule-ownership.test.ts', 'src/lib/ui/day-schedule-rules.test.ts', 'src/lib/ui/scheduled-training.test.ts', 'src/lib/ui/v4-effective-move.test.mjs', 'src/lib/ui/v4-effective-move-ui.test.mjs', 'src/lib/ui/v4-effective-pending.test.ts'],
     forbid: ['/lib/coach/', '/components/'],
   },
   'schedule-writer': {
@@ -70,6 +70,13 @@ export const BLOCKS = {
     entry: 'src/lib/coach/knowledge/complete.ts',
     tests: ['src/lib/coach/knowledge/complete.test.ts', 'src/lib/coach/knowledge/entry.test.ts', 'src/lib/coach/knowledge/approval.test.ts', 'src/lib/coach/knowledge/approval-integrity.test.ts', 'src/lib/coach/knowledge/scope.test.ts'],
     forbid: ['online-coach', 'deepseek', '/plan-execution/', '/components/', '/stated/', 'day-schedule'],
+  },
+  'health-stats': {
+    desc: 'U09 个人统计（只读）：同协议可比序列、描述统计/趋势/留出回测，健康页折叠卡与方坤事实行；不给训练许可、不改课表',
+    files: ['src/lib/core/personal-uncertainty.ts', 'src/lib/core/personal-forecast-decision-bridge.ts', 'src/lib/health/personal-statistics-adapter.ts', 'src/lib/health/personal-statistics-view.ts', 'src/lib/health/personal-stats-host.ts'],
+    entry: 'src/lib/health/personal-stats-host.ts',
+    tests: ['verification/u09/personal-uncertainty.test.mjs', 'src/lib/health/personal-stats-host.test.ts'],
+    forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule', 'schedule-writer'],
   },
   'coach-online': {
     desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',

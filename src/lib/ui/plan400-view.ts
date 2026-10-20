@@ -131,6 +131,24 @@ export function primaryCta(s: DayStatus): PrimaryCta {
   }
 }
 
+/** v88（R2 B12）：组合课跑步、力量各自状态。一项做完、另一项没开始时，主按钮指向没做的那一项（不说“继续训练”）。 */
+export function componentCta(d: V4Day, log: V4Log | undefined, x: DayParts | undefined, s: DayStatus, live = false): PrimaryCta {
+  const base = primaryCta(s)
+  if (s !== 'in_progress' || live) return base
+  const f = v4DayFact(d, log, x)
+  if (!f.combo || f.legacyOverall) return base
+  const open = (p: PartFact | null) => !!p && (p.state === 'none' || p.state === 'candidate')
+  if (f.actualRun && !f.madeUp.running && open(f.strength)) return { label: '开始力量部分', action: 'start' }
+  if (f.actualLift && !f.madeUp.strength && open(f.running)) return { label: '开始跑步部分', action: 'start' }
+  return base
+}
+/** v88：组合课分项短标签（计划列表一行用），如“跑步完成·力量待练”。非组合课返回 null。 */
+export function comboShort(d: V4Day, log: V4Log | undefined, x: DayParts | undefined): string | null {
+  const f = v4DayFact(d, log, x); if (!f.combo || f.legacyOverall) return null
+  const w = (p: PartFact | null) => !p ? '' : p.state === 'done' ? '完成' : p.state === 'reduced' ? '减量' : p.state === 'skipped' ? '跳过' : p.state === 'partial' ? '有记录' : p.state === 'live' ? '进行中' : p.state === 'candidate' ? '待确认' : '待练'
+  if ((!f.running || f.running.state === 'none') && (!f.strength || f.strength.state === 'none')) return null
+  return `跑步${w(f.running)}·力量${w(f.strength)}`
+}
 export function allDays(p: V4Plan): V4Day[] { return p.days }
 export function dayOf(p: V4Plan, date: string): V4Day | undefined { return p.days.find(d => d.date === date) }
 /** 当前周：包含 today 的周；早于计划时为第一周，晚于计划时为最后一周。 */

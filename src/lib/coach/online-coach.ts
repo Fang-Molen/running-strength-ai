@@ -5,6 +5,8 @@ import { partLine, loadComponents } from '../ui/plan400-components-store'
 import { currentStore } from '../core/storage'
 import { garminViewKey } from '../health/garmin-view-scope'
 import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
+import { personalStatsCards, personalStatsFactLine } from '../health/personal-stats-host'
+import { currentAthleteId } from '../core/events'
 import { loadTrainingActivities, loadRunMatch, type ActivityRow } from '../ui/training-read-model'
 import type { DayComponents } from '../ui/plan400-components-store'
 import { isGarmin, recordLabel } from '../ui/log-range'
@@ -65,7 +67,8 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
     for (const d of [act ? localDayOf(act.start) : null, day]) { if (d && !seen.has(d)) { const l = v4RecordLine(d); if (l) { v4lines.push(l + '（历史整课记录·旧口径·仅参考）'); seen.add(d) } } }
     if (v4lines.length) lines.push(...v4lines)
   } catch { /* optional */ }
-  try { const snap = loadHealthSnapshot(day); lines.push('恢复指标：' + snap.metrics.filter(m => ['SLEEP', 'RHR', 'HRV', 'BODY_BATTERY', 'STRESS'].includes(m.metric)).map(healthSummaryLine).join('；')) } catch { /* optional */ }
+  try { const snap = loadHealthSnapshot(day); lines.push('恢复指标：' + snap.metrics.filter(m => ['SLEEP', 'RHR', 'HRV', 'BODY_BATTERY', 'STRESS'].includes(m.metric)).map(healthSummaryLine).join('；'))
+    const u09 = personalStatsFactLine(personalStatsCards(snap, currentAthleteId(), `${day}T23:59:59`)); if (u09) lines.push(u09) } catch { /* optional */ }
   return lines.join('\n').slice(0, 7800)
 }
 /** 客户端问题上限与线上 /api/coach-chat 一致（v84 线上服务端截断到 1000 字）：超限直接拒绝、不 fetch，避免静默截断。
