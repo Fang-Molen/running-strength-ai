@@ -1,0 +1,37 @@
+// v89.2 验证（合成种子；Playwright Chrome 393×852，非真机）：肌肉恢复读日志同一份记录。
+import {chromium} from 'playwright'
+import {readFileSync} from 'node:fs'
+import {emulateSafeArea,overlayJs} from './_safe-emu.mjs'
+const base=process.argv[2], dir=process.argv[3]||'/workspace/out/v89.2'
+const seed=JSON.parse(readFileSync('/tmp/v89-seed.json','utf8')), train=JSON.parse(readFileSync('/tmp/v892-train.json','utf8'))
+const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']})
+const ctx=await b.newContext({viewport:{width:393,height:852},deviceScaleFactor:2,timezoneId:'Asia/Shanghai',isMobile:true,hasTouch:true,serviceWorkers:process.env.QA_SW==='1'?'allow':'block'})
+await ctx.clock.install({time:new Date('2026-10-21T02:07:00+08:00')})
+await emulateSafeArea(ctx,{top:59,bottom:34})
+await ctx.route('**/api/garmin/**',r=>r.fulfill({status:200,contentType:'application/json',body:'{"loggedIn":false}'}));await ctx.route('**/api/coach-chat**',r=>r.fulfill({status:503,body:'{}'}))
+await ctx.addInitScript(([s,tr])=>{if(localStorage.getItem('qa-seeded'))return;localStorage.setItem('qa-seeded','1');localStorage.setItem('fk-onboard-v1','1');localStorage.setItem('fk-welcome-standalone-v1','1');localStorage.setItem('fk-garmin-intraday-v1:local',JSON.stringify(s.intraday));localStorage.setItem('fr255-vitals-v1',JSON.stringify(s.vitals));localStorage.setItem('fk-pain-log-v1',JSON.stringify(s.pain));for(const [k,v] of Object.entries(tr))localStorage.setItem(k,v)},[seed,train])
+await ctx.addInitScript(overlayJs(59,34))
+const p=await ctx.newPage();p.setDefaultTimeout(20000);p.on('pageerror',e=>console.log('PAGEERR',e.message))
+await p.clock.resume()
+await p.goto(base);await p.locator('[data-testid="training-app"][data-ready=true]').waitFor({timeout:60000});await p.waitForTimeout(1500)
+for(let i=0;i<4;i++){const later=p.getByRole('button',{name:'稍后（留在待补里）'});if(!await later.count())break;if(!i)await p.screenshot({path:dir+'/run-import-prompt-393.png'});await later.first().click();await p.waitForTimeout(700)}
+await p.getByRole('button',{name:'切换到日志'}).click();await p.waitForTimeout(1500)
+await p.screenshot({path:dir+'/log-393.png'})
+console.log('log:',(await p.locator('main').innerText()).replace(/\n+/g,' | ').slice(0,400))
+await p.getByRole('button',{name:'切换到健康'}).click();await p.waitForTimeout(1500);await p.evaluate(()=>window.scrollTo(0,0))
+await p.getByTestId('h89-muscle-entry').click();await p.waitForTimeout(1000)
+await p.locator('canvas[data-ready=true]').waitFor({timeout:60000}).catch(()=>console.log('3D not ready'))
+await p.waitForTimeout(1500)
+await p.screenshot({path:dir+'/muscle-status-393.png'})
+const sc=p.locator('[data-testid="m89-cards"]');if(await sc.count()){await sc.evaluate(e=>e.scrollIntoView({block:'start'}));await p.waitForTimeout(400);await p.screenshot({path:dir+'/muscle-cards-393.png'})}
+for(const [n,f] of [['力量负荷','strength'],['跑步影响','run']]){await p.locator('.fk-m89 .fk-h89-tabs button',{hasText:n}).click();await p.waitForTimeout(600)
+  const sec=p.locator(`[aria-label="${n}"]`);await sec.evaluate(e=>e.scrollIntoView({block:'start'}));await p.waitForTimeout(300)
+  await p.locator('details.fk-m89-limits').first().evaluate(e=>e.open=true).catch(()=>{})
+  await p.screenshot({path:`${dir}/muscle-${f}-393.png`});console.log(n+':',(await sec.innerText()).replace(/\n+/g,' | '))}
+console.log('advice:',(await p.locator('[aria-label="方坤分析与建议"]').innerText()).replace(/\n+/g,' | '))
+const adv=p.locator('[aria-label="方坤分析与建议"]');await adv.evaluate(e=>e.scrollIntoView({block:'start'}));await p.waitForTimeout(300);await p.screenshot({path:dir+'/muscle-advice-393.png'})
+await p.keyboard.press('Escape');await p.waitForTimeout(500)
+await p.getByRole('button',{name:'切换到方坤'}).click();await p.waitForTimeout(1500)
+const g=p.getByTestId('global-muscle-u11');if(await g.count()){await g.evaluate(e=>{e.open=true;e.scrollIntoView({block:'center'})});await p.waitForTimeout(400);console.log('coach muscle:',(await g.innerText()).replace(/\n+/g,' | '))}else console.log('coach muscle: (no global-muscle-u11 on coach page)')
+await p.screenshot({path:dir+'/coach-393.png'})
+await b.close()

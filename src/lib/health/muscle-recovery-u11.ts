@@ -1,4 +1,5 @@
 /** Read-only training-exposure and symptom map. NOT measured muscle fatigue. */
+import { exerciseById } from '../strength/catalog'
 export type Region='quads'|'hamstrings'|'glutes'|'calves'|'hip_flexors'|'adductors'|'core'|'lower_back'|'chest'|'back'|'shoulders'|'arms'|'feet'
 export type TrainingPart={athleteId:string;eventId:string;occurrenceId?:string;componentId?:string;modality:'RUN'|'STRENGTH';occurredAt:string;knownAt:string;sourceId:string;actual:'CONFIRMED'|'UNVERIFIED'|'PLANNED'|'RETRACTED';runType?:'EASY'|'TEMPO'|'INTERVAL'|'SPRINT'|'HILL'|'UNKNOWN';exercises?:{catalogId?:string;name?:string;actualSets?:number|null;verified:boolean}[];revision?:number}
 export type Symptom={athleteId:string;eventId:string;occurredAt:string;knownAt:string;region:Region;kind:'SORENESS'|'PAIN';severity?:number;sourceId:string;revision?:number}
@@ -16,7 +17,16 @@ const EX:Record<string,Region[]>={
 'hip-thrust':['glutes'],'glute-bridge':['glutes'],'single-hip':['glutes'],'kb-swing':['glutes','hamstrings'],'side-leg':['glutes'],
 plank:['core'],'side-plank':['core'],'knee-plank':['core'],'dead-bug':['core'],crunch:['core'],bicycle:['core'],russian:['core'],situp:['core'],vup:['core'],
 bench:['chest','shoulders','arms'],'bb-bench':['chest','shoulders','arms'],'db-bench':['chest','shoulders','arms'],pushup:['chest','shoulders','arms'],pullup:['back','arms'],row:['back','arms'],'bb-row':['back','arms'],'db-row':['back','arms'],'overhead-press':['shoulders','arms'],'bb-ohp':['shoulders','arms'],'db-ohp':['shoulders','arms']}
-export function exerciseRegions(id?:string):Region[]{return id?EX[id]??[]:[]}
+/** v89.2：动作库非目录条目（extra:<名称>）与目录分组兜底。只按动作库条目，不按自由文本猜。 */
+const EXTRA_EX:Record<string,Region[]>={'extra:分腿蹲':['quads','glutes'],'extra:Pallof 抗旋转':['core'],'extra:鸟狗':['core','lower_back'],'extra:北欧腿弯举':['hamstrings'],'extra:深蹲':['quads','glutes','core'],'extra:核心':['core']}
+const GROUP_EX:Record<string,Region[]>={胸:['chest','shoulders','arms'],背:['back','arms'],肩:['shoulders'],手臂:['arms'],臀:['glutes'],核心:['core']}
+export function exerciseRegions(id?:string):Region[]{
+ if(!id)return[]
+ if(id.startsWith('extra:'))return EXTRA_EX[id]??[]
+ const c=id.startsWith('local:')?id.slice(6):id
+ if(EX[c])return EX[c]
+ const g=exerciseById(c)?.group;return g?GROUP_EX[g]??[]:[]
+}
 const time=(s:string)=>Date.parse(s)
 const valid=(s:string)=>typeof s==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(s)&&Number.isFinite(time(s))
 const key=(p:TrainingPart)=>p.occurrenceId&&p.componentId?`${p.athleteId}|${p.occurrenceId}|${p.componentId}|${p.modality}`:`${p.athleteId}|${p.sourceId}|${p.eventId}|${p.modality}`

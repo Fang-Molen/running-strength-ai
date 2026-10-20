@@ -3,20 +3,23 @@
 import { currentAthleteId, loadCommittedEventRecords } from '../core/events'
 import { currentStore } from '../core/storage'
 import { getTrainingPlanSnapshot, listTrainingOccurrences } from '../core/occurrence'
-import { occurrenceAttempts, projectTrainingFact } from '../core/training-fact'
-import { projectActualSets } from '../core/canonical'
-import { listCorrections, occurrenceVoided } from '../core/training-correction'
+import { effectiveStrengthFields, listCorrections, occurrenceVoided } from '../core/training-correction'
+import { projectRunningExecution } from '../core/running-execution'
+import { loadRunMatch } from '../ui/training-read-model'
+import type { V4Day } from '../ui/plan400-view'
+import V4 from '../plan400-v4.json' with { type: 'json' }
+import { libraryKey, purposeRunType, RUN_TYPE_LABEL, v4RunType } from './muscle-log-source'
 import { coachImports } from '../core/coach-import-evidence'
 import { loadOwnedComponents } from '../ui/plan400-components-store'
 import { garminRows } from '../ui/training-read-model'
 import { garminViewKey } from './garmin-view-scope'
-import { CATALOG } from '../strength/catalog'
 import { localDay, shortHash, validDay } from './observation'
 import { buildMuscleReview, REGION_LABEL, type Region, type Symptom, type TrainingPart } from './muscle-recovery-u11'
 import { buildIntradayRecovery } from './intraday-recovery-u10'
 import { loadIntraday } from './intraday-store'
 import { intradayRecoveryFromStore } from './intraday-recovery-bridge-v89'
 
+const mdOf=(d:string)=>`${Number(d.slice(5,7))}-${d.slice(8,10)}`
 export type RecoverySource = {
   id: string; label: string; occurredAt: string | null; knownAt: string | null
   actualSets: number | null; detail: string
@@ -31,7 +34,7 @@ export const partEvidenceKey = (p: TrainingPart) => p.occurrenceId && p.componen
 export function readRecoveryProjection(day = localDay(), asOf = new Date().toISOString()) {
   if (!validDay(day) || !iso(asOf)) throw Error('INVALID_RECOVERY_TIME')
   const athleteId = currentAthleteId(), parts: TrainingPart[] = [], symptoms: Symptom[] = []
-  const sources: RecoverySource[] = [], gaps: string[] = []
+  const sources: RecoverySource[] = [], gaps: string[] = [], notes: string[] = []
   const endOfDay = new Date(`${day}T23:59:59.999`).getTime()
   const cutoff = Math.min(Date.parse(asOf), endOfDay), effectiveAsOf = new Date(cutoff).toISOString()
   const recent = (time: string) => iso(time) && Date.parse(time) <= cutoff && Date.parse(time) >= cutoff - 72 * 3600000
@@ -48,43 +51,57 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     const events = records.filter(r => r.event.athlete_id === athleteId && iso(r.event.timestamp) &&
       Date.parse(r.event.timestamp) <= cutoff && (!r.recordedAt || iso(r.recordedAt) && Date.parse(r.recordedAt) <= cutoff)).map(r => r.event)
     const occurrences = listTrainingOccurrences()
+    // v89.2：与训练日志同一份记录——这次训练自己的逐组事件（日志“逐组已记”的同一口径），不再要求原计划快照逐组对齐。
+    const strengthDays = new Set<string>(), runDays = new Set<string>(), phoneRunPlans = new Set<string>()
     for (const occurrence of occurrences) {
-      if (!occurrence.startedAt || !recent(occurrence.startedAt) || occurrenceVoided(occurrence.trainingOccurrenceId)) continue
-      const start = events.findIndex(e => e.event_id === occurrence.startEventId)
-      if (start < 0) continue
+      const oid = occurrence.trainingOccurrenceId
+      if (!occurrence.startedAt || !recent(occurrence.startedAt) || occurrenceVoided(oid)) continue
+      if (!events.some(e => e.event_id === occurrence.startEventId)) continue
       const snapshot = occurrence.trainingPlanSnapshotId ? getTrainingPlanSnapshot(occurrence.trainingPlanSnapshotId) : null
-      const siblings = occurrences.filter(o => o.sessionId === occurrence.sessionId && o.trainingOccurrenceId !== occurrence.trainingOccurrenceId)
-      const input = {occurrence,snapshot,events,siblingOccurrences:siblings,siblingStartEventIds:siblings.map(o=>o.startEventId)}
-      const fact = projectTrainingFact(input)
-      if (!['COMPLETED','INTERRUPTED'].includes(fact.lifecycle)) continue
-      if (listCorrections(occurrence.trainingOccurrenceId).some(c=>c.kind==='FIELD')) {
-        gaps.push('有更正的逐组记录暂不参与肌群推断，请核对更正后的动作明细'); continue
+      const latest = new Map<string, (typeof records)[number]>()
+      for (const r of records) {
+        const q = r.event.payload as Record<string, unknown> | undefined
+        if (r.event.event_type !== 'TRAINING_SET_COMPLETED' || r.event.athlete_id !== athleteId || q?.trainingOccurrenceId !== oid) continue
+        if (!iso(r.event.timestamp) || Date.parse(r.event.timestamp) > cutoff || r.recordedAt && (!iso(r.recordedAt) || Date.parse(r.recordedAt) > cutoff)) continue
+        if (typeof q.moveId !== 'string' || typeof q.setIndex !== 'number') continue
+        latest.set(`${q.moveId}:${q.setIndex}`, r) // 同一组重记以最后一次为准
       }
-      const end = events.findIndex(e=>e.event_id===occurrence.closeEventId)
-      const selected = occurrenceAttempts(input,start,end,athleteId)
-      if (selected.ambiguous) { gaps.push('存在跨课或归属不清的组记录，未参与肌群分析'); continue }
-      const projection = projectActualSets(snapshot,selected.attempts)
       const exercises: NonNullable<TrainingPart['exercises']> = []
-      for (const set of projection.plannedSets.filter(s=>s.status==='COMPLETED')) {
-        const attempt = projection.attempts.find(a=>a.actualSetId===set.attemptIds[0])
-        const event = selected.attempts.find(e=>e.event_id===attempt?.eventId)
-        const planned = snapshot?.exercises.find(e=>e.moveId===set.moveId)
-        if (!event || !attempt || !planned || attempt.movementChanged || attempt.actualAmount === null || attempt.actualAmount <= 0) {
-          gaps.push('部分组的实际动作或完成量不足，未按计划补齐'); continue
-        }
-        // A performed set is required; the frozen catalog ID only identifies its movement.
-        const catalogId = typeof event.payload?.catalogId === 'string' ? event.payload.catalogId : planned.catalogId ?? undefined
-        const same = exercises.find(e=>e.catalogId===catalogId && e.name===planned.name)
+      let known = ''
+      for (const r of latest.values()) {
+        const q = r.event.payload as Record<string, unknown>
+        if (q.completed !== true || q.skipped === true) continue
+        const eff = effectiveStrengthFields(q), timed = q.mode === 'seconds'
+        const amount = timed ? (typeof q.actualAmount === 'number' ? q.actualAmount : null) : eff.reps.value
+        if (!(eff.reps.status === 'UNKNOWN' || amount != null && amount > 0)) continue // 更正成 0 / 没有完成量 = 这组不算
+        const planned = snapshot?.exercises.find(e => e.moveId === q.moveId)
+        const name = (typeof q.name === 'string' && q.name.trim()) || planned?.name || String(q.moveId)
+        const key = libraryKey(name, typeof q.catalogId === 'string' ? q.catalogId : planned?.catalogId) ?? undefined
+        const same = exercises.find(e => e.catalogId === key && e.name === name)
         if (same) same.actualSets!++
-        else exercises.push({catalogId,name:planned.name,actualSets:1,verified:true})
+        else exercises.push({ catalogId: key, name, actualSets: 1, verified: true })
+        const at = r.recordedAt && iso(r.recordedAt) ? r.recordedAt : r.event.timestamp
+        if (at > known) known = at
       }
-      if (!exercises.length && !selected.attempts.length) continue // A running occurrence is not a strength session.
-      const known = records.find(r=>r.event.event_id===occurrence.closeEventId)?.recordedAt
-      if (!iso(known)) { gaps.push('旧训练缺少保存时间，无法用于按时间追踪的肌群判断'); continue }
-      const p: TrainingPart = {athleteId,eventId:occurrence.closeEventId!,occurrenceId:occurrence.trainingOccurrenceId,
-        componentId:'strength',modality:'STRENGTH',occurredAt:occurrence.startedAt,knownAt:known,
-        sourceId:occurrence.trainingOccurrenceId,actual:'CONFIRMED',exercises}
-      add(p,'力量逐组记录',exercises.map(e=>`${e.name} ${e.actualSets}组`).join('；') || '无法判断具体肌群：缺少可信实际动作',exercises.length ? exercises.reduce((n,e)=>n+(e.actualSets??0),0) : null)
+      if (exercises.length) {
+        const p: TrainingPart = { athleteId, eventId: oid, occurrenceId: oid, componentId: 'strength', modality: 'STRENGTH', occurredAt: occurrence.startedAt,
+          knownAt: known < occurrence.startedAt ? occurrence.startedAt : known, sourceId: oid, actual: 'CONFIRMED', exercises }
+        add(p, occurrence.lifecycle === 'IN_PROGRESS' ? '力量逐组记录（进行中）' : '力量逐组记录', exercises.map(e => `${e.name} ${e.actualSets}组`).join('；'), exercises.reduce((n, e) => n + (e.actualSets ?? 0), 0))
+        const d = localDay(new Date(occurrence.startedAt)); strengthDays.add(d)
+        const v4 = /plan400:(\d{4}-\d\d-\d\d)/.exec(occurrence.sessionId)?.[1]; if (v4) strengthDays.add(v4)
+        continue
+      }
+      // 逐段跑步（手机执行）：类型按计划课，不按配速/心率
+      let run: ReturnType<typeof projectRunningExecution> | null = null
+      try { run = projectRunningExecution(oid, events) } catch { run = null }
+      if (run?.availability !== 'AVAILABLE' || ![...run.repetitions, ...run.continuous].some(x => x.status === 'COMPLETED')) continue
+      const v4 = /plan400:(\d{4}-\d\d-\d\d)/.exec(occurrence.sessionId)?.[1]
+      const runType = v4 ? v4RunType((V4.days as V4Day[]).find(x => x.date === v4)) : 'UNKNOWN'
+      const close = records.find(r => r.event.event_id === occurrence.closeEventId)?.recordedAt
+      const plan = v4 ? `v4run:${v4}` : oid
+      add({ athleteId, eventId: oid, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: iso(close) && close >= occurrence.startedAt ? close : occurrence.startedAt,
+        sourceId: oid, actual: 'CONFIRMED', runType }, '逐段跑步记录', `${v4 ? `V4 ${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
+      phoneRunPlans.add(plan); runDays.add(localDay(new Date(occurrence.startedAt))); if (v4) runDays.add(v4)
     }
     for (const record of coachImports(athleteId,effectiveAsOf)) {
       if (!record.occurredAt.value || !recent(record.occurredAt.value) || occurrenceVoided(record.confirmedImportId)) continue
@@ -98,9 +115,8 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         for (const s of record.strengthSets) {
           if (s.completion!=='COMPLETED' || s.exerciseName.status!=='RECORDED' ||
             ![s.repetitions,s.durationSeconds].some(f=>f.status==='RECORDED' && f.value!=null && f.value>0)) continue
-          // Exact unique catalogue name only; no free-text/AI fuzzy matching.
-          const matches = CATALOG.filter(e=>e.name===s.exerciseName.value)
-          const catalogId = matches.length===1 ? matches[0].id : undefined
+          // Exact library name/alias only; no free-text/AI fuzzy matching.
+          const catalogId = libraryKey(s.exerciseName.value) ?? undefined
           const old = exercises.find(e=>e.catalogId===catalogId && e.name===s.exerciseName.value)
           if(old) old.actualSets!++
           else exercises.push({catalogId,name:s.exerciseName.value??undefined,actualSets:1,verified:true})
@@ -119,18 +135,36 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         symptoms.push(s);sources.push({id:s.eventId,label:'导入的局部反馈',occurredAt:s.occurredAt,knownAt:s.knownAt,actualSets:null,detail:`${field.value.location} · ${kind==='PAIN'?'疼痛':'酸痛'} ${s.severity??'程度未知'}`})
       }
     }
-    const watchRaw=currentStore()?.getItem(garminViewKey('fk-garmin-acts-v1'))
-    for(const row of garminRows(watchRaw?JSON.parse(watchRaw):{})) if(recent(row.startedAt)) {
-      // Device activity summaries are evidence of an activity, not proof of a
-      // reconstructed session, performed exercise, or a specific running protocol.
-      gaps.push(`${row.date} 佳明${row.sport==='STRENGTH'?'力量':'跑步'}活动只有摘要，无法判断具体肌群；活动条数未当成训练课次数`)
+    // v89.2：手表跑步——已关联计划课的按计划课类型计入；未关联的只留一句说明。手表力量只有摘要，同日已有逐组记录时不再重复提示。
+    let match: ReturnType<typeof loadRunMatch> = { links: [], suggestions: [] }
+    try { match = loadRunMatch() } catch { match = { links: [], suggestions: [] } }
+    const linkedIds = new Set<string>()
+    for (const l of match.links) {
+      if (!recent(l.run.startedAt)) continue
+      l.run.originIds.forEach(id => linkedIds.add(id)); linkedIds.add(l.run.id)
+      const v4 = /^plan400:(\d{4}-\d\d-\d\d):running$/.exec(l.entry.id)?.[1]
+      const plan = v4 ? `v4run:${v4}` : l.entry.id
+      if (phoneRunPlans.has(plan)) continue // 同一节已有逐段记录，只算一次
+      const runType = v4 ? v4RunType((V4.days as V4Day[]).find(x => x.date === v4)) : purposeRunType(l.entry.runComponents?.find(c => c.modality === 'RUNNING')?.purpose)
+      add({ athleteId, eventId: l.run.id, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: l.run.startedAt, knownAt: l.run.startedAt,
+        sourceId: l.run.id, actual: 'CONFIRMED', runType }, '已关联手表跑步', `${v4 ? `V4 ${mdOf(v4)}` : l.entry.title} 计划课 · ${RUN_TYPE_LABEL[runType]}${l.run.distanceM ? ` · ${(l.run.distanceM / 1000).toFixed(1)} km` : ''}`)
+      runDays.add(l.run.date); if (v4) runDays.add(v4)
     }
+    const watchRaw=currentStore()?.getItem(garminViewKey('fk-garmin-acts-v1'))
+    let unlinkedRuns=0, watchLifts=0
+    for(const row of garminRows(watchRaw?JSON.parse(watchRaw):{})) if(recent(row.startedAt)) {
+      if(row.sport==='RUNNING'){ if(!linkedIds.has(row.id)&&!row.originIds.some(id=>linkedIds.has(id)))unlinkedRuns++ }
+      else if(!strengthDays.has(row.date))watchLifts++
+    }
+    if(unlinkedRuns)notes.push(`${unlinkedRuns} 条手表跑步未关联计划课：类型未知，未计入肌群（可在日志里关联）`)
+    if(watchLifts)notes.push(`${watchLifts} 条手表力量只有摘要、没有逐组动作，未计入肌群`)
+    const evalOnly:string[]=[]
     for (const [date,row] of Object.entries(loadOwnedComponents(currentStore()).days)) {
       for (const name of ['running','strength'] as const) {
         const p=row[name], doneOn=p?.doneOn||date
         if(!p || !validDay(doneOn) || doneOn>day || doneOn<localDay(new Date(cutoff-72*3600000))) continue
-        if(p.status==='done'||p.status==='reduced')
-          gaps.push(`${doneOn} ${name==='running'?'跑步':'力量'}只有分项评价，无法判断具体肌群；未把原课表动作当实际完成`)
+        const logged=name==='running'?runDays.has(date)||runDays.has(doneOn):strengthDays.has(date)||strengthDays.has(doneOn)
+        if((p.status==='done'||p.status==='reduced')&&!logged) evalOnly.push(`${mdOf(doneOn)}${name==='running'?'跑步':'力量'}`)
         if(p.pain && (p.pain.score===null || p.pain.score>0)) {
           const region=regionFromExplicitLabel(p.pain.area)
           // Date-only actual time stays unknown: report the symptom without fabricating a timestamp.
@@ -138,6 +172,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         }
       }
     }
+    if(evalOnly.length)notes.push(`${evalOnly.join('、')}只有分项评价、没有逐组/逐段或关联手表记录，未计入肌群`)
     const rawPain=JSON.parse(currentStore()?.getItem('fk-pain-log-v1')??'[]')
     if(!Array.isArray(rawPain)) throw Error('INVALID_PAIN_SOURCE')
     for(const p of rawPain) if((p?.athleteId??'local')===athleteId && validDay(p?.date) && p.date<=day &&
@@ -150,7 +185,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     }
   } catch { unreadable=true; gaps.push('部分训练来源无法读取，不能当作没有训练或没有疼痛') }
   const review=buildMuscleReview({athleteId,asOf:effectiveAsOf,parts,symptoms})
-  review.gaps=[...new Set([...review.gaps,...gaps])]
+  review.gaps=[...new Set([...review.gaps,...gaps,...notes])]
   if(!review.regions.some(r=>r.state!=='UNKNOWN')) review.summary='无法判断具体肌群：缺少可信的实际动作明细或精确局部反馈。'
   // Current authorized runner only persists daily summaries. Its coverage is NOT promoted to continuous samples.
   // v89：日内曲线只有一套——数据源是 v88.3 手表日内存储，算法是 U10 投影；没有样本时保持空投影，不拼日汇总。
@@ -163,8 +198,19 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     revision:shortHash(JSON.stringify([athleteId,day,review.regions,review.gaps,sources,unreadable])),automaticPrescription:false as const}
 }
 export type RecoveryProjection = ReturnType<typeof readRecoveryProjection>
+const STATE_TEXT:Record<string,string>={PAIN_REVIEW:'有自报疼痛，需先核对症状',REPORTED_SORENESS:'有自报酸痛',OVERLAP_OBSERVED:'跑步和力量参与重叠',TRAINING_EXPOSURE:'有已确认训练参与'}
+/** v89.2：同一状态的肌群合并成一行、依据每条记录只列一次（不再每个肌群重复整节动作清单）。 */
+export function recoveryLines(v: RecoveryProjection) {
+  const observed=v.review.regions.filter(r=>r.state!=='UNKNOWN'), groups:string[]=[]
+  for(const st of ['PAIN_REVIEW','REPORTED_SORENESS','OVERLAP_OBSERVED','TRAINING_EXPOSURE']){
+    const rs=observed.filter(r=>r.state===st); if(rs.length) groups.push(`${rs.map(r=>REGION_LABEL[r.region]).join('、')}：${STATE_TEXT[st]}`)
+  }
+  const used=[...new Set(observed.flatMap(r=>[...r.runEventIds,...r.strengthEventIds,...r.symptomEventIds]))]
+  const evidence=used.map(id=>v.sources.find(s=>s.id===id)).filter((s):s is RecoverySource=>!!s)
+    .map(s=>`依据 ${s.label}${s.occurredAt?`（${mdOf(localDay(new Date(s.occurredAt)))}）`:''}：${s.detail}`)
+  return {summary:v.review.summary,groups,evidence,gaps:v.review.gaps,next:'下一步：核对实际完成的动作、组次和具体不适部位；这不是肌肉疲劳百分比，也不自动更改课表。'}
+}
 export function recoveryExplanation(v: RecoveryProjection): string {
-  const observed=v.review.regions.filter(r=>r.state!=='UNKNOWN')
-  return [v.review.summary,...observed.map(r=>`${REGION_LABEL[r.region]}：${r.state==='PAIN_REVIEW'?'有自报疼痛，需先核对症状':r.state==='REPORTED_SORENESS'?'有自报酸痛':r.state==='OVERLAP_OBSERVED'?'跑步和力量参与重叠':'有已确认训练参与'}；依据 ${[...r.runEventIds,...r.strengthEventIds,...r.symptomEventIds].map(id=>v.sources.find(s=>s.id===id)?.detail??id).join('；')}`),
-    ...v.review.gaps,'下一步：核对实际完成的动作、组次和具体不适部位；这不是肌肉疲劳百分比，也不自动更改课表。'].join('\n')
+  const l=recoveryLines(v)
+  return [l.summary,...l.groups,...l.evidence,...l.gaps,l.next].join('\n')
 }

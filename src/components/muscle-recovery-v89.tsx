@@ -3,7 +3,7 @@
  *  颜色只表示训练参与、负荷叠加或自报症状，不是实测疲劳百分比；“预计恢复”是一般经验范围（估算），不自动改课。 */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { MESH_KEYS, REGION_LABEL, REGIONS, type Region, type RegionState } from "@/lib/health/muscle-recovery-u11"
-import { readRecoveryProjection, recoveryExplanation, type RecoveryProjection } from "@/lib/health/recovery-host-u11"
+import { readRecoveryProjection, recoveryLines, type RecoveryProjection } from "@/lib/health/recovery-host-u11"
 import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
 import "./muscle-target-card.css"
 
@@ -95,18 +95,21 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
 function Loads({ value, modality }: { value: RecoveryProjection; modality: "STRENGTH" | "RUN" }) {
   const rows = value.sources.filter(s => s.id.endsWith(`|${modality}`)).sort((a, b) => (b.occurredAt ?? "").localeCompare(a.occurredAt ?? ""))
   const regions = value.review.regions.filter(r => (modality === "RUN" ? r.runEventIds : r.strengthEventIds).length)
-  const gaps = value.review.gaps.filter(g => modality === "RUN" ? /跑步/.test(g) : /力量|组|动作/.test(g))
+  const all = value.review.gaps.filter(g => modality === "RUN" ? /跑步/.test(g) : /力量|动作|组次|组记录/.test(g))
+  // v89.2：未关联的手表跑步 / 只有摘要的手表力量 = 一句短说明直接显示；其余放进“未纳入的记录”
+  const short = all.filter(g => /^\d+ 条手表/.test(g)), gaps = all.filter(g => !short.includes(g))
   return <section className="space-y-2" aria-label={modality === "RUN" ? "跑步影响" : "力量负荷"}>
     <b>{modality === "RUN" ? "近 72 小时跑步" : "近 72 小时力量（按实际完成组）"}</b>
     {rows.length ? rows.map(s => <div key={s.id} className="fk-m89-card"><p className="text-sm font-bold">{s.label}{s.actualSets != null ? ` · 实际 ${s.actualSets} 组` : ""}</p><p className="text-sm">{s.detail}</p><p className="keep text-[11px] text-muted">{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</p></div>)
       : <p className="text-sm text-muted">暂无{modality === "RUN" ? "可判断肌群的已确认跑步" : "已确认的逐组力量记录"}。</p>}
     {regions.length ? <p className="text-sm">涉及：{regions.map(r => REGION_LABEL[r.region]).join("、")}</p> : null}
+    {short.map(g => <p key={g} className="keep text-xs text-muted" data-testid="m89-watch-note">{g}</p>)}
     {gaps.length ? <details className="fk-m89-limits"><summary>未纳入的记录（{gaps.length}）</summary>{gaps.map(g => <p key={g}>{g}</p>)}</details> : null}
   </section>
 }
 
 function Advice({ value, onCoach }: { value: RecoveryProjection; onCoach?: () => void }) {
-  const lines = recoveryExplanation(value).split("\n").filter(Boolean).slice(0, 5)
+  const l = recoveryLines(value), lines = [l.summary, ...l.groups, l.next] // 依据已在上方卡片列出，这里不再逐条重复
   return <section className="fk-h89-card" aria-label="方坤分析与建议">
     <div className="flex items-center gap-2"><img src="/fangshen/care-bust.png" alt="" className="size-9 rounded-full border border-line object-cover" /><b>方坤分析与建议</b>{onCoach ? <button type="button" className="fk-h89-pill ml-auto" onClick={onCoach}>问方坤 ›</button> : null}</div>
     <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{lines.map(l => <li key={l} className="keep">{l}</li>)}</ul>
