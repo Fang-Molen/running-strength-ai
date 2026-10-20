@@ -2,6 +2,7 @@
 
 | 日期 | 改动 | 原因 | 文件 |
 |---|---|---|---|
+| 2026-10-20 | UI-R6：方坤对话页太小 → 对话区加大（iPhone 14 模拟从 49% 到约 70% 屏幕）：顶栏压缩，头像和 对话/学习/复盘 合成一行；联网状态改成小胶囊，和快捷问题合成一行，打字时自动收起；键盘弹出时页面跟随可视区，输入框不被挡；修复输入框底部留白失效（真机可能压到底部横条）。功能都在，状态说明移到状态胶囊展开后第一行；sw 缓存 fr255-shell-v86-4 | 用户 10-20 “进来之后这聊天页面太小了” | src/components/coach-sheet.tsx, src/components/strength-app.tsx, src/styles.css, public/sw.js |
 | 2026-10-20 | v86.2：复盘选课只显示 6 月的“导入跑步课”→ 修好。根因：已确认导入最多存 100 条，按写入顺序截取；佳明活动列表是新的在前，一次同步 200 条时最新的活动先写入、又被后写入的旧活动挤掉，存下来的总是最旧的 100 条（每次同步还会整批重写）。现在按训练发生时间保留最新的（上限 400 条），同一佳明活动仍只存一次、已有记录和确认时间不变；下次佳明同步后最近的课自动补回复盘选课。新区块 training-import；sw 缓存 fr255-shell-v86-3 | 用户 10-20 “导入的课为什么都是六月份的” | lib/core/import-retention.ts, lib/core/training-import.ts, scripts/blocks.mjs, public/sw.js |
 | 2026-10-20 | UI-R5（基于 v86）：逐组引导最后一组后点「结束并保存训练」没反应 → 修好（防连点锁在最后一组不再卡住），保存后刷新仍在 | 用户 R5 UI 优化 | src/components/training-runner.tsx |
 | 2026-10-20 | UI-R5：3D 动作详情的红色（主要参与肌肉、图例、肌群标签、演示按钮）统一改为品牌橙，读同一个色值 --fk-brand-orange；「已选中」仍为蓝色 | 用户 R5 UI 优化 | src/styles.css, exercise-demo.css, muscle-target-card.css, public/demo3d/* |

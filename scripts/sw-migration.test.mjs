@@ -52,7 +52,7 @@ function boot() {
 }
 
 test("the shell cache version moves off fr255-shell-1 and only owns its own prefix", () => {
-  assert.match(source, /const CACHE = "fr255-shell-v86-3"/)
+  assert.match(source, /const CACHE = "fr255-shell-v86-4"/)
   assert.doesNotMatch(source, /fr255-shell-1/)
   assert.doesNotMatch(source, /localStorage|indexedDB|sessionStorage/)
   assert.match(source, /ownedShellCache\(key\) && key !== CACHE/)
@@ -93,7 +93,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { cached = promise },
   })
   assert.equal(await (await cached).text(), "export const fresh = 1")
-  assert.equal(stores.get("fr255-shell-v86-3").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
+  assert.equal(stores.get("fr255-shell-v86-4").get("https://example.test/assets/fresh.js"), "export const fresh = 1")
   setFetch(async () => { throw new Error("offline") })
   let offline
   handlers.get("fetch")({
@@ -115,7 +115,7 @@ test("a rebuilt shell restores a valid script offline and still rejects HTML and
     respondWith: (promise) => { html = promise },
   })
   await html
-  assert.equal(stores.get("fr255-shell-v86-3").has("https://example.test/assets/bad.js"), false)
+  assert.equal(stores.get("fr255-shell-v86-4").has("https://example.test/assets/bad.js"), false)
   let intercepted = false
   handlers.get("fetch")({
     request: { url: "https://example.test/backup.zip", method: "GET", destination: "document", mode: "navigate", headers: { get: () => null } },
@@ -149,7 +149,7 @@ test('explicit root prefetch caches the shell before any controlled navigation',
   let response
   handlers.get('fetch')({request, respondWith: promise => {response = promise}})
   assert.equal(await (await response).text(), '<html>public shell</html>')
-  assert.equal(stores.get('fr255-shell-v86-3').get(request.url), '<html>public shell</html>')
+  assert.equal(stores.get('fr255-shell-v86-4').get(request.url), '<html>public shell</html>')
   setFetch(async () => {throw new Error('offline')})
   handlers.get('fetch')({request: {...request, mode: 'navigate', destination: 'document'}, respondWith: promise => {response = promise}})
   assert.equal(await (await response).text(), '<html>public shell</html>')
@@ -171,5 +171,5 @@ test('prefetch marker does not cache unmarked requests, queries, other paths, pr
   let response
   handlers.get('fetch')({request: base, respondWith: promise => {response = promise}})
   assert.equal(await (await response).text(), 'private content')
-  assert.equal(stores.get('fr255-shell-v86-3').has(base.url), false)
+  assert.equal(stores.get('fr255-shell-v86-4').has(base.url), false)
 })
