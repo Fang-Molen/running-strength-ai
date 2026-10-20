@@ -12,4 +12,9 @@ test('original V4 date suppresses new after/during feedback after move',()=>{ass
 test('moved V4 entry shows on target day even if target has its own V4 plan',()=>assert.match(board,/e\.id === `plan400:\$\{e\.date\}:strength`/))
 test('advanced feedback is collapsible, core RPE remains',()=>{assert.match(parts,/更多反馈（感受、备注，可选）/);assert.match(parts,/RPE（1–10/);assert.match(parts,/saveComponent\(date, part/)})
 const pending=read('lib/ui/pending-feedback.ts')
-test('pending feedback ignores moved original date without actual',()=>{assert.match(pending,/movedOriginalDates\.has\(d\.date\) && !f\.actualRun && !f\.actualLift/);assert.match(parts,/fk-schedule-changed/);assert.match(parts,/movedDates/);})
+test('pending feedback ignores moved original date without actual through shared host',()=>{
+  assert.match(pending,/movedOriginalDates\.has\(d\.date\) && !f\.actualRun && !f\.actualLift/)
+  assert.match(parts,/readPendingFeedback/);assert.match(parts,/subscribeGlobalCoach/)
+  assert.match(read('lib/ui/pending-feedback-host.ts'),/v4MovedOut\(day\.date, schedule\)/)
+  assert.match(read('lib/coach/global-coach-host-v89.ts'),/fk-schedule-changed/)
+})

@@ -46,6 +46,14 @@ test('a real start blocks that modality while preserving independent unstarted s
   assert.equal(snapshot.host.targets.find(x => x.componentId === 'strength-source-component')?.state, 'NOT_STARTED')
 })
 
+test('whole combo completion is not evidence that both running and strength completed', async t => {
+  const f = fixture(t, [entry({status:'done'})])
+  f.events([{event_type:'TRAINING_COMPLETED',payload:{sessionId:scheduleExecutionId('schedule-owned','run')}}])
+  const snapshot = await readCoachPlanHostSnapshot(AS_OF)
+  assert.equal(snapshot.host.targets.find(x=>x.componentId==='running-source-component')?.state,'COMPLETED')
+  assert.equal(snapshot.host.targets.find(x=>x.componentId==='strength-source-component')?.state,'UNKNOWN')
+})
+
 test('another athlete start is excluded and a future-known start is UNKNOWN', async t => {
   const f = fixture(t)
   f.events([{ athlete_id: 'another-athlete', payload: { sessionId: scheduleExecutionId('schedule-owned', 'run') } }])

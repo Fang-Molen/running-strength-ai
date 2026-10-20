@@ -4,7 +4,7 @@ import {missingNutrition,NUTRIENT_LABELS,NUTRIENT_KEYS} from '@/lib/nutrition/en
 import { HealthModeNote } from "@/components/health-mode-note";
 import { PersonalStatsPanel } from "@/components/personal-stats-panel";
 import { RestEntry } from "@/components/rest-entry";
-import { IntradayPanel } from "@/components/intraday-panel";
+import { HealthPageV89 } from "@/components/health-page-v89";
 import { HealthSourceDetails } from "./health-source-details";
 import { buildHealthSnapshot, loadHealthSources } from "@/lib/health/snapshot";
 import { HEALTH_CHANGED, valueText } from "@/lib/health/observation";
@@ -32,12 +32,12 @@ const MEAL_ICON = { 早餐: Sun, 午餐: Sun, 晚餐: Moon, 加餐: Coffee } as 
 const TITLE = { macro: "今日营养摄入", trend: "体重变化", SLEEP: "睡眠", RHR: "静息心率", HRV: "HRV", water: "饮水", protein: "蛋白质", carb: "碳水化合物", fat: "脂肪", fiber: "膳食纤维" } as const;
 function Empty({ text }: { text: string }) { return <p className="mt-2 text-sm text-muted">{text}</p>; }
 
-export function HomeDashboard(props: { onFood: () => void; onBody: () => void; onAdvice?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
+export function HomeDashboard(props: { onFood: () => void; onBody: () => void; onAdvice?: () => void; onCoach?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   return ready ? <HomeDashboardInner {...props} /> : null;
 }
-function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: () => void; onBody: () => void; onAdvice?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
+function HomeDashboardInner({ onFood, onBody, onAdvice, onCoach, only, slot }: { onFood: () => void; onBody: () => void; onAdvice?: () => void; onCoach?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
   const [profile, setProfile] = useState(() => loadProfile());
   const [goalBf, setGoalBf] = useState<number | null>(readGoalBodyFat);
   const [foodDate,setFoodDate]=useState(todayDate());
@@ -114,6 +114,9 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
       </div>
     </> : null}
     {B ? <>
+    {/* v89：健康页改为顶部分区（恢复/身体指标/睡眠/HRV/压力）；每样只出现一次。“形象与目标”与“我的形象/目标进度”重复，已合并。 */}
+    <HealthPageV89 onCoach={onCoach}
+      body={<>
       <div className="fk-health-figure-grid grid grid-cols-2 gap-3">
       <button type="button" onClick={() => setBodyOpen("figure")} className="fk-dash-card fk-health-portrait flex flex-col p-2 text-left">
         <span className="fk-dash-title text-sm"><UserRound className="size-4" />我的形象 ›</span>
@@ -128,16 +131,14 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, only, slot }: { onFood: 
         <div className="fk-dash-title text-sm"><Target className="size-4" />目标进度</div>
         {weight && target ? <><p className="keep text-xs text-muted">目标 {f1(target)} kg</p>{progress != null ? <><p className="text-sm">已完成 <b>{Math.round(progress * 100)}%</b></p><div className="fk-bar mt-1"><i style={{ width: `${progress * 100}%`, background: "linear-gradient(90deg,#ff5a0a,#ff9a4a)" }} /></div></> : null}<p className="mt-1 text-xs">还差 <b className="text-emerald-400">{f1(Math.abs(target - weight))} kg</b></p></> : <Empty text="在个人资料里设目标体重" />}
       </section>
-      <button type="button" onClick={() => setBodyOpen("figure")} className="fk-dash-card fk-health-goal-link p-3 text-left">
-        <span><span className="fk-dash-title text-sm"><ArrowRightLeft className="size-4" />形象与目标 ›</span><span className="keep block text-[11px] text-muted">体型3D参考 · 调整目标</span></span>
-        <span className="text-right text-sm"><b>{weight === null ? "—" : f1(weight)} → {target === null ? "未设置" : f1(target)}</b><span className="keep block text-xs text-muted">kg{weight !== null && target !== null ? ` · 相差 ${f1(Math.abs(target - weight))} kg` : ""}</span></span>
-      </button>
       </div>
-    <div className="grid grid-cols-1 gap-3">
-      <HealthGrid vitals={vitals} />
-      {slot}
-      <RecoveryTrend vitals={vitals} />
-    </div>
+      </>}
+      slot={slot}
+      grid={<HealthGrid vitals={vitals} />}
+      stats={<PersonalStatsPanel day={todayDate()} className="fk-dash-card p-3" />}
+      rest={(day) => <RestEntry day={day} onSaved={() => setHealthRev(x => x + 1)} />}
+      trend={(only) => <RecoveryTrend vitals={vitals} only={only} />}
+    />
     {bodyOpen === "figure" ? <BodyFigureSheet sex={sex} kg={weight} bf={fat} targetKg={target} targetBf={goalBf}
       onClose={() => setBodyOpen(false)} onData={() => setBodyOpen("data")}
       onSaved={(next, bf) => { setProfile(next); setGoalBf(bf); }} /> : bodyOpen === "data" ? <BodyDetail mode="data" editDate={editDate}
@@ -209,10 +210,11 @@ function BodyDetail({ children, checks, onClose, onSaved, editDate, onTrend, mod
   </div>;
 }
 
-const REC = [["SLEEP", "睡眠", "h"], ["RHR", "静息心率", "bpm"], ["HRV", "HRV", "ms"], ["fatigue", "疲劳", "1轻松-3很累"], ["pain", "酸痛", "0不疼-2明显"]] as const;
+const REC = [["SLEEP", "睡眠", "h"], ["RHR", "静息心率", "bpm"], ["HRV", "HRV", "ms"], ["STRESS", "压力", "/100"], ["fatigue", "疲劳", "1轻松-3很累"], ["pain", "酸痛", "0不疼-2明显"]] as const;
 const t2 = (d: string) => Date.parse(d + "T12:00:00Z");
-function RecoveryTrend({ vitals }: { vitals: ReturnType<typeof loadVitals>["records"] }) {
-  const [k, setK] = useState<(typeof REC)[number][0]>("SLEEP");
+function RecoveryTrend({ vitals, only }: { vitals: ReturnType<typeof loadVitals>["records"]; only?: string }) {
+  const [k0, setK] = useState<(typeof REC)[number][0]>("SLEEP");
+  const k = (REC.find(r => r[0] === only)?.[0] ?? k0) as (typeof REC)[number][0];
   const [days, setDays] = useState(30);
   // 上海本地日：今天往前 days-1 天（含今天共 days 天）。旧写法用 UTC 日期，早上 8 点前会差一天。
   const today = todayDate(), since = shiftDay(today, -(days - 1));
@@ -223,8 +225,8 @@ function RecoveryTrend({ vitals }: { vitals: ReturnType<typeof loadVitals>["reco
   }, [k, since, vitals]);
   const meta = REC.find((r) => r[0] === k)!;
   return <section className="fk-dash-card p-2">
-    <div className="fk-dash-title text-sm"><Activity className="size-4" />恢复趋势<span className="keep ml-auto text-[10px] font-normal text-muted">{meta[2]}</span></div>
-    <div className="mt-1 flex items-center gap-1 text-[11px]"><span className="flex flex-wrap rounded border border-line">{REC.map(([id, l]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)} className={"min-h-7 px-1.5 " + (k === id ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span><span className="ml-auto flex rounded border border-line">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={"min-h-7 px-1.5 " + (days === d ? "bg-accent text-accent-fg" : "")}>{d}天</button>)}</span></div>
+    <div className="fk-dash-title text-sm"><Activity className="size-4" />{only ? `${meta[1]}趋势` : "恢复趋势"}<span className="keep ml-auto text-[10px] font-normal text-muted">{meta[2]}</span></div>
+    <div className="mt-1 flex items-center gap-1 text-[11px]">{only ? null : <span className="flex flex-wrap rounded border border-line">{REC.map(([id, l]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)} className={"min-h-7 px-1.5 " + (k === id ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span>}<span className="ml-auto flex rounded border border-line">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={"min-h-7 px-1.5 " + (days === d ? "bg-accent text-accent-fg" : "")}>{d}天</button>)}</span></div>
     {pts.length >= 2 ? <><TrendChart key={`${k}-${days}`} domain={[since, today]} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} />
       <p className="keep text-[10px] text-muted" data-testid="trend-coverage">{since.slice(5)}–{today.slice(5)} · {pts.length} 天有数据{pts[0].d > since ? `；最早 ${pts[0].d.slice(5)}，不足 ${days} 天${k === "fatigue" || k === "pain" ? "" : "（佳明每次同步会往前补 14 天，直到 90 天）"}` : ""}{pts.length < Math.round((t2(today) - t2(pts[0].d)) / 864e5) + 1 ? "；缺的天不连线" : ""}</p></> : <Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} />}
   </section>;
@@ -239,6 +241,7 @@ const METRICS: MDef[] = [
 ];
 const SUBJ: Record<string, [string, number][]> = { fatigue: [["轻松", 1], ["一般", 2], ["很累", 3]], pain: [["不疼", 0], ["有点疼", 1], ["明显疼", 2]], recovery: [["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6], ["7", 7], ["8", 8], ["9", 9], ["10", 10]] };
 const TILE_KEY = "fk-health-tiles-v1";
+const IN_RECOVERY = new Set(["SLEEP", "RHR", "HRV", "BODY_BATTERY"]);
 const DEFAULT_TILES = ["SLEEP", "RHR", "HRV", "BODY_BATTERY", "fatigue", "pain"];
 function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records"] }) {
   const [rev, setRev] = useState(0);
@@ -257,7 +260,8 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
     for (const k in out) { const m = new Map(out[k].map((p) => [p.d, p.v])); out[k] = [...m].map(([d, v]) => ({ d, v })).sort((a, b) => a.d.localeCompare(b.d)); }
     return out;
   }, [vitals, rev, snapshot]);
-  const avail = METRICS.filter((m) => m.subj || snapshot.metrics.find(x=>x.metric===m.id)?.candidates.length);
+  // v89：睡眠/静息心率/HRV/身体电量已在「恢复」四宫格和各自分区，这里不再重复。
+  const avail = METRICS.filter((m) => !IN_RECOVERY.has(m.id) && (m.subj || snapshot.metrics.find(x=>x.metric===m.id)?.candidates.length));
   const shown = avail.filter((m) => chosen.includes(m.id));
   const val = (m: MDef) => { const view=snapshot.metrics.find(x=>x.metric===m.id); if(view?.state==='CONFLICT')return {t:"来源待核对",d:view.candidates[0]?.day??""}; if(!m.subj&&view?.current)return {t:valueText(m.id,view.current.value),d:view.current.day}; const s = series[m.id]; const l = s?.[s.length - 1]; if (!l) return null; if (m.subj) return { t: SUBJ[m.id].find(([, v]) => v === l.v)?.[0] ?? String(l.v), d: l.d }; return { t: `${(m.fmt ?? ((v: number) => String(Math.round(v))))(l.v)}${m.unit && m.unit !== "步" ? " " + m.unit : ""}`, d: l.d }; };
   const rate = (id: string, v: number) => {
@@ -266,13 +270,10 @@ function HealthGrid({ vitals }: { vitals: ReturnType<typeof loadVitals>["records
   };
   const om = open ? METRICS.find((m) => m.id === open)! : null;
   return <section className="fk-dash-card p-2">
-    <div className="flex items-center"><div className="fk-dash-title text-sm"><HeartPulse className="size-4" />健康记录</div><button type="button" className="ml-auto min-h-8 px-2 text-xs text-accent" onClick={() => setEdit(!edit)}>{edit ? "完成" : "编辑"}</button></div>
+    <div className="flex items-center"><div className="fk-dash-title text-sm"><HeartPulse className="size-4" />更多指标与历史</div><button type="button" className="ml-auto min-h-8 px-2 text-xs text-accent" onClick={() => setEdit(!edit)}>{edit ? "完成" : "编辑"}</button></div>
     <HealthModeNote day={today}/>
     {edit ? <div className="mt-1 grid grid-cols-2 gap-1 text-sm">{avail.map((m) => <label key={m.id} className="flex min-h-9 items-center gap-2 rounded-lg border border-line px-2"><input type="checkbox" checked={chosen.includes(m.id)} onChange={(e) => { const n = e.target.checked ? [...chosen, m.id] : chosen.filter((x) => x !== m.id); setChosen(n); localStorage.setItem(TILE_KEY, JSON.stringify(n)); }} />{m.label}</label>)}</div>
-    : shown.length ? <div className="mt-1 grid grid-cols-3 gap-1.5">{shown.map((m) => { const v = val(m); const I = m.icon; return <button key={m.id} type="button" onClick={() => setOpen(m.id)} className="rounded-xl border border-line bg-surface-2 p-2 text-left"><p className="flex items-center gap-1 whitespace-nowrap text-xs"><I className="size-3.5 shrink-0 text-accent" />{m.label}</p><p className="mt-1 text-base font-bold">{m.subj && v && v.d !== today ? "今天未评" : v?.t ?? (m.subj ? "点一下" : "—")}</p><p className="keep text-[10px] text-muted">{v ? (m.subj && v.d !== today ? `上次 ${v.t} · ${v.d.slice(5)}` : v.d.slice(5)) : ""}</p>{!m.subj?<p className="mt-0.5 text-[10px] text-muted">{snapshot.metrics.find(x=>x.metric===m.id)?.current?.statistic}</p>:null}</button>; })}</div> : <Empty text="点编辑选要显示的指标" />}
-    <IntradayPanel today={today} />
-    <PersonalStatsPanel day={today} className="mt-2 rounded-xl border border-line p-2" />
-    <RestEntry day={today} onSaved={() => setRev(x => x + 1)} />
+    : shown.length ? <div className="mt-1 grid grid-cols-3 gap-1.5">{shown.map((m) => { const v = val(m); const I = m.icon; return <button key={m.id} type="button" onClick={() => setOpen(m.id)} className="rounded-xl border border-line bg-surface-2 p-2 text-left"><p className="flex items-center gap-1 whitespace-nowrap text-xs"><I className="size-3.5 shrink-0 text-accent" />{m.label}</p><p className="mt-1 text-base font-bold">{m.subj && v && v.d !== today ? "今天未评" : v?.t ?? (m.subj ? "点一下" : "—")}</p><p className="keep text-xs text-muted">{v ? (m.subj && v.d !== today ? `上次 ${v.t} · ${v.d.slice(5)}` : v.d.slice(5)) : ""}</p>{!m.subj?<p className="mt-0.5 text-xs text-muted">{snapshot.metrics.find(x=>x.metric===m.id)?.current?.statistic}</p>:null}</button>; })}</div> : <Empty text="点编辑选要显示的指标" />}
     {om ? <Sheet title={om.label} label="健康指标详情" footer={null} onClose={()=>setOpen(null)}>
       {!om.subj && snapshot.metrics.find(x=>x.metric===om.id) ? <HealthSourceDetails view={snapshot.metrics.find(x=>x.metric===om.id)!}/> : null}
       {om.subj ? <div className="mt-1 flex flex-wrap gap-1.5"><span className="keep self-center text-xs text-muted">今天</span>{SUBJ[om.id].map(([l, v]) => { const last = series[om.id]?.find((p) => p.d === today)?.v; return <button key={l} type="button" className="fk-chip" aria-pressed={last === v} onClick={() => rate(om.id, v)}>{l}</button>; })}</div> : null}

@@ -1,8 +1,8 @@
 /**
- * UI-only read model for Fangkun's existing five destinations.
+ * UI-only read model for Fangkun's existing destinations.
  * No decisions, health scoring, storage writes, or network calls.
  */
-export type CoachOrganTarget = 'today' | 'plan' | 'log' | 'body';
+export type CoachOrganTarget = 'today' | 'plan' | 'log' | 'body' | 'diet';
 export type CoachOrganReadout = {
   id: CoachOrganTarget;
   label: string;
@@ -59,6 +59,7 @@ export function coachCoordinationView(input: CoachCoordinationInput): CoachOrgan
       id: 'body', label: '身体', role: '健康与恢复',
       readout: '恢复判断需独立证据',
     },
+    { id: 'diet', label: '饮食', role: '营养记录', readout: '已记录摄入不等于全天完整摄入' },
   ];
 }
 

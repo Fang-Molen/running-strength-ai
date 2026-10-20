@@ -4,6 +4,7 @@ import V4 from '../plan400-v4.json' with { type: 'json' }
 import {garminViewKey} from '@/lib/health/garmin-view-scope'
 import {occurrenceVoided, effectiveStrengthFields} from '@/lib/core/training-correction'
 import {currentAthleteId} from '@/lib/core/events'
+import { ownedBy } from '@/lib/core/ownership'
 import { loadConfirmedTrainingImports } from '@/lib/core/training-import';
 import { listTrainingOccurrences } from '@/lib/core/occurrence';
 import { projectRunningExecution } from '@/lib/core/running-execution';
@@ -14,7 +15,7 @@ import { addDays, weekOf } from './day-schedule-rules';
 import { runningActualTotals } from './running-actual-totals';
 import type { ScheduleEntry } from './day-schedule-rules';
 import { matchRuns, v4RunSlots, allRunLinks, v4RunSlotId, type RunLink, type RunSuggestion } from './run-link';
-import { loadComponents, type DayComponents, type ComponentsDoc } from './plan400-components-store';
+import { loadOwnedComponents, type DayComponents, type ComponentsDoc } from './plan400-components-store';
 import { v4DayFact, type DayParts, type V4Day, type V4DayFact, type V4Log } from './plan400-view';
 import { legacyQuickAudit, type LegacyQuickAudit } from './quick-log-save'
 import { v4ExecFrom, type V4Exec } from './v4-exec';
@@ -58,7 +59,7 @@ export function activityWeeks(rows: LoggedSession[], today: string, weeks = 4) {
 export function garminRows(raw: unknown): ActivityRow[] {
   if (!raw || typeof raw !== 'object') return [];
   return Object.values(raw as Record<string, Record<string, unknown>>).flatMap(g => {
-    if (!g || typeof g.start !== 'string' || !day(g.start) || !g.id || (g.athleteId != null && g.athleteId !== currentAthleteId())) return [];
+    if (!g || typeof g.start !== 'string' || !day(g.start) || !g.id || !ownedBy(g as {athleteId?:string}, currentAthleteId())) return [];
     const sport = /run|track|treadmill/.test(String(g.type)) ? 'RUNNING' as const : /strength|weight|fitness|training/.test(String(g.type)) ? 'STRENGTH' as const : 'UNKNOWN' as const;
     if (sport === 'UNKNOWN') return [];
     const identity = typeof g.sourceIdentity === 'string' ? g.sourceIdentity : `garmin:${g.id}`;
@@ -130,11 +131,11 @@ export function linkRuns(rows: ActivityRow[], store: Pick<Storage, 'getItem'> | 
   const today = day(new Date(now).toISOString())!
   let match: typeof lastMatch = { links: [], suggestions: [] }
   let comps: ComponentsDoc = { schemaVersion: 1, days: {} }, p4: Record<string, V4Log> = {}
-  try { comps = loadComponents(store) } catch { /* 读不到分项：按空 */ }
-  try { p4 = JSON.parse(store?.getItem('fk-plan400-v4-log') ?? '{}') ?? {} } catch { p4 = {} }
+  try { comps = loadOwnedComponents(store) } catch { /* 读不到分项：按空 */ }
+  try { p4 = Object.fromEntries(Object.entries(JSON.parse(store?.getItem('fk-plan400-v4-log') ?? '{}') ?? {}).filter(([,row]) => row && typeof row === 'object' && ownedBy(row, currentAthleteId()))) as Record<string,V4Log> } catch { p4 = {} }
   let sched: ScheduleEntry[] = []
   try {
-    sched = (JSON.parse(store?.getItem('fk-schedule-v1') ?? '{}')?.entries ?? []) as ScheduleEntry[]
+    sched = ((JSON.parse(store?.getItem('fk-schedule-v1') ?? '{}')?.entries ?? []) as ScheduleEntry[]).filter(row => ownedBy(row,currentAthleteId()))
     const base = (() => { try { return JSON.parse(store?.getItem('fk-run-links-v1') ?? '{}') ?? {} } catch { return {} } })()
     match = matchRuns([...sched, ...v4RunSlots(V4.days as V4Day[], today, comps)], mergeActivities(rows), allRunLinks(comps, base), today)
   } catch { /* 没有日程/关联：不关联 */ }
@@ -246,19 +247,19 @@ export function orphanSetRows(events: Ev[], occurrences: { trainingOccurrenceId:
   return [...groups.values()].map(g => ({ id: `sets:${g.sessionId}:${g.date}`, startedAt: g.first, date: g.date, sport: 'STRENGTH' as const, distanceM: null, durationSec: null, strengthVolumeKg: null, sets: g.done || null, rpe: null, source: 'phone' as const, appMade: true,
     originIds: [`sets:${g.sessionId}:${g.date}`], title: sessionTitle(g.sessionId) ?? '力量训练', status: g.finished ? 'completed' as const : 'incomplete' as const }))
 }
-type V4LogLite = { done?: string; reps?: string; rest?: string; aux?: string; strength?: string; rpe?: string; pain?: string; note?: string; savedAt?: string }
-type Sched = { id: string; date: string; unplanned?: boolean; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; note?: string; km?: number | null; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[]; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' }; restLog?: unknown[]; exercises?: { sets?: string }[] }
-type Check = { date?: string; sessionId?: string; moves?: Record<string, { done?: boolean }[]>; startedAt?: number | null; updatedAt?: number; rpe?: number | null; run?: { done?: boolean } | null }
+type V4LogLite = { athleteId?: string; done?: string; reps?: string; rest?: string; aux?: string; strength?: string; rpe?: string; pain?: string; note?: string; savedAt?: string }
+type Sched = { athleteId?: string; id: string; date: string; unplanned?: boolean; kind?: string; modality?: string; trainingType?: string; title?: string; status?: string; refId?: string | null; minutes?: number; actual?: { outcome?: string; note?: string; km?: number | null; minutes?: number | null; rpe?: number | null; at?: string; occurrenceIds?: string[]; executionState?: 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' }; restLog?: unknown[]; exercises?: { sets?: string }[] }
+type Check = { athleteId?: string; date?: string; sessionId?: string; moves?: Record<string, { done?: boolean }[]>; startedAt?: number | null; updatedAt?: number; rpe?: number | null; run?: { done?: boolean } | null }
 const isStrength = (e: Sched) => e.modality === 'strength' || e.kind === 'strength' || e.trainingType === 'strength' || e.trainingType === 'mixed'
 /** 日程（今日卡片、计划、+记一笔、400m 计划力量日）+ 今日逐组清单。日期 = 这节课的日期，不是保存时间。 */
 export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now()): ActivityRow[] {
   const read = <T,>(k: string, d: T): T => { try { const v = JSON.parse(store?.getItem(k) ?? 'null'); return v ?? d } catch { return d } }
   const today = day(new Date(now).toISOString())!
-  const checks = Object.values(read<Record<string, Check>>('fk-today-checklist-v1', {})).filter(c => c && typeof c.date === 'string' && typeof c.sessionId === 'string')
+  const checks = Object.values(read<Record<string, Check>>('fk-today-checklist-v1', {})).filter(c => c && ownedBy(c,currentAthleteId()) && typeof c.date === 'string' && typeof c.sessionId === 'string')
   // v79（t489）：只打开/动过清单（updatedAt/startedAt）不是训练证据；要勾过组或给过反馈（RPE）才算“记过”。
   const checkInfo = (c: Check) => { const sets = Object.values(c.moves ?? {}).flat(); return { done: sets.filter(x => x?.done).length, touched: c.rpe != null } }
   const used = new Set<string>(), rows: ActivityRow[] = []
-  const sched = read<{ entries?: Sched[] }>('fk-schedule-v1', {}).entries ?? []
+  const sched = (read<{ entries?: Sched[] }>('fk-schedule-v1', {}).entries ?? []).filter(e=>ownedBy(e,currentAthleteId()))
   for (const e of sched) {
     if (!e || typeof e.id !== 'string' || !/^\d{4}-\d\d-\d\d$/.test(e.date ?? '') || e.date > today || !isStrength(e)) continue
     // v84（合入 Codex 1019y）：同一天两节课用同一个模板时，按模板 id 找清单/组会把两节课认成一条（少记一条），只有模板在当天唯一时才按模板关联
@@ -289,7 +290,7 @@ export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localS
   }
   // V4 计划记录（fk-plan400-v4-log，首页/计划页/训练中都写这里，按计划日期记）：有实际记录或已完成/减量的一天 = 一条记录。
   // 跑步部分与手表活动没有可靠 id 关联，不合并；它没有距离/时长，不会把手表数据重复计入总量。
-  const p4 = read<Record<string, V4LogLite>>('fk-plan400-v4-log', {}), comps = read<ComponentsDoc>('fk-plan400-v4-components-v1', { schemaVersion: 1, days: {} })
+  const p4 = Object.fromEntries(Object.entries(read<Record<string, V4LogLite>>('fk-plan400-v4-log', {})).filter(([,row])=>row&&ownedBy(row,currentAthleteId()))), comps = loadOwnedComponents(store)
   const p4days = new Set([...Object.keys(p4 && typeof p4 === 'object' ? p4 : {}), ...Object.keys(comps?.days ?? {})])
   for (const d of p4days) {
     const l = (p4?.[d] ?? {}) as V4LogLite, c = comps?.days?.[d] as DayComponents | undefined

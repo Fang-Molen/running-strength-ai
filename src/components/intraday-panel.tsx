@@ -71,7 +71,7 @@ function MetricCard({ d, kind, onOpen }: { d: IntradayDay; kind: Kind; onOpen: (
   </div>;
 }
 
-function Detail({ d, kind, onClose, onDay, days }: { d: IntradayDay; kind: Kind; onClose: () => void; onDay: (day: string) => void; days: string[] }) {
+export function IntradayDetail({ d, kind, onClose, onDay, days }: { d: IntradayDay; kind: Kind; onClose: () => void; onDay: (day: string) => void; days: string[] }) {
   const m = META[kind], pts = kind === "hr" ? d.hr : d.bb, s = summarizeDay(d), st = kind === "hr" ? s?.hr : s?.bb;
   const hours = useMemo(() => { const out: { h: number; lo: number; hi: number; n: number }[] = []; for (const [t, v] of pts) { const h = Math.floor(minuteOfDay(t, d.day, d.offsetMin) / 60); if (h < 0 || h > 23) continue; const r = out.find(o => o.h === h); if (r) { r.lo = Math.min(r.lo, v); r.hi = Math.max(r.hi, v); r.n++; } else out.push({ h, lo: v, hi: v, n: 1 }); } return out.sort((a, b) => a.h - b.h); }, [pts, d]);
   const i = days.indexOf(d.day);
@@ -111,7 +111,7 @@ export function IntradayPanel({ today }: { today: string }) {
       {d.day !== today ? <p className="keep mt-1 text-[11px] text-muted">今天还没有日内样本，显示的是最近一天。</p> : null}
       <p className="keep mt-1 text-[11px] text-muted">身体电量只是设备读数，不是训练许可。</p>
     </>}
-    {d && open ? <Detail d={d} kind={open} days={days} onDay={setDay} onClose={() => setOpen(null)} /> : null}
+    {d && open ? <IntradayDetail d={d} kind={open} days={days} onDay={setDay} onClose={() => setOpen(null)} /> : null}
   </section>;
 }
 

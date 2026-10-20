@@ -9,7 +9,7 @@ export function CoachAnswerFeedbackForm({messageId,answer}:{messageId:string;ans
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='方坤回答反馈.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
  }
  return <details data-testid="coach-feedback" className="mt-2 text-xs">
-  <summary className="min-h-8 cursor-pointer text-muted">反馈这条回答</summary>
+  <summary className="min-h-11 cursor-pointer content-center text-sm text-muted">反馈这条回答</summary>
   <div className="space-y-2 pt-2">
    <p>反馈保存在本机，可导出后自行提供给维护者。</p>
    <select aria-label="回答反馈类型" value={category} onChange={e=>setCategory(e.target.value as CoachAnswerFeedback['category'])} className="h-10 rounded-card border border-line bg-surface px-2">

@@ -1,24 +1,30 @@
-// v88：U09 个人趋势统计（只读）折叠卡，只放在健康页「健康记录」卡里（一处）。
-import { loadHealthSnapshot } from "@/lib/health/snapshot"
-import { currentAthleteId } from "@/lib/core/events"
-import { personalStatsCards } from "@/lib/health/personal-stats-host"
-import { intradayMonitoringLine } from "@/lib/health/u07-v88-host"
-import { reviewFatigue, dailyCheckin } from "@/lib/health/analysis"
-import { intradayDay } from "@/lib/health/intraday-store"
-export function PersonalStatsPanel({ day, className = "home-card mt-3 p-3" }: { day: string; revision?: number; className?: string }) {
-  let cards: ReturnType<typeof personalStatsCards> = []
-  let intraday: string | null = null
-  try {
-    const snapshot = loadHealthSnapshot(day)
-    cards = personalStatsCards(snapshot, currentAthleteId(), `${day}T23:59:59`)
-    const line = intradayMonitoringLine(snapshot, reviewFatigue(snapshot, dailyCheckin(day)), new Date().toISOString())
-    // v88.3：已有带时间戳的手表样本时，占位说明换成指向上方曲线。
-    intraday = line.state === 'UNAVAILABLE' && intradayDay(day)?.bb.length ? '身体电量与全天心率：见上方「手表日内」曲线（设备读数，不是训练许可）。' : line.text
-  } catch { cards = []; intraday = '日内数据暂时无法核对。' }
-  return <details className={className} data-testid="u09-stats">
-    <summary className="min-h-11 cursor-pointer text-sm font-bold">个人趋势统计（只读）</summary>
-    {intraday ? <p className="keep mt-2 text-xs text-muted" data-testid="u07-intraday">{intraday}</p> : null}
-    {cards.map(c => <div key={c.metric} className="mt-2 text-xs" data-testid={`u09-${c.metric}`}><p className="font-bold">{c.title}</p>{c.lines.map((l, i) => <p key={i} className="keep">{l}</p>)}{c.caveats.map((l, i) => <p key={i} className="keep text-muted">{l}</p>)}</div>)}
-    <p className="keep mt-2 text-xs text-muted">只用同一来源、同一统计口径的记录；不足或冲突时不显示趋势。不是恢复许可、诊断或改课依据。</p>
-  </details>
+/** V89: concise, expandable projection of existing U09 research statistics. No new scores or writes. */
+import { loadHealthSnapshot } from '@/lib/health/snapshot';
+import { currentAthleteId } from '@/lib/core/events';
+import { personalStatsCards } from '@/lib/health/personal-stats-host';
+import { intradayMonitoringLine } from '@/lib/health/u07-v88-host';
+import { reviewFatigue, dailyCheckin } from '@/lib/health/analysis';
+import { intradayDay } from '@/lib/health/intraday-store';
+const STATUS: Record<string,string> = {DATA_CONFLICT:'来源待核对',HISTORY_ONLY:'历史参考',NEED_MORE_DATA:'数据不足',DESCRIPTIVE:'可比历史',STATISTICAL_REVIEW:'预测待校准'};
+export function PersonalStatsPanel({day,className='home-card mt-3 p-3'}:{day:string;revision?:number;className?:string}){
+ let cards:ReturnType<typeof personalStatsCards>=[];
+ let intraday:string|null=null;
+ try {const snapshot=loadHealthSnapshot(day);cards=personalStatsCards(snapshot,currentAthleteId(),`${day}T23:59:59`);
+  // v88.3/v89：有手表日内样本时不再重复说明（曲线在「全天趋势」）。
+  intraday=intradayDay(day)?.bb.length?null:intradayMonitoringLine(snapshot,reviewFatigue(snapshot,dailyCheckin(day)),new Date().toISOString()).text} catch {cards=[];intraday='日内数据暂时无法核对。'}
+ const comparable=cards.filter(c=>c.status==='DESCRIPTIVE'||c.status==='HISTORY_ONLY').length;
+ return <details className={className} data-testid="u09-stats">
+  <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-2 text-sm font-bold"><span>个人趋势与波动</span><span className="text-sm font-normal text-muted">{comparable ? `${comparable}项有可比历史` : '等待可比记录'} ›</span></summary>
+  <div className="mt-2 space-y-2" aria-label="个人统计详情">
+    {intraday ? <p className="keep text-sm text-muted" data-testid="u07-intraday">{intraday}</p> : null}
+   {cards.length ? cards.map(c=><details key={c.metric} className="rounded-xl border border-line p-3" data-testid={`u09-${c.metric}`}>
+    <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-bold"><span>{c.name}</span><span className="text-sm font-normal text-muted">{STATUS[c.status]??'待核对'} ›</span></summary>
+    <div className="space-y-2 pt-2 text-sm leading-relaxed">
+     {c.lines.map((line,i)=><p key={i} className="keep break-words">{line}</p>)}
+     {c.caveats.length ? <details className="rounded-lg bg-surface-2 p-2"><summary className="min-h-11 cursor-pointer content-center text-sm font-medium">查看适用条件与限制</summary>{c.caveats.map((line,i)=><p key={i} className="keep mt-1 text-sm text-muted">{line}</p>)}</details> : null}
+    </div>
+   </details>) : <p className="text-sm text-muted">统计记录暂不可读，不等于身体状态正常。</p>}
+   <p className="keep text-sm text-muted">只比较同来源、同口径的历史。区间是研究性统计描述，不代表恢复许可或自动改课。</p>
+  </div>
+ </details>
 }

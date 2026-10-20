@@ -12,7 +12,7 @@ export function checkBlock(name) {
   }
   return out
 }
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   let n = 0
   for (const name of Object.keys(BLOCKS)) for (const v of checkBlock(name)) { n++; console.error(`[${name}] ${v}`) }
   console.log(n ? `区块边界违规 ${n} 处` : `区块边界检查通过（${Object.keys(BLOCKS).length} 个区块）`)

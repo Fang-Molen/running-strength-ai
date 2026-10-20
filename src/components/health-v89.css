@@ -1,0 +1,30 @@
+/* v89 健康页（参考效果图）：深色卡片、橙色胶囊分区、四宫格指标、全天趋势 */
+.fk-h89-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.fk-h89-tabs::-webkit-scrollbar{display:none}
+.fk-h89-tabs button{flex:1 0 auto;min-height:36px;padding:0 12px;border-radius:999px;font-size:14px;color:var(--color-muted);white-space:nowrap}
+.fk-h89-tabs button[aria-pressed=true]{background:linear-gradient(90deg,#ff5a0a,#ff8a3a);color:#fff;font-weight:700}
+.fk-h89-date{display:flex;align-items:center;justify-content:center;gap:12px;font-size:15px}
+.fk-h89-date>button{display:grid;place-items:center;width:34px;height:34px;border-radius:999px;border:1px solid var(--color-line,#343b45)}
+.fk-h89-date>button:disabled{opacity:.3}
+.fk-h89-date>label{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--color-line,#343b45)}
+.fk-h89-card{border-radius:18px;padding:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);min-width:0}
+.fk-h89-today{background:linear-gradient(160deg,rgba(255,106,26,.10),rgba(255,255,255,.03) 55%)}
+.fk-h89-pill{min-height:34px;padding:0 14px;border-radius:999px;border:1px solid #ff6a1a;color:#ff8a3a;font-size:13px}
+.fk-h89-tile{border-radius:14px;padding:8px 6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);min-width:0}
+.fk-h89-seg{display:flex;border-radius:999px;border:1px solid var(--color-line,#343b45);padding:2px}
+.fk-h89-seg button{min-height:28px;padding:0 10px;border-radius:999px;font-size:12px;color:var(--color-muted)}
+.fk-h89-seg button[aria-pressed=true]{background:#ff6a1a;color:#fff;font-weight:700}
+.fk-h89-event{display:flex;gap:8px;align-items:flex-start;border-radius:12px;padding:8px;background:rgba(255,255,255,.04);min-width:0}
+.fk-h89-event.sleep svg{color:#8f9bff}.fk-h89-event.train svg{color:#ff8a3a}
+.fk-m89-stage{position:relative;border-radius:18px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#232733,#0e1014 70%)}
+.fk-m89-stage .fk-target-stage{height:min(440px,58vh);margin:0;border-radius:0;background:transparent}
+.fk-m89-side{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:6px}
+.fk-m89-side button{min-height:34px;min-width:56px;border-radius:10px;border:1px solid var(--color-line,#343b45);background:rgba(11,11,13,.6);font-size:13px}
+.fk-m89-side button[aria-pressed=true]{border-color:#ff6a1a;color:#ff8a3a}
+.fk-m89-legend{position:absolute;left:8px;top:8px;display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:12px;background:rgba(11,11,13,.62);font-size:11px}
+.fk-m89-legend i{display:inline-block;width:9px;height:9px;border-radius:999px;margin-right:6px;vertical-align:-1px}
+.fk-m89-card{display:block;width:100%;border-radius:14px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);min-width:0}
+.fk-m89-card[aria-pressed=true]{border-color:#ff6a1a}
+.fk-m89-chip{font-size:10px;line-height:1;padding:3px 6px;border-radius:999px;border:1px solid;white-space:nowrap}
+.fk-m89-evidence{border-radius:14px;padding:10px;border:1px solid var(--color-line,#343b45);overflow-wrap:anywhere}
+.fk-m89-limits{font-size:13px}.fk-m89-limits summary{cursor:pointer;min-height:40px;padding:8px 0}.fk-m89-limits p{margin-bottom:6px;color:var(--color-muted)}

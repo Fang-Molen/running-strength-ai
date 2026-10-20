@@ -11,7 +11,7 @@ export type Sample = [number, number] // [UTC ms, value]
 export type Span = [number, number]   // [UTC ms start, end]
 export type IntradayDay = {
   schemaVersion: 1; day: string; source: 'garmin'; fetchedAt: string; offsetMin: number | null
-  hr: Sample[]; bb: Sample[]; restingHr: number | null; sleep: Span | null; training: { start: number; end: number; label: string }[]
+  hr: Sample[]; bb: Sample[]; /** v89：压力（dailyStress.stressValuesArray，负值=无读数；字段名待核） */ st?: Sample[]; restingHr: number | null; sleep: Span | null; training: { start: number; end: number; label: string }[]
 }
 type Reply = { status: number; body: any }
 const MAX_POINTS = 720
@@ -67,7 +67,10 @@ export function parseBodyBattery(day: string, r: Reply | undefined, failures: st
     const li = indexFrom(desc, /level/i, e.length >= 3 ? 2 : 1), v = e[li]
     return finite(e[0]) && finite(v) && v >= 0 && v <= 100 ? [[e[0], Math.round(v)] as Sample] : []
   }) : []
-  return { bb: tidy(rows), offsetMin: offsetOf(b) }
+  // v89：同一响应里的压力样本 [[ms, level]]；-1/-2 等负值表示无读数/活动中，不收。字段名依据 python-garminconnect，待核真实账号。
+  const sd = b.stressValueDescriptorsDTOList, si = indexFrom(sd, /stress/i, 1), sti = indexFrom(sd, /time/i, 0)
+  const st: Sample[] = Array.isArray(b.stressValuesArray) ? b.stressValuesArray.flatMap((e: unknown) => Array.isArray(e) && finite(e[sti]) && finite(e[si]) && e[si] >= 0 && e[si] <= 100 ? [[e[sti], Math.round(e[si])] as Sample] : []) : []
+  return { bb: tidy(rows), st: tidy(st), offsetMin: offsetOf(b) }
 }
 export function sleepSpan(sleepBody: any): Span | null {
   const d = sleepBody?.dailySleepDTO, s = d?.sleepStartTimestampGMT, e = d?.sleepEndTimestampGMT
@@ -76,7 +79,7 @@ export function sleepSpan(sleepBody: any): Span | null {
 export function buildIntradayDay(input: { day: string; now: string; hr: Reply | undefined; stress: Reply | undefined; sleep?: Reply; activities?: { startIso: string | null; durationSec: number | null; sportLabel: string }[] }): { day: IntradayDay | null; failures: string[] } {
   const failures: string[] = []
   const h = parseHeartRate(input.day, input.hr, failures), bb = parseBodyBattery(input.day, input.stress, failures)
-  if (!h?.hr.length && !bb?.bb.length && h?.restingHr == null) return { day: null, failures }
+  if (!h?.hr.length && !bb?.bb.length && !bb?.st.length && h?.restingHr == null) return { day: null, failures }
   const sl = input.sleep?.status === 200 && input.sleep.body?.dailySleepDTO?.calendarDate === input.day ? sleepSpan(input.sleep.body) : null
   const all = [...(h?.hr ?? []), ...(bb?.bb ?? [])].map(p => p[0]), lo = Math.min(...all, Infinity), hi = Math.max(...all, -Infinity)
   const training = (input.activities ?? []).flatMap(a => {
@@ -84,14 +87,14 @@ export function buildIntradayDay(input: { day: string; now: string; hr: Reply | 
     return Number.isFinite(s) && a.durationSec && e > lo && s < hi ? [{ start: s, end: e, label: a.sportLabel }] : []
   }).slice(0, 12)
   return { day: { schemaVersion: 1, day: input.day, source: 'garmin', fetchedAt: input.now, offsetMin: h?.offsetMin ?? bb?.offsetMin ?? null,
-    hr: h?.hr ?? [], bb: bb?.bb ?? [], restingHr: h?.restingHr ?? null, sleep: sl, training }, failures }
+    hr: h?.hr ?? [], bb: bb?.bb ?? [], st: bb?.st ?? [], restingHr: h?.restingHr ?? null, sleep: sl, training }, failures }
 }
 
-export type IntradaySummary = { day: string; hr: { min: number; max: number; latest: Sample } | null; restingHr: number | null; bb: { min: number; max: number; latest: Sample } | null; authorizedToTrain: false }
+export type IntradaySummary = { day: string; hr: { min: number; max: number; latest: Sample } | null; restingHr: number | null; bb: { min: number; max: number; latest: Sample } | null; st?: { min: number; max: number; latest: Sample } | null; authorizedToTrain: false }
 export function summarizeDay(d: IntradayDay | null | undefined): IntradaySummary | null {
   if (!d) return null
   const st = (s: Sample[]) => s.length ? { min: Math.min(...s.map(p => p[1])), max: Math.max(...s.map(p => p[1])), latest: s[s.length - 1] } : null
-  return { day: d.day, hr: st(d.hr), restingHr: d.restingHr, bb: st(d.bb), authorizedToTrain: false }
+  return { day: d.day, hr: st(d.hr), restingHr: d.restingHr, bb: st(d.bb), st: st(d.st ?? []), authorizedToTrain: false }
 }
 /** 设备当地时间 HH:MM（有偏移用偏移，否则用浏览器时区）。 */
 export function clock(ms: number, offsetMin: number | null): string {

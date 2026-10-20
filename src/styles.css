@@ -562,3 +562,9 @@ body { min-height: 100dvh; background: #0b0b0d; }
 .product-ui .ui03-header.fk-coach-head button.size-11 { width: 2.25rem; height: 2.25rem; }
 .fk-coach-shell .fk-coach-sheet .fk-coach-bar { padding: 0 12px 4px; }
 .fk-coach-shell .fk-coach-bar > span.size-9 { width: 2rem; height: 2rem; }
+
+/* V89 global readable typography. Only visual rem units change; iOS input min 16px is preserved. */
+html[data-fk-font-scale="standard"]{font-size:16px}
+html[data-fk-font-scale="large"]{font-size:17px}
+html[data-fk-font-scale="extra"]{font-size:18px}
+@media(max-width:390px){.fk-log-v76,.fk-coach-sheet,.fk-figure-goal{overflow-wrap:anywhere}}

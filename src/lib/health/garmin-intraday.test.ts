@@ -43,11 +43,11 @@ test('tidy is bounded and ordered', () => {
   const rows = Array.from({ length: 3000 }, (_, i) => [3000 - i, i] as [number, number]); const t = tidy(rows)
   assert.ok(t.length <= 720); assert.ok(t.every((p, i) => !i || p[0] > t[i - 1][0]))
 })
-test('store: per athlete, newest 7 days kept, same day replaced, completeness', () => {
+test('store: per athlete, newest 14 days kept (v89), same day replaced, completeness', () => {
   setStoreBackend(mem()); setEventContext({ athleteId: 'local' })
-  for (let i = 1; i <= 10; i++) { const d = `2026-10-${String(i).padStart(2, '0')}`; saveIntraday([buildIntradayDay({ day: d, now: `2026-10-${String(i + 1).padStart(2, '0')}T20:00:00Z`, hr: ok(fixtureHeartRate(d, 2)), stress: ok(fixtureStress(d, 2)) }).day!]) }
-  const all = loadIntraday(); assert.equal(Object.keys(all).length, KEEP_DAYS); assert.ok(!all['2026-10-03'] && all['2026-10-10'])
-  assert.equal(intradayComplete('2026-10-09'), true)
+  for (let i = 1; i <= 20; i++) { const d = `2026-10-${String(i).padStart(2, '0')}`; saveIntraday([buildIntradayDay({ day: d, now: `2026-10-${String(i + 1).padStart(2, '0')}T20:00:00Z`, hr: ok(fixtureHeartRate(d, 2)), stress: ok(fixtureStress(d, 2)) }).day!]) }
+  const all = loadIntraday(); assert.equal(Object.keys(all).length, KEEP_DAYS); assert.ok(!all['2026-10-06'] && all['2026-10-07'] && all['2026-10-20'])
+  assert.equal(intradayComplete('2026-10-19'), true)
   assert.deepEqual(loadIntraday('other'), {})
 })
 test('sync runner: fetches dailyHeartRate/dailyStress for recent days only, saves after fence, failures non-fatal', async () => {
@@ -84,4 +84,9 @@ test('local coach recovery context reads intraday summary only after it was sync
   assert.equal(before.device, undefined)
   assert.ok(recoveryContextLines(after).some(x => x.includes('身体电量') && x.includes('不是训练许可')))
   assert.equal(after.planWrite, false)
+})
+test('v89 stress: stressValuesArray parsed, negative (no reading) dropped, optional on old days', () => {
+  const r = parseBodyBattery(D, ok({ calendarDate: D, bodyBatteryValuesArray: [[1, 'M', 60, 2]], stressValuesArray: [[1, 25], [2, -1], [3, -2], [4, 80]] }))!
+  assert.deepEqual(r.st, [[1, 25], [4, 80]])
+  assert.equal(summarizeDay({ schemaVersion: 1, day: D, source: 'garmin', fetchedAt: D + 'T12:00:00Z', offsetMin: 480, hr: [], bb: [], restingHr: null, sleep: null, training: [] })!.st, null)
 })

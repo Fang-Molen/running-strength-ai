@@ -1,15 +1,15 @@
-/** v88.3 日内样本本地存储：按运动员 + 日期，最多保留 7 天，单天单系列 ≤720 点。只存设备样本，不进健康单一来源的日指标。 */
+/** v88.3 日内样本本地存储：按运动员 + 日期，最多保留 14 天（v89：个人参考区间需≥7个可比日），单天单系列 ≤720 点。只存设备样本，不进健康单一来源的日指标。 */
 import { currentAthleteId } from '../core/events.ts'
 import { currentStore } from '../core/storage.ts'
 import type { IntradayDay } from './garmin-intraday.ts'
 export const INTRADAY_KEY = 'fk-garmin-intraday-v1'
-export const KEEP_DAYS = 7
+export const KEEP_DAYS = 14
 const key = (athlete: string) => `${INTRADAY_KEY}:${encodeURIComponent(athlete)}`
 const valid = (d: any): d is IntradayDay => d && d.schemaVersion === 1 && /^\d{4}-\d\d-\d\d$/.test(d.day) && Array.isArray(d.hr) && Array.isArray(d.bb)
 export function loadIntraday(athlete = currentAthleteId()): Record<string, IntradayDay> {
   try { const raw = JSON.parse(currentStore()?.getItem(key(athlete)) ?? 'null'); const days = raw?.schemaVersion === 1 && raw.days && typeof raw.days === 'object' ? raw.days : {}; return Object.fromEntries(Object.entries(days).filter(([k, v]) => valid(v) && (v as IntradayDay).day === k)) as Record<string, IntradayDay> } catch { return {} }
 }
-/** 合并写入：新的一天替换同日旧数据（同一来源的新版本），保留最近 7 天。返回写入天数。 */
+/** 合并写入：新的一天替换同日旧数据（同一来源的新版本），保留最近 14 天。返回写入天数。 */
 export function saveIntraday(days: IntradayDay[], athlete = currentAthleteId()): number {
   const s = currentStore(); if (!s) return 0
   const all = { ...loadIntraday(athlete) }

@@ -36,13 +36,15 @@ async function digest(value: unknown): Promise<string> {
   return [...new Uint8Array(bytes)].map(x => x.toString(16).padStart(2, '0')).join('')
 }
 function executionState(entry: ScheduleEntry, component: 'RUNNING' | 'STRENGTH', records: CommittedEventRecord[], asOf: string): PlanTarget['state'] {
-  if (entry.status === 'done' || entry.actual?.executionState === 'COMPLETED') return 'COMPLETED'
-  if (entry.actual) return 'UNKNOWN'
+  // A whole-course marker does not prove that both modalities were completed.
+  const single = entry.runComponents?.length === 1
+  if (single && (entry.status === 'done' || entry.actual?.executionState === 'COMPLETED')) return 'COMPLETED'
   const sessionId = scheduleExecutionId(entry.id, component === 'RUNNING' ? 'run' : 'strength')
   const matching = records.filter(x => x.event.payload?.sessionId === sessionId && ['TRAINING_STARTED', 'TRAINING_COMPLETED', 'TRAINING_INTERRUPTED', 'TRAINING_SET_COMPLETED', 'RUN_COMPLETED', 'RUNNING_CONTINUOUS_COMPLETED', 'RUNNING_REPETITION_COMPLETED'].includes(x.event.event_type))
   if (matching.some(x => !Number.isFinite(Date.parse(x.event.timestamp)) || Date.parse(x.event.timestamp) > Date.parse(asOf) || x.recordedAt !== null && (!Number.isFinite(Date.parse(x.recordedAt)) || Date.parse(x.recordedAt) > Date.parse(asOf)))) return 'UNKNOWN'
   if (matching.some(x => x.event.event_type === 'TRAINING_COMPLETED')) return 'COMPLETED'
   if (matching.length) return 'STARTED'
+  if (entry.actual || entry.status === 'done') return 'UNKNOWN'
   return entry.status === 'planned' && validDay(entry.date) ? 'NOT_STARTED' : 'UNKNOWN'
 }
 

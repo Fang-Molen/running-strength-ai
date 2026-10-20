@@ -200,10 +200,11 @@ export async function createMuscleExplorer(canvas, opt = {}) {
     for (const object of muscles) {
       const meta = object.userData.fk, picked = selectedMesh ? object === selectedMesh : matchesMuscle(meta, selected);
       const role = muscleRole(meta, opt.primary || [], opt.secondary || []);
+      const overlay = (opt.overlays || []).find(item => item.keys.some(key => matchesMuscle(meta, key)));
       object.visible = !meta.hiddenHead && !(deep ? meta.layer === 'superficial muscles' && !picked : meta.layer === 'deep muscles' && !picked);
       if (hide.some(k => matchesMuscle(meta, k))) object.visible = false;
-      object.material.userData.amount.value = picked ? .95 : role === 'main' ? .88 : role === 'aux' ? .65 : 0;
-      object.material.userData.tint.value.set(picked ? selectedTint : role === 'aux' ? auxTint : mainTint);
+      object.material.userData.amount.value = overlay ? (picked ? .95 : .82) : picked ? .95 : role === 'main' ? .88 : role === 'aux' ? .65 : 0;
+      object.material.userData.tint.value.set(overlay ? overlay.color : picked ? selectedTint : role === 'aux' ? auxTint : mainTint);
     }
     invalidate();
   }
@@ -247,6 +248,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   canvas.addEventListener('pointerdown', pointerDown); canvas.addEventListener('pointerup', pointerUp); canvas.addEventListener('pointercancel', pointerCancel);
   const ro = new ResizeObserver(resize); ro.observe(canvas); updateMaterials(); resize();
   return {
+    setOverlays(overlays) { opt.overlays = Array.isArray(overlays) ? overlays : []; updateMaterials(); },
     setView(next) { if (!(next in VIEWS)) return; view = next; place(); },
     setFocus(next) { if (!['body', 'calf', 'foot'].includes(next)) return; focus = next; place(); },
     setDeep(value) { deep = !!value; updateMaterials(); },

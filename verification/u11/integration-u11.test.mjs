@@ -1,0 +1,12 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {buildIntradayRecovery,recoveryCoachFacts} from '../../src/lib/health/intraday-recovery-u10.ts';
+import {normalizeVerifiedGarminIntraday,reviewGarminCoverage} from '../../src/lib/health/garmin-coverage-u11.ts';
+import {buildMuscleReview} from '../../src/lib/health/muscle-recovery-u11.ts';
+const now='2026-10-20T20:00:00Z';
+const payload={athleteId:'a',accountScope:'scope',providerVerified:true,authorized:true,sourceId:'garmin:scope',protocol:'verified',samples:[{metric:'HEART_RATE',at:'2026-10-20T08:00:00Z',value:60},{metric:'HEART_RATE',at:'2026-10-20T09:00:00Z',value:62},{metric:'BODY_BATTERY',at:'2026-10-20T08:00:00Z',value:50},{metric:'BODY_BATTERY',at:'2026-10-20T09:00:00Z',value:56}],sleepEvents:[{id:'nap',kind:'NAP',startAt:'2026-10-20T08:00:00Z',endAt:'2026-10-20T08:30:00Z',providerConfirmed:true}]};
+const normalized=normalizeVerifiedGarminIntraday(payload,'a','scope',now);
+const intraday=buildIntradayRecovery({athleteId:'a',day:'2026-10-20',utcOffsetMinutes:480,now,samples:normalized.samples,sleepEvents:normalized.sleepEvents,trainingEvents:[]});
+test('verified Garmin points reach U10 real curve',()=>{assert.equal(intraday.metrics.HEART_RATE.status,'AVAILABLE');assert.equal(intraday.metrics.BODY_BATTERY.status,'AVAILABLE')});
+test('verified nap reaches U10 time axis without manual entry',()=>assert.ok(intraday.events.some(e=>e.kind==='NAP'&&e.status==='CONFIRMED')));
+test('muscle exposure remains separate from device body battery',()=>{const v=buildMuscleReview({athleteId:'a',asOf:now,parts:[],symptoms:[]});assert.equal(v.regions.every(r=>r.state==='UNKNOWN'),true);assert.equal(v.isMeasuredMuscleFatigue,false)});
+test('Garmin unknown intraday never uses daily max as current curve',()=>{const v=reviewGarminCoverage({accountLinked:true,lastAttemptAt:now,lastUsefulAt:now,healthDays:14,activityRows:3,status:'OK',intraday:'UNVERIFIED',napEvents:'UNVERIFIED',strengthSets:'UNVERIFIED',now});assert.equal(v.intradayVisible,false)});

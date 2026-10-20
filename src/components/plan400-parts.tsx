@@ -1,13 +1,15 @@
 import { stampCN, activityLocalDay } from "@/lib/ui/activity-format";
 /* v79：V4 组合课分项反馈（fk-plan400-v4-components-v1）+ 跑步分项 ↔ 手表跑步关联 + 导入后弹窗。 */
 import { useEffect, useState } from "react"
-import { loadComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, COMPONENTS_EVT, type CompStatus, type PartFeedback, type DayComponents } from "@/lib/ui/plan400-components-store"
+import { loadComponents, loadOwnedComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, COMPONENTS_EVT, type CompStatus, type PartFeedback, type DayComponents } from "@/lib/ui/plan400-components-store"
 import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } from "@/lib/ui/run-link"
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
 import type { DayParts, V4Day, V4Log } from "@/lib/ui/plan400-view"
-import { pendingFeedback, partRated, pendingLabel, type PendingItem } from "@/lib/ui/pending-feedback"
+import { partRated, pendingLabel, pendingTaskId, type PendingItem } from "@/lib/ui/pending-feedback"
 import { loadSchedule } from "@/lib/ui/day-schedule"
-import { v4MovedOut } from "@/lib/ui/v4-effective-move"
+import { currentAthleteId } from "@/lib/core/events"
+import { readPendingFeedback } from "@/lib/ui/pending-feedback-host"
+import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
 import V4Json from "../lib/plan400-v4.json" with { type: "json" }
 const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
@@ -23,8 +25,8 @@ export function useRunMatch(): ReturnType<typeof lastRunMatch> {
 }
 /** 整个周期的分项输入（分项反馈 + 已确认关联 + 同日候选 + 逐组/逐段执行），来自读模型同一次计算：计划列表 / 首页主卡 / 进度计数 / 日志共用。 */
 export function usePartsAll(): Record<string, DayParts> {
-  const m = useRunMatch(), [doc, setDoc] = useState(() => loadComponents())
-  useEffect(() => { const f = () => setDoc(loadComponents()); window.addEventListener(COMPONENTS_EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(COMPONENTS_EVT, f); window.removeEventListener("storage", f) } }, [])
+  const m = useRunMatch(), [doc, setDoc] = useState(() => loadOwnedComponents())
+  useEffect(() => { const f = () => setDoc(loadOwnedComponents()); window.addEventListener(COMPONENTS_EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(COMPONENTS_EVT, f); window.removeEventListener("storage", f) } }, [])
   const out: Record<string, DayParts> = { ...(m.v4Parts ?? {}) }
   // 分项反馈刚保存、读模型还没刷新时，以最新分项为准（其余输入沿用）
   for (const [d, c] of Object.entries(doc.days)) out[d] = { ...(out[d] ?? {}), parts: c }
@@ -162,19 +164,19 @@ export function RunImportPrompt({ today }: { today: string }) {
 }
 /** v83（P1-07 / P1-04）：待补反馈（由事实推出；稍后过的也在这里）。点一项打开当天对应页。 */
 export function PendingFeedbackList({ today, compact = false }: { today: string; compact?: boolean }) {
-  const parts = usePartsAll(), [logs, setLogs] = useState<Record<string, V4Log>>({}), [prompted, setPrompted] = useState<string[]>([])
-  const [movedDates, setMovedDates] = useState<Set<string>>(new Set())
-  useEffect(() => { const f = () => { try { setLogs(JSON.parse(localStorage.getItem("fk-plan400-v4-log") || "{}") ?? {}) } catch { setLogs({}) } setPrompted(loadComponents().prompted ?? [])
-      // v88（R1 改期）：原日期已改期 → 不在原日期催评分（有真实训练除外）
-      try { const sch = loadSchedule().entries; setMovedDates(new Set((V4Json as { days: V4Day[] }).days.filter(d => !!v4MovedOut(d.date, sch)).map(d => d.date))) } catch { setMovedDates(new Set()) } }; f()
-    const ns = ["fk-plan400-changed", COMPONENTS_EVT, "fk-schedule-changed", "storage"]; ns.forEach(n => window.addEventListener(n, f)); return () => ns.forEach(n => window.removeEventListener(n, f)) }, [])
-  const items = today ? pendingFeedback((V4Json as { days: V4Day[] }).days, parts, logs, today, prompted, 14, movedDates) : []
+  const [items, setItems] = useState<PendingItem[]>([])
+  const [unavailable, setUnavailable] = useState(false)
+  useEffect(() => {
+    const refresh = () => { try { setItems(today ? readPendingFeedback(today) : []); setUnavailable(false) } catch { setItems([]); setUnavailable(true) } }
+    refresh(); return subscribeGlobalCoach(refresh)
+  }, [today])
+  if (unavailable) return <p className="keep text-sm text-muted">待补反馈暂不可读取，未当作全部完成。</p>
   if (!items.length) return null
   const open = (it: PendingItem) => window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: it.date, tab: it.kind === "confirm_run" ? "during" : "after" } }))
   const titleOf = (d: string) => (V4Json as { days: V4Day[] }).days.find(x => x.date === d)?.title
-  if (compact) return <button type="button" className="mt-1 min-h-11 text-left text-sm text-warn" data-testid="pending-feedback-compact" onClick={() => open(items[0])}>待补反馈：{pendingLabel(items[0], titleOf(items[0].date))}{items.length > 1 ? ` 等 ${items.length} 项` : ""} · 去评价 ›</button>
+  if (compact) return <button type="button" className="mt-1 min-h-11 text-left text-sm text-warn" data-testid="pending-feedback-compact" data-task-id={pendingTaskId(items[0],currentAthleteId())} onClick={() => open(items[0])}>待补反馈：{pendingLabel(items[0], titleOf(items[0].date))}{items.length > 1 ? ` 等 ${items.length} 项` : ""} · 去评价 ›</button>
   return <section className="home-card mb-3 p-3" aria-label="待补反馈" data-testid="pending-feedback">
     <p className="text-sm font-bold">待补反馈 · {items.length} 项</p>
-    <ul className="mt-1 divide-y divide-line">{items.map(it => <li key={`${it.date}|${it.kind}`}><button type="button" className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm" onClick={() => open(it)}><span className="min-w-0"><b>{Number(it.date.slice(5, 7))}月{Number(it.date.slice(8, 10))}日</b> {it.text}{it.deferred ? <span className="text-xs text-muted">（你点过稍后）</span> : null}</span><span className="shrink-0 text-accent">去补 ›</span></button></li>)}</ul>
+    <ul className="mt-1 divide-y divide-line">{items.map(it => <li key={pendingTaskId(it,currentAthleteId())} data-task-id={pendingTaskId(it,currentAthleteId())}><button type="button" className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm" onClick={() => open(it)}><span className="min-w-0"><b>{Number(it.date.slice(5, 7))}月{Number(it.date.slice(8, 10))}日</b> {it.text}{it.deferred ? <span className="text-xs text-muted">（你点过稍后）</span> : null}</span><span className="shrink-0 text-accent">去补 ›</span></button></li>)}</ul>
   </section>
 }

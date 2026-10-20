@@ -1,0 +1,12 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {planGarminDailySync} from '../../src/lib/health/garmin-sync-plan-u11.ts';
+const b=(p={})=>({today:'2026-10-20',now:'2026-10-20T20:00:00Z',reason:'FOREGROUND',lastAttemptAt:null,lastFullSuccessAt:null,lastFailureAt:null,backfillThrough:14,...p});
+test('first sync full 14 plus backfill',()=>{const p=planGarminDailySync(b());assert.equal(p.mode,'FULL');assert.equal(p.offsets.length,28);assert.equal(p.backfillThrough,28)});
+test('recent auto sync three days after full',()=>{const p=planGarminDailySync(b({lastFullSuccessAt:'2026-10-20T18:00:00Z'}));assert.deepEqual(p.offsets,[0,1,2])});
+test('24h full review prevents losing late corrections',()=>{const p=planGarminDailySync(b({lastFullSuccessAt:'2026-10-19T19:00:00Z'}));assert.equal(p.mode,'FULL')});
+test('manual sync full',()=>assert.equal(planGarminDailySync(b({reason:'MANUAL',lastFullSuccessAt:'2026-10-20T19:00:00Z'})).mode,'FULL'));
+test('recent duplicate attempt defers',()=>assert.equal(planGarminDailySync(b({lastAttemptAt:'2026-10-20T19:59:00Z'})).mode,'DEFER'));
+test('failure backoff defers auto',()=>assert.equal(planGarminDailySync(b({lastFailureAt:'2026-10-20T19:45:00Z'})).mode,'DEFER'));
+test('manual can retry despite backoff',()=>assert.equal(planGarminDailySync(b({reason:'MANUAL',lastFailureAt:'2026-10-20T19:45:00Z'})).mode,'FULL'));
+test('backfill capped 90 days',()=>{const p=planGarminDailySync(b({backfillThrough:85}));assert.equal(p.backfillThrough,90);assert.equal(p.offsets.length,19)});
+test('invalid date rejected',()=>assert.throws(()=>planGarminDailySync(b({today:'2026-02-30'})),/INVALID_TIME/));
+test('does not claim complete history',()=>assert.equal(planGarminDailySync(b()).completeHistory,false));

@@ -80,7 +80,7 @@ export function AbilityRadarCard({ asOf, mode = 'full' }: { asOf: string; mode?:
       </div> : null}
     </div> : null}
     {mode === 'chart' ? null : <>{pending.length ? <details className="mt-2"><summary className="min-h-10 cursor-pointer content-center text-xs font-bold">待评估 {pending.length} 项（{pending.map(p => p.label).join('、')}）</summary><ul className="keep space-y-1 text-xs">{pending.map(p => <li key={p.key}><b>{p.label}</b> · {p.reason}：{p.reasonText}</li>)}</ul></details> : null}
-    <p className="keep mt-2 text-[11px] text-muted">分数只用你自己的成绩和训练数据算出，点每一维能看到输入和算法；没数据的维度不打分。</p>
+    <p className="keep mt-2 text-[11px] text-muted">这里是按现有个人成绩与目标换算的参考指标，不是经过校准的专项能力百分位或训练许可；缺数据不打分。点每维查看输入与算法。</p>
     <div className="mt-3 grid gap-2 sm:grid-cols-2" aria-label="其他指标（不计入五维）">{others.map(o => <div key={o.group} className="rounded-card bg-surface-2 p-2 text-xs"><b className="block">{o.group}</b>{o.lines.map(l => <span key={l} className="keep block text-muted">{l}</span>)}</div>)}</div>
     {development ? <details className="mt-2"><summary className="min-h-10 cursor-pointer content-center text-xs font-bold">方坤能力原始指标</summary><CoachAbilityPanel development={development} /></details> : null}</>}
   </section>

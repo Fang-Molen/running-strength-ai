@@ -114,6 +114,11 @@ export function CoachSheet({
   onQuestionDraftConsumed?: () => void;
 }) {
   const [section, setSection] = useState<"chat" | "learn" | "review">("chat");
+  useEffect(() => {
+    const openReview = () => setSection('review');
+    window.addEventListener('fk-coach-review-open', openReview);
+    return () => window.removeEventListener('fk-coach-review-open', openReview);
+  }, []);
   const [cognitionTurn, setCognitionTurn] = useState<{cognition: CoachCognition; brief: CoachBrief} | null>(null);
   const [firstWeekGoalState,setFirstWeekGoalState]=useState<{ athleteId: string; value: ReturnType<typeof firstWeekGoalFromText> } | null>(null);
   const athleteScope = currentAthleteId();

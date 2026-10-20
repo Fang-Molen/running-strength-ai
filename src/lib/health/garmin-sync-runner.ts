@@ -74,7 +74,7 @@ export async function runGarminSyncJob(host: {
       if (!unchanged()) { result.status = 'stale'; return result }
       const d = shiftDay(host.day, -i)
       host.progress(`已取得 ${acts.length} 条活动记录 · 健康 ${n + 1}/${offsets.length} 天${i >= 14 ? '（补更早历史）' : ''}`)
-      const wantIntraday = !!host.intraday && i < 7 && (i < 2 || !host.intraday.complete(d))
+      const wantIntraday = !!host.intraday && i < 14 && (i < 2 || !host.intraday.complete(d))
       const none = Promise.resolve(undefined)
       const [s, h, sl, ihr, ist] = await Promise.all([
         host.api(`g/usersummary-service/usersummary/daily/${encodeURIComponent(account.name)}?calendarDate=${d}`),
