@@ -38,7 +38,7 @@ export function discardGuided(sessionId: string): boolean {
     const { actual: _drop, ...rest } = e; void _drop
     return { ...rest, status: 'planned' as const }
   })
-  if (changed && !saveSchedule({ ...store, entries })) return false
+  if (changed && !saveSchedule({ ...store, entries }, 'guided-discard')) return false
   // 本机的休息计时 / 逐组位置 / 输入草稿也清掉，下次从头开始
   try { const enc = encodeURIComponent(sessionId); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i) ?? ''; if ((k.startsWith('rs-rest-v1:') && k.includes(':' + enc)) || ((k.startsWith('fk-runner-draft-v71:') || k.startsWith('fr255-runner-draft-v1:')) && k.includes(':' + sessionId + ':'))) localStorage.removeItem(k) } } catch { /* node / storage unavailable */ }
   try { for (const n of ['fk-schedule-changed', 'fk-training-activities-changed', 'fk-plan400-components']) window.dispatchEvent(new Event(n)) } catch { /* node */ }

@@ -11,7 +11,7 @@ export function UnmarkedPlans({ items, plan, onChanged, suggestions = [] }: { it
   if (!items.length) return null
   const mark = (e: ScheduleEntry, outcome: "as_planned" | "missed") => {
     const store = loadSchedule(), next = logActual(store.entries, e.id, { outcome, minutes: null, intensity: null, note: "", reasons: [] })
-    if (!saveSchedule({ ...store, entries: next })) return
+    if (!saveSchedule({ ...store, entries: next }, 'unmarked-plans')) return
     const saved = next.find(x => x.id === e.id); if (saved) syncActualToLog(saved, e.modality === "strength" ? plan.sessions.find(s => s.id === e.refId) : undefined)
     onChanged()
   }

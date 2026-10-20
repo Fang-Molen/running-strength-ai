@@ -1,0 +1,178 @@
+[
+  {
+    "id": "S01",
+    "title": "ACSM: Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults",
+    "year": 2026,
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41843416/",
+    "type": "立场声明／综述之综述",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "健康成年人抗阻训练研究区分力量、肌肥大、功率和身体功能等结果，训练变量的影响需要对应具体目标。",
+    "limits": "研究纳入健康成年人；不能直接为儿童、伤病康复或精英专项处方背书。定量剂量未移植。"
+  },
+  {
+    "id": "S02",
+    "title": "The Training and Development of Elite Sprint Performance",
+    "year": 2019,
+    "url": "https://link.springer.com/article/10.1186/s40798-019-0221-0",
+    "type": "研究与最佳实践整合综述",
+    "accessed_on": "2026-10-20",
+    "read_level": "RELEVANT_FULLTEXT_SECTIONS_READ",
+    "verified_summary": "短跑训练需联系目的、强度、恢复和运动员条件；测量方式、环境及自然波动影响表现解释。",
+    "limits": "精英短跑实践存在证据空白；不复制其训练剂量到普通用户。"
+  },
+  {
+    "id": "S03",
+    "title": "Crossing the Golden Training Divide: World-Class 800- and 1500-m Runners",
+    "year": 2021,
+    "url": "https://link.springer.com/article/10.1007/s40279-021-01481-2",
+    "type": "研究与最佳实践整合综述",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_AND_KEY_POINTS_READ",
+    "verified_summary": "800米和1500米运动员的能力特点与训练安排存在显著差异；中跑运动员也有不同类型。",
+    "limits": "材料偏男性及精英实践；类别用于组织观察，不从一次训练给个人定型。"
+  },
+  {
+    "id": "S04",
+    "title": "Monitoring the athlete training response: subjective self-reported measures",
+    "year": 2016,
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26423706/",
+    "type": "系统综述",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "主观状态记录对监测训练反应有价值，可与客观观察共同使用。",
+    "limits": "不支持把任意自制问卷分数直接转成诊断或通用训练阈值。"
+  },
+  {
+    "id": "S05",
+    "title": "Monitoring Athletic Training Status Through Autonomic Heart Rate Regulation",
+    "year": 2016,
+    "url": "https://link.springer.com/article/10.1007/s40279-016-0484-2",
+    "type": "系统综述与荟萃分析",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "部分心率调节指标在不同适应状态下均可能改变，需要其他训练耐受信息辅助解释。",
+    "limits": "耐力研究及特定测量方法；不能把单个HRV数值转换成个人恢复百分比。"
+  },
+  {
+    "id": "S06",
+    "title": "Sleep and the athlete: narrative review and 2021 expert consensus recommendations",
+    "year": 2021,
+    "url": "https://bjsm.bmj.com/content/55/7/356",
+    "type": "专家共识／叙述综述",
+    "accessed_on": "2026-10-20",
+    "read_level": "PUBLISHER_INDEXED_EXCERPTS_READ",
+    "verified_summary": "睡眠建议需要考虑运动员个体；统一时长建议不能覆盖所有情境。",
+    "limits": "全文抓取受限；本包仅采用公开检索可核对的定性结论，不导入具体干预剂量。"
+  },
+  {
+    "id": "S07",
+    "title": "Nutrition and Athletic Performance",
+    "year": 2016,
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26891166/",
+    "type": "联合立场声明",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "营养策略需结合训练和比赛场景，考虑食物、液体的类型、量及时间。",
+    "limits": "已见2017勘误入口；本包不抽取剂量表。个体精确营养方案需合适的专业支持。"
+  },
+  {
+    "id": "S08",
+    "title": "2023 IOC consensus statement on Relative Energy Deficiency in Sport",
+    "year": 2023,
+    "url": "https://bjsm.bmj.com/content/57/17/1073",
+    "type": "共识声明",
+    "accessed_on": "2026-10-20",
+    "read_level": "PUBLISHER_INDEXED_EXCERPTS_READ",
+    "verified_summary": "REDs的临床判断需要综合评估和专业人员参与，风险指标本身不能替代诊断。",
+    "limits": "2024有更正；全文抓取受限。本包不实现CAT2分级或临床阈值。"
+  },
+  {
+    "id": "S09",
+    "title": "Acute:Chronic Workload Ratio: Conceptual Issues and Fundamental Pitfalls",
+    "year": 2020,
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32502973/",
+    "type": "方法学论证",
+    "accessed_on": "2026-10-20",
+    "read_level": "AUTHOR_ABSTRACT_INDEXED_EXCERPTS_READ",
+    "verified_summary": "ACWR作为因果预后指标存在比值和假设方面的问题。",
+    "limits": "本包只据此限制因果／伤病预测外推，不宣称所有负荷描述无用。"
+  },
+  {
+    "id": "S10",
+    "title": "Statistical methods for assessing agreement between two methods of clinical measurement",
+    "year": 1986,
+    "url": "https://pubmed.ncbi.nlm.nih.gov/2868172/",
+    "type": "测量方法研究",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "相关系数不能充分证明两种测量方法可互换，需要检查一致性与重复性。",
+    "limits": "本包不为任意两品牌设备建立未经验证的换算式。"
+  },
+  {
+    "id": "S11",
+    "title": "OpenStax Anatomy and Physiology 2e, 11.1: Interactions of Skeletal Muscles",
+    "year": 2022,
+    "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/11-1-interactions-of-skeletal-muscles-their-fascicle-arrangement-and-their-lever-systems",
+    "type": "教材",
+    "accessed_on": "2026-10-20",
+    "read_level": "SECTION_READ",
+    "verified_summary": "骨骼动作涉及主要作用肌、协同肌及稳定作用。",
+    "limits": "通用解剖知识不提供特定动作激活百分比，也不证明3D高亮是实测。"
+  },
+  {
+    "id": "S12",
+    "title": "A new approach to monitoring exercise training",
+    "year": 2001,
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11708692/",
+    "type": "原始训练监测研究",
+    "accessed_on": "2026-10-20",
+    "read_level": "AUTHOR_ABSTRACT_INDEXED_EXCERPTS_READ",
+    "verified_summary": "研究评估了整堂课主观用力监测方法。",
+    "limits": "本包的乘法示例使用显式给定口径；不将其作为肌肉损伤、恢复或跨模型统一分数。"
+  },
+  {
+    "id": "S13",
+    "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+    "year": 2020,
+    "url": "https://arxiv.org/abs/2005.11401",
+    "type": "原始AI研究",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "生成可结合外部检索内容，支持知识访问及来源追踪。",
+    "limits": "通用问答研究不证明运动教练专业效果；检索命中不代表适用。"
+  },
+  {
+    "id": "S14",
+    "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+    "year": 2023,
+    "url": "https://arxiv.org/abs/2210.03629",
+    "type": "原始AI研究",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "工具取证与任务处理交替进行，可让后续步骤利用外部反馈。",
+    "limits": "借鉴方法，不外推其基准提升百分比；不要求输出隐藏思维链。"
+  },
+  {
+    "id": "S15",
+    "title": "LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory",
+    "year": 2025,
+    "url": "https://arxiv.org/abs/2410.10813",
+    "type": "原始AI研究",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ",
+    "verified_summary": "长期记忆需要处理提取、跨会话、时间、更新与不知道的情况。",
+    "limits": "记忆检索正确不等于训练建议有效。"
+  },
+  {
+    "id": "S16",
+    "title": "Self-Refine: Iterative Refinement with Self-Feedback",
+    "year": 2023,
+    "url": "https://arxiv.org/abs/2303.17651",
+    "type": "原始AI研究",
+    "accessed_on": "2026-10-20",
+    "read_level": "ABSTRACT_READ_PRIOR_TURN",
+    "verified_summary": "初稿可经具体反馈再作定向修订。",
+    "limits": "本包要求外部事实校验；模型自评不作为专家审核。"
+  }
+]

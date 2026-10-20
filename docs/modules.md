@@ -22,8 +22,10 @@ npm run check:blocks              # 只查所有区块的 import 边界
 | garmin-link | `src/lib/ui/run-link.ts`、`lap-structure.ts`、`src/lib/health/garmin-*` | run-link.ts | lib/coach（类型除外）、components |
 | training-import | `src/lib/core/import-retention.ts`、`training-import.ts` | import-retention.ts | lib/coach、components、read-model |
 | schedule | `src/lib/ui/day-schedule*.ts`、`guided-discard.ts`、`scheduled-execution.ts` | day-schedule.ts | lib/coach、components |
+| schedule-writer | `src/lib/ui/schedule-writer.ts`（所有 fk-schedule-v1 写入经 `saveSchedule(…, writer)`） | schedule-writer.ts | lib/coach、components、day-schedule |
 | coach-local | `src/lib/coach/plain-coach.ts`、`src/lib/core/coach-local-first.ts`、`coach-first-week.ts`、`coach-plan.ts` | coach-local-first.ts | online-coach、deepseek、plan-execution |
 | coach-stated | `src/lib/coach/stated/parse.ts`、`compute.ts`、`compose.ts` | compose.ts | online-coach、deepseek、plan-execution、components、storage（只读、不保存） |
+| coach-knowledge | `src/lib/coach/knowledge/{complete,approval,approval-store,history}.ts`；数据 `knowledge/coach-complete-20261020/*.json`；开发例 `evaluation/coach-knowledge-complete/`（不进提示词、不当隐藏集） | complete.ts | online-coach、deepseek、plan-execution、components、stated、day-schedule（48 卡全部 PENDING；只有受信审核人 Ed25519 签名回执能批准，产品受信名单为空 = 0 批准） |
 | coach-online | `src/lib/coach/online-coach.ts`、`functions/api/coach-chat.js` | online-coach.ts | c03、plan-execution、server/coach-deepseek |
 | c03 | `src/lib/coach/c03/{argument,evidence,followup,runtime}.ts` | runtime.ts | components、online-coach、deepseek、plan-execution、day-schedule |
 | review-view | `src/lib/coach/review-view/{session-option,plain-review,host}.ts`、`components/coach-review-plain.tsx`（复盘页 `coach-offline-loop-panel.tsx` 只调用它） | plain-review.ts | online-coach、deepseek、plan-execution、c03、day-schedule、storage-journal（只读、不保存） |
@@ -37,9 +39,21 @@ npm run check:blocks              # 只查所有区块的 import 边界
 ## 固定规则（跨区块）
 
 - 归属：唯一出处 `src/lib/core/ownership.ts`。新记录显式写 `athleteId`；旧无归属记录属于本机 `local`，`local` 可读、可原地改，但不补写归属（不迁移）；其他运动员看不到、也改不了。首周计划生成/采纳、候选课表采纳和偏好来源仍只认显式归属。
+- 知识完整包（v87）：只有用户明确说“预览知识卡R03 / 查看HRV研究资料”才展示待审资料，且只在本地展示、不联网；急症/疼痛/医疗限制优先；普通分析不使用待审卡。单纯换算（如 1536秒）和“只剩N分钟怎么安排”（无经批准候选，不出剂量）也只在本地回答。
 - 联网方坤默认开启（用户 t460），客户端问题上限 = 线上服务端截断长度（1000），超限不发请求。
 - 改课：`plan-execution` 宿主固定 `UNCOORDINATED` / 日历 `UNKNOWN` / 安全 `UNKNOWN`，确认和撤销必然阻断；页面上的日期差异不是已保存的可执行提案。`scripts/check-blocks.test.mjs` 会在有人把它改成放行时报错。
 - 手表跑步关联必须用户确认；不补造时长；旧整课只读、RPE 不拆；同一训练只算一次。
+
+## v87 改课闭环：已实现、仍阻断
+
+- 已实现（plan-execution + schedule-writer）：预览 → 明确确认（CONFIRM_THIS_CHANGE + 差异哈希）→ CAS（上下文签名含日程内容哈希、日/分项版本）→ 幂等（同一提案只出一张回执）→ 撤销（另出一张回执，原回执保留）；移动记在执行修订层，不复制日程行。所有 fk-schedule-v1 写入方经 `saveSchedule` 记修订号和写入方；异步写入（saveScheduledEntry）与执行器共用锁 `fangkun-plan-execution-v1`。测试 `loop-v87.test.ts`（宿主条件只在测试里放开）。
+- 产品宿主仍固定 `UNCOORDINATED`（BLOCKED_UNCOORDINATED），未改 READY。放行前还缺：
+  1. 5 个同步写入方（首页日程 today-board ×2、引导问卷 r8、未标记课 unmarked-plans、进度同步 schedule-progress、放弃本次 guided-discard）仍是同步写，跨页面拿不到 Web Lock；需改成异步加锁写并逐页回归；
+  2. 页面（首页、计划页、日志、读模型）还不读执行修订层，确认后的新日期不会显示；
+  3. 完整执行日历未合并核定（V4、自建、导入、已确认修订），calendarCoverage 仍 UNKNOWN；
+  4. 改期的安全限制未受信复核（safety UNKNOWN）；
+  5. V4 力量分项没有稳定组成 ID；ensurePlan400Entry 会重建被移走的分项；
+  6. 备份恢复等整库写入不经过闸口（不记修订号）。
 
 ## 后续拆分（未在本轮做）
 

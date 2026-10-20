@@ -17,6 +17,7 @@ import { loadSettings } from "@/lib/ui/app-settings"
 import { acceptedAdaptation } from "@/lib/ui/review"
 import { loadFeedback } from "@/lib/ui/assessment-store"
 import { adaptProposal, adaptation, addDays, weekOf, type Recovery, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
+import { commitScheduleRaw, withScheduleLock, type ScheduleWriter } from "@/lib/ui/schedule-writer"
 
 export const SCHEDULE_KEY = "fk-schedule-v1"
 export type ScheduleStore = { entries: ScheduleEntry[]; acks: string[] }
@@ -39,7 +40,8 @@ export function loadSchedule(): ScheduleStore {
   const v = result.value
   return { entries: v.entries.filter(e => ownsEntry(e, athlete)), acks: v.acksByAthlete?.[athlete] ?? (athlete === 'local' ? v.acks : []) }
 }
-export function saveSchedule(s: ScheduleStore): boolean {
+/** v87：所有写入方都走这里 → schedule-writer 闸口（修订号 + 写入方标记）。 */
+export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown'): boolean {
   try {
     const box = currentStore(), read = readScheduleDocument(), athlete = currentAthleteId()
     if (!box || !read.ok || !Array.isArray(s.entries) || !Array.isArray(s.acks) || new Set(s.entries.map(e=>e.id)).size!==s.entries.length) return false
@@ -57,7 +59,7 @@ export function saveSchedule(s: ScheduleStore): boolean {
       next.push(old && old.athleteId == null && entry.athleteId == null ? entry : { ...entry, athleteId: athlete })
     }
     const raw = JSON.stringify({ ...original, entries: [...protectedRows, ...next], acksByAthlete: { ...original.acksByAthlete, [athlete]: s.acks.slice(-200) } })
-    if (box.getItem(SCHEDULE_KEY) !== raw) { box.setItem(SCHEDULE_KEY, raw); if (box.getItem(SCHEDULE_KEY) !== raw) return false; if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed')); }
+    if (box.getItem(SCHEDULE_KEY) !== raw) { if (!commitScheduleRaw(box, raw, writer).ok) return false; if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed')); }
     return true;
   } catch { return false }
 }
@@ -71,9 +73,10 @@ export async function saveScheduledEntry(entry: ScheduleEntry, previous?: Schedu
     if (old && !previous) return JSON.stringify(own(old)) === JSON.stringify(own(entry)) ? { ok: true } : { ok: false, reason: '同一节训练已保存，未重复添加。请关闭后核对。' };
     if (previous && (!old || JSON.stringify(own(old)) !== JSON.stringify(own(previous)))) return { ok: false, reason: '这节训练刚刚发生变化，请重新打开后修改；草稿保留。' };
     const next = { ...current, entries: old ? current.entries.map(e => e.id === entry.id ? entry : e) : [...current.entries, entry] };
-    return saveSchedule(next) ? { ok: true } : { ok: false, reason: '本机保存失败，草稿保留。' };
+    return saveSchedule(next, 'scheduled-entry') ? { ok: true } : { ok: false, reason: '本机保存失败，草稿保留。' };
   };
-  const result = typeof navigator !== 'undefined' && navigator.locks?.request ? await navigator.locks.request(SCHEDULE_KEY, work) : work();
+  // v87：与改课执行器共用同一把锁（原来用的是 fk-schedule-v1 自己的锁名，两边互不排斥）。
+  const result = (await withScheduleLock(work)).value;
   return currentAthleteId() === ownerAtRequest ? result : { ok: false, reason: '当前运动员已切换，请返回原档案核对保存结果；不要重复提交。' }
 }
 

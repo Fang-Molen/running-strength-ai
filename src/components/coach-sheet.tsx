@@ -51,7 +51,9 @@ import { currentAthleteId } from "@/lib/core/events";
 import { readFormalEvidenceRows } from "@/lib/core/coach-v4-formal-rows-store";
 import { buildCoachModelRequest, normalizeAskCoachInput, normalizeV4 } from '@/lib/strength/coach-pipeline';
 import { latestReasoningBasis, reasoningReadFailure } from '@/lib/core/coach-reasoning';
-import { answerLocally } from "@/lib/core/coach-local-first";
+import { answerLocally, answerStaysLocal } from "@/lib/core/coach-local-first";
+import { loadInstalledKnowledgeLedger } from "@/lib/coach/knowledge/approval-store";
+import { reviewKnowledgeJudgments } from "@/lib/coach/knowledge/history";
 import { isNativeRecordInspection } from '@/lib/core/dialogue-e1';
 import { offlineCapability, localModelFallback, type CoachFailure } from "@/lib/core/coach-offline";
 import { saveOfflineReview } from "@/lib/core/coach-offline-loop";
@@ -127,6 +129,9 @@ export function CoachSheet({
   const [notice, setNotice] = useState("");
   const [draft, setDraft] = useState("");
   useEffect(()=>{if(questionDraft){setSection('chat');setDraft(questionDraft);onQuestionDraftConsumed?.()}},[questionDraft]);
+  // v87：载入本机受信知识回执并重新验证（生产没有受信审核人 → 0 批准）。
+  const [knowledgeLedgerAt, setKnowledgeLedgerAt] = useState(0);
+  useEffect(()=>{void loadInstalledKnowledgeLedger().then(()=>setKnowledgeLedgerAt(Date.now())).catch(()=>{})},[]);
   const [sending, setSending] = useState(false);
   const [onlineRequest, setOnlineRequest] = useState<string | null>(null);
   const [activityNotices, setActivityNotices] = useState<CoachActivityNotice[]>([]);
@@ -237,6 +242,8 @@ export function CoachSheet({
     setFuelPreview(selectedOccurrenceId ? assembleCoachBrief(plan, "查看当天热量", selectedOccurrenceId).fuel ?? null : null);
   }, [plan, selectedOccurrenceId, recordRevision]);
 
+  // v87：引用过知识卡的旧回答，卡/来源哈希、版本或批准变化后标“需复核”（复用 C03 依赖比较器）。
+  const knowledgeReview = useMemo(() => { const m = new Map<string, boolean>(); if (!memory) return m; try { for (const r of reviewKnowledgeJudgments(memory.messages, { athleteId: athleteScope, asOf: Date.now() })) if (r.state === 'NEEDS_REVIEW') m.set(r.messageId, true) } catch { /* 复核失败不隐藏原回答 */ } return m }, [memory, athleteScope, knowledgeLedgerAt]);
   const screen = useMemo(() => {
     if (!athlete) return null;
     const session = plan.sessions.find((item) => item.id === activeId) ?? plan.sessions[0] ?? null;
@@ -328,11 +335,13 @@ export function CoachSheet({
       const contextual = detectRedFlags(value).level!=='NONE'||local.offlineRuleIds?.length||local.reasoning?.scopeOccurrenceIds.length?null:contextualFollowup(value, conversation);
       // 安全门：急症/疼痛/必须保留的安全约束 → 只用本地安全回答，不联网、不替换。
       const redFlag = detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
-      let shown = local.dialogue ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
-      if (!redFlag && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today);
-      else if (!redFlag) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
+      // v87：待审知识预览、单纯换算、无候选的剩余任务只在本地展示，不联网、不被跑步复盘替换。
+      const keepLocal = answerStaysLocal(local);
+      let shown = local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
+      if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today);
+      else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
       let label = "本地分析";
-      if (!redFlag && onlineSetting().on && navigator.onLine !== false) {
+      if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
         const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, { goalTarget: memory.dialogue?.goalTarget ?? null }), local: shown, history: memory.messages.slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
         if ("text" in r) { shown = r.text; label = "联网分析"; } else { label = `本地分析 · 联网失败（${r.error}）`; }
@@ -341,7 +350,7 @@ export function CoachSheet({
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
       const messageId = `${Date.now()}-local`;
       if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
-      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
+      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
       setOnlineRequest(null);
       setTurnId(null);
       setFace(brief.pain ? "guard" : "focus");
@@ -636,6 +645,7 @@ export function CoachSheet({
               {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
               {message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
               {message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
+              {knowledgeReview.get(message.id)?<p data-testid="coach-knowledge-review" role="status" className="keep mt-1 text-xs text-amber-400">这条回答引用的知识卡已变化或批准已失效，结论需要复核（原回答保留）。</p>:null}
               {message.factDetails?<details data-testid="coach-fact-details" className="mt-2 text-xs"><summary className="min-h-8 cursor-pointer">查看分段核算详情</summary><p className="whitespace-pre-wrap break-words">{message.factDetails}</p></details>:null}
               {message.role==='coach'?<CoachAnswerFeedbackForm messageId={message.id} answer={message.text}/>:null}
             </div>

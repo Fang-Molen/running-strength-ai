@@ -1,3 +1,5 @@
+import { isCompleteKnowledgePreviewRequest } from '../coach/knowledge/complete.ts'
+import { statedDirectAnswer } from '../coach/stated/compose.ts'
 import { parseRoundStructure } from './coach-cognition-tools.ts'
 import type { CoachBrief } from './coach-brief.ts'
 import type { LocalCoachAnswer } from './coach-local-first.ts'
@@ -49,6 +51,8 @@ export const OFFLINE_COACH_RULES:readonly OfflineRule[]=[
 ]
 
 export function offlineCapability(question:string):{independent:boolean;topics:OfflineTopic[];complex:boolean}{
+ // v87：待审知识资料预览、单纯换算、无候选的剩余任务只在本地回答，不走付费模型。
+ if(isCompleteKnowledgePreviewRequest(question)||statedDirectAnswer(question))return {independent:true,topics:[],complex:false}
  const topics=OFFLINE_COACH_RULES.filter(r=>r.match.test(question)).map(r=>r.topic)
  const complex=/复杂|多周|跨周|多周期|长期周期|赛季|综合.{0,8}(?:周期|多次)|比较.{0,12}(?:三|四|多)次/.test(question)
  const safety=detectRedFlags(question).level!=='NONE'||/酸痛|抽筋|岔气|轻度头晕/.test(question)

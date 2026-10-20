@@ -1,0 +1,297 @@
+[
+  {
+    "id": "T01",
+    "title": "表现变化与恢复条件",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "initial": {
+      "hypothesis": "本课后程保持可能变弱",
+      "state": "TENTATIVE"
+    },
+    "events": [
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-01",
+        "new_fact": "同协议4段最后一段明显更慢；仅1次",
+        "expected_revision_draft": "保留暂时假设，列出恢复、测量和执行解释。"
+      },
+      {
+        "event_date": "2025-09-08",
+        "known_date": "2025-09-08",
+        "new_fact": "平均恢复比9月1日短，表现更慢",
+        "expected_revision_draft": "条件改变，不能作同协议恶化证据。"
+      },
+      {
+        "event_date": "2025-09-15",
+        "known_date": "2025-09-15",
+        "new_fact": "恢复恢复到原设置，表现接近首次前3段",
+        "expected_revision_draft": "新增可比观察削弱持续能力下降解释；不证明唯一原因。"
+      },
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-18",
+        "new_fact": "9月1日最后一段原数值抄错，更正后各段接近",
+        "expected_revision_draft": "撤回依赖错误数字的掉速判断，保留审计轨迹。"
+      },
+      {
+        "event_date": "2025-09-22",
+        "known_date": "2025-09-22",
+        "new_fact": "新同协议课各段稳定",
+        "expected_revision_draft": "作为新的状态观察，不把撤回旧结论说成干预成功。"
+      }
+    ],
+    "lessons": [
+      "L03",
+      "L05",
+      "L07",
+      "L14"
+    ]
+  },
+  {
+    "id": "T02",
+    "title": "换设备后的个人基线",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "initial": {
+      "hypothesis": "最近恢复指标偏离自身水平",
+      "state": "TENTATIVE"
+    },
+    "events": [
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-01",
+        "new_fact": "设备A夜间HRV一周记录",
+        "expected_revision_draft": "只建立A夜间方法的观察窗口。"
+      },
+      {
+        "event_date": "2025-09-08",
+        "known_date": "2025-09-08",
+        "new_fact": "改设备B晨起HRV，数值较低",
+        "expected_revision_draft": "分开序列，旧基线不可直接移植。"
+      },
+      {
+        "event_date": "2025-09-15",
+        "known_date": "2025-09-15",
+        "new_fact": "B连续有记录，主观正常，表现未变",
+        "expected_revision_draft": "描述B内部趋势；暂不把设备差异当疲劳。"
+      },
+      {
+        "event_date": "2025-09-18",
+        "known_date": "2025-09-18",
+        "new_fact": "B今天漏测",
+        "expected_revision_draft": "今日未知，不补零、不沿用昨日作为今日。"
+      },
+      {
+        "event_date": "2025-09-18",
+        "known_date": "2025-09-22",
+        "new_fact": "补传18日真实值",
+        "expected_revision_draft": "当前可补齐趋势；18日当时回答的证据快照不改写。"
+      }
+    ],
+    "lessons": [
+      "L02",
+      "L03",
+      "L12",
+      "L14"
+    ]
+  },
+  {
+    "id": "T03",
+    "title": "建议是否实际有效",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "initial": {
+      "hypothesis": "调整某批准安排后主观反应可能改善",
+      "state": "TENTATIVE"
+    },
+    "events": [
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-01",
+        "new_fact": "提出批准短版，未确认",
+        "expected_revision_draft": "建议状态PROPOSED，执行未知。"
+      },
+      {
+        "event_date": "2025-09-08",
+        "known_date": "2025-09-08",
+        "new_fact": "用户说没采用但感觉好",
+        "expected_revision_draft": "不记录为建议成功。"
+      },
+      {
+        "event_date": "2025-09-15",
+        "known_date": "2025-09-15",
+        "new_fact": "明确采用短版，次日主观更轻松，同时睡眠改善",
+        "expected_revision_draft": "记录关联及混杂，保留低确定程度。"
+      },
+      {
+        "event_date": "2025-09-22",
+        "known_date": "2025-09-22",
+        "new_fact": "又采用短版，次日反应无改善",
+        "expected_revision_draft": "加入反证，不能只选正面记录。"
+      },
+      {
+        "event_date": "2025-09-29",
+        "known_date": "2025-09-29",
+        "new_fact": "专业复核认为目标保留不足，候选撤回",
+        "expected_revision_draft": "停用候选；先前观察保留，不能继续推荐过期参数。"
+      }
+    ],
+    "lessons": [
+      "L06",
+      "L07",
+      "L11",
+      "L13"
+    ]
+  },
+  {
+    "id": "T04",
+    "title": "组合课与实际执行",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "initial": {
+      "hypothesis": "今日组合课是否完成",
+      "state": "OPEN"
+    },
+    "events": [
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-01",
+        "new_fact": "跑步自动导入，力量无记录",
+        "expected_revision_draft": "跑步已完成，力量NOT_RECORDED。"
+      },
+      {
+        "event_date": "2025-09-02",
+        "known_date": "2025-09-02",
+        "new_fact": "用户确认力量计划4组，只做2组",
+        "expected_revision_draft": "PARTIAL，只能讨论剩余2组。"
+      },
+      {
+        "event_date": "2025-09-03",
+        "known_date": "2025-09-03",
+        "new_fact": "整体RPE补填6",
+        "expected_revision_draft": "RPE不证明剩余2组完成；不回填假执行。"
+      },
+      {
+        "event_date": "2025-09-08",
+        "known_date": "2025-09-08",
+        "new_fact": "用户明确剩余2组跳过",
+        "expected_revision_draft": "剩余SKIPPED，不再显示继续未完成组的强制任务。"
+      },
+      {
+        "event_date": "2025-09-15",
+        "known_date": "2025-09-15",
+        "new_fact": "第二周一份同名计划完整执行",
+        "expected_revision_draft": "新课次独立记录，不覆盖第一周。"
+      }
+    ],
+    "lessons": [
+      "L02",
+      "L09",
+      "L11",
+      "L14"
+    ]
+  },
+  {
+    "id": "T05",
+    "title": "饮食漏记与身体目标",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "initial": {
+      "hypothesis": "近期是否存在持续摄入不足线索",
+      "state": "OPEN"
+    },
+    "events": [
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-01",
+        "new_fact": "只记录早餐；体重单次下降",
+        "expected_revision_draft": "先报告覆盖不足，不诊断。"
+      },
+      {
+        "event_date": "2025-09-08",
+        "known_date": "2025-09-08",
+        "new_fact": "补第一周午晚餐与份量估计",
+        "expected_revision_draft": "重新汇总已知量，估计状态保留。"
+      },
+      {
+        "event_date": "2025-09-15",
+        "known_date": "2025-09-15",
+        "new_fact": "用户改目标，从体重增加转为专项表现",
+        "expected_revision_draft": "当前推荐优先级更新，旧目标不再自动生效。"
+      },
+      {
+        "event_date": "2025-09-22",
+        "known_date": "2025-09-22",
+        "new_fact": "出现健康担忧并已有专业指导",
+        "expected_revision_draft": "尊重指导，辅助整理资料，不能用模型推断代替。"
+      },
+      {
+        "event_date": "2025-09-29",
+        "known_date": "2025-09-29",
+        "new_fact": "用户删除部分饮食记录",
+        "expected_revision_draft": "关联汇总与假设失效，不从旧摘要恢复删除内容。"
+      }
+    ],
+    "lessons": [
+      "L02",
+      "L07",
+      "L13",
+      "L16"
+    ]
+  },
+  {
+    "id": "T06",
+    "title": "生活约束和知识版本",
+    "synthetic": true,
+    "professional_review": "PENDING",
+    "production_eligible": false,
+    "initial": {
+      "hypothesis": "某训练安排适合当前条件",
+      "state": "TENTATIVE"
+    },
+    "events": [
+      {
+        "event_date": "2025-09-01",
+        "known_date": "2025-09-01",
+        "new_fact": "本周出差，只能徒手，已确认保存期限",
+        "expected_revision_draft": "限制只在有效期内应用，保存成功须有回执。"
+      },
+      {
+        "event_date": "2025-09-08",
+        "known_date": "2025-09-08",
+        "new_fact": "出差结束，恢复器材",
+        "expected_revision_draft": "到期偏好不继续阻挡选择；重新读取现实条件。"
+      },
+      {
+        "event_date": "2025-09-15",
+        "known_date": "2025-09-15",
+        "new_fact": "同一知识条目新版缩小适用人群",
+        "expected_revision_draft": "原依赖判断进入适用性复核，不自动改全部计划。"
+      },
+      {
+        "event_date": "2025-09-22",
+        "known_date": "2025-09-22",
+        "new_fact": "跨设备计划版本有冲突",
+        "expected_revision_draft": "旧预览失效，重新预览再确认。"
+      },
+      {
+        "event_date": "2025-09-29",
+        "known_date": "2025-09-29",
+        "new_fact": "专业审核给出新的批准候选",
+        "expected_revision_draft": "在当前有效版本中选择，旧候选不复活。"
+      }
+    ],
+    "lessons": [
+      "L08",
+      "L09",
+      "L13",
+      "L14",
+      "L16"
+    ]
+  }
+]

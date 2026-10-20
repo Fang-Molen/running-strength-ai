@@ -19,6 +19,8 @@ export type StatedFacts = {
   changes: { label: string; from: number; to: number; unit: string }[]
   sets: StatedSet[]; rounds: Rounds | null; statuses: Statuses | null; planActual: PlanActual[]; distanceTimes: DistanceTime[]; strength: StrengthSet[]
   secondsToMinutes: number | null; sessionMinutes: number | null; sessionRpe: number | null
+  /** v87：用户说“只剩/还剩N分钟”并问怎么安排（剩余任务），只记这个数，不推出剂量 */
+  remainingMinutes: number | null
   pain: { score: number; where: string | null }[]; painFree: boolean
   recovery10: number | null; readiness: number | null; sleepHours: number | null; sleepRange: [number, number] | null
   baselines: Baseline[]; weekly: number[]; symptoms: Symptom[]; recentInjury: string | null; notAssessed: boolean
@@ -153,7 +155,8 @@ export function parseStatedFacts(input: string): StatedFacts {
     hrvMetricMismatch: /RMSSD/i.test(q) && /SDNN/i.test(q) ? '今天的读数是另一台设备的SDNN，基线是RMSSD：指标不同，不能直接算“较基线下降多少%”；这不妨碍用实际分段复盘训练。' : null,
     changes: [...q.matchAll(/(体重|周跑量|跑量)[^。；]{0,6}?从\s*(\d+(?:\.\d+)?)\s*(?:kg|公斤|公里)?\s*(?:降到|减到|加到|增到|升到|到)\s*(\d+(?:\.\d+)?)\s*(kg|公斤|公里)/g)].map(m => ({ label: m[1], from: num(m[2]), to: num(m[3]), unit: m[4] === '公斤' ? 'kg' : m[4] })),
     sets: setsOf(q), rounds: roundsOf(q), statuses: statusesOf(q), planActual, distanceTimes: planActual.length ? [] : distanceTimes, strength,
-    secondsToMinutes: /换算成分钟|换成分钟|折合.{0,3}分钟/.test(q) ? g(/(\d+(?:\.\d+)?)\s*秒/) : null,
+    secondsToMinutes: /换算成分钟|换成分钟|折合.{0,3}分钟/.test(q) ? g(/(\d+(?:\.\d+)?)\s*秒/) : g(/(\d+(?:\.\d+)?)\s*秒\s*(?:是|等于|合|折合|换算成?)?\s*(?:多少|几)\s*分钟?/),
+    remainingMinutes: /怎么安排|怎么办|做什么|练什么|怎么练|怎么用|如何安排/.test(q) ? g(/(?:只剩|还剩|剩下|仅剩)\s*(\d+(?:\.\d+)?)\s*分钟/) : null,
     sessionMinutes: g(/(?:整课|完整时长|完成整课|总时长|整课时长)\s*(\d+(?:\.\d+)?)\s*分钟/),
     sessionRpe: g(/(?:整课s?RPE|sRPE|整课评分)(?:字段)?\s*(?:为|是|明确为)?\s*(\d+(?:\.\d+)?)/i),
     pain, painFree,
