@@ -28,3 +28,18 @@ test('v83: 跑步已手动评价但同日手表跑步未确认 → 仍待确认'
   const items = pendingFeedback([d], { '2026-10-19': { parts: { running: { status: 'done', rpe: 8 } } as never, runCandidates: 1 } }, {}, '2026-10-19')
   assert.deepEqual(items.map(i => i.kind), ['confirm_run'])
 })
+
+test('v87.1: 恢复课（非组合）在课后整课表填了反馈（fk-plan400-v4-log）→ 不再待评价；稍后过也一样消失', () => {
+  const d = (V4.days as V4Day[]).find(x => x.date === '2026-10-20')!
+  assert.match(d.title, /恢复/)
+  const x = { '2026-10-20': { runLinked: true } }, pr = ['2026-10-20|garmin:1']
+  assert.equal(pendingFeedback([d], x, {}, T, pr)[0].kind, 'rate_run')
+  for (const log of [{ rpe: '3' }, { done: 'done' }, { note: '轻松' }, { pain: '无' }])
+    assert.equal(pendingFeedback([d], x, { '2026-10-20': log }, T, pr).length, 0, JSON.stringify(log))
+  // 只有训练中记录（成绩）不算评价
+  assert.equal(pendingFeedback([d], x, { '2026-10-20': { reps: '5.79km' } }, T, pr).length, 1)
+})
+test('v87.1: 组合课的旧整课分不复制给分项 → 仍待分项评价', () => {
+  const d = (V4.days as V4Day[]).find(x => x.date === '2026-10-19')!
+  assert.equal(pendingFeedback([d], { '2026-10-19': { runLinked: true } }, { '2026-10-19': { rpe: '7' } }, T).length, 1)
+})

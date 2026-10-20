@@ -5,7 +5,7 @@ import { loadComponents, saveComponent, markPrompted, hasFeedback, STATUS_TEXT, 
 import { saveRunLink, planVsActual, v4RunSlotId, allRunLinks, type RunLink } from "@/lib/ui/run-link"
 import { lastRunMatch, loadRunMatch, type ActivityRow } from "@/lib/ui/training-read-model"
 import type { DayParts, V4Day, V4Log } from "@/lib/ui/plan400-view"
-import { pendingFeedback, type PendingItem } from "@/lib/ui/pending-feedback"
+import { pendingFeedback, partRated, type PendingItem } from "@/lib/ui/pending-feedback"
 import V4Json from "../lib/plan400-v4.json" with { type: "json" }
 const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
@@ -107,7 +107,9 @@ export function RunImportPrompt({ today }: { today: string }) {
     if (open) return
     const doc = loadComponents(), seen = new Set(doc.prompted ?? [])
     const recent = (d: string) => Date.parse(today) - Date.parse(d) <= 3 * 864e5 && d <= today
-    const due = m.links.find(l => l.entry.id.startsWith("plan400:") && !seen.has(`${l.entry.date}|${l.run.id}`) && !hasFeedback(doc.days[l.entry.date]?.running) && recent(l.entry.date))
+    let logs: Record<string, V4Log> = {}; try { logs = JSON.parse(localStorage.getItem("fk-plan400-v4-log") || "{}") ?? {} } catch { logs = {} }
+    const rated = (date: string) => { const d = (V4Json as { days: V4Day[] }).days.find(x => x.date === date); return d ? partRated(d, { parts: doc.days[date] }, logs[date], "running") : hasFeedback(doc.days[date]?.running) }
+    const due = m.links.find(l => l.entry.id.startsWith("plan400:") && !seen.has(`${l.entry.date}|${l.run.id}`) && !rated(l.entry.date) && recent(l.entry.date))
     if (due) { setOpen({ kind: "link", l: due }); return }
     const cand = m.suggestions.find(x => x.entry.id.startsWith("plan400:") && x.runs.length === 1 && x.runs[0].date === x.entry.date && !seen.has(`${x.entry.date}|${x.runs[0].id}`) && recent(x.entry.date))
     if (cand) setOpen({ kind: "cand", entry: cand.entry, run: cand.runs[0], basis: cand.basis })

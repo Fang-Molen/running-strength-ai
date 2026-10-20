@@ -44,3 +44,12 @@ test('源码里不再把 ISO 时间戳直接截成显示文本', () => {
     assert.ok(!/(At|\.at)\??\.slice\((0|5), ?16\)|\.replace\("T", " "\)|startedAt\.slice\(11/.test(src), f)
   }
 })
+test('v87.1: 恢复课（只有跑步）确认关联手表跑步 → 整天已完成，首页不再“继续训练”；组合课力量仍要自己记录', () => {
+  const rec = plan.days.find(x => x.date === '2026-10-20')!
+  assert.equal(dayStatus(rec, undefined, '2026-10-20', false, { runLinked: true }), 'done')
+  assert.equal(dayStatus(rec, { rpe: '3' }, '2026-10-20', false, { runLinked: true }), 'done', '恢复课整课表填了 RPE 也一样')
+  assert.equal(dayStatus(rec, { done: 'skipped' }, '2026-10-20', false, { runLinked: true }), 'skipped', '用户明确标没练优先')
+  assert.equal(dayStatus(d, undefined, '2026-10-19', false, { runLinked: true }), 'in_progress')
+  assert.equal(dayStatus(d, undefined, '2026-10-19', false, { runLinked: true, parts: { strength: { status: 'done' } } }), 'done')
+  assert.equal(progressCounts(plan, {}, { '2026-10-20': { runLinked: true } }).completedTrainingDays + progressCounts(plan, {}, { '2026-10-20': { runLinked: true } }).recordedDays > 0, true)
+})

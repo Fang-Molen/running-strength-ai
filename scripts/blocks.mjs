@@ -3,9 +3,9 @@
 export const BLOCKS = {
   'read-model': {
     desc: '训练读模型：各页同一份训练事实投影（V4 分项、记录合并、只算一次）',
-    files: ['src/lib/ui/training-read-model.ts', 'src/lib/ui/plan400-view.ts', 'src/lib/ui/v4-exec.ts', 'src/lib/ui/running-actual-totals.ts', 'src/lib/ui/log-range.ts'],
+    files: ['src/lib/ui/training-read-model.ts', 'src/lib/ui/plan400-view.ts', 'src/lib/ui/v4-exec.ts', 'src/lib/ui/running-actual-totals.ts', 'src/lib/ui/log-range.ts', 'src/lib/ui/pending-feedback.ts'],
     entry: 'src/lib/ui/training-read-model.ts',
-    tests: ['src/lib/ui/plan400-view.test.ts', 'src/lib/ui/v84-host-p0.test.ts', 'src/lib/ui/v84-merge.test.ts', 'src/lib/ui/v83-acceptance.test.ts', 'src/lib/ui/v82.test.ts', 'src/lib/ui/unfeedback-t489.test.ts', 'src/lib/ui/log-range.test.ts', 'src/lib/ui/training-log-view.test.ts'],
+    tests: ['src/lib/ui/plan400-view.test.ts', 'src/lib/ui/v84-host-p0.test.ts', 'src/lib/ui/v84-merge.test.ts', 'src/lib/ui/v83-acceptance.test.ts', 'src/lib/ui/v82.test.ts', 'src/lib/ui/unfeedback-t489.test.ts', 'src/lib/ui/log-range.test.ts', 'src/lib/ui/training-log-view.test.ts', 'src/lib/ui/pending-feedback.test.ts', 'src/lib/ui/v79-1.test.ts'],
     forbid: ['/lib/coach/', '/components/', 'online-coach', 'deepseek'],
   },
   'plan400-components': {

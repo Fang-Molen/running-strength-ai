@@ -35,7 +35,7 @@ export const hasRecord = (l: V4Log | undefined) => Boolean(l && RECORD_FIELDS.so
 /** v83（P0-01/P0-02）：V4 一天 = 一节课（Session）＋ 计划里应练的分项（跑步 / 力量，Component）。
  * 这里是唯一的分项事实投影：首页主卡、计划页周列表/进度、日志、方坤事实包都从这里派生，不各自猜。
  * 层次：计划（应练哪些分项）→ 观测/证据（手填、逐组/逐段执行、用户确认关联的手表跑步）→ 用户明确终态（完成/减量/跳过）。
- * - 候选手表跑步（同日但未确认）只是 candidate，不算记录、不算完成；用户确认关联也只是“跑步有实测”，不等于跑步完成。
+ * - 候选手表跑步（同日但未确认）只是 candidate，不算记录、不算完成；用户确认关联 = 跑步部分完成（v87.1），力量不受影响。
  * - 用户填过分项（状态/RPE/疼痛/感受/备注）后，整天只由分项派生；旧整课 done 不再覆盖。
  * - 只有旧整课记录（fk-plan400-v4-log.done）时，整天按旧口径显示并标“历史整课”，绝不拆成两项各自完成，也不复制 RPE。 */
 export type ExecState = 'COMPLETED' | 'PARTIAL' | 'INTERRUPTED' | null
@@ -61,7 +61,8 @@ export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefi
     running = us ? { state: us, label: withRpe(PART_TEXT[us], q), source: 'user', rpe: q?.rpe ?? null, ...(linked ? { detail: '已关联手表跑步（你确认的）' } : {}) }
       : x?.runExec === 'COMPLETED' ? { state: 'done', label: '逐段记录已完成', source: 'execution', rpe: q?.rpe ?? null }
       : x?.runExec === 'PARTIAL' || x?.runExec === 'INTERRUPTED' ? { state: 'partial', label: '逐段记录未做完', source: 'execution', rpe: q?.rpe ?? null }
-      : linked ? { state: 'partial', label: '已关联手表跑步 · 待评价', source: 'device', rpe: q?.rpe ?? null }
+      // v87.1（用户 2026-10-20）：你确认关联了手表跑步 = 这节的跑步部分做了 → 跑步完成（评价另在待补反馈里提醒）。只影响跑步，力量永远要自己的记录。
+      : linked ? { state: 'done', label: withRpe('完成（已关联手表跑步）', q), source: 'device', rpe: q?.rpe ?? null }
       : filledV(l.reps) || filledV(l.rest) || filledV(l.aux) ? { state: 'partial', label: '已手填跑步记录', source: 'hand', rpe: q?.rpe ?? null, ...(x?.runCandidates ? { detail: `另有 ${x.runCandidates} 条同日手表跑步（未关联）` } : {}) }
       : partFeedback(q) ? { state: 'partial', label: withRpe('有评价 · 未标完成', q), source: 'feedback', rpe: q?.rpe ?? null }
       : x?.runCandidates ? { state: 'candidate', label: x.runCandidates === 1 ? '有同日手表跑步 · 待你确认' : `有 ${x.runCandidates} 条同日手表跑步 · 待你确认`, source: 'candidate', rpe: null }
@@ -86,7 +87,7 @@ export function v4DayFact(d: V4Day, log: V4Log | undefined, x: DayParts | undefi
     : need.length && need.every(v => v.state === 'done' || v.state === 'reduced') ? (need.some(v => v.state === 'reduced') ? 'reduced' : 'done')
     : need.some(v => v.state !== 'none' && v.state !== 'candidate') ? 'in_progress' : null
   // C03/R14 HOST-01：正在进行的逐组引导、已有逐组/逐段执行状态，也属于“新口径”，旧整课 done 不能盖过它。
-  // （用户确认关联的手表跑步 runLinked 仍按 v83 口径，不单独触发；见 docs/modules.md 跟进项。）
+  // （用户确认关联的手表跑步：v87.1 起跑步分项算完成，但不单独触发 split——纯旧整课记录仍按旧口径。）
   const split = hasEnteredPart(x) || (plannedLift && strengthLive) || !!x?.strengthExec || !!x?.runExec
   const legacyDone = l.done === 'done' || l.done === 'reduced' || l.done === 'skipped' ? l.done : null
   const legacyOverall = !split && !!legacyDone
