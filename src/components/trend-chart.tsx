@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 
 export type Pt = { d: string; v: number };
+/** v89.10.6：方坤估算·个人常态（中位数 + 四分位），画在第一条线的纵轴上。 */
+export type NormPt = { d: string; median: number; p25: number; p75: number };
 export type Series = { label: string; color: string; points: Pt[]; fmt?: (v: number) => string; unit?: string };
 export function niceTicks(lo: number, hi: number, n = 4): number[] {
   if (hi - lo < 1e-9) { lo -= 1; hi += 1; }
@@ -15,7 +17,7 @@ const t = (d: string) => new Date(d + "T12:00:00").getTime();
 
 /** 轻量 SVG 折线（可多条，各自归一化）：双指缩放、单指横向拖动、点按看数值、双击复原。 */
 /** domain：x 轴固定为所选时间段（如近 90 天），不是数据首尾；相隔超过 1 天的点不连线（缺的天不画假线）。 */
-export function MultiTrend({ series, height = 96, domain }: { series: Series[]; height?: number; domain?: [string, string] }) {
+export function MultiTrend({ series, height = 96, domain, norm }: { series: Series[]; height?: number; domain?: [string, string]; norm?: NormPt[] }) {
   const [win, setWin] = useState<[number, number]>([0, 1]);
   const [tip, setTip] = useState<number | null>(null);
   const ref = useRef<SVGSVGElement>(null);
@@ -43,8 +45,8 @@ export function MultiTrend({ series, height = 96, domain }: { series: Series[]; 
     if (s && !s.moved && ptrs.current.size === 0) setTip(t0 + (a + fx(e.clientX) * (b - a)) * T);
     if (ptrs.current.size === 0) st.current = null; else { const xs = [...ptrs.current.values()]; st.current = { win, x: xs[0], dist: 0, moved: true }; }
   };
-  const lines = live.map((s) => {
-    const vis = s.points.filter((p) => F(p.d) >= a - 0.02 && F(p.d) <= b + 0.02); const vs = (vis.length ? vis : s.points).map((p) => p.v);
+  const lines = live.map((s, i) => {
+    const vis = s.points.filter((p) => F(p.d) >= a - 0.02 && F(p.d) <= b + 0.02); const vs = [...(vis.length ? vis : s.points).map((p) => p.v), ...(i === 0 && norm ? norm.filter((n) => F(n.d) >= a - 0.02 && F(n.d) <= b + 0.02).flatMap((n) => [n.p25, n.p75]) : [])];
     const lo = Math.min(...vs), hi = Math.max(...vs); const ticks = niceTicks(lo, hi); const d0 = ticks[0], d1 = ticks[ticks.length - 1];
     const Y = (v: number) => 60 - ((v - d0) / (d1 - d0 || 1)) * 56;
     const segs: Pt[][] = []; for (const p of s.points) { const last = segs.at(-1)?.at(-1); if (last && t(p.d) - t(last.d) <= 1.5 * 864e5) segs.at(-1)!.push(p); else segs.push([p]); }
@@ -60,6 +62,7 @@ export function MultiTrend({ series, height = 96, domain }: { series: Series[]; 
     <div className="pointer-events-none absolute left-0 top-1 w-8 text-[10px] text-muted" style={{ height }}>{L0.ticks.map((v) => <span key={v} className="absolute right-1 -translate-y-1/2" style={{ top: `${(L0.Y(v) / 64) * 100}%` }}>{f(L0.s, v)}</span>)}{L0.s.unit ? <span className="absolute -top-3 left-0">{L0.s.unit}</span> : null}</div>
     <svg ref={ref} viewBox="0 0 100 64" preserveAspectRatio="none" className="mt-1 w-full select-none" style={{ height, touchAction: "pan-y" }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onDoubleClick={() => setWin([0, 1])}>
       {lines[0].ticks.map((v) => <line key={v} x1="0" x2="100" y1={lines[0].Y(v)} y2={lines[0].Y(v)} stroke="#2a2b30" strokeWidth=".5" vectorEffect="non-scaling-stroke" />)}
+      {norm?.length ? <g data-testid="trend-norm">{(() => { const segs: NormPt[][] = []; for (const n of norm) { const last = segs.at(-1)?.at(-1); if (last && t(n.d) - t(last.d) <= 1.5 * 864e5) segs.at(-1)!.push(n); else segs.push([n]); } const Y = lines[0].Y; return segs.map((g, j) => <g key={j}><polygon points={[...g.map((n) => `${X(n.d).toFixed(2)},${Y(n.p75).toFixed(2)}`), ...[...g].reverse().map((n) => `${X(n.d).toFixed(2)},${Y(n.p25).toFixed(2)}`)].join(" ")} fill="#b49cff" fillOpacity=".16" /><polyline points={g.map((n) => `${X(n.d).toFixed(2)},${Y(n.median).toFixed(2)}`).join(" ")} fill="none" stroke="#c4b2ff" strokeWidth="1.4" strokeDasharray="4 3" vectorEffect="non-scaling-stroke" /></g>); })()}</g> : null}
       {lines.map(({ s, segs, pt }, i) => <g key={s.label} data-segments={segs.length}>{segs.map((g, j) => g.length > 1 ? <g key={j}>{i === 0 && live.length === 1 ? <polyline points={`${X(g[0].d)},64 ${g.map(pt).join(" ")} ${X(g[g.length - 1].d)},64`} fill={s.color} fillOpacity=".15" /> : null}<polyline points={g.map(pt).join(" ")} fill="none" stroke={s.color} strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></g>
         : <line key={j} x1={X(g[0].d)} x2={X(g[0].d)} y1={lines[i].Y(g[0].v)} y2={lines[i].Y(g[0].v)} stroke={s.color} strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}</g>)}
       {tipX != null ? <line x1={tipX} x2={tipX} y1="0" y2="64" stroke="#9a9ca3" strokeWidth=".6" vectorEffect="non-scaling-stroke" /> : null}
@@ -69,6 +72,6 @@ export function MultiTrend({ series, height = 96, domain }: { series: Series[]; 
     {tipX != null ? <div className="pointer-events-none absolute top-0 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] shadow" style={{ left: `clamp(0px, calc(${tipX}% - 40px), calc(100% - 110px))` }}>{live.map((s) => { const p = near(s)!; return <div key={s.label}><span style={{ color: s.color }}>●</span> {p.d.slice(5)} {s.label} <b>{f(s, p.v)}</b></div>; })}</div> : null}
   </div>;
 }
-export function TrendChart({ points, fmt, height = 96, color = "#ff6a1a", unit, domain }: { points: Pt[]; fmt?: (v: number) => string; height?: number; color?: string; unit?: string; domain?: [string, string] }) {
-  return <MultiTrend series={[{ label: "", color, points, fmt, unit }]} height={height} domain={domain} />;
+export function TrendChart({ points, fmt, height = 96, color = "#ff6a1a", unit, domain, norm }: { points: Pt[]; fmt?: (v: number) => string; height?: number; color?: string; unit?: string; domain?: [string, string]; norm?: NormPt[] }) {
+  return <MultiTrend series={[{ label: "", color, points, fmt, unit }]} height={height} domain={domain} norm={norm} />;
 }

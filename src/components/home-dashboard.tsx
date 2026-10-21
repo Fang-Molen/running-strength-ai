@@ -22,6 +22,7 @@ import { shiftDay } from "@/lib/health/observation";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { computePlan } from "@/lib/nutrition/calc";
 import { TrendChart, MultiTrend, type Pt } from "@/components/trend-chart";
+import { typicalDaily, type TypicalDaily } from "@/lib/health/intraday-recovery-bridge-v89";
 import { loadCheckins, saveCheckin } from "@/lib/ui/watch-mode";
 import { loadExtras } from "@/lib/ui/device-store";
 import "./recovery-trend-detail.css";
@@ -223,6 +224,13 @@ function RecoveryTrend({ vitals, only, endDay, rangeDays, embedded = false }: { 
     const view=buildHealthSnapshot(vitals,loadExtras(),today,loadHealthSources(),loadCheckins()).metrics.find(m=>m.metric===k);
     return (view?.series??[]).filter(p=>p.day>=since && p.day<=today).map(p=>({d:p.day,v:p.value}));
   }, [k, since, today, vitals]);
+  // v89.10.6：方坤估算·个人常态——同一序列（同来源）前 28 天日值的中位数与四分位，≥7 天才出（与日内曲线同一口径）。
+  const [norm, normDays]: [TypicalDaily[], number] = useMemo(() => {
+    if (k === "fatigue" || k === "pain" || days > 30) return [[], 0]; // 90天只看原始数据（用户要求）
+    const view=buildHealthSnapshot(vitals,loadExtras(),today,loadHealthSources(),loadCheckins()).metrics.find(m=>m.metric===k);
+    const full = (view?.series??[]).filter(p=>p.day<=today).map(p=>({d:p.day,v:p.value}));
+    return [typicalDaily(full).filter(n=>n.d>=since), full.filter(p=>p.d<today && p.d>=shiftDay(today,-28)).length];
+  }, [k, since, today, vitals, days]);
   const meta = REC.find((r) => r[0] === k)!;
   const unitLabel = k === "SLEEP" ? "小时（h）" : k === "RHR" ? "次/分（bpm）" : k === "HRV" ? "毫秒（ms）" : meta[2] === "/100" ? "分 · 满分100" : `分 · ${meta[2]}`;
   return <section className={`${embedded ? "fk-h89-history" : "fk-dash-card"} fk-recovery-trend`} aria-label={`${meta[1]}历史趋势`}>
@@ -234,8 +242,9 @@ function RecoveryTrend({ vitals, only, endDay, rangeDays, embedded = false }: { 
       </div>
     </> : null}
     <div className="fk-recovery-trend-meta"><b>{meta[1]}</b><span>单位：{unitLabel}</span></div>
-    {pts.length >= 2 ? <div className="fk-recovery-trend-plot"><TrendChart key={`${k}-${days}-${today}`} domain={[since, today]} height={embedded ? 184 : 192} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /></div>
+    {pts.length >= 2 ? <div className="fk-recovery-trend-plot"><TrendChart key={`${k}-${days}-${today}`} domain={[since, today]} height={embedded ? 184 : 192} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} norm={norm} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /></div>
       : <div className="fk-recovery-trend-empty"><Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} /></div>}
+    {k !== "fatigue" && k !== "pain" && days <= 30 && pts.length >= 2 ? <p className="keep mt-1 flex flex-wrap items-center gap-x-3 text-[11px] text-muted" data-testid="trend-norm-legend"><span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3" style={{ background: "#ff6a1a" }} />手表{meta[1]}</span>{norm.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed border-[#c4b2ff]" />方坤估算·个人常态（每天前28天同来源中位，≥7天；阴影为四分位）</span> : <span>方坤估算：需前28天内≥7天同来源记录，现有{normDays}天</span>}</p> : null}
     <p className="keep fk-recovery-trend-coverage" data-testid="trend-coverage">{since.slice(5)}–{today.slice(5)} · {pts.length} 天有数据</p>
     <details className="fk-recovery-disclosure" key={`explanation-${k}-${today}`}>
       <summary>趋势说明</summary>

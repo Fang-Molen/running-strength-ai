@@ -19,6 +19,7 @@ import type { View as U10View, Metric as U10Metric } from "@/lib/health/intraday
 import { readRestHistory, REST_LABELS } from "@/lib/health/rest-store"
 import { eventReadout, restOnDay, restReadout } from "@/lib/health/event-presentation"
 import { garminStorageKey } from "@/lib/health/garmin-sync-runner"
+import { loadIntraday } from "@/lib/health/intraday-store"
 import { todayDate } from "@/lib/nutrition/body"
 import "./health-v89.css"
 
@@ -51,7 +52,8 @@ function useHealthRev() {
 export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }: { body: ReactNode; slot?: ReactNode; grid: ReactNode; stats: ReactNode; rest: (day: string) => ReactNode; trend: (only?: string, endDay?: string, days?: number) => ReactNode; onCoach?: () => void }) {
   const today = todayDate()
   const [tab, setTab] = useState<HealthTab>("recovery")
-  const [day, setDay] = useState(today)
+  // v89.10.6：今天还没同步到手表逐时样本（如刚过零点）时，默认打开最近 3 天内有样本的那天；可随时点“今天”回来。
+  const [day, setDay] = useState(() => { try { const all = loadIntraday(), has = (x: string) => !!(all[x]?.bb.length || all[x]?.hr.length); if (has(today)) return today; for (let i = 1; i <= 3; i++) { const x = shiftDay(today, -i); if (has(x)) return x } } catch { /* ignore */ } return today })
   const [muscle, setMuscle] = useState(false)
   const rev = useHealthRev()
   useEffect(() => {
@@ -66,7 +68,7 @@ export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }:
     <div id="health-recovery" hidden={tab !== "recovery"} className="space-y-3">
       <DaySwitch day={day} today={today} onDay={setDay} />
       <CorosHealthPanel day={day} />
-      <RecoveryTab day={day} today={today} rev={rev} rest={rest} trend={trend} onCoach={onCoach} onMuscle={() => setMuscle(true)} />
+      <RecoveryTab day={day} today={today} rev={rev} onDay={setDay} rest={rest} trend={trend} onCoach={onCoach} onMuscle={() => setMuscle(true)} />
     </div>
     <div id="health-body" hidden={tab !== "body"} className="space-y-3">{body}{slot}{grid}{stats}</div>
     {muscle ? <Sheet title="肌肉恢复" label="肌肉恢复" footer={null} full onClose={() => setMuscle(false)}><MuscleRecoveryV89 day={day} trend={trend(undefined, day)} onCoach={onCoach} /></Sheet> : null}
@@ -123,7 +125,7 @@ function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): T
   }, [day, rev, all])
 }
 
-function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend }: { day: string; today: string; rev: number; onCoach?: () => void; onMuscle: () => void; rest: (day: string) => ReactNode; trend: (only?: string, endDay?: string, days?: number) => ReactNode }) {
+function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: setPageDay }: { day: string; today: string; rev: number; onDay: (d: string) => void; onCoach?: () => void; onMuscle: () => void; rest: (day: string) => ReactNode; trend: (only?: string, endDay?: string, days?: number) => ReactNode }) {
   const [metric, setMetric] = useState<ExplorerMetric>("bb"), [span, setSpan] = useState<Span>(1)
   const [checkin, setCheckin] = useState(false), [pain, setPain] = useState(false)
   const [subjective, setSubjective] = useState<"fatigue" | "pain">("fatigue")
@@ -146,7 +148,7 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend }: { day:
   // History is viewed using records known now, including later syncs of that day.
   const view = useMemo(() => { void rev; return intradayRecoveryFromStore(all, currentAthleteId(), day, new Date().toISOString()) }, [all, day, rev])
   const now = new Date()
-  const explorer = <AllDayTrend day={day} rev={rev} d={all[day] ?? null} view={view} metric={metric} onMetric={select} span={span} onSpan={setSpan} trend={trend} rest={rest} showSyncNote={!emptyMetrics} />
+  const explorer = <AllDayTrend day={day} today={today} onDay={setPageDay} rev={rev} d={all[day] ?? null} view={view} metric={metric} onMetric={select} span={span} onSpan={setSpan} trend={trend} rest={rest} showSyncNote={!emptyMetrics} />
   return <div className="space-y-3">
     <section className="fk-h89-card fk-h89-today" aria-label="今日恢复状态">
       <div className="flex items-start gap-3">
@@ -183,7 +185,7 @@ const META: Record<"bb" | "hr" | "st", { label: string; unit: string; color: str
   st: { label: "压力", unit: "/100", color: "#f5a524", metric: "STRESS", Icon: Gauge },
 }
 type K = keyof typeof META
-function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend, rest, showSyncNote = true }: { day: string; rev: number; d: IntradayDay | null; view: U10View | null; metric: ExplorerMetric; onMetric: (m: ExplorerMetric) => void; span: Span; onSpan: (s: Span) => void; trend: (only?: string, endDay?: string, days?: number) => ReactNode; rest: (day: string) => ReactNode; showSyncNote?: boolean }) {
+function AllDayTrend({ day, today, onDay: setDay, rev, d, view, metric, onMetric, span, onSpan, trend, rest, showSyncNote = true }: { day: string; today: string; onDay: (d: string) => void; rev: number; d: IntradayDay | null; view: U10View | null; metric: ExplorerMetric; onMetric: (m: ExplorerMetric) => void; span: Span; onSpan: (s: Span) => void; trend: (only?: string, endDay?: string, days?: number) => ReactNode; rest: (day: string) => ReactNode; showSyncNote?: boolean }) {
   const all = useIntraday()
   const dailyMetric = EXPLORER.find(([id]) => id === metric)![2]
   const kind: K | null = metric === "bb" || metric === "hr" || metric === "st" ? metric : null
@@ -196,6 +198,11 @@ function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend,
     <div className="fk-h89-section-title"><h2>健康趋势</h2></div>
     <div className="fk-h89-metrics" role="group" aria-label="趋势指标">{EXPLORER.map(([id, label]) => <button key={id} type="button" aria-pressed={metric === id} onClick={() => onMetric(id)}>{label}</button>)}</div>
     <div className="fk-h89-period" role="group" aria-label="趋势时间范围">{([1,7,30,90] as const).map(n => <button key={n} type="button" aria-pressed={span === n} onClick={() => onSpan(n)}>{n === 1 ? "当天" : `${n}天`}</button>)}</div>
+    {span === 1 ? <div className="mt-2 flex items-center justify-between gap-2 text-sm" role="group" aria-label="当天日期" data-testid="h89-trend-day">
+      <button type="button" className="grid size-11 place-items-center rounded-full border border-line disabled:opacity-30" aria-label="前一天" disabled={day <= shiftDay(today, -89)} onClick={() => setDay(shiftDay(day, -1))}><ChevronLeft className="size-4" /></button>
+      <b>{mdCN(day)}{day === today ? " · 今天" : ""}</b>
+      <span className="flex items-center gap-1">{day !== today ? <button type="button" className="min-h-11 px-2 text-accent" onClick={() => setDay(today)}>今天</button> : null}<button type="button" className="grid size-11 place-items-center rounded-full border border-line disabled:opacity-30" aria-label="后一天" disabled={day >= today} onClick={() => setDay(shiftDay(day, 1))}><ChevronRight className="size-4" /></button></span>
+    </div> : null}
     {span === 1 && kind ? <>
       {latest && d ? <>
         <div className="fk-h89-reading"><div><span>{META[kind].label} · {clock(latest[0], d.offsetMin)}</span><p><strong>{latest[1]}</strong> <small>{unit}</small></p></div><div><span>当天范围</span><p>{Math.min(...samples.map(p => p[1]))}–{Math.max(...samples.map(p => p[1]))}</p></div></div>
@@ -205,7 +212,7 @@ function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend,
           <p className="keep mb-2 text-xs text-muted">个人常态由近28天同钟点样本计算；每个钟点至少7天才显示中位数虚线，阴影为四分位范围。不是恢复目标。</p><div className="fk-h89-hours">{hours.map(([hour, values]) => <span key={hour}>{String(hour).padStart(2,"0")}时 <b>{Math.min(...values)}–{Math.max(...values)}</b></span>)}</div>
           <p className="keep text-xs text-muted">佳明手表样本 · 同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", {hour12:false})}{d.offsetMin != null ? ` · 手表时区 UTC${d.offsetMin >= 0 ? "+" : ""}${d.offsetMin / 60}` : ""}</p>
         </details>
-      </> : <p className="fk-h89-empty" data-testid="intraday-empty">{mdCN(day)}没有{META[kind].label}逐时样本。已有日汇总可切换到7天或更长范围查看。</p>}
+      </> : <div className="fk-h89-empty" data-testid="intraday-empty"><p>{mdCN(day)}没有{META[kind].label}逐时样本{day === today ? "（今天的数据同步后才有）" : ""}。</p>{(() => { const prev = Object.keys(all).filter(x => x < day && (kind === "bb" ? all[x].bb : kind === "hr" ? all[x].hr : all[x].st ?? []).length).sort().at(-1); return prev ? <button type="button" className="mt-1 min-h-11 font-bold text-accent" onClick={() => setDay(prev)}>看最近有数据的 {mdCN(prev)} ›</button> : null })()}</div>}
       {view?.warnings.filter(w => /冲突/.test(w)).map(w => <p key={w} className="keep text-xs text-amber-400">{w}</p>)}
       {showSyncNote ? <SyncNote /> : null}
       <p className="keep mt-2 text-xs text-muted">{kind === "st" ? "压力是设备估算读数，不是心理诊断。" : kind === "bb" ? "身体电量是设备估算，不代表肌肉已恢复或可以加量。" : "全天心率来自手表样本，和每日静息心率分别展示。"}</p>

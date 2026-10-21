@@ -14,6 +14,7 @@ import { loadOwnedComponents } from '../ui/plan400-components-store'
 import { garminRows } from '../ui/training-read-model'
 import { garminViewKey } from './garmin-view-scope'
 import { localDay, shortHash, validDay } from './observation'
+import { providerOf } from './brand-isolation'
 import { buildMuscleReview, exerciseRegions, REGION_LABEL, type Region, type Symptom, type TrainingPart } from './muscle-recovery-u11'
 import { buildIntradayRecovery } from './intraday-recovery-u10'
 import { loadIntraday } from './intraday-store'
@@ -108,6 +109,10 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         sourceId: oid, actual: 'CONFIRMED', runType }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
       phoneRunPlans.add(plan); runDays.add(localDay(new Date(occurrence.startedAt))); if (v4) runDays.add(v4)
     }
+    // v89.10.6：先读手表跑步关联——已关联计划课的那条手表跑步，导入记录（同一来源标识）不再重复列出。
+    let match: ReturnType<typeof loadRunMatch> = { links: [], suggestions: [] }
+    try { match = loadRunMatch() } catch { match = { links: [], suggestions: [] } }
+    const linkedRunIdentity = new Set(match.links.filter(l => recent(l.run.startedAt)).flatMap(l => [l.run.id, ...l.run.originIds]))
     for (const record of coachImports(athleteId,effectiveAsOf)) {
       if (!record.occurredAt.value || !recent(record.occurredAt.value) || occurrenceVoided(record.confirmedImportId)) continue
       if (listCorrections(record.confirmedImportId).some(c=>c.kind==='FIELD')) {
@@ -130,8 +135,8 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
           exercises.map(e=>`${e.name} ${e.actualSets}组`).join('；')||'无法判断具体肌群：只有摘要，没有动作明细',
           exercises.length ? exercises.reduce((n,e)=>n+(e.actualSets??0),0) : null)
       }
-      if (record.sport==='RUNNING'||record.sport==='MIXED')
-        add({...base,componentId:'running',modality:'RUN',runType:'UNKNOWN'},'已确认导入跑步','跑步类型未独立确认，未由标题、距离或平均心率推断肌群')
+      if ((record.sport==='RUNNING'||record.sport==='MIXED') && !(record.sourceRecordIdentity && linkedRunIdentity.has(record.sourceRecordIdentity)))
+        add({...base,componentId:'running',modality:'RUN',runType:'UNKNOWN'},`导入的跑步${brandLabel(record.sourceRecordIdentity)}`,importedRunDetail(record))
       for (const [kind,field] of [['PAIN',record.pain],['SORENESS',record.soreness]] as const) {
         if (field.status!=='RECORDED'||!field.value) continue
         const region=regionFromExplicitLabel(field.value.location)
@@ -141,8 +146,6 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       }
     }
     // v89.2：手表跑步——已关联计划课的按计划课类型计入；未关联的只留一句说明。手表力量只有摘要，同日已有逐组记录时不再重复提示。
-    let match: ReturnType<typeof loadRunMatch> = { links: [], suggestions: [] }
-    try { match = loadRunMatch() } catch { match = { links: [], suggestions: [] } }
     const linkedIds = new Set<string>()
     for (const l of match.links) {
       if (!recent(l.run.startedAt)) continue
@@ -234,3 +237,15 @@ export function recoveryExplanation(v: RecoveryProjection): string {
   const l=recoveryLines(v)
   return [l.summary,...l.groups,...l.evidence,...l.gaps,l.next].join('\n')
 }
+
+const BRAND_ZH = { GARMIN: '佳明', COROS: '高驰' } as const
+function brandLabel(identity: string | undefined) { const p = providerOf(identity); return p === 'OTHER' ? '' : ` · ${BRAND_ZH[p]}` }
+/** v89.10.6：导入跑步卡只写记录里真有的字段（标题/距离/用时/配速），不推断类型或肌群；说明它对肌肉恢复意味着什么、可以怎么做。 */
+export function importedRunDetail(r: { title: { value: string | null }; totalDistanceMeters: { value: number | null }; durationSeconds: { value: number | null } }): string {
+  const km = r.totalDistanceMeters.value && r.totalDistanceMeters.value > 0 ? r.totalDistanceMeters.value / 1000 : null
+  const sec = r.durationSeconds.value && r.durationSeconds.value > 0 ? r.durationSeconds.value : null
+  const mmss = (t: number) => `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, '0')}`
+  const facts = [r.title.value?.trim() || null, km ? `${km.toFixed(2)} km` : null, sec ? `用时 ${sec >= 3600 ? `${Math.floor(sec / 3600)}:` : ''}${sec >= 3600 ? mmss(sec % 3600).padStart(5, '0') : mmss(sec)}` : null, km && sec ? `配速 ${mmss(sec / km)}/km` : null].filter(Boolean)
+  return `${facts.length ? facts.join(' · ') : '跑步（记录里没有距离/用时）'}。还不知道这次是轻松跑、间歇还是长距离，所以没算进肌肉负荷；在日志里把它关联到计划课后，会按课型计入。`
+}
+
