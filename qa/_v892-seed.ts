@@ -13,7 +13,7 @@ const { emptySets, recordSet } = await import('../src/lib/core/execution')
 const { plan400TodayEntry } = await import('../src/lib/ui/plan400-start')
 const { resolveScheduledCourse } = await import('../src/lib/ui/scheduled-execution')
 const { setRunDevice } = await import('../src/lib/ui/plan400-components-store')
-const V4 = (await import('../src/lib/plan400-v4.json', { with: { type: 'json' } })).default as { days: any[] }
+const V4 = (await import('../test-fixtures/private/plan400-v4.json', { with: { type: 'json' } })).default as { days: any[] }
 const d = V4.days.find(x => x.date === '2026-10-19')
 const entry = plan400TodayEntry(d, null, () => ({ unit: 'reps', perSide: false }))!
 const s = resolveScheduledCourse(entry, { sessions: [] }, []).strength!

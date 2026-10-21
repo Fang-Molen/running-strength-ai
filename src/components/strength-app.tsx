@@ -15,7 +15,7 @@ import { RunImportPrompt } from "@/components/plan400-parts";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
 import { todayCoordinationParts, todayPartsText, type TodayPart } from "@/lib/ui/coach-coordination-view";
 import { dayKind, hasRunPart, hasStrength, type V4Day } from "@/lib/ui/plan400-view";
-import v4PlanJson from "../lib/plan400-v4.json" with { type: "json" };
+import { planDay, PLAN_CHANGED_EVT } from "@/lib/plan/active-plan";
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
@@ -407,12 +407,12 @@ export function StrengthApp() {
   const [todayCoord, setTodayCoord] = useState<{ parts: TodayPart[]; unplanned: number } | null>(null);
   useEffect(() => {
     const refresh = () => { try {
-      const pd = planSrc === "400m-v4" ? (v4PlanJson as { days: V4Day[] }).days.find(d => d.date === todayIso) : undefined;
+      const pd = planSrc === "400m-v4" ? planDay(todayIso) : undefined;
       const kind = pd ? dayKind(pd) : null;
       setTodayCoord(todayCoordinationParts(loadTrainingActivities(), loadSchedule().entries, todayIso, pd && kind !== 'rest' ? { run: hasRunPart(pd), lift: hasStrength(pd) && kind !== 'recovery' } : null));
     } catch { setTodayCoord(null); } };
     refresh(); const un = onAppEvent(refresh);
-    const evs = ['fk-schedule-changed', 'fk-training-activities-changed', 'fk-plan400-changed', 'fk-plan400-components', 'fk-garmin-synced', 'storage'];
+    const evs = [PLAN_CHANGED_EVT, 'fk-schedule-changed', 'fk-training-activities-changed', 'fk-plan400-changed', 'fk-plan400-components', 'fk-garmin-synced', 'storage'];
     for (const e of evs) window.addEventListener(e, refresh);
     return () => { un(); for (const e of evs) window.removeEventListener(e, refresh); };
   }, [todayIso, planSrc, tab]);
@@ -622,7 +622,7 @@ export function StrengthApp() {
         
         {tab === "plan" && hubPane === "run" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} sourceSlot={<PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />} /> : null}
         {tab === "plan" && hubPane === "run" && planSrc !== "400m-v4" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : null}
-        {tab === "plan" && hubPane === "run" ? <TempTrainingList entries={calendar} modality="run" title="临时 / 自建跑步训练" addLabel="＋添加跑步" onAdd={() => setTrainingEditor({ date: selectedDate, initialType: 'run' })} onOpen={openScheduled} empty="还没有临时或自建的跑步训练。" footer={<p className="keep mt-2 text-xs text-muted">与上方周期计划分开显示；只有 V4 当天课程生成的训练才算挂靠周期。间歇训练保留每次、每轮与休息结构；未开始的计划不会计入实际训练。</p>} /> : null}
+        {tab === "plan" && hubPane === "run" ? <TempTrainingList entries={calendar} modality="run" title="临时 / 自建跑步训练" addLabel="＋添加跑步" onAdd={() => setTrainingEditor({ date: selectedDate, initialType: 'run' })} onOpen={openScheduled} empty="还没有临时或自建的跑步训练。" footer={<p className="keep mt-2 text-xs text-muted">与上方周期计划分开显示；只有导入计划当天课程生成的训练才算挂靠周期。间歇训练保留每次、每轮与休息结构；未开始的计划不会计入实际训练。</p>} /> : null}
         {tab === "plan" && hubPane === "run" ? <section className="home-card mb-3 p-4" aria-label="训练资源"><h2 className="text-sm font-bold text-muted">训练资源</h2><button type="button" className="mt-2 flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left font-bold" onClick={() => setTechniqueLibrary(true)}><span>跑步技术动作库 · 53 项</span><span aria-hidden="true" className="text-muted">›</span></button></section> : null}
         {tab === "plan" && hubPane === "lift" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} lens="lift" /> : null}
         {tab === "plan" && hubPane === "lift" ? <section className="home-card product-goal-card mb-3 p-4" aria-label="当前目标">

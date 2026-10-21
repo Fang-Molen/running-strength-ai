@@ -20,11 +20,14 @@ import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink, 
 import type { DayParts } from "@/lib/ui/plan400-view";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { currentAthleteId } from "@/lib/core/events";
-import planJson from "../lib/plan400-v4.json" with { type: "json" };
+import { activePlan, planLabel, planTag, planPrefix } from "@/lib/plan/active-plan";
+import { NoPlanCard, usePlanRevision } from "@/components/plan-import";
 
-/* 原课表只读：plan400-v4.json 永不写回。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
-const plan = planJson as V4Plan;
-const days = plan.days;
+/* 原课表只读：存储里的计划文档（fk-plan-doc-v1）永不被训练记录改写。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
+const EMPTY_PLAN: V4Plan = { name: "", shiftDays: 0, weeks: [], days: [] };
+/** v89.6：计划来自本机存储（导入的计划文件或本地生成），不再内置。没有就是空计划。 */
+const P = (): V4Plan => activePlan() ?? EMPTY_PLAN;
+
 type Log = V4Log;
 const KEY = "fk-plan400-v4-log";
 const OKEY = "fk-plan400-v4-overrides";
@@ -35,7 +38,7 @@ type Tab = "plan" | "during" | "after" | "later";
 const loadO = (): Record<string, Override> => { try { return JSON.parse(localStorage.getItem(OKEY) || "{}"); } catch { return {}; } };
 /** v81：今天的 V4 课 → 确保有一条可执行条目（同一 id，已存在且结构一致就原样用；已开始/已有结果的不改结构）。返回条目 id；解析不出返回 null。 */
 export async function ensurePlan400Entry(date: string): Promise<{ id: string | null; reason?: string }> {
-  const d = dayOf(plan, date); if (!d || dayKind(d) === "rest") return { id: null };
+  const d = dayOf(P(), date); if (!d || dayKind(d) === "rest") return { id: null };
   const want = plan400TodayEntry(d, loadO()[date] ?? null, doseOf); if (!want) return { id: null };
   const old = loadSchedule().entries.find((e) => e.id === want.id);
   // V4 原始日期只作历史：已移动的稳定 ID 绝不能在旧日期重新生成。
@@ -113,7 +116,7 @@ function DeviceRunList({ runs }: { runs: DeviceRun[] }) {
   </div>;
 }
 export function openPlan400Day(date: string, tab: Tab = "plan") { window.dispatchEvent(new CustomEvent(OPEN_EVT, { detail: { date, tab } })); }
-export function plan400DayFor(date: string): { title: string; kind: ReturnType<typeof dayKind>; week: string } | null { const d = dayOf(plan, date); return d ? { title: d.title, kind: dayKind(d), week: d.week } : null; }
+export function plan400DayFor(date: string): { title: string; kind: ReturnType<typeof dayKind>; week: string } | null { const d = dayOf(P(), date); return d ? { title: d.title, kind: dayKind(d), week: d.week } : null; }
 const md = (iso: string) => `${Number(iso.slice(5, 7))}/${Number(iso.slice(8, 10))}`;
 const STATUS_CLS: Record<DayStatus, string> = { rest: "border-line text-muted", not_started: "border-line text-fg", upcoming: "border-line text-muted", in_progress: "border-accent text-accent", done: "border-[#47C29A] text-[#47C29A]", reduced: "border-[#47C29A] text-[#47C29A]", skipped: "border-line text-muted line-through decoration-1", unrecorded: "border-warn text-warn" };
 function StatusChip({ s }: { s: DayStatus }) { return <span className={"shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-bold " + STATUS_CLS[s]}>{STATUS_LABEL[s]}</span>; }
@@ -212,7 +215,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
   const combo = useCombo(d, log);
   const status = dayStatus(d, log, today, strengthLive(d.date), combo.dayParts);
   const moved = v4MovedOut(d.date, loadSchedule().entries);
-  const week = plan.weeks.find(w => w.week === d.week);
+  const week = P().weeks.find(w => w.week === d.week);
   const commit = (keys: (keyof Log)[], extra: Log = {}) => { const patch: Log = { ...extra }; for (const k of keys) patch[k] = edit[k] ?? ""; const ok = saveLog(d.date, patch); setMsg(ok ? `已保存 ${new Date().toTimeString().slice(0, 5)}（本机）` : "没有保存成功，原记录未改变。请检查存储空间后重试。"); };
   const tabs: [Tab, string][] = [["plan", "课表"], ["during", "训练中"], ["after", "训练后"], ["later", "24–72h"]];
   const later = d.date >= today;
@@ -232,7 +235,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(d.week === "TEST" ? d.main : d.main.slice(1)) || "原课表未写"}</p></section>
         {d.aux.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">辅助激活与技术</h3><p className="mt-1 leading-6">{joinLines(d.aux)}</p></section> : null}
         {d.strength.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">力量与核心 · 原课表</h3><p className="mt-1 leading-6">{joinLines(d.strength)}</p>{moved ? <p className="text-xs text-muted">已调整到其他日期，原日期不可执行。</p> : <StrengthOverride d={d} />}</section> : null}
-        {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{shiftedText(plan, week.week, week.principle)}</p></details> : null}
+        {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{shiftedText(P(), week.week, week.principle)}</p></details> : null}
         <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">原文与原日期（只读）</summary><p className="mt-1 text-xs text-muted">原课表日期 {d.orig || "未记录"} → 当前日程 {d.date}{d.orig && d.orig !== d.date ? `（顺延 ${Math.round((Date.parse(d.date) - Date.parse(d.orig)) / 864e5)} 天）` : ""}</p><pre className="mt-2 whitespace-pre-wrap break-words text-xs leading-5">{[...d.main, ...d.aux, ...d.strength].join("\n")}</pre></details>
       </> : null}
       {tab === "during" && moved ? <p className="home-card p-4 text-sm" data-testid="v4-moved-no-old-execution">{moved.label}，请到新日期执行；旧记录可在日志查看。</p> : null}
@@ -282,15 +285,15 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       {tab === "later" && combo.combo ? <LegacyReadOnly log={log} kind="later" /> : null}
       {tab === "later" && !moved && combo.combo && !later ? <RecoveryParts date={d.date} late={recoveryTiming(d.date, today) === "late"} daysSince={Math.round((Date.parse(today) - Date.parse(d.date)) / 864e5)} /> : null}
       {msg ? <p role="status" className="text-sm">{msg}</p> : log.savedAt ? <p className="text-xs text-muted">上次保存 {stampCN(log.savedAt, "ymd")}</p> : null}
-      <p className="text-xs text-muted">这一页的记录存在本机（整课：400米V4 记录；分项：V4 分项记录），会进入日志、复盘和方坤；关联的手表跑步只算一次。</p>
+      <p className="text-xs text-muted">这一页的记录存在本机（整课：计划记录；分项：计划分项记录），会进入日志、复盘和方坤；关联的手表跑步只算一次。</p>
     </div>
   </div>;
 }
 /** 全局只挂一次：首页卡、计划页、日历都通过事件打开同一个详情（同一日期 = 同一记录）。 */
 export function Plan400DayHost({ today }: { today: string }) {
   const [open, setOpen] = useState<{ date: string; tab: Tab } | null>(null);
-  useEffect(() => { const h = (e: Event) => { const v = (e as CustomEvent<{ date: string; tab?: Tab }>).detail; if (v?.date && dayOf(plan, v.date)) setOpen({ date: v.date, tab: v.tab ?? "plan" }); }; window.addEventListener(OPEN_EVT, h); return () => window.removeEventListener(OPEN_EVT, h); }, []);
-  const d = open ? dayOf(plan, open.date) : undefined;
+  useEffect(() => { const h = (e: Event) => { const v = (e as CustomEvent<{ date: string; tab?: Tab }>).detail; if (v?.date && dayOf(P(), v.date)) setOpen({ date: v.date, tab: v.tab ?? "plan" }); }; window.addEventListener(OPEN_EVT, h); return () => window.removeEventListener(OPEN_EVT, h); }, []);
+  const d = open ? dayOf(P(), open.date) : undefined;
   return d && open ? <DaySheet key={open.date + open.tab} d={d} today={today} initialTab={open.tab} onClose={() => setOpen(null)} /> : null;
 }
 
@@ -309,18 +312,19 @@ function HomeComboLine({ d, log }: { d: V4Day; log: Log | undefined }) {
 }
 /** 首页：今天 V4 课摘要 + 唯一主操作。 */
 export function Plan400TodayCard({ today, onReview }: { today: string; onReview?: () => void }) {
+  usePlanRevision();
   const logs = useLogs(); const partsAll = usePartsAll();
   const [live, setLive] = useState(false);
   useEffect(() => { setLive(strengthLive(today)); }, [today, logs]);
   if (!today) return null;
-  const d = dayOf(plan, today);
-  if (!d) { const next = days.find((x) => x.date > today); return next ? <section className="home-card mb-3 p-4 text-sm" aria-label="400米计划"><p className="text-xs text-muted">400米 V4</p><p className="mt-1">今天不在计划日程内。下一节：{md(next.date)} {next.weekday}「{next.title}」</p><button type="button" className="mt-2 min-h-11 text-accent" onClick={() => openPlan400Day(next.date)}>查看 ›</button></section> : null; }
+  const d = dayOf(P(), today);
+  if (!d) { const next = P().days.find((x) => x.date > today); return next ? <section className="home-card mb-3 p-4 text-sm" aria-label="训练计划"><p className="text-xs text-muted">{planLabel()}</p><p className="mt-1">今天不在计划日程内。下一节：{md(next.date)} {next.weekday}「{next.title}」</p><button type="button" className="mt-2 min-h-11 text-accent" onClick={() => openPlan400Day(next.date)}>查看 ›</button></section> : null; }
   const s = dayStatus(d, logs[d.date], today, live, partsAll[d.date]), cta = componentCta(d, logs[d.date], partsAll[d.date], s, live);
   const moved = v4MovedOut(d.date, loadSchedule().entries);
-  const week = plan.weeks.find(w => w.week === d.week);
+  const week = P().weeks.find(w => w.week === d.week);
   const go = () => { if ((cta.action === "start" || cta.action === "continue") && d.date === today) { const detail = { date: d.date, handled: false }; window.dispatchEvent(new CustomEvent(PLAN400_GUIDED_EVT, { detail })); if (!detail.handled) openPlan400Day(d.date, "during"); } else if (cta.action === "start" || cta.action === "continue") openPlan400Day(d.date, "during"); else if (cta.action === "review" || cta.action === "reason" || cta.action === "backfill") openPlan400Day(d.date, "after"); else openPlan400Day(d.date, "plan"); };
   return <section className="home-card mb-3 p-4" aria-label="今日训练主卡" data-testid="today-main-card" data-status={s}>
-    <div className="flex items-center justify-between gap-2"><p className="min-w-0 truncate text-xs text-muted">今日 · 400米 V4 · {d.week}{week ? `｜${week.title}` : ""}</p><StatusChip s={s} /></div>
+    <div className="flex items-center justify-between gap-2"><p className="min-w-0 truncate text-xs text-muted">今日 · {planLabel()} · {d.week}{week ? `｜${week.title}` : ""}</p><StatusChip s={s} /></div>
     <h2 className="mt-1 text-xl font-bold">{d.title}</h2>
     <p className="text-xs text-muted">{md(d.date)} {d.weekday} · <KindChip d={d} /></p>
     <ul className="mt-2 space-y-1 text-sm leading-6">{summaryLines(d).map((t, i) => <li key={i} className="line-clamp-2">{t}</li>)}</ul>
@@ -342,42 +346,46 @@ function DayRow({ d, today, logs, parts }: { d: V4Day; today: string; logs: Reco
   </button>;
 }
 /** 计划页：正式导入周期（V4）。当前周默认展开，其余周折叠，W1–W10 与最终测试全部可进入详情。 */
-export function Plan400Cycle({ today, sourceSlot, lens = "run" }: { today: string; sourceSlot?: React.ReactNode; lens?: "run" | "lift" }) {
+export function Plan400Cycle(props: { today: string; sourceSlot?: React.ReactNode; lens?: "run" | "lift" }) {
+  usePlanRevision();
+  return P().days.length ? <Plan400CycleView key={planLabel()} {...props} /> : props.lens === "lift" ? null : <NoPlanCard sourceSlot={props.sourceSlot} />;
+}
+function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; sourceSlot?: React.ReactNode; lens?: "run" | "lift" }) {
   const logs = useLogs(); const partsAll = usePartsAll();
   const [showSource, setShowSource] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
-  const [confirm, setConfirm] = useState(() => { migrateUserConfirmedDates(plan); return loadDateConfirm(plan); });
-  const cw = currentWeek(plan, today);
+  const [confirm, setConfirm] = useState(() => { migrateUserConfirmedDates(P()); return loadDateConfirm(P()); });
+  const cw = currentWeek(P(), today);
   const [openWeeks, setOpenWeeks] = useState<string[]>([]);
   useEffect(() => { setOpenWeeks([cw]); }, [cw]);
-  const counts = useMemo(() => progressCounts(plan, logs, partsAll), [logs, partsAll]);
-  const conflicts = useMemo(() => dateConflicts(plan), []);
-  const shift = shiftSummary(plan);
-  const cur = plan.weeks.find(w => w.week === cw);
-  const finals = days.filter(d => d.week === "TEST");
+  const counts = useMemo(() => progressCounts(P(), logs, partsAll), [logs, partsAll]);
+  const conflicts = useMemo(() => dateConflicts(P()), []);
+  const shift = shiftSummary(P());
+  const cur = P().weeks.find(w => w.week === cw);
+  const finals = P().days.filter(d => d.week === "TEST");
   const filt = (ds: V4Day[]) => lens === "lift" ? ds.filter(hasStrength) : ds;
   return <section className="home-card mb-3 p-4" aria-label="正在执行的周期计划" data-testid="plan400-cycle">
     <p className="text-xs text-muted">正在执行的周期计划</p>
-    <div className="mt-1 flex items-start justify-between gap-2"><h2 className="min-w-0 text-lg font-bold leading-snug">{plan.name}</h2><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={showSource} onClick={() => setShowSource(!showSource)}>来源 / 切换</button></div>
-    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入 · V4</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${shiftedText(plan, cur.week, cur.title)}` : ""}</span></div>
+    <div className="mt-1 flex items-start justify-between gap-2"><h2 className="min-w-0 text-lg font-bold leading-snug">{P().name}</h2><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={showSource} onClick={() => setShowSource(!showSource)}>来源 / 切换</button></div>
+    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入{planTag() ? ` · ${planTag()}` : ""}</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${shiftedText(P(), cur.week, cur.title)}` : ""}</span></div>
     <p className="mt-2 text-xs text-muted" data-testid="plan400-progress">已记录 {counts.recordedDays}/{counts.calendarEntries} 个日程（含休息/恢复日与测试）· 训练与测试课完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
     {showSource && sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
     {(conflicts.length || shift.shifted) && confirm ? <details className="mt-2 text-xs text-muted" data-testid="plan400-date-confirmed"><summary className="flex min-h-9 cursor-pointer list-none items-center gap-1">✓ 日期已确认 · 整体顺延 {shift.shiftDays} 天<ChevronRight className="size-3.5" /></summary>
-      <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表 {c.originalRange} → 现 {c.shownRange}；「{c.text}」{c.matchedDay ? `的${c.matchedDay.title}现在是 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : "在日程中没有对应的课"}</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天；最终测试 {plan.final?.date ?? "—"}（原 {plan.final?.orig ?? "—"}）。导入的原课表没有改。</li><li>{confirm.by} · {stampCN(confirm.at, "ymd").slice(0, 10)}</li></ul>
+      <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表 {c.originalRange} → 现 {c.shownRange}；「{c.text}」{c.matchedDay ? `的${c.matchedDay.title}现在是 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : "在日程中没有对应的课"}</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天；最终测试 {P().final?.date ?? "—"}（原 {P().final?.orig ?? "—"}）。导入的原课表没有改。</li><li>{confirm.by} · {stampCN(confirm.at, "ymd").slice(0, 10)}</li></ul>
       <button type="button" className="min-h-10 text-accent" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + ":revoked", "1") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>
     </details> : null}
     {(conflicts.length || shift.shifted) && !confirm ? <div className="mt-3 rounded-xl border border-warn/50 p-3 text-xs" role="status" data-testid="plan400-date-warning">
       <p className="flex gap-1.5 font-bold text-warn"><TriangleAlert className="mt-0.5 size-4 shrink-0" />日期待核对</p>
       <p className="mt-1 leading-5">导入日程整体顺延 {shift.shiftDays} 天{conflicts.length ? `；${conflicts.map(c => `${c.week} 标题写「${c.text}」，当前周显示 ${c.shownRange}`).join("；")}` : ""}。请核对原始安排后再执行相关测试课。这里保留原课表，未自动改期。</p>
-      <button type="button" className="mt-1 mr-3 min-h-10 font-bold text-accent" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + ":revoked") } catch { /* ignore */ } setConfirm(saveDateConfirm(plan, "用户确认")); }}>日期没问题，按顺延后执行</button>
+      <button type="button" className="mt-1 mr-3 min-h-10 font-bold text-accent" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + ":revoked") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), "用户确认")); }}>日期没问题，按顺延后执行</button>
       <button type="button" className="mt-1 min-h-10 font-bold text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button>
-      {showDiff ? <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程都按原日期 +{shift.shiftDays} 天排入；最终测试原为 {plan.final?.orig ?? "—"}，现为 {plan.final?.date ?? "—"}。</li><li>是否改测试日期需要你确认，App 不会自动修改。</li></ul> : null}
+      {showDiff ? <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程都按原日期 +{shift.shiftDays} 天排入；最终测试原为 {P().final?.orig ?? "—"}，现为 {P().final?.date ?? "—"}。</li><li>是否改测试日期需要你确认，App 不会自动修改。</li></ul> : null}
     </div> : null}
-    <div className="mt-3">{plan.weeks.map(w => { const ds = weekDays(plan, w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
+    <div className="mt-3">{P().weeks.map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
       return <div key={w.week} className="border-t border-line first:border-t-0">
         <button type="button" aria-expanded={isOpen} onClick={() => setOpenWeeks(isOpen ? openWeeks.filter(x => x !== w.week) : [...openWeeks, w.week])} className="flex min-h-12 w-full items-center gap-2 py-2 text-left">
           <span className={"w-9 shrink-0 text-sm font-bold " + (w.week === cw ? "text-accent" : "")}>{w.week}</span>
-          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{shiftedText(plan, w.week, w.title)}</span><span className="block text-[11px] text-muted">{md(ds[0].date)}—{md(ds[ds.length - 1].date)}{w.week === cw ? " · 本周" : ""}{!confirm && conflicts.some(c => c.week === w.week) ? " · ⚠ 日期待核对" : ""}</span></span>
+          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{shiftedText(P(), w.week, w.title)}</span><span className="block text-[11px] text-muted">{md(ds[0].date)}—{md(ds[ds.length - 1].date)}{w.week === cw ? " · 本周" : ""}{!confirm && conflicts.some(c => c.week === w.week) ? " · ⚠ 日期待核对" : ""}</span></span>
           <ChevronDown className={"size-4 shrink-0 text-muted transition-transform " + (isOpen ? "rotate-180" : "")} />
         </button>
         {isOpen ? <div className="pb-2">{shown.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} parts={partsAll[d.date]} />)}</div> : null}
@@ -396,10 +404,10 @@ export function TempTrainingList<E extends TempEntry>({ entries, modality, title
     <div className="flex items-center justify-between gap-2"><h2 className="font-bold">{title}</h2><button type="button" className="min-h-11 rounded-full border border-accent px-3 text-sm font-bold text-accent" onClick={onAdd}>{addLabel}</button></div>
     {list.map(e => { const l = entryLinkFor(e); return <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => onOpen(e)}>
       <span className="min-w-0"><b className="block truncate">{e.title}</b><span className="block text-xs text-muted">{e.date} · {modality === "strength" ? `${e.exercises?.length ?? "—"}个动作` : `${e.minutes}分钟`} · {e.status === "done" ? "已完成" : "待执行"}</span>
-        <span className="mt-0.5 flex flex-wrap gap-1 text-[11px]"><span className="rounded-full bg-surface-2 px-2 text-muted">{l.sourceLabel}</span>{l.linkedToV4 ? <span className="rounded-full bg-surface-2 px-2 text-muted">挂靠 V4 当天课程</span> : <span className="rounded-full bg-surface-2 px-2 text-muted">未挂靠周期</span>}{l.sameDayV4 ? <span className="rounded-full border border-warn/50 px-2 text-warn">同日有 V4「{l.sameDayV4.title}」</span> : null}</span></span>
+        <span className="mt-0.5 flex flex-wrap gap-1 text-[11px]"><span className="rounded-full bg-surface-2 px-2 text-muted">{l.sourceLabel}</span>{l.linkedToV4 ? <span className="rounded-full bg-surface-2 px-2 text-muted">挂靠{planTag()}当天课程</span> : <span className="rounded-full bg-surface-2 px-2 text-muted">未挂靠周期</span>}{l.sameDayV4 ? <span className="rounded-full border border-warn/50 px-2 text-warn">同日有计划课「{l.sameDayV4.title}」</span> : null}</span></span>
       <ChevronRight className="size-4 shrink-0 text-muted" /></button>; })}
     {!list.length ? <p className="border-t border-line py-3 text-sm text-muted">{empty}</p> : null}
     {footer}
   </section>;
 }
-function entryLinkFor(e: TempEntry) { return entryLink(plan, e); }
+function entryLinkFor(e: TempEntry) { return entryLink(P(), e); }

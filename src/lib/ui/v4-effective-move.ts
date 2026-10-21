@@ -1,6 +1,6 @@
 /**
  * V4 imported plan effective-schedule projection (candidate R1).
- * Original plan400-v4.json and actual event records are immutable.
+ * The stored plan document (fk-plan-doc-v1) and actual event records are immutable.
  * A moved scheduled entry keeps its stable original V4 ID.
  * This module never writes storage or infers a move from matching titles.
  */

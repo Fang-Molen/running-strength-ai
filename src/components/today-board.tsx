@@ -15,6 +15,7 @@ import { TrainingEditorSheet } from "@/components/training-editor-sheet"
 import { fillRestOnce, fmtRest } from "@/lib/strength/rest"
 import { RestTimer } from "@/components/rest-timer"
 import { openPlan400Day, plan400DayFor } from "@/components/plan400"
+import { planLabel, planTag } from "@/lib/plan/active-plan"
 
 const WD = ["一", "二", "三", "四", "五", "六", "日"]
 const INT: Record<Intensity, string> = { EASY: "轻松", MODERATE: "中等", HARD: "高强度" }
@@ -88,8 +89,8 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
       {(() => { const v = v4Day(day); if (!v) return !list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null
         if (day === today) return null // 今天的 V4 课只在上方今日主卡出现一次（一个主操作）
         return <button type="button" data-testid="board-v4-row" onClick={() => openPlan400Day(day)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3 text-left">
-          <span className="min-w-0 flex-1"><span className="block text-[11px] text-muted">400米 V4 · {v.week} · {v.kind === "rest" ? "休息日" : v.kind === "recovery" ? "恢复" : v.kind === "test" ? "测试" : "训练课"}</span><span className="block truncate font-bold">{v.title}</span></span><span aria-hidden="true" className="text-muted">›</span></button> })()}
-      {!list.length && v4Day(day) ? <p className="px-1 text-xs text-muted">{day === today ? "今天的 V4 课见上方主卡；没有其他自建或方坤的训练。" : "这天还没有安排自建或方坤的训练。"}</p> : null}
+          <span className="min-w-0 flex-1"><span className="block text-[11px] text-muted">{planLabel()} · {v.week} · {v.kind === "rest" ? "休息日" : v.kind === "recovery" ? "恢复" : v.kind === "test" ? "测试" : "训练课"}</span><span className="block truncate font-bold">{v.title}</span></span><span aria-hidden="true" className="text-muted">›</span></button> })()}
+      {!list.length && v4Day(day) ? <p className="px-1 text-xs text-muted">{day === today ? `今天的${planTag()}课见上方主卡；没有其他自建或方坤的训练。` : "这天还没有安排自建或方坤的训练。"}</p> : null}
       {undo ? <div role="status" className="fixed inset-x-3 bottom-24 z-40 mx-auto flex max-w-md items-center justify-between rounded-card bg-fg px-4 py-3 text-sm text-bg shadow-lg"><span>{undo.label}</span><button type="button" className="font-bold underline" onClick={restore}>撤销</button></div> : null}
     </div>
     <div className="mt-2 flex flex-wrap gap-3 px-1">

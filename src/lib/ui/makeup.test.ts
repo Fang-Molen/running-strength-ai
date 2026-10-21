@@ -2,7 +2,7 @@
 process.env.TZ = 'Asia/Shanghai'
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import V4 from '../plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
 import { linkRuns, phoneRows, garminRows, detachMakeup, type ActivityRow } from './training-read-model.ts'
 import { setRunDevice, saveComponent } from './plan400-components-store.ts'
 import { v4ExecFrom } from './v4-exec.ts'

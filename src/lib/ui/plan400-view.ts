@@ -1,10 +1,11 @@
 /**
- * 只读 view-model：把内置导入的《400米53秒多 完整专项训练体系 V4》(plan400-v4.json) 与
+ * 只读 view-model：把本机已导入的计划文档（fk-plan-doc-v1，见 lib/plan/active-plan.ts）与
  * 本机执行记录（fk-plan400-v4-log / fk-plan400-v4-overrides / fk-schedule-v1）聚合给首页与计划页同一份口径。
  * 不写任何存储、不改原课表、不改日期；冲突只报告。
  */
 import type { CompStatus, DayComponents, PartFeedback } from './plan400-components-store'
 import { madeUpOn, makeupText } from './makeup'
+import { planTag, planPrefix } from '../plan/active-plan'
 export type V4Day = { orig: string; date: string; weekday: string; week: string; title: string; main: string[]; aux: string[]; strength: string[] }
 export type V4Week = { week: string; title: string; range: string; principle: string }
 export type V4Plan = { name: string; shiftDays: number; weeks: V4Week[]; days: V4Day[]; final?: V4Day }
@@ -208,12 +209,12 @@ export function entryLink(p: V4Plan, e: { id: string; date: string; source: stri
   const v = dayOf(p, e.date)
   return {
     linkedToV4: linked,
-    sourceLabel: linked ? 'V4 计划·力量部分' : e.source === 'fangkun' ? '方坤安排' : e.unplanned ? '临时记录' : '自建训练',
+    sourceLabel: linked ? `${planPrefix()}计划·力量部分` : e.source === 'fangkun' ? '方坤安排' : e.unplanned ? '临时记录' : '自建训练',
     ...(v && !linked && dayKind(v) !== 'rest' ? { sameDayV4: { title: v.title, kind: dayKind(v) } } : {}),
   }
 }
 
-/* v78：用户确认“V4 从 10/19 = W1 开始，整体顺延 7 天是对的”。只存确认，不改导入的原课表。 */
+/* v78：用户可确认“导入计划整体顺延 N 天是对的”。只存确认，不改导入的原课表。 */
 export const DATE_CONFIRM_KEY = 'fk-plan400-dates-confirmed-v1'
 export type DateConfirm = { shiftDays: number; at: string; by: string }
 type KV = Pick<Storage, 'getItem' | 'setItem'> | null
@@ -225,10 +226,9 @@ export function saveDateConfirm(p: V4Plan, by: string, s: KV = kv(), at = new Da
   const v = { shiftDays: p.shiftDays, at, by }; try { s?.setItem(DATE_CONFIRM_KEY, JSON.stringify(v)); return v } catch { return null }
 }
 export function clearDateConfirm(s: Pick<Storage, 'removeItem'> | null = kv() as never) { try { s?.removeItem(DATE_CONFIRM_KEY) } catch { /* ignore */ } }
-/** 2026-10-19 用户（t486）确认：W1 = 10/19，+7 天日程正确。v78 升级时写一次；之后用户可在详情里撤销。 */
-export function migrateUserConfirmedDates(p: V4Plan, s: KV = kv()): void {
-  try { if (p.shiftDays === 7 && !s?.getItem(DATE_CONFIRM_KEY) && !s?.getItem(DATE_CONFIRM_KEY + ':revoked') && p.days.some(d => d.date === '2026-10-19' && d.week === 'W1')) saveDateConfirm(p, '用户确认（2026-10-19：W1 从 10/19 开始）', s, '2026-10-19T02:46:00Z') } catch { /* ignore */ }
-}
+/** v89.6：旧版这里按个人计划内容（某个具体日期）自动写一次“日期已确认”。应用不再内置任何个人计划内容，改为空操作；
+ *  已写入设备的确认（DATE_CONFIRM_KEY）原样保留，用户仍可在详情里确认/撤销。 */
+export function migrateUserConfirmedDates(_p: V4Plan, _s: KV = kv()): void { /* no-op since v89.6 */ }
 /** 显示用：标题/原则里写的原日期（如「10月31日」）换成顺延后的日期（「11月7日」）。原数据不改。 */
 export function shiftedText(p: V4Plan, week: string, text: string): string {
   const cs = dateConflicts(p).filter(c => c.week === week && c.matchedDay)

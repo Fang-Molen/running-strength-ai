@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { FileUp, Sparkles } from 'lucide-react';
 import { ImageIntake } from './image-intake';
 import { readPhoto, savePhoto, deletePhoto } from '@/lib/nutrition/food-photo';
+import { hasActivePlan, planLabel } from '@/lib/plan/active-plan';
+import { PlanImportPanel } from './plan-import';
 type Imp = { id: string; name: string; type: string; size: number; at: string; text?: string; attachmentId?: string };
 const KEY = 'fk-plan-imports-v1';
 function load(): Imp[] { const rows = JSON.parse(localStorage.getItem(KEY) || '[]'); if (!Array.isArray(rows)) throw Error('已有课表来源无法读取，请先备份核对。'); return rows; }
-const LABEL: Record<string, string> = { '400m-v4': '400米专项计划 V4（已导入）', generated: '方坤生成计划' };
+const LABEL: Record<string, string> = { get '400m-v4'() { return hasActivePlan() ? `${planLabel()}（已导入）` : '未导入计划' }, generated: '方坤生成计划' } as Record<string, string>;
 /** Imported source documents stay distinct from active/executed plans. */
 export function PlanSourceCard({ active, onChange, onGenerate }: { active: string; onChange: (v: string) => void; onGenerate: () => void }) {
  const [imports, setImports] = useState<Imp[]>([]), [open, setOpen] = useState(false), [msg, setMsg] = useState(''), [file, setFile] = useState<File | null>(null), [busy, setBusy] = useState(false); const saving = useRef(false);
@@ -25,7 +27,7 @@ export function PlanSourceCard({ active, onChange, onGenerate }: { active: strin
  }
  async function download(row: Imp) { try { if (!row.attachmentId) throw Error('旧版本只保存了文件名，原文件未保留，请重新导入。'); const blob = await readPhoto(row.attachmentId); if (!blob) throw Error('原文件暂不可读，请检查当前浏览器。'); const url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = row.name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 10000); } catch(e) { setMsg((e as Error).message); } }
  return <section className="home-card mb-3 p-3" aria-label="计划来源"><div className="flex items-center justify-between gap-2"><div className="min-w-0"><p className="text-xs text-muted">当前计划</p><b className="block truncate">{LABEL[active] ?? active}</b></div><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={open} onClick={() => setOpen(!open)}>切换 / 替换</button></div>
- {open ? <div className="mt-3 space-y-2"><label className="fk-orange-btn flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl font-bold"><FileUp className="size-4" />保存课表资料（PDF / 文本）<input disabled={busy} type="file" accept=".pdf,.txt,.md,.csv" className="sr-only" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void add(f); }} /></label>
+ {open ? <div className="mt-3 space-y-2"><PlanImportPanel onImported={() => onChange('400m-v4')} /><label className="fk-orange-btn flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl font-bold"><FileUp className="size-4" />保存课表资料（PDF / 文本，仅存档）<input disabled={busy} type="file" accept=".pdf,.txt,.md,.csv" className="sr-only" onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void add(f); }} /></label>
  <fieldset disabled={busy}><ImageIntake title="课表图片识别" file={file} onFile={setFile} onText={(text, f) => { if (f) void add(f, text); }} /></fieldset>
  {file ? <button type="button" disabled={busy} className="fk-chip min-h-11" onClick={() => void add(file)}>仅保存原图资料</button> : null}
  <button type="button" className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-line text-sm" onClick={onGenerate}><Sparkles className="size-4" />让方坤生成</button>

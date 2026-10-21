@@ -7,9 +7,10 @@
  */
 import { COLLECTED } from './app-settings.ts'
 import { LOCAL_BACKUP_KIND, inspectLocalBackup, restoreLocalBackup } from '../core/trial.ts'
+import { PLAN_DOC_KEY, PLAN_DOC_SCHEMA, validatePlanDoc } from '../plan/active-plan.ts'
 
-export type BackupFormat = 'vault' | 'local' | 'legacy-r8'
-export const FORMAT_LABEL: Record<BackupFormat, string> = { vault: '全部数据备份（fangkun-backup-日期.json）', local: '训练记录备份（running-strength-backup.json，仅 fr255- 开头的数据）', 'legacy-r8': '旧版「导出全部（JSON）」（fangkun-data.json，8 类数据）' }
+export type BackupFormat = 'vault' | 'local' | 'legacy-r8' | 'plan'
+export const FORMAT_LABEL: Record<BackupFormat, string> = { plan: '训练计划文件（fangkun-plan-v1，只含计划，不含训练记录）', vault: '全部数据备份（fangkun-backup-日期.json）', local: '训练记录备份（running-strength-backup.json，仅 fr255- 开头的数据）', 'legacy-r8': '旧版「导出全部（JSON）」（fangkun-data.json，8 类数据）' }
 type Store = { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void }
 export type BackupPreview =
   | { ok: true; format: BackupFormat; label: string; exportedAt: string | null; version: string | null; total: number; added: number; overwritten: number; unchanged: number; skipped: number; skippedReasons: string[] }
@@ -26,6 +27,12 @@ function planOf(raw: string): Plan | { error: string } {
   try { b = JSON.parse(raw) } catch { return { error: '文件不是有效的 JSON，未做任何修改。' } }
   if (!b || typeof b !== 'object' || Array.isArray(b)) return { error: '不是方坤备份文件，未做任何修改。' }
   const o = b as Record<string, unknown>
+  // v89.6：通用计划文件（任何用户都可导入；应用本身不内置任何计划）。只写计划键，不碰训练记录。
+  if (o.schema === PLAN_DOC_SCHEMA) {
+    const v = validatePlanDoc(o)
+    if (!v.ok) return { error: `${v.reason}未做任何修改。` }
+    return { entries: [{ key: PLAN_DOC_KEY, value: JSON.stringify(v.doc) }], skipped: [], format: 'plan', exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : null, version: PLAN_DOC_SCHEMA }
+  }
   if (o.kind === LOCAL_BACKUP_KIND) return { entries: [], skipped: [], format: 'local', exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : null, version: typeof o.version === 'string' ? o.version : null }
   if (o.format === 'fangkun-vault-backup') {
     if (!o.data || typeof o.data !== 'object' || Array.isArray(o.data)) return { error: '备份内容缺失或损坏，未做任何修改。' }
@@ -83,4 +90,14 @@ export function applyEntries(entries: { key: string; value: string }[], storage:
     return { ok: false, reason: '恢复失败（可能是存储空间不足），已退回，原有记录还在。' }
   }
   return { ok: true, restored: applied.length }
+}
+
+/** v89.6：恢复前记下将被改写的键的旧值，供“撤销导入”。local 格式不支持（返回 null）。 */
+export function backupUndoSnapshot(raw: string, storage: Pick<Store, 'getItem'>): { key: string; previous: string | null }[] | null {
+  const p = planOf(raw)
+  if ('error' in p || p.format === 'local') return null
+  return p.entries.map(e => ({ key: e.key, previous: storage.getItem(e.key) }))
+}
+export function undoBackupSnapshot(snap: { key: string; previous: string | null }[], storage: Store): boolean {
+  try { for (const s of snap) { if (s.previous == null) storage.removeItem(s.key); else storage.setItem(s.key, s.previous) } return true } catch { return false }
 }

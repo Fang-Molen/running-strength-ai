@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Intensity, ScheduleEntry } from "@/lib/ui/day-schedule-rules";
 import { ExerciseEditor, PartChips, type Ex } from "@/components/exercise-editor";
-import plan from "../lib/plan400-v4.json" with { type: "json" };
+import { planDays } from "@/lib/plan/active-plan";
 
 const TYPES = [["run", "跑步"], ["strength", "力量"], ["mixed", "混合"], ["other", "其他"]] as const;
 const RUN_SUB: [string, Intensity][] = [["轻松跑", "EASY"], ["间歇", "HARD"], ["节奏跑", "MODERATE"], ["加速跑", "MODERATE"], ["技术", "EASY"], ["测试", "HARD"]];
@@ -14,7 +14,7 @@ export function CustomSessionBuilder({ day, onAdd }: { day: string; onAdd: (e: S
   const [sub, setSub] = useState<string>(""); const [parts, setParts] = useState<string[]>([]);
   const [dist, setDist] = useState(""); const [reps, setReps] = useState(""); const [exs, setExs] = useState<Ex[]>([]); const [between, setBetween] = useState<number | null>(null);
   const [minutes, setMinutes] = useState("40"); const [slot, setSlot] = useState<"am" | "pm">("pm"); const [hard, setHard] = useState<Intensity>("MODERATE");
-  const p400 = (plan.days as { date: string; title: string }[]).find((d) => d.date === day);
+  const p400 = planDays().find((d) => d.date === day);
   const intensity: Intensity = type === "run" ? (RUN_SUB.find((x) => x[0] === sub)?.[1] ?? "EASY") : type === "other" ? "EASY" : hard;
   const lowerHeavy = (type === "strength" || type === "mixed") && parts.some((x) => ["下肢", "后链", "全身", "快速力量"].includes(x)) && intensity !== "EASY";
   const conflict = p400 && isFormal(p400.title) && (intensity === "HARD" || lowerHeavy);

@@ -10,7 +10,7 @@ import { loadSchedule } from "@/lib/ui/day-schedule"
 import { currentAthleteId } from "@/lib/core/events"
 import { readPendingFeedback } from "@/lib/ui/pending-feedback-host"
 import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
-import V4Json from "../lib/plan400-v4.json" with { type: "json" }
+import { planDays } from "@/lib/plan/active-plan"
 const hm = (iso: string) => stampCN(iso, "hm")
 const km = (m: number | null) => m != null ? `${(m / 1000).toFixed(2)} km` : ""
 export function useParts(date: string): DayComponents | undefined {
@@ -125,7 +125,7 @@ export function RunImportPrompt({ today }: { today: string }) {
     const doc = loadComponents(), seen = new Set(doc.prompted ?? [])
     const recent = (d: string) => Date.parse(today) - Date.parse(d) <= 3 * 864e5 && d <= today
     let logs: Record<string, V4Log> = {}; try { logs = JSON.parse(localStorage.getItem("fk-plan400-v4-log") || "{}") ?? {} } catch { logs = {} }
-    const rated = (date: string) => { const d = (V4Json as { days: V4Day[] }).days.find(x => x.date === date); return d ? partRated(d, { parts: doc.days[date] }, logs[date], "running") : hasFeedback(doc.days[date]?.running) }
+    const rated = (date: string) => { const d = planDays().find(x => x.date === date); return d ? partRated(d, { parts: doc.days[date] }, logs[date], "running") : hasFeedback(doc.days[date]?.running) }
     const due = m.links.find(l => l.entry.id.startsWith("plan400:") && !seen.has(`${l.entry.date}|${l.run.id}`) && !rated(l.entry.date) && recent(l.entry.date))
     if (due) { setOpen({ kind: "link", l: due }); return }
     const cand = m.suggestions.find(x => x.entry.id.startsWith("plan400:") && x.runs.length === 1 && x.runs[0].date === x.entry.date && !seen.has(`${x.entry.date}|${x.runs[0].id}`) && recent(x.entry.date))
@@ -173,7 +173,7 @@ export function PendingFeedbackList({ today, compact = false }: { today: string;
   if (unavailable) return <p className="keep text-sm text-muted">待补反馈暂不可读取，未当作全部完成。</p>
   if (!items.length) return null
   const open = (it: PendingItem) => window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: it.date, tab: it.kind === "confirm_run" ? "during" : "after" } }))
-  const titleOf = (d: string) => (V4Json as { days: V4Day[] }).days.find(x => x.date === d)?.title
+  const titleOf = (d: string) => planDays().find(x => x.date === d)?.title
   if (compact) return <button type="button" className="mt-1 min-h-11 text-left text-sm text-warn" data-testid="pending-feedback-compact" data-task-id={pendingTaskId(items[0],currentAthleteId())} onClick={() => open(items[0])}>待补反馈：{pendingLabel(items[0], titleOf(items[0].date))}{items.length > 1 ? ` 等 ${items.length} 项` : ""} · 去评价 ›</button>
   return <section className="home-card mb-3 p-3" aria-label="待补反馈" data-testid="pending-feedback">
     <p className="text-sm font-bold">待补反馈 · {items.length} 项</p>

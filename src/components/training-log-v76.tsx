@@ -2,6 +2,7 @@ import type React from "react"
 import { useEffect, useMemo, useState } from "react"
 import { Activity, Dumbbell, Footprints } from "lucide-react"
 import { onAppEvent } from "@/lib/core/events"
+import { planTag, planPrefix } from "@/lib/plan/active-plan"
 import { listTrainingOccurrences } from "@/lib/core/occurrence"
 import { loadConfirmedTrainingImports } from "@/lib/core/training-import"
 import { calendarDayShanghai } from "@/lib/ui/training-log-view"
@@ -75,8 +76,8 @@ function RecordRow({ r, plan, onAsk, open, onOpen, link }: { r: ActivityRow; pla
     </button>
     {open ? <div className="mb-3 space-y-2">
       {link ? <RunLinkNote link={link} /> : null}
-      {r.v4 ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-fact-note"><p className="keep font-bold">V4 这节课</p>{r.v4.running ? <p className="keep">跑步：{r.v4.running.label}{r.v4.running.detail ? ` · ${r.v4.running.detail}` : ""}</p> : null}{r.v4.strength ? <p className="keep">力量：{r.v4.strength.label}</p> : null}{r.v4.legacyOverall ? <p className="keep text-muted">历史整课记录（旧口径，只读；整课 RPE 不拆给跑步或力量）</p> : null}</div> : null}
-      {r.v4parts ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-parts-note"><p className="keep font-bold">V4 分项评价</p>{[partLine("跑步", r.v4parts.running), partLine("力量", r.v4parts.strength)].map((x, i) => x ? <p key={i} className="keep">{x}</p> : null)}{!partLine("跑步", r.v4parts.running) && !partLine("力量", r.v4parts.strength) ? <p className="keep text-muted">还没有分项评价</p> : null}</div> : null}
+      {r.v4 ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-fact-note"><p className="keep font-bold">{planPrefix()}这节课</p>{r.v4.running ? <p className="keep">跑步：{r.v4.running.label}{r.v4.running.detail ? ` · ${r.v4.running.detail}` : ""}</p> : null}{r.v4.strength ? <p className="keep">力量：{r.v4.strength.label}</p> : null}{r.v4.legacyOverall ? <p className="keep text-muted">历史整课记录（旧口径，只读；整课 RPE 不拆给跑步或力量）</p> : null}</div> : null}
+      {r.v4parts ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-parts-note"><p className="keep font-bold">{planPrefix()}分项评价</p>{[partLine("跑步", r.v4parts.running), partLine("力量", r.v4parts.strength)].map((x, i) => x ? <p key={i} className="keep">{x}</p> : null)}{!partLine("跑步", r.v4parts.running) && !partLine("力量", r.v4parts.strength) ? <p className="keep text-muted">还没有分项评价</p> : null}</div> : null}
       {g ? <GarminActivityRow g={g} detailOnly /> : null}
       {occ ? <OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /> : null}
       {imp ? <ImportRow item={imp} onAsk={onAsk} onDeleted={() => window.dispatchEvent(new Event("fk-training-activities-changed"))} /> : null}

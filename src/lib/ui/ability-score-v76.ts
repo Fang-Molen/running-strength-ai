@@ -34,14 +34,14 @@ export function scoreAbilities(x: ScoreInput): AxisScore[] {
   const ok = (key: AxisKey, score: number, inputs: string[]): AxisScore => ({ ...base(key), score: clamp(score), inputs, reason: null, reasonText: '' })
   const out: AxisScore[] = []
   // 速度
-  const m400 = x.marks.find(m => m.meters === 400), goal = m400?.goalSec ?? 53.5
+  const m400 = x.marks.find(m => m.meters === 400), goal = m400?.goalSec ?? null // v89.6：不再内置任何个人目标；没填目标就不换算
   const cands: { sec: number; src: string }[] = []
   if (m400?.recentSec) cands.push({ sec: m400.recentSec, src: `个人资料最近 400 米成绩 ${fmt(m400.recentSec)}` })
   let roadLaps = 0
   for (const a of x.acts) if (isRun(a.type) && !/track/.test(a.type) && daysBefore(x.asOf, a.start) <= 90) roadLaps += (x.laps[String(a.id)] ?? []).filter(l => l.dist && l.dist >= 380 && l.dist <= 420).length
   for (const a of x.acts) if (/track/.test(a.type) && daysBefore(x.asOf, a.start) <= 90 && daysBefore(x.asOf, a.start) >= 0) for (const l of x.laps[String(a.id)] ?? []) if (l.dist && l.dur && l.dist >= 380 && l.dist <= 420) cands.push({ sec: l.dur * 400 / l.dist, src: `${dayOf(a.start)} 田径场训练分段（非正式测试，分数偏保守） ${Math.round(l.dist)} 米 ${fmt(l.dur)}，折算 400 米 ${fmt(l.dur * 400 / l.dist)}` })
   const best = cands.sort((a, b) => a.sec - b.sec)[0]
-  out.push(best ? ok('speed', 100 * goal / best.sec, [best.src, `目标 400 米 ${fmt(goal)}`]) : roadLaps ? pend('speed', '条件不可比', `只有路跑里的 ${roadLaps} 段约 400 米分段，不是全力测试，不能代表速度。在田径场做一次 400 米全力计时，或在个人资料填最近 400 米成绩。`) : pend('speed', '缺记录', '没有 400 米成绩：在个人资料填最近 400 米成绩，或在田径场跑一次 400 米计时（手表按圈记录）。'))
+  out.push(best && !goal ? pend('speed', '缺评分标准', '在个人资料填写 400 米目标成绩后才能换算速度分（应用不内置目标）。', [best.src]) : best && goal ? ok('speed', 100 * goal / best.sec, [best.src, `目标 400 米 ${fmt(goal)}`]) : roadLaps ? pend('speed', '条件不可比', `只有路跑里的 ${roadLaps} 段约 400 米分段，不是全力测试，不能代表速度。在田径场做一次 400 米全力计时，或在个人资料填最近 400 米成绩。`) : pend('speed', '缺记录', '没有 400 米成绩：在个人资料填最近 400 米成绩，或在田径场跑一次 400 米计时（手表按圈记录）。'))
   // 速度耐力
   let se: AxisScore | null = null
   for (const a of [...x.acts].sort((p, q) => (parseActivityTime(q.start)?.getTime() ?? 0) - (parseActivityTime(p.start)?.getTime() ?? 0))) {

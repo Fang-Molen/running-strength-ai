@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { currentWeek, dateConflicts, dayKind, dayOf, dayStatus, entryLink, hasStrength, primaryCta, progressCounts, shiftSummary, weekDays, type V4Plan } from './plan400-view.ts'
 
-const raw = readFileSync(new URL('../plan400-v4.json', import.meta.url), 'utf8')
+const raw = readFileSync(new URL('../../../test-fixtures/private/plan400-v4.json', import.meta.url), 'utf8')
 const plan = JSON.parse(raw) as V4Plan
 
 test('V4 source plan is untouched (checksum pinned before UI work)', () => {

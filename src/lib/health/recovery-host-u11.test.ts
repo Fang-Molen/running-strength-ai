@@ -126,7 +126,7 @@ import { setRunDevice } from '../ui/plan400-components-store'
 import { garminViewKey } from './garmin-view-scope'
 import { libraryKey, v4RunType, LIBRARY_ALIAS } from './muscle-log-source'
 import { ACTIONS } from '../strength/action-picker'
-import V4 from '../plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
 import type { V4Day } from '../ui/plan400-view'
 function v4Lift(f:ReturnType<typeof fixture>){
   const d=(V4.days as V4Day[]).find(x=>x.date==='2026-10-19')!

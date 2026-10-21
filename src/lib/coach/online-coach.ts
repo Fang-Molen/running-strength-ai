@@ -1,4 +1,5 @@
 import { planVsActual } from '../ui/run-link'
+import { planTag, planPrefix } from '../plan/active-plan'
 import { partLine, loadComponents } from '../ui/plan400-components-store'
 /** 方坤联网分析（用户 t460 明确要求“一直保持联网”）：默认开启并记录一次同意；用户可在方坤里关闭。
  * 只发送去标识化事实（活动数值/分段/恢复指标/计划目标），不发送账号、位置或凭证。失败/离线回退本地分析。 */
@@ -35,10 +36,10 @@ export function v4FactLine(r: ActivityRow, c?: DayComponents): string {
   if (f.strength) segs.push(`力量 ${STATE_WORD[f.strength.state] ?? f.strength.state}${pl('力量', c?.strength)}`)
   if (r.runLink && r.distanceM != null) segs.push(`跑步实际 ${fmtDistance(r.distanceM) ?? ''} ${fmtDuration(r.durationSec)}（已关联佳明，同一次训练只算一次）`)
   // 旧整课记录原样带上（成绩/组间休息/整课 RPE 都保留，不拆、不丢），只标口径
-  const legacy = v4RecordLine(r.date)?.replace(/^V4 计划记录（[^）]*）：/, '')
+  const legacy = v4RecordLine(r.date)?.replace(/^(?:\S+ )?计划记录（[^）]*）：/, '')
   if (f.legacyOverall) segs.push(`历史整课记录（旧口径·仅参考，整课 RPE 不拆给跑步或力量）：${legacy ?? f.legacy.done ?? ''}`)
   else if (legacy) segs.push(`旧整课字段（仅参考）：${legacy}`)
-  return `V4 计划记录（${r.date} ${r.title?.replace(/^V4 /, '').replace(/（.*$/, '') ?? ''}）：${segs.join('；')}`
+  return `${planPrefix()}计划记录（${r.date} ${(planPrefix() && r.title?.startsWith(planPrefix()) ? r.title.slice(planPrefix().length) : r.title)?.replace(/（.*$/, '') ?? ''}）：${segs.join('；')}`
 }
 /** 去标识化事实包。v86（R1.1）：只发用户自己的数据——目标来自资料“目标成绩”或聊天里明确说过的目标，没有就写“未知”；
  * 内置 V4 课表只有用户真的在用（本机有 V4 记录）时才作为“用户在用的计划”发出，不再给新用户/合成学员套用。 */

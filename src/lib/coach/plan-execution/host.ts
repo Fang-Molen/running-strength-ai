@@ -58,7 +58,7 @@ export async function readCoachPlanHostSnapshot(asOf = new Date().toISOString())
   const date = new Date(asOf), clockKnown = Number.isFinite(date.getTime()) && date.getTime() <= Date.now()
   const all = read.ok ? read.value.entries : [], owned = loadSchedule().entries.filter(entry => entry.athleteId === athleteId)
   const records = loadCommittedEventRecords().filter(record => record.event.athlete_id === athleteId)
-  const reasons = ['当前完整执行日历尚未合并核定（V4、自建、导入及已确认修订）。', '现有日程和训练写入尚未统一并发协调；尚未修改。', '日期移动的适用安全限制尚未完成受信复核，确认不能解除医疗限制。']
+  const reasons = ['当前完整执行日历尚未合并核定（周期计划、自建、导入及已确认修订）。', '现有日程和训练写入尚未统一并发协调；尚未修改。', '日期移动的适用安全限制尚未完成受信复核，确认不能解除医疗限制。']
   const unattributed = all.filter(entry => entry.athleteId == null).length
   if (unattributed) reasons.push(`${unattributed} 条旧日程没有明确归属，仅保留历史，未认领为当前运动员。`)
   const choices: CoachPlanHostChoice[] = [], targets: PlanTarget[] = []

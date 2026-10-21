@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import V4 from '../plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
 import { v4DayFact, dayStatus, progressCounts, type V4Day, type V4Plan } from './plan400-view.ts'
 import { v4ExecFrom } from './v4-exec.ts'
 import { phoneRows, garminRows, linkRuns, mergeActivities } from './training-read-model.ts'
@@ -66,7 +66,7 @@ test('A07/A08/N14：分段课同日唯一手表跑步只是候选；两条都列
   const f = v4DayFact(D, undefined, { runCandidates: 1 }); assert.equal(f.running?.state, 'candidate'); assert.equal(f.actualRun, false); assert.equal(f.overall, null)
 })
 test('A17：V4 原始 JSON hash 不变；W1 从 10/19 开始（+7 天）', () => {
-  const h = createHash('sha256').update(readFileSync(new URL('../plan400-v4.json', import.meta.url))).digest('hex')
+  const h = createHash('sha256').update(readFileSync(new URL('../../../test-fixtures/private/plan400-v4.json', import.meta.url))).digest('hex')
   assert.equal(h, '7a59a75ed693c147b763e5285f838b828d0c702e3d59aca5927e0efd21c5e282'); assert.equal(days[0].date, '2026-10-19')
 })
 test('A18/A19：更正留历史；同一份存储读两次结果一致（刷新不重复、不丢）', () => {

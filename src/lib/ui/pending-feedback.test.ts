@@ -1,7 +1,7 @@
 // v83 整改包 P1-07：“稍后”不丢——待补反馈由事实推出
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import V4 from '../plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
 import { pendingFeedback } from './pending-feedback.ts'
 import type { V4Day } from './plan400-view.ts'
 const days = (V4 as { days: V4Day[] }).days, T = '2026-10-20'

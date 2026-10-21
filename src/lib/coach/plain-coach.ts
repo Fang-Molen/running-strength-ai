@@ -3,11 +3,11 @@ import { loadComponents, hasFeedback } from '../ui/plan400-components-store'
 import { currentStore } from '../core/storage'
 /** 方坤面向用户的“成熟教练”表达层：结论 → 生理原因 → 下一课处方；数据不够时直接说做什么测试、记什么。
  * 只读：不写计划、不改记录。内部事实/审计模型不变，这里只组织文字与联网上下文。 */
-import plan from '../plan400-v4.json' with { type: 'json' }
+import { planDays, hasActivePlan, planTag, PLAN_DOC_KEY, planPrefix } from '../plan/active-plan'
 export type GActivity = { id: number | string; sourceIdentity?: string; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null }
 export type GLap = { i: number; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; speed: number | null }
 type Day = { date: string; title: string; main: string[]; aux: string[]; strength: string[]; week: string }
-const days = (plan as { days: Day[] }).days
+const days = { find: (f: (d: Day) => boolean) => (planDays() as Day[]).find(f) }
 
 export const isReviewAsk = (q: string) => /复盘|这节|这次训练|这次跑|今天.{0,3}(?:跑|练)得|昨天.{0,6}(?:跑|练|训练)|上一?次.{0,4}(?:跑|训练|课)|刚才.{0,4}(?:跑|练)|跑得怎么样|练得怎么样/.test(q)
 export const localDayOf = (iso: string) => activityLocalDay(iso) ?? iso.slice(0, 10)
@@ -30,7 +30,9 @@ const browserStore = (): Store => currentStore() as Store
  * 新用户/别的运动员没有这份计划，不能把它当事实发出去或拿来对照。 */
 export function plan400Active(store: Store = browserStore()): boolean {
   const has = (k: string, pick: (v: any) => unknown) => { try { const v = JSON.parse(store?.getItem(k) ?? 'null'); const x = v && pick(v); return !!x && typeof x === 'object' && Object.keys(x).length > 0 } catch { return false } }
-  return has('fk-plan400-v4-log', v => v) || has('fk-plan400-v4-components-v1', v => v.days)
+  // v89.6：计划只来自本机已导入/生成的计划文档；没有文档 = 没有计划（旧记录照常是事实）。
+  let stored = false; try { stored = store?.getItem(PLAN_DOC_KEY) != null } catch { stored = false }
+  return hasActivePlan(store) && (stored || has('fk-plan400-v4-log', v => v) || has('fk-plan400-v4-components-v1', v => v.days))
 }
 const mmss = (s: number) => s >= 60 ? `${Math.floor(s / 60)}分${String(Math.round((s % 60) * 100) / 100).padStart(2, '0')}秒` : `${s}秒`
 /** v86：目标只来自用户自己的设置（资料“目标成绩”）或用户在聊天里明确说过的目标；没有就返回 null（= 未知），绝不用内置课表名里的成绩。 */
@@ -62,7 +64,7 @@ export function v4RecordLine(day: string, store: Pick<Storage, 'getItem'> | null
   const d = days.find(x => x.date === day), st = l.done === 'done' ? '已完成' : l.done === 'reduced' ? '已完成·减量' : l.done === 'skipped' ? '取消' : '已记录未完成'
   const F: [string, string][] = [['reps', '成绩'], ['rest', '组间休息'], ['strength', '力量实际'], ['rpe', 'RPE'], ['pain', '疼痛'], ['r24', '24小时后'], ['note', '备注']]
   const parts = F.filter(([k]) => String(l![k] ?? '').trim()).map(([k, n]) => `${n} ${String(l![k]).trim().slice(0, 80)}`)
-  return `V4 计划记录（${day}${d ? ' ' + d.title : ''}）：${st}${parts.length ? '；' + parts.join('；') : ''}`
+  return `${planPrefix()}计划记录（${day}${d ? ' ' + d.title : ''}）：${st}${parts.length ? '；' + parts.join('；') : ''}`
 }
 /** 只用运动类型，不用活动名（佳明默认活动名带城市）。 */
 export const sportLabel = (t: string) => /track/.test(t) ? '田径场跑' : /treadmill/.test(t) ? '跑步机跑' : /trail/.test(t) ? '越野跑' : /run/.test(t) ? '跑步' : /strength/.test(t) ? '力量训练' : /cycl|bik/.test(t) ? '骑行' : /swim/.test(t) ? '游泳' : t || '训练'

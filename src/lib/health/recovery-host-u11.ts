@@ -7,7 +7,7 @@ import { effectiveStrengthFields, listCorrections, occurrenceVoided } from '../c
 import { projectRunningExecution } from '../core/running-execution'
 import { loadRunMatch } from '../ui/training-read-model'
 import type { V4Day } from '../ui/plan400-view'
-import V4 from '../plan400-v4.json' with { type: 'json' }
+import { planDays, planTag, planPrefix } from '../plan/active-plan'
 import { libraryKey, purposeRunType, RUN_TYPE_LABEL, v4RunType } from './muscle-log-source'
 import { coachImports } from '../core/coach-import-evidence'
 import { loadOwnedComponents } from '../ui/plan400-components-store'
@@ -101,11 +101,11 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       try { run = projectRunningExecution(oid, events) } catch { run = null }
       if (run?.availability !== 'AVAILABLE' || ![...run.repetitions, ...run.continuous].some(x => x.status === 'COMPLETED')) continue
       const v4 = /plan400:(\d{4}-\d\d-\d\d)/.exec(occurrence.sessionId)?.[1]
-      const runType = v4 ? v4RunType((V4.days as V4Day[]).find(x => x.date === v4)) : 'UNKNOWN'
+      const runType = v4 ? v4RunType(planDays().find(x => x.date === v4)) : 'UNKNOWN'
       const close = records.find(r => r.event.event_id === occurrence.closeEventId)?.recordedAt
       const plan = v4 ? `v4run:${v4}` : oid
       add({ athleteId, eventId: oid, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: iso(close) && close >= occurrence.startedAt ? close : occurrence.startedAt,
-        sourceId: oid, actual: 'CONFIRMED', runType }, '逐段跑步记录', `${v4 ? `V4 ${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
+        sourceId: oid, actual: 'CONFIRMED', runType }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
       phoneRunPlans.add(plan); runDays.add(localDay(new Date(occurrence.startedAt))); if (v4) runDays.add(v4)
     }
     for (const record of coachImports(athleteId,effectiveAsOf)) {
@@ -150,9 +150,9 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const v4 = /^plan400:(\d{4}-\d\d-\d\d):running$/.exec(l.entry.id)?.[1]
       const plan = v4 ? `v4run:${v4}` : l.entry.id
       if (phoneRunPlans.has(plan)) continue // 同一节已有逐段记录，只算一次
-      const runType = v4 ? v4RunType((V4.days as V4Day[]).find(x => x.date === v4)) : purposeRunType(l.entry.runComponents?.find(c => c.modality === 'RUNNING')?.purpose)
+      const runType = v4 ? v4RunType(planDays().find(x => x.date === v4)) : purposeRunType(l.entry.runComponents?.find(c => c.modality === 'RUNNING')?.purpose)
       add({ athleteId, eventId: l.run.id, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: l.run.startedAt, knownAt: l.run.startedAt,
-        sourceId: l.run.id, actual: 'CONFIRMED', runType }, '已关联手表跑步', `${v4 ? `V4 ${mdOf(v4)}` : l.entry.title} 计划课 · ${RUN_TYPE_LABEL[runType]}${l.run.distanceM ? ` · ${(l.run.distanceM / 1000).toFixed(1)} km` : ''}`)
+        sourceId: l.run.id, actual: 'CONFIRMED', runType }, '已关联手表跑步', `${v4 ? `${planPrefix()}${mdOf(v4)}` : l.entry.title} 计划课 · ${RUN_TYPE_LABEL[runType]}${l.run.distanceM ? ` · ${(l.run.distanceM / 1000).toFixed(1)} km` : ''}`)
       runDays.add(l.run.date); if (v4) runDays.add(v4)
     }
     const watchRaw=currentStore()?.getItem(garminViewKey('fk-garmin-acts-v1'))

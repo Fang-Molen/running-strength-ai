@@ -32,6 +32,7 @@ import { Sheet, Toast, useToast } from "@/components/sheet"
 import { pendingLocal, sentToday, support, SENT_KEY } from "@/lib/ui/notify"
 import { loadInjury } from "@/lib/ui/injury"
 import { IntradayTodayLine } from "@/components/intraday-panel"
+import { AboutStep, EMPTY_ME, goalsForEvent, saveAboutMe, type AboutMe } from "@/components/onboarding-about"
 
 const read = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d } }
 export const loadAnswers = (): (Answers & { done?: boolean }) | null => read(ONBOARD_KEY, null)
@@ -39,18 +40,22 @@ export const loadAnswers = (): (Answers & { done?: boolean }) | null => read(ONB
 /* ---------------- 1) 首次引导 ---------------- */
 export function Onboarding({ today, onDone }: { today: string; onDone: () => void }) {
   const [step, setStep] = useState(0)
+  const q = step - 1 // v89.6：第 0 步“关于你”，原 5 题顺延
+  const [me, setMe] = useState<AboutMe>(EMPTY_ME)
+  const [added, setAdded] = useState<string[]>([])
   const [a, setA] = useState<Answers>(DEFAULTS)
   const [brand, setBrand] = useState<string | null>(null)
   const [accepted, setAccepted] = useState(false)
   const week = weekOf(today)
   const preview = useMemo(() => previewWeek(a, week, today), [a, week, today])
   const set = (p: Partial<Answers>) => setA({ ...a, ...p })
-  const next = () => setStep(step + 1)
+  const next = () => { if (step === 0) setA({ ...a, goals: goalsForEvent(me.event, a.goals) }); setStep(step + 1) }
   const finish = (accept: boolean) => {
     saveWatch(a.source, undefined, brand)
     const s = loadSchedule(); const ids = new Set(s.entries.map((e) => e.id))
     const add = preview.filter((e) => !ids.has(e.id)).map(({ why, ...e }) => ({ ...e, status: accept ? "planned" : "proposed", swapReason: why } as ScheduleEntry))
     saveSchedule({ ...s, entries: [...s.entries, ...add] }, 'onboarding-r8')
+    saveAboutMe(me, a.days.length); setAdded(add.map((e) => e.id))
     localStorage.setItem(ONBOARD_KEY, JSON.stringify({ ...a, done: true, at: new Date().toISOString() }))
     setAccepted(true)
   }
@@ -60,33 +65,33 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
     const s = loadSettings(); saveSettings({ ...s, reminders: { ...s.reminders, master: ok } }); onDone()
   }
   const Opt = ({ on, onClick, label, sub }: { on: boolean; onClick: () => void; label: string; sub?: string }) => <button type="button" aria-pressed={on} onClick={onClick} className={"w-full rounded-2xl border p-3 text-left " + (on ? "border-accent bg-accent/10" : "border-line bg-surface")}><b>{label}</b>{sub ? <span className="block text-xs text-muted">{sub}</span> : null}</button>
-  const body = step === 0 ? <div className="space-y-2">{WATCHES.map(([id, l]) => <Opt key={id} on={a.source === id} onClick={() => { set({ source: id }); setBrand(null) }} label={l} sub={`${GROUP_HINT[id]} · ${TIER_LABEL[TIERS[tierFor({ ...a, source: id })] ? tierFor({ ...a, source: id }) : "basic"]}`} />)}
+  const body = step === 0 ? <AboutStep me={me} onChange={setMe} /> : q === 0 ? <div className="space-y-2">{WATCHES.map(([id, l]) => <Opt key={id} on={a.source === id} onClick={() => { set({ source: id }); setBrand(null) }} label={l} sub={`${GROUP_HINT[id]} · ${TIER_LABEL[TIERS[tierFor({ ...a, source: id })] ? tierFor({ ...a, source: id }) : "basic"]}`} />)}
       {BRANDS[a.source].length ? <select aria-label="品牌" className="fk-cell w-full" value={brand ?? ""} onChange={(e) => setBrand(e.target.value || null)}><option value="">品牌（只决定显示哪份说明）</option>{BRANDS[a.source].map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select> : null}</div>
-    : step === 1 ? <div className="space-y-2"><p className="text-xs text-muted">最多选 2 个，第一个算主目标。</p>{GOALS.map(([id, l]) => <Opt key={id} on={a.goals.includes(id)} onClick={() => set({ goals: toggleGoal(a.goals, id) })} label={l} sub={a.goals[0] === id ? "主目标" : undefined} />)}</div>
-    : step === 2 ? <div className="space-y-2"><p className="text-xs text-muted">按时间选，不用自我评价。</p>{EXPERIENCE.map(([id, l]) => <Opt key={id} on={a.experience === id} onClick={() => set({ experience: id })} label={`规律训练：${l}`} />)}</div>
-    : step === 3 ? <div className="space-y-2">{VENUES.map(([id, l]) => <Opt key={id} on={a.venue === id} onClick={() => set({ venue: id, equipment: PRESET[id] })} label={l} />)}
+    : q === 1 ? <div className="space-y-2"><p className="text-xs text-muted">最多选 2 个，第一个算主目标。</p>{GOALS.map(([id, l]) => <Opt key={id} on={a.goals.includes(id)} onClick={() => set({ goals: toggleGoal(a.goals, id) })} label={l} sub={a.goals[0] === id ? "主目标" : undefined} />)}</div>
+    : q === 2 ? <div className="space-y-2"><p className="text-xs text-muted">按时间选，不用自我评价。</p>{EXPERIENCE.map(([id, l]) => <Opt key={id} on={a.experience === id} onClick={() => set({ experience: id })} label={`规律训练：${l}`} />)}</div>
+    : q === 3 ? <div className="space-y-2">{VENUES.map(([id, l]) => <Opt key={id} on={a.venue === id} onClick={() => set({ venue: id, equipment: PRESET[id] })} label={l} />)}
       <p className="pt-1 text-xs text-muted">已按场地预勾，删改即可：</p><div className="flex flex-wrap gap-1.5">{EQUIPMENT.map((q) => <button key={q} type="button" className="fk-chip" aria-pressed={a.equipment.includes(q)} onClick={() => set({ equipment: a.equipment.includes(q) ? a.equipment.filter((x) => x !== q) : [...a.equipment, q] })}>{q}</button>)}</div></div>
-    : step === 4 ? <div className="space-y-3"><p className="text-sm font-bold">每周哪几天</p><div className="grid grid-cols-7 gap-1">{["一", "二", "三", "四", "五", "六", "日"].map((d, i) => <button key={d} type="button" aria-pressed={a.days.includes(i)} onClick={() => set({ days: a.days.includes(i) ? a.days.filter((x) => x !== i) : [...a.days, i] })} className={"grid aspect-square place-items-center rounded-full border text-sm font-bold " + (a.days.includes(i) ? "border-accent bg-accent text-accent-fg" : "border-line")}>{d}</button>)}</div>
+    : q === 4 ? <div className="space-y-3"><p className="text-sm font-bold">每周哪几天</p><div className="grid grid-cols-7 gap-1">{["一", "二", "三", "四", "五", "六", "日"].map((d, i) => <button key={d} type="button" aria-pressed={a.days.includes(i)} onClick={() => set({ days: a.days.includes(i) ? a.days.filter((x) => x !== i) : [...a.days, i] })} className={"grid aspect-square place-items-center rounded-full border text-sm font-bold " + (a.days.includes(i) ? "border-accent bg-accent text-accent-fg" : "border-line")}>{d}</button>)}</div>
       <p className="text-sm font-bold">每次多长</p><div className="grid grid-cols-4 gap-1.5">{([20, 30, 45, 60] as const).map((m) => <button key={m} type="button" className="fk-chip justify-center" aria-pressed={a.minutes === m} onClick={() => set({ minutes: m })}>{m === 60 ? "60+" : m} 分</button>)}</div>
       <p className="text-sm font-bold">通常什么时候练 <span className="text-xs font-normal text-muted">（可选，提醒按这个来）</span></p><div className="grid grid-cols-3 gap-1.5">{WHEN.map(([id, l]) => <button key={id} type="button" className="fk-chip justify-center" aria-pressed={a.when === id} onClick={() => set({ when: a.when === id ? null : id })}>{l}</button>)}</div></div>
     : null
   return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="首次引导">
-    <div className="mx-auto max-w-xl px-4 pb-10 pt-5">
-      {step < 5 ? <>
-        <div className="flex items-center gap-3"><span className="text-sm font-bold">{step + 1}/5</span><div className="h-1.5 flex-1 rounded-full bg-line"><div className="h-full rounded-full bg-accent" style={{ width: `${(step + 1) * 20}%` }} /></div></div>
-        <h1 className="mt-4 text-2xl font-bold">{["你的数据从哪来？", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
-        <p className="mt-1 text-xs text-muted">{QUESTIONS[step]} · 伤病和饮食等用到时再问</p>
+    <div className="fk-onboard-safe mx-auto max-w-xl px-4 pb-10 pt-5">
+      {step < 6 ? <>
+        <div className="flex items-center gap-3"><span className="text-sm font-bold">{step + 1}/6</span><div className="h-1.5 flex-1 rounded-full bg-line"><div className="h-full rounded-full bg-accent" style={{ width: `${(step + 1) * 100 / 6}%` }} /></div></div>
+        <h1 className="mt-4 text-2xl font-bold">{["先认识一下你", "你的数据从哪来？（可连佳明）", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
+        <p className="mt-1 text-xs text-muted">{step === 0 ? "资料只存在这台设备上" : QUESTIONS[q]} · 伤病和饮食等用到时再问</p>
         <div className="mt-4">{body}</div>
         <div className="mt-6 flex gap-2">{step ? <button type="button" className="fk-chip min-h-12 px-4" onClick={() => setStep(step - 1)}>上一步</button> : null}<button type="button" className="fk-primary min-h-12 flex-1" onClick={next}>下一步</button></div>
-        <button type="button" className="fk-link mt-3 w-full text-center text-sm" onClick={() => { setA({ ...a, ...pickDefault(step) }); next() }}>跳过，用默认</button>
+        <button type="button" className="fk-link mt-3 w-full text-center text-sm" onClick={() => { if (step === 0) setMe(EMPTY_ME); else setA({ ...a, ...pickDefault(q) }); next() }}>跳过，用默认</button>
       </> : !accepted ? <>
-        <h1 className="text-2xl font-bold">这是你本周的计划</h1>
+        <h1 className="text-2xl font-bold">{me.nickname ? `${me.nickname}，` : ""}这是你本周的计划</h1>
         <p className="mt-1 text-sm text-muted">为了「{goalLabel(a.goals[0] ?? "fitness")}」· {TIER_LABEL[tierFor(a)]} · 每节都是方坤的建议，可以逐个改。</p>
         <div className="mt-3 space-y-2">{preview.length ? preview.map((e) => <div key={e.id} className={"rounded-2xl border-l-4 bg-surface p-3 " + (e.modality === "run" ? "border-l-[#2182bd]" : "border-l-[#d07a2b]")}><p className="font-bold">周{"一二三四五六日"[week.indexOf(e.date)]} · {e.title} · {e.minutes} 分钟{e.slot ? (e.slot === "pm" ? " · 今晚" : " · 上午") : ""}</p><p className="text-xs text-muted">{e.why}</p></div>) : <p className="text-sm text-muted">本周剩下的日子没有你选的训练日，下周一开始。</p>}</div>
         <div className="mt-4 grid grid-cols-2 gap-2"><button type="button" className="fk-primary min-h-12" onClick={() => finish(true)}>接受</button><button type="button" className="fk-chip min-h-12 justify-center" onClick={() => finish(false)}>逐个调整</button></div>
         <p className="mt-2 text-xs text-muted">“逐个调整”会放到首页的待确认卡上：接受 / 自己改 / 换一个 / 不要。</p>
       </> : <>
-        <Bell className="size-10 text-accent" /><h1 className="mt-3 text-2xl font-bold">要不要到点提醒你？</h1>
+        {added.length ? <button type="button" data-testid="onboard-undo" className="mb-3 min-h-11 w-full rounded-xl border border-line text-sm" onClick={() => { const s = loadSchedule(); const ids = new Set(added); saveSchedule({ ...s, entries: s.entries.filter((e) => !ids.has(e.id)) }, "onboarding-r8"); setAdded([]) }}>撤销刚加入的 {added.length} 节（回到没有计划）</button> : null}<Bell className="size-10 text-accent" /><h1 className="mt-3 text-2xl font-bold">要不要到点提醒你？</h1>
         <p className="mt-1 text-sm text-muted">到点提醒你今天的课；晚上还没记录再提醒一次。每天最多 2 条，随时可在设置里关。</p>
         <button type="button" className="fk-primary mt-5 min-h-12 w-full" onClick={askNotify}>打开提醒</button>
         <button type="button" className="fk-link mt-3 w-full text-center text-sm" onClick={onDone}>暂不需要</button>
