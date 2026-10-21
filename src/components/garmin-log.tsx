@@ -27,6 +27,12 @@ export function saveGarminActivities(list: unknown[], accountScope?: string): vo
   if(accountScope) currentStore()?.setItem(garminScopeKey(), accountScope);
   if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-training-activities-changed'));
 }
+/** v89.10.1：增量同步判断“这条活动本机已有且时长/距离没变”。 */
+export function garminViewHas(accountScope: string, o: Record<string, any>): boolean {
+  if (!o?.activityId) return false
+  const g = load<Record<string, G>>(`${GACTS_KEY}:${encodeURIComponent(currentAthleteId())}:${accountScope}`, {})[o.activityId]
+  return !!g && g.dur === num(o.duration) && g.dist === num(o.distance)
+}
 export const kindOf = (t: string) => /run|track|treadmill/.test(t) ? "run" : /strength|fitness|weight|hiit|training/.test(t) ? "strength" : "other";
 const fmtDur = (s: number | null) => fmtDuration(s);
 const pace = (dist: number | null, dur: number | null) => fmtPace(dist, dur);

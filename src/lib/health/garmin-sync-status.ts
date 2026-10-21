@@ -35,12 +35,12 @@ export function readGarminSyncStatus(subject: string, store: KV | null = typeof 
   const backoffUntil = failAt && now - failAt < 30 * 60e3 ? new Date(failAt + 30 * 60e3).toISOString() : null
   const days = [...(report?.coverageDays ?? [])].sort()
   const importRange = report ? { healthFrom: days[0] ?? null, healthTo: days.at(-1) ?? null, healthDaysRequested: report.healthDaysRequested, healthDaysWithData: days.length, activityLimit: report.activityLimit, activityRows: report.activityRows, completeHistory: report.completeHistory,
-    label: `健康数据：${report.healthDaysRequested > 14 ? `最近 14 天 + 补更早历史 ${report.healthDaysRequested - 14} 天` : `最近 ${report.healthDaysRequested} 天`}（${days.length} 天有数据${days.length ? `，${days[0].slice(5)}–${days.at(-1)!.slice(5)}` : ''}）；活动：最近 ${report.activityLimit} 条摘要（本次 ${report.activityRows} 条）${report.completeHistory ? '' : '，更早的历史不导入'}` } : null
+    label: `健康数据：${report.mode === 'RECENT' ? '增量同步 · ' : report.mode === 'INITIAL' ? '首次同步 · ' : ''}${report.healthDaysRequested > 14 ? `最近 14 天 + 补更早历史 ${report.healthDaysRequested - 14} 天` : `最近 ${report.healthDaysRequested} 天`}（${days.length} 天有数据${days.length ? `，${days[0].slice(5)}–${days.at(-1)!.slice(5)}` : ''}）；活动：最近 ${report.activityLimit} 条摘要（本次 ${report.activityRows} 条）${report.completeHistory ? '' : '，更早的历史不导入'}` } : null
   const partialFailure = report && report.status === 'partial' ? { at: report.at, errors: report.errors.slice(0, 10), saved: report.saved, skipped: report.skipped } : null
   const details = [
     `自动同步：${AUTO_SYNC_RULE}`,
     ...(backoffUntil ? [`上次自动同步失败，${hhmm(backoffUntil)} 前不再自动重试（可手动同步）`] : []),
-    ...(report ? [`最近一次：保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
+    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（一次补齐 90 天）' : report.mode === 'RECENT' ? '增量同步（近 3 天 + 新活动）' : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
     ...(report?.errors.length ? report.errors.slice(0, 5).map(e => `问题：${e}`) : []),
   ]
   return {

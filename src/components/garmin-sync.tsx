@@ -9,7 +9,8 @@ import { saveDeviceRows } from "@/lib/ui/device-store";
 import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
 import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
 import { exportFeedback } from "@/components/coach-feedback";
-import { saveGarminActivities } from "@/components/garmin-log";
+import { saveGarminActivities, garminViewHas } from "@/components/garmin-log";
+import { shortHash } from "@/lib/health/observation";
 import { saveIntraday, intradayComplete } from "@/lib/health/intraday-store";
 
 const api = async (p: string, init?: RequestInit, ms = 20000) => {
@@ -19,7 +20,7 @@ const api = async (p: string, init?: RequestInit, ms = 20000) => {
 };
 let running = false;
 let accountGeneration = 0;
-export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string): Promise<"ok" | "partial" | "auth" | "fail" | "busy"> {
+export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string, reason: "AUTO" | "MANUAL" = "AUTO"): Promise<"ok" | "partial" | "auth" | "fail" | "busy"> {
   if (running) return "busy";
   running = true;
   try {
@@ -27,6 +28,9 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
       day: localDay(), now: new Date().toISOString(), progress: setMsg,
       save: saveDeviceRows, saveView: saveGarminActivities, bindAccount: bindGarminAccount,
       intraday: { complete: d => intradayComplete(d), save: days => saveIntraday(days) },
+      // v89.10.1：增量同步。完整复核时间按佳明账号分开存；手动点同步 = 完整复核。
+      reason, activitySeen: garminViewHas,
+      fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId())) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId()), at) } },
       backfill: { get: scope => { try { return Number(localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 90 } }, set: (scope, n) => { try { localStorage.setItem(`fk-garmin-health-backfill:${scope}`, String(n)) } catch { /* 下次再补 */ } } },
       report: report => {
         const key = (name: string) => garminStorageKey(name, report.subjectId);
@@ -42,7 +46,8 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
     });
     const label = { ok: '同步完成', partial: '部分同步', empty: '本次未取得可用记录', auth: '登录失效或身份不完整', fail: '同步失败', stale: '账号或运动员变化，已丢弃本次结果' }[result.status];
     if (result.status === 'ok' || result.status === 'partial') void prefetchRecentLaps();
-    setMsg(`${label}：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
+    const modeLabel = result.mode === 'INITIAL' ? '首次同步' : result.mode === 'RECENT' ? '增量同步' : '完整复核';
+    setMsg(`${modeLabel}${label}（请求 ${result.requests ?? '—'} 次）：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
     return result.status === 'empty' || result.status === 'stale' ? 'fail' : result.status;
   } finally { running = false; }
 }
@@ -121,7 +126,7 @@ export function GarminSync({ hideBackup = false, onState }: { hideBackup?: boole
   }
   async function sync() {
     setBusy(true); setMsg("同步中…");
-    const r = await runGarminSync(setMsg, st?.profile?.displayName);
+    const r = await runGarminSync(setMsg, st?.profile?.displayName, "MANUAL");
     if (r === "auth") await refresh(); if (r === "busy") setMsg("正在后台同步…");
     setBusy(false);
   }

@@ -132,3 +132,49 @@ test('v78 health history backfills 14 older days per sync until 90 days, only af
   assert.equal(upTo, 90)
   const last = await runGarminSyncJob(host); assert.equal(last.healthDaysRequested, 14)
 })
+
+// ---- v89.10.1 增量同步 / 首次一次补齐 ----
+function counting(opts: { list?: (start: number, limit: number) => any[]; throttleAfter?: number } = {}) {
+  const f = fixture(), paths: string[] = []; let daily = 0
+  const base = f.host.api
+  f.host.api = async (p: string) => { paths.push(p)
+    if (p.includes('activities/search')) { const m = /start=(\d+)&limit=(\d+)/.exec(p)!; return { status: 200, body: opts.list ? opts.list(+m[1], +m[2]) : [activity] } }
+    if (p.includes('usersummary')) { daily++; if (opts.throttleAfter != null && daily > opts.throttleAfter) return { status: 429, body: {} } }
+    return base(p) }
+  const store: Record<string, string> = {}; let cursor = 14
+  const host = { ...f.host, sleep: async () => {}, intraday: { complete: () => false, save: (d: unknown[]) => d.length },
+    backfill: { get: () => cursor, set: (_: string, n: number) => { cursor = n } },
+    fullReview: { get: (s: string) => store[s] ?? null, set: (s: string, at: string) => { store[s] = at } } }
+  return { f, host, paths, store, cursor: () => cursor, setCursor: (n: number) => { cursor = n } }
+}
+test('first sync collects 90 days daily + 28 days intraday in one go, then marks full review', async () => {
+  const c = counting(), r = await runGarminSyncJob({ ...c.host, reason: 'AUTO' })
+  assert.equal(r.mode, 'INITIAL'); assert.equal(r.healthDaysRequested, 90); assert.equal(c.cursor(), 90); assert.ok(c.store['cn:synthetic-user'])
+  assert.equal(c.paths.filter(p => p.includes('dailyHeartRate')).length, 28)
+  console.log('INITIAL requests', r.requests)
+})
+test('auto sync same local day after full review = RECENT: 3 days, 20-item list, far fewer requests', async () => {
+  const c = counting(); c.setCursor(90); c.store['cn:synthetic-user'] = c.host.now
+  const done = new Set<number>(); const host = { ...c.host, intraday: { complete: (d: string) => d < '2026-10-16', save: (d: unknown[]) => d.length } }
+  const full = await runGarminSyncJob({ ...host, reason: 'MANUAL' }), recent = await runGarminSyncJob({ ...host, reason: 'AUTO' }); void done
+  assert.equal(full.mode, 'FULL'); assert.equal(recent.mode, 'RECENT'); assert.equal(recent.healthDaysRequested, 3); assert.equal(recent.activityLimit, 20)
+  assert.ok(c.paths.some(p => p.includes('start=0&limit=20'))); assert.ok(recent.requests! < full.requests! / 2)
+  console.log('FULL requests', full.requests, 'RECENT requests', recent.requests)
+})
+test('new local day or no full review → FULL even for auto', async () => {
+  const c = counting(); c.setCursor(90); c.store['cn:synthetic-user'] = '2026-10-17T12:00:00Z'
+  assert.equal((await runGarminSyncJob({ ...c.host, reason: 'AUTO' })).mode, 'FULL')
+})
+test('RECENT pages further only while every item is new/changed (cap 200)', async () => {
+  const c = counting({ list: (start, limit) => Array.from({ length: limit }, (_, i) => ({ ...activity, activityId: 1000 + start + i })) }); c.setCursor(90); c.store['cn:synthetic-user'] = c.host.now
+  const r = await runGarminSyncJob({ ...c.host, reason: 'AUTO', activitySeen: (_s: string, o: any) => o.activityId >= 1045 })
+  assert.equal(c.paths.filter(p => p.includes('activities/search')).length, 3); assert.equal(r.activityRows, 60)
+  const all = counting({ list: (start, limit) => Array.from({ length: limit }, (_, i) => ({ ...activity, activityId: 5000 + start + i })) }); all.setCursor(90); all.store['cn:synthetic-user'] = all.host.now
+  await runGarminSyncJob({ ...all.host, reason: 'AUTO', activitySeen: () => false }); assert.equal(all.paths.filter(p => p.includes('activities/search')).length, 10)
+})
+test('first sync throttled (429) saves partial, cursor resumes, no full-review mark', async () => {
+  const c = counting({ throttleAfter: 30 }), r = await runGarminSyncJob({ ...c.host, reason: 'AUTO' })
+  assert.equal(r.mode, 'INITIAL'); assert.equal(r.healthDaysRequested, 30); assert.equal(c.cursor(), 30); assert.equal(c.store['cn:synthetic-user'], undefined); assert.ok(r.errors.some(e => e.includes('429')))
+  const c2 = counting(); c2.setCursor(30); const r2 = await runGarminSyncJob({ ...c2.host, reason: 'AUTO' })
+  assert.equal(r2.mode, 'INITIAL'); assert.equal(r2.healthDaysRequested, 14 + 60); assert.equal(c2.cursor(), 90)
+})
