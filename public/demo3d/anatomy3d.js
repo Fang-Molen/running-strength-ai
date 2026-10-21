@@ -6,7 +6,16 @@ import { OrbitControls } from './vendor/jsm/controls/OrbitControls.js';
 import { mergeGeometries } from './vendor/jsm/utils/BufferGeometryUtils.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.module.js';
 import { placeRestrictedView, fitAnatomyBounds } from './viewer-policy.js';
-import { anatomyMeta, muscleRole, matchesMuscle, coveringGroups } from './anatomy-map.js';
+import { anatomyMeta, muscleRole, matchesMuscle, coveringGroups, keyZh } from './anatomy-map.js';
+
+// v89.10.2: closest zoom = 0.35 × the fitted whole-body distance (was 0.97, i.e. almost no zoom).
+export const ANATOMY_MIN_ZOOM = .35;
+/** 0 at the fitted distance, 1 at the closest zoom: how far the orbit target slides from the
+ * body centre toward the selected muscle, so a close zoom stays on that muscle (no free pan). */
+export function focusBlend(distance, fitDistance, minRatio = ANATOMY_MIN_ZOOM) {
+  const near = fitDistance * minRatio, far = fitDistance * .97;
+  return far <= near ? 0 : Math.min(1, Math.max(0, (far - distance) / (far - near)));
+}
 
 const VIEWS = { front: 0, left: 90, right: -90, back: 180 };
 // v89.5: 'r9' = 1021c R9 friendly muscle shell (Écorché/BodyParts3D/Z-Anatomy derivative, CC BY-SA 4.0),
@@ -277,7 +286,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   const mainTint = opt.mainTint || fkToken('--fk-brand-orange', '#ff6a1a'), auxTint = opt.auxTint || fkToken('--fk-brand-orange-soft', '#ffb084');
   function invalidate() { if (!disposed && !raf && visible && !document.hidden) raf = requestAnimationFrame(draw); }
   function draw() { raf = 0; if (disposed) return; controls.update(); renderer.render(scene, camera); }
-  controls.addEventListener('change', invalidate);
+  controls.addEventListener('change', () => { follow(); invalidate(); });
   const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) invalidate(); }); io.observe(canvas);
   const visibility = () => invalidate(); document.addEventListener('visibilitychange', visibility);
   function updateMaterials() {
@@ -299,8 +308,25 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   function place() {
     const box = focusBounds();
     lastFit = fitAnatomyBounds(box.min.toArray(), box.max.toArray(), camera.aspect, camera.fov, VIEWS[view]);
-    placeRestrictedView(controls, camera, VIEWS[view], new THREE.Vector3(...lastFit.center), lastFit.distance, .97);
-    invalidate();
+    placeRestrictedView(controls, camera, VIEWS[view], new THREE.Vector3(...lastFit.center), lastFit.distance, ANATOMY_MIN_ZOOM);
+    follow(); invalidate();
+  }
+  // Close zoom keeps the selected muscle in view: the orbit target glides from the body centre
+  // to the selection's centre as the camera approaches (camera moves by the same offset, so
+  // yaw/polar limits are unchanged and there is still no free pan).
+  const focusPoint = new THREE.Vector3(), wanted = new THREE.Vector3(), shift = new THREE.Vector3(); let hasFocus = false;
+  function setFocusPoint() {
+    const box = new THREE.Box3(); hasFocus = false;
+    const objects = selectedMesh ? [selectedMesh] : selected ? muscles.filter(object => object.visible && matchesMuscle(object.userData.fk, selected)) : [];
+    for (const object of objects) box.expandByObject(object, true);
+    if (!box.isEmpty()) { box.getCenter(focusPoint); hasFocus = true; }
+  }
+  function follow() {
+    if (!lastFit) return;
+    const t = hasFocus ? focusBlend(camera.position.distanceTo(controls.target), lastFit.distance) : 0;
+    wanted.fromArray(lastFit.center); if (t) wanted.lerp(focusPoint, t);
+    shift.subVectors(wanted, controls.target); if (shift.lengthSq() < 1e-10) return;
+    controls.target.add(shift); camera.position.add(shift);
   }
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
@@ -308,7 +334,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   }
   function select(object) {
     selectedMesh = object; selected = object?.userData.fk.k || null;
-    updateMaterials(); opt.onPick?.(object ? { ...object.userData.fk, id: object.uuid } : null);
+    updateMaterials(); setFocusPoint(); follow(); opt.onPick?.(object ? { ...object.userData.fk, id: object.uuid } : null);
   }
   const ray = new THREE.Raycaster(), pointer = new THREE.Vector2(); let down = null, touches = new Set();
   function pickAt(x, y) {
@@ -337,11 +363,12 @@ export async function createMuscleExplorer(canvas, opt = {}) {
     setView(next) { if (!(next in VIEWS)) return; view = next; place(); },
     setFocus(next) { if (!['body', 'calf', 'foot'].includes(next)) return; focus = next; place(); },
     setDeep(value) { deep = !!value; updateMaterials(); },
-    reset() { view = 'front'; focus = 'body'; deep = false; selected = null; selectedMesh = null; updateMaterials(); place(); opt.onPick?.(null); },
+    reset() { view = 'front'; focus = 'body'; deep = false; selected = null; selectedMesh = null; hasFocus = false; updateMaterials(); place(); opt.onPick?.(null); },
     selectKey(key) {
-      selected = key; selectedMesh = null; updateMaterials();
+      selected = key; selectedMesh = null; updateMaterials(); setFocusPoint(); follow(); invalidate();
       const object = key && muscles.find(object => matchesMuscle(object.userData.fk, key));
-      opt.onPick?.(object ? { ...object.userData.fk, zh: object.userData.fk.g === key ? ({ quads: '股四头肌', hamstrings: '腘绳肌', calves: '小腿肌群', feet: '足部内在肌群' }[key] || object.userData.fk.zh) : object.userData.fk.zh, id: object.uuid } : null);
+      // A key selection covers both sides / a whole group, so it is named by key, not by one mesh.
+      opt.onPick?.(object ? { ...object.userData.fk, zh: (object.userData.fk.r9 ? object.userData.fk.g === key && ({ quads: '股四头肌', hamstrings: '腘绳肌', calves: '小腿肌群', feet: '足部内在肌群' }[key]) : keyZh(key)) || object.userData.fk.base || object.userData.fk.zh, id: object.uuid } : null);
     },
     pickAt,
     get state() { return { asset, view, focus, deep, meshCount: muscles.length, polar: controls.getPolarAngle() * 180 / Math.PI, azimuth: controls.getAzimuthalAngle() * 180 / Math.PI, distance: camera.position.distanceTo(controls.target), fit: lastFit }; },

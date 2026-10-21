@@ -14,4 +14,4 @@ export const MUSCLE_FN: Record<string, string> = {
   soleus: "踝跖屈（屈膝位仍有效），站立时维持姿势", tibialis: "踝背屈与足内翻，控制落地时前足下落",
   peroneals: "足外翻，协助跖屈，稳定踝关节外侧", plantar_fascia: "被动支撑足弓（筋膜，不是肌肉）", foot_intrinsic: "维持足弓、控制脚趾与足部细微稳定",
 };
-export const MUSCLE_FN_SRC = "功能描述参考 Kenhub 肌肉解剖条目（kenhub.com/en/library/anatomy）。高亮表示所选区域，不代表实测发力、疲劳或恢复。";
+export const MUSCLE_FN_SRC = "中文名称按《人体解剖学名词》（全国科学技术名词审定委员会）写法整理；功能为教科书通用的起止点动作，参照《系统解剖学》（人民卫生出版社）与 Kenhub 肌肉解剖条目（kenhub.com/en/library/anatomy）；标“待核”的尚未逐条核对。筋膜、肌腱等结构不会主动收缩。高亮表示所选区域，不代表实测发力、疲劳或恢复。";

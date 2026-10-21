@@ -2,7 +2,8 @@ import data from '../strength/demo/data.json' with { type: 'json' };
 import { FOOT_LIBRARY } from './foot-library';
 import { CATALOG } from '@/lib/strength/catalog';
 import { has3d } from '@/lib/strength/demo';
-export type MusclePick = { k: string; g: string | null } | null;
+/** train: exercise-library groups that also train this structure (v89.10.2 anatomy-zh), shown as 辅助/相关. */
+export type MusclePick = { k: string; g: string | null; train?: string[] } | null;
 export type MuscleAction = {
   id: string; name: string; english?: string; source: 'local' | 'foot' | 'external';
   catalogId: string | null; primary: string[]; secondary: string[]; equipment: string[];
@@ -32,6 +33,7 @@ export function actionRole(action: MuscleAction, pick: MusclePick) {
   if (!pick) return 'none';
   if (action.primary.some(k => k === pick.k || k === pick.g)) return 'main';
   if (action.secondary.some(k => k === pick.k || k === pick.g)) return 'aux';
+  if (pick.train?.length && [...action.primary, ...action.secondary].some(k => pick.train!.includes(k))) return 'aux';
   return 'none';
 }
 export function findMuscleActions(actions: MuscleAction[], pick: MusclePick, query = '', equipment = '', level = '') {

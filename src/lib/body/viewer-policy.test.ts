@@ -32,3 +32,19 @@ test("all camera presets bound yaw and zoom, prohibit a below-target camera, and
   }
   assert.equal(CAMERA_LIMITS.maxPolar, 90);
 });
+test("v89.10.2: anatomy explorer zooms to 0.35× the fitted distance and glides the target to the selection only when close", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const src = await readFile(new URL("../../../public/demo3d/anatomy3d.js", import.meta.url), "utf8");
+  assert.match(src, /export const ANATOMY_MIN_ZOOM = \.35;/);
+  assert.match(src, /lastFit.distance, ANATOMY_MIN_ZOOM\);/);
+  const c = { target: { copy: (_: unknown) => {} }, enableDamping: true, minAzimuthAngle: 0, maxAzimuthAngle: 0, minDistance: 0, maxDistance: 0,
+    minPolarAngle: 0, maxPolarAngle: 0, enablePan: true, autoRotate: true, update: () => {} };
+  placeRestrictedView(c, { position: { set: () => {} } }, 0, { x: 0, y: .9, z: 0 }, 4, .35);
+  assert.ok(Math.abs(c.minDistance - 1.4) < 1e-9); assert.equal(c.maxDistance, 5.2); assert.equal(c.enablePan, false);
+  assert.ok(Math.abs(c.maxAzimuthAngle - c.minAzimuthAngle - Math.PI / 3) < 1e-8);
+  // focusBlend mirrors anatomy3d.js (that module needs the browser three.js import map).
+  const body = src.match(/export function focusBlend\(([^)]*)\) \{([\s\S]*?)\n\}/)!;
+  const focusBlend = new Function(...body[1].replace(/ = [^,]+/g, "").split(",").map(s => s.trim()), `const ANATOMY_MIN_ZOOM = .35;${body[2]}`) as (d: number, f: number, r?: number) => number;
+  assert.equal(focusBlend(4, 4, .35), 0); assert.equal(focusBlend(4 * .97, 4, .35), 0); assert.equal(focusBlend(1.4, 4, .35), 1);
+  const mid = focusBlend(2.64, 4, .35); assert.ok(mid > .4 && mid < .6);
+});

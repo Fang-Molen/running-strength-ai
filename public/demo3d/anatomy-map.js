@@ -1,13 +1,26 @@
 // Anatomy names are retained from the source meshes. These aliases connect them
 // to the existing exercise catalogue; they do not measure activation or fatigue.
+import { zhStructure, normStructure, UNNAMED_ZH } from './anatomy-zh.js';
+import MUS from './muscles.js';
+/** v89.10.2: display names come from anatomy-zh.js (left/right prefixed, never raw English).
+ * k/g (exercise highlight keys) are unchanged; `train` lists exercise-library groups that train it. */
 export function anatomyMeta(data) {
+  const meta = anatomyKeys(data); if (!meta) return null;
+  const zh = zhStructure(data);
+  return zh ? { ...meta, zh: zh.zh, base: zh.base, fn: zh.fn, train: zh.train, fascia: zh.fascia, pending: zh.pending, rel: zh.rel }
+    : { ...meta, zh: UNNAMED_ZH, base: UNNAMED_ZH, fn: null, train: [], fascia: false, pending: true, rel: '' };
+}
+const GROUP_ZH = { quads: '股四头肌', hamstrings: '腘绳肌', calves: '小腿肌群', feet: '足部内在肌群', forearm: '前臂肌群', obliques: '腹斜肌群', traps: '斜方肌', chest: '胸大肌', triceps: '肱三头肌', biceps: '肱二头肌', adductors: '大腿内收肌群', erectors: '竖脊肌', glutes: '臀大肌', hip_flexors: '髂腰肌' };
+/** Chinese label for a highlight key (k or group), for selections made by key rather than by tap. */
+export const keyZh = key => GROUP_ZH[key] || MUS.find(m => m.k === key)?.zh || null;
+function anatomyKeys(data) {
   const name = data.name || '', n = name.toLowerCase();
   if (!/muscles/.test(data.layer || '')) return null;
   const entry = (k, g, zh) => ({ k, g, zh, name, side: data.side, layer: data.layer, fma: data.fma || null });
   if (/pectoralis major/.test(n)) return /clavicular/.test(n) ? entry('pec_upper', 'chest', '胸大肌锁骨部') : entry('pec_lower', 'chest', '胸大肌胸肋部');
   if (/deltoid/.test(n)) return /clavicular/.test(n) ? entry('delt_front', 'delt_front', '三角肌前束') : /acromial/.test(n) ? entry('delt_side', 'delt_side', '三角肌中束') : entry('delt_rear', 'delt_rear', '三角肌后束');
   if (/biceps brachii/.test(n)) return entry('biceps', 'biceps', /short head/.test(n) ? '肱二头肌短头' : '肱二头肌长头');
-  if (/brachialis/.test(n) && !/brachioradialis/.test(n)) return entry('brachialis', 'elbow_flexors', '肱肌');
+  if (/\bbrachialis/.test(n)) return entry('brachialis', 'elbow_flexors', '肱肌');
   if (/triceps brachii/.test(n)) return entry(/long head/.test(n) ? 'triceps_long' : /medial head/.test(n) ? 'triceps_medial' : 'triceps_lat', 'triceps', /long head/.test(n) ? '肱三头肌长头' : /medial head/.test(n) ? '肱三头肌内侧头' : '肱三头肌外侧头');
   if (/trapezius/.test(n)) return /descending/.test(n) ? entry('trap_upper', 'traps', '斜方肌上部') : /ascending/.test(n) ? entry('trap_lower', 'traps', '斜方肌下部') : entry('trap_mid', 'traps', '斜方肌中部');
   if (/latissimus/.test(n)) return entry('lats', 'lats', '背阔肌');
@@ -37,7 +50,7 @@ export function anatomyMeta(data) {
   if (/flexor carpi|flexor digitorum (superficialis|profundus)|flexor pollicis longus|palmaris longus|pronator/.test(n)) return entry('forearm_flex', 'forearm', '前臂屈肌群');
   if (/extensor carpi|extensor digitorum$|extensor digiti minimi|extensor pollicis|brachioradialis/.test(n)) return entry('forearm_ext', 'forearm', '前臂伸肌群');
   // Keep distinct, source-named meshes selectable without inventing an exercise mapping.
-  return entry(name.toLowerCase().replace(/[^a-z0-9]+/g, '_'), null, name);
+  return entry(normStructure(name).replace(/[^a-z0-9]+/g, '_'), null, name);
 }
 
 export const matchesMuscle = (meta, key) => !!key && (meta.k === key || meta.g === key);

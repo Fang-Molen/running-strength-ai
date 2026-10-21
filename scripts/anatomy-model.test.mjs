@@ -77,3 +77,17 @@ test('the anatomy shader binds real material uniforms and substitutes an existin
   assert.equal(shader.uniforms.fkAmount, material.userData.amount);
   // CPU contract check only; this intentionally makes no WebGL compilation claim.
 });
+
+test('v89.10.2: every muscle-layer mesh has a Chinese name with side prefix, never raw English', () => {
+  for (const o of prepared.muscles) {
+    const fk = o.userData.fk;
+    assert.ok(!/[A-Za-z]/.test(fk.zh), `${fk.name} -> ${fk.zh}`);
+    if (fk.side === 'left') assert.ok(fk.zh.startsWith('左侧'), fk.zh);
+    if (fk.side === 'right') assert.ok(fk.zh.startsWith('右侧'), fk.zh);
+    assert.ok(fk.fn, `${fk.name} has function text`);
+  }
+  const itb = prepared.muscles.find(o => o.userData.fk.name === 'Right iliotibial tract').userData.fk;
+  assert.equal(itb.zh, '右侧髂胫束（筋膜结构，非肌肉）'); assert.ok(itb.fascia); assert.match(itb.rel, /阔筋膜张肌.*臀大肌/);
+  const cb = prepared.muscles.find(o => o.userData.fk.name === 'Left coracobrachialis').userData.fk;
+  assert.equal(cb.k, 'coracobrachialis'); assert.equal(cb.zh, '左侧喙肱肌');
+});

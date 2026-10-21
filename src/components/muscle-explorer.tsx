@@ -7,7 +7,10 @@ import { FangkunExerciseVideo } from './fangkun-unified-video';
 import { MuscleActionList } from "@/components/muscle-action-list";
 import type { MuscleAction } from "@/lib/body/muscle-actions";
 
-type Pick = { id: number | string; k: string; zh: string; g: string | null } | null;
+type Pick = { id: number | string; k: string; zh: string; g: string | null; name?: string; fn?: string | null; train?: string[]; fascia?: boolean; pending?: boolean; rel?: string } | null;
+const UNNAMED = "未命名结构（待核）";
+/** Never show a raw English mesh name as the label (v89.10.2). */
+const pickZh = (p: NonNullable<Pick>) => p.zh && !/[A-Za-z]{3}/.test(p.zh) ? p.zh : UNNAMED;
 type Explorer = { setView: (v: string) => void; setFocus: (f: string) => void; reset: () => void; selectKey: (k: string) => void; destroy: () => void };
 const zhOf = (k: string) => (MUS as { k: string; zh: string }[]).find(m => m.k === k)?.zh ?? k;
 
@@ -84,10 +87,13 @@ export function MuscleExplorerSheet({ onClose, onAdd, onShow, selected = [] }: {
   const [cat, setCat] = useState(FOOT_CATEGORIES[0]);
   return <Sheet full label="人体肌群3D" title="人体肌肉 3D" sub="点击身体上的肌群，查看对应训练动作" onClose={onClose} footer={<button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={onClose}>{selected.length ? `返回训练 · 已选${selected.length}个动作` : '完成查看'}</button>}>
     <Viewer3D onPick={setPick} apiRef={api} />
-    {pick ? <div className="sticky top-0 z-10 mt-2 flex items-center justify-between gap-2 rounded-xl border border-accent bg-[#171a1e] p-3"><b className="text-sm text-accent">已选：{pick.zh}</b><button type="button" className="min-h-11 shrink-0 rounded-full bg-accent px-3 text-sm font-bold text-accent-fg" onClick={() => actionAnchor.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })}>查看相关动作 ↓</button></div> : null}
+    {pick ? <div className="sticky top-0 z-10 mt-2 flex items-center justify-between gap-2 rounded-xl border border-accent bg-[#171a1e] p-3"><b className="text-sm text-accent">已选：{pickZh(pick)}</b><button type="button" className="min-h-11 shrink-0 rounded-full bg-accent px-3 text-sm font-bold text-accent-fg" onClick={() => actionAnchor.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })}>查看相关动作 ↓</button></div> : null}
     <details className="mt-2 rounded-xl border border-line p-2"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">按名称选择肌群</summary><div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">{MUS.map((m, index) => <button type="button" key={m.k} className="fk-chip" aria-pressed={pick?.k === m.k} onClick={() => { setPick({ id: index + 1, k: m.k, zh: m.zh, g: m.g }); api.current?.selectKey(m.k); }}>{m.zh}</button>)}</div></details>
     <section aria-label="肌群信息" className="mt-3 rounded-card border border-line p-3">
-      {pick ? <><h3 className="text-lg font-black">{pick.zh}</h3><p className="mt-1 text-sm">功能：{MUSCLE_FN[pick.k] ?? "待核"}</p>
+      {pick ? <><h3 className="text-lg font-black">{pickZh(pick)}</h3>
+        {pickZh(pick) === UNNAMED && pick.name ? <p className="keep text-[11px] text-muted">模型原名：{pick.name}</p> : null}
+        <p className="mt-1 text-sm">{pick.fascia ? "作用" : "功能"}：{pick.fn ?? MUSCLE_FN[pick.k] ?? "待核"}{pick.pending ? "（待核）" : ""}</p>
+        {pick.rel ? <p className="mt-1 text-sm">相关肌肉：{pick.rel}</p> : null}
         </>
         : <p className="keep text-sm text-muted">在模型上点一下某块肌群。</p>}
       <p className="keep mt-2 text-[11px] text-muted">{MUSCLE_FN_SRC}</p>

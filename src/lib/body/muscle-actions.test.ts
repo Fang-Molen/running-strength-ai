@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { LOCAL_MUSCLE_ACTIONS, externalActions, findMuscleActions, type ExternalCatalogue } from './muscle-actions';
+import { LOCAL_MUSCLE_ACTIONS, actionRole, externalActions, findMuscleActions, type ExternalCatalogue } from './muscle-actions';
 import { muscleSession, type MuscleDraft } from './muscle-workout';
 const externalRaw = readFileSync(new URL('../../../public/exercise-sources/free-exercise-db/catalog.json', import.meta.url), 'utf8');
 const external = externalActions(JSON.parse(externalRaw) as ExternalCatalogue);
@@ -38,4 +38,10 @@ test('a confirmed draft preserves side count, source, stable IDs and time-based 
   assert.equal(move.id, 'move-id'); assert.equal(move.catalogId, null); assert.equal(move.mode, 'seconds'); assert.equal(move.amount, 30);
   assert.match(move.executionNote || '', /仅左/); assert.match(move.executionNote || '', /free-exercise-db/);
   assert.equal('completed' in result.session, false);
+});
+test("v89.10.2: a structure linked by train groups lists only existing exercises, as auxiliary", () => {
+  const acts = findMuscleActions(LOCAL_MUSCLE_ACTIONS, { k: "brachialis", g: "elbow_flexors", train: ["biceps"] });
+  assert.ok(acts.length > 0 && acts.every(a => [...a.primary, ...a.secondary].includes("biceps")));
+  assert.ok(acts.every(a => actionRole(a, { k: "brachialis", g: "elbow_flexors", train: ["biceps"] }) === "aux"));
+  assert.equal(findMuscleActions(LOCAL_MUSCLE_ACTIONS, { k: "popliteus", g: null, train: [] }).length, 0);
 });
