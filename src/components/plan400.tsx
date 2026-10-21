@@ -259,6 +259,8 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       </> : null}
       {tab === "during" && !moved && !combo.combo ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
         <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}</p>
+        {/* 非组合的纯跑步课同样必须提供“关联手表记录”入口；原来仅组合课渲染 RunLinkPanel，导致首页待确认无法在详情完成。 */}
+        {dayKind(d) !== "rest" && !/^力量/.test(d.title) ? <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} /> : null}
         <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
         <Fields list={DURING} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux", "strength"])}>保存本段记录</button>

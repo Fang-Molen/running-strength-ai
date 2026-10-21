@@ -48,11 +48,12 @@ export function RunLinkPanel({ date, fallback }: { date: string; fallback: React
     </div> }
   if (candidates.length) { const sug = m0.suggestions.find(x => x.entry.id === v4RunSlotId(date))
     const reject = (id: string) => saveRunLink(v4RunSlotId(date), { rejected: [...(allRunLinks()[v4RunSlotId(date)]?.rejected ?? []), id] })
-    return <div className="space-y-1 rounded-xl border border-warn/50 p-2.5 text-xs" data-testid="v4-run-suggest">
+    return <div className="space-y-2 rounded-xl border border-warn/50 p-3 text-xs" data-testid="v4-run-suggest" aria-label="关联手表记录">
+    <p className="font-bold text-sm">关联手表记录</p>
     <p className="keep font-bold">{sug?.likely ? "很可能是这条手表跑步，确认一下" : "是这次吗？"}{candidates.length > 1 ? `（${candidates.length} 条，选一条）` : ""}</p>
     {sug?.basis ? <p className="keep text-muted">依据：{sug.basis}。确认前不算关联，也不算跑步完成。</p> : null}
     {candidates.map(r => <div key={r.id} className="keep flex flex-wrap items-center justify-between gap-2"><span>{r.date.slice(5)} {hm(r.startedAt)} · {r.title || "跑步"} · {km(r.distanceM)}{r.durationSec ? ` · ${Math.round(r.durationSec / 60)} 分钟` : ""}</span>
-      <span className="flex gap-1"><button type="button" className="fk-chip min-h-9" onClick={() => saveRunLink(v4RunSlotId(date), { garminId: r.id, by: "user" })}>是，关联</button><button type="button" className="fk-chip min-h-9" onClick={() => reject(r.id)}>不是这节</button></span></div>)}
+      <span className="flex flex-wrap gap-2"><button type="button" className="min-h-11 rounded-xl bg-accent px-3 font-bold text-accent-fg" data-testid="confirm-device-run-link" onClick={() => saveRunLink(v4RunSlotId(date), { garminId: r.id, by: "user" })}>确认关联本节课</button><button type="button" className="min-h-11 rounded-xl border border-line px-3" onClick={() => reject(r.id)}>不是这节</button></span></div>)}
   </div> }
   return <>{fallback}</>
 }
@@ -174,9 +175,9 @@ export function PendingFeedbackList({ today, compact = false }: { today: string;
   if (!items.length) return null
   const open = (it: PendingItem) => window.dispatchEvent(new CustomEvent("fk-open-plan400-day", { detail: { date: it.date, tab: it.kind === "confirm_run" ? "during" : "after" } }))
   const titleOf = (d: string) => planDays().find(x => x.date === d)?.title
-  if (compact) return <button type="button" className="mt-1 min-h-11 text-left text-sm text-warn" data-testid="pending-feedback-compact" data-task-id={pendingTaskId(items[0],currentAthleteId())} onClick={() => open(items[0])}>待补反馈：{pendingLabel(items[0], titleOf(items[0].date))}{items.length > 1 ? ` 等 ${items.length} 项` : ""} · 去评价 ›</button>
+  if (compact) return <button type="button" className="mt-1 min-h-11 text-left text-sm text-warn" data-testid="pending-feedback-compact" data-task-id={pendingTaskId(items[0],currentAthleteId())} onClick={() => open(items[0])}>待补反馈：{pendingLabel(items[0], titleOf(items[0].date))}{items.length > 1 ? ` 等 ${items.length} 项` : ""} · {items[0].kind === "confirm_run" ? "去关联" : "去评价"} ›</button>
   return <section className="home-card mb-3 p-3" aria-label="待补反馈" data-testid="pending-feedback">
     <p className="text-sm font-bold">待补反馈 · {items.length} 项</p>
-    <ul className="mt-1 divide-y divide-line">{items.map(it => <li key={pendingTaskId(it,currentAthleteId())} data-task-id={pendingTaskId(it,currentAthleteId())}><button type="button" className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm" onClick={() => open(it)}><span className="min-w-0"><b>{Number(it.date.slice(5, 7))}月{Number(it.date.slice(8, 10))}日</b> {it.text}{it.deferred ? <span className="text-xs text-muted">（你点过稍后）</span> : null}</span><span className="shrink-0 text-accent">去补 ›</span></button></li>)}</ul>
+    <ul className="mt-1 divide-y divide-line">{items.map(it => <li key={pendingTaskId(it,currentAthleteId())} data-task-id={pendingTaskId(it,currentAthleteId())}><button type="button" className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm" onClick={() => open(it)}><span className="min-w-0"><b>{Number(it.date.slice(5, 7))}月{Number(it.date.slice(8, 10))}日</b> {it.text}{it.deferred ? <span className="text-xs text-muted">（你点过稍后）</span> : null}</span><span className="shrink-0 text-accent">{it.kind === "confirm_run" ? "去关联" : "去补"} ›</span></button></li>)}</ul>
   </section>
 }
