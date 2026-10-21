@@ -2,10 +2,12 @@ import { rmSync, realpathSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-/** Nitro's static prerender can serve an existing index.html before rendering
- * the new client bundle. Remove only generated output before every build. */
+/** Nitro's static prerender can reuse generated HTML and a cached server manifest.
+ * Remove both generated output and Nitro build caches before every build. */
 export function cleanBuildOutput(projectRoot) {
-  rmSync(resolve(projectRoot, '.output'), { recursive: true, force: true });
+  for (const generated of ['.output', '.nitro', 'node_modules/.nitro']) {
+    rmSync(resolve(projectRoot, generated), { recursive: true, force: true });
+  }
 }
 
 if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {

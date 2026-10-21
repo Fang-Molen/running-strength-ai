@@ -5,11 +5,17 @@ import { characterReference, type Gender } from '@/lib/strength/approved-motion'
 import { validateVideoManifest } from '@/lib/character/identity'
 import type { MuscleId } from '@/lib/strength/demo/types'
 import './exercise-demo.css'
+import { poseCardUrl, POSE_CARD_LABEL, defaultPoseGender } from '@/lib/strength/pose-cards-r8'
 import RunningTechniqueLibrary from './running-technique-library'
 import './running-technique-library.css'
 
 /** The list never depicts old athlete figures or calls an unreviewed 3D motion a finished animation. */
-function Thumb({ gender }: { gender: Gender }) {
+function Thumb({ gender, exerciseId }: { gender: Gender; exerciseId?: string }) {
+  const card = poseCardUrl(exerciseId, gender)
+  if (card) return <div data-testid="pose-thumb" style={{ position: 'relative', flexShrink: 0, width: 78, height: 90, borderRadius: 12, background: '#17191c', overflow: 'hidden' }}>
+    <img src={card} loading="lazy" decoding="async" alt="姿势示意（待审核）" style={{ height: '100%', width: '100%', objectFit: 'cover', objectPosition: 'top' }}/>
+    <span style={{ position: 'absolute', bottom: 2, left: 2, right: 2, textAlign: 'center', fontSize: 9, background: '#17191cdd', color: '#fbbf24', borderRadius: 4 }}>{POSE_CARD_LABEL}</span>
+  </div>
   return <div style={{ position: 'relative', flexShrink: 0, width: 78, height: 90, borderRadius: 12,
     background: '#17191c', overflow: 'hidden', display: 'grid', placeItems: 'center' }}>
     <img src={characterReference(gender)} loading="lazy" alt={`${gender === 'male' ? '男性' : '女性'}新版角色形象，仅为外观参考`} style={{ height: '100%', width: '100%', objectFit: 'contain' }}/>
@@ -26,7 +32,7 @@ export default function ExerciseLibrary({ onSelect }: { onSelect: (id: string) =
 }
 function StrengthLibrary({ onSelect }: { onSelect: (id: string) => void }) {
  const [q, setQ] = useState(''), [g, setG] = useState('全部'), [eq, setEq] = useState('全部'), [muscle, setMuscle] = useState<MuscleId|null>(null)
- const [gender,setGender] = useState<Gender>('male')
+ const [gender,setGender] = useState<Gender>(defaultPoseGender)
  const [approved,setApproved] = useState<Set<string>>(new Set())
  const [onlyApproved,setOnlyApproved] = useState(false)
  useEffect(() => {
@@ -48,8 +54,8 @@ function StrengthLibrary({ onSelect }: { onSelect: (id: string) => void }) {
   <div className="maps" onClick={event=>{const target=(event.target as Element).closest('[data-m]');const m=target?.getAttribute('data-m') as MuscleId|null;if(m&&MUSCLES[m])setMuscle(m===muscle?null:m)}}>{(['front','back'] as const).map((v,i)=><div key={v}><div dangerouslySetInnerHTML={{__html:muscleMapSVG(v,[],[],{selected:muscle?[muscle]:[]})}}/>{i?'背面':'正面'}</div>)}</div>
   <div className="selbar"><span>{muscle?'肌肉：'+MUSCLES[muscle]:'点人体图按肌肉筛选'} · {rows.length} 个</span>{muscle?<button type="button" onClick={()=>setMuscle(null)}>清除</button>:null}</div>
   <label className="only3d"><input type="checkbox" checked={onlyApproved} onChange={e=>setOnlyApproved(e.target.checked)}/>只看已审核同角色视频（当前{approvedCount}个）</label>
-  <p className="note">列表缩略图仅展示新版人物外观，不是对应动作姿势。有合格同角色素材才显示视频。</p>
-  <div className="list">{rows.map(e=><button type="button" className="item" key={e.id} onClick={()=>onSelect(e.id)}><Thumb gender={gender}/><div style={{textAlign:'left',minWidth:0}}><b>{e.name_zh}{hasApproved(e.id)?<em className="b3">已审核视频</em>:null}</b><small>{e.category} · {e.equipment.join('、')}</small></div></button>)}</div>
+  <p className="note">缩略图为 R8 姿势示意（程序化简化人形，待审核，不是标准教学）；缺图的动作仍显示人物外观参考。有合格同角色素材才显示视频。</p>
+  <div className="list">{rows.map(e=><button type="button" className="item" key={e.id} onClick={()=>onSelect(e.id)}><Thumb gender={gender} exerciseId={e.id}/><div style={{textAlign:'left',minWidth:0}}><b>{e.name_zh}{hasApproved(e.id)?<em className="b3">已审核视频</em>:null}</b><small>{e.category} · {e.equipment.join('、')}</small></div></button>)}</div>
   {rows.length===0?<p className="note">当前筛选下没有符合要求的动作，或尚无审核通过的同角色视频。可取消已审核过滤继续查看图文。</p>:null}
   <p className="note">肌肉映射待教练组审校。浏览、搜索和筛选不会加入训练。</p>
  </section>

@@ -21,10 +21,12 @@ test('goal comes from the user: profile target or explicitly stated chat goal', 
   assert.match(f, /目标：800米 2:15/); assert.match(f, /800米 最近成绩 2:21/); assert.doesNotMatch(f, /目标：未知/); assert.doesNotMatch(f, HARDCODED)
   data.clear(); assert.match(buildFacts('2026-10-20', null, null, { goalTarget: { meters: 1500, toSeconds: 300 } }), /目标：1500米 5分00秒（用户在聊天中明确说过）/)
 })
-test('plan lines only when the user actually uses the V4 plan, and labelled as plan', () => {
+test('plan lines require an actual imported plan, not just an old log, and are labelled as plan', () => {
   data.set('fk-plan400-v4-log', JSON.stringify({ '2026-10-19': { done: 'done', rpe: '7' } }))
+  assert.doesNotMatch(buildFacts('2026-10-20', null, null), /用户在用的计划·下一节/)
+  data.set('fk-plan-doc-v1', JSON.stringify({schema:'fangkun-plan-v1',plan:{name:'合成测试计划',shiftDays:0,weeks:[],days:[{date:'2026-10-22',orig:'2026-10-22',weekday:'四',week:'1',title:'轻松跑',main:['轻松跑20分钟'],aux:[],strength:[]}]}}))
   const f = buildFacts('2026-10-20', null, null)
-  assert.match(f, /用户在用的计划·下一节（计划，不是实际）/); assert.match(f, /目标：未知/)
+  assert.match(f, /轻松跑20分钟/); assert.match(f, /用户在用的计划·下一节（计划，不是实际）/); assert.match(f, /目标：未知/)
 })
 test('G04: askOnlineCoach honours setOnline(false) itself — no fetch', async () => {
   const orig = globalThis.fetch; let calls = 0

@@ -11,7 +11,10 @@ export type Sample = [number, number] // [UTC ms, value]
 export type Span = [number, number]   // [UTC ms start, end]
 export type IntradayDay = {
   schemaVersion: 1; day: string; source: 'garmin'; fetchedAt: string; offsetMin: number | null
-  hr: Sample[]; bb: Sample[]; /** v89：压力（dailyStress.stressValuesArray，负值=无读数；字段名待核） */ st?: Sample[]; restingHr: number | null; sleep: Span | null; training: { start: number; end: number; label: string }[]
+  eventTimingVersion?: 2
+  /** Failed metric requests must not erase previously cached samples on event-only syncs. */
+  failedReadings?: ('hr' | 'bb' | 'st')[]
+  hr: Sample[]; bb: Sample[]; /** v89：压力（dailyStress.stressValuesArray，负值=无读数；字段名待核） */ st?: Sample[]; restingHr: number | null; sleep: Span | null; training: { start: number; end: number; label: string; id?: string }[]
 }
 type Reply = { status: number; body: any }
 const MAX_POINTS = 720
@@ -76,17 +79,23 @@ export function sleepSpan(sleepBody: any): Span | null {
   const d = sleepBody?.dailySleepDTO, s = d?.sleepStartTimestampGMT, e = d?.sleepEndTimestampGMT
   return finite(s) && finite(e) && e > s && e - s < 20 * 3600e3 ? [s, e] : null
 }
-export function buildIntradayDay(input: { day: string; now: string; hr: Reply | undefined; stress: Reply | undefined; sleep?: Reply; activities?: { startIso: string | null; durationSec: number | null; sportLabel: string }[] }): { day: IntradayDay | null; failures: string[] } {
+export function buildIntradayDay(input: { day: string; now: string; hr: Reply | undefined; stress: Reply | undefined; sleep?: Reply; activities?: { key?: string; startIso: string | null; durationSec: number | null; sportLabel: string }[] }): { day: IntradayDay | null; failures: string[] } {
   const failures: string[] = []
   const h = parseHeartRate(input.day, input.hr, failures), bb = parseBodyBattery(input.day, input.stress, failures)
-  if (!h?.hr.length && !bb?.bb.length && !bb?.st.length && h?.restingHr == null) return { day: null, failures }
   const sl = input.sleep?.status === 200 && input.sleep.body?.dailySleepDTO?.calendarDate === input.day ? sleepSpan(input.sleep.body) : null
-  const all = [...(h?.hr ?? []), ...(bb?.bb ?? [])].map(p => p[0]), lo = Math.min(...all, Infinity), hi = Math.max(...all, -Infinity)
+  const offsetMin = h?.offsetMin ?? bb?.offsetMin ?? null
+  // Events belong to the calendar window, not the first/last heart-rate sample.
+  const lo = offsetMin == null ? new Date(input.day + 'T00:00:00').getTime() : Date.parse(input.day + 'T00:00:00Z') - offsetMin * 60000
+  const next = new Date(lo); next.setDate(next.getDate() + 1)
+  const hi = offsetMin == null ? next.getTime() : lo + 864e5
   const training = (input.activities ?? []).flatMap(a => {
     const s = a.startIso ? Date.parse(a.startIso) : NaN, e = s + (a.durationSec ?? 0) * 1000
-    return Number.isFinite(s) && a.durationSec && e > lo && s < hi ? [{ start: s, end: e, label: a.sportLabel }] : []
-  }).slice(0, 12)
-  return { day: { schemaVersion: 1, day: input.day, source: 'garmin', fetchedAt: input.now, offsetMin: h?.offsetMin ?? bb?.offsetMin ?? null,
+    return Number.isFinite(s) && Number.isFinite(e) && e > s && e <= Date.parse(input.now) && e > lo && s < hi ? [{ start: s, end: e, label: a.sportLabel, ...(a.key ? { id: a.key } : {}) }] : []
+  })
+  if (!h?.hr.length && !bb?.bb.length && !bb?.st.length && h?.restingHr == null && !sl && !training.length) return { day: null, failures }
+  const failed = (r: Reply | undefined, parsed: unknown) => !r || ![200,204].includes(r.status) || r.status === 200 && !parsed && !!r.body && Object.keys(r.body).length > 0
+  const failedReadings: ('hr'|'bb'|'st')[] = [...(failed(input.hr,h) ? ['hr' as const] : []), ...(failed(input.stress,bb) ? ['bb' as const,'st' as const] : [])]
+  return { day: { schemaVersion: 1, eventTimingVersion: 2, failedReadings, day: input.day, source: 'garmin', fetchedAt: input.now, offsetMin,
     hr: h?.hr ?? [], bb: bb?.bb ?? [], st: bb?.st ?? [], restingHr: h?.restingHr ?? null, sleep: sl, training }, failures }
 }
 

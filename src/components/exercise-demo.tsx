@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { demoData, mount2d, mount3d, type DemoPlayer, type DemoView } from '@/lib/strength/demo/provider'
 import { has3d } from '@/lib/strength/demo'
 import { FangkunExerciseVideo } from './fangkun-unified-video'
+import { defaultPoseGender } from '@/lib/strength/pose-cards-r8'
 import type { Gender } from '@/lib/character/identity'
 import './exercise-demo.css'
 /** Shared by library, training execution and plan editor; exact catalogue ID is retained. */
 export default function ExerciseDemo({catalogId,onAdd}:{catalogId:string;onAdd?:()=>void;compact?:boolean}){
- const [gender,setGender]=useState<Gender>('male')
+ const [gender,setGender]=useState<Gender>(defaultPoseGender)
  const exercise=demoData.exercises.find(e=>e.id===catalogId)
  if(!exercise)return <p className="keep text-sm text-muted">没有本动作对应演示；请核对动作编号与文字要领。</p>
  return <section className="fk-demo fk-demo-unified" aria-label={`${exercise.name_zh}演示`}>

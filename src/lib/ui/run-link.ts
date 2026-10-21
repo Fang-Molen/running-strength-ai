@@ -1,3 +1,4 @@
+import { mainTrainingLines } from '../plan/plan-main';
 import { planTag, planPrefix } from '../plan/active-plan'
 import type { ScheduleEntry } from './day-schedule-rules'
 import type { ActivityRow } from './training-read-model'
@@ -33,7 +34,7 @@ export const v4RunSlotId = (date: string) => `plan400:${date}:running`
 /** V4 课里有跑步部分的日子（到今天为止）→ 当作“计划跑步课”参与同一套匹配。 */
 export function v4RunSlots(days: readonly V4Day[], today: string, comps: ComponentsDoc = { schemaVersion: 1, days: {} }): ScheduleEntry[] {
   return days.filter(d => d.date <= today && dayKind(d) !== 'rest' && !/^力量/.test(d.title) && comps.days[d.date]?.running?.status !== 'skipped')
-    .map(d => ({ v4Intervals: (() => { const p = plannedRepsFromText(d.main.slice(1).join('')); return p ? `${p.distanceM}m×${p.reps}${p.rounds ? `×${p.rounds}` : ''}` : undefined })(), id: v4RunSlotId(d.date), date: d.date, kind: 'run', modality: 'run', trainingType: 'run', title: `${planPrefix()}${d.title} · 跑步部分`, focus: [], minutes: 0, intensity: 'MODERATE', lowerHeavy: false, source: 'fangkun', refId: null, status: 'planned' }) as unknown as ScheduleEntry)
+    .map(d => ({ v4Intervals: (() => { const p = plannedRepsFromText(mainTrainingLines(d).join('')); return p ? `${p.distanceM}m×${p.reps}${p.rounds ? `×${p.rounds}` : ''}` : undefined })(), id: v4RunSlotId(d.date), date: d.date, kind: 'run', modality: 'run', trainingType: 'run', title: `${planPrefix()}${d.title} · 跑步部分`, focus: [], minutes: 0, intensity: 'MODERATE', lowerHeavy: false, source: 'fangkun', refId: null, status: 'planned' }) as unknown as ScheduleEntry)
 }
 /** 日程跑步课的关联（fk-run-links-v1）+ V4 跑步分项的关联（fk-plan400-v4-components-v1 running.device / deviceRejected）。 */
 export function allRunLinks(comps: ComponentsDoc = loadComponents(), base: RunLinkStore = loadRunLinks()): RunLinkStore {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { poseCardUrl, POSE_CARD_LABEL } from '@/lib/strength/pose-cards-r8'
 import { fetchVideo, preview, verifiedMediaBytes, type Gender, type VideoAsset } from '@/lib/character/identity'
 
 /** One exact catalogue ID and character. Images are identity references, never action frames. */
@@ -43,7 +44,8 @@ export function FangkunExerciseVideo({ exerciseId, title, gender }: { exerciseId
         const v = video.current; if (!v) return
         if (v.paused) void v.play().catch(() => setState('播放未能开始，请使用视频控件重试')); else v.pause()
       }}>{playing ? '暂停' : '播放'}</button><button className="fk-chip min-h-11" type="button" aria-pressed={slow} onClick={() => { setSlow(!slow); if (video.current) video.current.playbackRate = slow ? 1 : .5 }}>慢放 0.5×</button></div>
-    </> : <figure className="m-0 mt-2 rounded-xl bg-[#111318] p-2 text-center"><img src={preview(gender)} className="mx-auto h-[210px] max-w-full object-contain" alt={`${gender === 'female' ? '女性' : '男性'}角色参考，非${title}动作姿势`} /><figcaption className="text-xs text-muted">同角色外观参考 · 非本动作示范</figcaption></figure>}
+    </> : poseCardUrl(exerciseId, gender) ? <figure className="m-0 mt-2 rounded-xl bg-[#111318] p-2 text-center" data-testid="pose-card"><img key={`${exerciseId}:${gender}`} src={poseCardUrl(exerciseId, gender)!} loading="lazy" decoding="async" className="mx-auto max-h-[420px] w-full object-contain" alt={`${title} · ${gender === 'female' ? '女性' : '男性'}版姿势示意（待审核）`} /><figcaption className="mt-1 text-xs font-semibold text-amber-500">{POSE_CARD_LABEL} · 以文字要领为准</figcaption></figure>
+    : <figure className="m-0 mt-2 rounded-xl bg-[#111318] p-2 text-center"><img src={preview(gender)} className="mx-auto h-[210px] max-w-full object-contain" alt={`${gender === 'female' ? '女性' : '男性'}角色参考，非${title}动作姿势`} /><figcaption className="text-xs text-muted">同角色外观参考 · 非本动作示范</figcaption></figure>}
     <p role="status" className="mt-2 text-xs text-muted">{state}{!current ? '。动作步骤与注意事项仍可阅读。' : ''}</p>
     {!current && <button type="button" className="fk-chip mt-2 min-h-11" onClick={() => setRetry(x => x + 1)}>重新检查视频</button>}
   </section>

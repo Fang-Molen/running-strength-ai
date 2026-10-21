@@ -1,5 +1,7 @@
 /** Athlete-facing labels and read-only answers for a specific library item. */
-import { SPORT_DOCUMENTS, findSportSource, sportSourceReadLabel, type SportDocument } from './knowledge-catalog.ts';
+import { SPORT_DOCUMENTS, findSportSource, type SportDocument } from './knowledge-catalog.ts';
+
+import { athleteReading } from './knowledge-reader.ts';
 
 export { sportSourceReadLabel } from './knowledge-catalog.ts';
 
@@ -9,7 +11,7 @@ export function sportDocumentLabel(doc: SportDocument): string {
 }
 
 export function learningQuestion(doc: SportDocument): string {
-  return `请解释运动知识“${doc.title}”（资料编号${doc.id}）的适用范围和限制。`;
+  return `“${athleteReading(doc).title}”能用简单的话讲讲吗？`;
 }
 
 /** Only the exact library question takes this route. Edited/personal questions
@@ -18,17 +20,15 @@ export function learningQuestion(doc: SportDocument): string {
 export function answerLearningQuestion(question: string): string | null {
   const doc = SPORT_DOCUMENTS.find(item => learningQuestion(item) === question.trim());
   if (!doc) return null;
+  const reading = athleteReading(doc);
   const sources = doc.sourceIds.map(findSportSource).filter(source => source !== undefined);
   return [
-    '【知识讲解 · 本地资料】',
-    doc.title,
-    doc.kind === 'research-note' ? '这条研究笔记仍待专业审核，仅供查阅。' : doc.summary,
-    doc.body,
-    `${doc.kind === 'literature' ? '查阅建议' : '怎样理解或观察'}：${doc.practice}`,
-    `适用限制：${doc.limits}`,
-    '这是一般知识讲解，不能据此判断你已恢复、批准加量或修改课表。若要讨论个人适用性，请另行说明你的目标、实际训练和身体反馈。',
-    '参考来源：',
-    ...sources.map(source => `${source.title}（${source.year}；${sportSourceReadLabel(source.readLevel)}）。来源限制：${source.limits}`),
-    '可返回「学习」查看原文链接；你的搜索和展开内容会保留。',
+    reading.title,
+    doc.kind === 'research-note' ? '这条研究草稿仍待专业审核，仅供查阅。' : reading.summary,
+    reading.points.map(p=>`• ${p}`).join('\n'),
+    `平时怎么用：${reading.practice}`,
+    reading.note,
+    '这是一般知识。要讨论你今天怎么练，还需要近期训练和身体反馈；不会因此自动修改课表。',
+    `参考：${sources.map(source=>source.title).join('；')}。详细说明和适用范围可返回原文查看。`,
   ].join('\n\n');
 }

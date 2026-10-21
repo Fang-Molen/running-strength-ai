@@ -14,7 +14,16 @@ export function loadIntraday(athlete = currentAthleteId()): Record<string, Intra
 export function saveIntraday(days: IntradayDay[], athlete = currentAthleteId()): number {
   const s = currentStore(); if (!s) return 0
   const all = { ...loadIntraday(athlete) }
-  for (const d of days) if (valid(d)) all[d.day] = d
+  for (const d of days) if (valid(d)) {
+    const prior = all[d.day]
+    all[d.day] = prior && d.failedReadings?.length ? {
+      ...d, offsetMin: d.offsetMin ?? prior.offsetMin,
+      hr: d.failedReadings.includes('hr') ? prior.hr : d.hr,
+      restingHr: d.failedReadings.includes('hr') ? prior.restingHr : d.restingHr,
+      bb: d.failedReadings.includes('bb') ? prior.bb : d.bb,
+      st: d.failedReadings.includes('st') ? prior.st : d.st,
+    } : d
+  }
   const kept = Object.keys(all).sort().slice(-KEEP_DAYS)
   const fullFrom = kept.slice(-RECENT_FULL_DAYS)[0] ?? ''
   const slim = (d: IntradayDay): IntradayDay => d.day >= fullFrom ? d : { ...d, hr: tidy(d.hr, OLD_DAY_POINTS), bb: tidy(d.bb, OLD_DAY_POINTS), ...(d.st ? { st: tidy(d.st, OLD_DAY_POINTS) } : {}) }
@@ -29,7 +38,7 @@ export function saveIntraday(days: IntradayDay[], athlete = currentAthleteId()):
 export function intradayDay(day: string, athlete = currentAthleteId()): IntradayDay | null { return loadIntraday(athlete)[day] ?? null }
 /** 已过完的一天（按手表当地时区）且是在当天结束 2 小时后抓的、并且确实有样本，才算取全；否则下次同步重取。 */
 export function intradayComplete(day: string, athlete = currentAthleteId()): boolean {
-  const d = intradayDay(day, athlete); if (!d || (!d.hr.length && !d.bb.length)) return false
+  const d = intradayDay(day, athlete); if (!d || d.eventTimingVersion !== 2 || d.failedReadings?.length || (!d.hr.length && !d.bb.length)) return false
   const offset = d.offsetMin ?? -new Date(Date.parse(day + 'T12:00:00Z')).getTimezoneOffset()
   const localEnd = Date.parse(day + 'T00:00:00Z') + 864e5 - offset * 60e3
   return Date.parse(d.fetchedAt) > localEnd + 2 * 3600e3

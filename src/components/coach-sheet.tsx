@@ -230,10 +230,12 @@ export function CoachSheet({
       setOnlineOn(onlineSetting().on);
     };
     window.addEventListener('fk-online-features-changed', refreshPermissions);
+    window.addEventListener('storage', refreshPermissions);
     window.addEventListener("online", refresh);
     window.addEventListener("offline", refresh);
     return () => {
       window.removeEventListener('fk-online-features-changed', refreshPermissions);
+      window.removeEventListener('storage', refreshPermissions);
       window.removeEventListener("online", refresh);
       window.removeEventListener("offline", refresh);
     };
@@ -497,7 +499,7 @@ export function CoachSheet({
       </div> : null}
       <div ref={messagePane} data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
         <div hidden={section !== "learn"}>
-          <LearningLibrary onNavigate={onNavigate} onAsk={(question)=>{setDraft(question);setFromLibrary(true);setSection("chat")}}
+          <LearningLibrary active={section === "learn"} onNavigate={onNavigate} onAsk={(question)=>{setDraft(question);setFromLibrary(true);setSection("chat")}}
             publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed}
             publicReferencesEnabled={networkMode === "public-knowledge"} online={isOnline !== false}
             onPublicReferencesChange={enabled=>{

@@ -126,6 +126,15 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
     if(details)details.open=true
     document.getElementById("body-vitals")?.scrollIntoView({block:"start"})
   }
+  // R2: the compact host is a record drawer, not a second hidden health workspace.
+  if (compact) return <section id="body-records" className="space-y-3" aria-label="健康记录与设备">
+    <details id="body-vitals" className="fk-h89-records"><summary>健康数据补录与历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision(v => v + 1)} /></details>
+    <details id="body-device-records" className="fk-h89-records" tabIndex={-1}><summary>设备导入与说明</summary>
+      {watch === null ? <WatchQuestion onPick={w => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision(v => v + 1) }} /> : watch ? <SourceGuide watch={watch} /> : null}
+      <DeviceImport today={today} onSaved={() => setRevision(v => v + 1)} />
+      <details id="body-devices" className="mt-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">其他品牌导出步骤</summary><DeviceCenter /></details>
+    </details>
+  </section>
   if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} />{compact ? null : <UnifiedRecoveryHostU11 day={today} onRecord={openVitals}/>}<div id="body-vitals"><details className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={()=>setRevision(v=>v+1)}/></details></div></div>
   const hasWatch = watch != null && watch !== "none"
   return <div className={compact ? "" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}>

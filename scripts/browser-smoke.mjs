@@ -115,9 +115,9 @@ try {
     await page.waitForTimeout(1000);
     // This app exposes readiness after local storage and React hydration finish.
     // A visible SSR shell alone cannot prove that navigation is interactive.
-    if (await page.getByTestId('training-app').count()) {
-      await page.locator('[data-testid="training-app"][data-ready="true"]').waitFor({ timeout: timeoutMs });
-    }
+    // The first SSR frame may not contain the app root yet. Always wait for
+    // Fangkun's hydrated root before inspecting content or taking screenshots.
+    await page.locator('[data-testid="training-app"][data-ready="true"]').waitFor({ timeout: timeoutMs });
     if(process.env.BROWSER_SMOKE_ABSENT_TEXT) await page.waitForFunction(
       text => document.body.innerText.length>100 && !document.body.innerText.includes(text), process.env.BROWSER_SMOKE_ABSENT_TEXT, {timeout:timeoutMs}
     );

@@ -1,3 +1,4 @@
+import { mainTrainingLines } from '@/lib/plan/plan-main';
 import { sleepHoursText } from "@/lib/health/observation";
 import { stampCN } from "@/lib/ui/activity-format";
 import { useEffect, useMemo, useState } from "react";
@@ -167,7 +168,7 @@ function LapSuggest({ d, onFill }: { d: V4Day; onFill: (reps: string, rest: stri
   const { link } = useV4RunLink(d.date);
   if (!link) return null;
   const gid = link.run.garminId;
-  const m = matchLaps(gid != null ? cachedLaps(gid) : null, plannedRepsFromText(d.main.slice(1).join("")));
+  const m = matchLaps(gid != null ? cachedLaps(gid) : null, plannedRepsFromText(mainTrainingLines(d).join("")));
   if (m.status !== "matched") return <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted" data-testid="lap-unknown">圈段对照：{m.reason}{gid != null && !cachedLaps(gid) ? "（圈段还没下载：在日志里打开这条佳明跑步可加载）" : ""}</p>;
   return <div className="rounded-xl border border-accent/50 p-2.5 text-xs leading-5" data-testid="lap-match">
     <p className="font-bold">识别值（待确认）· 来源 {m.source}</p>
@@ -178,7 +179,7 @@ function LapSuggest({ d, onFill }: { d: V4Day; onFill: (reps: string, rest: stri
 }
 /** R5：手填分段——「按目标填充」一键填满每组，只改偏离的那几组；结果仍写进下面的“实际分段”文字框（不自动保存）。 */
 function SplitGrid({ d, value, logs, onChange }: { d: V4Day; value: string | undefined; logs: Record<string, Log>; onChange: (reps: string) => void }) {
-  const text = d.main.slice(1).join("");
+  const text = mainTrainingLines(d).join("");
   const plan = plannedRepsFromText(text);
   if (!plan) return null;
   const vals = splitsFromText(value, plan);
@@ -232,7 +233,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       <ComboStatus v={combo} />
       {!moved ? <GuidedLiveActions date={d.date} onClose={onClose} /> : null}
       {tab === "plan" ? <>
-        <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(d.week === "TEST" ? d.main : d.main.slice(1)) || "原课表未写"}</p></section>
+        <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">{dayKind(d) === "rest" ? "休息日安排" : "正式主课 / 恢复课"}</h3><p className="mt-1 whitespace-pre-line leading-6">{joinLines(mainTrainingLines(d)) || "原课表未写"}</p></section>
         {d.aux.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">辅助激活与技术</h3><p className="mt-1 leading-6">{joinLines(d.aux)}</p></section> : null}
         {d.strength.length ? <section className="home-card p-4"><h3 className="text-xs font-bold text-muted">力量与核心 · 原课表</h3><p className="mt-1 leading-6">{joinLines(d.strength)}</p>{moved ? <p className="text-xs text-muted">已调整到其他日期，原日期不可执行。</p> : <StrengthOverride d={d} />}</section> : null}
         {week ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">本周原则</summary><p className="mt-1 leading-6 text-muted">{shiftedText(P(), week.week, week.principle)}</p></details> : null}
@@ -242,7 +243,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       {tab === "during" && !moved && combo.combo ? <>
         <section className="home-card space-y-3 p-4" aria-label="跑步实际记录" data-testid="during-running">
           <h3 className="font-bold">跑步部分</h3>
-          <p className="keep text-xs text-muted">目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}。没做的项留空（不会记成 0）。</p>
+          <p className="keep text-xs text-muted">目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}。没做的项留空（不会记成 0）。</p>
           <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} />
           <LapSuggest d={d} onFill={(reps, rest) => setEdit(e => ({ ...e, reps, rest }))} />
           <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
@@ -257,7 +258,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         </section>
       </> : null}
       {tab === "during" && !moved && !combo.combo ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
-        <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(d.main.slice(1)).split("\n")[0] || d.title}</p>
+        <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}</p>
         <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
         <Fields list={DURING} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux", "strength"])}>保存本段记录</button>
@@ -298,7 +299,7 @@ export function Plan400DayHost({ today }: { today: string }) {
 }
 
 function summaryLines(d: V4Day): string[] {
-  const k = dayKind(d), main = joinLines(d.main.slice(1)).split("\n")[0];
+  const k = dayKind(d), main = joinLines(mainTrainingLines(d)).split("\n")[0];
   const out = [main ? `主课：${main.replace(/^正式主课：/, "")}` : ""];
   if (d.aux.length) out.push(joinLines(d.aux).replace(/^辅助：/, "辅助："));
   if (hasStrength(d)) out.push(`力量：${joinLines(d.strength)}`);

@@ -3,10 +3,10 @@ export type Metric='HEART_RATE'|'BODY_BATTERY'|'STRESS'
 export type Context='SLEEP'|'REST'|'TRAINING'|'AWAKE'|'UNKNOWN'
 export type Sample={athleteId:string;metric:Metric;value:number;measuredAt:string;knownAt:string;sourceId:string;protocol:string;statistic:'INSTANT'|'DAILY_MEAN'|'DAILY_MAX';quality:'CONFIRMED'|'UNVERIFIED'|'CONFLICT';context:Context;revision?:number}
 export type Sleep={athleteId:string;eventId:string;startAt:string;endAt:string;knownAt:string;sourceId:string;kind:'MAIN'|'NAP'|'REST'|'UNKNOWN_SLEEP';evidence:'DEVICE_SLEEP'|'USER_CONFIRMED'|'DEVICE_REST'|'INFERRED_REST'}
-export type Training={athleteId:string;eventId:string;startAt:string;endAt:string;sourceId:string;kind:'RUN'|'STRENGTH'|'OTHER'}
+export type Training={athleteId:string;eventId:string;startAt:string;endAt:string;sourceId:string;kind:'RUN'|'STRENGTH'|'OTHER';knownAt?:string;label?:string;endEstimated?:boolean}
 export type Point={hour:number;value:number;n:number;measuredAt:string;sourceId:string}
 export type Reference={hour:number;median:number;p25:number;p75:number;days:number}
-export type Event={eventId:string;kind:Sleep['kind']|Training['kind'];startHour:number;endHour:number;sourceId:string;status:'CONFIRMED'|'POSSIBLE'|'CONFLICT'}
+export type Event={eventId:string;kind:Sleep['kind']|Training['kind'];startHour:number;endHour:number;startAt:string;endAt:string;sourceId:string;status:'CONFIRMED'|'POSSIBLE'|'CONFLICT';label?:string;endEstimated?:boolean}
 export type MetricView={points:Point[];reference:Reference[];latest:Point|null;sourceId:string|null;status:'AVAILABLE'|'NO_CONTINUOUS_DATA'|'SOURCE_CONFLICT'}
 export type View={athleteId:string;day:string;utcOffsetMinutes:number;generatedAt:string;metrics:Record<Metric,MetricView>;events:Event[];warnings:string[]}
 export type Input={athleteId:string;day:string;utcOffsetMinutes:number;now:string;samples:Sample[];sleepEvents:Sleep[];trainingEvents:Training[];preferredSources?:Partial<Record<Metric,string>>;minReferenceDays?:number}
@@ -64,9 +64,9 @@ export function buildIntradayRecovery(input:Input):View{
   const durationDiff=Math.abs((ts(e.endAt)-ts(e.startAt))-(ts(existing.endAt)-ts(existing.startAt)))
   if(durationDiff>30*MS){conflicts.add(existing.eventId);warnings.push('重叠睡眠记录时长冲突，需核对')}
  }
- const events:Event[]=chosen.map(e=>({eventId:e.eventId,kind:e.kind,startHour:Math.max(0,(ts(e.startAt)-start)/3600000),endHour:Math.min(24,(ts(e.endAt)-start)/3600000),sourceId:e.sourceId,status:conflicts.has(e.eventId)?'CONFLICT':e.evidence==='DEVICE_SLEEP'||e.evidence==='USER_CONFIRMED'?'CONFIRMED':'POSSIBLE'}))
- for(const e of input.trainingEvents){if(e.athleteId!==athleteId||!e.eventId||!valid(e.startAt)||!valid(e.endAt)||ts(e.startAt)>=ts(e.endAt)||ts(e.endAt)<=start||ts(e.startAt)>=end)continue
-  events.push({eventId:e.eventId,kind:e.kind,startHour:Math.max(0,(ts(e.startAt)-start)/3600000),endHour:Math.min(24,(ts(e.endAt)-start)/3600000),sourceId:e.sourceId,status:'CONFIRMED'})}
+ const events:Event[]=chosen.map(e=>({eventId:e.eventId,kind:e.kind,startAt:e.startAt,endAt:e.endAt,startHour:Math.max(0,(ts(e.startAt)-start)/3600000),endHour:Math.min(24,(ts(e.endAt)-start)/3600000),sourceId:e.sourceId,status:conflicts.has(e.eventId)?'CONFLICT':e.evidence==='DEVICE_SLEEP'||e.evidence==='USER_CONFIRMED'?'CONFIRMED':'POSSIBLE'}))
+ for(const e of input.trainingEvents){if(e.athleteId!==athleteId||!e.eventId||!e.sourceId||!valid(e.startAt)||!valid(e.endAt)||ts(e.startAt)>=ts(e.endAt)||ts(e.endAt)>now||e.knownAt!==undefined&&(!valid(e.knownAt)||ts(e.knownAt)>now||ts(e.knownAt)<ts(e.endAt))||ts(e.endAt)<=start||ts(e.startAt)>=end)continue
+  events.push({eventId:e.eventId,kind:e.kind,startAt:e.startAt,endAt:e.endAt,startHour:Math.max(0,(ts(e.startAt)-start)/3600000),endHour:Math.min(24,(ts(e.endAt)-start)/3600000),sourceId:e.sourceId,status:'CONFIRMED',label:e.label,endEstimated:e.endEstimated})}
  events.sort((a,b)=>a.startHour-b.startHour)
  return {athleteId,day,utcOffsetMinutes:offset,generatedAt:input.now,metrics:out,events,warnings}
 }

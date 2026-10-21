@@ -1,3 +1,4 @@
+import { mainTrainingLines } from '../plan/plan-main';
 /** v89.2：肌群视图 / 方坤事实 读取“日志里的同一份真实记录”。
  *  - 力量：这次训练自己的逐组事件（completed 且未跳过；更正按日志同口径覆盖），动作名经动作库精确别名映射，不做模糊猜测。
  *  - 跑步：只用计划课的类型（V4 当天课文字 / 日程跑步课 purpose），不按平均心率、标题或距离推断。
@@ -32,7 +33,7 @@ export const purposeRunType = (p: unknown): RunType => typeof p === 'string' ? P
 /** V4 当天课的计划类型：只看计划文字（标题 + 主课），与手表数据无关。 */
 export function v4RunType(d: Pick<V4Day, 'title' | 'main'> | undefined): RunType {
   if (!d || /^休息|完全休息|赛前休息/.test(d.title)) return 'UNKNOWN'
-  const main = d.main.slice(1).join('')
+  const main = mainTrainingLines(d).join('')
   const reps = /\d{2,4}\s*(?:m|米)\s*[×xX*✕]|\(\d{2,4}m[＋+]\d{2,4}m\)|（\d{2,4}m[＋+]\d{2,4}m）|\d{3}m全力/.test(main)
   if (reps) return /节奏|容量/.test(d.title) ? 'TEMPO' : 'INTERVAL'
   if (/恢复|轻松|有氧/.test(d.title) || /轻松跑|慢跑/.test(main)) return 'EASY'

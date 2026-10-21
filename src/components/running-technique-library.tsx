@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import './running-technique-library.css'
+import { defaultPoseGender } from '@/lib/strength/pose-cards-r8'
 import { FangkunExerciseVideo } from './fangkun-unified-video'
 import { catalogue, categories, filterDrills, getDrill } from '@/lib/running-technique/catalogue'
 import type { DrillLevel, RunningEvent, TechniqueCategory } from '@/lib/running-technique/types'
@@ -11,7 +12,7 @@ const EQUIPMENT = [...new Set(catalogue.drills.flatMap(d => d.equipment))]
 const range = (values: readonly [number, number] | null, unit: string) => values === null ? '未指定' : `${values[0] === values[1] ? values[0] : values.join('–')} ${unit}`
 
 export default function RunningTechniqueLibrary() {
-  const [gender,setGender]=useState<'male'|'female'>('male')
+  const [gender,setGender]=useState<'male'|'female'>(defaultPoseGender)
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<TechniqueCategory | ''>('')
   const [event, setEvent] = useState<RunningEvent | ''>('')

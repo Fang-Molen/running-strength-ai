@@ -591,3 +591,27 @@ html[data-fk-font-scale="extra"]{font-size:18px}
   padding-top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px) + var(--fk-coach-notice-h, 0px) + 8px) !important;
   scroll-padding-top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px) + var(--fk-coach-notice-h, 0px));
 }
+
+/* The warmup badge wraps independently from its title on narrow screens. */
+.product-ui .learning-library .fk-warmup-drafts > summary { display: block; padding-block: .4rem; }
+
+/* R3: a question and a conclusion first; technical/source details stay folded. */
+.fk-reader-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fk-reader-heading h2{font-size:20px;font-weight:750}
+.fk-reader-heading button{min-height:44px;color:var(--color-accent);font-size:12px}
+.fk-reader-modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--color-surface);padding:4px;border-radius:12px}
+.fk-reader-modes button{min-height:44px;border-radius:9px;color:var(--color-muted);font-size:14px}
+.fk-reader-modes [aria-selected=true]{background:var(--color-surface-2);color:var(--color-fg);font-weight:700}
+.learning-library .fk-learning-article{border-radius:16px}
+.fk-reader-conclusion{line-height:1.6}
+.fk-reader-points{display:grid;gap:8px;list-style:disc;padding-left:18px;line-height:1.7}
+.fk-reader-points li::marker{color:var(--color-accent)}
+.fk-reader-practice{padding:12px;border-radius:12px;background:var(--color-surface-2);line-height:1.7}
+.fk-reader-practice h3{font-size:12px;color:var(--color-muted);font-weight:600;margin-bottom:4px}
+.fk-reader-ask{min-height:44px;color:var(--color-accent);text-align:left}
+.fk-reader-reference-filter label{display:flex;justify-content:space-between;align-items:center;font-size:13px;gap:12px}
+.fk-reader-reference-filter select{min-height:44px;border:1px solid var(--color-line);border-radius:10px;padding:8px;background:var(--color-surface)}
+.fk-reader-reference-filter p{font-size:12px;color:var(--color-muted);line-height:1.6;margin-top:8px}
+.fk-reader-more-references{min-height:44px;width:100%;text-align:left;color:var(--color-accent);font-size:12px}
+.learning-library :is(button,summary,select):focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}
+.product-ui .learning-library .fk-learning-article:not([open]) > summary{padding-block:12px}

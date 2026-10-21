@@ -5,6 +5,7 @@ import rawArticles from './learning-articles.json' with { type: 'json' };
 import rawCards from '../../../knowledge/coach-complete-20261020/knowledge_cards.json' with { type: 'json' };
 import rawSources from '../../../knowledge/coach-complete-20261020/sources.json' with { type: 'json' };
 import modernSources from './modern-sports-sources.json' with { type: 'json' };
+import { readerSearchText } from './knowledge-reader.ts';
 import { COACH_KNOWLEDGE } from '../core/coach-knowledge.ts';
 import { RESEARCH_SEED } from '../core/research-knowledge-registry.ts';
 
@@ -130,7 +131,7 @@ export function searchSportKnowledge(options:{query?:string;category?:SportCateg
   const skip=Math.max(0,Number.isFinite(offset)?Math.floor(offset):0);
   const ranked=SPORT_DOCUMENTS.filter(doc=>(category==='all'||doc.category===category)&&(kind==='all'||doc.kind===kind)).map(doc=>{
     const sources=doc.sourceIds.map(findSportSource).filter((s):s is SportSource=>!!s);
-    const title=doc.title.toLowerCase(), all=[doc.title,doc.summary,doc.body,doc.practice,doc.limits,
+    const title=doc.title.toLowerCase(), all=[doc.title,doc.summary,doc.body,doc.practice,doc.limits,readerSearchText(doc),
       ...sources.map(s=>s.title+' '+s.summary+' '+s.design+' '+s.id)].join(' ').normalize('NFKC').toLowerCase();
     const score=words.reduce((acc,word)=>acc+(title.includes(word)?10:all.includes(word)?2:0),0);
     return {doc,score};

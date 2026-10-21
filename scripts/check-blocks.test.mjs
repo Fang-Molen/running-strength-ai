@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, existsSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { BLOCKS } from './blocks.mjs'
 import { checkBlock } from './check-blocks.mjs'
 test('every block passes its import boundary and lists existing tests', () => {
@@ -17,8 +18,15 @@ test('plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认�
 })
 test('online coach stays default ON and client cap equals live server clip', () => {
   const c = readFileSync('src/lib/coach/online-coach.ts', 'utf8'), s = readFileSync('functions/api/coach-chat.js', 'utf8')
-  assert.match(c, /on: true, consentAt: now/)
+  const values = JSON.parse(execFileSync(process.execPath, ['--import', './scripts/test-register.mjs', '--input-type=module', '-e', `
+    import { setStoreBackend } from './src/lib/core/storage.ts';
+    import { onlineSetting, setOnline } from './src/lib/coach/online-coach.ts';
+    const m=new Map();setStoreBackend({getItem:k=>m.get(k)??null,setItem:(k,v)=>m.set(k,v)});
+    const defaultOn=onlineSetting().on;setOnline(false);console.log(JSON.stringify({defaultOn,afterOff:onlineSetting().on}));
+  `], {encoding:'utf8'}))
+  assert.deepEqual(values, {defaultOn:true,afterOff:false})
   const cap = Number(/ONLINE_QUESTION_MAX = (\d+)/.exec(c)?.[1]), server = Number(/clip\(body\?\.question, (\d+)\)/.exec(s)?.[1])
+  assert.ok(Number.isFinite(cap) && Number.isFinite(server))
   assert.equal(cap, server)
 })
 test('knowledge complete package stays PENDING with zero production approvals (no self-approval)', () => {

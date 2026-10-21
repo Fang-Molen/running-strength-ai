@@ -1,5 +1,6 @@
 import {preview} from '@/lib/character/identity'
 import { supplementalMediaId } from '@/lib/character/inventory'
+import { defaultPoseGender } from '@/lib/strength/pose-cards-r8'
 import { FangkunExerciseVideo } from './fangkun-unified-video'
 import { MuscleExplorerSheet } from "@/components/muscle-explorer";
 import { MuscleTargetCard } from "@/components/muscle-target-card";
@@ -65,7 +66,7 @@ export function DemoSheet({ id, onClose }: { id: string; onClose: () => void }) 
 
 /** 76 条原始动作数据以外的补充动作：可靠图文优先，绝不拿相似动作冒充本动作3D。 */
 export function BasicExerciseSheet({ name, onClose }: { name: string; onClose: () => void }) {
-  const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [gender, setGender] = useState<'male' | 'female'>(defaultPoseGender);
   const mediaId = supplementalMediaId(name);
   const foot = FOOT_LIBRARY.find(x => x.name === name);
   const d = doseOf(name);

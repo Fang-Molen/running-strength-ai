@@ -13,16 +13,18 @@ import type { DayComponents } from '../ui/plan400-components-store'
 import { isGarmin, recordLabel } from '../ui/log-range'
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr } from '../ui/activity-format'
 import { activityFacts, localDayOf, planFor, userMarks, v4RecordLine, sportLabel, type GActivity, type GLap } from './plain-coach'
-export const COACH_ONLINE_KEY = 'fk-coach-online-v1'
+import { COACH_ONLINE_KEY, savedOnlineChoices, savedOnlineRecord } from '../ui/online-preferences'
+export { COACH_ONLINE_KEY } from '../ui/online-preferences'
 export type OnlineSetting = { on: boolean; consentAt: string; by: string }
 export function onlineSetting(now = new Date().toISOString()): OnlineSetting {
   const s = currentStore()
-  try { const v = JSON.parse(s?.getItem(COACH_ONLINE_KEY) ?? 'null'); if (v && typeof v.on === 'boolean') return v } catch { /* reset below */ }
-  const v: OnlineSetting = { on: true, consentAt: now, by: '用户要求一直保持联网（t460）' }
+  const saved = savedOnlineRecord(s, COACH_ONLINE_KEY)
+  const v: OnlineSetting = { on: savedOnlineChoices(s).coach ?? true, consentAt: typeof saved?.consentAt === 'string' ? saved.consentAt : now, by: typeof saved?.by === 'string' ? saved.by : '沿用用户联网选择（t460）' }
+  if (saved && typeof saved.on === 'boolean') return v
   try { s?.setItem(COACH_ONLINE_KEY, JSON.stringify(v)) } catch { /* session only */ }
   return v
 }
-export function setOnline(on: boolean) { const v = { ...onlineSetting(), on, consentAt: new Date().toISOString(), by: on ? '用户在方坤中开启联网' : '用户在方坤中关闭联网' }; try { currentStore()?.setItem(COACH_ONLINE_KEY, JSON.stringify(v)) } catch { /* ignore */ } return v }
+export function setOnline(on: boolean) { const v = { ...onlineSetting(), on, consentAt: new Date().toISOString(), by: on ? '用户在方坤中开启联网' : '用户在方坤中关闭联网' }; try { currentStore()?.setItem(COACH_ONLINE_KEY, JSON.stringify(v)) } catch { /* ignore */ } try { window.dispatchEvent(new Event('fk-online-features-changed')) } catch { /* no browser */ } return v }
 const read = <T,>(k: string, d: T): T => { try { return JSON.parse(currentStore()?.getItem(k) ?? '') as T } catch { return d } }
 export const garminActivities = (): GActivity[] => Object.values(read<Record<string, GActivity>>(garminViewKey('fk-garmin-acts-v1'), {})).filter(a => a && typeof a.start === 'string')
 export const cachedLaps = (id: number | string): GLap[] | null => read<Record<string, GLap[]>>(garminViewKey('fk-garmin-laps-v1'), {})[String(id)] ?? null

@@ -10,13 +10,13 @@ export function Sheet({ title, sub, onClose, footer, children, label, full = fal
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null, root = dialog.current;
     root?.focus({ preventScroll: true });
     const keydown = (event: KeyboardEvent) => {
-      const dialogs = document.querySelectorAll('[role="dialog"][aria-modal="true"]'); if (dialogs[dialogs.length - 1] !== root) return;
+      const dialogs = [...document.querySelectorAll<HTMLElement>('[role="dialog"][aria-modal="true"]')].filter(node => node.getClientRects().length > 0); if (dialogs.at(-1) !== root) return;
       if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeRef.current(); }
       if (event.key !== 'Tab' || !root) return;
-      const items = [...root.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled):not([type="hidden"]), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]')].filter(x => x.getClientRects().length > 0);
+      const items = [...root.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled):not([type="hidden"]), textarea:not(:disabled), select:not(:disabled), a[href], summary, [contenteditable="true"], [tabindex]')].filter(x => x.tabIndex >= 0 && !x.closest('[hidden], [inert]') && x.getClientRects().length > 0);
       const first = items[0], last = items.at(-1); if (!first || !last) { event.preventDefault(); root.focus(); return; }
-      if (event.shiftKey && (document.activeElement === first || document.activeElement === root)) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && (document.activeElement === last || document.activeElement === root)) { event.preventDefault(); first.focus(); }
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === root || !root.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && (document.activeElement === last || document.activeElement === root || !root.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', keydown); return () => { document.removeEventListener('keydown', keydown); if (previous?.isConnected) previous.focus({ preventScroll: true }); };
   }, []);

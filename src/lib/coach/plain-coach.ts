@@ -1,3 +1,4 @@
+import { mainTrainingLines } from '../plan/plan-main';
 import { activityTs, activityLocalDay, fmtDistance, fmtDuration, fmtHr, fmtPaceSec } from '../ui/activity-format'
 import { loadComponents, hasFeedback } from '../ui/plan400-components-store'
 import { currentStore } from '../core/storage'
@@ -6,8 +7,6 @@ import { currentStore } from '../core/storage'
 import { planDays, hasActivePlan, planTag, PLAN_DOC_KEY, planPrefix } from '../plan/active-plan'
 export type GActivity = { id: number | string; sourceIdentity?: string; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null }
 export type GLap = { i: number; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; speed: number | null }
-type Day = { date: string; title: string; main: string[]; aux: string[]; strength: string[]; week: string }
-const days = { find: (f: (d: Day) => boolean) => (planDays() as Day[]).find(f) }
 
 export const isReviewAsk = (q: string) => /复盘|这节|这次训练|这次跑|今天.{0,3}(?:跑|练)得|昨天.{0,6}(?:跑|练|训练)|上一?次.{0,4}(?:跑|训练|课)|刚才.{0,4}(?:跑|练)|跑得怎么样|练得怎么样/.test(q)
 export const localDayOf = (iso: string) => activityLocalDay(iso) ?? iso.slice(0, 10)
@@ -52,19 +51,20 @@ export function userMarks(store: Store = browserStore()): string[] {
 }
 export function planFor(day: string, store: Store = browserStore(), chatGoal?: { meters: number; toSeconds: number } | null) {
   const active = plan400Active(store)
-  const d = active ? days.find(x => x.date === day) : undefined, next = active ? days.find(x => x.date > day) : undefined
-  return { today: d ? `${d.date} ${d.title}：${d.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${next.main.slice(1).join('').replace(/观察：/, '；观察：')}` : null, goal: userGoal(chatGoal, store), active }
+  const days = active ? [...planDays(store)].sort((a, b) => a.date.localeCompare(b.date)) : []
+  const d = days.find(x => x.date === day), next = days.find(x => x.date > day)
+  return { today: d ? `${d.date} ${d.title}：${mainTrainingLines(d).join('').replace(/观察：/, '；观察：')}` : null, next: next ? `${next.date} ${next.title}：${mainTrainingLines(next).join('').replace(/观察：/, '；观察：')}` : null, goal: userGoal(chatGoal, store), active }
 }
 
 /** V4 计划记录（首页/计划页/训练中写的 fk-plan400-v4-log）→ 一行事实。日志页与复盘读的是同一条。 */
-export function v4RecordLine(day: string, store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage): string | null {
+export function v4RecordLine(day: string, store: Store = browserStore()): string | null {
   let l: Record<string, string> | undefined
   try { l = JSON.parse(store?.getItem('fk-plan400-v4-log') ?? '{}')?.[day] } catch { l = undefined }
   if (!l || typeof l !== 'object') return null
-  const d = days.find(x => x.date === day), st = l.done === 'done' ? '已完成' : l.done === 'reduced' ? '已完成·减量' : l.done === 'skipped' ? '取消' : '已记录未完成'
+  const d = planDays(store).find(x => x.date === day), st = l.done === 'done' ? '已完成' : l.done === 'reduced' ? '已完成·减量' : l.done === 'skipped' ? '取消' : '已记录未完成'
   const F: [string, string][] = [['reps', '成绩'], ['rest', '组间休息'], ['strength', '力量实际'], ['rpe', 'RPE'], ['pain', '疼痛'], ['r24', '24小时后'], ['note', '备注']]
   const parts = F.filter(([k]) => String(l![k] ?? '').trim()).map(([k, n]) => `${n} ${String(l![k]).trim().slice(0, 80)}`)
-  return `${planPrefix()}计划记录（${day}${d ? ' ' + d.title : ''}）：${st}${parts.length ? '；' + parts.join('；') : ''}`
+  return `${planPrefix(store)}计划记录（${day}${d ? ' ' + d.title : ''}）：${st}${parts.length ? '；' + parts.join('；') : ''}`
 }
 /** 只用运动类型，不用活动名（佳明默认活动名带城市）。 */
 export const sportLabel = (t: string) => /track/.test(t) ? '田径场跑' : /treadmill/.test(t) ? '跑步机跑' : /trail/.test(t) ? '越野跑' : /run/.test(t) ? '跑步' : /strength/.test(t) ? '力量训练' : /cycl|bik/.test(t) ? '骑行' : /swim/.test(t) ? '游泳' : t || '训练'

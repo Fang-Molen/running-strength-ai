@@ -1,3 +1,4 @@
+import { mainTrainingLines } from '../plan/plan-main';
 import type { ScheduleEntry } from './day-schedule-rules'
 type Ex = NonNullable<ScheduleEntry['exercises']>[number]
 type Dose = { unit: 'reps' | 'sec' | 'm'; perSide: boolean }
@@ -47,7 +48,7 @@ const NO_LIFT = /^无|^可做|^仅活动度|^仅臀桥|^核心.*可选|^核心�
 export function plan400TodayEntry(d: DayLike, override: { parts: string[]; exercises: Ex[]; betweenRestSec?: number | null } | null, doseOf: (name: string) => Dose): ScheduleEntry | null {
   const liftText = d.strength.join('')
   const exercises: Ex[] = override?.exercises?.length ? override.exercises : NO_LIFT.test(liftText) ? [] : parseV4StrengthText(liftText).map(m => ({ name: m.name, sets: m.sets, reps: m.reps, weight: '', rpe: '', unit: m.unit === 'sec' ? 'sec' : undefined, perSide: m.perSide || undefined }) as Ex)
-  const run = /休息/.test(d.title) ? null : parseV4RunText(d.main.slice(1).join(''))
+  const run = /休息/.test(d.title) ? null : parseV4RunText(mainTrainingLines(d).join(''))
   if (!exercises.length && !run) return null
   const runComponents = run ? [{ componentId: 'v4-main', modality: 'RUNNING' as const, purpose: 'INTERVAL' as const, structure: { kind: 'REPEATED' as const, blocks: [{ blockId: 'v4-main', roundCount: 1, recoveryAfterRoundSeconds: null, steps: run.steps.map((s, i) => ({ stepId: `v4-${i + 1}`, plannedDistanceMeters: s.distanceM, plannedDurationSeconds: null, repeatCount: s.reps, recoveryAfterRepeatSeconds: run.restSec, recoveryBeforeNextStepSeconds: i < run.steps.length - 1 ? run.restSec : null })) }] } }] : null
   const base = plan400StrengthEntry(d.date, d.title, { parts: override?.parts ?? [], exercises, betweenRestSec: override?.betweenRestSec ?? null }, doseOf)

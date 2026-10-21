@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { SPORT_DOCUMENTS, SPORT_SOURCES, searchSportKnowledge } from './knowledge-catalog.ts';
+import { athleteReading } from './knowledge-reader.ts';
 import { answerLearningQuestion, learningQuestion, sportSourceReadLabel } from './knowledge-presentation.ts';
 
 test('progressive browsing reaches every course and every catalogue item beyond 60',()=>{
@@ -37,16 +38,17 @@ test('library questions resolve to the chosen article and its actual limits and 
   for(const doc of SPORT_DOCUMENTS){
     const answer=answerLearningQuestion(learningQuestion(doc));
     assert.ok(answer,doc.id);
-    assert.ok(answer.includes(doc.title));
-    assert.ok(answer.includes(doc.body));
-    assert.ok(answer.includes(doc.limits));
-    assert.match(answer,/不能据此判断你已恢复、批准加量或修改课表/);
+    const reading=athleteReading(doc);
+    assert.ok(answer.includes(reading.title));
+    assert.ok(reading.points.every(p=>answer.includes(p)));
+    assert.ok(answer.includes(reading.note));
+    assert.match(answer,/不会因此自动修改课表/);
     if(doc.kind==='research-note')assert.match(answer,/待专业审核/);
   }
 });
 test('personal edits and safety questions never bypass the normal coach pipeline',()=>{
   const q=learningQuestion(SPORT_DOCUMENTS[0]);
-  for(const value of ['', '我今天胸痛还能跑吗', q+'我胸痛，是否继续跑？',q.replace('适用范围','我的今日训练量'),q.replace('EDU001','EDU999')]){
+  for(const value of ['', '我今天胸痛还能跑吗', q+'我胸痛，是否继续跑？',q.replace('简单的话','我的今日训练量'),q.replace('加速','不存在的条目')]){
     assert.equal(answerLearningQuestion(value),null,value);
   }
   assert.ok(answerLearningQuestion('  '+q+'  '));

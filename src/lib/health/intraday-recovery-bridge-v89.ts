@@ -12,22 +12,25 @@ function context(t: number, d: IntradayDay): U10Sample['context'] {
 export function intradayInput(days: Record<string, IntradayDay>, athleteId: string, day: string, now: string, minReferenceDays = 7) {
   const samples: U10Sample[] = [], sleepEvents: Sleep[] = [], trainingEvents: Training[] = []
   const target = days[day]
-  const offset = target?.offsetMin ?? -new Date(now).getTimezoneOffset()
+  const offset = target?.offsetMin ?? -new Date(day + 'T12:00:00').getTimezoneOffset()
   for (const d of Object.values(days)) {
     const knownAt = d.fetchedAt
     const push = (metric: U10Sample['metric'], rows: [number, number][] | undefined) => { for (const [t, v] of rows ?? []) samples.push({ athleteId, metric, value: v, measuredAt: new Date(t).toISOString(), knownAt: new Date(Math.max(t, Date.parse(knownAt) || t)).toISOString(), sourceId: SOURCE, protocol: metric, statistic: 'INSTANT', quality: 'CONFIRMED', context: context(t, d) }) }
     push('HEART_RATE', d.hr); push('BODY_BATTERY', d.bb); push('STRESS', d.st)
     if (d.sleep) sleepEvents.push({ athleteId, eventId: `garmin-sleep:${d.day}`, startAt: new Date(d.sleep[0]).toISOString(), endAt: new Date(d.sleep[1]).toISOString(), knownAt: new Date(Math.max(d.sleep[1], Date.parse(knownAt) || d.sleep[1])).toISOString(), sourceId: SOURCE, kind: 'MAIN', evidence: 'DEVICE_SLEEP' })
-    d.training.forEach((x, i) => trainingEvents.push({ athleteId, eventId: `garmin-act:${d.day}:${i}:${x.start}`, startAt: new Date(x.start).toISOString(), endAt: new Date(x.end).toISOString(), sourceId: SOURCE, kind: /跑|run/i.test(x.label) ? 'RUN' : /力量|strength|weight/i.test(x.label) ? 'STRENGTH' : 'OTHER' }))
+    d.training.forEach(x => trainingEvents.push({ athleteId, eventId: x.id ?? `garmin-act:${x.start}:${x.end}:${x.label}`, startAt: new Date(x.start).toISOString(), endAt: new Date(x.end).toISOString(), knownAt, label: x.label, endEstimated: true, sourceId: SOURCE, kind: /跑|run/i.test(x.label) ? 'RUN' : /力量|strength|weight/i.test(x.label) ? 'STRENGTH' : 'OTHER' }))
   }
   // 同一次主睡眠会出现在相邻两天的记录里：按事件 id 去重。
-  const uniq = <T extends { eventId: string }>(xs: T[]) => [...new Map(xs.map(x => [x.eventId, x])).values()]
-  const sleepDedup = [...new Map(sleepEvents.map(e => [`${e.startAt}|${e.endAt}`, e])).values()]
-  return { athleteId, day, utcOffsetMinutes: Math.round(offset), now, samples, sleepEvents: sleepDedup, trainingEvents: uniq(trainingEvents), minReferenceDays }
+  const known = <T extends { knownAt?: string }>(xs: T[]) => xs.filter(x => x.knownAt && Date.parse(x.knownAt) <= Date.parse(now)).sort((a,b) => Date.parse(a.knownAt!) - Date.parse(b.knownAt!))
+  const uniq = <T>(xs: T[], key: (x:T)=>string) => [...new Map(xs.map(x => [key(x), x])).values()]
+  const sleepDedup = uniq(known(sleepEvents), e => `${e.startAt}|${e.endAt}`)
+  return { athleteId, day, utcOffsetMinutes: Math.round(offset), now, samples, sleepEvents: sleepDedup, trainingEvents: uniq(known(trainingEvents), e => e.eventId), minReferenceDays }
 }
 export function intradayRecoveryFromStore(days: Record<string, IntradayDay>, athleteId: string, day: string, now: string): View | null {
-  if (!days[day]) return null
-  try { return buildIntradayRecovery(intradayInput(days, athleteId, day, now)) } catch { return null }
+  try {
+    const view = buildIntradayRecovery(intradayInput(days, athleteId, day, now))
+    return days[day] || view.events.length ? view : null
+  } catch { return null }
 }
 
 /** v89.1 方坤估算·个人常态曲线：用这一天之前（≤28 天）同一来源的手表样本，按当地钟点算“每天该小时的中位数”，
