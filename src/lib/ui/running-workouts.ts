@@ -312,8 +312,14 @@ export function saveCustomTrackPlan(
 
 export function describeTrackPlan(plan: RunningPlan): string {
   const component = plan.components.find((item) => item.modality === "RUNNING");
-  if (!component || component.modality !== "RUNNING" || component.structure.kind !== "REPEATED")
-    return plan.planId;
+  if (!component || component.modality !== "RUNNING") return "跑步内容待补充";
+  if (component.structure.kind === "CONTINUOUS") {
+    const { plannedDistanceMeters: distance, plannedDistanceMaxMeters: maxDistance, plannedDurationSeconds: seconds } = component.structure;
+    const distanceText = distance == null ? null : `${distance}${maxDistance != null && maxDistance !== distance ? `—${maxDistance}` : ""}米`;
+    const durationText = seconds == null ? null : seconds < 60 ? `${seconds}秒` : `${Math.floor(seconds / 60)}分${seconds % 60 ? `${seconds % 60}秒` : "钟"}`;
+    const dose = [distanceText, durationText ? `目标${durationText}` : null].filter(Boolean).join(" · ");
+    return `连续跑 · ${dose || "参数待补充"}`;
+  }
   return component.structure.blocks
     .map((block) => {
       const text = block.steps

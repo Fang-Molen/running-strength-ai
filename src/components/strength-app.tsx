@@ -15,6 +15,7 @@ import { RunImportPrompt } from "@/components/plan400-parts";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
 import { todayCoordinationParts, todayPartsText, type TodayPart } from "@/lib/ui/coach-coordination-view";
 import { dayKind, hasRunPart, hasStrength, type V4Day } from "@/lib/ui/plan400-view";
+import { matchesScheduledPlanPane } from "@/lib/ui/plan-training-filter";
 import { hasActivePlan, planDay, PLAN_CHANGED_EVT } from "@/lib/plan/active-plan";
 import { NoPlanCard, PlanImportPanel } from "@/components/plan-import";
 import { DeviceImport } from "@/components/device-import";
@@ -436,7 +437,7 @@ export function StrengthApp() {
     for (const e of evs) window.addEventListener(e, refresh);
     return () => { un(); for (const e of evs) window.removeEventListener(e, refresh); };
   }, [todayIso, planSrc, tab]);
-  const hasScheduledForPane = calendar.some(e => e.modality === (hubPane === 'run' ? 'run' : 'strength') && ['planned', 'done'].includes(e.status) && !e.id.startsWith('plan400:') && !e.unplanned);
+  const hasScheduledForPane = calendar.some(e => matchesScheduledPlanPane(e, hubPane === 'run' ? 'run' : 'strength'));
   const liftSummary = (session?.moves ?? []).slice(0, 4).map((move) => displayName(move)).join(" · ");
   const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : todayCoord?.parts.length ? todayPartsText(todayCoord.parts) : courseCount === 0 ? "暂无安排" : "待选择课程";
   const pageTitle = tab === "today" ? "今天" : inTraining ? "训练" : tab === "coach" ? "方坤" : tab === "diet" ? "饮食" : "健康";

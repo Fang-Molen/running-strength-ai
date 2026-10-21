@@ -1,4 +1,4 @@
-const CACHE = "fr255-shell-v89-10-3-1"
+const CACHE = "fr255-shell-v89-10-4"
 const DEMO_CACHE="fk-demo3d-v74-paired"
 const CACHE_PREFIX = "fr255-shell-"
 

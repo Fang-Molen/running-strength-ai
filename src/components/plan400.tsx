@@ -24,6 +24,7 @@ import { loadVitals } from "@/lib/nutrition/vitals";
 import { currentAthleteId } from "@/lib/core/events";
 import { activePlan, planLabel } from "@/lib/plan/active-plan";
 import { NoPlanCard, usePlanRevision } from "@/components/plan-import";
+import { matchesImportedPlanPane, matchesScheduledPlanPane } from "@/lib/ui/plan-training-filter";
 
 /* 原课表只读：存储里的计划文档（fk-plan-doc-v1）永不被训练记录改写。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
 const EMPTY_PLAN: V4Plan = { name: "", shiftDays: 0, weeks: [], days: [] };
@@ -336,7 +337,7 @@ function DayRow({ d, today, logs, parts }: { d: V4Day; today: string; logs: Reco
   const moved = v4MovedOut(d.date, loadSchedule().entries);
   return <button type="button" onClick={() => openPlan400Day(d.date)} className={"flex min-h-14 w-full items-center gap-2 border-t border-line py-2 text-left " + (d.date === today ? "rounded-lg bg-accent/10 px-2" : "")} aria-label={`${md(d.date)} ${d.weekday} ${d.title} ${STATUS_LABEL[s]}`}>
     <span className="w-[4.6rem] shrink-0 text-sm"><b>{md(d.date)}</b> <span className="text-muted">{d.weekday}</span></span>
-    <span className="min-w-0 flex-1"><span className="block font-bold">{d.title}</span><span className="block text-xs text-muted">{KIND_LABEL[dayKind(d)]}{hasStrength(d) && dayKind(d) !== "rest" ? " + 力量" : ""}{d.date === today ? " · 今天" : ""}</span>{!moved && part ? <span className="mt-1 block text-xs text-muted" data-testid="v4-combo-parts">{part}</span> : null}</span>
+    <span className="min-w-0 flex-1"><span className="block font-bold">{d.title}</span><span className="block text-xs text-muted">{matchesImportedPlanPane(d, "strength") ? (matchesImportedPlanPane(d, "run") ? "跑步＋力量" : "力量") : KIND_LABEL[dayKind(d)]}{d.date === today ? " · 今天" : ""}</span>{!moved && part ? <span className="mt-1 block text-xs text-muted" data-testid="v4-combo-parts">{part}</span> : null}</span>
     {moved ? <span className="text-xs text-muted" data-testid="v4-moved-row">{moved.label}</span> : <StatusChip s={s} />}<ChevronRight className="size-4 shrink-0 text-muted" />
   </button>;
 }
@@ -357,17 +358,22 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
   const counts = useMemo(() => progressCounts(P(), logs, partsAll), [logs, partsAll]);
   const conflicts = useMemo(() => dateConflicts(P()), []);
   const shift = shiftSummary(P());
-  const finals = P().days.filter(d => d.week === "TEST");
-  const filt = (ds: V4Day[]) => lens === "lift" ? ds.filter(hasStrength) : ds;
+  const modality = lens === "lift" ? "strength" : "run";
+  const paneLabel = lens === "lift" ? "力量" : "跑步";
+  const filt = (ds: V4Day[]) => ds.filter(d => matchesImportedPlanPane(d, modality));
+  const visibleWeeks = P().weeks.filter(w => w.week !== "TEST" && (cycleExpanded || w.week === cw));
+  const finals = cycleExpanded || cw === "TEST" ? filt(P().days.filter(d => d.week === "TEST")) : [];
+  const hasShown = finals.length > 0 || visibleWeeks.some(w => filt(weekDays(P(), w.week)).length > 0);
+  const restDays = P().days.filter(d => dayKind(d) === "rest" && (cycleExpanded || d.week === cw));
   return <section className="home-card fk-cycle-plan mb-3 p-4" aria-label="正在执行的周期计划" data-testid="plan400-cycle">
-    <div className="flex items-center justify-between gap-3"><h2 className="font-bold">{cycleExpanded ? "周期安排" : "本周安排"}</h2><button type="button" className="flex min-h-11 shrink-0 items-center gap-1 text-sm text-accent" aria-expanded={cycleExpanded} data-testid="v91-cycle-toggle" onClick={toggleCycle}><span>{cycleExpanded ? "只看本周" : "全部周次"}</span><ChevronDown className={"size-4 transition-transform " + (cycleExpanded ? "rotate-180" : "")} /></button></div>
+    <div className="flex items-center justify-between gap-3"><h2 className="font-bold">{cycleExpanded ? `${paneLabel}安排` : `本周${paneLabel}`}</h2><button type="button" className="flex min-h-11 shrink-0 items-center gap-1 text-sm text-accent" aria-expanded={cycleExpanded} data-testid="v91-cycle-toggle" onClick={toggleCycle}><span>{cycleExpanded ? "只看本周" : "全部周次"}</span><ChevronDown className={"size-4 transition-transform " + (cycleExpanded ? "rotate-180" : "")} /></button></div>
     {(conflicts.length || shift.shifted) && !confirm ? <div className="my-3 rounded-xl border border-warn/50 p-3 text-sm" role="status" data-testid="plan400-date-warning">
       <p className="flex gap-1.5 font-bold text-warn"><TriangleAlert className="mt-0.5 size-4 shrink-0" />日期待核对</p>
       <p className="mt-1 leading-6">{shift.shifted ? `日程整体顺延 ${shift.shiftDays} 天。` : "日程与原课表文字存在日期差异。"}请核对后再执行相关测试课。</p>
       <div className="flex flex-wrap gap-x-4"><button type="button" className="min-h-11 font-bold text-accent" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + ":revoked") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), "用户确认")); }}>按当前日期执行</button><button type="button" className="min-h-11 text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button></div>
       {showDiff ? <ul className="mt-1 space-y-1 leading-6">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天排入；最终测试原为 {P().final?.orig ?? "—"}，现为 {P().final?.date ?? "—"}。</li></ul> : null}
     </div> : null}
-    <div>{P().weeks.filter(w => cycleExpanded || w.week === cw).map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
+    <div>{visibleWeeks.map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (!shown.length) return null;
       return <div key={w.week} className="border-t border-line first:border-t-0">
         <button type="button" aria-expanded={isOpen} onClick={() => setOpenWeeks(isOpen ? openWeeks.filter(x => x !== w.week) : [...openWeeks, w.week])} className="flex min-h-12 w-full items-center gap-2 py-2 text-left">
           <span className={"w-9 shrink-0 text-sm font-bold " + (w.week === cw ? "text-accent" : "")}>{w.week}</span>
@@ -376,12 +382,14 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
         </button>
         {isOpen ? <div className="pb-2">{shown.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} parts={partsAll[d.date]} />)}</div> : null}
       </div>; })}
-      {lens === "run" && (cycleExpanded || cw === "TEST") ? finals.map(d => <div key={d.date} className="border-t border-line"><DayRow d={d} today={today} logs={logs} parts={partsAll[d.date]} /></div>) : null}
+      {finals.map(d => <div key={d.date} className="border-t border-line"><DayRow d={d} today={today} logs={logs} parts={partsAll[d.date]} /></div>)}
+      {!hasShown ? <p className="border-t border-line py-3 text-sm text-muted">{cycleExpanded ? "这个计划" : "本周"}没有{paneLabel}安排</p> : null}
     </div>
+    {restDays.length ? <details className="border-t border-line text-sm" aria-label="休息安排"><summary className="flex min-h-11 cursor-pointer items-center justify-between text-muted"><span>休息安排 · {restDays.length}天</span><ChevronDown className="size-4" /></summary>{restDays.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} parts={partsAll[d.date]} />)}</details> : null}
     <details className="mt-2 border-t border-line text-sm" onToggle={e => setShowSource(e.currentTarget.open)}>
       <summary className="flex min-h-11 cursor-pointer items-center justify-between text-muted">计划详情<ChevronRight className="size-4" /></summary>
       <h3 className="font-bold">{P().name}</h3>
-      <p className="mt-2 text-sm text-muted" data-testid="plan400-progress">日程已记录 {counts.recordedDays}/{counts.calendarEntries} · 训练与测试已完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
+      <p className="mt-2 text-sm text-muted" data-testid="plan400-progress">整份计划 · 日程已记录 {counts.recordedDays}/{counts.calendarEntries} · 训练与测试已完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
       {(conflicts.length || shift.shifted) && confirm ? <details className="mt-2 text-sm text-muted" data-testid="plan400-date-confirmed"><summary className="flex min-h-11 cursor-pointer list-none items-center gap-1">日期调整记录<ChevronRight className="size-3.5" /></summary>
         <p>已确认顺延 {shift.shiftDays} 天 · {confirm.by} · {stampCN(confirm.at, "ymd").slice(0, 10)}</p>
         <ul className="mt-1 space-y-1 leading-6">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：{c.originalRange} → {c.shownRange}；「{c.text}」{c.matchedDay ? `对应 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}「${c.matchedDay.title}」` : "在日程中没有对应的课"}</li>)}<li>最终测试 {P().final?.date ?? "—"}（原 {P().final?.orig ?? "—"}）。</li></ul>
@@ -392,17 +400,17 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
   </section>;
 }
 
-type TempEntry = { id: string; date: string; title: string; minutes: number; source: string; status: string; unplanned?: boolean; modality: string; exercises?: unknown[] };
+type TempEntry = { id: string; date: string; title: string; minutes: number; source: string; status: string; unplanned?: boolean; modality: string; trainingType?: string; exercises?: unknown[] };
 /** 临时 / 自建训练：与正式周期分开展示，只按真实 id 判断是否挂靠 V4。 */
 export function TempTrainingList<E extends TempEntry>({ entries, modality, title, onOpen, onAdd, addLabel, empty, footer, today }: { entries: E[]; modality: "run" | "strength"; title: string; onOpen: (e: E) => void; onAdd: () => void; addLabel: string; empty: string; footer?: React.ReactNode; today?: string }) {
   // v83（P2-03）：正式周期（V4 当天课程 plan400:*）只在上方周期计划里出现；计划外记录（记一笔等 unplanned）在日志里，不算“排了的训练”
   const now = new Date(), day = today ?? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const list = entries.filter(e => e.modality === modality && ["planned", "done"].includes(e.status) && !String(e.id).startsWith("plan400:") && !(e as { unplanned?: boolean }).unplanned);
+  const list = entries.filter(e => matchesScheduledPlanPane(e, modality));
   const upcoming = list.filter(e => e.status === "planned" && e.date >= day).sort((a, b) => a.date.localeCompare(b.date));
   const past = list.filter(e => e.status === "planned" && e.date < day).sort((a, b) => b.date.localeCompare(a.date));
   const completed = list.filter(e => e.status === "done").sort((a, b) => b.date.localeCompare(a.date));
   const row = (e: E) => { const l = entryLinkFor(e); return <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => onOpen(e)}>
-    <span className="min-w-0 flex-1"><b className="block">{e.title}</b><span className="mt-1 block text-sm text-muted">{e.date === day ? '今天' : md(e.date)} · {modality === "strength" ? `${e.exercises?.length ?? "—"}个动作` : `${e.minutes}分钟`} · {e.status === "done" ? "已完成" : "待执行"}</span>{l.sameDayV4 && e.status === "planned" ? <span className="mt-1 block text-xs text-warn">同日已有「{l.sameDayV4.title}」</span> : null}</span><ChevronRight className="size-4 shrink-0 text-muted" /></button>; };
+    <span className="min-w-0 flex-1"><b className="block">{e.title}</b><span className="mt-1 block text-sm text-muted">{e.date === day ? '今天' : md(e.date)} · {e.trainingType === "mixed" ? "跑步＋力量 · " : ""}{modality === "strength" ? `${e.exercises?.length ?? "—"}个动作` : `${e.minutes}分钟`} · {e.status === "done" ? "已完成" : "待执行"}</span>{l.sameDayV4 && e.status === "planned" ? <span className="mt-1 block text-xs text-warn">同日已有「{l.sameDayV4.title}」</span> : null}</span><ChevronRight className="size-4 shrink-0 text-muted" /></button>; };
   return <section className="home-card fk-scheduled-list mb-3 p-4" aria-label={title}>
     <div className="flex items-center justify-between gap-2"><h2 className="font-bold">{title}</h2><button type="button" className="min-h-11 shrink-0 px-1 text-sm font-bold text-accent" onClick={onAdd}>{addLabel}</button></div>
     {upcoming.map(row)}

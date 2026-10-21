@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import test from "node:test"
 import { loadEvents } from "@/lib/core/events"
 import { projectRunningExecution } from "@/lib/core/running-execution"
-import { getRunningPlan } from "@/lib/core/running-plan"
+import { getRunningPlan, type RunningPlan } from "@/lib/core/running-plan"
 import { setStoreBackend, type MemoryStore } from "@/lib/core/storage"
 import { commitTrackRecovery, commitTrackSlot, confirmTrackPlan, customTrackComponents, describeTrackPlan, emptyDraft, listTrackPlans, saveCustomTrackPlan, startTrackSession, trackHomeView } from "./running-workouts.ts"
 
@@ -10,6 +10,28 @@ function memory(): MemoryStore {
   const dump = new Map<string, string>()
   return { keys:()=>[...dump.keys()], getItem: (key) => dump.get(key) ?? null, setItem: (key, value) => void dump.set(key, value) }
 }
+
+test("continuous running summaries show the prescribed dose rather than execution identities", () => {
+  const make = (distance: number | null, seconds: number | null, maxDistance: number | null = null): RunningPlan => ({
+    runningPlanSchemaVersion: 1, planId: "scheduled:custom:example:run", planSlotId: "scheduled:custom:example:run",
+    components: [{ componentId: "run", modality: "RUNNING", purpose: "UNSPECIFIED", structure: {
+      kind: "CONTINUOUS", plannedDistanceMeters: distance, plannedDistanceMaxMeters: maxDistance, plannedDurationSeconds: seconds,
+    } }],
+  })
+  const cases: [RunningPlan, string][] = [
+    [make(2000, 900), "连续跑 · 2000米 · 目标15分钟"],
+    [make(null, 95), "连续跑 · 目标1分35秒"],
+    [make(null, 45), "连续跑 · 目标45秒"],
+    [make(3000, null, 5000), "连续跑 · 3000—5000米"],
+    [make(null, null), "连续跑 · 参数待补充"],
+  ]
+  for (const [plan, text] of cases) {
+    const before = structuredClone(plan)
+    assert.equal(describeTrackPlan(plan), text)
+    assert.doesNotMatch(describeTrackPlan(plan), /scheduled:|custom:|0秒|0分钟/)
+    assert.deepEqual(plan, before)
+  }
+})
 
 test("200m x 4 x 2 keeps two rounds and does not repeat a write", () => {
   setStoreBackend(memory())
