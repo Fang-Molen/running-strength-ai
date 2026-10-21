@@ -232,23 +232,25 @@ function RecoveryTrend({ vitals, only, endDay, rangeDays, embedded = false }: { 
     return [typicalDaily(full).filter(n=>n.d>=since), full.filter(p=>p.d<today && p.d>=shiftDay(today,-28)).length];
   }, [k, since, today, vitals, days]);
   const meta = REC.find((r) => r[0] === k)!;
+  const latest = pts.at(-1);
   const unitLabel = k === "SLEEP" ? "小时（h）" : k === "RHR" ? "次/分（bpm）" : k === "HRV" ? "毫秒（ms）" : meta[2] === "/100" ? "分 · 满分100" : `分 · ${meta[2]}`;
   return <section className={`${embedded ? "fk-h89-history" : "fk-dash-card"} fk-recovery-trend`} aria-label={`${meta[1]}历史趋势`}>
     {!embedded ? <>
       <div className="fk-dash-title"><Activity className="size-4" />{only ? `${meta[1]}趋势` : "恢复趋势"}</div>
       <div className="fk-recovery-trend-controls">
         {only ? null : <div className="fk-recovery-trend-metrics" role="group" aria-label="恢复趋势指标" data-testid="trend-metrics">{REC.map(([id, label]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)}>{label}</button>)}</div>}
-        <div className="fk-recovery-trend-range" role="group" aria-label="恢复趋势时间范围" data-testid="trend-range">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)}>{d}天</button>)}</div>
+        <div className="fk-recovery-trend-range" role="group" aria-label="恢复趋势时间范围" data-testid="trend-range">{[7, 30].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)}>{d}天</button>)}</div>
       </div>
     </> : null}
-    <div className="fk-recovery-trend-meta"><b>{meta[1]}</b><span>单位：{unitLabel}</span></div>
+    <div className="fk-recovery-trend-meta"><div><b>{meta[1]}</b>{!embedded && latest ? <p className="fk-recovery-trend-latest"><strong>{valueText(k, latest.v)}</strong><span>{latest.d.slice(5)} 记录</span></p> : null}</div><span>{unitLabel}</span></div>
     {pts.length >= 2 ? <div className="fk-recovery-trend-plot"><TrendChart key={`${k}-${days}-${today}`} domain={[since, today]} height={embedded ? 184 : 192} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} norm={norm} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /></div>
       : <div className="fk-recovery-trend-empty"><Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} /></div>}
-    {k !== "fatigue" && k !== "pain" && days <= 30 && pts.length >= 2 ? <p className="keep mt-1 flex flex-wrap items-center gap-x-3 text-[11px] text-muted" data-testid="trend-norm-legend"><span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3" style={{ background: "#ff6a1a" }} />手表{meta[1]}</span>{norm.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed border-[#c4b2ff]" />方坤估算·个人常态（每天前28天同来源中位，≥7天；阴影为四分位）</span> : <span>方坤估算：需前28天内≥7天同来源记录，现有{normDays}天</span>}</p> : null}
+    {k !== "fatigue" && k !== "pain" && days <= 30 && pts.length >= 2 ? <div className="fk-recovery-trend-legend" data-testid="trend-norm-legend"><span><i className="fk-trend-key-record" />记录值</span>{norm.length ? <><span><i className="fk-trend-key-reference" />方坤常态</span><span><i className="fk-trend-key-band" />常态范围</span></> : <span>常态参考待积累</span>}</div> : null}
     <p className="keep fk-recovery-trend-coverage" data-testid="trend-coverage">{since.slice(5)}–{today.slice(5)} · {pts.length} 天有数据</p>
     <details className="fk-recovery-disclosure" key={`explanation-${k}-${today}`}>
-      <summary>趋势说明</summary>
+      <summary>比较依据与说明</summary>
       <div className="fk-recovery-disclosure-body">
+        {k !== "fatigue" && k !== "pain" && days <= 30 ? <p>{norm.length ? "方坤常态：按每个日期之前28天的同来源记录计算，至少7天才显示中位数虚线；阴影为四分位范围。它是个人常态参考，不是恢复目标。" : `常态参考需要前28天内至少7天的同来源记录，目前有${normDays}天。`}</p> : null}
         <p>{k === "fatigue" || k === "pain" ? "按你已记录的主观感受显示。" : "沿用当前所选数据来源，仅显示所选时间范围内的记录。"}缺失日期不补零、不跨来源拼接。</p>
         {pts.length && pts[0].d > since ? <p>最早记录 {pts[0].d}，不足 {days} 天。</p> : null}
         {pts.length && pts.length < Math.round((t2(today) - t2(pts[0].d)) / 864e5) + 1 ? <p>缺的天不连线。</p> : null}

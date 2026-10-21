@@ -1,6 +1,6 @@
 /** v89 肌肉恢复视图：肌肉状态 / 力量负荷 / 跑步影响 / 恢复趋势。
  *  沿用 U11 的已有 Écorché 3D 肌群网格和同一份恢复投影（readRecoveryProjection）。
- *  颜色只表示训练参与、负荷叠加或自报症状，不是实测疲劳百分比；“预计恢复”是一般经验范围（估算），不自动改课。 */
+ *  颜色只表示训练参与、负荷叠加或自报症状，不是实测疲劳百分比，不自动改课。 */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { HeartPulse } from "lucide-react"
 import { MESH_KEYS, REGION_LABEL, REGIONS, type Region, type RegionState } from "@/lib/health/muscle-recovery-u11"
@@ -8,6 +8,7 @@ import { readRecoveryProjection, recoveryLines, type RecoveryProjection } from "
 import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
 import "./muscle-target-card.css"
 import "./recovery-trend-detail.css"
+import "./muscle-recovery-detail.css"
 import { MuscleStimulusChartV90 } from "./muscle-stimulus-chart-v90"
 
 type API = { setView: (v: string) => void; selectKey: (k: string | null) => void; setOverlays: (v: { keys: string[]; color: string }[]) => void; destroy: () => void }
@@ -67,51 +68,74 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
   }, [retry])
   useEffect(() => { api.current?.setOverlays(overlays) }, [overlays])
   const observed = value.review.regions.filter(r => r.state !== "UNKNOWN").sort((a, b) => LEVELS.indexOf(levelOf(a.state)) - LEVELS.indexOf(levelOf(b.state)))
+  const painRegions = observed.filter(r => r.state === "PAIN_REVIEW")
+  const activeRegion = selected ?? observed[0]?.region ?? null
   const row = selected ? value.review.regions.find(r => r.region === selected) : null
   return <section aria-label="肌肉状态" className="space-y-3">
-    <div className="fk-m89-stage">
-      <div className="fk-target-stage"><canvas ref={canvas} aria-label="可旋转点选的3D肌群" data-ready={ready} />
-        {!ready ? <div className="fk-target-status" role="status"><p>{error || "正在打开肌群模型…"}</p>{error ? <button type="button" onClick={() => setRetry(n => n + 1)}>重新加载</button> : null}</div> : null}
+    {painRegions.length ? <p className="keep fk-muscle-priority">疼痛待核对：{painRegions.map(r => REGION_LABEL[r.region]).join("、")}。未复核不自动解除。</p> : null}
+    <div className="fk-muscle-model">
+      <div className="fk-muscle-model-toolbar">
+        <div><b>训练反应</b><p className="keep">拖动旋转 · 点选肌群</p></div>
+        <div className="fk-muscle-view-controls" role="group" aria-label="视角">{[["front", "正面"], ["back", "背面"]].map(([id, t]) => <button key={id} type="button" disabled={!ready} aria-pressed={side === id} onClick={() => { setSide(id); api.current?.setView(id) }}>{t}</button>)}</div>
       </div>
-      <div className="fk-m89-side" role="group" aria-label="视角">{[["front", "正面"], ["back", "背面"]].map(([id, t]) => <button key={id} type="button" disabled={!ready} aria-pressed={side === id} onClick={() => { setSide(id); api.current?.setView(id) }}>{t}</button>)}</div>
-      <div className="fk-m89-legend" aria-label="图例"><b>训练反应</b>{LEVELS.map(l => <span key={l.id}><i style={{ background: l.color }} />{l.label}</span>)}</div>
+      <div className="fk-m89-stage">
+        <div className="fk-target-stage"><canvas ref={canvas} aria-label="可旋转点选的3D肌群" data-ready={ready} />
+          {!ready ? <div className="fk-target-status" role="status"><p>{error || "正在打开肌群模型…"}</p>{error ? <button type="button" onClick={() => setRetry(n => n + 1)}>重新加载</button> : null}</div> : null}
+        </div>
+      </div>
+      <div className="fk-muscle-legend" aria-label="图例">{LEVELS.map(l => <span key={l.id}><i style={{ background: l.color }} />{l.label}</span>)}</div>
+      <p className="keep fk-muscle-caption">颜色表示训练参与或自报症状，非疲劳百分比。</p>
     </div>
-    <p className="keep text-xs text-muted">颜色只表示近 72 小时已确认训练涉及的区域或你自报的症状，不是肌肉疲劳百分比。拖动旋转，点肌肉看依据。</p>
-    <div><b>重点肌群</b>
-      {observed.length ? <div className="mt-2 grid grid-cols-2 gap-2" data-testid="m89-cards">{observed.map(r => { const l = levelOf(r.state), h = lastLoadHours(value, r)
+    <div><div className="fk-muscle-section-heading"><b>重点肌群</b><span>训练记录与局部反馈</span></div>
+      {observed.length ? <div className="fk-muscle-region-grid" data-testid="m89-cards">{observed.map(r => { const l = levelOf(r.state), h = lastLoadHours(value, r)
         const src = [...r.strengthEventIds.length ? ["力量"] : [], ...r.runEventIds.length ? ["跑步"] : [], ...r.symptomEventIds.length ? ["自报症状"] : []].join(" + ")
-        return <button key={r.region} type="button" className="fk-m89-card text-left" aria-pressed={selected === r.region} onClick={() => { api.current?.selectKey(MESH_KEYS[r.region][0]); setSelected(r.region) }}>
-          <span className="flex items-center gap-1.5"><b className="text-sm">{REGION_LABEL[r.region]}</b><span className="fk-m89-chip ml-auto" style={{ color: l.color, borderColor: l.color }}>{r.state === "PAIN_REVIEW" && r.notes.some(n => /缺少近期复核/.test(n)) ? "疼痛待复核" : l.label}</span></span>
-          <span className="mt-1 block text-[11px] text-muted">负荷来源</span><span className="block text-xs">{src || "—"}{h != null ? ` · ${h} 小时前` : ""}</span>
-          <span className="mt-1 block text-xs text-muted">点选查看真实依据及未校准刺激情景</span>
+        return <button key={r.region} type="button" className="fk-m89-card fk-muscle-region-card" aria-pressed={activeRegion === r.region} onClick={() => { api.current?.selectKey(MESH_KEYS[r.region][0]); setSelected(r.region) }}>
+          <span className="fk-muscle-region-title"><b>{REGION_LABEL[r.region]}</b>{activeRegion === r.region ? <span>已选</span> : null}</span>
+          <span className="fk-muscle-region-state" data-state={r.state}><i style={{ background: l.color }} />{r.state === "PAIN_REVIEW" && r.notes.some(n => /缺少近期复核/.test(n)) ? "疼痛待复核" : l.label}</span>
+          <span className="fk-muscle-region-source">{src || "—"}{h != null ? <span> · {h} 小时前</span> : null}</span>
         </button> })}</div>
         : <p className="mt-1 text-sm text-muted">暂无：近 72 小时没有可判断到具体肌群的已确认训练或局部反馈。未记录不等于已恢复。</p>}
     </div>
-    {(selected ?? observed[0]?.region) ? <MuscleStimulusChartV90 value={value} region={(selected ?? observed[0].region)} /> : null}
-    {row ? <div className="fk-m89-evidence" aria-live="polite" data-testid="u11-muscle-evidence"><b>{REGION_LABEL[row.region]} · {levelOf(row.state).label}</b>
+    {activeRegion ? <MuscleStimulusChartV90 value={value} region={activeRegion} /> : null}
+    {row ? <details className="fk-recovery-disclosure fk-muscle-evidence" key={row.region} data-testid="u11-muscle-evidence"><summary>{REGION_LABEL[row.region]} · 训练与反馈依据</summary><div className="fk-recovery-disclosure-body">
+      <b>{levelOf(row.state).label}</b>
       {row.state === "UNKNOWN" ? <p>没有足够的已确认动作或局部反馈。</p> : null}
       {[...row.strengthEventIds, ...row.runEventIds, ...row.symptomEventIds].map(id => { const s = value.sources.find(x => x.id === id); return <p key={id} className="mt-1 text-sm">{s?.label ?? "训练来源"}：{s?.detail ?? "来源待核对"}{s?.occurredAt ? ` · ${new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false })}` : ""}</p> })}
-      {row.notes.map(n => <p key={n} className="mt-1 text-xs text-muted">{n}</p>)}</div> : null}
-    <p className="keep text-xs text-muted">模拟曲线不表示真实肌肉疲劳或恢复百分比；只有实际完成的训练可用于刺激情景，疼痛需独立核对。</p>
+      {row.notes.map(n => <p key={n} className="mt-1 text-xs text-muted">{n}</p>)}</div></details> : null}
     {value.review.gaps.length ? <details className="fk-m89-limits"><summary>缺失与待核对（{value.review.gaps.length}）</summary>{value.review.gaps.map(g => <p key={g}>{g}</p>)}</details> : null}
-    <details className="fk-m89-limits"><summary>模型与解释边界</summary><p>肌群模型：R9 友好肌群（由 Écorché / BodyParts3D / Z-Anatomy 派生，CC BY-SA 4.0）；加载失败时退回原 Écorché。足部为外形示意，不是肌肉网格。颜色只来自已确认训练记录与自报症状，区域映射为待复核的解释资料。</p><a href="/demo3d/anatomy/ATTRIBUTION.md" target="_blank" rel="noreferrer">模型来源与授权</a></details>
+    <details className="fk-m89-limits"><summary>模型与解释边界</summary><p>颜色只表示近 72 小时已确认训练涉及的区域或你自报的症状，不是肌肉疲劳百分比。疼痛按最近一次反馈，未复核不自动解除。</p><p>肌群模型：R9 友好肌群（由 Écorché / BodyParts3D / Z-Anatomy 派生，CC BY-SA 4.0）；加载失败时退回原 Écorché。足部为外形示意，不是肌肉网格。颜色只来自已确认训练记录与自报症状，区域映射为待复核的解释资料。</p><a href="/demo3d/anatomy/ATTRIBUTION.md" target="_blank" rel="noreferrer">模型来源与授权</a></details>
   </section>
 }
 
 function Loads({ value, modality }: { value: RecoveryProjection; modality: "STRENGTH" | "RUN" }) {
   const rows = value.sources.filter(s => s.id.endsWith(`|${modality}`)).sort((a, b) => (b.occurredAt ?? "").localeCompare(a.occurredAt ?? ""))
   const regions = value.review.regions.filter(r => (modality === "RUN" ? r.runEventIds : r.strengthEventIds).length)
+  const includedRuns = new Set(regions.flatMap(r => r.runEventIds))
   const all = value.review.gaps.filter(g => modality === "RUN" ? /跑步/.test(g) : /力量|动作|组次|组记录/.test(g))
   // v89.2：未关联的手表跑步 / 只有摘要的手表力量 = 一句短说明直接显示；其余放进“未纳入的记录”
   const short = all.filter(g => /^\d+ 条手表/.test(g)), gaps = all.filter(g => !short.includes(g))
   return <section className="space-y-2" aria-label={modality === "RUN" ? "跑步影响" : "力量负荷"}>
     <b>{modality === "RUN" ? "近 72 小时跑步" : "近 72 小时力量（按实际完成组）"}</b>
-    {rows.length ? rows.map(s => <div key={s.id} className="fk-m89-card"><p className="text-sm font-bold">{s.label}{s.actualSets != null ? ` · 实际 ${s.actualSets} 组` : ""}</p><p className="text-sm">{s.detail}</p><p className="keep text-[11px] text-muted">{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</p></div>)
+    {rows.length ? rows.map(s => modality === "RUN" ? <details key={s.id} className="fk-m89-card fk-muscle-run-record" data-testid="m89-run-source">
+      <summary>
+        <span className="fk-muscle-run-heading"><b>{s.label}</b><span className="fk-muscle-run-status" data-included={includedRuns.has(s.id)}>{includedRuns.has(s.id) ? "已计入负荷" : "未计入负荷"}</span></span>
+        <span className="fk-muscle-run-facts">{conciseRunDetail(s.detail)}</span>
+        <span className="fk-muscle-run-footer"><time dateTime={s.occurredAt ?? undefined}>{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</time><span className="fk-muscle-run-more">说明</span></span>
+      </summary>
+      <div className="fk-muscle-run-detail"><p className="keep">{s.detail}</p></div>
+    </details> : <div key={s.id} className="fk-m89-card"><p className="text-sm font-bold">{s.label}{s.actualSets != null ? ` · 实际 ${s.actualSets} 组` : ""}</p><p className="text-sm">{s.detail}</p><p className="keep text-[11px] text-muted">{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</p></div>)
       : <p className="text-sm text-muted">暂无{modality === "RUN" ? "可判断肌群的已确认跑步" : "已确认的逐组力量记录"}。</p>}
     {regions.length ? <p className="text-sm">涉及：{regions.map(r => REGION_LABEL[r.region]).join("、")}</p> : null}
     {short.map(g => <p key={g} className="keep text-xs text-muted" data-testid="m89-watch-note">{g}</p>)}
     {gaps.length ? <details className="fk-m89-limits"><summary>未纳入的记录（{gaps.length}）</summary>{gaps.map(g => <p key={g}>{g}</p>)}</details> : null}
   </section>
+}
+
+// Presentation-only shortening of the known explanation from importedRunDetail.
+// Inclusion above comes from stable evidence IDs; no status is inferred from this text.
+function conciseRunDetail(detail: string) {
+  const explanation = "。还不知道这次是轻松跑、间歇还是长距离，所以没算进肌肉负荷；在日志里把它关联到计划课后，会按课型计入。"
+  return detail.endsWith(explanation) ? detail.slice(0, -explanation.length) : detail
 }
 
 function Advice({ value, onCoach }: { value: RecoveryProjection; onCoach?: () => void }) {

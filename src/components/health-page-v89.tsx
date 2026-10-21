@@ -147,14 +147,13 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
   }, [day, rev, all])
   // History is viewed using records known now, including later syncs of that day.
   const view = useMemo(() => { void rev; return intradayRecoveryFromStore(all, currentAthleteId(), day, new Date().toISOString()) }, [all, day, rev])
-  const now = new Date()
   const explorer = <AllDayTrend day={day} today={today} onDay={setPageDay} rev={rev} d={all[day] ?? null} view={view} metric={metric} onMetric={select} span={span} onSpan={setSpan} trend={trend} rest={rest} showSyncNote={!emptyMetrics} />
   return <div className="space-y-3">
     <section className="fk-h89-card fk-h89-today" aria-label="今日恢复状态">
       <div className="flex items-start gap-3">
         <span className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-surface-2">{portraitError ? <HeartPulse aria-hidden="true" className="size-6 text-accent" /> : <img src="/fangshen/care-bust.png" alt="" onError={() => setPortraitError(true)} className="size-full object-cover" />}</span>
         <div className="min-w-0 flex-1">
-          <p className="keep flex items-center gap-2 text-xs text-muted"><span>方坤 · {day === today ? "今日" : mdCN(day)}恢复状态</span>{day === today ? <span className="ml-auto">{String(now.getHours()).padStart(2, "0")}:{String(now.getMinutes()).padStart(2, "0")} 更新</span> : null}</p>
+          <p className="keep text-xs text-muted">方坤 · {day === today ? "今日" : mdCN(day)}恢复状态</p>
           <h2 className="mt-0.5 text-xl font-black leading-tight">{review?.title ?? "暂无恢复判断"}</h2>
           <p className="keep mt-1 text-sm text-muted">{review ? (review.signals.length ? review.signals.map(s => s.detail).join("；") : review.action) : "读取健康记录失败，未当作正常。"}</p>
         </div>
@@ -167,6 +166,7 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
     {!emptyMetrics ? <div className="fk-h89-tiles" data-testid="h89-tiles">{tiles.map(t => <button type="button" key={t.key} className="fk-h89-tile text-left" data-testid={`h89-tile-${t.key}`} onClick={() => select(t.key === "SLEEP" ? "sleep" : t.key === "HRV" ? "hrv" : t.key === "BB" ? "bb" : "hr", true)}>
       <p className="keep text-xs text-muted">{t.label}</p>
       <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? "暂无"}</b>{t.value && t.unit ? <span className="ml-0.5 text-[10px] text-muted">{t.unit}</span> : null}</p>
+      {t.value && t.key === "BB" && !t.stale ? <p className="keep text-[11px] text-muted">{t.sub}</p> : null}
       {t.delta ? <p className="keep text-[10px] text-muted">{t.delta}</p> : null}{t.stale ? <p className="keep text-[10px] text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
     </button>)}</div> : null}
     {emptyMetrics ? <details className="fk-h89-disclosure" data-testid="h89-empty-trend"><summary>查看健康趋势</summary>{explorer}</details> : explorer}
@@ -197,7 +197,7 @@ function AllDayTrend({ day, today, onDay: setDay, rev, d, view, metric, onMetric
   return <section id="fk-intraday" tabIndex={-1} className="fk-h89-card fk-h89-explorer" aria-label="健康趋势" data-testid="h89-trend">
     <div className="fk-h89-section-title"><h2>健康趋势</h2></div>
     <div className="fk-h89-metrics" role="group" aria-label="趋势指标">{EXPLORER.map(([id, label]) => <button key={id} type="button" aria-pressed={metric === id} onClick={() => onMetric(id)}>{label}</button>)}</div>
-    <div className="fk-h89-period" role="group" aria-label="趋势时间范围">{([1,7,30,90] as const).map(n => <button key={n} type="button" aria-pressed={span === n} onClick={() => onSpan(n)}>{n === 1 ? "当天" : `${n}天`}</button>)}</div>
+    <div className="fk-h89-period" role="group" aria-label="趋势时间范围">{([1,7,30] as const).map(n => <button key={n} type="button" aria-pressed={span === n} onClick={() => onSpan(n)}>{n === 1 ? "当天" : `${n}天`}</button>)}</div>
     {span === 1 ? <div className="mt-2 flex items-center justify-between gap-2 text-sm" role="group" aria-label="当天日期" data-testid="h89-trend-day">
       <button type="button" className="grid size-11 place-items-center rounded-full border border-line disabled:opacity-30" aria-label="前一天" disabled={day <= shiftDay(today, -89)} onClick={() => setDay(shiftDay(day, -1))}><ChevronLeft className="size-4" /></button>
       <b>{mdCN(day)}{day === today ? " · 今天" : ""}</b>
@@ -261,7 +261,7 @@ function DayChart({ d, view, k, height, bandLabels = false, typ }: { d: Intraday
       {ticks.map(v => <g key={v}><line x1={left} x2={W - 4} y1={y(v)} y2={y(v)} stroke="var(--color-line)" strokeWidth=".5" /><text x={left - 3} y={y(v) + 3} fontSize="10" textAnchor="end" fill="var(--color-muted)">{v}</text></g>)}
       {[0, 6, 12, 18, 24].map(h => <text key={h} x={xh(h)} y={height - 4} fontSize="10" textAnchor={h === 0 ? "start" : h === 24 ? "end" : "middle"} fill="var(--color-muted)">{String(h).padStart(2, "0")}:00</text>)}
       {refRows.length ? <g data-testid="h89-reference">{refRows.map(r => <rect key={r.hour} x={xh(r.hour)} y={y(r.p75)} width={pw / 24} height={Math.max(1, y(r.p25) - y(r.p75))} fill="#b49cff" opacity=".16" />)}
-        <path data-testid="h89-estimate" d={refRows.slice().sort((a, b) => a.hour - b.hour).map((r, i, a) => `${i && a[i - 1].hour === r.hour - 1 ? "L" : "M"}${(xh(r.hour) + pw / 48).toFixed(1)},${y(r.median).toFixed(1)}`).join("")} fill="none" stroke="#c4b2ff" strokeWidth="1.4" strokeDasharray="4 3" /></g> : null}
+        <path data-testid="h89-estimate" d={refRows.slice().sort((a, b) => a.hour - b.hour).map((r, i, a) => `${i && a[i - 1].hour === r.hour - 1 ? "L" : "M"}${(xh(r.hour) + pw / 48).toFixed(1)},${y(r.median).toFixed(1)}`).join("")} fill="none" stroke="var(--fk-reference-color, #c4b2ff)" strokeWidth="1.4" strokeDasharray="4 3" /></g> : null}
       {area ? <path d={area} fill={m.color} opacity=".16" /> : null}
       <path d={path} fill="none" stroke={m.color} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
       <circle cx={x(pts[pts.length - 1][0])} cy={y(pts[pts.length - 1][1])} r="2.8" fill={m.color} data-testid="latest-dot" />
@@ -274,7 +274,7 @@ function DayChart({ d, view, k, height, bandLabels = false, typ }: { d: Intraday
 function Legend({ k, typ }: { k: K; typ: { hours: TypicalHour[]; historyDays: number } }) {
   return <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted" data-testid="h89-legend">
     <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3" style={{ background: META[k].color }} />手表{META[k].label}</span>
-    {typ.hours.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed border-[#c4b2ff]" />个人常态 · 近{typ.historyDays}天</span>
+    {typ.hours.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed" style={{ borderColor: "var(--fk-reference-color, #c4b2ff)" }} />方坤常态 · 近{typ.historyDays}天</span>
       : <span>个人常态：历史不足7天</span>}
     <span className="flex items-center gap-1"><i className="inline-block size-2.5 rounded-sm bg-[#4a5cff]/50" />睡眠</span>
     <span className="flex items-center gap-1"><i className="inline-block size-2.5 rounded-sm bg-[#ff6a1a]/50" />训练</span>

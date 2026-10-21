@@ -4,6 +4,11 @@
   min-width: 0;
 }
 
+.fk-recovery-trend,
+.fk-h89-explorer {
+  --fk-reference-color: color-mix(in srgb, #a78bfa 78%, var(--color-fg));
+}
+
 .fk-recovery-trend-controls {
   display: grid;
   min-width: 0;
@@ -51,7 +56,7 @@
 
 .fk-recovery-trend-range {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .1875rem;
   padding: .1875rem;
   border: 1px solid var(--color-line);
@@ -81,6 +86,63 @@
   font-size: .9375rem;
   font-weight: 650;
   color: var(--color-fg);
+}
+
+.fk-recovery-trend-latest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .25rem .5rem;
+  margin-top: .375rem;
+}
+
+.fk-recovery-trend-latest strong {
+  color: var(--color-fg);
+  font-size: 1.5rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.fk-recovery-trend-latest span {
+  font-size: .75rem;
+}
+
+.fk-recovery-trend-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem .875rem;
+  margin-top: .625rem;
+  color: var(--color-muted);
+  font-size: .8125rem;
+  line-height: 1.4;
+}
+
+.fk-recovery-trend-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+}
+
+.fk-recovery-trend-legend i {
+  display: inline-block;
+  width: 1.125rem;
+  flex-shrink: 0;
+}
+
+.fk-trend-key-record {
+  border-top: 2px solid #ff6a1a;
+}
+
+.fk-trend-key-reference {
+  border-top: 2px dashed var(--fk-reference-color);
+}
+
+.fk-trend-key-band {
+  height: .625rem;
+  border-radius: .1875rem;
+  background: color-mix(in srgb, #b49cff 28%, var(--color-surface));
 }
 
 .fk-recovery-trend-plot {
