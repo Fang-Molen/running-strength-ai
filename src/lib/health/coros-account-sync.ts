@@ -59,3 +59,14 @@ export async function corosRecentImport(days = 28, now = new Date()): Promise<De
     '高驰这一步不提供日内心率、压力、睡眠、HRV 和分圈；不生成“身体电量”。开始时间和运动类型按开源资料解析，若与高驰 App 不一致请不要保存并告诉我。',
   ] }
 }
+
+/** 最近一次读取记录（只存时间和条数，不存令牌/账号）；按当前运动员分开。 */
+export type CorosReadMeta = { at: string; read: number; saved?: number }
+const metaKey = (athlete: string) => `fk-coros-last-read-v1:${athlete}`
+export function loadCorosMeta(athlete: string): CorosReadMeta | null {
+  try { const v = JSON.parse(localStorage.getItem(metaKey(athlete)) ?? 'null'); return v && typeof v.at === 'string' ? v : null } catch { return null }
+}
+export function saveCorosMeta(athlete: string, m: CorosReadMeta) {
+  try { localStorage.setItem(metaKey(athlete), JSON.stringify(m)) } catch { /* storage unavailable */ }
+  try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* no window */ }
+}

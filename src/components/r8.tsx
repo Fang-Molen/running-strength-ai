@@ -1,4 +1,5 @@
 import { stampCN } from "@/lib/ui/activity-format";
+import { CorosAccount } from "@/components/coros-account"
 import { ImageIntake } from "./image-intake";
 import { loadTrainingActivities, activityWeeks } from "@/lib/ui/training-read-model";
 import { onAppEvent } from "@/lib/core/events";
@@ -66,7 +67,8 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
   }
   const Opt = ({ on, onClick, label, sub }: { on: boolean; onClick: () => void; label: string; sub?: string }) => <button type="button" aria-pressed={on} onClick={onClick} className={"w-full rounded-2xl border p-3 text-left " + (on ? "border-accent bg-accent/10" : "border-line bg-surface")}><b>{label}</b>{sub ? <span className="block text-xs text-muted">{sub}</span> : null}</button>
   const body = step === 0 ? <AboutStep me={me} onChange={setMe} /> : q === 0 ? <div className="space-y-2">{WATCHES.map(([id, l]) => <Opt key={id} on={a.source === id} onClick={() => { set({ source: id }); setBrand(null) }} label={l} sub={`${GROUP_HINT[id]} · ${TIER_LABEL[TIERS[tierFor({ ...a, source: id })] ? tierFor({ ...a, source: id }) : "basic"]}`} />)}
-      {BRANDS[a.source].length ? <select aria-label="品牌" className="fk-cell w-full" value={brand ?? ""} onChange={(e) => setBrand(e.target.value || null)}><option value="">品牌（只决定显示哪份说明）</option>{BRANDS[a.source].map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select> : null}</div>
+      {BRANDS[a.source].length ? <select aria-label="品牌" className="fk-cell w-full" value={brand ?? ""} onChange={(e) => setBrand(e.target.value || null)}><option value="">品牌（只决定显示哪份说明）</option>{BRANDS[a.source].map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select> : null}
+      {brand === "coros" ? <CorosAccount compact /> : null}</div>
     : q === 1 ? <div className="space-y-2"><p className="text-xs text-muted">最多选 2 个，第一个算主目标。</p>{GOALS.map(([id, l]) => <Opt key={id} on={a.goals.includes(id)} onClick={() => set({ goals: toggleGoal(a.goals, id) })} label={l} sub={a.goals[0] === id ? "主目标" : undefined} />)}</div>
     : q === 2 ? <div className="space-y-2"><p className="text-xs text-muted">按时间选，不用自我评价。</p>{EXPERIENCE.map(([id, l]) => <Opt key={id} on={a.experience === id} onClick={() => set({ experience: id })} label={`规律训练：${l}`} />)}</div>
     : q === 3 ? <div className="space-y-2">{VENUES.map(([id, l]) => <Opt key={id} on={a.venue === id} onClick={() => set({ venue: id, equipment: PRESET[id] })} label={l} />)}
@@ -79,7 +81,7 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
     <div className="fk-onboard-safe mx-auto max-w-xl px-4 pb-10 pt-5">
       {step < 6 ? <>
         <div className="flex items-center gap-3"><span className="text-sm font-bold">{step + 1}/6</span><div className="h-1.5 flex-1 rounded-full bg-line"><div className="h-full rounded-full bg-accent" style={{ width: `${(step + 1) * 100 / 6}%` }} /></div></div>
-        <h1 className="mt-4 text-2xl font-bold">{["先认识一下你", "你的数据从哪来？（可连佳明）", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
+        <h1 className="mt-4 text-2xl font-bold">{["先认识一下你", "你的数据从哪来？（可连佳明/高驰）", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
         <p className="mt-1 text-xs text-muted">{step === 0 ? "资料只存在这台设备上" : QUESTIONS[q]} · 伤病和饮食等用到时再问</p>
         <div className="mt-4">{body}</div>
         <div className="mt-6 flex gap-2">{step ? <button type="button" className="fk-chip min-h-12 px-4" onClick={() => setStep(step - 1)}>上一步</button> : null}<button type="button" className="fk-primary min-h-12 flex-1" onClick={next}>下一步</button></div>

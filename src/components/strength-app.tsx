@@ -63,6 +63,7 @@ import { MuscleExplorerSheet } from "@/components/muscle-explorer";
 import { ActionPicker } from "@/components/action-picker";
 import { DemoSheet } from "@/components/exercise-editor";
 import { TrainingEditorSheet } from "@/components/training-editor-sheet";
+import { CorosAccount } from "@/components/coros-account";
 import { SchedulePicker, ScheduledTraining } from "@/components/scheduled-training";
 import { MuscleActionList } from "@/components/muscle-action-list";
 import { loadSchedule, saveScheduledEntry, strengthEntry, runEntry } from "@/lib/ui/day-schedule";
@@ -255,6 +256,7 @@ export function StrengthApp() {
     watch(); const t = setTimeout(watch, 300);
     return () => { clearTimeout(t); ro.disconnect(); };
   }, [tab, offline, offlineShellState]);
+  useEffect(() => { const h = () => { setSettingsPaneRaw("sync"); setSettingsOpen(true); }; window.addEventListener("fk-open-sync", h); return () => window.removeEventListener("fk-open-sync", h); }, []);
   useEffect(() => { const h = () => { setTab("body"); setTimeout(() => document.getElementById("fk-intraday")?.scrollIntoView({ block: "start", behavior: "smooth" }), 120); }; window.addEventListener("fk-open-intraday", h); return () => window.removeEventListener("fk-open-intraday", h); }, []);
   useEffect(() => { const h = (ev: Event) => { const id = (ev as CustomEvent<string>).detail; const all = loadSchedule().entries; if (all.some(e => e.id === id)) { setCalendar(all); setTimerPicker(false); setExecutionEntryId(id); } }; window.addEventListener("fk-open-scheduled", h); return () => window.removeEventListener("fk-open-scheduled", h); }, []);
   const resumeSession = (id: string) => {
@@ -885,7 +887,7 @@ export function StrengthApp() {
           {settingsPane === "menu" ? <StorageHint /> : null}
           {settingsPane === "athlete" ? <><AthletePanel profile={profile} onEdit={() => setProfileOpen(true)} /><SettingsHub only={["p", "n"]} initialOpen="p" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "health" ? <><HealthPanel /><SettingsHub only={["h"]} initialOpen="h" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
-          {settingsPane === "sync" ? <><SyncStatusPanel conn={garminConn} /><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
+          {settingsPane === "sync" ? <><SyncStatusPanel conn={garminConn} /><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><CorosAccount /><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "import" ? <><section className="home-card mt-3 p-4"><h3 className="font-bold">导入手表文件或截图</h3><p className="mt-1 text-xs text-muted">导入的数据会先给你核对，确认后才保存；与佳明账号同步分开记录来源。</p><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></section><button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { window.dispatchEvent(new Event("fk-open-health-records")); }, 40); }} className="home-card mt-3 flex min-h-14 w-full items-center justify-between px-4 text-left text-sm"><span><b className="block">健康页 · 设备记录与说明</b><span className="text-xs text-muted">查看已导入的设备数据和各品牌导入说明</span></span><span aria-hidden="true">›</span></button></> : null}
           {settingsPane === "coach" ? <SettingsHub only={["c", "r"]} initialOpen="c" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "ai" ? <OnlineFeaturesSettings /> : null}

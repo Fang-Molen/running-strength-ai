@@ -1,5 +1,6 @@
 import { stampCN } from "@/lib/ui/activity-format";
 /* R1「个人与数据」：一级三组入口 + 二级页（同步状态、备份恢复、隐私、健康）。只做展示与入口整理，存储键与业务写入沿用原实现。 */
+import { CorosStatusRows } from "@/components/coros-account";
 import { useEffect, useRef, useState } from "react";
 import { Bot, ChevronRight, Cpu, Database, FileUp, HeartPulse, Palette, ShieldCheck, Target, TriangleAlert, UserRound, Watch } from "lucide-react";
 import { currentAthleteId } from "@/lib/core/events";
@@ -102,6 +103,8 @@ export function SyncStatusPanel({ conn }: { conn: GarminConnState }) {
       {g.status !== "never" ? <KV k="最近一次范围" v={`活动 ${g.activityRows ?? "—"} 条（最多取最近 ${g.activityLimit ?? 200} 条，不是全部历史）· 健康 ${g.coveredFrom ? `${g.coveredFrom.slice(5)} 至 ${g.coveredTo?.slice(5)}` : "无有效日期"}（请求 ${g.healthDaysRequested ?? "—"} 天）`} /> : null}
       {g.status !== "never" ? <KV k="写入结果" v={`保存/更新 ${g.saved ?? "—"} 条 · 未变化 ${g.skipped ?? "—"} 条`} /> : null}
     </div>
+    <h3 className="mt-3 font-bold">高驰账号</h3>
+    <div className="mt-1" data-testid="coros-status"><CorosStatusRows KV={(p) => <KV key={p.k} {...p} />} /></div>
     <h3 className="mt-3 font-bold">本机设备文件导入</h3>
     <div className="mt-1"><KV k="最近导入" v={fmtTime(imp.lastCompleteSuccessAt)} />{imp.healthRows ? <KV k="导入的健康记录" v={`${imp.healthRows} 条${imp.coveredFrom ? ` · ${imp.coveredFrom.slice(5)} 至 ${imp.coveredTo?.slice(5)}` : ""}`} /> : null}</div>
     <details id="sync-report" className="mt-3 rounded-xl bg-surface-2 p-3" open={bad} data-testid="sync-report">
