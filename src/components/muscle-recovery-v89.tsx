@@ -6,6 +6,7 @@ import { MESH_KEYS, REGION_LABEL, REGIONS, type Region, type RegionState } from 
 import { readRecoveryProjection, recoveryLines, type RecoveryProjection } from "@/lib/health/recovery-host-u11"
 import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
 import "./muscle-target-card.css"
+import { MuscleStimulusChartV90 } from "./muscle-stimulus-chart-v90"
 
 type API = { setView: (v: string) => void; selectKey: (k: string | null) => void; setOverlays: (v: { keys: string[]; color: string }[]) => void; destroy: () => void }
 /** 4 级图例（效果图同款层级，但措辞按证据：不是疲劳测量）。 */
@@ -16,8 +17,7 @@ export const LEVELS = [
   { id: "none", label: "无近期负荷记录", color: "#8b929a", states: ["UNKNOWN"] as RegionState[] },
 ]
 export const levelOf = (s: RegionState) => LEVELS.find(l => l.states.includes(s))!
-/** 一般经验范围（估算）：仅按证据层级给出，非个人实测；疼痛不估时。 */
-export const ESTIMATE: Record<RegionState, string> = { PAIN_REVIEW: "先排查疼痛，不估时", REPORTED_SORENESS: "48–72 小时（估算）", OVERLAP_OBSERVED: "48–72 小时（估算）", TRAINING_EXPOSURE: "24–48 小时（估算）", UNKNOWN: "—" }
+/* 旧版按状态固定的24–72小时“预计恢复”已取消，避免伪精确。 */
 const TABS = [["status", "肌肉状态"], ["strength", "力量负荷"], ["run", "跑步影响"], ["trend", "恢复趋势"]] as const
 
 export function MuscleRecoveryV89({ day, trend, onCoach }: { day: string; trend: ReactNode; onCoach?: () => void }) {
@@ -78,15 +78,16 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
         return <button key={r.region} type="button" className="fk-m89-card text-left" aria-pressed={selected === r.region} onClick={() => { api.current?.selectKey(MESH_KEYS[r.region][0]); setSelected(r.region) }}>
           <span className="flex items-center gap-1.5"><b className="text-sm">{REGION_LABEL[r.region]}</b><span className="fk-m89-chip ml-auto" style={{ color: l.color, borderColor: l.color }}>{r.state === "PAIN_REVIEW" && r.notes.some(n => /缺少近期复核/.test(n)) ? "疼痛待复核" : l.label}</span></span>
           <span className="mt-1 block text-[11px] text-muted">负荷来源</span><span className="block text-xs">{src || "—"}{h != null ? ` · ${h} 小时前` : ""}</span>
-          <span className="mt-1 block text-[11px] text-muted">预计恢复</span><span className="block text-xs">{ESTIMATE[r.state]}</span>
+          <span className="mt-1 block text-xs text-muted">点选查看真实依据及未校准刺激情景</span>
         </button> })}</div>
         : <p className="mt-1 text-sm text-muted">暂无：近 72 小时没有可判断到具体肌群的已确认训练或局部反馈。未记录不等于已恢复。</p>}
     </div>
+    {(selected ?? observed[0]?.region) ? <MuscleStimulusChartV90 value={value} region={(selected ?? observed[0].region)} /> : null}
     {row ? <div className="fk-m89-evidence" aria-live="polite" data-testid="u11-muscle-evidence"><b>{REGION_LABEL[row.region]} · {levelOf(row.state).label}</b>
       {row.state === "UNKNOWN" ? <p>没有足够的已确认动作或局部反馈。</p> : null}
       {[...row.strengthEventIds, ...row.runEventIds, ...row.symptomEventIds].map(id => { const s = value.sources.find(x => x.id === id); return <p key={id} className="mt-1 text-sm">{s?.label ?? "训练来源"}：{s?.detail ?? "来源待核对"}{s?.occurredAt ? ` · ${new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false })}` : ""}</p> })}
       {row.notes.map(n => <p key={n} className="mt-1 text-xs text-muted">{n}</p>)}</div> : null}
-    <p className="keep text-[11px] text-muted">“预计恢复”为一般经验范围（估算），未按你的个人数据校准；疼痛优先，不自动改课。</p>
+    <p className="keep text-xs text-muted">模拟曲线不表示真实肌肉疲劳或恢复百分比；只有实际完成的训练可用于刺激情景，疼痛需独立核对。</p>
     {value.review.gaps.length ? <details className="fk-m89-limits"><summary>缺失与待核对（{value.review.gaps.length}）</summary>{value.review.gaps.map(g => <p key={g}>{g}</p>)}</details> : null}
     <details className="fk-m89-limits"><summary>模型与解释边界</summary><p>沿用原有 Écorché 独立肌肉网格。区域映射为待复核的解释资料。</p><a href="/demo3d/anatomy/ATTRIBUTION.md" target="_blank" rel="noreferrer">模型来源与授权</a></details>
   </section>

@@ -14,7 +14,7 @@ import { loadOwnedComponents } from '../ui/plan400-components-store'
 import { garminRows } from '../ui/training-read-model'
 import { garminViewKey } from './garmin-view-scope'
 import { localDay, shortHash, validDay } from './observation'
-import { buildMuscleReview, REGION_LABEL, type Region, type Symptom, type TrainingPart } from './muscle-recovery-u11'
+import { buildMuscleReview, exerciseRegions, REGION_LABEL, type Region, type Symptom, type TrainingPart } from './muscle-recovery-u11'
 import { buildIntradayRecovery } from './intraday-recovery-u10'
 import { loadIntraday } from './intraday-store'
 import { intradayRecoveryFromStore } from './intraday-recovery-bridge-v89'
@@ -24,6 +24,8 @@ const mdOf=(d:string)=>`${Number(d.slice(5,7))}-${d.slice(8,10)}`
 export type RecoverySource = {
   id: string; label: string; occurredAt: string | null; knownAt: string | null
   actualSets: number | null; detail: string
+  /** v89.4：这次力量里涉及各肌群的实际组数（动作库映射；未映射动作不计） */
+  regionSets?: Partial<Record<Region, number>>
 }
 export const regionFromExplicitLabel = (label: string): Region | null => {
   const exact = Object.entries(REGION_LABEL).find(([,name]) => name === label.trim().replace(/^(左|右)(侧)?[ ·]?/, ''))
@@ -41,7 +43,9 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
   const recent = (time: string) => iso(time) && Date.parse(time) <= cutoff && Date.parse(time) >= cutoff - 72 * 3600000
   let unreadable = !currentStore()
   const add = (p: TrainingPart, label: string, detail: string, actualSets: number | null = null) => {
-    parts.push(p); sources.push({id:partEvidenceKey(p),label,occurredAt:p.occurredAt,knownAt:p.knownAt,actualSets,detail})
+    const regionSets: Partial<Record<Region, number>> = {}
+    for (const e of p.exercises ?? []) for (const r of exerciseRegions(e.catalogId)) regionSets[r] = (regionSets[r] ?? 0) + (e.actualSets ?? 0)
+    parts.push(p); sources.push({id:partEvidenceKey(p),label,occurredAt:p.occurredAt,knownAt:p.knownAt,actualSets,detail,...(p.modality==='STRENGTH'?{regionSets}:{})})
   }
   try {
     // Legacy readers degrade to empty. Expose corrupt containers before using them.

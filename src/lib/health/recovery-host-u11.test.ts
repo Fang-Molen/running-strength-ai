@@ -147,6 +147,7 @@ test('v89.2 V4 free-text moves logged set by set reach muscle view, log and coac
   const on=v.review.regions.filter(r=>r.state!=='UNKNOWN').map(r=>r.region)
   for(const r of ['quads','hamstrings','glutes','calves','core'] as const) assert.ok(on.includes(r),r)
   assert.equal(v.review.gaps.filter(g=>/未映射/.test(g)).length,0)
+  assert.deepEqual([v.sources[0].regionSets?.quads,v.sources[0].regionSets?.glutes,v.sources[0].regionSets?.calves],[2,6,2]) // v89.4 刺激情景按该肌群实际组数
   const ex=recoveryExplanation(v);assert.equal(ex.split('分腿蹲 2组').length-1,1,'依据只列一次，不按肌群重复')
   const data=readCoachData(v.day);assert.match(data.muscleRecovery!.explanation,/分腿蹲 2组/);assert.equal(data.muscleRecovery!.hasObservedRegions,true)
 })
