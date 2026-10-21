@@ -11,7 +11,8 @@ export const muscleName = (key: string) => (MUSCLES as Record<string, string>)[k
  *  v89.10.3: prefers the per-mesh Chinese function/related text from v89.10.2 (anatomy-zh), never shows a raw English mesh name. */
 export function muscleDisplay(pick: DisplayPick) {
   const identifiers = `${pick.k} ${pick.name ?? ''} ${pick.zh}`;
-  const side = pick.side === 'left' || /\bleft[ _-]/i.test(identifiers) ? '左侧'
+  // side === null: a whole-key selection (both sides / group) — never infer a side from one mesh's name.
+  const side = pick.side === null ? '' : pick.side === 'left' || /\bleft[ _-]/i.test(identifiers) ? '左侧'
     : pick.side === 'right' || /\bright[ _-]/i.test(identifiers) ? '右侧' : '';
   if (/iliotibial[ _-]*(tract|band)|髂胫束/i.test(identifiers)) {
     return {

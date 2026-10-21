@@ -32,3 +32,8 @@ test('unknown structures do not gain a made-up effect or related muscle', () => 
   assert.equal(display.effect, null);
   assert.deepEqual(display.related, []);
 });
+
+test('a whole-key selection (side null) is not labelled with one mesh side', () => {
+  const display = muscleDisplay({ k: 'rectus_fem', zh: '股直肌', g: 'quads', side: null, name: 'Left rectus femoris' });
+  assert.equal(display.name, '股直肌');
+});
