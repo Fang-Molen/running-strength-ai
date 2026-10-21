@@ -172,3 +172,14 @@ test('v89.2 library aliases point at real library entries; planned run types com
   assert.equal(v4RunType({title:'低强度恢复',main:['','轻松跑20—30分钟']}),'EASY')
   assert.equal(v4RunType({title:'休息',main:['','完全休息']}),'UNKNOWN')
 })
+test('v89.3 U12: old pain stays 待复核 beyond 72h; a later explicit 0 clears it without claiming recovery',t=>{
+  const f=fixture(t)
+  f.map.set('fk-pain-log-v1',JSON.stringify([{id:'old',athleteId:athlete,date:'2026-10-16',part:'股四头肌',score:5,occurredAt:'2026-10-16T08:00:00Z',recordedAt:'2026-10-16T08:05:00Z'}]))
+  const v=readRecoveryProjection(day,now),q=v.review.regions.find(r=>r.region==='quads')!
+  assert.equal(q.state,'PAIN_REVIEW');assert.ok(q.notes.some(n=>/不得自动宣告恢复/.test(n)))
+  assert.match(v.sources.find(s=>s.id==='pain:old')!.label,/待复核/)
+  f.map.set('fk-pain-log-v1',JSON.stringify([{id:'old',athleteId:athlete,date:'2026-10-16',part:'股四头肌',score:5,occurredAt:'2026-10-16T08:00:00Z',recordedAt:'2026-10-16T08:05:00Z'},
+    {id:'zero',athleteId:athlete,date:'2026-10-20',part:'股四头肌',score:0,occurredAt:'2026-10-20T07:00:00Z',recordedAt:'2026-10-20T07:01:00Z'}]))
+  const w=readRecoveryProjection(day,now),q2=w.review.regions.find(r=>r.region==='quads')!
+  assert.equal(q2.state,'UNKNOWN');assert.ok(q2.notes.some(n=>/不等于组织已完全恢复/.test(n)))
+})

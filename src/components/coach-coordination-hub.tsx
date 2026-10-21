@@ -37,7 +37,7 @@ function GlobalCoachDigest({ input, onNavigate }: { input: CoachCoordinationInpu
   return <div className="mt-2 rounded-xl border border-line p-3 text-sm" aria-label="方坤全局观察（只读）" data-testid="global-coach-v89" data-revision={current.revision}>
     <p className="font-bold">全局观察 · {data.day}</p>
     <p className="keep mt-1">恢复：{data.fatigue.title}。</p>
-    {data.muscleRecovery?<details className="mt-2" data-testid="global-muscle-u11"><summary className="min-h-11 cursor-pointer py-2">肌群观察 · {data.muscleRecovery.summary}</summary><p className="keep whitespace-pre-line">{data.muscleRecovery.explanation}</p></details>:null}
+    {data.muscleRecovery?<details className="mt-2" data-testid="global-muscle-u11"><summary className="min-h-11 cursor-pointer py-2">肌群观察 · {data.muscleRecovery.summary}</summary><p className="keep whitespace-pre-line">{data.muscleRecovery.explanation.startsWith(data.muscleRecovery.summary) ? data.muscleRecovery.explanation.slice(data.muscleRecovery.summary.length).replace(/^\n/, "") : data.muscleRecovery.explanation}</p></details>:null}
     <p className="keep mt-1">{data.nutrition.count ? `饮食已记录 ${data.nutrition.count} 条，已知热量小计 ${Math.round(data.nutrition.knownKcal)} kcal${data.nutrition.pending ? `，${data.nutrition.pending} 项热量待核` : ''}；全天是否完整未知。` : '饮食尚无可确认的记录，不按摄入 0 计算。'}</p>
     <p className="keep mt-1">{data.balance.from}—{data.balance.to}：有开始与完成来源的训练 {data.coreActual.sessions} 次，已知时长 {Math.round(data.coreActual.knownMinutes)} 分钟{data.coreActual.unknownMinutes ? `，另有 ${data.coreActual.unknownMinutes} 次时长未知` : ''}；不代表所有历史渠道都完整。</p>
     {current.result.tasks.length ? <ul className="mt-2 divide-y divide-line" aria-label="全局待办">{current.result.tasks.slice(0,5).map(task => <li key={task.id} data-task-id={task.id}>

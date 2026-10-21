@@ -18,6 +18,7 @@ import { buildMuscleReview, REGION_LABEL, type Region, type Symptom, type Traini
 import { buildIntradayRecovery } from './intraday-recovery-u10'
 import { loadIntraday } from './intraday-store'
 import { intradayRecoveryFromStore } from './intraday-recovery-bridge-v89'
+import { buildMuscleTimeline, type SymptomUpdate } from './muscle-timeline-u12'
 
 const mdOf=(d:string)=>`${Number(d.slice(5,7))}-${d.slice(8,10)}`
 export type RecoverySource = {
@@ -34,7 +35,7 @@ export const partEvidenceKey = (p: TrainingPart) => p.occurrenceId && p.componen
 export function readRecoveryProjection(day = localDay(), asOf = new Date().toISOString()) {
   if (!validDay(day) || !iso(asOf)) throw Error('INVALID_RECOVERY_TIME')
   const athleteId = currentAthleteId(), parts: TrainingPart[] = [], symptoms: Symptom[] = []
-  const sources: RecoverySource[] = [], gaps: string[] = [], notes: string[] = []
+  const sources: RecoverySource[] = [], gaps: string[] = [], notes: string[] = [], painUpdates: SymptomUpdate[] = [], painLabel = new Map<string, string>()
   const endOfDay = new Date(`${day}T23:59:59.999`).getTime()
   const cutoff = Math.min(Date.parse(asOf), endOfDay), effectiveAsOf = new Date(cutoff).toISOString()
   const recent = (time: string) => iso(time) && Date.parse(time) <= cutoff && Date.parse(time) >= cutoff - 72 * 3600000
@@ -175,16 +176,31 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     if(evalOnly.length)notes.push(`${evalOnly.join('、')}只有分项评价、没有逐组/逐段或关联手表记录，未计入肌群`)
     const rawPain=JSON.parse(currentStore()?.getItem('fk-pain-log-v1')??'[]')
     if(!Array.isArray(rawPain)) throw Error('INVALID_PAIN_SOURCE')
-    for(const p of rawPain) if((p?.athleteId??'local')===athleteId && validDay(p?.date) && p.date<=day &&
-      p.date>=localDay(new Date(cutoff-72*3600000)) && typeof p.score==='number' && p.score>0 && p.score<=10) {
+    // v89.3（合入 U12 时间线）：自报疼痛不随 72 小时窗口自动消失——超过 36 小时没有新反馈 = 待复核；之后明确报 0 才解除（但不等于组织已恢复）。
+    for(const p of rawPain) if((p?.athleteId??'local')===athleteId && validDay(p?.date) && p.date<=day && typeof p.score==='number' && p.score>=0 && p.score<=10) {
       const region=regionFromExplicitLabel(String(p.part??''))
-      if(region && iso(p.occurredAt) && iso(p.recordedAt) && recent(p.occurredAt) && Date.parse(p.recordedAt)<=cutoff) {
-        const s:Symptom={athleteId,eventId:`pain:${p.id}`,occurredAt:p.occurredAt,knownAt:p.recordedAt,region,kind:'PAIN',severity:p.score,sourceId:'fk-pain-log-v1'}
-        symptoms.push(s);sources.push({id:s.eventId,label:'自报疼痛',occurredAt:s.occurredAt,knownAt:s.knownAt,actualSets:null,detail:`${p.part} · ${p.score}/10`})
-      } else gaps.push(`${p.date} 自报${String(p.part??'部位未知')}疼痛 ${p.score}/10；时间或肌群位置不够明确，不补造发生时刻或肌群诊断`)
+      if(region && iso(p.occurredAt) && iso(p.recordedAt) && Date.parse(p.occurredAt)<=cutoff && Date.parse(p.recordedAt)<=cutoff && Date.parse(p.recordedAt)>=Date.parse(p.occurredAt)) {
+        painUpdates.push({athleteId,reportId:String(p.id),sourceId:'fk-pain-log-v1',region,kind:'PAIN',severity:p.score,occurredAt:p.occurredAt,knownAt:p.recordedAt,revision:0,status:'RECORDED'})
+        painLabel.set(String(p.id),`${p.part} · ${p.score}/10`)
+      } else if(p.score>0 && p.date>=localDay(new Date(cutoff-72*3600000))) gaps.push(`${p.date} 自报${String(p.part??'部位未知')}疼痛 ${p.score}/10；时间或肌群位置不够明确，不补造发生时刻或肌群诊断`)
     }
   } catch { unreadable=true; gaps.push('部分训练来源无法读取，不能当作没有训练或没有疼痛') }
   const review=buildMuscleReview({athleteId,asOf:effectiveAsOf,parts,symptoms})
+  let timeline:ReturnType<typeof buildMuscleTimeline>|null=null
+  try{timeline=buildMuscleTimeline({athleteId,asOf:effectiveAsOf,parts:[],symptomUpdates:painUpdates})}catch{gaps.push('自报疼痛记录无法按时间整理，请核对')}
+  for(const t of timeline?.regions??[]){
+    const r=review.regions.find(x=>x.region===t.region)!
+    if(t.state==='PAIN_ACTIVE'||t.state==='PAIN_RECHECK'){
+      const last=painUpdates.filter(u=>u.region===t.region&&u.kind==='PAIN'&&u.severity>0).sort((a,b)=>b.occurredAt.localeCompare(a.occurredAt))[0]
+      if(last){const id=`pain:${last.reportId}`
+        if(!sources.some(x=>x.id===id))sources.push({id,label:t.state==='PAIN_RECHECK'?'自报疼痛（待复核）':'自报疼痛',occurredAt:last.occurredAt,knownAt:last.knownAt,actualSets:null,detail:painLabel.get(last.reportId)??`${t.label} · ${last.severity}/10`})
+        if(!r.symptomEventIds.includes(id))r.symptomEventIds.push(id)}
+      r.state='PAIN_REVIEW'
+    }else if(t.state==='SOURCE_CONFLICT')gaps.push(`${t.label}：同一时刻有互相矛盾的疼痛反馈，请核对`)
+    for(const n of t.notes)if(!/训练参与|跑步与力量/.test(n)&&!r.notes.includes(n))r.notes.push(n)
+  }
+  const observedN=review.regions.filter(r=>r.state!=='UNKNOWN').length
+  if(observedN)review.summary=`近72小时${observedN}个区域有训练参与或主观反馈（疼痛按最近一次反馈，未复核不自动解除），不能据此估算恢复百分比。`
   review.gaps=[...new Set([...review.gaps,...gaps,...notes])]
   if(!review.regions.some(r=>r.state!=='UNKNOWN')) review.summary='无法判断具体肌群：缺少可信的实际动作明细或精确局部反馈。'
   // Current authorized runner only persists daily summaries. Its coverage is NOT promoted to continuous samples.

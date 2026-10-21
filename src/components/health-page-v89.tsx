@@ -2,6 +2,7 @@
  *  恢复：方坤今日恢复卡 → 四项指标（较昨日）→ 全天趋势（身体电量/心率/压力，睡眠·训练时段带，个人参考区间）→ 时间段事件 → 肌肉恢复入口。
  *  只显示真实同步/记录的数据；没有就写“暂无”。图表数据只有一套：v88.3 手表日内存储 + U10 投影。 */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { classifyFreshness } from "@/lib/health/recovery-freshness-u12"
 import { ChevronLeft, ChevronRight, CalendarDays, Moon, Footprints, Dumbbell, BedDouble, Activity, HeartPulse, BatteryMedium, Gauge } from "lucide-react"
 import { Sheet } from "./sheet"
 import { useIntraday, IntradayDetail } from "./intraday-panel"
@@ -18,6 +19,14 @@ import { garminStorageKey } from "@/lib/health/garmin-sync-runner"
 import { todayDate } from "@/lib/nutrition/body"
 import "./health-v89.css"
 
+/** v89.3（合入 U12 新鲜度）：今天的读数按测量时刻标注新旧，不把几小时前的值写成“最新”。界面标签，不是生理阈值。 */
+function freshSub(ms: number, hhmm: string) {
+  const f = classifyFreshness({ metric: "BODY_BATTERY", asOf: new Date().toISOString(), measuredAt: new Date(ms).toISOString(), sourceId: "garmin", value: 0 })
+  if (f.state === "CURRENT") return `最新 ${hhmm}`
+  if (f.state === "RECENT") return `${hhmm} · ${f.ageMinutes}分钟前`
+  if (f.state === "STALE") return `${hhmm} · 已${Math.round((f.ageMinutes ?? 0) / 60)}小时未更新`
+  return hhmm
+}
 export type HealthTab = "recovery" | "body" | "sleep" | "hrv" | "stress"
 const TABS: [HealthTab, string][] = [["recovery", "恢复"], ["body", "身体指标"], ["sleep", "睡眠"], ["hrv", "HRV"], ["stress", "压力"]]
 const mdCN = (d: string) => `${Number(d.slice(5, 7))}月${Number(d.slice(8, 10))}日`
@@ -63,7 +72,7 @@ function DaySwitch({ day, today, onDay }: { day: string; today: string; onDay: (
 function onDay(view: HealthMetricView | undefined, day: string) { return view?.series.find(p => p.day === day) ?? (view?.current?.day === day ? view.current : null) }
 function nearest(rows: Sample[], t: number, within = 30 * 60e3) { let best: Sample | null = null; for (const p of rows) if (Math.abs(p[0] - t) <= within && (!best || Math.abs(p[0] - t) < Math.abs(best[0] - t))) best = p; return best }
 
-type Tile = { key: string; label: string; value: string | null; unit: string; sub: string; delta: string | null; tone: "up" | "down" | "flat" | null; note?: string }
+type Tile = { key: string; label: string; value: string | null; unit: string; sub: string; delta: string | null; tone: "up" | "down" | "flat" | null; note?: string; stale?: string }
 function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): Tile[] {
   return useMemo(() => {
     void rev
@@ -75,7 +84,7 @@ function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): T
     const bbLast = d?.bb.at(-1)
     if (bbLast) {
       const prev = y ? nearest(y.bb, bbLast[0] - 864e5) : null, dv = prev ? bbLast[1] - prev[1] : null
-      tiles.push({ key: "BB", label: "身体电量", value: String(bbLast[1]), unit: "/100", sub: `${day === todayDate() ? "最新" : "当天最后"} ${clock(bbLast[0], d.offsetMin)}`, delta: dv == null ? null : `较昨日同时刻 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(dv)}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
+      tiles.push({ key: "BB", label: "身体电量", value: String(bbLast[1]), unit: "/100", sub: day === todayDate() ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) : `当天最后 ${clock(bbLast[0], d.offsetMin)}`, stale: day === todayDate() && !freshSub(bbLast[0], "").startsWith("最新") ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) : undefined, delta: dv == null ? null : `较昨日同时刻 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(dv)}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
     } else {
       const p = onDay(v("BODY_BATTERY"), day), q = onDay(v("BODY_BATTERY"), yday), dv = p && q && p.stream === q.stream ? p.value - q.value : null
       tiles.push({ key: "BB", label: "身体电量", value: p ? String(Math.round(p.value)) : null, unit: "/100", sub: p ? p.statistic : "暂无当日读数", delta: dv == null ? null : `较昨日 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(Math.round(dv))}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
@@ -120,7 +129,7 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, onTab }: { day: strin
     <div className="grid grid-cols-4 gap-1.5" data-testid="h89-tiles">{tiles.map(t => <button type="button" key={t.key} className="fk-h89-tile text-left" data-testid={`h89-tile-${t.key}`} onClick={() => t.key === "SLEEP" ? onTab("sleep") : t.key === "HRV" ? onTab("hrv") : window.dispatchEvent(new CustomEvent("fk-h89-detail", { detail: t.key === "BB" ? "bb" : "hr" }))}>
       <p className="keep truncate text-[11px] text-muted">{t.label}</p>
       <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? "暂无"}</b>{t.value && t.unit ? <span className="ml-0.5 text-[10px] text-muted">{t.unit}</span> : null}</p>
-      <p className={"keep text-[10px] " + (t.tone === "down" ? "text-[#ff7a6a]" : t.tone === "up" ? "text-[#4cc38a]" : "text-muted")}>{t.delta ?? "较昨日 暂无"}</p>
+      <p className={"keep text-[10px] " + (t.tone === "down" ? "text-[#ff7a6a]" : t.tone === "up" ? "text-[#4cc38a]" : "text-muted")}>{t.delta ?? "较昨日 暂无"}</p>{t.stale ? <p className="keep text-[10px] text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
     </button>)}</div>
     <AllDayTrend day={day} d={all[day] ?? null} view={view} />
     <EventCards day={day} d={all[day] ?? null} view={view} rev={rev} />

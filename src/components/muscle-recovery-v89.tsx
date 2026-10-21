@@ -76,7 +76,7 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
       {observed.length ? <div className="mt-2 grid grid-cols-2 gap-2" data-testid="m89-cards">{observed.map(r => { const l = levelOf(r.state), h = lastLoadHours(value, r)
         const src = [...r.strengthEventIds.length ? ["力量"] : [], ...r.runEventIds.length ? ["跑步"] : [], ...r.symptomEventIds.length ? ["自报症状"] : []].join(" + ")
         return <button key={r.region} type="button" className="fk-m89-card text-left" aria-pressed={selected === r.region} onClick={() => { api.current?.selectKey(MESH_KEYS[r.region][0]); setSelected(r.region) }}>
-          <span className="flex items-center gap-1.5"><b className="text-sm">{REGION_LABEL[r.region]}</b><span className="fk-m89-chip ml-auto" style={{ color: l.color, borderColor: l.color }}>{l.label}</span></span>
+          <span className="flex items-center gap-1.5"><b className="text-sm">{REGION_LABEL[r.region]}</b><span className="fk-m89-chip ml-auto" style={{ color: l.color, borderColor: l.color }}>{r.state === "PAIN_REVIEW" && r.notes.some(n => /缺少近期复核/.test(n)) ? "疼痛待复核" : l.label}</span></span>
           <span className="mt-1 block text-[11px] text-muted">负荷来源</span><span className="block text-xs">{src || "—"}{h != null ? ` · ${h} 小时前` : ""}</span>
           <span className="mt-1 block text-[11px] text-muted">预计恢复</span><span className="block text-xs">{ESTIMATE[r.state]}</span>
         </button> })}</div>

@@ -47,16 +47,16 @@ const PAIN_KEY = "fk-pain-log-v1"
 type Pain = { id: string; date: string; part: string; score: number; note: string; athleteId?: string; occurredAt?: string; recordedAt?: string }
 export function PainLog({ today }: { today: string }) {
   const [list, setList] = useState<Pain[]>([])
-  const [part, setPart] = useState(""), [score, setScore] = useState(3), [stamp, setStamp] = useState(0)
+  const [part, setPart] = useState(""), [score, setScore] = useState(3), [stamp, setStamp] = useState(0), [saveError, setSaveError] = useState("")
   useEffect(() => { try { setList(JSON.parse(localStorage.getItem(PAIN_KEY) ?? "[]").filter((p:Pain)=>(p.athleteId??'local')===currentAthleteId())) } catch { setList([]) } }, [])
-  const save = (next: Pain[]) => { try { const all=JSON.parse(localStorage.getItem(PAIN_KEY)??'[]') as Pain[]; if(!Array.isArray(all))return
+  const save = (next: Pain[]) => { try { const all=JSON.parse(localStorage.getItem(PAIN_KEY)??'[]') as Pain[]; if(!Array.isArray(all))throw Error('INVALID')
     const raw=JSON.stringify([...all.filter(p=>(p.athleteId??'local')!==currentAthleteId()),...next]);localStorage.setItem(PAIN_KEY,raw)
-    if(localStorage.getItem(PAIN_KEY)!==raw)return
-    setList(next);setStamp(Date.now());healthChanged() } catch { /* Preserve old data on failed persistence. */ } }
+    if(localStorage.getItem(PAIN_KEY)!==raw)throw Error('VERIFY_FAILED')
+    setList(next);setStamp(Date.now());setSaveError("");healthChanged() } catch { setSaveError("没保存成功：原有记录未改动，请稍后重试。") /* Preserve old data on failed persistence. */ } }
   const byPart = new Map<string, Pain[]>(); for (const p of list) byPart.set(p.part, [...(byPart.get(p.part) ?? []), p])
   const long = [...byPart.entries()].filter(([, ps]) => { const ds = ps.map((p) => p.date).sort(); return (Date.parse(ds.at(-1)!) - Date.parse(ds[0])) / 864e5 >= 14 && ds.at(-1)! >= today.slice(0, 8) })
   return <section className="home-card mt-3 p-4 text-sm" aria-label="疼痛与伤病">
-    <div className="flex items-center justify-between"><h2 className="text-base font-bold">疼痛 / 伤病</h2><SavedBadge stamp={stamp} /></div>
+    <div className="flex items-center justify-between"><h2 className="text-base font-bold">疼痛 / 伤病</h2><SavedBadge stamp={stamp} /></div>{saveError ? <p role="status" className="keep mt-1 text-sm text-risk">{saveError}</p> : null}
     <div className="mt-2 flex flex-wrap items-center gap-2">
       <input value={part} onChange={(e) => setPart(e.target.value.slice(0, 12))} placeholder="部位，如 左膝外侧" className="fk-cell min-h-10 min-w-0 flex-1" aria-label="疼痛部位" />
       <label className="flex items-center gap-1 text-xs">程度<input type="range" min={0} max={10} value={score} onChange={(e) => setScore(+e.target.value)} aria-label="疼痛程度" /><b className="w-5">{score}</b></label>
