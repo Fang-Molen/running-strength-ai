@@ -26,7 +26,7 @@ v73继承v72热身与通用人物成果，原精细定制人物仍未完成。�
 - 6 个标签：今日 / 计划 / 日志 / 方坤β（本地规则引擎，测试版）/ 健康 / 饮食
 - 方坤：本地规则引擎为主；静态部署没有服务端模型函数，所以**不会把任何数据发给 DeepSeek**。以后接 DeepSeek 必须走服务端代理（密钥做 Cloudflare secret），发送前去标识化并先征得用户同意。
 - 方坤回答下有「反馈/报错」→ localStorage `fk-feedback-v1`（同步镜像到 IndexedDB），可导出 JSON。
-- 400m 计划：`src/lib/plan400-v4.json`（由 docs/plan400/parse.py 从 PDF 逐字解析，70 天课 + 最终测试，整体顺延 7 天），组件 `src/components/plan400.tsx`，记录存 `fk-plan400-v4-log`（按日期：完成/减量/取消、实际分段、休息、辅助、力量组×重量×次数、RPE、疼痛、24h、48–72h、备注）。
+- 训练计划（v89.6 起）：应用不内置任何计划。计划是数据，用「导入计划/备份文件」导入（格式 fangkun-plan-v1，存 `fk-plan-doc-v1`，上一版 `fk-plan-doc-prev-v1`），读写见 `src/lib/plan/active-plan.ts` / `plan-import.ts`；组件 `src/components/plan400.tsx`（没有计划时显示「未导入计划」）。用户本人的 400 计划只作测试夹具在 `test-fixtures/private/`（含原 PDF 与解析脚本），不进包、不进精简源码。记录仍存 `fk-plan400-v4-log`（key 不变）。
 - 佳明账号同步：`functions/api/garmin/[[path]].js`（复用 molen-garmin 中转）。登录后令牌用 AES-GCM（secret `STATE_KEY`）加密，放在 HttpOnly+Secure+SameSite=Strict cookie（Path=/api/garmin，180 天），前端 JS 读不到；令牌快过期时服务端自动刷新；无日志、不存储密码。前端组件 `src/components/garmin-sync.tsx`：活动（最近 60 条）+ 14 天 RHR/HRV/睡眠/身体电量/压力 → `saveDeviceRows` 去重写入。
 
 ## 数据保存（src/lib/vault.ts）
