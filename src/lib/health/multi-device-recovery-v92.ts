@@ -7,6 +7,7 @@ import { intradayInput } from './intraday-recovery-bridge-v89'
 import type { IntradayDay } from './garmin-intraday'
 import { adaptVerifiedCoros, mergeCorosRecovery, type VerifiedBatch } from './coros-evidence-v92'
 import { corosRecoveryAvailability } from './coros-capabilities-v92'
+import { corosDailyRecoveryTrend, corosRecoveryInterpretation } from './coros-recovery-trend-v93'
 
 export type TrustedRecoveryRequest = {
   athleteId: string
@@ -37,6 +38,9 @@ export function projectVerifiedMultiDeviceRecovery(request: TrustedRecoveryReque
     coachFacts: recoveryCoachFacts(view),
     corosAvailability: coros ? corosRecoveryAvailability(coros) : null,
     dailyFacts: coros?.dailyFacts ?? [],
+    // v89.9.4（参考补丁合入，休眠）：高驰日级趋势，只来自已核实批次；不生成佳明身体电量。
+    corosDailyTrend: coros ? corosDailyRecoveryTrend(coros.dailyFacts, request.utcOffsetMinutes) : [],
+    corosRecoveryAssessment: coros ? corosRecoveryInterpretation(corosDailyRecoveryTrend(coros.dailyFacts, request.utcOffsetMinutes)) : null,
     warnings: [...view.warnings, ...(coros?.warnings ?? [])],
     // Do not persist unverified records or use this output to modify a plan.
     canAutoChangePlan: false as const,

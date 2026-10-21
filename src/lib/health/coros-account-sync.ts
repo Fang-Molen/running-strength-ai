@@ -3,6 +3,7 @@
  * 接口为开源项目使用的非官方 Training Hub 接口；字段含义（startTime 单位、sportType 编码）按开源代码推断，待真实账号核对。
  * 不读取、也不生成：日内心率、压力、身体电量（Body Battery）、睡眠、HRV、分圈。 */
 import type { DeviceActivity, DeviceParseResult } from '../ui/device-parse'
+import { corosProvenance } from './brand-isolation'
 
 export type CorosActivity = { labelId: string; name: string; sportType: number | null; date: string | null; startTime: number | null; endTime: number | null; totalTime: number | null; distance: number | null; avgHr: number | null; maxHr: number | null; calorie: number | null }
 export const COROS_SOURCE = '高驰账号同步'
@@ -19,7 +20,7 @@ export function corosSport(t: number | null): DeviceActivity['sport'] {
   if (t === 402) return 'STRENGTH'
   return 'UNKNOWN'
 }
-export function corosToDevice(list: CorosActivity[], accountRef: string): DeviceActivity[] {
+export function corosToDevice(list: CorosActivity[], accountRef: string, receivedAt: string = new Date().toISOString()): DeviceActivity[] {
   if (!/^[0-9a-f]{8,32}$/.test(accountRef)) return []
   return list.flatMap(a => {
     if (!a.labelId || !/^[0-9A-Za-z_-]{1,40}$/.test(a.labelId)) return []
@@ -29,15 +30,19 @@ export function corosToDevice(list: CorosActivity[], accountRef: string): Device
     const hr = (v: number | null) => v != null && v >= 25 && v <= 240 ? Math.round(v) : null
     return [{ key: `coros:${accountRef}:${a.labelId}`, sourceIdentity: `coros:${accountRef}:${a.labelId}`, source: COROS_SOURCE, sport,
       sportLabel: sport === 'RUNNING' ? '跑步' : sport === 'STRENGTH' ? '力量' : (a.name || '其他运动'), startIso, durationSec: dur, distanceM: dist,
-      avgHr: hr(a.avgHr), maxHr: hr(a.maxHr), calories: null, avgCadence: null, avgPower: null, verticalOscMm: null, groundContactMs: null, sets: [] }]
+      avgHr: hr(a.avgHr), maxHr: hr(a.maxHr), calories: null, avgCadence: null, avgPower: null, verticalOscMm: null, groundContactMs: null, sets: [],
+      provenance: corosProvenance(accountRef, a.labelId, startIso, receivedAt) }]
   })
 }
+/** v89.9.4：带错误码，便于区分“登录过期/未登录”（需重新登录）和临时失败。 */
+export class CorosError extends Error { constructor(message: string, readonly code: string, readonly status: number) { super(message) } }
+export const corosNeedsLogin = (e: unknown) => e instanceof CorosError && (e.code === 'TOKEN_EXPIRED' || e.code === 'NOT_LOGGED_IN' || e.status === 401 && e.code !== 'BAD_CREDENTIALS')
 const ymd = (d: Date) => `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`
 async function call(path: string, init?: RequestInit) {
   const r = await fetch('/api/coros/' + path, { credentials: 'same-origin', ...init })
   const body = await r.json().catch(() => null) as { ok?: boolean; message?: string } & Record<string, unknown> | null
-  if (!body) throw Error('高驰中转没有返回有效数据')
-  if (!body.ok) throw Error(body.message || '高驰请求失败')
+  if (!body) throw new CorosError('高驰中转没有返回有效数据', 'NO_BODY', r.status)
+  if (!body.ok) throw new CorosError(body.message || '高驰请求失败', typeof body.error === 'string' ? body.error : 'UNKNOWN', r.status)
   return body
 }
 export const corosStatus = () => call('status') as Promise<{ ok: true; loggedIn: boolean; region: number | null }>
@@ -53,7 +58,7 @@ export async function corosRecentImport(days = 28, now = new Date()): Promise<De
     if (page >= (r.totalPage || 1)) break
     await new Promise(res => setTimeout(res, 350))
   }
-  const mapped = corosToDevice(all, ref), activities = mapped.filter(a => a.sport !== 'UNKNOWN'), other = mapped.length - activities.length
+  const mapped = corosToDevice(all, ref, new Date().toISOString()), activities = mapped.filter(a => a.sport !== 'UNKNOWN'), other = mapped.length - activities.length
   return { kind: '高驰账号', brand: 'COROS', activities, health: [], notes: [
     `从高驰账号读到近 ${days} 天 ${all.length} 条活动摘要（距离、时长、平均/最大心率）。其中跑步/力量 ${activities.length} 条${other ? `（其他运动 ${other} 条未列出）` : ''}。请核对后勾选保存；保存后与其他导入一样进入日志，关联计划课仍需你确认。`,
     '高驰这一步不提供日内心率、压力、睡眠、HRV 和分圈；不生成“身体电量”。开始时间和运动类型按开源资料解析，若与高驰 App 不一致请不要保存并告诉我。',

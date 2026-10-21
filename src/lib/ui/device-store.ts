@@ -59,6 +59,7 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
     }, "TEXT", ["user-confirmed"])
     draft.draftId = draftId
     if(a.sourceIdentity) draft.sourceRecordIdentity=a.sourceIdentity
+    if(a.provenance) draft.provenance={...a.provenance}
     const res = confirmTrainingImport(draft)
     if (res.ok) { have.sigs.push({ startIso: a.startIso, distanceM: a.distanceM }); try { currentStore()?.setItem(SIG_KEY, JSON.stringify(have.sigs.slice(-500))) } catch { /* ignore */ } }
     if (res.ok && !res.duplicate) saved++

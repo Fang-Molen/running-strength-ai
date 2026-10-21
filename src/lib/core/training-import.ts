@@ -65,6 +65,8 @@ export type TrainingImportDraft = TrainingImportCandidate & {
   draftId: string
   /** Optional stable device-channel identity; never proof of authorization or training structure. */
   sourceRecordIdentity?: string
+  /** v89.9.4：provider/accountRef/recordId/measuredAt/receivedAt（仅高驰账号读取会带；只做来源追溯，不参与判断）。 */
+  provenance?: import("@/lib/health/brand-isolation").Provenance
   schemaVersion: 1
   createdAt: string
   inputKind: ImportInputKind

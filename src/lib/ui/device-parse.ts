@@ -7,6 +7,8 @@ export type DeviceActivity = {
   key: string
   /** Verified import channel + account + stable activity ID, when actually available. */
   sourceIdentity?: string
+  /** v89.9.4：来源记录（目前只有高驰账号读取会填；佳明与文件导入不填，行为不变）。 */
+  provenance?: import("@/lib/health/brand-isolation").Provenance
   source: string
   sport: "RUNNING" | "STRENGTH" | "MIXED" | "UNKNOWN"
   sportLabel: string
