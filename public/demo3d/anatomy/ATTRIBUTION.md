@@ -55,3 +55,21 @@ asserted to have passed independent professional anatomical/clinical review.
 
 Meshopt decoder: meshoptimizer 1.3.0, Arseny Kapoulkine, MIT;
 see ../vendor/MESHOPT-LICENSE.md.
+
+## R9 friendly muscle regions (v89.5, 肌肉恢复 view)
+
+File: `fk-muscle-r9.meshopt.glb` (1,910,964 bytes). Region table: [muscle-regions-r9.json](muscle-regions-r9.json).
+Source: Fangkun R9 candidate `fk_muscle_friendly_r9.glb` (10,116,136 bytes, SHA-256
+`a8815c4f57ff763b933d9341ebc7e135b40926f6c31caae9b2a886b264699316`), delivered in package 1021c.
+It is a derivative of the Écorché / BodyParts3D / Z-Anatomy meshes credited above: 156 source
+muscle structures merged into 78 selectable regions (39 keys, same keys as ../anatomy-map.js),
+plus a smooth neutral head, neck, hands/feet shell and opaque training shorts made by Fangkun.
+License: **CC BY-SA 4.0** (same as above; BodyParts3D © The Database Center for Life Science,
+CC BY 4.0; Z-Anatomy by Gauthier Kervyn, CC BY-SA 4.0).
+
+Changes in Fangkun v89.5: repaired three invalid index references (shorts waistband/hems used a
+vertex attribute as triangle indices; the right hem's index data was missing and reuses the
+identical left-hem ring topology), removed empty image/texture arrays, then compressed with
+gltfpack 0.25 (`-cc -kn -km -ke`, meshopt + quantization, no simplification). At load time the
+hands/feet shell is split so the feet outline can show the existing `feet` region; it is an outline,
+not a muscle mesh. Highlights are anatomical regions from logged training, not measured activation.

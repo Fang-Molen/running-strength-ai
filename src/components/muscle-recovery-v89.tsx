@@ -54,7 +54,10 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
     const timer = setTimeout(() => { if (!dead && !instance) setError("模型加载较慢；下方仍可查看肌群依据。") }, 45000)
     import(/* @vite-ignore */ new URL("/demo3d/anatomy3d.js", window.location.origin).href).then(async m => {
       if (dead || !canvas.current) return
-      instance = await m.createMuscleExplorer(canvas.current, { overlays: latest.current, onPick: (p: { k: string; g?: string | null } | null) => { if (dead) return; setSelected(p ? REGIONS.find(r => MESH_KEYS[r].includes(p.k) || r === p.g) ?? null : null) } }) as API
+      const options = (asset: "r9" | "ecorche") => ({ asset, overlays: latest.current, onPick: (p: { k: string; g?: string | null } | null) => { if (dead) return; setSelected(p ? REGIONS.find(r => MESH_KEYS[r].includes(p.k) || r === p.g) ?? null : null) } })
+      // v89.5：默认 R9 友好肌群（1.9 MB）；加载失败退回原 Écorché（6.0 MB），再失败退回下方文字/卡片依据。
+      instance = await m.createMuscleExplorer(canvas.current, options("r9")).catch(() => dead || !canvas.current ? null : m.createMuscleExplorer(canvas.current, options("ecorche"))) as API | null
+      if (!instance) return
       if (dead) { instance.destroy(); return }
       api.current = instance; instance.setOverlays(latest.current); setReady(true); setError(""); clearTimeout(timer)
     }).catch(() => { if (!dead) setError("3D 模型暂时无法加载；下方仍可查看真实记录依据。") })
@@ -89,7 +92,7 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
       {row.notes.map(n => <p key={n} className="mt-1 text-xs text-muted">{n}</p>)}</div> : null}
     <p className="keep text-xs text-muted">模拟曲线不表示真实肌肉疲劳或恢复百分比；只有实际完成的训练可用于刺激情景，疼痛需独立核对。</p>
     {value.review.gaps.length ? <details className="fk-m89-limits"><summary>缺失与待核对（{value.review.gaps.length}）</summary>{value.review.gaps.map(g => <p key={g}>{g}</p>)}</details> : null}
-    <details className="fk-m89-limits"><summary>模型与解释边界</summary><p>沿用原有 Écorché 独立肌肉网格。区域映射为待复核的解释资料。</p><a href="/demo3d/anatomy/ATTRIBUTION.md" target="_blank" rel="noreferrer">模型来源与授权</a></details>
+    <details className="fk-m89-limits"><summary>模型与解释边界</summary><p>肌群模型：R9 友好肌群（由 Écorché / BodyParts3D / Z-Anatomy 派生，CC BY-SA 4.0）；加载失败时退回原 Écorché。足部为外形示意，不是肌肉网格。颜色只来自已确认训练记录与自报症状，区域映射为待复核的解释资料。</p><a href="/demo3d/anatomy/ATTRIBUTION.md" target="_blank" rel="noreferrer">模型来源与授权</a></details>
   </section>
 }
 

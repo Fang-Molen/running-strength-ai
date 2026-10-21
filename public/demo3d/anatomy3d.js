@@ -9,12 +9,16 @@ import { placeRestrictedView, fitAnatomyBounds } from './viewer-policy.js';
 import { anatomyMeta, muscleRole, matchesMuscle, coveringGroups } from './anatomy-map.js';
 
 const VIEWS = { front: 0, left: 90, right: -90, back: 180 };
-let modelTask;
-export function loadAnatomyModel() {
-  if (!modelTask) modelTask = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder)
-    .loadAsync(new URL('./anatomy/ecorche.meshopt.glb', import.meta.url).href)
-    .catch(error => { modelTask = null; throw error; });
-  return modelTask;
+// v89.5: 'r9' = 1021c R9 friendly muscle shell (Écorché/BodyParts3D/Z-Anatomy derivative, CC BY-SA 4.0),
+// repaired + meshopt-compressed (1.9 MB vs 6.0 MB). Used by the 肌肉恢复 view; exercise cards keep Écorché.
+const ASSETS = { ecorche: './anatomy/ecorche.meshopt.glb', r9: './anatomy/fk-muscle-r9.meshopt.glb' };
+const modelTasks = {};
+export function loadAnatomyModel(asset = 'ecorche') {
+  const id = asset in ASSETS ? asset : 'ecorche';
+  if (!modelTasks[id]) modelTasks[id] = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder)
+    .loadAsync(new URL(ASSETS[id], import.meta.url).href)
+    .catch(error => { modelTasks[id] = null; throw error; });
+  return modelTasks[id];
 }
 
 // R1 friendly palette: low-saturation matte warm grey with low tendon contrast.
@@ -168,9 +172,90 @@ export function prepareAnatomyModel(source) {
   return { root, muscles, skeleton, head, cover, hiddenHead, shorts, bounds: grounded, foci };
 }
 
+function r9MuscleMaterial(base) {
+  const material = new THREE.MeshStandardMaterial({ color: base, roughness: .9, metalness: 0, side: THREE.DoubleSide });
+  const tint = { value: new THREE.Color(fkToken('--fk-brand-orange', '#ff6a1a')) }, amount = { value: 0 };
+  material.userData.tint = tint; material.userData.amount = amount;
+  material.onBeforeCompile = shader => {
+    shader.uniforms.fkTint = tint; shader.uniforms.fkAmount = amount;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 fkTint; uniform float fkAmount;')
+      .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, fkTint, fkAmount);');
+  };
+  material.customProgramCacheKey = () => 'fangkun-anatomy-r9';
+  return material;
+}
+
+/** R9: 78 pre-merged muscle regions (39 keys, same k/g as anatomy-map) + smooth non-anatomical shells.
+ * All regions are shown (no deep/superficial hiding: R9 regions are shells, not layered meshes).
+ * The combined hands/feet shell is split so the existing `feet` region (running load / pain) can
+ * still be coloured and picked; it is labelled as an outline, not a muscle mesh. */
+export function prepareR9Model(source) {
+  const root = source.scene.clone(true), muscles = [], blockers = [], owned = [];
+  root.updateMatrixWorld(true);
+  const bounds0 = new THREE.Box3().setFromObject(root, true), c0 = bounds0.getCenter(new THREE.Vector3());
+  root.position.sub(new THREE.Vector3(c0.x, bounds0.min.y, c0.z)); root.updateMatrixWorld(true);
+  const grounded = new THREE.Box3().setFromObject(root, true), height = grounded.max.y;
+  const meshes = []; root.traverse(o => { if (o.isMesh) meshes.push(o); });
+  for (const object of meshes) {
+    // gltfpack moves each mesh under a dequantisation child; node extras stay on the parent.
+    const ud = object.userData?.fk || object.userData?.selectable ? object.userData : object.parent?.userData || {};
+    const label = ud.name || object.parent?.name || object.name || '';
+    if (ud.fk?.k && !ud.notAnatomicalMuscle) {
+      object.userData.fk = { ...ud.fk, r9: true }; object.material = r9MuscleMaterial(PALETTE.muscle); owned.push(object.material);
+      object.frustumCulled = false; muscles.push(object); continue;
+    }
+    const shorts = /short|waistband|hem/i.test(label);
+    object.material = new THREE.MeshStandardMaterial({ color: shorts ? PALETTE.shorts : PALETTE.head, roughness: .92, metalness: 0, side: THREE.DoubleSide }); owned.push(object.material);
+    object.userData.fkBlocker = true; blockers.push(object);
+    if (shorts) {
+      // R9 shorts sit slightly inside the glute/hip regions, so highlighted glutes poke through.
+      // Expand a float copy of the shorts shell a little around its own centre (asset file unchanged).
+      const g = object.geometry.clone();
+      for (const key of ['position', 'normal']) {
+        const attr = g.getAttribute(key); if (!attr) continue;
+        const values = new Float32Array(attr.count * 3);
+        for (let i = 0; i < attr.count; i++) { values[i * 3] = attr.getX(i); values[i * 3 + 1] = attr.getY(i); values[i * 3 + 2] = attr.getZ(i); }
+        g.setAttribute(key, new THREE.BufferAttribute(values, 3));
+      }
+      g.computeBoundingBox(); const c = g.boundingBox.getCenter(new THREE.Vector3());
+      g.translate(-c.x, -c.y, -c.z); g.scale(1.06, 1.03, 1.12); g.translate(c.x, c.y, c.z);
+      object.geometry = g; owned.push(g);
+    }
+    if (/hands_and_feet/i.test(label) && object.geometry.index) {
+      const g = object.geometry, pos = g.getAttribute('position'), idx = g.index.array, feet = [], hands = [], v = new THREE.Vector3();
+      const yOf = i => v.fromBufferAttribute(pos, i).applyMatrix4(object.matrixWorld).y;
+      for (let t = 0; t < idx.length; t += 3) ((yOf(idx[t]) + yOf(idx[t + 1]) + yOf(idx[t + 2])) / 3 < height * .1 ? feet : hands).push(idx[t], idx[t + 1], idx[t + 2]);
+      if (feet.length) {
+        const handsGeom = g.clone(); handsGeom.setIndex(hands); object.geometry = handsGeom; owned.push(handsGeom);
+        const feetGeom = g.clone(); feetGeom.setIndex(feet); owned.push(feetGeom);
+        const foot = new THREE.Mesh(feetGeom, r9MuscleMaterial(PALETTE.head)); owned.push(foot.material);
+        foot.name = 'Fangkun R9 feet outline'; foot.position.copy(object.position); foot.quaternion.copy(object.quaternion); foot.scale.copy(object.scale);
+        foot.userData.fk = { k: 'foot_intrinsic', g: 'feet', zh: '足部（外形示意，非肌肉网格）', name: 'feet outline', layer: 'superficial muscles', r9: true, outline: true };
+        foot.frustumCulled = false; object.parent.add(foot); muscles.push(foot);
+      }
+    }
+  }
+  root.updateMatrixWorld(true);
+  if (!muscles.length) throw new Error('R9 anatomy asset has no selectable muscle regions');
+  const foci = { body: grounded, calf: new THREE.Box3(), foot: new THREE.Box3() }, point = new THREE.Vector3();
+  for (const object of [...muscles, ...blockers]) {
+    const position = object.geometry.getAttribute('position');
+    for (let i = 0; i < position.count; i++) {
+      point.fromBufferAttribute(position, i).applyMatrix4(object.matrixWorld);
+      if (point.y <= height * .32) foci.calf.expandByPoint(point);
+      if (point.y <= height * .13) foci.foot.expandByPoint(point);
+    }
+  }
+  if (foci.calf.isEmpty()) foci.calf.copy(grounded);
+  if (foci.foot.isEmpty()) foci.foot.copy(grounded);
+  return { root, muscles, blockers, foci, flat: true, bounds: grounded, dispose() { owned.forEach(x => x.dispose()); } };
+}
+
 export async function createMuscleExplorer(canvas, opt = {}) {
-  const source = await loadAnatomyModel(), prepared = prepareAnatomyModel(source);
+  const asset = opt.asset === 'r9' ? 'r9' : 'ecorche';
+  const source = await loadAnatomyModel(asset), prepared = asset === 'r9' ? prepareR9Model(source) : prepareAnatomyModel(source);
   const { root, muscles, skeleton, head, cover, foci } = prepared;
+  canvas.dataset.asset = asset;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: !!opt.capture });
   renderer.setPixelRatio(Math.min(globalThis.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .95;
@@ -187,7 +272,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   let view = 'front', focus = 'body', selected = null, selectedMesh = null, deep = false;
   let disposed = false, raf = 0, visible = true, lastFit = null;
   // The neutral head, skeleton and crotch panel are opaque blockers, never selectable.
-  const selectable = [...muscles, skeleton, head, cover], selectedTint = opt.selectedTint || '#62a6ff';
+  const selectable = prepared.flat ? [...muscles, ...prepared.blockers] : [...muscles, skeleton, head, cover], selectedTint = opt.selectedTint || '#62a6ff';
   // R5: main/aux overlay = FIELDWORK brand orange token (was one-off red #f17650).
   const mainTint = opt.mainTint || fkToken('--fk-brand-orange', '#ff6a1a'), auxTint = opt.auxTint || fkToken('--fk-brand-orange-soft', '#ffb084');
   function invalidate() { if (!disposed && !raf && visible && !document.hidden) raf = requestAnimationFrame(draw); }
@@ -196,12 +281,12 @@ export async function createMuscleExplorer(canvas, opt = {}) {
   const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) invalidate(); }); io.observe(canvas);
   const visibility = () => invalidate(); document.addEventListener('visibilitychange', visibility);
   function updateMaterials() {
-    const hide = coveringGroups(selected);
+    const hide = prepared.flat ? [] : coveringGroups(selected);
     for (const object of muscles) {
       const meta = object.userData.fk, picked = selectedMesh ? object === selectedMesh : matchesMuscle(meta, selected);
       const role = muscleRole(meta, opt.primary || [], opt.secondary || []);
       const overlay = (opt.overlays || []).find(item => item.keys.some(key => matchesMuscle(meta, key)));
-      object.visible = !meta.hiddenHead && !(deep ? meta.layer === 'superficial muscles' && !picked : meta.layer === 'deep muscles' && !picked);
+      object.visible = prepared.flat ? true : !meta.hiddenHead && !(deep ? meta.layer === 'superficial muscles' && !picked : meta.layer === 'deep muscles' && !picked);
       if (hide.some(k => matchesMuscle(meta, k))) object.visible = false;
       object.material.userData.amount.value = overlay ? (picked ? .95 : .82) : picked ? .95 : role === 'main' ? .88 : role === 'aux' ? .65 : 0;
       object.material.userData.tint.value.set(overlay ? overlay.color : picked ? selectedTint : role === 'aux' ? auxTint : mainTint);
@@ -259,12 +344,13 @@ export async function createMuscleExplorer(canvas, opt = {}) {
       opt.onPick?.(object ? { ...object.userData.fk, zh: object.userData.fk.g === key ? ({ quads: '股四头肌', hamstrings: '腘绳肌', calves: '小腿肌群', feet: '足部内在肌群' }[key] || object.userData.fk.zh) : object.userData.fk.zh, id: object.uuid } : null);
     },
     pickAt,
-    get state() { return { view, focus, deep, meshCount: muscles.length, polar: controls.getPolarAngle() * 180 / Math.PI, azimuth: controls.getAzimuthalAngle() * 180 / Math.PI, distance: camera.position.distanceTo(controls.target), fit: lastFit }; },
+    get state() { return { asset, view, focus, deep, meshCount: muscles.length, polar: controls.getPolarAngle() * 180 / Math.PI, azimuth: controls.getAzimuthalAngle() * 180 / Math.PI, distance: camera.position.distanceTo(controls.target), fit: lastFit }; },
     destroy() {
       disposed = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); controls.dispose();
       document.removeEventListener('visibilitychange', visibility);
       canvas.removeEventListener('pointerdown', pointerDown); canvas.removeEventListener('pointerup', pointerUp); canvas.removeEventListener('pointercancel', pointerCancel);
-      muscles.forEach(object => object.material.dispose()); skeleton.geometry.dispose(); skeleton.material.dispose(); head.geometry.dispose(); head.material.dispose(); cover.geometry.dispose(); cover.material.dispose(); floor.geometry.dispose(); floor.material.dispose(); renderer.dispose();
+      if (prepared.flat) prepared.dispose(); else { muscles.forEach(object => object.material.dispose()); skeleton.geometry.dispose(); skeleton.material.dispose(); head.geometry.dispose(); head.material.dispose(); cover.geometry.dispose(); cover.material.dispose(); }
+      floor.geometry.dispose(); floor.material.dispose(); renderer.dispose();
     }
   };
 }

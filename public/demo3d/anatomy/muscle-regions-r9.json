@@ -1,0 +1,860 @@
+[
+  {
+    "node": "Muscle__adductors__left",
+    "muscleKey": "adductors",
+    "groupKey": "adductors",
+    "labelZh": "髋内收肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left adductor brevis",
+      "Left adductor minimus",
+      "Left adductor longus",
+      "Left adductor magnus",
+      "Left gracilis",
+      "Left pectineus"
+    ]
+  },
+  {
+    "node": "Muscle__forearm_flex__left",
+    "muscleKey": "forearm_flex",
+    "groupKey": "forearm",
+    "labelZh": "前臂屈肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left flexor digitorum profundus",
+      "Left flexor pollicis longus",
+      "Left pronator quadratus",
+      "Humeral head of left flexor carpi ulnaris",
+      "Humeral head of left pronator teres",
+      "Left flexor carpi radialis",
+      "Left flexor digitorum superficialis",
+      "Left flexor digitorum superficialis (2)",
+      "Left palmaris longus",
+      "Ulnar head of left flexor carpi ulnaris",
+      "Ulnar head of left pronator teres"
+    ]
+  },
+  {
+    "node": "Muscle__glute_min__left",
+    "muscleKey": "glute_min",
+    "groupKey": "hip_abductors",
+    "labelZh": "臀小肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left gluteus minimus"
+    ]
+  },
+  {
+    "node": "Muscle__iliopsoas__left",
+    "muscleKey": "iliopsoas",
+    "groupKey": "hip_flexors",
+    "labelZh": "髂腰肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left iliacus",
+      "Left psoas major"
+    ]
+  },
+  {
+    "node": "Muscle__erectors__left",
+    "muscleKey": "erectors",
+    "groupKey": "erectors",
+    "labelZh": "竖脊肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left iliocostalis cervicis",
+      "Left iliocostalis lumborum",
+      "Left iliocostalis thoracis",
+      "Left longissimus capitis",
+      "Left longissimus cervicis",
+      "Left longissimus thoracis",
+      "Left semispinalis thoracis",
+      "Left spinalis thoracis"
+    ]
+  },
+  {
+    "node": "Muscle__internal_oblique__left",
+    "muscleKey": "internal_oblique",
+    "groupKey": "obliques",
+    "labelZh": "腹内斜肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left internal oblique"
+    ]
+  },
+  {
+    "node": "Muscle__rhomboids__left",
+    "muscleKey": "rhomboids",
+    "groupKey": "rhomboids",
+    "labelZh": "菱形肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left rhomboid major",
+      "Left rhomboid minor"
+    ]
+  },
+  {
+    "node": "Muscle__transversus__left",
+    "muscleKey": "transversus",
+    "groupKey": "core",
+    "labelZh": "腹横肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left transversus abdominis"
+    ]
+  },
+  {
+    "node": "Muscle__vastus_intermedius__left",
+    "muscleKey": "vastus_intermedius",
+    "groupKey": "quads",
+    "labelZh": "股中间肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left vastus intermedius"
+    ]
+  },
+  {
+    "node": "Muscle__adductors__right",
+    "muscleKey": "adductors",
+    "groupKey": "adductors",
+    "labelZh": "髋内收肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right adductor brevis",
+      "Right adductor minimus",
+      "Right adductor longus",
+      "Right adductor magnus",
+      "Right gracilis",
+      "Right pectineus"
+    ]
+  },
+  {
+    "node": "Muscle__forearm_flex__right",
+    "muscleKey": "forearm_flex",
+    "groupKey": "forearm",
+    "labelZh": "前臂屈肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right flexor digitorum profundus",
+      "Right flexor pollicis longus",
+      "Right pronator quadratus",
+      "Humeral head of right flexor carpi ulnaris",
+      "Humeral head of right pronator teres",
+      "Right flexor carpi radialis",
+      "Right flexor digitorum superficialis",
+      "Right flexor digitorum superficialis (2)",
+      "Right palmaris longus",
+      "Ulnar head of right flexor carpi ulnaris",
+      "Ulnar head of right pronator teres"
+    ]
+  },
+  {
+    "node": "Muscle__glute_min__right",
+    "muscleKey": "glute_min",
+    "groupKey": "hip_abductors",
+    "labelZh": "臀小肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right gluteus minimus"
+    ]
+  },
+  {
+    "node": "Muscle__iliopsoas__right",
+    "muscleKey": "iliopsoas",
+    "groupKey": "hip_flexors",
+    "labelZh": "髂腰肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right iliacus",
+      "Right psoas major"
+    ]
+  },
+  {
+    "node": "Muscle__erectors__right",
+    "muscleKey": "erectors",
+    "groupKey": "erectors",
+    "labelZh": "竖脊肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right iliocostalis cervicis",
+      "Right iliocostalis lumborum",
+      "Right iliocostalis thoracis",
+      "Right longissimus capitis",
+      "Right longissimus cervicis",
+      "Right longissimus thoracis",
+      "Right semispinalis thoracis",
+      "Right spinalis thoracis"
+    ]
+  },
+  {
+    "node": "Muscle__internal_oblique__right",
+    "muscleKey": "internal_oblique",
+    "groupKey": "obliques",
+    "labelZh": "腹内斜肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right internal oblique"
+    ]
+  },
+  {
+    "node": "Muscle__rhomboids__right",
+    "muscleKey": "rhomboids",
+    "groupKey": "rhomboids",
+    "labelZh": "菱形肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right rhomboid major",
+      "Right rhomboid minor"
+    ]
+  },
+  {
+    "node": "Muscle__transversus__right",
+    "muscleKey": "transversus",
+    "groupKey": "core",
+    "labelZh": "腹横肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right transversus abdominis"
+    ]
+  },
+  {
+    "node": "Muscle__vastus_intermedius__right",
+    "muscleKey": "vastus_intermedius",
+    "groupKey": "quads",
+    "labelZh": "股中间肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right vastus intermedius"
+    ]
+  },
+  {
+    "node": "Muscle__biceps_fem__left",
+    "muscleKey": "biceps_fem",
+    "groupKey": "hamstrings",
+    "labelZh": "股二头肌",
+    "side": "left",
+    "sourceStructures": [
+      "Short head of left biceps femoris",
+      "Long head of left biceps femoris"
+    ]
+  },
+  {
+    "node": "Muscle__biceps_fem__right",
+    "muscleKey": "biceps_fem",
+    "groupKey": "hamstrings",
+    "labelZh": "股二头肌",
+    "side": "right",
+    "sourceStructures": [
+      "Short head of right biceps femoris",
+      "Long head of right biceps femoris"
+    ]
+  },
+  {
+    "node": "Muscle__pec_lower__left",
+    "muscleKey": "pec_lower",
+    "groupKey": "chest",
+    "labelZh": "胸大肌胸肋部",
+    "side": "left",
+    "sourceStructures": [
+      "Abdominal part of left pectoralis major",
+      "Sternocostal part of left pectoralis major"
+    ]
+  },
+  {
+    "node": "Muscle__pec_lower__right",
+    "muscleKey": "pec_lower",
+    "groupKey": "chest",
+    "labelZh": "胸大肌胸肋部",
+    "side": "right",
+    "sourceStructures": [
+      "Abdominal part of right pectoralis major",
+      "Sternocostal part of right pectoralis major"
+    ]
+  },
+  {
+    "node": "Muscle__delt_side__left",
+    "muscleKey": "delt_side",
+    "groupKey": "delt_side",
+    "labelZh": "三角肌中束",
+    "side": "left",
+    "sourceStructures": [
+      "Acromial part of left deltoid"
+    ]
+  },
+  {
+    "node": "Muscle__delt_side__right",
+    "muscleKey": "delt_side",
+    "groupKey": "delt_side",
+    "labelZh": "三角肌中束",
+    "side": "right",
+    "sourceStructures": [
+      "Acromial part of right deltoid"
+    ]
+  },
+  {
+    "node": "Muscle__trap_lower__left",
+    "muscleKey": "trap_lower",
+    "groupKey": "traps",
+    "labelZh": "斜方肌下部",
+    "side": "left",
+    "sourceStructures": [
+      "Ascending part of left trapezius"
+    ]
+  },
+  {
+    "node": "Muscle__trap_lower__right",
+    "muscleKey": "trap_lower",
+    "groupKey": "traps",
+    "labelZh": "斜方肌下部",
+    "side": "right",
+    "sourceStructures": [
+      "Ascending part of right trapezius"
+    ]
+  },
+  {
+    "node": "Muscle__delt_front__left",
+    "muscleKey": "delt_front",
+    "groupKey": "delt_front",
+    "labelZh": "三角肌前束",
+    "side": "left",
+    "sourceStructures": [
+      "Clavicular part of left deltoid"
+    ]
+  },
+  {
+    "node": "Muscle__pec_upper__left",
+    "muscleKey": "pec_upper",
+    "groupKey": "chest",
+    "labelZh": "胸大肌锁骨部",
+    "side": "left",
+    "sourceStructures": [
+      "Clavicular part of left pectoralis major"
+    ]
+  },
+  {
+    "node": "Muscle__delt_front__right",
+    "muscleKey": "delt_front",
+    "groupKey": "delt_front",
+    "labelZh": "三角肌前束",
+    "side": "right",
+    "sourceStructures": [
+      "Clavicular part of right deltoid"
+    ]
+  },
+  {
+    "node": "Muscle__pec_upper__right",
+    "muscleKey": "pec_upper",
+    "groupKey": "chest",
+    "labelZh": "胸大肌锁骨部",
+    "side": "right",
+    "sourceStructures": [
+      "Clavicular part of right pectoralis major"
+    ]
+  },
+  {
+    "node": "Muscle__trap_upper__left",
+    "muscleKey": "trap_upper",
+    "groupKey": "traps",
+    "labelZh": "斜方肌上部",
+    "side": "left",
+    "sourceStructures": [
+      "Descending part of left trapezius"
+    ]
+  },
+  {
+    "node": "Muscle__trap_upper__right",
+    "muscleKey": "trap_upper",
+    "groupKey": "traps",
+    "labelZh": "斜方肌上部",
+    "side": "right",
+    "sourceStructures": [
+      "Descending part of right trapezius"
+    ]
+  },
+  {
+    "node": "Muscle__gastroc_lat__left",
+    "muscleKey": "gastroc_lat",
+    "groupKey": "calves",
+    "labelZh": "腓肠肌外侧头",
+    "side": "left",
+    "sourceStructures": [
+      "Lateral head of left gastrocnemius"
+    ]
+  },
+  {
+    "node": "Muscle__triceps_lat__left",
+    "muscleKey": "triceps_lat",
+    "groupKey": "triceps",
+    "labelZh": "肱三头肌外侧头",
+    "side": "left",
+    "sourceStructures": [
+      "Lateral head of left triceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__gastroc_lat__right",
+    "muscleKey": "gastroc_lat",
+    "groupKey": "calves",
+    "labelZh": "腓肠肌外侧头",
+    "side": "right",
+    "sourceStructures": [
+      "Lateral head of right gastrocnemius"
+    ]
+  },
+  {
+    "node": "Muscle__triceps_lat__right",
+    "muscleKey": "triceps_lat",
+    "groupKey": "triceps",
+    "labelZh": "肱三头肌外侧头",
+    "side": "right",
+    "sourceStructures": [
+      "Lateral head of right triceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__brachialis__left",
+    "muscleKey": "brachialis",
+    "groupKey": "elbow_flexors",
+    "labelZh": "肱肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left brachialis",
+      "Left coracobrachialis"
+    ]
+  },
+  {
+    "node": "Muscle__forearm_ext__left",
+    "muscleKey": "forearm_ext",
+    "groupKey": "forearm",
+    "labelZh": "前臂伸肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left brachioradialis",
+      "Left extensor carpi radialis brevis",
+      "Left extensor carpi radialis longus",
+      "Left extensor carpi ulnaris",
+      "Left extensor carpi ulnaris (2)",
+      "Left extensor digiti minimi",
+      "Left extensor digitorum",
+      "Left extensor pollicis brevis",
+      "Left extensor pollicis longus"
+    ]
+  },
+  {
+    "node": "Muscle__ext_oblique__left",
+    "muscleKey": "ext_oblique",
+    "groupKey": "obliques",
+    "labelZh": "腹外斜肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left external oblique"
+    ]
+  },
+  {
+    "node": "Muscle__peroneals__left",
+    "muscleKey": "peroneals",
+    "groupKey": "calves",
+    "labelZh": "腓骨肌群",
+    "side": "left",
+    "sourceStructures": [
+      "Left fibularis brevis",
+      "Left fibularis longus",
+      "Left fibularis tertius"
+    ]
+  },
+  {
+    "node": "Muscle__glutes__left",
+    "muscleKey": "glutes",
+    "groupKey": "glutes",
+    "labelZh": "臀大肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left gluteus maximus"
+    ]
+  },
+  {
+    "node": "Muscle__glute_med__left",
+    "muscleKey": "glute_med",
+    "groupKey": "glute_med",
+    "labelZh": "臀中肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left gluteus medius"
+    ]
+  },
+  {
+    "node": "Muscle__lats__left",
+    "muscleKey": "lats",
+    "groupKey": "lats",
+    "labelZh": "背阔肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left latissimus dorsi"
+    ]
+  },
+  {
+    "node": "Muscle__abs__left",
+    "muscleKey": "abs",
+    "groupKey": "abs",
+    "labelZh": "腹直肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left rectus abdominis"
+    ]
+  },
+  {
+    "node": "Muscle__rectus_fem__left",
+    "muscleKey": "rectus_fem",
+    "groupKey": "quads",
+    "labelZh": "股直肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left rectus femoris"
+    ]
+  },
+  {
+    "node": "Muscle__semitend__left",
+    "muscleKey": "semitend",
+    "groupKey": "hamstrings",
+    "labelZh": "半腱肌与半膜肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left semimembranosus",
+      "Left semitendinosus"
+    ]
+  },
+  {
+    "node": "Muscle__serratus__left",
+    "muscleKey": "serratus",
+    "groupKey": "obliques",
+    "labelZh": "前锯肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left serratus anterior"
+    ]
+  },
+  {
+    "node": "Muscle__soleus__left",
+    "muscleKey": "soleus",
+    "groupKey": "calves",
+    "labelZh": "比目鱼肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left soleus"
+    ]
+  },
+  {
+    "node": "Muscle__tibialis__left",
+    "muscleKey": "tibialis",
+    "groupKey": null,
+    "labelZh": "胫骨前肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left tibialis anterior"
+    ]
+  },
+  {
+    "node": "Muscle__vastus_lat__left",
+    "muscleKey": "vastus_lat",
+    "groupKey": "quads",
+    "labelZh": "股外侧肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left vastus lateralis"
+    ]
+  },
+  {
+    "node": "Muscle__vastus_med__left",
+    "muscleKey": "vastus_med",
+    "groupKey": "quads",
+    "labelZh": "股内侧肌",
+    "side": "left",
+    "sourceStructures": [
+      "Left vastus medialis"
+    ]
+  },
+  {
+    "node": "Muscle__biceps__left",
+    "muscleKey": "biceps",
+    "groupKey": "biceps",
+    "labelZh": "肱二头肌长头",
+    "side": "left",
+    "sourceStructures": [
+      "Long head of left biceps brachii",
+      "Short head of left biceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__triceps_long__left",
+    "muscleKey": "triceps_long",
+    "groupKey": "triceps",
+    "labelZh": "肱三头肌长头",
+    "side": "left",
+    "sourceStructures": [
+      "Long head of left triceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__biceps__right",
+    "muscleKey": "biceps",
+    "groupKey": "biceps",
+    "labelZh": "肱二头肌长头",
+    "side": "right",
+    "sourceStructures": [
+      "Long head of right biceps brachii",
+      "Short head of right biceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__triceps_long__right",
+    "muscleKey": "triceps_long",
+    "groupKey": "triceps",
+    "labelZh": "肱三头肌长头",
+    "side": "right",
+    "sourceStructures": [
+      "Long head of right triceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__gastroc_med__left",
+    "muscleKey": "gastroc_med",
+    "groupKey": "calves",
+    "labelZh": "腓肠肌内侧头",
+    "side": "left",
+    "sourceStructures": [
+      "Medial head of left gastrocnemius"
+    ]
+  },
+  {
+    "node": "Muscle__triceps_medial__left",
+    "muscleKey": "triceps_medial",
+    "groupKey": "triceps",
+    "labelZh": "肱三头肌内侧头",
+    "side": "left",
+    "sourceStructures": [
+      "Medial head of left triceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__gastroc_med__right",
+    "muscleKey": "gastroc_med",
+    "groupKey": "calves",
+    "labelZh": "腓肠肌内侧头",
+    "side": "right",
+    "sourceStructures": [
+      "Medial head of right gastrocnemius"
+    ]
+  },
+  {
+    "node": "Muscle__triceps_medial__right",
+    "muscleKey": "triceps_medial",
+    "groupKey": "triceps",
+    "labelZh": "肱三头肌内侧头",
+    "side": "right",
+    "sourceStructures": [
+      "Medial head of right triceps brachii"
+    ]
+  },
+  {
+    "node": "Muscle__brachialis__right",
+    "muscleKey": "brachialis",
+    "groupKey": "elbow_flexors",
+    "labelZh": "肱肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right brachialis",
+      "Right coracobrachialis"
+    ]
+  },
+  {
+    "node": "Muscle__forearm_ext__right",
+    "muscleKey": "forearm_ext",
+    "groupKey": "forearm",
+    "labelZh": "前臂伸肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right brachioradialis",
+      "Right extensor carpi radialis brevis",
+      "Right extensor carpi radialis longus",
+      "Right extensor carpi ulnaris",
+      "Right extensor carpi ulnaris (2)",
+      "Right extensor digiti minimi",
+      "Right extensor digitorum",
+      "Right extensor pollicis brevis",
+      "Right extensor pollicis longus"
+    ]
+  },
+  {
+    "node": "Muscle__ext_oblique__right",
+    "muscleKey": "ext_oblique",
+    "groupKey": "obliques",
+    "labelZh": "腹外斜肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right external oblique"
+    ]
+  },
+  {
+    "node": "Muscle__peroneals__right",
+    "muscleKey": "peroneals",
+    "groupKey": "calves",
+    "labelZh": "腓骨肌群",
+    "side": "right",
+    "sourceStructures": [
+      "Right fibularis brevis",
+      "Right fibularis longus",
+      "Right fibularis tertius"
+    ]
+  },
+  {
+    "node": "Muscle__glutes__right",
+    "muscleKey": "glutes",
+    "groupKey": "glutes",
+    "labelZh": "臀大肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right gluteus maximus"
+    ]
+  },
+  {
+    "node": "Muscle__glute_med__right",
+    "muscleKey": "glute_med",
+    "groupKey": "glute_med",
+    "labelZh": "臀中肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right gluteus medius"
+    ]
+  },
+  {
+    "node": "Muscle__lats__right",
+    "muscleKey": "lats",
+    "groupKey": "lats",
+    "labelZh": "背阔肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right latissimus dorsi"
+    ]
+  },
+  {
+    "node": "Muscle__abs__right",
+    "muscleKey": "abs",
+    "groupKey": "abs",
+    "labelZh": "腹直肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right rectus abdominis"
+    ]
+  },
+  {
+    "node": "Muscle__rectus_fem__right",
+    "muscleKey": "rectus_fem",
+    "groupKey": "quads",
+    "labelZh": "股直肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right rectus femoris"
+    ]
+  },
+  {
+    "node": "Muscle__semitend__right",
+    "muscleKey": "semitend",
+    "groupKey": "hamstrings",
+    "labelZh": "半腱肌与半膜肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right semimembranosus",
+      "Right semitendinosus"
+    ]
+  },
+  {
+    "node": "Muscle__serratus__right",
+    "muscleKey": "serratus",
+    "groupKey": "obliques",
+    "labelZh": "前锯肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right serratus anterior"
+    ]
+  },
+  {
+    "node": "Muscle__soleus__right",
+    "muscleKey": "soleus",
+    "groupKey": "calves",
+    "labelZh": "比目鱼肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right soleus"
+    ]
+  },
+  {
+    "node": "Muscle__tibialis__right",
+    "muscleKey": "tibialis",
+    "groupKey": null,
+    "labelZh": "胫骨前肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right tibialis anterior"
+    ]
+  },
+  {
+    "node": "Muscle__vastus_lat__right",
+    "muscleKey": "vastus_lat",
+    "groupKey": "quads",
+    "labelZh": "股外侧肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right vastus lateralis"
+    ]
+  },
+  {
+    "node": "Muscle__vastus_med__right",
+    "muscleKey": "vastus_med",
+    "groupKey": "quads",
+    "labelZh": "股内侧肌",
+    "side": "right",
+    "sourceStructures": [
+      "Right vastus medialis"
+    ]
+  },
+  {
+    "node": "Muscle__delt_rear__left",
+    "muscleKey": "delt_rear",
+    "groupKey": "delt_rear",
+    "labelZh": "三角肌后束",
+    "side": "left",
+    "sourceStructures": [
+      "Spinal part of left deltoid"
+    ]
+  },
+  {
+    "node": "Muscle__delt_rear__right",
+    "muscleKey": "delt_rear",
+    "groupKey": "delt_rear",
+    "labelZh": "三角肌后束",
+    "side": "right",
+    "sourceStructures": [
+      "Spinal part of right deltoid"
+    ]
+  },
+  {
+    "node": "Muscle__trap_mid__left",
+    "muscleKey": "trap_mid",
+    "groupKey": "traps",
+    "labelZh": "斜方肌中部",
+    "side": "left",
+    "sourceStructures": [
+      "Transverse part of left trapezius"
+    ]
+  },
+  {
+    "node": "Muscle__trap_mid__right",
+    "muscleKey": "trap_mid",
+    "groupKey": "traps",
+    "labelZh": "斜方肌中部",
+    "side": "right",
+    "sourceStructures": [
+      "Transverse part of right trapezius"
+    ]
+  }
+]
