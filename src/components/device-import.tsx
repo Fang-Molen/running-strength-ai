@@ -4,6 +4,7 @@ import { Upload } from "lucide-react"
 import { METRIC_LABELS, METRIC_UNITS, mergeResults, healthPreviewKey, paceText, parseDeviceFile, parseSummaryText, type DeviceActivity, type DeviceHealthRow, type DeviceParseResult } from "@/lib/ui/device-parse"
 import { healthSavedKey, activityDraftId, existingKeys, isDuplicate, saveDeviceRows } from "@/lib/ui/device-store"
 import { SavedBadge } from "@/components/saved-badge"
+import { CorosAccount } from "@/components/coros-account"
 
 export { ocr } from "@/lib/vision/local-ocr";
 import { ocr } from "@/lib/vision/local-ocr";
@@ -76,6 +77,7 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
   return <section ref={panel} className="home-card p-4 text-sm" aria-label="导入设备数据">
     <div className="flex items-center justify-between gap-2"><h2 className="text-base font-bold">导入手表数据</h2><SavedBadge stamp={stamp} /></div>
     <p className="mt-1 text-muted">佳明优先。选文件或截图，自动识别类型 → 核对 → 一次保存。文件在本机解析。图片可选择本地识字或联网识别，均需核对后保存。</p>
+    <CorosAccount onResult={stage} />
     <label className="fk-drop mt-3">
       <Upload className="size-5" />
       <span className="font-bold">选择文件或截图</span>
