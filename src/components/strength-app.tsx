@@ -223,6 +223,8 @@ export function StrengthApp() {
   const [quickOpen, setQuickOpen] = useState<{ text: string; n: number } | null>(null);
   const [healthLink, setHealthLink] = useState<string | null>(null);
   useEffect(() => { setHomeLayout(loadLayout()); const lp = readLaunchParams(location.search); if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() }); if (lp.health) setHealthLink(lp.health); if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname); }, []);
+  // v89.10：高驰官方授权回跳（/?coros_auth=…）→ 打开“设备连接与同步”显示结果（首次引导未完成时留在引导里）。
+  useEffect(() => { try { if (new URLSearchParams(location.search).has("coros_auth") && localStorage.getItem("fk-onboard-v1")) { setSettingsPane("sync"); setSettingsOpen(true); } } catch { /* ignore */ } }, []);
   useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");

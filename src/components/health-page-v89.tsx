@@ -8,6 +8,7 @@ import { HealthSourceDetails } from "./health-source-details"
 import { CheckinCard, PainLog } from "./health-extras"
 import { loadWatch } from "@/lib/ui/watch-mode"
 import { MuscleRecoveryV89 } from "./muscle-recovery-v89"
+import { CorosHealthPanel } from "./coros-health-panel"
 import { HEALTH_CHANGED, shiftDay, valueText } from "@/lib/health/observation"
 import { loadHealthSnapshot, type HealthMetricView } from "@/lib/health/snapshot"
 import { reviewFatigue, dailyCheckin } from "@/lib/health/analysis"
@@ -64,6 +65,7 @@ export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }:
     <nav className="fk-h89-tabs" aria-label="健康分区">{TABS.map(([id, l]) => <button key={id} type="button" aria-pressed={tab === id} aria-controls={`health-${id}`} onClick={() => setTab(id)}>{l}</button>)}</nav>
     <div id="health-recovery" hidden={tab !== "recovery"} className="space-y-3">
       <DaySwitch day={day} today={today} onDay={setDay} />
+      <CorosHealthPanel day={day} />
       <RecoveryTab day={day} today={today} rev={rev} rest={rest} trend={trend} onCoach={onCoach} onMuscle={() => setMuscle(true)} />
     </div>
     <div id="health-body" hidden={tab !== "body"} className="space-y-3">{body}{slot}{grid}{stats}</div>

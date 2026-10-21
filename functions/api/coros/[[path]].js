@@ -9,7 +9,7 @@ const REGION_HOSTS = { 1: 'https://teamapi.coros.com', 2: 'https://teamcnapi.cor
 const COOKIE = 'fk_csess';
 const MSG = {
   BAD_REQUEST: '请求不完整', BAD_CREDENTIALS: '高驰账号或密码不对', TOKEN_EXPIRED: '高驰登录已过期（约 24 小时），请重新登录',
-  NOT_LOGGED_IN: '还没有登录高驰账号', UPSTREAM: '高驰服务返回异常，可能接口有变化', NOT_ALLOWED: '不支持的接口',
+  NOT_LOGGED_IN: '还没有登录高驰账号', LOGIN_REPLACED: '高驰账号密码登录已停用，请在“设备连接与同步”里点“用高驰授权登录”。', UPSTREAM: '高驰服务返回异常，可能接口有变化', NOT_ALLOWED: '不支持的接口',
 };
 const json = (obj, status = 200, extra = {}) => new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...extra } });
 const fail = (code, status, extra = {}) => json({ ok: false, error: code, message: MSG[code] || code }, status, extra);
@@ -33,6 +33,8 @@ export async function onRequest({ request, env, params }) {
   try {
     if (path === 'status') { const s = await getSession(env, request); return json({ ok: true, loggedIn: !!s, region: s ? s.region : null }); }
     if (path === 'logout') return json({ ok: true }, 200, { 'set-cookie': cookieHeader('', 0) });
+    // v89.10：账号密码登录已停用，只保留官方 MCP 授权（/api/coros-mcp）。status/logout 保留，用于提示旧登录用户重新授权并清除旧 cookie。
+    if (path === 'login' || path === 'activities') return fail('LOGIN_REPLACED', 410);
     if (path === 'login' && request.method === 'POST') {
       let body; try { body = await request.json(); } catch { return fail('BAD_REQUEST', 400); }
       const account = typeof body?.account === 'string' ? body.account.trim() : '', password = typeof body?.password === 'string' ? body.password : '';

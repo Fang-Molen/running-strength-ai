@@ -47,3 +47,8 @@ export function crossBrandPairsInLog(rows: ActLike[]): [string, string][] {
   for (const x of c) { const hit = g.find(y => sameActivityCandidate(x, y)); if (hit) pairs.push([x.id, hit.id]) }
   return pairs
 }
+/** 高驰活动的 labelId（来源标识 coros:<账号引用>:<labelId>）。换登录方式后账号引用可能不同，同一 labelId 仍视为同一条高驰记录。 */
+export function corosLabelOf(identity: string | null | undefined): string | null {
+  const m = typeof identity === 'string' ? /^coros:[^:]*:([0-9A-Za-z_-]{1,40})$/.exec(identity) : null
+  return m ? m[1] : null
+}
