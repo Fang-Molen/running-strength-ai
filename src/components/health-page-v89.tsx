@@ -36,7 +36,7 @@ type ExplorerMetric = "bb" | "hr" | "st" | "hrv" | "sleep"
 type Span = 1 | 7 | 30 | 90
 const EXPLORER: [ExplorerMetric, string, string][] = [["bb", "身体电量", "BODY_BATTERY"], ["hr", "心率", "RHR"], ["st", "压力", "STRESS"], ["hrv", "HRV", "HRV"], ["sleep", "睡眠", "SLEEP"]]
 function jumpTo(id: string) {
-  requestAnimationFrame(() => { const node = document.getElementById(id); node?.focus({ preventScroll: true }); node?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }) })
+  requestAnimationFrame(() => { const node = document.getElementById(id); const disclosure = node?.closest("details"); if (disclosure) disclosure.open = true; node?.focus({ preventScroll: true }); node?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }) })
 }
 const mdCN = (d: string) => `${Number(d.slice(5, 7))}月${Number(d.slice(8, 10))}日`
 const hm = (hours: number) => { const m = Math.round(hours * 60); return `${Math.floor(m / 60)}小时${m % 60}分` }
@@ -133,9 +133,20 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend }: { day:
   const all = useIntraday()
   const tiles = useTiles(day, rev, all)
   const review = useMemo(() => { void rev; try { return reviewFatigue(loadHealthSnapshot(day), dailyCheckin(day)) } catch { return null } }, [day, rev])
+  const emptyMetrics = useMemo(() => {
+    void rev
+    try {
+      const snapshot = loadHealthSnapshot(day)
+      // Conflicts, historical records and read failures remain visible in the full workspace.
+      const hasRecords = snapshot.metrics.some(m => m.current || m.candidates.length || m.series.length || m.availableSources.length)
+        || Object.values(all).some(d => d.bb.length || d.hr.length || d.st?.length || d.restingHr != null || d.sleep || d.training.length)
+      return !snapshot.unreadable && !hasRecords
+    } catch { return false }
+  }, [day, rev, all])
   // History is viewed using records known now, including later syncs of that day.
   const view = useMemo(() => { void rev; return intradayRecoveryFromStore(all, currentAthleteId(), day, new Date().toISOString()) }, [all, day, rev])
   const now = new Date()
+  const explorer = <AllDayTrend day={day} rev={rev} d={all[day] ?? null} view={view} metric={metric} onMetric={select} span={span} onSpan={setSpan} trend={trend} rest={rest} showSyncNote={!emptyMetrics} />
   return <div className="space-y-3">
     <section className="fk-h89-card fk-h89-today" aria-label="今日恢复状态">
       <div className="flex items-start gap-3">
@@ -147,19 +158,20 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend }: { day:
         </div>
       </div>
       {review && review.signals.length ? <p className="keep mt-2 text-sm">{review.action}</p> : null}
-      <div className="fk-h89-actions"><button type="button" className="fk-h89-pill" aria-expanded={checkin} aria-controls="health-checkin" onClick={() => setCheckin(!checkin)}>{checkin ? "收起记录" : "记录疲劳与疼痛"}</button>{onCoach ? <button type="button" className="fk-h89-pill" onClick={onCoach}>问方坤建议 ›</button> : null}</div>
+      {emptyMetrics ? <SyncNote /> : null}
+      <div className="fk-h89-actions">{emptyMetrics ? <button type="button" className="fk-h89-pill" aria-label="导入健康数据" onClick={() => window.dispatchEvent(new Event("fk-open-health-records"))}>导入数据</button> : null}<button type="button" className="fk-h89-pill" aria-label="记录疲劳与疼痛" aria-expanded={checkin} aria-controls="health-checkin" onClick={() => setCheckin(!checkin)}>{checkin ? "收起记录" : "疲劳与疼痛"}</button>{onCoach ? <button type="button" className="fk-h89-pill" onClick={onCoach}>问方坤</button> : null}</div>
     </section>
     {checkin ? <div id="health-checkin"><CheckinCard key={day} today={day} watch={loadWatch() ?? "none"} onSaved={() => undefined} onPain={() => setPain(true)} />{pain ? <PainLog key={day} today={day} /> : null}<details className="fk-h89-disclosure"><summary>疲劳与疼痛历史</summary><div className="fk-h89-metrics" role="group" aria-label="主观记录指标">{([["fatigue","疲劳"],["pain","疼痛"]] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={subjective === id} onClick={() => setSubjective(id)}>{label}</button>)}</div>{trend(subjective, day)}</details></div> : null}
-    <div className="fk-h89-tiles" data-testid="h89-tiles">{tiles.map(t => <button type="button" key={t.key} className="fk-h89-tile text-left" data-testid={`h89-tile-${t.key}`} onClick={() => select(t.key === "SLEEP" ? "sleep" : t.key === "HRV" ? "hrv" : t.key === "BB" ? "bb" : "hr", true)}>
+    {!emptyMetrics ? <div className="fk-h89-tiles" data-testid="h89-tiles">{tiles.map(t => <button type="button" key={t.key} className="fk-h89-tile text-left" data-testid={`h89-tile-${t.key}`} onClick={() => select(t.key === "SLEEP" ? "sleep" : t.key === "HRV" ? "hrv" : t.key === "BB" ? "bb" : "hr", true)}>
       <p className="keep text-xs text-muted">{t.label}</p>
       <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? "暂无"}</b>{t.value && t.unit ? <span className="ml-0.5 text-[10px] text-muted">{t.unit}</span> : null}</p>
-      <p className={"keep text-[10px] " + "text-muted"}>{t.delta ?? "较昨日 暂无"}</p>{t.stale ? <p className="keep text-[10px] text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
-    </button>)}</div>
-    <AllDayTrend day={day} rev={rev} d={all[day] ?? null} view={view} metric={metric} onMetric={select} span={span} onSpan={setSpan} trend={trend} rest={rest} />
+      {t.delta ? <p className="keep text-[10px] text-muted">{t.delta}</p> : null}{t.stale ? <p className="keep text-[10px] text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
+    </button>)}</div> : null}
+    {emptyMetrics ? <details className="fk-h89-disclosure" data-testid="h89-empty-trend"><summary>查看健康趋势</summary>{explorer}</details> : explorer}
     <details className="fk-h89-disclosure"><summary>睡眠与训练时段</summary><EventCards day={day} d={all[day] ?? null} view={view} rev={rev} /></details>
     <button type="button" className="fk-h89-card flex w-full items-center gap-3 text-left" onClick={onMuscle} data-testid="h89-muscle-entry">
       <Dumbbell className="size-6 shrink-0 text-accent" />
-      <span className="min-w-0 flex-1"><b className="block">肌肉恢复</b><span className="keep block text-xs text-muted">正背面训练反应着色、重点肌群、力量负荷与跑步影响</span></span>
+      <span className="min-w-0 flex-1"><b className="block">肌肉恢复</b><span className="keep block text-xs text-muted">查看各部位的训练负荷</span></span>
       <ChevronRight className="size-5 text-muted" />
     </button>
   </div>
@@ -171,7 +183,7 @@ const META: Record<"bb" | "hr" | "st", { label: string; unit: string; color: str
   st: { label: "压力", unit: "/100", color: "#f5a524", metric: "STRESS", Icon: Gauge },
 }
 type K = keyof typeof META
-function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend, rest }: { day: string; rev: number; d: IntradayDay | null; view: U10View | null; metric: ExplorerMetric; onMetric: (m: ExplorerMetric) => void; span: Span; onSpan: (s: Span) => void; trend: (only?: string, endDay?: string, days?: number) => ReactNode; rest: (day: string) => ReactNode }) {
+function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend, rest, showSyncNote = true }: { day: string; rev: number; d: IntradayDay | null; view: U10View | null; metric: ExplorerMetric; onMetric: (m: ExplorerMetric) => void; span: Span; onSpan: (s: Span) => void; trend: (only?: string, endDay?: string, days?: number) => ReactNode; rest: (day: string) => ReactNode; showSyncNote?: boolean }) {
   const all = useIntraday()
   const dailyMetric = EXPLORER.find(([id]) => id === metric)![2]
   const kind: K | null = metric === "bb" || metric === "hr" || metric === "st" ? metric : null
@@ -181,7 +193,7 @@ function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend,
   const hours = useMemo(() => { const map = new Map<number, number[]>(); if (d) for (const [time, value] of samples) { const hour = Math.floor(minuteOfDay(time, d.day, d.offsetMin) / 60); if (hour >= 0 && hour < 24) map.set(hour, [...(map.get(hour) ?? []), value]) }; return [...map].sort((a,b) => a[0]-b[0]) }, [samples, d])
   const unit = kind ? META[kind].unit : metric === "hrv" ? "ms" : "小时"
   return <section id="fk-intraday" tabIndex={-1} className="fk-h89-card fk-h89-explorer" aria-label="健康趋势" data-testid="h89-trend">
-    <div className="fk-h89-section-title"><h2>健康趋势</h2><span>同一页查看与比较</span></div>
+    <div className="fk-h89-section-title"><h2>健康趋势</h2></div>
     <div className="fk-h89-metrics" role="group" aria-label="趋势指标">{EXPLORER.map(([id, label]) => <button key={id} type="button" aria-pressed={metric === id} onClick={() => onMetric(id)}>{label}</button>)}</div>
     <div className="fk-h89-period" role="group" aria-label="趋势时间范围">{([1,7,30,90] as const).map(n => <button key={n} type="button" aria-pressed={span === n} onClick={() => onSpan(n)}>{n === 1 ? "当天" : `${n}天`}</button>)}</div>
     {span === 1 && kind ? <>
@@ -193,9 +205,9 @@ function AllDayTrend({ day, rev, d, view, metric, onMetric, span, onSpan, trend,
           <p className="keep mb-2 text-xs text-muted">个人常态由近28天同钟点样本计算；每个钟点至少7天才显示中位数虚线，阴影为四分位范围。不是恢复目标。</p><div className="fk-h89-hours">{hours.map(([hour, values]) => <span key={hour}>{String(hour).padStart(2,"0")}时 <b>{Math.min(...values)}–{Math.max(...values)}</b></span>)}</div>
           <p className="keep text-xs text-muted">佳明手表样本 · 同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", {hour12:false})}{d.offsetMin != null ? ` · 手表时区 UTC${d.offsetMin >= 0 ? "+" : ""}${d.offsetMin / 60}` : ""}</p>
         </details>
-      </> : <p className="fk-h89-empty" data-testid="intraday-empty">{mdCN(day)}没有{META[kind].label}逐时样本。同步后显示；日汇总可在7天、30天或90天中查看，不会拼成全天曲线。</p>}
+      </> : <p className="fk-h89-empty" data-testid="intraday-empty">{mdCN(day)}没有{META[kind].label}逐时样本。已有日汇总可切换到7天或更长范围查看。</p>}
       {view?.warnings.filter(w => /冲突/.test(w)).map(w => <p key={w} className="keep text-xs text-amber-400">{w}</p>)}
-      <SyncNote />
+      {showSyncNote ? <SyncNote /> : null}
       <p className="keep mt-2 text-xs text-muted">{kind === "st" ? "压力是设备估算读数，不是心理诊断。" : kind === "bb" ? "身体电量是设备估算，不代表肌肉已恢复或可以加量。" : "全天心率来自手表样本，和每日静息心率分别展示。"}</p>
     </> : <>
       <MetricSummary day={day} rev={rev} metric={dailyMetric} />

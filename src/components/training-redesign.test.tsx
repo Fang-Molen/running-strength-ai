@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { TrainingEditorSheet } from './training-editor-sheet';
 import { ExerciseDetailBody } from './exercise-editor';
 import { ExerciseContent } from './exercise-content';
+import { FangkunExerciseVideo } from './fangkun-unified-video';
 import { BodyFigureSheet } from './body-figure-sheet';
 import { SchedulePicker } from './scheduled-training';
 import { setStoreBackend } from '@/lib/core/storage';
@@ -15,8 +16,9 @@ beforeEach(() => {
 });
 test('new training exposes a date, two primary types, and a fixed form submit target', () => {
   const html = renderToStaticMarkup(<TrainingEditorSheet date="2026-10-17" onClose={() => {}} onSave={async () => ({ ok: true })} />);
-  for (const label of ['训练日期', '跑步运动', '力量训练', '肌肉图选择', '预计时长']) assert.ok(html.includes(label));
+  for (const label of ['训练日期', '跑步运动', '力量训练', '肌肉图', '预计时长']) assert.ok(html.includes(label));
   assert.match(html, /type="date"/); assert.match(html, /type="submit" form="[^"]+"/); assert.match(html, /role="dialog"/);
+  assert.doesNotMatch(html, /aria-label="可添加动作"/);
 });
 test('the timer picker renders only the selected date calendar courses', () => {
   const a = draftEntry({ ...newTrainingDraft('2026-10-17', 'my-run'), type: 'run', name: '我的8公里', distance: '8000', minutes: '40' }); assert.ok(a.ok);
@@ -26,7 +28,11 @@ test('the timer picker renders only the selected date calendar courses', () => {
 });
 test('execution and library details share the same 3D content renderer', () => {
   const direct = renderToStaticMarkup(<ExerciseDetailBody id="bss" />), execution = renderToStaticMarkup(<ExerciseContent catalogId="bss" />);
-  assert.equal(direct, execution); assert.match(direct, /新版动作演示区域/); assert.match(direct, /未验收时显示今晚角色外观参考/); assert.doesNotMatch(direct, /athlete-male|athlete-female|viewer3d/); assert.match(direct, /独立肌肉/); assert.doesNotMatch(direct, /查看未审校示意/);
+  assert.equal(direct, execution); assert.match(direct, /动作示范/); assert.match(direct, /相关部位/); assert.match(direct, /动作步骤/); assert.match(direct, /注意事项/);
+  assert.doesNotMatch(direct, /athlete-male|athlete-female|viewer3d|未验收时显示今晚角色外观参考|模型与肌群依据|动作审校状态/);
+  const media = renderToStaticMarkup(<FangkunExerciseVideo exerciseId="bss" title="保加利亚分腿蹲" gender="male" />);
+  assert.match(media, /\/fangkun-pose-r8\/male\/bss\.webp/); assert.match(media, /姿势示意·待审核/);
+  assert.doesNotMatch(media, /<video|>播放<|已审核同角色视频/);
 });
 test('body targets compare recorded numbers and never claim the portrait is a finished personal 3D', () => {
   const html = renderToStaticMarkup(<BodyFigureSheet sex="male" kg={56} bf={9} targetKg={60} targetBf={null} onClose={() => {}} onData={() => {}} onSaved={() => {}} />);

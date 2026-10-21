@@ -368,7 +368,7 @@ export async function createMuscleExplorer(canvas, opt = {}) {
       selected = key; selectedMesh = null; updateMaterials(); setFocusPoint(); follow(); invalidate();
       const object = key && muscles.find(object => matchesMuscle(object.userData.fk, key));
       // A key selection covers both sides / a whole group, so it is named by key, not by one mesh.
-      opt.onPick?.(object ? { ...object.userData.fk, zh: (object.userData.fk.r9 ? object.userData.fk.g === key && ({ quads: '股四头肌', hamstrings: '腘绳肌', calves: '小腿肌群', feet: '足部内在肌群' }[key]) : keyZh(key)) || object.userData.fk.base || object.userData.fk.zh, id: object.uuid } : null);
+      opt.onPick?.(object ? { ...object.userData.fk, side: null, zh: (object.userData.fk.r9 ? object.userData.fk.g === key && ({ quads: '股四头肌', hamstrings: '腘绳肌', calves: '小腿肌群', feet: '足部内在肌群' }[key]) : keyZh(key)) || object.userData.fk.base || object.userData.fk.zh, id: object.uuid } : null);
     },
     pickAt,
     get state() { return { asset, view, focus, deep, meshCount: muscles.length, polar: controls.getPolarAngle() * 180 / Math.PI, azimuth: controls.getAzimuthalAngle() * 180 / Math.PI, distance: camera.position.distanceTo(controls.target), fit: lastFit }; },

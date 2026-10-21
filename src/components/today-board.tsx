@@ -23,7 +23,7 @@ const ACT: Record<ConflictAction, string> = { postpone: "顺延一天", reduce: 
 const dot = (e: ScheduleEntry) => e.modality === "run" ? "bg-[#2182bd]" : "bg-[#d07a2b]"
 const shown = (e: ScheduleEntry) => e.status !== "rejected"
 
-export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExecute, onEdit, onDateChange, selectedDate, onAskCoach, onFood, revision = 0, override = null, band = true, v4 = true }: { v4?: boolean; plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onExecute?: (entry: ScheduleEntry) => void; onEdit?: (entry: ScheduleEntry) => void; onDateChange?: (date: string) => void; selectedDate?: string; onAskCoach: () => void; onFood?: () => void; revision?: number; override?: Override | null; band?: boolean }) {
+export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExecute, onEdit, onDateChange, selectedDate, onAskCoach, onFood, onImportPlan, onBrowseCourses, gettingStarted = false, revision = 0, override = null, band = true, v4 = true }: { v4?: boolean; plan: Plan; runPlans: RunningPlan[]; today: string; onOpenRun: (planId: string) => void; onOpenLift: (sessionId: string) => void; onExecute?: (entry: ScheduleEntry) => void; onEdit?: (entry: ScheduleEntry) => void; onDateChange?: (date: string) => void; selectedDate?: string; onAskCoach: () => void; onFood?: () => void; onImportPlan?: () => void; onBrowseCourses?: () => void; gettingStarted?: boolean; revision?: number; override?: Override | null; band?: boolean }) {
   const v4Day = (d: string) => (v4 ? plan400DayFor(d) : null)
   const [store, setStore] = useState<ScheduleStore>({ entries: [], acks: [] })
   const [day, setDay] = useState(today)
@@ -55,14 +55,24 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
   }
   // v83（P1-01）：V4 当天的执行条目（plan400:<date>:strength）由上方今日主卡 / 下方 V4 行代表，不再另出一张卡和第二组“按计划完成”按钮
   const list = applyOverride(store.entries.filter((e) => e.date === day && shown(e) && !(v4 && e.id === `plan400:${e.date}:strength` && v4Day(e.date))), override)
-  const sloted = list.some((e) => e.slot)
+  const confirmed = list.filter(e => e.status !== 'proposed')
+  const suggested = list.filter(e => e.status === 'proposed')
+  const sloted = confirmed.some((e) => e.slot)
   const [inj, setInj] = useState<InjuryStore>({ asked: true, items: [] })
   useEffect(() => { setInj(loadInjury()) }, [revision])
-  const askInjury = needsInjuryAsk(inj, list.some((e) => e.modality === "strength"))
-  const groups: [string, ScheduleEntry[]][] = sloted ? [["上午", list.filter((e) => e.slot !== "pm")], ["今晚", list.filter((e) => e.slot === "pm")]] : [["", list]]
+  const askInjury = needsInjuryAsk(inj, confirmed.some((e) => e.modality === "strength"))
+  const askSuggestedInjury = needsInjuryAsk(inj, suggested.some((e) => e.modality === "strength"))
+  const groups: [string, ScheduleEntry[]][] = sloted ? [["上午", confirmed.filter((e) => e.slot !== "pm")], ["今晚", confirmed.filter((e) => e.slot === "pm")]] : [["", confirmed]]
   const proposals = store.entries.filter((e) => week.includes(e.date) && e.status === "proposed")
   const rank = (c: Conflict) => c.id.startsWith("rec:") ? 0 : c.level === "warn" ? 1 : 2
   const dayConflicts = conflicts.filter((c) => c.date === day || c.entryIds.some((id) => list.some((e) => e.id === id))).sort((x, y) => rank(x) - rank(y))
+  const hasWeekActivity = store.entries.some(e => week.includes(e.date) && (e.status === 'planned' || e.status === 'done' || Boolean(e.actual)))
+  const renderEntry = (e: ScheduleEntry) => <EntryCard key={e.id} e={e} injuries={inj.items} band={band ? planBand(e) : null} today={today} open={open === e.id} session={sessionOf(e)} onToggle={() => setOpen(open === e.id ? null : e.id)}
+    onReview={(d, patch) => setEntries(review(store.entries, e.id, d, patch))}
+    onSwap={(why) => { const n = swapProposal(e, why); setEntries([...review(store.entries, e.id, "reject"), n]); setOpen(n.id) }}
+    onRest={(r) => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, restLog: [...(x.restLog ?? []), r] } : x))}
+    onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
+    onEdit={onEdit ? () => onEdit(e) : undefined} onOpenRun={() => onExecute ? onExecute(e) : e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { if (onExecute) { onExecute(e); return; } const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />
   return <section aria-label="本周训练" className="home-card mb-3 px-3 py-3">
     <div className="flex items-center justify-between px-1"><h2 className="text-lg font-bold">{day === today ? "今日训练" : `${+day.slice(5, 7)}月${+day.slice(8)}日`}</h2><SavedBadge stamp={stamp} /></div>
     <div className="mt-2 grid grid-cols-7 gap-1" role="tablist" aria-label="本周">
@@ -72,38 +82,43 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
           <span className="mt-0.5 flex h-2 gap-0.5">{(() => { const v = v4Day(d); return v && v.kind !== "rest" ? <i className={"size-1.5 rounded-full ring-1 " + (d === day ? "bg-accent-fg ring-accent-fg" : "bg-accent ring-accent")} title={`V4：${v.title}`} /> : null })()}{es.slice(0, 3).map((e) => <i key={e.id} className={"size-1.5 rounded-full " + dot(e) + (e.status === "proposed" ? " opacity-40" : "")} />)}{warn ? <i className="size-1.5 rounded-full bg-[#c0392b]" /> : null}</span>
         </button> })}
     </div>
-    {proposals.length ? <p className="mt-2 px-1 text-xs text-muted">方坤本周有 {proposals.length} 节建议待你确认（浅色点）。</p> : null}
+    {proposals.length ? <p className="mt-2 px-1 text-sm text-muted">本周有 {proposals.length} 节待确认建议</p> : null}
     {dayConflicts.slice(0, 2).map((c) => <div key={c.id} className={"mt-3 rounded-xl border p-2.5 text-sm " + (c.level === "warn" ? "border-[#e0a46b] bg-[#fdf3e8] dark:bg-transparent" : "border-line bg-surface-2")} role="status">
       <p className="flex gap-1.5 font-bold"><TriangleAlert className="mt-0.5 size-4 shrink-0" />{c.text}</p>
       <p className="mt-0.5 text-[11px] text-muted">方坤 · {c.basis}</p>
       <div className="mt-2 flex flex-wrap gap-1.5">{c.actions.map((a) => <button key={a} type="button" className="fk-chip" onClick={() => act(c, a)}>{ACT[a]}</button>)}</div>
     </div>)}
+    {gettingStarted && !v4Day(day) ? <div className="fk-first-training" aria-label="开始安排训练">
+      <h3>从第一节训练开始</h3>
+      <p>导入自己的计划，或添加一次训练。</p>
+      <div className="fk-first-training-actions">
+        <button type="button" className="fk-primary" onClick={() => setAdding(true)}><Plus className="size-4" />添加训练</button>
+        {onImportPlan ? <button type="button" className="fk-first-import" onClick={onImportPlan}>导入计划</button> : null}
+      </div>
+      {onBrowseCourses ? <button type="button" className="fk-first-browse" onClick={onBrowseCourses}>浏览课程与动作<span aria-hidden="true">›</span></button> : null}
+    </div> : null}
     <div className="mt-3 space-y-2">
       {askInjury ? <InjuryCard onSave={(v) => { saveInjury(v); setInj(v) }} /> : null}
-      {groups.map(([label, items]) => items.length ? <div key={label} className="space-y-2">{label ? <p className="px-1 text-xs font-bold text-muted">{label}</p> : null}{items.map((e) => <EntryCard key={e.id} e={e} injuries={inj.items} band={band ? planBand(e) : null} today={today} open={open === e.id} session={sessionOf(e)} onToggle={() => setOpen(open === e.id ? null : e.id)}
-        onReview={(d, patch) => setEntries(review(store.entries, e.id, d, patch))}
-        onSwap={(why) => { const n = swapProposal(e, why); setEntries([...review(store.entries, e.id, "reject"), n]); setOpen(n.id) }}
-        onRest={(r) => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, restLog: [...(x.restLog ?? []), r] } : x))}
-        onActual={(a) => saveActual(e, a)} onSkip={() => setEntries(store.entries.map((x) => x.id === e.id ? { ...x, status: "rejected" } : x))}
-        onEdit={onEdit ? () => onEdit(e) : undefined} onOpenRun={() => onExecute ? onExecute(e) : e.refId && e.kind === "run" ? onOpenRun(e.refId) : onAskCoach()} onOpenFull={() => { if (onExecute) { onExecute(e); return; } const s = sessionOf(e); if (s) onOpenLift(s.id); else if (e.refId && e.modality === "run") onOpenRun(e.refId); else onAskCoach() }} onAskCoach={onAskCoach} onFood={onFood} />)}</div> : null)}
-      {(() => { const v = v4Day(day); if (!v) return !list.length ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null
+      {groups.map(([label, items]) => items.length ? <div key={label} className="space-y-2">{label ? <p className="px-1 text-xs font-bold text-muted">{label}</p> : null}{items.map(renderEntry)}</div> : null)}
+      {suggested.length ? <details className="border-t border-line" aria-label="待确认的训练建议"><summary className="flex min-h-12 cursor-pointer items-center justify-between text-sm font-bold"><span>方坤的建议 · {suggested.length}</span><ChevronDown className="size-4 text-muted" /></summary><div className="space-y-2 pb-3">{askSuggestedInjury && !askInjury ? <InjuryCard onSave={(v) => { saveInjury(v); setInj(v) }} /> : null}{suggested.map(renderEntry)}</div></details> : null}
+      {(() => { const v = v4Day(day); if (!v) return !list.length && !gettingStarted ? <p className="px-1 py-2 text-sm text-muted">这天还没有安排。</p> : null
         if (day === today) return null // 今天的 V4 课只在上方今日主卡出现一次（一个主操作）
         return <button type="button" data-testid="board-v4-row" onClick={() => openPlan400Day(day)} className="flex min-h-14 w-full items-center gap-3 rounded-2xl border border-line bg-surface-2 p-3 text-left">
           <span className="min-w-0 flex-1"><span className="block text-[11px] text-muted">{planLabel()} · {v.week} · {v.kind === "rest" ? "休息日" : v.kind === "recovery" ? "恢复" : v.kind === "test" ? "测试" : "训练课"}</span><span className="block truncate font-bold">{v.title}</span></span><span aria-hidden="true" className="text-muted">›</span></button> })()}
-      {!list.length && v4Day(day) ? <p className="px-1 text-xs text-muted">{day === today ? `今天的${planTag()}课见上方主卡；没有其他自建或方坤的训练。` : "这天还没有安排自建或方坤的训练。"}</p> : null}
       {undo ? <div role="status" className="fixed inset-x-3 bottom-24 z-40 mx-auto flex max-w-md items-center justify-between rounded-card bg-fg px-4 py-3 text-sm text-bg shadow-lg"><span>{undo.label}</span><button type="button" className="font-bold underline" onClick={restore}>撤销</button></div> : null}
     </div>
-    <div className="mt-2 flex flex-wrap gap-3 px-1">
+    {note ? <p role="status" className="mt-2 text-sm">{note}</p> : null}
+    {!gettingStarted ? <div className="mt-2 flex flex-wrap gap-3 px-1">
       <button type="button" className="fk-link flex min-h-11 items-center gap-1 text-sm" aria-expanded={adding} onClick={() => setAdding(true)}><Plus className="size-4" />添加训练</button>
-      {week.some((d) => d >= today && !store.entries.some((e) => e.date === d && shown(e))) ? <button type="button" className="fk-link flex items-center gap-1 text-sm" onClick={() => commit(proposeWeek(store, week, today, plan.sessions, runPlans))}><Bot className="size-4" />让方坤排本周空档</button> : null}
-    </div>
+      {week.some((d) => d >= today && !store.entries.some((e) => e.date === d && shown(e))) ? <button type="button" className="fk-link flex items-center gap-1 text-sm" onClick={() => commit(proposeWeek(store, week, today, plan.sessions, runPlans))}><Bot className="size-4" />推荐本周训练</button> : null}
+    </div> : null}
     {adding ? <TrainingEditorSheet key={day} templates={plan} date={day} onClose={() => setAdding(false)} onSave={async e => { const result = await saveScheduledEntry(e); if (result.ok) { setDay(e.date); onDateChange?.(e.date); setStore(loadSchedule()); } return result; }} /> : null}
-    <div className="mt-3 rounded-xl bg-surface-2 p-3 text-sm" aria-label="本周计划与实际">
-      <p className="font-bold">本周 计划 vs 实际</p>
+    {hasWeekActivity ? <details className="mt-3 border-t border-line text-sm" aria-label="本周计划与实际">
+      <summary className="min-h-12 cursor-pointer font-bold">本周统计<span className="ml-auto text-muted">{summary.planned} 节安排 ›</span></summary>
       <p className="mt-1">计划 {summary.planned} 节 · 按计划 <b>{summary.asPlanned}</b> · 有变 <b>{summary.different}</b> · 没练 <b>{summary.missed}</b>{summary.partial ? ` · 部分记录 ${summary.partial}` : ''}{summary.open ? ` · 待执行 ${summary.open}` : ""}{summary.unrecorded ? ` · 待登记 ${summary.unrecorded}` : ''}</p>
       <p className="keep text-xs text-muted">时长 实际 {summary.actualMin} / 计划 {summary.plannedMin} 分钟{summary.reasons.length ? ` · 主要原因：${summary.reasons.slice(0, 2).map(([r, n]) => `${REASON_LABELS[r]}×${n}`).join("、")}` : ""}</p>
-      <p className="mt-1 text-xs"><Bot className="mr-1 inline size-3.5" />{summary.note}</p>
-    </div>
+      <p className="mt-1 pb-3 text-xs"><Bot className="mr-1 inline size-3.5" />{summary.note}</p>
+    </details> : null}
   </section>
 }
 
@@ -123,17 +138,16 @@ function EntryCard({ e, injuries = [], band, today, open, session, onRest, onTog
   const a = e.actual
   const adv = e.modality === "strength" && injuries.length ? injuryAdvice(session ? session.moves.map((m) => displayName(m)) : [e.title], injuries, today) : null
   return <div style={band ? { borderLeft: `5px solid ${BAND_COLOR[band]}` } : undefined} data-band={band ?? undefined} className={"rounded-2xl border bg-surface-2 " + (proposed ? "border-dashed border-[#7a5cc7]" : "border-line")}>
-    <button type="button" aria-expanded={open} onClick={onToggle} className="flex w-full items-center gap-3 p-3 text-left">
+    <div className="flex items-center gap-2 pr-3"><button type="button" aria-expanded={open} onClick={onToggle} className="flex min-w-0 flex-1 items-center gap-3 p-3 text-left">
       <span className={"relative grid size-10 shrink-0 place-items-center rounded-xl text-white " + dot(e)}><Icon className="size-5" />{e.source === "fangkun" ? <Bot className="absolute -bottom-1 -right-1 size-4 rounded-full bg-surface p-0.5 text-[#7a5cc7]" /> : null}</span>
-      <span className="min-w-0 flex-1"><span className="block truncate font-bold">{e.title}</span>
+      <span className="min-w-0 flex-1"><span className="block break-words font-bold">{e.title}</span>
         <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">{e.minutes} 分钟 · <span className={e.intensity === "HARD" ? "font-bold text-[#c0612b]" : ""}>{INT[e.intensity]}</span>
-          <span className={"rounded-full px-1.5 py-0.5 text-[10px] font-bold " + (e.source === "fangkun" ? "bg-[#7a5cc7]/15 text-[#6a4cb7]" : "bg-line text-fg")}>{e.source === "fangkun" ? "方坤" : "自定"}</span>
           {proposed ? <span className="rounded-full bg-[#7a5cc7] px-1.5 py-0.5 text-[10px] font-bold text-white">待确认</span> : null}
           {e.overrideNote ? <span className="text-[10px] font-bold text-[#6a4cb7]">今天临时改</span> : null}{e.unplanned ? <span className="text-[10px]">计划外</span> : null}
           {e.edited ? <span className="text-[10px]">已改</span> : null}{e.reduced ? <span className="text-[10px]">已降强度</span> : null}{e.movedFrom ? <span className="text-[10px]">由 {e.movedFrom.slice(5)} 顺延</span> : null}
           {a ? <span className={"text-[10px] font-bold " + (a.outcome === "as_planned" ? "text-[#269775]" : a.outcome === "different" ? "text-[#c0612b]" : "text-muted")}>{a.executionState === 'PARTIAL' || a.executionState === 'INTERRUPTED' ? '部分执行已记录' : a.outcome === "as_planned" ? "✓ 按计划" : a.outcome === "different" ? `实际 ${a.minutes ?? "未记时长"}${a.minutes == null ? '' : '分钟'}` : "没练"}</span> : null}</span></span>
       <ChevronDown className={"size-4 shrink-0 transition " + (open ? "rotate-180" : "")} />
-    </button>
+    </button>{!proposed && e.date === today && e.status === "planned" && !a ? <button type="button" className="fk-primary shrink-0 px-3 text-sm" onClick={onOpenFull} aria-label={`开始${e.title}`}>开始</button> : null}</div>
     {proposed ? <div className="border-t border-line px-3 pb-3 pt-2">
       {e.swapReason ? <p className="mb-2 text-xs text-muted">方坤：{e.swapReason}</p> : null}{e.overrideNote ? <p className="mb-2 text-xs text-[#6a4cb7]">{e.overrideNote}</p> : null}
       <div className="grid grid-cols-4 gap-1.5">

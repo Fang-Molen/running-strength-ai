@@ -2,6 +2,8 @@
 import { addDays, type ScheduleEntry } from "./day-schedule-rules.ts"
 import { TIER_OF_GROUP, type Tier, type WatchId } from "./watch-mode.ts"
 export const ONBOARD_KEY = "fk-onboard-v1"
+/** Only remembers that the welcome flow was skipped; it is not a saved questionnaire. */
+export const ONBOARD_SKIPPED_KEY = "fk-onboard-skipped-v1"
 export type Goal = "speed" | "race" | "muscle" | "fat" | "fitness"
 export const GOALS: [Goal, string][] = [["speed", "跑步提速"], ["race", "半马/全马"], ["muscle", "增肌"], ["fat", "减脂"], ["fitness", "综合体能"]]
 export type Experience = "none" | "lt1" | "1to3" | "gt3"

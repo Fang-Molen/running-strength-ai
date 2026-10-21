@@ -1,0 +1,334 @@
+/* Fangkun identity, 2026-10-21.
+ * Presentation only: dates, training order and recorded numbers provide the rhythm.
+ * Import after the legacy styles. No content, lifecycle or storage rules live here.
+ */
+
+:root,
+.app-wallpaper.product-ui[data-theme="dark"] {
+  --fk-identity-bg: #121314;
+  --fk-identity-surface: #1d1f21;
+  --fk-identity-inset: #282b2d;
+  --fk-identity-fg: #f4f5f5;
+  --fk-identity-muted: #b4b6b8;
+  --fk-identity-line: #373c40;
+  --fk-identity-action: #ffac75;
+  --fk-identity-accent: #ff8b45;
+  --fk-identity-accent-fg: #27180e;
+  --fk-identity-success: #8bc9a8;
+  --fk-identity-warn: #edc476;
+  --fk-identity-risk: #ff9c93;
+  --fk-identity-focus: #ffac75;
+  --fk-identity-model: #1c2021;
+  --fk-identity-shadow: 0 12px 40px #00000036;
+  --fk-brand-orange: var(--fk-identity-accent);
+  --fk-brand-orange-soft: var(--fk-identity-action);
+}
+
+html:has(.app-wallpaper.product-ui[data-theme="light"]),
+.app-wallpaper.product-ui[data-theme="light"] {
+  --fk-identity-bg: #f7f6f2;
+  --fk-identity-surface: #ffffff;
+  --fk-identity-inset: #eeeee7;
+  --fk-identity-fg: #1d211f;
+  --fk-identity-muted: #626a65;
+  --fk-identity-line: #d9ded7;
+  --fk-identity-action: #a8420a;
+  --fk-identity-success: #2c7551;
+  --fk-identity-warn: #865b0c;
+  --fk-identity-risk: #b33b33;
+  --fk-identity-focus: #a8420a;
+  --fk-identity-model: #e7ebe4;
+  --fk-identity-shadow: 0 12px 40px #25332314;
+}
+
+/* The html surface also follows the actual saved appearance under iOS safe areas. */
+html:has(.app-wallpaper.product-ui),
+html:has(.app-wallpaper.product-ui) body {
+  background: var(--fk-identity-bg) !important;
+  color-scheme: dark;
+}
+
+html:has(.app-wallpaper.product-ui[data-theme="light"]),
+html:has(.app-wallpaper.product-ui[data-theme="light"]) body {
+  color-scheme: light;
+}
+
+.app-wallpaper.product-ui,
+.app-wallpaper.product-ui[data-theme],
+.app-wallpaper.product-ui[data-theme][data-wallpaper] {
+  --color-bg: var(--fk-identity-bg);
+  --color-surface: var(--fk-identity-surface);
+  --color-surface-2: var(--fk-identity-inset);
+  --color-fg: var(--fk-identity-fg);
+  --color-text: var(--fk-identity-fg);
+  --color-muted: var(--fk-identity-muted);
+  --color-line: var(--fk-identity-line);
+  --color-accent: var(--fk-identity-accent);
+  --color-accent-fg: var(--fk-identity-accent-fg);
+  --color-warn: var(--fk-identity-warn);
+  --color-risk: var(--fk-identity-risk);
+  --fk-card-bg: var(--fk-identity-surface);
+  --fk-card-border: var(--fk-identity-line);
+  --fk-inner-bg: var(--fk-identity-inset);
+  --fk-accent: var(--fk-identity-accent);
+  --fk-text-2: var(--fk-identity-muted);
+  --fk-success: var(--fk-identity-success);
+  --fk-card-radius: 1rem;
+  --fk-inner-radius: .75rem;
+  --fk-card-pad: 1rem;
+  --fk-page-title: 1.75rem;
+  --fk-card-title: 1.125rem;
+  --radius-card: 1rem;
+  --ui03-edge: var(--fk-identity-line);
+  --ui03-elevation: none;
+  background: var(--fk-identity-bg);
+  color: var(--fk-identity-fg);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  color-scheme: dark;
+}
+
+.app-wallpaper.product-ui[data-theme="light"],
+.app-wallpaper.product-ui[data-theme="light"][data-wallpaper] { color-scheme: light; }
+
+/* Respect the selected local wallpaper without bringing a glow behind text. */
+.app-wallpaper.product-ui[data-theme][data-wallpaper="track"] {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--fk-identity-accent) 2.5%, var(--fk-identity-bg)), var(--fk-identity-bg) 16%);
+}
+.app-wallpaper.product-ui[data-theme][data-wallpaper="forest"] {
+  background: color-mix(in srgb, var(--fk-identity-success) 3%, var(--fk-identity-bg));
+}
+.app-wallpaper.product-ui[data-theme][data-wallpaper="night"] {
+  background: color-mix(in srgb, var(--fk-identity-muted) 3%, var(--fk-identity-bg));
+}
+
+.app-wallpaper.product-ui :is(main, section, article, header, footer, form, fieldset) { min-width: 0; }
+.app-wallpaper.product-ui :is(h1, h2, h3, button, label) { overflow-wrap: anywhere; }
+.app-wallpaper.product-ui :is(h1, h2, h3, .font-bold) { font-weight: 650; }
+.app-wallpaper.product-ui .font-black { font-weight: 750; }
+.app-wallpaper.product-ui .text-base { font-size: 1.0625rem; }
+.app-wallpaper.product-ui .text-sm { font-size: 1rem; }
+.app-wallpaper.product-ui :is(.text-xs, .text-\[10px\], .text-\[11px\], .text-\[12px\]) {
+  font-size: .875rem;
+  line-height: 1.45;
+}
+.app-wallpaper.product-ui .text-accent { color: var(--fk-identity-action); }
+.app-wallpaper.product-ui :is(.tabular-nums, [role="timer"], .fk-metric-value, .fk-date-day) {
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -.025em;
+}
+
+/* Existing header and dock keep their keyboard/scroll behavior. */
+.app-wallpaper.product-ui .ui03-header {
+  background: var(--fk-identity-bg) !important;
+  border-bottom: 1px solid var(--fk-identity-line);
+  padding-top: calc(env(safe-area-inset-top) + .375rem) !important;
+  padding-bottom: .375rem !important;
+  padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.app-wallpaper.product-ui .ui03-header-inner { min-height: 3rem !important; gap: .75rem; }
+.app-wallpaper.product-ui .ui03-title { font-size: var(--fk-page-title); line-height: 1.2; font-weight: 650; letter-spacing: -.035em; }
+.app-wallpaper.product-ui .ui03-subtitle { margin-top: .25rem; font-size: .875rem; line-height: 1.4; white-space: normal; }
+.app-wallpaper.product-ui .ui03-settings { border: 0; border-radius: .75rem; background: var(--fk-identity-inset); box-shadow: none; }
+.app-wallpaper.product-ui .ui03-header button.size-11 { min-height: 2.75rem; min-width: 2.75rem; width: 2.75rem; height: 2.75rem; }
+.app-wallpaper.product-ui .ui03-main { padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right)); padding-top: 1rem; }
+.app-wallpaper.product-ui .ui03-dock {
+  background: var(--fk-identity-surface) !important;
+  border-top: 1px solid var(--fk-identity-line) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
+.app-wallpaper.product-ui .ui03-dock-inner { overflow: visible; }
+.app-wallpaper.product-ui .ui03-tab { min-height: 4.5rem; padding-block: .625rem .5rem; gap: .25rem; }
+.app-wallpaper.product-ui .ui03-tab-icon,
+.app-wallpaper.product-ui .ui03-tab-active .ui03-tab-icon,
+.app-wallpaper.product-ui .ui04-coach-tab .ui04-coach-tab-icon {
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  border-radius: 0;
+  min-width: 2.75rem;
+  height: 1.5rem;
+}
+.app-wallpaper.product-ui .ui03-tab-label { font-size: .875rem; font-weight: 600; line-height: 1.25; }
+.app-wallpaper.product-ui .ui03-tab-active { color: var(--fk-identity-action); }
+.app-wallpaper.product-ui .ui03-tab-active::after { top: .1875rem; left: calc(50% - .5rem); right: auto; width: 1rem; height: .1875rem; border-radius: 1px; background: var(--fk-identity-accent); }
+
+.app-wallpaper.product-ui .fk-brand-lockup h1 { font-size: 1.625rem; font-weight: 750; font-style: normal; line-height: 1.15; letter-spacing: .035em; }
+.app-wallpaper.product-ui .fk-brand-lockup :is(p, span) { display: block; margin-top: .1875rem; font-size: .875rem; color: var(--fk-identity-muted); font-weight: 500; }
+.app-wallpaper.product-ui .fk-page-header:not(.ui03-header) { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; padding-bottom: 1rem; }
+.app-wallpaper.product-ui .fk-page-header h2 { font-size: 1.5rem; font-weight: 650; }
+.app-wallpaper.product-ui .fk-today-date { display: flex; align-items: center; gap: .75rem; padding: .25rem 0 .25rem .75rem; margin-block: .25rem 1.25rem; border-inline-start: 3px solid var(--fk-identity-accent); }
+.app-wallpaper.product-ui .fk-first-training { margin-top: 1.5rem; padding: 1rem .25rem .25rem; border-top: 1px solid var(--color-line); }
+.app-wallpaper.product-ui .fk-first-training h3 { margin: 0; font-size: 1.5rem; line-height: 1.4; font-weight: 750; letter-spacing: -.025em; }
+.app-wallpaper.product-ui .fk-first-training > p { margin-top: .5rem; color: var(--fk-identity-muted); font-size: .9375rem; line-height: 1.65; }
+.app-wallpaper.product-ui .fk-first-training-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .625rem; margin-top: 1.5rem; }
+.app-wallpaper.product-ui .fk-first-training-actions button { display: flex; align-items: center; justify-content: center; gap: .375rem; min-height: 3rem; font-size: .9375rem; font-weight: 700; border-radius: .75rem; }
+.app-wallpaper.product-ui .fk-first-import { color: var(--fk-identity-fg); background: var(--fk-identity-surface); border: 1px solid var(--color-line); }
+.app-wallpaper.product-ui .fk-first-browse { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%; min-height: 3rem; margin-top: .75rem; color: var(--fk-identity-muted); font-size: .875rem; }
+.app-wallpaper.product-ui .fk-date-day { font-size: 2.625rem; font-weight: 650; line-height: 1; color: var(--fk-identity-fg); }
+.app-wallpaper.product-ui .fk-date-context { font-size: .875rem; color: var(--fk-identity-muted); }
+.app-wallpaper.product-ui .fk-date-context :is(b, span) { display: block; }
+.app-wallpaper.product-ui .fk-date-context b { color: var(--fk-identity-fg); font-weight: 600; }
+.app-wallpaper.product-ui .fk-date-context span { margin-top: .1875rem; }
+
+/* A quiet surface, with flat nested sections rather than repeated frames. */
+.app-wallpaper.product-ui :is(.home-card, .fk-dash-card, .fk-panel, .fk-h89-card, .fk-h89-tile, .fk-m89-card, .metric-tile) {
+  background: var(--fk-identity-surface);
+  border-color: var(--fk-identity-line);
+  border-radius: 1rem;
+  box-shadow: none;
+}
+.app-wallpaper.product-ui :is(.home-card, .fk-dash-card, .fk-panel) :is(.home-card, .fk-dash-card, .fk-panel) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.app-wallpaper.product-ui :is(.fangkun-hub, .fangkun-next) { background: var(--fk-identity-surface); border-color: var(--fk-identity-line); box-shadow: none; border-radius: 1rem; }
+.app-wallpaper.product-ui .fangkun-next { border-inline-start: 3px solid var(--fk-identity-accent); }
+.app-wallpaper.product-ui .fangkun-core-mark { box-shadow: none; border-radius: .75rem; }
+.app-wallpaper.product-ui :is(.product-section-heading h2, .fk-dash-title, .fk-h89-section-title h2) { font-size: 1.125rem; font-weight: 650; line-height: 1.4; }
+.app-wallpaper.product-ui :is(.product-eyebrow, .product-text-action, .fangkun-next-detail, .fangkun-next-eyebrow, .fk-h89-section-title > span) { font-size: .875rem; line-height: 1.4; }
+.app-wallpaper.product-ui :is(.product-text-action, .fk-link) { color: var(--fk-identity-action); font-weight: 600; }
+.app-wallpaper.product-ui .fk-bar { background: var(--fk-identity-inset); }
+.app-wallpaper.product-ui :is(.stat-run, .stat-lift) { background: var(--fk-identity-inset); }
+.app-wallpaper.product-ui :is(.chip-run, .chip-lift) { background: var(--fk-identity-inset); color: var(--fk-identity-fg); }
+.app-wallpaper.product-ui :is(.tone-run, .tone-lift) { color: var(--fk-identity-action); }
+
+/* Controls: orange is an action; selected filters stay quiet. */
+.app-wallpaper.product-ui button { min-height: 2.75rem; }
+.app-wallpaper.product-ui :is(.fk-primary, .fk-orange-btn, .ink-btn, .cta-run, .cta-lift, button.bg-accent, a.bg-accent) {
+  min-height: 3rem;
+  background: var(--fk-identity-accent);
+  color: var(--fk-identity-accent-fg);
+  border-color: transparent;
+  border-radius: .75rem;
+  font-size: 1rem;
+  font-weight: 650;
+  box-shadow: none;
+  line-height: 1.4;
+  padding-block: .625rem;
+}
+.app-wallpaper.product-ui :is(.fk-primary, .fk-orange-btn, .ink-btn, .cta-run, .cta-lift, button.bg-accent, a.bg-accent) :is(.text-accent, .text-white) { color: inherit; }
+.app-wallpaper.product-ui :is(.fk-chip, .fk-subjective .fk-chip) { min-height: 2.75rem; max-width: 100%; padding: .5rem .75rem; border-radius: .625rem; font-size: .875rem; font-weight: 550; white-space: normal; line-height: 1.4; }
+.app-wallpaper.product-ui .fk-chip[aria-pressed="true"] { background: var(--fk-identity-inset); border-color: var(--fk-identity-action); color: var(--fk-identity-fg); }
+.app-wallpaper.product-ui [role="tablist"][aria-label="本周"] [role="tab"][aria-selected="true"] {
+  background: var(--fk-identity-inset);
+  color: var(--fk-identity-fg);
+  border-color: var(--fk-identity-line);
+  box-shadow: inset 0 -3px 0 var(--fk-identity-accent);
+}
+.app-wallpaper.product-ui :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), select, textarea) {
+  min-width: 0;
+  max-width: 100%;
+  min-height: 3rem;
+  font-size: max(16px, 1.0625rem);
+  line-height: 1.5;
+  color: var(--fk-identity-fg);
+  background-color: var(--fk-identity-surface);
+  border-color: var(--fk-identity-line);
+  border-radius: .75rem;
+}
+.app-wallpaper.product-ui :is(input, textarea)::placeholder { color: var(--fk-identity-muted); opacity: 1; }
+.app-wallpaper.product-ui :is(input[type="checkbox"], input[type="radio"]) { accent-color: var(--fk-identity-action); }
+.app-wallpaper.product-ui :is(input[type="date"], input[type="time"], input[type="datetime-local"]) { -webkit-appearance: none; appearance: none; }
+.app-wallpaper.product-ui :is(button, a, summary, input, textarea, select):focus-visible { outline: 2px solid var(--fk-identity-focus); outline-offset: 3px; }
+.app-wallpaper.product-ui :is(button, a)[aria-disabled="true"], .app-wallpaper.product-ui button:disabled { opacity: .5; }
+
+/* The training hub contracts also work alongside existing Tailwind utility classes. */
+.app-wallpaper.product-ui .fk-training-hub { min-width: 0; }
+.app-wallpaper.product-ui .fk-training-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem; border-bottom: 1px solid var(--fk-identity-line); padding: 0; margin-bottom: 1rem; background: transparent; border-radius: 0; }
+.app-wallpaper.product-ui .fk-training-tabs button { position: relative; min-width: 0; min-height: 3rem; padding: .625rem .375rem; border: 0; border-radius: 0; background: transparent; color: var(--fk-identity-muted); font-size: 1rem; font-weight: 550; box-shadow: none; }
+.app-wallpaper.product-ui .fk-training-tabs button:is([aria-selected="true"], [aria-pressed="true"], [aria-current="page"]) { background: transparent; color: var(--fk-identity-fg); font-weight: 650; }
+.app-wallpaper.product-ui .fk-training-tabs button:is([aria-selected="true"], [aria-pressed="true"], [aria-current="page"])::after { content: ""; position: absolute; inset-inline: 30%; bottom: -1px; height: 3px; background: var(--fk-identity-accent); border-radius: 1px; }
+.app-wallpaper.product-ui .fk-training-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem .75rem; margin-bottom: 1rem; }
+.app-wallpaper.product-ui .fk-training-toolbar > * { min-width: 0; max-width: 100%; }
+.app-wallpaper.product-ui .fk-training-toolbar > div { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem; }
+.app-wallpaper.product-ui .fk-training-toolbar button:not(.bg-accent):not(.fk-primary):not(.fk-orange-btn) { padding-inline: .75rem; border-radius: .625rem; border-color: transparent; font-size: .875rem; font-weight: 550; }
+.app-wallpaper.product-ui .fk-training-toolbar button[aria-pressed="true"] { background: var(--fk-identity-inset); color: var(--fk-identity-fg); }
+.app-wallpaper.product-ui .fk-course-card { padding: 1rem; border: 0; border-bottom: 1px solid var(--fk-identity-line); border-radius: 0; background: transparent; box-shadow: none; min-width: 0; }
+.app-wallpaper.product-ui.fk-identity .fk-course-card.home-card { padding: 1rem; background: var(--fk-identity-surface); border: 1px solid var(--fk-identity-line); border-radius: 1rem; }
+.app-wallpaper.product-ui .fk-course-card:last-child { border-bottom: 0; }
+.app-wallpaper.product-ui .fk-course-card h3 { font-size: 1.0625rem; }
+.app-wallpaper.product-ui .fk-date-rail { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); align-items: start; gap: .875rem; padding-block: 1rem; border-bottom: 1px solid var(--fk-identity-line); min-width: 0; }
+.app-wallpaper.product-ui .fk-date-rail:last-child { border-bottom: 0; }
+.app-wallpaper.product-ui .fk-date-rail > :first-child { color: var(--fk-identity-muted); font-size: .875rem; font-variant-numeric: tabular-nums; }
+.app-wallpaper.product-ui .fk-date-rail > :first-child strong { display: block; color: var(--fk-identity-fg); font-size: 1.625rem; font-weight: 650; line-height: 1.2; }
+.app-wallpaper.product-ui .fk-date-rail-current > :first-child { border-inline-start: 3px solid var(--fk-identity-accent); padding-inline-start: .5rem; }
+.app-wallpaper.product-ui .fk-date-rail:has(.fk-date-rail-action) { grid-template-columns: 3.25rem minmax(0, 1fr) auto; }
+.app-wallpaper.product-ui .fk-date-rail-action { grid-column: 3; align-self: center; }
+
+/* AppSheet retains the existing viewport and keyboard measurements. */
+.app-wallpaper.product-ui .fk-sheet {
+  background: var(--fk-identity-bg);
+  color: var(--fk-identity-fg);
+  border-color: var(--fk-identity-line);
+  border-radius: 1.25rem 1.25rem 0 0;
+  box-shadow: var(--fk-identity-shadow);
+  font-size: 1.0625rem;
+}
+.app-wallpaper.product-ui .fk-sheet > :is(header, footer) { background: var(--fk-identity-bg); border-color: var(--fk-identity-line); }
+.app-wallpaper.product-ui .fk-sheet > header { gap: .75rem; padding: .875rem 1rem; }
+.app-wallpaper.product-ui .fk-sheet > header h2 { overflow: visible; white-space: normal; text-overflow: clip; font-size: 1.25rem; font-weight: 650; line-height: 1.35; }
+.app-wallpaper.product-ui .fk-sheet > header > button { min-width: 2.75rem; min-height: 2.75rem; border: 0; border-radius: .75rem; background: var(--fk-identity-inset); }
+.app-wallpaper.product-ui .fk-sheet > .overflow-y-auto { padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right)); scroll-padding-block: 1rem; }
+.app-wallpaper.product-ui .fk-sheet > footer { padding-top: .75rem; }
+.app-wallpaper.product-ui .fk-sheet > footer:empty { padding: 0 !important; border: 0; }
+.app-wallpaper.product-ui .fk-sheet form :is(section, fieldset) { min-width: 0; }
+.app-wallpaper.product-ui .fk-sheet form > fieldset > section { background: transparent; border: 0; border-radius: 0; padding-inline: 0; }
+.app-wallpaper.product-ui .fk-sheet form > fieldset > section + section { border-top: 1px solid var(--fk-identity-line); padding-top: 1rem; }
+
+/* Health, anatomy and coaching use the same typography and actual-data colors. */
+.app-wallpaper.product-ui :is(.product-segments, .fk-h89-period, .fk-h89-seg) { background: var(--fk-identity-inset); border-color: transparent; border-radius: .75rem; }
+.app-wallpaper.product-ui :is(.product-segments, .fk-h89-period, .fk-h89-seg, .fk-h89-tabs) button { min-height: 2.75rem; font-size: .875rem; border-radius: .625rem; }
+.app-wallpaper.product-ui :is(.product-segments, .fk-h89-period, .fk-h89-seg, .fk-h89-tabs) button[aria-pressed="true"] { background: var(--fk-identity-surface); color: var(--fk-identity-fg); box-shadow: none; }
+.app-wallpaper.product-ui .fk-h89-metrics button { font-size: .875rem; }
+.app-wallpaper.product-ui .fk-h89-metrics button[aria-pressed="true"] { background: var(--fk-identity-inset); border-color: var(--fk-identity-line); color: var(--fk-identity-fg); }
+.app-wallpaper.product-ui .fk-h89-actions .fk-h89-pill:first-child { background: var(--fk-identity-accent); color: var(--fk-identity-accent-fg); border-color: transparent; }
+.app-wallpaper.product-ui .fk-h89-reading strong { color: var(--fk-identity-fg); font-size: 1.75rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.app-wallpaper.product-ui .fk-h89-tile > p:nth-child(2) b { font-size: 1.5rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.app-wallpaper.product-ui :is(.fk-h89-reading small, .fk-h89-reading > div > span, .fk-h89-tile > p:nth-child(3), .fk-h89-disclosure > summary, .fk-h89-records > summary) { font-size: .875rem; }
+.app-wallpaper.product-ui :is(.fk-h89-event, .fk-h89-hours > span) { background: var(--fk-identity-inset); }
+.app-wallpaper.product-ui :is(.fk-target-stage, .fk-target-status, .fk-m89-stage) { background: var(--fk-identity-model); }
+.app-wallpaper.product-ui :is(.fk-m89-side button, .fk-m89-legend) { background: var(--fk-identity-surface); color: var(--fk-identity-fg); border-color: var(--fk-identity-line); }
+.app-wallpaper.product-ui :is(.fk-target-controls button, .fk-target-layer button, .fk-target-muscles button, .fk-m89-side button) { min-height: 2.75rem; font-size: .875rem; }
+.app-wallpaper.product-ui :is(.fk-target-controls button, .fk-target-layer button)[aria-pressed="true"] { background: var(--fk-identity-inset); color: var(--fk-identity-fg); border-color: var(--fk-identity-action); }
+.app-wallpaper.product-ui .fk-detail :is(.fk-topic, details > summary, section > div:first-child > h2) { color: var(--fk-identity-fg); font-size: 1.125rem; font-weight: 650; }
+.app-wallpaper.product-ui .fk-detail .fk-topic { background: var(--fk-identity-inset); border-color: var(--fk-identity-line); }
+.app-wallpaper.product-ui .fk-detail .fk-topic::before { background: var(--fk-identity-accent); }
+.app-wallpaper.product-ui .fk-detail .fk-sub { color: var(--fk-identity-fg); font-size: 1.0625rem; }
+.app-wallpaper.product-ui .fk-detail :is(.fk-body, li, p) { font-size: 1.0625rem; line-height: 1.6; }
+.app-wallpaper.product-ui :is(.fk-bubble-coach, .fk-bubble-user) { font-size: 1.0625rem; line-height: 1.6; padding: .75rem .875rem; }
+.app-wallpaper.product-ui .fk-bubble-coach { background: var(--fk-identity-surface); border-color: var(--fk-identity-line); }
+.app-wallpaper.product-ui .fk-bubble-user { background: var(--fk-identity-inset); color: var(--fk-identity-fg); }
+.app-wallpaper.product-ui .ui03-header.fk-coach-head .ui03-header-inner { min-height: 3rem !important; }
+.app-wallpaper.product-ui .ui03-header.fk-coach-head .ui03-title { font-size: 1.25rem; }
+.app-wallpaper.product-ui .fk-coach-sheet .fk-coach-bar,
+.app-wallpaper.product-ui.fk-coach-shell > header ~ p,
+.app-wallpaper.product-ui .fk-coach-sheet > .mx-4.mb-2 { background: var(--fk-identity-bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+@media (max-width: 374px) {
+  .app-wallpaper.product-ui .ui03-header-inner { gap: .5rem; }
+  .app-wallpaper.product-ui .ui03-header-inner > .flex { gap: .375rem; }
+  .app-wallpaper.product-ui .fk-brand-lockup h1 { font-size: 1.375rem; }
+  .app-wallpaper.product-ui .fk-training-toolbar { align-items: stretch; }
+  .app-wallpaper.product-ui .fk-training-toolbar > div { flex: 1 1 100%; }
+  .app-wallpaper.product-ui .fk-date-rail { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .625rem; }
+  .app-wallpaper.product-ui .fk-date-rail:has(.fk-date-rail-action) { grid-template-columns: 2.75rem minmax(0, 1fr) auto; }
+  .app-wallpaper.product-ui .fk-target-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-wallpaper.product-ui [role="tablist"][aria-label="本周"] { grid-template-columns: repeat(7, minmax(2.75rem, 1fr)); overflow-x: auto; padding-bottom: .375rem; }
+}
+
+@media (min-width: 768px) {
+  .app-wallpaper.product-ui .ui03-main { padding-top: 1.25rem; }
+  .app-wallpaper.product-ui .fk-page-header h2 { font-size: 1.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-wallpaper.product-ui :is(.ui03-tab-icon, .fk-training-tabs button, .fk-h89-disclosure > summary::after) { transition: none; }
+}

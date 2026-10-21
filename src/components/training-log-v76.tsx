@@ -122,6 +122,8 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
   const feelLogs = plan.cycle?.logs ?? []
   const undatedImports = loadConfirmedTrainingImports().filter(i => !calendarDayShanghai(i.occurredAt.value) && !String(i.title.value ?? "").includes("佳明账号同步"))
   const undatedOcc = listTrainingOccurrences().filter(o => !calendarDayShanghai(o.startedAt))
+  const garminCount = garminActivities().length
+  const hasHistory = rows.length > 0 || undatedImports.length > 0 || undatedOcc.length > 0 || garminCount > 0
   return <div className="fk-log-v76 mx-auto max-w-3xl px-3 pt-2 pb-nav" data-testid="training-log-v76">
     {/* v83（P1-04）：先看“待补什么、最近练了什么”；五维能力图下移到记录之后 */}
     <PendingFeedbackList today={today} />
@@ -131,12 +133,12 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
         {([["all", "全部"], ["run", "跑步"], ["lift", "力量"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={f.kind === id} onClick={() => setFilter({ kind: id })} className={seg(f.kind === id)}>{label}</button>)}
       </div>
       <div className="mt-2 grid grid-cols-2 gap-1 rounded-full bg-surface-2 p-1" role="group" aria-label="日期范围">
-        {([["week", "本周（按天）"], ["4w", "近4周（按周）"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={!focusDay && f.range === id} onClick={() => setFilter({ range: id })} className={seg(!focusDay && f.range === id)}>{label}</button>)}
+        {([["week", "本周"], ["4w", "近4周"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={!focusDay && f.range === id} onClick={() => setFilter({ range: id })} className={seg(!focusDay && f.range === id)}>{label}</button>)}
       </div>
+      {!focusDay && f.kind !== "all" ? <p className="keep mt-2 flex items-center justify-between rounded-lg bg-accent/15 px-2 py-1 text-xs font-bold text-accent" data-testid="active-filter">只看{f.kind === "run" ? "跑步" : "力量"}{otherCount ? ` · 另有 ${otherCount} 条${f.kind === "run" ? "力量" : "跑步"}没显示` : ""}<button type="button" className="min-h-9 underline" onClick={() => setFilter({ kind: "all" })}>看全部</button></p> : null}
     </section>
-    <section className="home-card mt-3 px-3 py-3" aria-label="当前周期摘要">
+    {focusDay || s.count > 0 ? <section className="home-card mt-3 px-3 py-3" aria-label="当前周期摘要">
       {focusDay ? <p className="keep text-sm font-bold">{focusDay} 的记录（从复盘打开）<button type="button" className="fk-link ml-2 text-xs" onClick={() => setFocusDay(null)}>回到{f.range === "week" ? "本周" : "近4周"}</button></p> : <>
-        {f.kind !== "all" ? <p className="keep mb-1 flex items-center justify-between rounded-lg bg-accent/15 px-2 py-1 text-xs font-bold text-accent" data-testid="active-filter">只看{f.kind === "run" ? "跑步" : "力量"}{otherCount ? ` · 另有 ${otherCount} 条${f.kind === "run" ? "力量" : "跑步"}没显示` : ""}<button type="button" className="underline" onClick={() => setFilter({ kind: "all" })}>看全部</button></p> : null}
         <p className="keep text-sm"><b>{s.start.slice(5)} – {s.end.slice(5)}</b> · {f.kind === "all" ? "全部" : f.kind === "run" ? "跑步" : "力量"} {s.count} 条记录{f.kind === "all" ? `（跑步 ${s.run} · 力量 ${s.lift}${s.run + s.lift > s.count ? `，其中 ${s.run + s.lift - s.count} 条是跑+力量同一课` : ""}）` : ""}{s.incomplete ? ` · 另有 ${s.incomplete} 条未完成（不计入）` : ""}</p>
         <p className="keep mt-1 text-xs text-muted">{f.kind !== "lift" ? `跑步 ${(s.distanceM / 1000).toFixed(2)} km${s.missingDistance ? `（${s.missingDistance} 条缺距离，未计入）` : ""} · ` : ""}时长 {s.durationSec ? durTotal(s.durationSec) : s.missingDuration ? "—" : "0分钟"}{s.missingDuration ? `（${s.missingDuration} 条缺时长，未计入）` : ""} · 来源 手机记录 {s.bySource.app} · 佳明 {s.bySource.garmin}{s.bySource.upload ? ` · 聊天/上传 ${s.bySource.upload}` : ""}</p>
         <div className="mt-2 flex items-end gap-1.5" aria-label={f.range === "week" ? "本周每天训练分钟" : "近4周每周训练分钟"}>
@@ -147,29 +149,34 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
           </div>)}
         </div>
       </>}
-    </section>
+    </section> : null}
     <section className="home-card mt-3 px-3 py-2" aria-label="训练记录列表">
       {days.length ? days.map(([d, rs]) => <div key={d} id={`log-day-${d}`} className="scroll-mt-24">
         <h3 className="keep pt-2 text-xs font-bold text-muted">{d.slice(5)} 周{"日一二三四五六"[new Date(d + "T00:00:00Z").getUTCDay()]} · {rs.length} 条</h3>
         <ul>{rs.map(r => <RecordRow key={r.id} r={r} plan={plan} link={linkByRow.get(r.id)} onAsk={onAsk} open={openId === r.id} onOpen={v => setOpenId(v ? r.id : null)} />)}</ul>
-      </div>) : <p className="keep py-2 text-sm text-muted">{hint ?? `${s.start.slice(5)}–${s.end.slice(5)} 还没有${f.kind === "run" ? "跑步" : f.kind === "lift" ? "力量" : "训练"}记录。`}</p>}
+      </div>) : hasHistory || focusDay ? <p className="keep py-2 text-sm text-muted">{focusDay ? `${focusDay} 没有训练记录。` : hint ?? `${s.start.slice(5)}–${s.end.slice(5)} 还没有${f.kind === "run" ? "跑步" : f.kind === "lift" ? "力量" : "训练"}记录。`}</p> : <div className="py-5 text-center">
+        <p className="text-base font-bold">还没有训练记录</p>
+        {onNavigate ? <button type="button" className="fk-primary mt-3 min-h-11 px-5" onClick={() => onNavigate("plan")}>去安排训练</button> : null}
+      </div>}
       {prevWeek ? <p className="keep pt-1 text-xs text-muted">上周（{prevWeek.start.slice(5)}–{prevWeek.end.slice(5)}）有 {prevWeek.count} 条{f.kind === "run" ? "跑步" : f.kind === "lift" ? "力量" : ""}记录{prevWeek.incomplete ? `（另有 ${prevWeek.incomplete} 条未完成，不计入）` : ""}。<button type="button" className="ml-1 font-bold text-accent underline" onClick={() => setFilter({ range: "4w" })}>看近4周</button></p> : null}
     </section>
     <UnmarkedPlans items={unmarked} plan={plan} suggestions={runMatch.suggestions} onChanged={() => setRev(n => n + 1)} />
+    {hasHistory ? <>
     <div className="mt-3"><ReviewPanel today={today} title="方坤复盘" /></div>
-    <Entry id="log-trend" title="详细趋势" summary="训练负荷 · 记录依据查询" open={entry.trend} onToggle={o => setEntry(e => ({ ...e, trend: o }))}>{entry.trend ? <><LogMetricsPanel today={today} loadOnly /><TrainingEvidencePanel today={today} /></> : null}</Entry>
-    <section className="home-card mt-3 px-3 py-2" aria-label="我的能力（五维）" data-testid="log-radar"><div className="flex items-baseline justify-between"><h2 className="text-base font-bold">我的能力</h2><span className="keep text-xs text-muted">点各维看输入和算法</span></div><AbilityRadarCard asOf={today} mode="chart" /></section>
-    <Entry id="log-week-review" title="本周复盘与感受" summary={feelLogs.length ? `感受 ${feelLogs.length} 条 · 查看建议与反馈` : "查看本周建议，按需补充感受"} open={entry.history || entry.feel} onToggle={o => setEntry(e => ({ ...e, history: o, feel: o }))}>
+    <Entry id="log-trend" title="详细趋势" summary="训练负荷" open={entry.trend} onToggle={o => setEntry(e => ({ ...e, trend: o }))}>{entry.trend ? <><LogMetricsPanel today={today} loadOnly /><TrainingEvidencePanel today={today} /></> : null}</Entry>
+    <details className="home-card mt-3 px-3 py-2" aria-label="我的能力（五维）" data-testid="log-radar"><summary className="min-h-12 cursor-pointer text-base font-bold">我的能力</summary><AbilityRadarCard asOf={today} mode="chart" /></details>
+    </> : null}
+    {hasHistory || feelLogs.length > 0 ? <Entry id="log-week-review" title="本周复盘与感受" summary={feelLogs.length ? `感受 ${feelLogs.length} 条 · 查看建议与反馈` : "查看本周建议，按需补充感受"} open={entry.history || entry.feel} onToggle={o => setEntry(e => ({ ...e, history: o, feel: o }))}>
       {entry.history || entry.feel ? <>
         <AssessmentPanel />
         <div className="mt-3 border-t border-line pt-3 text-sm">
           <h3 className="font-bold">本周感受与成长</h3>
-          {feelLogs.length ? <ul className="mt-2 space-y-1">{feelLogs.map(log => <li key={log.sessionId}>{plan.sessions.find(x => x.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <div className="mt-2 text-sm"><p>尚无本周主观感受。训练后评分填写一次即可，日志不重复要求填写。</p><button type="button" className="mt-2 min-h-11 rounded-full border border-line px-3 font-bold" onClick={() => onNavigate?.("today")}>前往今日反馈</button></div>}
+          {feelLogs.length ? <ul className="mt-2 space-y-1">{feelLogs.map(log => <li key={log.sessionId}>{plan.sessions.find(x => x.id === log.sessionId)?.name ?? "未命名课"} · {FEEL[log.feel] ?? log.feel}{log.note ? ` · ${log.note}` : ""}</li>)}</ul> : <div className="mt-2 text-sm"><p>本周还没有训练感受。</p><button type="button" className="mt-2 min-h-11 rounded-full border border-line px-3 font-bold" onClick={() => onNavigate?.("today")}>前往今日反馈</button></div>}
           <AthleteGrowthCard plan={plan} />
         </div>
       </> : null}
-    </Entry>
-    <Entry id="log-garmin" title="佳明活动" summary={`共 ${garminActivities().length} 条 · 原始列表`} open={entry.garmin} onToggle={o => setEntry(e => ({ ...e, garmin: o }))}>{entry.garmin ? <GarminLog range={{ start: s.start, end: s.end }} /> : null}</Entry>
+    </Entry> : null}
+    {garminCount > 0 ? <Entry id="log-garmin" title="佳明活动" summary={`共 ${garminCount} 条 · 原始列表`} open={entry.garmin} onToggle={o => setEntry(e => ({ ...e, garmin: o }))}>{entry.garmin ? <GarminLog range={{ start: s.start, end: s.end }} /> : null}</Entry> : null}
     {undatedImports.length || undatedOcc.length ? <Entry id="log-undated" title="没有可用日期的记录" summary={`${undatedImports.length + undatedOcc.length} 条`}>
       {undatedImports.map(item => <ImportRow key={item.confirmedImportId} item={item} onAsk={onAsk} onDeleted={() => setRev(n => n + 1)} />)}
       {undatedOcc.map(item => <OccurrenceCard key={item.trainingOccurrenceId} item={item} plan={plan} onAsk={onAsk} />)}

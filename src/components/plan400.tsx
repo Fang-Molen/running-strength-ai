@@ -2,7 +2,8 @@ import { mainTrainingLines } from '@/lib/plan/plan-main';
 import { sleepHoursText } from "@/lib/health/observation";
 import { stampCN } from "@/lib/ui/activity-format";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, TriangleAlert, X } from "lucide-react";
+import { ChevronDown, ChevronRight, TriangleAlert } from "lucide-react";
+import { Sheet } from "./sheet";
 import { ExerciseEditor, PartChips, doseOf, UNIT_LABEL, type Ex } from "@/components/exercise-editor";
 import { fmtRest } from "@/lib/strength/rest";
 import { plan400TodayEntry, parseV4StrengthText } from "@/lib/ui/plan400-start";
@@ -21,7 +22,7 @@ import { RunLinkPanel, PartFeedbackForm, RecoveryParts, useParts, useV4RunLink, 
 import type { DayParts } from "@/lib/ui/plan400-view";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { currentAthleteId } from "@/lib/core/events";
-import { activePlan, planLabel, planTag, planPrefix } from "@/lib/plan/active-plan";
+import { activePlan, planLabel } from "@/lib/plan/active-plan";
 import { NoPlanCard, usePlanRevision } from "@/components/plan-import";
 
 /* 原课表只读：存储里的计划文档（fk-plan-doc-v1）永不被训练记录改写。执行记录沿用原 key 与字段（fk-plan400-v4-log / fk-plan400-v4-overrides），无 schema 变化。 */
@@ -102,19 +103,18 @@ function CompChip({ s }: { s: ComponentState }) { return <span className={"shrin
 function ComboStatus({ v }: { v: ComboView }) {
   if (!v.combo) return null;
   return <section className="home-card p-3" aria-label="组合课分项状态" data-testid="combo-status">
-    <p className="keep text-xs text-muted">组合课分两项记录 · {v.overall}</p>
+    <p className="text-sm text-muted">{v.overall}</p>
     <div className="mt-2 grid gap-1.5"><div className="flex items-center justify-between gap-2"><span className="font-bold">跑步</span><CompChip s={v.running} /></div>{v.running.detail ? <p className="keep text-[11px] text-muted">{v.running.detail}</p> : null}
       {v.strength ? <div className="flex items-center justify-between gap-2"><span className="font-bold">力量</span><CompChip s={v.strength} /></div> : null}</div>
-    {v.legacy.done ? <p className="keep mt-2 text-[11px] text-muted">整课标记（旧口径，跑步与力量没分开）：{v.legacy.done === "done" ? "完成" : v.legacy.done === "reduced" ? "减量完成" : v.legacy.done === "skipped" ? "没练/取消" : v.legacy.done}</p> : null}
+    {v.legacy.done ? <p className="keep mt-2 text-xs text-muted">历史整课结果：{v.legacy.done === "done" ? "完成" : v.legacy.done === "reduced" ? "减量完成" : v.legacy.done === "skipped" ? "没练/取消" : v.legacy.done}（未区分跑步与力量）</p> : null}
   </section>;
 }
 function DeviceRunList({ runs }: { runs: DeviceRun[] }) {
-  if (!runs.length) return <p className="keep text-xs text-muted">这天没有手表跑步记录。佳明账号同步只在打开 App / 手动同步时拉取；也可以在「健康 › 导入」导入 FIT/TCX/GPX 文件。</p>;
-  return <div className="space-y-2" data-testid="device-run-candidates">
-    <p className="keep text-xs text-muted">同日手表跑步{runs.length > 1 ? `（${runs.length} 条，未判断是哪一条）` : ""} · 只显示设备给出的字段，未关联到这节课</p>
-    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-xs leading-5"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p><p className="keep text-muted">没有确认是这节课的跑步前，不拿它的圈段对照；各组成绩和组间休息请按实际手填，没填就保持未知。</p></div>)}
-    <p className="keep text-[11px] text-muted">这些手表跑步不是这节课的候选（你标过“不是这节”，或已关联到别的计划课），作为计划外记录保留在日志里。</p>
-  </div>;
+  if (!runs.length) return <p className="text-sm text-muted">这天没有手表跑步记录。</p>;
+  return <details className="space-y-2" data-testid="device-run-candidates"><summary className="min-h-11 cursor-pointer py-2 text-sm">其他同日手表记录 · {runs.length}条</summary>
+    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-sm leading-6"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p></div>)}
+    <p className="text-sm text-muted">已排除或已关联其他课程，不参与本课分段对照。</p>
+  </details>;
 }
 export function openPlan400Day(date: string, tab: Tab = "plan") { window.dispatchEvent(new CustomEvent(OPEN_EVT, { detail: { date, tab } })); }
 export function plan400DayFor(date: string): { title: string; kind: ReturnType<typeof dayKind>; week: string } | null { const d = dayOf(P(), date); return d ? { title: d.title, kind: dayKind(d), week: d.week } : null; }
@@ -133,17 +133,17 @@ function StrengthOverride({ d }: { d: V4Day }) {
   const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };
   const startStrength = async () => {
     const r = await ensurePlan400Entry(d.date);
-    if (!r.id) { setStartError(r.reason ?? "这节力量没有可执行的动作，请先“把力量动作设为可执行”。"); return; }
+    if (!r.id) { setStartError(r.reason ?? "请先设置这节训练的力量动作。"); return; }
     setStartError("");
     window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: r.id }));
   };
   const live = strengthLive(d.date);
   return <div className="mt-2 rounded-xl bg-surface-2 p-3">
     {startError ? <p role="alert" className="text-sm text-risk">{startError}</p> : null}
-    {o && !edit ? <><p className="text-xs font-bold text-muted">我的力量安排（修改后的执行安排，原课表不变）</p><ul className="mt-1 space-y-0.5 text-sm">{o.exercises.map((e, i) => <li key={i}>{e.name} {e.sets}×{e.reps}{UNIT_LABEL[e.unit ?? doseOf(e.name).unit]}{(e.perSide ?? doseOf(e.name).perSide) ? "/每侧" : ""}{e.weight ? ` @${e.weight}kg` : ""}{e.rpe ? ` RPE${e.rpe}` : ""}｜组间休息：{fmtRest(e.restSec)}</li>)}{o.betweenRestSec != null ? <li>动作之间休息：{fmtRest(o.betweenRestSec)}</li> : null}</ul></> : null}
+    {o && !edit ? <><p className="text-sm font-bold">我的力量安排</p><ul className="mt-1 space-y-0.5 text-sm">{o.exercises.map((e, i) => <li key={i}>{e.name} {e.sets}×{e.reps}{UNIT_LABEL[e.unit ?? doseOf(e.name).unit]}{(e.perSide ?? doseOf(e.name).perSide) ? "/每侧" : ""}{e.weight ? ` @${e.weight}kg` : ""}{e.rpe ? ` RPE${e.rpe}` : ""}｜组间休息：{fmtRest(e.restSec)}</li>)}{o.betweenRestSec != null ? <li>动作之间休息：{fmtRest(o.betweenRestSec)}</li> : null}</ul></> : null}
     {edit ? <div className="space-y-2"><PartChips value={draft.parts} onChange={(parts) => setDraft({ ...draft, parts })} /><ExerciseEditor value={draft.exercises} onChange={(exercises) => setDraft({ ...draft, exercises })} parts={draft.parts} betweenRest={draft.betweenRestSec ?? null} onBetweenRest={(v) => setDraft({ ...draft, betweenRestSec: v })} />
       <div className="flex gap-2"><button type="button" className="min-h-11 flex-1 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => save({ ...draft, savedAt: new Date().toISOString() })}>保存我的安排</button><button type="button" className="min-h-11 rounded-xl border border-line px-3" onClick={() => setEdit(false)}>取消</button></div></div>
-      : <div className="mt-2 flex flex-wrap gap-2">{o ? <button type="button" className="min-h-11 flex-1 rounded-xl border border-accent font-bold text-accent" onClick={() => { void startStrength(); }}>{live ? "继续力量部分（逐组引导）" : "开始力量部分（逐组引导）"}</button> : null}<button type="button" className="min-h-11 flex-1 rounded-xl border border-line text-sm" onClick={() => { setDraft(o ?? { parts: [], exercises: parseStrength(text), savedAt: "" }); setEdit(true); }}>{o ? "修改力量安排" : "把力量动作设为可执行"}</button>{o ? <button type="button" className="min-h-11 rounded-xl border border-line px-3 text-sm" onClick={() => { if (window.confirm("恢复为原课表的力量文字？你的修改会删除，已完成的训练记录不受影响。")) save(null); }}>恢复原计划</button> : null}</div>}
+      : <div className="mt-2 flex flex-wrap gap-2">{o ? <button type="button" className="min-h-11 flex-1 rounded-xl border border-accent font-bold text-accent" onClick={() => { void startStrength(); }}>{live ? "继续力量训练" : "开始力量训练"}</button> : null}<button type="button" className="min-h-11 flex-1 rounded-xl border border-line text-sm" onClick={() => { setDraft(o ?? { parts: [], exercises: parseStrength(text), savedAt: "" }); setEdit(true); }}>{o ? "修改力量安排" : "设置力量动作"}</button>{o ? <button type="button" className="min-h-11 rounded-xl border border-line px-3 text-sm" onClick={() => { if (window.confirm("恢复为原课表的力量文字？你的修改会删除，已完成的训练记录不受影响。")) save(null); }}>恢复原计划</button> : null}</div>}
   </div>;
 }
 export function parseStrength(text: string): Ex[] {
@@ -153,15 +153,15 @@ export function parseStrength(text: string): Ex[] {
 const DURING: [keyof Log, string, string][] = [["reps", "正式主课实际分段", "如 150m: 21.3 / 21.0 / 21.6"], ["rest", "实际组间休息", "如 7分 / 8分"], ["aux", "辅助段（单独记录）", "如 60m渐进×3 完成"], ["strength", "力量实际 组×重量×次数", "如 分腿蹲 2×20kg×5/腿"]];
 const AFTER: [keyof Log, string, string][] = [["rpe", "整课 RPE (1-10)", "7"], ["pain", "疼痛部位/程度 (0-10)", "无 / 跟腱 2"], ["note", "备注 / 天气 / 场地", ""]];
 /* ui-r2：占位符不再写成像答案的样子（原来的“6.5h · 7 · 小腿酸”“恢复好 · 轻快”看起来像已填）。 */
-const LATER: [keyof Log, string, string][] = [["r24", "24 小时后：恢复1-10·酸痛部位·腿沉（睡眠见上方，不用重复填）", "按实际填写，没感觉就留空"], ["r48", "48–72 小时后：恢复·热身轻快程度", "按实际填写，没感觉就留空"]];
+const LATER: [keyof Log, string, string][] = [["r24", "24小时后：恢复1–10／酸痛／腿沉", "按实际填写"], ["r48", "48–72小时后：恢复／热身轻快程度", "按实际填写"]];
 function SharedSleep({ date }: { date: string }) {
   const [s, setS] = useState<ReturnType<typeof sharedSleepFor>>(null);
   useEffect(() => { try { setS(sharedSleepFor(date, loadVitals().records, currentAthleteId())); } catch { setS(null); } }, [date]);
-  return <p className="keep rounded-xl bg-surface-2 p-2 text-xs text-muted" data-testid="shared-sleep">{s ? `训练当晚睡眠 ${sleepHoursText(s.hours)}（${s.day} · ${s.source}）。这是健康页的同一条记录，跑步和力量共用，不再重复填。` : "训练当晚的睡眠还没有记录。睡眠在健康页记一次就行，跑步和力量共用同一条。"}</p>;
+  return <p className="keep rounded-xl bg-surface-2 p-3 text-sm text-muted" data-testid="shared-sleep">{s ? `当晚睡眠 ${sleepHoursText(s.hours)} · ${s.day} · ${s.source}` : "当晚睡眠未记录，可在健康页补充。"}</p>;
 }
 
 function Fields({ list, value, onChange }: { list: [keyof Log, string, string][]; value: Log; onChange: (l: Log) => void }) {
-  return <>{list.map(([k, label, ph]) => <label key={k} className="block"><span className="text-xs text-muted">{label}</span><input className="mt-0.5 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder={ph} value={value[k] ?? ""} onChange={(e) => onChange({ ...value, [k]: e.target.value })} /></label>)}</>;
+  return <>{list.map(([k, label, ph]) => <label key={k} className="block"><span className="text-sm">{label}</span><input className="mt-1 min-h-11 w-full rounded-xl border border-line bg-surface px-3 text-base" placeholder={ph} value={value[k] ?? ""} onChange={(e) => onChange({ ...value, [k]: e.target.value })} /></label>)}</>;
 }
 /** v83（P1-06）：已确认关联的手表跑步有圈段 → 识别值（待确认）；点“填入”才放进下面的输入框，再点保存才写入。 */
 function LapSuggest({ d, onFill }: { d: V4Day; onFill: (reps: string, rest: string) => void }) {
@@ -220,15 +220,11 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
   const commit = (keys: (keyof Log)[], extra: Log = {}) => { const patch: Log = { ...extra }; for (const k of keys) patch[k] = edit[k] ?? ""; const ok = saveLog(d.date, patch); setMsg(ok ? `已保存 ${new Date().toTimeString().slice(0, 5)}（本机）` : "没有保存成功，原记录未改变。请检查存储空间后重试。"); };
   const tabs: [Tab, string][] = [["plan", "课表"], ["during", "训练中"], ["after", "训练后"], ["later", "24–72h"]];
   const later = d.date >= today;
-  return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label={`${md(d.date)} ${d.title} 训练详情`} data-testid="plan400-day-sheet">
-    <div className="sticky top-0 z-10 border-b border-line bg-bg px-4 pb-2" style={{ paddingTop: "max(8px, env(safe-area-inset-top))" }}>
-      <div className="mx-auto flex max-w-3xl items-start justify-between gap-2">
-        <div className="min-w-0"><p className="text-xs text-muted">{d.week === "TEST" ? "最终测试" : `${d.week}${week ? `｜${week.title}` : ""}`}</p><h2 className="text-lg font-bold">{md(d.date)} {d.weekday} · {d.title}</h2><div className="mt-1 flex flex-wrap items-center gap-1.5" data-testid="sheet-status"><KindChip d={d} /><StatusChip s={status} />{combo.combo ? <><span className="text-[11px] text-muted">跑步</span><CompChip s={combo.running} />{combo.strength ? <><span className="text-[11px] text-muted">力量</span><CompChip s={combo.strength} /></> : null}</> : null}</div></div>
-        <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full bg-surface" aria-label="关闭训练详情" onClick={onClose}><X className="size-5" /></button>
-      </div>
-      <div className="mx-auto mt-2 grid max-w-3xl grid-cols-4 gap-1 rounded-xl bg-surface p-1" role="tablist" aria-label="训练详情分区">{tabs.map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={"min-h-10 rounded-lg text-sm font-bold " + (tab === id ? "bg-accent text-accent-fg" : "text-muted")}>{label}</button>)}</div>
-    </div>
-    <div className="mx-auto max-w-3xl space-y-3 px-4 pt-3 text-sm" style={{ paddingBottom: "calc(24px + env(safe-area-inset-bottom))" }}>
+  return <Sheet full title={d.title} sub={`${md(d.date)} ${d.weekday} · ${d.week === "TEST" ? "最终测试" : d.week}`} label={`${md(d.date)} ${d.title} 训练详情`} onClose={onClose} footer={null}>
+    <div data-testid="plan400-day-sheet">
+      <div className="mb-3 flex flex-wrap items-center gap-2" data-testid="sheet-status"><KindChip d={d} /><StatusChip s={status} /></div>
+      <div className="sticky top-0 z-10 grid grid-cols-4 gap-1 rounded-xl bg-surface p-1" role="tablist" aria-label="训练详情分区">{tabs.map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)} className={"min-h-11 rounded-lg text-sm font-bold " + (tab === id ? "bg-accent text-accent-fg" : "text-muted")}>{label}</button>)}</div>
+    <div className="space-y-3 pb-3 pt-3 text-sm">
       {moved ? <p className="rounded-xl border border-line bg-surface-2 p-3 text-sm" data-testid="v4-moved-history">{moved.label} · 此处保留原始课表及历史记录，不再从旧日期开始这项训练。</p> : null}
       <ComboStatus v={combo} />
       {!moved ? <GuidedLiveActions date={d.date} onClose={onClose} /> : null}
@@ -243,7 +239,7 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       {tab === "during" && !moved && combo.combo ? <>
         <section className="home-card space-y-3 p-4" aria-label="跑步实际记录" data-testid="during-running">
           <h3 className="font-bold">跑步部分</h3>
-          <p className="keep text-xs text-muted">目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}。没做的项留空（不会记成 0）。</p>
+          <p className="keep text-sm text-muted">目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}</p>
           <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} />
           <LapSuggest d={d} onFill={(reps, rest) => setEdit(e => ({ ...e, reps, rest }))} />
           <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
@@ -252,19 +248,17 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         </section>
         <section className="home-card space-y-3 p-4" aria-label="力量实际记录" data-testid="during-strength">
           <h3 className="font-bold">力量部分</h3>
-          <p className="keep text-xs text-muted">手表跑步不会把力量算作完成。可以在「课表」把力量设为可执行后逐组引导；或在这里简单手填。</p>
           <Fields list={DURING.slice(3)} value={edit} onChange={setEdit} />
           <button type="button" className="min-h-12 w-full rounded-xl border border-accent font-bold text-accent" onClick={() => commit(["strength"])}>保存力量记录</button>
         </section>
       </> : null}
       {tab === "during" && !moved && !combo.combo ? <section className="home-card space-y-3 p-4" aria-label="训练中记录">
-        <p className="text-xs text-muted">逐段记录实际完成情况；没做的项留空（不会记成 0）。目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}</p>
+        <p className="text-sm text-muted">目标：{joinLines(mainTrainingLines(d)).split("\n")[0] || d.title}</p>
         {/* 非组合的纯跑步课同样必须提供“关联手表记录”入口；原来仅组合课渲染 RunLinkPanel，导致首页待确认无法在详情完成。 */}
         {dayKind(d) !== "rest" && !/^力量/.test(d.title) ? <RunLinkPanel date={d.date} fallback={<DeviceRunList runs={combo.runs} />} /> : null}
         <SplitGrid d={d} value={edit.reps} logs={logs} onChange={(reps) => setEdit(e => ({ ...e, reps }))} />
         <Fields list={DURING} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => commit(["reps", "rest", "aux", "strength"])}>保存本段记录</button>
-        {hasStrength(d) ? <p className="text-xs text-muted">力量部分可在「课表」页设为可执行后逐组引导，记录会进入训练日志。</p> : null}
       </section> : null}
       {tab === "after" && moved ? <p className="home-card p-4 text-sm">已改期，原日期只可查看旧评价；请到实际训练日期评分。</p> : null}
       {tab === "after" && !moved && combo.combo ? <><PartFeedbackForm date={d.date} part="running" name="跑步" />{hasStrength(d) ? <PartFeedbackForm date={d.date} part="strength" name="力量" /> : null}</> : null}
@@ -274,7 +268,6 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
         <div className="grid grid-cols-3 gap-2">{([["done", "完成"], ["reduced", "减量完成"], ["skipped", "没练/取消"]] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={edit.done === v} className={"min-h-11 rounded-xl border text-sm font-bold " + (edit.done === v ? "border-accent bg-accent/15 text-accent" : "border-line")} onClick={() => setEdit({ ...edit, done: edit.done === v ? undefined : v })}>{t}</button>)}</div>
         <Fields list={AFTER} value={edit} onChange={setEdit} />
         <button type="button" className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => { if (edit.done === "skipped" && log.done !== "skipped" && !window.confirm("标记为没练/取消？原课表不会改动，之后可以改回。")) return; commit(["rpe", "pain", "note"], { done: edit.done ?? "" }); }}>保存训练后反馈</button>
-        <p className="text-xs text-muted">24 小时、48–72 小时的恢复情况不用现在填，到时在「24–72h」补录。</p>
       </section> : null}
       {tab === "later" && moved ? <p className="home-card p-4 text-sm">已改期；恢复反馈应关联真实执行日期，不在原日期新建。</p> : null}
       {tab === "later" && !moved ? <section className="home-card space-y-3 p-4" aria-label="恢复补录">
@@ -288,9 +281,9 @@ function DaySheet({ d, today, initialTab, onClose }: { d: V4Day; today: string; 
       {tab === "later" && combo.combo ? <LegacyReadOnly log={log} kind="later" /> : null}
       {tab === "later" && !moved && combo.combo && !later ? <RecoveryParts date={d.date} late={recoveryTiming(d.date, today) === "late"} daysSince={Math.round((Date.parse(today) - Date.parse(d.date)) / 864e5)} /> : null}
       {msg ? <p role="status" className="text-sm">{msg}</p> : log.savedAt ? <p className="text-xs text-muted">上次保存 {stampCN(log.savedAt, "ymd")}</p> : null}
-      <p className="text-xs text-muted">这一页的记录存在本机（整课：计划记录；分项：计划分项记录），会进入日志、复盘和方坤；关联的手表跑步只算一次。</p>
     </div>
-  </div>;
+    </div>
+  </Sheet>;
 }
 /** 全局只挂一次：首页卡、计划页、日历都通过事件打开同一个详情（同一日期 = 同一记录）。 */
 export function Plan400DayHost({ today }: { today: string }) {
@@ -324,17 +317,16 @@ export function Plan400TodayCard({ today, onReview }: { today: string; onReview?
   if (!d) { const next = P().days.find((x) => x.date > today); return next ? <section className="home-card mb-3 p-4 text-sm" aria-label="训练计划"><p className="text-xs text-muted">{planLabel()}</p><p className="mt-1">今天不在计划日程内。下一节：{md(next.date)} {next.weekday}「{next.title}」</p><button type="button" className="mt-2 min-h-11 text-accent" onClick={() => openPlan400Day(next.date)}>查看 ›</button></section> : null; }
   const s = dayStatus(d, logs[d.date], today, live, partsAll[d.date]), cta = componentCta(d, logs[d.date], partsAll[d.date], s, live);
   const moved = v4MovedOut(d.date, loadSchedule().entries);
-  const week = P().weeks.find(w => w.week === d.week);
   const go = () => { if ((cta.action === "start" || cta.action === "continue") && d.date === today) { const detail = { date: d.date, handled: false }; window.dispatchEvent(new CustomEvent(PLAN400_GUIDED_EVT, { detail })); if (!detail.handled) openPlan400Day(d.date, "during"); } else if (cta.action === "start" || cta.action === "continue") openPlan400Day(d.date, "during"); else if (cta.action === "review" || cta.action === "reason" || cta.action === "backfill") openPlan400Day(d.date, "after"); else openPlan400Day(d.date, "plan"); };
   return <section className="home-card mb-3 p-4" aria-label="今日训练主卡" data-testid="today-main-card" data-status={s}>
-    <div className="flex items-center justify-between gap-2"><p className="min-w-0 truncate text-xs text-muted">今日 · {planLabel()} · {d.week}{week ? `｜${week.title}` : ""}</p><StatusChip s={s} /></div>
+    <div className="flex items-center justify-between gap-2"><p className="text-sm text-muted">今日训练</p><StatusChip s={s} /></div>
     <h2 className="mt-1 text-xl font-bold">{d.title}</h2>
     <p className="text-xs text-muted">{md(d.date)} {d.weekday} · <KindChip d={d} /></p>
     <ul className="mt-2 space-y-1 text-sm leading-6">{summaryLines(d).map((t, i) => <li key={i} className="line-clamp-2">{t}</li>)}</ul>
     <HomeComboLine d={d} log={logs[d.date]} />
     {moved ? <div className="mt-3 rounded-xl border border-line bg-surface-2 p-3 text-sm" data-testid="today-moved-status"><p>{moved.label} · 原日期不再待练</p><button type="button" className="mt-2 min-h-10 text-accent" onClick={() => openPlan400Day(d.date, "plan")}>查看原课表与改期历史 ›</button></div>
       : <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent text-base font-bold text-accent-fg" data-testid="today-primary-cta" onClick={go}>{cta.label}</button>}
-    <div className="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" className="min-h-11 text-accent" onClick={() => openPlan400Day(d.date, "plan")}>完整课表 ›</button>{s === "done" || s === "reduced" ? <button type="button" className="min-h-11 text-muted" onClick={() => openPlan400Day(d.date, "later")}>补充恢复信息</button> : null}{(s === "done" || s === "reduced") && onReview ? <button type="button" className="min-h-11 text-muted" onClick={onReview}>去日志看复盘</button> : null}</div>
+    <div className="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" className="min-h-11 text-accent" onClick={() => openPlan400Day(d.date, "plan")}>查看课表</button>{s === "done" || s === "reduced" ? <button type="button" className="min-h-11 text-muted" onClick={() => openPlan400Day(d.date, "later")}>恢复反馈</button> : null}{(s === "done" || s === "reduced") && onReview ? <button type="button" className="min-h-11 text-muted" onClick={onReview}>查看复盘</button> : null}</div>
     <PendingFeedbackList today={today} compact />
   </section>;
 }
@@ -344,8 +336,8 @@ function DayRow({ d, today, logs, parts }: { d: V4Day; today: string; logs: Reco
   const moved = v4MovedOut(d.date, loadSchedule().entries);
   return <button type="button" onClick={() => openPlan400Day(d.date)} className={"flex min-h-14 w-full items-center gap-2 border-t border-line py-2 text-left " + (d.date === today ? "rounded-lg bg-accent/10 px-2" : "")} aria-label={`${md(d.date)} ${d.weekday} ${d.title} ${STATUS_LABEL[s]}`}>
     <span className="w-[4.6rem] shrink-0 text-sm"><b>{md(d.date)}</b> <span className="text-muted">{d.weekday}</span></span>
-    <span className="min-w-0 flex-1"><span className="block truncate font-bold">{d.title}</span><span className="block text-[11px] text-muted">{KIND_LABEL[dayKind(d)]}{hasStrength(d) && dayKind(d) !== "rest" ? " + 力量" : ""}{d.date === today ? " · 今天" : ""}</span></span>
-    {moved ? <span className="text-[11px] text-muted" data-testid="v4-moved-row">{moved.label}</span> : <>{part ? <span className="text-[11px] text-muted" data-testid="v4-combo-parts">{part}</span> : null}<StatusChip s={s} /></>}<ChevronRight className="size-4 shrink-0 text-muted" />
+    <span className="min-w-0 flex-1"><span className="block font-bold">{d.title}</span><span className="block text-xs text-muted">{KIND_LABEL[dayKind(d)]}{hasStrength(d) && dayKind(d) !== "rest" ? " + 力量" : ""}{d.date === today ? " · 今天" : ""}</span>{!moved && part ? <span className="mt-1 block text-xs text-muted" data-testid="v4-combo-parts">{part}</span> : null}</span>
+    {moved ? <span className="text-xs text-muted" data-testid="v4-moved-row">{moved.label}</span> : <StatusChip s={s} />}<ChevronRight className="size-4 shrink-0 text-muted" />
   </button>;
 }
 /** 计划页：正式导入周期（V4）。当前周默认展开，其余周折叠，W1–W10 与最终测试全部可进入详情。 */
@@ -355,11 +347,9 @@ export function Plan400Cycle(props: { today: string; sourceSlot?: React.ReactNod
 }
 function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; sourceSlot?: React.ReactNode; lens?: "run" | "lift" }) {
   const logs = useLogs(); const partsAll = usePartsAll();
-  // v89.7（取自 V91）：完整周期外层折叠，默认只显示当前周；仅存 UI 偏好，不改计划、日程或训练事实。
   const [cycleExpanded, setCycleExpanded] = useState(() => { try { return localStorage.getItem("fk-v91-cycle-expanded") === "1" } catch { return false } });
   const toggleCycle = () => setCycleExpanded(v => { try { localStorage.setItem("fk-v91-cycle-expanded", v ? "0" : "1") } catch { /* UI remains usable */ } return !v; });
-  const [showSource, setShowSource] = useState(false);
-  const [showDiff, setShowDiff] = useState(false);
+  const [showSource, setShowSource] = useState(false), [showDiff, setShowDiff] = useState(false);
   const [confirm, setConfirm] = useState(() => { migrateUserConfirmedDates(P()); return loadDateConfirm(P()); });
   const cw = currentWeek(P(), today);
   const [openWeeks, setOpenWeeks] = useState<string[]>([]);
@@ -367,55 +357,58 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
   const counts = useMemo(() => progressCounts(P(), logs, partsAll), [logs, partsAll]);
   const conflicts = useMemo(() => dateConflicts(P()), []);
   const shift = shiftSummary(P());
-  const cur = P().weeks.find(w => w.week === cw);
   const finals = P().days.filter(d => d.week === "TEST");
   const filt = (ds: V4Day[]) => lens === "lift" ? ds.filter(hasStrength) : ds;
-  return <section className="home-card mb-3 p-4" aria-label="正在执行的周期计划" data-testid="plan400-cycle">
-    <p className="text-xs text-muted">正在执行的周期计划</p>
-    <div className="mt-1 flex items-start justify-between gap-2"><h2 className="min-w-0 text-lg font-bold leading-snug">{P().name}</h2><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={showSource} onClick={() => setShowSource(!showSource)}>来源 / 切换</button></div>
-    <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入{planTag() ? ` · ${planTag()}` : ""}</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${shiftedText(P(), cur.week, cur.title)}` : ""}</span></div>
-    <p className="mt-2 text-xs text-muted" data-testid="plan400-progress">已记录 {counts.recordedDays}/{counts.calendarEntries} 个日程（含休息/恢复日与测试）· 训练与测试课完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
-    <button type="button" className="mt-3 flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-3 text-sm font-bold" aria-expanded={cycleExpanded} data-testid="v91-cycle-toggle" onClick={toggleCycle}>
-      <span>{cycleExpanded ? "收起完整周期（只看本周）" : "展开完整周期（全部周次）"}</span><ChevronDown className={"size-4 transition-transform " + (cycleExpanded ? "rotate-180" : "")} />
-    </button>
-    {showSource && sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
-    {(conflicts.length || shift.shifted) && confirm ? <details className="mt-2 text-xs text-muted" data-testid="plan400-date-confirmed"><summary className="flex min-h-9 cursor-pointer list-none items-center gap-1">✓ 日期已确认 · 整体顺延 {shift.shiftDays} 天<ChevronRight className="size-3.5" /></summary>
-      <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表 {c.originalRange} → 现 {c.shownRange}；「{c.text}」{c.matchedDay ? `的${c.matchedDay.title}现在是 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : "在日程中没有对应的课"}</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天；最终测试 {P().final?.date ?? "—"}（原 {P().final?.orig ?? "—"}）。导入的原课表没有改。</li><li>{confirm.by} · {stampCN(confirm.at, "ymd").slice(0, 10)}</li></ul>
-      <button type="button" className="min-h-10 text-accent" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + ":revoked", "1") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>
-    </details> : null}
-    {(conflicts.length || shift.shifted) && !confirm ? <div className="mt-3 rounded-xl border border-warn/50 p-3 text-xs" role="status" data-testid="plan400-date-warning">
+  return <section className="home-card fk-cycle-plan mb-3 p-4" aria-label="正在执行的周期计划" data-testid="plan400-cycle">
+    <div className="flex items-center justify-between gap-3"><h2 className="font-bold">{cycleExpanded ? "周期安排" : "本周安排"}</h2><button type="button" className="flex min-h-11 shrink-0 items-center gap-1 text-sm text-accent" aria-expanded={cycleExpanded} data-testid="v91-cycle-toggle" onClick={toggleCycle}><span>{cycleExpanded ? "只看本周" : "全部周次"}</span><ChevronDown className={"size-4 transition-transform " + (cycleExpanded ? "rotate-180" : "")} /></button></div>
+    {(conflicts.length || shift.shifted) && !confirm ? <div className="my-3 rounded-xl border border-warn/50 p-3 text-sm" role="status" data-testid="plan400-date-warning">
       <p className="flex gap-1.5 font-bold text-warn"><TriangleAlert className="mt-0.5 size-4 shrink-0" />日期待核对</p>
-      <p className="mt-1 leading-5">导入日程整体顺延 {shift.shiftDays} 天{conflicts.length ? `；${conflicts.map(c => `${c.week} 标题写「${c.text}」，当前周显示 ${c.shownRange}`).join("；")}` : ""}。请核对原始安排后再执行相关测试课。这里保留原课表，未自动改期。</p>
-      <button type="button" className="mt-1 mr-3 min-h-10 font-bold text-accent" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + ":revoked") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), "用户确认")); }}>日期没问题，按顺延后执行</button>
-      <button type="button" className="mt-1 min-h-10 font-bold text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button>
-      {showDiff ? <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程都按原日期 +{shift.shiftDays} 天排入；最终测试原为 {P().final?.orig ?? "—"}，现为 {P().final?.date ?? "—"}。</li><li>是否改测试日期需要你确认，App 不会自动修改。</li></ul> : null}
+      <p className="mt-1 leading-6">{shift.shifted ? `日程整体顺延 ${shift.shiftDays} 天。` : "日程与原课表文字存在日期差异。"}请核对后再执行相关测试课。</p>
+      <div className="flex flex-wrap gap-x-4"><button type="button" className="min-h-11 font-bold text-accent" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + ":revoked") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), "用户确认")); }}>按当前日期执行</button><button type="button" className="min-h-11 text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button></div>
+      {showDiff ? <ul className="mt-1 space-y-1 leading-6">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天排入；最终测试原为 {P().final?.orig ?? "—"}，现为 {P().final?.date ?? "—"}。</li></ul> : null}
     </div> : null}
-    <div className="mt-3">{P().weeks.filter(w => cycleExpanded || w.week === cw).map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
+    <div>{P().weeks.filter(w => cycleExpanded || w.week === cw).map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
       return <div key={w.week} className="border-t border-line first:border-t-0">
         <button type="button" aria-expanded={isOpen} onClick={() => setOpenWeeks(isOpen ? openWeeks.filter(x => x !== w.week) : [...openWeeks, w.week])} className="flex min-h-12 w-full items-center gap-2 py-2 text-left">
           <span className={"w-9 shrink-0 text-sm font-bold " + (w.week === cw ? "text-accent" : "")}>{w.week}</span>
-          <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{shiftedText(P(), w.week, w.title)}</span><span className="block text-[11px] text-muted">{md(ds[0].date)}—{md(ds[ds.length - 1].date)}{w.week === cw ? " · 本周" : ""}{!confirm && conflicts.some(c => c.week === w.week) ? " · ⚠ 日期待核对" : ""}</span></span>
+          <span className="min-w-0 flex-1"><span className="block text-sm font-bold">{shiftedText(P(), w.week, w.title)}</span><span className="block text-xs text-muted">{ds.length ? `${md(ds[0].date)}—${md(ds[ds.length - 1].date)}` : "暂无日程"}{w.week === cw ? " · 本周" : ""}{!confirm && conflicts.some(c => c.week === w.week) ? " · 日期待核对" : ""}</span></span>
           <ChevronDown className={"size-4 shrink-0 text-muted transition-transform " + (isOpen ? "rotate-180" : "")} />
         </button>
         {isOpen ? <div className="pb-2">{shown.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} parts={partsAll[d.date]} />)}</div> : null}
       </div>; })}
       {lens === "run" && (cycleExpanded || cw === "TEST") ? finals.map(d => <div key={d.date} className="border-t border-line"><DayRow d={d} today={today} logs={logs} parts={partsAll[d.date]} /></div>) : null}
     </div>
+    <details className="mt-2 border-t border-line text-sm" onToggle={e => setShowSource(e.currentTarget.open)}>
+      <summary className="flex min-h-11 cursor-pointer items-center justify-between text-muted">计划详情<ChevronRight className="size-4" /></summary>
+      <h3 className="font-bold">{P().name}</h3>
+      <p className="mt-2 text-sm text-muted" data-testid="plan400-progress">日程已记录 {counts.recordedDays}/{counts.calendarEntries} · 训练与测试已完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
+      {(conflicts.length || shift.shifted) && confirm ? <details className="mt-2 text-sm text-muted" data-testid="plan400-date-confirmed"><summary className="flex min-h-11 cursor-pointer list-none items-center gap-1">日期调整记录<ChevronRight className="size-3.5" /></summary>
+        <p>已确认顺延 {shift.shiftDays} 天 · {confirm.by} · {stampCN(confirm.at, "ymd").slice(0, 10)}</p>
+        <ul className="mt-1 space-y-1 leading-6">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：{c.originalRange} → {c.shownRange}；「{c.text}」{c.matchedDay ? `对应 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}「${c.matchedDay.title}」` : "在日程中没有对应的课"}</li>)}<li>最终测试 {P().final?.date ?? "—"}（原 {P().final?.orig ?? "—"}）。</li></ul>
+        <button type="button" className="min-h-11 text-accent" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + ":revoked", "1") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>
+      </details> : null}
+      {showSource && sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
+    </details>
   </section>;
 }
 
 type TempEntry = { id: string; date: string; title: string; minutes: number; source: string; status: string; unplanned?: boolean; modality: string; exercises?: unknown[] };
 /** 临时 / 自建训练：与正式周期分开展示，只按真实 id 判断是否挂靠 V4。 */
-export function TempTrainingList<E extends TempEntry>({ entries, modality, title, onOpen, onAdd, addLabel, empty, footer }: { entries: E[]; modality: "run" | "strength"; title: string; onOpen: (e: E) => void; onAdd: () => void; addLabel: string; empty: string; footer?: React.ReactNode }) {
+export function TempTrainingList<E extends TempEntry>({ entries, modality, title, onOpen, onAdd, addLabel, empty, footer, today }: { entries: E[]; modality: "run" | "strength"; title: string; onOpen: (e: E) => void; onAdd: () => void; addLabel: string; empty: string; footer?: React.ReactNode; today?: string }) {
   // v83（P2-03）：正式周期（V4 当天课程 plan400:*）只在上方周期计划里出现；计划外记录（记一笔等 unplanned）在日志里，不算“排了的训练”
-  const list = entries.filter(e => e.modality === modality && ["planned", "done"].includes(e.status) && !String(e.id).startsWith("plan400:") && !(e as { unplanned?: boolean }).unplanned).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
-  return <section className="home-card mb-3 p-4" aria-label={title}>
-    <div className="flex items-center justify-between gap-2"><h2 className="font-bold">{title}</h2><button type="button" className="min-h-11 rounded-full border border-accent px-3 text-sm font-bold text-accent" onClick={onAdd}>{addLabel}</button></div>
-    {list.map(e => { const l = entryLinkFor(e); return <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => onOpen(e)}>
-      <span className="min-w-0"><b className="block truncate">{e.title}</b><span className="block text-xs text-muted">{e.date} · {modality === "strength" ? `${e.exercises?.length ?? "—"}个动作` : `${e.minutes}分钟`} · {e.status === "done" ? "已完成" : "待执行"}</span>
-        <span className="mt-0.5 flex flex-wrap gap-1 text-[11px]"><span className="rounded-full bg-surface-2 px-2 text-muted">{l.sourceLabel}</span>{l.linkedToV4 ? <span className="rounded-full bg-surface-2 px-2 text-muted">挂靠{planTag()}当天课程</span> : <span className="rounded-full bg-surface-2 px-2 text-muted">未挂靠周期</span>}{l.sameDayV4 ? <span className="rounded-full border border-warn/50 px-2 text-warn">同日有计划课「{l.sameDayV4.title}」</span> : null}</span></span>
-      <ChevronRight className="size-4 shrink-0 text-muted" /></button>; })}
-    {!list.length ? <p className="border-t border-line py-3 text-sm text-muted">{empty}</p> : null}
+  const now = new Date(), day = today ?? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const list = entries.filter(e => e.modality === modality && ["planned", "done"].includes(e.status) && !String(e.id).startsWith("plan400:") && !(e as { unplanned?: boolean }).unplanned);
+  const upcoming = list.filter(e => e.status === "planned" && e.date >= day).sort((a, b) => a.date.localeCompare(b.date));
+  const past = list.filter(e => e.status === "planned" && e.date < day).sort((a, b) => b.date.localeCompare(a.date));
+  const completed = list.filter(e => e.status === "done").sort((a, b) => b.date.localeCompare(a.date));
+  const row = (e: E) => { const l = entryLinkFor(e); return <button type="button" key={e.id} className="flex min-h-16 w-full items-center justify-between gap-3 border-t border-line py-3 text-left" onClick={() => onOpen(e)}>
+    <span className="min-w-0 flex-1"><b className="block">{e.title}</b><span className="mt-1 block text-sm text-muted">{e.date === day ? '今天' : md(e.date)} · {modality === "strength" ? `${e.exercises?.length ?? "—"}个动作` : `${e.minutes}分钟`} · {e.status === "done" ? "已完成" : "待执行"}</span>{l.sameDayV4 && e.status === "planned" ? <span className="mt-1 block text-xs text-warn">同日已有「{l.sameDayV4.title}」</span> : null}</span><ChevronRight className="size-4 shrink-0 text-muted" /></button>; };
+  return <section className="home-card fk-scheduled-list mb-3 p-4" aria-label={title}>
+    <div className="flex items-center justify-between gap-2"><h2 className="font-bold">{title}</h2><button type="button" className="min-h-11 shrink-0 px-1 text-sm font-bold text-accent" onClick={onAdd}>{addLabel}</button></div>
+    {upcoming.map(row)}
+    {!upcoming.length ? <p className="border-t border-line py-3 text-sm text-muted">{list.length ? "暂无即将进行的训练" : empty}</p> : null}
+    {past.length ? <details className="border-t border-line"><summary className="flex min-h-12 cursor-pointer items-center justify-between text-sm"><span>往期安排 <span className="text-muted">{past.length}</span></span><ChevronDown className="size-4 text-muted" /></summary>{past.map(row)}</details> : null}
+    {completed.length ? <details className="border-t border-line"><summary className="flex min-h-12 cursor-pointer items-center justify-between text-sm"><span>已完成 <span className="text-muted">{completed.length}</span></span><ChevronDown className="size-4 text-muted" /></summary>{completed.map(row)}</details> : null}
     {footer}
   </section>;
 }

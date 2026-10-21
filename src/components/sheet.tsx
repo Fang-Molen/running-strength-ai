@@ -37,8 +37,8 @@ export function Sheet({ title, sub, onClose, footer, children, label, full = fal
         <div className="min-w-0 flex-1"><h2 className="truncate text-lg font-black">{title}</h2>{sub ? <div className="mt-0.5 text-xs text-muted">{sub}</div> : null}</div>
         <button type="button" aria-label="关闭" className="grid size-11 shrink-0 place-items-center rounded-full border border-line" onClick={onClose}><X className="size-5" /></button>
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">{children}</div>
-      <footer className="shrink-0 border-t border-line px-4 pt-2" style={{ paddingBottom: vv?.kb ? 10 : "max(12px, env(safe-area-inset-bottom))" }}>{footer}</footer>
+      <div className="fk-sheet-content min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3" style={!footer ? { paddingBottom: "max(16px, env(safe-area-inset-bottom))" } : undefined}>{children}</div>
+      {footer ? <footer className="shrink-0 border-t border-line px-4 pt-2" style={{ paddingBottom: vv?.kb ? 10 : "max(12px, env(safe-area-inset-bottom))" }}>{footer}</footer> : null}
     </div>
   </div>;
 }

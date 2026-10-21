@@ -27,11 +27,11 @@ export function PlanImportPanel({ onImported }: { onImported?: () => void }) {
     const r = confirmImport(raw, localStorage, loadProfile(), saveProfile)
     setPv(null); setRaw(null)
     if (!r.ok) { setMsg(r.reason); return }
-    setUndo(r.undo); setMsg(`已导入（${r.restored} 项）。训练记录、反馈和手表登录没有被改动。`); notify(); onImported?.()
+    setUndo(r.undo); setMsg(`已导入 ${r.restored} 项。`); notify(); onImported?.()
   }
-  const revert = () => { if (undo && undoImport(undo, localStorage)) { setUndo(null); setMsg("已撤销这次导入，回到导入前的状态。"); notify() } else setMsg("撤销失败，请到设置的备份与恢复里核对。") }
+  const revert = () => { if (undo && undoImport(undo, localStorage)) { setUndo(null); setMsg("已撤销这次导入。"); notify() } else setMsg("撤销失败，请到设置的备份与恢复里核对。") }
   return <div className="space-y-2" data-testid="plan-import">
-    <label className="fk-orange-btn flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl font-bold"><FileUp className="size-4" />导入计划/备份文件
+    <label className="fk-orange-btn flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl font-bold"><FileUp className="size-4" />导入计划或备份
       <input type="file" accept=".json,application/json" className="sr-only" aria-label="导入计划/备份文件" onChange={e => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void pick(f) }} /></label>
     {pv && !pv.ok ? <p role="alert" className="keep text-sm text-risk">{pv.reason}</p> : null}
     {pv && pv.ok ? <div className="rounded-xl border border-line p-3 text-sm" data-testid="plan-import-preview">
@@ -46,12 +46,12 @@ export function PlanImportPanel({ onImported }: { onImported?: () => void }) {
   </div>
 }
 
-/** 没有计划时的计划页：明确写“未导入计划”，给导入与本地生成两个入口；日志等其他页面不受影响。 */
+/** 没有计划时只展示一个空状态；其他来源保留在折叠入口中。 */
 export function NoPlanCard({ sourceSlot, onImported }: { sourceSlot?: React.ReactNode; onImported?: () => void }) {
   return <section className="home-card mb-3 p-4" aria-label="训练计划" data-testid="no-plan">
-    <h2 className="text-lg font-bold">未导入计划</h2>
-    <p className="keep mt-1 text-sm text-muted">这台设备上还没有训练计划。可以导入你自己的计划/备份文件，或让方坤按你的资料先排一周（预览确认后才生效）。已有的训练记录照常显示在日志里。</p>
+    <h2 className="text-lg font-bold">还没有训练计划</h2>
+    <p className="keep mt-1 text-sm text-muted">导入课表，或添加一次训练。</p>
     <div className="mt-3"><PlanImportPanel onImported={onImported} /></div>
-    {sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
+    {sourceSlot ? <details className="mt-2"><summary className="min-h-11 cursor-pointer text-sm text-muted">其他计划方式</summary>{sourceSlot}</details> : null}
   </section>
 }

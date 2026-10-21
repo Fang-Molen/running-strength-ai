@@ -15,7 +15,8 @@ import { RunImportPrompt } from "@/components/plan400-parts";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
 import { todayCoordinationParts, todayPartsText, type TodayPart } from "@/lib/ui/coach-coordination-view";
 import { dayKind, hasRunPart, hasStrength, type V4Day } from "@/lib/ui/plan400-view";
-import { planDay, PLAN_CHANGED_EVT } from "@/lib/plan/active-plan";
+import { hasActivePlan, planDay, PLAN_CHANGED_EVT } from "@/lib/plan/active-plan";
+import { NoPlanCard, PlanImportPanel } from "@/components/plan-import";
 import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
@@ -44,7 +45,7 @@ import { PlanSourceCard } from "@/components/plan-source";
 import { DietPage } from "@/components/fuel-guide";
 import { ReviewPanel } from "@/components/review-card";
 import { HealthLinkSheet, HomeEditor, useLocalReminders, HomeHeader, LogMetricsPanel, Onboarding, QuickLog, SettingsHub } from "@/components/r8";
-import { ONBOARD_KEY } from "@/lib/ui/first-run";
+import { ONBOARD_KEY, ONBOARD_SKIPPED_KEY } from "@/lib/ui/first-run";
 import { LAYOUT_DEFAULT, loadLayout, type Layout, type QuickId } from "@/lib/ui/home-layout";
 import { readLaunchParams } from "@/lib/ui/shortcut-link";
 import { OVERRIDE_KEY, type Override } from "@/lib/ui/day-override";
@@ -76,7 +77,7 @@ import type { MuscleAction } from "@/lib/body/muscle-actions";
 import { PLAN_KEY, appendSessionCompared, savePlanCompared } from "@/lib/strength/session-builder";
 import { executionOf } from "@/lib/core/execution";
 import { ProfileSheet } from "@/components/profile-sheet";
-import { listTrackPlans, openTrackOccurrence } from "@/lib/ui/running-workouts";
+import { listTrackPlans, openTrackOccurrence, describeTrackPlan } from "@/lib/ui/running-workouts";
 import { trackHomeView } from "@/lib/ui/running-workouts";
 import { absorbFeel, loadCoach, saveCoach } from "@/lib/strength/coach";
 import { emptyProfile, goalsFromProfile, loadProfile, profileFilled, profileSummary, saveProfile, withCoachGoals, type Profile } from "@/lib/strength/profile";
@@ -120,7 +121,6 @@ const FEELS: { id: Feel; label: string; hint: string }[] = [
 ];
 
 export function StrengthApp() {
-  const [coachPortraitError, setCoachPortraitError] = useState(false);
   useEffect(() => startC03FollowupRuntime(), []);
   const [bodyPane, setBodyPane] = useState<BodyPane>("recovery");
   const [, setDataRevision] = useState(0);
@@ -193,9 +193,10 @@ export function StrengthApp() {
   const [profile, setProfile] = useState<Profile>(emptyProfile());
   const [profileOpen, setProfileOpen] = useState(false);
   const [trainingImportOpen, setTrainingImportOpen] = useState(false);
+  const [planImportOpen, setPlanImportOpen] = useState(false);
   const [coachPlanOpen, setCoachPlanOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const prevTab = useRef<"today" | "plan" | "log" | "body" | "diet">("today");
+  const prevTab = useRef<"today" | "plan" | "log" | "courses" | "body" | "diet">("today");
   const [settingsPane, setSettingsPaneRaw] = useState<SettingsPane>("menu");
   const settingsScroll = useRef<HTMLDivElement>(null); const menuScrollTop = useRef(0);
   const setSettingsPane = (p: SettingsPane) => { const el = settingsScroll.current; if (p !== "menu" && el) menuScrollTop.current = el.scrollTop; setSettingsPaneRaw(p); window.setTimeout(() => { if (settingsScroll.current) settingsScroll.current.scrollTop = p === "menu" ? menuScrollTop.current : 0; }, 0); };
@@ -213,7 +214,8 @@ export function StrengthApp() {
   const [planSrc, setPlanSrc] = useState<string>("400m-v4");
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}").active; if (v) setPlanSrc(v); } catch { /* keep default */ } }, []);
   const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}"); localStorage.setItem("fk-plan-source-v1", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };
-  const [tab, setTab] = useState<"today" | "plan" | "log" | "coach" | "body" | "diet">("today");
+  const [tab, setTab] = useState<"today" | "plan" | "log" | "courses" | "coach" | "body" | "diet">("today");
+  const inTraining = tab === "plan" || tab === "log" || tab === "courses";
   const [homeRev, setHomeRev] = useState(0);
   const [dayOverride, setDayOverride] = useState<Override | null>(null);
   const [bandOn, setBandOn] = useState(true);
@@ -224,8 +226,8 @@ export function StrengthApp() {
   const [healthLink, setHealthLink] = useState<string | null>(null);
   useEffect(() => { setHomeLayout(loadLayout()); const lp = readLaunchParams(location.search); if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() }); if (lp.health) setHealthLink(lp.health); if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname); }, []);
   // v89.10：高驰官方授权回跳（/?coros_auth=…）→ 打开“设备连接与同步”显示结果（首次引导未完成时留在引导里）。
-  useEffect(() => { try { if (new URLSearchParams(location.search).has("coros_auth") && localStorage.getItem("fk-onboard-v1")) { setSettingsPane("sync"); setSettingsOpen(true); } } catch { /* ignore */ } }, []);
-  useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
+  useEffect(() => { try { if (new URLSearchParams(location.search).has("coros_auth") && (localStorage.getItem(ONBOARD_KEY) || localStorage.getItem(ONBOARD_SKIPPED_KEY))) { setSettingsPane("sync"); setSettingsOpen(true); } } catch { /* ignore */ } }, []);
+  useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY) && !localStorage.getItem(ONBOARD_SKIPPED_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");
   const [showPlanTools, setShowPlanTools] = useState(false);
@@ -418,25 +420,31 @@ export function StrengthApp() {
   const courseCount = (trackHome?.planId ? 1 : 0) + (session ? 1 : 0);
   // v83（P0-05）：今日各项状态来自统一读模型（V4 分项事实 + 日程上其他计划课），不再写死 0。
   const [todayCoord, setTodayCoord] = useState<{ parts: TodayPart[]; unplanned: number } | null>(null);
+  const [hasImportedPlan, setHasImportedPlan] = useState(false);
+  const [hasTrainingContent, setHasTrainingContent] = useState(false);
   useEffect(() => {
     const refresh = () => { try {
       const pd = planSrc === "400m-v4" ? planDay(todayIso) : undefined;
       const kind = pd ? dayKind(pd) : null;
-      setTodayCoord(todayCoordinationParts(loadTrainingActivities(), loadSchedule().entries, todayIso, pd && kind !== 'rest' ? { run: hasRunPart(pd), lift: hasStrength(pd) && kind !== 'recovery' } : null));
+      const activities = loadTrainingActivities(), entries = loadSchedule().entries, imported = hasActivePlan();
+      setHasImportedPlan(imported);
+      setHasTrainingContent(imported || activities.length > 0 || entries.some(e => e.status === 'planned' || e.status === 'done' || Boolean(e.actual)));
+      setTodayCoord(todayCoordinationParts(activities, entries, todayIso, pd && kind !== 'rest' ? { run: hasRunPart(pd), lift: hasStrength(pd) && kind !== 'recovery' } : null));
     } catch { setTodayCoord(null); } };
     refresh(); const un = onAppEvent(refresh);
     const evs = [PLAN_CHANGED_EVT, 'fk-schedule-changed', 'fk-training-activities-changed', 'fk-plan400-changed', 'fk-plan400-components', 'fk-garmin-synced', 'storage'];
     for (const e of evs) window.addEventListener(e, refresh);
     return () => { un(); for (const e of evs) window.removeEventListener(e, refresh); };
   }, [todayIso, planSrc, tab]);
+  const hasScheduledForPane = calendar.some(e => e.modality === (hubPane === 'run' ? 'run' : 'strength') && ['planned', 'done'].includes(e.status) && !e.id.startsWith('plan400:') && !e.unplanned);
   const liftSummary = (session?.moves ?? []).slice(0, 4).map((move) => displayName(move)).join(" · ");
   const statusText = !ready ? "读取中" : trackHome?.openOccurrenceId ? "跑步进行中" : todayCoord?.parts.length ? todayPartsText(todayCoord.parts) : courseCount === 0 ? "暂无安排" : "待选择课程";
-  const pageTitle = tab === "today" ? "今日训练" : tab === "plan" ? "训练计划" : tab === "log" ? "训练日志" : tab === "coach" ? "方坤 AI · 测试版" : tab === "diet" ? "饮食" : "健康";
+  const pageTitle = tab === "today" ? "今天" : inTraining ? "训练" : tab === "coach" ? "方坤" : tab === "diet" ? "饮食" : "健康";
   const phaseLabel = plan.cycle ? PHASES.find((item) => item.week === plan.cycle?.week)?.label ?? "" : "";
   const headerHint = tab === "today"
     ? (clockLabel ? `${clockLabel} · ${statusText}` : statusText)
     : tab === "plan"
-      ? (plan.cycle ? `第 ${plan.cycle.week} 周 · ${phaseLabel}` : "周期未就绪")
+      ? ""
       : tab === "log"
         ? ""
         : tab === "coach"
@@ -580,42 +588,54 @@ export function StrengthApp() {
 
 
   return (
-    <div className={"app-wallpaper product-ui bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-dvh")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-V74-UI-INTEGRATED-20261017" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
-      <header className={"ui03-header px-4 pt-1 pb-1" + (tab === "coach" ? " fk-coach-head" : "")}>
+    <div className={"app-wallpaper product-ui fk-identity bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-dvh")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-UI-R1-20261021" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
+      <header className={"ui03-header fk-page-header px-4 pt-1 pb-1" + (tab === "coach" ? " fk-coach-head" : "")}>
         <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
-            {tab === "today" ? <><h1 className="text-[1.6rem] font-black italic leading-none tracking-wide">FANGKUN</h1><p className="text-sm font-bold">更好的你</p></> : <>
+            {tab === "today" ? <div className="fk-brand-lockup"><h1>FANGKUN</h1><span>方坤</span></div> : <>
             <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
-            {tab === "coach" ? null : <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>}</>}
+            {tab === "coach" || !headerHint ? null : <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>}</>}
           </div>
           <div className="flex shrink-0 items-center gap-2">
           {tab === "today" ? <button type="button" aria-label="记一笔" onClick={() => window.dispatchEvent(new Event("fk-open-quicklog"))} className="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><Plus className="size-4" />记一笔</button> : null}
-          <button type="button" onClick={() => { if (tab === "coach") { setTab(prevTab.current); } else { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); } }} className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-accent bg-surface shadow-sm" aria-label={tab === "coach" ? "关闭方坤" : "打开方坤"}>{tab === "coach" ? <X className="size-5" /> : coachPortraitError ? <MessageCircle aria-hidden="true" className="size-5" /> : <img src="/fangshen/happy-bust.png" alt="" onError={() => setCoachPortraitError(true)} className="size-full object-cover object-top" />}</button>
+          {tab === "coach" ? <button type="button" onClick={() => setTab(prevTab.current)} className="grid size-11 shrink-0 place-items-center rounded-xl border border-line" aria-label="关闭方坤"><X className="size-5" /></button> : null}
           <button type="button" onClick={() => { menuScrollTop.current = 0; setSettingsPaneRaw("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
         </div>
       </header>
       {offline ? <p className="mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已缓存页面和本机记录可继续使用；方坤本地问答仍可用。</p> : null}
-      {!offline && offlineShellState !== "ready" ? <p role="status" className="mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">{offlineShellState === "preparing" ? "正在准备离线使用，首次打开请保持网络。" : "离线页面还未准备完成，联网后重新打开可重试。"}</p> : null}
+      {!offline && offlineShellState !== "ready" ? <p role="status" className="mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">{offlineShellState === "preparing" ? "离线功能准备中…" : "离线功能暂不可用"}</p> : null}
       {planSaveFailed ? <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-4 pb-2 text-sm">
         <p>{planConflict || PLAN_SAVE_FAIL}</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (navigator.locks?.request) void navigator.locks.request(PLAN_KEY, () => { const result = savePlanCompared(localStorage, planRaw.current, plan); if(result.ok){planRaw.current=result.raw;setPlanSaveFailed(false);setPlanConflict("");}else setPlanConflict(result.reason); }); }}>再存一次</button>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { setSettingsPaneRaw("backup"); setSettingsOpen(true); }}>下载备份</button>
       </div> : null}
 
-      <main className={"ui03-main mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "today" || tab === "plan" ? "" : " hidden")}>
+      {inTraining ? <div className="fk-training-hub mx-auto max-w-3xl px-4">
+        <nav className="fk-training-tabs" aria-label="训练视图">
+          {([['plan', '计划'], ['log', '记录'], ['courses', '课程']] as const).map(([id, label]) => <button key={id} type="button" aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{label}</button>)}
+        </nav>
+        {tab !== "log" ? <div className="fk-training-toolbar">
+          <div className="flex gap-1" role="group" aria-label="运动类型">
+            {([['run', '跑步', Footprints], ['lift', '力量', Dumbbell]] as const).map(([id, label, Icon]) => <button key={id} type="button" aria-pressed={hubPane === id} onClick={() => setHubPane(id)} className="flex min-h-11 items-center gap-1.5 rounded-xl px-3 font-bold"><Icon className="size-4" />{label}</button>)}
+          </div>
+          {tab === "plan" ? <button type="button" className="fk-primary flex items-center justify-center gap-1 px-4" onClick={() => setTrainingEditor({ date: selectedDate, initialType: hubPane === 'run' ? 'run' : 'strength' })}><Plus className="size-4" />添加训练</button> : null}
+        </div> : null}
+      </div> : null}
+      <main className={"ui03-main mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "today" || tab === "plan" || tab === "courses" ? "" : " hidden")}>
         {tab === "today" ? (
           <div className="flex flex-col">
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
-            <div className="mb-3 flex justify-center"><span className="rounded-full border border-line px-4 py-1.5 text-sm">{Number(todayIso.slice(5,7))}月{Number(todayIso.slice(8,10))}日 周{"日一二三四五六"[new Date(todayIso + "T12:00:00").getDay()]}</span></div>{planSrc === "400m-v4" ? <Plan400TodayCard today={todayIso} onReview={() => setTab("log")} /> : null}<HomeHeader today={todayIso} revision={homeRev} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
+            <div className="fk-today-date"><span className="fk-date-day">{todayIso.slice(8, 10)}</span><div className="fk-date-context"><b>{Number(todayIso.slice(5, 7))}月 · 周{"日一二三四五六"[new Date(todayIso + "T12:00:00").getDay()]}</b></div></div>{planSrc === "400m-v4" ? <Plan400TodayCard today={todayIso} onReview={() => setTab("log")} /> : null}<HomeHeader today={todayIso} revision={homeRev} trainingStarted={hasTrainingContent} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
             <div style={{ order: homeLayout.order.indexOf("week") }}><TodayBoard v4={planSrc === "400m-v4"} revision={homeRev} override={dayOverride} band={bandOn} plan={plan} runPlans={ready ? listTrackPlans() : []} today={todayIso} selectedDate={selectedDate} onDateChange={setSelectedDate} onExecute={openScheduled} onEdit={editScheduled}
+              gettingStarted={!hasTrainingContent} onImportPlan={() => setPlanImportOpen(true)} onBrowseCourses={() => { setHubPane('lift'); setTab('courses'); }}
               onOpenRun={(planId) => { if (!workspaceOpen) setCourseChoice(`run:${planId}`); openDetail(); }}
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
               onFood={() => { setTab("diet"); }}
               onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /></div>
-            <section id="detail-record" aria-label="本日训练执行入口" style={{ order: homeLayout.order.indexOf("detail") }} className="mb-3 px-1">
-              <button type="button" className="flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left text-sm" onClick={openTimer}><span><b className="block">其他训练 · 计时与逐组记录</b><span className="block text-xs text-muted">自建/方坤安排的课程，开始或继续同一节</span></span><span aria-hidden="true" className="text-muted">›</span></button>
-            </section>
+            {hasTrainingContent ? <section id="detail-record" aria-label="本日训练执行入口" style={{ order: homeLayout.order.indexOf("detail") }} className="mb-3 px-1">
+              <button type="button" className="flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left text-sm" onClick={openTimer}><span className="font-bold">计时与逐组记录</span><span aria-hidden="true" className="text-muted">›</span></button>
+            </section> : null}
             <div style={{ order: 100 }} className="h-20" aria-hidden="true" />
           </div>
         ) : null}
@@ -623,30 +643,43 @@ export function StrengthApp() {
           <div className="flex items-center justify-between gap-2"><h2 className="font-bold">当前课程 · {courseChoice.startsWith("run:") ? courseChoice.slice(4) : session?.name}</h2><button type="button" className="min-h-11 text-sm" onClick={()=>{if(trainingDecision.current){setNotice("请先在执行页暂停或结束当前力量课，再选择其他课程。");return;}setWorkspaceOpen(false);}}>返回课程选择</button></div>
           {courseChoice.startsWith("run:") ? <TrackSessionPanel selectedPlanId={courseChoice.slice(4)} onLog={()=>setTab("log")} /> : session ? <>
             <TrainingDecisionCard key={session.id} plan={plan} session={session} onApply={next=>updateSession(next)} onLive={id=>{trainingDecision.current=id;}} />
-            <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setHubPane("lift");setTab("plan");}} /></details>
+            <details className="rounded-xl border border-line p-3"><summary className="min-h-11 cursor-pointer font-bold">已保存的课程安排</summary><SessionOverview name={session.name} focus={session.focus} moves={session.moves} minutes={minutes} onEdit={()=>{setEditorOpen(true);setPlanMore(true);setHubPane("lift");setTab("courses");}} /></details>
           </> : <p>选定课程已不存在，请重新选择。</p>}
         </section> : null}
-        {tab === "plan" ? <div className="mb-3 grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface p-1" role="group" aria-label="运动专区">
-          {([['run', '跑步', Footprints], ['lift', '力量', Dumbbell]] as const).map(([id, title, Icon]) => <button type="button" key={id} aria-pressed={hubPane === id} onClick={() => setHubPane(id)} className={'flex min-h-11 items-center justify-center gap-1.5 rounded-lg text-sm font-bold ' + (hubPane === id ? 'bg-accent text-accent-fg' : 'text-muted')}><Icon className="size-4" />{title}</button>)}
-        </div> : null}
-        {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 space-y-3 p-4" aria-label="力量训练入口"><h2 className="text-lg font-black">从肌肉开始选动作</h2><button type="button" className="flex min-h-20 w-full items-center justify-between rounded-2xl border border-accent bg-accent/10 p-4 text-left text-accent" onClick={() => setTrainingEditor({ date: selectedDate, openMuscleInitially: true })}><span><b className="block">人体肌肉 3D</b><span className="keep mt-1 block text-xs">点选肌肉 → 选择动作 → 加入这节训练</span></span><span>›</span></button><div className="grid grid-cols-2 gap-2"><button type="button" className="min-h-12 rounded-xl border border-line font-bold" onClick={() => setActionLibrary(true)}>动作库</button><button type="button" className="min-h-12 rounded-xl bg-accent font-bold text-accent-fg" onClick={() => setTrainingEditor({ date: selectedDate })}>＋添加力量训练</button></div></section> : null}
-        {tab === 'plan' && hubPane === 'lift' ? <TempTrainingList entries={calendar} modality="strength" title="已排力量训练" addLabel="按日期查看" onAdd={() => setTab('today')} onOpen={openScheduled} empty="还没有排期，先选动作或从下方课程库添加。" /> : null}
-        {tab === 'plan' && hubPane === 'lift' ? <section className="home-card mb-3 p-4" aria-label="力量课程库"><h2 className="font-bold">已保存的力量课程</h2>{plan.sessions.map((s, i) => <div key={s.id} className="flex items-center justify-between gap-2 border-t border-line py-3"><span className="min-w-0"><b className="block">{s.name}</b><span className="text-xs text-muted">{s.moves.length}个动作{plan.cycle?.logs.some(l => l.sessionId === s.id) ? " · 已有反馈" : ""}</span></span><span className="flex shrink-0 gap-1"><button type="button" className="min-h-11 rounded-full border border-line px-3 text-sm" onClick={() => { setActive(i); setEditorOpen(true); setPlanMore(true); setTimeout(() => document.getElementById("session-editor")?.scrollIntoView({ block: "start", behavior: "smooth" }), 60); }}>编辑</button><button type="button" className="min-h-11 rounded-full border border-line px-3 text-sm font-bold text-accent" onClick={() => setTrainingEditor({ date: selectedDate, template: templateEntry(s.id) })}>加入训练</button></span></div>)}{plan.sessions.length === 0 ? <p className="py-3 text-sm text-muted">没有已保存的力量课。</p> : null}</section> : null}
-        
-        {tab === "plan" && hubPane === "run" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} sourceSlot={<PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />} /> : null}
-        {tab === "plan" && hubPane === "run" && planSrc !== "400m-v4" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : null}
-        {tab === "plan" && hubPane === "run" ? <TempTrainingList entries={calendar} modality="run" title="临时 / 自建跑步训练" addLabel="＋添加跑步" onAdd={() => setTrainingEditor({ date: selectedDate, initialType: 'run' })} onOpen={openScheduled} empty="还没有临时或自建的跑步训练。" footer={<p className="keep mt-2 text-xs text-muted">与上方周期计划分开显示；只有导入计划当天课程生成的训练才算挂靠周期。间歇训练保留每次、每轮与休息结构；未开始的计划不会计入实际训练。</p>} /> : null}
-        {tab === "plan" && hubPane === "run" ? <section className="home-card mb-3 p-4" aria-label="训练资源"><h2 className="text-sm font-bold text-muted">训练资源</h2><button type="button" className="mt-2 flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left font-bold" onClick={() => setTechniqueLibrary(true)}><span>跑步技术动作库 · 53 项</span><span aria-hidden="true" className="text-muted">›</span></button></section> : null}
+        {tab === "plan" && hubPane === "run" && planSrc === "400m-v4" && (hasImportedPlan || !hasScheduledForPane) ? <Plan400Cycle today={todayIso} sourceSlot={<PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />} /> : null}
+        {tab === "plan" && hubPane === "run" && planSrc !== "400m-v4" ? (hasImportedPlan ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /> : !hasScheduledForPane ? <NoPlanCard onImported={() => setPlanSrcSaved('400m-v4')} sourceSlot={<PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved("generated"); setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} />} /> : null) : null}
         {tab === "plan" && hubPane === "lift" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} lens="lift" /> : null}
-        {tab === "plan" && hubPane === "lift" ? <section className="home-card product-goal-card mb-3 p-4" aria-label="当前目标">
-          <div className="product-section-heading"><div><p className="product-eyebrow">目标与约束</p><h2>{GOALS.find(goal => goal.id === preference.primaryGoal)?.label ?? "目标待确认"}</h2></div><button type="button" className="product-text-action" onClick={() => { setSettingsPane("goals"); setSettingsOpen(true); }}>修改 ›</button></div>
-          <p className="mt-2 text-sm text-muted">{profileFilled(profile) ? profileSummary(profile) : "当前能力、期限、可用时间与运动限制，需进一步确认。"}</p>
-          <button type="button" className="product-text-action" onClick={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }}>和方坤完善首周候选计划 ›</button>
-        </section> : null}
-        {tab === "plan" && hubPane === "lift" ? (
-          <details className="home-card mb-3 px-3 py-3" aria-label="力量周期工具"><summary className="min-h-12 cursor-pointer font-bold">力量周期（3 周训练 + 调整周）</summary>
+        {tab === "plan" && hubPane === "lift" && !hasImportedPlan && !hasScheduledForPane ? <NoPlanCard onImported={() => setPlanSrcSaved('400m-v4')} /> : null}
+        {tab === "plan" && hubPane === "lift" && hasImportedPlan && planSrc !== "400m-v4" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved('generated'); setCoachLink('ask'); setCoachFocus(null); setTab('coach'); }} /> : null}
+        {tab === "plan" && hasScheduledForPane ? <TempTrainingList today={todayIso} entries={calendar} modality={hubPane === "run" ? "run" : "strength"} title={hubPane === "run" ? "自建跑步" : "自建力量"} addLabel="查看今天" onAdd={() => setTab("today")} onOpen={openScheduled} empty="还没有训练安排。" /> : null}
+        {tab === 'plan' && hasScheduledForPane && !hasImportedPlan ? <button type="button" className="mb-3 min-h-12 w-full rounded-xl border border-line text-sm" onClick={() => setPlanImportOpen(true)}>导入计划或备份</button> : null}
+        {tab === "courses" && hubPane === "lift" ? <>
+          <section className="fk-course-card home-card mb-4 p-4" aria-label="力量动作">
+            <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">力量动作</h2><button type="button" className="min-h-11 text-sm font-bold text-accent" onClick={() => setActionLibrary(true)}>全部动作 ›</button></div>
+            <button type="button" className="mt-2 flex min-h-16 w-full items-center justify-between border-t border-line py-3 text-left font-bold" onClick={() => setTrainingEditor({ date: selectedDate, initialType: "strength", openMuscleInitially: true })}><span className="flex items-center gap-3"><Dumbbell className="size-5 text-accent" />按部位选动作</span><span aria-hidden="true">›</span></button>
+          </section>
+          <section className="fk-course-card home-card mb-4 p-4" aria-label="力量课程库">
+            <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">力量课程</h2><button type="button" className="min-h-11 text-sm font-bold text-accent" onClick={() => setBuilderOpen(true)}>组合一课</button></div>
+            {plan.sessions.map((s, i) => <div key={s.id} className="fk-course-row flex flex-wrap items-center justify-between gap-2 border-t border-line py-4">
+              <div className="min-w-0 flex-1"><h3 className="font-bold">{s.name}</h3><p className="mt-1 text-sm text-muted">{s.moves.length} 个动作 · 约 {estimateMinutes(s)} 分钟</p></div>
+              <div className="flex shrink-0 gap-1">
+                <button type="button" className="min-h-11 rounded-xl px-3 text-sm" onClick={() => { setActive(i); setEditorOpen(true); setPlanMore(true); setTimeout(() => document.getElementById("session-editor")?.scrollIntoView({ block: "start", behavior: "smooth" }), 60); }}>编辑</button>
+                <button type="button" className="min-h-11 rounded-xl border border-line px-3 text-sm font-bold text-accent" onClick={() => setTrainingEditor({ date: selectedDate, template: templateEntry(s.id) })}>安排训练</button>
+              </div>
+            </div>)}
+            {plan.sessions.length === 0 ? <p className="py-4 text-sm text-muted">组合动作，保存你的第一节课。</p> : null}
+          </section>
+        </> : null}
+        {tab === "courses" && hubPane === "run" ? <>
+          <section className="fk-course-card home-card mb-4 p-4" aria-label="跑步课程库"><h2 className="text-lg font-bold">我的跑步课</h2>
+            {ready && listTrackPlans().length ? listTrackPlans().map(p => <div key={p.planId} className="fk-course-row border-t border-line py-4"><p className="font-bold">{describeTrackPlan(p)}</p><button type="button" className="mt-2 min-h-11 rounded-xl border border-line px-3 text-sm font-bold text-accent" onClick={() => setTrainingEditor({ date: selectedDate, template: runEntry(p, selectedDate, "custom"), initialType: "run" })}>安排训练</button></div>) : <p className="py-4 text-sm text-muted">还没有保存的跑步课。</p>}
+          </section>
+          <section className="fk-course-card home-card mb-4 p-4" aria-label="跑步技术"><button type="button" className="flex min-h-12 w-full items-center justify-between text-left font-bold" onClick={() => setTechniqueLibrary(true)}><span className="flex items-center gap-3"><Footprints className="size-5 text-accent" />跑步技术动作库</span><span aria-hidden="true">›</span></button></section>
+        </> : null}
+        {tab === "courses" && hubPane === "lift" ? (
+          <details className="home-card mb-3 px-3 py-3" aria-label="力量周期工具"><summary className="min-h-12 cursor-pointer font-bold">课程周期</summary>
             <div className="flex items-center justify-between gap-2 px-1">
-              <h2 className="font-bold">训练周期</h2>
+              <h2 className="font-bold">课程周期</h2>
               <span className="text-xs text-muted">{plan.cycle ? `3 周训练 + 调整周` : "周期未就绪"}</span>
             </div>
             <div className="mt-3 grid grid-cols-4 gap-1" role="group" aria-label="训练周期周次">
@@ -659,9 +692,9 @@ export function StrengthApp() {
             {/* v83（P1-03）：课程清单只在上方“已保存的力量课程”出现一次（编辑/加入训练都在那里）；跑步课在“跑步”视图 */}
           </details>
         ) : null}
-        {tab === "plan" && hubPane === "lift" ? <details className="home-card mt-3 px-4 py-2" open={planMore} onToggle={(event) => setPlanMore(event.currentTarget.open)}>
-          <summary className="min-h-12 cursor-pointer text-sm font-bold">调整周期、模板和这节课</summary>
-        {tab === "plan" && hubPane === "lift" && showPlanTools && plan.sessions.length > 1 ? (
+        {tab === "courses" && hubPane === "lift" ? <details className="home-card mt-3 px-4 py-2" open={planMore} onToggle={(event) => setPlanMore(event.currentTarget.open)}>
+          <summary className="min-h-12 cursor-pointer text-sm font-bold">管理课程</summary>
+        {tab === "courses" && hubPane === "lift" && showPlanTools && plan.sessions.length > 1 ? (
           <nav aria-label="选择要查看的训练课" className="mb-4 rounded-card border border-line bg-surface p-3">
             <p className="mb-2 text-xs font-bold text-muted">查看本周期其他训练课 · 共 {plan.sessions.length} 节</p>
             <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="训练课列表">
@@ -686,7 +719,7 @@ export function StrengthApp() {
             </div>
           </nav>
         ) : null}
-        {tab === "plan" && hubPane === "lift" ? <section>
+        {tab === "courses" && hubPane === "lift" ? <section>
           <button type="button" aria-expanded={showPlanTools} onClick={() => setShowPlanTools((current) => !current)} className="flex min-h-11 w-full items-center justify-between rounded-card border border-line bg-surface px-4 text-left text-sm font-bold">
             训练模板与周期管理 {showPlanTools ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
           </button>
@@ -733,7 +766,7 @@ export function StrengthApp() {
           />
           </> : null}
         </section> : null}
-        {tab === "plan" && hubPane === "lift" ? <details className="mt-3 rounded-card border border-line bg-surface p-3">
+        {tab === "courses" && hubPane === "lift" ? <details className="mt-3 rounded-card border border-line bg-surface p-3">
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">实验功能 · 周期计划候选</summary>
           
           <button
@@ -750,8 +783,7 @@ export function StrengthApp() {
         </details> : null}
 
 
-        {tab === "plan" && hubPane === "lift" ? <button type="button" className="mt-4 min-h-12 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={()=>setBuilderOpen(true)}>按多个部位组合一课</button> : null}
-        {tab === "plan" && hubPane === "lift" ? <details id="session-editor" open={editorOpen} onToggle={(event) => setEditorOpen(event.currentTarget.open)} className="mt-5 rounded-card border border-line bg-surface p-3">
+        {tab === "courses" && hubPane === "lift" ? <details id="session-editor" open={editorOpen} onToggle={(event) => setEditorOpen(event.currentTarget.open)} className="mt-5 rounded-card border border-line bg-surface p-3">
           <summary className="cursor-pointer text-sm font-bold">调整这节课</summary>
           <div className="mt-3 flex items-center gap-2 overflow-x-auto">
             {plan.sessions.map((item, index) => (
@@ -870,7 +902,7 @@ export function StrengthApp() {
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready && !!todayCoord, todayParts: todayCoord?.parts, todayUnplanned: todayCoord?.unplanned, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
-      <div className={tab === "diet" ? "" : "hidden"}><div className="mx-auto max-w-3xl px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情与依据</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
+      <div className={tab === "diet" ? "" : "hidden"}><div className="mx-auto max-w-3xl px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
       <div className={tab === "body" ? "" : "hidden"}><div className="mx-auto max-w-3xl px-3 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} onCoach={() => setTab("coach")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
       </div>
       <StandaloneWelcome />
@@ -1019,17 +1051,17 @@ export function StrengthApp() {
       {true ? <QuickLog hideFab openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}
+      {planImportOpen ? <AppSheet title="导入训练计划" label="导入训练计划" footer={null} onClose={() => setPlanImportOpen(false)}><PlanImportPanel onImported={() => { setPlanImportOpen(false); setPlanSrcSaved('400m-v4'); setTab('plan'); }} /></AppSheet> : null}
       {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <ChromeMetrics />
       <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " hidden" : "")} aria-label="主导航">
-        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-6">
+        <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
           {(
             [
-              ["today", "今日", House],
-              ["plan", "计划", ClipboardList],
+              ["today", "今天", House],
+              ["plan", "训练", ClipboardList],
               ["coach", "方坤", MessageCircle],
               ["diet", "饮食", Utensils],
-              ["log", "日志", CalendarDays],
               ["body", "健康", Scale],
             ] as const
           ).map(([id, label, Icon]) => (
@@ -1038,10 +1070,10 @@ export function StrengthApp() {
               type="button"
               onClick={() => { if (id === "coach" && tab !== "coach") { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); } setTab(id); }}
               aria-label={`切换到${label}`}
-              aria-current={tab === id ? "page" : undefined}
-              className={"ui03-tab flex min-h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-bold " + "" + (tab === id ? "ui03-tab-active text-accent" : "text-muted")}
+              aria-current={(tab === id || (id === "plan" && inTraining)) ? "page" : undefined}
+              className={"ui03-tab flex min-h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-bold " + "" + ((tab === id || (id === "plan" && inTraining)) ? "ui03-tab-active text-accent" : "text-muted")}
             >
-              <span className={"ui03-tab-icon grid h-8 min-w-12 place-items-center rounded-2xl " + (tab === id ? "stat-run" : "")}><Icon className="size-5" strokeWidth={tab === id ? 2.4 : 2} /></span>
+              <span className={"ui03-tab-icon grid h-8 min-w-12 place-items-center rounded-2xl " + ((tab === id || (id === "plan" && inTraining)) ? "stat-run" : "")}><Icon className="size-5" strokeWidth={(tab === id || (id === "plan" && inTraining)) ? 2.4 : 2} /></span>
               <span className="ui03-tab-label">{label}</span>
             </button>
           ))}
@@ -1151,7 +1183,7 @@ export function StrengthApp() {
       {trainingEditor ? <TrainingEditorSheet templates={plan} key={`${trainingEditor.date}:${trainingEditor.initial?.id ?? trainingEditor.template?.id ?? 'new-training'}`} {...trainingEditor} onClose={() => setTrainingEditor(null)} onSave={async entry => { const result = await saveScheduledEntry(entry, trainingEditor.initial); if (result.ok) { setCalendar(loadSchedule().entries); setSelectedDate(entry.date); setHomeRev(n => n + 1); } return result; }} /> : null}
       {timerPicker ? <SchedulePicker date={selectedDate} onClose={() => setTimerPicker(false)} onChoose={openScheduled} onAdd={() => { setTimerPicker(false); setTrainingEditor({ date: selectedDate }); }} /> : null}
       {executionEntryId && calendar.find(e => e.id === executionEntryId) ? <ScheduledTraining key={executionEntryId} entry={calendar.find(e => e.id === executionEntryId)!} plan={plan} onClose={() => setExecutionEntryId(null)} onEdit={() => { const entry = calendar.find(e => e.id === executionEntryId)!; setExecutionEntryId(null); editScheduled(entry); }} onChanged={() => { setCalendar(loadSchedule().entries); setHomeRev(n => n + 1); }} onResumeOther={id => { setExecutionEntryId(null); resumeSession(id); }} /> : null}
-      {actionLibrary ? <AppSheet full title="力量动作库" label="力量动作库" onClose={() => setActionLibrary(false)} footer={<button type="button" className="min-h-12 w-full rounded-xl border border-line" onClick={() => setActionLibrary(false)}>完成查看</button>}><MuscleActionList pick={null} onShow={setMuscleDemo} onAdd={action => { setActionLibrary(false); setTrainingEditor({ date: selectedDate, seedAction: action }); }} /></AppSheet> : null}
+      {actionLibrary ? <AppSheet full title="力量动作库" label="力量动作库" onClose={() => setActionLibrary(false)} footer={null}><MuscleActionList pick={null} onShow={setMuscleDemo} onAdd={action => { setActionLibrary(false); setTrainingEditor({ date: selectedDate, seedAction: action }); }} /></AppSheet> : null}
       {techniqueLibrary ? <AppSheet full title="跑步技术动作库" label="跑步技术动作库" onClose={() => setTechniqueLibrary(false)} footer={null}><Suspense fallback={<p>正在加载跑步技术…</p>}><RunningTechniqueLibrary/></Suspense></AppSheet> : null}
       {muscleDemo ? <DemoSheet id={muscleDemo} onClose={() => setMuscleDemo(null)} /> : null}
       {formMove ? <Sheet title={displayName(formMove)} onClose={()=>setFormMove(null)}><ExerciseContent catalogId={formMove.catalogId} /></Sheet> : null}

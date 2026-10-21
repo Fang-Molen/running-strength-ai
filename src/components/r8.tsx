@@ -6,7 +6,7 @@ import { onAppEvent } from "@/lib/core/events";
 import { useEffect, useMemo, useRef, useState } from "react"
 import { niceTicks } from "@/components/trend-chart"
 import { Bell, Camera, ChevronRight, FileUp, Flame, Info, Plus, X } from "lucide-react"
-import { DEFAULTS, EQUIPMENT, EXPERIENCE, GOALS, ONBOARD_KEY, PRESET, QUESTIONS, VENUES, WHEN, goalLabel, previewWeek, tierFor, toggleGoal, type Answers } from "@/lib/ui/first-run"
+import { DEFAULTS, EQUIPMENT, EXPERIENCE, GOALS, ONBOARD_KEY, ONBOARD_SKIPPED_KEY, PRESET, QUESTIONS, VENUES, WHEN, goalLabel, previewWeek, tierFor, toggleGoal, type Answers } from "@/lib/ui/first-run"
 import { BRANDS, GROUP_HINT, TIERS, TIER_LABEL, WATCHES, gateRecovery, loadBrand, loadTier, loadWatch, saveTier, saveWatch, type Tier, type WatchId } from "@/lib/ui/watch-mode"
 import { loadSchedule, saveSchedule } from "@/lib/ui/day-schedule"
 import { addDays, weekOf, weekSummary, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
@@ -47,18 +47,34 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
   const [a, setA] = useState<Answers>(DEFAULTS)
   const [brand, setBrand] = useState<string | null>(null)
   const [accepted, setAccepted] = useState(false)
+  const [error, setError] = useState("")
   const week = weekOf(today)
   const preview = useMemo(() => previewWeek(a, week, today), [a, week, today])
   const set = (p: Partial<Answers>) => setA({ ...a, ...p })
-  const next = () => { if (step === 0) setA({ ...a, goals: goalsForEvent(me.event, a.goals) }); setStep(step + 1) }
+  const next = () => { setError(""); if (step === 0) setA({ ...a, goals: goalsForEvent(me.event, a.goals) }); setStep(step + 1) }
+  const browse = () => {
+    setError("")
+    try {
+      localStorage.setItem(ONBOARD_SKIPPED_KEY, "1")
+      if (localStorage.getItem(ONBOARD_SKIPPED_KEY) !== "1") throw new Error("skip-not-saved")
+    } catch { setError("未能保存进入状态，请重试。"); return }
+    onDone()
+  }
   const finish = (accept: boolean) => {
-    saveWatch(a.source, undefined, brand)
-    const s = loadSchedule(); const ids = new Set(s.entries.map((e) => e.id))
-    const add = preview.filter((e) => !ids.has(e.id)).map(({ why, ...e }) => ({ ...e, status: accept ? "planned" : "proposed", swapReason: why } as ScheduleEntry))
-    saveSchedule({ ...s, entries: [...s.entries, ...add] }, 'onboarding-r8')
-    saveAboutMe(me, a.days.length); setAdded(add.map((e) => e.id))
-    localStorage.setItem(ONBOARD_KEY, JSON.stringify({ ...a, done: true, at: new Date().toISOString() }))
-    setAccepted(true)
+    setError("")
+    try {
+      saveWatch(a.source, undefined, brand)
+      const s = loadSchedule(); const ids = new Set(s.entries.map((e) => e.id))
+      const add = preview.filter((e) => !ids.has(e.id)).map(({ why, ...e }) => ({ ...e, status: accept ? "planned" : "proposed", swapReason: why } as ScheduleEntry))
+      if (!saveSchedule({ ...s, entries: [...s.entries, ...add] }, 'onboarding-r8')) { setError("训练建议未能保存，请重试。"); return }
+      saveAboutMe(me, a.days.length); setAdded(current => [...new Set([...current, ...add.map((e) => e.id)])])
+      const answers = JSON.stringify({ ...a, done: true, at: new Date().toISOString() })
+      localStorage.setItem(ONBOARD_KEY, answers)
+      if (localStorage.getItem(ONBOARD_KEY) !== answers) throw new Error("answers-not-saved")
+      localStorage.removeItem(ONBOARD_SKIPPED_KEY)
+      if (localStorage.getItem(ONBOARD_SKIPPED_KEY) !== null) throw new Error("skip-not-cleared")
+      setAccepted(true)
+    } catch { setError("引导资料未能完整保存，请重试。"); }
   }
   const askNotify = async () => {
     let ok = false
@@ -79,15 +95,16 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
     : null
   return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="首次引导">
     <div className="fk-onboard-safe mx-auto max-w-xl px-4 pb-10 pt-5">
+      {error ? <p role="alert" className="mb-3 rounded-xl border border-risk p-3 text-sm text-risk">{error}</p> : null}
       {step < 6 ? <>
-        <div className="flex items-center gap-3"><span className="text-sm font-bold">{step + 1}/6</span><div className="h-1.5 flex-1 rounded-full bg-line"><div className="h-full rounded-full bg-accent" style={{ width: `${(step + 1) * 100 / 6}%` }} /></div></div>
+        <div className="flex items-center gap-3"><span className="text-sm font-bold">{step + 1}/6</span><div className="h-1.5 flex-1 rounded-full bg-line"><div className="h-full rounded-full bg-accent" style={{ width: `${(step + 1) * 100 / 6}%` }} /></div>{step === 0 ? <button type="button" className="min-h-11 shrink-0 px-2 text-sm font-bold" onClick={browse}>先逛逛</button> : null}</div>
         <h1 className="mt-4 text-2xl font-bold">{["先认识一下你", "你的数据从哪来？（可连佳明/高驰）", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
         <p className="mt-1 text-xs text-muted">{step === 0 ? "资料只存在这台设备上" : QUESTIONS[q]} · 伤病和饮食等用到时再问</p>
         <div className="mt-4">{body}</div>
         <div className="mt-6 flex gap-2">{step ? <button type="button" className="fk-chip min-h-12 px-4" onClick={() => setStep(step - 1)}>上一步</button> : null}<button type="button" className="fk-primary min-h-12 flex-1" onClick={next}>下一步</button></div>
         <button type="button" className="fk-link mt-3 w-full text-center text-sm" onClick={() => { if (step === 0) setMe(EMPTY_ME); else setA({ ...a, ...pickDefault(q) }); next() }}>跳过，用默认</button>
       </> : !accepted ? <>
-        <h1 className="text-2xl font-bold">{me.nickname ? `${me.nickname}，` : ""}这是你本周的计划</h1>
+        <h1 className="text-2xl font-bold">本周训练建议</h1>
         <p className="mt-1 text-sm text-muted">为了「{goalLabel(a.goals[0] ?? "fitness")}」· {TIER_LABEL[tierFor(a)]} · 每节都是方坤的建议，可以逐个改。</p>
         <div className="mt-3 space-y-2">{preview.length ? preview.map((e) => <div key={e.id} className={"rounded-2xl border-l-4 bg-surface p-3 " + (e.modality === "run" ? "border-l-[#2182bd]" : "border-l-[#d07a2b]")}><p className="font-bold">周{"一二三四五六日"[week.indexOf(e.date)]} · {e.title} · {e.minutes} 分钟{e.slot ? (e.slot === "pm" ? " · 今晚" : " · 上午") : ""}</p><p className="text-xs text-muted">{e.why}</p></div>) : <p className="text-sm text-muted">本周剩下的日子没有你选的训练日，下周一开始。</p>}</div>
         <div className="mt-4 grid grid-cols-2 gap-2"><button type="button" className="fk-primary min-h-12" onClick={() => finish(true)}>接受</button><button type="button" className="fk-chip min-h-12 justify-center" onClick={() => finish(false)}>逐个调整</button></div>
@@ -106,39 +123,39 @@ const pickDefault = (step: number): Partial<Answers> => [{ source: DEFAULTS.sour
 /** v83：记一笔的训练事实（不在日程里）同样算打卡 */
 function quickDays(): Set<string> { try { return new Set(loadConfirmedTrainingImports().filter(x => /^act-q-n-/.test(x.draftId) && !occurrenceVoided(x.confirmedImportId) && x.occurredAt.value).map(x => activityLocalDay(x.occurredAt.value!)).filter((d): d is string => !!d)) } catch { return new Set() } }
 /* ---------------- 2) 首页摘要：目标回响 + 连续打卡 + 基线 + 恢复一句话 + 今天临时改 ---------------- */
-export function HomeHeader({ today, revision, onRecovery, onOverride, layout, onQuick, onEdit }: { today: string; revision: number; onRecovery: () => void; onOverride: (o: Override | null) => void; layout: Layout; onQuick: (id: QuickId | "more") => void; onEdit: () => void }) {
-  const [st, setSt] = useState<{ goal: string | null; done: number; planned: number; streak: ReturnType<typeof computeStreak>; baseline: number; verdict: string; reason: string; ov: Override | null } | null>(null)
+export function HomeHeader({ today, revision, onRecovery, onOverride, layout, onQuick, onEdit, trainingStarted = true }: { today: string; revision: number; onRecovery: () => void; onOverride: (o: Override | null) => void; layout: Layout; onQuick: (id: QuickId | "more") => void; onEdit: () => void; trainingStarted?: boolean }) {
+  const [st, setSt] = useState<{ goal: string | null; done: number; planned: number; streak: ReturnType<typeof computeStreak>; baseline: number; verdict: string; reason: string; hasRecoveryRecord: boolean; ov: Override | null } | null>(null)
   useEffect(() => {
     if (!today) return
     const s = loadSchedule(), wk = weekOf(today), ans = loadAnswers(), sum = weekSummary(s.entries, wk, today)
-    const tier = loadTier(), v = recoveryVerdict(gateRecovery(tier, readRecoveryInput(today)))
+    const tier = loadTier(), recovery = readRecoveryInput(today), v = recoveryVerdict(gateRecovery(tier, recovery))
+    const hasRecoveryRecord = recovery.pain != null || [recovery.readiness, recovery.bodyBattery, recovery.sleepH, recovery.hrv, recovery.rhr, recovery.subjective, recovery.stress].some(value => value != null && Number.isFinite(value))
     const days = new Set(loadVitals().records.map((r) => r.observedOn)); for (const c of read<{ date: string }[]>("fk-checkin-v1", [])) days.add(c.date)
     const ov = read<Override | null>(OVERRIDE_KEY, null)
-    setSt({ goal: ans?.goals?.[0] ? goalLabel(ans.goals[0]) : null, done: sum.asPlanned + sum.different, planned: sum.planned, streak: computeStreak(s.entries, today, quickDays()), baseline: Math.max(0, 7 - days.size), verdict: v.title, reason: v.reasons[0] ?? "", ov: ov?.date === today ? ov : null })
+    setSt({ goal: ans?.goals?.[0] ? goalLabel(ans.goals[0]) : null, done: sum.asPlanned + sum.different, planned: sum.planned, streak: computeStreak(s.entries, today, quickDays()), baseline: Math.max(0, 7 - days.size), verdict: v.title, reason: v.reasons[0] ?? "", hasRecoveryRecord, ov: ov?.date === today ? ov : null })
   }, [today, revision])
   if (!st) return null
   const setOv = (p: Partial<Override>) => { const n = { ...(st.ov ?? { date: today }), ...p, date: today }; const val = n.short || n.home ? n : null; localStorage.setItem(OVERRIDE_KEY, JSON.stringify(val)); setSt({ ...st, ov: val }); onOverride(val) }
   const ord = (id: CardId) => ({ order: layout.order.indexOf(id) })
   const vis = (id: CardId) => !layout.hidden.includes(id)
   return <>
-    {vis("summary") ? <div style={ord("summary")} className="mb-2 flex items-center gap-2 px-1 text-sm" aria-label="目标与连续打卡">
+    {trainingStarted && vis("summary") && (st.goal || st.streak.days > 0) ? <div style={ord("summary")} className="mb-2 flex items-center gap-2 px-1 text-sm" aria-label="目标与连续打卡">
       {st.goal ? <span className="rounded-full bg-[#7a5cc7]/12 px-2.5 py-1 font-bold text-[#6a4cb7]">为了{st.goal}：本周 {st.done}/{st.planned}</span> : null}
       <span className="ml-auto flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 font-bold" title="完成一节或登记实际不同都算；每周 2 次休息不断签"><Flame className={"size-4 " + (st.streak.todayDone ? "text-[#e07b2b]" : "text-muted")} />连续 {st.streak.days} 天{st.streak.frozen.length ? <span className="text-[10px] font-normal text-muted">（含休息 {st.streak.frozen.length}）</span> : null}</span>
     </div> : null}
-    {vis("recovery") ? <button type="button" style={ord("recovery")} onClick={onRecovery} className="mb-2 flex w-full items-center gap-2 rounded-2xl border-l-4 border-l-[#269775] bg-surface px-3 py-2 text-left text-sm" aria-label="今日恢复">
-      <b className="shrink-0 text-[#1d7a5e]">恢复</b><span className="min-w-0 flex-1 truncate">{st.verdict}{st.reason ? ` · ${st.reason}` : ""}</span>
-      {st.baseline ? <span className="shrink-0 text-[11px] text-muted">还需 {st.baseline} 天建立基线</span> : null}<ChevronRight className="size-4 shrink-0 text-muted" />
+    {vis("recovery") && (trainingStarted || st.hasRecoveryRecord) ? <button type="button" style={ord("recovery")} onClick={onRecovery} className="mb-2 flex w-full items-center gap-2 rounded-2xl border-l-4 border-l-[#269775] bg-surface px-3 py-2 text-left text-sm" aria-label="今日恢复">
+      <b className="shrink-0 text-fg">恢复</b><span className="min-w-0 flex-1">{st.verdict}</span>
+      <ChevronRight className="size-4 shrink-0 text-muted" />
     </button> : null}
     {vis("recovery") ? <div style={ord("recovery")}><IntradayTodayLine today={today} onOpen={() => window.dispatchEvent(new CustomEvent("fk-open-intraday"))} /></div> : null}
-    {vis("override") ? <div style={ord("override")} className="mb-2 flex flex-wrap items-center gap-1.5 px-1" aria-label="今天临时改"><span className="text-xs text-muted">今天临时改：</span>
-      <button type="button" className="fk-chip" aria-pressed={!!st.ov?.short} onClick={() => setOv({ short: !st.ov?.short })}>只有 20 分钟</button>
-      <button type="button" className="fk-chip" aria-pressed={!!st.ov?.home} onClick={() => setOv({ home: !st.ov?.home })}>今天在家</button>
-      {st.ov ? <span className="text-[11px] text-muted">只改今天，不改档案</span> : null}</div> : null}
-    {vis("quick") ? <div style={ord("quick")} className="mb-3 grid grid-cols-5 gap-1.5" aria-label="快捷入口">
-      {layout.quick.map((q) => <button key={q} type="button" onClick={() => onQuick(q)} className="flex min-h-14 flex-col items-center justify-center rounded-2xl bg-surface text-xs font-bold">{QUICK_LABEL[q]}</button>)}
-      <button type="button" onClick={() => onQuick("more")} className="flex min-h-14 flex-col items-center justify-center rounded-2xl border border-dashed border-line text-xs font-bold text-muted">更多</button>
-    </div> : null}
-    <button type="button" style={{ order: 99 }} onClick={onEdit} className="fk-link mx-auto mb-2 text-xs">编辑首页卡片</button>
+    {trainingStarted && vis("override") ? <details style={ord("override")} className="mb-2 border-b border-line px-1" aria-label="今天临时改"><summary className="min-h-11 cursor-pointer text-sm"><span>调整今天</span><span className="ml-auto text-muted">{[st.ov?.short ? "20分钟" : null, st.ov?.home ? "在家" : null].filter(Boolean).join(" · ") || "时间与场地"} ›</span></summary>
+      <div className="flex flex-wrap gap-2 pb-3"><button type="button" className="fk-chip" aria-pressed={!!st.ov?.short} onClick={() => setOv({ short: !st.ov?.short })}>只有 20 分钟</button>
+      <button type="button" className="fk-chip" aria-pressed={!!st.ov?.home} onClick={() => setOv({ home: !st.ov?.home })}>今天在家</button></div></details> : null}
+    {trainingStarted && vis("quick") ? <details style={ord("quick")} className="mb-3 border-b border-line px-1" aria-label="快捷入口"><summary className="min-h-11 cursor-pointer text-sm">快捷工具<span className="ml-auto text-muted">›</span></summary><div className="grid grid-cols-5 gap-1.5 pb-3">
+      {layout.quick.map((q) => <button key={q} type="button" onClick={() => onQuick(q)} className="flex min-h-14 flex-col items-center justify-center rounded-xl bg-surface text-xs font-bold">{QUICK_LABEL[q]}</button>)}
+      <button type="button" onClick={() => onQuick("more")} className="flex min-h-14 flex-col items-center justify-center rounded-xl border border-line text-xs text-muted">自定义</button>
+    </div></details> : null}
+    {trainingStarted ? <button type="button" style={{ order: 99 }} onClick={onEdit} className="fk-link mx-auto mb-2 text-xs">编辑首页卡片</button> : null}
   </>
 }
 const QUICK_LABEL = Object.fromEntries(QUICK_OPTIONS) as Record<QuickId, string>
@@ -305,7 +322,18 @@ export type HubRow = "p" | "d" | "h" | "n" | "c" | "r" | "v" | "x"
 export function SettingsHub({ onProfile, onDiet, onBackup, only, initialOpen = null }: { onProfile: () => void; onDiet: () => void; onBackup: () => void; only?: HubRow[]; initialOpen?: HubRow | null }) {
   const [s, setS] = useState<AppSettings | null>(null), [open, setOpen] = useState<string | null>(initialOpen), [stamp, setStamp] = useState(0)
   const [w, setW] = useState<WatchId | null>(null), [tier, setT] = useState<Tier>("basic"), [ans, setAns] = useState<ReturnType<typeof loadAnswers>>(null), [sync, setSync] = useState<string | null>(null), [confirmDel, setConfirmDel] = useState(false)
+  const [onboardingError, setOnboardingError] = useState("")
   useEffect(() => { setS(loadSettings()); setW(loadWatch()); setT(loadTier()); setAns(loadAnswers()); setSync(lastDeviceSync()) }, [])
+  const restartOnboarding = () => {
+    if (!window.confirm("重新开始引导？已有训练、健康记录不会删除。")) return
+    setOnboardingError("")
+    try {
+      localStorage.removeItem(ONBOARD_SKIPPED_KEY)
+      localStorage.removeItem(ONBOARD_KEY)
+      if (localStorage.getItem(ONBOARD_SKIPPED_KEY) !== null || localStorage.getItem(ONBOARD_KEY) !== null) throw new Error("onboarding-not-reset")
+      location.reload()
+    } catch { setOnboardingError("未能重新打开引导，请重试。") }
+  }
   if (!s) return null
   const up = (p: Partial<AppSettings>) => { const n = { ...s, ...p }; setS(n); saveSettings(n); setStamp(Date.now()) }
   const r = s.reminders, tg = (k: string) => setOpen(open === k ? null : k)
@@ -317,7 +345,7 @@ export function SettingsHub({ onProfile, onDiet, onBackup, only, initialOpen = n
   const injText = inj.items.length ? `已记录 ${inj.items.length} 处需要留意（${inj.items.map((x) => x.part + (x.kind === "current" ? "·当前疼" : "·旧伤")).join("、")}）` : inj.asked ? "未记录不适（旧版“都没有”与“以后再说”存成同一状态）" : "尚未填写"
   return <section className="home-card mt-3 px-4" aria-label="设置">
     <div className="flex items-center justify-between pt-3"><h3 className="text-sm font-bold text-muted">修改后立即保存到本机</h3><SavedBadge stamp={stamp} /></div>
-    {has("p") ? <Row title="训练条件（引导问卷）" sub={ans ? `${ans.goals.map(goalLabel).join("、")} · ${EXPERIENCE.find((x) => x[0] === ans.experience)?.[1]} · ${VENUES.find((x) => x[0] === ans.venue)?.[1]} · 每周可安排 ${ans.days.length} 天 × 约 ${ans.minutes} 分钟` : unset} open={open === "p"} onToggle={() => tg("p")}><p className="text-xs text-muted">「每周可安排」是你填写的可用时间，不是方坤开的训练处方，也不代表每天都练高强度。</p><button type="button" className="fk-link" onClick={onProfile}>编辑基本信息 ›</button><button type="button" className="fk-link ml-4" onClick={() => { if (window.confirm("重新回答 5 个问题？已有训练、健康记录不会删除。")) { localStorage.removeItem(ONBOARD_KEY); location.reload() } }}>重新回答 5 个问题 ›</button></Row> : null}
+    {has("p") ? <Row title="训练条件（引导问卷）" sub={ans ? `${ans.goals.map(goalLabel).join("、")} · ${EXPERIENCE.find((x) => x[0] === ans.experience)?.[1]} · ${VENUES.find((x) => x[0] === ans.venue)?.[1]} · 每周可安排 ${ans.days.length} 天 × 约 ${ans.minutes} 分钟` : unset} open={open === "p"} onToggle={() => tg("p")}><p className="text-xs text-muted">「每周可安排」是你填写的可用时间，不是方坤开的训练处方，也不代表每天都练高强度。</p><button type="button" className="fk-link" onClick={onProfile}>编辑基本信息 ›</button><button type="button" className="fk-link ml-4" onClick={restartOnboarding}>重新填写引导 ›</button>{onboardingError ? <p role="alert" className="mt-2 text-sm text-risk">{onboardingError}</p> : null}</Row> : null}
     {has("d") ? <Row title="手表类型与显示版本" sub={`${w ? WATCHES.find((x) => x[0] === w)?.[1] : unset} · ${TIER_LABEL[tier]}${w && w !== "none" ? (sync ? ` · 最近收到设备数据 ${new Date(sync).toTimeString().slice(0, 5)}${stale ? "（超过 24 小时）" : ""}` : " · 暂无设备数据") : ""}`} open={open === "d"} onToggle={() => tg("d")}>
       <div className="flex flex-wrap gap-1.5">{WATCHES.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={w === id} onClick={() => { saveWatch(id, undefined, loadBrand()); setW(id); setT(loadTier()); setStamp(Date.now()) }}>{l}</button>)}</div>
       <p className="mt-2 text-xs font-bold">版本（可手动升降）</p><div className="mt-1 flex flex-wrap gap-1.5" aria-label="版本">{(Object.keys(TIERS) as Tier[]).map((id) => <button key={id} type="button" className="fk-chip" aria-pressed={tier === id} onClick={() => { saveTier(id); setT(id); setStamp(Date.now()) }}>{TIER_LABEL[id]}</button>)}</div><p className="mt-1 text-xs text-muted">{TIERS[tier].desc}</p>
