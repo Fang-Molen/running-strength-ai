@@ -2,10 +2,12 @@
  *  沿用 U11 的已有 Écorché 3D 肌群网格和同一份恢复投影（readRecoveryProjection）。
  *  颜色只表示训练参与、负荷叠加或自报症状，不是实测疲劳百分比；“预计恢复”是一般经验范围（估算），不自动改课。 */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { HeartPulse } from "lucide-react"
 import { MESH_KEYS, REGION_LABEL, REGIONS, type Region, type RegionState } from "@/lib/health/muscle-recovery-u11"
 import { readRecoveryProjection, recoveryLines, type RecoveryProjection } from "@/lib/health/recovery-host-u11"
 import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
 import "./muscle-target-card.css"
+import "./recovery-trend-detail.css"
 import { MuscleStimulusChartV90 } from "./muscle-stimulus-chart-v90"
 
 type API = { setView: (v: string) => void; selectKey: (k: string | null) => void; setOverlays: (v: { keys: string[]; color: string }[]) => void; destroy: () => void }
@@ -113,10 +115,36 @@ function Loads({ value, modality }: { value: RecoveryProjection; modality: "STRE
 }
 
 function Advice({ value, onCoach }: { value: RecoveryProjection; onCoach?: () => void }) {
-  const l = recoveryLines(value), lines = [l.summary, ...l.groups, l.next] // 依据已在上方卡片列出，这里不再逐条重复
-  return <section className="fk-h89-card" aria-label="方坤分析与建议">
-    <div className="flex items-center gap-2"><img src="/fangshen/care-bust.png" alt="" className="size-9 rounded-full border border-line object-cover" /><b>方坤分析与建议</b>{onCoach ? <button type="button" className="fk-h89-pill ml-auto" onClick={onCoach}>问方坤 ›</button> : null}</div>
-    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{lines.map(l => <li key={l} className="keep">{l}</li>)}</ul>
-    <p className="keep mt-1 text-[11px] text-muted">本地规则整理，不调用模型；不是诊断，也不自动改课。</p>
+  const [portraitError, setPortraitError] = useState(false)
+  const l = recoveryLines(value)
+  // Only shorten the initial reading; the original projection text remains available in full below.
+  const summary = l.summary.split(/[（，。]/)[0] || l.summary
+  const next = l.next.split("；")[0]
+  const painRegions = value.review.regions.filter(r => r.state === "PAIN_REVIEW")
+  const reminders = [...new Set([
+    ...l.groups.filter(line => line.includes("自报疼痛")),
+    ...l.gaps.filter(line => /疼痛|症状|复核/.test(line)),
+    ...painRegions.flatMap(r => r.notes.filter(note => /复核/.test(note)).map(note => `${REGION_LABEL[r.region]}：${note}`)),
+  ])]
+  return <section className="fk-h89-card fk-recovery-advice" aria-label="方坤分析与建议">
+    <div className="fk-recovery-advice-heading"><span className="fk-recovery-advice-portrait" aria-hidden="true">{portraitError ? <HeartPulse data-testid="m89-advice-portrait-fallback" /> : <img src="/fangshen/care-bust.png" alt="" onError={() => setPortraitError(true)} />}</span><b>方坤分析与建议</b>{onCoach ? <button type="button" className="fk-recovery-advice-coach" onClick={onCoach}>问方坤 ›</button> : null}</div>
+    <p className="keep fk-recovery-advice-summary">{summary}。</p>
+    <p className="keep fk-recovery-advice-next">{next}。</p>
+    {reminders.length ? <div className="fk-recovery-advice-reminders" data-testid="m89-pain-reminders">
+      <b>{painRegions.length ? "疼痛待核对" : "反馈待核对"}</b>
+      {reminders.map(line => <p key={line} className="keep">{line}</p>)}
+      {painRegions.length ? <p className="keep">疼痛按最近一次反馈，未复核不自动解除。</p> : null}
+    </div> : null}
+    <details className="fk-recovery-disclosure" data-testid="m89-advice-details">
+      <summary>依据与说明</summary>
+      <div className="fk-recovery-disclosure-body fk-recovery-advice-evidence">
+        <div><h3>判断摘要</h3><p className="keep">{l.summary}</p></div>
+        {l.groups.length ? <div><h3>肌群分组</h3><ul>{l.groups.map(line => <li key={line} className="keep">{line}</li>)}</ul></div> : null}
+        {l.evidence.length ? <div><h3>记录依据</h3><ul>{l.evidence.map(line => <li key={line} className="keep">{line}</li>)}</ul></div> : null}
+        {l.gaps.length ? <div><h3>资料缺口与说明</h3><ul>{l.gaps.map(line => <li key={line} className="keep">{line}</li>)}</ul></div> : null}
+        <div><h3>下一步</h3><p className="keep">{l.next}</p></div>
+        <p className="keep">本地规则整理，不调用模型；不是诊断，也不自动改课。</p>
+      </div>
+    </details>
   </section>
 }

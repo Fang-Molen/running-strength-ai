@@ -34,12 +34,13 @@ import {applyStrengthReduction,rollbackStrengthReduction,type StrengthProposal,t
 import {commitControlledStrengthPlan} from "@/lib/core/coach-strength-plan-storage";
 import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
-import { readWallpaper, writeWallpaper, WALLPAPERS, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
+import { AppearanceSettings } from "@/components/appearance-settings";
+import { readWallpaper, writeWallpaper, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
 import { readFontScale, writeFontScale, type FontScale } from "@/lib/ui/font-scale-v89";
 import { TrainingLogPage } from "@/components/training-log-v76";
 import { TrainingEvidencePanel } from "@/components/training-evidence-panel";
 import { AbilityRadarCard } from "@/components/ability-radar-card";
-import { Activity, CalendarDays, ChevronDown, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, Footprints, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Utensils, Watch, X } from "lucide-react";
+import { Activity, CalendarDays, ChevronDown, ChevronLeft, ChevronUp, ClipboardList, Database, Dumbbell, Heart, House, Footprints, MessageCircle, Palette, Plus, Scale, Settings, Target, Trash2, UserRound, Utensils, Watch, X } from "lucide-react";
 import { DayCard } from "@/components/day-card";
 import { TodayBoard } from "@/components/today-board";
 import { PlanSourceCard } from "@/components/plan-source";
@@ -912,9 +913,9 @@ export function StrengthApp() {
         <div className="mx-auto max-w-3xl px-4 pb-nav">
           {/* R5: sticky header — title + close stay reachable below the iPhone notch while long panes scroll. */}
           <div data-testid="settings-header" className="sticky top-0 z-20 -mx-4 flex items-center justify-between border-b border-line bg-bg px-4 pb-2" style={{ paddingTop: "max(6px, env(safe-area-inset-top))" }}>
-            <div>
-              <p className="text-[11px] font-semibold tracking-[0.16em] text-accent">{settingsPane === "menu" ? "RUNNING & STRENGTH" : "个人与设置"}</p>
-              <h2 className="text-[1.55rem] font-bold">{({ menu: "个人与设置", athlete: "运动员档案", goals: "训练目标与赛季计划", health: "健康与训练限制", sync: "设备连接与同步", import: "数据导入", backup: "备份与恢复", coach: "教练与提醒", theme: "外观与显示", ai: "AI 服务与联网功能", privacy: "隐私与数据流向" } as Record<SettingsPane, string>)[settingsPane]}</h2>
+            <div className="fk-settings-heading">
+              {settingsPane === "menu" ? null : <button type="button" className="fk-settings-back" aria-label="返回个人与设置" onClick={() => setSettingsPane("menu")}><ChevronLeft className="size-5" aria-hidden="true" /></button>}
+              <h2 className="font-bold">{({ menu: "个人与设置", athlete: "运动员档案", goals: "训练目标与赛季计划", health: "健康与训练限制", sync: "设备连接与同步", import: "数据导入", backup: "备份与恢复", coach: "教练与提醒", theme: "外观与显示", ai: "AI 服务与联网功能", privacy: "隐私与数据流向" } as Record<SettingsPane, string>)[settingsPane]}</h2>
             </div>
             <button type="button" onClick={() => setSettingsOpen(false)} className="grid size-11 place-items-center rounded-full bg-surface shadow-sm" aria-label="关闭设置"><X className="size-5" /></button>
           </div>
@@ -922,52 +923,26 @@ export function StrengthApp() {
           {settingsPane === "menu" ? <StorageHint /> : null}
           {settingsPane === "athlete" ? <><AthletePanel profile={profile} onEdit={() => setProfileOpen(true)} /><SettingsHub only={["p", "n"]} initialOpen="p" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "health" ? <><HealthPanel /><SettingsHub only={["h"]} initialOpen="h" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
-          {settingsPane === "sync" ? <><SyncStatusPanel conn={garminConn} /><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><CorosAccount /><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
+          {settingsPane === "sync" ? <><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><CorosAccount /><SyncStatusPanel conn={garminConn} /><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "import" ? <><section className="home-card mt-3 p-4"><h3 className="font-bold">导入手表文件或截图</h3><p className="mt-1 text-xs text-muted">导入的数据会先给你核对，确认后才保存；与佳明账号同步分开记录来源。</p><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></section><button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { window.dispatchEvent(new Event("fk-open-health-records")); }, 40); }} className="home-card mt-3 flex min-h-14 w-full items-center justify-between px-4 text-left text-sm"><span><b className="block">健康页 · 设备记录与说明</b><span className="text-xs text-muted">查看已导入的设备数据和各品牌导入说明</span></span><span aria-hidden="true">›</span></button></> : null}
           {settingsPane === "coach" ? <SettingsHub only={["c", "r"]} initialOpen="c" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "ai" ? <OnlineFeaturesSettings /> : null}
           {settingsPane === "privacy" ? <><PrivacyPanel /><SettingsHub only={["x"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
-          {settingsPane === "menu" ? null : <button type="button" onClick={() => setSettingsPane("menu")} className="mt-3 min-h-11 text-sm font-bold text-accent">‹ 返回个人与设置</button>}
-          {settingsPane === "theme" ? <section id="settings-theme" className="home-card mt-3 p-4" aria-label="界面与壁纸设置">
-            <h2 className="font-bold">界面与壁纸</h2>
-            
-            <div className="mt-3" role="group" aria-label="显示模式">
-              <p className="mb-2 text-sm font-bold">显示模式</p>
-              <div className="grid grid-cols-3 gap-2">
-                {([ ["light", "浅色"], ["dark", "深色"], ["system", "跟随系统"] ] as const).map(([id, label]) => (
-                  <button key={id} type="button" aria-pressed={displayMode === id}
-                    onClick={() => {
-                      if (writeDisplayMode(window.localStorage, id)) setDisplayMode(id);
-                      else setNotice("显示模式保存失败，其他记录未修改。");
-                    }}
-                    className={"min-h-11 rounded-card border px-2 text-sm font-bold " + (displayMode === id ? "border-accent bg-bg" : "border-line")}>{label}</button>
-                ))}
-              </div>
-            </div>
-            <div className="mt-3" role="group" aria-label="全局字体大小">
-              <p className="mb-2 text-sm font-bold">全局字体大小</p>
-              <div className="grid grid-cols-3 gap-2">
-                {([['standard','标准'],['large','大'],['extra','特大']] as const).map(([id,label]) =>
-                  <button key={id} type="button" aria-pressed={fontScale===id} onClick={() => {
-                    if (writeFontScale(window.localStorage,id)) setFontScale(id);
-                    else setNotice('字体设置保存失败，训练数据未修改。');
-                  }} className={'min-h-11 rounded-card border px-2 text-sm font-bold '+(fontScale===id?'border-accent bg-bg':'border-line')}>{label}</button>)}
-              </div>
-              <p className="mt-1 text-sm text-muted">聊天、训练、健康和弹窗共同使用；字号变大时可滚动，不缩小关键信息。</p>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {WALLPAPERS.map((item) => (
-                <button key={item.id} type="button" aria-pressed={wallpaper === item.id} onClick={() => {
-                  if (writeWallpaper(localStorage, item.id)) { setWallpaper(item.id); }
-                  else { setNotice("壁纸设置未能保存，当前记录不会被修改。"); }
-                }} className={"min-h-24 rounded-card border p-2 text-left " + (wallpaper === item.id ? "border-accent ring-2 ring-accent/30" : "border-line")}>
-                  <span className={"block h-11 rounded-lg wallpaper-swatch wallpaper-swatch-" + item.id} aria-hidden="true" />
-                  <span className="mt-2 block text-sm font-bold">{item.label}</span>
-                  <span className="block text-xs text-muted">{item.description}</span>
-                </button>
-              ))}
-            </div>
-          </section> : null}
+          {settingsPane === "theme" ? <AppearanceSettings
+            displayMode={displayMode} fontScale={fontScale} wallpaper={wallpaper}
+            onDisplayMode={(id) => {
+              if (writeDisplayMode(window.localStorage, id)) setDisplayMode(id);
+              else setNotice("显示模式保存失败，其他记录未修改。");
+            }}
+            onFontScale={(id) => {
+              if (writeFontScale(window.localStorage, id)) setFontScale(id);
+              else setNotice("字体设置保存失败，训练数据未修改。");
+            }}
+            onWallpaper={(id) => {
+              if (writeWallpaper(localStorage, id)) setWallpaper(id);
+              else setNotice("壁纸设置未能保存，当前记录不会被修改。");
+            }}
+          /> : null}
           {settingsPane === "theme" ? <SettingsHub only={["v"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "goals" ? <section id="settings-goals" className="home-card mt-3 p-4 text-sm">
             <h2 className="font-bold">运动项目与目标</h2>

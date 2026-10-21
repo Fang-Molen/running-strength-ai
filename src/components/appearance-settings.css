@@ -1,0 +1,62 @@
+/* Scoped settings polish. All saved preferences and the app identity stay in their existing modules. */
+.app-wallpaper.product-ui .fk-appearance-settings {
+  margin-top: 1rem;
+  padding: 1rem;
+}
+.app-wallpaper.product-ui .fk-appearance-group + .fk-appearance-group { margin-top: 1.5rem; }
+.app-wallpaper.product-ui .fk-appearance-group h3 { margin: 0 0 .625rem; font-size: 1rem; font-weight: 650; }
+.app-wallpaper.product-ui .fk-appearance-segments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.app-wallpaper.product-ui .fk-appearance-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  min-width: 0;
+  min-height: 3rem;
+  padding: .5rem .25rem;
+  border: 1px solid var(--color-line);
+  border-radius: .75rem;
+  background: var(--color-surface);
+  color: var(--color-fg);
+  font-size: .9375rem;
+  line-height: 1.4;
+}
+.app-wallpaper.product-ui .fk-appearance-choice[aria-pressed="true"],
+.app-wallpaper.product-ui .fk-wallpaper-option[aria-pressed="true"] {
+  border-color: var(--fk-identity-action);
+  box-shadow: inset 0 0 0 1px var(--fk-identity-action);
+  background: var(--color-surface-2);
+}
+.app-wallpaper.product-ui .fk-appearance-choice svg,
+.app-wallpaper.product-ui .fk-wallpaper-caption svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--fk-identity-action); }
+.app-wallpaper.product-ui .fk-appearance-choice span { white-space: nowrap; }
+.app-wallpaper.product-ui .fk-appearance-choice svg { position: absolute; top: .1875rem; right: .1875rem; width: .625rem; height: .625rem; }
+.app-wallpaper.product-ui .fk-appearance-preview {
+  margin-top: .75rem;
+  padding: .75rem;
+  border: 1px solid var(--color-line);
+  border-radius: .75rem;
+  background: var(--fk-identity-bg);
+}
+.app-wallpaper.product-ui .fk-appearance-preview-label { display: block; margin-bottom: .5rem; color: var(--color-muted); font-size: .875rem; }
+.app-wallpaper.product-ui .fk-appearance-preview-card { padding: .625rem .75rem; border-radius: .625rem; border-inline-start: 3px solid var(--color-accent); background: var(--color-surface); }
+.app-wallpaper.product-ui .fk-appearance-preview-card strong { display: block; font-size: 1.125rem; font-weight: 650; }
+.app-wallpaper.product-ui .fk-appearance-preview-card p { margin: .25rem 0 0; font-size: .875rem; color: var(--color-muted); }
+.app-wallpaper.product-ui .fk-wallpaper-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .625rem; }
+.app-wallpaper.product-ui .fk-wallpaper-option { min-width: 0; padding: .5rem; border: 1px solid var(--color-line); border-radius: .75rem; background: var(--color-surface); color: var(--color-fg); text-align: left; }
+.app-wallpaper.product-ui .fk-wallpaper-visual { display: block; height: 4.5rem; padding: .625rem; border: 1px solid var(--color-line); border-radius: .5rem; background: var(--fk-identity-bg); }
+.app-wallpaper.product-ui .fk-wallpaper-visual > i { display: block; width: 38%; height: .1875rem; margin-bottom: .625rem; background: var(--color-muted); opacity: .65; }
+.app-wallpaper.product-ui .fk-wallpaper-visual > span { display: block; padding: .5rem; border-radius: .375rem; border: 1px solid var(--color-line); background: var(--color-surface); }
+.app-wallpaper.product-ui .fk-wallpaper-visual b { display: block; width: 65%; height: .1875rem; background: var(--color-fg); opacity: .65; }
+.app-wallpaper.product-ui .fk-wallpaper-visual em { display: block; width: 40%; height: .375rem; margin-top: .5rem; border-radius: 2px; background: var(--color-accent); }
+.app-wallpaper.product-ui .fk-wallpaper-caption { display: flex; align-items: center; justify-content: space-between; gap: .25rem; padding: .5rem .125rem .125rem; font-size: .9375rem; font-weight: 600; }
+/* Match the real wallpaper, including the current light/dark mode. */
+.app-wallpaper.product-ui :is(.fk-appearance-preview, .fk-wallpaper-visual)[data-wallpaper="track"] { background: linear-gradient(90deg, color-mix(in srgb, var(--fk-identity-accent) 2.5%, var(--fk-identity-bg)), var(--fk-identity-bg) 16%); }
+.app-wallpaper.product-ui :is(.fk-appearance-preview, .fk-wallpaper-visual)[data-wallpaper="forest"] { background: color-mix(in srgb, var(--fk-identity-success) 3%, var(--fk-identity-bg)); }
+.app-wallpaper.product-ui :is(.fk-appearance-preview, .fk-wallpaper-visual)[data-wallpaper="night"] { background: color-mix(in srgb, var(--fk-identity-muted) 3%, var(--fk-identity-bg)); }
+.app-wallpaper.product-ui .fk-settings-heading { display: flex; align-items: center; gap: .5rem; min-width: 0; padding-top: .375rem; }
+.app-wallpaper.product-ui .fk-settings-heading h2 { margin: 0; font-size: 1.375rem; line-height: 1.35; }
+.app-wallpaper.product-ui .fk-settings-back { display: grid; place-items: center; flex-shrink: 0; width: 2.75rem; min-height: 2.75rem; margin-inline-start: -.5rem; color: var(--color-fg); border-radius: .75rem; }
+.app-wallpaper.product-ui .fk-settings-back svg { width: 1.375rem; height: 1.375rem; }
+@media (min-width: 600px) { .app-wallpaper.product-ui .fk-wallpaper-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

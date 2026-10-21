@@ -21,11 +21,11 @@ export function deviceRunsOn(date: string, rows: readonly { id: string; source: 
       return { id: r.id, source: src, sourceLabel: src === 'garmin' ? '佳明账号同步' : '文件导入', startedAt: r.startedAt, distanceM: r.distanceM, durationSec: r.durationSec, avgHr: r.avgHr ?? null, title: r.title ?? '' } })
 }
 /** 一行摘要，只放设备真实给出的字段；缺的字段不出现，不写 0。 */
-export function deviceRunFacts(r: DeviceRun): string[] {
+export function deviceRunFacts(r: DeviceRun, formatDuration: typeof fmtDuration = fmtDuration): string[] {
   const out: string[] = []
   const t = activityLocalTime(r.startedAt); if (t) out.push(`${t} 开始`)
   const d = fmtDistance(r.distanceM); if (d) out.push(d)
-  if (r.durationSec != null) out.push(`用时 ${fmtDuration(r.durationSec)}`)
+  if (r.durationSec != null) out.push(`用时 ${formatDuration(r.durationSec)}`)
   const p = fmtPace(r.distanceM, r.durationSec); if (p) out.push(`平均配速 ${p}（由距离/用时算出）`)
   const hr = fmtHr(r.avgHr); if (hr != null) out.push(`平均心率 ${hr}`)
   return out

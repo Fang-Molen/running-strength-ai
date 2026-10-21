@@ -2,11 +2,11 @@ import { stampCN } from "@/lib/ui/activity-format";
 /* R1「个人与数据」：一级三组入口 + 二级页（同步状态、备份恢复、隐私、健康）。只做展示与入口整理，存储键与业务写入沿用原实现。 */
 import { CorosStatusRows } from "@/components/coros-account";
 import { useEffect, useRef, useState } from "react";
-import { Bot, ChevronRight, Cpu, Database, FileUp, HeartPulse, Palette, ShieldCheck, Target, TriangleAlert, UserRound, Watch } from "lucide-react";
+import { Bot, ChevronDown, ChevronRight, Cpu, Database, FileUp, HeartPulse, Palette, ShieldCheck, Target, TriangleAlert, UserRound, Watch } from "lucide-react";
 import { currentAthleteId } from "@/lib/core/events";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { loadExtras } from "@/lib/health/device-store";
-import { AUTO_SYNC_RULE, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
+import { subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { STATUS_TEXT, fmtTime, latestGarminReceipt, readDeviceImportDisplay, readGarminSyncDisplay, syncSummary, type ObservationLike, type SyncDisplay } from "@/lib/health/sync-status";
 import { applyEntries, inspectAnyBackup, inspectEntries, isCredentialKey, restoreAnyBackup, type BackupPreview } from "@/lib/ui/backup-center";
 import { exportVault, listSnapshots, migrateKv, type Snapshot } from "@/lib/vault";
@@ -15,6 +15,7 @@ import { loadSettings } from "@/lib/ui/app-settings";
 import { athleteLines, athleteSummary } from "@/lib/ui/profile-labels";
 import type { Profile } from "@/lib/strength/profile";
 import { InjuryCard } from "@/components/today-board";
+import "./device-settings-detail.css";
 
 export type SettingsPane = "menu" | "athlete" | "goals" | "health" | "sync" | "import" | "backup" | "coach" | "theme" | "ai" | "privacy";
 export type GarminConnState = { loggedIn: boolean; unreachable?: boolean } | null;
@@ -92,28 +93,33 @@ export function SyncStatusPanel({ conn }: { conn: GarminConnState }) {
   const imp = readDeviceImportDisplay(obs), recv = latestGarminReceipt(obs);
   const connText = conn === null ? "正在确认…" : conn.unreachable ? "同步服务暂时不可达" : conn.loggedIn ? "已连接" : "未登录";
   const bad = ["partial", "failed", "auth", "unknown"].includes(g.status);
-  return <section className="home-card mt-3 p-4 text-sm" aria-label="同步状态总览" data-testid="sync-status" data-status={g.status}>
-    <h3 className="font-bold">佳明账号</h3>
-    <div className="mt-1">
-      <KV k="连接状态" v={connText} tone={conn?.unreachable ? "warn" : undefined} />
-      <KV k="最近尝试" v={g.status === "never" ? "暂无记录" : `${fmtTime(g.lastAttemptAt)}（${STATUS_TEXT[g.status]}）`} tone={bad ? "warn" : g.status === "ok" ? "ok" : undefined} />
-      <KV k="上次完整成功" v={fmtTime(g.lastCompleteSuccessAt)} />
-      {g.lastUsefulSyncAt && g.lastUsefulSyncAt !== g.lastCompleteSuccessAt ? <KV k="最近取得数据（含部分成功）" v={fmtTime(g.lastUsefulSyncAt)} /> : null}
-      <KV k="最近收到佳明健康数据" v={fmtTime(recv)} />
-      {g.status !== "never" ? <KV k="最近一次范围" v={`活动 ${g.activityRows ?? "—"} 条（最多取最近 ${g.activityLimit ?? 200} 条，不是全部历史）· 健康 ${g.coveredFrom ? `${g.coveredFrom.slice(5)} 至 ${g.coveredTo?.slice(5)}` : "无有效日期"}（请求 ${g.healthDaysRequested ?? "—"} 天）`} /> : null}
-      {g.status !== "never" ? <KV k="写入结果" v={`保存/更新 ${g.saved ?? "—"} 条 · 未变化 ${g.skipped ?? "—"} 条`} /> : null}
+  return <section className="home-card device-sync-panel mt-3 p-4 text-sm" aria-label="同步状态总览" data-testid="sync-status" data-status={g.status}>
+    <div className="device-account-heading">
+      <div><h3 className="font-bold">同步记录</h3><p className="mt-1 text-muted">佳明 · {g.status === "never" ? "尚未同步" : `最近尝试 ${fmtTime(g.lastAttemptAt)}`}</p></div>
+      <span className="device-account-status" data-tone={bad ? "warn" : g.status === "ok" ? "ok" : undefined}>{g.status === "ok" ? "完整成功" : g.status === "never" ? "暂无记录" : STATUS_TEXT[g.status]}</span>
     </div>
-    <h3 className="mt-3 font-bold">高驰账号</h3>
-    <div className="mt-1" data-testid="coros-status"><CorosStatusRows KV={(p) => <KV key={p.k} {...p} />} /></div>
-    <h3 className="mt-3 font-bold">本机设备文件导入</h3>
-    <div className="mt-1"><KV k="最近导入" v={fmtTime(imp.lastCompleteSuccessAt)} />{imp.healthRows ? <KV k="导入的健康记录" v={`${imp.healthRows} 条${imp.coveredFrom ? ` · ${imp.coveredFrom.slice(5)} 至 ${imp.coveredTo?.slice(5)}` : ""}`} /> : null}</div>
-    <details id="sync-report" className="mt-3 rounded-xl bg-surface-2 p-3" open={bad} data-testid="sync-report">
-      <summary className="min-h-10 cursor-pointer font-bold">同步报告{g.errors.length ? `（${g.errors.length} 项未完成）` : ""}</summary>
-      {g.errors.length ? <ul className="mt-1 list-disc space-y-1 pl-5 text-xs">{g.errors.slice(0, 4).map((e, i) => <li key={i}>{e.message}</li>)}{g.errors.length > 4 ? <li className="text-muted">另有 {g.errors.length - 4} 项{(() => { const c = [...new Set(g.errors.map((e) => /HTTP \d+/.exec(e.message)?.[0] ?? "其他"))]; return c.length === 1 && c[0] !== "其他" ? `，均为 ${c[0]}（佳明服务暂不可用时常见，稍后重试）` : ""; })()}</li> : null}</ul> : <p className="mt-1 text-xs text-muted">{g.status === "never" ? "还没有同步记录。" : "最近一次没有报告缺失项。"}</p>}
-      {bad ? <p role="status" className="mt-2 text-xs text-muted">处理：{g.status === "auth" ? "在下方重新登录佳明后再同步。" : "已保存的数据不受影响；缺失项可稍后重试同步，或用「数据导入」补文件。未收到的数据不会记成 0 或“无训练”。"}</p> : null}
+    {bad ? <p role="status" className="device-sync-notice" data-tone="warn">{g.status === "partial" ? `部分同步未完成${g.errors.length ? `（${g.errors.length} 项）` : ""}，已有数据不受影响。` : g.status === "auth" ? "请重新登录佳明后再同步。" : g.status === "unknown" ? "同步结果暂时无法确认，请展开详情查看。" : "最近一次同步未完成，可稍后重试。"}</p> : null}
+    <details id="sync-report" className="device-sync-disclosure" data-testid="sync-report">
+      <summary><span>同步详情</span><ChevronDown aria-hidden="true" /></summary>
+      <div className="device-sync-detail-body">
+        <h4 className="font-bold">佳明账号</h4>
+        <div className="device-sync-rows">
+          <KV k="连接状态" v={connText} tone={conn?.unreachable ? "warn" : undefined} />
+          <KV k="最近尝试" v={g.status === "never" ? "暂无记录" : `${fmtTime(g.lastAttemptAt)}（${STATUS_TEXT[g.status]}）`} tone={bad ? "warn" : g.status === "ok" ? "ok" : undefined} />
+          <KV k="上次完整成功" v={fmtTime(g.lastCompleteSuccessAt)} />
+          {g.lastUsefulSyncAt && g.lastUsefulSyncAt !== g.lastCompleteSuccessAt ? <KV k="最近取得数据（含部分成功）" v={fmtTime(g.lastUsefulSyncAt)} /> : null}
+          <KV k="最近收到佳明健康数据" v={fmtTime(recv)} />
+          {g.status !== "never" ? <KV k="最近一次范围" v={`活动 ${g.activityRows ?? "—"} 条（最多取最近 ${g.activityLimit ?? 200} 条，不是全部历史）· 健康 ${g.coveredFrom ? `${g.coveredFrom.slice(5)} 至 ${g.coveredTo?.slice(5)}` : "无有效日期"}（请求 ${g.healthDaysRequested ?? "—"} 天）`} /> : null}
+          {g.status !== "never" ? <KV k="写入结果" v={`保存/更新 ${g.saved ?? "—"} 条 · 未变化 ${g.skipped ?? "—"} 条`} /> : null}
+        </div>
+        {g.errors.length ? <div className="device-sync-errors"><h4 className="font-bold">未完成项（{g.errors.length}）</h4><ul className="mt-2 list-disc space-y-2 pl-5">{g.errors.map((e, i) => <li key={i}>{e.message}</li>)}</ul></div> : <p className="text-muted">{g.status === "never" ? "还没有同步记录。" : "最近一次没有报告缺失项。"}</p>}
+        {bad ? <p className="text-muted">处理：{g.status === "auth" ? "在上方重新登录佳明后再同步。" : "已保存的数据不受影响；缺失项可稍后重试同步，或用「数据导入」补文件。未收到的数据不会记成 0 或“无训练”。"}</p> : null}
+        <h4 className="device-sync-subheading font-bold">高驰账号</h4>
+        <div className="device-sync-rows" data-testid="coros-status"><CorosStatusRows KV={(p) => <KV key={p.k} {...p} />} /></div>
+        <h4 className="device-sync-subheading font-bold">本机设备文件导入</h4>
+        <div className="device-sync-rows"><KV k="最近导入" v={fmtTime(imp.lastCompleteSuccessAt)} />{imp.healthRows ? <KV k="导入的健康记录" v={`${imp.healthRows} 条${imp.coveredFrom ? ` · ${imp.coveredFrom.slice(5)} 至 ${imp.coveredTo?.slice(5)}` : ""}`} /> : null}</div>
+      </div>
     </details>
-    <p className="mt-2 text-xs text-muted">{AUTO_SYNC_RULE}</p>
-    <p className="mt-1 text-xs text-muted">健康数据按页面所在时区取最近 14 个日历日；身体电量为当日最高值，HRV 为昨夜平均，都不是实时值。</p>
   </section>;
 }
 

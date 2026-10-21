@@ -3,8 +3,9 @@ import { runGarminSyncJob, garminStorageKey } from "@/lib/health/garmin-sync-run
 import { currentAthleteId } from "@/lib/core/events";
 import { bindGarminAccount } from "@/lib/health/garmin-account-owner";
 import { localDay, shiftDay, healthChanged } from "@/lib/health/observation";
-import { readGarminSyncStatus, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
+import { AUTO_SYNC_RULE, readGarminSyncStatus, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { useEffect, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { saveDeviceRows } from "@/lib/ui/device-store";
 import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
 import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
@@ -12,6 +13,7 @@ import { exportFeedback } from "@/components/coach-feedback";
 import { saveGarminActivities, garminViewHas } from "@/components/garmin-log";
 import { shortHash } from "@/lib/health/observation";
 import { saveIntraday, intradayComplete } from "@/lib/health/intraday-store";
+import "./device-settings-detail.css";
 
 const api = async (p: string, init?: RequestInit, ms = 20000) => {
   const ac = new AbortController(); const t = setTimeout(() => ac.abort(), ms);
@@ -84,15 +86,21 @@ export function GarminSyncStatusView() {
   const [s, setS] = useState(() => readGarminSyncStatus(currentAthleteId()));
   useEffect(() => subscribeGarminSyncStatus(() => setS(readGarminSyncStatus(currentAthleteId()))), []);
   const t = (iso: string | null) => iso ? new Date(iso).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
-  return <div className="keep rounded-card bg-surface-2 p-2 text-xs" aria-label="佳明同步状态">
-    <dl className="grid grid-cols-[6.5em_1fr] gap-x-2 gap-y-0.5">
-      <dt className="text-muted">连接状态</dt><dd>{s.connectionLabel}</dd>
-      <dt className="text-muted">最近尝试</dt><dd>{s.lastAttemptLabel}</dd>
-      <dt className="text-muted">最后完整成功</dt><dd>{t(s.lastFullSuccessAt)}</dd>
-      {s.partialFailure ? <><dt className="text-muted">部分失败</dt><dd>{s.partialFailure.errors.length ? s.partialFailure.errors.slice(0, 2).join("；") : "部分日期没取到"}</dd></> : null}
-      <dt className="text-muted">导入范围</dt><dd>{s.importRange?.label ?? "还没同步过"}</dd>
-    </dl>
-    <details className="mt-1"><summary className="min-h-9 cursor-pointer content-center text-muted">详情</summary><ul className="space-y-0.5">{s.details.map((d) => <li key={d}>{d}</li>)}</ul></details>
+  return <div className="keep text-sm" aria-label="佳明同步状态">
+    <p className={s.lastAttemptResult && s.lastAttemptResult !== "ok" ? "text-warn" : "text-muted"}>最近尝试：{s.lastAttemptLabel}</p>
+    <details className="device-sync-disclosure">
+      <summary><span>同步详情</span><ChevronDown aria-hidden="true" /></summary>
+      <div className="device-sync-detail-body">
+        <dl className="device-sync-definition">
+          <dt className="text-muted">连接状态</dt><dd>{s.connectionLabel}</dd>
+          <dt className="text-muted">最近尝试</dt><dd>{s.lastAttemptLabel}</dd>
+          <dt className="text-muted">最后完整成功</dt><dd>{t(s.lastFullSuccessAt)}</dd>
+          {s.partialFailure ? <><dt className="text-muted">部分失败</dt><dd className="text-warn">{s.partialFailure.errors.length ? s.partialFailure.errors.join("；") : "部分日期没取到"}</dd></> : null}
+          <dt className="text-muted">导入范围</dt><dd>{s.importRange?.label ?? "还没同步过"}</dd>
+        </dl>
+        <ul className="space-y-2 text-muted">{s.details.map((d) => <li key={d}>{d}</li>)}</ul>
+      </div>
+    </details>
   </div>;
 }
 export type GarminConn = { loggedIn: boolean; unreachable?: boolean; profile?: { displayName?: string; fullName?: string } | null } | null;
@@ -131,23 +139,29 @@ export function GarminSync({ hideBackup = false, onState }: { hideBackup?: boole
     setBusy(false);
   }
   const input = "min-h-11 w-full rounded-card border border-line bg-surface px-3";
-  return <section className="home-card mx-3 my-3 space-y-2 p-4 text-sm" id="garmin-sync">
-    <h2 className="font-bold">佳明账号</h2>
-    <p className="keep text-xs text-muted">App 打开、回到前台和开着时每 2 小时自动尝试；关闭或挂起后不保证后台同步。</p>
-    {st === null ? <p role="status" className="text-muted">正在确认连接状态…</p> : st.unreachable ? <p role="status" className="text-warn">暂时连不上佳明同步服务（网络或服务端问题）。已导入的记录不受影响，稍后再试。</p> : null}
+  return <section className="home-card device-account-card mx-3 my-3 space-y-2 p-4 text-sm" id="garmin-sync">
+    <div className="device-account-heading"><h2 className="font-bold">佳明账号</h2><span role="status" className="device-account-status" data-tone={st?.unreachable ? "warn" : st?.loggedIn ? "ok" : undefined}>{st === null ? "确认中…" : st.unreachable ? "暂不可达" : st.loggedIn ? "已连接" : "未登录"}</span></div>
+    {st?.unreachable ? <p role="status" className="text-warn">暂时连不上佳明同步服务。已导入的记录不受影响，请稍后再试。</p> : null}
     {st?.loggedIn ? <>
       <p className="text-muted">已登录 {st.profile?.fullName || st.profile?.displayName || ""}</p>
+      <div className="device-account-actions"><button type="button" disabled={busy} className="min-h-11 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={sync}>{busy ? "同步中…" : "立即同步"}</button><button type="button" className="min-h-11 rounded-card border border-line px-3" onClick={async () => { if (!window.confirm("只退出佳明账号连接，已导入的活动和健康记录都会保留。确定退出？")) return; accountGeneration++; await api("logout"); await refresh(); }}>退出</button></div>
       {hideBackup ? null : <GarminSyncStatusView />}
-      <div className="flex gap-2"><button type="button" disabled={busy} className="min-h-11 flex-1 rounded-card bg-accent font-bold text-accent-fg" onClick={sync}>同步最近活动和健康数据</button><button type="button" className="min-h-11 rounded-card border border-line px-3" onClick={async () => { if (!window.confirm("只退出佳明账号连接，已导入的活动和健康记录都会保留。确定退出？")) return; accountGeneration++; await api("logout"); await refresh(); }}>退出</button></div>
-    </> : mfa ? <div className="flex gap-2"><input className={input} inputMode="numeric" placeholder="验证码" value={code} onChange={(e) => setCode(e.target.value)} /><button type="button" disabled={busy} className="rounded-card bg-accent px-4 font-bold text-accent-fg" onClick={sendMfa}>确认</button></div> : <>
-      <select className={input} value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}><option value="cn">佳明中国（garmin.cn）</option><option value="com">佳明国际（garmin.com）</option></select>
-      <input className={input} autoComplete="username" placeholder="佳明账号（邮箱/手机）" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
-      <input className={input} type="password" autoComplete="current-password" placeholder="密码" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+    </> : mfa ? <div className="flex gap-2"><input className={input} aria-label="佳明验证码" inputMode="numeric" placeholder="验证码" value={code} onChange={(e) => setCode(e.target.value)} /><button type="button" disabled={busy} className="min-h-11 rounded-card bg-accent px-4 font-bold text-accent-fg" onClick={sendMfa}>确认</button></div> : <>
+      <select className={input} aria-label="佳明账号地区" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}><option value="cn">佳明中国（garmin.cn）</option><option value="com">佳明国际（garmin.com）</option></select>
+      <input className={input} aria-label="佳明账号" autoComplete="username" placeholder="佳明账号（邮箱/手机）" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
+      <input className={input} aria-label="佳明密码" type="password" autoComplete="current-password" placeholder="密码" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
       <button type="button" disabled={busy || !form.username || !form.password || Boolean(st?.unreachable)} className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={login}>登录佳明</button>
-      <p className="text-xs text-muted">账号密码只用于这次登录，经方坤服务端转发给佳明；App 不把密码存到本机，服务端代码也不保存、不记录。登录后的会话令牌加密存放在网页脚本读不到的 Cookie 中。</p>
     </>}
-    {msg ? <p className="text-accent">{msg}</p> : null}
-    <p className="text-xs text-muted">活动仅请求最近最多200条，活动条数不是训练课次数，也不代表全部历史。健康数据按页面所在时区请求最近14个日历日；与手表日期不一致时先核对两端时区。身体电量取同步时佳明给出的最近值（没有时才用当日最高并注明），HRV为昨夜平均；同步后才更新，不是实时值。同步报告会列出未完成项。</p>
+    {msg ? msg.includes("（请求 ") ? <details className="device-sync-disclosure device-sync-feedback" data-tone={/部分同步|失败|未取得|失效|已丢弃/.test(msg) ? "warn" : undefined}><summary><span role="status">{msg.slice(0, msg.indexOf("（请求 "))}</span><ChevronDown aria-hidden="true" /></summary><p className="device-sync-detail-body">{msg}</p></details> : <p role="status" className="device-sync-message">{msg}</p> : null}
+    <details className="device-sync-disclosure">
+      <summary><span>同步说明</span><ChevronDown aria-hidden="true" /></summary>
+      <div className="device-sync-detail-body text-muted">
+        <p>{AUTO_SYNC_RULE}关闭或挂起后不保证后台同步。</p>
+        <p>活动仅请求最近最多 200 条，活动条数不是训练课次数，也不代表全部历史。健康数据按页面所在时区请求最近 14 个日历日；与手表日期不一致时先核对两端时区。</p>
+        <p>身体电量取同步时佳明给出的最近值（没有时才用当日最高并注明），HRV 为昨夜平均；同步后才更新，不是实时值。同步详情会列出未完成项。</p>
+        {!st?.loggedIn ? <p>账号密码只用于这次登录，经方坤服务端转发给佳明；App 不把密码存到本机，服务端代码也不保存、不记录。登录后的会话令牌加密存放在网页脚本读不到的 Cookie 中。</p> : null}
+      </div>
+    </details>
     {hideBackup ? null : <>
     <h2 className="pt-2 font-bold">全部数据备份</h2>
     

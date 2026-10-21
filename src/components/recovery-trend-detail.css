@@ -1,0 +1,272 @@
+/* Recovery detail presentation only. Metric selection, observations and coach callbacks stay in their existing components. */
+.fk-recovery-trend,
+.fk-recovery-advice {
+  min-width: 0;
+}
+
+.fk-recovery-trend-controls {
+  display: grid;
+  min-width: 0;
+  gap: .625rem;
+  margin-top: .875rem;
+}
+
+.fk-recovery-trend-metrics {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  gap: .375rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: .1875rem .125rem .375rem;
+  scroll-padding-inline: .125rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+.fk-recovery-trend-metrics button,
+.fk-recovery-trend-range button {
+  min-height: 44px;
+  border-radius: .625rem;
+  padding: .5rem .75rem;
+  color: var(--color-muted);
+  font-size: .875rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.fk-recovery-trend-metrics button {
+  flex: 0 0 auto;
+  min-width: 3.5rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+}
+
+.fk-recovery-trend-metrics button[aria-pressed="true"] {
+  color: var(--color-accent-fg);
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  font-weight: 700;
+}
+
+.fk-recovery-trend-range {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .1875rem;
+  padding: .1875rem;
+  border: 1px solid var(--color-line);
+  border-radius: .8125rem;
+  background: var(--color-surface-2);
+}
+
+.fk-recovery-trend-range button[aria-pressed="true"] {
+  color: var(--color-fg);
+  background: var(--color-surface);
+  box-shadow: inset 0 -3px 0 var(--color-accent);
+  font-weight: 700;
+}
+
+.fk-recovery-trend-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .375rem .75rem;
+  margin-block: 1rem .75rem;
+  font-size: .875rem;
+  color: var(--color-muted);
+}
+
+.fk-recovery-trend-meta b {
+  font-size: .9375rem;
+  font-weight: 650;
+  color: var(--color-fg);
+}
+
+.fk-recovery-trend-plot {
+  min-width: 0;
+  padding-top: .625rem;
+}
+
+.fk-recovery-trend-plot .fk-trend-axis-labels {
+  height: 1.5em;
+  min-height: 1.5em;
+  line-height: 1.5;
+}
+
+.fk-recovery-trend-plot .fk-trend-axis-labels > span:nth-child(even) {
+  display: none;
+}
+
+.fk-recovery-trend-empty {
+  padding: 1rem .75rem;
+  margin-block: .625rem;
+  border-radius: .75rem;
+  background: var(--color-surface-2);
+  text-align: center;
+  line-height: 1.65;
+}
+
+.fk-recovery-trend-empty > p {
+  margin: 0;
+}
+
+.fk-recovery-trend-coverage {
+  margin-top: .625rem;
+  color: var(--color-muted);
+  font-size: .875rem;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.fk-recovery-disclosure {
+  margin-top: .75rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.fk-recovery-disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  min-height: 44px;
+  padding-block: .5rem;
+  color: var(--color-muted);
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  list-style: none;
+  cursor: pointer;
+}
+
+.fk-recovery-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.fk-recovery-disclosure > summary::after {
+  content: "";
+  width: .4375rem;
+  height: .4375rem;
+  flex: 0 0 auto;
+  margin-right: .25rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+
+.fk-recovery-disclosure[open] > summary::after {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.fk-recovery-disclosure-body {
+  display: grid;
+  gap: .625rem;
+  padding-block: .25rem .75rem;
+  color: var(--color-muted);
+  font-size: .875rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.fk-recovery-advice-heading {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+}
+
+.fk-recovery-advice-portrait {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--color-surface-2);
+}
+
+.fk-recovery-advice-portrait > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fk-recovery-advice-portrait > svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent);
+}
+
+.fk-recovery-advice-heading > b {
+  flex: 1;
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
+.fk-recovery-advice-coach {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: .5rem .75rem;
+  border: 1px solid var(--color-line);
+  border-radius: .75rem;
+  background: var(--color-surface-2);
+  color: var(--color-fg);
+  font-size: .875rem;
+  white-space: nowrap;
+}
+
+.fk-recovery-advice-summary {
+  margin-top: .875rem;
+  font-size: .9375rem;
+  line-height: 1.65;
+}
+
+.fk-recovery-advice-next {
+  margin-top: .375rem;
+  color: var(--color-muted);
+  font-size: .875rem;
+  line-height: 1.65;
+}
+
+.fk-recovery-advice-reminders {
+  display: grid;
+  gap: .375rem;
+  padding: .25rem 0 .25rem .75rem;
+  margin-top: .875rem;
+  border-left: 3px solid var(--color-risk);
+  color: var(--color-fg);
+  font-size: .875rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.fk-recovery-advice-reminders > b {
+  color: var(--color-risk);
+}
+
+.fk-recovery-advice-evidence {
+  gap: 1rem;
+}
+
+.fk-recovery-advice-evidence h3 {
+  margin-bottom: .375rem;
+  color: var(--color-fg);
+  font-size: .875rem;
+  font-weight: 650;
+}
+
+.fk-recovery-advice-evidence ul {
+  display: grid;
+  gap: .5rem;
+  padding-left: 1.125rem;
+  list-style: disc;
+}
+
+.fk-recovery-trend :is(button, summary):focus-visible,
+.fk-recovery-advice :is(button, summary):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}

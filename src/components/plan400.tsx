@@ -1,6 +1,6 @@
 import { mainTrainingLines } from '@/lib/plan/plan-main';
 import { sleepHoursText } from "@/lib/health/observation";
-import { stampCN } from "@/lib/ui/activity-format";
+import { stampCN, fmtDurationPrecise } from "@/lib/ui/activity-format";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, TriangleAlert } from "lucide-react";
 import { Sheet } from "./sheet";
@@ -113,7 +113,7 @@ function ComboStatus({ v }: { v: ComboView }) {
 function DeviceRunList({ runs }: { runs: DeviceRun[] }) {
   if (!runs.length) return <p className="text-sm text-muted">这天没有手表跑步记录。</p>;
   return <details className="space-y-2" data-testid="device-run-candidates"><summary className="min-h-11 cursor-pointer py-2 text-sm">其他同日手表记录 · {runs.length}条</summary>
-    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-sm leading-6"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r).join(" · ") || "设备没有给出距离/用时"}</p></div>)}
+    {runs.map((r) => <div key={r.id} className="rounded-xl bg-surface-2 p-2.5 text-sm leading-6"><p className="font-bold">{r.title || "跑步"} <span className="font-normal text-muted">· {r.sourceLabel}</span></p><p>{deviceRunFacts(r, fmtDurationPrecise).join(" · ") || "设备没有给出距离/用时"}</p></div>)}
     <p className="text-sm text-muted">已排除或已关联其他课程，不参与本课分段对照。</p>
   </details>;
 }

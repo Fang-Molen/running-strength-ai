@@ -22,6 +22,25 @@ export function fmtDuration(s: number | null | undefined): string {
   const t = Math.round(s), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sec = t % 60
   return h ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`
 }
+function durationTicks(s: number | null | undefined): number | null {
+  if (s == null || !Number.isFinite(s) || s < 0) return null
+  const ticks = Math.round((s + Number.EPSILON * s) * 100)
+  return Number.isSafeInteger(ticks) ? ticks : null
+}
+const fractionText = (hundredths: number) => hundredths ? `.${pad(hundredths).replace(/0$/, '')}` : ''
+/** UI 计时显示：最多保留两位小数秒，不改变原始数值或方坤事实包的格式。 */
+export function fmtDurationPrecise(s: number | null | undefined): string {
+  const ticks = durationTicks(s)
+  if (ticks == null) return '—'
+  const t = Math.floor(ticks / 100), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60)
+  const sec = `${pad(t % 60)}${fractionText(ticks % 100)}`
+  return h ? `${h}:${pad(m)}:${sec}` : `${m}:${sec}`
+}
+/** 单段成绩与间歇休息用明确的秒单位；不改变保存的原始秒数。 */
+export function fmtSeconds(s: number | null | undefined): string {
+  const ticks = durationTicks(s)
+  return ticks == null ? '—' : `${Math.floor(ticks / 100)}${fractionText(ticks % 100)} 秒`
+}
 export function fmtPaceSec(sec: number | null | undefined): string | null {
   if (sec == null || !Number.isFinite(sec) || sec <= 0) return null
   const t = Math.round(sec); return `${Math.floor(t / 60)}'${pad(t % 60)}"/km`

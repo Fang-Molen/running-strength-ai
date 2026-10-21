@@ -9,6 +9,7 @@ import {
 } from "@/lib/core/running-execution";
 import { explainRunningFeedback } from "@/lib/core/running-transaction";
 import { getRunningPlan } from "@/lib/core/running-plan";
+import { fmtDurationPrecise, fmtSeconds } from "@/lib/ui/activity-format";
 import {
   TRACK_PRESETS,
   commitTrackContinuous,
@@ -39,7 +40,11 @@ const STATUS: Record<string, string> = {
 };
 
 function secondsLabel(value: number | null): string {
-  return value == null ? "未设置" : `${value} 秒`;
+  return value == null ? "未设置" : fmtSeconds(value);
+}
+
+function actualSecondsLabel(value: number | null): string {
+  return value == null ? "未记录" : fmtSeconds(value);
 }
 
 /** Read-only planning aid. Unknown targets/rests are never silently treated as zero. */
@@ -75,8 +80,11 @@ export function estimatePendingTrackTime(view: RunningExecutionProjection): {
 }
 
 function timeEstimateLabel(seconds: number): string {
-  const minutes = Math.ceil(seconds / 60);
-  return minutes >= 60 ? `${Math.floor(minutes / 60)}小时${minutes % 60}分钟` : `${minutes}分钟`;
+  if (seconds < 60) return fmtSeconds(seconds);
+  const parts = fmtDurationPrecise(seconds).split(":");
+  return parts.length === 3
+    ? `${Number(parts[0])}小时${Number(parts[1])}分${Number(parts[2])}秒`
+    : `${Number(parts[0])}分${Number(parts[1])}秒`;
 }
 
 function upcomingRecovery(
@@ -117,7 +125,7 @@ function restLabel(item: RecoveryExecution): string {
       : item.kind === "AFTER_ROUND"
         ? "轮间休息"
         : "下一段前休息";
-  return `${name} · 计划 ${secondsLabel(item.plannedRecoverySeconds)} · 实际 ${item.actualRecoverySeconds ?? "未记录"} 秒`;
+  return `${name} · 计划 ${secondsLabel(item.plannedRecoverySeconds)} · 实际 ${actualSecondsLabel(item.actualRecoverySeconds)}`;
 }
 
 export function TrackStructureList({ occurrenceId }: { occurrenceId: string }) {
@@ -137,17 +145,17 @@ export function TrackStructureList({ occurrenceId }: { occurrenceId: string }) {
           </p>
           <p>
             计划 {slot.plannedDistanceMeters ?? "未设置"} 米 · 目标{" "}
-            {secondsLabel(slot.plannedDurationSeconds)}
+            <span className="whitespace-nowrap tabular-nums">{secondsLabel(slot.plannedDurationSeconds)}</span>
           </p>
           <p>
             实际 {slot.actualDistanceMeters ?? "未记录"} 米 ·{" "}
-            {slot.actualDurationSeconds ?? "未记录"} 秒
+            <span className="whitespace-nowrap tabular-nums">{actualSecondsLabel(slot.actualDurationSeconds)}</span>
           </p>
         </div>
       ))}
       {view.continuous.map((x) => (
         <p key={x.componentId}>
-          {x.componentId} · {STATUS[x.status]} · 实际 {x.actualDurationSeconds ?? "未记录"} 秒 /{" "}
+          {x.componentId} · {STATUS[x.status]} · 实际 <span className="whitespace-nowrap tabular-nums">{actualSecondsLabel(x.actualDurationSeconds)}</span> /{" "}
           {x.actualDistanceMeters ?? "未记录"} 米
         </p>
       ))}
@@ -161,8 +169,8 @@ export function TrackStructureList({ occurrenceId }: { occurrenceId: string }) {
             : item.kind === "AFTER_ROUND"
               ? "轮间休息"
               : "下一段前休息"}{" "}
-          · 计划 {secondsLabel(item.plannedRecoverySeconds)} · 实际{" "}
-          {item.actualRecoverySeconds ?? "未记录"} 秒
+          · 计划 <span className="whitespace-nowrap tabular-nums">{secondsLabel(item.plannedRecoverySeconds)}</span> · 实际{" "}
+          <span className="whitespace-nowrap tabular-nums">{actualSecondsLabel(item.actualRecoverySeconds)}</span>
         </p>
       ))}
     </div>

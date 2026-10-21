@@ -4,11 +4,11 @@ import { Upload } from "lucide-react"
 import { METRIC_LABELS, METRIC_UNITS, mergeResults, healthPreviewKey, paceText, parseDeviceFile, parseSummaryText, type DeviceActivity, type DeviceHealthRow, type DeviceParseResult } from "@/lib/ui/device-parse"
 import { healthSavedKey, activityDraftId, existingKeys, isDuplicate, saveDeviceRows } from "@/lib/ui/device-store"
 import { SavedBadge } from "@/components/saved-badge"
+import { fmtDurationPrecise as fmtDur } from "@/lib/ui/activity-format"
 
 export { ocr } from "@/lib/vision/local-ocr";
 import { ocr } from "@/lib/vision/local-ocr";
 import { ImageIntake } from "./image-intake";
-const fmtDur = (s: number | null) => s == null ? "—" : s >= 3600 ? `${Math.floor(s / 3600)}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`
 
 export function DeviceImport({ today, onSaved }: { today: string; onSaved: () => void }) {
   const panel=useRef<HTMLElement>(null)

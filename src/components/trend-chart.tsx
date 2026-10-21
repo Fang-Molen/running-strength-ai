@@ -6,7 +6,9 @@ export function niceTicks(lo: number, hi: number, n = 4): number[] {
   if (hi - lo < 1e-9) { lo -= 1; hi += 1; }
   const raw = (hi - lo) / n, mag = 10 ** Math.floor(Math.log10(raw)), r = raw / mag;
   const step = (r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10) * mag;
-  const out: number[] = []; for (let v = Math.floor(lo / step) * step; v <= hi + step * 0.5; v += step) out.push(Math.round(v * 1e6) / 1e6);
+  // Inclusive integer bounds keep the full data range visible without accumulating step rounding.
+  const first = Math.floor(lo / step), last = Math.ceil(hi / step);
+  const out: number[] = []; for (let i = first; i <= last; i++) out.push(Math.round(i * step * 1e6) / 1e6);
   return out;
 }
 const t = (d: string) => new Date(d + "T12:00:00").getTime();
@@ -62,7 +64,7 @@ export function MultiTrend({ series, height = 96, domain }: { series: Series[]; 
         : <line key={j} x1={X(g[0].d)} x2={X(g[0].d)} y1={lines[i].Y(g[0].v)} y2={lines[i].Y(g[0].v)} stroke={s.color} strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}</g>)}
       {tipX != null ? <line x1={tipX} x2={tipX} y1="0" y2="64" stroke="#9a9ca3" strokeWidth=".6" vectorEffect="non-scaling-stroke" /> : null}
     </svg>
-    <div className="keep relative h-4 text-[10px] text-muted">{[0, 0.25, 0.5, 0.75, 1].map((q) => <span key={q} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${q * 100}%`, transform: `translateX(${q === 0 ? "0" : q === 1 ? "-100%" : "-50%"})` }}>{day(t0 + (a + q * (b - a)) * T)}</span>)}</div>
+    <div className="fk-trend-axis-labels keep relative h-4 text-[10px] text-muted">{[0, 0.25, 0.5, 0.75, 1].map((q) => <span key={q} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${q * 100}%`, transform: `translateX(${q === 0 ? "0" : q === 1 ? "-100%" : "-50%"})` }}>{day(t0 + (a + q * (b - a)) * T)}</span>)}</div>
     {live.length > 1 ? <p className="keep text-[10px] text-muted">左轴为{live[0].label}，其余指标各自缩放</p> : null}
     {tipX != null ? <div className="pointer-events-none absolute top-0 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] shadow" style={{ left: `clamp(0px, calc(${tipX}% - 40px), calc(100% - 110px))` }}>{live.map((s) => { const p = near(s)!; return <div key={s.label}><span style={{ color: s.color }}>●</span> {p.d.slice(5)} {s.label} <b>{f(s, p.v)}</b></div>; })}</div> : null}
   </div>;

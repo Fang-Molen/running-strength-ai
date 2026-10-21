@@ -8,6 +8,7 @@ import { loadTrainingFact } from "@/lib/core/training-fact"
 import { appendCorrection, compensationDraft, effectiveStrengthFields, listCorrections, occurrenceVoided, strengthSetKey, UNWIRED_CORRECTION_FIELDS, type CorrectionField } from "@/lib/core/training-correction"
 import { loadConfirmedTrainingImports, permanentlyDeleteConfirmedTrainingImport, type ConfirmedTrainingImport } from "@/lib/core/training-import"
 import { calendarDayShanghai, formatDeviceLocal, logMarks, occurrenceTitle, userFacingStatus } from "@/lib/ui/training-log-view"
+import { fmtDurationPrecise, fmtSeconds } from "@/lib/ui/activity-format"
 import { TrackStructureList } from "@/components/track-session"
 import { AthleteGrowthCard } from "@/components/athlete-growth-card"
 import { projectRunningExecution } from "@/lib/core/running-execution"
@@ -257,12 +258,12 @@ export function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingI
   return <article className="border-b border-line py-1 text-sm last:border-b-0">
     <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex min-h-12 w-full items-center gap-3 text-left">
       <span className={(run && !lift ? "chip-run" : "chip-lift") + " grid size-10 shrink-0 place-items-center rounded-2xl"}>{run && !lift ? <Activity className="size-4" /> : <Dumbbell className="size-4" />}</span>
-      <span className="min-w-0 flex-1"><span className="block truncate font-bold">{item.title.value || "未命名上传"}</span><span className="mt-0.5 block truncate text-xs text-muted">{formatDeviceLocal(item.occurredAt.value)} · {item.sport === "UNKNOWN" ? "证据不足" : "已确认上传"}</span></span>
+      <span className="min-w-0 flex-1"><span className="block truncate font-bold">{item.title.value || "未命名上传"}</span><span className="mt-0.5 block truncate text-xs text-muted">{formatDeviceLocal(item.occurredAt.value)} · {item.sport === "UNKNOWN" ? "证据不足" : "已确认上传"}</span>{item.durationSeconds.value != null ? <span className="mt-0.5 block text-xs tabular-nums">用时 {fmtDurationPrecise(item.durationSeconds.value)}</span> : null}</span>
       <span className="text-lg text-muted" aria-hidden="true">{open ? "↑" : "›"}</span>
     </button>
     {open ? <div className="mt-2 space-y-2 border-t border-line pt-2">
       
-      {item.runningSegments.length ? <ul className="space-y-1">{item.runningSegments.map((segment, index) => <li key={segment.id}>原始跑步 {index + 1} · {segment.distanceMeters.value ?? "距离未记录"} 米 · {segment.durationSeconds.value ?? "时间未记录"} 秒 · {STATUS[segment.completion] ?? segment.completion}</li>)}</ul> : <p className="text-muted">跑步分段：未记录</p>}
+      {item.runningSegments.length ? <ul className="space-y-1">{item.runningSegments.map((segment, index) => <li key={segment.id}>原始跑步 {index + 1} · {segment.distanceMeters.value ?? "距离未记录"} 米 · <span className="whitespace-nowrap tabular-nums">{segment.durationSeconds.value != null ? fmtSeconds(segment.durationSeconds.value) : "时间未记录"}</span> · {STATUS[segment.completion] ?? segment.completion}</li>)}</ul> : <p className="text-muted">跑步分段：未记录</p>}
       {item.strengthSets.length ? <ul className="space-y-1">{item.strengthSets.map((set, index) => <li key={set.id}>原始力量 {index + 1} · {set.exerciseName.value || "动作未记录"} · {set.repetitions.value ?? "次数未记录"} · {STATUS[set.completion] ?? set.completion}</li>)}</ul> : null}
       <ImportLogCorrectionPanel record={item} onSaved={onDeleted}/>
       <button type="button" onClick={() => onAsk(item.confirmedImportId)} className="min-h-11 rounded-full border border-line px-3 font-bold">问教练</button>

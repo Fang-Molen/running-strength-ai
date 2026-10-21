@@ -24,6 +24,7 @@ import { computePlan } from "@/lib/nutrition/calc";
 import { TrendChart, MultiTrend, type Pt } from "@/components/trend-chart";
 import { loadCheckins, saveCheckin } from "@/lib/ui/watch-mode";
 import { loadExtras } from "@/lib/ui/device-store";
+import "./recovery-trend-detail.css";
 
 const n = (v: string | number | undefined | null) => { const x = Number(v); return Number.isFinite(x) && x > 0 ? x : null; };
 const f1 = (x: number) => (Math.round(x * 10) / 10).toString();
@@ -223,11 +224,28 @@ function RecoveryTrend({ vitals, only, endDay, rangeDays, embedded = false }: { 
     return (view?.series??[]).filter(p=>p.day>=since && p.day<=today).map(p=>({d:p.day,v:p.value}));
   }, [k, since, today, vitals]);
   const meta = REC.find((r) => r[0] === k)!;
-  return <section className={embedded ? "fk-h89-history" : "fk-dash-card p-2"} aria-label={`${meta[1]}历史趋势`}>
-    {!embedded ? <><div className="fk-dash-title text-sm"><Activity className="size-4" />{only ? `${meta[1]}趋势` : "恢复趋势"}<span className="keep ml-auto text-[10px] font-normal text-muted">{meta[2]}</span></div>
-    <div className="mt-1 flex items-center gap-1 text-[11px]">{only ? null : <span className="flex flex-wrap rounded border border-line">{REC.map(([id, l]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)} className={"min-h-7 px-1.5 " + (k === id ? "bg-accent text-accent-fg" : "")}>{l}</button>)}</span>}<span className="ml-auto flex rounded border border-line">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={"min-h-7 px-1.5 " + (days === d ? "bg-accent text-accent-fg" : "")}>{d}天</button>)}</span></div></> : null}
-    {pts.length >= 2 ? <><TrendChart key={`${k}-${days}-${today}`} domain={[since, today]} height={embedded ? 170 : 96} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} />
-      <p className="keep text-[10px] text-muted" data-testid="trend-coverage">{since.slice(5)}–{today.slice(5)} · {pts.length} 天有数据{pts[0].d > since ? `；最早 ${pts[0].d.slice(5)}，不足 ${days} 天${k === "fatigue" || k === "pain" ? "" : "（佳明每次同步会往前补 14 天，直到 90 天）"}` : ""}{pts.length < Math.round((t2(today) - t2(pts[0].d)) / 864e5) + 1 ? "；缺的天不连线" : ""}</p></> : <Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} />}
+  const unitLabel = k === "SLEEP" ? "小时（h）" : k === "RHR" ? "次/分（bpm）" : k === "HRV" ? "毫秒（ms）" : meta[2] === "/100" ? "分 · 满分100" : `分 · ${meta[2]}`;
+  return <section className={`${embedded ? "fk-h89-history" : "fk-dash-card"} fk-recovery-trend`} aria-label={`${meta[1]}历史趋势`}>
+    {!embedded ? <>
+      <div className="fk-dash-title"><Activity className="size-4" />{only ? `${meta[1]}趋势` : "恢复趋势"}</div>
+      <div className="fk-recovery-trend-controls">
+        {only ? null : <div className="fk-recovery-trend-metrics" role="group" aria-label="恢复趋势指标" data-testid="trend-metrics">{REC.map(([id, label]) => <button key={id} type="button" aria-pressed={k === id} onClick={() => setK(id)}>{label}</button>)}</div>}
+        <div className="fk-recovery-trend-range" role="group" aria-label="恢复趋势时间范围" data-testid="trend-range">{[7, 30, 90].map((d) => <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)}>{d}天</button>)}</div>
+      </div>
+    </> : null}
+    <div className="fk-recovery-trend-meta"><b>{meta[1]}</b><span>单位：{unitLabel}</span></div>
+    {pts.length >= 2 ? <div className="fk-recovery-trend-plot"><TrendChart key={`${k}-${days}-${today}`} domain={[since, today]} height={embedded ? 184 : 192} unit={meta[2].length < 5 ? meta[2] : "分"} points={pts} fmt={(v) => (k === "SLEEP" ? (Math.round(v * 10) / 10).toString() : String(Math.round(v)))} /></div>
+      : <div className="fk-recovery-trend-empty"><Empty text={k === "fatigue" || k === "pain" ? "在主观感受里点 2 天以上后显示" : "选择同一来源且有2天以上数据后显示"} /></div>}
+    <p className="keep fk-recovery-trend-coverage" data-testid="trend-coverage">{since.slice(5)}–{today.slice(5)} · {pts.length} 天有数据</p>
+    <details className="fk-recovery-disclosure" key={`explanation-${k}-${today}`}>
+      <summary>趋势说明</summary>
+      <div className="fk-recovery-disclosure-body">
+        <p>{k === "fatigue" || k === "pain" ? "按你已记录的主观感受显示。" : "沿用当前所选数据来源，仅显示所选时间范围内的记录。"}缺失日期不补零、不跨来源拼接。</p>
+        {pts.length && pts[0].d > since ? <p>最早记录 {pts[0].d}，不足 {days} 天。</p> : null}
+        {pts.length && pts.length < Math.round((t2(today) - t2(pts[0].d)) / 864e5) + 1 ? <p>缺的天不连线。</p> : null}
+        {pts.length >= 2 ? <p>点按图表看数值；双指缩放、横向拖动，双击复原。</p> : null}
+      </div>
+    </details>
     {embedded && pts.length ? <details className="fk-h89-disclosure" key={`${k}-${today}`}><summary>每日记录 · {pts.length}天</summary><div className="fk-h89-history-list">{[...pts].reverse().map(p => <p key={p.d}><span>{p.d}</span><b>{valueText(k, p.v)}</b></p>)}</div></details> : null}
   </section>;
 }

@@ -4,7 +4,7 @@ import { shortHash } from '@/lib/health/observation';
 import { currentStore } from '@/lib/core/storage';
 import { currentAthleteId } from '@/lib/core/events';
 import { useEffect, useMemo, useState } from "react";
-import { fmtDistance, fmtDuration, fmtPace, parseActivityTime } from "@/lib/ui/activity-format";
+import { fmtDistance, fmtDurationPrecise as fmtDuration, fmtSeconds, fmtPace, parseActivityTime } from "@/lib/ui/activity-format";
 import { Dumbbell, Footprints, Activity } from "lucide-react";
 
 export const GACTS_KEY = "fk-garmin-acts-v1";
@@ -79,7 +79,7 @@ function Row({ g, defaultOpen = false, detailOnly = false }: { g: G; defaultOpen
         {([["距离", km(g.dist)], ["时长", fmtDur(g.dur)], ["配速", pace(g.dist, g.dur)], ["平均心率", g.avgHr && Math.round(g.avgHr)], ["最大心率", g.maxHr && Math.round(g.maxHr)], ["步频", g.cad && Math.round(g.cad)], ["爬升", g.elev != null ? `${Math.round(g.elev)} m` : null], ["热量", g.cal && Math.round(g.cal)], ["训练负荷", g.tl && Math.round(g.tl)], ["有氧效果", g.te], ["组数", g.sets], ["次数", g.reps]] as [string, unknown][]).filter(([, v]) => v != null && v !== "—" && v !== 0).map(([l, v]) => <div key={l}><div className="text-xs text-muted">{l}</div><div className="font-bold">{String(v)}</div></div>)}
       </div>
       {state ? <p className="keep mt-2 text-xs text-muted">{state}</p> : null}
-      {laps && laps.length ? <table className="mt-3 w-full text-xs"><thead><tr className="text-muted"><th className="text-left">圈</th><th>距离</th><th>用时</th><th>配速</th><th>心率</th><th>步频</th></tr></thead><tbody>{laps.map((l) => <tr key={l.i} className="text-center"><td className="text-left">{l.i}</td><td>{km(l.dist)}</td><td>{fmtDur(l.dur)}</td><td>{pace(l.dist, l.dur) ?? "—"}</td><td>{l.avgHr ? Math.round(l.avgHr) : "—"}</td><td>{l.cad ? Math.round(l.cad) : "—"}</td></tr>)}</tbody></table> : null}
+      {laps && laps.length ? <div className="mt-3 overflow-x-auto"><table aria-label="佳明分圈" className="w-full whitespace-nowrap text-xs tabular-nums"><thead><tr className="text-muted"><th className="text-left">圈</th><th>距离</th><th>用时</th><th>配速</th><th>心率</th><th>步频</th></tr></thead><tbody>{laps.map((l) => <tr key={l.i} className="text-center"><td className="text-left">{l.i}</td><td className="px-1">{km(l.dist)}</td><td className="px-1">{fmtSeconds(l.dur)}</td><td className="px-1">{pace(l.dist, l.dur) ?? "—"}</td><td className="px-1">{l.avgHr ? Math.round(l.avgHr) : "—"}</td><td>{l.cad ? Math.round(l.cad) : "—"}</td></tr>)}</tbody></table></div> : null}
     </div> : null}
   </Wrap>;
 }

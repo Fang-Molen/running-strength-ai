@@ -1,0 +1,196 @@
+.device-account-card,
+.device-sync-panel {
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.device-account-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.device-account-heading > div,
+.device-account-heading h2,
+.device-account-heading h3 {
+  min-width: 0;
+}
+
+.device-account-heading h2,
+.device-account-heading h3 {
+  font-size: var(--fk-card-title, 1rem);
+  line-height: 1.5;
+}
+
+.device-account-status {
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.device-account-status[data-tone="ok"] {
+  color: var(--fk-identity-success, var(--color-fg));
+  background: color-mix(in srgb, var(--fk-identity-success, var(--color-fg)) 7%, transparent);
+}
+
+.device-account-status[data-tone="warn"] {
+  color: var(--color-warn);
+  background: color-mix(in srgb, var(--color-warn) 8%, transparent);
+  border-color: color-mix(in srgb, var(--color-warn) 30%, var(--color-line));
+}
+
+.device-account-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.device-account-actions > :last-child {
+  flex-shrink: 0;
+}
+
+.device-account-card :is(button, select, input:not([type="checkbox"]):not([type="file"])),
+.device-sync-disclosure > summary {
+  min-height: 44px;
+}
+
+.device-account-card :is(select, input:not([type="checkbox"]):not([type="file"])) {
+  font-size: 1rem;
+}
+
+.device-account-card button:disabled {
+  opacity: 0.55;
+}
+
+.device-account-card input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--color-accent);
+}
+
+.device-account-regions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.device-account-regions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-block: 6px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.device-account-regions button[aria-checked="true"] {
+  color: var(--color-fg);
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+}
+
+.device-account-regions svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+.device-sync-disclosure {
+  margin-top: 12px;
+  border-top: 1px solid var(--color-line);
+}
+
+.device-sync-disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  list-style: none;
+}
+
+.device-sync-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.device-sync-disclosure > summary svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.device-sync-disclosure[open] > summary {
+  color: var(--color-fg);
+}
+
+.device-sync-disclosure[open] > summary svg {
+  transform: rotate(180deg);
+}
+
+.device-sync-detail-body {
+  display: grid;
+  gap: 12px;
+  padding: 4px 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.device-sync-rows > div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr);
+  gap: 12px;
+}
+
+.device-sync-rows > div > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.device-sync-definition {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr);
+  gap: 8px 12px;
+}
+
+.device-sync-subheading {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-line);
+}
+
+.device-sync-errors {
+  padding: 12px;
+  border-radius: var(--fk-inner-radius, 12px);
+  background: var(--color-surface-2);
+  overflow-wrap: anywhere;
+}
+
+.device-sync-notice {
+  margin-top: 12px;
+}
+
+.device-sync-notice[data-tone="warn"],
+.device-sync-feedback[data-tone="warn"] > summary {
+  color: var(--color-warn);
+}
+
+.device-sync-message {
+  overflow-wrap: anywhere;
+}
+
+.device-account-card :is(button, a, select, input):focus-visible,
+.device-sync-disclosure > summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}

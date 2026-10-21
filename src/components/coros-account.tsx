@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Check, ChevronDown } from 'lucide-react'
 import { corosNeedsLogin, loadCorosMeta, saveCorosMeta } from '@/lib/health/coros-account-sync'
 import { corosMcpDisconnect, corosMcpLaps, corosMcpRecent, corosMcpStartUrl, corosMcpStatus, legacyCorosLoggedIn, legacyCorosLogout, setCorosMcpLinked, type McpPreview } from '@/lib/health/coros-mcp-client'
 import { corosLabelOf, crossBrandCandidates, crossBrandPairsInLog } from '@/lib/health/brand-isolation'
@@ -6,6 +7,8 @@ import type { McpLap } from '@/lib/health/coros-mcp-parse'
 import { loadTrainingActivities } from '@/lib/ui/training-read-model'
 import { activityDraftId, existingKeys, saveDeviceRows } from '@/lib/ui/device-store'
 import { currentAthleteId } from '@/lib/core/events'
+import { fmtDurationPrecise, fmtSeconds } from '@/lib/ui/activity-format'
+import './device-settings-detail.css'
 
 /** 日志里已有的活动（用于“已保存过”和“可能与佳明同一次活动”提示）；读不到就当没有。 */
 const logRows = () => { try { return loadTrainingActivities() } catch { return [] } }
@@ -75,29 +78,37 @@ export function CorosAccount({ compact = false }: { compact?: boolean }) {
   const showLaps = (a: McpPreview) => { if (a.sportType == null) { setLaps(l => ({ ...l, [a.key]: '没有运动类型码，查不了分圈' })); return }
     void corosMcpLaps(a.labelId, a.sportType).then(r => setLaps(l => ({ ...l, [a.key]: r.laps.length ? r.laps : (r.issues[0] ?? '没有分圈') }))).catch(e => { if (corosNeedsLogin(e)) expired(); else setLaps(l => ({ ...l, [a.key]: e instanceof Error ? e.message : '读取失败' })) }) }
   const nPick = rows ? rows.filter(a => pick[a.key] && !dup.has(a.key)).length : 0
-  return <section className={compact ? 'mt-3 rounded-xl border border-line p-3 text-sm' : 'home-card mt-3 p-4 text-sm'} aria-label="高驰账号" data-testid="coros-account">
-    <h3 className="font-bold">高驰（COROS）· {state === 'in' ? '已授权' : state === 'checking' ? '检查中…' : state === 'unreachable' ? '中转暂不可达' : '未授权'}</h3>
-    <p className="keep mt-1 text-xs text-muted">通过高驰官方授权页登录（密码只在高驰页面输入，方坤拿不到）。可读：活动、分圈、睡眠、睡眠 HRV、静息心率、日内压力、当前恢复度。高驰没有全天心率曲线，也没有“身体电量”。高驰数据单独记来源，不和佳明混算、不进佳明计划关联。</p>
-    {legacy && state !== 'in' ? <p className="keep mt-2 rounded-lg border border-line p-2 text-xs" data-testid="coros-legacy-note">高驰登录方式已升级为官方授权：请点下面按钮重新授权一次。以前保存的高驰记录都还在，不会重复保存。</p> : null}
+  return <section className={`device-account-card ${compact ? 'mt-3 rounded-xl border border-line p-3 text-sm' : 'home-card mt-3 p-4 text-sm'}`} aria-label="高驰账号" data-testid="coros-account">
+    <div className="device-account-heading"><h3 className="font-bold">高驰（COROS）</h3><span role="status" className="device-account-status" data-tone={state === 'in' ? 'ok' : state === 'unreachable' ? 'warn' : undefined}>{state === 'in' ? '已授权' : state === 'checking' ? '确认中…' : state === 'unreachable' ? '暂不可达' : '未授权'}</span></div>
+    <p className="keep mt-2 text-muted">{state === 'in' ? '读取近 28 天活动，核对后保存。' : '通过高驰官方授权，密码仅在高驰页面输入。'}</p>
+    {legacy && state !== 'in' ? <p className="keep mt-2 rounded-lg border border-line p-2" data-testid="coros-legacy-note">高驰登录方式已升级为官方授权：请点下面按钮重新授权一次。以前保存的高驰记录都还在，不会重复保存。</p> : null}
     {state !== 'in' ? <div className="mt-2 space-y-2">
-      <div className="flex gap-2 text-xs" role="radiogroup" aria-label="高驰账号地区">
-        {([['cn', '中国区账号'], ['auto', '海外账号（自动）']] as const).map(([v, l]) => <button key={v} type="button" role="radio" aria-checked={region === v} onClick={() => setRegion(v)} className={`min-h-11 flex-1 rounded-xl border px-2 ${region === v ? 'border-accent font-bold' : 'border-line'}`}>{l}</button>)}
+      <div className="device-account-regions" role="radiogroup" aria-label="高驰账号地区">
+        {([['cn', '中国区账号'], ['auto', '海外账号（自动）']] as const).map(([v, l]) => <button key={v} type="button" role="radio" aria-checked={region === v} onClick={() => setRegion(v)} className={`min-h-11 flex-1 rounded-xl border px-2 ${region === v ? 'border-accent font-bold' : 'border-line'}`}><Check aria-hidden="true" className={region === v ? '' : 'invisible'} />{l}</button>)}
       </div>
-      <a href={corosMcpStartUrl(region)} onClick={() => { void legacyCorosLogout() }} className="flex min-h-11 w-full items-center justify-center rounded-xl bg-accent font-bold text-accent-fg" data-testid="coros-oauth">用高驰授权登录</a>
-    </div> : <div className="mt-2 flex flex-wrap gap-2">
-      <button type="button" disabled={busy} className="min-h-11 rounded-xl bg-accent px-3 font-bold text-accent-fg" onClick={() => void read()}>{busy ? '读取中…' : '手动读取近 28 天'}</button>
+      <a href={corosMcpStartUrl(region)} onClick={() => { void legacyCorosLogout() }} className="flex min-h-11 w-full items-center justify-center rounded-xl bg-accent font-bold text-accent-fg" data-testid="coros-oauth">连接高驰</a>
+    </div> : <div className="device-account-actions mt-2">
+      <button type="button" disabled={busy} className="min-h-11 flex-1 rounded-xl bg-accent px-3 font-bold text-accent-fg" onClick={() => void read()}>{busy ? '读取中…' : '立即同步'}</button>
       <button type="button" disabled={busy} className="min-h-11 rounded-xl border border-line px-3" onClick={() => void run(async () => { const r = await corosMcpDisconnect(); setState('out'); setRows(null); setCorosMcpLinked(currentAthleteId(), false); setMsg(`已断开高驰。${r.revoked ? '' : '本机凭证已删除；如需彻底撤销授权，请到高驰 App 的授权管理里取消（入口待核）。'}已保存的记录不受影响。`) })}>断开高驰</button>
     </div>}
+    {msg ? <p role="status" className="device-sync-message mt-2">{msg}</p> : null}
     {rows && rows.length ? <div className="mt-2 space-y-1" data-testid="coros-preview">
-      {rows.map(a => <div key={a.key} className="border-t border-line pt-1 text-xs"><label className="flex min-h-11 items-center gap-2"><input type="checkbox" disabled={dup.has(a.key)} checked={!!pick[a.key] && !dup.has(a.key)} onChange={e => setPick(p => ({ ...p, [a.key]: e.target.checked }))} />
-        <span>{fmt(a.startIso)}{a.timeAssumed ? '（按本机时区，待核）' : ''} · {a.sportLabel}{a.distanceM ? ` · ${(a.distanceM / 1000).toFixed(2)} km` : ''}{a.durationSec ? ` · ${Math.round(a.durationSec / 60)} 分钟` : ''}{a.avgHr ? ` · 均心率 ${a.avgHr}` : ''}{dup.has(a.key) ? '（已保存过）' : cross.has(a.key) ? '（可能与佳明同一次活动，默认不勾选）' : ''}</span></label>
-        <button type="button" className="min-h-9 text-accent" onClick={() => showLaps(a)}>分圈</button>
-        {Array.isArray(laps[a.key]) ? <table className="mt-1 w-full text-[11px]"><thead><tr><th>圈</th><th>用时</th><th>配速</th><th>均心率</th><th>步频</th></tr></thead><tbody>{(laps[a.key] as McpLap[]).map((l, i) => <tr key={i}><td>{l.index ?? i + 1}</td><td>{l.timeSec != null ? `${Math.floor(l.timeSec / 60)}:${String(Math.round(l.timeSec % 60)).padStart(2, '0')}` : '—'}</td><td>{l.paceSecPerKm != null ? `${Math.floor(l.paceSecPerKm / 60)}'${String(Math.round(l.paceSecPerKm % 60)).padStart(2, '0')}"` : '—'}</td><td>{l.avgHr ?? '—'}</td><td>{l.avgCadence ?? '—'}</td></tr>)}</tbody></table> : laps[a.key] ? <p className="text-muted">{laps[a.key] as string}</p> : null}</div>)}
+      {rows.map(a => <div key={a.key} className="border-t border-line pt-1"><label className="flex min-h-11 items-center gap-2"><input type="checkbox" disabled={dup.has(a.key)} checked={!!pick[a.key] && !dup.has(a.key)} onChange={e => setPick(p => ({ ...p, [a.key]: e.target.checked }))} />
+        <span>{fmt(a.startIso)}{a.timeAssumed ? '（按本机时区，待核）' : ''} · {a.sportLabel}{a.distanceM ? ` · ${(a.distanceM / 1000).toFixed(2)} km` : ''}{a.durationSec ? ` · 用时 ${fmtDurationPrecise(a.durationSec)}` : ''}{a.avgHr ? ` · 均心率 ${a.avgHr}` : ''}{dup.has(a.key) ? '（已保存过）' : cross.has(a.key) ? '（可能与佳明同一次活动，默认不勾选）' : ''}</span></label>
+        <button type="button" className="min-h-11 px-2 text-accent" onClick={() => showLaps(a)}>分圈</button>
+        {Array.isArray(laps[a.key]) ? <div className="mt-1 overflow-x-auto"><table aria-label="高驰分圈" className="w-full whitespace-nowrap text-sm tabular-nums"><thead><tr><th>圈</th><th>用时</th><th>配速</th><th>均心率</th><th>步频</th></tr></thead><tbody>{(laps[a.key] as McpLap[]).map((l, i) => <tr key={i} className="text-center"><td>{l.index ?? i + 1}</td><td className="px-1">{fmtSeconds(l.timeSec)}</td><td className="px-1">{l.paceSecPerKm != null ? `${Math.floor(l.paceSecPerKm / 60)}'${String(Math.round(l.paceSecPerKm % 60)).padStart(2, '0')}"` : '—'}</td><td className="px-1">{l.avgHr ?? '—'}</td><td>{l.avgCadence ?? '—'}</td></tr>)}</tbody></table></div> : laps[a.key] ? <p className="text-muted">{laps[a.key] as string}</p> : null}</div>)}
       <button type="button" disabled={!nPick} className="min-h-11 w-full rounded-xl bg-accent font-bold text-accent-fg disabled:opacity-50" onClick={save}>保存选中的 {nPick} 条</button>
     </div> : null}
-    {unusable ? <p className="keep mt-2 text-xs text-muted">另有 {unusable} 条活动高驰没给出活动标识或开始时刻，暂不能保存（待核）。</p> : null}
-    {logPairs ? <p className="mt-2 text-xs text-muted" data-testid="coros-crossbrand-note">日志里有 {logPairs} 条高驰记录与佳明记录开始时间相差 2 分钟内、距离/时长接近，可能是同一次活动记了两次。没有自动合并，请到日志里核对，需要时删掉其中一条。</p> : null}
-    {msg ? <p role="status" className="mt-2 text-xs">{msg}</p> : null}
+    {unusable ? <p className="keep mt-2 text-warn">另有 {unusable} 条活动高驰没给出活动标识或开始时刻，暂不能保存（待核）。</p> : null}
+    {logPairs ? <p className="mt-2 text-muted" data-testid="coros-crossbrand-note">日志里有 {logPairs} 条高驰记录与佳明记录开始时间相差 2 分钟内、距离/时长接近，可能是同一次活动记了两次。没有自动合并，请到日志里核对，需要时删掉其中一条。</p> : null}
+    <details className="device-sync-disclosure">
+      <summary><span>同步说明</span><ChevronDown aria-hidden="true" /></summary>
+      <div className="device-sync-detail-body text-muted">
+        <p>通过高驰官方授权页登录，密码只在高驰页面输入，方坤拿不到。可读：活动、分圈、睡眠、睡眠 HRV、静息心率、日内压力、当前恢复度。高驰没有全天心率曲线，也没有“身体电量”。</p>
+        <p>高驰数据单独记来源，不和佳明混算、不进佳明计划关联。读取的活动需要核对、勾选后保存。</p>
+        <p>已授权时，此页在前台每 10 分钟检查近 7 天的新活动，回到前台也会检查；只列出待核对记录，不会自动保存。手动同步读取近 28 天活动。</p>
+      </div>
+    </details>
   </section>
 }
 /** 设备连接与同步状态卡里的高驰行（只显示实际查询/读取结果）。 */
