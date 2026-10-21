@@ -12,7 +12,7 @@ function GlobalCoachDigest({ input, onNavigate }: { input: CoachCoordinationInpu
     let live = true, sequence = 0;
     const refresh = () => {
       const request = ++sequence, owner = currentAthleteId();
-      setSnapshot(null);
+      // Keep a verified same-athlete snapshot visible while refreshing; never flash 'no data'.
       void readGlobalCoachSnapshot().then(next => {
         if (live && request === sequence && owner === currentAthleteId()) setSnapshot(next);
       }).catch(() => { if (live && request === sequence) setSnapshot(null); });
@@ -69,6 +69,8 @@ export function CoachCoordinationHub({
 }) {
   const organs = coachCoordinationView(input);
   const next = coachCoordinationNext(input);
+  // Only mount the expensive read-only snapshot when its detail is visible.
+  const [observationsOpen, setObservationsOpen] = useState(false);
   return (
     <section className="fangkun-hub" aria-label="方坤AI协同中枢">
       <div className="fangkun-hub-core">
@@ -89,9 +91,13 @@ export function CoachCoordinationHub({
           前往 <ArrowRight size={14} aria-hidden="true" />
         </button>
       </div>
-      <GlobalCoachDigest input={input} onNavigate={onNavigate} />
-      <p className="fangkun-organ-heading">协同工作区 <span>点击查看事实和训练任务</span></p>
-      <div className="fangkun-organ-grid" aria-label="查看协作模块">
+      <details className="mt-2 rounded-xl border border-line px-3" data-testid="v91-global-observations" onToggle={event=>setObservationsOpen(event.currentTarget.open)}>
+        <summary className="min-h-11 cursor-pointer py-3 text-sm font-bold">全局观察与待办 · 查看依据</summary>
+        {observationsOpen ? <GlobalCoachDigest input={input} onNavigate={onNavigate} /> : null}
+      </details>
+      <details className="mt-2 rounded-xl border border-line px-3" data-testid="v91-organ-navigation">
+        <summary className="min-h-11 cursor-pointer py-3 text-sm font-bold">其他模块 · 按需进入</summary>
+        <div className="fangkun-organ-grid pb-3" aria-label="查看协作模块">
         {organs.map(({ id, label, role, readout }) => {
           const Icon = ICONS[id];
           return (
@@ -105,7 +111,8 @@ export function CoachCoordinationHub({
             </button>
           );
         })}
-      </div>
+        </div>
+      </details>
       <details className="fangkun-mechanism-rail" aria-label="训练机制理解路径">
         <summary className="fangkun-mechanism-summary">了解方坤如何理解训练 <span>展开</span></summary>
         <p className="mt-2 text-xs text-muted">训练刺激 <span aria-hidden="true">→</span> 身体响应 <span aria-hidden="true">→</span> 恢复与适应 <span aria-hidden="true">→</span> 专项表现</p>

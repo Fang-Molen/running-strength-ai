@@ -14,24 +14,30 @@ const CATEGORIES = [
 ] as const;
 
 /** Existing teaching materials only. Browsing never submits a question or changes athlete data. */
-export function LearningLibrary({ onNavigate, publicReferencesAllowed = false }: { onNavigate?: (tab: 'plan' | 'body' | 'log') => void; publicReferencesAllowed?: boolean }) {
+export function LearningLibrary({ onNavigate, onAsk, publicReferencesAllowed = false }: { onNavigate?: (tab: 'plan' | 'body' | 'log') => void; onAsk?: (question: string) => void; publicReferencesAllowed?: boolean }) {
+  const [query, setQuery] = useState(''); // v89.7（取自 V91）：搜索 + 问方坤
   const [category, setCategory] = useState<string>('course');
   const [mx, setMx] = useState(false);
   const selected = CATEGORIES.find(item => item.id === category)!;
-  const lessons = TEACHING_RULES.filter(rule => (selected.cores as readonly string[]).includes(rule.originalId[0]));
+  const needle = query.trim().toLocaleLowerCase();
+  const lessons = needle ? TEACHING_RULES.filter(rule => `${rule.core} ${rule.title} ${rule.guidance}`.toLocaleLowerCase().includes(needle)) : TEACHING_RULES.filter(rule => (selected.cores as readonly string[]).includes(rule.originalId[0]));
   return <section className="learning-library" aria-label="方坤学习目录">
     <div className="product-section-heading"><div><p className="product-eyebrow">按需要学习</p><h2>训练之外，也能理解训练</h2></div><BookOpen size={21} aria-hidden="true" /></div>
     <p className="mt-2 text-sm text-muted">沿用已接入的教学资料。学习内容与个人训练建议分别呈现。</p>
+    <label className="mt-3 block text-sm" htmlFor="fk-lesson-search">搜索学习内容</label>
+    <input id="fk-lesson-search" type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="例如：间歇、力量、睡眠" className="mt-1 min-h-12 w-full rounded-xl border border-line bg-surface px-3 text-base" />
     <div className="learning-categories" role="group" aria-label="内容栏目">
       {CATEGORIES.map(item => <button key={item.id} type="button" aria-pressed={item.id === category} onClick={() => setCategory(item.id)}><strong>{item.label}</strong><span>{item.hint}</span></button>)}
     </div>
     {category === 'technique' ? <div className="home-card p-4"><h3 className="font-bold">现有动作库 · {CATALOG.length} 个动作</h3><p className="mt-2 text-sm text-muted">在计划里选择动作，可查看原有动作示意、技术提示与设置；浏览不会加入课表。</p><button type="button" className="product-text-action" onClick={() => onNavigate?.('plan')}>打开动作与课表 <ArrowUpRight size={16} /></button><button type="button" className="product-text-action" onClick={() => setMx(true)}>人体肌群 3D · 足踝小腿动作 <ArrowUpRight size={16} /></button>{mx ? <MuscleExplorerSheet onClose={() => setMx(false)} /> : null}</div> : null}
     {category === 'nutrition' ? <div className="home-card p-4"><h3 className="font-bold">食物、餐食与营养记录</h3><p className="mt-2 text-sm text-muted">原有食物搜索、手动记录和营养明细保留在身体页。这里只提供入口，尚未接入独立营养教学正文。</p><button type="button" className="product-text-action" onClick={() => onNavigate?.('body')}>打开饮食与营养 <ArrowUpRight size={16} /></button></div> : null}
+    {needle && !lessons.length ? <p role="status" className="keep py-4 text-sm text-muted">没有找到匹配的内容。可以换个关键词，或直接在对话中提问。</p> : null}
     <div className="space-y-3 mt-3">
       {lessons.map(rule => <details key={rule.id} className="home-card p-4">
         <summary className="min-h-11 cursor-pointer"><span className="product-eyebrow">{rule.core}</span><strong className="block mt-1 text-sm">{rule.title}</strong></summary>
         <p className="mt-3 text-sm leading-relaxed">{rule.guidance}</p>
         <p className="mt-2 text-xs text-muted">适用边界：{rule.counterexample}</p>
+        {onAsk ? <button type="button" className="mt-2 min-h-11 text-sm text-accent" onClick={() => onAsk(`请结合我已确认的训练记录，解释“${rule.title}”在我当前训练中的适用条件；没有证据时先说明缺口。`)}>问方坤这条和我有什么关系</button> : null}
         <details className="mt-3 text-xs"><summary className="min-h-11 cursor-pointer font-bold">来源与核验范围</summary>
           <p className="text-muted">教学候选资料；本轮没有升级文献核验等级，也不作为个人处方。</p>
           {!publicReferencesAllowed ? <p className="mt-2 text-muted">本地可读来源说明。需要打开外部资料时，请先在对话页开启公开知识权限；离线时不打开外部链接。</p> : null}

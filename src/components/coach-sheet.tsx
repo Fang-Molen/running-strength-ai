@@ -458,8 +458,10 @@ export function CoachSheet({
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (memory && saveCoach(memory)) setCoachSaveFailed(false); }}>再存一次</button>
       </div> : null}
       <div data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
-        {section === "learn" ? <LearningLibrary onNavigate={onNavigate} publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed} /> : null}
+        {section === "learn" ? <LearningLibrary onNavigate={onNavigate} onAsk={(question)=>{setDraft(question);setSection("chat")}} publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed} /> : null}
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
+        {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
+        {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-review-tools"><summary className="min-h-11 cursor-pointer font-bold">更多复盘与协调工具（按需展开）</summary><div className="mt-2 space-y-3">
         {coordinationPanel ?? null}
         {section === 'review' && <CoachPlanChangePanel revision={recordRevision} />}
         {section === 'review' && <CoachC03FollowupPanel revision={recordRevision} />}
@@ -474,17 +476,22 @@ export function CoachSheet({
           const history = (memory?.messages ?? []).slice(-8).map(({ role, text }) => ({ role, text: text.slice(0, 300) }));
           return buildCoachModelRequest(normalizeAskCoachInput({ brief, history, v4, coachContextMemory })).inputSummary;
         }} />}
-        <div className="flex justify-start gap-2">
+        </div></details>}
+        {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-legacy-review">
+          <summary className="min-h-11 cursor-pointer font-bold">高级复盘、规则与设备工具 · 按需展开</summary>
+          <div className="mt-2 space-y-3">
+        <div className="flex justify-start gap-2" hidden={section === 'review'}>
           <span className="mt-1 grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-surface"><span className="origin-center scale-[0.45]"><FangShen face="happy" motion={false} /></span></span>
           <p className="max-w-[85%] rounded-2xl rounded-tl-md stat-run px-3 py-2 text-sm">你好。建议只依据已保存的训练记录。数据不足时会说明，不会编造疲劳、恢复或伤病结论。</p>
         </div>
-        <div className="rounded-2xl bg-surface px-3 py-3 text-sm">
+        <details className="rounded-2xl bg-surface px-3 py-3 text-sm">
+          <summary className="min-h-11 cursor-pointer font-bold">对话风格设置</summary>
           <label htmlFor="coach-persona" className="font-bold">方坤的说话风格</label>
           <select id="coach-persona" value={persona} onChange={(e) => { const next = parsePersona(e.target.value); setPersona(next); try { window.localStorage.setItem(PERSONA_KEY, next); } catch { /* current session only */ } }} className="ml-2 rounded-lg border border-line bg-surface px-2 py-2">
             {PERSONAS.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
           </select>
           <p className="mt-1 text-xs text-muted">{PERSONAS.find(item => item.id === persona)?.description}。仅改变表达方式，不改变医学警示、训练决策或冻结权限。</p>
-        </div>
+        </details>
         {onControlledStrengthEdit ? <details className="mb-2 rounded-card border border-line p-2"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">未来力量计划 · 预览修改与撤销</summary><CoachStrengthEditPanel plan={plan} onAction={onControlledStrengthEdit} /></details> : null}
         <details className="mb-2 rounded-card border border-line p-2"><summary className="min-h-11 cursor-pointer py-2 text-sm font-bold">设备截图 / 身体数据 / 单次分段识别（本地免费）</summary><DeviceEvidenceImport /></details>
         <details className="rounded-2xl bg-surface px-3 py-2 text-xs text-muted" aria-label="方坤教练功能说明">
@@ -597,6 +604,8 @@ export function CoachSheet({
           </div>
           </details>
         ) : null}
+          </div>
+        </details>}
         {pending ? (
           <section className="rounded-card border border-line p-3 text-sm">
             <p className="font-bold">一条还没执行的建议 · {pending.risk}</p>

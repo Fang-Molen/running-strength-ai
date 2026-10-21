@@ -352,6 +352,9 @@ export function Plan400Cycle(props: { today: string; sourceSlot?: React.ReactNod
 }
 function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; sourceSlot?: React.ReactNode; lens?: "run" | "lift" }) {
   const logs = useLogs(); const partsAll = usePartsAll();
+  // v89.7（取自 V91）：完整周期外层折叠，默认只显示当前周；仅存 UI 偏好，不改计划、日程或训练事实。
+  const [cycleExpanded, setCycleExpanded] = useState(() => { try { return localStorage.getItem("fk-v91-cycle-expanded") === "1" } catch { return false } });
+  const toggleCycle = () => setCycleExpanded(v => { try { localStorage.setItem("fk-v91-cycle-expanded", v ? "0" : "1") } catch { /* UI remains usable */ } return !v; });
   const [showSource, setShowSource] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   const [confirm, setConfirm] = useState(() => { migrateUserConfirmedDates(P()); return loadDateConfirm(P()); });
@@ -369,6 +372,9 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
     <div className="mt-1 flex items-start justify-between gap-2"><h2 className="min-w-0 text-lg font-bold leading-snug">{P().name}</h2><button type="button" className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm" aria-expanded={showSource} onClick={() => setShowSource(!showSource)}>来源 / 切换</button></div>
     <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]"><span className="rounded-full border border-accent px-2 py-0.5 font-bold text-accent">使用中</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">已导入{planTag() ? ` · ${planTag()}` : ""}</span><span className="rounded-full bg-surface-2 px-2 py-0.5 text-muted">当前 {cw}{cur ? `｜${shiftedText(P(), cur.week, cur.title)}` : ""}</span></div>
     <p className="mt-2 text-xs text-muted" data-testid="plan400-progress">已记录 {counts.recordedDays}/{counts.calendarEntries} 个日程（含休息/恢复日与测试）· 训练与测试课完成 {counts.completedTrainingDays}/{counts.trainingDays + counts.testDays}</p>
+    <button type="button" className="mt-3 flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-3 text-sm font-bold" aria-expanded={cycleExpanded} data-testid="v91-cycle-toggle" onClick={toggleCycle}>
+      <span>{cycleExpanded ? "收起完整周期（只看本周）" : "展开完整周期（全部周次）"}</span><ChevronDown className={"size-4 transition-transform " + (cycleExpanded ? "rotate-180" : "")} />
+    </button>
     {showSource && sourceSlot ? <div className="mt-3">{sourceSlot}</div> : null}
     {(conflicts.length || shift.shifted) && confirm ? <details className="mt-2 text-xs text-muted" data-testid="plan400-date-confirmed"><summary className="flex min-h-9 cursor-pointer list-none items-center gap-1">✓ 日期已确认 · 整体顺延 {shift.shiftDays} 天<ChevronRight className="size-3.5" /></summary>
       <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表 {c.originalRange} → 现 {c.shownRange}；「{c.text}」{c.matchedDay ? `的${c.matchedDay.title}现在是 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : "在日程中没有对应的课"}</li>)}<li>全部 {shift.total} 个日程按原日期 +{shift.shiftDays} 天；最终测试 {P().final?.date ?? "—"}（原 {P().final?.orig ?? "—"}）。导入的原课表没有改。</li><li>{confirm.by} · {stampCN(confirm.at, "ymd").slice(0, 10)}</li></ul>
@@ -381,7 +387,7 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
       <button type="button" className="mt-1 min-h-10 font-bold text-accent" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? "收起差异" : "查看差异"}</button>
       {showDiff ? <ul className="mt-1 space-y-1 leading-5">{conflicts.map(c => <li key={c.week + c.mentioned}>{c.week}：原课表周期 {c.originalRange}，当前日程 {c.shownRange}；标题/原则中的「{c.text}」{c.matchedDay ? ` 对应原日期 ${c.matchedDay.orig} 的「${c.matchedDay.title}」，现排在 ${md(c.matchedDay.date)} ${c.matchedDay.weekday}` : " 在日程中没有对应的课"}。</li>)}<li>全部 {shift.total} 个日程都按原日期 +{shift.shiftDays} 天排入；最终测试原为 {P().final?.orig ?? "—"}，现为 {P().final?.date ?? "—"}。</li><li>是否改测试日期需要你确认，App 不会自动修改。</li></ul> : null}
     </div> : null}
-    <div className="mt-3">{P().weeks.map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
+    <div className="mt-3">{P().weeks.filter(w => cycleExpanded || w.week === cw).map(w => { const ds = weekDays(P(), w.week); const shown = filt(ds); const isOpen = openWeeks.includes(w.week); if (lens === "lift" && !shown.length) return null;
       return <div key={w.week} className="border-t border-line first:border-t-0">
         <button type="button" aria-expanded={isOpen} onClick={() => setOpenWeeks(isOpen ? openWeeks.filter(x => x !== w.week) : [...openWeeks, w.week])} className="flex min-h-12 w-full items-center gap-2 py-2 text-left">
           <span className={"w-9 shrink-0 text-sm font-bold " + (w.week === cw ? "text-accent" : "")}>{w.week}</span>
@@ -390,7 +396,7 @@ function Plan400CycleView({ today, sourceSlot, lens = "run" }: { today: string; 
         </button>
         {isOpen ? <div className="pb-2">{shown.map(d => <DayRow key={d.date} d={d} today={today} logs={logs} parts={partsAll[d.date]} />)}</div> : null}
       </div>; })}
-      {lens === "run" ? finals.map(d => <div key={d.date} className="border-t border-line"><DayRow d={d} today={today} logs={logs} parts={partsAll[d.date]} /></div>) : null}
+      {lens === "run" && (cycleExpanded || cw === "TEST") ? finals.map(d => <div key={d.date} className="border-t border-line"><DayRow d={d} today={today} logs={logs} parts={partsAll[d.date]} /></div>) : null}
     </div>
   </section>;
 }
