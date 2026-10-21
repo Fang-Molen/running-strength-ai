@@ -18,6 +18,8 @@ export type ChatMessage = {
   id: string;
   role: "user" | "coach";
   text: string;
+  /** Library explanations are chat history, never personal training evidence. */
+  purpose?: "KNOWLEDGE_READING";
   analysisBasis?: ReasoningBasis;
   factDetails?: string;
   /** v87：本回答用过的经批准知识卡（版本+内容哈希），用于知识变化后复核。 */
@@ -63,7 +65,7 @@ export function recordedCoachFatigue(memory: CoachMemory): number | null {
   const untouched = memory.fatigue === 20
     && memory.band === "ready"
     && memory.notes.length === 0
-    && memory.messages.every((item) => item.role !== "user")
+    && memory.messages.every((item) => item.role !== "user" || item.purpose === "KNOWLEDGE_READING")
   return untouched ? null : memory.fatigue
 }
 

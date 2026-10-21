@@ -571,3 +571,23 @@ html[data-fk-font-scale="extra"]{font-size:18px}
 
 /* v89.6：首次引导全屏层避开刘海/灵动岛（安全区） */
 .fk-onboard-safe { padding-top: max(1.25rem, calc(env(safe-area-inset-top) + 0.75rem)); padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom) + 1rem)); }
+
+/* V94.1 learning: scoped reading layout, safe wrapping and touch targets. */
+.learning-library { padding-bottom: max(1rem, env(safe-area-inset-bottom)); overflow-wrap: anywhere; }
+.fk-learning-types { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.fk-learning-topics { max-width: 100%; -webkit-overflow-scrolling: touch; overscroll-behavior-inline: contain; }
+.learning-library input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+.learning-library input[type="search"]:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.fk-learning-article[open] > summary .fk-learning-chevron { transform: rotate(180deg); }
+.fk-learning-article[open] { border-color: var(--color-accent); }
+.fk-learning-reading { line-height: 1.8; }
+.fk-learning-sources a { display: inline-block; padding-block: 8px; }
+.fk-learning-settings input[type="checkbox"] { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--color-accent); }
+@media (max-width: 359px) { .fk-learning-types { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.product-ui .learning-library .fk-learning-article > summary { display: block; }
+
+.fk-coach-shell [data-testid="coach-messages"] {
+  padding-top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px) + var(--fk-coach-notice-h, 0px) + 8px) !important;
+  scroll-padding-top: calc(var(--fk-head-h, 0px) + var(--fk-coach-bar-h, 0px) + var(--fk-coach-notice-h, 0px));
+}

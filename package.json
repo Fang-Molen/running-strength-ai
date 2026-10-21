@@ -8,9 +8,9 @@
   },
   "scripts": {
     "dev": "node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
-    "build": "node scripts/with-app-env.mjs vite build && npm run db:migrate",
+    "build": "node scripts/clean-build-output.mjs && node scripts/with-app-env.mjs vite build && npm run db:migrate",
     "db:migrate": "node scripts/migrate.mjs",
-    "build:dev": "node scripts/with-app-env.mjs vite build --mode development",
+    "build:dev": "node scripts/clean-build-output.mjs && node scripts/with-app-env.mjs vite build --mode development",
     "preview": "node scripts/with-app-env.mjs vite preview",
     "preview:restart": "node scripts/preview.mjs restart",
     "preview:stop": "node scripts/preview.mjs stop",
@@ -72,7 +72,10 @@
     "test:block:plan-execution": "node scripts/test-block.mjs plan-execution",
     "test:block:health": "node scripts/test-block.mjs health",
     "test:block:nutrition": "node scripts/test-block.mjs nutrition",
-    "test:block:strength-ui": "node scripts/test-block.mjs strength-ui"
+    "test:block:strength-ui": "node scripts/test-block.mjs strength-ui",
+    "test:learning-v93": "node --experimental-strip-types --test src/lib/education/knowledge-catalog.test.ts src/lib/education/learning-integration.test.ts",
+    "test:learning-v94": "node --import ./scripts/test-register.mjs --test src/lib/education/knowledge-catalog.test.ts src/lib/education/learning-integration.test.ts src/lib/education/knowledge-reading.test.ts src/lib/education/knowledge-chat-boundary.test.ts",
+    "typecheck:application": "tsc --noEmit -p tsconfig.application-check.json"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",

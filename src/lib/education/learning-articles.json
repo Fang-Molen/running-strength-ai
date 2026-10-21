@@ -1,0 +1,884 @@
+[
+  {
+    "id": "EDU001",
+    "category": "track",
+    "title": "短跑的加速、最高速度和速度耐力",
+    "summary": "这三个目标不能只用跑多快来区分。",
+    "body": "加速关注从低速提升速度的过程；最高速度关注快速跑姿与动作质量；速度耐力关注高速状态的持续或重复能力。训练距离、速度、组间恢复与总量应服务于明确目标。",
+    "practice": "记录训练目的、每段成绩和恢复时间，比较动作质量是否随组次变化。",
+    "limits": "短距离计时不能单独判断哪种能力不足。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU002",
+    "category": "track",
+    "title": "400米前后程分配",
+    "summary": "比较前后程表现时先统一计时条件。",
+    "body": "400米分段变化可能受到出发策略、最高速度、速度耐力、比赛环境和疲劳等因素共同影响。单场比赛只能提出假设，不能证明唯一原因。",
+    "practice": "分别记录前200米、后200米或每100米分段，结合多场可比比赛。",
+    "limits": "一次掉速不能诊断乳酸耐受或具体肌群缺陷。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU003",
+    "category": "track",
+    "title": "800米训练为什么要兼顾速度与有氧",
+    "summary": "800米既要求较高跑速，也需要持续能力。",
+    "body": "训练内容可包括有氧基础、比赛配速、速度和力量等，但比例取决于运动员背景、阶段与赛季安排。不能直接复制精英选手的周训练量。",
+    "practice": "比较比赛分段、专项课质量、低强度训练与恢复反应。",
+    "limits": "不能把单次1000米成绩直接换算为800米比赛保证。",
+    "sourceIds": [
+      "S03"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU004",
+    "category": "track",
+    "title": "1500米配速和分段控制",
+    "summary": "平均配速掩盖了实际比赛的速度变化。",
+    "body": "1500米表现受到有氧能力、专项速度、节奏变化与战术影响。分段记录能帮助理解节奏，但不自动解释生理原因。",
+    "practice": "将每圈用时与目标配速比较，标注环境、跑道和计时方式。",
+    "limits": "仅凭某次训练配速无法给出精确比赛预测。",
+    "sourceIds": [
+      "S03"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU005",
+    "category": "track",
+    "title": "间歇课中的组、轮与休息",
+    "summary": "4×200米和2轮×4×200米不是同一种记录结构。",
+    "body": "间歇训练应保留组次、轮次、恢复时间、速度要求及实际完成情况。相同距离在不同休息安排下，可能服务不同训练目的。",
+    "practice": "把每一组实际成绩与组间休息分别记下，避免展平组合结构。",
+    "limits": "训练目的不能仅从数字简写推断。",
+    "sourceIds": [
+      "S02",
+      "S03"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU006",
+    "category": "track",
+    "title": "田径简写422与1234321怎么理解",
+    "summary": "教练简写必须先确认距离单位和分组约定。",
+    "body": "“422”“1234321”可能代表不同距离组合、次数或节奏，不能默认固定解释。应保留原文、候选结构和确认记录。",
+    "practice": "例如先询问数字单位是100米、200米还是组次，再生成可编辑课表预览。",
+    "limits": "没有确认不能写入正式计划。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU007",
+    "category": "strength",
+    "title": "最大力量、肌肥大和爆发力",
+    "summary": "力量训练目标不同，评价指标也不同。",
+    "body": "最大力量通常关注高负荷动作能力；肌肥大关注肌肉体积变化；爆发力关注快速产生力量。选择动作、组次和恢复应与目标一致。",
+    "practice": "同时记录重量、次数、动作速度感受和专项训练表现。",
+    "limits": "力量增长不保证跑步成绩等比例提升。",
+    "sourceIds": [
+      "S01"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU008",
+    "category": "strength",
+    "title": "深蹲与髋主导动作的区别",
+    "summary": "动作模式和主要受力肌群存在差异。",
+    "body": "深蹲、硬拉、分腿蹲等动作均可能涉及多个肌群，训练刺激取决于动作幅度、负荷、执行方式和个人技术。肌肉高亮只应表达参与或报告的反应。",
+    "practice": "分别记录动作、实际组数、重量和RPE，观察后续跑步质量。",
+    "limits": "不能凭动作名称直接计算肌肉恢复百分比。",
+    "sourceIds": [
+      "S01",
+      "S11"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU009",
+    "category": "strength",
+    "title": "力量课为什么要记录每组",
+    "summary": "平均心率不能替代真实力量组次。",
+    "body": "同一节力量课的不同动作和组次，负重、重复次数及休息差异很大。设备只提供活动摘要时，不能推断完成了哪些动作。",
+    "practice": "按组保存重量、次数、是否完成及休息，保留计划与实际区别。",
+    "limits": "缺失组次不能记作0组或已完成。",
+    "sourceIds": [
+      "S01",
+      "S12"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU010",
+    "category": "strength",
+    "title": "单腿训练与跑步专项迁移",
+    "summary": "单腿动作可以是辅助，不等于越多越好。",
+    "body": "单腿训练可帮助观察左右侧动作控制和局部力量需求；专项迁移还受跑步技术、速度刺激和恢复影响。",
+    "practice": "记录两侧差异并观察相似跑步训练的变化。",
+    "limits": "不能用一次单腿测试推断伤病风险或专项成绩。",
+    "sourceIds": [
+      "S01",
+      "S11"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU011",
+    "category": "strength",
+    "title": "训练到力竭是否必要",
+    "summary": "每组力竭不是所有训练目标的必需条件。",
+    "body": "阻力训练安排应考虑动作质量、训练经验、专项目标与后续训练；留有余力可以是合理的选择。",
+    "practice": "记录主观余力或RPE，并结合第二天专项课完成情况。",
+    "limits": "不能从一般研究直接给个人开具固定组次。",
+    "sourceIds": [
+      "S01"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU012",
+    "category": "strength",
+    "title": "跑步与力量组合课怎样复盘",
+    "summary": "跑步和力量是同一训练日的不同组成。",
+    "body": "组合课可以共享睡眠和整体感受，但跑步分段与力量逐组数据应分别评价。先看实际完成，再判断是否存在刺激叠加。",
+    "practice": "分别记录跑步RPE与力量RPE、局部酸痛和后续专项表现。",
+    "limits": "不能把跑步完成当成力量完成。",
+    "sourceIds": [
+      "S01",
+      "S03"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU013",
+    "category": "recovery",
+    "title": "静息心率怎样建立个人基线",
+    "summary": "比较同条件下的连续测量比单日绝对值更有意义。",
+    "body": "静息心率可能受测量时间、姿势、睡眠、环境和身体状态影响。长期变化可提示需要复核，但不是诊断。",
+    "practice": "尽量比较同设备、同测量时段的连续记录。",
+    "limits": "单个较低心率不等于训练许可。",
+    "sourceIds": [
+      "S04",
+      "S05"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU014",
+    "category": "recovery",
+    "title": "HRV为什么不能只看一天",
+    "summary": "HRV需要一致的测量协议与个人可比历史。",
+    "body": "不同设备、算法和测量时段可能导致不可比。观察趋势时应结合主观疲劳、训练反应与近期生活情况。",
+    "practice": "核对设备和测量时间，记录一周内有效样本数。",
+    "limits": "不能用固定HRV阈值诊断过度训练。",
+    "sourceIds": [
+      "S05"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU015",
+    "category": "recovery",
+    "title": "午睡和安静休息有什么区别",
+    "summary": "心率下降不能证明睡着了。",
+    "body": "设备明确识别的午睡事件可以记录为睡眠；仅有低心率或身体电量上升时，只能描述可能的休息时段。",
+    "practice": "查看午睡前后心率和主观精力变化。",
+    "limits": "午睡后精神改善不证明局部肌肉恢复完成。",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU016",
+    "category": "recovery",
+    "title": "酸痛、疼痛与训练刺激",
+    "summary": "肌肉酸痛与持续疼痛应分开记录。",
+    "body": "训练参与和模型估计不等于肌肉损伤；局部疼痛如果持续、加重或影响功能，应另行复核并考虑专业评估。",
+    "practice": "记录部位、出现时间、变化趋势及是否影响正常活动。",
+    "limits": "模型时间衰减不能自动清除疼痛记录。",
+    "sourceIds": [
+      "S04"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU017",
+    "category": "recovery",
+    "title": "为什么恢复不能只看身体电量",
+    "summary": "设备指标是全身观察的一部分。",
+    "body": "身体电量、HRV、睡眠、心率和主观感受测量的不是同一事物；肌肉力量与局部功能还需要训练事实和反馈。",
+    "practice": "把睡眠、训练、局部感受并列核对，避免重复扣分。",
+    "limits": "身体电量不能直接授权高强度训练。",
+    "sourceIds": [
+      "S04",
+      "S05",
+      "S06"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU018",
+    "category": "recovery",
+    "title": "训练后48小时该看什么",
+    "summary": "恢复是连续观察而不是固定倒计时。",
+    "body": "可记录睡眠、疲劳、酸痛、疼痛、力量表现与专项课质量的变化；不同训练和个体恢复反应不同。",
+    "practice": "比较类似训练后24小时和48小时的主观及表现记录。",
+    "limits": "不能规定所有肌群48小时后恢复80%。",
+    "sourceIds": [
+      "S04",
+      "S06"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU019",
+    "category": "nutrition",
+    "title": "碳水与田径训练",
+    "summary": "碳水供应应结合训练量与训练目标考虑。",
+    "body": "高强度或较长时间运动的供能需求不同；饮食建议应结合全天摄入、训练时段和个人耐受。",
+    "practice": "记录训练前后餐食与实际完成训练，观察主观感受。",
+    "limits": "没有完整饮食记录不能断言缺碳水。",
+    "sourceIds": [
+      "S07"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU020",
+    "category": "nutrition",
+    "title": "蛋白质和力量适应",
+    "summary": "蛋白质是组织更新的营养支持因素之一。",
+    "body": "蛋白质摄入需放在整体能量和长期训练背景下评估；食物来源、分配和个体需求均有差异。",
+    "practice": "先核对一日总摄入及记录完整度，再讨论具体选择。",
+    "limits": "不能把一个固定克数当作所有人的处方。",
+    "sourceIds": [
+      "S07"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU021",
+    "category": "nutrition",
+    "title": "增重不等于盲目加餐",
+    "summary": "体重变化同时受到能量、训练和水分变化影响。",
+    "body": "想提高体重或肌肉量，需要结合长期体重趋势、力量训练执行、饮食完整度和生活作息。",
+    "practice": "记录同条件体重趋势与训练表现，不以单日称重判断。",
+    "limits": "无法凭不完整食物记录精确计算热量盈余。",
+    "sourceIds": [
+      "S07"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU022",
+    "category": "nutrition",
+    "title": "跑前跑后怎样安排进食",
+    "summary": "饮食时间需要服从实际训练和个人耐受。",
+    "body": "训练前的进食量与时间、训练后的补给都应考虑运动时长、强度、消化耐受和下一次训练。",
+    "practice": "观察不同进食安排对训练感受和胃肠反应的影响。",
+    "limits": "不要把单一进食时间作为硬性医学规则。",
+    "sourceIds": [
+      "S07"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU023",
+    "category": "nutrition",
+    "title": "补水与炎热环境",
+    "summary": "口渴、出汗和环境都会影响补液需求。",
+    "body": "补液需求存在个人差异；炎热环境下应关注运动时长、强度、出汗和实际补液情况。",
+    "practice": "记录训练时天气、补液与身体感受。",
+    "limits": "不能用一次体重差估算长期健康风险。",
+    "sourceIds": [
+      "S07"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU024",
+    "category": "nutrition",
+    "title": "低能量可用性和REDs",
+    "summary": "长期能量供应问题需要多方面专业评估。",
+    "body": "低能量可用性可能影响运动员健康与表现，但不能用简单的摄入减消耗或一条体重记录诊断。",
+    "practice": "出现持续问题时结合临床和营养专业人员评估。",
+    "limits": "不提供未经核实的诊断或补剂处方。",
+    "sourceIds": [
+      "S08"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU025",
+    "category": "principles",
+    "title": "训练周期为什么要有轻重日",
+    "summary": "不同课次承担不同的训练与恢复任务。",
+    "body": "专项刺激、基础训练、力量和恢复安排需要放在周期里理解。不能把每天训练量最大化当成进步。",
+    "practice": "查看一周内不同课次目的及相邻课程反应。",
+    "limits": "单周负荷比值不能直接变成伤病概率。",
+    "sourceIds": [
+      "S02",
+      "S03",
+      "S09"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU026",
+    "category": "principles",
+    "title": "训练负荷怎样记录",
+    "summary": "负荷指标只描述训练的一部分。",
+    "body": "时间、RPE、距离、速度、重量和组次分别提供不同信息。不同类型训练不能简单合成一个万能分数。",
+    "practice": "跑步与力量先分别记录，再对照训练目标分析。",
+    "limits": "不能用心率负荷代替冲刺神经肌肉刺激。",
+    "sourceIds": [
+      "S04",
+      "S12"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU027",
+    "category": "principles",
+    "title": "怎样判断一次进步是否可靠",
+    "summary": "单次最佳成绩可能包含测量和环境波动。",
+    "body": "同项目、同计时协议、相近环境和多次可比记录更适合观察长期趋势。测量误差不明时不宣称可靠变化。",
+    "practice": "比较相同条件下多次训练或比赛的分段与成绩。",
+    "limits": "个人分位数不等于受伤概率。",
+    "sourceIds": [
+      "S10"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU028",
+    "category": "principles",
+    "title": "训练建议为什么要复核结果",
+    "summary": "建议是否有效要看真实执行与后续表现。",
+    "body": "区分“方坤建议”“用户确认”“实际执行”和“后续结果”。仅观察到好转不能直接证明建议导致改善。",
+    "practice": "记录改课原因、执行情况与后续相似训练反应。",
+    "limits": "未经用户确认不修改正式课表。",
+    "sourceIds": [
+      "S04",
+      "S10"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU029",
+    "category": "principles",
+    "title": "计划与实际为什么分开",
+    "summary": "计划内容不是已经完成的训练事实。",
+    "body": "课程改期、部分完成和未记录应有独立状态；保留原始V4课表及实际发生时间。",
+    "practice": "同一组合课分别查看跑步与力量的完成状态。",
+    "limits": "不能把未记录当作未训练或完成。",
+    "sourceIds": [
+      "S10"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU030",
+    "category": "principles",
+    "title": "个人化训练为什么需要时间",
+    "summary": "个人规律要通过可比历史逐步校准。",
+    "body": "短期数据可能包含偶然波动、生活压力和设备误差。模型应随证据变化而更新，但保留不确定性。",
+    "practice": "使用真实后续训练结果回测过去的判断。",
+    "limits": "模拟区间不是经过真实验证的预测区间。",
+    "sourceIds": [
+      "S04",
+      "S10"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU031",
+    "category": "technique",
+    "title": "跑前热身如何安排",
+    "summary": "热身内容应服务当天的训练目的。",
+    "body": "逐渐提高活动水平，再加入当天所需的动作模式；高强度跑前与恢复跑前的热身要求可能不同。",
+    "practice": "记录热身动作、感受及第一组质量。",
+    "limits": "不强制所有课使用相同热身模板。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU032",
+    "category": "technique",
+    "title": "A-Skip和A-March的作用",
+    "summary": "技术练习应关注协调与节奏，而非完成数量。",
+    "body": "A-March可用于慢速练习姿态与节奏，A-Skip增加动态要求；动作选择应符合个人技术水平和当天目的。",
+    "practice": "观察躯干控制、摆臂和落地节奏。",
+    "limits": "单个动作不能保证提高比赛成绩。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU033",
+    "category": "technique",
+    "title": "短跑摆臂与下肢节奏",
+    "summary": "上肢动作与下肢节奏需要整体观察。",
+    "body": "摆臂和步频、步幅可能共同变化。视频观察应考虑速度、视角与拍摄条件。",
+    "practice": "在相同速度和拍摄角度下对比动作。",
+    "limits": "不能用单张照片诊断生物力学缺陷。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU034",
+    "category": "technique",
+    "title": "力量动作的控制与幅度",
+    "summary": "动作质量与训练目标都重要。",
+    "body": "深蹲、硬拉等动作的可控幅度、稳定性和负重选择应与训练经验相适应；训练过程要区分不适和普通用力感。",
+    "practice": "逐组记录动作控制和异常疼痛。",
+    "limits": "3D演示不能替代专业现场技术指导。",
+    "sourceIds": [
+      "S01",
+      "S11"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU035",
+    "category": "technique",
+    "title": "跳跃与弹性练习的记录",
+    "summary": "跳跃训练应记录接触次数与动作质量。",
+    "body": "跳跃和增强式练习对技术、着地与恢复有要求，不能仅看手表心率来估算局部机械刺激。",
+    "practice": "记录动作、实际次数、接触质量和后续酸痛。",
+    "limits": "没有动作记录时不生成具体肌群负荷。",
+    "sourceIds": [
+      "S01",
+      "S11"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU036",
+    "category": "technique",
+    "title": "训练视频怎样帮助复盘",
+    "summary": "视频是技术观察证据，不是自动诊断。",
+    "body": "视频可辅助比较动作节奏、姿态与变化，但拍摄角度、速度和镜头畸变会影响观察。",
+    "practice": "相似拍摄条件下与本人历史对比，必要时请教练核实。",
+    "limits": "单帧画面不能证明受伤风险。",
+    "sourceIds": [
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU037",
+    "category": "strength",
+    "title": "力量、肌肥大与功率：先分清目标",
+    "summary": "同一动作可以服务不同目标，但训练安排不相同。",
+    "body": "力量强调产生较大力的能力；肌肥大关注肌肉尺寸；功率关注快速输出。ACSM 2026综述认为抗阻训练对多种结果有效，但具体变量应对应训练目标。短跑运动员还应考虑力量课对跑道专项课的影响。",
+    "practice": "记录动作、实际负荷、次数、组数和下一次专项表现；先问本次力量课最重要的目标。",
+    "limits": "健康成年人总体研究不能保证400米或800米成绩提升。",
+    "sourceIds": [
+      "MOD2026ACSM"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU038",
+    "category": "strength",
+    "title": "大重量训练和最大力量",
+    "summary": "更大重量不等于每次都必须练到力竭。",
+    "body": "较高相对负荷常用于发展最大力量，但技术、训练史、动作幅度和恢复条件会影响适用性。ACSM 2026研究综述报告了较高负荷与力量结果的关系，不能据此给所有运动员统一安排每周组数。",
+    "practice": "同动作同协议比较重量和重复次数，并记录动作质量及疼痛。",
+    "limits": "无可靠技术和恢复数据时，不凭单次1RM估计自动加量。",
+    "sourceIds": [
+      "MOD2026ACSM"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU039",
+    "category": "strength",
+    "title": "爆发力和最大力量不是同一个指标",
+    "summary": "力量增长不必然意味着起跑更快。",
+    "body": "功率训练关注发力速度与运动任务，最大力量训练关注更高力量输出。专项表现还取决于技术、神经协调和跑步训练。器械PR不应直接当成比赛进步。",
+    "practice": "同时跟踪相同测试条件下的短跑分段、跳跃和力量表现。",
+    "limits": "成人力量证据不能直接推出专项成绩变化幅度。",
+    "sourceIds": [
+      "MOD2026ACSM"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU040",
+    "category": "strength",
+    "title": "力量训练到力竭是否必要",
+    "summary": "力竭不是所有目标的必要条件。",
+    "body": "2026 ACSM立场文件未发现瞬时肌肉力竭对主要训练结果有一致额外收益。对跑步运动员，应把训练目的、动作技术和次日专项质量一起考虑。",
+    "practice": "记录实际组次、RPE或RIR，检查下一节速度课是否受影响。",
+    "limits": "不能由总体研究推断任何人必须或绝不能练到力竭。",
+    "sourceIds": [
+      "MOD2026ACSM"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU041",
+    "category": "strength",
+    "title": "跑步叠加力量的肌群刺激",
+    "summary": "参与肌群不等于实际测得的肌肉疲劳。",
+    "body": "速度跑和下肢抗阻训练可能同时涉及股四头肌、臀肌、腘绳肌等，但刺激性质不同。肌群高亮只应说明已确认的参与、酸痛或疼痛，不能把公里数和力量吨数相加成疲劳百分比。",
+    "practice": "核对实际跑步、逐组力量记录、局部酸痛和后续功能表现。",
+    "limits": "没有逐组力量事实时，不能把计划组次当实际完成。",
+    "sourceIds": [
+      "MOD2016LOAD",
+      "MOD2026ACSM"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU042",
+    "category": "recovery",
+    "title": "睡眠不足后是否该训练",
+    "summary": "单晚睡眠不足不自动等于禁止训练。",
+    "body": "运动员睡眠需求有个体差异，睡眠不足的影响还受到近期负荷、精神状态和疾病线索影响。消费级设备的睡眠分期不宜直接当作恢复程度。",
+    "practice": "比较近一周睡眠机会、白天困倦与训练质量，必要时补一条主观反馈。",
+    "limits": "持续失眠、异常嗜睡需专业评估。",
+    "sourceIds": [
+      "MOD2021SLEEP"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU043",
+    "category": "recovery",
+    "title": "午睡能恢复多少体能",
+    "summary": "午睡可帮助警觉性，但不是肌肉恢复证明。",
+    "body": "短时午睡可能改善情绪和注意力，不能直接证明肌肉或肌腱恢复。设备明确记录午睡时可以自动归档；仅有心率下降或身体电量回升时，应标记疑似休息。",
+    "practice": "把午睡事件、午睡前后精神感受和后续训练反应分别记录。",
+    "limits": "不能根据身体电量回升自动批准高强度训练。",
+    "sourceIds": [
+      "MOD2021SLEEP"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU044",
+    "category": "recovery",
+    "title": "HRV为什么不能单独判定疲劳",
+    "summary": "HRV是辅助信号，不是疲劳仪表盘。",
+    "body": "HRV受设备、测量时段、姿势、睡眠和压力影响。跨设备的绝对数值可能不可比；需要个人可比历史和主观疲劳、静息心率、专项表现交叉核对。",
+    "practice": "优先同设备同条件看趋势，显示样本数和缺失天数。",
+    "limits": "单次HRV下降不能诊断过度训练。",
+    "sourceIds": [
+      "MOD2016LOAD",
+      "MOD2021SLEEP"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU045",
+    "category": "recovery",
+    "title": "酸痛、疼痛和训练刺激有什么区别",
+    "summary": "不酸痛不等于无训练效果。",
+    "body": "肌群参与、延迟性肌肉酸痛与局部疼痛是不同事实。近期刺激可能伴随酸痛，但持续疼痛、肿胀或功能受限应独立核查；模型曲线自然衰减不能解除疼痛标记。",
+    "practice": "分别记录训练事件、酸痛开始时间、疼痛程度和是否影响跑步。",
+    "limits": "疑似损伤需要专业判断，不能用模拟曲线代替。",
+    "sourceIds": [
+      "MOD2016LOAD",
+      "MOD2024PSYCH"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU046",
+    "category": "recovery",
+    "title": "伤后回归为什么要分阶段",
+    "summary": "休息了多少天不等于已经具备专项能力。",
+    "body": "伤后回归要考虑症状、功能、技术、心理准备与逐步提高的专项要求。训练可以有多阶段，不能把无痛或到期自动解释为完全恢复。",
+    "practice": "分别跟踪症状、功能任务和下一阶段训练表现。",
+    "limits": "医学诊断和重返高强度许可需专业人员判断。",
+    "sourceIds": [
+      "MOD2024PSYCH",
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU047",
+    "category": "recovery",
+    "title": "生活压力也是恢复背景",
+    "summary": "手表正常不代表所有恢复条件正常。",
+    "body": "工作、学业、比赛和伤后不确定性可能影响睡眠与主观恢复。负荷监测应结合运动外压力，但不应把心理压力当成一切身体问题的唯一解释。",
+    "practice": "允许用户自愿记录简短主观压力，不强制每日长问卷。",
+    "limits": "心理困扰持续或影响生活应寻求专业支持。",
+    "sourceIds": [
+      "MOD2016LOAD",
+      "MOD2024PSYCH"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU048",
+    "category": "nutrition",
+    "title": "长期能量不足为什么难以察觉",
+    "summary": "吃得少不一定马上出现体重下降。",
+    "body": "IOC REDs共识指出，长期或严重低能量可用性可能影响多个身体系统。单日饮食和手表热量估计误差很大，应综合饮食完整度、长期变化与健康表现。",
+    "practice": "核对多日饮食记录与训练质量，持续异常时寻求专业评估。",
+    "limits": "不能用BMI或热量缺口单独诊断REDs。",
+    "sourceIds": [
+      "MOD2023REDS"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU049",
+    "category": "nutrition",
+    "title": "增肌不能只靠蛋白粉",
+    "summary": "总能量、训练刺激和长期坚持同样重要。",
+    "body": "蛋白质摄入与抗阻训练共同支持肌肉适应。ISSN立场文件给出健康训练人群的一般摄入范围，但不能脱离总能量、个人目标和健康条件。",
+    "practice": "先观察实际食物来源、训练和体重趋势，再决定是否需要调整。",
+    "limits": "不向肾病患者或未成年人自动套用一般蛋白范围。",
+    "sourceIds": [
+      "MOD2017PROTEIN",
+      "MOD2023REDS"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU050",
+    "category": "nutrition",
+    "title": "蛋白质摄入怎样安排更实用",
+    "summary": "不必执着于训练后某一分钟。",
+    "body": "训练前后摄入蛋白质与肌肉蛋白合成有关，但全天总量、食物质量和规律性同样重要。没有必要把每餐都设计成严格打卡任务。",
+    "practice": "按正常三餐与加餐记录蛋白质来源及摄入完整度。",
+    "limits": "个体化克数应结合身体条件，不由手表估算直接生成。",
+    "sourceIds": [
+      "MOD2017PROTEIN"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU051",
+    "category": "nutrition",
+    "title": "为什么跑步专项需要关注碳水",
+    "summary": "高强度训练需要关注供能，但需求不是一个固定值。",
+    "body": "不同专项和训练日的强度、时长不同，饮食安排也不同。IOC REDs共识讨论了低碳水可用性与运动员健康之间的复杂关系。",
+    "practice": "核对高强度课当天的进食时间、实际完成和主观感受。",
+    "limits": "不能从一次疲劳断定糖原耗尽或开固定补给剂量。",
+    "sourceIds": [
+      "MOD2023REDS"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU052",
+    "category": "principles",
+    "title": "内负荷和外负荷如何结合",
+    "summary": "同样跑5公里，对不同运动员的刺激不同。",
+    "body": "外负荷描述完成了什么，例如距离、速度、重量和组次；内负荷描述个体反应，例如RPE、心率和恢复体验。IOC负荷共识强调结合个人背景，不能用单一指标判定适应不良。",
+    "practice": "每节课保留实际训练结构和可获得的主观反应，缺失就标未知。",
+    "limits": "不把公里数与力量吨数简单相加为统一疲劳分。",
+    "sourceIds": [
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU053",
+    "category": "principles",
+    "title": "同样的成绩为什么未必有同样效果",
+    "summary": "成绩只是观察结果，不能自动解释原因。",
+    "body": "相同的200米分段可能伴随不同休息、天气、跑道、训练阶段和疲劳。只有训练目的、组间休息、主观强度和可比条件完整，才有基础分析原因。",
+    "practice": "对照两次相似训练，列出事实、两种解释与缺失信息。",
+    "limits": "单次训练不能证明生理瓶颈或因果效果。",
+    "sourceIds": [
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU054",
+    "category": "principles",
+    "title": "周期训练为什么需要轻重交替",
+    "summary": "更多刺激不等于每天都应加量。",
+    "body": "训练适应取决于刺激与恢复的共同作用，密集高强度训练还受到非训练压力和个体承受能力影响。安排恢复日与调整周有助于观察反应，但不存在所有运动员通用的固定减量比例。",
+    "practice": "记录一周的训练目的、主观疲劳和实际完成，不只统计总公里数。",
+    "limits": "不能仅凭某个周负荷百分比自动调整课表。",
+    "sourceIds": [
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU055",
+    "category": "principles",
+    "title": "个人参考线与预测区间不是一回事",
+    "summary": "历史中位数不是对未来的保证。",
+    "body": "同时间段历史中位数描述过去的常见水平，四分位范围描述历史离散；模型预测区间则需要额外的统计假设和真实回测。不同设备、睡眠与训练阶段混合时，参考线可能失真。",
+    "practice": "查看样本天数、设备来源和数据覆盖，核对个人条件是否可比。",
+    "limits": "历史参考线不能直接当训练许可或95%预测区间。",
+    "sourceIds": [
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU056",
+    "category": "track",
+    "title": "400米训练怎样兼顾速度和速度耐力",
+    "summary": "短跑速度与高速度持续能力相关但不同。",
+    "body": "短跑表现由技术、速度能力、体能和策略共同决定。高质量短距离速度训练和较长速度耐力训练目的不同，休息时间与强度也不同。不能只凭总距离判断课型。",
+    "practice": "记录每段用时、轮次、恢复时间、目标与实际偏差。",
+    "limits": "具体专项剂量应由训练背景和阶段决定。",
+    "sourceIds": [
+      "S02",
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU057",
+    "category": "track",
+    "title": "800米专项为什么不能照搬400米课表",
+    "summary": "项目距离接近不代表训练需求完全相同。",
+    "body": "800米需要兼顾较高速度与持续供能能力。训练计划应联系比赛分段、训练年限、有氧基础和恢复反应；一节速度耐力课并不能独立解释比赛能力。",
+    "practice": "把800米比赛分段与近期同类专项课做对照，并标注训练阶段。",
+    "limits": "不能直接复制世界级运动员的周训练量。",
+    "sourceIds": [
+      "S03",
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU058",
+    "category": "track",
+    "title": "田径训练简写422和1234321怎样读",
+    "summary": "简写没有跨教练统一的唯一含义。",
+    "body": "422可能指距离序列、组次、轮次或速度分配；1234321也可能对应多种距离单位。系统需要先识别单位、轮次、恢复和训练目的，歧义时要求确认，再保存成Session、Component、Block、Step结构。",
+    "practice": "确认每个数字的单位、组间恢复、轮间恢复和重复轮数。",
+    "limits": "不能把猜测写入正式课表或自动启动训练。",
+    "sourceIds": [
+      "S02",
+      "S03"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU059",
+    "category": "technique",
+    "title": "动作技术学习和实际训练必须分开",
+    "summary": "看了动作示范不等于完成了动作。",
+    "body": "A-Skip、A-March、深蹲和分腿蹲等动作演示可帮助理解训练目的，但动作是否适合个人还取决于技术、身体限制和当前课表。视频观看记录只能作为学习记录。",
+    "practice": "动作页展示目的、常见错误、观察要点和器械替代，再由用户确认实际完成。",
+    "limits": "没有实际执行事件时，不计入训练负荷。",
+    "sourceIds": [
+      "MOD2026ACSM",
+      "S02"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU060",
+    "category": "technique",
+    "title": "跑姿视频能说明什么不能说明什么",
+    "summary": "视频可帮助描述动作，但不自动诊断伤病。",
+    "body": "侧面和正面视频可辅助观察步频、接地、躯干和摆臂，但摄像角度、帧率、速度和疲劳都会影响判断。应优先与同速度、同拍摄条件的历史视频比较。",
+    "practice": "保存视频拍摄条件与本次速度，再提出可验证的技术假设。",
+    "limits": "仅凭一帧不能确定肌肉薄弱或损伤原因。",
+    "sourceIds": [
+      "S02",
+      "MOD2016LOAD"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  },
+  {
+    "id": "EDU061",
+    "category": "nutrition",
+    "title": "体重目标和运动表现如何兼顾",
+    "summary": "增重或减重都需要关注专项质量。",
+    "body": "运动员体重变化既可能影响训练感受，也可能伴随力量和体能变化。关注长期趋势与饮食质量，比追求某一天的体重数字更有意义。过度限制能量可能损害健康和表现。",
+    "practice": "每周同条件记录体重，结合力量、跑步表现和进食完整度观察。",
+    "limits": "体重变化不能直接当作肌肉增减或REDs诊断。",
+    "sourceIds": [
+      "MOD2023REDS",
+      "MOD2017PROTEIN"
+    ],
+    "reviewStatus": "EDUCATIONAL_DRAFT",
+    "personalPrescription": false
+  }
+]

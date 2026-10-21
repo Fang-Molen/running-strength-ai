@@ -1,0 +1,30 @@
+import { chromium } from 'playwright';
+const S='/workspace/out/screenshots/v89.8';
+const b=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});
+const p=await (await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'zh-CN'})).newPage();
+const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('https://molen-fangkun.pages.dev',{waitUntil:'domcontentloaded'});
+await p.locator('[data-testid="training-app"][data-ready="true"]').waitFor({timeout:60000});
+for(let i=0;i<6;i++){const s=p.getByRole('button',{name:'跳过，用默认',exact:true});if(await s.isVisible())await s.click();}
+for(const n of ['逐个调整','暂不需要']){const x=p.getByRole('button',{name:n,exact:true});if(await x.isVisible())await x.click();}
+if(await p.getByTestId('onboard-undo').isVisible())await p.getByTestId('onboard-undo').click();
+await p.getByRole('button',{name:'打开方坤',exact:true}).click();
+await p.locator('.fk-coach-tabs').getByRole('button',{name:'学习',exact:true}).click();
+const w=p.getByTestId('warmup-drafts');await w.locator('summary').click();
+const label=await w.locator('summary').innerText();
+const items=await w.locator('li').count();
+await w.getByRole('button',{name:/徒手半蹲/}).click();
+const v=w.locator('video');await w.getByRole('button',{name:'播放'}).click();
+await p.waitForTimeout(1500);
+const s1=await v.evaluate(e=>({t:e.currentTime,paused:e.paused,loop:e.loop,rate:e.playbackRate,w:e.videoWidth,h:e.videoHeight,err:e.error?.code??null}));
+await w.getByRole('button',{name:'正常速度'}).click();
+const rate=await v.evaluate(e=>e.playbackRate);
+await p.waitForTimeout(3500);
+const s2=await v.evaluate(e=>({t:e.currentTime,paused:e.paused}));
+await w.scrollIntoViewIfNeeded();await v.scrollIntoViewIfNeeded();
+await p.screenshot({path:`${S}/390-warmup-playing.png`});
+await w.getByRole('button',{name:'暂停'}).click();const paused=await v.evaluate(e=>e.paused);
+await w.getByRole('button',{name:'男',exact:true}).click();await p.waitForTimeout(300);
+const src=await v.getAttribute('src');
+console.log(JSON.stringify({label,items,s1,slowRate:rate,afterLoop:s2,paused,maleSrc:src,errs}));
+await b.close();

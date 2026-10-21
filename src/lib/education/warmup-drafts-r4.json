@@ -1,0 +1,92 @@
+[
+ {
+  "id": "fk-warmup-bodyweight_squat_half",
+  "name": "徒手半蹲",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_bodyweight_squat_half.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_bodyweight_squat_half.mp4"
+ },
+ {
+  "id": "fk-warmup-hip_hinge",
+  "name": "徒手髋铰链",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_hip_hinge.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_hip_hinge.mp4"
+ },
+ {
+  "id": "fk-warmup-elbow_flex",
+  "name": "徒手肘屈伸",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_elbow_flex.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_elbow_flex.mp4"
+ },
+ {
+  "id": "fk-warmup-front_raise",
+  "name": "徒手前平举",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_front_raise.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_front_raise.mp4"
+ },
+ {
+  "id": "fk-warmup-lateral_raise",
+  "name": "徒手侧平举",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_lateral_raise.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_lateral_raise.mp4"
+ },
+ {
+  "id": "fk-warmup-overhead_reach",
+  "name": "徒手过顶伸展",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_overhead_reach.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_overhead_reach.mp4"
+ },
+ {
+  "id": "fk-warmup-shoulder_shrug",
+  "name": "肩部耸肩",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_shoulder_shrug.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_shoulder_shrug.mp4"
+ },
+ {
+  "id": "fk-warmup-march",
+  "name": "原地交替高抬腿",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_march.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_march.mp4"
+ },
+ {
+  "id": "fk-warmup-single_leg_balance",
+  "name": "单腿平衡抬膝",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_single_leg_balance.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_single_leg_balance.mp4"
+ },
+ {
+  "id": "fk-warmup-arm_swing",
+  "name": "跑步摆臂练习",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_arm_swing.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_arm_swing.mp4"
+ },
+ {
+  "id": "fk-warmup-standing_knee_flex",
+  "name": "站姿屈膝练习",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_standing_knee_flex.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_standing_knee_flex.mp4"
+ },
+ {
+  "id": "fk-warmup-trunk_rotation",
+  "name": "站姿躯干旋转",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_trunk_rotation.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_trunk_rotation.mp4"
+ },
+ {
+  "id": "fk-warmup-arm_circle",
+  "name": "肩部活动（半环）",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_arm_circle.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_arm_circle.mp4"
+ },
+ {
+  "id": "fk-warmup-ankle_mobility",
+  "name": "踝关节活动",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_ankle_mobility.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_ankle_mobility.mp4"
+ },
+ {
+  "id": "fk-warmup-hinge_row_unloaded",
+  "name": "髋铰链结合屈肘",
+  "female": "/fangkun-warmup-r4/videos/female_warmup_hinge_row_unloaded.mp4",
+  "male": "/fangkun-warmup-r4/videos/male_warmup_hinge_row_unloaded.mp4"
+ }
+]

@@ -24,13 +24,15 @@ import { CoachAnswerFeedbackForm } from "@/components/coach-answer-feedback";
 import { attachLinkedSources, deviceCoachSources } from "@/lib/core/coach-linked-context";
 import { coachImports } from "@/lib/core/coach-import-evidence";
 import { LearningLibrary } from "@/components/learning-library";
+import { answerLearningQuestion } from "@/lib/education/knowledge-presentation";
+import { setOnlineFeature } from "@/lib/ui/online-features";
 import { CoachCognitionPanel } from "@/components/coach-cognition-panel";
 import { CoachFirstWeekPanel } from '@/components/coach-first-week-panel';
 import { CoachLoadMetricsPanel } from '@/components/coach-load-metrics-panel';
 import { firstWeekGoalFromText } from '@/lib/core/coach-first-week';
 import type { CoachCognition } from "@/lib/core/coach-cognition";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Send, X } from "lucide-react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { BookOpen, Send, X } from "lucide-react";
 import { FangShen, type FangFace } from "@/components/fang-shen";
 import { executeDecision, loadDecisions, recordOverride, rejectDecision } from "@/lib/core";
 import { RunningRoundReadout } from "@/components/running-round-readout";
@@ -109,11 +111,24 @@ export function CoachSheet({
   link?: "ask" | "bound" | "unbound";
   onControlledStrengthEdit?: CoachStrengthAction;
   coordinationPanel?: ReactNode;
-  onNavigate?: (tab: "plan" | "body" | "log") => void;
+  onNavigate?: (tab: "plan" | "body" | "log" | "diet") => void;
   questionDraft?: string | null;
   onQuestionDraftConsumed?: () => void;
 }) {
-  const [section, setSection] = useState<"chat" | "learn" | "review">("chat");
+  const [section, setSectionState] = useState<"chat" | "learn" | "review">("chat");
+  const messagePane = useRef<HTMLDivElement>(null);
+  const currentSection = useRef(section);
+  const sectionScroll = useRef({ chat: 0, learn: 0, review: 0 });
+  const [fromLibrary, setFromLibrary] = useState(false);
+  const setSection = useCallback((next: "chat" | "learn" | "review") => {
+    if (next === currentSection.current) return;
+    sectionScroll.current[currentSection.current] = messagePane.current?.scrollTop ?? 0;
+    currentSection.current = next;
+    setSectionState(next);
+  }, []);
+  useLayoutEffect(() => {
+    if (messagePane.current) messagePane.current.scrollTop = sectionScroll.current[section];
+  }, [section]);
   useEffect(() => {
     const openReview = () => setSection('review');
     window.addEventListener('fk-coach-review-open', openReview);
@@ -210,9 +225,15 @@ export function CoachSheet({
     // Connectivity is informative only: all basic coach functions remain local.
     const refresh = () => setIsOnline(window.navigator.onLine);
     refresh();
+    const refreshPermissions = () => {
+      try { setNetworkMode(parseCoachNetworkMode(window.localStorage.getItem(COACH_NETWORK_MODE_KEY))); } catch { /* Keep current session preference. */ }
+      setOnlineOn(onlineSetting().on);
+    };
+    window.addEventListener('fk-online-features-changed', refreshPermissions);
     window.addEventListener("online", refresh);
     window.addEventListener("offline", refresh);
     return () => {
+      window.removeEventListener('fk-online-features-changed', refreshPermissions);
       window.removeEventListener("online", refresh);
       window.removeEventListener("offline", refresh);
     };
@@ -269,12 +290,29 @@ export function CoachSheet({
   }, [athlete, plan, activeId]);
 
   useEffect(() => {
-    bottom.current?.scrollIntoView({ block: "end" });
+    if (currentSection.current === "chat") bottom.current?.scrollIntoView({ block: "end" });
   }, [memory?.messages.length]);
 
   async function send(text: string, retry = false, useCloud = false) {
     const value = text.trim();
     if (!value || !memory || sending) return;
+    // An exact knowledge-library request is a read-only educational response.
+    // Do this before any fact extraction, training linkage or model invocation.
+    const learningAnswer = answerLearningQuestion(value);
+    if (learningAnswer) {
+      const athleteId = currentAthleteId();
+      const id = crypto.randomUUID();
+      setMemory(current => current?.athleteId === athleteId ? {
+        ...current, messages: [...current.messages,
+          { id: `${id}-question`, role: "user" as const, text: value, purpose: "KNOWLEDGE_READING" as const },
+          { id: `${id}-learning`, role: "coach" as const, text: learningAnswer, purpose: "KNOWLEDGE_READING" as const },
+        ].slice(-40),
+      } : current);
+      setDraft(""); setNotice(""); setRetryQuestion(null); setOnlineRequest(null);
+      setChatLoad(null); setChatTraining(null); setCognitionTurn(null); setTurnId(null);
+      setFace("focus");
+      return;
+    }
     // Local capability is evaluated before the optional, explicitly requested model route.
     const capable=offlineCapability(value);
     const authorized=authorizeNetworkAction({ mode: networkMode, action: "invoke-paid-model", online: isOnline ?? undefined, explicitDataConsent: useCloud, serverAuthorized: false }).allowed;
@@ -316,7 +354,7 @@ export function CoachSheet({
     if(/设备|截图|心率|HRV|RHR/i.test(value)){
     try { brief=attachLinkedSources(brief,deviceCoachSources(await listConfirmedDeviceEvidence(),new Date().toISOString())); } catch { brief=attachLinkedSources(brief,[{id:"linked:device-unreadable",kind:"CONTEXT",detail:"设备证据库读取失败，不能认为没有记录"}]); }
     }
-    const priorAnalysis=latestReasoningBasis(memory.messages,athleteId,asOf,brief.occurrenceId?[brief.occurrenceId]:[]);
+    const priorAnalysis=latestReasoningBasis(memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING"),athleteId,asOf,brief.occurrenceId?[brief.occurrenceId]:[]);
     if (currentAthleteId() !== athleteId) { setSending(false); return; }
     let formal:ReturnType<typeof readFormalEvidenceRows>;
     try{formal=readFormalEvidenceRows(athleteId,asOf)}catch{
@@ -344,7 +382,7 @@ export function CoachSheet({
       const intakeGoal=firstWeekGoalFromText(value);
       if(intakeGoal && local.cognition?.safety==='NONE' && !brief.pain)setFirstWeekGoalState({ athleteId, value: intakeGoal });
       setCognitionTurn(local.cognition ? {cognition: local.cognition, brief} : null);
-      const conversation = extractConversationContext(memory.messages, value);
+      const conversation = extractConversationContext(memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING"), value);
       const contextual = detectRedFlags(value).level!=='NONE'||local.offlineRuleIds?.length||local.reasoning?.scopeOccurrenceIds.length?null:contextualFollowup(value, conversation);
       // 安全门：急症/疼痛/必须保留的安全约束 → 只用本地安全回答，不联网、不替换。
       const redFlag = detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
@@ -356,7 +394,7 @@ export function CoachSheet({
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
-        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, { goalTarget: memory.dialogue?.goalTarget ?? null }), local: shown, history: memory.messages.slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
+        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, { goalTarget: memory.dialogue?.goalTarget ?? null }), local: shown, history: memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
         if ("text" in r) { shown = r.text; label = "联网分析"; } else { label = `本地分析 · 联网失败（${r.error}）`; }
         setNotice(linkNotice);
       }
@@ -376,7 +414,7 @@ export function CoachSheet({
       const fallback=localModelFallback(local,reason);setNotice(fallback.notice);return fallback.text;
     };
     try {
-      const history = memory.messages.slice(-8).map(({ role, text: prior }) => ({ role, text: prior.slice(0, 300) }));
+      const history = memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-8).map(({ role, text: prior }) => ({ role, text: prior.slice(0, 300) }));
       // Read-only formal rows for the V4 server review; this athlete only, unknown commit times stay out.
       const bound = listBoundTrainings();
       const candidates = bound.map((item) => ({ id: item.trainingOccurrenceId, startedAt: item.startedAt, running: item.running }));
@@ -439,14 +477,14 @@ export function CoachSheet({
   }
 
   const connectivity = isOnline === null ? "网络状态待确认" : isOnline ? "设备联网" : "设备离线";
-  const statusLine = !memory || (memory.notes.length === 0 && memory.fatigue === 20 && memory.messages.every((item) => item.role !== "user")) ? "方坤本地常驻 · 公开知识参考可选 · 大模型需服务端授权" : "训练反馈已保留 · 恢复状态待评估";
+  const statusLine = !memory || (memory.notes.length === 0 && memory.fatigue === 20 && memory.messages.every((item) => item.role !== "user" || item.purpose === "KNOWLEDGE_READING")) ? "方坤本地常驻 · 公开知识参考可选 · 大模型需服务端授权" : "训练反馈已保留 · 恢复状态待评估";
 
   return (
     <div className={embedded ? "fk-coach-sheet flex min-h-0 flex-1 flex-col px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "fixed inset-0 z-30 flex flex-col bg-bg"}>
       {/* R6：头像、状态和三段切换合成一行紧凑顶栏，把高度让给对话区 */}
       <div className={"fk-coach-bar flex items-center gap-2 pb-1 pt-0.5" + (embedded ? "" : " px-4")}>
         <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-surface" title={`方坤 · ${statusLine} · ${connectivity}`}>
-          <span className="origin-center scale-[0.62]"><FangShen face={sending ? "thinking" : face} motion={motion} /></span>
+          {section === 'learn' ? <BookOpen size={20} aria-hidden="true" /> : <span className="origin-center scale-[0.62]"><FangShen face={sending ? "thinking" : face} motion={motion} /></span>}
         </span>
         <nav className="product-segments fk-coach-tabs min-w-0 flex-1" aria-label="方坤工作区">
           {([["chat", "对话"], ["learn", "学习"], ["review", "复盘"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={section === id} onClick={() => setSection(id)}>{label}</button>)}
@@ -457,8 +495,17 @@ export function CoachSheet({
         <p>教练记录没有写入本机，原来的记录还在。</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (memory && saveCoach(memory)) setCoachSaveFailed(false); }}>再存一次</button>
       </div> : null}
-      <div data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
-        {section === "learn" ? <LearningLibrary onNavigate={onNavigate} onAsk={(question)=>{setDraft(question);setSection("chat")}} publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed} /> : null}
+      <div ref={messagePane} data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
+        <div hidden={section !== "learn"}>
+          <LearningLibrary onNavigate={onNavigate} onAsk={(question)=>{setDraft(question);setFromLibrary(true);setSection("chat")}}
+            publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed}
+            publicReferencesEnabled={networkMode === "public-knowledge"} online={isOnline !== false}
+            onPublicReferencesChange={enabled=>{
+              const next = enabled ? "public-knowledge" : "local";
+              setNetworkMode(next);
+              setOnlineFeature('coachRefs', enabled);
+            }} />
+        </div>
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
         {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-review-tools"><summary className="min-h-11 cursor-pointer font-bold">更多复盘与协调工具（按需展开）</summary><div className="mt-2 space-y-3">
@@ -473,7 +520,7 @@ export function CoachSheet({
           const v4 = { athleteId, asOf, rows: formal.rows, unknownCommitTime: formal.unknownCommitTime.length };
           const reviewed = normalizeV4(v4, brief.question, Date.now(), brief.occurrenceId ?? null);
           const coachContextMemory = readCoachMemory(athleteId, asOf, reviewed?.review.audit.snapshot).active;
-          const history = (memory?.messages ?? []).slice(-8).map(({ role, text }) => ({ role, text: text.slice(0, 300) }));
+          const history = (memory?.messages ?? []).filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-8).map(({ role, text }) => ({ role, text: text.slice(0, 300) }));
           return buildCoachModelRequest(normalizeAskCoachInput({ brief, history, v4, coachContextMemory })).inputSummary;
         }} />}
         </div></details>}
@@ -573,7 +620,7 @@ export function CoachSheet({
               recovery={athlete.recovery.recoveryStatus}
               fatigue={athlete.recovery.fatigueScore}
               usable={athlete.performance.todayUsable}
-              uncalibrated={!memory || (memory.notes.length === 0 && memory.fatigue === 20 && memory.messages.every((item) => item.role !== "user"))}
+              uncalibrated={!memory || (memory.notes.length === 0 && memory.fatigue === 20 && memory.messages.every((item) => item.role !== "user" || item.purpose === "KNOWLEDGE_READING"))}
               sleep={athlete.recovery.sleep}
               painNoted={athlete.recovery.pain}
               sessionRpe={latestSessionRpe(loadEvents())}
@@ -665,7 +712,7 @@ export function CoachSheet({
               }
             >
               {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
-              {message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
+              {message.role==='coach'&&message.id.endsWith('-learning')?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
               {message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
               {knowledgeReview.get(message.id)?<p data-testid="coach-knowledge-review" role="status" className="keep mt-1 text-xs text-amber-400">这条回答引用的知识卡已变化或批准已失效，结论需要复核（原回答保留）。</p>:null}
               {message.factDetails?<details data-testid="coach-fact-details" className="mt-2 text-xs"><summary className="min-h-8 cursor-pointer">查看分段核算详情</summary><p className="whitespace-pre-wrap break-words">{message.factDetails}</p></details>:null}
@@ -700,7 +747,7 @@ export function CoachSheet({
         <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：经服务端调用 DeepSeek，只发送去标识化的训练数值、分段、恢复指标和计划目标，不发送账号或位置；离线或失败时自动用本地分析。急症/疼痛问题始终本地处理。</span></label>
         <details className="coach-network-card mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限"><summary className="min-h-11 cursor-pointer font-bold">联网与隐私权限（按需展开）</summary>
           <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
-          <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); try { window.localStorage.setItem(COACH_NETWORK_MODE_KEY, next); } catch { /* storage unavailable */ } }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
+          <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); setOnlineFeature('coachRefs', e.target.checked); }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
           {networkMode === "public-knowledge" && <div className="mt-2 flex flex-wrap gap-2">{COACH_PUBLIC_REFERENCES.map((item) => <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="underline" onClick={(event) => { if (!authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed) event.preventDefault() }}>{item.label}</a>)}</div>}
           <div className="mt-1 text-muted">公开链接仅供人工查阅；自动检索、内容核验和付费模型额度服务尚未接入。</div>
         </details>
@@ -801,6 +848,7 @@ export function CoachSheet({
           <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
         </div>
         </div>
+        {fromLibrary ? <button type="button" className="min-h-11 text-sm text-accent" onClick={()=>setSection("learn")}>返回刚才的知识阅读 ›</button> : null}
         <form
           className="flex gap-2 pt-1.5"
           onSubmit={(event) => {
@@ -813,6 +861,7 @@ export function CoachSheet({
             onChange={(event) => setDraft(event.target.value)}
             onFocus={(event) => event.currentTarget.scrollIntoView({ block: "nearest" })}
             placeholder="输入你的问题"
+            aria-label="输入你的问题"
             enterKeyHint="send"
             className="h-11 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 outline-none"
           />

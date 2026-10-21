@@ -1,0 +1,62 @@
+[
+  {
+    "id": "MOD2026ACSM",
+    "title": "ACSM 2026 Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41843416/",
+    "year": "2026",
+    "design": "137篇系统综述的立场文件",
+    "readLevel": "PUBLIC_ABSTRACT_OR_RELEVANT_TEXT_2026_10_21",
+    "summary": "抗阻训练可改善力量、肌肥大、功率和功能，训练变量应与目标对应。",
+    "limits": "主要纳入健康成年人，不能直接为精英短跑运动员开训练剂量。"
+  },
+  {
+    "id": "MOD2023REDS",
+    "title": "IOC 2023 Consensus Statement on Relative Energy Deficiency in Sport (REDs)",
+    "url": "https://bjsm.bmj.com/content/57/17/1073",
+    "year": "2023",
+    "design": "IOC专家共识",
+    "readLevel": "PUBLIC_ABSTRACT_OR_RELEVANT_TEXT_2026_10_21",
+    "summary": "长期或严重低能量可用性可能影响运动员健康和表现。",
+    "limits": "不能用单日热量、体重或手表消耗独立诊断REDs。"
+  },
+  {
+    "id": "MOD2021SLEEP",
+    "title": "Sleep and the athlete: 2021 expert consensus recommendations",
+    "url": "https://bjsm.bmj.com/content/55/7/356",
+    "year": "2021",
+    "design": "专家共识与叙述综述",
+    "readLevel": "PUBLIC_ABSTRACT_OR_RELEVANT_TEXT_2026_10_21",
+    "summary": "运动员睡眠需求个体化；午睡可改善部分警觉性与情绪指标。",
+    "limits": "手表睡眠分期、单次睡眠时长不是训练许可。"
+  },
+  {
+    "id": "MOD2016LOAD",
+    "title": "IOC Consensus: How much is too much? Load in sport and risk of injury",
+    "url": "https://doi.org/10.1136/BJSPORTS-2016-096581",
+    "year": "2016",
+    "design": "IOC专家共识",
+    "readLevel": "PUBLIC_ABSTRACT_OR_RELEVANT_TEXT_2026_10_21",
+    "summary": "综合外部负荷、内部负荷、主观反馈和非训练压力；没有单一指标能识别适应不良。",
+    "limits": "不能把单一负荷比值转换成个人伤病概率。"
+  },
+  {
+    "id": "MOD2017PROTEIN",
+    "title": "ISSN Position Stand: Protein and Exercise",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5477153/",
+    "year": "2017",
+    "design": "运动营养学会立场声明",
+    "readLevel": "PUBLIC_ABSTRACT_OR_RELEVANT_TEXT_2026_10_21",
+    "summary": "蛋白质与抗阻训练共同支持肌肉适应；需要考虑总摄入和训练目标。",
+    "limits": "一般健康训练者参考，不适用于自动个人处方。"
+  },
+  {
+    "id": "MOD2024PSYCH",
+    "title": "50 Years of Research on the Psychology of Sport Injury: A Consensus Statement",
+    "url": "https://doi.org/10.1007/s40279-024-02045-w",
+    "year": "2024",
+    "design": "专家共识",
+    "readLevel": "PUBLIC_ABSTRACT_OR_RELEVANT_TEXT_2026_10_21",
+    "summary": "压力、社会支持与伤后回归心理准备值得纳入训练管理。",
+    "limits": "不能用心理压力代替医学诊断。"
+  }
+]
