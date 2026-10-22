@@ -33,7 +33,12 @@ export function reviewFatigue(snapshot:HealthSnapshot,checkin:Checkin|null):Fati
   const state:FatigueReview['state']=pain?'PAIN_REVIEW':domains.size>=2?'MULTI_SIGNAL':signals.length?'WATCH':snapshot.unreadable||![sleep,hrv,rhr].some(x=>!!x?.baseline)||[sleep,hrv,rhr].some(x=>x&&!x.baseline)||!subjectiveKnown?'INSUFFICIENT':'NO_ADVERSE_SIGNAL'
   const title={PAIN_REVIEW:'先核对疼痛与功能',MULTI_SIGNAL:'多个信号提示恢复压力',WATCH:'有单类信号，先观察核对',INSUFFICIENT:'证据不足，暂不能判断疲劳',NO_ADVERSE_SIGNAL:'已记录指标未见上述不利信号'}[state]
   const action={PAIN_REVIEW:'暂缓会诱发疼痛的高强度内容；根据症状与功能变化寻求专业评估。手表正常分数不能解除疼痛限制。',MULTI_SIGNAL:'这些变化仅达到未核准的经验复核阈值，不足以据此决定减量、停训或医学回归。先观察热身表现、疼痛和近期训练，再讨论待确认候选。',WATCH:'核对该信号的测量条件和近期训练；先看热身表现，不凭单项数值自动改课。',INSUFFICIENT:'先补当天感受、睡眠和近期实际训练，核对冲突来源；不据此自动加量。',NO_ADVERSE_SIGNAL:'结合既定计划和热身表现决定是否继续；这不等于确认完全恢复，也不自动加量。'}[state]
-  return {ruleStatus:'RESEARCH_CANDIDATE',automaticPrescription:false,state,title,signals,excluded,action,followup:pain?'先记录疼痛部位、起始时间和日常活动影响；不要用加速或负重试探疼痛，回归训练需相应专业评估。':'本次热身后记录腿部感觉、疼痛与同类动作表现；主课后记录RPE，次日再看睡眠和主观恢复，重新评估。',diagnosis:false,planChanged:false}
+  // v89.10.10：“证据不足”只写实际缺的项；没有来源冲突时不提示核对冲突来源。
+  const hrvComparable=!hrv||hrv.current?.method==='RMSSD'||hrv.current?.method==='SDNN'
+  const need=[...(!subjectiveKnown?['当天感受']:[]),...[sleep,hrv,rhr].flatMap(x=>x&&!x.baseline&&!(x===hrv&&!hrvComparable)?[`${x.label}同来源可比基线（前7天至少3天）`]:[]),...[['SLEEP','睡眠'],['HRV','HRV'],['RHR','静息心率']].flatMap(([m,l])=>view(m)?.state==='CONFLICT'?[]:!view(m)||view(m)!.state!=='AVAILABLE'?[`今天的${l}`]:[])]
+  const conflicted=['SLEEP','HRV','RHR','RECOVERY'].some(m=>view(m)?.state==='CONFLICT')
+  const insufficient=`先${need.length?`补${need.join('、')}`:'补近期实际训练'}${hrvComparable?'':'；HRV 来源未注明算法，暂不做个人比较'}${conflicted?'；并在来源中选择冲突项':''}；不据此自动加量。`
+  return {ruleStatus:'RESEARCH_CANDIDATE',automaticPrescription:false,state,title,signals,excluded,action:state==='INSUFFICIENT'?insufficient:action,followup:pain?'先记录疼痛部位、起始时间和日常活动影响；不要用加速或负重试探疼痛，回归训练需相应专业评估。':'本次热身后记录腿部感觉、疼痛与同类动作表现；主课后记录RPE，次日再看睡眠和主观恢复，重新评估。',diagnosis:false,planChanged:false}
 }
 export type BalanceReview={from:string;to:string;planned:{run:number;strength:number;hardDates:string[];muscleGroups:string[];unknownExercises:number};actual:{sessions:number;knownMinutes:number;unknownMinutes:number;knownRunKm:number;unknownRunKm:number;intensityKnown:number;intensityMinutes:{easy:number;moderate:number;hard:number;unknown:number}};observations:string[];gaps:string[];action:string;planChanged:false}
 export function reviewBalance(entries:ScheduleEntry[],to:string):BalanceReview{

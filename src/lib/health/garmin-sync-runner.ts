@@ -44,7 +44,7 @@ export function garminActivity(o: any, scope: string): DeviceActivity | null {
 export async function runGarminSyncJob(host: {
   api: (path: string) => Promise<GarminReply>; subject: () => string; generation: () => number; day: string; now: string;
   bindAccount: (scope: string, subject: string) => boolean;
-  save: (health: DeviceHealthRow[], activities: DeviceActivity[]) => { saved: number; skipped: number; errors: string[] };
+  save: (health: DeviceHealthRow[], activities: DeviceActivity[]) => { saved: number; skipped: number; errors: string[]; healthErrors?: string[] };
   saveView: (activities: unknown[], accountScope: string) => void;
   report: (report: GarminSyncReport) => void; progress: (message: string) => void;
   /** v78：健康历史逐次补到 90 天。get = 已补到第几天（≥14），set 在本次保存成功后调用。 */
@@ -59,6 +59,9 @@ export async function runGarminSyncJob(host: {
   fullReview?: { get: (scope: string) => string | null; set: (scope: string, at: string) => void };
   /** 活动是否已在本机且数值未变（增量同步用来判断要不要往后翻页）。 */
   activitySeen?: (accountScope: string, o: any) => boolean;
+  /** v89.10.10：按天记录（按佳明账号分开）。有它时：首次一次取全，之后只取“上次取到的日子往前 2 天 → 今天”+ 上次没取到的具体日子；
+   * 已存过佳明健康记录的旧日子不再重取。完整复核仅在手动“完整复核最近数据”时。 */
+  healthDays?: { get: (scope: string) => { through: string | null; retry: string[] }; set: (scope: string, v: { through: string; retry: string[] }) => void; saved?: (scope: string) => Set<string> };
 }): Promise<GarminSyncReport> {
   const subjectId = host.subject(), generation = host.generation()
   const result: GarminSyncReport = { at: host.now, status: 'fail', subjectId, accountScope: null, healthRows: 0, activityRows: 0, saved: 0, skipped: 0,
@@ -80,7 +83,8 @@ export async function runGarminSyncJob(host: {
       lastFullSuccessAt: sameLocalDay ? lastFull : null, lastFailureAt: null, backfillThrough: host.backfill?.get(account.scope) ?? 90 })
     // 首次同步（新账号或历史还没补满 90 天）：一次补齐 90 天日汇总 + 28 天日内；中断/限流后下次从游标继续。
     const cursor = Math.min(90, Math.max(14, host.backfill?.get(account.scope) ?? 90))
-    const mode: 'INITIAL' | 'RECENT' | 'FULL' = host.fullReview && cursor < 90 ? 'INITIAL' : plan.mode === 'RECENT' ? 'RECENT' : 'FULL'
+    const days = host.healthDays ? host.healthDays.get(account.scope) : null, savedDays = host.healthDays?.saved?.(account.scope) ?? new Set<string>()
+    const mode: 'INITIAL' | 'RECENT' | 'FULL' = host.fullReview && cursor < 90 ? 'INITIAL' : days ? host.reason === 'MANUAL' ? 'FULL' : 'RECENT' : plan.mode === 'RECENT' ? 'RECENT' : 'FULL'
     result.mode = mode
     // 活动列表：完整复核一次取 200 条；增量先取 20 条，整页都是新的/有变化才继续往后翻（每页 20，最多到 200），不漏新活动。
     const PAGE = mode === 'RECENT' ? 20 : 200, raw: any[] = []
@@ -106,7 +110,19 @@ export async function runGarminSyncJob(host: {
     // 每次同步最近 14 天；另外往前补 14 天更早的历史，直到满 90 天（恢复趋势 30/90 天才有数据）。
     // 增量：只取最近 3 天（0–2）；完整复核：14 天 + 往前补 14 天，直到满 90 天。补历史游标只在保存成功后推进。
     const HIST = 90, from = cursor
-    const offsets = mode === 'INITIAL' ? [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: HIST - from }, (_, i) => from + i)] : plan.offsets
+    const offsetOf = (d: string) => Math.round((Date.parse(host.day + 'T00:00:00Z') - Date.parse(d + 'T00:00:00Z')) / 864e5)
+    let offsets = mode === 'INITIAL' ? [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: HIST - from }, (_, i) => from + i)] : plan.offsets
+    if (days) {
+      // 最近窗口：从上次取到的日子往前 2 天到今天（没有记录时用本机已存的最近一天；都没有 = 首次，取近 14 天）。
+      const latestSaved = [...savedDays].filter(d => d <= host.day).sort().at(-1) ?? null, through = days.through ?? latestSaved
+      const span = through ? Math.min(HIST - 1, Math.max(2, offsetOf(through) + 2)) : 13
+      const recent = Array.from({ length: span + 1 }, (_, i) => i)
+      const retry = days.retry.map(offsetOf).filter(i => Number.isInteger(i) && i >= 0 && i < HIST)
+      // 首次补历史：本机已有这个佳明账号记录的旧日子不再重取。
+      const history = mode === 'INITIAL' ? Array.from({ length: HIST - from }, (_, i) => from + i).filter(i => i > span && !savedDays.has(shiftDay(host.day, -i))) : []
+      offsets = [...new Set([...(mode === 'FULL' ? plan.offsets : []), ...recent, ...retry, ...history])].sort((a, b) => a - b)
+    }
+    const answered = new Set<number>()
     let done = 0, dailyThrottled = false, unavailableStreak = 0, serviceUnavailable = false
     let firstUnavailable: number | null = null, firstUnavailableHistory: number | null = null
     // v89.1：日内样本首次/历史不足时补到 28 天。今天、昨天每次都重取；更早的只取还没取全的日子。
@@ -141,6 +157,7 @@ export async function runGarminSyncJob(host: {
       const parsed = garminHealthDay(d, account.scope, s, h, sl, host.now)
       health.push(...parsed.rows); result.errors.push(...parsed.failures)
       if (parsed.rows.length) result.coverageDays.push(d)
+      if (![s, h, sl].some(r => r.status === 0 || r.status === 429 || r.status >= 500)) answered.add(i)
       // 只有整天的三个接口都发生网络/网关故障才计连续失败；空数据、404 或单项缺失仍继续。
       if ([s, h, sl].every(r => [0, 502, 503, 504].includes(r.status))) {
         firstUnavailable ??= n
@@ -178,10 +195,15 @@ export async function runGarminSyncJob(host: {
     if (intraday.length) { try { intradayStat.saved = host.intraday?.save(intraday) ?? 0; if (!intradayStat.saved) intradayStat.failed.push('日内样本本机保存失败（空间不足？）') } catch { intradayStat.failed.push('日内样本本机保存失败') } }
     if (host.intraday) result.intraday = intradayStat
     // 历史游标不能跨过未取得的旧日；近 14 天下次完整复核会重取，不阻止已保存历史推进。
-    const back = offsets.slice(0, firstUnavailableHistory ?? done).filter(i => i >= 14), upTo = back.length ? Math.max(...back) + 1 : from
-    if (!saved.errors.length && upTo > from) host.backfill?.set(account.scope, upTo)
+    // v89.10.10：只有健康记录本身保存失败才阻止推进；活动“需核对”提示不影响健康历史游标。
+    const blocking = saved.healthErrors ?? saved.errors
+    const back = offsets.slice(0, firstUnavailableHistory ?? done).filter(i => i >= 14), upTo = days ? HIST : back.length ? Math.max(...back) + 1 : from
+    if (!blocking.length && upTo > from) host.backfill?.set(account.scope, upTo)
+    // 没取到的具体日子（网络/限流/服务故障或中途停止）记下来，下次只重试这些天。
+    const missing = offsets.filter(i => !answered.has(i)).map(i => shiftDay(host.day, -i))
+    if (days && !blocking.length) { try { host.healthDays!.set(account.scope, { through: host.day, retry: missing }) } catch { /* 下次按原窗口重取 */ } }
     // 完整复核/首次同步完整做完且本机保存无误才记时间（按佳明账号分开）；被限流中断的不记，下次继续。
-    if (mode !== 'RECENT' && !dailyThrottled && firstUnavailable === null && done === offsets.length && !saved.errors.length) { try { host.fullReview?.set(account.scope, host.now) } catch { /* 下次再复核 */ } }
+    if (mode !== 'RECENT' && !dailyThrottled && firstUnavailable === null && done === offsets.length && !blocking.length && !(days && missing.length)) { try { host.fullReview?.set(account.scope, host.now) } catch { /* 下次再复核 */ } }
     // Raw activity view remains account/athlete scoped and never counts as training sessions.
     host.saveView(raw.flatMap(o => { const a = garminActivity(o, account.scope); return a ? [{ ...o, fkSourceIdentity: a.sourceIdentity, fkStartIso: a.startIso }] : [] }), result.accountScope!)
     result.status = result.errors.length ? (result.saved + result.skipped ? 'partial' : 'fail') : health.length + acts.length ? 'ok' : 'empty'

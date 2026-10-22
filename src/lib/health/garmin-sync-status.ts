@@ -40,7 +40,7 @@ export function readGarminSyncStatus(subject: string, store: KV | null = typeof 
   const details = [
     `自动同步：${AUTO_SYNC_RULE}`,
     ...(backoffUntil ? [`上次自动同步失败，${hhmm(backoffUntil)} 前不再自动重试（可手动同步）`] : []),
-    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（一次补齐 90 天）' : report.mode === 'RECENT' ? '增量同步（近 3 天 + 新活动）' : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
+    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（一次补齐 90 天）' : report.mode === 'RECENT' ? `增量同步（新日子 + 新活动${report.healthDaysRequested > 3 ? '，含上次未取到的日子' : ''}）` : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
     ...(report?.errors.length ? report.errors.slice(0, 5).map(e => `问题：${e}`) : []),
   ]
   return {

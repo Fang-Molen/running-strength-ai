@@ -178,3 +178,50 @@ test('first sync throttled (429) saves partial, cursor resumes, no full-review m
   const c2 = counting(); c2.setCursor(30); const r2 = await runGarminSyncJob({ ...c2.host, reason: 'AUTO' })
   assert.equal(r2.mode, 'INITIAL'); assert.equal(r2.healthDaysRequested, 14 + 60); assert.equal(c2.cursor(), 90)
 })
+
+// ---- v89.10.10：首次一次取全；之后只取新日子 + 上次没取到的具体日子 ----
+function withDays(c: ReturnType<typeof counting>, init: { through: string | null; retry: string[] } = { through: null, retry: [] }, saved: string[] = []) {
+  let state = init
+  const asked = () => [...new Set(c.paths.filter(p => p.includes('usersummary')).map(p => p.match(/\d{4}-\d{2}-\d{2}/)![0]))]
+  return { host: { ...c.host, healthDays: { get: () => state, set: (_s: string, v: { through: string; retry: string[] }) => { state = v }, saved: () => new Set(saved) } }, state: () => state, asked }
+}
+test('v89.10.10 activity review notices do not block the history cursor; second sync is incremental', async () => {
+  const c = counting(); const w = withDays(c)
+  const host = { ...w.host, save: (h: any[], a: any[]) => ({ saved: h.length + a.length, skipped: 0, errors: ['同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。'], healthErrors: [] }) }
+  const first = await runGarminSyncJob({ ...host, reason: 'AUTO' })
+  assert.equal(first.mode, 'INITIAL'); assert.equal(first.healthDaysRequested, 90); assert.equal(c.cursor(), 90)
+  assert.deepEqual(w.state(), { through: '2026-10-18', retry: [] })
+  c.paths.length = 0
+  const second = await runGarminSyncJob({ ...host, reason: 'AUTO' })
+  assert.equal(second.mode, 'RECENT'); assert.deepEqual(w.asked(), ['2026-10-18', '2026-10-17', '2026-10-16'])
+})
+test('v89.10.10 health save failure still blocks the cursor (next sync retries the same window)', async () => {
+  const c = counting(); const w = withDays(c)
+  const host = { ...w.host, save: () => ({ saved: 0, skipped: 0, errors: ['RHR 保存失败'], healthErrors: ['RHR 保存失败'] }) }
+  await runGarminSyncJob({ ...host, reason: 'AUTO' })
+  assert.equal(c.cursor(), 14); assert.deepEqual(w.state(), { through: null, retry: [] })
+})
+test('v89.10.10 days that failed (5xx/429) are retried by date, not the whole window', async () => {
+  const c = counting(); c.setCursor(90)
+  const w = withDays(c, { through: '2026-10-15', retry: ['2026-09-01'] })
+  const api = w.host.api
+  const host = { ...w.host, api: async (p: string) => p.includes('2026-10-17') && p.includes('hrv-service') ? { status: 503, body: {} } : api(p) }
+  const r = await runGarminSyncJob({ ...host, reason: 'AUTO' })
+  assert.equal(r.mode, 'RECENT')
+  // 上次取到 10-15 → 往前 2 天：10-13…10-18（6 天），加 09-01 重试
+  assert.deepEqual(w.asked().sort(), ['2026-09-01', '2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-17', '2026-10-18'])
+  assert.deepEqual(w.state(), { through: '2026-10-18', retry: ['2026-10-17'] })
+})
+test('v89.10.10 unfinished first sync skips old days already saved for this Garmin account', async () => {
+  const c = counting(); c.setCursor(42)
+  const saved = Array.from({ length: 48 }, (_, i) => { const d = new Date(Date.UTC(2026, 9, 18 - 42 - i)); return d.toISOString().slice(0, 10) }).concat(['2026-10-18'])
+  const w = withDays(c, { through: null, retry: [] }, saved)
+  const r = await runGarminSyncJob({ ...w.host, reason: 'AUTO' })
+  assert.equal(r.mode, 'INITIAL'); assert.equal(r.healthDaysRequested, 3); assert.equal(c.cursor(), 90)
+  c.paths.length = 0
+  assert.equal((await runGarminSyncJob({ ...w.host, reason: 'AUTO' })).healthDaysRequested, 3)
+})
+test('v89.10.10 manual 完整复核 still reads 14 days', async () => {
+  const c = counting(); c.setCursor(90); const w = withDays(c, { through: '2026-10-18', retry: [] })
+  const r = await runGarminSyncJob({ ...w.host, reason: 'MANUAL' }); assert.equal(r.mode, 'FULL'); assert.ok(r.healthDaysRequested >= 14)
+})

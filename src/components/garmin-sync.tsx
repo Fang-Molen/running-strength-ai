@@ -6,7 +6,8 @@ import { localDay, shiftDay, healthChanged } from "@/lib/health/observation";
 import { AUTO_SYNC_RULE, readGarminSyncStatus, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { saveDeviceRows } from "@/lib/ui/device-store";
+import { saveDeviceRows, loadExtras } from "@/lib/ui/device-store";
+import { loadVitals } from "@/lib/nutrition/vitals";
 import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
 import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
 import { exportFeedback } from "@/components/coach-feedback";
@@ -39,6 +40,12 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
       // 日常按钮按既有规则选择增量；完整复核通过说明区显式触发，仍按账号分别记录。
       reason, activitySeen: garminViewHas,
       fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId())) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId()), at) } },
+      // v89.10.10：按天记录（运动员 + 佳明账号分开）；本机已存的该账号健康日子用于不重取旧日。
+      healthDays: {
+        get: scope => { try { const v = JSON.parse(localStorage.getItem(garminStorageKey(`fk-garmin-health-days:${shortHash(scope)}`, currentAthleteId())) ?? "null"); return { through: typeof v?.through === "string" ? v.through : null, retry: Array.isArray(v?.retry) ? v.retry.filter((d: unknown) => typeof d === "string") : [] } } catch { return { through: null, retry: [] } } },
+        set: (scope, v) => { localStorage.setItem(garminStorageKey(`fk-garmin-health-days:${shortHash(scope)}`, currentAthleteId()), JSON.stringify(v)) },
+        saved: scope => { const src = `garmin:${shortHash(scope)}`, me = currentAthleteId(); return new Set([...loadVitals().records.filter(r => (r.athleteId ?? "local") === me && r.observation?.sourceId === src).map(r => r.observedOn), ...loadExtras().filter(x => x.observation?.sourceId === src).map(x => x.day)]) },
+      },
       backfill: { get: scope => { try { return Number(localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 90 } }, set: (scope, n) => { try { localStorage.setItem(`fk-garmin-health-backfill:${scope}`, String(n)) } catch { /* 下次再补 */ } } },
       report: report => {
         const key = (name: string) => garminStorageKey(name, report.subjectId);
@@ -185,7 +192,7 @@ export function GarminSync({ hideBackup = false, onState }: { hideBackup?: boole
       <summary><span>同步说明</span><ChevronDown aria-hidden="true" /></summary>
       <div className="device-sync-detail-body text-muted">
         <p>{AUTO_SYNC_RULE}关闭或挂起后不保证后台同步。</p>
-        <p>日常同步优先更新近3天和新活动；首次同步补齐近90天健康汇总，之后每日复核近14天。更早记录需要核对时，可手动完整复核。</p>
+        <p>首次同步一次补齐近90天健康汇总；之后只取新的日子（从上次同步那天往前2天到今天）、新活动，以及上次没取到的具体日子，已取到的旧数据不再重取。需要核对近14天时，可手动完整复核。</p>
         <p>活动最多请求最近200条，不代表全部历史或训练课次数。健康日期按页面所在时区计算；与手表日期不一致时先核对两端时区。</p>
         {st?.loggedIn ? <button type="button" disabled={busy || live.running} className="min-h-11 w-full rounded-card border border-line px-3 text-fg" onClick={() => void sync(true)}>完整复核最近数据</button> : null}
         <p>身体电量取同步时佳明给出的最近值（没有时才用当日最高并注明），HRV 为昨夜平均；同步后才更新，不是实时值。同步详情会列出未完成项。</p>

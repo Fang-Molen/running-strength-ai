@@ -31,7 +31,9 @@ export function existingKeys(): { health: Set<string>; activities: Set<string>; 
 
 const field = <T,>(value: T | null) => value == null ? { value: null, status: "ABSENT", sourceIds: [] } : { value, status: "RECORDED", sourceIds: ["user-confirmed"] }
 
-export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActivity[]): { saved: number; skipped: number; errors: string[] } {
+/** 与训练导入保存时相同的数值范围（0.1–1,000,000）：范围外按“未记录”保存，比较时也按未记录，避免距离 0 的力量课每次同步都被当成“数值已变化”。 */
+const storedNumber = (v: number | null | undefined) => typeof v === "number" && Number.isFinite(v) && v >= 0.1 && v <= 1_000_000 ? v : null
+export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActivity[]): { saved: number; skipped: number; errors: string[]; healthErrors: string[] } {
   let saved = 0, skipped = 0
   const errors: string[] = []
   // One normalized snapshot per save call. Repeat syncs can contain hundreds of
@@ -43,12 +45,13 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
 
   const result = saveConfirmedHealth(health);
   saved += result.saved; skipped += result.skipped; errors.push(...result.errors);
+  const healthErrors = [...result.errors];
   for (const a of activities) {
     if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');continue}
     const draftId = activityDraftId(a)
     if (have.activities.has(draftId) || isDuplicate(a, have)) {
       const previous=a.sourceIdentity?importedByDraft.get(draftId):null
-      if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==a.durationSec||previous.totalDistanceMeters.value!==a.distanceM))
+      if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==storedNumber(a.durationSec)||previous.totalDistanceMeters.value!==storedNumber(a.distanceM)))
         errors.push('同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。')
       else skipped++
       continue
@@ -74,5 +77,5 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
   }
   healthChanged()
   if(typeof window!=="undefined") window.dispatchEvent(new Event("storage"))
-  return { saved, skipped, errors }
+  return { saved, skipped, errors, healthErrors }
 }
