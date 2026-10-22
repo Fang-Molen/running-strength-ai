@@ -86,7 +86,7 @@ export function loadTrainingActivities(): ActivityRow[] {
     const anySets = events.some(e => e.event_type === 'TRAINING_SET_COMPLETED' && (e.payload as { trainingOccurrenceId?: string }).trainingOccurrenceId === o.trainingOccurrenceId)
     const doneCount = fact?.completedSetCount ?? 0
     if (!isRun && doneCount < 1 && !anySets) continue;
-    const incomplete = !isRun && (doneCount < 1 || o.lifecycle === 'IN_PROGRESS');
+    const incomplete = o.lifecycle === 'IN_PROGRESS' || !isRun && doneCount < 1;
     const elapsed = o.endedAt ? (Date.parse(o.endedAt) - Date.parse(o.startedAt)) / 1000 : null;
     const totals = runningActualTotals(run);
     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,

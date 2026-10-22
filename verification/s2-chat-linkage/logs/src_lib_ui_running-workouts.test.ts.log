@@ -1,0 +1,16 @@
+✔ continuous running summaries show the prescribed dose rather than execution identities (7.205459ms)
+✔ 200m x 4 x 2 keeps two rounds and does not repeat a write (14.389646ms)
+✔ 400m plus 200m keeps combination order (0.860018ms)
+✔ custom 600 400 300 keeps two rounds and an empty target (6.961922ms)
+✔ a started snapshot stays when the plan is edited (2.661444ms)
+✔ one repeat cannot store a between-rep rest (0.162995ms)
+✔ today track card reads the saved plan and does not invent readiness (5.647248ms)
+✔ explicit running course selection never reads progress from another open course (0.620887ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.098553

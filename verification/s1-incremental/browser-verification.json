@@ -1,0 +1,190 @@
+{
+  "method": "Isolated local production preview, synthetic APIs, no live services; screenshots visually reviewed",
+  "reports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "status": "PASS",
+      "checks": [
+        "served production HTML matches the verified build",
+        "correct page identity, nonblank content and no framework overlay",
+        "synthetic fixture contains confirmed activities to protect",
+        "approved single connection surface stays within viewport",
+        "active progress names the actual bounded historical batch",
+        "active sync prevents duplicate user action",
+        "activity conflicts remain explicitly partial",
+        "only the four changed activities conflict; unchanged zero-distance strength is stable",
+        "older cached source conflicts remain visible without reading past the newest 20",
+        "successful health data do not overwrite confirmed activity totals",
+        "partial result does not falsely claim complete success",
+        "historical batch 1 is bounded and never re-reads completed old dates",
+        "health progress advances despite activity conflict in batch 1",
+        "legacy backlog finishes in bounded batches",
+        "historical batch 2 is bounded and never re-reads completed old dates",
+        "health progress advances despite activity conflict in batch 2",
+        "legacy backlog finishes in bounded batches",
+        "historical batch 3 is bounded and never re-reads completed old dates",
+        "health progress advances despite activity conflict in batch 3",
+        "legacy backlog finishes in bounded batches",
+        "historical batch 4 is bounded and never re-reads completed old dates",
+        "health progress advances despite activity conflict in batch 4",
+        "all 48 remaining legacy historical days were completed once",
+        "completed historical batches retain original confirmed activities",
+        "next ordinary sync requests only a 20-activity page",
+        "next ordinary sync requests only the recent three health days",
+        "repeated job is reported as incremental rather than first sync",
+        "unresolved activity conflicts stay visible after incremental sync",
+        "incremental sync still preserves original confirmed activities",
+        "next-day ordinary sync does not expand to a daily full activity review",
+        "next-day health read stays on the three current recent dates",
+        "next-day read keeps conflicts and confirmed activities",
+        "full review remains an explicit collapsed action",
+        "explicit full review still requests 200-activity and 14-day scope",
+        "full review preserves unresolved conflict and original record",
+        "no uncaught runtime error or extra popup",
+        "no new console errors beyond the two baseline missing images",
+        "only mocked read/configuration APIs were invoked"
+      ],
+      "checkCount": 38,
+      "htmlSha256": "209bb42453f466ee37dbaa670499a3d1d58842f73872c34de9a870279fa0aa30",
+      "pageErrors": [],
+      "findings": [],
+      "sourceHashes": {
+        "src/components/garmin-sync.tsx": "ebf6bb59845d3d9334f38a1fbfb8af8b42307f7f49afad5d5cdfc53f9657f4b0",
+        "src/lib/health/garmin-sync-runner.ts": "a1fd5029c58b120eaba38f45f82122804c950425be5051e1f28ff364a0e9219a",
+        "src/lib/health/garmin-sync-status.ts": "51ebae87bf918e57c6e9b8130e9c170b4c2fcf9e89e7e9f51be32c24556a1ea9",
+        "src/lib/ui/device-store.ts": "329ae2b4f59980922a4e2736ac92862d7098ecf30aa56560c9060e1a6bb57309",
+        "src/lib/health/garmin-daily-progress.ts": "05fc0e215a3b7c01cab9804626ef04f8dd7285b8e7d1696acb213ebc817dfe02",
+        "src/lib/health/garmin-progress-store.ts": "a3f6534b5f8fd95c2f61fb66f5570c5bdeeb38eea877ee370504aeed0b18746a",
+        "src/lib/health/garmin-activity-conflicts.ts": "3affbc50fa2279a6a998f0131715f0e6543ee6a6165cd38ff4ab20cdad7f09ae"
+      },
+      "knownBaselineIssues": [
+        "/fangshen/care-bust.png",
+        "/fangkun-atlas/figure-female.webp"
+      ],
+      "receipts": {
+        "resumed": {
+          "status": "partial",
+          "mode": "BACKFILL",
+          "healthDaysRequested": 17,
+          "activityRows": 20,
+          "activityLimit": 20,
+          "requests": 58,
+          "saved": 0,
+          "skipped": 122,
+          "errors": [
+            "仍有 4 条来源活动与原记录不同，待核对；未重复计入或覆盖手填更正。"
+          ]
+        },
+        "repeated": {
+          "status": "partial",
+          "mode": "RECENT",
+          "healthDaysRequested": 3,
+          "activityRows": 20,
+          "activityLimit": 20,
+          "requests": 16,
+          "saved": 0,
+          "skipped": 38,
+          "errors": [
+            "仍有 4 条来源活动与原记录不同，待核对；未重复计入或覆盖手填更正。"
+          ]
+        },
+        "nextDayReceipt": {
+          "status": "partial",
+          "mode": "RECENT",
+          "healthDaysRequested": 3,
+          "activityRows": 20,
+          "activityLimit": 20,
+          "requests": 16,
+          "saved": 6,
+          "skipped": 32,
+          "errors": [
+            "仍有 4 条来源活动与原记录不同，待核对；未重复计入或覆盖手填更正。"
+          ]
+        },
+        "fullReceipt": {
+          "status": "partial",
+          "mode": "FULL",
+          "healthDaysRequested": 14,
+          "activityRows": 200,
+          "activityLimit": 200,
+          "requests": 49,
+          "saved": 0,
+          "skipped": 280,
+          "errors": [
+            "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。",
+            "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。",
+            "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。",
+            "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。"
+          ]
+        }
+      },
+      "historicalBatches": [
+        {
+          "healthDays": 17,
+          "activityRows": 20,
+          "taskRequests": 58,
+          "pendingDates": 34
+        },
+        {
+          "healthDays": 17,
+          "activityRows": 20,
+          "taskRequests": 58,
+          "pendingDates": 20
+        },
+        {
+          "healthDays": 17,
+          "activityRows": 20,
+          "taskRequests": 58,
+          "pendingDates": 6
+        },
+        {
+          "healthDays": 9,
+          "activityRows": 20,
+          "taskRequests": 34,
+          "pendingDates": 0
+        }
+      ],
+      "startedAt": "2026-10-22T04:47:08.720Z",
+      "finishedAt": "2026-10-22T04:47:19.648Z"
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "status": "PASS",
+      "checks": [
+        "served production HTML matches the verified build",
+        "correct page identity, nonblank content and no framework overlay",
+        "synthetic fixture contains confirmed activities to protect",
+        "approved single connection surface stays within viewport",
+        "desktop render has no runtime error or extra popup",
+        "desktop render has no new console errors"
+      ],
+      "checkCount": 6,
+      "htmlSha256": "209bb42453f466ee37dbaa670499a3d1d58842f73872c34de9a870279fa0aa30",
+      "pageErrors": [],
+      "findings": [],
+      "sourceHashes": {
+        "src/components/garmin-sync.tsx": "ebf6bb59845d3d9334f38a1fbfb8af8b42307f7f49afad5d5cdfc53f9657f4b0",
+        "src/lib/health/garmin-sync-runner.ts": "a1fd5029c58b120eaba38f45f82122804c950425be5051e1f28ff364a0e9219a",
+        "src/lib/health/garmin-sync-status.ts": "51ebae87bf918e57c6e9b8130e9c170b4c2fcf9e89e7e9f51be32c24556a1ea9",
+        "src/lib/ui/device-store.ts": "329ae2b4f59980922a4e2736ac92862d7098ecf30aa56560c9060e1a6bb57309",
+        "src/lib/health/garmin-daily-progress.ts": "05fc0e215a3b7c01cab9804626ef04f8dd7285b8e7d1696acb213ebc817dfe02",
+        "src/lib/health/garmin-progress-store.ts": "a3f6534b5f8fd95c2f61fb66f5570c5bdeeb38eea877ee370504aeed0b18746a",
+        "src/lib/health/garmin-activity-conflicts.ts": "3affbc50fa2279a6a998f0131715f0e6543ee6a6165cd38ff4ab20cdad7f09ae"
+      },
+      "knownBaselineIssues": [
+        "/fangshen/care-bust.png",
+        "/fangkun-atlas/figure-female.webp"
+      ],
+      "receipts": {},
+      "historicalBatches": [],
+      "startedAt": "2026-10-22T04:47:09.400Z",
+      "finishedAt": "2026-10-22T04:47:16.788Z"
+    }
+  ]
+}

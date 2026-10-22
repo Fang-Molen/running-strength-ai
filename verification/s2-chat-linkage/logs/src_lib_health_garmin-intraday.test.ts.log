@@ -1,0 +1,19 @@
+✔ heart rate: drops null samples, keeps timestamps, resting HR, device offset (13.091089ms)
+✔ body battery: level read via descriptor list (index 2), not the status column (9.30025ms)
+✔ single-source date rule: calendarDate mismatch or missing → whole day rejected, reported (1.026829ms)
+✔ day build: sleep span + training shading from activities; summary is not permission (34.531957ms)
+✔ tidy is bounded and ordered (4.543475ms)
+✔ store: per athlete, newest 28 days kept (v89.1), old days compacted, completeness needs samples + local day end (303.254934ms)
+✔ sync runner: fetches dailyHeartRate/dailyStress for recent days only, saves after fence, failures non-fatal (5.664686ms)
+✔ no intraday host → no extra Garmin calls (existing sync unchanged) (1.096244ms)
+✔ local coach recovery context reads intraday summary only after it was synced (11.736246ms)
+✔ v89 stress: stressValuesArray parsed, negative (no reading) dropped, optional on old days (0.448617ms)
+✔ v89.1 runner: empty intraday history → 28 days requested (incl. days outside the 14-day daily window); 429 stops intraday only (17.853525ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 431.308842

@@ -6,12 +6,18 @@ import { healthChanged, shortHash } from './observation'
 export const UNIFIED_FACT_PREFIX='fk-device-facts-v1:'
 /** Called only by the existing reviewed import save action. Append, never overwrite. */
 export function saveReviewedFacts(rows:readonly UnifiedFact[]){
- const athleteId=currentAthleteId(),errors:string[]=[];let saved=0
+ const athleteId=currentAthleteId(),prefix=UNIFIED_FACT_PREFIX+encodeURIComponent(athleteId)+':',errors:string[]=[];let saved=0
+ // One source-history read per successful batch; never reuse an index across athletes or calls.
+ let existing:Map<string,UnifiedFact>|undefined
  for(const raw of rows){const f=normalizeFact(raw);if(!f||f.athleteId!==athleteId){errors.push('无效或非本人证据未保存');continue}
-  const content=JSON.stringify(f),id=shortHash(content),prefix=UNIFIED_FACT_PREFIX+encodeURIComponent(athleteId)+':'
-  const old=readJournal<UnifiedFact>(prefix).find(x=>x.id===id)
-  if(old){if(JSON.stringify(old.data)!==content)errors.push('证据标识冲突，未覆盖');continue}
-  if(!appendJournal(prefix,id,f))errors.push('证据保存失败');else saved++
+  const content=JSON.stringify(f),id=shortHash(content)
+  if(!existing){existing=new Map();for(const entry of readJournal<UnifiedFact>(prefix))if(!existing.has(entry.id))existing.set(entry.id,entry.data)}
+  if(existing.has(id)){if(JSON.stringify(existing.get(id))!==content)errors.push('证据标识冲突，未覆盖');continue}
+  if(!appendJournal(prefix,id,f)){
+   errors.push('证据保存失败')
+   // A failed read-back can follow a successful physical write. Re-read before the next retry.
+   existing=undefined
+  }else{saved++;existing.set(id,f)}
  }
  if(saved)healthChanged();return {saved,errors}
 }

@@ -1,0 +1,107 @@
+TAP version 13
+# Subtest: unbound free chat sends meal and measured weight as facts: 你看我的饮食，我应该吃哪些高热量的食物才能增重？
+ok 1 - unbound free chat sends meal and measured weight as facts: 你看我的饮食，我应该吃哪些高热量的食物才能增重？
+  ---
+  duration_ms: 68.381536
+  type: 'test'
+  ...
+# Subtest: unbound free chat sends meal and measured weight as facts: 你不是可以读取我饮食健康里面的东西吗？
+ok 2 - unbound free chat sends meal and measured weight as facts: 你不是可以读取我饮食健康里面的东西吗？
+  ---
+  duration_ms: 9.134361
+  type: 'test'
+  ...
+# Subtest: unbound native strength retains actual load, repetitions and RPE at the provider boundary
+ok 3 - unbound native strength retains actual load, repetitions and RPE at the provider boundary
+  ---
+  duration_ms: 7.158204
+  type: 'test'
+  ...
+# Subtest: daily recovery retains quantitative readings, subjective recovery and independent rest
+ok 4 - daily recovery retains quantitative readings, subjective recovery and independent rest
+  ---
+  duration_ms: 7.054863
+  type: 'test'
+  ...
+# Subtest: unknown nutrition stays unknown while an explicit recorded zero remains zero
+ok 5 - unknown nutrition stays unknown while an explicit recorded zero remains zero
+  ---
+  duration_ms: 3.777499
+  type: 'test'
+  ...
+# Subtest: unreadable food and health storage remain errors in the final domain summaries
+ok 6 - unreadable food and health storage remain errors in the final domain summaries
+  ---
+  duration_ms: 2.576657
+  type: 'test'
+  ...
+# Subtest: future-known and future-day records are excluded by the request as-of boundary
+ok 7 - future-known and future-day records are excluded by the request as-of boundary
+  ---
+  duration_ms: 6.783295
+  type: 'test'
+  ...
+# Subtest: foreign food, body, health and legacy V4 records never enter the final provider request
+ok 8 - foreign food, body, health and legacy V4 records never enter the final provider request
+  ---
+  duration_ms: 7.856043
+  type: 'test'
+  ...
+# Subtest: long context preserves all three domain summaries and discloses omitted details
+ok 9 - long context preserves all three domain summaries and discloses omitted details
+  ---
+  duration_ms: 7.78219
+  type: 'test'
+  ...
+# Subtest: the requested historical day is preserved in final provider nutrition and health
+ok 10 - the requested historical day is preserved in final provider nutrition and health
+  ---
+  duration_ms: 3.662695
+  type: 'test'
+  ...
+# Subtest: food corrections and deletions are reflected by the next real outgoing request
+ok 11 - food corrections and deletions are reflected by the next real outgoing request
+  ---
+  duration_ms: 7.612305
+  type: 'test'
+  ...
+# Subtest: online off stops the client before either proxy or provider receives a request
+ok 12 - online off stops the client before either proxy or provider receives a request
+  ---
+  duration_ms: 1.578301
+  type: 'test'
+  ...
+# Subtest: provider system defines current-record reading and prioritises new facts over old denial
+ok 13 - provider system defines current-record reading and prioritises new facts over old denial
+  ---
+  duration_ms: 0.710712
+  type: 'test'
+  ...
+# Subtest: maximal Chinese chat uses at most 24000 UTF-8 request bytes while preserving formal facts
+ok 14 - maximal Chinese chat uses at most 24000 UTF-8 request bytes while preserving formal facts
+  ---
+  duration_ms: 193.415012
+  type: 'test'
+  ...
+# Actual UTF-8 request: 23485 bytes; facts: 3819 chars; retained local: 3000 chars; retained history: 2 entries; real proxy status: 200
+# Subtest: complete facts that cannot fit UTF-8 byte cap are rejected before any request
+ok 15 - complete facts that cannot fit UTF-8 byte cap are rejected before any request
+  ---
+  duration_ms: 0.405362
+  type: 'test'
+  ...
+# Subtest: complete facts that cannot fit proxy fact character cap are rejected before any request
+ok 16 - complete facts that cannot fit proxy fact character cap are rejected before any request
+  ---
+  duration_ms: 0.200372
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 338.546754

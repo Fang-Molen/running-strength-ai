@@ -226,9 +226,20 @@ export function StrengthApp() {
   const [editHome, setEditHome] = useState(false);
   const [quickOpen, setQuickOpen] = useState<{ text: string; n: number } | null>(null);
   const [healthLink, setHealthLink] = useState<string | null>(null);
-  useEffect(() => { setHomeLayout(loadLayout()); const lp = readLaunchParams(location.search); if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() }); if (lp.health) setHealthLink(lp.health); if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname); }, []);
-  // Every vendor returns to the same connection surface, including during first-run setup.
-  useEffect(() => { const result = readSyncCallback(location.search); if (!result) return; setSyncCallback(result); setSyncRequest({ mode: "accounts", provider: result.provider }); setSettingsPaneRaw("sync"); setSettingsOpen(true); history.replaceState(history.state, "", `${location.pathname}${result.cleanSearch}${location.hash}`); }, []);
+  const launchHandled = useRef(false);
+  useEffect(() => {
+    // Consume one launch once, including React's development effect replay.
+    // A vendor return takes precedence over shortcut import, keeping one window.
+    if (launchHandled.current) return;
+    launchHandled.current = true;
+    setHomeLayout(loadLayout());
+    const result = readSyncCallback(location.search);
+    if (result) { setSyncCallback(result); setSyncRequest({ mode: "accounts", provider: result.provider }); setSettingsPaneRaw("sync"); setSettingsOpen(true); history.replaceState(history.state, "", `${location.pathname}${result.cleanSearch}${location.hash}`); return; }
+    const lp = readLaunchParams(location.search);
+    if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() });
+    if (lp.health) setHealthLink(lp.health);
+    if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname);
+  }, []);
   useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY) && !localStorage.getItem(ONBOARD_SKIPPED_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");

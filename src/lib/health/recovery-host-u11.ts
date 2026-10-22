@@ -3,7 +3,7 @@
 import { currentAthleteId, loadCommittedEventRecords } from '../core/events'
 import { currentStore } from '../core/storage'
 import { getTrainingPlanSnapshot, listTrainingOccurrences } from '../core/occurrence'
-import { effectiveStrengthFields, listCorrections, occurrenceVoided } from '../core/training-correction'
+import { effectiveStrengthFields, readTrainingCorrectionsAsOf } from '../core/training-correction'
 import { projectRunningExecution } from '../core/running-execution'
 import { loadRunMatch } from '../ui/training-read-model'
 import type { V4Day } from '../ui/plan400-view'
@@ -61,8 +61,11 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     const strengthDays = new Set<string>(), runDays = new Set<string>(), phoneRunPlans = new Set<string>()
     for (const occurrence of occurrences) {
       const oid = occurrence.trainingOccurrenceId
-      if (!occurrence.startedAt || !recent(occurrence.startedAt) || occurrenceVoided(oid)) continue
+      if (!occurrence.startedAt || !recent(occurrence.startedAt)) continue
       if (!events.some(e => e.event_id === occurrence.startEventId)) continue
+      const corrections = readTrainingCorrectionsAsOf(oid,effectiveAsOf)
+      if (corrections.unknownCommitTime.length) { gaps.push('训练更正缺少可靠录入时间，历史肌群依据未知，未推定更正已在分析时点发生'); continue }
+      if (corrections.voided) continue
       const snapshot = occurrence.trainingPlanSnapshotId ? getTrainingPlanSnapshot(occurrence.trainingPlanSnapshotId) : null
       const latest = new Map<string, (typeof records)[number]>()
       for (const r of records) {
@@ -73,11 +76,11 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         latest.set(`${q.moveId}:${q.setIndex}`, r) // 同一组重记以最后一次为准
       }
       const exercises: NonNullable<TrainingPart['exercises']> = []
-      let known = ''
+      let known = Date.parse(occurrence.startedAt)
       for (const r of latest.values()) {
         const q = r.event.payload as Record<string, unknown>
         if (q.completed !== true || q.skipped === true) continue
-        const eff = effectiveStrengthFields(q), timed = q.mode === 'seconds'
+        const eff = effectiveStrengthFields(q,{corrections:corrections.rows}), timed = q.mode === 'seconds'
         const amount = timed ? (typeof q.actualAmount === 'number' ? q.actualAmount : null) : eff.reps.value
         if (!(eff.reps.status === 'UNKNOWN' || amount != null && amount > 0)) continue // 更正成 0 / 没有完成量 = 这组不算
         const planned = snapshot?.exercises.find(e => e.moveId === q.moveId)
@@ -87,12 +90,13 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         if (same) same.actualSets!++
         else exercises.push({ catalogId: key, name, actualSets: 1, verified: true })
         const at = r.recordedAt && iso(r.recordedAt) ? r.recordedAt : r.event.timestamp
-        if (at > known) known = at
+        const edits = corrections.rows.filter(c=>c.kind==='FIELD'&&(c.field==='weight'||c.field==='reps')&&c.setKey===`${q.moveId}:${q.setIndex}`)
+        known = Math.max(known,Date.parse(at),...edits.map(c=>Date.parse(c.recordedAt!)))
       }
       if (exercises.length) {
         const p: TrainingPart = { athleteId, eventId: oid, occurrenceId: oid, componentId: 'strength', modality: 'STRENGTH', occurredAt: occurrence.startedAt,
-          knownAt: known < occurrence.startedAt ? occurrence.startedAt : known, sourceId: oid, actual: 'CONFIRMED', exercises }
-        add(p, occurrence.lifecycle === 'IN_PROGRESS' ? '力量逐组记录（进行中）' : '力量逐组记录', exercises.map(e => `${e.name} ${e.actualSets}组`).join('；'), exercises.reduce((n, e) => n + (e.actualSets ?? 0), 0))
+          knownAt: new Date(known).toISOString(), sourceId: oid, actual: 'CONFIRMED', exercises }
+        add(p, events.some(e=>e.event_id===occurrence.closeEventId) ? '力量逐组记录' : '力量逐组记录（进行中）', exercises.map(e => `${e.name} ${e.actualSets}组`).join('；'), exercises.reduce((n, e) => n + (e.actualSets ?? 0), 0))
         const d = localDay(new Date(occurrence.startedAt)); strengthDays.add(d)
         const v4 = /plan400:(\d{4}-\d\d-\d\d)/.exec(occurrence.sessionId)?.[1]; if (v4) strengthDays.add(v4)
         continue
@@ -100,12 +104,17 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       // 逐段跑步（手机执行）：类型按计划课，不按配速/心率
       let run: ReturnType<typeof projectRunningExecution> | null = null
       try { run = projectRunningExecution(oid, events) } catch { run = null }
-      if (run?.availability !== 'AVAILABLE' || ![...run.repetitions, ...run.continuous].some(x => x.status === 'COMPLETED')) continue
+      if (run?.availability !== 'AVAILABLE') continue
+      const completed = [...run.repetitions, ...run.continuous].filter(x => x.status === 'COMPLETED')
+      if (!completed.length) continue
+      // Participation was known when the actual segments were committed; a later close cannot change that time.
+      const segmentIds = new Set(completed.flatMap(x=>x.sourceEventIds))
+      const segmentKnown = records.filter(r=>segmentIds.has(r.event.event_id)&&r.event.athlete_id===athleteId&&iso(r.event.timestamp)&&iso(r.recordedAt)&&Date.parse(r.event.timestamp)<=cutoff&&Date.parse(r.recordedAt)<=cutoff&&Date.parse(r.recordedAt)>=Date.parse(r.event.timestamp)).map(r=>Date.parse(r.recordedAt!))
+      if (!segmentKnown.length) { gaps.push('逐段跑步缺少可靠录入时间，历史参与依据未知，未补造知晓时刻'); continue }
       const v4 = /plan400:(\d{4}-\d\d-\d\d)/.exec(occurrence.sessionId)?.[1]
       const runType = v4 ? v4RunType(planDays().find(x => x.date === v4)) : 'UNKNOWN'
-      const close = records.find(r => r.event.event_id === occurrence.closeEventId)?.recordedAt
       const plan = v4 ? `v4run:${v4}` : oid
-      add({ athleteId, eventId: oid, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: iso(close) && close >= occurrence.startedAt ? close : occurrence.startedAt,
+      add({ athleteId, eventId: oid, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: new Date(Math.max(Date.parse(occurrence.startedAt),...segmentKnown)).toISOString(),
         sourceId: oid, actual: 'CONFIRMED', runType }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
       phoneRunPlans.add(plan); runDays.add(localDay(new Date(occurrence.startedAt))); if (v4) runDays.add(v4)
     }
@@ -114,8 +123,11 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     try { match = loadRunMatch() } catch { match = { links: [], suggestions: [] } }
     const linkedRunIdentity = new Set(match.links.filter(l => recent(l.run.startedAt)).flatMap(l => [l.run.id, ...l.run.originIds]))
     for (const record of coachImports(athleteId,effectiveAsOf)) {
-      if (!record.occurredAt.value || !recent(record.occurredAt.value) || occurrenceVoided(record.confirmedImportId)) continue
-      if (listCorrections(record.confirmedImportId).some(c=>c.kind==='FIELD')) {
+      if (!record.occurredAt.value || !recent(record.occurredAt.value)) continue
+      const corrections = readTrainingCorrectionsAsOf(record.confirmedImportId,effectiveAsOf)
+      if (corrections.unknownCommitTime.length) { gaps.push('导入训练更正缺少可靠录入时间，历史肌群依据未知，未推定更正已在分析时点发生'); continue }
+      if (corrections.voided) continue
+      if (corrections.rows.some(c=>c.kind==='FIELD')) {
         gaps.push('导入训练已有更正，肌群分析不再引用更正前明细'); continue
       }
       const base = {athleteId,eventId:record.confirmedImportId,occurrenceId:record.confirmedImportId,

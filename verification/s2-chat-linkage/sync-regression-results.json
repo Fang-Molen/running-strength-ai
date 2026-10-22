@@ -1,0 +1,321 @@
+{
+  "files": 39,
+  "tests": 342,
+  "pass": 342,
+  "fail": 0,
+  "failed_files": [],
+  "results": [
+    {
+      "file": "src/lib/health/garmin-sync-runner.test.ts",
+      "exit_code": 0,
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-sync-runner.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-sync-incremental.test.ts",
+      "exit_code": 0,
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-sync-incremental.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-sync-performance.test.ts",
+      "exit_code": 0,
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-sync-performance.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-intraday.test.ts",
+      "exit_code": 0,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-intraday.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-progress-store.test.ts",
+      "exit_code": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-progress-store.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-activity-conflicts.test.ts",
+      "exit_code": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-activity-conflicts.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-sync-status.test.ts",
+      "exit_code": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-sync-status.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/garmin-pending-imports.test.ts",
+      "exit_code": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "log": "logs/src_lib_health_garmin-pending-imports.test.ts.log"
+    },
+    {
+      "file": "src/components/garmin-sync-persistence.test.ts",
+      "exit_code": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "log": "logs/src_components_garmin-sync-persistence.test.ts.log"
+    },
+    {
+      "file": "verification/u11/garmin-sync-plan-u11.test.mjs",
+      "exit_code": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "log": "logs/verification_u11_garmin-sync-plan-u11.test.mjs.log"
+    },
+    {
+      "file": "src/lib/ui/device-store-health-result.test.ts",
+      "exit_code": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "log": "logs/src_lib_ui_device-store-health-result.test.ts.log"
+    },
+    {
+      "file": "src/lib/ui/device-store-sync.test.ts",
+      "exit_code": 0,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "log": "logs/src_lib_ui_device-store-sync.test.ts.log"
+    },
+    {
+      "file": "src/lib/ui/garmin-sync-live.test.ts",
+      "exit_code": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "log": "logs/src_lib_ui_garmin-sync-live.test.ts.log"
+    },
+    {
+      "file": "src/lib/ui/training-record-sync.test.ts",
+      "exit_code": 0,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "log": "logs/src_lib_ui_training-record-sync.test.ts.log"
+    },
+    {
+      "file": "src/lib/ui/scheduled-training.test.ts",
+      "exit_code": 0,
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "log": "logs/src_lib_ui_scheduled-training.test.ts.log"
+    },
+    {
+      "file": "src/lib/ui/running-workouts.test.ts",
+      "exit_code": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "log": "logs/src_lib_ui_running-workouts.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/occurrence.test.ts",
+      "exit_code": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "log": "logs/src_lib_core_occurrence.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/execution.test.ts",
+      "exit_code": 0,
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "log": "logs/src_lib_core_execution.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-decision.test.ts",
+      "exit_code": 0,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-decision.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-start-alias.test.ts",
+      "exit_code": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-start-alias.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-fact.test.ts",
+      "exit_code": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-fact.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-fact-ownership.test.ts",
+      "exit_code": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-fact-ownership.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-correction.test.ts",
+      "exit_code": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-correction.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-correction-projection.test.ts",
+      "exit_code": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-correction-projection.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-import.test.ts",
+      "exit_code": 0,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-import.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/training-import-delete.test.ts",
+      "exit_code": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "log": "logs/src_lib_core_training-import-delete.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/running-real-use.test.ts",
+      "exit_code": 0,
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "log": "logs/src_lib_core_running-real-use.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/running-execution.test.ts",
+      "exit_code": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "log": "logs/src_lib_core_running-execution.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/running-execution-rest.test.ts",
+      "exit_code": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "log": "logs/src_lib_core_running-execution-rest.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/coach-brief.test.ts",
+      "exit_code": 0,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "log": "logs/src_lib_core_coach-brief.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/coach-fuel.test.ts",
+      "exit_code": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "log": "logs/src_lib_core_coach-fuel.test.ts.log"
+    },
+    {
+      "file": "src/lib/core/coach-fieldwork-context.test.ts",
+      "exit_code": 0,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "log": "logs/src_lib_core_coach-fieldwork-context.test.ts.log"
+    },
+    {
+      "file": "src/lib/coach/global-coach-host-v89.test.ts",
+      "exit_code": 0,
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "log": "logs/src_lib_coach_global-coach-host-v89.test.ts.log"
+    },
+    {
+      "file": "src/lib/coach/online-coach.test.ts",
+      "exit_code": 0,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "log": "logs/src_lib_coach_online-coach.test.ts.log"
+    },
+    {
+      "file": "src/lib/health/health-nutrition-sync.test.ts",
+      "exit_code": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "log": "logs/src_lib_health_health-nutrition-sync.test.ts.log"
+    },
+    {
+      "file": "src/lib/nutrition/entry-workflow.test.ts",
+      "exit_code": 0,
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "log": "logs/src_lib_nutrition_entry-workflow.test.ts.log"
+    },
+    {
+      "file": "src/lib/nutrition/food-agg.test.ts",
+      "exit_code": 0,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "log": "logs/src_lib_nutrition_food-agg.test.ts.log"
+    },
+    {
+      "file": "src/lib/nutrition/vitals.test.ts",
+      "exit_code": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "log": "logs/src_lib_nutrition_vitals.test.ts.log"
+    },
+    {
+      "file": "src/lib/nutrition/energy-source.test.ts",
+      "exit_code": 0,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "log": "logs/src_lib_nutrition_energy-source.test.ts.log"
+    }
+  ]
+}

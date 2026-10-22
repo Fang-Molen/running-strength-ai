@@ -6,7 +6,7 @@ import { storeKeys } from '../core/storage-journal'
 import { readCoachData, type CoachDataContext } from '../health/coach-data'
 import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
 import { HEALTH_CHANGED, localDay, shortHash, validDay } from '../health/observation'
-import { loadEntries } from '../nutrition/log'
+import { loadEntries, nutrientOf } from '../nutrition/log'
 import { readPendingFeedback } from '../ui/pending-feedback-host'
 import { pendingTaskId, type PendingItem } from '../ui/pending-feedback'
 import { readC03FollowupView, C03_FOLLOWUP_CHANGED_EVENT } from './c03/runtime'
@@ -87,10 +87,11 @@ export async function readGlobalCoachSnapshot(
         value: p?.value ?? null, quality: p ? p.legacy ? 'LEGACY' : 'RECORDED' : 'UNKNOWN', coverage: 'RECORDED_ONLY' }
     })
     for (const food of loadEntries().filter(row => row.date === day && (row.athleteId ?? 'local') === athleteId)) {
+      const kcal=nutrientOf(food,'kcal')
       evidence.push({ id:`nutrition:${athleteId}:${food.id}`,athleteId,domain:'NUTRITION',
-        availability:food.kcal===null?'MISSING':'AVAILABLE',revision:revision(food),observedAt:at(food.eatenAt),knownAt:at(food.recordedAt),
-        summary:`${food.meal} · ${food.name}：${food.kcal===null?'热量未记录':`${food.kcal} kcal`}（仅此条记录）`,
-        sourceId:food.id,metric:'ENERGY_INTAKE',unit:'kcal',value:food.kcal,quality:food.recordedAt?'RECORDED':'LEGACY',coverage:'RECORDED_ONLY'})
+        availability:kcal===null?'MISSING':'AVAILABLE',revision:revision(food),observedAt:at(food.eatenAt),knownAt:at(food.recordedAt),
+        summary:`${food.meal} · ${food.name}：${kcal===null?'热量未记录':`${kcal} kcal`}（仅此条记录）`,
+        sourceId:food.id,metric:'ENERGY_INTAKE',unit:'kcal',value:kcal,quality:food.recordedAt?'RECORDED':'LEGACY',coverage:'RECORDED_ONLY'})
     }
     pending = readPendingFeedback(day)
     if(data.muscleRecovery) evidence.push({id:`muscle:${athleteId}:${day}`,athleteId,domain:'TRAINING',

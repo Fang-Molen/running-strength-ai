@@ -1,0 +1,13 @@
+✔ late-mounted views observe the same running progress and completed message (0.829471ms)
+✔ sync messages are scoped to the originating athlete (0.172901ms)
+✔ logout clears the view and late completion cannot replace a new account job (0.113241ms)
+✔ mounted subscriber immediately re-reads athlete scope without changing the original job (0.339523ms)
+✔ completed auth result stays scoped until cleared and old tokens cannot replace a new result (0.146962ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.041041

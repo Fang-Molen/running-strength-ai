@@ -9,9 +9,12 @@ export function withUnifiedFacts(snapshot:HealthSnapshot,asOf=new Date().toISOSt
   const owned=p.evidence.filter(f=>f.metric===view.metric&&f.day<=snapshot.asOf);if(!owned.length)return view
   const prefixes=new Set(owned.map(f=>`${f.provider.toLowerCase()}:${shortHash(f.accountRef+':'+f.deviceId)}|`))
   const others=view.series.concat(view.candidates).filter(v=>![...prefixes].some(prefix=>v.stream.startsWith(prefix)))
-  const current=p.facts.filter(f=>f.metric===view.metric&&f.day<=snapshot.asOf&&(f.provider!=='APPLE'||!['SLEEP','STEPS','ACTIVE_KCAL','RESTING_KCAL'].includes(f.metric)||f.recordId.startsWith('daily:')))
-  const points:HealthPoint[]=current.map(f=>({id:factId(f),metric:f.metric,day:f.day,value:f.value!,source:`${f.provider} · 核对导入`,stream:factProtocol(f),statistic:f.protocol,method:f.metric==='HRV'?(/SDNN/.test(f.protocol)?'SDNN':/RMSSD/.test(f.protocol)?'RMSSD':'UNSPECIFIED'):'',updatedAt:f.receivedAt,measuredAt:f.end??f.start,legacy:false}))
-  const all=[...new Map([...others,...points].map(v=>[v.id,v])).values()],lastDay=owned.map(f=>f.day).concat(all.map(v=>v.day)).sort().at(-1)
+  const visible=(f:typeof p.evidence[number])=>f.provider!=='APPLE'||!['SLEEP','STEPS','ACTIVE_KCAL','RESTING_KCAL'].includes(f.metric)||f.recordId.startsWith('daily:')
+  const current=p.facts.filter(f=>f.metric===view.metric&&f.day<=snapshot.asOf&&visible(f))
+  const latestRevision=new Map<string,number>();for(const f of p.evidence)latestRevision.set(factId(f),Math.max(latestRevision.get(factId(f))??-1,f.revision))
+  const latest=owned.filter(f=>f.revision===latestRevision.get(factId(f))&&visible(f))
+  const points:HealthPoint[]=current.map(f=>({id:factId(f),metric:f.metric,day:f.day,value:f.value!,source:`${f.provider} · ${f.manualCorrection?'人工更正':'核对导入'}`,stream:factProtocol(f),statistic:f.protocol,method:f.metric==='HRV'?(/SDNN/.test(f.protocol)?'SDNN':/RMSSD/.test(f.protocol)?'RMSSD':'UNSPECIFIED'):'',updatedAt:f.receivedAt,measuredAt:f.end??f.start,legacy:false}))
+  const all=[...new Map([...others,...points].map(v=>[v.id,v])).values()],lastDay=latest.map(f=>f.day).concat(all.map(v=>v.day)).sort().at(-1)
   const candidates=all.filter(v=>v.day===lastDay&&(!view.selectedSource||v.stream===view.selectedSource))
   const conflicted=owned.some(f=>f.day===lastDay&&p.conflicts.includes(factId(f)))||new Set(candidates.map(v=>JSON.stringify([v.stream,v.value]))).size>1
   const selected=conflicted?null:candidates.at(-1)??null

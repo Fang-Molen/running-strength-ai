@@ -1,0 +1,17 @@
+✔ coach reads a draft as traceable context without completed-training facts (19.329613ms)
+✔ unrelated questions do not pull meal, body, appearance or draft records (3.316489ms)
+✔ meal context uses recorded numbers with unknown macros and no energy-deficit diagnosis (1.130606ms)
+✔ body context uses measured weight and never includes scenario or presentation gender (1.19985ms)
+✔ future-saved observations do not leak into an earlier as-of view (1.161883ms)
+✔ coach packet carries new read-only sources and leaves occurrence unbound (23.308276ms)
+✔ source views stay scoped to the current athlete (0.817683ms)
+✔ actual dialogue route answers record inspection with saved numbers instead of intake (14.03854ms)
+✔ medical safety and a prior emergency override read-only record inspection (12.939762ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 92.31226

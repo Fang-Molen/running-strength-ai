@@ -1,0 +1,12 @@
+✔ facts are de-identified: no activity name/city, id or source identity (1.298519ms)
+✔ garmin directWorkoutRpe 10-100 maps to RPE 1-10 (0.176096ms)
+✔ coach-chat proxy: key required, size and rate limited, system prompt fixed server-side (37.483222ms)
+✔ C03 merge: client question cap matches live server clip (1000); over-limit or control chars never fetch (750.400162ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 796.083366

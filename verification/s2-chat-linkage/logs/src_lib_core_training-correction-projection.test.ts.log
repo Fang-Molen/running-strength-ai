@@ -1,0 +1,13 @@
+✔ decision formulas do not read the correction projection (1.149905ms)
+✔ strength weight and reps follow one projection through correct, void, restore and correct again (15.281994ms)
+✔ unbound, unmatched and unreadable corrections do not invent a strength value (1.004696ms)
+✔ squat 40x8 corrects to 55x10 across log, evidence, summary and coach review (6.982134ms)
+✔ different corrected sets are listed once and are not added together (1.400202ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31.931723

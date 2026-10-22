@@ -1,0 +1,2568 @@
+--- /dev/null
++++ b/S1-INCREMENTAL-SYNC-README.md
+@@ -0,0 +1,85 @@
++# 方坤 S1：增量同步与数据通路修复
++
++本次在上一份 `fangkun-s1-unified-sync-fixed.zip` 上继续修改。保留原有页面风格、统一设备窗口和健康趋势日期导航，主要修复重复读取、训练记录一致性及方坤读取健康/饮食数据的问题。
++
++## 日常同步的变化
++
++- 健康读取进度与训练活动冲突分开保存。一条活动需要核对，不再让已经成功保存的健康历史反复从头读取。
++- 日常同步读取近 3 天、新活动和明确未完成的日期；一次最多补 14 个更早日期。跨日不会自动恢复为读取 200 条活动与 14 天健康。
++- 新活动每页 20 条，遇到已读且未变化的活动后停止；新活动较多时继续翻页，单次上限仍为 200 条。
++- 首次建立健康历史仍可读取近 90 天；升级时不能凭已有几个健康数值猜测某天全部接口都已完成，因此会保守补齐旧游标留下的缺口。
++- 单项接口失败、限流、认证失效、账户变化、本机保存失败都不会被当作成功回执。明确无数据的日内响应可以记录为已检查，不生成虚假的健康值。
++- “完整复核最近数据”仍保留在原有折叠说明内，由用户主动重查近 14 天与最近 200 条活动。
++
++### 相同合成条件下的请求对比
++
++用上一份已交付源码作为基线，模拟旧健康游标 42、四条活动来源变化、较早日内已经完整的状态：
++
++| 场景 | 旧版 | 本版 |
++|---|---|---|
++| 后续健康日期 | 每轮又读 62 天 | 续补依次 17、17、17、9 天，之后 3 天 |
++| 后续活动列表 | 每轮 200 条 | 默认一页 20 条；有更多新活动才继续 |
++| 成功历史重复读取 | 同一旧日期每轮重读 | 本次 48 个旧缺口各成功读取一次 |
++| 仅日汇总的任务请求 | 189 次/轮 | 补齐后 12 次/轮 |
++| 加今昨两日日内的任务请求 | 193 次/轮 | 补齐后 16 次/轮 |
++
++这是合成响应下的请求数量验证，不是本人手表或公网耗时测试。页面连接检查、首次分圈预取及实际新活动数量会影响整个页面的总请求数。
++
++## 训练完成、记录和方坤
++
++跑步成绩录入后会保留实际记录；只有正式结束训练才显示完成。力量和跑步的重复完成不会额外增加同一课次。实际时长的小数精度保持原样。
++
++同一手表来源 ID 重复导入不会重复计数；佳明的原始视图与正式导入会按共同来源合为一条记录。来源总量发生变化时保留原记录与人工更正，并继续显示待核对提示。较旧冲突通过本机已有记录检查，不需要为了显示提示重新拉取 200 条活动。
++
++新增加的本机重试只处理明确保存失败的活动。即使失败活动已不在下一页 20 条中，也能使用已下载的记录补存，补存成功后清除待重试项。账号和运动员分别隔离；旧的原始活动视图不会被当成失败清单，以免恢复用户主动删除的训练。无法确认保存结果时保留待复核提示。
++
++修复了零距离力量活动的比较口径：设备传入的 `0` 与导入合同规范化后的缺失距离不会再产生虚假冲突；真实 0.1 秒差异仍要求核对。
++
++各训练实际写入入口、恢复课次、完成回调和方坤选择训练均补上运动员归属检查。等待保存时发生 A→B→A 切换，旧操作仍失效，避免写入错误课次。
++
++**跨来源的边界：** 手机独立记录与手表独立记录同一节课，在没有共同身份或确认关联时，仍保留两份证据；不会只凭相同时间、距离或成绩自动合并。方坤日背景分别列示且不把两种计数直接相加。
++
++## 健康与饮食到方坤
++
++已使用真实业务入口与合成数据验证：确认导入健康 → 当前健康快照 → 方坤读取；餐食确认 → 分餐记录 → 汇总 → 方坤读取。修复包括：
++
++- 未估算热量继续显示为未知，不被方坤当成已知 0。
++- 新餐食的碳水字段与旧字段共用同一读取口径。
++- 修改、删除餐食后，汇总与方坤读取当前有效版本；修改一条较旧餐食后，新版本也能进入最近的上下文。
++- 新版营养快照优先提供食物来源与地区，旧版食物快照仍可读取；品牌食物不会被错误标成手工输入。
++- 早餐与午餐吃相同食物仍是两条合理记录；同一餐食 ID 反复保存不会重复累计。
++- 已确认健康来源修订更新当前值，不额外制造重复健康记录；日期和运动员分别隔离。
++
++人工修改导入活动的总时长/距离时，原有日背景会撤回旧总量，提示进入具体训练核对，不会继续把旧值当最新值。本次没有扩大为自动把所有人工更正回填到各类汇总的功能。
++
++## 其他品牌检查的实际范围
++
++共同的正式导入、来源去重和健康/饮食读取链路已检查。此次网络增量调度修复针对截图所示的佳明状态机，其他适配器的能力应按实际代码区分：
++
++| 平台 | 当前代码状态 |
++|---|---|
++| COROS | 活动按自动 7 天/手动 28 天读取，健康有缓存；仍不是完整的持久化增量游标。 |
++| Apple Health / Health Connect | 依赖原生权限与桥接；现有读取范围仍是 28 天。 |
++| Suunto / Polar | 现有官方接口按各自可用范围读取；没有在本次被宣称为全部改成佳明式增量。 |
++| Strava | 当前个人 MCP 路径核验工具能力，尚未实际导入数据。 |
++| 华为云 | 当前官方云通道尚未开放；不能称为已打通。 |
++
++本次没有调用本人真实手表账户或付费模型，没有部署线上版本。验证范围与全仓既有失败见随附验证说明；不能把合成业务通路测试等同于所有品牌真实设备已完成联调。
++
++## 复核与使用
++
++完整源代码、相对上一份交付的源码补丁和验证记录都在同一压缩包内。验证说明见 `S1-INCREMENTAL-SYNC-VERIFICATION.md`。
++
++安装项目依赖后，可从项目根目录执行：
++
++```sh
++python3 verification/s1-incremental/run-regressions.py
++npm run typecheck:application
++```
++
++本次构建使用以下入口，仅构建前后端资源，不运行数据库迁移：
++
++```sh
++node scripts/clean-build-output.mjs
++node scripts/with-app-env.mjs ./node_modules/.bin/vite build
++```
+--- /dev/null
++++ b/S1-INCREMENTAL-SYNC-VERIFICATION.md
+@@ -0,0 +1,123 @@
++# 方坤 S1：数据同步验证说明
++
++验证日期：2026-10-22。
++
++## 版本和验证范围
++
++本次基线是上一份交付 `fangkun-s1-unified-sync-fixed.zip`，SHA-256：
++
++`187ab3b950962389fb90067045ed1e637ee3a21a8120afe53b314f217a71ce46`
++
++修复在完整基线上完成；没有删除既有源文件。保留原有浅色橙色界面、统一设备入口、健康趋势日期导航以及原始记录和人工更正的区分。
++
++所有数据通路验证使用实际产品函数、真实本机存储合同和合成数据；浏览器中的网络响应被隔离模拟。没有调用真实手表账户、付费模型或第三方云账户，没有部署线上版本，也没有运行数据库迁移。
++
++## 最终验证结果
++
++| 验证 | 实际结果 |
++|---|---|
++| 专项产品回归 | **39 个文件，339 项通过，0 失败**。逐文件结果见 `verification/s1-incremental/test-results.json`。 |
++| 应用类型检查 | `npm run typecheck:application` 退出 0。 |
++| 清理后的应用构建 | Vite / Nitro 构建与首页预渲染完成，退出 0；没有执行数据库迁移。 |
++| 手机生产预览 | **390 × 900，38/38 通过**；覆盖续补、重复同步、跨日、旧来源冲突、明确完整复核。 |
++| 桌面生产预览 | **1280 × 900，6/6 通过**；覆盖页面身份、统一入口、布局、运行时错误和新增弹窗。 |
++| 页面运行情况 | 未捕获运行时错误 0、新增弹窗 0、横向溢出 0；仅有下文列出的两张基线图片 404。 |
++| 人工视觉复核 | 已查看手机同步中 / 增量完成与桌面连接页面截图，保持原有设计。 |
++
++浏览器实际加载的生产 HTML SHA-256 与构建产物一致：
++
++`209bb42453f466ee37dbaa670499a3d1d58842f73872c34de9a870279fa0aa30`
++
++首页引用的 15 个构建资源均存在。浏览器检查摘要见 `verification/s1-incremental/browser-verification.json`。A→B→A 的真实 host 页面专项在此前开发预览执行通过；最终产品回归也覆盖归属和等待中的写入隔离。
++
++## 请求量与续传
++
++针对旧健康游标 42、四条来源活动变化的情形，原版会反复请求 62 个健康日期与 200 条活动。修复后，健康成功回执独立于活动冲突保存。
++
++| 验证场景 | 预期与已执行的行为 |
++|---|---|
++| 迁移旧游标 | 续补 17、17、17、9 个日期，之后为近 3 天；48 个旧缺口各成功读取一次。 |
++| 普通活动同步 | 先读取 20 条，遇到已读且未变化的活动停止；存在更多新活动才继续。 |
++| 跨日普通同步 | 保持近 3 天与新活动，不因换日自动变为 14 天 / 200 条。 |
++| 长期未打开 | 加入上次有效读取后的缺口，旧日期单次最多补 14 个。 |
++| 明确完整复核 | 保留近 14 天健康与最多 200 条活动的主动复核入口。 |
++| 单接口失败 / 限流 | 失败日期保留待处理，不把未完成日期记成成功。 |
++| 日内明确无数据 | 保存“已检查”回执，不写出虚假的心率、压力或身体电量。 |
++| 登录失效 / 账号切换 | 放弃不再属于当前账号或运动员的响应；A→B→A 仍会使旧请求失效。 |
++| 旧来源冲突 | 本机检查原始来源与正式记录，旧冲突继续显示；不额外联网拉 200 条来维持提示。 |
++
++在相同合成响应下，仅日汇总任务请求从 189 次降为补齐后的 12 次；包含今昨两日日内数据时，从 193 次降为 16 次。这些数字是任务实际请求计数，不代表公网耗时或所有页面附加请求。首次连接检查和分圈预取会产生额外请求。
++
++## 今日训练、记录和方坤
++
++| 通路 | 核验与修复 |
++|---|---|
++| 跑步实际录入 → 记录 | 未正式结束的跑步显示进行中；已经录入的实际成绩仍保留。 |
++| 力量 / 跑步完成 → 完成事实 | 重复点击完成复用同一完成事件，不新增第二次训练。 |
++| 恢复同一训练 → 录组 / 完成 | 原开始记录与恢复后开始别名指向同一课次；已关闭课次不能被旧回调继续追加组，也不能关闭后来的新课次。 |
++| 设备导入 → 正式记录 | 同一来源活动身份重复同步不新增训练；零距离力量活动不再因 0 / 缺失值的规范化差异误报来源冲突。 |
++| 佳明原始视图 → 记录 | 新记录具有运动员归属；原始视图与正式导入使用共同来源合成一条展示记录。 |
++| 本机入库失败 → 下次同步 | 40 条中第 25 条保存失败后，下一轮仍只联网读取 20 条，通过本机失败清单补存到 40 条；再同步不重复。 |
++| 人工更正 → 正式事实 | 保留原始值与更正事件；不会用重新下载的旧值覆盖手工更正。 |
++| 训练 → 方坤 | 从当前运动员真实训练事件与正式记录建立上下文，排除其他运动员的开始事件和训练。 |
++| 等待中的写入 → 切换运动员 | 实际保存入口再次检查归属；等待 Web Lock 时发生 A→B→A 也拒绝旧操作。 |
++
++### 重复与更正的边界
++
++- 手机独立开始一节训练、手表又独立记录一节活动，没有共同来源身份或确认关联时，系统保留两份证据。相似时间和距离不能证明一定是同一活动。方坤按来源分别展示计数，不把两者直接相加。
++- 手工更正导入的总时长 / 总距离后，旧的日背景总量会撤回并提示核对具体训练；本次没有新增“将所有人工更正自动回填到所有汇总”的功能。
++- 只从新版本明确保存失败的结果建立本机待重试清单。旧版本留下的原始视图不能区分“从未保存成功”和“用户主动删除”，因此不自动把缺少正式记录的旧视图补成训练。
++- 待重试状态损坏时提示检查本机存储；写入失败或保存结果无法确认时保留待复核提示。不把不确定结果显示为成功，也不自动恢复可能已删除的记录。
++
++## 健康与饮食到方坤
++
++采用真实确认导入、餐食保存、聚合和方坤上下文构造入口，验证了以下路径：
++
++1. 确认健康记录 → 当前健康快照 → 方坤；来源修订更新当前有效值，日期和运动员分别隔离。
++2. 餐食确认 → 分餐记录 → 当日营养汇总 → 方坤；同一餐食 ID 重复保存不重复累计，早餐和午餐的相同食物仍是不同餐食。
++3. 修改或删除餐食 → 汇总与方坤更新；修改较早餐食后，按修改时间进入最近上下文。
++4. 新版 `carb` 与旧版 `carbs` 经同一营养读取入口处理。
++5. 未估算热量保持未知，不转成已知 0；明确记录的 0 仍然是有效值。
++6. 新版 `nutritionSnapshot` 的食物来源与地区优先使用，旧版 `foodSnapshot` 保持兼容。
++
++这些验证证明本版数据能够进入方坤的输入上下文，不等同于已经调用某个线上模型并验证其最终自然语言回答。
++
++## 其他品牌的实际状态
++
++| 平台 | 检查结果与限制 |
++|---|---|
++| COROS | 活动自动 7 天 / 手动 28 天，健康带缓存；尚无与本次佳明相同的持久化日期回执。 |
++| Apple Health / Health Connect | 使用原生桥接与系统权限；既有读取范围仍是 28 天，本环境未连接原生设备。 |
++| Suunto / Polar | 既有官方接口按各自固定范围读取，失败后可能重复读取部分数据；本次没有宣称所有品牌都完成网络增量改造。 |
++| Strava | 当前个人 MCP 路径只核验工具能力，实际 `dataImported` 仍为 `false`。 |
++| 华为云 | 当前官方云通道尚未配置开放，不能视为已经直连。 |
++
++共同的正式导入、来源去重及健康 / 饮食读取路径有产品回归覆盖。各品牌在线授权、服务可用性、真实设备同步速度仍需在对应正式环境联调。
++
++## 全仓既有失败
++
++对未经修改的上一版与本版分别运行 `npm test`，两者均在第一阶段得到 **222 项、218 通过、4 失败**；后续通过 `&&` 串接的阶段未执行。因此本报告不宣称全仓测试全部通过。
++
++四项失败均来自基线中未包含的静态资源：
++
++- `scripts/anatomy-model.test.mjs` 缺少 `public/demo3d/anatomy/ecorche.meshopt.glb`。
++- `scripts/anatomy-r9.test.mjs` 缺少 `public/demo3d/anatomy/fk-muscle-r9.meshopt.glb`。
++- `scripts/muscle3d-friendly.test.mjs` 同样缺少 `ecorche.meshopt.glb`。
++- `scripts/grok-pwa-plugin.test.mjs` 的资源存在性断言缺少 `public/__grok/icon-180.png`。
++
++另外，既有 `health-hardening.test.ts` 一项使用运行当日保存时间、却按固定较早日期读取的测试会被严格的截止时间过滤；在未修改基线中也可复现。本次没有放宽产品时间隔离规则来迎合该断言。
++
++页面中既有的 `/fangshen/care-bust.png` 与 `/fangkun-atlas/figure-female.webp` 缺图也没有在本次用新图替代。与同步有关的运行时异常、宽度溢出和行为断言单独记录。
++
++## 重跑入口
++
++项目依赖安装完成后，在项目根目录执行；汇总脚本使用 Python 3 标准库调用项目现有 Node 测试入口：
++
++```sh
++python3 verification/s1-incremental/run-regressions.py
++npm run typecheck:application
++node scripts/clean-build-output.mjs
++node scripts/with-app-env.mjs ./node_modules/.bin/vite build
++```
++
++回归入口会打印逐文件测试汇总，并在系统临时目录保存详细日志。本次不使用会连带执行数据库迁移的 `npm run build`。
+--- /dev/null
++++ b/docs/superpowers/plans/2026-10-22-incremental-sync-and-data-paths.md
+@@ -0,0 +1,65 @@
++# Incremental sync and data paths implementation plan
++
++> **For agentic workers:** Use `superpowers:subagent-driven-development` or `superpowers:executing-plans` task by task; work is already authorized by the user's request to fix and verify the existing app.
++
++**Goal:** Stop repeated Garmin history reads while verifying that completed training, health and food records remain accurate and available to 方坤.
++
++**Architecture:** Commit daily health receipts independently of training import conflicts. Scope receipts to the athlete and Garmin account; daily sync reads recent dates and explicit gaps, while manual review remains available. Reuse the existing confirmed-data read models for all downstream checks.
++
++**Tech Stack:** TypeScript, React, local durable stores, Node tests and isolated browser fixtures.
++
++**Spec:** User's 2026-10-22 request: subsequent sync still reads too much; also check today's completed training, duplicate records, 方坤 access, and health/nutrition data paths.
++
++## Global constraints
++
++- Preserve the accepted UI, health trend navigation, original records and manual corrections.
++- No real account requests, paid model calls, deployment or database migrations during verification.
++- Use the previous delivered S1 archive as the baseline. Do not silently replace source history or mark failed reads as complete.
++- Normal established sync reads recent 3 days plus explicit missing dates, with at most 14 older catch-up dates per run. Manual review reads 14 days and at most 200 activities.
++- A single failed health endpoint retains the date for retry; activity conflicts remain visible and cannot reset successful health progress.
++
++## Review focus
++
++- Mixed success: health saved while an activity conflicts; health receipts must advance and the conflict must remain reported.
++- Interrupted / cross-day catch-up: already checked historical dates must not be requested again; old pending dates must not disappear.
++- Account or athlete switches, including A→B→A during a request, must invalidate the result and its progress.
++- Repeated completion/import must not double count the same source identity; similar independent activities must not be silently merged.
++- Unknown nutrition values, same-day different meals, corrections and removals must be reflected accurately in 方坤's latest read.
++
++## Task 1: Runner and scheduling (runner agent)
++
++**Files:** `src/lib/health/garmin-sync-runner.ts`, `garmin-daily-progress.ts`, related tests.
++
++**Interface:** `GarminDailyProgress = {checkedDays:string[]; pendingDays:string[]; lastSyncAt:string|null; intradayCheckedDays?:string[]}`; optional `host.dailyProgress.get/set`; optional `save().healthErrors`; new report mode `BACKFILL`.
++
++- [x] Reproduce repeated INITIAL with legacy cursor 42 and four activity errors.
++- [x] Add failing tests for category-independent progress, bounded catch-up, per-endpoint errors, cross-day gaps, empty intraday receipts and ownership fences.
++- [x] Implement modern receipt-based scheduling while preserving conservative compatibility for hosts without receipts.
++- [x] Run runner / scheduling / performance regressions and save actual request counts.
++
++## Task 2: Durable host integration (root)
++
++**Files:** `src/lib/health/garmin-progress-store.ts`, `src/lib/ui/device-store.ts`, `src/components/garmin-sync.tsx`, `src/lib/health/garmin-sync-status.ts`, related tests.
++
++**Interface:** Read/write daily progress with explicit scope and subject and verified durable writes; expose health errors from the single existing batch save; retain the legacy public save result for other callers.
++
++- [x] Add tests for account/athlete isolation, corrupt progress, failed writes, and health-versus-activity errors.
++- [x] Implement receipt storage and connect the real host; invalidate an in-flight sync when the athlete changes.
++- [x] Update existing compact details to distinguish catch-up from first sync and show actual requested date counts.
++- [x] Verify ordinary sync, manual review and source conflict preservation in the real browser entry point.
++
++## Task 3: Data path verification (training and nutrition agents)
++
++**Files:** Actual training completion/record/coach read models and actual health/food confirmation/coach read models; only confirmed defects receive minimal fixes.
++
++- [x] Exercise completed and partially completed training, repeated imports, source corrections, manual corrections and athlete isolation using synthetic records.
++- [x] Exercise confirmed health, multiple same-day meals, editing/removing a meal, unknown nutrition and latest 方坤 context.
++- [x] For each defect, capture a failing test, apply the smallest correction, and rerun the affected tests.
++- [x] Record which paths were executed and distinguish code-level synthetic evidence from real-account end-to-end verification.
++
++## Task 4: Delivery (root)
++
++- [x] Review all changes against the prior archive and verify no baseline files were lost.
++- [x] Run relevant data-contract tests, application typecheck, clean build and bounded dev/production browser checks.
++- [x] Package the complete source and a concise verification report with test counts, actual requests, unresolved limits and reproduction instructions.
++- [x] Prepare the updated delivery and a short Chinese explanation for final file handoff.
+--- a/src/components/garmin-log.tsx
++++ b/src/components/garmin-log.tsx
+@@ -10,17 +10,18 @@
+ 
+ export const GACTS_KEY = "fk-garmin-acts-v1";
+ export const GLAPS_KEY = "fk-garmin-laps-v1";
+-type G = { sourceIdentity?: string; id: number; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null; vo2?: number | null; vr?: number | null };
++type G = { athleteId?: string; sourceIdentity?: string; id: number; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null; vo2?: number | null; vr?: number | null };
+ type Lap = { i: number; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; speed: number | null };
+ const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);
+ const load = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) || "") as T; } catch { return d; } };
+ 
+ export function saveGarminActivities(list: unknown[], accountScope?: string): void {
+-  const key = accountScope ? `${GACTS_KEY}:${encodeURIComponent(currentAthleteId())}:${accountScope}` : garminViewKey(GACTS_KEY);
++  const athleteId = currentAthleteId();
++  const key = accountScope ? `${GACTS_KEY}:${encodeURIComponent(athleteId)}:${accountScope}` : garminViewKey(GACTS_KEY);
+   const have = load<Record<string, G>>(key, {});
+   for (const o of list as Record<string, any>[]) {
+     if (!o?.activityId) continue;
+-    have[o.activityId] = { id: o.activityId, sourceIdentity: o.fkSourceIdentity, name: o.activityName ?? "", type: o.activityType?.typeKey ?? "", start: o.fkStartIso ?? o.startTimeLocal ?? o.startTimeGMT ?? "", dist: num(o.distance), dur: num(o.duration), avgHr: num(o.averageHR), maxHr: num(o.maxHR), cad: num(o.averageRunningCadenceInStepsPerMinute), elev: num(o.elevationGain), cal: num(o.calories), sets: num(o.totalSets) ?? num(o.activeSets), reps: num(o.totalReps), tl: num(o.activityTrainingLoad), te: num(o.aerobicTrainingEffect), ate: num(o.anaerobicTrainingEffect), rpe: num(o.directWorkoutRpe), vo2: num(o.vO2MaxValue), vr: num(o.avgVerticalRatio) };
++    have[o.activityId] = { athleteId, id: o.activityId, sourceIdentity: o.fkSourceIdentity, name: o.activityName ?? "", type: o.activityType?.typeKey ?? "", start: o.fkStartIso ?? o.startTimeLocal ?? o.startTimeGMT ?? "", dist: num(o.distance), dur: num(o.duration), avgHr: num(o.averageHR), maxHr: num(o.maxHR), cad: num(o.averageRunningCadenceInStepsPerMinute), elev: num(o.elevationGain), cal: num(o.calories), sets: num(o.totalSets) ?? num(o.activeSets), reps: num(o.totalReps), tl: num(o.activityTrainingLoad), te: num(o.aerobicTrainingEffect), ate: num(o.anaerobicTrainingEffect), rpe: num(o.directWorkoutRpe), vo2: num(o.vO2MaxValue), vr: num(o.avgVerticalRatio) };
+   }
+   const raw = JSON.stringify(have);
+   localStorage.setItem(key, raw);
+--- /dev/null
++++ b/src/components/garmin-sync-persistence.test.ts
+@@ -0,0 +1,71 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { setStoreBackend } from '../lib/core/storage'
++import { setEventContext } from '../lib/core/events'
++import { localDay, shiftDay } from '../lib/health/observation'
++import { writeGarminDailyProgress } from '../lib/health/garmin-progress-store'
++import { readGarminSyncStatus } from '../lib/health/garmin-sync-status'
++
++async function fixture(mode: 'cache' | 'throw-report' | 'drop-report') {
++  const original = new Map(['localStorage', 'window', 'navigator'].map(k => [k, Object.getOwnPropertyDescriptor(globalThis, k)]))
++  const oldFetch = globalThis.fetch, data = new Map<string, string>(), paths: string[] = []
++  let fail = false
++  const subject = `synthetic-report-${mode}`, scope = 'cn:synthetic-report'
++  const key = (name: string) => `${name}:${subject}`
++  const store = {
++    getItem: (k: string) => data.get(k) ?? null,
++    setItem: (k: string, v: string) => {
++      if (fail && (mode === 'cache' ? /^fk-garmin-last-(sync|full-ok|attempt):/.test(k) : k.startsWith('fk-garmin-sync-report:'))) {
++        if (mode === 'drop-report') return
++        throw Error('synthetic persistence failure')
++      }
++      data.set(k, v)
++    }, removeItem: (k: string) => { data.delete(k) }, keys: () => [...data.keys()],
++  }
++  setStoreBackend(store); setEventContext({ athleteId: subject })
++  Object.defineProperty(globalThis, 'localStorage', { value: store, configurable: true })
++  Object.defineProperty(globalThis, 'window', { value: new EventTarget(), configurable: true })
++  Object.defineProperty(globalThis, 'navigator', { value: { onLine: true }, configurable: true })
++  const day = localDay(), now = new Date().toISOString()
++  store.setItem(`fk-garmin-health-backfill:${scope}`, '90')
++  for (const name of ['fk-garmin-last-attempt', 'fk-garmin-last-sync', 'fk-garmin-last-full-ok']) store.setItem(key(name), '2026-01-01T00:00:00Z')
++  writeGarminDailyProgress(scope, subject, { checkedDays: [day], pendingDays: [], lastSyncAt: now, intradayCheckedDays: Array.from({ length: 28 }, (_, i) => shiftDay(day, -i)) }, store)
++  globalThis.fetch = async input => {
++    const p = String(input); paths.push(p)
++    if (p.endsWith('/status')) return Response.json({ loggedIn: true, region: 'cn', profile: { displayName: 'synthetic-report' } })
++    if (p.includes('activities/search')) return Response.json([{ activityId: 1, startTimeGMT: '2026-01-01 01:00:00', duration: 60.1, distance: 200.25, activityType: { typeKey: 'running' } }])
++    return new Response(null, { status: 204 })
++  }
++  const api = await import('./garmin-sync')
++  fail = true
++  return { ...api, paths, store, subject, key, data, cleanup: () => {
++    globalThis.fetch = oldFetch; setStoreBackend(null); setEventContext({ athleteId: 'local' })
++    for (const [k, descriptor] of original) if (descriptor) Object.defineProperty(globalThis, k, descriptor); else Reflect.deleteProperty(globalThis, k)
++  } }
++}
++
++test('saved reports remain successful when derived timestamp writes fail and still suppress an immediate automatic reread', async () => {
++  const f = await fixture('cache')
++  try {
++    const result = await f.runGarminSync(() => {})
++    assert.equal(result, 'ok')
++    const report = JSON.parse(f.store.getItem(f.key('fk-garmin-sync-report'))!)
++    assert.equal(report.status, 'ok'); assert.equal(report.requests, 16)
++    const visible = readGarminSyncStatus(f.subject, f.store)
++    assert.equal(visible.lastUsefulSyncAt, report.at); assert.equal(visible.lastFullSuccessAt, report.at); assert.equal(visible.lastAttemptAt, report.at)
++    const requests = f.paths.length
++    await f.maybeAutoGarminSync()
++    assert.equal(f.paths.length, requests, 'fresh verified report must prevent a new automatic request even with an old time cache')
++  } finally { f.cleanup() }
++})
++
++test('throwing or silently dropped primary report writes remain explicit failures', async () => {
++  for (const mode of ['throw-report', 'drop-report'] as const) {
++    const f = await fixture(mode)
++    try {
++      assert.equal(await f.runGarminSync(() => {}), 'fail', mode)
++      assert.equal(f.store.getItem(f.key('fk-garmin-sync-report')), null, mode)
++      assert.equal(f.store.getItem(f.key('fk-garmin-last-full-ok')), '2026-01-01T00:00:00Z', mode)
++    } finally { f.cleanup() }
++  }
++})
+--- a/src/components/garmin-sync.tsx
++++ b/src/components/garmin-sync.tsx
+@@ -6,7 +6,9 @@
+ import { AUTO_SYNC_RULE, readGarminSyncStatus, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
+ import { useEffect, useRef, useState } from "react";
+ import { ChevronDown } from "lucide-react";
+-import { saveDeviceRows } from "@/lib/ui/device-store";
++import { saveGarminRowsWithRetry } from "@/lib/health/garmin-pending-imports";
++import { readGarminDailyProgress, writeGarminDailyProgress } from "@/lib/health/garmin-progress-store";
++import { readGarminActivityConflicts } from "@/lib/health/garmin-activity-conflicts";
+ import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
+ import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
+ import { exportFeedback } from "@/components/coach-feedback";
+@@ -23,6 +25,8 @@
+ };
+ let running = false;
+ let accountGeneration = 0;
++// A → B → A during an awaited request is still a scope change, even if the final id matches.
++if (typeof window !== "undefined") window.addEventListener(ATHLETE_SCOPE_CHANGED, () => { accountGeneration++; });
+ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string, reason: "AUTO" | "MANUAL" = "AUTO"): Promise<"ok" | "partial" | "auth" | "fail" | "busy"> {
+   if (running) return "busy";
+   running = true;
+@@ -31,31 +35,53 @@
+   let finalResult: "ok" | "partial" | "auth" | "fail" = "fail";
+   const sameOwner = () => currentAthleteId() === subjectId && accountGeneration === syncGeneration;
+   const progress = (message: string) => { if (sameOwner()) { updateGarminSyncLive(liveToken, message); setMsg(message); } };
++  let boundScope: string | null = null;
+   try {
+     const result = await runGarminSyncJob({ api, subject: currentAthleteId, generation: () => accountGeneration,
+       day: localDay(), now: new Date().toISOString(), progress,
+-      save: saveDeviceRows, saveView: saveGarminActivities, bindAccount: bindGarminAccount,
++      save: (health, activities) => {
++        if (!sameOwner() || !boundScope) throw Error('活动同步归属已变化');
++        return saveGarminRowsWithRetry(boundScope, subjectId, health, activities, reason === 'MANUAL');
++      }, saveView: saveGarminActivities, bindAccount: (scope, owner) => {
++        const bound = sameOwner() && bindGarminAccount(scope, owner);
++        if (bound) boundScope = scope;
++        return bound;
++      },
+       intraday: { complete: d => intradayComplete(d), save: days => saveIntraday(days) },
+       // 日常按钮按既有规则选择增量；完整复核通过说明区显式触发，仍按账号分别记录。
+       reason, activitySeen: garminViewHas,
+-      fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId())) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId()), at) } },
+-      backfill: { get: scope => { try { return Number(localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 90 } }, set: (scope, n) => { try { localStorage.setItem(`fk-garmin-health-backfill:${scope}`, String(n)) } catch { /* 下次再补 */ } } },
++      fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId)) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId), at) } },
++      dailyProgress: { get: scope => readGarminDailyProgress(scope, subjectId), set: (scope, value) => { if (!sameOwner()) throw Error('同步归属已变化'); writeGarminDailyProgress(scope, subjectId, value); } },
++      backfill: { get: scope => { try { return Number(localStorage.getItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId)) ?? localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 14 } }, set: (scope, n) => { localStorage.setItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId), String(n)); } },
+       report: report => {
++        // A short recent page cannot resolve older source conflicts. Recheck the
++        // persisted source view against formal records without fetching history.
++        if (report.accountScope && ['ok', 'partial', 'empty'].includes(report.status)) {
++          try {
++            const pending = readGarminActivityConflicts(report.accountScope, report.subjectId);
++            if (pending.length) {
++              if (!report.errors.some(error => /同一来源活动|来源活动.*待核对/.test(error))) report.errors.push(`仍有 ${pending.length} 条来源活动与原记录不同，待核对；未重复计入或覆盖手填更正。`);
++              report.status = 'partial';
++            }
++          } catch { report.errors.push('本机活动核对记录无法读取，未确认全部成功'); report.status = 'partial'; }
++        }
+         const key = (name: string) => garminStorageKey(name, report.subjectId);
+         const raw = JSON.stringify(report);
+-        localStorage.setItem(key("fk-garmin-last-attempt"), report.at);
+         localStorage.setItem(key("fk-garmin-sync-report"), raw);
+         if (localStorage.getItem(key("fk-garmin-sync-report")) !== raw) throw Error('REPORT_SAVE_FAILED');
+-        // 部分同步但已取得数据也算一次有效同步（避免每次打开都重拉、设置页显示过期时间）。
+-        if (report.status === 'ok' || (report.status === 'partial' && report.saved + report.skipped > 0)) localStorage.setItem(key("fk-garmin-last-sync"), report.at);
+-        if (report.status === 'ok') localStorage.setItem(key("fk-garmin-last-full-ok"), report.at); // 契约：最后完整成功（garmin-sync-status.ts）
++        // Derived time caches are optional. Readers fall back to the verified
++        // report, so a cache failure must not turn saved data into a failed sync.
++        const cacheTime = (name: string) => { try { localStorage.setItem(key(name), report.at); } catch { /* The durable report supplies this time. */ } };
++        cacheTime("fk-garmin-last-attempt");
++        if (report.status === 'ok' || (report.status === 'partial' && report.saved + report.skipped > 0)) cacheTime("fk-garmin-last-sync");
++        if (report.status === 'ok') cacheTime("fk-garmin-last-full-ok");
+         healthChanged(); window.dispatchEvent(new Event("fk-garmin-synced"));
+       },
+     });
+-    const label = { ok: '同步完成', partial: '部分同步', empty: '本次未取得可用记录', auth: '登录失效或身份不完整', fail: '同步失败', stale: '账号或运动员变化，已丢弃本次结果' }[result.status];
++    const label = { ok: '已完成', partial: '部分完成', empty: '本次未取得可用记录', auth: '登录失效或身份不完整', fail: '同步失败', stale: '账号或运动员变化，已丢弃本次结果' }[result.status];
+     if (result.status === 'ok' || result.status === 'partial') void prefetchRecentLaps();
+-    const modeLabel = result.mode === 'INITIAL' ? '首次同步' : result.mode === 'RECENT' ? '增量同步' : '完整复核';
+-    progress(`${modeLabel}${label}（请求 ${result.requests ?? '—'} 次）：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
++    const modeLabel = result.mode === 'INITIAL' ? '首次同步' : result.mode === 'BACKFILL' ? '补齐历史' : result.mode === 'RECENT' ? '增量同步' : '完整复核';
++    progress(`${modeLabel}：${label}（请求 ${result.requests ?? '—'} 次）：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
+     finalResult = result.status === 'empty' || result.status === 'stale' ? 'fail' : result.status;
+     return finalResult;
+   } finally { running = false; if (sameOwner()) finishGarminSyncLive(liveToken, finalResult); else clearGarminSyncLive(liveToken); }
+@@ -71,7 +97,6 @@
+     for (const a of todo) { const l = await fetchLaps(Number(a.id)).catch(() => null); if (l) saveLaps(a.id, l); }
+   } catch { /* optional */ }
+ }
+-const syncKey = (key: string) => garminStorageKey(key, currentAthleteId());
+ const AUTO_MS = 5 * 60e3;
+ let lastTry = 0;
+ /** 每次打开/回到前台（距上次 >5 分钟）+ 开着时每 2 小时：已登录、在线才静默同步；失败后 30 分钟内不重试。 */
+@@ -80,7 +105,7 @@
+   const subjectId = currentAthleteId(), syncGeneration = accountGeneration;
+   const sameOwner = () => currentAthleteId() === subjectId && accountGeneration === syncGeneration;
+   const key = (name: string) => garminStorageKey(name, subjectId);
+-  const last = Date.parse(localStorage.getItem(key("fk-garmin-last-sync")) || "") || 0;
++  const last = Date.parse(readGarminSyncStatus(subjectId).lastUsefulSyncAt || "") || 0;
+   const failAt = Date.parse(localStorage.getItem(key("fk-garmin-auto-fail")) || "") || 0;
+   if (Date.now() - last < AUTO_MS || Date.now() - failAt < 30 * 60e3 || Date.now() - lastTry < 60e3) return;
+   lastTry = Date.now();
+@@ -130,7 +155,7 @@
+   const [snaps, setSnaps] = useState<Snapshot[]>([]);
+   const [lastSync, setLastSync] = useState("");
+   const [lastPartial,setLastPartial]=useState(false);
+-  useEffect(() => { const f = () => { const t = localStorage.getItem(syncKey("fk-garmin-last-sync")); try{setLastPartial(JSON.parse(localStorage.getItem(syncKey("fk-garmin-sync-report"))??"null")?.status!=="ok")}catch{setLastPartial(true)} setLastSync(t ? new Date(t).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""); }; f(); window.addEventListener("fk-garmin-synced", f); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); return () => { window.removeEventListener("fk-garmin-synced", f); window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); }; }, []);
++  useEffect(() => { const f = () => { const s = readGarminSyncStatus(currentAthleteId()); setLastPartial(s.lastAttemptResult !== "ok"); setLastSync(s.lastUsefulSyncAt ? new Date(s.lastUsefulSyncAt).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""); }; f(); window.addEventListener("fk-garmin-synced", f); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); return () => { window.removeEventListener("fk-garmin-synced", f); window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); }; }, []);
+   const [remind, setRemind] = useState(false);
+   useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); const last = localStorage.getItem("fk-last-export"); setRemind(needsBackupReminder() || !last || Date.now() - Date.parse(last) > 14 * 86400e3); }, []);
+   const refresh = () => {
+@@ -180,13 +205,13 @@
+       <input className={input} aria-label="佳明密码" type="password" autoComplete="current-password" placeholder="密码" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+       <button type="button" disabled={busy || !form.username || !form.password || Boolean(st?.unreachable)} className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={login}>登录佳明</button>
+     </>}
+-    {feedback ? feedback.includes("（请求 ") ? <details className="device-sync-disclosure device-sync-feedback" data-tone={/部分同步|失败|未取得|失效|已丢弃/.test(feedback) ? "warn" : undefined}><summary><span role="status">{feedback.slice(0, feedback.indexOf("（请求 "))}</span><ChevronDown aria-hidden="true" /></summary><p className="device-sync-detail-body">{feedback}</p></details> : <p role="status" className="device-sync-message">{feedback}</p> : null}
++    {feedback ? feedback.includes("（请求 ") ? <details className="device-sync-disclosure device-sync-feedback" data-tone={/部分完成|部分同步|失败|未取得|失效|已丢弃/.test(feedback) ? "warn" : undefined}><summary><span role="status">{feedback.slice(0, feedback.indexOf("（请求 "))}</span><ChevronDown aria-hidden="true" /></summary><p className="device-sync-detail-body">{feedback}</p></details> : <p role="status" className="device-sync-message">{feedback}</p> : null}
+     <details className="device-sync-disclosure">
+       <summary><span>同步说明</span><ChevronDown aria-hidden="true" /></summary>
+       <div className="device-sync-detail-body text-muted">
+         <p>{AUTO_SYNC_RULE}关闭或挂起后不保证后台同步。</p>
+-        <p>日常同步优先更新近3天和新活动；首次同步补齐近90天健康汇总，之后每日复核近14天。更早记录需要核对时，可手动完整复核。</p>
+-        <p>活动最多请求最近200条，不代表全部历史或训练课次数。健康日期按页面所在时区计算；与手表日期不一致时先核对两端时区。</p>
++        <p>日常同步更新近3天、新活动和未完成的日期。首次读取近90天健康汇总；中断后按缺口继续，每次最多补14个较早日期，已完成的历史不再整批重读。</p>
++        <p>新活动每页读取20条，遇到已同步活动后停止，最多200条。完整复核会重查近14天和最近200条活动，不代表全部历史。健康日期按页面所在时区计算。</p>
+         {st?.loggedIn ? <button type="button" disabled={busy || live.running} className="min-h-11 w-full rounded-card border border-line px-3 text-fg" onClick={() => void sync(true)}>完整复核最近数据</button> : null}
+         <p>身体电量取同步时佳明给出的最近值（没有时才用当日最高并注明），HRV 为昨夜平均；同步后才更新，不是实时值。同步详情会列出未完成项。</p>
+         {!st?.loggedIn ? <p>账号密码只用于这次登录，经方坤服务端转发给佳明；App 不把密码存到本机，服务端代码也不保存、不记录。登录后的会话令牌加密存放在网页脚本读不到的 Cookie 中。</p> : null}
+--- a/src/lib/coach/global-coach-host-v89.ts
++++ b/src/lib/coach/global-coach-host-v89.ts
+@@ -6,7 +6,7 @@
+ import { readCoachData, type CoachDataContext } from '../health/coach-data'
+ import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
+ import { HEALTH_CHANGED, localDay, shortHash, validDay } from '../health/observation'
+-import { loadEntries } from '../nutrition/log'
++import { loadEntries, nutrientOf } from '../nutrition/log'
+ import { readPendingFeedback } from '../ui/pending-feedback-host'
+ import { pendingTaskId, type PendingItem } from '../ui/pending-feedback'
+ import { readC03FollowupView, C03_FOLLOWUP_CHANGED_EVENT } from './c03/runtime'
+@@ -87,10 +87,11 @@
+         value: p?.value ?? null, quality: p ? p.legacy ? 'LEGACY' : 'RECORDED' : 'UNKNOWN', coverage: 'RECORDED_ONLY' }
+     })
+     for (const food of loadEntries().filter(row => row.date === day && (row.athleteId ?? 'local') === athleteId)) {
++      const kcal=nutrientOf(food,'kcal')
+       evidence.push({ id:`nutrition:${athleteId}:${food.id}`,athleteId,domain:'NUTRITION',
+-        availability:food.kcal===null?'MISSING':'AVAILABLE',revision:revision(food),observedAt:at(food.eatenAt),knownAt:at(food.recordedAt),
+-        summary:`${food.meal} · ${food.name}：${food.kcal===null?'热量未记录':`${food.kcal} kcal`}（仅此条记录）`,
+-        sourceId:food.id,metric:'ENERGY_INTAKE',unit:'kcal',value:food.kcal,quality:food.recordedAt?'RECORDED':'LEGACY',coverage:'RECORDED_ONLY'})
++        availability:kcal===null?'MISSING':'AVAILABLE',revision:revision(food),observedAt:at(food.eatenAt),knownAt:at(food.recordedAt),
++        summary:`${food.meal} · ${food.name}：${kcal===null?'热量未记录':`${kcal} kcal`}（仅此条记录）`,
++        sourceId:food.id,metric:'ENERGY_INTAKE',unit:'kcal',value:kcal,quality:food.recordedAt?'RECORDED':'LEGACY',coverage:'RECORDED_ONLY'})
+     }
+     pending = readPendingFeedback(day)
+     if(data.muscleRecovery) evidence.push({id:`muscle:${athleteId}:${day}`,athleteId,domain:'TRAINING',
+--- a/src/lib/core/coach-brief.ts
++++ b/src/lib/core/coach-brief.ts
+@@ -5,7 +5,7 @@
+ import { preserveReferral } from "./coach-referral-safety.ts"
+ import { evidenceAvailability } from "./evidence-availability.ts"
+ import { projectOccurrenceEvidence, type EvidenceGroup, type EvidenceRecord } from "./evidence.ts"
+-import { loadEvents } from "./events.ts"
++import { currentAthleteId, loadEvents } from "./events.ts"
+ import { dispatchEvent } from "./events.ts"
+ import { listTrainingOccurrences } from "./occurrence.ts"
+ import { occurrenceVoided } from "./training-correction.ts"
+@@ -180,7 +180,7 @@
+ function assembleSessionCoachBrief(plan: Plan | null, question: string, selectedOccurrenceId: string | null | undefined, asOf: string, formalRows?: readonly FormalEvidenceRow[]): CoachBrief {
+   const imported=selectedOccurrenceId ? coachImports().find(r=>r.confirmedImportId===selectedOccurrenceId) : null
+   if(imported&&!occurrenceVoided(imported.confirmedImportId))return attachLinkedSources(deriveCoachBrief(importedCoachParts(imported,question)),readLinkedCoachSources(undefined,question))
+-  const events = loadEvents()
++  const events = loadEvents().filter(event => (event.athlete_id ?? 'local') === currentAthleteId())
+   const candidates = listTrainingOccurrences()
+     .filter((item) => !occurrenceVoided(item.trainingOccurrenceId) && item.startedAt && events.some((event) => event.event_id === item.startEventId && event.event_type === "TRAINING_STARTED"))
+     .sort((left, right) => (left.startedAt ?? "").localeCompare(right.startedAt ?? "") || left.trainingOccurrenceId.localeCompare(right.trainingOccurrenceId))
+--- a/src/lib/core/coach-fieldwork-context.ts
++++ b/src/lib/core/coach-fieldwork-context.ts
+@@ -1,6 +1,6 @@
+ import {loadPlanDrafts} from '../ui/fieldwork-plan-drafts'
+ import {loadChecks} from '../nutrition/body'
+-import {loadEntries} from '../nutrition/log'
++import {loadEntries,nutrientOf} from '../nutrition/log'
+ import {calendarDay} from './coach-calendar'
+ import type {CoachBrief} from './coach-brief'
+ type Source=NonNullable<CoachBrief['sources']>[number]
+@@ -15,6 +15,10 @@
+   else for(const d of view.drafts.filter(d=>available(d.createdAt,cutoff)&&available(d.updatedAt,cutoff)).slice(-2))sources.push({id:`linked:fieldwork-draft:${d.uid}:${d.revisionId}`,kind:'CONTEXT',detail:`待练草稿 ${d.date} ${d.title}；${d.sets??'组数待确认'}组 × ${d.amount??'数量待确认'}${d.unit}；休息${d.restSec??'待确认'}秒；内容${d.contentVersion}／${d.reviewStatus}。仅为候选，未确认个人适用性或医学许可，不是已完成训练，不自动修改正式计划。`.slice(0,300)})
+  }
+  if(/体重|腰围|实测|体型|身体测量/.test(question))for(const row of loadChecks().filter(r=>r.date<=day&&available(r.recordedAt,cutoff)).slice(-2))sources.push({id:`linked:measurement:${row.id}:${row.recordedAt}`,kind:'CONTEXT',detail:`身体记录 ${row.date}：体重${row.weight}公斤；腰围${row.waist??'未记录'}${row.waist===undefined?'':'厘米'}；${row.source??'来源未知'}；保存于${row.recordedAt}。数值记录不证明恢复或能力变化；不读取体型模拟、外观或目标情景。`.slice(0,300)})
+- if(/记录|我的|本地/.test(question)&&/饮食|营养|食物|餐|摄入|热量|补给/.test(question))for(const row of loadEntries().filter(r=>r.date<=day&&available(r.recordedAt,cutoff)&&(!r.eatenAt||Date.parse(r.eatenAt)<=cutoff)).slice(-3))sources.push({id:`linked:meal:${row.id}${row.revisionId?':'+row.revisionId:''}`,kind:'CONTEXT',detail:`餐食记录 ${row.date} ${row.name}：${row.kcal===null?'热量未知':'已记录'+row.kcal+'千卡'}；蛋白${row.protein??'未记录'}${row.protein===undefined?'':'克'}，碳水${row.carbs??'未记录'}${row.carbs===undefined?'':'克'}，脂肪${row.fat??'未记录'}${row.fat===undefined?'':'克'}；来源${row.foodSnapshot?.source.status??'用户手填'}${row.foodSnapshot?'／'+row.foodSnapshot.region:''}；实际进食${row.eatenAt??'时刻未知'}。不代表全天记录完整，不证明供能不足或训练掉速原因。`.slice(0,300)})
++ if(/记录|我的|本地/.test(question)&&/饮食|营养|食物|餐|摄入|热量|补给/.test(question))for(const row of loadEntries().filter(r=>r.date<=day&&available(r.recordedAt,cutoff)&&(!r.eatenAt||Date.parse(r.eatenAt)<=cutoff)).sort((a,b)=>Date.parse(a.recordedAt!)-Date.parse(b.recordedAt!)).slice(-3)){
++  const kcal=nutrientOf(row,'kcal'),protein=nutrientOf(row,'protein'),carb=nutrientOf(row,'carb'),fat=nutrientOf(row,'fat')
++  const sourceLabel=row.nutritionSnapshot?.source?.label??row.foodSnapshot?.source.status??'用户手填',region=row.nutritionSnapshot?.region??row.foodSnapshot?.region??''
++  sources.push({id:`linked:meal:${row.id}${row.revisionId?':'+row.revisionId:''}`,kind:'CONTEXT',detail:`餐食记录 ${row.date} ${row.name}：${kcal===null?'热量未知':'已记录'+kcal+'千卡'}；蛋白${protein??'未记录'}${protein===null?'':'克'}，碳水${carb??'未记录'}${carb===null?'':'克'}，脂肪${fat??'未记录'}${fat===null?'':'克'}；来源${sourceLabel}${region?'／'+region:''}；实际进食${row.eatenAt??'时刻未知'}。不代表全天记录完整，不证明供能不足或训练掉速原因。`.slice(0,300)})
++ }
+  return sources
+ }
+--- a/src/lib/core/coach-fuel.ts
++++ b/src/lib/core/coach-fuel.ts
+@@ -1,4 +1,4 @@
+-import type { FoodEntry } from "@/lib/nutrition/log"
++import { nutrientOf, type FoodEntry } from "@/lib/nutrition/log"
+ import { calendarDay } from "./coach-calendar.ts"
+ 
+ export type CoachFuel = {
+@@ -17,7 +17,9 @@
+   const todayDay = calendarDay(now) ?? ""
+   const sameDay = Boolean(trainingDay && trainingDay === todayDay)
+   const entries = sameDay
+-    ? allEntries.filter((entry): entry is FoodEntry & {kcal:number} => typeof entry.kcal === "number" && entry.date === todayDay && typeof entry.id === "string" && Number.isFinite(entry.kcal) && entry.kcal >= 0).slice(0, 200).map((entry) => ({ id: entry.id.slice(0, 80), kcal: entry.kcal }))
++    ? allEntries.filter(entry => entry.date === todayDay && typeof entry.id === "string")
++      .map(entry => ({ id: entry.id.slice(0, 80), kcal: nutrientOf(entry, "kcal") }))
++      .filter((entry): entry is {id:string;kcal:number} => typeof entry.kcal === "number" && Number.isFinite(entry.kcal) && entry.kcal >= 0).slice(0, 200)
+     : []
+   const status = !sameDay ? "DIFFERENT_DAY" : entries.length ? "SAME_DAY_RECORDED" : "NO_RECORD"
+   const target = sameDay && targetKcal != null && Number.isFinite(targetKcal) && targetKcal > 0 ? Math.round(targetKcal) : null
+--- a/src/lib/core/execution.ts
++++ b/src/lib/core/execution.ts
+@@ -1,4 +1,4 @@
+-import { dispatchEvent, loadEvents } from "./events.ts"
++import { currentAthleteId, dispatchEvent, loadEvents } from "./events.ts"
+ import { listTrainingOccurrences } from "./occurrence.ts"
+ import { effectiveStrengthFields } from "./training-correction.ts"
+ import { displayName, type Session } from "@/lib/strength/model"
+@@ -131,7 +131,20 @@
+ }
+ 
+ export function recordSet(sessionId: string, decisionId: string, set: SetRecord) {
+-  const open = [...listTrainingOccurrences()].reverse().find((item) => item.sessionId === sessionId && item.lifecycle === "IN_PROGRESS")
++  const starts = loadEvents().filter(event => event.event_type === 'TRAINING_STARTED' && event.payload.sessionId === sessionId)
++  const bound = starts.filter(event => event.payload.decisionId === decisionId)
++  const owned = (bound.length ? bound : starts).filter(event => (event.athlete_id ?? 'local') === currentAthleteId())
++  if (bound.length && !owned.length) return null
++  const startIds = new Set(owned.map(event => event.event_id))
++  const ownedStartIds = new Set(starts.filter(event => (event.athlete_id ?? 'local') === currentAthleteId()).map(event => event.event_id))
++  // Reopening an in-progress training can create another decision/start event,
++  // but its sets still belong to the same owned occurrence.
++  const occurrences = listTrainingOccurrences().filter(item => item.sessionId === sessionId &&
++    (startIds.has(item.startEventId) || ownedStartIds.has(item.startEventId) && item.duplicateStartEventIds?.some(id => startIds.has(id))))
++  const open = [...occurrences].reverse().find(item => item.lifecycle === "IN_PROGRESS")
++  // Legacy starts without an occurrence snapshot remain recordable; a bound,
++  // closed occurrence must use the correction path instead of a stale callback.
++  if (bound.length && occurrences.length && !open) return null
+   const payload = payloadOf(sessionId, decisionId, set)
+   if (open) payload.trainingOccurrenceId = open.trainingOccurrenceId
+   return dispatchEvent("TRAINING_SET_COMPLETED", payload, { source: "MANUAL", confidence: set.source === "user_entered" ? 1 : 0.8, dataQuality: set.source === "user_entered" ? "HIGH" : "MEDIUM" })
+@@ -180,7 +193,7 @@
+ export function executionOf(sessionId: string): { open: boolean; decisionId: string | null; sets: SetRecord[] } {
+   const events = loadEvents().filter((event) => {
+     const payload = event.payload as { sessionId?: string }
+-    return payload.sessionId === sessionId && (event.event_type === "TRAINING_STARTED" || event.event_type === "TRAINING_SET_COMPLETED" || event.event_type === "TRAINING_COMPLETED" || event.event_type === "TRAINING_INTERRUPTED")
++    return (event.athlete_id ?? 'local') === currentAthleteId() && payload.sessionId === sessionId && (event.event_type === "TRAINING_STARTED" || event.event_type === "TRAINING_SET_COMPLETED" || event.event_type === "TRAINING_COMPLETED" || event.event_type === "TRAINING_INTERRUPTED")
+   })
+   let start = -1
+   events.forEach((event, index) => {
+--- a/src/lib/core/occurrence.ts
++++ b/src/lib/core/occurrence.ts
+@@ -4,6 +4,7 @@
+ import { freezeRunningPlanOnStart } from "./running-plan.ts";
+ import { readEnvelope, writeEnvelope } from "./storage.ts";
+ import { loadTrainingFact } from "./training-fact.ts";
++import { currentAthleteId, loadEvents } from './events.ts';
+ 
+ export const TRAINING_OCCURRENCE_KEY = "fr255-training-occurrence-v1";
+ 
+@@ -127,11 +128,17 @@
+   );
+ }
+ 
+-function openOccurrence(store: OccurrenceStore, sessionId: string): TrainingOccurrence | null {
++function sameOccurrenceOwner(occurrence: TrainingOccurrence, athleteId: string, events = loadEvents()): boolean {
++  const starts = events.filter(event => event.event_id === occurrence.startEventId && event.event_type === 'TRAINING_STARTED');
++  // Legacy snapshots without a persisted start stay in their original local namespace.
++  return starts.length ? starts.every(event => (event.athlete_id ?? 'local') === athleteId) : athleteId === 'local';
++}
++function openOccurrence(store: OccurrenceStore, sessionId: string, athleteId = currentAthleteId()): TrainingOccurrence | null {
++  const events = loadEvents();
+   return (
+     [...store.occurrences]
+       .reverse()
+-      .find((item) => item.sessionId === sessionId && item.lifecycle === "IN_PROGRESS") ?? null
++      .find((item) => item.sessionId === sessionId && item.lifecycle === "IN_PROGRESS" && sameOccurrenceOwner(item, athleteId, events)) ?? null
+   );
+ }
+ 
+@@ -144,6 +151,8 @@
+   runningPlanId?: string | null;
+   persistSnapshot?: (snapshot: OriginalPlanSnapshot) => boolean;
+ }): TrainingOccurrence | null {
++  const started = loadEvents().find(event => event.event_id === input.startEventId && event.event_type === 'TRAINING_STARTED');
++  if (started && (started.athlete_id ?? 'local') !== currentAthleteId()) return null;
+   const store = loadStore();
+   const existing = store.occurrences.find(
+     (item) =>
+@@ -218,6 +227,7 @@
+   event_id?: string;
+   event_type: string;
+   timestamp?: string;
++  athlete_id?: string;
+   payload?: Record<string, unknown>;
+ };
+ 
+@@ -242,10 +252,13 @@
+   const sessionId = typeof event.payload?.sessionId === "string" ? event.payload.sessionId : "";
+   if (!kind || kind === "IGNORE" || !sessionId) return openOccurrence(loadStore(), sessionId);
+   const store = loadStore();
+-  const open = openOccurrence(store, sessionId);
+-  const target =
+-    open ?? [...store.occurrences].reverse().find((item) => item.sessionId === sessionId) ?? null;
++  const athleteId = event.athlete_id ?? currentAthleteId(), events = loadEvents();
++  const boundId = typeof event.payload?.trainingOccurrenceId === 'string' ? event.payload.trainingOccurrenceId : null;
++  const eligible = store.occurrences.filter(item => item.sessionId === sessionId && sameOccurrenceOwner(item, athleteId, events));
++  const target = boundId !== null ? eligible.find(item => item.trainingOccurrenceId === boundId) ?? null
++    : [...eligible].reverse().find(item => item.lifecycle === 'IN_PROGRESS') ?? eligible.at(-1) ?? null;
+   if (!target) return null;
++  const open = target.lifecycle === 'IN_PROGRESS';
+   if (!open) {
+     const ids = target.duplicateCloseEventIds ?? [];
+     const id = event.event_id ?? "";
+--- a/src/lib/core/running-real-use.test.ts
++++ b/src/lib/core/running-real-use.test.ts
+@@ -315,7 +315,7 @@
+     nav = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+   let queue = Promise.resolve();
+   try {
+-    Object.defineProperty(globalThis, "window", { value: {}, configurable: true });
++    Object.defineProperty(globalThis, "window", { value: new EventTarget(), configurable: true });
+     Object.defineProperty(globalThis, "navigator", {
+       value: {
+         locks: {
+--- a/src/lib/core/training-decision.ts
++++ b/src/lib/core/training-decision.ts
+@@ -238,8 +238,13 @@
+ 
+ function completionIdentity(sessionId: string, decisionId: string): string {
+   const starts = loadEvents().filter(event => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_STARTED" && event.payload.sessionId === sessionId)
+-  const startIds = new Set(starts.map(event => event.event_id))
+-  const rows = listTrainingOccurrences().filter((item) => item.sessionId === sessionId && startIds.has(item.startEventId))
++  const bound = starts.filter(event => event.payload.decisionId === decisionId)
++  const startIds = new Set((bound.length ? bound : starts).map(event => event.event_id))
++  const ownedStartIds = new Set(starts.map(event => event.event_id))
++  // Start aliases share one completion identity, including after that occurrence
++  // closes. A stale decision must not fall through to a later open training.
++  const rows = listTrainingOccurrences().filter((item) => item.sessionId === sessionId &&
++    (startIds.has(item.startEventId) || ownedStartIds.has(item.startEventId) && item.duplicateStartEventIds?.some(id => startIds.has(id))))
+   const open = [...rows].reverse().find((item) => item.lifecycle === "IN_PROGRESS")
+   const target = open ?? rows.at(-1)
+   return target ? `occurrence:${target.trainingOccurrenceId}` : `decision:${decisionId}:${sessionId}`
+@@ -258,6 +263,8 @@
+   interrupted: boolean
+   partial?: boolean
+ }) {
++  const starts = loadEvents().filter(event => event.event_type === 'TRAINING_STARTED' && event.payload.sessionId === input.sessionId && event.payload.decisionId === input.decisionId)
++  if (starts.length && !starts.some(event => (event.athlete_id ?? 'local') === currentAthleteId())) return null
+   const idempotencyKey = completionIdentity(input.sessionId, input.decisionId)
+   const boundOccurrenceId = idempotencyKey.startsWith("occurrence:") ? idempotencyKey.slice("occurrence:".length) : null
+   const existing = loadEvents().find((event) => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_COMPLETED" && event.payload.idempotencyKey === idempotencyKey)
+--- a/src/lib/core/training-import.ts
++++ b/src/lib/core/training-import.ts
+@@ -1,7 +1,7 @@
+ import { sleepHoursText } from '../health/observation'
+ import { currentAthleteId } from "./events.ts"
+ import type { ImportCompleteness } from "./import-completeness.ts"
+-import { readEnvelope, writeEnvelope } from "./storage.ts"
++import { currentStore, readEnvelope, writeEnvelope } from "./storage.ts"
+ import { appendRetained, retainNewest, MAX_CONFIRMED_IMPORTS } from "./import-retention.ts"
+ 
+ export type ImportFieldStatus = "RECORDED" | "ABSENT" | "AMBIGUOUS" | "CONFLICTING"
+@@ -299,7 +299,7 @@
+   return [...new Set(gaps)]
+ }
+ 
+-export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; record: ConfirmedTrainingImport; duplicate: boolean } | { ok: false; reason: string } {
++export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; record: ConfirmedTrainingImport; duplicate: boolean } | { ok: false; reason: string; code?: 'PERSISTENCE_FAILED' | 'PERSISTENCE_UNCONFIRMED' } {
+   const draft = { ...input, ...normalizeTrainingImportCandidate(input) }
+   if (!draft.draftId || draft.draftId.length > 55) return { ok: false, reason: "草稿标识无效" }
+   const existing = loadConfirmedTrainingImports().find((item) => item.draftId === draft.draftId)
+@@ -322,7 +322,18 @@
+   // v86.2：按训练发生时间保留最新的（旧版按写入顺序截取，佳明“新的在前”导致最新活动被挤掉）
+   const next = appendRetained(retainNewest(loadConfirmedTrainingImports()), confirmed)
+   if (!next) return { ok: false, reason: `早于保留范围（只保留最近 ${MAX_CONFIRMED_IMPORTS} 条导入），未保存` }
+-  if (!writeEnvelope(CONFIRMED_TRAINING_IMPORTS_KEY, next)) return { ok: false, reason: "确认记录保存失败，请重试" }
++  const written = writeEnvelope(CONFIRMED_TRAINING_IMPORTS_KEY, next)
++  try {
++    const raw = currentStore()?.getItem(CONFIRMED_TRAINING_IMPORTS_KEY)
++    if (!written || raw !== JSON.stringify(written)) {
++      const stored = raw == null ? null : JSON.parse(raw)
++      // An automatic retry is allowed only when the readback proves absence.
++      // A throw or an ambiguous write may already have saved this record.
++      const absent = raw == null || Array.isArray(stored?.data) && !stored.data.some((item: { confirmedImportId?: string; draftId?: string }) => item?.confirmedImportId === confirmed.confirmedImportId || item?.draftId === confirmed.draftId)
++      return absent ? { ok: false, reason: "确认记录保存失败，请重试", code: 'PERSISTENCE_FAILED' }
++        : { ok: false, reason: "确认记录保存结果无法核对，请刷新后复核", code: 'PERSISTENCE_UNCONFIRMED' }
++    }
++  } catch { return { ok: false, reason: "确认记录保存结果无法核对，请刷新后复核", code: 'PERSISTENCE_UNCONFIRMED' } }
+   discardTrainingImportDraft(draft.draftId)
+   return { ok: true, record: confirmed, duplicate: false }
+ }
+--- /dev/null
++++ b/src/lib/core/training-start-alias.test.ts
+@@ -0,0 +1,78 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { currentAthleteId, loadEvents, setEventContext } from './events'
++import { setStoreBackend } from './storage'
++import { emptySets, recordSet } from './execution'
++import { startTraining } from './training-decision'
++import { bindTrainingStart, getTrainingOccurrence, listTrainingOccurrences } from './occurrence'
++import { completeFromRunner } from '../../components/training-runner'
++import type { Session } from '../strength/model'
++
++const plan: Session = { id: 'alias-strength', name: '合成力量课', moves: [{ id: 'squat', catalogId: 'back-squat', customName: '', sets: 1, mode: 'reps', amount: 8, restSec: 60, weightKg: 40 }] }
++function fixture(t: test.TestContext) {
++  const owner = currentAthleteId(), data = new Map<string, string>()
++  setStoreBackend({ getItem: k => data.get(k) ?? null, setItem: (k, v) => { data.set(k, v) }, keys: () => [...data.keys()] })
++  setEventContext({ athleteId: 'synthetic-start-alias' })
++  t.after(() => { setStoreBackend(null); setEventContext({ athleteId: owner }) })
++}
++function begin(decisionId: string) {
++  const event = startTraining({ decisionId, sessionId: plan.id, action: 'ORIGINAL_PLAN' }); assert.ok(event)
++  const occurrence = bindTrainingStart({ startEventId: event.event_id, startedAt: event.timestamp, sessionId: plan.id, planSlotId: plan.id, plan })
++  assert.ok(occurrence)
++  return { event, occurrence }
++}
++const done = () => ({ ...emptySets(plan)[0], actualWeight: 40, actualAmount: 8, completed: true, source: 'user_entered' as const, timestamp: new Date().toISOString() })
++const finish = (decisionId: string) => completeFromRunner({ decisionId, sessionId: plan.id, planned: null, actualSets: 1, actualAmount: 8, actualWeightKg: 40, rpe: 6, pain: false, modified: false, interrupted: false })
++
++test('resuming one open training under a new decision binds its set to the original occurrence', t => {
++  fixture(t)
++  const first = begin('first-decision'), resumed = begin('resumed-decision')
++  assert.equal(resumed.occurrence.trainingOccurrenceId, first.occurrence.trainingOccurrenceId)
++  assert.deepEqual(resumed.occurrence.duplicateStartEventIds, [resumed.event.event_id])
++  const set = recordSet(plan.id, 'resumed-decision', done()); assert.ok(set)
++  assert.equal(set.payload.trainingOccurrenceId, first.occurrence.trainingOccurrenceId)
++  assert.equal(loadEvents().filter(e => e.event_type === 'TRAINING_SET_COMPLETED').length, 1)
++  assert.equal(listTrainingOccurrences().length, 1)
++})
++
++test('finishing through either start decision returns the same completion event', t => {
++  fixture(t)
++  const first = begin('first-decision'); begin('resumed-decision')
++  assert.ok(recordSet(plan.id, 'resumed-decision', done()))
++  const closed = finish('resumed-decision'); assert.ok(closed)
++  assert.equal(closed.payload.trainingOccurrenceId, first.occurrence.trainingOccurrenceId)
++  assert.equal(finish('first-decision')?.event_id, closed.event_id)
++  assert.equal(finish('resumed-decision')?.event_id, closed.event_id)
++  assert.equal(loadEvents().filter(e => e.event_type === 'TRAINING_COMPLETED').length, 1)
++  assert.equal(getTrainingOccurrence(first.occurrence.trainingOccurrenceId)?.lifecycle, 'COMPLETED')
++  assert.deepEqual(getTrainingOccurrence(first.occurrence.trainingOccurrenceId)?.duplicateCloseEventIds, [])
++})
++
++test('closed start aliases cannot record new sets or close the next occurrence of the same session', t => {
++  fixture(t)
++  const first = begin('first-decision'); begin('resumed-decision')
++  assert.ok(recordSet(plan.id, 'resumed-decision', done()))
++  const closed = finish('resumed-decision'); assert.ok(closed)
++  const next = begin('next-decision'); assert.notEqual(next.occurrence.trainingOccurrenceId, first.occurrence.trainingOccurrenceId)
++  const before = loadEvents().length
++  for (const oldDecision of ['first-decision', 'resumed-decision']) {
++    assert.equal(recordSet(plan.id, oldDecision, done()), null)
++    assert.equal(finish(oldDecision)?.event_id, closed.event_id)
++  }
++  assert.equal(loadEvents().length, before)
++  assert.equal(getTrainingOccurrence(next.occurrence.trainingOccurrenceId)?.lifecycle, 'IN_PROGRESS')
++  assert.equal(recordSet(plan.id, 'next-decision', done())?.payload.trainingOccurrenceId, next.occurrence.trainingOccurrenceId)
++})
++
++test('another athlete cannot use either original or resumed decision to write into the occurrence', t => {
++  fixture(t)
++  const first = begin('first-decision'); begin('resumed-decision')
++  const before = loadEvents().length
++  setEventContext({ athleteId: 'synthetic-start-other' })
++  for (const decision of ['first-decision', 'resumed-decision']) {
++    assert.equal(recordSet(plan.id, decision, done()), null)
++    assert.equal(finish(decision), null)
++  }
++  assert.equal(loadEvents().length, before)
++  assert.equal(getTrainingOccurrence(first.occurrence.trainingOccurrenceId)?.lifecycle, 'IN_PROGRESS')
++})
+--- a/src/lib/health/coach-data.ts
++++ b/src/lib/health/coach-data.ts
+@@ -7,7 +7,7 @@
+ import { reviewFatigue, reviewBalance, dailyCheckin } from './analysis'
+ import { localDay, shiftDay, validDay, shortHash } from './observation'
+ import { currentStore } from '../core/storage'
+-import { loadEntries } from '../nutrition/log'
++import { aggregate, loadEntries } from '../nutrition/log'
+ import { coachImports } from '../core/coach-import-evidence'
+ import { currentAthleteId, loadEvents } from '../core/events'
+ import { occurrenceVoided, listCorrections } from '../core/training-correction'
+@@ -55,7 +55,7 @@
+ export function readCoachData(day=localDay()):CoachDataContext{
+   const snap=loadHealthSnapshot(day),ci=dailyCheckin(day)
+   const fatigue=reviewFatigue(snap,ci),balance=reviewBalance(scheduleRows(),day)
+-  const foods=loadEntries().filter(e=>e.date===day&&(e.athleteId??'local')===currentAthleteId()),agg={kcal:{sum:foods.reduce((s,e)=>s+(typeof e.kcal==='number'&&Number.isFinite(e.kcal)&&e.kcal>=0?e.kcal:0),0),pending:foods.filter(e=>e.kcal==null||!Number.isFinite(e.kcal)||e.kcal<0).length}}
++  const foods=loadEntries().filter(e=>e.date===day&&(e.athleteId??'local')===currentAthleteId()),agg=aggregate(foods)
+   const all=coachImports().filter(i=>!occurrenceVoided(i.confirmedImportId)),unknownDate=all.filter(i=>i.occurredAt.status!=='RECORDED'||!i.occurredAt.value).length
+   const imports=all.filter(i=>i.occurredAt.status==='RECORDED'&&i.occurredAt.value&&Number.isFinite(Date.parse(i.occurredAt.value))).map(i=>({i,day:localDay(new Date(i.occurredAt.value!))})).filter(x=>x.day>=shiftDay(day,-27)&&x.day<=day).sort((a,b)=>b.day.localeCompare(a.day))
+   const result:CoachDataContext={mode:healthModeSummary(loadWatch(currentStore()),snap),day,sourceId:`appdata:${day}`,health:snap.metrics.map(v=>({metric:v.metric,state:v.state,detail:healthSummaryLine(v).slice(0,500)})),fatigue:{ruleStatus:fatigue.ruleStatus,automaticPrescription:false,state:fatigue.state,title:fatigue.title,reasons:fatigue.signals.map(s=>s.detail),excluded:fatigue.excluded,action:fatigue.action,followup:fatigue.followup},balance:{from:balance.from,to:balance.to,plannedRun:balance.planned.run,plannedStrength:balance.planned.strength,actualSessions:balance.actual.sessions,knownMinutes:balance.actual.knownMinutes,unknownMinutes:balance.actual.unknownMinutes,knownRunKm:balance.actual.knownRunKm,unknownRunKm:balance.actual.unknownRunKm,groups:balance.planned.muscleGroups,observations:balance.observations.slice(0,20),gaps:balance.gaps,action:balance.action},coreActual:coreActual(day),nutrition:{count:foods.length,knownKcal:agg.kcal.sum,pending:agg.kcal.pending},imports:{count:imports.length,unknownDate,latest:imports.slice(0,8).map(({i,day})=>({id:i.confirmedImportId.slice(0,120),day,title:String(i.title.value??'未命名训练').slice(0,120),sport:i.sport,distanceM:i.totalDistanceMeters.status==='RECORDED'&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='distance')?i.totalDistanceMeters.value:null,durationSec:i.durationSeconds.status==='RECORDED'&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='duration')?i.durationSeconds.value:null}))},subjective:ci?`当天感受：${({fresh:'轻松',ok:'一般',tired:'很累'} as Record<string,string>)[ci.fatigue??'']??'疲劳未填'}；疼痛：${({none:'不疼',mild:'有点疼',sharp:'明显疼'} as Record<string,string>)[ci.pain??'']??'未填'}；主观恢复：${ci.recovery??'未填'}`:'当天主观感受未记录',warnings:[...(scheduleUnreadable()?['兼容日程无法读取，零汇总不能解释为没有训练']:[]),...(snap.unreadable?['健康存储无法读取；未当作没有健康记录']:[]),'这些为日历日背景，不自动绑定某次训练。','经验阈值尚未科学核准，只作复核提示，不决定减量、停训或医学回归。','已确认导入与日程实际明细可能重叠，分开列示，不重复累加。','导入距离/时长有更正时，日汇总暂不引用旧总量；请进入对应训练核对更正后的明细。','独立截图证据需选择“用于健康分析”后进入健康记录；待核对图片不参与分析。'],planChanged:false}
+--- /dev/null
++++ b/src/lib/health/garmin-activity-conflicts.test.ts
+@@ -0,0 +1,47 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { setStoreBackend, type MemoryStore } from '../core/storage'
++import { setEventContext } from '../core/events'
++import { shortHash } from './observation'
++import { saveDeviceRows } from '../ui/device-store'
++import type { DeviceActivity } from '../ui/device-parse'
++
++const api = await import('./garmin-activity-conflicts').catch(() => ({})) as typeof import('./garmin-activity-conflicts')
++class Store implements MemoryStore {
++  data = new Map<string, string>()
++  getItem(key: string) { return this.data.get(key) ?? null }
++  setItem(key: string, value: string) { this.data.set(key, value) }
++  keys() { return [...this.data.keys()] }
++}
++const scope = 'cn:synthetic-conflicts', hash = shortHash(scope), subject = 'synthetic-conflicts'
++const activity: DeviceActivity = { key: '42', sourceIdentity: `garmin:${encodeURIComponent(scope)}:42`, source: '佳明账号同步', sport: 'RUNNING', sportLabel: '跑步', startIso: '2026-10-01T00:00:00Z', durationSec: 1800.1, distanceM: 5000, avgHr: null, maxHr: null, calories: null, avgCadence: null, avgPower: null, verticalOscMm: null, groundContactMs: null, sets: [] }
++
++test('older unresolved source differences remain detectable without fetching 200 activities again', () => {
++  assert.equal(typeof api.readGarminActivityConflicts, 'function')
++  const store = new Store(); setStoreBackend(store); setEventContext({ athleteId: subject })
++  try {
++    saveDeviceRows([], [activity])
++    const key = `fk-garmin-acts-v1:${encodeURIComponent(subject)}:${hash}`
++    store.setItem(key, JSON.stringify({ 42: { id: 42, sourceIdentity: activity.sourceIdentity, dur: 1801.1, dist: 5000 } }))
++    assert.equal(api.readGarminActivityConflicts(hash, subject).length, 1)
++    // New recent-page results contain none of this old activity; the persisted view still exposes its unresolved mismatch.
++    saveDeviceRows([], [])
++    assert.equal(api.readGarminActivityConflicts(hash, subject).length, 1)
++    store.setItem(key, JSON.stringify({ 42: { id: 42, sourceIdentity: activity.sourceIdentity, dur: 1800.1, dist: 5000 } }))
++    assert.deepEqual(api.readGarminActivityConflicts(hash, subject), [])
++  } finally { setStoreBackend(null) }
++})
++
++test('conflict inspection is athlete and account scoped and does not invent deleted imports', () => {
++  assert.equal(typeof api.readGarminActivityConflicts, 'function')
++  const store = new Store(); setStoreBackend(store); setEventContext({ athleteId: subject })
++  try {
++    const key = `fk-garmin-acts-v1:${encodeURIComponent(subject)}:${hash}`
++    store.setItem(key, JSON.stringify({ 42: { id: 42, sourceIdentity: activity.sourceIdentity, dur: 1801.1, dist: 5000 } }))
++    assert.deepEqual(api.readGarminActivityConflicts(hash, subject), [], 'raw view alone is not evidence of a confirmed training record')
++    saveDeviceRows([], [activity])
++    assert.deepEqual(api.readGarminActivityConflicts(shortHash('com:other'), subject), [])
++    setEventContext({ athleteId: 'another-athlete' })
++    assert.deepEqual(api.readGarminActivityConflicts(hash, subject), [])
++  } finally { setStoreBackend(null) }
++})
+--- /dev/null
++++ b/src/lib/health/garmin-activity-conflicts.ts
+@@ -0,0 +1,31 @@
++import { currentAthleteId } from '../core/events'
++import { currentStore } from '../core/storage'
++import { coachImports } from '../core/coach-import-evidence'
++import { normalizedDeviceActivityTotals } from '../ui/device-activity-totals'
++
++/** Recheck stored source differences without another network request. The raw
++ * activity view is evidence of what the source said, never a completed import.
++ * Base confirmed records remain authoritative; manual corrections stay separate. */
++export function readGarminActivityConflicts(accountScope: string, subjectId: string): string[] {
++  if (!accountScope || !subjectId || currentAthleteId() !== subjectId) return []
++  const store = currentStore()
++  if (!store) return []
++  const raw = store.getItem(`fk-garmin-acts-v1:${encodeURIComponent(subjectId)}:${accountScope}`)
++  if (!raw) return []
++  const view: unknown = JSON.parse(raw)
++  if (!view || typeof view !== 'object' || Array.isArray(view)) throw new Error('活动核对记录无法读取')
++  const byIdentity = new Map<string, ReturnType<typeof coachImports>[number]>()
++  for (const record of coachImports()) if (record.sourceRecordIdentity && !byIdentity.has(record.sourceRecordIdentity)) byIdentity.set(record.sourceRecordIdentity, record)
++  const conflicts = new Set<string>()
++  for (const entry of Object.values(view)) {
++    if (!entry || typeof entry !== 'object') continue
++    const source = entry as { sourceIdentity?: unknown; dur?: unknown; dist?: unknown }
++    if (typeof source.sourceIdentity !== 'string') continue
++    const previous = byIdentity.get(source.sourceIdentity)
++    if (!previous) continue
++    if (!(source.dur === null || typeof source.dur === 'number' && Number.isFinite(source.dur)) || !(source.dist === null || typeof source.dist === 'number' && Number.isFinite(source.dist))) continue
++    const totals = normalizedDeviceActivityTotals(source.dur, source.dist)
++    if (previous.durationSeconds.value !== totals.durationSec || previous.totalDistanceMeters.value !== totals.distanceM) conflicts.add(source.sourceIdentity)
++  }
++  return [...conflicts]
++}
+--- /dev/null
++++ b/src/lib/health/garmin-daily-progress.ts
+@@ -0,0 +1,60 @@
++import { shiftDay, validDay } from './observation'
++
++/** A checked date is a completed read, including explicit no-data responses. It
++ * does not assert that a measurement exists or that an activity import succeeded.
++ * The host stores this receipt under both the Garmin account and athlete. */
++export type GarminDailyProgress = {
++  checkedDays: string[]
++  pendingDays: string[]
++  lastSyncAt: string | null
++  intradayCheckedDays?: string[]
++}
++export type GarminProgressPlan = {
++  mode: 'INITIAL' | 'RECENT' | 'BACKFILL' | 'FULL'
++  offsets: number[]
++  pendingDays: string[]
++}
++const localDayOf = (iso: string) => {
++  const d = new Date(iso)
++  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
++}
++const offsetOf = (today: string, day: string) => Math.round((Date.parse(today + 'T00:00:00Z') - Date.parse(day + 'T00:00:00Z')) / 864e5)
++export const validProgressDays = (days: readonly string[] | undefined, today: string) =>
++  [...new Set((Array.isArray(days) ? days : []).filter(d => validDay(d) && d <= today))].sort().reverse()
++
++/** New receipt-based scheduling. The legacy planner remains unchanged for callers
++ * without a dailyProgress adapter. Ordinary resumptions read at most 14 older
++ * dates, even when a failed date or a long pause leaves many outstanding dates. */
++export function planGarminProgressSync(input: {
++  today: string; now: string; reason?: 'AUTO' | 'MANUAL'; progress: GarminDailyProgress | null; backfillThrough: number
++}): GarminProgressPlan {
++  const { today, now, progress } = input
++  if (!validDay(today) || !Number.isFinite(Date.parse(now))) throw Error('INVALID_TIME')
++  const cursor = Math.min(90, Math.max(14, Number.isFinite(input.backfillThrough) ? input.backfillThrough : 14))
++  const pending = new Set(validProgressDays(progress?.pendingDays, today))
++  // Old versions had only a cursor. Resume that known unfinished range without
++  // pretending previously saved metrics are complete per-date receipts.
++  if (!progress && cursor < 90) for (let i = cursor; i < 90; i++) pending.add(shiftDay(today, -i))
++  if (input.reason === 'MANUAL') {
++    const offsets = Array.from({ length: 14 }, (_, i) => i)
++    for (const i of offsets) pending.add(shiftDay(today, -i))
++    return { mode: 'FULL', offsets, pendingDays: validProgressDays([...pending], today) }
++  }
++  if (!progress && cursor === 14) {
++    const offsets = Array.from({ length: 90 }, (_, i) => i)
++    return { mode: 'INITIAL', offsets, pendingDays: offsets.map(i => shiftDay(today, -i)) }
++  }
++  const recent = [0, 1, 2], priorPending = [...pending]
++  const lastSync = progress?.lastSyncAt
++  if (lastSync && Number.isFinite(Date.parse(lastSync)) && Date.parse(lastSync) <= Date.parse(now)) {
++    // Refresh the previous read day too: it may have been read before that day
++    // finished. Newly discovered gaps use the existing 90-day history target;
++    // explicit pending dates are retained even after they age beyond that window.
++    const missed = Math.min(89, Math.max(0, offsetOf(today, localDayOf(lastSync))))
++    for (let i = 0; i <= missed; i++) pending.add(shiftDay(today, -i))
++  }
++  for (const i of recent) pending.add(shiftDay(today, -i))
++  const older = [...new Set([...priorPending, ...validProgressDays([...pending], today)])]
++    .map(d => offsetOf(today, d)).filter(i => i >= 3).slice(0, 14)
++  return { mode: older.length ? 'BACKFILL' : 'RECENT', offsets: [...recent, ...older], pendingDays: validProgressDays([...pending], today) }
++}
+--- /dev/null
++++ b/src/lib/health/garmin-pending-imports.test.ts
+@@ -0,0 +1,159 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { currentAthleteId, setEventContext } from '../core/events'
++import { setStoreBackend } from '../core/storage'
++import { coachImports } from '../core/coach-import-evidence'
++import { CONFIRMED_TRAINING_IMPORTS_KEY, permanentlyDeleteConfirmedTrainingImport } from '../core/training-import'
++import { appendCorrection } from '../core/training-correction'
++import { saveDeviceRowsWithHealthResult } from '../ui/device-store'
++import { saveGarminActivities, garminViewHas } from '../../components/garmin-log'
++import { garminActivity, runGarminSyncJob, type GarminDailyProgress } from './garmin-sync-runner'
++import { shortHash } from './observation'
++
++const api = await import('./garmin-pending-imports').catch(() => ({})) as typeof import('./garmin-pending-imports')
++const scope = 'cn:synthetic-retry', subject = 'synthetic-retry-athlete'
++const raw = (id: number) => ({ activityId: id, activityType: { typeKey: 'running' }, activityName: '合成跑步', startTimeGMT: '2026-10-01 08:00:00', duration: 90.1, distance: 400 })
++const activity = (id: number, account = scope) => garminActivity(raw(id), account)!
++
++function fixture(t: test.TestContext) {
++  const owner = currentAthleteId(), oldStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage'), oldWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
++  const data = new Map<string, string>()
++  let blocked: number | null = null, silent = false, queueWrites = 0, failQueueAt = 0, failReadback = false, throwNextImportRead = false
++  const box = {
++    keys: () => [...data.keys()], getItem: (key: string) => {
++      if (key === CONFIRMED_TRAINING_IMPORTS_KEY && throwNextImportRead) { throwNextImportRead = false; throw Error('synthetic readback failure') }
++      return data.get(key) ?? null
++    },
++    setItem: (key: string, value: string) => {
++      if (key === CONFIRMED_TRAINING_IMPORTS_KEY && (silent || blocked !== null && JSON.parse(value).data.some((row: { sourceRecordIdentity?: string }) => row.sourceRecordIdentity?.endsWith(`:${blocked}`)))) {
++        if (silent) return
++        throw Error('synthetic import storage failure')
++      }
++      if (key.startsWith('fk-garmin-pending-imports:') && ++queueWrites === failQueueAt) throw Error('synthetic retry-state storage failure')
++      data.set(key, value)
++      if (key === CONFIRMED_TRAINING_IMPORTS_KEY && failReadback) { failReadback = false; throwNextImportRead = true }
++    },
++    removeItem: (key: string) => { data.delete(key) },
++  }
++  Object.defineProperty(globalThis, 'localStorage', { value: box, configurable: true })
++  Object.defineProperty(globalThis, 'window', { value: new EventTarget(), configurable: true })
++  setStoreBackend(box); setEventContext({ athleteId: subject })
++  t.after(() => {
++    setStoreBackend(null); setEventContext({ athleteId: owner })
++    if (oldStorage) Object.defineProperty(globalThis, 'localStorage', oldStorage); else Reflect.deleteProperty(globalThis, 'localStorage')
++    if (oldWindow) Object.defineProperty(globalThis, 'window', oldWindow); else Reflect.deleteProperty(globalThis, 'window')
++  })
++  return { data, box, block: (id: number | null) => { blocked = id }, silent: (value: boolean) => { silent = value }, failQueueAfter: (writes: number) => { failQueueAt = queueWrites + writes }, failReadbackOnce: () => { failReadback = true } }
++}
++function helper() { assert.equal(typeof api.saveGarminRowsWithRetry, 'function'); return api.saveGarminRowsWithRetry }
++
++test('the 25th failed activity retries locally after a 20-row incremental read and then never duplicates', async t => {
++  const f = fixture(t), save = helper(), paths: string[] = [], list = Array.from({ length: 40 }, (_, i) => raw(i + 1))
++  let cursor = 14, receipt: GarminDailyProgress | null = null
++  f.block(25)
++  const host: Parameters<typeof runGarminSyncJob>[0] = {
++    day: '2026-10-22', now: '2026-10-22T12:00:00Z', subject: currentAthleteId, generation: () => 0,
++    api: async path => {
++      paths.push(path)
++      if (path === 'status') return { status: 200, body: { loggedIn: true, region: 'cn', profile: { displayName: 'synthetic-retry' } } }
++      if (path.includes('activities/search')) { const q = new URL('https://fixture.invalid/' + path).searchParams; return { status: 200, body: list.slice(Number(q.get('start')), Number(q.get('start')) + Number(q.get('limit'))) } }
++      return { status: 204, body: null }
++    },
++    save: (health, rows) => save(scope, subject, health, rows), saveView: saveGarminActivities, activitySeen: garminViewHas,
++    bindAccount: () => true, progress: () => {}, report: () => {},
++    backfill: { get: () => cursor, set: (_scope, value) => { cursor = value } },
++    dailyProgress: { get: () => receipt, set: (_scope, value) => { receipt = value } },
++  }
++  const first = await runGarminSyncJob(host)
++  assert.equal(first.status, 'partial'); assert.equal(coachImports().length, 39)
++  assert.equal(api.readGarminPendingImports(scope, subject).length, 1); assert.equal(cursor, 90)
++  f.block(null); paths.length = 0
++  const second = await runGarminSyncJob(host)
++  assert.equal(second.mode, 'RECENT'); assert.equal(second.status, 'ok'); assert.equal(second.activityRows, 20)
++  assert.equal(second.saved, 1); assert.equal(second.skipped, 20); assert.equal(coachImports().length, 40)
++  assert.equal(paths.filter(path => path.includes('activities/search')).length, 1)
++  assert.equal(api.readGarminPendingImports(scope, subject).length, 0)
++  const third = await runGarminSyncJob(host)
++  assert.equal(third.saved, 0); assert.equal(coachImports().length, 40)
++})
++
++test('structured persistence failures include silent dropped writes, while invalid data is never queued', t => {
++  const f = fixture(t), save = helper()
++  f.silent(true)
++  const lost = save(scope, subject, [], [activity(1)])
++  assert.equal(lost.saved, 0); assert.equal(lost.activityResults[0].status, 'persistence_failed')
++  assert.equal(api.readGarminPendingImports(scope, subject).length, 1)
++  f.silent(false)
++  const retried = save(scope, subject, [], [{ ...activity(2), sport: 'UNKNOWN' }])
++  assert.equal(retried.saved, 1); assert.equal(retried.activityResults.find(row => row.sourceIdentity?.endsWith(':2'))?.status, 'rejected')
++  assert.equal(api.readGarminPendingImports(scope, subject).length, 0)
++})
++
++test('retry state is account and athlete scoped and stale owners cannot write', t => {
++  const f = fixture(t), save = helper(); f.block(25)
++  save(scope, subject, [], [activity(25)]); f.block(null)
++  const queued = [...f.data]
++  assert.equal(save('com:other-account', subject, [], []).saved, 0)
++  setEventContext({ athleteId: 'another-athlete' })
++  assert.throws(() => save(scope, subject, [], []), /归属/)
++  assert.equal(save(scope, 'another-athlete', [], []).saved, 0)
++  assert.deepEqual([...f.data], queued)
++  setEventContext({ athleteId: subject })
++  assert.equal(save(scope, subject, [], []).saved, 1)
++})
++
++test('old raw-only history and an explicitly deleted confirmed activity are never inferred as failed imports', t => {
++  fixture(t); const save = helper(), a = activity(25)
++  saveGarminActivities([{ ...raw(25), fkSourceIdentity: a.sourceIdentity, fkStartIso: a.startIso }], shortHash(scope))
++  assert.equal(save(scope, subject, [], []).saved, 0); assert.equal(coachImports().length, 0)
++  assert.equal(save(scope, subject, [], [a]).saved, 1)
++  assert.equal(permanentlyDeleteConfirmedTrainingImport(coachImports()[0].confirmedImportId), true)
++  assert.equal(save(scope, subject, [], []).saved, 0); assert.equal(coachImports().length, 0)
++  assert.deepEqual(api.readGarminPendingImports(scope, subject), [])
++})
++
++test('an already confirmed source clears its failed retry but source conflicts preserve manual corrections', t => {
++  const f = fixture(t), save = helper(), a = activity(25); f.block(25)
++  save(scope, subject, [], [a]); f.block(null)
++  assert.equal(saveDeviceRowsWithHealthResult([], [a]).saved, 1)
++  const record = coachImports()[0]
++  assert.ok(appendCorrection({ trainingOccurrenceId: record.confirmedImportId, kind: 'FIELD', field: 'duration', setKey: null, originalValue: '90.1', newValue: '91.2', reason: '合成更正' }))
++  const result = save(scope, subject, [], [{ ...a, durationSec: 92.3 }])
++  assert.equal(result.saved, 0); assert.equal(result.activityResults[0].status, 'conflict'); assert.ok(result.errors.length)
++  assert.deepEqual(api.readGarminPendingImports(scope, subject), [])
++  assert.equal(coachImports()[0].durationSeconds.value, 90.1); assert.equal(coachImports().length, 1)
++})
++
++test('a failed retry acknowledgement cannot later resurrect a user-deleted successful import', t => {
++  const f = fixture(t), save = helper(); f.block(25)
++  save(scope, subject, [], [activity(25)]); f.block(null)
++  f.failQueueAfter(2) // The attempting receipt succeeds; the final acknowledgement fails.
++  const result = save(scope, subject, [], [])
++  assert.equal(result.saved, 1); assert.ok(result.errors.some(error => /重试|复核/.test(error)))
++  assert.equal(api.readGarminPendingImports(scope, subject)[0].state, 'attempting')
++  assert.ok(permanentlyDeleteConfirmedTrainingImport(coachImports()[0].confirmedImportId))
++  const later = save(scope, subject, [], [])
++  assert.equal(later.saved, 0); assert.equal(coachImports().length, 0)
++  assert.ok(later.errors.some(error => /复核/.test(error)))
++})
++
++test('a successful write whose readback throws remains unconfirmed and cannot resurrect a later deletion', t => {
++  const f = fixture(t), save = helper(); f.failReadbackOnce()
++  const result = save(scope, subject, [], [activity(25)])
++  assert.equal(result.saved, 0); assert.equal(result.activityResults[0].status, 'persistence_unconfirmed')
++  assert.equal(coachImports().length, 1, 'the store did persist the record before readback failed')
++  assert.equal(api.readGarminPendingImports(scope, subject)[0].state, 'attempting')
++  assert.ok(permanentlyDeleteConfirmedTrainingImport(coachImports()[0].confirmedImportId))
++  const later = save(scope, subject, [], [])
++  assert.equal(later.saved, 0); assert.equal(coachImports().length, 0)
++  assert.ok(later.errors.some(error => /复核/.test(error)))
++})
++
++test('corrupt retry state is preserved and reported without blocking independent health persistence', t => {
++  const f = fixture(t), save = helper(), key = `fk-garmin-pending-imports:${shortHash(scope)}:${encodeURIComponent(subject)}`
++  f.data.set(key, '{corrupt')
++  const health = { key: 'steps', source: '合成佳明', metric: 'STEPS' as const, day: '2026-10-22', value: 100, observation: { key: 'steps:2026-10-22', sourceId: 'synthetic', statistic: '当日步数', syncedAt: '2026-10-22T12:00:00Z' } }
++  const result = save(scope, subject, [health], [activity(1)])
++  assert.equal(result.saved, 1); assert.deepEqual(result.healthErrors, []); assert.ok(result.errors.length)
++  assert.equal(coachImports().length, 0); assert.equal(f.data.get(key), '{corrupt')
++})
+--- /dev/null
++++ b/src/lib/health/garmin-pending-imports.ts
+@@ -0,0 +1,97 @@
++import { currentAthleteId } from '../core/events'
++import { currentStore } from '../core/storage'
++import { coachImports } from '../core/coach-import-evidence'
++import { saveDeviceRowsWithHealthResult, type DeviceSaveResult } from '../ui/device-store'
++import type { DeviceActivity, DeviceHealthRow } from '../ui/device-parse'
++import { shortHash } from './observation'
++
++export type GarminPendingImport = { activity: DeviceActivity; failedAt: string; state: 'pending' | 'attempting' }
++const keyFor = (scope: string, athleteId: string) => `fk-garmin-pending-imports:${shortHash(scope)}:${encodeURIComponent(athleteId)}`
++const checkOwner = (scope: string, athleteId: string) => {
++  if (!scope || !athleteId || currentAthleteId() !== athleteId) throw Error('活动同步归属已变化，未保存')
++}
++function hasSource(activity: DeviceActivity, scope: string): boolean {
++  const prefix = `garmin:${encodeURIComponent(scope)}:`
++  return typeof activity?.sourceIdentity === 'string' && activity.sourceIdentity.startsWith(prefix) && /^\d+$/.test(activity.sourceIdentity.slice(prefix.length))
++}
++function validEntry(value: unknown, scope: string): value is GarminPendingImport {
++  if (!value || typeof value !== 'object') return false
++  const entry = value as GarminPendingImport, a = entry.activity
++  const numeric = (v: unknown) => v === null || typeof v === 'number' && Number.isFinite(v) && v >= 0
++  return (entry.state === 'pending' || entry.state === 'attempting') && typeof entry.failedAt === 'string' && Number.isFinite(Date.parse(entry.failedAt))
++    && !!a && hasSource(a, scope) && typeof a.key === 'string' && typeof a.source === 'string' && typeof a.sportLabel === 'string'
++    && ['RUNNING', 'STRENGTH', 'MIXED'].includes(a.sport) && typeof a.startIso === 'string' && Number.isFinite(Date.parse(a.startIso))
++    && [a.durationSec, a.distanceM, a.avgHr, a.maxHr, a.calories, a.avgCadence, a.avgPower, a.verticalOscMm, a.groundContactMs].every(numeric)
++    && Array.isArray(a.sets) && a.sets.length <= 80 && a.sets.every(s => typeof s.name === 'string' && [s.reps, s.weightKg, s.durationSec].every(numeric))
++}
++
++/** Only explicit failed automatic imports are eligible. Raw activity views are
++ * never scanned: an absent formal record may have been intentionally deleted. */
++export function readGarminPendingImports(scope: string, athleteId: string): GarminPendingImport[] {
++  checkOwner(scope, athleteId)
++  const store = currentStore()
++  if (!store) throw Error('活动重试记录无法读取')
++  const raw = store.getItem(keyFor(scope, athleteId))
++  if (raw === null) return []
++  const record = JSON.parse(raw)
++  if (record?.version !== 1 || record.accountScope !== scope || record.athleteId !== athleteId || !Array.isArray(record.entries)
++    || !record.entries.every((entry: unknown) => validEntry(entry, scope))
++    || new Set(record.entries.map((entry: GarminPendingImport) => entry.activity.sourceIdentity)).size !== record.entries.length) throw Error('活动重试记录无法读取')
++  return record.entries
++}
++function writePending(scope: string, athleteId: string, entries: GarminPendingImport[]) {
++  checkOwner(scope, athleteId)
++  const store = currentStore()
++  if (!store) throw Error('活动重试记录保存失败')
++  const key = keyFor(scope, athleteId), raw = JSON.stringify({ version: 1, accountScope: scope, athleteId, entries }), before = store.getItem(key)
++  if (before === raw || before === null && entries.length === 0) return
++  store.setItem(key, raw)
++  if (store.getItem(key) !== raw) throw Error('活动重试记录保存失败')
++}
++function healthOnly(health: DeviceHealthRow[], message: string): DeviceSaveResult {
++  const result = saveDeviceRowsWithHealthResult(health, [])
++  result.errors.push(message)
++  return result
++}
++
++/** Reuse known failed activity snapshots locally; no network or history scan.
++ * A retry is marked attempting before saving. If acknowledging it later fails,
++ * the ambiguous result needs explicit review rather than reviving a deletion. */
++export function saveGarminRowsWithRetry(scope: string, athleteId: string, health: DeviceHealthRow[], activities: DeviceActivity[], manualReview = false): DeviceSaveResult {
++  checkOwner(scope, athleteId)
++  let previous: GarminPendingImport[]
++  try { previous = readGarminPendingImports(scope, athleteId) }
++  catch { return healthOnly(health, '活动重试记录无法读取；本次仅保存健康数据，请检查本机存储后重试。') }
++  const confirmed = previous.length ? new Set(coachImports().map(record => record.sourceRecordIdentity).filter(Boolean)) : new Set<string>()
++  const remaining = previous.filter(entry => !confirmed.has(entry.activity.sourceIdentity))
++  const ambiguous = new Map(remaining.filter(entry => entry.state === 'attempting').map(entry => [entry.activity.sourceIdentity!, entry]))
++  const invalidSources = activities.filter(activity => !hasSource(activity, scope))
++  const fresh = activities.filter(activity => hasSource(activity, scope) && (manualReview || !ambiguous.has(activity.sourceIdentity!)))
++  const freshIds = new Set(fresh.map(activity => activity.sourceIdentity))
++  const work = [...remaining.filter(entry => entry.state === 'pending' && !freshIds.has(entry.activity.sourceIdentity)).map(entry => entry.activity), ...fresh]
++  // Even a retry already confirmed elsewhere receives the attempting receipt
++  // before removal, so a failed cleanup cannot later resurrect a deleted record.
++  if (previous.length) {
++    try { writePending(scope, athleteId, previous.map(entry => ({ ...entry, state: 'attempting' }))) }
++    catch { return healthOnly(health, '活动重试状态保存失败，未重试活动；请进行完整复核。') }
++  }
++  checkOwner(scope, athleteId)
++  const result = saveDeviceRowsWithHealthResult(health, work)
++  if (invalidSources.length) result.errors.push('部分活动来源与当前佳明账号不匹配，未保存。')
++  const workById = new Map(work.map(activity => [activity.sourceIdentity!, activity]))
++  const next = new Map(ambiguous)
++  for (const outcome of result.activityResults) {
++    const identity = outcome.sourceIdentity
++    if (!identity) continue
++    if (outcome.status === 'persistence_failed' || outcome.status === 'persistence_unconfirmed') {
++      const activity = workById.get(identity)!
++      next.set(identity, { activity, failedAt: new Date().toISOString(), state: outcome.status === 'persistence_failed' ? 'pending' : 'attempting' })
++    } else if (outcome.status === 'conflict' && previous.some(entry => entry.activity.sourceIdentity === identity) && !confirmed.has(identity)) {
++      next.set(identity, { ...previous.find(entry => entry.activity.sourceIdentity === identity)!, state: 'attempting' })
++    } else next.delete(identity)
++  }
++  if (next.size && [...next.values()].some(entry => entry.state === 'attempting')) result.errors.push('有先前活动的保存结果未确认，请进行完整复核；未自动恢复可能已删除的记录。')
++  try { writePending(scope, athleteId, [...next.values()]) }
++  catch { result.errors.push('活动重试记录保存失败，尚未确认后续自动补存；请进行完整复核。') }
++  return result
++}
+--- /dev/null
++++ b/src/lib/health/garmin-progress-store.test.ts
+@@ -0,0 +1,41 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import type { MemoryStore } from '../core/storage'
++import { shortHash } from './observation'
++
++const api = await import('./garmin-progress-store').catch(() => ({})) as typeof import('./garmin-progress-store')
++class Store implements MemoryStore {
++  data = new Map<string, string>()
++  getItem(key: string) { return this.data.get(key) ?? null }
++  setItem(key: string, value: string) { this.data.set(key, value) }
++}
++const receipt = { checkedDays: ['2026-10-22', '2026-10-21'], pendingDays: ['2026-07-01'], lastSyncAt: '2026-10-22T04:00:00Z', intradayCheckedDays: ['2026-10-20'] }
++
++test('daily receipts are durable and scoped to both Garmin account and athlete', () => {
++  assert.equal(typeof api.writeGarminDailyProgress, 'function')
++  const store = new Store()
++  api.writeGarminDailyProgress('cn:synthetic-a', 'athlete-a', receipt, store)
++  assert.deepEqual(api.readGarminDailyProgress('cn:synthetic-a', 'athlete-a', store), receipt)
++  assert.equal(api.readGarminDailyProgress('com:synthetic-a', 'athlete-a', store), null)
++  assert.equal(api.readGarminDailyProgress('cn:synthetic-a', 'athlete-b', store), null)
++  api.writeGarminDailyProgress('cn:synthetic-a', 'athlete-b', { ...receipt, checkedDays: [] }, store)
++  assert.deepEqual(api.readGarminDailyProgress('cn:synthetic-a', 'athlete-a', store), receipt)
++})
++
++test('corrupt or mismatched receipts do not invent completed dates', () => {
++  assert.equal(typeof api.readGarminDailyProgress, 'function')
++  const store = new Store(), scope = 'cn:synthetic-a', subject = 'athlete-a'
++  const key = `fk-garmin-daily-progress:${shortHash(scope)}:${encodeURIComponent(subject)}`
++  for (const raw of ['{', JSON.stringify({ version: 1, scope, subjectId: subject, progress: { ...receipt, checkedDays: ['2026-02-30'] } }), JSON.stringify({ version: 1, scope: 'another-account', subjectId: subject, progress: receipt })]) {
++    store.data.set(key, raw)
++    assert.equal(api.readGarminDailyProgress(scope, subject, store), null)
++  }
++})
++
++test('failed durable writes are reported instead of acknowledging new progress', () => {
++  assert.equal(typeof api.writeGarminDailyProgress, 'function')
++  const lost: MemoryStore = { getItem: () => null, setItem: () => {} }
++  assert.throws(() => api.writeGarminDailyProgress('cn:synthetic-a', 'a', receipt, lost), /保存/)
++  assert.throws(() => api.writeGarminDailyProgress('cn:synthetic-a', 'a', receipt, null), /保存/)
++  assert.throws(() => api.writeGarminDailyProgress('cn:synthetic-a', 'a', { ...receipt, lastSyncAt: 'invalid' }, new Store()), /无效/)
++})
+--- /dev/null
++++ b/src/lib/health/garmin-progress-store.ts
+@@ -0,0 +1,40 @@
++import { currentStore, type MemoryStore } from '../core/storage'
++import { shortHash, validDay } from './observation'
++import type { GarminDailyProgress } from './garmin-daily-progress'
++
++const keyFor = (scope: string, subjectId: string) => `fk-garmin-daily-progress:${shortHash(scope)}:${encodeURIComponent(subjectId)}`
++const dates = (value: unknown): value is string[] => Array.isArray(value) && value.every(day => typeof day === 'string' && validDay(day))
++function validProgress(value: unknown): value is GarminDailyProgress {
++  if (!value || typeof value !== 'object') return false
++  const p = value as GarminDailyProgress
++  return dates(p.checkedDays) && dates(p.pendingDays)
++    && (p.intradayCheckedDays === undefined || dates(p.intradayCheckedDays))
++    && (p.lastSyncAt === null || typeof p.lastSyncAt === 'string' && Number.isFinite(Date.parse(p.lastSyncAt)))
++}
++
++/** Receipts acknowledge completed reads, never infer them from existing health values. */
++export function readGarminDailyProgress(scope: string, subjectId: string, store: MemoryStore | null = currentStore()): GarminDailyProgress | null {
++  if (!scope || !subjectId || !store) return null
++  try {
++    const record = JSON.parse(store.getItem(keyFor(scope, subjectId)) ?? 'null')
++    return record?.version === 1 && record.scope === scope && record.subjectId === subjectId && validProgress(record.progress) ? record.progress : null
++  } catch { return null }
++}
++
++/** Verify the write before the runner announces saved progress. Pending dates are not clipped. */
++export function writeGarminDailyProgress(scope: string, subjectId: string, progress: GarminDailyProgress, store: MemoryStore | null = currentStore()): void {
++  if (!scope || !subjectId || !validProgress(progress)) throw new Error('健康同步进度无效，未保存')
++  try {
++    if (!store) throw new Error()
++    const key = keyFor(scope, subjectId)
++    const previous = store.getItem(key)
++    if (previous) {
++      let record: { scope?: string; subjectId?: string } | null = null
++      try { record = JSON.parse(previous) } catch { /* Invalid receipts may be replaced after a verified new read. */ }
++      if (record && (record.scope !== scope || record.subjectId !== subjectId)) throw new Error()
++    }
++    const raw = JSON.stringify({ version: 1, scope, subjectId, progress })
++    store.setItem(key, raw)
++    if (store.getItem(key) !== raw) throw new Error()
++  } catch { throw new Error('健康同步进度保存失败，下次将重试未确认日期') }
++}
+--- /dev/null
++++ b/src/lib/health/garmin-sync-incremental.test.ts
+@@ -0,0 +1,214 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { runGarminSyncJob, type GarminReply, type GarminSyncReport } from './garmin-sync-runner'
++
++// Only the remote transport and local persistence boundary are synthetic. The real
++// runner selects, parses, fences and checkpoints every requested date.
++type Progress = { checkedDays: string[]; pendingDays: string[]; lastSyncAt: string | null; intradayCheckedDays?: string[] }
++const account = (name = 'synthetic') => ({ status: 200, body: { loggedIn: true, region: 'cn', profile: { displayName: name } } })
++function fixture(options: { cursor?: number; intraday?: boolean } = {}) {
++  let progress: Progress | null = null, cursor = options.cursor ?? 14, full: string | null = null, subject = 'synthetic-athlete'
++  const paths: string[] = [], writes: any[] = [], reports: GarminSyncReport[] = []
++  const failures = new Map<string, number>()
++  let activityConflict = false, healthSaveFailure = false, checkpointFailure = false, stale = false
++  const activity = { activityId: 123, activityType: { typeKey: 'running' }, startTimeGMT: '2026-10-21 01:02:03', duration: 60.1, distance: 200.25 }
++  const api = async (path: string): Promise<GarminReply> => {
++    paths.push(path)
++    if (path === 'status') return account(stale && paths.filter(p => p === 'status').length % 2 === 0 ? 'other' : 'synthetic')
++    if (path.includes('activities/search')) return { status: 200, body: [activity] }
++    const d = path.match(/\d{4}-\d{2}-\d{2}/)![0]
++    const kind = path.includes('usersummary') ? 'summary' : path.includes('hrv-service') ? 'hrv' : path.includes('dailySleepData') ? 'sleep' : path.includes('dailyHeartRate') ? 'hr' : 'stress'
++    const status = failures.get(`${kind}:${d}`)
++    if (status !== undefined) return { status, body: {} }
++    if (kind === 'hr' || kind === 'stress') return { status: 204, body: null }
++    return { status: 200, body: { calendarDate: d, totalSteps: 0, hrvSummary: { calendarDate: d, lastNightAvg: 60 }, dailySleepDTO: { calendarDate: d, sleepTimeSeconds: 23400 } } }
++  }
++  const host = {
++    api, subject: () => subject, generation: () => 0, day: '2026-10-22', now: '2026-10-22T12:02:00Z', reason: 'AUTO' as 'AUTO' | 'MANUAL',
++    bindAccount: () => true, progress: (_: string) => {}, saveView: (_: unknown[], __: string) => {}, activitySeen: () => true,
++    save: (health: any[], activities: any[]) => { writes.push({ health, activities }); return { saved: healthSaveFailure ? activities.length : health.length + activities.length, skipped: 0,
++      errors: [...(healthSaveFailure ? ['健康本机保存失败'] : []), ...(activityConflict ? ['同一来源活动数值已变化，保留原记录等待确认'] : [])], healthErrors: healthSaveFailure ? ['健康本机保存失败'] : [] } },
++    report: (r: GarminSyncReport) => { reports.push(structuredClone(r)) }, sleep: async (_: number) => {},
++    backfill: { get: () => cursor, set: (_: string, n: number) => { cursor = n } },
++    fullReview: { get: () => full, set: (_: string, at: string) => { full = at } },
++    dailyProgress: { get: () => progress, set: (_: string, p: Progress) => { if (checkpointFailure) throw Error('disk'); progress = structuredClone(p) } },
++    ...(options.intraday ? { intraday: { complete: (_: string) => false, save: (days: any[]) => days.length } } : {}),
++  }
++  return { host, paths, writes, reports, failures, get progress() { return progress }, get cursor() { return cursor }, get full() { return full },
++    seed: (p: Progress) => { progress = structuredClone(p) }, conflict: () => { activityConflict = true }, healthSaveFailure: () => { healthSaveFailure = true },
++    checkpointFailure: () => { checkpointFailure = true }, stale: () => { stale = true }, switchSubject: () => { subject = 'other-athlete' },
++    days: () => paths.filter(p => p.includes('usersummary')).map(p => p.match(/\d{4}-\d{2}-\d{2}/)![0]), clear: () => { paths.length = 0 },
++  }
++}
++
++test('activity conflicts stay visible but cannot make saved health history repeat INITIAL on every sync', async () => {
++  const f = fixture(); f.conflict()
++  const first = await runGarminSyncJob(f.host)
++  assert.equal(first.status, 'partial'); assert.equal(first.healthDaysRequested, 90)
++  assert.equal(f.progress?.checkedDays.length, 90); assert.deepEqual(f.progress?.pendingDays, []); assert.equal(f.cursor, 90)
++  assert.equal(f.full, null, 'a partial activity import must not be called a complete success')
++  f.clear()
++  const second = await runGarminSyncJob(f.host)
++  assert.equal(second.status, 'partial'); assert.equal(second.mode, 'RECENT'); assert.equal(second.activityLimit, 20)
++  assert.deepEqual(f.days(), ['2026-10-22', '2026-10-21', '2026-10-20'])
++  assert.equal(second.requests, 12); assert.equal(f.writes.at(-1).activities[0].durationSec, 60.1)
++  assert.ok(second.errors.some(e => e.includes('保留原记录')))
++})
++
++test('a legacy partial cursor migrates into bounded backfill without one more sixty-two-day reread', async () => {
++  const f = fixture({ cursor: 42 }); f.conflict()
++  for (const [days, cursor, pending] of [[17, 56, 34], [17, 70, 20], [17, 84, 6], [9, 90, 0], [3, 90, 0]]) {
++    f.clear(); const r = await runGarminSyncJob(f.host)
++    assert.equal(r.healthDaysRequested, days); assert.equal(r.activityLimit, 20); assert.equal(r.status, 'partial')
++    assert.equal(f.cursor, cursor); assert.equal(f.progress?.pendingDays.length, pending)
++    assert.equal(r.mode, days > 3 ? 'BACKFILL' : 'RECENT')
++    assert.ok(!f.days().includes('2026-10-15'), 'completed legacy history must not be reread to establish receipts')
++  }
++})
++
++test('ordinary sync across midnight remains three days while explicit manual review reads fourteen days and 200 activities', async () => {
++  const f = fixture(); await runGarminSyncJob(f.host); f.clear()
++  f.host.day = '2026-10-23'; f.host.now = '2026-10-23T12:02:00Z'
++  const ordinary = await runGarminSyncJob(f.host)
++  assert.equal(ordinary.mode, 'RECENT'); assert.equal(ordinary.activityLimit, 20)
++  assert.deepEqual(f.days(), ['2026-10-23', '2026-10-22', '2026-10-21'])
++  f.clear(); f.host.reason = 'MANUAL'
++  const review = await runGarminSyncJob(f.host)
++  assert.equal(review.mode, 'FULL'); assert.equal(review.activityLimit, 200); assert.equal(f.days().length, 14)
++})
++
++test('missed days after a longer pause include the last previously read day without reopening all history', async () => {
++  const f = fixture(); await runGarminSyncJob(f.host); f.clear()
++  f.host.day = '2026-10-27'; f.host.now = '2026-10-27T12:02:00Z'
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.activityLimit, 20)
++  assert.deepEqual(f.days(), ['2026-10-27', '2026-10-26', '2026-10-25', '2026-10-24', '2026-10-23', '2026-10-22'])
++})
++
++test('single-metric historical failures remain pending and retry only the missing dates', async () => {
++  const f = fixture(); f.failures.set('hrv:2026-09-22', 500); f.failures.set('sleep:2026-09-20', 502)
++  const first = await runGarminSyncJob(f.host)
++  assert.equal(first.status, 'partial'); assert.equal(f.progress?.checkedDays.length, 88)
++  assert.deepEqual(f.progress?.pendingDays, ['2026-09-22', '2026-09-20']); assert.equal(f.cursor, 30); assert.equal(f.full, null)
++  f.failures.clear(); f.clear()
++  const retry = await runGarminSyncJob(f.host)
++  assert.equal(retry.mode, 'BACKFILL'); assert.equal(retry.activityLimit, 20); assert.equal(retry.status, 'ok')
++  assert.deepEqual(f.days(), ['2026-10-22', '2026-10-21', '2026-10-20', '2026-09-22', '2026-09-20'])
++  assert.deepEqual(f.progress?.pendingDays, []); assert.equal(f.cursor, 90)
++})
++
++test('interrupted initial history resumes in fourteen older dates without replaying its completed range', async () => {
++  const f = fixture(); f.failures.set('summary:2026-09-22', 429)
++  const first = await runGarminSyncJob(f.host)
++  assert.equal(first.healthDaysRequested, 31); assert.equal(f.progress?.checkedDays.length, 30); assert.equal(f.progress?.pendingDays.length, 60)
++  f.failures.clear(); f.clear()
++  const retry = await runGarminSyncJob(f.host)
++  assert.equal(retry.mode, 'BACKFILL'); assert.equal(retry.activityLimit, 20); assert.equal(retry.healthDaysRequested, 17)
++  assert.deepEqual(f.days().slice(0, 4), ['2026-10-22', '2026-10-21', '2026-10-20', '2026-09-22'])
++  assert.equal(f.days().at(-1), '2026-09-09'); assert.equal(f.progress?.pendingDays.length, 46); assert.equal(f.cursor, 44)
++})
++
++test('pending dates survive calendar changes and are not discarded because they have become older than ninety days', async () => {
++  const f = fixture(); f.seed({ checkedDays: ['2026-10-22'], pendingDays: ['2026-07-01'], lastSyncAt: '2026-10-22T12:02:00Z' })
++  f.host.day = '2026-10-23'; f.host.now = '2026-10-23T12:02:00Z'; f.failures.set('sleep:2026-07-01', 502)
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.mode, 'BACKFILL'); assert.deepEqual(f.days(), ['2026-10-23', '2026-10-22', '2026-10-21', '2026-07-01'])
++  assert.deepEqual(f.progress?.pendingDays, ['2026-07-01']); assert.ok(!f.progress?.checkedDays.includes('2026-07-01'))
++})
++
++test('health persistence failure cannot create checked receipts or advance the successful-health time', async () => {
++  const f = fixture(); f.healthSaveFailure()
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.status, 'partial'); assert.deepEqual(f.progress?.checkedDays, []); assert.equal(f.progress?.pendingDays.length, 90)
++  assert.equal(f.progress?.lastSyncAt, null); assert.equal(f.cursor, 14); assert.equal(f.full, null)
++})
++
++test('healthErrors omitted by a legacy save adapter conservatively blocks health progress for all save errors', async () => {
++  const f = fixture(); const host = { ...f.host, save: () => ({ saved: 1, skipped: 0, errors: ['unknown save failure'] }) }
++  await runGarminSyncJob(host)
++  assert.deepEqual(f.progress?.checkedDays, []); assert.equal(f.progress?.lastSyncAt, null); assert.equal(f.cursor, 14)
++})
++
++test('empty supported daily responses are checked without inventing health values', async () => {
++  const f = fixture(); const base = f.host.api
++  f.host.api = async p => p === 'status' || p.includes('activities/search') ? base(p) : { status: 204, body: null }
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.healthRows, 0); assert.equal(f.progress?.checkedDays.length, 90); assert.deepEqual(f.progress?.pendingDays, [])
++  assert.deepEqual(f.writes[0].health, [])
++})
++
++test('an absent daily resource is checked as unavailable data without manufacturing a metric', async () => {
++  const f = fixture(); const base = f.host.api
++  f.host.api = async p => p === 'status' || p.includes('activities/search') ? base(p) : { status: 404, body: {} }
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.healthRows, 0); assert.equal(f.progress?.checkedDays.length, 90); assert.deepEqual(f.progress?.pendingDays, [])
++  assert.equal(r.status, 'ok'); assert.deepEqual(f.writes[0].health, [])
++})
++
++test('malformed daily response dates remain pending even if other health metrics were saved', async () => {
++  const f = fixture(); const base = f.host.api
++  f.host.api = async p => p.includes('hrv-service/hrv/2026-09-22') ? { status: 200, body: { hrvSummary: { calendarDate: '2026-09-21', lastNightAvg: 60 } } } : base(p)
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.status, 'partial'); assert.deepEqual(f.progress?.pendingDays, ['2026-09-22']); assert.equal(f.progress?.checkedDays.length, 89)
++})
++
++test('empty old intraday dates get a separate checked receipt and do not cause a repeated twenty-eight-day scan', async () => {
++  const f = fixture({ intraday: true }); const first = await runGarminSyncJob(f.host)
++  assert.equal(first.intraday?.requested, 28); assert.equal(f.progress?.intradayCheckedDays?.length, 28)
++  f.clear(); const second = await runGarminSyncJob(f.host)
++  assert.equal(second.intraday?.requested, 2); assert.equal(second.requests, 16)
++  assert.equal(f.paths.filter(p => p.includes('dailyHeartRate')).length, 2)
++  assert.equal(f.paths.filter(p => p.includes('dailyStress')).length, 2)
++})
++
++test('failed old intraday metrics remain retryable instead of becoming empty checked receipts', async () => {
++  const f = fixture({ intraday: true }); f.failures.set('hr:2026-10-12', 500)
++  const first = await runGarminSyncJob(f.host)
++  assert.equal(first.status, 'partial'); assert.ok(first.errors.some(e => e.includes('2026-10-12')))
++  assert.equal(f.progress?.intradayCheckedDays?.length, 27); assert.ok(!f.progress?.intradayCheckedDays?.includes('2026-10-12'))
++  f.failures.clear(); f.clear(); const retry = await runGarminSyncJob(f.host)
++  assert.equal(retry.intraday?.requested, 3); assert.ok(f.progress?.intradayCheckedDays?.includes('2026-10-12'))
++  assert.deepEqual(f.paths.filter(p => p.includes('dailyHeartRate')).map(p => p.match(/\d{4}-\d{2}-\d{2}/)![0]), ['2026-10-22', '2026-10-21', '2026-10-12'])
++})
++
++test('intraday auth expiry blocks all writes while malformed replies and persistence failure retain retryable dates', async () => {
++  const auth = fixture({ intraday: true }); auth.failures.set('hr:2026-10-22', 401)
++  const expired = await runGarminSyncJob(auth.host)
++  assert.equal(expired.status, 'auth'); assert.equal(auth.writes.length, 0); assert.equal(auth.progress, null)
++
++  const malformed = fixture({ intraday: true }); const base = malformed.host.api
++  malformed.host.api = async p => p.includes('dailyHeartRate') && p.includes('2026-10-12') ? { status: 200, body: { calendarDate: '2026-10-12', ok: false, error: 'unavailable' } } : base(p)
++  const invalid = await runGarminSyncJob(malformed.host)
++  assert.equal(invalid.status, 'partial'); assert.ok(!malformed.progress?.intradayCheckedDays?.includes('2026-10-12'))
++  assert.equal(malformed.progress?.checkedDays.length, 90, 'daily progress is independent of a failed intraday metric')
++
++  const disk = fixture({ intraday: true }); disk.host.intraday!.save = () => 0
++  const failed = await runGarminSyncJob(disk.host)
++  assert.equal(failed.status, 'partial'); assert.equal(disk.full, null); assert.deepEqual(disk.progress?.intradayCheckedDays, [])
++})
++
++test('a long pause queues all outstanding dates but each automatic pass reads at most fourteen older dates', async () => {
++  const f = fixture({ cursor: 90 }); f.seed({ checkedDays: ['2026-09-01'], pendingDays: ['2026-08-01'], lastSyncAt: '2026-09-01T12:02:00Z' })
++  const first = await runGarminSyncJob(f.host)
++  assert.equal(first.mode, 'BACKFILL'); assert.equal(first.healthDaysRequested, 17); assert.equal(first.activityLimit, 20)
++  assert.ok(f.days().includes('2026-08-01')); assert.ok(f.progress!.pendingDays.length > 14)
++  f.clear(); const second = await runGarminSyncJob(f.host)
++  assert.equal(second.healthDaysRequested, 17); assert.equal(second.activityLimit, 20)
++  assert.ok(!f.days().includes('2026-08-01'), 'a checked pending date is not reread on the next continuation')
++})
++
++test('changing account or athlete during a request prevents every progress and data write', async () => {
++  for (const kind of ['account', 'athlete']) {
++    const f = fixture({ intraday: true }); if (kind === 'account') f.stale()
++    else { const base = f.host.api; f.host.api = async p => { const r = await base(p); if (p.includes('dailySleepData')) f.switchSubject(); return r } }
++    const r = await runGarminSyncJob(f.host)
++    assert.equal(r.status, 'stale', kind); assert.equal(f.writes.length, 0, kind); assert.equal(f.progress, null, kind); assert.equal(f.cursor, 14, kind)
++  }
++})
++
++test('a failed progress write reports partial and cannot manufacture a complete-success timestamp', async () => {
++  const f = fixture(); f.checkpointFailure()
++  const r = await runGarminSyncJob(f.host)
++  assert.equal(r.status, 'partial'); assert.equal(f.progress, null); assert.equal(f.full, null)
++  assert.ok(r.errors.length > 0); assert.ok(f.writes[0].health.length > 0)
++})
+--- a/src/lib/health/garmin-sync-runner.ts
++++ b/src/lib/health/garmin-sync-runner.ts
+@@ -2,7 +2,9 @@
+ import { buildIntradayDay, type IntradayDay } from './garmin-intraday'
+ import { shortHash, shiftDay } from './observation'
+ import { planGarminDailySync } from './garmin-sync-plan-u11'
++import { planGarminProgressSync, validProgressDays, type GarminDailyProgress } from './garmin-daily-progress'
+ import type { DeviceActivity, DeviceHealthRow } from '../ui/device-parse'
++export type { GarminDailyProgress } from './garmin-daily-progress'
+ 
+ export type GarminReply = { status: number; body: any }
+ /** v89.1：日内样本取 28 天；补取的旧日子之间停顿 350ms，避免触发佳明限流。 */
+@@ -12,8 +14,9 @@
+   at: string; status: 'ok' | 'partial' | 'empty' | 'auth' | 'fail' | 'stale'; subjectId: string; accountScope: string | null;
+   healthRows: number; activityRows: number; saved: number; skipped: number; errors: string[];
+   healthDaysRequested: number; coverageDays: string[]; activityLimit: number; completeHistory: false;
+-  /** v89.10.1：RECENT=增量同步（近 3 天 + 新活动）；FULL=完整复核（14 天 + 补历史 + 最近 200 条活动）。requests=本次向佳明发出的请求数。 */
+-  mode?: 'INITIAL' | 'RECENT' | 'FULL'; requests?: number;
++  /** RECENT=近期 3 日；BACKFILL=近期 3 日 + 最多 14 个历史缺口；
++   * FULL=显式复核近期 14 日/200 活动；INITIAL=新账号首次历史。requests 为实际请求数。 */
++  mode?: 'INITIAL' | 'RECENT' | 'BACKFILL' | 'FULL'; requests?: number;
+   /** v89.1：日内样本单独计数，失败不再静默（不影响日汇总状态）。 */
+   intraday?: { requested: number; saved: number; failed: string[]; throttled: boolean };
+ }
+@@ -44,19 +47,23 @@
+ export async function runGarminSyncJob(host: {
+   api: (path: string) => Promise<GarminReply>; subject: () => string; generation: () => number; day: string; now: string;
+   bindAccount: (scope: string, subject: string) => boolean;
+-  save: (health: DeviceHealthRow[], activities: DeviceActivity[]) => { saved: number; skipped: number; errors: string[] };
++  save: (health: DeviceHealthRow[], activities: DeviceActivity[]) => { saved: number; skipped: number; errors: string[]; healthErrors?: string[] };
+   saveView: (activities: unknown[], accountScope: string) => void;
+   report: (report: GarminSyncReport) => void; progress: (message: string) => void;
+   /** v78：健康历史逐次补到 90 天。get = 已补到第几天（≥14），set 在本次保存成功后调用。 */
+   backfill?: { get: (scope: string) => number; set: (scope: string, upTo: number) => void };
+-  /** v88.3：最近 7 天日内心率/身体电量（今天、昨天每次都取；更早的已完整就跳过）。失败不影响日汇总同步结果。 */
++  /** 近 28 天日内样本；今昨重取，更早完整或已核对的日期跳过。
++   * 日内失败不阻塞独立日汇总进度，但现代调用会在整体报告中保留失败。 */
+   intraday?: { complete: (day: string) => boolean; save: (days: IntradayDay[]) => number };
+   /** 测试可注入；默认真实等待（节流）。 */
+   sleep?: (ms: number) => Promise<void>;
+-  /** v89.10.1：增量同步。没有 fullReview（旧调用/测试）= 每次完整复核，行为与以前相同。
+-   * reason=MANUAL（点“同步最近活动和健康数据”）→ 完整复核；AUTO → 当天（本地日）首次、首次同步/新账号、或上次完整复核超过 24 小时 → 完整复核，否则增量。 */
++  /** MANUAL 显式完整复核。现代 AUTO 按日期回执增量/续传，跨日不自动全量。
++   * 没有 dailyProgress 的旧调用继续沿用 fullReview/历史游标计划。 */
+   reason?: 'AUTO' | 'MANUAL';
+   fullReview?: { get: (scope: string) => string | null; set: (scope: string, at: string) => void };
++  /** Account + athlete scoped, committed only after final ownership checks and
++   * successful health persistence. Activity conflicts keep their own errors. */
++  dailyProgress?: { get: (scope: string) => GarminDailyProgress | null; set: (scope: string, progress: GarminDailyProgress) => void };
+   /** 活动是否已在本机且数值未变（增量同步用来判断要不要往后翻页）。 */
+   activitySeen?: (accountScope: string, o: any) => boolean;
+ }): Promise<GarminSyncReport> {
+@@ -73,26 +80,29 @@
+     if (!account && (initial.status === 0 || initial.status >= 404)) { result.status = 'fail'; result.errors.push(initial.status === 0 ? '网络中断或请求超时，未连接到佳明同步服务' : `佳明同步服务暂不可用（HTTP ${initial.status}）`); return result }
+     if (!account) { result.status = 'auth'; result.errors.push('未登录、登录过期或账号身份不完整'); return result }
+     result.accountScope = shortHash(account.scope)
+-    // v89.10.1：选模式（复用 U11 计划：FULL 的 14 天 + 补历史游标与以前一致）。本地日变了视同“超过 24 小时”。
++    // 保留旧调用的 U11 计划；现代调用在下面由逐日期回执选择范围。
+     const lastFull = host.fullReview ? host.fullReview.get(account.scope) : null
+     const sameLocalDay = !!lastFull && Number.isFinite(Date.parse(lastFull)) && localDayOf(lastFull) === host.day
+     const plan = planGarminDailySync({ today: host.day, now: host.now, reason: !host.fullReview || host.reason !== 'AUTO' ? 'MANUAL' : 'PERIODIC', lastAttemptAt: null,
+       lastFullSuccessAt: sameLocalDay ? lastFull : null, lastFailureAt: null, backfillThrough: host.backfill?.get(account.scope) ?? 90 })
+-    // 首次同步（新账号或历史还没补满 90 天）：一次补齐 90 天日汇总 + 28 天日内；中断/限流后下次从游标继续。
++    // 兼容历史游标；现代旧账号中断后不再重跑 INITIAL 的全部剩余历史。
+     const cursor = Math.min(90, Math.max(14, host.backfill?.get(account.scope) ?? 90))
+-    const mode: 'INITIAL' | 'RECENT' | 'FULL' = host.fullReview && cursor < 90 ? 'INITIAL' : plan.mode === 'RECENT' ? 'RECENT' : 'FULL'
++    const dailyProgress = host.dailyProgress?.get(account.scope) ?? null
++    const progressPlan = host.dailyProgress ? planGarminProgressSync({ today: host.day, now: host.now, reason: host.reason, progress: dailyProgress, backfillThrough: cursor }) : null
++    const mode = progressPlan?.mode ?? (host.fullReview && cursor < 90 ? 'INITIAL' : plan.mode === 'RECENT' ? 'RECENT' : 'FULL')
+     result.mode = mode
+     // 活动列表：完整复核一次取 200 条；增量先取 20 条，整页都是新的/有变化才继续往后翻（每页 20，最多到 200），不漏新活动。
+-    const PAGE = mode === 'RECENT' ? 20 : 200, raw: any[] = []
++    const incrementalActivities = mode === 'RECENT' || mode === 'BACKFILL'
++    const PAGE = incrementalActivities ? 20 : 200, raw: any[] = []
+     for (let start = 0; start < 200; start += PAGE) {
+       const list = await api(`g/activitylist-service/activities/search/activities?start=${start}&limit=${PAGE}`)
+       if ([401, 403].includes(list.status)) { result.errors.push(`活动列表 HTTP ${list.status}`); result.status = 'auth'; return result }
+       if (list.status !== 200 || !Array.isArray(list.body)) { result.errors.push(`活动列表 HTTP ${list.status}`); break }
+       raw.push(...list.body)
+-      if (mode !== 'RECENT' || list.body.length < PAGE || !host.activitySeen || list.body.some((o: any) => host.activitySeen!(result.accountScope!, o))) break
++      if (!incrementalActivities || list.body.length < PAGE || !host.activitySeen || list.body.some((o: any) => host.activitySeen!(result.accountScope!, o))) break
+       if (!unchanged()) { result.status = 'stale'; return result }
+     }
+-    result.activityLimit = mode !== 'RECENT' ? 200 : raw.length >= 20 ? Math.min(200, Math.ceil(raw.length / 20) * 20) : 20
++    result.activityLimit = !incrementalActivities ? 200 : raw.length >= 20 ? Math.min(200, Math.ceil(raw.length / 20) * 20) : 20
+     const acts: DeviceActivity[] = [], health: DeviceHealthRow[] = [], intraday: IntradayDay[] = []
+     const identities = new Map<string, DeviceActivity>()
+     for (const o of raw) {
+@@ -103,10 +113,17 @@
+       identities.set(a.key, a)
+     }
+     acts.push(...identities.values())
+-    // 每次同步最近 14 天；另外往前补 14 天更早的历史，直到满 90 天（恢复趋势 30/90 天才有数据）。
+-    // 增量：只取最近 3 天（0–2）；完整复核：14 天 + 往前补 14 天，直到满 90 天。补历史游标只在保存成功后推进。
++    // 现代计划精确列出近期日期与待补缺口；旧调用保留原有 14 日 + 游标规则。
+     const HIST = 90, from = cursor
+-    const offsets = mode === 'INITIAL' ? [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: HIST - from }, (_, i) => from + i)] : plan.offsets
++    const offsets = progressPlan?.offsets ?? (mode === 'INITIAL' ? [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: HIST - from }, (_, i) => from + i)] : plan.offsets)
++    const checkedDaily = new Set<string>(), checkedIntraday = new Set<string>(), attemptedIntraday = new Set<string>()
++    const priorIntraday = new Set(validProgressDays(dailyProgress?.intradayCheckedDays, host.day))
++    // A known date-scoped resource returning 404 has no data. This is a read
++    // receipt, not a synthetic measurement. Auth, 429, 5xx and malformed 200
++    // responses still fail validation and remain pending.
++    const emptyResource = (r: GarminReply | undefined) => host.dailyProgress && r?.status === 404 ? { status: 204, body: null } : r
++    const intradayNeeded = (d: string, offset: number) => offset < 2 || !host.intraday!.complete(d) &&
++      !(host.dailyProgress && host.reason !== 'MANUAL' && priorIntraday.has(d))
+     let done = 0, dailyThrottled = false, unavailableStreak = 0, serviceUnavailable = false
+     let firstUnavailable: number | null = null, firstUnavailableHistory: number | null = null
+     // v89.1：日内样本首次/历史不足时补到 28 天。今天、昨天每次都重取；更早的只取还没取全的日子。
+@@ -114,32 +131,50 @@
+     let throttled = false
+     const intradayStat = { requested: 0, saved: 0, failed: [] as string[], throttled: false }
+     const takeIntraday = (d: string, ihr: GarminReply | undefined, ist: GarminReply | undefined, sl?: GarminReply) => {
++      attemptedIntraday.add(d)
+       intradayStat.requested++
+       if ([ihr, ist].some(r => r?.status === 429)) { throttled = intradayStat.throttled = true; intradayStat.failed.push(`${d} 佳明限流（429），稍后再同步补取`); return }
+       if (!ihr && !ist) { intradayStat.failed.push(`${d} 日内请求失败（网络）`); return }
+-      const built = buildIntradayDay({ day: d, now: host.now, hr: ihr, stress: ist, sleep: sl, activities: acts })
++      const hr = emptyResource(ihr), stress = emptyResource(ist), sleep = emptyResource(sl)
++      const built = buildIntradayDay({ day: d, now: host.now, hr, stress, sleep, activities: acts })
+       if (built.day) intraday.push(built.day); else if (built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
++      if (host.dailyProgress) {
++        // Empty valid replies may produce no IntradayDay. Missing transport
++        // replies and failed metrics must never be mistaken for checked empties.
++        const validReplies = [hr, stress, sleep].every(r => !!r && (r.status === 204 || r.status === 200 && r.body &&
++          typeof r.body === 'object' && !Array.isArray(r.body) && r.body.ok !== false && !r.body.error))
++        const sleepFailed = sleep ? garminHealthDay(d, account.scope, { status: 204, body: null }, { status: 204, body: null }, sleep, host.now).failures.length : 1
++        if (validReplies && !built.failures.length && !sleepFailed && !built.day?.failedReadings?.length) checkedIntraday.add(d)
++        if (built.day && built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
++        if ((!validReplies || sleepFailed) && !built.failures.length) intradayStat.failed.push(`${d} 日内部分请求未完成`)
++      }
+     }
+     for (const [n, i] of offsets.entries()) {
+       if (!unchanged()) { result.status = 'stale'; return result }
+       const d = shiftDay(host.day, -i)
+-      host.progress(mode === 'INITIAL' ? `首次同步：活动 ${acts.length} 条 · 健康 ${n + 1}/${offsets.length} 天${i < INTRADAY_DAYS ? '（含日内）' : ''}` : `${mode === 'RECENT' ? '增量同步' : '完整复核'}：已取得 ${acts.length} 条活动记录 · 健康 ${n + 1}/${offsets.length} 天${i >= 14 ? '（补更早历史）' : ''}`)
+-      const wantIntraday = !!host.intraday && !throttled && i < INTRADAY_DAYS && (i < 2 || !host.intraday.complete(d))
++      host.progress(mode === 'INITIAL' ? `首次同步：活动 ${acts.length} 条 · 健康 ${n + 1}/${offsets.length} 天${i < INTRADAY_DAYS ? '（含日内）' : ''}` : `${mode === 'RECENT' ? '增量同步' : mode === 'BACKFILL' ? '补齐历史' : '完整复核'}：已取得 ${acts.length} 条活动记录 · 健康 ${n + 1}/${offsets.length} 天${i >= 3 && mode === 'BACKFILL' || i >= 14 ? '（补更早历史）' : ''}`)
++      const wantIntraday = !!host.intraday && !throttled && i < INTRADAY_DAYS && intradayNeeded(d, i)
+       const none = Promise.resolve(undefined)
+       if (wantIntraday && i >= 2) await (host.sleep ?? defaultSleep)(INTRADAY_GAP_MS)
++      if (host.dailyProgress) result.healthDaysRequested++
+       const [s, h, sl, ihr, ist] = await Promise.all([
+         api(`g/usersummary-service/usersummary/daily/${encodeURIComponent(account.name)}?calendarDate=${d}`),
+         api(`g/hrv-service/hrv/${d}`), api(`g/wellness-service/wellness/dailySleepData/${encodeURIComponent(account.name)}?date=${d}`),
+         wantIntraday ? api(`g/wellness-service/wellness/dailyHeartRate/${encodeURIComponent(account.name)}?date=${d}`).catch(() => undefined) : none,
+         wantIntraday ? api(`g/wellness-service/wellness/dailyStress/${d}`).catch(() => undefined) : none,
+       ])
++      if (host.dailyProgress && [s, h, sl, ihr, ist].some(r => r && [401, 403].includes(r.status))) {
++        result.status = 'auth'; result.errors.push('同步期间登录过期，未写入本次结果'); return result
++      }
+       // 日汇总被限流（429）：立即停止，保存已取得的部分；补历史游标只推进到已取完的那天，下次从那里继续。
+-      if (s.status === 429 || mode === 'INITIAL' && [h, sl].some(r => r.status === 429)) { dailyThrottled = throttled = true; result.errors.push(`佳明限流（429），已在第 ${n + 1}/${offsets.length} 天停止；下次同步从这里继续`); break }
++      if (s.status === 429 || (mode === 'INITIAL' || host.dailyProgress) && [h, sl].some(r => r.status === 429)) { dailyThrottled = throttled = true; result.errors.push(`佳明限流（429），已在第 ${n + 1}/${offsets.length} 天停止；下次同步从这里继续`); break }
+       if (wantIntraday) takeIntraday(d, ihr, ist, sl)
+-      result.healthDaysRequested++; done = n + 1
++      if (!host.dailyProgress) result.healthDaysRequested++
++      done = n + 1
+       if ([s, h, sl].some(r => [401, 403].includes(r.status))) { result.status = 'auth'; result.errors.push('同步期间登录过期，未写入本次结果'); return result }
+-      const parsed = garminHealthDay(d, account.scope, s, h, sl, host.now)
++      const parsed = garminHealthDay(d, account.scope, emptyResource(s)!, emptyResource(h)!, emptyResource(sl)!, host.now)
+       health.push(...parsed.rows); result.errors.push(...parsed.failures)
++      if (!parsed.failures.length) checkedDaily.add(d)
+       if (parsed.rows.length) result.coverageDays.push(d)
+       // 只有整天的三个接口都发生网络/网关故障才计连续失败；空数据、404 或单项缺失仍继续。
+       if ([s, h, sl].every(r => [0, 502, 503, 504].includes(r.status))) {
+@@ -155,7 +190,10 @@
+       }
+     }
+     if (host.intraday && !serviceUnavailable) {
+-      const extra = Array.from({ length: INTRADAY_DAYS }, (_, i) => i).filter(i => !offsets.includes(i)).map(i => shiftDay(host.day, -i)).filter(d => !host.intraday!.complete(d))
++      const extraCandidates = Array.from({ length: INTRADAY_DAYS }, (_, i) => i).filter(i => !offsets.includes(i)).filter(i => intradayNeeded(shiftDay(host.day, -i), i))
++      // Resuming history must not quietly add a second unbounded old-date scan.
++      const extraLimit = host.dailyProgress && incrementalActivities ? Math.max(0, 14 - offsets.filter(i => i >= 3).length) : INTRADAY_DAYS
++      const extra = extraCandidates.slice(0, extraLimit).map(i => shiftDay(host.day, -i))
+       for (const [n, d] of extra.entries()) {
+         if (throttled || !unchanged()) break
+         host.progress(`补取日内心率/身体电量/压力 ${n + 1}/${extra.length} 天`)
+@@ -175,13 +213,38 @@
+     result.healthRows = health.length; result.activityRows = acts.length
+     const saved = host.save(health, acts)
+     result.saved = saved.saved; result.skipped = saved.skipped; result.errors.push(...saved.errors)
+-    if (intraday.length) { try { intradayStat.saved = host.intraday?.save(intraday) ?? 0; if (!intradayStat.saved) intradayStat.failed.push('日内样本本机保存失败（空间不足？）') } catch { intradayStat.failed.push('日内样本本机保存失败') } }
++    let intradayStored = true
++    if (intraday.length) { try { intradayStat.saved = host.intraday?.save(intraday) ?? 0; if (intradayStat.saved < intraday.length) { intradayStored = false; intradayStat.failed.push('日内样本本机保存未完成（空间不足？）') } } catch { intradayStored = false; intradayStat.failed.push('日内样本本机保存失败') } }
+     if (host.intraday) result.intraday = intradayStat
+-    // 历史游标不能跨过未取得的旧日；近 14 天下次完整复核会重取，不阻止已保存历史推进。
+-    const back = offsets.slice(0, firstUnavailableHistory ?? done).filter(i => i >= 14), upTo = back.length ? Math.max(...back) + 1 : from
+-    if (!saved.errors.length && upTo > from) host.backfill?.set(account.scope, upTo)
+-    // 完整复核/首次同步完整做完且本机保存无误才记时间（按佳明账号分开）；被限流中断的不记，下次继续。
+-    if (mode !== 'RECENT' && !dailyThrottled && firstUnavailable === null && done === offsets.length && !saved.errors.length) { try { host.fullReview?.set(account.scope, host.now) } catch { /* 下次再复核 */ } }
++    if (host.dailyProgress && intradayStat.failed.length) result.errors.push(...intradayStat.failed)
++    const healthErrors = saved.healthErrors ?? saved.errors
++    if (host.dailyProgress && progressPlan) {
++      const checked = new Set(validProgressDays(dailyProgress?.checkedDays, host.day))
++      const pending = new Set(progressPlan.pendingDays)
++      for (const i of offsets) { const d = shiftDay(host.day, -i); if (!healthErrors.length && checkedDaily.has(d)) { checked.add(d); pending.delete(d) } else checked.delete(d) }
++      for (const d of attemptedIntraday) priorIntraday.delete(d)
++      if (intradayStored) for (const d of checkedIntraday) priorIntraday.add(d)
++      const progress: GarminDailyProgress = {
++        checkedDays: validProgressDays([...checked], host.day).filter(d => d >= shiftDay(host.day, -89)),
++        pendingDays: validProgressDays([...pending], host.day),
++        lastSyncAt: !healthErrors.length && checkedDaily.size ? host.now : dailyProgress?.lastSyncAt ?? null,
++        intradayCheckedDays: validProgressDays([...priorIntraday], host.day).filter(d => d >= shiftDay(host.day, -(INTRADAY_DAYS - 1))),
++      }
++      // Write the durable per-date receipt before advancing the compatibility
++      // cursor. If this fails, the job remains partial and is safe to retry.
++      host.dailyProgress.set(account.scope, progress)
++      let upTo = from
++      if (!healthErrors.length) while (upTo < HIST && checked.has(shiftDay(host.day, -upTo)) && !pending.has(shiftDay(host.day, -upTo))) upTo++
++      if (upTo > from) host.backfill?.set(account.scope, upTo)
++      if ((mode === 'INITIAL' || mode === 'FULL') && !dailyThrottled && done === offsets.length && !result.errors.length && !progress.pendingDays.length && !intradayStat.failed.length) {
++        try { host.fullReview?.set(account.scope, host.now) } catch { /* A missing review marker never invalidates the checked-date receipt. */ }
++      }
++    } else {
++      // Legacy callers keep their existing scheduling and conservative error gate.
++      const back = offsets.slice(0, firstUnavailableHistory ?? done).filter(i => i >= 14), upTo = back.length ? Math.max(...back) + 1 : from
++      if (!saved.errors.length && upTo > from) host.backfill?.set(account.scope, upTo)
++      if (mode !== 'RECENT' && !dailyThrottled && firstUnavailable === null && done === offsets.length && !saved.errors.length) { try { host.fullReview?.set(account.scope, host.now) } catch { /* 下次再复核 */ } }
++    }
+     // Raw activity view remains account/athlete scoped and never counts as training sessions.
+     host.saveView(raw.flatMap(o => { const a = garminActivity(o, account.scope); return a ? [{ ...o, fkSourceIdentity: a.sourceIdentity, fkStartIso: a.startIso }] : [] }), result.accountScope!)
+     result.status = result.errors.length ? (result.saved + result.skipped ? 'partial' : 'fail') : health.length + acts.length ? 'ok' : 'empty'
+--- a/src/lib/health/garmin-sync-status.test.ts
++++ b/src/lib/health/garmin-sync-status.test.ts
+@@ -18,3 +18,27 @@
+   const s = readGarminSyncStatus('local', mk({ [k('fk-garmin-sync-report')]: JSON.stringify({ at: '2026-10-19T00:20:00Z', status: 'auth', errors: [], saved: 0, skipped: 0, coverageDays: [], healthDaysRequested: 14, activityLimit: 200, activityRows: 0, completeHistory: false }), [k('fk-garmin-auto-fail')]: '2026-10-19T00:20:00Z' }), now)
+   assert.equal(s.connection, 'expired'); assert.equal(s.autoSync.backoffUntil, '2026-10-19T00:50:00.000Z')
+ })
++
++test('resuming noncontiguous dates is labeled catch-up rather than a new full first sync', () => {
++  const report = { at: '2026-10-22T12:00:00Z', status: 'partial', subjectId: 'local', accountScope: 'abc', mode: 'BACKFILL', healthRows: 50, activityRows: 20, saved: 3, skipped: 60, errors: ['同一来源活动数值已变化'], healthDaysRequested: 17, coverageDays: ['2026-08-28', '2026-10-22'], activityLimit: 20, completeHistory: false, requests: 58 }
++  const s = readGarminSyncStatus('local', mk({ [k('fk-garmin-sync-report')]: JSON.stringify(report) }))
++  assert.match(s.importRange!.label, /补齐历史/)
++  assert.match(s.importRange!.label, /17 个日期/)
++  assert.doesNotMatch(s.importRange!.label, /最近 17 天|最近 14 天 \+|首次/)
++  assert.ok(s.details.some(detail => detail.includes('补齐历史')))
++  assert.equal(s.lastFullSuccessAt, null)
++})
++
++test('a verified report supplies newer successful times when timestamp caches are stale or unavailable', () => {
++  const old = '2026-10-21T12:00:00Z', at = '2026-10-22T12:00:00Z'
++  const report = { at, status: 'ok', subjectId: 'local', accountScope: 'abc', healthRows: 3, activityRows: 1, saved: 1, skipped: 3, errors: [], healthDaysRequested: 3, coverageDays: ['2026-10-22'], activityLimit: 20, completeHistory: false }
++  for (const cached of [old, 'invalid']) {
++    const store = mk({ [k('fk-garmin-sync-report')]: JSON.stringify(report), [k('fk-garmin-last-attempt')]: cached, [k('fk-garmin-last-sync')]: cached, [k('fk-garmin-last-full-ok')]: cached })
++    const s = readGarminSyncStatus('local', store)
++    assert.equal(s.lastAttemptAt, at); assert.equal(s.lastUsefulSyncAt, at); assert.equal(s.lastFullSuccessAt, at)
++  }
++  const partial = readGarminSyncStatus('local', mk({ [k('fk-garmin-sync-report')]: JSON.stringify({ ...report, status: 'partial', errors: ['活动待核对'] }), [k('fk-garmin-last-full-ok')]: old }))
++  assert.equal(partial.lastUsefulSyncAt, at); assert.equal(partial.lastFullSuccessAt, old)
++  const failed = readGarminSyncStatus('local', mk({ [k('fk-garmin-sync-report')]: JSON.stringify({ ...report, status: 'fail', saved: 0, skipped: 0 }) }))
++  assert.equal(failed.lastUsefulSyncAt, null); assert.equal(failed.lastFullSuccessAt, null)
++})
+--- a/src/lib/health/garmin-sync-status.ts
++++ b/src/lib/health/garmin-sync-status.ts
+@@ -23,24 +23,32 @@
+ type KV = { getItem(k: string): string | null }
+ const RESULT: Record<GarminSyncReport['status'], string> = { ok: '完整成功', partial: '部分成功', empty: '没取到可用记录', auth: '登录失效', fail: '失败', stale: '账号已切换，结果已丢弃' }
+ const hhmm = (iso: string | null) => { if (!iso) return '—'; const d = new Date(iso); return Number.isFinite(d.getTime()) ? `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : iso }
++const latestTime = (...values: (string | null | undefined)[]): string | null => values
++  .filter((value): value is string => typeof value === 'string' && Number.isFinite(Date.parse(value)))
++  .sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null
+ export function readGarminSyncStatus(subject: string, store: KV | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now(), accountScope: string | null = null): GarminSyncStatus {
+   const get = (k: string) => store?.getItem(garminStorageKey(k, subject)) ?? null
+   let report: GarminSyncReport | null = null
+   try { report = JSON.parse(get(GARMIN_KEYS.report) ?? 'null') } catch { report = null }
+-  const lastAttemptAt = get(GARMIN_KEYS.lastAttempt) ?? report?.at ?? null
+-  const lastUsefulSyncAt = get(GARMIN_KEYS.lastUseful)
+-  const lastFullSuccessAt = get(GARMIN_KEYS.lastFullOk) ?? (report?.status === 'ok' ? report.at : null)
++  // The verified report is authoritative. Timestamp caches may fail to update
++  // without invalidating saved data, so use the newer valid report time too.
++  const usefulReportAt = report && (report.status === 'ok' || report.status === 'partial' && report.saved + report.skipped > 0) ? report.at : null
++  const lastAttemptAt = latestTime(get(GARMIN_KEYS.lastAttempt), report?.at)
++  const lastUsefulSyncAt = latestTime(get(GARMIN_KEYS.lastUseful), usefulReportAt)
++  const lastFullSuccessAt = latestTime(get(GARMIN_KEYS.lastFullOk), report?.status === 'ok' ? report.at : null)
+   const connection: GarminConnection = report?.status === 'auth' ? 'expired' : (report?.accountScope || accountScope || lastUsefulSyncAt) ? 'connected' : 'not_connected'
+   const failAt = Date.parse(get(GARMIN_KEYS.autoFail) ?? '') || 0
+   const backoffUntil = failAt && now - failAt < 30 * 60e3 ? new Date(failAt + 30 * 60e3).toISOString() : null
+   const days = [...(report?.coverageDays ?? [])].sort()
++  const modeLabel = report?.mode === 'BACKFILL' ? '补齐历史' : report?.mode === 'INITIAL' ? '首次同步' : report?.mode === 'RECENT' ? '增量同步' : report?.mode === 'FULL' ? '完整复核' : ''
++  const dateRange = report?.mode ? `${modeLabel} · 本次读取 ${report.healthDaysRequested} 个日期` : report && report.healthDaysRequested > 14 ? `最近 14 天 + 补更早历史 ${report.healthDaysRequested - 14} 天` : `最近 ${report?.healthDaysRequested ?? 0} 天`
+   const importRange = report ? { healthFrom: days[0] ?? null, healthTo: days.at(-1) ?? null, healthDaysRequested: report.healthDaysRequested, healthDaysWithData: days.length, activityLimit: report.activityLimit, activityRows: report.activityRows, completeHistory: report.completeHistory,
+-    label: `健康数据：${report.mode === 'RECENT' ? '增量同步 · ' : report.mode === 'INITIAL' ? '首次同步 · ' : ''}${report.healthDaysRequested > 14 ? `最近 14 天 + 补更早历史 ${report.healthDaysRequested - 14} 天` : `最近 ${report.healthDaysRequested} 天`}（${days.length} 天有数据${days.length ? `，${days[0].slice(5)}–${days.at(-1)!.slice(5)}` : ''}）；活动：最近 ${report.activityLimit} 条摘要（本次 ${report.activityRows} 条）${report.completeHistory ? '' : '，更早的历史不导入'}` } : null
++    label: `健康数据：${dateRange}（${days.length} 天有数据${days.length ? `，${days[0].slice(5)}–${days.at(-1)!.slice(5)}` : ''}）；活动：最近 ${report.activityLimit} 条摘要（本次 ${report.activityRows} 条）${report.completeHistory ? '' : '，更早的历史不导入'}` } : null
+   const partialFailure = report && report.status === 'partial' ? { at: report.at, errors: report.errors.slice(0, 10), saved: report.saved, skipped: report.skipped } : null
+   const details = [
+     `自动同步：${AUTO_SYNC_RULE}`,
+     ...(backoffUntil ? [`上次自动同步失败，${hhmm(backoffUntil)} 前不再自动重试（可手动同步）`] : []),
+-    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（一次补齐 90 天）' : report.mode === 'RECENT' ? '增量同步（近 3 天 + 新活动）' : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
++    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（近 90 天，中断后续补）' : report.mode === 'BACKFILL' ? '补齐历史（近期数据 + 未完成日期）' : report.mode === 'RECENT' ? '增量同步（近 3 天 + 新活动）' : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
+     ...(report?.errors.length ? report.errors.slice(0, 5).map(e => `问题：${e}`) : []),
+   ]
+   return {
+--- /dev/null
++++ b/src/lib/health/health-nutrition-sync.test.ts
+@@ -0,0 +1,138 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { currentAthleteId, setEventContext, loadEvents } from '../core/events'
++import { setStoreBackend } from '../core/storage'
++import { garminHealthDay } from './garmin-health'
++import { saveDeviceRows as saveImportedRows } from '../ui/device-store'
++import { loadHealthSnapshot } from './snapshot'
++import { loadVitals } from '../nutrition/vitals'
++import { loadExtras } from './device-store'
++import { readCoachData } from './coach-data'
++import { readGlobalCoachSnapshot, subscribeGlobalCoach } from '../coach/global-coach-host-v89'
++import { emptyPlanExecution } from '../coach/plan-execution/core'
++import { loadEntries, saveEntries, removeEntry, updateEntry, aggregate, type FoodEntry } from '../nutrition/log'
++import { commitFoodDraft, draftFromProduct, draftFromEntry, type FoodSaveInput } from '../nutrition/entry-workflow'
++import { nutritionTotals } from '../nutrition/ui-records'
++import { readFieldworkCoachSources } from '../core/coach-fieldwork-context'
++import { fuelForTraining } from '../core/coach-fuel'
++import type { FoodRow } from '../nutrition/food-db'
++
++const day='2026-10-22', yesterday='2026-10-21'
++const before='2026-10-22T04:00:00.000Z', after='2026-10-22T05:00:00.000Z'
++const cereal:FoodRow={i:'qa-cereal',n:'合成谷物',a:[],br:'合成来源',rg:'测试地区',g:0,b:'g',p:[200,10,40,2,3],s:{g:100,u:'100g',v:null},pt:[],src:'U',st:'REFERENCE',uri:'https://example.invalid/synthetic'}
++function fixture(t:test.TestContext){
++  t.mock.timers.enable({apis:['Date'],now:Date.parse('2026-10-22T12:00:00.000Z')})
++  const fetch=globalThis.fetch;let networkCalls=0
++  globalThis.fetch=()=>{networkCalls++;throw Error('Synthetic integration test forbids network calls')}
++  t.after(()=>{globalThis.fetch=fetch;assert.equal(networkCalls,0)})
++  const previous=currentAthleteId(),oldLocal=Object.getOwnPropertyDescriptor(globalThis,'localStorage'),oldWindow=Object.getOwnPropertyDescriptor(globalThis,'window')
++  const map=new Map<string,string>(),store={getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v)},removeItem:(k:string)=>{map.delete(k)},keys:()=>[...map.keys()]}
++  Object.defineProperty(globalThis,'localStorage',{value:store,configurable:true});Object.defineProperty(globalThis,'window',{value:new EventTarget(),configurable:true})
++  setStoreBackend(store);setEventContext({athleteId:'qa-health-food-a'})
++  t.after(()=>{setStoreBackend(null);setEventContext({athleteId:previous});for(const [key,old]of [['localStorage',oldLocal],['window',oldWindow]] as const){if(old)Object.defineProperty(globalThis,key,old);else Reflect.deleteProperty(globalThis,key)}})
++  return{map,store,repository:{read:async(id:string)=>emptyPlanExecution(id)}}
++}
++function health(date=day,sleep=23400,at=before){return garminHealthDay(date,'qa-watch-account',{status:200,body:{calendarDate:date,restingHeartRate:55,bodyBatteryMostRecentValue:73,averageStressLevel:24,totalSteps:4567}},{status:200,body:{hrvSummary:{calendarDate:date,lastNightAvg:62}}},{status:200,body:{dailySleepDTO:{calendarDate:date,sleepTimeSeconds:sleep}}},at).rows}
++const saveDeviceRows=(rows:ReturnType<typeof health>)=>saveImportedRows(rows,[])
++function mealInput(meal:FoodSaveInput['meal']='早餐',date=day):FoodSaveInput{return{draft:{...draftFromProduct(cereal),amount:'100'},date,meal,acknowledged:true,athleteId:currentAthleteId()}}
++function saveMeal(input=mealInput()){const r=commitFoodDraft(input);assert.equal(r.ok,true,JSON.stringify(r));if(!r.ok)throw Error(r.reason);return r.row}
++const legacy=(patch:Partial<FoodEntry>={}):FoodEntry=>({id:'qa-unestimated',date:day,meal:'加餐',name:'合成未估算餐',kcal:0,label:'未估算',athleteId:currentAthleteId(),recordedAt:before,...patch})
++
++test('confirmed watch health is idempotent and the newest revision reaches both health and coach',async t=>{
++  const f=fixture(t),rows=health();assert.equal(rows.length,6)
++  const first=saveDeviceRows(rows);assert.equal(first.saved,6);assert.deepEqual(first.errors,[])
++  const duplicate=saveDeviceRows(rows);assert.equal(duplicate.saved,0);assert.equal(duplicate.skipped,6);assert.deepEqual(duplicate.errors,[])
++  assert.equal(loadVitals().records.length+loadExtras().length,6)
++  const firstCoach=await readGlobalCoachSnapshot(day,f.repository)
++  assert.equal(firstCoach.evidence.find(e=>e.metric==='SLEEP')?.value,6.5)
++  assert.equal(firstCoach.evidence.find(e=>e.metric==='BODY_BATTERY')?.value,73)
++  const corrected=saveDeviceRows(health(day,21600,after));assert.equal(corrected.saved,1);assert.deepEqual(corrected.errors,[])
++  assert.equal(loadHealthSnapshot(day).metrics.find(m=>m.metric==='SLEEP')?.current?.value,6)
++  assert.equal(loadVitals().records.length+loadExtras().length,6)
++  const latest=await readGlobalCoachSnapshot(day,f.repository)
++  assert.equal(latest.evidence.find(e=>e.metric==='SLEEP')?.value,6);assert.notEqual(latest.revision,firstCoach.revision)
++  assert.match(readCoachData(day).health.find(m=>m.metric==='SLEEP')!.detail,/6小时/)
++  const stored=JSON.stringify([...f.map]);await readGlobalCoachSnapshot(day,f.repository);assert.equal(JSON.stringify([...f.map]),stored)
++})
++
++test('health daily facts and athlete scopes stay separate across confirmed import and coach reads',async t=>{
++  const f=fixture(t);saveDeviceRows(health());saveDeviceRows(health(yesterday,28800,after))
++  assert.equal(loadHealthSnapshot(yesterday).metrics.find(m=>m.metric==='SLEEP')?.current?.value,8)
++  assert.equal(loadHealthSnapshot(day).metrics.find(m=>m.metric==='SLEEP')?.current?.value,6.5)
++  setEventContext({athleteId:'qa-health-food-b'});const empty=await readGlobalCoachSnapshot(day,f.repository)
++  assert.equal(empty.evidence.find(e=>e.metric==='SLEEP')?.value,null)
++  assert.equal(saveDeviceRows(health(day,25200,after)).saved,6)
++  assert.equal((await readGlobalCoachSnapshot(day,f.repository)).evidence.find(e=>e.metric==='SLEEP')?.value,7)
++  setEventContext({athleteId:'qa-health-food-a'});assert.equal((await readGlobalCoachSnapshot(day,f.repository)).evidence.find(e=>e.metric==='SLEEP')?.value,6.5)
++})
++
++test('same food in separate meals stays separate while re-saving the same IDs is not counted twice',async t=>{
++  const f=fixture(t),breakfast=saveMeal(),lunch=saveMeal(mealInput('午餐'));saveMeal(mealInput('晚餐',yesterday))
++  assert.notEqual(breakfast.id,lunch.id);assert.equal(loadEntries().length,3)
++  assert.ok(saveEntries(loadEntries()));assert.ok(saveEntries(loadEntries()));assert.equal(loadEntries().length,3)
++  assert.equal(nutritionTotals(loadEntries().filter(e=>e.date===day)).kcal.value,400)
++  assert.deepEqual(readCoachData(day).nutrition,{count:2,knownKcal:400,pending:0})
++  const draft=draftFromEntry(breakfast);draft.amount='150'
++  const corrected=saveMeal({...mealInput(),draft,entryId:breakfast.id,expectedRevision:breakfast.revisionId})
++  assert.equal(corrected.kcal,300);assert.equal(loadEntries().length,3)
++  assert.equal(commitFoodDraft({...mealInput(),draft,entryId:breakfast.id,expectedRevision:breakfast.revisionId}).ok,false)
++  assert.equal(readCoachData(day).nutrition.knownKcal,500)
++  assert.ok(removeEntry(lunch.id));assert.equal(readCoachData(day).nutrition.knownKcal,300)
++  assert.equal((await readGlobalCoachSnapshot(day,f.repository)).evidence.filter(e=>e.domain==='NUTRITION').length,1)
++  assert.ok(loadEvents().some(e=>(e.payload.foodEntry as FoodEntry)?.id===lunch.id))
++  assert.deepEqual(readCoachData(yesterday).nutrition,{count:1,knownKcal:200,pending:0})
++  const oldDraft=mealInput();setEventContext({athleteId:'qa-health-food-b'})
++  assert.equal(commitFoodDraft(oldDraft).ok,false);assert.equal(loadEntries().length,0);assert.equal(readCoachData(day).nutrition.count,0)
++  saveMeal();assert.equal(readCoachData(day).nutrition.knownKcal,200)
++  setEventContext({athleteId:'qa-health-food-a'});assert.equal(readCoachData(day).nutrition.knownKcal,300)
++})
++
++test('coach daily nutrition preserves unestimated energy as pending instead of known zero',t=>{
++  const f=fixture(t);f.store.setItem('fr255-food-log-v1',JSON.stringify([legacy(),legacy({id:'qa-zero',name:'合成明确零值',source:'MANUAL',label:'手填'}),legacy({id:'qa-known',name:'合成已知餐',kcal:300,source:'MANUAL',label:'手填'})]))
++  assert.deepEqual(aggregate(loadEntries()).kcal,{sum:300,known:2,pending:1})
++  assert.deepEqual(readCoachData(day).nutrition,{count:3,knownKcal:300,pending:1})
++})
++
++test('global coach evidence does not present unestimated energy as an available measured zero',async t=>{
++  const f=fixture(t);f.store.setItem('fr255-food-log-v1',JSON.stringify([legacy()]))
++  const e=(await readGlobalCoachSnapshot(day,f.repository)).evidence.find(e=>e.domain==='NUTRITION')!
++  assert.equal(e.availability,'MISSING');assert.equal(e.value,null);assert.match(e.summary,/未记录|未知/)
++})
++
++test('training fuel excludes unknown legacy energy while preserving an explicit confirmed zero',t=>{
++  fixture(t);const unknown=fuelForTraining(before,after,[legacy()],null)
++  assert.equal(unknown.status,'NO_RECORD');assert.equal(unknown.recordedKcal,null);assert.deepEqual(unknown.entries,[])
++  const known=fuelForTraining(before,after,[legacy({label:'手填',source:'MANUAL'})],null)
++  assert.equal(known.status,'SAME_DAY_RECORDED');assert.equal(known.recordedKcal,0)
++})
++
++test('the actual confirmed food draft sends new carb fields and unknown energy accurately to coach context',t=>{
++  const f=fixture(t);saveMeal();f.store.setItem('fr255-food-log-v1',JSON.stringify([legacy()]))
++  const sources=readFieldworkCoachSources('查看我的饮食记录',new Date(Date.now()+1000).toISOString())
++  assert.match(sources.find(s=>s.detail.includes('合成谷物'))!.detail,/碳水40克/)
++  assert.match(sources.find(s=>s.detail.includes('合成未估算餐'))!.detail,/热量未知/)
++})
++
++test('coach meal context preserves the confirmed nutrition snapshot source and region',t=>{
++  fixture(t)
++  const branded:FoodRow={...cereal,src:'B',st:'BRAND_REPORTED',lbl:'合成品牌标签（仅测试）',rg:'合成地区乙'}
++  const row=saveMeal({...mealInput(),draft:{...draftFromProduct(branded),amount:'100'}})
++  assert.equal(row.nutritionSnapshot?.source.label,'合成品牌标签（仅测试）')
++  const detail=readFieldworkCoachSources('查看我的饮食记录',new Date(Date.now()+1000).toISOString())[0].detail
++  assert.match(detail,/来源合成品牌标签（仅测试）／合成地区乙/)
++  assert.doesNotMatch(detail,/来源用户手填/)
++})
++
++test('editing an older meal makes its new version available in the latest coach source selection',t=>{
++  fixture(t);const rows=[0,1,2,3].map(i=>legacy({id:'qa-meal-'+i,name:'合成餐'+i,kcal:100+i,label:'手填',source:'MANUAL',recordedAt:`2026-10-20T0${i}:00:00.000Z`}))
++  assert.ok(saveEntries(rows));assert.ok(updateEntry(rows[0].id,{kcal:999}))
++  const sources=readFieldworkCoachSources('查看我的饮食记录',new Date(Date.now()+1000).toISOString())
++  assert.ok(sources.some(s=>s.detail.includes('合成餐0')&&s.detail.includes('999千卡')))
++})
++
++test('health and nutrition commits notify coach readers with committed current values',async t=>{
++  fixture(t);let calls=0,lastKcal:number|undefined,lastSleep:number|undefined
++  const off=subscribeGlobalCoach(()=>{calls++;lastKcal=readCoachData(day).nutrition.knownKcal;lastSleep=loadHealthSnapshot(day).metrics.find(m=>m.metric==='SLEEP')?.current?.value});t.after(off)
++  saveDeviceRows(health());saveMeal();await Promise.resolve()
++  assert.equal(calls,1);assert.equal(lastKcal,200);assert.equal(lastSleep,6.5)
++})
+--- /dev/null
++++ b/src/lib/ui/device-activity-totals.ts
+@@ -0,0 +1,10 @@
++import { normalizeTrainingImportCandidate } from '../core/training-import'
++
++/** Compare source values in the same representation used by confirmed imports.
++ * For example, a watch's zero-distance strength activity is stored as an
++ * unavailable distance by the existing import contract, not as a new revision. */
++export function normalizedDeviceActivityTotals(durationSec: number | null, distanceM: number | null) {
++  const field = (value: number | null) => ({ value, status: value === null ? 'ABSENT' : 'RECORDED', sourceIds: ['user-confirmed'] })
++  const normalized = normalizeTrainingImportCandidate({ durationSeconds: field(durationSec), totalDistanceMeters: field(distanceM) })
++  return { durationSec: normalized.durationSeconds.value, distanceM: normalized.totalDistanceMeters.value }
++}
+--- /dev/null
++++ b/src/lib/ui/device-store-health-result.test.ts
+@@ -0,0 +1,32 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { setStoreBackend, type MemoryStore } from '../core/storage'
++import { setEventContext } from '../core/events'
++import * as deviceStore from './device-store'
++import type { DeviceActivity, DeviceHealthRow } from './device-parse'
++
++class Store implements MemoryStore {
++  data = new Map<string, string>()
++  getItem(key: string) { return this.data.get(key) ?? null }
++  setItem(key: string, value: string) { this.data.set(key, value) }
++  keys() { return [...this.data.keys()] }
++}
++const activity: DeviceActivity = { key: '1', sourceIdentity: 'garmin:cn%3Asynthetic:1', source: '佳明账号同步', sport: 'RUNNING', sportLabel: '跑步', startIso: '2026-10-22T00:00:00Z', durationSec: 1800.1, distanceM: 5000, avgHr: null, maxHr: null, calories: null, avgCadence: null, avgPower: null, verticalOscMm: null, groundContactMs: null, sets: [] }
++const health: DeviceHealthRow = { key: 'synthetic-rhr', source: '佳明账号同步', metric: 'RHR', day: '2026-10-22', value: 52 }
++
++test('activity conflicts stay visible while separately confirming successful health storage', () => {
++  setStoreBackend(new Store()); setEventContext({ athleteId: 'synthetic-health-split' })
++  try {
++    assert.equal(deviceStore.saveDeviceRows([], [activity]).saved, 1)
++    const save = (deviceStore as typeof deviceStore & { saveDeviceRowsWithHealthResult?: typeof deviceStore.saveDeviceRows }).saveDeviceRowsWithHealthResult ?? deviceStore.saveDeviceRows
++    const result = save([health], [{ ...activity, durationSec: 1801.1 }]) as ReturnType<typeof save> & { healthErrors?: string[] }
++    assert.equal(result.saved, 1)
++    assert.equal(result.errors.length, 1)
++    assert.deepEqual(result.healthErrors, [])
++    assert.match(result.errors[0], /需核对原记录/)
++    const failed = save([{ ...health, value: -2 }], []) as typeof result
++    assert.equal(failed.saved, 0)
++    assert.ok(failed.healthErrors?.length)
++    assert.deepEqual(failed.healthErrors, failed.errors)
++  } finally { setStoreBackend(null) }
++})
+--- a/src/lib/ui/device-store-sync.test.ts
++++ b/src/lib/ui/device-store-sync.test.ts
+@@ -87,3 +87,15 @@
+   assert.deepEqual([...store.data], before)
+   setStoreBackend(null)
+ })
++
++test('watch strength sessions with zero distance do not create a false repeat-import conflict', () => {
++  setup()
++  try {
++    const strength = { ...activity(81), sport: 'STRENGTH' as const, sportLabel: '力量', distanceM: 0 }
++    assert.equal(saveDeviceRows([], [strength]).saved, 1)
++    assert.deepEqual(saveDeviceRows([], [strength]), { saved: 0, skipped: 1, errors: [] })
++    const changed = saveDeviceRows([], [{ ...strength, durationSec: 1800.1 }])
++    assert.equal(changed.saved, 0)
++    assert.equal(changed.errors.length, 1, 'a real 0.1-second source revision must still require review')
++  } finally { setStoreBackend(null) }
++})
+--- a/src/lib/ui/device-store.ts
++++ b/src/lib/ui/device-store.ts
+@@ -7,6 +7,7 @@
+ import { loadVitals, saveVital, type HrvMethod, type VitalKind } from "@/lib/nutrition/vitals"
+ import { loadChecks, upsertCheck } from "@/lib/nutrition/body"
+ import type { DeviceActivity, DeviceHealthRow, HealthMetric } from "./device-parse"
++import { normalizedDeviceActivityTotals } from './device-activity-totals'
+ 
+ export {DEVICE_EXTRA_KEY, extrasUnreadable, loadExtras, hrvMethodOf, observationFor} from '@/lib/health/device-store';
+ import {loadExtras, observationFor, saveDeviceRows as saveConfirmedHealth} from '@/lib/health/device-store';
+@@ -30,10 +31,18 @@
+ }
+ 
+ const field = <T,>(value: T | null) => value == null ? { value: null, status: "ABSENT", sourceIds: [] } : { value, status: "RECORDED", sourceIds: ["user-confirmed"] }
++export type DeviceActivitySaveResult = { draftId: string; sourceIdentity?: string; status: 'saved' | 'skipped' | 'conflict' | 'rejected' | 'persistence_failed' | 'persistence_unconfirmed' }
++export type DeviceSaveResult = { saved: number; skipped: number; errors: string[]; healthErrors: string[]; activityResults: DeviceActivitySaveResult[] }
+ 
+ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActivity[]): { saved: number; skipped: number; errors: string[] } {
++  const { saved, skipped, errors } = saveDeviceRowsWithHealthResult(health, activities)
++  return { saved, skipped, errors }
++}
++/** Same single-batch save, with independent health errors for incremental health receipts. */
++export function saveDeviceRowsWithHealthResult(health: DeviceHealthRow[], activities: DeviceActivity[]): DeviceSaveResult {
+   let saved = 0, skipped = 0
+   const errors: string[] = []
++  const activityResults: DeviceActivitySaveResult[] = []
+   // One normalized snapshot per save call. Repeat syncs can contain hundreds of
+   // existing activities; reparsing the entire history for each one is quadratic.
+   const imports = coachImports()
+@@ -44,13 +53,16 @@
+   const result = saveConfirmedHealth(health);
+   saved += result.saved; skipped += result.skipped; errors.push(...result.errors);
+   for (const a of activities) {
+-    if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');continue}
+     const draftId = activityDraftId(a)
++    const recordResult = (status: DeviceActivitySaveResult['status']) => activityResults.push({ draftId, sourceIdentity: a.sourceIdentity, status })
++    if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');recordResult('conflict');continue}
+     if (have.activities.has(draftId) || isDuplicate(a, have)) {
+       const previous=a.sourceIdentity?importedByDraft.get(draftId):null
+-      if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==a.durationSec||previous.totalDistanceMeters.value!==a.distanceM))
++      const totals = normalizedDeviceActivityTotals(a.durationSec, a.distanceM)
++      if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==totals.durationSec||previous.totalDistanceMeters.value!==totals.distanceM)) {
+         errors.push('同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。')
+-      else skipped++
++        recordResult('conflict')
++      } else { skipped++; recordResult('skipped') }
+       continue
+     }
+     const sport = a.sport
+@@ -68,11 +80,11 @@
+     if(a.provenance) draft.provenance={...a.provenance}
+     const res = confirmTrainingImport(draft)
+     if (res.ok) { have.sigs.push({ startIso: a.startIso, distanceM: a.distanceM }); try { currentStore()?.setItem(SIG_KEY, JSON.stringify(have.sigs.slice(-500))) } catch { /* ignore */ } }
+-    if (res.ok && !res.duplicate) saved++
+-    else if (res.ok) skipped++
+-    else errors.push(`${a.startIso?.slice(0, 10) ?? ""} ${a.sportLabel}：${res.reason}`)
++    if (res.ok && !res.duplicate) { saved++; recordResult('saved') }
++    else if (res.ok) { skipped++; recordResult('skipped') }
++    else { errors.push(`${a.startIso?.slice(0, 10) ?? ""} ${a.sportLabel}：${res.reason}`); recordResult(res.code === 'PERSISTENCE_FAILED' ? 'persistence_failed' : res.code === 'PERSISTENCE_UNCONFIRMED' ? 'persistence_unconfirmed' : 'rejected') }
+   }
+   healthChanged()
+   if(typeof window!=="undefined") window.dispatchEvent(new Event("storage"))
+-  return { saved, skipped, errors }
++  return { saved, skipped, errors, healthErrors: result.errors, activityResults }
+ }
+--- a/src/lib/ui/running-workouts.ts
++++ b/src/lib/ui/running-workouts.ts
+@@ -1,4 +1,4 @@
+-import { createAppEvent, loadEvents, notifyCommittedEvent } from "@/lib/core/events";
++import { ATHLETE_SCOPE_CHANGED, createAppEvent, currentAthleteId, loadEvents, notifyCommittedEvent } from "@/lib/core/events";
+ import { getTrainingOccurrence, listTrainingOccurrences } from "@/lib/core/occurrence";
+ import {
+   getRunningPlan,
+@@ -124,11 +124,15 @@
+   });
+ }
+ 
++function ownsTrackOccurrence(occurrenceId: string) {
++  return loadEvents().some(event => event.event_id === occurrenceId && event.event_type === 'TRAINING_STARTED' && (event.athlete_id ?? 'local') === currentAthleteId());
++}
+ export function openTrackOccurrence(planId: string) {
++  const starts = new Set(loadEvents().filter(event => event.event_type === 'TRAINING_STARTED' && (event.athlete_id ?? 'local') === currentAthleteId()).map(event => event.event_id));
+   return (
+     [...listTrainingOccurrences()]
+       .reverse()
+-      .find((item) => item.sessionId === planId && item.lifecycle === "IN_PROGRESS") ?? null
++      .find((item) => item.sessionId === planId && item.lifecycle === "IN_PROGRESS" && starts.has(item.startEventId)) ?? null
+   );
+ }
+ 
+@@ -195,6 +199,7 @@
+   secondsText: string,
+   distanceText: string,
+ ): { ok: true } | { ok: false; reason: string } {
++  if (!ownsTrackOccurrence(slot.trainingOccurrenceId)) return { ok: false, reason: '训练不属于当前运动员，未写入。' };
+   const current = projectRunningExecution(slot.trainingOccurrenceId, loadEvents()).repetitions.find(
+     (item) =>
+       item.componentId === slot.componentId &&
+@@ -435,6 +440,7 @@
+   slot: RecoveryExecution,
+   secondsText: string,
+ ): { ok: true } | { ok: false; reason: string } {
++  if (!ownsTrackOccurrence(slot.trainingOccurrenceId)) return { ok: false, reason: '训练不属于当前运动员，未写入。' };
+   const current = projectRunningExecution(slot.trainingOccurrenceId, loadEvents()).recoveries.find(
+     (item) =>
+       item.kind === slot.kind &&
+@@ -483,10 +489,18 @@
+       ok: false,
+       reason: "此浏览器缺少安全并发写入能力；请使用支持 Web Locks 的 HTTPS 独立预览，当前未保存。",
+     };
++  const athleteAtRequest = currentAthleteId();
++  let scopeChanged = false;
++  const invalidate = () => { scopeChanged = true; };
++  window.addEventListener(ATHLETE_SCOPE_CHANGED, invalidate);
+   try {
+-    return await navigator.locks.request("fr255-running-write-r3", work);
++    return await navigator.locks.request("fr255-running-write-r3", () => scopeChanged || currentAthleteId() !== athleteAtRequest
++      ? { ok: false as const, reason: '等待保存期间运动员已切换，未写入；请重新核对当前训练。' }
++      : work());
+   } catch {
+     return { ok: false, reason: "并发保存未确认，请刷新核对后重试。" };
++  } finally {
++    window.removeEventListener(ATHLETE_SCOPE_CHANGED, invalidate);
+   }
+ }
+ export const startTrackSessionSafely = (planId: string) =>
+@@ -498,6 +512,7 @@
+   secondsText: string,
+   distanceText: string,
+ ) {
++  if (!ownsTrackOccurrence(occurrenceId)) return { ok: false as const, reason: '训练不属于当前运动员，未写入。' };
+   const view = projectRunningExecution(occurrenceId, loadEvents());
+   const slot = view.continuous.find((x) => x.componentId === componentId);
+   if (view.terminal || !slot || slot.status !== "NOT_YET_RECORDED")
+@@ -528,6 +543,7 @@
+   rpe: number | null,
+   pain: number | null,
+ ) {
++  if (!ownsTrackOccurrence(occurrenceId)) return { ok: false as const, reason: '训练不属于当前运动员，未写入。' };
+   const occurrence = getTrainingOccurrence(occurrenceId),
+     snapshot = getRunningPlanSnapshot(occurrenceId);
+   if (!occurrence || !snapshot || !feedbackValid(rpe, pain, null))
+@@ -612,6 +628,7 @@
+   pain: number | null,
+   now = new Date(),
+ ) {
++  if (!ownsTrackOccurrence(occurrenceId)) return { ok: false as const, reason: '训练不属于当前运动员，未写入。' };
+   const occurrence = getTrainingOccurrence(occurrenceId);
+   if (
+     !occurrence ||
+--- a/src/lib/ui/training-read-model.ts
++++ b/src/lib/ui/training-read-model.ts
+@@ -86,7 +86,7 @@
+     const anySets = events.some(e => e.event_type === 'TRAINING_SET_COMPLETED' && (e.payload as { trainingOccurrenceId?: string }).trainingOccurrenceId === o.trainingOccurrenceId)
+     const doneCount = fact?.completedSetCount ?? 0
+     if (!isRun && doneCount < 1 && !anySets) continue;
+-    const incomplete = !isRun && (doneCount < 1 || o.lifecycle === 'IN_PROGRESS');
++    const incomplete = o.lifecycle === 'IN_PROGRESS' || !isRun && doneCount < 1;
+     const elapsed = o.endedAt ? (Date.parse(o.endedAt) - Date.parse(o.startedAt)) / 1000 : null;
+     const totals = runningActualTotals(run);
+     rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
+--- /dev/null
++++ b/src/lib/ui/training-record-sync.test.ts
+@@ -0,0 +1,243 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { currentAthleteId, loadEvents, setEventContext } from '../core/events'
++import { setStoreBackend } from '../core/storage'
++import { readTrainingContext, startTraining } from '../core/training-decision'
++import { bindTrainingStart, getTrainingOccurrence } from '../core/occurrence'
++import { emptySets, executionOf, recordSet } from '../core/execution'
++import { readTrainingFact } from '../core/fact-read'
++import { appendCorrection } from '../core/training-correction'
++import { assembleCoachBrief } from '../core/coach-brief'
++import { readFormalEvidenceRows } from '../core/coach-v4-formal-rows-store'
++import { coachImports } from '../core/coach-import-evidence'
++import { completeFromRunner } from '../../components/training-runner'
++import { saveGarminActivities } from '../../components/garmin-log'
++import { readCoachData } from '../health/coach-data'
++import { localDay } from '../health/observation'
++import { emptyPlanExecution } from '../coach/plan-execution/core'
++import { readGlobalCoachSnapshot, subscribeGlobalCoach } from '../coach/global-coach-host-v89'
++import { saveRunningPlan } from '../core/running-plan'
++import { projectRunningExecution } from '../core/running-execution'
++import { commitTrackContinuous, commitTrackRecovery, commitTrackSlot, confirmTrackPlan, emptyDraft, finishTrackSession, openTrackOccurrence, recordTrackRecoveryFeedback, startTrackSession, withRunningWriteLock } from './running-workouts'
++import { loadTrainingActivities, mergeActivities } from './training-read-model'
++import { saveDeviceRows } from './device-store'
++import type { DeviceActivity } from './device-parse'
++import type { Session } from '../strength/model'
++
++const owner = 'synthetic-training-a'
++function fixture(t: test.TestContext) {
++  const previousOwner = currentAthleteId(), previousStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage'), previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
++  const data = new Map<string, string>(), box = { getItem: (key: string) => data.get(key) ?? null, setItem: (key: string, value: string) => { data.set(key, value) }, removeItem: (key: string) => { data.delete(key) }, keys: () => [...data.keys()] }
++  Object.defineProperty(globalThis, 'localStorage', { value: box, configurable: true })
++  Object.defineProperty(globalThis, 'window', { value: new EventTarget(), configurable: true })
++  setStoreBackend(box); setEventContext({ athleteId: owner })
++  t.after(() => {
++    setStoreBackend(null); setEventContext({ athleteId: previousOwner })
++    if (previousStorage) Object.defineProperty(globalThis, 'localStorage', previousStorage); else Reflect.deleteProperty(globalThis, 'localStorage')
++    if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow); else Reflect.deleteProperty(globalThis, 'window')
++  })
++  return { data, box, day: localDay(), repository: { read: async (id: string) => emptyPlanExecution(id) } }
++}
++function beginRun(planId = 'audit-run') {
++  assert.equal(saveRunningPlan({ planId, planSlotId: planId, components: [{ componentId: 'run', modality: 'RUNNING', purpose: 'UNSPECIFIED', structure: { kind: 'CONTINUOUS', plannedDistanceMeters: 400, plannedDurationSeconds: null } }] }).ok, true)
++  const started = startTrackSession(planId); assert.equal(started.ok, true)
++  if (!started.ok) throw Error(started.reason)
++  return started.trainingOccurrenceId
++}
++const session: Session = { id: 'audit-strength', name: '合成力量课', moves: [{ id: 'squat', catalogId: 'back-squat', customName: '', sets: 1, mode: 'reps', amount: 8, restSec: 60, weightKg: 40 }] }
++function beginStrength(decisionId = 'audit-decision') {
++  const event = startTraining({ decisionId, sessionId: session.id, action: 'ORIGINAL_PLAN' }); assert.ok(event)
++  assert.ok(bindTrainingStart({ startEventId: event.event_id, startedAt: event.timestamp, sessionId: session.id, planSlotId: session.id, plan: session }))
++  const set = { ...emptySets(session)[0], actualWeight: 40, actualAmount: 8, completed: true, source: 'user_entered' as const, timestamp: new Date().toISOString() }
++  assert.ok(recordSet(session.id, decisionId, set))
++  return event.event_id
++}
++const closeStrength = (decisionId = 'audit-decision') => completeFromRunner({ decisionId, sessionId: session.id, planned: null, actualSets: 1, actualAmount: 8, actualWeightKg: 40, rpe: 6, pain: false, modified: false, interrupted: false })
++function device(id = 'run-1'): DeviceActivity {
++  return { key: id, sourceIdentity: `synthetic-watch:account:${id}`, source: '合成手表', sport: 'RUNNING', sportLabel: '跑步', startIso: new Date(Date.now() - 60_000).toISOString(), durationSec: 90.1, distanceM: 400, avgHr: 150, maxHr: 160, calories: null, avgCadence: null, avgPower: null, verticalOscMm: null, groundContactMs: null, sets: [] }
++}
++
++test('running work is recorded immediately but only an explicit finish marks the log completed', async t => {
++  const f = fixture(t), id = beginRun()
++  assert.equal(startTrackSession('audit-run').ok, true)
++  assert.equal(loadEvents().filter(e => e.event_type === 'TRAINING_STARTED').length, 1)
++  assert.equal(commitTrackContinuous(id, 'run', '90.1', '400').ok, true)
++  assert.equal(commitTrackContinuous(id, 'run', '90.2', '400').ok, false)
++  assert.equal(loadTrainingActivities().find(r => r.occurrenceId === id)?.status, 'incomplete')
++  assert.equal(readCoachData(f.day).coreActual.sessions, 0)
++  assert.equal(finishTrackSession(id, 'COMPLETED', 7, 0).ok, true)
++  assert.equal(finishTrackSession(id, 'COMPLETED', 7, 0).ok, false)
++  const rows = loadTrainingActivities().filter(r => r.occurrenceId === id)
++  assert.equal(rows.length, 1); assert.equal(rows[0].status, 'completed'); assert.equal(rows[0].durationSec, 90.1); assert.equal(rows[0].distanceM, 400)
++  assert.equal(loadEvents().filter(e => e.event_type === 'TRAINING_COMPLETED').length, 1)
++  assert.equal(readTrainingFact(id)?.lifecycle, 'COMPLETED')
++  const brief = assembleCoachBrief(null, '复盘这次跑步', id)
++  assert.equal(brief.occurrenceId, id); assert.equal(brief.sessionRpe, 7)
++  assert.ok(brief.sources?.some(s => s.detail.includes('90.1')))
++  const global = await readGlobalCoachSnapshot(f.day, f.repository)
++  assert.equal(global.data?.coreActual.sessions, 1); assert.ok(global.data?.coreActual.sourceIds.includes(id))
++})
++
++test('strength finish is idempotent and a correction reaches the log and Fangkun without rewriting the original event', async t => {
++  const f = fixture(t), id = beginStrength(), first = closeStrength(); assert.ok(first)
++  assert.equal(closeStrength()?.event_id, first.event_id)
++  assert.equal(loadEvents().filter(e => e.event_type === 'TRAINING_COMPLETED').length, 1)
++  assert.equal(loadTrainingActivities().filter(r => r.occurrenceId === id).length, 1)
++  assert.equal(loadTrainingActivities().find(r => r.occurrenceId === id)?.strengthVolumeKg, 320)
++  const before = await readGlobalCoachSnapshot(f.day, f.repository)
++  assert.equal(before.data?.coreActual.sessions, 1)
++  assert.ok(appendCorrection({ trainingOccurrenceId: id, kind: 'FIELD', field: 'weight', setKey: 'squat:1', originalValue: '40', newValue: '55', reason: '合成审计更正' }))
++  assert.equal(loadTrainingActivities().find(r => r.occurrenceId === id)?.strengthVolumeKg, 440)
++  assert.equal(loadEvents().find(e => e.event_type === 'TRAINING_SET_COMPLETED')?.payload.actualWeight, 40)
++  const formal = readFormalEvidenceRows(owner).rows, replaced = new Set(formal.map(r => r.supersedesRecordId).filter(Boolean))
++  assert.ok(formal.some(r => r.metric === 'STRENGTH_KG' && r.value === 55 && !replaced.has(r.recordId)))
++  const brief = assembleCoachBrief(null, '这次力量训练的实际重量', id)
++  assert.equal(brief.occurrenceId, id); assert.equal(brief.completedSetCount, 1)
++  assert.equal(readTrainingContext(null).snapshot?.strength.completedWeight, 55)
++  const after = await readGlobalCoachSnapshot(f.day, f.repository)
++  assert.equal(after.data?.coreActual.sessions, 1)
++})
++
++test('repeated watch import creates one activity and changed device totals do not overwrite a manual correction', t => {
++  const f = fixture(t), a = device()
++  assert.equal(saveDeviceRows([], [a]).saved, 1)
++  for (let n = 0; n < 3; n++) { const result = saveDeviceRows([], [a]); assert.equal(result.saved, 0); assert.equal(result.skipped, 1) }
++  const imported = coachImports()[0]; assert.ok(imported)
++  assert.equal(loadTrainingActivities().length, 1)
++  assert.ok(appendCorrection({ trainingOccurrenceId: imported.confirmedImportId, kind: 'FIELD', field: 'duration', setKey: null, originalValue: '90.1', newValue: '91.2', reason: '合成审计更正' }))
++  const result = saveDeviceRows([], [{ ...a, durationSec: 92.3 }])
++  assert.equal(result.saved, 0); assert.equal(result.errors.length, 1); assert.equal(coachImports().length, 1)
++  assert.equal(coachImports()[0].durationSeconds.value, 90.1)
++  assert.equal(readCoachData(f.day).imports.latest[0].durationSec, null)
++})
++
++test('the actual Garmin view writer and formal import reader merge one scoped activity after repeated saves', t => {
++  fixture(t)
++  const a = { ...device('same-garmin-run'), sourceIdentity: 'garmin:synthetic-account:987' }
++  const raw = { activityId: 987, activityName: '合成间歇跑', activityType: { typeKey: 'running' }, fkStartIso: a.startIso, fkSourceIdentity: a.sourceIdentity, duration: a.durationSec, distance: a.distanceM, averageHR: 150 }
++  for (let n = 0; n < 3; n++) {
++    saveGarminActivities([raw], 'synthetic-account')
++    const saved = saveDeviceRows([], [a]); assert.equal(saved.errors.length, 0)
++    assert.equal(saved.saved, n === 0 ? 1 : 0)
++  }
++  const rows = loadTrainingActivities()
++  assert.equal(rows.length, 1); assert.equal(coachImports().length, 1)
++  assert.deepEqual(new Set(rows[0].sources), new Set(['import', 'garmin']))
++  assert.equal(rows[0].durationSec, 90.1); assert.equal(rows[0].distanceM, 400); assert.equal(rows[0].garminId, 987)
++  setEventContext({ athleteId: 'synthetic-training-b' })
++  assert.equal(loadTrainingActivities().length, 0)
++})
++
++test('independent phone and watch sources need a confirmed identity link; equal values alone do not merge', t => {
++  const f = fixture(t), id = beginRun(); assert.ok(commitTrackContinuous(id, 'run', '90.1', '400').ok); assert.ok(finishTrackSession(id, 'COMPLETED', null, null).ok)
++  const a = device(); assert.equal(saveDeviceRows([], [a]).saved, 1)
++  const rows = loadTrainingActivities(); assert.equal(rows.length, 2)
++  assert.equal(mergeActivities([rows[0], { ...rows[1], originIds: [...rows[1].originIds, ...rows[0].originIds] }]).length, 1)
++  const context = readCoachData(f.day)
++  assert.equal(context.coreActual.sessions, 1); assert.equal(context.imports.count, 1)
++  assert.ok(context.warnings.some(w => w.includes('不重复累加')))
++})
++
++test('switching athlete excludes both automatic and explicitly selected old training from Fangkun', async t => {
++  const f = fixture(t), id = beginStrength(); assert.ok(closeStrength())
++  assert.equal(assembleCoachBrief(null, '复盘这次训练', id).occurrenceId, id)
++  setEventContext({ athleteId: 'synthetic-training-b' })
++  assert.equal(loadTrainingActivities().length, 0)
++  assert.equal((await readGlobalCoachSnapshot(f.day, f.repository)).data?.coreActual.sessions, 0)
++  assert.equal(assembleCoachBrief(null, '复盘这次训练', id).occurrenceId, null)
++  assert.equal(assembleCoachBrief(null, '复盘最近训练').occurrenceId, null)
++})
++
++test('switching athlete cannot resume or write into another athlete running occurrence', t => {
++  const f = fixture(t), id = beginRun(); const before = [...f.data]
++  setEventContext({ athleteId: 'synthetic-training-b' })
++  assert.equal(openTrackOccurrence('audit-run'), null)
++  assert.equal(commitTrackContinuous(id, 'run', '90.1', '400').ok, false)
++  assert.equal(finishTrackSession(id, 'INTERRUPTED', null, null).ok, false)
++  assert.deepEqual([...f.data], before)
++  const own = startTrackSession('audit-run'); assert.equal(own.ok, true)
++  if (own.ok) assert.notEqual(own.trainingOccurrenceId, id)
++  assert.equal(getTrainingOccurrence(id)?.lifecycle, 'IN_PROGRESS')
++})
++
++test('switching athlete does not restore another athlete recorded strength sets', t => {
++  fixture(t); beginStrength()
++  assert.equal(executionOf(session.id).sets.length, 1)
++  setEventContext({ athleteId: 'synthetic-training-b' })
++  assert.deepEqual(executionOf(session.id), { open: false, decisionId: null, sets: [] })
++})
++
++test('stale running write callbacks cannot mutate another athlete before any resume check', t => {
++  const f = fixture(t), id = beginRun(), draft = emptyDraft('200x4x2')
++  draft.repRestSeconds = 60; draft.roundRestSeconds = 180
++  assert.equal(confirmTrackPlan('200x4x2', draft).ok, true)
++  const intervals = startTrackSession('track-200-4-2'); assert.equal(intervals.ok, true)
++  if (!intervals.ok) throw Error(intervals.reason)
++  const intervalView = projectRunningExecution(intervals.trainingOccurrenceId, loadEvents())
++  assert.ok(intervalView.repetitions[0]); assert.ok(intervalView.recoveries[0])
++  const ended = beginRun('audit-feedback')
++  assert.equal(commitTrackContinuous(ended, 'run', '90.1', '400').ok, true)
++  assert.equal(finishTrackSession(ended, 'COMPLETED', null, null).ok, true)
++  const followupAt = new Date(Date.parse(getTrainingOccurrence(ended)!.startedAt) + 24 * 3600000)
++  const before = [...f.data]
++  setEventContext({ athleteId: 'synthetic-training-b' })
++  assert.equal(commitTrackSlot(intervalView.repetitions[0], 'complete', '33.5', '200').ok, false)
++  assert.equal(commitTrackRecovery(intervalView.recoveries[0], '60').ok, false)
++  assert.equal(commitTrackContinuous(id, 'run', '90.1', '400').ok, false)
++  assert.equal(finishTrackSession(id, 'INTERRUPTED', null, null).ok, false)
++  assert.equal(recordTrackRecoveryFeedback(ended, '24H', 7, null, followupAt).ok, false)
++  assert.deepEqual([...f.data], before)
++})
++
++test('stale strength completion does not append an event or close the old athlete occurrence', t => {
++  const f = fixture(t), id = beginStrength(), before = [...f.data]
++  setEventContext({ athleteId: 'synthetic-training-b' })
++  assert.equal(recordSet(session.id, 'audit-decision', { ...emptySets(session)[0], completed: true, actualWeight: 99, actualAmount: 8, source: 'user_entered' }), null)
++  assert.equal(closeStrength(), null)
++  assert.equal(getTrainingOccurrence(id)?.lifecycle, 'IN_PROGRESS')
++  assert.deepEqual([...f.data], before)
++})
++
++test('two athletes can execute the same strength template independently', t => {
++  fixture(t); const a = beginStrength('decision-a')
++  setEventContext({ athleteId: 'synthetic-training-b' }); const b = beginStrength('decision-b')
++  assert.notEqual(a, b); assert.ok(getTrainingOccurrence(b))
++  assert.equal(loadEvents().filter(e => e.athlete_id === 'synthetic-training-b' && e.event_type === 'TRAINING_SET_COMPLETED')[0]?.payload.trainingOccurrenceId, b)
++  assert.ok(closeStrength('decision-b'))
++  assert.equal(getTrainingOccurrence(a)?.lifecycle, 'IN_PROGRESS'); assert.equal(getTrainingOccurrence(b)?.lifecycle, 'COMPLETED')
++  setEventContext({ athleteId: owner }); assert.ok(closeStrength('decision-a'))
++  assert.equal(loadTrainingActivities().length, 1)
++})
++
++test('a repeated completion from an older decision cannot close a newer strength session', t => {
++  fixture(t); const a = beginStrength('decision-old'), closed = closeStrength('decision-old'); assert.ok(closed)
++  const b = beginStrength('decision-new')
++  assert.notEqual(a, b)
++  const before = [...loadEvents()]
++  assert.equal(recordSet(session.id, 'decision-old', { ...emptySets(session)[0], completed: true, actualWeight: 99, actualAmount: 8, source: 'user_entered' }), null)
++  assert.deepEqual(loadEvents(), before)
++  assert.equal(closeStrength('decision-old')?.event_id, closed.event_id)
++  assert.equal(getTrainingOccurrence(b)?.lifecycle, 'IN_PROGRESS')
++  assert.equal(loadEvents().filter(e => e.event_type === 'TRAINING_COMPLETED').length, 1)
++})
++
++test('an athlete A to B to A switch invalidates a queued running write', async t => {
++  const f = fixture(t), id = beginRun(), before = [...f.data]
++  const previousNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator')
++  let release: (() => void) | undefined
++  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { locks: { request: (_name: string, work: () => unknown) => new Promise(resolve => { release = () => resolve(work()) }) } } })
++  t.after(() => { if (previousNavigator) Object.defineProperty(globalThis, 'navigator', previousNavigator); else Reflect.deleteProperty(globalThis, 'navigator') })
++  const pending = withRunningWriteLock(() => commitTrackContinuous(id, 'run', '90.1', '400'))
++  setEventContext({ athleteId: 'synthetic-training-b' }); setEventContext({ athleteId: owner })
++  assert.ok(release); release()
++  const result = await pending; assert.equal(result.ok, false)
++  assert.deepEqual([...f.data], before)
++})
++
++test('a completed training event triggers a fresh Fangkun projection after the commit', async t => {
++  const f = fixture(t), id = beginStrength(); const revisions: number[] = []
++  const off = subscribeGlobalCoach(() => revisions.push(readCoachData(f.day).coreActual.sessions)); t.after(off)
++  assert.ok(closeStrength()); assert.equal(revisions.length, 0)
++  await Promise.resolve()
++  assert.deepEqual(revisions, [1]); assert.equal(getTrainingOccurrence(id)?.lifecycle, 'COMPLETED')
++})
+--- /dev/null
++++ b/verification/s1-incremental/run-regressions.py
+@@ -0,0 +1,67 @@
++from pathlib import Path
++from concurrent.futures import ThreadPoolExecutor
++import json, os, re, subprocess, sys, tempfile
++
++root = Path(__file__).resolve().parents[2]
++review = Path(tempfile.mkdtemp(prefix='fangkun-sync-validation-'))
++logs = review / 'final-targeted'
++logs.mkdir(exist_ok=True)
++files = '''
++src/lib/health/garmin-sync-runner.test.ts
++src/lib/health/garmin-sync-incremental.test.ts
++src/lib/health/garmin-sync-performance.test.ts
++src/lib/health/garmin-intraday.test.ts
++src/lib/health/garmin-progress-store.test.ts
++src/lib/health/garmin-activity-conflicts.test.ts
++src/lib/health/garmin-sync-status.test.ts
++src/lib/health/garmin-pending-imports.test.ts
++src/components/garmin-sync-persistence.test.ts
++verification/u11/garmin-sync-plan-u11.test.mjs
++src/lib/ui/device-store-health-result.test.ts
++src/lib/ui/device-store-sync.test.ts
++src/lib/ui/garmin-sync-live.test.ts
++src/lib/ui/training-record-sync.test.ts
++src/lib/ui/scheduled-training.test.ts
++src/lib/ui/running-workouts.test.ts
++src/lib/core/occurrence.test.ts
++src/lib/core/execution.test.ts
++src/lib/core/training-decision.test.ts
++src/lib/core/training-start-alias.test.ts
++src/lib/core/training-fact.test.ts
++src/lib/core/training-fact-ownership.test.ts
++src/lib/core/training-correction.test.ts
++src/lib/core/training-correction-projection.test.ts
++src/lib/core/training-import.test.ts
++src/lib/core/training-import-delete.test.ts
++src/lib/core/running-real-use.test.ts
++src/lib/core/running-execution.test.ts
++src/lib/core/running-execution-rest.test.ts
++src/lib/core/coach-brief.test.ts
++src/lib/core/coach-fuel.test.ts
++src/lib/core/coach-fieldwork-context.test.ts
++src/lib/coach/global-coach-host-v89.test.ts
++src/lib/coach/online-coach.test.ts
++src/lib/health/health-nutrition-sync.test.ts
++src/lib/nutrition/entry-workflow.test.ts
++src/lib/nutrition/food-agg.test.ts
++src/lib/nutrition/vitals.test.ts
++src/lib/nutrition/energy-source.test.ts
++'''.split()
++
++def run(file):
++    env = dict(os.environ, FK_NO_TEST_PLAN='1')
++    result = subprocess.run(['node', '--import', './scripts/test-register.mjs', file], cwd=root, env=env, capture_output=True, text=True, timeout=90)
++    output = result.stdout + result.stderr
++    log = logs / (file.replace('/', '_') + '.log')
++    log.write_text(output)
++    def count(label):
++        found = re.findall(r'(?:ℹ |# )' + label + r' (\d+)', output)
++        return int(found[-1]) if found else 0
++    return {'file': file, 'exit_code': result.returncode or (0 if count('tests') else 1), 'tests': count('tests'), 'pass': count('pass'), 'fail': count('fail'), 'log': str(log)}
++
++with ThreadPoolExecutor(max_workers=3) as executor:
++    results = list(executor.map(run, files))
++summary = {'files': len(results), 'tests': sum(r['tests'] for r in results), 'pass': sum(r['pass'] for r in results), 'fail': sum(r['fail'] for r in results), 'failed_files': [r for r in results if r['exit_code']], 'results': results}
++(review / 'targeted-results.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2))
++print(json.dumps({**{k:v for k,v in summary.items() if k != 'results'}, 'logs': str(review)}, ensure_ascii=False, indent=2), flush=True)
++sys.exit(1 if summary['failed_files'] else 0)

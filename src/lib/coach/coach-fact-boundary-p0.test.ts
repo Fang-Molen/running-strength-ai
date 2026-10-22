@@ -27,6 +27,12 @@ test('absent and malformed records do not become an invented completion', () => 
   assert.equal(v4RecordLine(date), null)
 })
 
+test('legacy local fallback cannot read another athlete through an otherwise valid watch review', () => {
+  put('fk-plan400-v4-log', { [date]: { athleteId: 'another-athlete', done: 'done', strength: 'FOREIGN_LEGACY_ACTUAL', rpe: '10' } })
+  assert.equal(v4RecordLine(date), null)
+  assert.doesNotMatch(reviewActivity(run, null, date), /FOREIGN_LEGACY_ACTUAL/)
+})
+
 const run: GActivity = { id: 'synthetic-run', name: 'synthetic', type: 'running', start: `${date}T06:00:00Z`, dist: 6000, dur: 1860, avgHr: null, maxHr: null, cad: null, elev: null, cal: null, sets: null, reps: null, tl: null, te: null }
 const laps = (heart: (number | null)[]): GLap[] => heart.map((avgHr, i) => ({ i: i + 1, dist: 1000, dur: i < 3 ? 300 : 320, avgHr, maxHr: null, cad: null, elev: null, speed: null }))
 

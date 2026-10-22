@@ -1,0 +1,10 @@
+✔ saved reports remain successful when derived timestamp writes fail and still suppress an immediate automatic reread (2477.445419ms)
+✔ throwing or silently dropped primary report writes remain explicit failures (65.729725ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2552.397455

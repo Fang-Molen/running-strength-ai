@@ -1,0 +1,11 @@
+✔ device total is never augmented by workout expenditure (0.982182ms)
+✔ missing total preserves estimated target and missing data (0.213832ms)
+✔ no profile does not invent a nutritional target (0.162776ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.072322

@@ -1,0 +1,14 @@
+✔ repeat device import reads its normalized history once for the entire batch (46.145959ms)
+✔ same-source changed totals still require review and never overwrite the confirmed record (0.6427ms)
+✔ matching time and distance do not merge different accounts or activity IDs (0.533164ms)
+✔ a later call reloads source state after deletion and athlete switches (4.822224ms)
+✔ duplicate draft IDs retain the existing first-record conflict policy (0.579163ms)
+✔ watch strength sessions with zero distance do not create a false repeat-import conflict (1.033689ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64.026982

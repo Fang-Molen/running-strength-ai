@@ -1,4 +1,4 @@
-import type { FoodEntry } from "@/lib/nutrition/log"
+import { nutrientOf, type FoodEntry } from "@/lib/nutrition/log"
 import { calendarDay } from "./coach-calendar.ts"
 
 export type CoachFuel = {
@@ -17,7 +17,9 @@ export function fuelForTraining(startedAt: string | null, now: string, allEntrie
   const todayDay = calendarDay(now) ?? ""
   const sameDay = Boolean(trainingDay && trainingDay === todayDay)
   const entries = sameDay
-    ? allEntries.filter((entry): entry is FoodEntry & {kcal:number} => typeof entry.kcal === "number" && entry.date === todayDay && typeof entry.id === "string" && Number.isFinite(entry.kcal) && entry.kcal >= 0).slice(0, 200).map((entry) => ({ id: entry.id.slice(0, 80), kcal: entry.kcal }))
+    ? allEntries.filter(entry => entry.date === todayDay && typeof entry.id === "string")
+      .map(entry => ({ id: entry.id.slice(0, 80), kcal: nutrientOf(entry, "kcal") }))
+      .filter((entry): entry is {id:string;kcal:number} => typeof entry.kcal === "number" && Number.isFinite(entry.kcal) && entry.kcal >= 0).slice(0, 200)
     : []
   const status = !sameDay ? "DIFFERENT_DAY" : entries.length ? "SAME_DAY_RECORDED" : "NO_RECORD"
   const target = sameDay && targetKcal != null && Number.isFinite(targetKcal) && targetKcal > 0 ? Math.round(targetKcal) : null

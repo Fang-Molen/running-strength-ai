@@ -1,0 +1,27 @@
+✔ 400m real-use service chain: questions → editable candidate → acceptance → actual → atomic finish → reload → changed next analysis (91.316852ms)
+✔ novice candidate is executable as continuous warmup/main/cooldown without invented performance (5.143991ms)
+✔ cannot begin unaccepted, rejected, edited, future or rest-day candidate (2.329405ms)
+✔ confirmed candidate with new pain cannot start and does not generate training facts (1.011256ms)
+✔ one failed start commit leaves no event, occurrence, snapshot or candidate plan; retry succeeds (1.842941ms)
+✔ interrupted serialization/partial physical write is never projected or reported successful (1.383157ms)
+✔ silent no-op write/readback mismatch cannot report successful start (1.237307ms)
+✔ failed end commit preserves prior actual data, stays open and does not partially save RPE (8.578301ms)
+✔ early end preserves unknown remaining segments and rejects post-close writes and duplicate close (2.455194ms)
+✔ concurrent clients append independent multi-entity starts without loss or overwrite (0.822801ms)
+✔ concurrent conflicting plan edits retain both branches and refuse successful ambiguous plan (0.342357ms)
+✔ browser lock serializes concurrent same-plan start; unsupported lock refuses without write (0.722149ms)
+✔ 24/48h observations reject premature input, bind source, survive refresh and affect next explanation (3.648374ms)
+✔ original plan and personal legacy keys are byte-for-byte untouched by candidate chain (1.691402ms)
+✔ transaction backup round trip retains candidate start/close/feedback with no re-inference (3.553141ms)
+✔ runner exposes explicit formal finish/interrupt and continuous actual entry (SSR evidence only) (10.292128ms)
+✔ well-formed but incomplete start bundle remains audit-only and exposes no partial entities (0.253683ms)
+✔ end and recovery feedback remain independent across interleaved clients (1.439172ms)
+✔ delayed pain feedback binds to the existing safety evidence layer and blocks performance options (10.395324ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 167.72412

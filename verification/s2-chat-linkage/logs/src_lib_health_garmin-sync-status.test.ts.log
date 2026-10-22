@@ -1,0 +1,13 @@
+✔ nothing synced => not connected, no invented times (1.867077ms)
+✔ partial attempt keeps last full success separate and lists errors + range (1.676319ms)
+✔ auth failure => expired; auto backoff exposed (0.520175ms)
+✔ resuming noncontiguous dates is labeled catch-up rather than a new full first sync (0.452422ms)
+✔ a verified report supplies newer successful times when timestamp caches are stale or unavailable (0.425742ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.286055

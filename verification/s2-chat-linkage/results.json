@@ -1,0 +1,45 @@
+{
+  "scope": "Ordinary online Fangkun chat reads current owned nutrition, training, strength and recovery; previous sync changes retained.",
+  "online_regression": {
+    "files": 9,
+    "tests": 89,
+    "pass": 89,
+    "fail": 0
+  },
+  "previous_sync_regression": {
+    "files": 39,
+    "tests": 342,
+    "pass": 342,
+    "fail": 0
+  },
+  "recovery_cutoff_tests": {
+    "tests": 7,
+    "pass": 7
+  },
+  "independent_review": {
+    "important_findings_fixed": 4,
+    "remaining_blockers": 0,
+    "independent_checks_pass": 88,
+    "final_ui_cutoff_adjustment_reviewed": true
+  },
+  "application_typecheck": "PASS",
+  "production_build": "PASS",
+  "production_browser": {
+    "checks": 40,
+    "pass": 40,
+    "real_model_used": false
+  },
+  "full_test_suite": {
+    "status": "BASELINE_BLOCKED",
+    "first_phase_tests": 222,
+    "first_phase_pass": 218,
+    "first_phase_fail": 4,
+    "reason": "Missing original 3D model and PWA image assets; subsequent chained phases did not automatically execute."
+  },
+  "full_typecheck": {
+    "status": "BASELINE_BLOCKED",
+    "reason": "Pre-existing test typing issues and omitted private plan fixtures; introduced test typing issues fixed."
+  },
+  "historical_nutrition_limit": "Queries use current saved revisions for a selected day. Arbitrary pre-edit/pre-delete asOf reconstruction is not implemented. Online cutoff is captured immediately before synchronous fact building after awaited device reads.",
+  "deployment": "Source and proxy code provided together. No live deployment, database migration or real-account/model call performed."
+}

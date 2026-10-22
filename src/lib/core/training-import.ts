@@ -1,7 +1,7 @@
 import { sleepHoursText } from '../health/observation'
 import { currentAthleteId } from "./events.ts"
 import type { ImportCompleteness } from "./import-completeness.ts"
-import { readEnvelope, writeEnvelope } from "./storage.ts"
+import { currentStore, readEnvelope, writeEnvelope } from "./storage.ts"
 import { appendRetained, retainNewest, MAX_CONFIRMED_IMPORTS } from "./import-retention.ts"
 
 export type ImportFieldStatus = "RECORDED" | "ABSENT" | "AMBIGUOUS" | "CONFLICTING"
@@ -299,7 +299,7 @@ export function criticalImportGaps(input: TrainingImportDraft): string[] {
   return [...new Set(gaps)]
 }
 
-export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; record: ConfirmedTrainingImport; duplicate: boolean } | { ok: false; reason: string } {
+export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; record: ConfirmedTrainingImport; duplicate: boolean } | { ok: false; reason: string; code?: 'PERSISTENCE_FAILED' | 'PERSISTENCE_UNCONFIRMED' } {
   const draft = { ...input, ...normalizeTrainingImportCandidate(input) }
   if (!draft.draftId || draft.draftId.length > 55) return { ok: false, reason: "草稿标识无效" }
   const existing = loadConfirmedTrainingImports().find((item) => item.draftId === draft.draftId)
@@ -322,7 +322,18 @@ export function confirmTrainingImport(input: TrainingImportDraft): { ok: true; r
   // v86.2：按训练发生时间保留最新的（旧版按写入顺序截取，佳明“新的在前”导致最新活动被挤掉）
   const next = appendRetained(retainNewest(loadConfirmedTrainingImports()), confirmed)
   if (!next) return { ok: false, reason: `早于保留范围（只保留最近 ${MAX_CONFIRMED_IMPORTS} 条导入），未保存` }
-  if (!writeEnvelope(CONFIRMED_TRAINING_IMPORTS_KEY, next)) return { ok: false, reason: "确认记录保存失败，请重试" }
+  const written = writeEnvelope(CONFIRMED_TRAINING_IMPORTS_KEY, next)
+  try {
+    const raw = currentStore()?.getItem(CONFIRMED_TRAINING_IMPORTS_KEY)
+    if (!written || raw !== JSON.stringify(written)) {
+      const stored = raw == null ? null : JSON.parse(raw)
+      // An automatic retry is allowed only when the readback proves absence.
+      // A throw or an ambiguous write may already have saved this record.
+      const absent = raw == null || Array.isArray(stored?.data) && !stored.data.some((item: { confirmedImportId?: string; draftId?: string }) => item?.confirmedImportId === confirmed.confirmedImportId || item?.draftId === confirmed.draftId)
+      return absent ? { ok: false, reason: "确认记录保存失败，请重试", code: 'PERSISTENCE_FAILED' }
+        : { ok: false, reason: "确认记录保存结果无法核对，请刷新后复核", code: 'PERSISTENCE_UNCONFIRMED' }
+    }
+  } catch { return { ok: false, reason: "确认记录保存结果无法核对，请刷新后复核", code: 'PERSISTENCE_UNCONFIRMED' } }
   discardTrainingImportDraft(draft.draftId)
   return { ok: true, record: confirmed, duplicate: false }
 }

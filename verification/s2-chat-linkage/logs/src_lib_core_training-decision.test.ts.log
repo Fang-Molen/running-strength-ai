@@ -1,0 +1,23 @@
+✔ A low legacy index stays cautious and keeps the original plan (1.405671ms)
+✔ B high fatigue does not increase the load (0.184528ms)
+✔ C a hard run blocks an automatic weight increase (0.121153ms)
+✔ D pain blocks a load increase (0.201484ms)
+✔ E a near competition does not add load after one bad session (0.134203ms)
+✔ F G H I J rejecting, modifying, interrupting and finishing stay tied to the decision (3.57963ms)
+✔ K one miss does not change ability (0.233563ms)
+✔ L missing data stays unknown (0.192871ms)
+✔ M a decision exists without a model key (0.169165ms)
+✔ a recorded sleep value is visible and an empty record stays null (1.257286ms)
+✔ recorded HRV and resting heart rate stay on the context and off the decision (0.387574ms)
+✔ a run RPE and several stored runs are visible without a made-up type (0.354535ms)
+✔ completed strength sets are visible and do not change the adjustment (0.728469ms)
+✔ a pain event is visible without becoming the decision pain flag (0.821499ms)
+✔ missing context facts stay null (0.170207ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.069171

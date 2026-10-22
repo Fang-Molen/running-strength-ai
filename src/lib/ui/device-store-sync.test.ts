@@ -26,10 +26,10 @@ function setup() {
 
 test('repeat device import reads its normalized history once for the entire batch', () => {
   const store = setup(), rows = Array.from({length: 20}, (_, i) => activity(i))
-  assert.deepEqual(saveDeviceRows([], rows), {saved: 20, skipped: 0, errors: [], healthErrors: []})
+  assert.deepEqual(saveDeviceRows([], rows), {saved: 20, skipped: 0, errors: []})
   const before = [...store.data]
   store.importReads = 0; store.writes = 0
-  assert.deepEqual(saveDeviceRows([], rows), {saved: 0, skipped: 20, errors: [], healthErrors: []})
+  assert.deepEqual(saveDeviceRows([], rows), {saved: 0, skipped: 20, errors: []})
   assert.equal(store.importReads, 1, 'duplicate count must not multiply full-history parses')
   assert.equal(store.writes, 0)
   assert.deepEqual([...store.data], before)
@@ -54,7 +54,7 @@ test('same-source changed totals still require review and never overwrite the co
 test('matching time and distance do not merge different accounts or activity IDs', () => {
   setup()
   const a = activity(1), b = activity(2), other = activity(1, 'com:synthetic-other')
-  assert.deepEqual(saveDeviceRows([], [a, b, other, a]), {saved: 3, skipped: 1, errors: [], healthErrors: []})
+  assert.deepEqual(saveDeviceRows([], [a, b, other, a]), {saved: 3, skipped: 1, errors: []})
   assert.equal(loadConfirmedTrainingImports().length, 3)
   setStoreBackend(null)
 })
@@ -83,16 +83,19 @@ test('duplicate draft IDs retain the existing first-record conflict policy', () 
   raw.data.push(conflicting)
   store.data.set(CONFIRMED_TRAINING_IMPORTS_KEY, JSON.stringify(raw))
   const before = [...store.data]
-  assert.deepEqual(saveDeviceRows([], [a]), {saved: 0, skipped: 1, errors: [], healthErrors: []})
+  assert.deepEqual(saveDeviceRows([], [a]), {saved: 0, skipped: 1, errors: []})
   assert.deepEqual([...store.data], before)
   setStoreBackend(null)
 })
 
-test('v89.10.10 a distance-0 strength activity re-synced unchanged is skipped, not reported as changed', () => {
+test('watch strength sessions with zero distance do not create a false repeat-import conflict', () => {
   setup()
-  const a = {...activity(7), sport: 'STRENGTH' as const, sportLabel: '力量', distanceM: 0, sets: []}
-  assert.equal(saveDeviceRows([], [a]).saved, 1)
-  const again = saveDeviceRows([], [a])
-  assert.deepEqual(again, {saved: 0, skipped: 1, errors: [], healthErrors: []})
-  setStoreBackend(null)
+  try {
+    const strength = { ...activity(81), sport: 'STRENGTH' as const, sportLabel: '力量', distanceM: 0 }
+    assert.equal(saveDeviceRows([], [strength]).saved, 1)
+    assert.deepEqual(saveDeviceRows([], [strength]), { saved: 0, skipped: 1, errors: [] })
+    const changed = saveDeviceRows([], [{ ...strength, durationSec: 1800.1 }])
+    assert.equal(changed.saved, 0)
+    assert.equal(changed.errors.length, 1, 'a real 0.1-second source revision must still require review')
+  } finally { setStoreBackend(null) }
 })

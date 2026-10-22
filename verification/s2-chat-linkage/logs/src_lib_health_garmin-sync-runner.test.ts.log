@@ -1,0 +1,31 @@
+INITIAL requests 329
+FULL requests 51 RECENT requests 18
+✔ Garmin mapping preserves decimal units, valid zero and stable source ID (4.413459ms)
+✔ successful synthetic sync reports actual coverage, 6.5h sleep and zero observations (5.074596ms)
+✔ duplicate activity ID is one record, different IDs with same measurements stay separate (4.684868ms)
+✔ divergent duplicate activity IDs block writes rather than select a value (0.362246ms)
+✔ partial health endpoint failure stays partial while preserving valid data (1.904863ms)
+✔ all failed endpoints never report successful sync (0.946719ms)
+✔ HTTP200 with no available fields is empty, not successful record coverage (2.070984ms)
+✔ login expiry produces an attempt report without writing any new data (0.813658ms)
+✔ subject switch during sync discards rows and does not write old report into new user (0.343058ms)
+✔ logout generation change prevents late response writes (0.442578ms)
+✔ account changes in another tab detected by final status fence (0.688329ms)
+✔ a known account cannot be imported into another athlete (0.575779ms)
+✔ transport and report storage failures are explicit (2.408003ms)
+✔ real local import service deduplicates stable source ID, keeps corrections, and unifies raw view identity (10.004143ms)
+✔ R1 SYNC-04: network failure on status is reported as fail (not auth) and still produces a report (0.285141ms)
+✔ v78 health history backfills 14 older days per sync until 90 days, only after a clean save (14.209948ms)
+✔ first sync collects 90 days daily + 28 days intraday in one go, then marks full review (8.609339ms)
+✔ auto sync same local day after full review = RECENT: 3 days, 20-item list, far fewer requests (1.861048ms)
+✔ new local day or no full review → FULL even for auto (1.690631ms)
+✔ RECENT pages further only while every item is new/changed (cap 200) (13.201356ms)
+✔ first sync throttled (429) saves partial, cursor resumes, no full-review mark (6.269859ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.217017

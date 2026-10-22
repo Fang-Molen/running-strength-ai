@@ -1,0 +1,10 @@
+✔ fuel stays on the Shanghai training day and absence is unknown, never zero (20.173877ms)
+✔ fuel answers require both sources and cannot turn partial logs into a cause (5.582662ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.681978

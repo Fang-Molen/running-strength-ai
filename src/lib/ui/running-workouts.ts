@@ -1,4 +1,4 @@
-import { createAppEvent, loadEvents, notifyCommittedEvent } from "@/lib/core/events";
+import { ATHLETE_SCOPE_CHANGED, createAppEvent, currentAthleteId, loadEvents, notifyCommittedEvent } from "@/lib/core/events";
 import { getTrainingOccurrence, listTrainingOccurrences } from "@/lib/core/occurrence";
 import {
   getRunningPlan,
@@ -124,11 +124,15 @@ export function confirmTrackPlan(id: TrackPresetId, draft: TrackDraft) {
   });
 }
 
+function ownsTrackOccurrence(occurrenceId: string) {
+  return loadEvents().some(event => event.event_id === occurrenceId && event.event_type === 'TRAINING_STARTED' && (event.athlete_id ?? 'local') === currentAthleteId());
+}
 export function openTrackOccurrence(planId: string) {
+  const starts = new Set(loadEvents().filter(event => event.event_type === 'TRAINING_STARTED' && (event.athlete_id ?? 'local') === currentAthleteId()).map(event => event.event_id));
   return (
     [...listTrainingOccurrences()]
       .reverse()
-      .find((item) => item.sessionId === planId && item.lifecycle === "IN_PROGRESS") ?? null
+      .find((item) => item.sessionId === planId && item.lifecycle === "IN_PROGRESS" && starts.has(item.startEventId)) ?? null
   );
 }
 
@@ -195,6 +199,7 @@ export function commitTrackSlot(
   secondsText: string,
   distanceText: string,
 ): { ok: true } | { ok: false; reason: string } {
+  if (!ownsTrackOccurrence(slot.trainingOccurrenceId)) return { ok: false, reason: '训练不属于当前运动员，未写入。' };
   const current = projectRunningExecution(slot.trainingOccurrenceId, loadEvents()).repetitions.find(
     (item) =>
       item.componentId === slot.componentId &&
@@ -435,6 +440,7 @@ export function commitTrackRecovery(
   slot: RecoveryExecution,
   secondsText: string,
 ): { ok: true } | { ok: false; reason: string } {
+  if (!ownsTrackOccurrence(slot.trainingOccurrenceId)) return { ok: false, reason: '训练不属于当前运动员，未写入。' };
   const current = projectRunningExecution(slot.trainingOccurrenceId, loadEvents()).recoveries.find(
     (item) =>
       item.kind === slot.kind &&
@@ -483,10 +489,18 @@ export async function withRunningWriteLock<T>(
       ok: false,
       reason: "此浏览器缺少安全并发写入能力；请使用支持 Web Locks 的 HTTPS 独立预览，当前未保存。",
     };
+  const athleteAtRequest = currentAthleteId();
+  let scopeChanged = false;
+  const invalidate = () => { scopeChanged = true; };
+  window.addEventListener(ATHLETE_SCOPE_CHANGED, invalidate);
   try {
-    return await navigator.locks.request("fr255-running-write-r3", work);
+    return await navigator.locks.request("fr255-running-write-r3", () => scopeChanged || currentAthleteId() !== athleteAtRequest
+      ? { ok: false as const, reason: '等待保存期间运动员已切换，未写入；请重新核对当前训练。' }
+      : work());
   } catch {
     return { ok: false, reason: "并发保存未确认，请刷新核对后重试。" };
+  } finally {
+    window.removeEventListener(ATHLETE_SCOPE_CHANGED, invalidate);
   }
 }
 export const startTrackSessionSafely = (planId: string) =>
@@ -498,6 +512,7 @@ export function commitTrackContinuous(
   secondsText: string,
   distanceText: string,
 ) {
+  if (!ownsTrackOccurrence(occurrenceId)) return { ok: false as const, reason: '训练不属于当前运动员，未写入。' };
   const view = projectRunningExecution(occurrenceId, loadEvents());
   const slot = view.continuous.find((x) => x.componentId === componentId);
   if (view.terminal || !slot || slot.status !== "NOT_YET_RECORDED")
@@ -528,6 +543,7 @@ export function finishTrackSession(
   rpe: number | null,
   pain: number | null,
 ) {
+  if (!ownsTrackOccurrence(occurrenceId)) return { ok: false as const, reason: '训练不属于当前运动员，未写入。' };
   const occurrence = getTrainingOccurrence(occurrenceId),
     snapshot = getRunningPlanSnapshot(occurrenceId);
   if (!occurrence || !snapshot || !feedbackValid(rpe, pain, null))
@@ -612,6 +628,7 @@ export function recordTrackRecoveryFeedback(
   pain: number | null,
   now = new Date(),
 ) {
+  if (!ownsTrackOccurrence(occurrenceId)) return { ok: false as const, reason: '训练不属于当前运动员，未写入。' };
   const occurrence = getTrainingOccurrence(occurrenceId);
   if (
     !occurrence ||

@@ -1,0 +1,23 @@
+✔ a direct start snapshots the current four-set plan (5.085572ms)
+✔ edits do not become the training plan (1.453993ms)
+✔ reps, seconds, rest, mode, order, and movement edits are the saved plan (2.158546ms)
+✔ five edits then a later start use only the final saved plan (0.535378ms)
+✔ reopening after an edit uses the saved plan, not yesterday's edit snapshot (0.249686ms)
+✔ advance and template changes snapshot the plan in effect at start (1.252309ms)
+✔ an empty plan is known and an unreadable plan stays unknown (0.394625ms)
+✔ a second start before close stays on the first occurrence (0.352582ms)
+✔ the same slot next week is a new occurrence after the first one closes (0.323208ms)
+✔ old starts are not backfilled from edit snapshots (0.655609ms)
+✔ the runner close separates the next real start (1.592292ms)
+✔ the runner interrupt also frees the next start (0.456238ms)
+✔ a duplicate start stays on the first occurrence until the runner completes it (0.600446ms)
+✔ a second close removes the unique end time and a pre-session note does not close (0.937144ms)
+✔ legacy set counting stays on event count and does not use the training snapshot (0.181053ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35.255106

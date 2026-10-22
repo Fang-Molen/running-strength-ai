@@ -1,0 +1,10 @@
+✔ older unresolved source differences remain detectable without fetching 200 activities again (7.446474ms)
+✔ conflict inspection is athlete and account scoped and does not invent deleted imports (0.805395ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.936164

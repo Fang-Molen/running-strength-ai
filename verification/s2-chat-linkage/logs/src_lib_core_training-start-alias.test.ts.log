@@ -1,0 +1,12 @@
+✔ resuming one open training under a new decision binds its set to the original occurrence (8.012713ms)
+✔ finishing through either start decision returns the same completion event (2.877461ms)
+✔ closed start aliases cannot record new sets or close the next occurrence of the same session (2.860965ms)
+✔ another athlete cannot use either original or resumed decision to write into the occurrence (0.973558ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.397848

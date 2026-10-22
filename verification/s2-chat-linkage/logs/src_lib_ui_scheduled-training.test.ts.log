@@ -1,0 +1,28 @@
+✔ adding and choosing a course preserves the selected date, title and exercise parameters (5.296971ms)
+✔ same template on separate calendar days has independent execution identity (0.522849ms)
+✔ unknown doses remain blank and cannot enter strength execution as zero or template defaults (0.472813ms)
+✔ external actions require explicit unit and side conventions (1.173581ms)
+✔ an old run title is not parsed into a made-up distance or target (0.499944ms)
+✔ 200 x 4 x 2 retains rounds, stable step IDs, and unknown rests (0.420845ms)
+✔ invalid dates and nonexistent single-round rests fail before saving (0.397369ms)
+✔ saving is idempotent, merges another new course, and detects conflicting edits (1.108553ms)
+✔ a populated schedule is not silently truncated to 400 entries (6.824846ms)
+✔ run execution resumes the same occurrence and closes only its calendar slot (26.858483ms)
+✔ starting another course is blocked while one part is in progress (0.447705ms)
+✔ an edited running plan applies to a new occurrence and keeps the earlier snapshot (2.904562ms)
+✔ actual strength sets close the original calendar slot without using estimated minutes (3.589135ms)
+✔ no report is not a missed session in either the week summary or coach assessment (0.978856ms)
+✔ Garmin cache contributes actual dates and conservative cross-source deduplication (0.619865ms)
+✔ a mixed course waits for both parts before closing the calendar entry (3.398427ms)
+✔ partial strength remains partial and a reduced prescription is not reported as the original plan (7.517431ms)
+✔ calendar projection preserves an explicitly entered actual result (0.99445ms)
+✔ editing a repeated run preserves purpose and component/block/step identity (0.542308ms)
+✔ calendar input drafts survive full-vault migration and cannot poison the legacy core export (0.612033ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 80.785673

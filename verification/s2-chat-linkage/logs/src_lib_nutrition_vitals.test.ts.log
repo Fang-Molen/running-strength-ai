@@ -1,0 +1,10 @@
+✔ vitals stay independent, keep same-day rows, and do not invent trends (6.819658ms)
+✔ unreadable vitals are not overwritten (0.630752ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.840993
