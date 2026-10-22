@@ -1,0 +1,857 @@
+--- /dev/null
++++ b/docs/superpowers/plans/2026-10-22-s1-import-integration.md
+@@ -0,0 +1,28 @@
++# S1 导入与统一同步窗口衔接
++
++基线：用户上传的 `fangkun-s1-精简源码.zip`，包内目录 `fangkun-v89.10.9/`。
++
++## 已授权的范围
++
++沿用当前页面风格及统一设备同步窗口。保留 S1 的原始证据、人工更正、教练和健康趋势更新。按现有数据入口核对导入，不进行线上部署、真实平台授权或付费模型调用。
++
++## 实施步骤
++
++1. 比较 S1 与上一版统一窗口源码；仅补充实际遗漏或修复可复现的衔接问题。
++2. 为缺失、未佩戴、冲突及撤回状态提供显式选择；默认不选。保存计数与保存内容使用同一份选择结果，已选读数保留其原始证据历史。
++3. 人工更正追加新修订并保留原始事实；健康投影显示最新更正及来源。覆盖连续更正、日期更正、Apple 聚合和旧文件重导入场景。
++   - 更正被拒绝时复位数值草稿，保证显示值与实际保存值一致。
++   - 批次保存复用已有证据索引，避免每条读数重新扫描全部历史；保留写入失败、碰撞和归属保护。
++4. 在读取、识别、预览和保存边界绑定运动员；切换身份或卸载后丢弃旧异步结果。
++   - 原始状态和超过 200 条的活动可以继续展开核对。
++   - 授权回调优先进入统一窗口；一次启动只处理一次，防止快捷导入参数和 React effect 重放触发第二个窗口。
++5. 使用合成数据完成针对性回归、应用类型检查及开发/构建预览验证；保留现有已知限制的准确说明。
++6. 核对完整源文件清单、ZIP 校验和与基线差异，交付完整源码压缩包。
++
++## 验收要点
++
++- 未勾选的状态不落盘；有效读数附带的原始历史不丢失。
++- 更正后的读数、来源、日期与健康投影一致，不改变原始证据。
++- 旧运动员的解析任务不能进入新运动员的预览或存储。
++- 原有同步、授权窗口、健康日期导航和页面风格保持。
++- 不将模拟验证描述为真实手表连接、真实健康读取或已部署。
+--- a/src/components/device-import.tsx
++++ b/src/components/device-import.tsx
+@@ -1,83 +1,136 @@
+ import { saveReviewedFacts } from '@/lib/health/unified-fact-store'
++import { editReviewedHealthRow } from '@/lib/health/reviewed-correction'
+ import {DecimalInput} from './decimal-input'
+-import { useRef, useState } from "react"
++import { useEffect, useRef, useState } from "react"
+ import { Upload } from "lucide-react"
+-import { METRIC_LABELS, METRIC_UNITS, mergeResults, healthPreviewKey, paceText, parseDeviceFile, parseSummaryText, type DeviceActivity, type DeviceHealthRow, type DeviceParseResult } from "@/lib/ui/device-parse"
++import { METRIC_LABELS, METRIC_UNITS, mergeResults, paceText, parseDeviceFile, parseSummaryText, type DeviceActivity, type DeviceHealthRow, type DeviceParseResult } from "@/lib/ui/device-parse"
+ import { healthSavedKey, activityDraftId, existingKeys, isDuplicate, saveDeviceRows } from "@/lib/ui/device-store"
+ import { SavedBadge } from "@/components/saved-badge"
+ import { fmtDurationPrecise as fmtDur } from "@/lib/ui/activity-format"
+ import { openDeviceSync } from "@/lib/ui/device-sync-navigation"
++import { ATHLETE_SCOPE_CHANGED, currentAthleteId } from '@/lib/core/events'
++import { reviewFactKey, reviewStatusFacts, selectReviewedDeviceRows } from '@/lib/ui/device-import-review'
++import type { FactQuality } from '@/lib/health/unified-facts'
+ 
+ export { ocr } from "@/lib/vision/local-ocr";
+ import { ocr } from "@/lib/vision/local-ocr";
+ import { ImageIntake } from "./image-intake";
+ 
+-export function DeviceImport({ today, onSaved, hideConnectionLink = false }: { today: string; onSaved: () => void; hideConnectionLink?: boolean }) {
++type DeviceImportProps = { today: string; onSaved: () => void; hideConnectionLink?: boolean }
++const STATUS_LABELS: Record<FactQuality, string> = { VALID: '有效', UNKNOWN: '未知', UNAVAILABLE: '无数据', NOT_WORN: '未佩戴', CONFLICT: '数据冲突', RETRACTED: '撤回记录' }
++
++export function DeviceImport(props: DeviceImportProps) {
++  const [scope, setScope] = useState(() => ({ owner: currentAthleteId(), version: 0 }))
++  const liveScope = useRef(scope)
++  useEffect(() => {
++    const changed = () => {
++      const next = { owner: currentAthleteId(), version: liveScope.current.version + 1 }
++      // Invalidate immediately, including an A → B → A change before React renders.
++      liveScope.current = next
++      setScope(next)
++    }
++    window.addEventListener(ATHLETE_SCOPE_CHANGED, changed)
++    if (currentAthleteId() !== liveScope.current.owner) changed()
++    return () => window.removeEventListener(ATHLETE_SCOPE_CHANGED, changed)
++  }, [])
++  return <ScopedDeviceImport key={scope.version} {...props} scopeIsCurrent={() => liveScope.current === scope && currentAthleteId() === scope.owner} />
++}
++
++function ScopedDeviceImport({ today, onSaved, hideConnectionLink = false, scopeIsCurrent }: DeviceImportProps & { scopeIsCurrent: () => boolean }) {
+   const panel=useRef<HTMLElement>(null)
+   const importing = useRef(false);
++  const alive = useRef(true)
++  const readGeneration = useRef(0)
++  useEffect(() => { alive.current = true; return () => { alive.current = false; readGeneration.current++ } }, [])
++  const isCurrent = (generation = readGeneration.current) => alive.current && scopeIsCurrent() && generation === readGeneration.current
+   const [reading, setReading] = useState(false);
+   const [status, setStatus] = useState("")
+   const [result, setResult] = useState<DeviceParseResult | null>(null)
+   const [pickH, setPickH] = useState<Record<string, boolean>>({})
+   const [pickA, setPickA] = useState<Record<string, boolean>>({})
++  const [pickF, setPickF] = useState<Record<string, boolean>>({})
++  const [visibleStates, setVisibleStates] = useState(20)
++  const [visibleActivities, setVisibleActivities] = useState(200)
++  const [inputRevision, setInputRevision] = useState<Record<string, number>>({})
+   const [dup, setDup] = useState<{ h: Set<string>; a: Set<string> }>({ h: new Set(), a: new Set() })
+   const [stamp, setStamp] = useState(0)
+   const [ocrText, setOcrText] = useState("")
+   async function handle(files: FileList | null) {
+-    if (!files?.length || importing.current) return
++    if (!files?.length || importing.current || !isCurrent()) return
++    const generation = ++readGeneration.current
+     importing.current = true; setReading(true)
+     setResult(null); setOcrText("")
+     const parts: DeviceParseResult[] = []
+     try {
+       for (const f of Array.from(files)) {
++        if (!isCurrent(generation)) return
+         if (f.size > 400 * 1024 * 1024) { parts.push({ kind: "过大", brand: "", activities: [], health: [], notes: [`${f.name} 超过 400MB，请先解压后只选需要的文件。`] }); continue }
+         if (f.type.startsWith("image/")) {
+-          const text = await ocr(f, setStatus); setOcrText(text)
++          const text = await ocr(f, message => { if (isCurrent(generation)) setStatus(message) })
++          if (!isCurrent(generation)) return
++          setOcrText(text)
+           const r = parseSummaryText(text, today)
+           parts.push({ kind: "截图", brand: /garmin|佳明|身体电量|训练准备度/i.test(text) ? "Garmin Connect" : "未知", activities: r.activity ? [r.activity] : [], health: r.health, notes: r.health.length || r.activity ? ["截图识别可能认错数字，请逐项核对。日期默认今天，可在表里改。"] : ["截图里没认出指标。请截“我的一天”/睡眠/HRV/活动汇总页，或直接导出文件。"] })
+         } else {
+           setStatus(`正在读取 ${f.name}…`)
+-          parts.push(await parseDeviceFile(f.name, new Uint8Array(await f.arrayBuffer()), today))
++          const bytes = new Uint8Array(await f.arrayBuffer())
++          if (!isCurrent(generation)) return
++          const parsed = await parseDeviceFile(f.name, bytes, today)
++          if (!isCurrent(generation)) return
++          parts.push(parsed)
+         }
+       }
+-    } catch (e) { parts.push({ kind: "错误", brand: "", activities: [], health: [], notes: [e instanceof Error ? e.message : "读取失败"] }) }
++    } catch (e) { if (!isCurrent(generation)) return; parts.push({ kind: "错误", brand: "", activities: [], health: [], notes: [e instanceof Error ? e.message : "读取失败"] }) }
++    if (!isCurrent(generation)) return
+     importing.current = false; setReading(false)
+     stage(mergeResults(parts))
+   }
+   function stage(merged: DeviceParseResult) {
+-
++    if (!isCurrent()) return
+     const have = existingKeys()
+     const dh = new Set(merged.health.filter((h) => have.health.has(healthSavedKey(h))).map((h) => h.key))
+     const da = new Set(merged.activities.filter((a) => (have.activities.has(activityDraftId(a)) || isDuplicate(a, have))).map((a) => a.key))
+     setDup({ h: dh, a: da })
+     setPickH(Object.fromEntries(merged.health.map((h) => [h.key, !dh.has(h.key)])))
+     setPickA(Object.fromEntries(merged.activities.map((a) => [a.key, !da.has(a.key)])))
++    setPickF({}); setVisibleStates(20); setVisibleActivities(200); setInputRevision({})
+     setResult(merged); setStatus("")
+   }
+-  function edit(key: string, patch: Partial<DeviceHealthRow>) {
+-    if (!result) return
++  function edit(key: string, patch: Partial<Pick<DeviceHealthRow, 'day' | 'value'>>) {
++    if (!result || !isCurrent()) return
+     const old=result.health.find(h=>h.key===key);if(!old)return
+-    const updated={...old,...patch,source:old.source.includes('人工更正')?old.source:old.source+' · 人工更正',observation:old.observation?{...old.observation,facts:undefined,previous:[...(old.observation.previous??[]),{value:old.value,syncedAt:old.observation.syncedAt}]}:undefined};updated.key=healthPreviewKey(updated)
+-    if(patch.day&&updated.observation)updated.observation={...updated.observation,key:`${updated.observation.key}:date:${patch.day}`.slice(0,160),measuredAt:null}
++    const correction = editReviewedHealthRow(old, patch)
++    if (!correction.ok) {
++      // DecimalInput has its own draft. Reset a rejected draft so the visible
++      // number cannot differ from the value that the save action would write.
++      setInputRevision(p => ({ ...p, [key]: (p[key] ?? 0) + 1 }))
++      setStatus(`${correction.reason} 已恢复为更正前的值。`)
++      return
++    }
++    const updated = correction.row
++    setStatus("")
++    if (updated === old) return
+     setResult({...result,health:result.health.map(h=>h.key===key?updated:h)})
+-    setPickH(p=>({...p,[updated.key]:true}))
++    setPickH(p=>{const next={...p};delete next[key];return {...next,[updated.key]:true}})
+     setDup(d=>({...d,h:new Set([...d.h].filter(k=>k!==key))}))
+   }
+ 
+   function save() {
+-    if(panel.current&&![...panel.current.querySelectorAll("input")].every(e=>e.reportValidity())){setStatus("请先修正读数；空白不会当成0。");return;}
+-    if (!result) return
+-    const h = result.health.filter((x) => pickH[x.key] ?? true)
+-    const a = result.activities.filter((x) => pickA[x.key])
+-    const rawFacts=[...h.flatMap(x=>x.observation?.facts??[]),...(result.facts??[]).filter(f=>f.quality!=='VALID')]
+-    const evidence=saveReviewedFacts(rawFacts)
+-    const r = saveDeviceRows(h, a)
++    if (!result || !isCurrent()) return
++    const inputs = panel.current?.querySelectorAll<HTMLInputElement>('tr[data-review-key] input:not([type="checkbox"])') ?? []
++    if (![...inputs].filter(input => pickH[input.closest<HTMLElement>('tr')?.dataset.reviewKey ?? ''] === true).every(input => input.reportValidity())) { setStatus("请先修正选中的读数；空白不会当成0。"); return }
++    const selection = selectReviewedDeviceRows(result, pickH, pickA, pickF)
++    if (!selection.count) return
++    const evidence=saveReviewedFacts(selection.facts)
++    if (!isCurrent()) return
++    const r = saveDeviceRows(selection.health, selection.activities)
+     r.errors.push(...evidence.errors)
+     setStatus(`已保存 ${r.saved} 条读数/活动、${evidence.saved} 条原始证据${r.skipped ? `，跳过已存在 ${r.skipped} 条` : ""}${r.errors.length ? `；${r.errors.length} 条未保存：${r.errors.slice(0, 3).join("；")}` : ""}`)
+     if (r.saved || evidence.saved) { setStamp(Date.now()); onSaved() }
+     if (!r.errors.length) setResult(null)
+   }
+-  const nPick = result ? (result.facts??[]).filter(f=>f.quality!=='VALID').length + result.health.filter((x) => pickH[x.key] ?? true).length + result.activities.filter((x) => pickA[x.key]).length : 0
++  const nPick = result ? selectReviewedDeviceRows(result, pickH, pickA, pickF).count : 0
++  const statusFacts = result ? reviewStatusFacts(result) : []
+   return <section ref={panel} className="home-card p-4 text-sm" aria-label="导入设备数据">
+     <div className="flex items-center justify-between gap-2"><h2 className="text-base font-bold">导入手表数据</h2><SavedBadge stamp={stamp} /></div>
+     <p className="mt-1 text-muted">选择文件或截图，核对后一次保存。文件在本机解析，截图可选本地识字或联网识别。</p>
+@@ -86,29 +139,44 @@
+       <Upload className="size-5" />
+       <span className="font-bold">选择文件或截图</span>
+       <small className="text-muted">FIT · GPX · TCX · CSV · 佳明数据导出 ZIP · Apple 健康 ZIP · 截图（可多选）</small>
+-      <input disabled={reading} type="file" multiple accept=".fit,.gpx,.tcx,.csv,.zip,.json,image/*" className="sr-only" onChange={(e) => { const f = e.target.files; void handle(f).finally(() => { e.target.value = "" }) }} />
++      <input disabled={reading} type="file" multiple accept=".fit,.gpx,.tcx,.csv,.zip,.json,image/*" className="sr-only" onChange={(e) => { const input = e.currentTarget; void handle(input.files).finally(() => { input.value = "" }) }} />
+     </label>
+-    <ImageIntake title="联网识别手表 / 健康截图" onText={(text) => { const r = parseSummaryText(text, today); setOcrText(text); stage({kind:"核对后的图片文字",brand:"待核对",activities:r.activity?[r.activity]:[],health:r.health,notes:["请逐项核对日期、单位和分段；缺少日期时页面暂用所选日期，不能当作原图日期。"]}); }} />
++    <ImageIntake title="联网识别手表 / 健康截图" onText={(text) => { if (!isCurrent()) return; readGeneration.current++; importing.current = false; setReading(false); const r = parseSummaryText(text, today); setOcrText(text); stage({kind:"核对后的图片文字",brand:"待核对",activities:r.activity?[r.activity]:[],health:r.health,notes:["请逐项核对日期、单位和分段；缺少日期时页面暂用所选日期，不能当作原图日期。"]}); }} />
+     {status ? <p className="mt-2" role="status">{status}</p> : null}
+     {result ? <div className="mt-3 space-y-3">
+       <p className="text-xs text-muted">识别为：{result.kind}{result.brand && result.brand !== "未知" ? ` · ${result.brand}` : ""}。{result.notes.join(" ")}</p>
+-      {result.facts?.length ? <details className="fk-h89-disclosure"><summary>原始证据与缺失状态（{result.facts.length}条）</summary><p>来源、原单位、时区和修订号随核对保存；未佩戴与未知不填0。</p><ul>{result.facts.filter(f=>f.quality!=='VALID').slice(0,20).map((f,i)=><li key={i}>{f.provider} · {f.metric} · {f.day}：{f.quality}</li>)}</ul></details> : null}
++      {statusFacts.length ? <details className="fk-h89-disclosure" data-testid="import-status-review">
++        <summary>缺失与撤回状态（{statusFacts.length} 条）</summary>
++        <p>只保存勾选的状态；撤回记录会移除对应读数。</p>
++        <ul>{statusFacts.slice(0, visibleStates).map(f => <li key={reviewFactKey(f)}>
++          <label className="flex min-h-11 cursor-pointer items-center gap-2">
++            <input type="checkbox" aria-label={`保存原始状态 ${f.provider} ${f.metric} ${f.day} ${STATUS_LABELS[f.quality]}`} checked={pickF[reviewFactKey(f)] === true} onChange={e => setPickF(p => ({ ...p, [reviewFactKey(f)]: e.target.checked }))} />
++            <span>{f.provider} · {(METRIC_LABELS as Record<string, string>)[f.metric] ?? f.metric} · {f.day} · {STATUS_LABELS[f.quality]}</span>
++          </label>
++        </li>)}</ul>
++        <div className="flex flex-wrap gap-x-4">
++          {visibleStates < statusFacts.length ? <button type="button" className="min-h-11 text-accent" onClick={() => setVisibleStates(n => n + 20)}>再显示 {Math.min(20, statusFacts.length - visibleStates)} 条</button> : null}
++          <button type="button" className="min-h-11 text-accent" onClick={() => setPickF(p => ({ ...p, ...Object.fromEntries(statusFacts.slice(0, visibleStates).map(f => [reviewFactKey(f), true])) }))}>选中已显示状态</button>
++          {Object.values(pickF).some(Boolean) ? <button type="button" className="min-h-11 text-muted" onClick={() => setPickF({})}>清空状态选择</button> : null}
++        </div>
++      </details> : null}
+       {result.health.length ? <div className="overflow-x-auto rounded-xl border border-line"><table className="fk-table"><thead><tr><th></th><th>日期</th><th>指标</th><th>数值</th><th>来源</th></tr></thead><tbody>
+-        {result.health.map((h) => <tr key={h.key} className={dup.h.has(h.key) ? "opacity-60" : ""}>
+-          <td><input type="checkbox" aria-label="保存这条" checked={pickH[h.key] ?? true} onChange={(e) => setPickH({ ...pickH, [h.key]: e.target.checked })} /></td>
++        {result.health.map((h) => <tr key={h.key} data-review-key={h.key} className={dup.h.has(h.key) ? "opacity-60" : ""}>
++          <td><input type="checkbox" aria-label="保存这条" checked={pickH[h.key] === true} onChange={(e) => setPickH({ ...pickH, [h.key]: e.target.checked })} /></td>
+           <td><input type="date" value={h.day} onChange={(e) => edit(h.key, { day: e.target.value })} className="fk-cell w-[8.5rem]" /></td>
+           <td>{METRIC_LABELS[h.metric]}</td>
+-          <td><DecimalInput min={0} value={h.value} onCommit={value=>{if(value!==null)edit(h.key,{value})}} className="fk-cell w-16" /> <span className="text-muted">{METRIC_UNITS[h.metric]}</span></td>
++          <td><DecimalInput key={inputRevision[h.key] ?? 0} min={0} value={h.value} onCommit={value=>{if(value!==null)edit(h.key,{value})}} className="fk-cell w-16" /> <span className="text-muted">{METRIC_UNITS[h.metric]}</span></td>
+           <td className="text-muted">{dup.h.has(h.key) ? "已有，默认跳过" : h.source}</td></tr>)}
+       </tbody></table></div> : null}
+       {result.activities.length ? <div className="overflow-x-auto rounded-xl border border-line"><table className="fk-table"><thead><tr><th></th><th>时间</th><th>类型</th><th>距离</th><th>用时</th><th>配速</th><th>心率</th></tr></thead><tbody>
+-        {result.activities.slice(0, 200).map((a: DeviceActivity) => <tr key={a.key} className={dup.a.has(a.key) ? "opacity-60" : ""}>
++        {result.activities.slice(0, visibleActivities).map((a: DeviceActivity) => <tr key={a.key} className={dup.a.has(a.key) ? "opacity-60" : ""}>
+           <td><input type="checkbox" aria-label="保存这次训练" checked={pickA[a.key] ?? false} onChange={(e) => setPickA({ ...pickA, [a.key]: e.target.checked })} /></td>
+           <td>{a.startIso ? new Date(a.startIso).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+           <td>{a.sportLabel}{a.sets.length ? ` · ${a.sets.length} 组` : ""}{dup.a.has(a.key) ? " · 已导入" : ""}</td>
+           <td>{a.distanceM ? `${(a.distanceM / 1000).toFixed(2)} km` : "—"}</td><td>{fmtDur(a.durationSec)}</td><td>{paceText(a) ?? "—"}</td>
+           <td>{a.avgHr ?? "—"}{a.maxHr ? `/${a.maxHr}` : ""}</td></tr>)}
+       </tbody></table></div> : null}
++      {result.activities.length > visibleActivities ? <button type="button" className="min-h-11 text-accent" onClick={() => setVisibleActivities(n => n + 200)}>再显示 {Math.min(200, result.activities.length - visibleActivities)} 次训练（共 {result.activities.length} 次）</button> : null}
+       {result.health.length || result.activities.length || (result.facts??[]).some(f=>f.quality!=='VALID') ? <button type="button" disabled={!nPick} onClick={save} className="fk-primary w-full">保存选中的 {nPick} 条</button> : null}
+       {ocrText ? <details className="text-xs"><summary className="min-h-10 cursor-pointer text-muted">查看识别出的原文</summary><pre className="whitespace-pre-wrap text-muted">{ocrText}</pre></details> : null}
+     </div> : null}
+--- a/src/components/strength-app.tsx
++++ b/src/components/strength-app.tsx
+@@ -226,9 +226,20 @@
+   const [editHome, setEditHome] = useState(false);
+   const [quickOpen, setQuickOpen] = useState<{ text: string; n: number } | null>(null);
+   const [healthLink, setHealthLink] = useState<string | null>(null);
+-  useEffect(() => { setHomeLayout(loadLayout()); const lp = readLaunchParams(location.search); if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() }); if (lp.health) setHealthLink(lp.health); if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname); }, []);
+-  // Every vendor returns to the same connection surface, including during first-run setup.
+-  useEffect(() => { const result = readSyncCallback(location.search); if (!result) return; setSyncCallback(result); setSyncRequest({ mode: "accounts", provider: result.provider }); setSettingsPaneRaw("sync"); setSettingsOpen(true); history.replaceState(history.state, "", `${location.pathname}${result.cleanSearch}${location.hash}`); }, []);
++  const launchHandled = useRef(false);
++  useEffect(() => {
++    // Consume one launch once, including React's development effect replay.
++    // A vendor return takes precedence over shortcut import, keeping one window.
++    if (launchHandled.current) return;
++    launchHandled.current = true;
++    setHomeLayout(loadLayout());
++    const result = readSyncCallback(location.search);
++    if (result) { setSyncCallback(result); setSyncRequest({ mode: "accounts", provider: result.provider }); setSettingsPaneRaw("sync"); setSettingsOpen(true); history.replaceState(history.state, "", `${location.pathname}${result.cleanSearch}${location.hash}`); return; }
++    const lp = readLaunchParams(location.search);
++    if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() });
++    if (lp.health) setHealthLink(lp.health);
++    if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname);
++  }, []);
+   useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY) && !localStorage.getItem(ONBOARD_SKIPPED_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
+   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
+   const [clockLabel, setClockLabel] = useState("");
+--- /dev/null
++++ b/src/lib/health/reviewed-correction.test.ts
+@@ -0,0 +1,206 @@
++import test, { beforeEach, afterEach } from 'node:test'
++import assert from 'node:assert/strict'
++import { setStoreBackend } from '../core/storage'
++import { setEventContext } from '../core/events'
++import { loadVitals } from '../nutrition/vitals'
++import { mergeResults, type DeviceHealthRow } from '../ui/device-parse'
++import { saveDeviceRows } from '../ui/device-store'
++import { appleHealthFacts, parseUnifiedExport } from './unified-import'
++import { readUnifiedFacts, saveReviewedFacts } from './unified-fact-store'
++import { factId, type UnifiedFact } from './unified-facts'
++import { loadHealthSnapshot } from './snapshot'
++import { editReviewedHealthRow } from './reviewed-correction'
++
++const owner = 'synthetic-reviewed-correction'
++const day = '2026-10-20'
++const sourceAt = '2026-10-20T12:00:00Z'
++const fact = (patch: Partial<UnifiedFact> = {}): UnifiedFact => ({
++  athleteId: owner, provider: 'GARMIN', accountRef: 'synthetic-account', deviceId: 'synthetic-device',
++  recordId: 'synthetic-record', metric: 'HRV', value: 60, unit: 'ms', protocol: 'NIGHT_RMSSD',
++  start: '2026-10-19T22:00:00Z', end: '2026-10-20T06:00:00Z', receivedAt: sourceAt,
++  day, utcOffsetMinutes: 0, quality: 'VALID', revision: 1, ...patch,
++})
++let data: Map<string, string>
++beforeEach(() => {
++  data = new Map()
++  setStoreBackend({ getItem: key => data.get(key) ?? null, setItem: (key, value) => void data.set(key, value), keys: () => [...data.keys()] })
++  setEventContext({ athleteId: owner })
++})
++afterEach(() => { setStoreBackend(null); setEventContext({ athleteId: 'local' }) })
++const rows = (facts: UnifiedFact[]) => mergeResults([parseUnifiedExport(JSON.stringify({ schema: 'fangkun-device-facts-v1', facts }), owner)!]).health
++function edited(row: DeviceHealthRow, patch: Partial<Pick<DeviceHealthRow, 'day' | 'value'>>) {
++  const result = editReviewedHealthRow(row, patch)
++  assert.equal(result.ok, true, result.ok ? undefined : result.reason)
++  if (!result.ok) throw new Error(result.reason)
++  return result.row
++}
++function save(row: DeviceHealthRow) {
++  const evidence = saveReviewedFacts(row.observation?.facts ?? [])
++  const legacy = saveDeviceRows([row], [])
++  assert.deepEqual(evidence.errors, [])
++  assert.deepEqual(legacy.errors, [])
++  return { evidence, legacy }
++}
++
++test('editing a saved fact appends an explicit manual revision and changes the shared snapshot', () => {
++  const original = rows([fact()])[0], before = structuredClone(original)
++  save(original)
++  const savedBeforeEdit = [...data]
++  const correction = edited(original, { value: 70 })
++  assert.deepEqual([...data], savedBeforeEdit, 'editing remains a preview until the save action')
++  save(correction)
++  assert.deepEqual(original, before, 'the uploaded evidence is immutable')
++  assert.equal(loadVitals().records[0].value, 70)
++  const view = loadHealthSnapshot(day).metrics.find(v => v.metric === 'HRV')!
++  assert.equal(view.current?.value, 70)
++  assert.match(view.current?.source ?? '', /人工更正/)
++  const projection = readUnifiedFacts()
++  assert.equal(projection.evidence.length, 2)
++  assert.equal(projection.evidence.find(f => f.revision === 1)?.value, 60)
++  assert.equal(projection.facts[0].manualCorrection?.previousRevision, 1)
++})
++
++test('a correction before the first save retains the original fact alongside its revision', () => {
++  const original = rows([fact()])[0]
++  save(edited(original, { value: 75 }))
++  const projection = readUnifiedFacts()
++  assert.equal(projection.evidence.length, 2)
++  assert.equal(projection.evidence.find(f => f.revision === 1)?.value, 60)
++  assert.equal(projection.facts[0].value, 75)
++})
++
++test('repeated edits and a repeated reviewed import reuse the current correction without conflict', () => {
++  const original = rows([fact()])[0]
++  save(original)
++  const first = edited(original, { value: 70 })
++  const second = edited(first, { value: 80 })
++  save(second)
++  assert.equal(readUnifiedFacts().facts[0].revision, 3)
++  const again = edited(rows([fact()])[0], { value: 80 })
++  const result = save(again)
++  assert.equal(result.evidence.saved, 0)
++  assert.equal(result.legacy.skipped, 1)
++  assert.equal(readUnifiedFacts().evidence.length, 3)
++  assert.deepEqual(readUnifiedFacts().conflicts, [])
++  assert.equal(loadHealthSnapshot(day).metrics.find(v => v.metric === 'HRV')?.current?.value, 80)
++})
++
++test('a stale preview edits above the newest stored revision and cannot return to an older value', () => {
++  const original = rows([fact()])[0]
++  save(original)
++  saveReviewedFacts([fact({ revision: 9, value: 65 })])
++  const correction = edited(original, { value: 70 })
++  save(correction)
++  assert.equal(readUnifiedFacts().facts[0].revision, 10)
++  assert.equal(readUnifiedFacts().facts[0].manualCorrection?.previousRevision, 9)
++  saveReviewedFacts(original.observation!.facts!)
++  const oldSave = saveDeviceRows([original], [])
++  assert.equal(oldSave.saved, 0)
++  assert.equal(loadVitals().records[0].value, 70)
++  assert.equal(readUnifiedFacts().facts[0].value, 70)
++  assert.deepEqual(readUnifiedFacts().conflicts, [])
++})
++
++for (const correctedDay of ['2026-10-19', '2026-10-21']) {
++  test(`sleep date correction to ${correctedDay} is not reset by the old wake timestamp`, () => {
++    const original = rows([fact({ metric: 'SLEEP', value: 8, unit: 'h', protocol: 'NIGHT_SLEEP' })])[0]
++    save(original)
++    const correction = edited(original, { day: correctedDay })
++    save(correction)
++    const projection = readUnifiedFacts()
++    assert.equal(projection.facts[0].day, correctedDay)
++    assert.equal(projection.facts[0].start, null)
++    assert.equal(projection.facts[0].end, null)
++    assert.equal(projection.evidence.find(f => f.revision === 1)?.end, '2026-10-20T06:00:00Z')
++    const view = loadHealthSnapshot('2026-10-21').metrics.find(v => v.metric === 'SLEEP')!
++    assert.equal(view.current?.day, correctedDay)
++    assert.equal(view.current?.value, 8)
++  })
++}
++
++test('an Apple aggregate correction leaves all original sleep stages unchanged', () => {
++  const record = (stage: string, start: string, end: string) => `<Record type="HKCategoryTypeIdentifierSleepAnalysis" sourceName="Synthetic Apple Watch" sourceVersion="1" device="synthetic" value="${stage}" unit="h" startDate="${start}" endDate="${end}"/>`
++  const parsed = appleHealthFacts(record('AsleepCore', '2026-10-19 23:00:00 +0800', '2026-10-20 07:00:00 +0800') + record('AsleepDeep', '2026-10-20 01:00:00 +0800', '2026-10-20 03:00:00 +0800'), '2026-10-01', owner, sourceAt)
++  const stages = parsed.facts.filter(f => !f.recordId.startsWith('daily:'))
++  const original = parsed.health[0]
++  save(original)
++  save(edited(original, { value: 7.5 }))
++  const projection = readUnifiedFacts()
++  assert.deepEqual(projection.evidence.filter(f => !f.recordId.startsWith('daily:')), stages)
++  assert.equal(projection.evidence.filter(f => f.manualCorrection).length, 1)
++  assert.ok(projection.evidence.find(f => f.manualCorrection)?.recordId.startsWith('daily:'))
++  assert.equal(loadHealthSnapshot(day).metrics.find(v => v.metric === 'SLEEP')?.current?.value, 7.5)
++})
++
++test('editing separate same-day samples keeps independent checkbox identities', () => {
++  const samples = rows([fact(), fact({ recordId: 'synthetic-second-record', value: 65 })])
++  const a = edited(samples[0], { value: 70 }), b = edited(samples[1], { value: 75 })
++  assert.notEqual(a.key, b.key)
++  assert.notEqual(factId(a.observation!.facts!.at(-1)!), factId(b.observation!.facts!.at(-1)!))
++})
++
++test('value then date then value edits stay on one fact across successive saves', () => {
++  const original = rows([fact({ metric: 'SLEEP', value: 8, unit: 'h', protocol: 'NIGHT_SLEEP' })])[0]
++  save(original)
++  let correction = edited(original, { value: 7.5 })
++  correction = edited(correction, { day: '2026-10-19' })
++  save(correction)
++  correction = edited(correction, { value: 7 })
++  save(correction)
++  const projection = readUnifiedFacts()
++  assert.equal(projection.facts.length, 1)
++  assert.equal(projection.facts[0].revision, 4)
++  assert.equal(projection.facts[0].day, '2026-10-19')
++  assert.equal(projection.facts[0].value, 7)
++  assert.deepEqual(projection.conflicts, [])
++  assert.equal(projection.evidence.length, 4)
++  assert.equal(loadHealthSnapshot(day).metrics.find(v => v.metric === 'SLEEP')?.current?.value, 7)
++})
++
++test('a real zero correction remains zero and preserves the original numeric evidence', () => {
++  const original = rows([fact({ metric: 'STEPS', value: 100, unit: 'steps', protocol: 'DAILY_STEPS' })])[0]
++  save(edited(original, { value: 0 }))
++  const projection = readUnifiedFacts()
++  assert.equal(projection.evidence.find(f => f.revision === 1)?.value, 100)
++  assert.equal(projection.facts[0].value, 0)
++  const view = loadHealthSnapshot(day).metrics.find(v => v.metric === 'STEPS')!
++  assert.equal(view.state, 'AVAILABLE')
++  assert.equal(view.current?.value, 0)
++})
++
++test('a normalized-unit correction retains the source raw value and unit', () => {
++  const original = rows([fact({ value: 0.06, unit: 's' })])[0]
++  save(edited(original, { value: 70 }))
++  const projection = readUnifiedFacts()
++  assert.equal(projection.facts[0].value, 70)
++  assert.equal(projection.facts[0].unit, 'ms')
++  assert.equal(projection.facts[0].rawValue, 0.06)
++  assert.equal(projection.facts[0].rawUnit, 's')
++  assert.equal(projection.evidence.find(f => f.revision === 1)?.value, 60)
++})
++
++test('ordinary rows retain the existing edit path without inventing unified facts', () => {
++  const original: DeviceHealthRow = { key: 'plain', source: '截图核对', metric: 'STEPS', day, value: 100 }
++  const result = edited(original, { value: 0 })
++  assert.equal(result.value, 0)
++  assert.match(result.source, /人工更正/)
++  assert.equal(result.observation?.facts, undefined)
++  save(result)
++  assert.equal(readUnifiedFacts().evidence.length, 0)
++  assert.equal(loadHealthSnapshot(day).metrics.find(v => v.metric === 'STEPS')?.current?.value, 0)
++})
++
++test('unchanged values do not create manual revisions', () => {
++  const original = rows([fact()])[0]
++  assert.deepEqual(edited(original, { value: original.value }), original)
++  assert.equal(data.size, 0)
++})
++
++test('cross-athlete facts and invalid corrections are rejected before any write', () => {
++  const original = rows([fact()])[0]
++  assert.equal(editReviewedHealthRow(original, { value: 0 }).ok, false, 'zero HRV is invalid')
++  assert.equal(editReviewedHealthRow(original, { day: '2026-02-30' }).ok, false)
++  setEventContext({ athleteId: 'synthetic-another-athlete' })
++  assert.equal(editReviewedHealthRow(original, { value: 70 }).ok, false)
++  assert.equal(data.size, 0)
++})
+--- /dev/null
++++ b/src/lib/health/reviewed-correction.ts
+@@ -0,0 +1,57 @@
++import { healthPreviewKey, type DeviceHealthRow } from '../ui/device-parse'
++import { currentAthleteId } from '../core/events'
++import { shortHash } from './observation'
++import { readUnifiedFacts } from './unified-fact-store'
++import { exactInstant, factDay, factId, normalizeFact, projectFacts, type UnifiedFact } from './unified-facts'
++
++export type ReviewedHealthEdit = { ok: true; row: DeviceHealthRow } | { ok: false; reason: string }
++
++/** Preview-only edit. The existing explicit save action commits the retained originals and revision together. */
++export function editReviewedHealthRow(row: DeviceHealthRow, patch: Partial<Pick<DeviceHealthRow, 'day' | 'value'>>, receivedAt = new Date().toISOString()): ReviewedHealthEdit {
++  const day = patch.day ?? row.day, value = patch.value ?? row.value
++  if (!factDay(day) || !Number.isFinite(value) || value < 0 || !exactInstant(receivedAt)) return { ok: false, reason: '请填写有效日期和读数；缺失值不会填为0。' }
++  const originals = row.observation?.facts ?? []
++  const preview: UnifiedFact[] = []
++  for (const raw of originals) {
++    const f = normalizeFact(raw)
++    if (!f || f.athleteId !== currentAthleteId()) return { ok: false, reason: '原始证据无效或不属于当前运动员，请重新读取后核对。' }
++    preview.push(f)
++  }
++  if (day === row.day && value === row.value) return { ok: true, row }
++  const updated: DeviceHealthRow = {
++    ...row, day, value, source: row.source.includes('人工更正') ? row.source : row.source + ' · 人工更正',
++    observation: row.observation ? { ...row.observation, previous: [...(row.observation.previous ?? []), { value: row.value, syncedAt: row.observation.syncedAt }] } : undefined,
++  }
++  if (!preview.length) {
++    if (day !== row.day && updated.observation) updated.observation = { ...updated.observation, key: `${updated.observation.key}:date:${day}`.slice(0, 160), measuredAt: null }
++    updated.key = healthPreviewKey(updated)
++    return { ok: true, row: updated }
++  }
++
++  // Apple aggregates carry their original stages too. Only the row's own fact identity is revised.
++  const matching = preview.filter(f => f.metric === row.metric && (row.observation!.key === `fact:${shortHash(factId(f))}` || row.observation!.key.startsWith(`fact:${shortHash(factId(f))}:date:`)))
++  if (!matching.length || new Set(matching.map(factId)).size !== 1) return { ok: false, reason: '无法确认待更正的原始记录，请重新读取后核对。' }
++  const target = [...matching].sort((a, b) => a.revision - b.revision || a.receivedAt.localeCompare(b.receivedAt)).at(-1)!
++  const id = factId(target), stored = readUnifiedFacts()
++  if (stored.rejected.length) return { ok: false, reason: '已有原始证据无法读取，未创建可能冲突的更正。' }
++  const known = [...stored.evidence.filter(f => factId(f) === id), ...matching]
++  const previousRevision = Math.max(...known.map(f => f.revision))
++  if (!Number.isSafeInteger(previousRevision + 1)) return { ok: false, reason: '记录修订号已达上限，未覆盖原始证据。' }
++  const latest = projectFacts(known, currentAthleteId(), receivedAt).facts.find(f => factId(f) === id)
++  const correction = latest?.manualCorrection && latest.day === day && latest.value === value ? latest : normalizeFact({
++    ...target, day, value, quality: 'VALID', revision: previousRevision + 1, receivedAt,
++    // The user changed the day, not the source's timestamp. Keeping it would reassign sleep to the old wake date.
++    start: day === target.day ? target.start : null, end: day === target.day ? target.end : null,
++    manualCorrection: { previousRevision },
++  })
++  if (!correction) return { ok: false, reason: '更正的日期、读数或单位无效，原始证据未改变。' }
++  const first = [...known].sort((a, b) => a.revision - b.revision).at(0)!
++  const baseKey = `fact:${shortHash(id)}`
++  updated.observation = {
++    ...updated.observation!, key: day === first.day ? baseKey : `${baseKey}:date:${day}`,
++    syncedAt: correction.receivedAt, measuredAt: correction.end ?? correction.start,
++    facts: [...new Map([...preview, correction].map(f => [JSON.stringify(f), f])).values()],
++  }
++  updated.key = healthPreviewKey(updated)
++  return { ok: true, row: updated }
++}
+--- /dev/null
++++ b/src/lib/health/unified-fact-store.test.ts
+@@ -0,0 +1,135 @@
++import test, { beforeEach, afterEach } from 'node:test'
++import assert from 'node:assert/strict'
++import { setStoreBackend, type MemoryStore } from '../core/storage'
++import { setEventContext } from '../core/events'
++import { normalizeFact, type UnifiedFact } from './unified-facts'
++import { shortHash } from './observation'
++import { readUnifiedFacts, saveReviewedFacts, UNIFIED_FACT_PREFIX } from './unified-fact-store'
++
++const owner = 'synthetic-fact-batch-a', otherOwner = 'synthetic-fact-batch-b'
++const at = '2026-10-20T12:00:00Z'
++const fact = (recordId = 'record-1', athleteId = owner): UnifiedFact => ({
++  athleteId, provider: 'GARMIN', accountRef: 'synthetic-account', deviceId: 'synthetic-device', recordId,
++  metric: 'HRV', value: 60, unit: 'ms', protocol: 'NIGHT_RMSSD', start: null, end: null,
++  receivedAt: at, day: '2026-10-20', utcOffsetMinutes: 0, quality: 'VALID', revision: 1,
++})
++class CountingStore implements MemoryStore {
++  data = new Map<string, string>()
++  factReads = 0
++  writes = 0
++  failWrites = 0
++  hideNextFactReads = 0
++  getItem(key: string) {
++    if (key.startsWith(UNIFIED_FACT_PREFIX)) {
++      this.factReads++
++      if (this.hideNextFactReads > 0) { this.hideNextFactReads--; return null }
++    }
++    return this.data.get(key) ?? null
++  }
++  setItem(key: string, value: string) {
++    if (this.failWrites > 0) { this.failWrites--; throw new Error('synthetic storage failure') }
++    this.writes++; this.data.set(key, value)
++  }
++  keys() { return [...this.data.keys()] }
++  resetCounts() { this.factReads = 0; this.writes = 0 }
++}
++let store: CountingStore
++beforeEach(() => { store = new CountingStore(); setStoreBackend(store); setEventContext({ athleteId: owner }) })
++afterEach(() => { setStoreBackend(null); setEventContext({ athleteId: 'local' }) })
++
++test('a 20-fact batch reads existing source evidence once and verifies each new write once', () => {
++  const rows = Array.from({ length: 20 }, (_, i) => fact(`record-${i}`))
++  assert.deepEqual(saveReviewedFacts(rows), { saved: 20, errors: [] })
++  assert.equal(store.factReads, 20, 'an empty journal needs only the 20 new-write verification reads, not 210 growing-history reads')
++  assert.equal(store.writes, 20)
++})
++
++test('a repeated 20-fact batch reads each existing record only once and does not write', () => {
++  const rows = Array.from({ length: 20 }, (_, i) => fact(`record-${i}`))
++  saveReviewedFacts(rows)
++  const before = [...store.data]
++  store.resetCounts()
++  assert.deepEqual(saveReviewedFacts(rows), { saved: 0, errors: [] })
++  assert.equal(store.factReads, 20, 'a repeated batch reads its 20 existing records once, not 400 times')
++  assert.equal(store.writes, 0)
++  assert.deepEqual([...store.data], before)
++})
++
++test('a successful new write immediately participates in same-batch deduplication', () => {
++  const row = fact()
++  assert.deepEqual(saveReviewedFacts([row, row, row]), { saved: 1, errors: [] })
++  assert.equal(store.factReads, 1)
++  assert.equal(store.writes, 1)
++  assert.equal(readUnifiedFacts().evidence.length, 1)
++})
++
++test('a later call reloads evidence after deletion and athlete scope changes', () => {
++  assert.equal(saveReviewedFacts([fact()]).saved, 1)
++  const firstKey = [...store.data.keys()][0]
++  setEventContext({ athleteId: otherOwner })
++  assert.equal(saveReviewedFacts([fact('record-1', otherOwner)]).saved, 1)
++  assert.deepEqual(saveReviewedFacts([fact()]), { saved: 0, errors: ['无效或非本人证据未保存'] })
++  setEventContext({ athleteId: owner })
++  assert.equal(saveReviewedFacts([fact()]).saved, 0)
++  assert.equal(readUnifiedFacts().evidence.length, 1)
++  store.data.delete(firstKey)
++  assert.equal(saveReviewedFacts([fact()]).saved, 1)
++  assert.equal(readUnifiedFacts().evidence.length, 1)
++  setEventContext({ athleteId: otherOwner })
++  assert.equal(readUnifiedFacts().evidence.length, 1)
++})
++
++test('a failed append is not cached as saved and can succeed later in the same batch', () => {
++  store.failWrites = 1
++  const row = fact()
++  assert.deepEqual(saveReviewedFacts([row, row]), { saved: 1, errors: ['证据保存失败'] })
++  assert.equal(store.writes, 1)
++  assert.equal(readUnifiedFacts().evidence.length, 1)
++})
++
++test('an unconfirmed write reloads the journal before retrying so an actually persisted row is not duplicated', () => {
++  store.hideNextFactReads = 1
++  const row = fact()
++  assert.deepEqual(saveReviewedFacts([row, row]), { saved: 0, errors: ['证据保存失败'] })
++  assert.equal(store.writes, 1)
++  assert.equal(readUnifiedFacts().evidence.length, 1)
++})
++
++test('a content-hash collision retains the existing record and reports a conflict', () => {
++  const row = normalizeFact(fact())!, id = shortHash(JSON.stringify(row))
++  const key = `${UNIFIED_FACT_PREFIX}${encodeURIComponent(owner)}:${id}:synthetic-collision`
++  store.data.set(key, JSON.stringify({ schemaVersion: 1, id, order: 1, recordedAt: at, data: normalizeFact(fact('different-record')) }))
++  const before = [...store.data]
++  assert.deepEqual(saveReviewedFacts([row]), { saved: 0, errors: ['证据标识冲突，未覆盖'] })
++  assert.deepEqual([...store.data], before)
++  assert.equal(store.writes, 0)
++})
++
++test('duplicate journal IDs retain the existing first-record collision policy', () => {
++  const row = normalizeFact(fact())!, id = shortHash(JSON.stringify(row))
++  const prefix = `${UNIFIED_FACT_PREFIX}${encodeURIComponent(owner)}:${id}:`
++  store.data.set(prefix + 'first', JSON.stringify({ schemaVersion: 1, id, order: 1, recordedAt: at, data: row }))
++  store.data.set(prefix + 'later', JSON.stringify({ schemaVersion: 1, id, order: 2, recordedAt: at, data: normalizeFact(fact('different-record')) }))
++  const before = [...store.data]
++  assert.deepEqual(saveReviewedFacts([row]), { saved: 0, errors: [] })
++  assert.deepEqual([...store.data], before)
++})
++
++test('a malformed existing entry stays intact and remains visibly unreadable', () => {
++  const key = `${UNIFIED_FACT_PREFIX}${encodeURIComponent(owner)}:broken`
++  store.data.set(key, '{broken')
++  assert.equal(saveReviewedFacts([fact()]).saved, 1)
++  assert.equal(store.data.get(key), '{broken')
++  assert.ok(readUnifiedFacts().rejected.includes('UNREADABLE_JOURNAL'))
++})
++
++test('storage without key enumeration still fails visibly without pretending to save', () => {
++  setStoreBackend({ getItem: () => null, setItem: () => { throw new Error('must not reach write') } })
++  assert.deepEqual(saveReviewedFacts([fact()]), { saved: 0, errors: ['证据保存失败'] })
++})
++
++test('entirely invalid or foreign rows do not require a source-history scan', () => {
++  assert.deepEqual(saveReviewedFacts([{ ...fact(), value: 0 }, fact('other', otherOwner)]), { saved: 0, errors: ['无效或非本人证据未保存', '无效或非本人证据未保存'] })
++  assert.equal(store.factReads, 0)
++  assert.equal(store.writes, 0)
++})
+--- a/src/lib/health/unified-fact-store.ts
++++ b/src/lib/health/unified-fact-store.ts
+@@ -6,12 +6,18 @@
+ export const UNIFIED_FACT_PREFIX='fk-device-facts-v1:'
+ /** Called only by the existing reviewed import save action. Append, never overwrite. */
+ export function saveReviewedFacts(rows:readonly UnifiedFact[]){
+- const athleteId=currentAthleteId(),errors:string[]=[];let saved=0
++ const athleteId=currentAthleteId(),prefix=UNIFIED_FACT_PREFIX+encodeURIComponent(athleteId)+':',errors:string[]=[];let saved=0
++ // One source-history read per successful batch; never reuse an index across athletes or calls.
++ let existing:Map<string,UnifiedFact>|undefined
+  for(const raw of rows){const f=normalizeFact(raw);if(!f||f.athleteId!==athleteId){errors.push('无效或非本人证据未保存');continue}
+-  const content=JSON.stringify(f),id=shortHash(content),prefix=UNIFIED_FACT_PREFIX+encodeURIComponent(athleteId)+':'
+-  const old=readJournal<UnifiedFact>(prefix).find(x=>x.id===id)
+-  if(old){if(JSON.stringify(old.data)!==content)errors.push('证据标识冲突，未覆盖');continue}
+-  if(!appendJournal(prefix,id,f))errors.push('证据保存失败');else saved++
++  const content=JSON.stringify(f),id=shortHash(content)
++  if(!existing){existing=new Map();for(const entry of readJournal<UnifiedFact>(prefix))if(!existing.has(entry.id))existing.set(entry.id,entry.data)}
++  if(existing.has(id)){if(JSON.stringify(existing.get(id))!==content)errors.push('证据标识冲突，未覆盖');continue}
++  if(!appendJournal(prefix,id,f)){
++   errors.push('证据保存失败')
++   // A failed read-back can follow a successful physical write. Re-read before the next retry.
++   existing=undefined
++  }else{saved++;existing.set(id,f)}
+  }
+  if(saved)healthChanged();return {saved,errors}
+ }
+--- a/src/lib/health/unified-facts.ts
++++ b/src/lib/health/unified-facts.ts
+@@ -10,6 +10,8 @@
+   utcOffsetMinutes: number | null; quality: FactQuality; revision: number;
+   /** Set only for an explicitly confirmed common activity, never from proximity. */
+   activityRef?: string; rawValue?: number | null; rawUnit?: string;
++  /** An explicit reviewed edit supersedes this revision; original source evidence stays immutable. */
++  manualCorrection?: { previousRevision: number };
+ }
+ export const FACT_UNITS: Record<FactMetric,string> = {STEPS:'steps',ACTIVE_KCAL:'kcal',RESTING_KCAL:'kcal',TOTAL_KCAL:'kcal',WORKOUT_KCAL:'kcal',HRV:'ms',RHR:'bpm',SLEEP:'h',BODY_BATTERY:'score',DURATION:'min',DISTANCE:'m',SESSION_RPE:'RPE',WEIGHT:'kg'}
+ const providers = ['GARMIN','COROS','APPLE','HUAWEI','MANUAL']
+@@ -26,9 +28,10 @@
+   if ([input.start,input.end].some(v=>v!==null&&!exactInstant(v))) return null
+   if (input.start && input.end && Date.parse(input.end)<Date.parse(input.start) || input.end && Date.parse(input.end)>Date.parse(input.receivedAt) || input.start && Date.parse(input.start)>Date.parse(input.receivedAt)) return null
+   if (input.activityRef!==undefined && !known(input.activityRef)) return null
++  if (input.manualCorrection!==undefined && (!input.manualCorrection || !Number.isSafeInteger(input.manualCorrection.previousRevision) || input.manualCorrection.previousRevision<0 || input.manualCorrection.previousRevision>=input.revision)) return null
+   if(input.rawValue!==undefined&&input.rawValue!==null&&(typeof input.rawValue!=='number'||!Number.isFinite(input.rawValue)) || input.rawUnit!==undefined&&(typeof input.rawUnit!=='string'||input.rawUnit.length>30))return null
+   const {athleteId,provider,accountRef,deviceId,recordId,metric,value,unit,protocol,start,end,receivedAt,day,utcOffsetMinutes,quality,revision,activityRef}=input
+-  const f:UnifiedFact={athleteId,provider,accountRef,deviceId,recordId,metric,value,unit,protocol,start,end,receivedAt,day,utcOffsetMinutes,quality,revision,...(activityRef?{activityRef}:{}),rawValue:input.rawValue===undefined?input.value:input.rawValue,rawUnit:input.rawUnit??input.unit}
++  const f:UnifiedFact={athleteId,provider,accountRef,deviceId,recordId,metric,value,unit,protocol,start,end,receivedAt,day,utcOffsetMinutes,quality,revision,...(activityRef?{activityRef}:{}),rawValue:input.rawValue===undefined?input.value:input.rawValue,rawUnit:input.rawUnit??input.unit,...(input.manualCorrection?{manualCorrection:{previousRevision:input.manualCorrection.previousRevision}}:{})}
+   if (f.quality!=='VALID') return f.value===null?{...f,unit:FACT_UNITS[f.metric]}:null
+   if (typeof f.value!=='number'||!Number.isFinite(f.value)||f.value<0) return null
+   const units: Record<string,number> = f.metric==='DISTANCE'?{m:1,km:1000,mi:1609.344}:f.metric==='DURATION'?{min:1,s:1/60,h:60}:f.metric==='SLEEP'?{h:1,min:1/60,s:1/3600}:f.metric.endsWith('KCAL')?{kcal:1,kJ:1/4.184}:f.metric==='WEIGHT'?{kg:1,lb:0.45359237}:f.metric==='HRV'?{ms:1,s:1000}:{[FACT_UNITS[f.metric]]:1}
+@@ -55,7 +58,7 @@
+   const facts:UnifiedFact[]=[]
+   for(const [id,rows] of groups){
+     const rev=Math.max(...rows.map(f=>f.revision)),latest=rows.filter(f=>f.revision===rev)
+-    const semantic=(f:UnifiedFact)=>JSON.stringify([f.metric,f.value,f.unit,f.protocol,f.start,f.end,f.day,f.quality,f.activityRef??null,f.utcOffsetMinutes])
++    const semantic=(f:UnifiedFact)=>JSON.stringify([f.metric,f.value,f.unit,f.protocol,f.start,f.end,f.day,f.quality,f.activityRef??null,f.utcOffsetMinutes,f.manualCorrection?.previousRevision??null])
+     if(new Set(latest.map(semantic)).size!==1){conflicts.push(id);continue}
+     const f=latest.sort((a,b)=>a.receivedAt.localeCompare(b.receivedAt)).at(-1)!
+     if(f.quality==='CONFLICT')conflicts.push(id)
+--- a/src/lib/health/unified-snapshot.ts
++++ b/src/lib/health/unified-snapshot.ts
+@@ -9,9 +9,12 @@
+   const owned=p.evidence.filter(f=>f.metric===view.metric&&f.day<=snapshot.asOf);if(!owned.length)return view
+   const prefixes=new Set(owned.map(f=>`${f.provider.toLowerCase()}:${shortHash(f.accountRef+':'+f.deviceId)}|`))
+   const others=view.series.concat(view.candidates).filter(v=>![...prefixes].some(prefix=>v.stream.startsWith(prefix)))
+-  const current=p.facts.filter(f=>f.metric===view.metric&&f.day<=snapshot.asOf&&(f.provider!=='APPLE'||!['SLEEP','STEPS','ACTIVE_KCAL','RESTING_KCAL'].includes(f.metric)||f.recordId.startsWith('daily:')))
+-  const points:HealthPoint[]=current.map(f=>({id:factId(f),metric:f.metric,day:f.day,value:f.value!,source:`${f.provider} · 核对导入`,stream:factProtocol(f),statistic:f.protocol,method:f.metric==='HRV'?(/SDNN/.test(f.protocol)?'SDNN':/RMSSD/.test(f.protocol)?'RMSSD':'UNSPECIFIED'):'',updatedAt:f.receivedAt,measuredAt:f.end??f.start,legacy:false}))
+-  const all=[...new Map([...others,...points].map(v=>[v.id,v])).values()],lastDay=owned.map(f=>f.day).concat(all.map(v=>v.day)).sort().at(-1)
++  const visible=(f:typeof p.evidence[number])=>f.provider!=='APPLE'||!['SLEEP','STEPS','ACTIVE_KCAL','RESTING_KCAL'].includes(f.metric)||f.recordId.startsWith('daily:')
++  const current=p.facts.filter(f=>f.metric===view.metric&&f.day<=snapshot.asOf&&visible(f))
++  const latestRevision=new Map<string,number>();for(const f of p.evidence)latestRevision.set(factId(f),Math.max(latestRevision.get(factId(f))??-1,f.revision))
++  const latest=owned.filter(f=>f.revision===latestRevision.get(factId(f))&&visible(f))
++  const points:HealthPoint[]=current.map(f=>({id:factId(f),metric:f.metric,day:f.day,value:f.value!,source:`${f.provider} · ${f.manualCorrection?'人工更正':'核对导入'}`,stream:factProtocol(f),statistic:f.protocol,method:f.metric==='HRV'?(/SDNN/.test(f.protocol)?'SDNN':/RMSSD/.test(f.protocol)?'RMSSD':'UNSPECIFIED'):'',updatedAt:f.receivedAt,measuredAt:f.end??f.start,legacy:false}))
++  const all=[...new Map([...others,...points].map(v=>[v.id,v])).values()],lastDay=latest.map(f=>f.day).concat(all.map(v=>v.day)).sort().at(-1)
+   const candidates=all.filter(v=>v.day===lastDay&&(!view.selectedSource||v.stream===view.selectedSource))
+   const conflicted=owned.some(f=>f.day===lastDay&&p.conflicts.includes(factId(f)))||new Set(candidates.map(v=>JSON.stringify([v.stream,v.value]))).size>1
+   const selected=conflicted?null:candidates.at(-1)??null
+--- /dev/null
++++ b/src/lib/ui/device-import-review.test.ts
+@@ -0,0 +1,74 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { setStoreBackend, type MemoryStore } from '../core/storage'
++import { setEventContext } from '../core/events'
++import { readUnifiedFacts, saveReviewedFacts } from '../health/unified-fact-store'
++import type { UnifiedFact } from '../health/unified-facts'
++import type { DeviceParseResult } from './device-parse'
++import { reviewFactKey, reviewStatusFacts, selectReviewedDeviceRows } from './device-import-review'
++
++const original: UnifiedFact = {
++  athleteId: 'synthetic-review', provider: 'GARMIN', accountRef: 'test-account', deviceId: 'test-watch',
++  recordId: 'rhr-1', metric: 'RHR', value: 60, unit: 'bpm', protocol: 'resting',
++  start: null, end: null, receivedAt: '2026-10-20T12:00:00Z', day: '2026-10-20',
++  utcOffsetMinutes: 0, quality: 'VALID', revision: 1,
++}
++const retraction: UnifiedFact = { ...original, value: null, quality: 'RETRACTED', revision: 2 }
++function parsed(facts = [original, retraction]): DeviceParseResult {
++  return { kind: 'test', brand: 'GARMIN', health: [], activities: [], notes: [], facts }
++}
++class Store implements MemoryStore {
++  data = new Map<string, string>()
++  getItem(key: string) { return this.data.get(key) ?? null }
++  setItem(key: string, value: string) { this.data.set(key, value) }
++  keys() { return [...this.data.keys()] }
++}
++
++test('an unselected retraction cannot erase a previously saved health reading', () => {
++  setStoreBackend(new Store())
++  setEventContext({ athleteId: original.athleteId })
++  try {
++    assert.equal(saveReviewedFacts([original]).saved, 1)
++    const selection = selectReviewedDeviceRows(parsed(), {}, {}, {})
++    assert.equal(selection.count, 0)
++    assert.equal(saveReviewedFacts(selection.facts).saved, 0)
++    assert.equal(readUnifiedFacts().facts[0]?.value, 60)
++  } finally { setStoreBackend(null) }
++})
++
++test('an explicitly selected retraction is saved and takes effect without inventing zero', () => {
++  setStoreBackend(new Store())
++  setEventContext({ athleteId: original.athleteId })
++  try {
++    saveReviewedFacts([original])
++    const selection = selectReviewedDeviceRows(parsed(), {}, {}, { [reviewFactKey(retraction)]: true })
++    assert.equal(selection.count, 1)
++    assert.deepEqual(selection.facts, [retraction])
++    assert.equal(saveReviewedFacts(selection.facts).saved, 1)
++    const result = readUnifiedFacts()
++    assert.equal(result.facts.length, 0)
++    assert.equal(result.evidence.length, 2)
++    assert.equal(result.evidence.find(f => f.quality === 'RETRACTED')?.value, null)
++  } finally { setStoreBackend(null) }
++})
++
++test('selecting a corrected reading preserves its history, deduplicates evidence and excludes unrelated status', () => {
++  const corrected = { ...original, value: 70, revision: 3 }
++  const unrelated = { ...retraction, recordId: 'unrelated', quality: 'NOT_WORN' as const }
++  const result = parsed([original, retraction, corrected, unrelated, unrelated])
++  result.health = [{ key: 'selected', source: 'GARMIN', metric: 'RHR', day: original.day, value: 70,
++    observation: { key: 'test', sourceId: 'garmin:test', statistic: 'resting',
++      measuredAt: null, syncedAt: original.receivedAt, facts: [original, retraction, corrected] } }]
++  const selection = selectReviewedDeviceRows(result, { selected: true }, {}, { [reviewFactKey(retraction)]: true })
++  assert.equal(selection.count, 2)
++  assert.deepEqual(selection.facts, [original, retraction, corrected])
++  assert.deepEqual(reviewStatusFacts(result), [retraction, unrelated])
++})
++
++test('unselected readings do not implicitly select their attached source facts', () => {
++  const result = parsed([retraction])
++  result.health = [{ key: 'not-selected', source: 'GARMIN', metric: 'RHR', day: original.day, value: 60,
++    observation: { key: 'test', sourceId: 'garmin:test', statistic: 'resting',
++      syncedAt: original.receivedAt, facts: [original] } }]
++  assert.deepEqual(selectReviewedDeviceRows(result, {}, {}, {}), { health: [], activities: [], facts: [], count: 0 })
++})
+--- /dev/null
++++ b/src/lib/ui/device-import-review.ts
+@@ -0,0 +1,25 @@
++import type { UnifiedFact } from '../health/unified-facts'
++import type { DeviceParseResult } from './device-parse'
++
++type Picks = Readonly<Record<string, boolean>>
++
++/** Include the complete revision payload so conflicting evidence stays distinct. */
++export const reviewFactKey = (fact: UnifiedFact): string => JSON.stringify(fact)
++
++function uniqueFacts(facts: readonly UnifiedFact[]): UnifiedFact[] {
++  return [...new Map(facts.map(fact => [reviewFactKey(fact), fact])).values()]
++}
++
++export function reviewStatusFacts(result: DeviceParseResult): UnifiedFact[] {
++  return uniqueFacts((result.facts ?? []).filter(fact => fact.quality !== 'VALID'))
++}
++
++/** Count and persistence share one explicit selection. A selected reading keeps
++ * its original evidence history; unrelated missing/retracted states opt in. */
++export function selectReviewedDeviceRows(result: DeviceParseResult, healthPicks: Picks, activityPicks: Picks, statusPicks: Picks) {
++  const health = result.health.filter(row => healthPicks[row.key] === true)
++  const activities = result.activities.filter(row => activityPicks[row.key] === true)
++  const states = reviewStatusFacts(result).filter(fact => statusPicks[reviewFactKey(fact)] === true)
++  const facts = uniqueFacts([...health.flatMap(row => row.observation?.facts ?? []), ...states])
++  return { health, activities, facts, count: health.length + activities.length + states.length }
++}

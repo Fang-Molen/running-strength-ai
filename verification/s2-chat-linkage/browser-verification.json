@@ -1,0 +1,278 @@
+{
+  "mode": "production-final",
+  "viewport": {
+    "width": 420,
+    "height": 900
+  },
+  "startedAt": "2026-10-22T05:33:27.970Z",
+  "finishedAt": "2026-10-22T05:33:37.031Z",
+  "flow": "Main navigation Fangkun -> unlinked chat with online enabled -> nutrition, strength and recovery questions -> real UI meal correction/deletion -> yesterday query -> online off.",
+  "isolation": "Fresh browser context, real app writers seeded with synthetic records, all API responses local, external network blocked. Stub replies are transport QA only.",
+  "status": "PASS",
+  "sourceHashes": {
+    "src/components/coach-sheet.tsx": "82073b68ac416142105dbe12c8a3c5d20683d7e494e22797192c24fe6cc5682a",
+    "src/lib/coach/online-coach.ts": "be1dd9c1c6691246b75efc0859fac8d083eae90beaa2ffb55e70d29fcb0eeda9",
+    "src/lib/coach/online-nutrition-facts.ts": "477011d2f92d08ea60debdcda73c5f182da9228234459cf9d11f106f2678e8f2",
+    "src/lib/coach/online-training-facts.ts": "ff565801489458ebcaa66727e671ccc109d4aff21757308fc72d3df13b04c58c",
+    "src/lib/coach/online-recovery-facts.ts": "7a4c1db3a852af775731222cf300007a46c2656049d13475fff94dde48a075c2"
+  },
+  "endSourceHashes": {
+    "src/components/coach-sheet.tsx": "82073b68ac416142105dbe12c8a3c5d20683d7e494e22797192c24fe6cc5682a",
+    "src/lib/coach/online-coach.ts": "be1dd9c1c6691246b75efc0859fac8d083eae90beaa2ffb55e70d29fcb0eeda9",
+    "src/lib/coach/online-nutrition-facts.ts": "477011d2f92d08ea60debdcda73c5f182da9228234459cf9d11f106f2678e8f2",
+    "src/lib/coach/online-training-facts.ts": "ff565801489458ebcaa66727e671ccc109d4aff21757308fc72d3df13b04c58c",
+    "src/lib/coach/online-recovery-facts.ts": "7a4c1db3a852af775731222cf300007a46c2656049d13475fff94dde48a075c2"
+  },
+  "pageErrors": [],
+  "checks": [
+    {
+      "name": "served production HTML matches the verified build",
+      "result": "PASS"
+    },
+    {
+      "name": "page identity, meaningful content and no framework overlay",
+      "result": "PASS"
+    },
+    {
+      "name": "the real chat stays unlinked with online enabled",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile chat entry has no document horizontal overflow",
+      "result": "PASS"
+    },
+    {
+      "name": "food-first: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "food-first: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "food-first: formal facts contain all three app domains",
+      "result": "PASS"
+    },
+    {
+      "name": "first screenshot question sends food, macro nutrients and weight in formal facts",
+      "result": "PASS"
+    },
+    {
+      "name": "food-followup: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "food-followup: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "food-followup: formal facts contain all three app domains",
+      "result": "PASS"
+    },
+    {
+      "name": "follow-up retains current food despite old conversation text",
+      "result": "PASS"
+    },
+    {
+      "name": "strength: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "strength: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "strength: formal facts contain all three app domains",
+      "result": "PASS"
+    },
+    {
+      "name": "unlinked UI request retains actual strength weight reps and RPE",
+      "result": "PASS"
+    },
+    {
+      "name": "recovery: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "recovery: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "recovery: formal facts contain all three app domains",
+      "result": "PASS"
+    },
+    {
+      "name": "UI request retains sleep, subjective recovery and independent nap",
+      "result": "PASS"
+    },
+    {
+      "name": "UI request retains measured heart rate and HRV with its method",
+      "result": "PASS"
+    },
+    {
+      "name": "real food edit UI shows saved revised calories",
+      "result": "PASS"
+    },
+    {
+      "name": "the real chat stays unlinked with online enabled",
+      "result": "PASS"
+    },
+    {
+      "name": "after-edit: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "after-edit: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "next UI upload uses the corrected meal revision",
+      "result": "PASS"
+    },
+    {
+      "name": "the real chat stays unlinked with online enabled",
+      "result": "PASS"
+    },
+    {
+      "name": "after-delete: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "after-delete: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "next UI upload excludes deleted meal while retaining prior days",
+      "result": "PASS"
+    },
+    {
+      "name": "yesterday: one real UI upload",
+      "result": "PASS"
+    },
+    {
+      "name": "yesterday: legacy local explanation is not uploaded",
+      "result": "PASS"
+    },
+    {
+      "name": "yesterday resolves its own query date and saved meal",
+      "result": "PASS"
+    },
+    {
+      "name": "online toggle changes the real status to local analysis",
+      "result": "PASS"
+    },
+    {
+      "name": "online-off: no upload while online disabled",
+      "result": "PASS"
+    },
+    {
+      "name": "mobile flow introduces no document horizontal overflow",
+      "result": "PASS"
+    },
+    {
+      "name": "no uncaught application runtime error",
+      "result": "PASS"
+    },
+    {
+      "name": "every actual chat HTTP payload fits the 24KB UTF-8 limit",
+      "result": "PASS"
+    },
+    {
+      "name": "no new console errors beyond known assets and explicitly blocked external resources",
+      "result": "PASS"
+    },
+    {
+      "name": "five client chat and fact files stayed unchanged throughout the UI run",
+      "result": "PASS"
+    }
+  ],
+  "requests": [
+    {
+      "phase": "food-first",
+      "method": "POST",
+      "utf8Bytes": 3294,
+      "factsCharacters": 1285,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    },
+    {
+      "phase": "food-followup",
+      "method": "POST",
+      "utf8Bytes": 3536,
+      "factsCharacters": 1285,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    },
+    {
+      "phase": "strength",
+      "method": "POST",
+      "utf8Bytes": 3751,
+      "factsCharacters": 1285,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    },
+    {
+      "phase": "recovery",
+      "method": "POST",
+      "utf8Bytes": 3756,
+      "factsCharacters": 1285,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    },
+    {
+      "phase": "after-edit",
+      "method": "POST",
+      "utf8Bytes": 3714,
+      "factsCharacters": 1285,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    },
+    {
+      "phase": "after-delete",
+      "method": "POST",
+      "utf8Bytes": 3470,
+      "factsCharacters": 1187,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    },
+    {
+      "phase": "yesterday",
+      "method": "POST",
+      "utf8Bytes": 3121,
+      "factsCharacters": 1032,
+      "local_empty": true,
+      "fact_sections": [
+        "饮食",
+        "训练与力量",
+        "健康与恢复"
+      ]
+    }
+  ],
+  "known_missing_asset_console_errors": 19,
+  "screenshots": "Private visual verification only; not included in this package.",
+  "production_html_sha256": "49e73d4632db487f09a9f9abf871b3858bc14b2e4ec9f6e0743b8060982b54f4"
+}

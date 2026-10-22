@@ -1,0 +1,20 @@
+✔ initial import keeps all 90 daily and 28 intraday dates, with pauses only for older intraday requests (62.591929ms)
+✔ initial import without missing old intraday days adds no artificial delay (6.499077ms)
+✔ two wholly unavailable days (HTTP 0) stop initial import without a full-review marker (0.715008ms)
+✔ two wholly unavailable days (HTTP 502) stop initial import without a full-review marker (0.362257ms)
+✔ two wholly unavailable days (HTTP 503) stop initial import without a full-review marker (0.31842ms)
+✔ two wholly unavailable days (HTTP 504) stop initial import without a full-review marker (0.329086ms)
+✔ outage after useful history saves only after the fence and resumes from the first unavailable day (20.0419ms)
+✔ an isolated unavailable day resets the consecutive counter but remains eligible for history retry (11.326604ms)
+✔ an isolated recent-day outage keeps saved historical coverage and retries only the FULL recent window (23.623572ms)
+✔ empty data, unsupported endpoints, and one unavailable metric do not stop history coverage (56.423285ms)
+✔ daily outage skips extra intraday backfill outside the FULL daily window (1.23304ms)
+✔ outage does not bypass the final account and subject fence (2.076352ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 229.12081

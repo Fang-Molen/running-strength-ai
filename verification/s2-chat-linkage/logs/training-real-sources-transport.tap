@@ -1,0 +1,12 @@
+✔ real strength feedback reaches the final provider through unlinked online chat (74.021226ms)
+ℹ real proxy 200; 2296 UTF-8 bytes; self-report and feedback preserved; local empty
+✔ confirmed Garmin without cache reaches the final provider through unlinked online chat (7.943952ms)
+ℹ real proxy 200; 2338 UTF-8 bytes; confirmed 5321 m / 1845 s / RPE 7 preserved; cache absent
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89.987077

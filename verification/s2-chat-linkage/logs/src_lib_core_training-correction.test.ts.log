@@ -1,0 +1,16 @@
+✔ void and restore stay append-only and resolve to one effective state (6.034934ms)
+✔ a field correction keeps the original text and the latest value wins (0.865025ms)
+✔ a voided occurrence is hidden from later reads without deleting its events (3.581933ms)
+✔ voiding one occurrence does not hide the next independent session or turn it into zero load (19.258043ms)
+✔ correction storage does not reuse the event or occurrence keys (0.200192ms)
+✔ asOf correction reads preserve old strength fields while default reads still apply current edits (3.277144ms)
+✔ asOf void and restore keep their commit order without changing callback-compatible current reads (1.246741ms)
+✔ missing or malformed correction commit timestamps are reported without inferring from at (0.968491ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.077989

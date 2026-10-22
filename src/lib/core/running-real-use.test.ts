@@ -315,7 +315,7 @@ test("browser lock serializes concurrent same-plan start; unsupported lock refus
     nav = Object.getOwnPropertyDescriptor(globalThis, "navigator");
   let queue = Promise.resolve();
   try {
-    Object.defineProperty(globalThis, "window", { value: {}, configurable: true });
+    Object.defineProperty(globalThis, "window", { value: new EventTarget(), configurable: true });
     Object.defineProperty(globalThis, "navigator", {
       value: {
         locks: {

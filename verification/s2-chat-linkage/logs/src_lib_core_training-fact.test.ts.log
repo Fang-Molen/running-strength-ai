@@ -1,0 +1,13 @@
+✔ two trainings on the same slot stay different facts (7.746707ms)
+✔ completion counts stay with the snapshot and do not treat gaps as skips (0.813216ms)
+✔ a missing start is an unknown window, not zero completed sets (0.670972ms)
+✔ duration uses only reliable start and end times (1.300061ms)
+✔ the fact projection does not read legacy plan counting (0.421906ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.205182

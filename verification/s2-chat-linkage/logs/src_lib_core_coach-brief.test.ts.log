@@ -1,0 +1,21 @@
+✔ coach brief separates enough evidence from gaps and frozen limits (7.119401ms)
+✔ legacy and mixed sessions stay traceable, and rejection does not change the plan (26.944392ms)
+✔ explicitly confirmed follow-up evidence is bound once; duplicate and old data cannot be silently resolved (4.230553ms)
+✔ coach cites bound recovery and soreness without treating soreness as pain (20.202339ms)
+✔ a bound pain or soreness return boundary is not erased by a missing RPE (1.048462ms)
+✔ conflicting recovery is unresolved while bound pain remains distinct and cited (1.839766ms)
+✔ confirmed body feedback writes only its own bound event and does not infer an injury (5.087746ms)
+✔ coach will not duplicate a recovery already recorded through subjective feedback (4.185154ms)
+✔ high RPE without recovery must ask, and soreness return must separate pain (2.87033ms)
+✔ conflicting recovery must be asked with both scores and cannot be resolved or prescribed (1.741077ms)
+✔ R2 wording: high-RPE recovery fallback never re-asks an already recorded RPE (0.937555ms)
+✔ R3: high RPE + no recovery/sleep keeps analysis, strips increase advice, appends follow-up; other checks still apply (0.60326ms)
+✔ R4: question-shaped nextStep is merged into one follow-up (no duplicate question, no fake 'candidate') (0.70928ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 85.537222

@@ -1,0 +1,312 @@
+
+> test
+> node --test --test-concurrency=3 'scripts/**/*.test.mjs' && node --experimental-strip-types --test --test-concurrency=3 src/lib/body/scale-parse.test.ts src/lib/ui/decimal.test.ts src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts && node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/core.test.ts src/lib/coach/stated/stated.test.ts src/lib/coach/stated/r11-behavior.test.ts src/lib/coach/online-facts-v86.test.ts src/lib/coach/stated/direct-v87.test.ts src/lib/coach/knowledge/complete.test.ts src/lib/coach/knowledge/entry.test.ts src/lib/coach/knowledge/approval.test.ts src/lib/coach/knowledge/approval-integrity.test.ts src/lib/coach/knowledge/scope.test.ts src/lib/coach/plan-execution/loop-v87.test.ts src/lib/ui/schedule-writer.test.ts src/lib/coach/review-view/review-view.test.ts src/components/coach-review-plain.test.tsx src/lib/core/canonical.test.ts src/lib/core/occurrence.test.ts src/lib/core/training-fact.test.ts src/lib/core/fact-read.test.ts src/lib/core/training-summary.test.ts src/lib/core/evidence.test.ts src/lib/core/performance-evidence.test.ts src/lib/core/recovery-evidence.test.ts src/lib/core/evidence-profile.test.ts src/lib/core/evidence-interpretation.test.ts src/lib/core/evidence-inference.test.ts src/lib/core/evidence-fatigue.test.ts src/lib/core/evidence-recovery.test.ts src/lib/core/evidence-musculoskeletal.test.ts src/lib/core/evidence-bundle.test.ts src/lib/core/evidence-provenance.test.ts src/lib/core/evidence-availability.test.ts src/lib/core/evidence-consistency.test.ts src/lib/core/historical-occurrences.test.ts src/lib/core/historical-facts.test.ts src/lib/core/historical-availability.test.ts src/lib/core/historical-evidence.test.ts src/lib/core/import-history.test.ts src/lib/core/running-plan.test.ts src/lib/core/running-execution.test.ts src/lib/core/running-execution-rest.test.ts src/lib/core/coach-brief.test.ts src/lib/core/coach-model-packet.test.ts src/lib/core/coach-output-budget.test.ts src/lib/core/coach-stream.test.ts src/lib/core/coach-open.test.ts src/lib/core/coach-fuel.test.ts src/lib/core/coach-compare.test.ts src/lib/core/coach-series.test.ts src/lib/core/coach-return.test.ts src/lib/core/coach-next-session.test.ts src/lib/core/hydration.test.tsx src/lib/core/training-decision.test.ts src/lib/core/fk-r4-p0.test.ts src/lib/core/training-correction.test.ts src/lib/core/training-correction-projection.test.ts src/lib/core/coach-view.test.tsx src/lib/core/brain-loop.test.ts src/lib/core/training-import.test.ts src/lib/core/import-retention.test.ts src/lib/core/training-coach.test.ts src/lib/core/training-model.test.ts src/lib/core/coach-plan.test.ts src/lib/core/coach-competency.test.ts src/lib/core/coach-plan-display.test.tsx src/lib/core/training-followup.test.ts src/lib/core/training-followup-display.test.tsx src/lib/core/coach-knowledge.test.ts src/lib/core/coach-knowledge-display.test.tsx src/lib/core/import-completeness.test.ts src/lib/core/running-observation.test.ts src/lib/core/running-round-analysis.test.ts src/lib/core/trial.test.ts src/lib/ui/training-log-view.test.ts src/lib/ui/pending-feedback.test.ts src/lib/ui/v79-1.test.ts src/lib/ui/makeup.test.ts src/lib/health/personal-stats-host.test.ts src/lib/ui/combo-parts-v88.test.ts src/lib/ui/v4-effective-move.test.mjs src/lib/ui/v4-effective-move-ui.test.mjs src/lib/ui/v4-effective-pending.test.ts verification/u09/personal-uncertainty.test.mjs src/lib/ui/sport-goal.test.ts src/lib/ui/running-workouts.test.ts src/lib/ui/sw-reload.test.ts src/lib/strength/model-access.test.ts src/lib/strength/persist.test.ts src/lib/strength/session-builder.test.tsx src/lib/nutrition/vitals.test.ts && npm run test:cognition && npm run test:v4 && npm run test:r188 && npm run test:r189 && npm run test:health-v74 && npm run test:live-kept && npm run test:k20 && npm run test:ui-v69 && npm run test:v84 && npm run test:ui-r5 && npm run test:v88-2
+
+node:internal/fs/promises:697
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/demo3d/anatomy/ecorche.meshopt.glb'
+    at async open (node:internal/fs/promises:697:25)
+    at async readFile (node:internal/fs/promises:1348:14)
+    at async file:///workspace/scratch/709a4e864be6/fangkun-s1-incremental/scripts/anatomy-model.test.mjs:12:15 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/demo3d/anatomy/ecorche.meshopt.glb'
+}
+
+Node.js v24.19.0
+✖ scripts/anatomy-model.test.mjs (114.655765ms)
+node:internal/fs/promises:697
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/demo3d/anatomy/fk-muscle-r9.meshopt.glb'
+    at async open (node:internal/fs/promises:697:25)
+    at async readFile (node:internal/fs/promises:1348:14)
+    at async file:///workspace/scratch/709a4e864be6/fangkun-s1-incremental/scripts/anatomy-r9.test.mjs:12:15 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/demo3d/anatomy/fk-muscle-r9.meshopt.glb'
+}
+
+Node.js v24.19.0
+✖ scripts/anatomy-r9.test.mjs (113.802458ms)
+✔ non-canvas app with no custom card gets a soft BRAND NOTE (utility exception) (2.582165ms)
+✔ non-canvas app with a compliant card is silent (1.408965ms)
+✔ card file without site.json card=custom warns (0.660937ms)
+✔ card file with missing site.json warns for card=custom (0.490871ms)
+✔ card file with invalid site.json warns for card=custom (1.383487ms)
+✔ oversized card warns for non-canvas apps too (0.708199ms)
+✔ canvas app with no card warns 'missing' and missing og:type (0.685504ms)
+✔ canvas card without type still warns for og:type (0.541326ms)
+✔ oversized card warns on the scraper budget (jpg and legacy png) (2.044344ms)
+✔ compliant game (custom card + site.json type + x-banner) is silent (0.800257ms)
+✔ __root.tsx og:type no longer satisfies the canvas gate (0.688378ms)
+✔ oversized x-banner warns on the same scraper budget as og.jpg (2.471989ms)
+✔ legacy png + site.json type still needs the X feed card (0.571141ms)
+✔ siteDeclaresOgTypeGame reads the site contract (0.137737ms)
+✔ a fresh og-pending marker silences the whole gate view (0.308765ms)
+✔ a stale og-pending marker is ignored and the warnings return (0.506745ms)
+✔ the marker goes stale on the clock, not on the file (0.386082ms)
+✔ no marker means nothing is in flight (0.243877ms)
+✔ parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest (0.337319ms)
+✔ cli: a game missing its card reports JSON and exits 1 (35.065269ms)
+✔ cli: a compliant game passes (41.780714ms)
+✔ cli: the task's own marker is reported, not honoured (37.228658ms)
+✔ cli: a bad argument fails with JSON on stderr (38.635975ms)
+✔ cli: a non-game with no card fails too — the pass exists to produce one (38.167098ms)
+✔ cli: --placeholder-ok is how a plain-utility pass reports no card as expected (76.228865ms)
+✔ cli: a non-game with a compliant card passes (46.383263ms)
+✔ project contract and AGENTS.md name the marker path and bound this script uses (0.502248ms)
+✔ the sections that own the brand-task prohibition never affirm a wait (1.089344ms)
+✔ project contract tells the pass to self-check with the flag this CLI accepts (0.288325ms)
+✔ normalizes whitespace before hashing (1.596048ms)
+✔ nullish and blank body text normalize to the empty string (0.145509ms)
+✔ body text prefix is normalized and capped (0.109436ms)
+✔ identical runs do not diverge (0.675309ms)
+✔ status change diverges (3.669846ms)
+✔ title change diverges (0.217028ms)
+✔ title comparison is skipped when either side lacks one (0.138208ms)
+✔ canvas disappearing diverges; canvas appearing does not (0.167143ms)
+✔ horizontal overflow appearing diverges; clearing does not (0.175685ms)
+✔ new console errors diverge (0.209296ms)
+✔ errors already present in the baseline do not re-diverge (0.290628ms)
+✔ body text collapse diverges (0.111498ms)
+✔ body text dropping to zero reports collapse (0.119781ms)
+✔ zero-length baseline reports growth via the hash branch, not collapse (0.131308ms)
+✔ hash mismatch with a trivial length delta and same page start is tolerated (0.067072ms)
+✔ hash mismatch with a trivial length delta but changed page start diverges (0.074643ms)
+✔ prefix check is skipped when either side lacks a prefix (0.153722ms)
+✔ length-delta tolerance boundary: 50 tolerated, 51 diverges (500-char baseline) (0.089845ms)
+✔ length-delta floor dominates small baselines: 20 tolerated, 21 diverges (100-char baseline) (0.174543ms)
+✔ collapse boundary: exactly half is 'changed', one below is 'collapsed' (0.088393ms)
+✔ missing baseline viewport diverges (0.103146ms)
+✔ empty or null baseline diverges for every viewport (0.100411ms)
+✔ degenerate current verdict fails closed (0.169305ms)
+✔ multiple signals across viewports all accumulate (0.142645ms)
+✔ baselineComparison round-trips a valid baseline (0.157678ms)
+✔ baselineComparison fails closed on malformed or wrong-shape baselines (0.236156ms)
+✔ parseSmokeArgs defaults (0.154923ms)
+✔ parseSmokeArgs consumes --baseline without shifting positionals (0.075875ms)
+✔ parseSmokeArgs rejects a trailing --baseline flag (0.065538ms)
+✔ parseSmokeArgs supports the --baseline= form (0.069354ms)
+✔ parseSmokeArgs rejects unknown flags instead of treating them as positionals (0.081543ms)
+✔ parseSmokeArgs env fallback and flag precedence (0.074232ms)
+✔ derivedPaths handles .png, .PNG, and extensionless inputs (0.183046ms)
+✔ exitCodeFor: clean run exits 0 (0.250598ms)
+✔ exitCodeFor: errors in any single viewport exit 2 (0.121453ms)
+✔ exitCodeFor: navigation failure in any viewport exits 1, beating errors (0.104467ms)
+✔ exitCodeFor: 4xx boundary and missing status (0.137868ms)
+✔ exitCodeFor: no viewport data is a failure (0.065339ms)
+✔ browser-smoke wires the guard and verdict helpers (0.282015ms)
+✔ browser-smoke file I/O only touches guarded paths (0.335907ms)
+✔ the flag predicate matches src/lib/auth (1.03431ms)
+✔ reads the value a live dev server resolved (0.244248ms)
+✔ a server started without the flag reads as sign-in on (0.120081ms)
+✔ agreement passes (0.199ms)
+✔ divergence fails in either direction (0.197367ms)
+✔ an unobservable dev server is indeterminate, not agreement (0.099661ms)
+✔ a dev server that cannot be reached probes as null (0.220693ms)
+✔ a server without the endpoint probes as null, not as agreement (0.371561ms)
+✔ only a divergence warns the smoke verdict (0.65609ms)
+✔ the build side resolves the template's shipped app-env (0.53033ms)
+✔ the CLI reports rather than silently passing when run via a symlink (72.913325ms)
+✔ every block passes its import boundary and lists existing tests (8.276396ms)
+✔ plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断) (0.358852ms)
+✔ online coach stays default ON and client cap equals live server clip (1542.893569ms)
+✔ knowledge complete package stays PENDING with zero production approvals (no self-approval) (1.048852ms)
+✔ clean rebuild removes stale HTML and Nitro manifests but preserves source, dependencies, assets and data (2.374602ms)
+✔ injects before </head> (3.229772ms)
+✔ injects the extensions script without a project id (0.385351ms)
+✔ injects project id on the script and meta when provided (0.282366ms)
+✔ does not duplicate grok:app_id (0.552103ms)
+✔ omits x:creator tags without both creator values (0.771063ms)
+✔ injects x:creator tags when both creator values are set (0.2187ms)
+✔ escapes x:creator values (0.121874ms)
+✔ does not duplicate x:creator tags (0.319342ms)
+✔ platform chrome overwrites share-card metas and always sets og:title (0.36434ms)
+✔ does not duplicate twitter:card or og:title (0.409538ms)
+✔ a baked site.image is treated as a custom card (0.425412ms)
+✔ baked identity does not need a workspace filesystem (0.265981ms)
+✔ a public card file wins over a baked site without card=custom (0.365582ms)
+✔ public/og.png wins when jpg is absent (0.246682ms)
+✔ resolveOgCardAsset: disk file, then bake, then empty (placeholder) (0.288014ms)
+✔ snapshotOgIdentity stamps card=custom from a public card file (0.270138ms)
+✔ snapshotOgIdentity stamps banner from public/x-banner.jpg (0.282356ms)
+✔ emits x:game:image for a public host when site.banner is set (0.192751ms)
+✔ does not emit x:game:image without a public host or banner (0.189636ms)
+✔ site title Grok App is a real name, not a sentinel (0.256577ms)
+✔ published grok.me slug is still a title fallback (0.23194ms)
+✔ rejects Vercel system hosts as og:image origins (0.088353ms)
+✔ published VITE_PUBLIC_HOSTNAME wins over request Host for og:image (0.228575ms)
+✔ vercel Host without a public hostname emits no og:image (0.140542ms)
+✔ emits og:image for a public host and prefers a custom card (0.241164ms)
+✔ placeholder og:image appends site.color when it is 6-digit hex (0.235255ms)
+✔ document title entities are not double-escaped on og:title (0.362346ms)
+✔ site.json title wins over the host slug (0.175695ms)
+✔ injects into documents with no head element (0.293252ms)
+✔ streaming injector matches </HEAD> case-insensitively (0.730092ms)
+✔ omits the extensions script when the deployer disables it (0.475477ms)
+✔ keeps the extensions script on commercial when the deployer enables it (0.215715ms)
+✔ does not duplicate the extensions script (0.320623ms)
+✔ is idempotent (0.267884ms)
+✔ home screen title stays the product name (0.456238ms)
+✔ streaming injector handles </head> split across chunks (0.310728ms)
+✔ streaming injector passes post-head chunks through untouched (0.228945ms)
+✔ streaming injector falls back when no </head> is seen (0.194424ms)
+✔ detects install query (0.21903ms)
+✔ filters non-document paths (0.270267ms)
+✔ strips install params from the app link (0.124057ms)
+✔ names the install page from host slug (0.072739ms)
+✔ rejects hosts that are not plain slugs (0.058378ms)
+✔ install page uses the product home-screen name (0.220112ms)
+✔ escapes host-derived values in the install page (0.259511ms)
+✔ renders the manifest with the fixed home-screen name (1.103745ms)
+✔ vite config keeps the nitro serverDir wiring (0.160252ms)
+✖ nitro middleware and its bundled assets exist (0.277329ms)
+✔ vite plugin bakes og identity as a virtual module (0.094272ms)
+✔ _migrations keys on basename, not path (1.421074ms)
+✔ a file already applied from another directory does not re-apply (0.645273ms)
+✔ pending migrations are returned in name order (6.748411ms)
+✔ non-.sql entries are dropped (readdir also yields the auth/ directory) (0.202876ms)
+✔ the auth schema ships outside the globbed directory (0.321696ms)
+✔ this workspace's auth schema copy is byte-identical to its source (0.31139ms)
+✔ the copy check reads both files and catches an edit (0.657993ms)
+node:internal/fs/promises:697
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/demo3d/anatomy/ecorche.meshopt.glb'
+    at async open (node:internal/fs/promises:697:25)
+    at async readFile (node:internal/fs/promises:1348:14)
+    at async file:///workspace/scratch/709a4e864be6/fangkun-s1-incremental/scripts/muscle3d-friendly.test.mjs:11:15 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/demo3d/anatomy/ecorche.meshopt.glb'
+}
+
+Node.js v24.19.0
+✖ scripts/muscle3d-friendly.test.mjs (108.60971ms)
+✔ Nitro receives the unchanged install tutorial as a bundled string (1.511721ms)
+✔ Nitro retains platform branding identity while leaving ordinary modules alone (0.562469ms)
+✔ static compatibility skips only a missing Nitro server entry after successful prerender (1.523058ms)
+✔ preview restart does not count a terminated zombie as a port owner (0.913097ms)
+✔ parsePreviewArgs accepts the two actions (1.469096ms)
+✔ parsePreviewArgs rejects missing, unknown and extra arguments (0.281515ms)
+✔ parsePid reads a pidfile and rejects junk (0.162415ms)
+✔ parsePgid reads the pgrp field past a comm containing spaces (0.195035ms)
+✔ parseListenerInodes picks LISTEN sockets on the wanted port only (0.345402ms)
+✔ parseListenerInodes reads the tcp6 dump the same way (0.189866ms)
+✔ looksLikePreviewProcess matches the npm wrapper and its vite child (0.374475ms)
+✔ looksLikePreviewProcess spares the sibling scripts and re-used pids (0.252301ms)
+✔ previewOwners trusts port owners and dedupes the pidfile pid (0.234553ms)
+✔ previewOwners adds a pidfile pid whose command line is still the preview (0.33098ms)
+✔ previewOwners drops a stale pidfile pid re-used by another process (0.214573ms)
+✔ previewOwners drops a pidfile pid that no longer exists (3.353559ms)
+✔ previewOwners on a free port with no pidfile signals nothing (0.116236ms)
+✔ stopOutcome fails when a pid survives or the port is still held (0.155064ms)
+✔ stopOutcome reports a verified free port (0.390128ms)
+✔ stopOutcome fails on a listener whose owner cannot be attributed (0.322161ms)
+✔ terminatePids SIGTERMs live pids and skips dead ones (0.463008ms)
+✔ terminatePids escalates to SIGKILL when SIGTERM is ignored (0.289006ms)
+✔ terminatePids reports a pid that survives SIGKILL as stubborn (0.33802ms)
+✔ terminatePids on a free port signals nothing (0.13271ms)
+✔ preview: a successful sign-out clears the token, then redirects (3.278567ms)
+✔ preview: a rejected sign-out still clears the token and redirects (0.320794ms)
+✔ preview: a sign-out that throws synchronously still clears and redirects (0.299652ms)
+✔ preview: a sign-out that never settles clears and redirects once the wait expires (7.847888ms)
+✔ preview: no bearer means nothing to invalidate, so no request is made (0.415757ms)
+✔ preview: a stored bearer is still invalidated server-side (0.196126ms)
+✔ deployed: a confirmed sign-out clears the token, then redirects (0.261444ms)
+✔ deployed: a sign-out that never settles throws and does NOT redirect (20.219393ms)
+✔ deployed: a rejected sign-out throws and does NOT redirect (0.501156ms)
+✔ deployed: the timeout is distinguishable from a rejection (20.658585ms)
+✔ settleWithin reports the outcome and never rejects (21.460764ms)
+✔ settleWithin waits its full window, then gives up rather than hanging (0.692414ms)
+✔ pre-sign-in: the preview clear gives up at the preview bound (0.601457ms)
+✔ pre-sign-in: a deployed session gets the deployed window, not the preview one (0.803412ms)
+✔ pre-sign-in: a failed clear never blocks sign-in (0.436859ms)
+✔ pre-sign-in: the preview skips the request when there is no bearer (0.136907ms)
+✔ every sign-out bound comes from one rule (0.082966ms)
+✔ the defaults are bounded, and deployed waits longer than preview (0.3114ms)
+✔ archives and exported user data bypass service worker (1.064266ms)
+✔ normal navigation cache behavior is retained (0.273022ms)
+✔ downloads are excluded from service worker interception (0.727177ms)
+✔ HTML responses cannot be cached as JavaScript assets (0.127352ms)
+✔ no-store resources are not cached (0.098648ms)
+✔ offline missing resources return 503 rather than fake success (0.094623ms)
+✔ the shell cache version moves off fr255-shell-1 and only owns its own prefix (1.016003ms)
+✔ activation deletes old shell caches, keeps foreign caches, and drops poisoned JavaScript (31.132125ms)
+✔ a rebuilt shell restores a valid script offline and still rejects HTML and archives (1.631531ms)
+✔ legacy GLB is not intercepted by the shell and private health APIs bypass it (0.693046ms)
+✔ revocable new motion manifest / models bypass stale service worker cache (0.623852ms)
+✔ explicit root prefetch caches the shell before any controlled navigation (1.031075ms)
+✔ prefetch marker does not cache unmarked requests, queries, other paths, private responses or writes (0.96747ms)
+✔ keeps VITE_-prefixed string entries (1.988931ms)
+✔ drops non-VITE keys, non-string values and malformed documents (0.200613ms)
+✔ a missing app-env.json is a clean no-op (0.680246ms)
+✔ reads the app env from a workspace (0.320613ms)
+✔ an explicit process-env override wins over the file (0.300914ms)
+✔ the template ships auth off (0.286773ms)
+✔ vite loadEnv resolves the wrapped value (0.540125ms)
+✔ the wrapped command runs with the app env applied (74.267057ms)
+✔ the wrapped command sees an explicit override, not the file value (69.738465ms)
+✔ the wrapper propagates the command's exit code (67.165223ms)
+✔ a signal-killed command is never reported as success (72.925573ms)
+✔ the CLI still runs when invoked through a symlinked path (73.436233ms)
+✔ parseWriteAtomicArgs needs exactly a staged file and a target (2.109933ms)
+✔ stagingError refuses a temp inside public/ and a no-op move (0.299302ms)
+✔ handOver replaces the target and clears the staged file (0.958185ms)
+✔ handOver creates a missing target directory (0.53064ms)
+✔ an interrupted pass leaves the target on its old bytes, temp-free (0.974229ms)
+✔ a failed hand-over creates no directory for the target it never wrote (0.3379ms)
+✔ a staged file on another filesystem is refused, not copied (0.598873ms)
+✔ cli: hands the file over, and refuses a temp staged in public/ (62.574728ms)
+✔ cli: relative paths follow the script's root, not the caller's cwd (41.032124ms)
+✔ every hand-over the project contract prints is one this script accepts (0.594347ms)
+✔ cli: a missing staged file fails without touching the target (39.137752ms)
+ℹ tests 222
+ℹ suites 0
+ℹ pass 218
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1807.144791
+
+✖ failing tests:
+
+test at scripts/anatomy-model.test.mjs:1:1
+✖ scripts/anatomy-model.test.mjs (114.655765ms)
+  'test failed'
+
+test at scripts/anatomy-r9.test.mjs:1:1
+✖ scripts/anatomy-r9.test.mjs (113.802458ms)
+  'test failed'
+
+test at scripts/grok-pwa-plugin.test.mjs:540:1
+✖ nitro middleware and its bundled assets exist (0.277329ms)
+  Error: ENOENT: no such file or directory, open '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/__grok/icon-180.png'
+      at Object.openSync (node:fs:622:18)
+      at readFileSync (node:fs:488:35)
+      at TestContext.<anonymous> (file:///workspace/scratch/709a4e864be6/fangkun-s1-incremental/scripts/grok-pwa-plugin.test.mjs:545:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspace/scratch/709a4e864be6/fangkun-s1-incremental/public/__grok/icon-180.png'
+  }
+
+test at scripts/muscle3d-friendly.test.mjs:1:1
+✖ scripts/muscle3d-friendly.test.mjs (108.60971ms)
+  'test failed'
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

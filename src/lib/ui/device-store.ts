@@ -7,6 +7,7 @@ import { confirmTrainingImport, createTrainingImportDraft, loadConfirmedTraining
 import { loadVitals, saveVital, type HrvMethod, type VitalKind } from "@/lib/nutrition/vitals"
 import { loadChecks, upsertCheck } from "@/lib/nutrition/body"
 import type { DeviceActivity, DeviceHealthRow, HealthMetric } from "./device-parse"
+import { normalizedDeviceActivityTotals } from './device-activity-totals'
 
 export {DEVICE_EXTRA_KEY, extrasUnreadable, loadExtras, hrvMethodOf, observationFor} from '@/lib/health/device-store';
 import {loadExtras, observationFor, saveDeviceRows as saveConfirmedHealth} from '@/lib/health/device-store';
@@ -30,10 +31,18 @@ export function existingKeys(): { health: Set<string>; activities: Set<string>; 
 }
 
 const field = <T,>(value: T | null) => value == null ? { value: null, status: "ABSENT", sourceIds: [] } : { value, status: "RECORDED", sourceIds: ["user-confirmed"] }
+export type DeviceActivitySaveResult = { draftId: string; sourceIdentity?: string; status: 'saved' | 'skipped' | 'conflict' | 'rejected' | 'persistence_failed' | 'persistence_unconfirmed' }
+export type DeviceSaveResult = { saved: number; skipped: number; errors: string[]; healthErrors: string[]; activityResults: DeviceActivitySaveResult[] }
 
 export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActivity[]): { saved: number; skipped: number; errors: string[] } {
+  const { saved, skipped, errors } = saveDeviceRowsWithHealthResult(health, activities)
+  return { saved, skipped, errors }
+}
+/** Same single-batch save, with independent health errors for incremental health receipts. */
+export function saveDeviceRowsWithHealthResult(health: DeviceHealthRow[], activities: DeviceActivity[]): DeviceSaveResult {
   let saved = 0, skipped = 0
   const errors: string[] = []
+  const activityResults: DeviceActivitySaveResult[] = []
   // One normalized snapshot per save call. Repeat syncs can contain hundreds of
   // existing activities; reparsing the entire history for each one is quadratic.
   const imports = coachImports()
@@ -44,13 +53,16 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
   const result = saveConfirmedHealth(health);
   saved += result.saved; skipped += result.skipped; errors.push(...result.errors);
   for (const a of activities) {
-    if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');continue}
     const draftId = activityDraftId(a)
+    const recordResult = (status: DeviceActivitySaveResult['status']) => activityResults.push({ draftId, sourceIdentity: a.sourceIdentity, status })
+    if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');recordResult('conflict');continue}
     if (have.activities.has(draftId) || isDuplicate(a, have)) {
       const previous=a.sourceIdentity?importedByDraft.get(draftId):null
-      if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==a.durationSec||previous.totalDistanceMeters.value!==a.distanceM))
+      const totals = normalizedDeviceActivityTotals(a.durationSec, a.distanceM)
+      if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==totals.durationSec||previous.totalDistanceMeters.value!==totals.distanceM)) {
         errors.push('同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。')
-      else skipped++
+        recordResult('conflict')
+      } else { skipped++; recordResult('skipped') }
       continue
     }
     const sport = a.sport
@@ -68,11 +80,11 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
     if(a.provenance) draft.provenance={...a.provenance}
     const res = confirmTrainingImport(draft)
     if (res.ok) { have.sigs.push({ startIso: a.startIso, distanceM: a.distanceM }); try { currentStore()?.setItem(SIG_KEY, JSON.stringify(have.sigs.slice(-500))) } catch { /* ignore */ } }
-    if (res.ok && !res.duplicate) saved++
-    else if (res.ok) skipped++
-    else errors.push(`${a.startIso?.slice(0, 10) ?? ""} ${a.sportLabel}：${res.reason}`)
+    if (res.ok && !res.duplicate) { saved++; recordResult('saved') }
+    else if (res.ok) { skipped++; recordResult('skipped') }
+    else { errors.push(`${a.startIso?.slice(0, 10) ?? ""} ${a.sportLabel}：${res.reason}`); recordResult(res.code === 'PERSISTENCE_FAILED' ? 'persistence_failed' : res.code === 'PERSISTENCE_UNCONFIRMED' ? 'persistence_unconfirmed' : 'rejected') }
   }
   healthChanged()
   if(typeof window!=="undefined") window.dispatchEvent(new Event("storage"))
-  return { saved, skipped, errors }
+  return { saved, skipped, errors, healthErrors: result.errors, activityResults }
 }

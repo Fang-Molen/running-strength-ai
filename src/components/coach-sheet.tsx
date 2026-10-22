@@ -298,6 +298,8 @@ export function CoachSheet({
   async function send(text: string, retry = false, useCloud = false) {
     const value = text.trim();
     if (!value || !memory || sending) return;
+    const athleteId = memory.athleteId;
+    if (currentAthleteId() !== athleteId) return;
     // An exact knowledge-library request is a read-only educational response.
     // Do this before any fact extraction, training linkage or model invocation.
     const learningAnswer = answerLearningQuestion(value);
@@ -339,7 +341,9 @@ export function CoachSheet({
     }
     const reviewOccurrence = (explicitlyReviewsRecord(value) || reviewAsk) ? effectiveSelected : null;
     const recordOccurrence = isNativeRecordInspection(value) ? effectiveSelected : reviewOccurrence;
-    let brief = assembleCoachBrief(plan, value, recordOccurrence);
+    if (currentAthleteId() !== athleteId) return;
+    const asOf = new Date().toISOString();
+    let brief = assembleCoachBrief(plan, value, recordOccurrence, asOf);
     brief={...brief,question:value.slice(0,8000)};
     setFuelPreview(brief.fuel ?? null);
     if (!retry) {
@@ -352,7 +356,6 @@ export function CoachSheet({
     setRetryQuestion(null);
     setSending(true);
     setFace("thinking");
-    const athleteId=currentAthleteId(),asOf=new Date().toISOString();
     if(/设备|截图|心率|HRV|RHR/i.test(value)){
     try { brief=attachLinkedSources(brief,deviceCoachSources(await listConfirmedDeviceEvidence(),new Date().toISOString())); } catch { brief=attachLinkedSources(brief,[{id:"linked:device-unreadable",kind:"CONTEXT",detail:"设备证据库读取失败，不能认为没有记录"}]); }
     }
@@ -396,7 +399,12 @@ export function CoachSheet({
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
-        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, { goalTarget: memory.dialogue?.goalTarget ?? null }), local: shown, history: memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
+        // Capture the online cutoff after any awaited device reads, so edits made during that wait use the latest view.
+        // Local prose remains the offline fallback. Upload one dated fact snapshot, without a second, older context path.
+        const factsAsOf = new Date().toISOString();
+        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, {
+          goalTarget: memory.dialogue?.goalTarget ?? null, question: value, asOf: factsAsOf, selectedOccurrenceId: effectiveSelected,
+        }), local: '', history: memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
         if ("text" in r) { shown = r.text; label = "联网分析"; } else { label = `本地分析 · 联网失败（${r.error}）`; }
         setNotice(linkNotice);
       }

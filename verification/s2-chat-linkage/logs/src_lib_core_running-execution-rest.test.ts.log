@@ -1,0 +1,11 @@
+✔ continuous running stays one identity and does not copy the plan (13.448769ms)
+✔ recovery slots stay structural and zero is not the plan (6.57601ms)
+✔ mixed session and legacy runs do not leak into strength facts (2.493952ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.158074

@@ -1,0 +1,16 @@
+✔ the 25th failed activity retries locally after a 20-row incremental read and then never duplicates (80.11809ms)
+✔ structured persistence failures include silent dropped writes, while invalid data is never queued (1.038406ms)
+✔ retry state is account and athlete scoped and stale owners cannot write (1.773075ms)
+✔ old raw-only history and an explicitly deleted confirmed activity are never inferred as failed imports (0.7092ms)
+✔ an already confirmed source clears its failed retry but source conflicts preserve manual corrections (1.336506ms)
+✔ a failed retry acknowledgement cannot later resurrect a user-deleted successful import (0.970724ms)
+✔ a successful write whose readback throws remains unconfirmed and cannot resurrect a later deletion (0.731994ms)
+✔ corrupt retry state is preserved and reported without blocking independent health persistence (0.573305ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.352536

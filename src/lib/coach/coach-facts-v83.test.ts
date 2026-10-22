@@ -6,7 +6,10 @@ import { setStoreBackend, type MemoryStore } from '../core/storage.ts'
 import { setEventContext } from '../core/events.ts'
 import { buildFacts } from './online-coach.ts'
 let data: Map<string, string>
-beforeEach(() => { data = new Map(); const store = { getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => { data.set(k, v) }, removeItem: (k: string) => { data.delete(k) }, keys: () => [...data.keys()] }; setStoreBackend(store as MemoryStore); setEventContext({ athleteId: 'local' }); Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: store }) })
+beforeEach(() => { data = new Map(); const store = { getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => { data.set(k, v) }, removeItem: (k: string) => { data.delete(k) }, keys: () => [...data.keys()] }; setStoreBackend(store as MemoryStore); setEventContext({ athleteId: 'local' }); Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: store })
+  // This boundary test needs an explicitly imported synthetic plan; the private user plan is not shipped.
+  data.set('fk-plan-doc-v1', JSON.stringify({ schema: 'fangkun-plan-v1', tag: 'V4', label: '合成测试计划', plan: { name: '合成测试计划', shiftDays: 0, weeks: [], days: [{ date: '2026-10-19', orig: '2026-10-19', weekday: '一', week: '1', title: '速度耐力＋力量A', main: ['合成跑步安排'], aux: [], strength: ['分腿蹲3×8'] }] } }))
+})
 test('P1-10：分项 + 旧整课 → 一行；分项为准，旧整课只作参考；不再出现单独的“V4 分项反馈”行', () => {
   data.set('fk-plan400-v4-log', JSON.stringify({ '2026-10-19': { done: 'done', rpe: '7', reps: '150m: 21.3/21.0/21.6' } }))
   data.set('fk-plan400-v4-components-v1', JSON.stringify({ schemaVersion: 1, days: { '2026-10-19': { running: { status: 'done', rpe: 8 } } } }))

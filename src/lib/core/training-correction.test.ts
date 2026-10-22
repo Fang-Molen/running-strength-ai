@@ -7,7 +7,7 @@ import { queryHistoricalOccurrences } from "./historical-occurrences.ts"
 import { readTrainingFact } from "./fact-read.ts"
 import { listBoundTrainings } from "./coach-compare.ts"
 import { readTrainingContext, completeTraining } from "./training-decision.ts"
-import { appendCorrection, compensationDraft, effectiveField, excludeVoidedTrainingEvents, listCorrections, occurrenceVoided, TRAINING_CORRECTION_KEY } from "./training-correction.ts"
+import { appendCorrection, compensationDraft, effectiveField, effectiveStrengthFields, excludeVoidedTrainingEvents, listCorrections, occurrenceVoided, readTrainingCorrectionsAsOf, TRAINING_CORRECTION_KEY } from "./training-correction.ts"
 import { dispatchEvent, EVENTS_KEY, loadEvents } from "./events.ts"
 
 function memory(): MemoryStore {
@@ -127,4 +127,37 @@ test("voiding one occurrence does not hide the next independent session or turn 
 test("correction storage does not reuse the event or occurrence keys", () => {
   assert.equal(TRAINING_CORRECTION_KEY, "fr255-training-correction-v1")
   assert.equal(TRAINING_CORRECTION_KEY.includes("events"), false)
+})
+
+test('asOf correction reads preserve old strength fields while default reads still apply current edits',t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-20T10:00:00Z')});const store=memory();setStoreBackend(store);t.after(()=>setStoreBackend(null))
+  const payload={trainingOccurrenceId:'cutoff',moveId:'squat',setIndex:1,mode:'reps',actualWeight:40,actualAmount:8},before=new Date().toISOString()
+  t.mock.timers.tick(3600000)
+  assert.ok(appendCorrection({trainingOccurrenceId:'cutoff',kind:'FIELD',field:'weight',setKey:'squat:1',originalValue:'40',newValue:'55',reason:'合成更正',at:'2020-01-01T00:00:00Z'}))
+  assert.ok(appendCorrection({trainingOccurrenceId:'cutoff',kind:'FIELD',field:'reps',setKey:'squat:1',originalValue:'8',newValue:'0',reason:'合成更正'}))
+  const raw=store.getItem(TRAINING_CORRECTION_KEY),past=readTrainingCorrectionsAsOf('cutoff',before),current=readTrainingCorrectionsAsOf('cutoff',new Date().toISOString())
+  assert.equal(past.rows.length,0);assert.equal(current.rows.length,2)
+  assert.deepEqual(effectiveStrengthFields(payload,{corrections:past.rows}).weight,{value:40,status:'ORIGINAL'})
+  assert.deepEqual(effectiveStrengthFields(payload,{corrections:past.rows}).reps,{value:8,status:'ORIGINAL'})
+  assert.deepEqual(effectiveStrengthFields(payload,{corrections:current.rows}).weight,{value:55,status:'CORRECTED'})
+  assert.deepEqual(effectiveStrengthFields(payload).reps,{value:0,status:'CORRECTED'});assert.equal(store.getItem(TRAINING_CORRECTION_KEY),raw)
+})
+test('asOf void and restore keep their commit order without changing callback-compatible current reads',t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-20T10:00:00Z')});setStoreBackend(memory());t.after(()=>setStoreBackend(null))
+  const before=new Date().toISOString();t.mock.timers.tick(3600000)
+  assert.ok(appendCorrection({trainingOccurrenceId:'cutoff',kind:'VOID',reason:'合成作废'}));const removedAt=new Date().toISOString()
+  t.mock.timers.tick(3600000);assert.ok(appendCorrection({trainingOccurrenceId:'cutoff',kind:'RESTORE',reason:'合成恢复'}))
+  assert.equal(readTrainingCorrectionsAsOf('cutoff',before).voided,false);assert.equal(readTrainingCorrectionsAsOf('cutoff',removedAt).voided,true);assert.equal(readTrainingCorrectionsAsOf('cutoff',new Date().toISOString()).voided,false)
+  assert.ok(appendCorrection({trainingOccurrenceId:'second',kind:'VOID',reason:'合成作废'}))
+  assert.deepEqual(['cutoff','second'].filter(occurrenceVoided),['second'])
+})
+test('missing or malformed correction commit timestamps are reported without inferring from at',()=>{
+  setStoreBackend(memory())
+  try{
+    const base={correctionId:'legacy',schemaVersion:1 as const,trainingOccurrenceId:'cutoff',kind:'VOID' as const,field:null,setKey:null,originalValue:'',newValue:'',reason:'合成旧记录',at:'2026-10-20T08:00:00Z'}
+    writeEnvelope(TRAINING_CORRECTION_KEY,[base,{...base,correctionId:'invalid',recordedAt:'2026-10-20'},{...base,correctionId:'other',trainingOccurrenceId:'unrelated'}])
+    const snapshot=readTrainingCorrectionsAsOf('cutoff','2026-10-20T10:00:00Z')
+    assert.equal(snapshot.rows.length,0);assert.deepEqual(snapshot.unknownCommitTime.map(c=>c.correctionId),['legacy','invalid']);assert.equal(snapshot.voided,false)
+    assert.equal(occurrenceVoided('cutoff'),true);assert.throws(()=>readTrainingCorrectionsAsOf('cutoff','2026-10-20'),/INVALID/)
+  }finally{setStoreBackend(null)}
 })

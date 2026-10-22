@@ -23,24 +23,32 @@ export type GarminSyncStatus = {
 type KV = { getItem(k: string): string | null }
 const RESULT: Record<GarminSyncReport['status'], string> = { ok: '完整成功', partial: '部分成功', empty: '没取到可用记录', auth: '登录失效', fail: '失败', stale: '账号已切换，结果已丢弃' }
 const hhmm = (iso: string | null) => { if (!iso) return '—'; const d = new Date(iso); return Number.isFinite(d.getTime()) ? `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : iso }
+const latestTime = (...values: (string | null | undefined)[]): string | null => values
+  .filter((value): value is string => typeof value === 'string' && Number.isFinite(Date.parse(value)))
+  .sort((a, b) => Date.parse(b) - Date.parse(a))[0] ?? null
 export function readGarminSyncStatus(subject: string, store: KV | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now(), accountScope: string | null = null): GarminSyncStatus {
   const get = (k: string) => store?.getItem(garminStorageKey(k, subject)) ?? null
   let report: GarminSyncReport | null = null
   try { report = JSON.parse(get(GARMIN_KEYS.report) ?? 'null') } catch { report = null }
-  const lastAttemptAt = get(GARMIN_KEYS.lastAttempt) ?? report?.at ?? null
-  const lastUsefulSyncAt = get(GARMIN_KEYS.lastUseful)
-  const lastFullSuccessAt = get(GARMIN_KEYS.lastFullOk) ?? (report?.status === 'ok' ? report.at : null)
+  // The verified report is authoritative. Timestamp caches may fail to update
+  // without invalidating saved data, so use the newer valid report time too.
+  const usefulReportAt = report && (report.status === 'ok' || report.status === 'partial' && report.saved + report.skipped > 0) ? report.at : null
+  const lastAttemptAt = latestTime(get(GARMIN_KEYS.lastAttempt), report?.at)
+  const lastUsefulSyncAt = latestTime(get(GARMIN_KEYS.lastUseful), usefulReportAt)
+  const lastFullSuccessAt = latestTime(get(GARMIN_KEYS.lastFullOk), report?.status === 'ok' ? report.at : null)
   const connection: GarminConnection = report?.status === 'auth' ? 'expired' : (report?.accountScope || accountScope || lastUsefulSyncAt) ? 'connected' : 'not_connected'
   const failAt = Date.parse(get(GARMIN_KEYS.autoFail) ?? '') || 0
   const backoffUntil = failAt && now - failAt < 30 * 60e3 ? new Date(failAt + 30 * 60e3).toISOString() : null
   const days = [...(report?.coverageDays ?? [])].sort()
+  const modeLabel = report?.mode === 'BACKFILL' ? '补齐历史' : report?.mode === 'INITIAL' ? '首次同步' : report?.mode === 'RECENT' ? '增量同步' : report?.mode === 'FULL' ? '完整复核' : ''
+  const dateRange = report?.mode ? `${modeLabel} · 本次读取 ${report.healthDaysRequested} 个日期` : report && report.healthDaysRequested > 14 ? `最近 14 天 + 补更早历史 ${report.healthDaysRequested - 14} 天` : `最近 ${report?.healthDaysRequested ?? 0} 天`
   const importRange = report ? { healthFrom: days[0] ?? null, healthTo: days.at(-1) ?? null, healthDaysRequested: report.healthDaysRequested, healthDaysWithData: days.length, activityLimit: report.activityLimit, activityRows: report.activityRows, completeHistory: report.completeHistory,
-    label: `健康数据：${report.mode === 'RECENT' ? '增量同步 · ' : report.mode === 'INITIAL' ? '首次同步 · ' : ''}${report.healthDaysRequested > 14 ? `最近 14 天 + 补更早历史 ${report.healthDaysRequested - 14} 天` : `最近 ${report.healthDaysRequested} 天`}（${days.length} 天有数据${days.length ? `，${days[0].slice(5)}–${days.at(-1)!.slice(5)}` : ''}）；活动：最近 ${report.activityLimit} 条摘要（本次 ${report.activityRows} 条）${report.completeHistory ? '' : '，更早的历史不导入'}` } : null
+    label: `健康数据：${dateRange}（${days.length} 天有数据${days.length ? `，${days[0].slice(5)}–${days.at(-1)!.slice(5)}` : ''}）；活动：最近 ${report.activityLimit} 条摘要（本次 ${report.activityRows} 条）${report.completeHistory ? '' : '，更早的历史不导入'}` } : null
   const partialFailure = report && report.status === 'partial' ? { at: report.at, errors: report.errors.slice(0, 10), saved: report.saved, skipped: report.skipped } : null
   const details = [
     `自动同步：${AUTO_SYNC_RULE}`,
     ...(backoffUntil ? [`上次自动同步失败，${hhmm(backoffUntil)} 前不再自动重试（可手动同步）`] : []),
-    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（一次补齐 90 天）' : report.mode === 'RECENT' ? '增量同步（近 3 天 + 新活动）' : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
+    ...(report ? [`最近一次：${report.mode === 'INITIAL' ? '首次同步（近 90 天，中断后续补）' : report.mode === 'BACKFILL' ? '补齐历史（近期数据 + 未完成日期）' : report.mode === 'RECENT' ? '增量同步（近 3 天 + 新活动）' : report.mode === 'FULL' ? '完整复核（14 天 + 最近 200 条活动）' : '同步'}，请求 ${report.requests ?? '—'} 次；保存/更新 ${report.saved} 条，未变化 ${report.skipped} 条`] : []),
     ...(report?.errors.length ? report.errors.slice(0, 5).map(e => `问题：${e}`) : []),
   ]
   return {

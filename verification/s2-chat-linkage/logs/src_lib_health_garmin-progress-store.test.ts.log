@@ -1,0 +1,11 @@
+✔ daily receipts are durable and scoped to both Garmin account and athlete (4.011862ms)
+✔ corrupt or mismatched receipts do not invent completed dates (0.572113ms)
+✔ failed durable writes are reported instead of acknowledging new progress (1.023564ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.953056

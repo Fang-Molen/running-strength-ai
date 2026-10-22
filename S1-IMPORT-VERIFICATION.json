@@ -1,0 +1,298 @@
+{
+  "release": "s1-import-integration-20261022",
+  "baseline": {
+    "filename": "fangkun-s1-精简源码.zip",
+    "sha256": "35ccb2b0b9a26d28071f8f79d4f07981914f04ddeb5b1c210f00f0154fdd206e",
+    "files": 1790
+  },
+  "preservedBaselineFiles": 1785,
+  "removedBaselineFiles": [],
+  "changedFiles": [
+    {
+      "path": "src/components/device-import.tsx",
+      "beforeSha256": "f26fd74cadf94778035f167e460d4a2a6a10e5feec2aeeb2aa5edc2d9e2fd31a",
+      "afterSha256": "98339d7230cc4c12ed7c82e4ca5e1e5d39e19351f7b0d5df4662197dd20a4fda"
+    },
+    {
+      "path": "src/components/strength-app.tsx",
+      "beforeSha256": "05d51ce15fae4c2272f052668c65414dfcfa8462e842b1f361fa3c25b40a82dc",
+      "afterSha256": "52a39fe67688ce46d206486581dfd85a3bad007b4afba894e51315766341788c"
+    },
+    {
+      "path": "src/lib/health/unified-fact-store.ts",
+      "beforeSha256": "2a8c52d1d7b9e897a6acc86f746ad79de4d77f9260b36e8c61fe523ec6ea440e",
+      "afterSha256": "86a8484f611ad151fe1e91807f821a4da734ed0f2f80be20cb27e42f0af28b33"
+    },
+    {
+      "path": "src/lib/health/unified-facts.ts",
+      "beforeSha256": "02b1f88db484dded68afad4322a353c0563de321c969a36e948b0d5c1099dcf7",
+      "afterSha256": "8f52d17d1968c4b17dd4f815755506cadf787ba3c98380f41b4ae7f38e2e745c"
+    },
+    {
+      "path": "src/lib/health/unified-snapshot.ts",
+      "beforeSha256": "ac47d0e82fa60cf5b6a6daa4665b03c4057f6438529e4bbfa89f060ce902ab48",
+      "afterSha256": "141e35a0be24aa8f612792dbfacf147a06e3b03b2008d8469bb7a52b9c69f996"
+    }
+  ],
+  "addedSourceFiles": [
+    {
+      "path": "docs/superpowers/plans/2026-10-22-s1-import-integration.md",
+      "sha256": "95290ed0a1ecba29f7b86fe6e186deb27e5f97a88ce3970c8e04eacca629e809"
+    },
+    {
+      "path": "src/lib/ui/device-import-review.ts",
+      "sha256": "40e7dd6f79b4431868bd6f8deefd6bda751217ebc2f57b67d9dfbc928253fe42"
+    },
+    {
+      "path": "src/lib/ui/device-import-review.test.ts",
+      "sha256": "2f035e94a045448690da5387129209603033e2d9e35528a9f0a0d43431f02ec4"
+    },
+    {
+      "path": "src/lib/health/reviewed-correction.ts",
+      "sha256": "9b6db86625f6c7d37db9be1609a83a0e2c52008699cf56a0391804b36b385efd"
+    },
+    {
+      "path": "src/lib/health/reviewed-correction.test.ts",
+      "sha256": "3445bca8631402af107ba02bfae05901f930c4d142d40a0412f78fc4449a643f"
+    },
+    {
+      "path": "src/lib/health/unified-fact-store.test.ts",
+      "sha256": "907777a48d64794418de7ccae30ad07363cffddc22dc70ec11d8938f2fa6f1bc"
+    }
+  ],
+  "verification": {
+    "status": "PASS",
+    "scope": "Targeted S1 import integration; synthetic data and mocked APIs only",
+    "unitAssertions": 86,
+    "browserAssertions": 86,
+    "gates": [
+      {
+        "name": "src/lib/health/reviewed-correction.test.ts",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 14,
+        "logSha256": "1ee327d215cf504e9c0146bf6e8032dcb784a76f2f13bdfd5089a6bf412562dd"
+      },
+      {
+        "name": "src/lib/health/unified-fact-store.test.ts",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 11,
+        "logSha256": "4d7b429c1b590775191247ba23a346039ffd9f52a63446923ed4df0623cc339e"
+      },
+      {
+        "name": "src/lib/health/batch99.test.ts",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 43,
+        "logSha256": "2dcf580078b1734171eb816993c3fa8bd51eec27ed50e74a114764b011d6470f"
+      },
+      {
+        "name": "src/lib/ui/device-store-sync.test.ts",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 5,
+        "logSha256": "210be793b839557bcfc17ca20b7bd7361cbfdd5b824b8338b5aecfb48e9800a2"
+      },
+      {
+        "name": "src/lib/ui/device-import-review.test.ts",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 4,
+        "logSha256": "eb214b5b7a55144e075ba4a0064d523a7ae0097e3fefb4dbcfc5d40a4d2529c4"
+      },
+      {
+        "name": "src/lib/ui/device-import-contract.test.ts",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 3,
+        "logSha256": "9784ee7e7240957efc1a760312d6825c3aadd049fa425d20bdde0144a239fbd4"
+      },
+      {
+        "name": "src/components/device-sync-preview.test.tsx",
+        "kind": "unit",
+        "status": "PASS",
+        "assertions": 6,
+        "logSha256": "6afb03327258303df6f679282323cfa7cb62e15e32bc54b1e368ec983e000d6e"
+      },
+      {
+        "name": "import",
+        "kind": "browser-development",
+        "status": "PASS",
+        "assertions": 21,
+        "reportSha256": "9b3a7bdca129336d0e410efba4322d294048dd197806834f3ed149c0f8e19032",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "file import remains in one unified window",
+          "only the valid reading is initially selected",
+          "unselecting visible readings leaves zero selected and no writes",
+          "tab switch keeps the preview and unchecked selection",
+          "only an explicitly selected state enables save",
+          "only the selected NOT_WORN record was persisted",
+          "invalid HRV correction visibly restores the accepted 60 value",
+          "reviewed correction is rendered as 70 instead of the previous raw 60",
+          "corrected reading survives reload",
+          "21-state file initially exposes 20 unselected rows",
+          "select displayed states excludes the undisplayed state",
+          "next state batch remains available and unselected",
+          "the last state can be independently selected",
+          "201-activity preview initially renders 200 rows",
+          "remaining activity is reachable for review",
+          "last activity selection updates the save count",
+          "paging and selection do not write evidence before confirmation",
+          "formal plan storage remains unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "health",
+        "kind": "browser-development",
+        "status": "PASS",
+        "assertions": 9,
+        "reportSha256": "d9ea6d60ce4f4b2644abf94466b471f6c579139a3fb334817374ef827afa1ee2",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "truly empty health view keeps the compact missing state",
+          "selected day displays its actual reading",
+          "date review follows the earlier day",
+          "missing historical day does not substitute a later reading",
+          "approved day, 7-day and 30-day ranges remain",
+          "formal plan storage remains unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "owner",
+        "kind": "browser-development",
+        "status": "PASS",
+        "assertions": 9,
+        "reportSha256": "5107c71baa51ec312e36a170ec773bca56ab57cec81a8ae127799494be48cb03",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "late old-owner parse cannot replace new-owner preview",
+          "only new-owner evidence is saved after a pending parse changes context",
+          "A to B to A within one JavaScript task invalidates the old pending read",
+          "new file import remains usable after the ABA invalidation",
+          "ABA roundtrip persists only the newly reviewed local record",
+          "formal plan content, existing schedule entries and acknowledgements remain unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "callback",
+        "kind": "browser-development",
+        "status": "PASS",
+        "assertions": 7,
+        "reportSha256": "53eea6cf2b346509b087af7cf7a529d6aebac7d00974d55a0854f59e6798052e",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "callback selects COROS in the unified account panel",
+          "cancelled authorization remains visible after query cleanup",
+          "authorization return uses one existing window",
+          "formal plan content, existing schedule entries and acknowledgements remain unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "import",
+        "kind": "browser-production",
+        "status": "PASS",
+        "assertions": 22,
+        "reportSha256": "940ff82e950e88813f41b1047fb45cd8270c6a674b66fe88a9705b91c7dee87b",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "compiled preview serves the expected document and loads the current client asset",
+          "file import remains in one unified window",
+          "only the valid reading is initially selected",
+          "unselecting visible readings leaves zero selected and no writes",
+          "tab switch keeps the preview and unchecked selection",
+          "only an explicitly selected state enables save",
+          "only the selected NOT_WORN record was persisted",
+          "invalid HRV correction visibly restores the accepted 60 value",
+          "reviewed correction is rendered as 70 instead of the previous raw 60",
+          "corrected reading survives reload",
+          "21-state file initially exposes 20 unselected rows",
+          "select displayed states excludes the undisplayed state",
+          "next state batch remains available and unselected",
+          "the last state can be independently selected",
+          "201-activity preview initially renders 200 rows",
+          "remaining activity is reachable for review",
+          "last activity selection updates the save count",
+          "paging and selection do not write evidence before confirmation",
+          "formal plan content, existing schedule entries and acknowledgements remain unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "callback",
+        "kind": "browser-production",
+        "status": "PASS",
+        "assertions": 8,
+        "reportSha256": "e4043f9c9ee0071b25dd9a84bcc4808d5be0a2a00768e7f22da79e2191badb2c",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "compiled preview serves the expected document and loads the current client asset",
+          "callback selects COROS in the unified account panel",
+          "cancelled authorization remains visible after query cleanup",
+          "authorization return uses one existing window",
+          "formal plan content, existing schedule entries and acknowledgements remain unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "health",
+        "kind": "browser-production",
+        "status": "PASS",
+        "assertions": 10,
+        "reportSha256": "29defb04f4a19b25a0c360078e819eb55af320766f3984adb4ab309ae19d12ae",
+        "checks": [
+          "correct page, nonblank app, and no framework overlay",
+          "compiled preview serves the expected document and loads the current client asset",
+          "truly empty health view keeps the compact missing state",
+          "selected day displays its actual reading",
+          "date review follows the earlier day",
+          "missing historical day does not substitute a later reading",
+          "approved day, 7-day and 30-day ranges remain",
+          "formal plan content, existing schedule entries and acknowledgements remain unchanged",
+          "only locally mocked status/configuration probes occurred, with no OAuth, data sync or model request",
+          "no popup or uncaught browser exception"
+        ]
+      },
+      {
+        "name": "application typecheck",
+        "kind": "build",
+        "status": "PASS",
+        "exitCode": 0,
+        "logSha256": "21a44a5a2f683d129108ef13e9d91f90728b909b266878e4f6241a7db1cea65d"
+      },
+      {
+        "name": "clean Vite production build",
+        "kind": "build",
+        "status": "PASS",
+        "exitCode": 0,
+        "logSha256": "339fc858f00238f7f114cc37e38b8e05c0587c8476c8d02ad2653392a6344deb"
+      }
+    ],
+    "builtIndexSha256": "b50c4c67f1e2835e9b27c47bf01dd77f837db93a520b7a046f1ba4b56e913261",
+    "builtAssetsVerified": 15,
+    "notes": [
+      "Development owner boundary includes same-task A→B→A; compiled preview covers import, callback and health, not a second owner injection.",
+      "Existing slim media care-bust.png and figure-female.webp remain absent.",
+      "Build retains existing large-chunk and ineffective-dynamic-import warnings.",
+      "No live account authentication, real device reads, paid model calls, deployment or database migration."
+    ]
+  },
+  "deliveryNotes": [
+    "Complete S1 source archive; existing S1 assets and historical reports preserved.",
+    "No changes to package dependencies, schema migration, native platform code, cloud platform code or accepted UI theme.",
+    "Synthetic local verification only; no production deployment, paid model calls, real OAuth or real health data reads.",
+    "Original slim-package media omissions and existing external platform setup requirements remain.",
+    "Batch index reduces evidence reads; the underlying append journal still enumerates storage. No end-to-end speed multiplier is claimed."
+  ]
+}

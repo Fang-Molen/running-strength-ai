@@ -10,6 +10,8 @@ export type UnifiedFact = {
   utcOffsetMinutes: number | null; quality: FactQuality; revision: number;
   /** Set only for an explicitly confirmed common activity, never from proximity. */
   activityRef?: string; rawValue?: number | null; rawUnit?: string;
+  /** An explicit reviewed edit supersedes this revision; original source evidence stays immutable. */
+  manualCorrection?: { previousRevision: number };
 }
 export const FACT_UNITS: Record<FactMetric,string> = {STEPS:'steps',ACTIVE_KCAL:'kcal',RESTING_KCAL:'kcal',TOTAL_KCAL:'kcal',WORKOUT_KCAL:'kcal',HRV:'ms',RHR:'bpm',SLEEP:'h',BODY_BATTERY:'score',DURATION:'min',DISTANCE:'m',SESSION_RPE:'RPE',WEIGHT:'kg'}
 const providers = ['GARMIN','COROS','APPLE','HUAWEI','MANUAL']
@@ -26,9 +28,10 @@ export function normalizeFact(input: UnifiedFact): UnifiedFact | null {
   if ([input.start,input.end].some(v=>v!==null&&!exactInstant(v))) return null
   if (input.start && input.end && Date.parse(input.end)<Date.parse(input.start) || input.end && Date.parse(input.end)>Date.parse(input.receivedAt) || input.start && Date.parse(input.start)>Date.parse(input.receivedAt)) return null
   if (input.activityRef!==undefined && !known(input.activityRef)) return null
+  if (input.manualCorrection!==undefined && (!input.manualCorrection || !Number.isSafeInteger(input.manualCorrection.previousRevision) || input.manualCorrection.previousRevision<0 || input.manualCorrection.previousRevision>=input.revision)) return null
   if(input.rawValue!==undefined&&input.rawValue!==null&&(typeof input.rawValue!=='number'||!Number.isFinite(input.rawValue)) || input.rawUnit!==undefined&&(typeof input.rawUnit!=='string'||input.rawUnit.length>30))return null
   const {athleteId,provider,accountRef,deviceId,recordId,metric,value,unit,protocol,start,end,receivedAt,day,utcOffsetMinutes,quality,revision,activityRef}=input
-  const f:UnifiedFact={athleteId,provider,accountRef,deviceId,recordId,metric,value,unit,protocol,start,end,receivedAt,day,utcOffsetMinutes,quality,revision,...(activityRef?{activityRef}:{}),rawValue:input.rawValue===undefined?input.value:input.rawValue,rawUnit:input.rawUnit??input.unit}
+  const f:UnifiedFact={athleteId,provider,accountRef,deviceId,recordId,metric,value,unit,protocol,start,end,receivedAt,day,utcOffsetMinutes,quality,revision,...(activityRef?{activityRef}:{}),rawValue:input.rawValue===undefined?input.value:input.rawValue,rawUnit:input.rawUnit??input.unit,...(input.manualCorrection?{manualCorrection:{previousRevision:input.manualCorrection.previousRevision}}:{})}
   if (f.quality!=='VALID') return f.value===null?{...f,unit:FACT_UNITS[f.metric]}:null
   if (typeof f.value!=='number'||!Number.isFinite(f.value)||f.value<0) return null
   const units: Record<string,number> = f.metric==='DISTANCE'?{m:1,km:1000,mi:1609.344}:f.metric==='DURATION'?{min:1,s:1/60,h:60}:f.metric==='SLEEP'?{h:1,min:1/60,s:1/3600}:f.metric.endsWith('KCAL')?{kcal:1,kJ:1/4.184}:f.metric==='WEIGHT'?{kg:1,lb:0.45359237}:f.metric==='HRV'?{ms:1,s:1000}:{[FACT_UNITS[f.metric]]:1}
@@ -55,7 +58,7 @@ export function projectFacts(raw: readonly UnifiedFact[], athleteId: string, asO
   const facts:UnifiedFact[]=[]
   for(const [id,rows] of groups){
     const rev=Math.max(...rows.map(f=>f.revision)),latest=rows.filter(f=>f.revision===rev)
-    const semantic=(f:UnifiedFact)=>JSON.stringify([f.metric,f.value,f.unit,f.protocol,f.start,f.end,f.day,f.quality,f.activityRef??null,f.utcOffsetMinutes])
+    const semantic=(f:UnifiedFact)=>JSON.stringify([f.metric,f.value,f.unit,f.protocol,f.start,f.end,f.day,f.quality,f.activityRef??null,f.utcOffsetMinutes,f.manualCorrection?.previousRevision??null])
     if(new Set(latest.map(semantic)).size!==1){conflicts.push(id);continue}
     const f=latest.sort((a,b)=>a.receivedAt.localeCompare(b.receivedAt)).at(-1)!
     if(f.quality==='CONFLICT')conflicts.push(id)

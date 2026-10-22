@@ -1,4 +1,4 @@
-import { dispatchEvent, loadEvents } from "./events.ts"
+import { currentAthleteId, dispatchEvent, loadEvents } from "./events.ts"
 import { listTrainingOccurrences } from "./occurrence.ts"
 import { effectiveStrengthFields } from "./training-correction.ts"
 import { displayName, type Session } from "@/lib/strength/model"
@@ -131,7 +131,20 @@ export function painOf(sessionId: string): boolean {
 }
 
 export function recordSet(sessionId: string, decisionId: string, set: SetRecord) {
-  const open = [...listTrainingOccurrences()].reverse().find((item) => item.sessionId === sessionId && item.lifecycle === "IN_PROGRESS")
+  const starts = loadEvents().filter(event => event.event_type === 'TRAINING_STARTED' && event.payload.sessionId === sessionId)
+  const bound = starts.filter(event => event.payload.decisionId === decisionId)
+  const owned = (bound.length ? bound : starts).filter(event => (event.athlete_id ?? 'local') === currentAthleteId())
+  if (bound.length && !owned.length) return null
+  const startIds = new Set(owned.map(event => event.event_id))
+  const ownedStartIds = new Set(starts.filter(event => (event.athlete_id ?? 'local') === currentAthleteId()).map(event => event.event_id))
+  // Reopening an in-progress training can create another decision/start event,
+  // but its sets still belong to the same owned occurrence.
+  const occurrences = listTrainingOccurrences().filter(item => item.sessionId === sessionId &&
+    (startIds.has(item.startEventId) || ownedStartIds.has(item.startEventId) && item.duplicateStartEventIds?.some(id => startIds.has(id))))
+  const open = [...occurrences].reverse().find(item => item.lifecycle === "IN_PROGRESS")
+  // Legacy starts without an occurrence snapshot remain recordable; a bound,
+  // closed occurrence must use the correction path instead of a stale callback.
+  if (bound.length && occurrences.length && !open) return null
   const payload = payloadOf(sessionId, decisionId, set)
   if (open) payload.trainingOccurrenceId = open.trainingOccurrenceId
   return dispatchEvent("TRAINING_SET_COMPLETED", payload, { source: "MANUAL", confidence: set.source === "user_entered" ? 1 : 0.8, dataQuality: set.source === "user_entered" ? "HIGH" : "MEDIUM" })
@@ -180,7 +193,7 @@ function asSet(payload: Record<string, unknown>): SetRecord | null {
 export function executionOf(sessionId: string): { open: boolean; decisionId: string | null; sets: SetRecord[] } {
   const events = loadEvents().filter((event) => {
     const payload = event.payload as { sessionId?: string }
-    return payload.sessionId === sessionId && (event.event_type === "TRAINING_STARTED" || event.event_type === "TRAINING_SET_COMPLETED" || event.event_type === "TRAINING_COMPLETED" || event.event_type === "TRAINING_INTERRUPTED")
+    return (event.athlete_id ?? 'local') === currentAthleteId() && payload.sessionId === sessionId && (event.event_type === "TRAINING_STARTED" || event.event_type === "TRAINING_SET_COMPLETED" || event.event_type === "TRAINING_COMPLETED" || event.event_type === "TRAINING_INTERRUPTED")
   })
   let start = -1
   events.forEach((event, index) => {

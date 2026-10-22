@@ -101,9 +101,9 @@ export const BLOCKS = {
   },
   'coach-online': {
     desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
-    files: ['src/lib/coach/online-coach.ts', 'functions/api/coach-chat.js'],
+    files: ['src/lib/coach/online-coach.ts', 'src/lib/coach/online-nutrition-facts.ts', 'src/lib/coach/online-training-facts.ts', 'src/lib/coach/online-recovery-facts.ts', 'functions/api/coach-chat.js'],
     entry: 'src/lib/coach/online-coach.ts',
-    tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts', 'src/lib/coach/online-facts-v86.test.ts'],
+    tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts', 'src/lib/coach/online-facts-v86.test.ts', 'src/lib/coach/online-facts-linkage.test.ts', 'src/lib/coach/online-chat-transport.test.ts', 'src/lib/coach/online-nutrition-facts.test.ts', 'src/lib/coach/online-training-facts.test.ts', 'src/lib/coach/online-recovery-facts.test.ts'],
     forbid: ['/c03/', '/plan-execution/', 'server/coach-deepseek', '/components/'],
   },
   'c03': {

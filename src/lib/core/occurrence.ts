@@ -4,6 +4,7 @@ import { buildOriginalPlanSnapshot, type OriginalPlanSnapshot } from "./canonica
 import { freezeRunningPlanOnStart } from "./running-plan.ts";
 import { readEnvelope, writeEnvelope } from "./storage.ts";
 import { loadTrainingFact } from "./training-fact.ts";
+import { currentAthleteId, loadEvents } from './events.ts';
 
 export const TRAINING_OCCURRENCE_KEY = "fr255-training-occurrence-v1";
 
@@ -127,11 +128,17 @@ export function getTrainingPlanSnapshot(
   );
 }
 
-function openOccurrence(store: OccurrenceStore, sessionId: string): TrainingOccurrence | null {
+function sameOccurrenceOwner(occurrence: TrainingOccurrence, athleteId: string, events = loadEvents()): boolean {
+  const starts = events.filter(event => event.event_id === occurrence.startEventId && event.event_type === 'TRAINING_STARTED');
+  // Legacy snapshots without a persisted start stay in their original local namespace.
+  return starts.length ? starts.every(event => (event.athlete_id ?? 'local') === athleteId) : athleteId === 'local';
+}
+function openOccurrence(store: OccurrenceStore, sessionId: string, athleteId = currentAthleteId()): TrainingOccurrence | null {
+  const events = loadEvents();
   return (
     [...store.occurrences]
       .reverse()
-      .find((item) => item.sessionId === sessionId && item.lifecycle === "IN_PROGRESS") ?? null
+      .find((item) => item.sessionId === sessionId && item.lifecycle === "IN_PROGRESS" && sameOccurrenceOwner(item, athleteId, events)) ?? null
   );
 }
 
@@ -144,6 +151,8 @@ export function bindTrainingStart(input: {
   runningPlanId?: string | null;
   persistSnapshot?: (snapshot: OriginalPlanSnapshot) => boolean;
 }): TrainingOccurrence | null {
+  const started = loadEvents().find(event => event.event_id === input.startEventId && event.event_type === 'TRAINING_STARTED');
+  if (started && (started.athlete_id ?? 'local') !== currentAthleteId()) return null;
   const store = loadStore();
   const existing = store.occurrences.find(
     (item) =>
@@ -218,6 +227,7 @@ type CloseEvent = {
   event_id?: string;
   event_type: string;
   timestamp?: string;
+  athlete_id?: string;
   payload?: Record<string, unknown>;
 };
 
@@ -242,10 +252,13 @@ export function closeTrainingOccurrence(event: CloseEvent): TrainingOccurrence |
   const sessionId = typeof event.payload?.sessionId === "string" ? event.payload.sessionId : "";
   if (!kind || kind === "IGNORE" || !sessionId) return openOccurrence(loadStore(), sessionId);
   const store = loadStore();
-  const open = openOccurrence(store, sessionId);
-  const target =
-    open ?? [...store.occurrences].reverse().find((item) => item.sessionId === sessionId) ?? null;
+  const athleteId = event.athlete_id ?? currentAthleteId(), events = loadEvents();
+  const boundId = typeof event.payload?.trainingOccurrenceId === 'string' ? event.payload.trainingOccurrenceId : null;
+  const eligible = store.occurrences.filter(item => item.sessionId === sessionId && sameOccurrenceOwner(item, athleteId, events));
+  const target = boundId !== null ? eligible.find(item => item.trainingOccurrenceId === boundId) ?? null
+    : [...eligible].reverse().find(item => item.lifecycle === 'IN_PROGRESS') ?? eligible.at(-1) ?? null;
   if (!target) return null;
+  const open = target.lifecycle === 'IN_PROGRESS';
   if (!open) {
     const ids = target.duplicateCloseEventIds ?? [];
     const id = event.event_id ?? "";

@@ -1,0 +1,20 @@
+✔ a set keeps the plan when the actual reps are lower (5.543422ms)
+✔ eight planned and six actual is minus two reps and 75 percent (0.398872ms)
+✔ a lighter completed set keeps the rep count and lowers the load (0.319182ms)
+✔ a skipped set stays in the session (0.587717ms)
+✔ stopping keeps the finished sets and does not complete the session (1.152869ms)
+✔ finishing writes TRAINING_COMPLETED and a short set does not change ability (0.877454ms)
+✔ rest reaches zero only after the full time (0.243998ms)
+✔ an open session can be rebuilt after the sets were stored (0.401416ms)
+✔ missing actual numbers stay unknown and a current-set edit is not the plan (0.647878ms)
+✔ pausing rest keeps the same second and continuing moves it down by one (0.373033ms)
+✔ each set line labels weight and reps as actual minus plan (0.374214ms)
+✔ feedback is stored without replacing the completed set (0.428126ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.551796

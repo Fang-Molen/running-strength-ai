@@ -1,0 +1,20 @@
+✔ partial sources preserve unknown metrics and never write plans or source records (24.379202ms)
+✔ actual sleep value, source metadata and correction revision reach the host (16.783797ms)
+✔ foreign health, food, phone rows and old unowned records never enter another profile (3.633492ms)
+✔ scope switch while awaiting receipts discards old facts (8.149735ms)
+✔ new source version during receipt read rejects the stale projection (1.910713ms)
+✔ corrupt source is unavailable, not a successful empty history (0.397609ms)
+✔ IndexedDB unavailable leaves usable partial health facts without claiming permission (2.973056ms)
+✔ independent conflicting sources stay visible and cannot be dismissed as normal (9.614435ms)
+✔ feedback tasks use one scoped logical ID and keep running and strength separate (0.372812ms)
+✔ foreign component feedback remains byte-identical and is not projected as current training (0.854099ms)
+✔ health, nutrition, corrections and profile events notify after commit, coalesce and clean up (0.522449ms)
+✔ calendar dates are strict rather than normalized into another month (0.208544ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 77.95625

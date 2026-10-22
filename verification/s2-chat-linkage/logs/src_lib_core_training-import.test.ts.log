@@ -1,0 +1,19 @@
+✔ training import keeps two rounds with four repetitions instead of flattening structure (2.204135ms)
+✔ missing, ambiguous and conflicting fields do not become zero (0.210047ms)
+✔ confirmation is actual-only, source-backed and idempotent (5.640529ms)
+✔ critical conflicts block confirmation (1.43183ms)
+✔ review requires numeric provenance and rejects plan or long-term claims for actual-only records (1.711472ms)
+✔ plan-only slots and invalid or unzoned dates cannot be confirmed as actual training (1.467805ms)
+✔ feedback conflicts block confirmation; ambiguous feedback stays unavailable rather than confirmed (0.935612ms)
+✔ server consistency normalization rebuilds citations and never trusts supplied source descriptions (0.690001ms)
+✔ review rejects numeric substrings, unknown citations, invalid boundary and unsolicited progression (1.204207ms)
+✔ compact model fields normalize without turning absent into zero (0.289166ms)
+✔ high RPE with pain and soreness needs a recovery question and both body sources (1.082203ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24.179818

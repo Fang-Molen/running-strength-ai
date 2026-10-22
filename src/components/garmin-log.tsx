@@ -10,17 +10,18 @@ import { Dumbbell, Footprints, Activity } from "lucide-react";
 
 export const GACTS_KEY = "fk-garmin-acts-v1";
 export const GLAPS_KEY = "fk-garmin-laps-v1";
-type G = { sourceIdentity?: string; id: number; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null; vo2?: number | null; vr?: number | null };
+type G = { athleteId?: string; sourceIdentity?: string; id: number; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null; vo2?: number | null; vr?: number | null };
 type Lap = { i: number; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; speed: number | null };
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 const load = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) || "") as T; } catch { return d; } };
 
 export function saveGarminActivities(list: unknown[], accountScope?: string): void {
-  const key = accountScope ? `${GACTS_KEY}:${encodeURIComponent(currentAthleteId())}:${accountScope}` : garminViewKey(GACTS_KEY);
+  const athleteId = currentAthleteId();
+  const key = accountScope ? `${GACTS_KEY}:${encodeURIComponent(athleteId)}:${accountScope}` : garminViewKey(GACTS_KEY);
   const have = load<Record<string, G>>(key, {});
   for (const o of list as Record<string, any>[]) {
     if (!o?.activityId) continue;
-    have[o.activityId] = { id: o.activityId, sourceIdentity: o.fkSourceIdentity, name: o.activityName ?? "", type: o.activityType?.typeKey ?? "", start: o.fkStartIso ?? o.startTimeLocal ?? o.startTimeGMT ?? "", dist: num(o.distance), dur: num(o.duration), avgHr: num(o.averageHR), maxHr: num(o.maxHR), cad: num(o.averageRunningCadenceInStepsPerMinute), elev: num(o.elevationGain), cal: num(o.calories), sets: num(o.totalSets) ?? num(o.activeSets), reps: num(o.totalReps), tl: num(o.activityTrainingLoad), te: num(o.aerobicTrainingEffect), ate: num(o.anaerobicTrainingEffect), rpe: num(o.directWorkoutRpe), vo2: num(o.vO2MaxValue), vr: num(o.avgVerticalRatio) };
+    have[o.activityId] = { athleteId, id: o.activityId, sourceIdentity: o.fkSourceIdentity, name: o.activityName ?? "", type: o.activityType?.typeKey ?? "", start: o.fkStartIso ?? o.startTimeLocal ?? o.startTimeGMT ?? "", dist: num(o.distance), dur: num(o.duration), avgHr: num(o.averageHR), maxHr: num(o.maxHR), cad: num(o.averageRunningCadenceInStepsPerMinute), elev: num(o.elevationGain), cal: num(o.calories), sets: num(o.totalSets) ?? num(o.activeSets), reps: num(o.totalReps), tl: num(o.activityTrainingLoad), te: num(o.aerobicTrainingEffect), ate: num(o.anaerobicTrainingEffect), rpe: num(o.directWorkoutRpe), vo2: num(o.vO2MaxValue), vr: num(o.avgVerticalRatio) };
   }
   const raw = JSON.stringify(have);
   localStorage.setItem(key, raw);

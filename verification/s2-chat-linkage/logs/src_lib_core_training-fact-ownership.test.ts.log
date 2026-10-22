@@ -1,0 +1,18 @@
+✔ explicit other-occurrence and unknown-occurrence sets inside the first window never count for first (7.431561ms)
+✔ legacy sets with no occurrence ID remain compatible in a single unambiguous window (1.148663ms)
+✔ overlapping windows use explicit occurrence ownership instead of the newest same-template start (0.961861ms)
+✔ legacy sets in overlapping same-template windows stay unknown for both occurrences (0.810864ms)
+✔ an unbound same-template start makes later legacy attribution ambiguous (1.4385ms)
+✔ other-athlete starts and sets cannot truncate or populate local facts (0.554637ms)
+✔ an explicit malformed occurrence field never falls back to a legacy unbound set (2.458209ms)
+✔ an event slice before a future close cannot expose that future outcome, end or duration (0.470881ms)
+✔ a future sibling absent from the supplied history cannot erase a completed past fact (0.655609ms)
+✔ a future duplicate close cannot change the earlier visible completed result (0.667918ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 25.961655

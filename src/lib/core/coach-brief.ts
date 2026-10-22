@@ -5,7 +5,7 @@ import { coachImports, importedCoachParts } from "./coach-import-evidence.ts"
 import { preserveReferral } from "./coach-referral-safety.ts"
 import { evidenceAvailability } from "./evidence-availability.ts"
 import { projectOccurrenceEvidence, type EvidenceGroup, type EvidenceRecord } from "./evidence.ts"
-import { loadEvents } from "./events.ts"
+import { currentAthleteId, loadEvents } from "./events.ts"
 import { dispatchEvent } from "./events.ts"
 import { listTrainingOccurrences } from "./occurrence.ts"
 import { occurrenceVoided } from "./training-correction.ts"
@@ -180,7 +180,7 @@ function returnAdviceNeedsBoundSource(brief: CoachBrief, text: string, citations
 function assembleSessionCoachBrief(plan: Plan | null, question: string, selectedOccurrenceId: string | null | undefined, asOf: string, formalRows?: readonly FormalEvidenceRow[]): CoachBrief {
   const imported=selectedOccurrenceId ? coachImports().find(r=>r.confirmedImportId===selectedOccurrenceId) : null
   if(imported&&!occurrenceVoided(imported.confirmedImportId))return attachLinkedSources(deriveCoachBrief(importedCoachParts(imported,question)),readLinkedCoachSources(undefined,question))
-  const events = loadEvents()
+  const events = loadEvents().filter(event => (event.athlete_id ?? 'local') === currentAthleteId())
   const candidates = listTrainingOccurrences()
     .filter((item) => !occurrenceVoided(item.trainingOccurrenceId) && item.startedAt && events.some((event) => event.event_id === item.startEventId && event.event_type === "TRAINING_STARTED"))
     .sort((left, right) => (left.startedAt ?? "").localeCompare(right.startedAt ?? "") || left.trainingOccurrenceId.localeCompare(right.trainingOccurrenceId))

@@ -1,0 +1,18 @@
+✔ first sync full 14 plus backfill (3.639591ms)
+✔ recent auto sync three days after full (1.613324ms)
+✔ 24h full review prevents losing late corrections (0.431652ms)
+✔ manual sync full (0.137317ms)
+✔ recent duplicate attempt defers (2.304016ms)
+✔ failure backoff defers auto (0.144398ms)
+✔ manual can retry despite backoff (0.146942ms)
+✔ backfill capped 90 days (0.299872ms)
+✔ invalid date rejected (0.661368ms)
+✔ does not claim complete history (0.375657ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35.551044

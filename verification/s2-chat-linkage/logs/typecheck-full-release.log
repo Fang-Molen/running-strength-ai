@@ -1,0 +1,22 @@
+
+> typecheck
+> tsc --noEmit
+
+src/lib/health/coros-mcp-transport.test.ts(169,37): error TS2339: Property 'durationSec' does not exist on type 'McpLap'.
+src/lib/health/coros-mcp-transport.test.ts(170,55): error TS2339: Property 'durationSec' does not exist on type 'McpLap'.
+src/lib/health/coros-mcp-transport.test.ts(171,87): error TS2339: Property 'durationSec' does not exist on type 'McpLap'.
+src/lib/health/health-nutrition-sync.test.ts(38,134): error TS2339: Property 'reason' does not exist on type 'never'.
+src/lib/health/reviewed-correction.test.ts(34,42): error TS2339: Property 'reason' does not exist on type 'never'.
+src/lib/ui/combo-parts-v88.test.ts(4,16): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/makeup.test.ts(5,16): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/pending-feedback.test.ts(4,16): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/plan400-dates.test.ts(4,22): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/training-record-sync.test.ts(44,40): error TS2339: Property 'reason' does not exist on type 'never'.
+src/lib/ui/training-record-sync.test.ts(175,44): error TS2339: Property 'reason' does not exist on type 'never'.
+src/lib/ui/training-record-sync.test.ts(181,42): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/lib/ui/v82.test.ts(18,18): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/v83-acceptance.test.ts(8,16): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/v84-host-p0.test.ts(3,22): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+src/lib/ui/v84-merge.test.ts(4,16): error TS2307: Cannot find module '../../../test-fixtures/private/plan400-v4.json' or its corresponding type declarations.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

@@ -1,0 +1,18 @@
+✔ confirmed watch health is idempotent and the newest revision reaches both health and coach (36.658793ms)
+✔ health daily facts and athlete scopes stay separate across confirmed import and coach reads (19.206335ms)
+✔ same food in separate meals stays separate while re-saving the same IDs is not counted twice (24.557188ms)
+✔ coach daily nutrition preserves unestimated energy as pending instead of known zero (1.539002ms)
+✔ global coach evidence does not present unestimated energy as an available measured zero (2.423506ms)
+✔ training fuel excludes unknown legacy energy while preserving an explicit confirmed zero (7.681729ms)
+✔ the actual confirmed food draft sends new carb fields and unknown energy accurately to coach context (1.296516ms)
+✔ coach meal context preserves the confirmed nutrition snapshot source and region (0.903944ms)
+✔ editing an older meal makes its new version available in the latest coach source selection (0.939177ms)
+✔ health and nutrition commits notify coach readers with committed current values (3.850869ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.856307

@@ -1,0 +1,132 @@
+{
+  "base_archive": "fangkun-s1-incremental-sync-fixed.zip",
+  "base_archive_sha256": "b8d4fe09f4bf0556617c00cb71dcb59fab0117607449e073f9e0ea2c70ecb943",
+  "baseline_file_count": 1822,
+  "baseline_files_missing": [],
+  "changes": [
+    {
+      "path": "functions/api/coach-chat.js",
+      "status": "modified",
+      "before_sha256": "202596db8c7029740518f058bfb2ce21ee61a795f4e378216505dbd543a3b335",
+      "after_sha256": "339a3e7490f887e085366fa62d516ecd6a67c7d0c0569a22a2bcf2eb578bbf2f"
+    },
+    {
+      "path": "package.json",
+      "status": "modified",
+      "before_sha256": "883720c7c9d4f1eb9ec4e749df1e02d954c207b2612a94bd929ebfdeb9407880",
+      "after_sha256": "0e78f3be785a6cf7b595504c54702f9c147cc1fa5b2875cdfec3551e63814ba0"
+    },
+    {
+      "path": "scripts/blocks.mjs",
+      "status": "modified",
+      "before_sha256": "9f9f603250cb21cf809bf240e52eb4d7525098bd5c8a1a3a8cdd8287191ecca7",
+      "after_sha256": "499941865fcc5cd4ffc6f41d29db9933243bf1ec810e89a61484acc33c6050ba"
+    },
+    {
+      "path": "src/components/coach-sheet.tsx",
+      "status": "modified",
+      "before_sha256": "ab1410c5b13061c93157b209952ee6a4e7df93ea1b5e7a37c6d29097bffafcfd",
+      "after_sha256": "82073b68ac416142105dbe12c8a3c5d20683d7e494e22797192c24fe6cc5682a"
+    },
+    {
+      "path": "src/lib/coach/coach-fact-boundary-p0.test.ts",
+      "status": "modified",
+      "before_sha256": "84f67d34b14a180ac6389503808fd7af7b436573f2af6cf3e38bf0b08d7b2d6e",
+      "after_sha256": "87561f89fb9bc7c48b38bf5e94ae22ac6c6703f561a0b38fd91b855345266c22"
+    },
+    {
+      "path": "src/lib/coach/coach-facts-v83.test.ts",
+      "status": "modified",
+      "before_sha256": "f4c544b4ecbfe12af555b7d95c46df5e88f9b9d61c4c2f114c2225981525054a",
+      "after_sha256": "befab4232cb083522004b39d10181821bb551defc72a173432019a2b7b0ed915"
+    },
+    {
+      "path": "src/lib/coach/online-coach.ts",
+      "status": "modified",
+      "before_sha256": "83823536f7ecd5a761a86e6a7903d0e6c686bff0d370ef32b8d3a54f76be4fbc",
+      "after_sha256": "be1dd9c1c6691246b75efc0859fac8d083eae90beaa2ffb55e70d29fcb0eeda9"
+    },
+    {
+      "path": "src/lib/coach/plain-coach.ts",
+      "status": "modified",
+      "before_sha256": "5bc68545b997869790cebcb77bed5328396c3d51312194369056d78f2134fb68",
+      "after_sha256": "9651a564a8f8c2b24efa9edb21755a842fb94d611cce71aef1724e0b98ed638e"
+    },
+    {
+      "path": "src/lib/core/training-correction.test.ts",
+      "status": "modified",
+      "before_sha256": "96c08941d2c45ca4f60276987b4ebbd403d857cd9b0f084425eceb1ecf21f0d1",
+      "after_sha256": "5a0508f002d05e9d1bd75ca2982b2e55f7f065cf6c89f88f67481abee6ba9a67"
+    },
+    {
+      "path": "src/lib/core/training-correction.ts",
+      "status": "modified",
+      "before_sha256": "fbc7f8cd58ee5f940d71fa951ccb179dff1991d537a7ea87a7a6bda5b7a0028e",
+      "after_sha256": "fd47aa2ce82f3a6a5316f420ed72a955a1fbbdfb08a5a9f9ba30b773ac57efad"
+    },
+    {
+      "path": "src/lib/health/recovery-host-u11.test.ts",
+      "status": "modified",
+      "before_sha256": "1e812cabc097ff47a86520627acb4b80fc7b71d0e9bacf2094ee1e21542aa35d",
+      "after_sha256": "6a7ba116622ac1b6b7cc25658e109e30d7566df2f38bb89bbf3f6668a1b3d20c"
+    },
+    {
+      "path": "src/lib/health/recovery-host-u11.ts",
+      "status": "modified",
+      "before_sha256": "81a96dcb15b39d7f9ea6ecfbe9818bd3dc0e0e55ba1b2cc57030e1f853f9ef08",
+      "after_sha256": "21071c511d357fb8f388e364367b82e62f147986e68f6c3c67f56579384a674b"
+    },
+    {
+      "path": "CHAT-LINKAGE-UPDATE.md",
+      "status": "added",
+      "after_sha256": "468a52ffa0cbea42f2abed753f5f92fcb36b76a372f0286efb5f952668c3fac9"
+    },
+    {
+      "path": "src/lib/coach/online-nutrition-facts.ts",
+      "status": "added",
+      "after_sha256": "477011d2f92d08ea60debdcda73c5f182da9228234459cf9d11f106f2678e8f2"
+    },
+    {
+      "path": "src/lib/coach/online-nutrition-facts.test.ts",
+      "status": "added",
+      "after_sha256": "b42c285071329cb9722d7fc62e84d799f51d9add24bd3b3687dea689c85373b1"
+    },
+    {
+      "path": "src/lib/coach/online-training-facts.ts",
+      "status": "added",
+      "after_sha256": "ff565801489458ebcaa66727e671ccc109d4aff21757308fc72d3df13b04c58c"
+    },
+    {
+      "path": "src/lib/coach/online-training-facts.test.ts",
+      "status": "added",
+      "after_sha256": "0a005fb7ce44fe368dec4ede4bcf685f4ff59005ba69b016627b0d090f9f0121"
+    },
+    {
+      "path": "src/lib/coach/online-recovery-facts.ts",
+      "status": "added",
+      "after_sha256": "7a4c1db3a852af775731222cf300007a46c2656049d13475fff94dde48a075c2"
+    },
+    {
+      "path": "src/lib/coach/online-recovery-facts.test.ts",
+      "status": "added",
+      "after_sha256": "de97e46f8b9c662cc4c1c754d1dda47de52e428b9f4748d6bd3f67b3fcded1ff"
+    },
+    {
+      "path": "src/lib/coach/online-facts-linkage.test.ts",
+      "status": "added",
+      "after_sha256": "b89dd209bbe100d3fd231db98d34d465b311c154d81505d99bc86034ebafee6a"
+    },
+    {
+      "path": "src/lib/coach/online-chat-transport.test.ts",
+      "status": "added",
+      "after_sha256": "f8fbb03eefc86858a40fb558d81aa70aa6d9539998094957b59831568346fd03"
+    },
+    {
+      "path": "src/lib/health/recovery-host-u11-cutoff.test.ts",
+      "status": "added",
+      "after_sha256": "ee86d72e79bcc0c9ea83a7078687f4d7df9dc159f26b0f551c8c4803f9e0cbf1"
+    }
+  ],
+  "verification_directory": "verification/s2-chat-linkage",
+  "note": "All original members retained; this manifest lists source/doc differences only. Evidence files are additional. Build output/dependencies and private browser screenshots are excluded."
+}

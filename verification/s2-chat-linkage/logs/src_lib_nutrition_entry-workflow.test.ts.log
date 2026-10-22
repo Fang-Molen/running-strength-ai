@@ -1,0 +1,35 @@
+✔ weighed food five nutrients at 50g (10.017604ms)
+✔ weighed food five nutrients at 100g (0.567877ms)
+✔ weighed food five nutrients at 150g (0.415066ms)
+✔ weighed food five nutrients at 250g (0.673527ms)
+✔ product search includes brand and never merges same-name products (0.806507ms)
+✔ brand serving uses exact product and grams only when documented (2.148612ms)
+✔ known protein and fiber survive absent energy (0.521426ms)
+✔ only energy never invents other nutrients (0.419603ms)
+✔ unmatched name remains wholly unknown; explicit zero remains known (0.654157ms)
+✔ selection without confirmation cannot save (0.282546ms)
+✔ manual correction of catalog values is explicitly estimated and traceable (0.270959ms)
+✔ explicit unknown carb must not resurrect a stale legacy alias (0.189376ms)
+✔ missing legacy quantity is not fabricated during editing (0.37758ms)
+✔ 150g snapshot roundtrip and quantity edit rescale all five from stored base (1.821237ms)
+✔ catalog changes never rewrite a recorded snapshot on refresh (0.261574ms)
+✔ move meal and local day changes membership without duplicate inclusion (0.791324ms)
+✔ editing rejects stale revision instead of overwriting newer values (0.537691ms)
+✔ delete excludes row on refreshed aggregate and preserves original event (0.597993ms)
+✔ legacy carbs and new carb share the same total and missing list (0.473424ms)
+✔ correcting legacy row preserves original bytes and prior evidence (0.507265ms)
+✔ reject invalid quantity 0 (0.138058ms)
+✔ reject invalid quantity -1 (0.210768ms)
+✔ reject invalid quantity Infinity (0.283307ms)
+✔ reject invalid quantity bad (0.126481ms)
+✔ reject impossible day, future date, incompatible units, or actor switch (0.177999ms)
+✔ storage failure leaves records and draft unchanged (0.237338ms)
+✔ editing amount through blank and small intermediate digits never compounds rounding (0.177197ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.007765

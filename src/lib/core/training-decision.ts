@@ -238,8 +238,13 @@ export function recordPain(decisionId: string, sessionId: string) {
 
 function completionIdentity(sessionId: string, decisionId: string): string {
   const starts = loadEvents().filter(event => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_STARTED" && event.payload.sessionId === sessionId)
-  const startIds = new Set(starts.map(event => event.event_id))
-  const rows = listTrainingOccurrences().filter((item) => item.sessionId === sessionId && startIds.has(item.startEventId))
+  const bound = starts.filter(event => event.payload.decisionId === decisionId)
+  const startIds = new Set((bound.length ? bound : starts).map(event => event.event_id))
+  const ownedStartIds = new Set(starts.map(event => event.event_id))
+  // Start aliases share one completion identity, including after that occurrence
+  // closes. A stale decision must not fall through to a later open training.
+  const rows = listTrainingOccurrences().filter((item) => item.sessionId === sessionId &&
+    (startIds.has(item.startEventId) || ownedStartIds.has(item.startEventId) && item.duplicateStartEventIds?.some(id => startIds.has(id))))
   const open = [...rows].reverse().find((item) => item.lifecycle === "IN_PROGRESS")
   const target = open ?? rows.at(-1)
   return target ? `occurrence:${target.trainingOccurrenceId}` : `decision:${decisionId}:${sessionId}`
@@ -258,6 +263,8 @@ export function completeTraining(input: {
   interrupted: boolean
   partial?: boolean
 }) {
+  const starts = loadEvents().filter(event => event.event_type === 'TRAINING_STARTED' && event.payload.sessionId === input.sessionId && event.payload.decisionId === input.decisionId)
+  if (starts.length && !starts.some(event => (event.athlete_id ?? 'local') === currentAthleteId())) return null
   const idempotencyKey = completionIdentity(input.sessionId, input.decisionId)
   const boundOccurrenceId = idempotencyKey.startsWith("occurrence:") ? idempotencyKey.slice("occurrence:".length) : null
   const existing = loadEvents().find((event) => event.athlete_id === currentAthleteId() && event.event_type === "TRAINING_COMPLETED" && event.payload.idempotencyKey === idempotencyKey)

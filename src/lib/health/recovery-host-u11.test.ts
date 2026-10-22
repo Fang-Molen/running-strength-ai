@@ -18,6 +18,7 @@ function fixture(t:test.TestContext) {
   const map=new Map<string,string>(),box={getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v)},keys:()=>[...map.keys()]}
   setStoreBackend(box);setEventContext({athleteId:athlete})
   Object.defineProperty(globalThis,'localStorage',{value:box,configurable:true})
+  map.set('fk-plan-doc-v1',JSON.stringify({schema:'fangkun-plan-v1',tag:'合成',label:'合成回归计划',plan:V4}))
   t.after(()=>{setStoreBackend(null);setEventContext({athleteId:owner});if(prev)Object.defineProperty(globalThis,'localStorage',prev);else Reflect.deleteProperty(globalThis,'localStorage')})
   return {map,box}
 }
@@ -57,6 +58,7 @@ test('completion-only V4 feedback is UNKNOWN and does not borrow planned muscle 
   assert.equal(global.data?.muscleRecovery?.hasObservedRegions,false)
 })
 test('void and field corrections invalidate old muscle evidence immediately without rewriting originals',t=>{
+  t.mock.timers.enable({apis:['Date'],now:new Date(now)})
   const f=fixture(t);training(f)
   const before=readRecoveryProjection(day,now);assert.equal(before.sources[0].actualSets,2)
   const oldJournal=[...f.map].filter(([k])=>k.startsWith(EVENT_JOURNAL_PREFIX))
@@ -126,8 +128,12 @@ import { setRunDevice } from '../ui/plan400-components-store'
 import { garminViewKey } from './garmin-view-scope'
 import { libraryKey, v4RunType, LIBRARY_ALIAS } from './muscle-log-source'
 import { ACTIONS } from '../strength/action-picker'
-import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
 import type { V4Day } from '../ui/plan400-view'
+// This regression needs five mapped movements and an interval plan, not a personal plan fixture.
+const V4={name:'合成回归计划',shiftDays:0,weeks:[],days:[
+  {orig:'2026-10-19',date:'2026-10-19',weekday:'一',week:'1',title:'间歇＋力量',main:['','正式主课：200m×4，组间3分钟'],aux:[],strength:['分腿蹲2×8；RDL2×8；臀推2×8；提踵2×8；抗旋2×8']},
+  {orig:'2026-10-20',date:'2026-10-20',weekday:'二',week:'1',title:'低强度恢复',main:['轻松跑20分钟'],aux:[],strength:[]},
+] satisfies V4Day[]}
 function v4Lift(f:ReturnType<typeof fixture>){
   const d=(V4.days as V4Day[]).find(x=>x.date==='2026-10-19')!
   const entry=plan400TodayEntry(d,null,()=>({unit:'reps',perSide:false}))!

@@ -87,3 +87,15 @@ test('duplicate draft IDs retain the existing first-record conflict policy', () 
   assert.deepEqual([...store.data], before)
   setStoreBackend(null)
 })
+
+test('watch strength sessions with zero distance do not create a false repeat-import conflict', () => {
+  setup()
+  try {
+    const strength = { ...activity(81), sport: 'STRENGTH' as const, sportLabel: '力量', distanceM: 0 }
+    assert.equal(saveDeviceRows([], [strength]).saved, 1)
+    assert.deepEqual(saveDeviceRows([], [strength]), { saved: 0, skipped: 1, errors: [] })
+    const changed = saveDeviceRows([], [{ ...strength, durationSec: 1800.1 }])
+    assert.equal(changed.saved, 0)
+    assert.equal(changed.errors.length, 1, 'a real 0.1-second source revision must still require review')
+  } finally { setStoreBackend(null) }
+})

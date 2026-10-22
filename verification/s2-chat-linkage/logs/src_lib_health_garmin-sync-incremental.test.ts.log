@@ -1,0 +1,26 @@
+✔ activity conflicts stay visible but cannot make saved health history repeat INITIAL on every sync (17.180064ms)
+✔ a legacy partial cursor migrates into bounded backfill without one more sixty-two-day reread (8.810068ms)
+✔ ordinary sync across midnight remains three days while explicit manual review reads fourteen days and 200 activities (8.67218ms)
+✔ missed days after a longer pause include the last previously read day without reopening all history (4.088978ms)
+✔ single-metric historical failures remain pending and retry only the missing dates (8.729687ms)
+✔ interrupted initial history resumes in fourteen older dates without replaying its completed range (6.465853ms)
+✔ pending dates survive calendar changes and are not discarded because they have become older than ninety days (0.69005ms)
+✔ health persistence failure cannot create checked receipts or advance the successful-health time (6.595548ms)
+✔ healthErrors omitted by a legacy save adapter conservatively blocks health progress for all save errors (7.198057ms)
+✔ empty supported daily responses are checked without inventing health values (2.827004ms)
+✔ an absent daily resource is checked as unavailable data without manufacturing a metric (2.425859ms)
+✔ malformed daily response dates remain pending even if other health metrics were saved (10.77623ms)
+✔ empty old intraday dates get a separate checked receipt and do not cause a repeated twenty-eight-day scan (7.912695ms)
+✔ failed old intraday metrics remain retryable instead of becoming empty checked receipts (8.391317ms)
+✔ intraday auth expiry blocks all writes while malformed replies and persistence failure retain retryable dates (9.739611ms)
+✔ a long pause queues all outstanding dates but each automatic pass reads at most fourteen older dates (4.829635ms)
+✔ changing account or athlete during a request prevents every progress and data write (11.113703ms)
+✔ a failed progress write reports partial and cannot manufacture a complete-success timestamp (3.19518ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 151.472996

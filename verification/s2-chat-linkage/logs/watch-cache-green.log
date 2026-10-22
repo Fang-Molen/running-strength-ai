@@ -1,0 +1,20 @@
+✔ unbound chat preserves independently labelled diet, training and recovery availability (40.231867ms)
+✔ yesterday and explicit date queries resolve the actual fact date with the request cutoff (8.825304ms)
+✔ legacy V4 fallback never sends another athlete even when it is the only saved record (2.286069ms)
+✔ an explicitly owned legacy record remains readable for a non-default athlete (2.376701ms)
+✔ owned legacy V4 actuals remain available without importing a plan and without arbitrary notes (2.014118ms)
+✔ foreign component detail cannot re-enter an otherwise owned V4 projection (4.999243ms)
+✔ future saved legacy facts and future watch observations are absent at a fixed request cutoff (3.958362ms)
+✔ long plan text cannot erase domain availability and omission is explicit (2.630389ms)
+✔ rebuilding an online snapshot does not mutate the saved data (2.66409ms)
+✔ a confirmed watch record and its optional view cache are one source in an unbound request (10.29404ms)
+✔ manual watch corrections withdraw old cached totals in unbound, selected and V4-linked requests (11.390636ms)
+✔ a voided confirmed watch record is not resurrected by a stale cache or selected activity (4.376983ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.616879

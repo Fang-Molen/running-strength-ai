@@ -6,7 +6,9 @@ import { localDay, shiftDay, healthChanged } from "@/lib/health/observation";
 import { AUTO_SYNC_RULE, readGarminSyncStatus, subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { saveDeviceRows } from "@/lib/ui/device-store";
+import { saveGarminRowsWithRetry } from "@/lib/health/garmin-pending-imports";
+import { readGarminDailyProgress, writeGarminDailyProgress } from "@/lib/health/garmin-progress-store";
+import { readGarminActivityConflicts } from "@/lib/health/garmin-activity-conflicts";
 import { activityKey, type DeviceActivity, type DeviceHealthRow } from "@/lib/ui/device-parse";
 import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupReminder, type Snapshot } from "@/lib/vault";
 import { exportFeedback } from "@/components/coach-feedback";
@@ -23,6 +25,8 @@ const api = async (p: string, init?: RequestInit, ms = 20000) => {
 };
 let running = false;
 let accountGeneration = 0;
+// A → B → A during an awaited request is still a scope change, even if the final id matches.
+if (typeof window !== "undefined") window.addEventListener(ATHLETE_SCOPE_CHANGED, () => { accountGeneration++; });
 export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string, reason: "AUTO" | "MANUAL" = "AUTO"): Promise<"ok" | "partial" | "auth" | "fail" | "busy"> {
   if (running) return "busy";
   running = true;
@@ -31,31 +35,53 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
   let finalResult: "ok" | "partial" | "auth" | "fail" = "fail";
   const sameOwner = () => currentAthleteId() === subjectId && accountGeneration === syncGeneration;
   const progress = (message: string) => { if (sameOwner()) { updateGarminSyncLive(liveToken, message); setMsg(message); } };
+  let boundScope: string | null = null;
   try {
     const result = await runGarminSyncJob({ api, subject: currentAthleteId, generation: () => accountGeneration,
       day: localDay(), now: new Date().toISOString(), progress,
-      save: saveDeviceRows, saveView: saveGarminActivities, bindAccount: bindGarminAccount,
+      save: (health, activities) => {
+        if (!sameOwner() || !boundScope) throw Error('活动同步归属已变化');
+        return saveGarminRowsWithRetry(boundScope, subjectId, health, activities, reason === 'MANUAL');
+      }, saveView: saveGarminActivities, bindAccount: (scope, owner) => {
+        const bound = sameOwner() && bindGarminAccount(scope, owner);
+        if (bound) boundScope = scope;
+        return bound;
+      },
       intraday: { complete: d => intradayComplete(d), save: days => saveIntraday(days) },
       // 日常按钮按既有规则选择增量；完整复核通过说明区显式触发，仍按账号分别记录。
       reason, activitySeen: garminViewHas,
-      fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId())) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, currentAthleteId()), at) } },
-      backfill: { get: scope => { try { return Number(localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 90 } }, set: (scope, n) => { try { localStorage.setItem(`fk-garmin-health-backfill:${scope}`, String(n)) } catch { /* 下次再补 */ } } },
+      fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId)) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId), at) } },
+      dailyProgress: { get: scope => readGarminDailyProgress(scope, subjectId), set: (scope, value) => { if (!sameOwner()) throw Error('同步归属已变化'); writeGarminDailyProgress(scope, subjectId, value); } },
+      backfill: { get: scope => { try { return Number(localStorage.getItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId)) ?? localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 14 } }, set: (scope, n) => { localStorage.setItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId), String(n)); } },
       report: report => {
+        // A short recent page cannot resolve older source conflicts. Recheck the
+        // persisted source view against formal records without fetching history.
+        if (report.accountScope && ['ok', 'partial', 'empty'].includes(report.status)) {
+          try {
+            const pending = readGarminActivityConflicts(report.accountScope, report.subjectId);
+            if (pending.length) {
+              if (!report.errors.some(error => /同一来源活动|来源活动.*待核对/.test(error))) report.errors.push(`仍有 ${pending.length} 条来源活动与原记录不同，待核对；未重复计入或覆盖手填更正。`);
+              report.status = 'partial';
+            }
+          } catch { report.errors.push('本机活动核对记录无法读取，未确认全部成功'); report.status = 'partial'; }
+        }
         const key = (name: string) => garminStorageKey(name, report.subjectId);
         const raw = JSON.stringify(report);
-        localStorage.setItem(key("fk-garmin-last-attempt"), report.at);
         localStorage.setItem(key("fk-garmin-sync-report"), raw);
         if (localStorage.getItem(key("fk-garmin-sync-report")) !== raw) throw Error('REPORT_SAVE_FAILED');
-        // 部分同步但已取得数据也算一次有效同步（避免每次打开都重拉、设置页显示过期时间）。
-        if (report.status === 'ok' || (report.status === 'partial' && report.saved + report.skipped > 0)) localStorage.setItem(key("fk-garmin-last-sync"), report.at);
-        if (report.status === 'ok') localStorage.setItem(key("fk-garmin-last-full-ok"), report.at); // 契约：最后完整成功（garmin-sync-status.ts）
+        // Derived time caches are optional. Readers fall back to the verified
+        // report, so a cache failure must not turn saved data into a failed sync.
+        const cacheTime = (name: string) => { try { localStorage.setItem(key(name), report.at); } catch { /* The durable report supplies this time. */ } };
+        cacheTime("fk-garmin-last-attempt");
+        if (report.status === 'ok' || (report.status === 'partial' && report.saved + report.skipped > 0)) cacheTime("fk-garmin-last-sync");
+        if (report.status === 'ok') cacheTime("fk-garmin-last-full-ok");
         healthChanged(); window.dispatchEvent(new Event("fk-garmin-synced"));
       },
     });
-    const label = { ok: '同步完成', partial: '部分同步', empty: '本次未取得可用记录', auth: '登录失效或身份不完整', fail: '同步失败', stale: '账号或运动员变化，已丢弃本次结果' }[result.status];
+    const label = { ok: '已完成', partial: '部分完成', empty: '本次未取得可用记录', auth: '登录失效或身份不完整', fail: '同步失败', stale: '账号或运动员变化，已丢弃本次结果' }[result.status];
     if (result.status === 'ok' || result.status === 'partial') void prefetchRecentLaps();
-    const modeLabel = result.mode === 'INITIAL' ? '首次同步' : result.mode === 'RECENT' ? '增量同步' : '完整复核';
-    progress(`${modeLabel}${label}（请求 ${result.requests ?? '—'} 次）：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
+    const modeLabel = result.mode === 'INITIAL' ? '首次同步' : result.mode === 'BACKFILL' ? '补齐历史' : result.mode === 'RECENT' ? '增量同步' : '完整复核';
+    progress(`${modeLabel}：${label}（请求 ${result.requests ?? '—'} 次）：保存/更新 ${result.saved} 条，未变化 ${result.skipped} 条。${result.errors.slice(0, 2).join('；')}`);
     finalResult = result.status === 'empty' || result.status === 'stale' ? 'fail' : result.status;
     return finalResult;
   } finally { running = false; if (sameOwner()) finishGarminSyncLive(liveToken, finalResult); else clearGarminSyncLive(liveToken); }
@@ -71,7 +97,6 @@ async function prefetchRecentLaps() {
     for (const a of todo) { const l = await fetchLaps(Number(a.id)).catch(() => null); if (l) saveLaps(a.id, l); }
   } catch { /* optional */ }
 }
-const syncKey = (key: string) => garminStorageKey(key, currentAthleteId());
 const AUTO_MS = 5 * 60e3;
 let lastTry = 0;
 /** 每次打开/回到前台（距上次 >5 分钟）+ 开着时每 2 小时：已登录、在线才静默同步；失败后 30 分钟内不重试。 */
@@ -80,7 +105,7 @@ export async function maybeAutoGarminSync(): Promise<void> {
   const subjectId = currentAthleteId(), syncGeneration = accountGeneration;
   const sameOwner = () => currentAthleteId() === subjectId && accountGeneration === syncGeneration;
   const key = (name: string) => garminStorageKey(name, subjectId);
-  const last = Date.parse(localStorage.getItem(key("fk-garmin-last-sync")) || "") || 0;
+  const last = Date.parse(readGarminSyncStatus(subjectId).lastUsefulSyncAt || "") || 0;
   const failAt = Date.parse(localStorage.getItem(key("fk-garmin-auto-fail")) || "") || 0;
   if (Date.now() - last < AUTO_MS || Date.now() - failAt < 30 * 60e3 || Date.now() - lastTry < 60e3) return;
   lastTry = Date.now();
@@ -130,7 +155,7 @@ export function GarminSync({ hideBackup = false, onState }: { hideBackup?: boole
   const [snaps, setSnaps] = useState<Snapshot[]>([]);
   const [lastSync, setLastSync] = useState("");
   const [lastPartial,setLastPartial]=useState(false);
-  useEffect(() => { const f = () => { const t = localStorage.getItem(syncKey("fk-garmin-last-sync")); try{setLastPartial(JSON.parse(localStorage.getItem(syncKey("fk-garmin-sync-report"))??"null")?.status!=="ok")}catch{setLastPartial(true)} setLastSync(t ? new Date(t).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""); }; f(); window.addEventListener("fk-garmin-synced", f); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); return () => { window.removeEventListener("fk-garmin-synced", f); window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); }; }, []);
+  useEffect(() => { const f = () => { const s = readGarminSyncStatus(currentAthleteId()); setLastPartial(s.lastAttemptResult !== "ok"); setLastSync(s.lastUsefulSyncAt ? new Date(s.lastUsefulSyncAt).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : ""); }; f(); window.addEventListener("fk-garmin-synced", f); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); return () => { window.removeEventListener("fk-garmin-synced", f); window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); }; }, []);
   const [remind, setRemind] = useState(false);
   useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); const last = localStorage.getItem("fk-last-export"); setRemind(needsBackupReminder() || !last || Date.now() - Date.parse(last) > 14 * 86400e3); }, []);
   const refresh = () => {
@@ -180,13 +205,13 @@ export function GarminSync({ hideBackup = false, onState }: { hideBackup?: boole
       <input className={input} aria-label="佳明密码" type="password" autoComplete="current-password" placeholder="密码" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
       <button type="button" disabled={busy || !form.username || !form.password || Boolean(st?.unreachable)} className="min-h-11 w-full rounded-card bg-accent font-bold text-accent-fg" onClick={login}>登录佳明</button>
     </>}
-    {feedback ? feedback.includes("（请求 ") ? <details className="device-sync-disclosure device-sync-feedback" data-tone={/部分同步|失败|未取得|失效|已丢弃/.test(feedback) ? "warn" : undefined}><summary><span role="status">{feedback.slice(0, feedback.indexOf("（请求 "))}</span><ChevronDown aria-hidden="true" /></summary><p className="device-sync-detail-body">{feedback}</p></details> : <p role="status" className="device-sync-message">{feedback}</p> : null}
+    {feedback ? feedback.includes("（请求 ") ? <details className="device-sync-disclosure device-sync-feedback" data-tone={/部分完成|部分同步|失败|未取得|失效|已丢弃/.test(feedback) ? "warn" : undefined}><summary><span role="status">{feedback.slice(0, feedback.indexOf("（请求 "))}</span><ChevronDown aria-hidden="true" /></summary><p className="device-sync-detail-body">{feedback}</p></details> : <p role="status" className="device-sync-message">{feedback}</p> : null}
     <details className="device-sync-disclosure">
       <summary><span>同步说明</span><ChevronDown aria-hidden="true" /></summary>
       <div className="device-sync-detail-body text-muted">
         <p>{AUTO_SYNC_RULE}关闭或挂起后不保证后台同步。</p>
-        <p>日常同步优先更新近3天和新活动；首次同步补齐近90天健康汇总，之后每日复核近14天。更早记录需要核对时，可手动完整复核。</p>
-        <p>活动最多请求最近200条，不代表全部历史或训练课次数。健康日期按页面所在时区计算；与手表日期不一致时先核对两端时区。</p>
+        <p>日常同步更新近3天、新活动和未完成的日期。首次读取近90天健康汇总；中断后按缺口继续，每次最多补14个较早日期，已完成的历史不再整批重读。</p>
+        <p>新活动每页读取20条，遇到已同步活动后停止，最多200条。完整复核会重查近14天和最近200条活动，不代表全部历史。健康日期按页面所在时区计算。</p>
         {st?.loggedIn ? <button type="button" disabled={busy || live.running} className="min-h-11 w-full rounded-card border border-line px-3 text-fg" onClick={() => void sync(true)}>完整复核最近数据</button> : null}
         <p>身体电量取同步时佳明给出的最近值（没有时才用当日最高并注明），HRV 为昨夜平均；同步后才更新，不是实时值。同步详情会列出未完成项。</p>
         {!st?.loggedIn ? <p>账号密码只用于这次登录，经方坤服务端转发给佳明；App 不把密码存到本机，服务端代码也不保存、不记录。登录后的会话令牌加密存放在网页脚本读不到的 Cookie 中。</p> : null}
