@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { corosMcpLinked, corosTrend, loadCorosHealth, refreshCorosHealth, setCorosMcpLinked, type CorosHealthCache } from '@/lib/health/coros-mcp-client'
+import { corosMcpLinked, corosTrend, isCurrentCorosContext, loadCorosHealth } from '@/lib/health/coros-mcp-client'
 import { corosNeedsLogin } from '@/lib/health/coros-account-sync'
 import { rowProvider } from '@/lib/health/brand-isolation'
 import { loadTrainingActivities } from '@/lib/ui/training-read-model'
-import { currentAthleteId } from '@/lib/core/events'
+import { runCorosHealthSync, useCorosSyncLive } from '@/lib/ui/coros-sync-live'
+import { openDeviceSync } from '@/lib/ui/device-sync-navigation'
 
 /** v89.10：高驰健康数据（官方授权）。只在本机连过高驰时显示；佳明用户看不到这块，佳明健康页原样不变。
  * 不画“身体电量”曲线（高驰没有）；日内只画高驰压力，并标出睡眠时段和训练时段；HRV/静息心率/睡眠为日级趋势；恢复度只有当前值。
@@ -14,16 +15,27 @@ const localMin = (iso: string) => { const d = new Date(iso); return d.getHours()
 const hm = (m: number | null | undefined) => m == null ? '—' : `${Math.floor(m / 60)}:${String(Math.round(m % 60)).padStart(2, '0')}`
 const W = 320, H = 110, PAD = 18
 export function CorosHealthPanel({ day }: { day: string }) {
-  const athlete = currentAthleteId()
-  const [data, setData] = useState<CorosHealthCache | null>(() => loadCorosHealth(athlete)), [linked, setLinked] = useState(() => corosMcpLinked(athlete))
-  const [busy, setBusy] = useState(false), [msg, setMsg] = useState('')
-  const refresh = async () => { if (busy) return; setBusy(true); setMsg(''); try { setData(await refreshCorosHealth(athlete)) } catch (e) { if (corosNeedsLogin(e)) { setCorosMcpLinked(athlete, false); setLinked(false); setMsg('高驰授权已过期，请到“设备连接与同步”重新授权。下面是本机保存的上次数据。') } else setMsg(e instanceof Error ? e.message : '读取失败') } finally { setBusy(false) } }
-  useEffect(() => { const f = () => setLinked(corosMcpLinked(athlete)); window.addEventListener('fk-coros-changed', f); return () => window.removeEventListener('fk-coros-changed', f) }, [athlete])
-  useEffect(() => { if (linked && (!data || Date.now() - Date.parse(data.fetchedAt) > 30 * 60e3)) void refresh() }, [linked]) // eslint-disable-line react-hooks/exhaustive-deps
+  const live = useCorosSyncLive(), context = live.context, athlete = context.athleteId
+  const [view, setView] = useState(() => ({ athlete, data: loadCorosHealth(athlete), linked: corosMcpLinked(athlete) }))
+  const data = view.athlete === athlete ? view.data : null, linked = view.athlete === athlete && view.linked
+  const busy = live.health.running, error = live.health.error
+  const msg = error ? corosNeedsLogin(error) ? `高驰授权已过期，请到“设备连接与同步”重新授权。${data ? '下面是本机保存的上次数据。' : ''}` : error instanceof Error ? error.message : '读取失败' : ''
+  const refresh = () => { void runCorosHealthSync('manual').catch(() => {}) }
+  useEffect(() => {
+    const reload = () => {
+      if (!isCurrentCorosContext(context)) return
+      const cached = loadCorosHealth(athlete), received = live.health.result
+      const latest = received && (!cached || Date.parse(received.fetchedAt) >= Date.parse(cached.fetchedAt)) ? received : cached
+      setView({ athlete, data: latest, linked: corosMcpLinked(athlete) })
+    }
+    reload(); window.addEventListener('fk-coros-changed', reload)
+    return () => window.removeEventListener('fk-coros-changed', reload)
+  }, [athlete, context.generation, live.health.result]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (linked) void runCorosHealthSync('auto').catch(() => {}) }, [linked, athlete, context.generation])
   const today = localDay(new Date().toISOString())
   const trend = useMemo(() => data ? corosTrend(data.days, athlete, today) : [], [data, athlete, today])
-  const sessions = useMemo(() => { try { return loadTrainingActivities().filter(r => rowProvider(r) === 'COROS' && r.startedAt && localDay(r.startedAt) === day) } catch { return [] } }, [day, data])
-  if (!linked && !data) return null
+  const sessions = useMemo(() => { try { return loadTrainingActivities().filter(r => rowProvider(r) === 'COROS' && r.startedAt && localDay(r.startedAt) === day) } catch { return [] } }, [day, data, athlete])
+  if (!linked && !data && !busy && !error) return null
   const stress = (data?.stress ?? []).map(p => p.iso ? { m: localDay(p.iso) === day ? localMin(p.iso) : null, v: p.value } : { m: p.local?.slice(0, 10) === day ? minOfLocal(p.local) : null, v: p.value }).filter(p => p.m != null) as { m: number; v: number }[]
   const x = (m: number) => PAD + (m / 1440) * (W - 2 * PAD), y = (v: number) => H - PAD - (v / 100) * (H - 2 * PAD)
   const sleepBands = (data?.days ?? []).flatMap(d => d.sleepStart && d.sleepEnd ? [[d.sleepStart, d.sleepEnd]] : []).flatMap(([s, e]) => {
@@ -50,6 +62,7 @@ export function CorosHealthPanel({ day }: { day: string }) {
       <p className="keep text-[11px] text-muted">个人基准 = 此前 7 个完整日的中位数，只用高驰自己的数据，不到 7 天显示“不足”；不和佳明数据混算。—=高驰没给或认不出。</p></div>
     {data?.issues.length ? <details className="mt-2 text-xs"><summary>待核：{data.issues.length} 项高驰返回没认出来</summary><ul className="list-disc pl-4">{data.issues.map((x, i) => <li key={i}>{x}</li>)}</ul>
       {Object.entries(data.raw ?? {}).map(([k, v]) => <details key={k}><summary>{k} 原文</summary><pre className="whitespace-pre-wrap break-all text-[10px]">{v || '（空）'}</pre></details>)}</details> : null}
-    {msg ? <p role="status" className="mt-2 text-xs">{msg}</p> : null}
+    {msg ? <p role="status" className="mt-2 text-sm">{msg}</p> : null}
+    {error && corosNeedsLogin(error) ? <button type="button" className="min-h-11 text-accent" onClick={() => openDeviceSync({ provider: 'coros' })}>重新连接高驰 ›</button> : null}
   </section>
 }

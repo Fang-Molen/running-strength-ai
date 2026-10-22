@@ -135,7 +135,9 @@
     "vaul": "^1.1.2",
     "vite": "^8.2.0",
     "zod": "^4.4.0",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.0",
+    "@capacitor/core": "8.5.3",
+    "@fangkun/native-health": "file:native/fangkun-health"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

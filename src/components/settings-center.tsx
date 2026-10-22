@@ -2,8 +2,8 @@ import { stampCN } from "@/lib/ui/activity-format";
 /* R1「个人与数据」：一级三组入口 + 二级页（同步状态、备份恢复、隐私、健康）。只做展示与入口整理，存储键与业务写入沿用原实现。 */
 import { CorosStatusRows } from "@/components/coros-account";
 import { useEffect, useRef, useState } from "react";
-import { Bot, ChevronDown, ChevronRight, Cpu, Database, FileUp, HeartPulse, Palette, ShieldCheck, Target, TriangleAlert, UserRound, Watch } from "lucide-react";
-import { currentAthleteId } from "@/lib/core/events";
+import { Bot, ChevronDown, ChevronRight, Cpu, Database, HeartPulse, Palette, ShieldCheck, Target, TriangleAlert, UserRound, Watch } from "lucide-react";
+import { ATHLETE_SCOPE_CHANGED, currentAthleteId } from "@/lib/core/events";
 import { loadVitals } from "@/lib/nutrition/vitals";
 import { loadExtras } from "@/lib/health/device-store";
 import { subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
@@ -16,6 +16,7 @@ import { athleteLines, athleteSummary } from "@/lib/ui/profile-labels";
 import type { Profile } from "@/lib/strength/profile";
 import { InjuryCard } from "@/components/today-board";
 import "./device-settings-detail.css";
+import { useGarminSyncLive } from "@/lib/ui/garmin-sync-live";
 
 export type SettingsPane = "menu" | "athlete" | "goals" | "health" | "sync" | "import" | "backup" | "coach" | "theme" | "ai" | "privacy";
 export type GarminConnState = { loggedIn: boolean; unreachable?: boolean } | null;
@@ -29,7 +30,7 @@ function observations(): ObservationLike[] {
 export function useGarminDisplay(conn: GarminConnState): SyncDisplay {
   const read = () => readGarminSyncDisplay(localStorage, currentAthleteId(), conn ? (conn.unreachable ? null : conn.loggedIn) : null);
   const [g, setG] = useState<SyncDisplay>(() => typeof localStorage === "undefined" ? readGarminSyncDisplay({ getItem: () => null }, "local", null) : read());
-  useEffect(() => { const f = () => setG(read()); f(); return subscribeGarminSyncStatus(f); }, [conn?.loggedIn, conn?.unreachable]);
+  useEffect(() => { const f = () => setG(read()); f(); const stop = subscribeGarminSyncStatus(f); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); return () => { stop(); window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); }; }, [conn?.loggedIn, conn?.unreachable]);
   return g;
 }
 /** 菜单页只读一次真实连接状态（不触发同步）。 */
@@ -55,6 +56,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 export function SettingsMenu({ profile, sportGoal, displayText, onPane, onProfile }: { profile: Profile; sportGoal: string; displayText: string; onPane: (p: SettingsPane) => void; onProfile: () => void }) {
   const conn = useGarminConn();
   const g = useGarminDisplay(conn);
+  const live = useGarminSyncLive();
   const [extra, setExtra] = useState({ injury: "尚未填写", lastImport: "暂无记录", lastExport: "暂无记录", snaps: 0, coach: "", vision: "" });
   useEffect(() => {
     const s = loadSettings(); const imp = readDeviceImportDisplay(observations());
@@ -70,8 +72,7 @@ export function SettingsMenu({ profile, sportGoal, displayText, onPane, onProfil
       <MenuRow icon={HeartPulse} title="健康与训练限制" sub={`伤病：${extra.injury}`} onClick={() => onPane("health")} />
     </Group>
     <Group title="设备与数据">
-      <MenuRow icon={Watch} title="设备连接与同步" sub={syncSummary(g)} warn={syncWarn} onClick={() => onPane("sync")} testId="menu-sync" />
-      <MenuRow icon={FileUp} title="数据导入" sub={`手表文件 / 截图 · 最近导入 ${extra.lastImport}`} onClick={() => onPane("import")} />
+      <MenuRow icon={Watch} title="设备与数据同步" sub={live.running ? "佳明账号 · 正在同步" : "手表与运动软件 · 账号连接 / 文件导入"} warn={live.running ? undefined : syncWarn} onClick={() => onPane("sync")} testId="menu-sync" />
       <MenuRow icon={Database} title="备份与恢复" sub={`最近触发导出 ${extra.lastExport} · 自动快照 ${extra.snaps} 份`} onClick={() => onPane("backup")} testId="menu-backup" />
     </Group>
     <Group title="应用与隐私">
@@ -88,19 +89,20 @@ function KV({ k, v, tone }: { k: string; v: string; tone?: "warn" | "ok" }) { re
 /** 设备连接与同步：状态总览 + 报告。连接状态由 GarminSync 实际查询后回传。 */
 export function SyncStatusPanel({ conn }: { conn: GarminConnState }) {
   const g = useGarminDisplay(conn);
+  const live = useGarminSyncLive();
   const [obs, setObs] = useState<ObservationLike[]>([]);
-  useEffect(() => { const f = () => setObs(observations()); f(); window.addEventListener("fk-garmin-synced", f); return () => window.removeEventListener("fk-garmin-synced", f); }, []);
+  useEffect(() => { const f = () => setObs(observations()); f(); window.addEventListener("fk-garmin-synced", f); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); return () => { window.removeEventListener("fk-garmin-synced", f); window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); }; }, []);
   const imp = readDeviceImportDisplay(obs), recv = latestGarminReceipt(obs);
   const connText = conn === null ? "正在确认…" : conn.unreachable ? "同步服务暂时不可达" : conn.loggedIn ? "已连接" : "未登录";
   const bad = ["partial", "failed", "auth", "unknown"].includes(g.status);
-  return <section className="home-card device-sync-panel mt-3 p-4 text-sm" aria-label="同步状态总览" data-testid="sync-status" data-status={g.status}>
+  return <section className="home-card device-sync-panel mt-3 p-4 text-sm" aria-label="同步状态总览" data-testid="sync-status" data-status={live.running ? "running" : g.status}>
     <div className="device-account-heading">
-      <div><h3 className="font-bold">同步记录</h3><p className="mt-1 text-muted">佳明 · {g.status === "never" ? "尚未同步" : `最近尝试 ${fmtTime(g.lastAttemptAt)}`}</p></div>
-      <span className="device-account-status" data-tone={bad ? "warn" : g.status === "ok" ? "ok" : undefined}>{g.status === "ok" ? "完整成功" : g.status === "never" ? "暂无记录" : STATUS_TEXT[g.status]}</span>
+      <div><h3 className="font-bold">同步记录</h3><p className="mt-1 text-muted">佳明 · {live.running ? `开始于 ${fmtTime(live.startedAt)}` : g.status === "never" ? "尚未同步" : `最近尝试 ${fmtTime(g.lastAttemptAt)}`}</p></div>
+      <span className="device-account-status" data-tone={live.running ? undefined : bad ? "warn" : g.status === "ok" ? "ok" : undefined}>{live.running ? "正在同步" : g.status === "ok" ? "完整成功" : g.status === "never" ? "暂无记录" : STATUS_TEXT[g.status]}</span>
     </div>
-    {bad ? <p role="status" className="device-sync-notice" data-tone="warn">{g.status === "partial" ? `部分同步未完成${g.errors.length ? `（${g.errors.length} 项）` : ""}，已有数据不受影响。` : g.status === "auth" ? "请重新登录佳明后再同步。" : g.status === "unknown" ? "同步结果暂时无法确认，请展开详情查看。" : "最近一次同步未完成，可稍后重试。"}</p> : null}
+    {!live.running && bad ? <p role="status" className="device-sync-notice" data-tone="warn">{g.status === "partial" ? `部分同步未完成${g.errors.length ? `（${g.errors.length} 项）` : ""}，已有数据不受影响。` : g.status === "auth" ? "请重新登录佳明后再同步。" : g.status === "unknown" ? "同步结果暂时无法确认，请展开详情查看。" : "最近一次同步未完成，可稍后重试。"}</p> : null}
     <details id="sync-report" className="device-sync-disclosure" data-testid="sync-report">
-      <summary><span>同步详情</span><ChevronDown aria-hidden="true" /></summary>
+      <summary><span>{live.running ? "上一次同步详情" : "同步详情"}</span><ChevronDown aria-hidden="true" /></summary>
       <div className="device-sync-detail-body">
         <h4 className="font-bold">佳明账号</h4>
         <div className="device-sync-rows">

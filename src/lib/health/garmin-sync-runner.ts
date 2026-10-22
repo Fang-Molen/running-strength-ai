@@ -107,7 +107,8 @@ export async function runGarminSyncJob(host: {
     // 增量：只取最近 3 天（0–2）；完整复核：14 天 + 往前补 14 天，直到满 90 天。补历史游标只在保存成功后推进。
     const HIST = 90, from = cursor
     const offsets = mode === 'INITIAL' ? [...Array.from({ length: 14 }, (_, i) => i), ...Array.from({ length: HIST - from }, (_, i) => from + i)] : plan.offsets
-    let done = 0, dailyThrottled = false
+    let done = 0, dailyThrottled = false, unavailableStreak = 0, serviceUnavailable = false
+    let firstUnavailable: number | null = null, firstUnavailableHistory: number | null = null
     // v89.1：日内样本首次/历史不足时补到 28 天。今天、昨天每次都重取；更早的只取还没取全的日子。
     // 不在本次日汇总范围内的日子（第 14–27 天）单独逐天取，每天之间停顿，遇到 429 立即停止日内补取（日汇总照常）。
     let throttled = false
@@ -125,7 +126,7 @@ export async function runGarminSyncJob(host: {
       host.progress(mode === 'INITIAL' ? `首次同步：活动 ${acts.length} 条 · 健康 ${n + 1}/${offsets.length} 天${i < INTRADAY_DAYS ? '（含日内）' : ''}` : `${mode === 'RECENT' ? '增量同步' : '完整复核'}：已取得 ${acts.length} 条活动记录 · 健康 ${n + 1}/${offsets.length} 天${i >= 14 ? '（补更早历史）' : ''}`)
       const wantIntraday = !!host.intraday && !throttled && i < INTRADAY_DAYS && (i < 2 || !host.intraday.complete(d))
       const none = Promise.resolve(undefined)
-      if ((wantIntraday || mode === 'INITIAL') && i >= 2) await (host.sleep ?? defaultSleep)(INTRADAY_GAP_MS)
+      if (wantIntraday && i >= 2) await (host.sleep ?? defaultSleep)(INTRADAY_GAP_MS)
       const [s, h, sl, ihr, ist] = await Promise.all([
         api(`g/usersummary-service/usersummary/daily/${encodeURIComponent(account.name)}?calendarDate=${d}`),
         api(`g/hrv-service/hrv/${d}`), api(`g/wellness-service/wellness/dailySleepData/${encodeURIComponent(account.name)}?date=${d}`),
@@ -140,8 +141,20 @@ export async function runGarminSyncJob(host: {
       const parsed = garminHealthDay(d, account.scope, s, h, sl, host.now)
       health.push(...parsed.rows); result.errors.push(...parsed.failures)
       if (parsed.rows.length) result.coverageDays.push(d)
+      // 只有整天的三个接口都发生网络/网关故障才计连续失败；空数据、404 或单项缺失仍继续。
+      if ([s, h, sl].every(r => [0, 502, 503, 504].includes(r.status))) {
+        firstUnavailable ??= n
+        if (i >= 14) firstUnavailableHistory ??= n
+        unavailableStreak++
+      }
+      else unavailableStreak = 0
+      if (unavailableStreak >= 2) {
+        serviceUnavailable = true
+        result.errors.push('连续 2 天的健康接口暂不可用，已暂停后续请求；保留已有记录，稍后重试未完成日期')
+        break
+      }
     }
-    if (host.intraday) {
+    if (host.intraday && !serviceUnavailable) {
       const extra = Array.from({ length: INTRADAY_DAYS }, (_, i) => i).filter(i => !offsets.includes(i)).map(i => shiftDay(host.day, -i)).filter(d => !host.intraday!.complete(d))
       for (const [n, d] of extra.entries()) {
         if (throttled || !unchanged()) break
@@ -164,10 +177,11 @@ export async function runGarminSyncJob(host: {
     result.saved = saved.saved; result.skipped = saved.skipped; result.errors.push(...saved.errors)
     if (intraday.length) { try { intradayStat.saved = host.intraday?.save(intraday) ?? 0; if (!intradayStat.saved) intradayStat.failed.push('日内样本本机保存失败（空间不足？）') } catch { intradayStat.failed.push('日内样本本机保存失败') } }
     if (host.intraday) result.intraday = intradayStat
-    const back = offsets.slice(0, done).filter(i => i >= 14), upTo = back.length ? Math.max(...back) + 1 : from
+    // 历史游标不能跨过未取得的旧日；近 14 天下次完整复核会重取，不阻止已保存历史推进。
+    const back = offsets.slice(0, firstUnavailableHistory ?? done).filter(i => i >= 14), upTo = back.length ? Math.max(...back) + 1 : from
     if (!saved.errors.length && upTo > from) host.backfill?.set(account.scope, upTo)
     // 完整复核/首次同步完整做完且本机保存无误才记时间（按佳明账号分开）；被限流中断的不记，下次继续。
-    if (mode !== 'RECENT' && !dailyThrottled && done === offsets.length && !saved.errors.length) { try { host.fullReview?.set(account.scope, host.now) } catch { /* 下次再复核 */ } }
+    if (mode !== 'RECENT' && !dailyThrottled && firstUnavailable === null && done === offsets.length && !saved.errors.length) { try { host.fullReview?.set(account.scope, host.now) } catch { /* 下次再复核 */ } }
     // Raw activity view remains account/athlete scoped and never counts as training sessions.
     host.saveView(raw.flatMap(o => { const a = garminActivity(o, account.scope); return a ? [{ ...o, fkSourceIdentity: a.sourceIdentity, fkStartIso: a.startIso }] : [] }), result.accountScope!)
     result.status = result.errors.length ? (result.saved + result.skipped ? 'partial' : 'fail') : health.length + acts.length ? 'ok' : 'empty'

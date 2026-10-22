@@ -1,0 +1,1290 @@
+--- a/src/components/coros-account.tsx
++++ b/src/components/coros-account.tsx
+@@ -1,12 +1,12 @@
+ import { useEffect, useRef, useState } from 'react'
+ import { Check, ChevronDown } from 'lucide-react'
+ import { corosNeedsLogin, loadCorosMeta, saveCorosMeta } from '@/lib/health/coros-account-sync'
+-import { corosMcpDisconnect, corosMcpLaps, corosMcpRecent, corosMcpStartUrl, corosMcpStatus, legacyCorosLoggedIn, legacyCorosLogout, setCorosMcpLinked, type McpPreview } from '@/lib/health/coros-mcp-client'
++import { captureCorosContext, isCurrentCorosContext, invalidateCorosContext, corosMcpDisconnect, corosMcpLaps, corosMcpLinked, corosMcpStartUrl, corosMcpStatus, legacyCorosLoggedIn, legacyCorosLogout, setCorosMcpLinked, type McpPreview } from '@/lib/health/coros-mcp-client'
+ import { corosLabelOf, crossBrandCandidates, crossBrandPairsInLog } from '@/lib/health/brand-isolation'
+ import type { McpLap } from '@/lib/health/coros-mcp-parse'
+ import { loadTrainingActivities } from '@/lib/ui/training-read-model'
+ import { activityDraftId, existingKeys, saveDeviceRows } from '@/lib/ui/device-store'
+-import { currentAthleteId } from '@/lib/core/events'
++import { dismissCorosActivityPreview, runCorosActivitySync, useCorosSyncLive } from '@/lib/ui/coros-sync-live'
+ import { fmtDurationPrecise, fmtSeconds } from '@/lib/ui/activity-format'
+ import './device-settings-detail.css'
+ 
+@@ -17,22 +17,44 @@
+ const AUTH_MSG: Record<string, string> = { ok: '已用高驰官方授权登录。', denied: '你在高驰页面取消了授权。', state: '授权已过期或不是从本页发起，请重新点“用高驰授权登录”。', code: '高驰没有返回授权码，请重试。', reauthorize: '高驰拒绝了授权，请重试。', register_failed: '高驰客户端注册失败，请稍后再试。', host_not_allowed: '高驰返回了白名单外的地址，已停止。', server_not_configured: '服务器未配置，暂不能授权。' }
+ /** v89.10：高驰卡片只保留官方 MCP 授权（OAuth）。不再收账号密码；读到的活动先列出，勾选确认后才保存进日志。 */
+ export function CorosAccount({ compact = false }: { compact?: boolean }) {
++  const live = useCorosSyncLive(), context = live.context, athlete = context.athleteId
+   const [state, setState] = useState<'checking' | 'out' | 'in' | 'unreachable'>('checking')
+   const [legacy, setLegacy] = useState(false), [region, setRegion] = useState<'cn' | 'auto'>('cn')
+-  const [busy, setBusy] = useState(false), [msg, setMsg] = useState('')
++  const [disconnecting, setDisconnecting] = useState(false), [msg, setMsg] = useState('')
+   const [rows, setRows] = useState<McpPreview[] | null>(null), [pick, setPick] = useState<Record<string, boolean>>({}), [dup, setDup] = useState<Set<string>>(new Set())
+   const [cross, setCross] = useState<Set<string>>(new Set()), [logPairs, setLogPairs] = useState(0), [unusable, setUnusable] = useState(0)
+   const [laps, setLaps] = useState<Record<string, McpLap[] | string>>({})
+-  const busyRef = useRef(false), rowsRef = useRef<McpPreview[] | null>(null)
++  const disconnectingRef = useRef(false), rowsRef = useRef<McpPreview[] | null>(null), lapPending = useRef(new Set<string>()), viewContext = useRef(context)
++  const disconnectJob = useRef(0), disconnectAthlete = useRef<string | null>(null)
++  const [lapBusy, setLapBusy] = useState<Set<string>>(new Set())
++  const busy = disconnecting || live.activities.running
++  const ownsView = viewContext.current.athleteId === athlete && viewContext.current.generation === context.generation
++  const shownState = ownsView ? state : 'checking'
+   rowsRef.current = rows
+   useEffect(() => {
+     const q = new URLSearchParams(location.search).get('coros_auth')
+     if (q) { setMsg(AUTH_MSG[q] ?? `高驰授权未完成（${q}）。`); const u = new URL(location.href); u.searchParams.delete('coros_auth'); history.replaceState(null, '', u.pathname + u.search + u.hash) }
+-    corosMcpStatus().then(s => { setState(s.connected ? 'in' : 'out'); setCorosMcpLinked(currentAthleteId(), s.connected)
+-      if (s.connected) void legacyCorosLogout(); else void legacyCorosLoggedIn().then(setLegacy) }).catch(() => setState('unreachable'))
+   }, [])
+-  const expired = () => { setState('out'); setRows(null); setCorosMcpLinked(currentAthleteId(), false); setMsg('高驰授权已过期，请重新点“用高驰授权登录”。已保存的记录不受影响。') }
+-  const run = async (f: () => Promise<void>) => { if (busyRef.current) return; busyRef.current = true; setBusy(true); setMsg(''); try { await f() } catch (e) { if (corosNeedsLogin(e)) expired(); else setMsg(e instanceof Error ? e.message : '高驰请求失败') } finally { busyRef.current = false; setBusy(false) } }
++  useEffect(() => {
++    let active = true
++    const changed = viewContext.current.athleteId !== athlete || viewContext.current.generation !== context.generation
++    viewContext.current = context; rowsRef.current = null
++    setRows(null); setPick({}); setDup(new Set()); setCross(new Set()); setUnusable(0); setLogPairs(0); setLaps({}); setLapBusy(new Set()); lapPending.current.clear(); setLegacy(false)
++    if (changed) setMsg('')
++    if (disconnectingRef.current && disconnectAthlete.current !== athlete) { disconnectJob.current++; disconnectingRef.current = false; setDisconnecting(false) }
++    if (disconnectingRef.current) return () => { active = false }
++    setState('checking')
++    corosMcpStatus().then(s => {
++      if (!active || !isCurrentCorosContext(context)) return
++      setState(s.connected ? 'in' : 'out'); setCorosMcpLinked(athlete, s.connected)
++      if (s.connected) void legacyCorosLogout()
++      else void legacyCorosLoggedIn().then(value => { if (active && isCurrentCorosContext(context)) setLegacy(value) })
++    }).catch(error => { if (active && isCurrentCorosContext(context)) setState(corosNeedsLogin(error) ? 'out' : 'unreachable') })
++    const linkedChanged = () => { if (active && isCurrentCorosContext(context) && !corosMcpLinked(athlete)) { setState('out'); setRows(null) } }
++    window.addEventListener('fk-coros-changed', linkedChanged)
++    return () => { active = false; window.removeEventListener('fk-coros-changed', linkedChanged) }
++  }, [athlete, context.generation]) // eslint-disable-line react-hooks/exhaustive-deps
++  const expired = () => { if (!isCurrentCorosContext(context)) return; setState('out'); setRows(null); setCorosMcpLinked(athlete, false); setMsg('高驰授权已过期，请重新点“用高驰授权登录”。已保存的记录不受影响。') }
+   /** 已保存过（同一高驰 labelId，含旧登录方式保存的）和“可能与佳明同一次活动”的默认不勾选；绝不自动合并。 */
+   const prepare = (list: McpPreview[]) => {
+     const have = existingKeys(), all = logRows(), savedLabels = new Set(all.flatMap(r => r.originIds.map(corosLabelOf)).filter(Boolean) as string[])
+@@ -41,79 +63,106 @@
+     const c = new Set(crossBrandCandidates(list.filter(a => !d.has(a.key)).map(asLike), all, 'COROS').keys())
+     return { d, c }
+   }
+-  const read = () => run(async () => {
+-    const r = await corosMcpRecent(28); const { d, c } = prepare(r.rows)
+-    setDup(d); setCross(c); setUnusable(r.unusable.length); setPick(Object.fromEntries(r.rows.map(a => [a.key, !d.has(a.key) && !c.has(a.key)]))); setRows(r.rows)
+-    saveCorosMeta(currentAthleteId(), { at: new Date().toISOString(), read: r.rows.length })
+-    setMsg(r.total ? `读到 ${r.rows.length} 条跑步/力量（${d.size} 条已保存过${c.size ? `，${c.size} 条可能与佳明记录是同一次活动` : ''}）${r.other ? `；其他运动 ${r.other} 条未列出` : ''}${r.truncated ? '；可能没读全（一次最多 100 条）' : ''}。勾选核对无误的再保存。` : '近 28 天没有读到活动。')
+-  })
+-  // 前台自动检查：只在已授权时运行；页面在前台每 10 分钟查近 7 天，回到前台也查一次。只列出未保存的新活动，绝不自动保存。
++  const read = () => { if (!busy) void runCorosActivitySync('manual').catch(() => {}) }
++  useEffect(() => {
++    const r = live.activities.result
++    if (!r || !isCurrentCorosContext(context)) return
++    const { d, c } = prepare(r.rows)
++    setUnusable(r.unusable.length)
++    if (live.activities.mode === 'auto') {
++      const fresh = r.rows.filter(a => !d.has(a.key)), cur = rowsRef.current
++      if (!fresh.length) { if (!cur?.length) setMsg('近 7 天没有新的待保存活动。'); return }
++      if (cur && fresh.every(a => cur.some(x => x.key === a.key))) return
++      setRows(fresh); setDup(new Set()); setCross(c); setPick(p => Object.fromEntries(fresh.map(a => [a.key, p[a.key] ?? !c.has(a.key)])))
++      setMsg(`发现 ${fresh.length} 条未保存的高驰活动${c.size ? `（${c.size} 条可能与佳明记录是同一次活动）` : ''}，核对后勾选保存。`)
++    } else {
++      setDup(d); setCross(c); setPick(Object.fromEntries(r.rows.map(a => [a.key, !d.has(a.key) && !c.has(a.key)]))); setRows(r.rows)
++      setMsg(r.total ? `读到 ${r.rows.length} 条跑步/力量（${d.size} 条已保存过${c.size ? `，${c.size} 条可能与佳明记录是同一次活动` : ''}）${r.other ? `；其他运动 ${r.other} 条未列出` : ''}${r.truncated ? '；可能没读全（一次最多 100 条）' : ''}。勾选核对无误的再保存。` : '近 28 天没有读到活动。')
++    }
++  }, [live.activities.result, athlete, context.generation]) // eslint-disable-line react-hooks/exhaustive-deps
++  useEffect(() => {
++    const error = live.activities.error
++    if (!error) return
++    if (corosNeedsLogin(error)) expired(); else setMsg(error instanceof Error ? error.message : '高驰请求失败')
++  }, [live.activities.error]) // eslint-disable-line react-hooks/exhaustive-deps
++  // 前台自动检查共享任务与十分钟间隔；离开再返回不会重复读取，也不会自动保存。
+   useEffect(() => {
+     if (state !== 'in') return
+-    let active = true
+-    const refresh = async () => {
+-      if (!active || busyRef.current || document.visibilityState !== 'visible') return
+-      busyRef.current = true
+-      try {
+-        const r = await corosMcpRecent(7); if (!active) return
+-        const { d, c } = prepare(r.rows), fresh = r.rows.filter(a => !d.has(a.key))
+-        if (!fresh.length) return
+-        const cur = rowsRef.current; if (cur && fresh.every(a => cur.some(x => x.key === a.key))) return
+-        setRows(fresh); setDup(new Set()); setCross(c); setPick(p => Object.fromEntries(fresh.map(a => [a.key, p[a.key] ?? !c.has(a.key)])))
+-        setMsg(`发现 ${fresh.length} 条未保存的高驰活动${c.size ? `（${c.size} 条可能与佳明记录是同一次活动）` : ''}，核对后勾选保存。`)
+-        saveCorosMeta(currentAthleteId(), { at: new Date().toISOString(), read: r.rows.length })
+-      } catch (e) { if (active && corosNeedsLogin(e)) expired() }
+-      finally { busyRef.current = false }
+-    }
++    const refresh = () => { if (!disconnectingRef.current && isCurrentCorosContext(context) && document.visibilityState === 'visible') void runCorosActivitySync('auto').catch(() => {}) }
+     void refresh()
+     const id = window.setInterval(() => void refresh(), 10 * 60 * 1000)
+     const onVisible = () => { if (document.visibilityState === 'visible') void refresh() }
+     document.addEventListener('visibilitychange', onVisible)
+-    return () => { active = false; window.clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
+-  }, [state])
+-  const save = () => { if (!rows) return; const r = saveDeviceRows([], rows.filter(a => pick[a.key] && !dup.has(a.key)))
+-    const m = loadCorosMeta(currentAthleteId()); if (m) saveCorosMeta(currentAthleteId(), { ...m, saved: r.saved })
++    return () => { window.clearInterval(id); document.removeEventListener('visibilitychange', onVisible) }
++  }, [state, athlete, context.generation]) // eslint-disable-line react-hooks/exhaustive-deps
++  const save = () => { if (!rows || !ownsView || !isCurrentCorosContext(context)) return; const r = saveDeviceRows([], rows.filter(a => pick[a.key] && !dup.has(a.key)))
++    const m = loadCorosMeta(athlete); if (m) saveCorosMeta(athlete, { ...m, saved: r.saved })
+     setLogPairs(crossBrandPairsInLog(logRows()).length)
+-    setMsg(`已保存 ${r.saved} 条${r.skipped ? `，跳过已存在 ${r.skipped} 条` : ''}${r.errors.length ? `；${r.errors.length} 条未保存：${r.errors.slice(0, 2).join('；')}` : ''}。保存后在日志里查看；高驰记录不进佳明计划关联。`); if (!r.errors.length) setRows(null) }
++    setMsg(`已保存 ${r.saved} 条${r.skipped ? `，跳过已存在 ${r.skipped} 条` : ''}${r.errors.length ? `；${r.errors.length} 条未保存：${r.errors.slice(0, 2).join('；')}` : ''}。保存后在日志里查看；高驰记录不进佳明计划关联。`); if (!r.errors.length) { setRows(null); dismissCorosActivityPreview() } }
+   const showLaps = (a: McpPreview) => { if (a.sportType == null) { setLaps(l => ({ ...l, [a.key]: '没有运动类型码，查不了分圈' })); return }
+-    void corosMcpLaps(a.labelId, a.sportType).then(r => setLaps(l => ({ ...l, [a.key]: r.laps.length ? r.laps : (r.issues[0] ?? '没有分圈') }))).catch(e => { if (corosNeedsLogin(e)) expired(); else setLaps(l => ({ ...l, [a.key]: e instanceof Error ? e.message : '读取失败' })) }) }
++    if (lapPending.current.has(a.key) || Array.isArray(laps[a.key])) return
++    const owner = captureCorosContext(); lapPending.current.add(a.key); setLapBusy(new Set(lapPending.current))
++    void corosMcpLaps(a.labelId, a.sportType).then(r => { if (isCurrentCorosContext(owner)) setLaps(l => ({ ...l, [a.key]: r.laps.length ? r.laps : (r.issues[0] ?? '没有分圈') })) }).catch(e => { if (!isCurrentCorosContext(owner)) return; if (corosNeedsLogin(e)) expired(); else setLaps(l => ({ ...l, [a.key]: e instanceof Error ? e.message : '读取失败' })) }).finally(() => { if (isCurrentCorosContext(owner)) { lapPending.current.delete(a.key); setLapBusy(new Set(lapPending.current)) } }) }
++  const disconnect = async () => {
++    if (busy || disconnectingRef.current) return
++    const job = ++disconnectJob.current
++    disconnectAthlete.current = athlete; disconnectingRef.current = true; setDisconnecting(true); setMsg('')
++    const pending = corosMcpDisconnect(), owner = captureCorosContext()
++    try { const r = await pending; if (!isCurrentCorosContext(owner)) return; setState('out'); setRows(null); setCorosMcpLinked(owner.athleteId, false); setMsg(`已断开高驰。${r.revoked ? '' : '本机凭证已删除；如需彻底撤销授权，请到高驰 App 的授权管理里取消（入口待核）。'}已保存的记录不受影响。`) }
++    catch (error) { if (isCurrentCorosContext(owner)) { setState('unreachable'); setMsg(error instanceof Error ? error.message : '断开失败，请重试') } }
++    finally { if (disconnectJob.current === job) { disconnectingRef.current = false; setDisconnecting(false) } }
++  }
++  const message = !ownsView ? '' : disconnecting ? '正在断开高驰…' : live.activities.running ? (live.activities.mode === 'auto' ? '正在检查近 7 天的新活动…' : '正在读取近 28 天活动…') : msg
+   const nPick = rows ? rows.filter(a => pick[a.key] && !dup.has(a.key)).length : 0
+   return <section className={`device-account-card ${compact ? 'mt-3 rounded-xl border border-line p-3 text-sm' : 'home-card mt-3 p-4 text-sm'}`} aria-label="高驰账号" data-testid="coros-account">
+-    <div className="device-account-heading"><h3 className="font-bold">高驰（COROS）</h3><span role="status" className="device-account-status" data-tone={state === 'in' ? 'ok' : state === 'unreachable' ? 'warn' : undefined}>{state === 'in' ? '已授权' : state === 'checking' ? '确认中…' : state === 'unreachable' ? '暂不可达' : '未授权'}</span></div>
+-    <p className="keep mt-2 text-muted">{state === 'in' ? '读取近 28 天活动，核对后保存。' : '通过高驰官方授权，密码仅在高驰页面输入。'}</p>
+-    {legacy && state !== 'in' ? <p className="keep mt-2 rounded-lg border border-line p-2" data-testid="coros-legacy-note">高驰登录方式已升级为官方授权：请点下面按钮重新授权一次。以前保存的高驰记录都还在，不会重复保存。</p> : null}
+-    {state !== 'in' ? <div className="mt-2 space-y-2">
++    <div className="device-account-heading"><h3 className="font-bold">高驰（COROS）</h3><span role="status" className="device-account-status" data-tone={shownState === 'in' ? 'ok' : shownState === 'unreachable' ? 'warn' : undefined}>{shownState === 'in' ? '已授权' : shownState === 'checking' ? '确认中…' : shownState === 'unreachable' ? '暂不可达' : '未授权'}</span></div>
++    <p className="keep mt-2 text-muted">{shownState === 'in' ? '读取近 28 天活动，核对后保存。' : '通过高驰官方授权，密码仅在高驰页面输入。'}</p>
++    {ownsView && legacy && shownState !== 'in' ? <p className="keep mt-2 rounded-lg border border-line p-2" data-testid="coros-legacy-note">高驰登录方式已升级为官方授权：请点下面按钮重新授权一次。以前保存的高驰记录都还在，不会重复保存。</p> : null}
++    {shownState !== 'in' ? <div className="mt-2 space-y-2">
+       <div className="device-account-regions" role="radiogroup" aria-label="高驰账号地区">
+         {([['cn', '中国区账号'], ['auto', '海外账号（自动）']] as const).map(([v, l]) => <button key={v} type="button" role="radio" aria-checked={region === v} onClick={() => setRegion(v)} className={`min-h-11 flex-1 rounded-xl border px-2 ${region === v ? 'border-accent font-bold' : 'border-line'}`}><Check aria-hidden="true" className={region === v ? '' : 'invisible'} />{l}</button>)}
+       </div>
+-      <a href={corosMcpStartUrl(region)} onClick={() => { void legacyCorosLogout() }} className="flex min-h-11 w-full items-center justify-center rounded-xl bg-accent font-bold text-accent-fg" data-testid="coros-oauth">连接高驰</a>
++      <a href={shownState === 'checking' || disconnecting ? undefined : corosMcpStartUrl(region)} aria-disabled={shownState === 'checking' || disconnecting} tabIndex={shownState === 'checking' || disconnecting ? -1 : 0} onClick={event => { if (shownState === 'checking' || disconnecting) { event.preventDefault(); return }; invalidateCorosContext(); void legacyCorosLogout() }} className={`flex min-h-11 w-full items-center justify-center rounded-xl bg-accent font-bold text-accent-fg ${shownState === 'checking' || disconnecting ? 'opacity-50' : ''}`} data-testid="coros-oauth">连接高驰</a>
+     </div> : <div className="device-account-actions mt-2">
+       <button type="button" disabled={busy} className="min-h-11 flex-1 rounded-xl bg-accent px-3 font-bold text-accent-fg" onClick={() => void read()}>{busy ? '读取中…' : '立即同步'}</button>
+-      <button type="button" disabled={busy} className="min-h-11 rounded-xl border border-line px-3" onClick={() => void run(async () => { const r = await corosMcpDisconnect(); setState('out'); setRows(null); setCorosMcpLinked(currentAthleteId(), false); setMsg(`已断开高驰。${r.revoked ? '' : '本机凭证已删除；如需彻底撤销授权，请到高驰 App 的授权管理里取消（入口待核）。'}已保存的记录不受影响。`) })}>断开高驰</button>
++      <button type="button" disabled={busy} className="min-h-11 rounded-xl border border-line px-3" onClick={() => void disconnect()}>断开高驰</button>
+     </div>}
+-    {msg ? <p role="status" className="device-sync-message mt-2">{msg}</p> : null}
+-    {rows && rows.length ? <div className="mt-2 space-y-1" data-testid="coros-preview">
++    {message ? <p role="status" className="device-sync-message mt-2" data-testid="coros-sync-status">{message}</p> : null}
++    {ownsView && rows && rows.length ? <div className="mt-2 space-y-1" data-testid="coros-preview">
+       {rows.map(a => <div key={a.key} className="border-t border-line pt-1"><label className="flex min-h-11 items-center gap-2"><input type="checkbox" disabled={dup.has(a.key)} checked={!!pick[a.key] && !dup.has(a.key)} onChange={e => setPick(p => ({ ...p, [a.key]: e.target.checked }))} />
+         <span>{fmt(a.startIso)}{a.timeAssumed ? '（按本机时区，待核）' : ''} · {a.sportLabel}{a.distanceM ? ` · ${(a.distanceM / 1000).toFixed(2)} km` : ''}{a.durationSec ? ` · 用时 ${fmtDurationPrecise(a.durationSec)}` : ''}{a.avgHr ? ` · 均心率 ${a.avgHr}` : ''}{dup.has(a.key) ? '（已保存过）' : cross.has(a.key) ? '（可能与佳明同一次活动，默认不勾选）' : ''}</span></label>
+-        <button type="button" className="min-h-11 px-2 text-accent" onClick={() => showLaps(a)}>分圈</button>
++        <button type="button" disabled={lapBusy.has(a.key)} className="min-h-11 px-2 text-accent" onClick={() => showLaps(a)}>{lapBusy.has(a.key) ? '读取分圈…' : '分圈'}</button>
+         {Array.isArray(laps[a.key]) ? <div className="mt-1 overflow-x-auto"><table aria-label="高驰分圈" className="w-full whitespace-nowrap text-sm tabular-nums"><thead><tr><th>圈</th><th>用时</th><th>配速</th><th>均心率</th><th>步频</th></tr></thead><tbody>{(laps[a.key] as McpLap[]).map((l, i) => <tr key={i} className="text-center"><td>{l.index ?? i + 1}</td><td className="px-1">{fmtSeconds(l.timeSec)}</td><td className="px-1">{l.paceSecPerKm != null ? `${Math.floor(l.paceSecPerKm / 60)}'${String(Math.round(l.paceSecPerKm % 60)).padStart(2, '0')}"` : '—'}</td><td className="px-1">{l.avgHr ?? '—'}</td><td>{l.avgCadence ?? '—'}</td></tr>)}</tbody></table></div> : laps[a.key] ? <p className="text-muted">{laps[a.key] as string}</p> : null}</div>)}
+       <button type="button" disabled={!nPick} className="min-h-11 w-full rounded-xl bg-accent font-bold text-accent-fg disabled:opacity-50" onClick={save}>保存选中的 {nPick} 条</button>
+     </div> : null}
+-    {unusable ? <p className="keep mt-2 text-warn">另有 {unusable} 条活动高驰没给出活动标识或开始时刻，暂不能保存（待核）。</p> : null}
+-    {logPairs ? <p className="mt-2 text-muted" data-testid="coros-crossbrand-note">日志里有 {logPairs} 条高驰记录与佳明记录开始时间相差 2 分钟内、距离/时长接近，可能是同一次活动记了两次。没有自动合并，请到日志里核对，需要时删掉其中一条。</p> : null}
++    {ownsView && unusable ? <p className="keep mt-2 text-warn">另有 {unusable} 条活动高驰没给出活动标识或开始时刻，暂不能保存（待核）。</p> : null}
++    {ownsView && logPairs ? <p className="mt-2 text-muted" data-testid="coros-crossbrand-note">日志里有 {logPairs} 条高驰记录与佳明记录开始时间相差 2 分钟内、距离/时长接近，可能是同一次活动记了两次。没有自动合并，请到日志里核对，需要时删掉其中一条。</p> : null}
+     <details className="device-sync-disclosure">
+       <summary><span>同步说明</span><ChevronDown aria-hidden="true" /></summary>
+       <div className="device-sync-detail-body text-muted">
+         <p>通过高驰官方授权页登录，密码只在高驰页面输入，方坤拿不到。可读：活动、分圈、睡眠、睡眠 HRV、静息心率、日内压力、当前恢复度。高驰没有全天心率曲线，也没有“身体电量”。</p>
+         <p>高驰数据单独记来源，不和佳明混算、不进佳明计划关联。读取的活动需要核对、勾选后保存。</p>
+-        <p>已授权时，此页在前台每 10 分钟检查近 7 天的新活动，回到前台也会检查；只列出待核对记录，不会自动保存。手动同步读取近 28 天活动。</p>
++        <p>已授权时，此页在前台每 10 分钟检查近 7 天的新活动，回到前台时按此间隔检查；只列出待核对记录，不会自动保存。手动同步读取近 28 天活动。</p>
+       </div>
+     </details>
+   </section>
+ }
+ /** 设备连接与同步状态卡里的高驰行（只显示实际查询/读取结果）。 */
+ export function CorosStatusRows({ KV }: { KV: (p: { k: string; v: string; tone?: 'warn' | 'ok' }) => React.ReactNode }) {
+-  const [st, setSt] = useState<string>('正在确认…'), [meta, setMeta] = useState(() => loadCorosMeta(currentAthleteId()))
+-  useEffect(() => { const f = () => { setMeta(loadCorosMeta(currentAthleteId())); corosMcpStatus().then(s => setSt(s.connected ? '已授权（官方）' : '未授权')).catch(() => setSt('中转暂不可达')) }; f(); window.addEventListener('fk-coros-changed', f); return () => window.removeEventListener('fk-coros-changed', f) }, [])
+-  return <>{KV({ k: '连接状态', v: st })}{KV({ k: '最近读取', v: meta ? `${fmt(meta.at)} · 读到 ${meta.read} 条${meta.saved != null ? ` · 保存 ${meta.saved} 条` : ''}` : '暂无记录' })}</>
++  const { context } = useCorosSyncLive(), athlete = context.athleteId
++  const [view, setView] = useState(() => ({ context, status: '正在确认…', meta: loadCorosMeta(athlete) }))
++  useEffect(() => {
++    let active = true, wasLinked = corosMcpLinked(athlete)
++    setView({ context, status: '正在确认…', meta: loadCorosMeta(athlete) })
++    corosMcpStatus().then(s => { if (active && isCurrentCorosContext(context)) setView(v => ({ ...v, status: s.connected ? '已授权（官方）' : '未授权' })) }).catch(error => { if (active && isCurrentCorosContext(context)) setView(v => ({ ...v, status: corosNeedsLogin(error) ? '未授权' : '中转暂不可达' })) })
++    const changed = () => {
++      if (!active || !isCurrentCorosContext(context)) return
++      const linked = corosMcpLinked(athlete), linkChanged = wasLinked !== linked; wasLinked = linked
++      setView(v => ({ ...v, meta: loadCorosMeta(athlete), status: linkChanged ? (linked ? '已授权（官方）' : '未授权') : v.status }))
++    }
++    window.addEventListener('fk-coros-changed', changed)
++    return () => { active = false; window.removeEventListener('fk-coros-changed', changed) }
++  }, [athlete, context.generation]) // eslint-disable-line react-hooks/exhaustive-deps
++  const current = view.context.athleteId === athlete && view.context.generation === context.generation, meta = current ? view.meta : null
++  return <>{KV({ k: '连接状态', v: current ? view.status : '正在确认…' })}{KV({ k: '最近读取', v: meta ? `${fmt(meta.at)} · 读到 ${meta.read} 条${meta.saved != null ? ` · 保存 ${meta.saved} 条` : ''}` : '暂无记录' })}</>
+ }
+--- a/src/components/coros-health-panel.tsx
++++ b/src/components/coros-health-panel.tsx
+@@ -1,9 +1,9 @@
+ import { useEffect, useMemo, useState } from 'react'
+-import { corosMcpLinked, corosTrend, loadCorosHealth, refreshCorosHealth, setCorosMcpLinked, type CorosHealthCache } from '@/lib/health/coros-mcp-client'
++import { corosMcpLinked, corosTrend, isCurrentCorosContext, loadCorosHealth } from '@/lib/health/coros-mcp-client'
+ import { corosNeedsLogin } from '@/lib/health/coros-account-sync'
+ import { rowProvider } from '@/lib/health/brand-isolation'
+ import { loadTrainingActivities } from '@/lib/ui/training-read-model'
+-import { currentAthleteId } from '@/lib/core/events'
++import { runCorosHealthSync, useCorosSyncLive } from '@/lib/ui/coros-sync-live'
+ 
+ /** v89.10：高驰健康数据（官方授权）。只在本机连过高驰时显示；佳明用户看不到这块，佳明健康页原样不变。
+  * 不画“身体电量”曲线（高驰没有）；日内只画高驰压力，并标出睡眠时段和训练时段；HRV/静息心率/睡眠为日级趋势；恢复度只有当前值。
+@@ -14,16 +14,27 @@
+ const hm = (m: number | null | undefined) => m == null ? '—' : `${Math.floor(m / 60)}:${String(Math.round(m % 60)).padStart(2, '0')}`
+ const W = 320, H = 110, PAD = 18
+ export function CorosHealthPanel({ day }: { day: string }) {
+-  const athlete = currentAthleteId()
+-  const [data, setData] = useState<CorosHealthCache | null>(() => loadCorosHealth(athlete)), [linked, setLinked] = useState(() => corosMcpLinked(athlete))
+-  const [busy, setBusy] = useState(false), [msg, setMsg] = useState('')
+-  const refresh = async () => { if (busy) return; setBusy(true); setMsg(''); try { setData(await refreshCorosHealth(athlete)) } catch (e) { if (corosNeedsLogin(e)) { setCorosMcpLinked(athlete, false); setLinked(false); setMsg('高驰授权已过期，请到“设备连接与同步”重新授权。下面是本机保存的上次数据。') } else setMsg(e instanceof Error ? e.message : '读取失败') } finally { setBusy(false) } }
+-  useEffect(() => { const f = () => setLinked(corosMcpLinked(athlete)); window.addEventListener('fk-coros-changed', f); return () => window.removeEventListener('fk-coros-changed', f) }, [athlete])
+-  useEffect(() => { if (linked && (!data || Date.now() - Date.parse(data.fetchedAt) > 30 * 60e3)) void refresh() }, [linked]) // eslint-disable-line react-hooks/exhaustive-deps
++  const live = useCorosSyncLive(), context = live.context, athlete = context.athleteId
++  const [view, setView] = useState(() => ({ athlete, data: loadCorosHealth(athlete), linked: corosMcpLinked(athlete) }))
++  const data = view.athlete === athlete ? view.data : null, linked = view.athlete === athlete && view.linked
++  const busy = live.health.running, error = live.health.error
++  const msg = error ? corosNeedsLogin(error) ? `高驰授权已过期，请到“设备连接与同步”重新授权。${data ? '下面是本机保存的上次数据。' : ''}` : error instanceof Error ? error.message : '读取失败' : ''
++  const refresh = () => { void runCorosHealthSync('manual').catch(() => {}) }
++  useEffect(() => {
++    const reload = () => {
++      if (!isCurrentCorosContext(context)) return
++      const cached = loadCorosHealth(athlete), received = live.health.result
++      const latest = received && (!cached || Date.parse(received.fetchedAt) >= Date.parse(cached.fetchedAt)) ? received : cached
++      setView({ athlete, data: latest, linked: corosMcpLinked(athlete) })
++    }
++    reload(); window.addEventListener('fk-coros-changed', reload)
++    return () => window.removeEventListener('fk-coros-changed', reload)
++  }, [athlete, context.generation, live.health.result]) // eslint-disable-line react-hooks/exhaustive-deps
++  useEffect(() => { if (linked) void runCorosHealthSync('auto').catch(() => {}) }, [linked, athlete, context.generation])
+   const today = localDay(new Date().toISOString())
+   const trend = useMemo(() => data ? corosTrend(data.days, athlete, today) : [], [data, athlete, today])
+-  const sessions = useMemo(() => { try { return loadTrainingActivities().filter(r => rowProvider(r) === 'COROS' && r.startedAt && localDay(r.startedAt) === day) } catch { return [] } }, [day, data])
+-  if (!linked && !data) return null
++  const sessions = useMemo(() => { try { return loadTrainingActivities().filter(r => rowProvider(r) === 'COROS' && r.startedAt && localDay(r.startedAt) === day) } catch { return [] } }, [day, data, athlete])
++  if (!linked && !data && !busy && !error) return null
+   const stress = (data?.stress ?? []).map(p => p.iso ? { m: localDay(p.iso) === day ? localMin(p.iso) : null, v: p.value } : { m: p.local?.slice(0, 10) === day ? minOfLocal(p.local) : null, v: p.value }).filter(p => p.m != null) as { m: number; v: number }[]
+   const x = (m: number) => PAD + (m / 1440) * (W - 2 * PAD), y = (v: number) => H - PAD - (v / 100) * (H - 2 * PAD)
+   const sleepBands = (data?.days ?? []).flatMap(d => d.sleepStart && d.sleepEnd ? [[d.sleepStart, d.sleepEnd]] : []).flatMap(([s, e]) => {
+--- a/src/components/device-center.tsx
++++ b/src/components/device-center.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from 'react'
++import { useEffect, useRef, useState } from 'react'
+ import { DEVICE_GUIDES } from '@/lib/ui/device-guides'
+ import { preflightDeviceFile, type DeviceFilePreflight } from '@/lib/ui/device-import-contract'
+ import { parseCsvPreview, type CsvPreview } from '@/lib/ui/device-csv-preview'
+@@ -9,6 +9,8 @@
+   const [preflight, setPreflight] = useState<DeviceFilePreflight | null>(null)
+   const [csvPreview, setCsvPreview] = useState<CsvPreview | null>(null)
+   const [csvError, setCsvError] = useState('')
++  const csvGeneration = useRef(0)
++  useEffect(() => () => { csvGeneration.current++ }, [])
+   const guide = DEVICE_GUIDES.find((item) => item.id === selected) ?? DEVICE_GUIDES[0]
+   return <section className="mt-4 rounded-card border border-line bg-surface p-3 text-sm" aria-labelledby="device-center-heading">
+     <h2 id="device-center-heading" className="font-bold">智能设备接入指南</h2>
+@@ -44,20 +46,21 @@
+       <h3 className="font-bold">CSV 批量本地预览（只读）</h3>
+       <p className="mt-1 text-muted">一次查看最多 20 行；仅在当前页面读取，不上传、不保存、不生成训练或身体记录。不同品牌 CSV 字段尚未统一映射。</p>
+       <input aria-label="选择 CSV 批量预览文件" type="file" accept=".csv,text/csv" className="mt-2 block w-full max-w-full text-sm" onChange={async (event) => {
++        const generation = ++csvGeneration.current
+         const file = event.target.files?.[0]
+         event.target.value = ''
+         setCsvPreview(null); setCsvError('')
+         if (!file) return
+         if (!/\.csv$/i.test(file.name) || file.size > 2_000_000) { setCsvError('请选择不超过 2 MB 的 CSV 文件'); return }
+-        try { setCsvPreview(parseCsvPreview(await file.text())) }
+-        catch (error) { setCsvError(error instanceof Error ? error.message : 'CSV 读取失败') }
++        try { const text = await file.text(); if (generation === csvGeneration.current) setCsvPreview(parseCsvPreview(text)) }
++        catch (error) { if (generation === csvGeneration.current) setCsvError(error instanceof Error ? error.message : 'CSV 读取失败') }
+       }} />
+       {csvError && <p role="alert" className="mt-2 text-warn">{csvError}</p>}
+       {csvPreview && <div className="mt-3" role="status">
+         <p>共 {csvPreview.totalRows} 行数据，预览 {csvPreview.rows.length} 行；{csvPreview.headers.length} 列。</p>
+         {csvPreview.warnings.map((warning) => <p key={warning} className="text-warn">{warning}</p>)}
+         <div className="mt-2 max-h-64 overflow-auto rounded-card border border-line"><table className="min-w-full text-left text-xs"><thead><tr>{csvPreview.headers.map((header, i) => <th key={i} className="border-b border-line p-2">{header || `第${i + 1}列`}</th>)}</tr></thead><tbody>{csvPreview.rows.map((row, i) => <tr key={i}>{csvPreview.headers.map((_, j) => <td key={j} className="border-b border-line p-2">{row[j] ?? '—'}</td>)}</tr>)}</tbody></table></div>
+-        <button type="button" className="mt-2 underline" onClick={() => setCsvPreview(null)}>清除预览</button>
++        <button type="button" className="mt-2 underline" onClick={() => { csvGeneration.current++; setCsvPreview(null); setCsvError('') }}>清除预览</button>
+       </div>}
+     </div>
+     <p className="mt-3 text-muted">以实际导入和授权结果为准；本面板预检查通过不等于数据已导入。</p>
+--- a/src/lib/health/coros-mcp-client.ts
++++ b/src/lib/health/coros-mcp-client.ts
+@@ -3,22 +3,138 @@
+ import type { McpActivity, McpDay, McpLap, Recovery, StressPoint } from './coros-mcp-parse'
+ import { CorosError, corosSport } from './coros-account-sync'
+ import { corosProvenance } from './brand-isolation'
++import { ATHLETE_SCOPE_CHANGED, currentAthleteId } from '../core/events'
+ // @ts-ignore 研究模块（纯 JS）：日级标准化 + 同品牌基准
+ import { normalizeCorosDailyBatch } from './coros-mcp-daily-v1.mjs'
+ // @ts-ignore
+ import { projectDailyTrend } from './coros-crossbrand-trend.mjs'
+ 
+-async function call(path: string, init?: RequestInit) {
+-  const r = await fetch('/api/coros-mcp/' + path, { credentials: 'same-origin', ...init })
+-  const body = await r.json().catch(() => null) as ({ ok?: boolean; message?: string; error?: string } & Record<string, unknown>) | null
+-  if (!body) throw new CorosError('高驰中转没有返回有效数据', 'NO_BODY', r.status)
+-  if (!body.ok) throw new CorosError(body.message || '高驰请求失败', body.error === 'REAUTHORIZE' || body.error === 'NOT_CONNECTED' ? 'TOKEN_EXPIRED' : String(body.error ?? 'UNKNOWN'), r.status)
+-  return body
++export const COROS_CONTEXT_CHANGED = 'fk-coros-context-changed'
++export type CorosContext = Readonly<{ athleteId: string; generation: number }>
++// The server allows 25s per upstream request. Data reads also initialize MCP;
++// health has three waves of two tools and may refresh/retry a rejected token.
++export const COROS_REQUEST_TIMEOUT_MS = { status: 15_000, activities: 150_000, laps: 150_000, health: 180_000, disconnect: 35_000 } as const
++type Reply = { ok?: boolean; message?: string; error?: string } & Record<string, unknown>
++let generation = 0, contextAthlete = currentAthleteId(), scopeTarget: EventTarget | null = null
++const pending = new Map<string, Promise<Reply>>(), controllers = new Set<AbortController>()
++const statusCache = new Map<string, { body: Reply; until: number }>()
++const healthPending = new Map<string, Promise<CorosHealthCache>>()
++let disconnectPending: Promise<void> | null = null
++let disconnectController: AbortController | null = null
++let disconnected = false, authorizationRequired = false
++const staleContext = () => new CorosError('运动员或高驰授权已变化，已忽略本次返回。', 'STALE_CONTEXT', 409)
++const expiredAuthorization = () => new CorosError('高驰授权已失效，请重新授权。', 'TOKEN_EXPIRED', 401)
++function watchScope() {
++  const target = typeof window === 'undefined' ? null : window
++  if (target === scopeTarget) return
++  scopeTarget?.removeEventListener(ATHLETE_SCOPE_CHANGED, onAthleteScopeChanged)
++  scopeTarget = target
++  scopeTarget?.addEventListener(ATHLETE_SCOPE_CHANGED, onAthleteScopeChanged)
++}
++function resetCorosContext(disconnectBarrier: Promise<void> | null = null, preserveSession = false): void {
++  watchScope(); generation++; contextAthlete = currentAthleteId()
++  disconnectPending = disconnectBarrier
++  if (!preserveSession) { disconnected = false; authorizationRequired = false }
++  for (const controller of controllers) {
++    if (preserveSession && controller === disconnectController) continue
++    controller.abort(); controllers.delete(controller)
++  }
++  pending.clear(); statusCache.clear(); healthPending.clear()
++  scopeTarget?.dispatchEvent(new Event(COROS_CONTEXT_CHANGED))
++}
++// Session cookies are shared across athlete views; switching views must not release an active revocation.
++function onAthleteScopeChanged(): void { resetCorosContext(disconnectPending, true) }
++/** Clear only ephemeral requests/status, never imported records or credentials. */
++export function invalidateCorosContext(): void { resetCorosContext() }
++export function captureCorosContext(): CorosContext {
++  watchScope()
++  if (contextAthlete !== currentAthleteId()) onAthleteScopeChanged()
++  return Object.freeze({ athleteId: contextAthlete, generation })
++}
++export function isCurrentCorosContext(context: CorosContext): boolean {
++  const current = captureCorosContext()
++  return context.athleteId === current.athleteId && context.generation === current.generation
++}
++function requireContext(context: CorosContext) { if (!isCurrentCorosContext(context)) throw staleContext() }
++function requireReadContext(context: CorosContext) { requireContext(context); if (authorizationRequired) throw expiredAuthorization() }
++const requestKey = (context: CorosContext, path: string) => JSON.stringify([context.athleteId, context.generation, path])
++function call(path: string, init?: RequestInit, options: { force?: boolean } = {}): Promise<Reply> {
++  const context = captureCorosContext(), key = requestKey(context, path), read = !init?.method || init.method === 'GET'
++  const barrier = path === 'disconnect' ? disconnectPending : null
++  const requireRequestContext = () => { if (!barrier || disconnectPending !== barrier) requireContext(context) }
++  if (read && authorizationRequired) return Promise.reject(expiredAuthorization())
++  if (read && path !== 'status') {
++    if (disconnectPending) return disconnectPending.then(() => { requireContext(context); return call(path, init, options) })
++    if (disconnected) return Promise.reject(new CorosError('高驰连接已断开，请重新授权。', 'TOKEN_EXPIRED', 401))
++  }
++  const copy = (body: Reply) => { read ? requireReadContext(context) : requireRequestContext(); return structuredClone(body) }
++  if (read && path === 'status') {
++    if (options.force) statusCache.delete(key)
++    const cached = statusCache.get(key)
++    if (cached && cached.until > Date.now()) return Promise.resolve().then(() => copy(cached.body))
++    statusCache.delete(key)
++  }
++  const shared = read ? pending.get(key) : null
++  if (shared) return shared.then(copy)
++  const controller = new AbortController()
++  controllers.add(controller)
++  if (barrier) disconnectController = controller
++  let timedOut = false
++  const endpoint = path.split('?')[0] as keyof typeof COROS_REQUEST_TIMEOUT_MS
++  const timeout = setTimeout(() => { timedOut = true; controller.abort() }, COROS_REQUEST_TIMEOUT_MS[endpoint] ?? 150_000)
++  const cancelled = new Promise<never>((_, reject) => controller.signal.addEventListener('abort', () => reject(timedOut
++    ? new CorosError('高驰读取超时，请稍后重试。已保存的记录不受影响。', 'TIMEOUT', 408)
++    : staleContext()), { once: true }))
++  const work = (async () => {
++    const r = await fetch('/api/coros-mcp/' + path, { credentials: 'same-origin', ...init, signal: controller.signal })
++    const body = await r.json().catch(() => null) as Reply | null
++    requireRequestContext()
++    if (!body) throw new CorosError('高驰中转没有返回有效数据', 'NO_BODY', r.status)
++    if (!body.ok) throw new CorosError(body.message || '高驰请求失败', body.error === 'REAUTHORIZE' || body.error === 'NOT_CONNECTED' ? 'TOKEN_EXPIRED' : String(body.error ?? 'UNKNOWN'), r.status)
++    return body
++  })()
++  const request = Promise.race([work, cancelled]).then(body => {
++    read ? requireReadContext(context) : requireRequestContext()
++    if (read && path === 'status') statusCache.set(key, { body, until: Date.now() + 5_000 })
++    return body
++  }).catch(error => {
++    requireRequestContext()
++    if (error instanceof CorosError) { if (error.code === 'TOKEN_EXPIRED') { authorizationRequired = true; statusCache.clear() } throw error }
++    throw new CorosError('高驰请求未完成，请检查网络后重试。', 'NETWORK_ERROR', 0)
++  }).finally(() => {
++    clearTimeout(timeout); controllers.delete(controller)
++    if (disconnectController === controller) disconnectController = null
++    if (pending.get(key) === request) pending.delete(key)
++  })
++  if (read) pending.set(key, request)
++  return request.then(copy)
+ }
+ export type McpStatus = { connected: boolean; region: 'auto' | 'cn' | null; host: string | null; refBasis: 'account' | 'unknown' | null; renewable: boolean; since: number | null }
+-export const corosMcpStatus = () => call('status') as unknown as Promise<McpStatus>
++export function corosMcpStatus(options: { force?: boolean } = {}): Promise<McpStatus> {
++  const context = captureCorosContext()
++  // Do not read the old cookie while a disconnect is still revoking it.
++  const read = () => { requireContext(context); return call('status', undefined, options) as unknown as Promise<McpStatus> }
++  return disconnectPending ? disconnectPending.then(read) : read()
++}
+ export const corosMcpStartUrl = (region: 'auto' | 'cn') => `/api/coros-mcp/start?region=${region}`
+-export const corosMcpDisconnect = () => call('disconnect', { method: 'POST' }) as unknown as Promise<{ revoked: boolean }>
++export const corosMcpDisconnect = () => {
++  const previous = captureCorosContext()
++  setCorosMcpLinked(previous.athleteId, false)
++  let settled!: () => void
++  const barrier = new Promise<void>(resolve => { settled = resolve })
++  // Install the barrier before notifying subscribers; a subscriber may read status immediately.
++  resetCorosContext(barrier)
++  const context = captureCorosContext()
++  return call('disconnect', { method: 'POST' }).then(body => {
++    if (disconnectPending !== barrier) throw staleContext()
++    disconnected = true
++    return body
++  }).finally(() => {
++    if (isCurrentCorosContext(context)) statusCache.clear()
++    if (disconnectPending === barrier) disconnectPending = null
++    settled()
++  }) as unknown as Promise<{ revoked: boolean }>
++}
+ /** 旧账号密码登录（已停用）的 cookie 是否还在：只用来提示“重新授权一次”。 */
+ export async function legacyCorosLoggedIn(): Promise<boolean> { try { const r = await fetch('/api/coros/status', { credentials: 'same-origin' }); const b = await r.json(); return !!b?.loggedIn } catch { return false } }
+ export async function legacyCorosLogout() { try { await fetch('/api/coros/logout', { method: 'POST', credentials: 'same-origin' }) } catch { /* ignore */ } }
+@@ -53,7 +169,7 @@
+ export type CorosHealthCache = { fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: (Recovery & { at: string }) | null; issues: string[]; raw: Record<string, string> }
+ const hKey = (athlete: string) => `fk-coros-mcp-health-v1:${athlete}`, linkKey = (athlete: string) => `fk-coros-mcp-linked-v1:${athlete}`
+ export const corosMcpLinked = (athlete: string) => { try { return localStorage.getItem(linkKey(athlete)) === '1' } catch { return false } }
+-export function setCorosMcpLinked(athlete: string, on: boolean) { try { on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { /* ignore */ } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
++export function setCorosMcpLinked(athlete: string, on: boolean) { try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
+ export function loadCorosHealth(athlete: string): CorosHealthCache | null { try { const v = JSON.parse(localStorage.getItem(hKey(athlete)) ?? 'null'); return v && Array.isArray(v.days) ? v : null } catch { return null } }
+ export function mergeCorosHealth(old: CorosHealthCache | null, b: { fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: Recovery | null; issues: string[]; raw: Record<string, string> }): CorosHealthCache {
+   const days = new Map((old?.days ?? []).map(d => [d.date, d]))
+@@ -63,11 +179,26 @@
+   return { fetchedAt: b.fetchedAt, days: [...days.values()].sort((x, y) => x.date.localeCompare(y.date)).slice(-90), stress: [...stress.values()].filter(p => keyOf(p).slice(0, 10) >= cutoff).sort((x, y) => keyOf(x).localeCompare(keyOf(y))),
+     recovery: b.recovery && b.recovery.percent != null ? { ...b.recovery, at: b.fetchedAt } : old?.recovery ?? null, issues: b.issues, raw: b.raw }
+ }
+-export async function refreshCorosHealth(athlete: string): Promise<CorosHealthCache> {
+-  const b = await call('health') as unknown as Parameters<typeof mergeCorosHealth>[1]
+-  const next = mergeCorosHealth(loadCorosHealth(athlete), b)
+-  try { localStorage.setItem(hKey(athlete), JSON.stringify(next)) } catch { /* storage full */ }
+-  return next
++export function refreshCorosHealth(athlete: string): Promise<CorosHealthCache> {
++  const context = captureCorosContext()
++  if (athlete !== context.athleteId) return Promise.reject(staleContext())
++  const key = requestKey(context, 'health')
++  const copy = (value: CorosHealthCache) => { requireReadContext(context); return structuredClone(value) }
++  const shared = healthPending.get(key)
++  if (shared) return shared.then(copy)
++  const request = (async () => {
++    const b = await call('health') as unknown as Parameters<typeof mergeCorosHealth>[1]
++    requireReadContext(context)
++    const old = loadCorosHealth(athlete)
++    if (old && Date.parse(b.fetchedAt) < Date.parse(old.fetchedAt)) throw new CorosError('本次返回早于本机记录，已保留较新的高驰数据。', 'STALE_DATA', 409)
++    const next = mergeCorosHealth(old, b)
++    let saved = false
++    try { localStorage.setItem(hKey(athlete), JSON.stringify(next)); saved = true } catch { /* storage full */ }
++    if (saved) { try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
++    return next
++  })().finally(() => { if (healthPending.get(key) === request) healthPending.delete(key) })
++  healthPending.set(key, request)
++  return request.then(copy)
+ }
+ /** 同品牌（只高驰）、同指标、同协议的个人基准：至少 7 个此前完整日，否则 null（研究模块 coros-crossbrand-trend）。 */
+ export function corosTrend(days: McpDay[], athlete: string, today: string) {
+--- a/src/lib/health/coros-mcp-server.ts
++++ b/src/lib/health/coros-mcp-server.ts
+@@ -102,13 +102,27 @@
+ // ---------- MCP streamable HTTP ----------
+ export class McpSession {
+   private id = 0; private session: string | null = null; refreshed = false
++  private refreshing: Promise<boolean> | null = null
+   constructor(private deps: Deps, private auth: Auth) {}
++  private async fresh(force = false): Promise<boolean> {
++    if (this.refreshing) return this.refreshing
++    if (!force && this.auth.expiresAt > (this.deps.now ?? Date.now)() + 60_000) return false
++    const pending = ensureFresh(this.deps, this.auth, force)
++    this.refreshing = pending
++    try { return await pending } finally { if (this.refreshing === pending) this.refreshing = null }
++  }
+   private async post(body: unknown, retry = true): Promise<Response> {
+-    if (await ensureFresh(this.deps, this.auth)) this.refreshed = true
+-    const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': PROTOCOL, authorization: 'Bearer ' + this.auth.access }
++    if (await this.fresh()) this.refreshed = true
++    const access = this.auth.access
++    const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': PROTOCOL, authorization: 'Bearer ' + access }
+     if (this.session) headers['mcp-session-id'] = this.session
+     const r = await safeFetch(this.deps, this.auth.md.resource, { method: 'POST', headers, body: JSON.stringify(body) })
+-    if (r.status === 401 && retry) { await r.arrayBuffer().catch(() => null); await ensureFresh(this.deps, this.auth, true); this.refreshed = true; return this.post(body, false) }
++    if (r.status === 401 && retry) {
++      await r.arrayBuffer().catch(() => null)
++      // 并发请求共享刷新；迟到的旧令牌 401 直接用已经更新的凭证重试。
++      if (this.auth.access === access && await this.fresh(true)) this.refreshed = true
++      return this.post(body, false)
++    }
+     if (r.status === 401 || r.status === 403) throw new McpError('REAUTHORIZE', '高驰授权已失效，请重新授权', 401)
+     if (r.status === 429) throw new McpError('RATE_LIMITED', '高驰请求太频繁，请稍后再试', 429)
+     if (!r.ok) throw new McpError('UPSTREAM', `高驰数据服务返回 ${r.status}`)
+@@ -194,13 +208,36 @@
+         const p = parseLaps(await s.tool('queryActivityLapData', { labelId, sportType }))
+         return finish({ laps: p.value, issues: p.issues, raw: p.raw })
+       }
+-      // health：逐个工具调用，单个失败不影响其他；失败如实写进 issues。
++      // health：同一已初始化会话最多并行两个只读工具；解析仍按原顺序，保留字段、原文和问题顺序。
+       const days = new Map<string, McpDay>(), issues: string[] = [], raw: Record<string, string> = {}
+       const daily: [HealthTool, Record<string, unknown>][] = [['querySleepOverview', { days: 7 }], ['querySleepHrv', { startDate: '', endDate: '', days: 7 }], ['queryRestingHeartRate', { days: 7 }], ['queryDailyHealthData', { days: 7 }]]
+-      for (const [name, args] of daily) { try { const r = await s.tool(name, args); raw[name] = (r.content ?? []).map(c => c.text ?? '').join('\n').slice(0, 6000); issues.push(...parseDailyTool(name, r, days)) } catch (e) { if (e instanceof McpError && e.code === 'REAUTHORIZE') throw e; issues.push(`${name}：${e instanceof Error ? e.message : '失败'}`) } }
++      const jobs: [HealthTool | 'queryStressTimeSeries' | 'queryRecoveryStatus', Record<string, unknown>][] = [...daily, ['queryStressTimeSeries', { startDate: '', endDate: '', days: 2 }], ['queryRecoveryStatus', {}]]
++      const outcomes: ({ value: McpToolResult } | { error: unknown } | undefined)[] = []
++      let next = 0, stopped = false
++      const worker = async () => {
++        while (!stopped && next < jobs.length) {
++          const i = next++, [name, args] = jobs[i]
++          try { outcomes[i] = { value: await s.tool(name, args) } }
++          catch (error) {
++            outcomes[i] = { error }
++            if (error instanceof McpError && ['RATE_LIMITED', 'REAUTHORIZE'].includes(error.code)) stopped = true
++          }
++        }
++      }
++      await Promise.all([worker(), worker()])
++      // 已发出的另一个请求必须收尾；任何授权失效都优先返回 401 并清凭证，不返回部分成功数据。
++      for (const r of outcomes) if (r && 'error' in r && r.error instanceof McpError && r.error.code === 'REAUTHORIZE') throw r.error
+       let stress: unknown[] = [], recovery: unknown = null
+-      try { const p = parseStressSeries(await s.tool('queryStressTimeSeries', { startDate: '', endDate: '', days: 2 })); stress = p.value; raw.queryStressTimeSeries = p.raw; issues.push(...p.issues) } catch (e) { if (e instanceof McpError && e.code === 'REAUTHORIZE') throw e; issues.push(`queryStressTimeSeries：${e instanceof Error ? e.message : '失败'}`) }
+-      try { const p = parseRecovery(await s.tool('queryRecoveryStatus', {})); recovery = p.value; raw.queryRecoveryStatus = p.raw; issues.push(...p.issues) } catch (e) { if (e instanceof McpError && e.code === 'REAUTHORIZE') throw e; issues.push(`queryRecoveryStatus：${e instanceof Error ? e.message : '失败'}`) }
++      for (const [i, [name]] of jobs.entries()) {
++        const r = outcomes[i]
++        if (!r) { issues.push(`${name}：高驰限流后已暂停，尚未读取；稍后重试`); continue }
++        try {
++          if ('error' in r) throw r.error
++          if (name === 'queryStressTimeSeries') { const p = parseStressSeries(r.value); stress = p.value; raw[name] = p.raw; issues.push(...p.issues) }
++          else if (name === 'queryRecoveryStatus') { const p = parseRecovery(r.value); recovery = p.value; raw[name] = p.raw; issues.push(...p.issues) }
++          else { raw[name] = (r.value.content ?? []).map(c => c.text ?? '').join('\n').slice(0, 6000); issues.push(...parseDailyTool(name, r.value, days)) }
++        } catch (e) { issues.push(`${name}：${e instanceof Error ? e.message : '失败'}`) }
++      }
+       return finish({ days: [...days.values()].sort((x, y) => x.date.localeCompare(y.date)), stress, recovery, issues, raw })
+     } catch (e) { return errorResponse(e, s.refreshed && !(e instanceof McpError && e.code === 'REAUTHORIZE') ? tokenCookies(await seal(deps.stateKey, a)) : []) }
+   } catch (e) {
+--- /dev/null
++++ b/src/lib/ui/coros-sync-live.ts
+@@ -0,0 +1,122 @@
++import { useSyncExternalStore } from 'react'
++import { ATHLETE_SCOPE_CHANGED } from '../core/events'
++import { CorosError, corosNeedsLogin, saveCorosMeta } from '../health/coros-account-sync'
++import {
++  COROS_CONTEXT_CHANGED, captureCorosContext, isCurrentCorosContext,
++  corosMcpLinked, corosMcpRecent, loadCorosHealth, refreshCorosHealth, setCorosMcpLinked,
++  type CorosContext, type CorosHealthCache,
++} from '../health/coros-mcp-client'
++
++type ActivityResult = Awaited<ReturnType<typeof corosMcpRecent>>
++type ReadMode = 'auto' | 'manual'
++type ReadJob<T> = Readonly<{ running: boolean; mode: ReadMode | null; result: T | null; error: unknown; attemptedAt: number; token: number }>
++export type CorosSyncLive = Readonly<{ context: CorosContext; activities: ReadJob<ActivityResult>; health: ReadJob<CorosHealthCache> }>
++const idle = <T>(): ReadJob<T> => Object.freeze({ running: false, mode: null, result: null, error: null, attemptedAt: 0, token: 0 })
++const same = (a: CorosContext, b: CorosContext) => a.athleteId === b.athleteId && a.generation === b.generation
++const listeners = new Set<() => void>()
++let state: CorosSyncLive | null = null, empty: CorosSyncLive | null = null, nextToken = 0
++let activityPending: Promise<ActivityResult | null> | null = null, healthPending: Promise<CorosHealthCache | null> | null = null
++let eventTarget: Window | null = null
++
++function notify() { for (const listener of listeners) listener() }
++function publish(next: CorosSyncLive) { state = Object.freeze(next); notify() }
++/** Only ephemeral jobs/previews are cleared. Saved activities and health history stay in their existing stores. */
++export function clearCorosSyncLive() {
++  state = null; empty = null; activityPending = null; healthPending = null; notify()
++}
++function listenForContext() {
++  const target = typeof window === 'undefined' ? null : window
++  if (target === eventTarget) return
++  eventTarget?.removeEventListener(ATHLETE_SCOPE_CHANGED, clearCorosSyncLive)
++  eventTarget?.removeEventListener(COROS_CONTEXT_CHANGED, clearCorosSyncLive)
++  eventTarget = target
++  target?.addEventListener(ATHLETE_SCOPE_CHANGED, clearCorosSyncLive)
++  target?.addEventListener(COROS_CONTEXT_CHANGED, clearCorosSyncLive)
++}
++export function readCorosSyncLive(): CorosSyncLive {
++  listenForContext()
++  const context = captureCorosContext()
++  if (state && same(state.context, context)) return state
++  if (!empty || !same(empty.context, context)) empty = Object.freeze({ context, activities: idle<ActivityResult>(), health: idle<CorosHealthCache>() })
++  return empty
++}
++export function subscribeCorosSyncLive(listener: () => void) {
++  listenForContext(); listeners.add(listener)
++  return () => { listeners.delete(listener) }
++}
++export function useCorosSyncLive() { return useSyncExternalStore(subscribeCorosSyncLive, readCorosSyncLive, readCorosSyncLive) }
++const stale = () => new CorosError('账号或运动员已切换，本次读取已取消。', 'STALE_CONTEXT', 0)
++function current(context: CorosContext, kind: 'activities' | 'health', token: number) {
++  return isCurrentCorosContext(context) && state != null && same(state.context, context) && state[kind].token === token
++}
++
++/** Automatic reads share one job across page mounts; manual reads retain the existing 28-day range. */
++export function runCorosActivitySync(mode: ReadMode): Promise<ActivityResult | null> {
++  const snapshot = readCorosSyncLive(), context = snapshot.context, job = snapshot.activities
++  if (mode === 'auto' && !corosMcpLinked(context.athleteId)) return Promise.resolve(null)
++  if (job.running && activityPending) {
++    // A requested full review must never silently become a seven-day automatic check.
++    if (mode === 'manual' && job.mode === 'auto') return activityPending.then(() => {
++      if (!isCurrentCorosContext(context)) throw stale()
++      return runCorosActivitySync('manual')
++    })
++    return activityPending
++  }
++  if (mode === 'auto' && job.attemptedAt && Date.now() - job.attemptedAt < 10 * 60e3) return Promise.resolve(job.result)
++  const token = ++nextToken, attemptedAt = Date.now()
++  const pending = Promise.resolve().then(async () => {
++    try {
++      if (!current(context, 'activities', token)) throw stale()
++      const result = await corosMcpRecent(mode === 'manual' ? 28 : 7)
++      if (!current(context, 'activities', token)) throw stale()
++      saveCorosMeta(context.athleteId, { at: new Date().toISOString(), read: result.rows.length })
++      publish({ ...state!, activities: { running: false, mode, result, error: null, attemptedAt, token } })
++      return result
++    } catch (error) {
++      if (current(context, 'activities', token)) {
++        publish({ ...state!, activities: { ...state!.activities, running: false, error } })
++        if (corosNeedsLogin(error)) setCorosMcpLinked(context.athleteId, false)
++      }
++      throw error
++    } finally { if (activityPending === pending) activityPending = null }
++  })
++  activityPending = pending
++  publish({ ...snapshot, activities: { ...job, running: true, mode, error: null, attemptedAt, token } })
++  return pending
++}
++
++/** Health reads keep the existing 30-minute freshness rule and remain visible after a page change. */
++export function runCorosHealthSync(mode: ReadMode): Promise<CorosHealthCache | null> {
++  const snapshot = readCorosSyncLive(), context = snapshot.context, job = snapshot.health
++  if (job.running && healthPending) return healthPending
++  if (mode === 'auto') {
++    if (!corosMcpLinked(context.athleteId)) return Promise.resolve(null)
++    const cached = loadCorosHealth(context.athleteId)
++    if (cached && Date.now() - Date.parse(cached.fetchedAt) < 30 * 60e3) return Promise.resolve(cached)
++    if (job.attemptedAt && Date.now() - job.attemptedAt < 60e3) return Promise.resolve(job.result)
++  }
++  const token = ++nextToken, attemptedAt = Date.now()
++  const pending = Promise.resolve().then(async () => {
++    try {
++      if (!current(context, 'health', token)) throw stale()
++      const result = await refreshCorosHealth(context.athleteId)
++      if (!current(context, 'health', token)) throw stale()
++      publish({ ...state!, health: { running: false, mode, result, error: null, attemptedAt, token } })
++      return result
++    } catch (error) {
++      if (current(context, 'health', token)) {
++        publish({ ...state!, health: { ...state!.health, running: false, error } })
++        if (corosNeedsLogin(error)) setCorosMcpLinked(context.athleteId, false)
++      }
++      throw error
++    } finally { if (healthPending === pending) healthPending = null }
++  })
++  healthPending = pending
++  publish({ ...snapshot, health: { ...job, running: true, mode, error: null, attemptedAt, token } })
++  return pending
++}
++
++export function dismissCorosActivityPreview() {
++  const snapshot = readCorosSyncLive()
++  publish({ ...snapshot, activities: { ...snapshot.activities, result: null } })
++}
+--- /dev/null
++++ b/src/lib/ui/coros-sync-live.test.ts
+@@ -0,0 +1,92 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { currentAthleteId, setEventContext } from '../core/events'
++import { invalidateCorosContext, loadCorosHealth, setCorosMcpLinked } from '../health/coros-mcp-client'
++import { loadCorosMeta } from '../health/coros-account-sync'
++import { clearCorosSyncLive, dismissCorosActivityPreview, readCorosSyncLive, runCorosActivitySync, runCorosHealthSync, subscribeCorosSyncLive } from './coros-sync-live'
++
++const activityBody = () => ({ ok: true, accountRef: 'synthetic-account', fetchedAt: new Date().toISOString(), activities: [{ labelId: 'synthetic-lap', sportType: 100, sportName: '跑步', startIso: '2026-10-22T08:00:00Z', startLocal: null, durationSec: 26.125, distanceM: 200, avgHr: 160, maxHr: 181, issues: [] }], issues: [], possiblyTruncated: false })
++const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
++const flush = () => new Promise<void>(resolve => setImmediate(resolve))
++function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(r => { resolve = r }); return { promise, resolve } }
++async function isolated(f: (store: Map<string, string>) => Promise<void>) {
++  const descriptors = ['window', 'localStorage', 'fetch'].map(k => [k, Object.getOwnPropertyDescriptor(globalThis, k)] as const), athlete = currentAthleteId()
++  const store = new Map<string, string>()
++  Object.defineProperty(globalThis, 'window', { configurable: true, value: new EventTarget() })
++  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) } })
++  setEventContext({ athleteId: 'synthetic-a' }); invalidateCorosContext(); clearCorosSyncLive()
++  setCorosMcpLinked('synthetic-a', true)
++  try { await f(store) } finally {
++    invalidateCorosContext(); clearCorosSyncLive(); setEventContext({ athleteId: athlete })
++    for (const [key, descriptor] of descriptors) { if (descriptor) Object.defineProperty(globalThis, key, descriptor); else Reflect.deleteProperty(globalThis, key) }
++  }
++}
++
++test('automatic activity job survives view remount, shares one request, and never saves a training record', async () => isolated(async store => {
++  const gate = deferred<Response>(); let requests = 0
++  globalThis.fetch = async () => { requests++; return gate.promise }
++  const first = runCorosActivitySync('auto'); await flush()
++  assert.equal(readCorosSyncLive().activities.running, true)
++  let updates = 0; const stop = subscribeCorosSyncLive(() => { updates++ }); stop()
++  const again = runCorosActivitySync('auto'); assert.equal(first, again)
++  const stopRemounted = subscribeCorosSyncLive(() => { updates++ })
++  gate.resolve(reply(activityBody())); await first
++  assert.equal(requests, 1); assert.equal(readCorosSyncLive().activities.running, false); assert.equal(updates, 1)
++  assert.equal(readCorosSyncLive().activities.result?.rows[0].durationSec, 26.125)
++  assert.equal(loadCorosMeta('synthetic-a')?.read, 1)
++  assert.deepEqual([...store.keys()].filter(key => !key.startsWith('fk-coros-mcp-linked')), ['fk-coros-last-read-v1:synthetic-a'], 'reading is preview-only')
++  stopRemounted()
++}))
++
++test('foreground automatic checks honor cadence while explicit manual review keeps its28-day request', async () => isolated(async () => {
++  const paths: string[] = []; globalThis.fetch = async input => { paths.push(String(input)); return reply(activityBody()) }
++  await runCorosActivitySync('auto'); await runCorosActivitySync('auto'); assert.equal(paths.length, 1)
++  await runCorosActivitySync('manual'); assert.equal(paths.length, 2)
++  const start = (path: string) => new URL(path, 'https://local.test').searchParams.get('startDate')
++  assert.notEqual(start(paths[0]), start(paths[1])); assert.equal(readCorosSyncLive().activities.mode, 'manual')
++  dismissCorosActivityPreview(); assert.equal(readCorosSyncLive().activities.result, null)
++  await runCorosActivitySync('auto'); assert.equal(paths.length, 2); assert.equal(readCorosSyncLive().activities.result, null)
++}))
++
++test('a scope switch invalidates late activity preview and read metadata without touching either athlete', async () => isolated(async store => {
++  const gate = deferred<Response>(); globalThis.fetch = async () => gate.promise
++  const pending = runCorosActivitySync('auto'), rejected = assert.rejects(pending, (e: any) => e.code === 'STALE_CONTEXT'); await flush()
++  setEventContext({ athleteId: 'synthetic-b' })
++  assert.equal(readCorosSyncLive().context.athleteId, 'synthetic-b'); assert.equal(readCorosSyncLive().activities.running, false)
++  gate.resolve(reply(activityBody())); await rejected; await flush()
++  assert.equal(loadCorosMeta('synthetic-a'), null); assert.equal(loadCorosMeta('synthetic-b'), null); assert.equal(store.size, 1)
++}))
++
++test('old authorization completion cannot replace the new pending job', async () => isolated(async () => {
++  const old = deferred<Response>(), fresh = deferred<Response>(); let calls = 0
++  globalThis.fetch = async () => ++calls === 1 ? old.promise : fresh.promise
++  const prior = runCorosActivitySync('auto'), rejected = assert.rejects(prior, (e: any) => e.code === 'STALE_CONTEXT'); await flush()
++  invalidateCorosContext(); const next = runCorosActivitySync('manual'); await flush()
++  old.resolve(reply(activityBody())); await rejected; await flush()
++  assert.equal(readCorosSyncLive().activities.running, true); assert.equal(readCorosSyncLive().activities.mode, 'manual')
++  fresh.resolve(reply(activityBody())); await next; assert.equal(readCorosSyncLive().activities.running, false)
++}))
++
++test('shared health job preserves partial existing values and releases busy state after completion', async () => isolated(async store => {
++  store.set('fk-coros-mcp-health-v1:synthetic-a', JSON.stringify({ fetchedAt: '2026-10-20T00:00:00Z', days: [{ date: '2026-10-20', hrvMs: 48.125, sleepMinutes: 450, steps: 0 }], stress: [], recovery: null, issues: [], raw: {} }))
++  const gate = deferred<Response>(); let requests = 0; globalThis.fetch = async () => { requests++; return gate.promise }
++  const first = runCorosHealthSync('manual'); await flush(); const again = runCorosHealthSync('manual')
++  assert.equal(first, again); assert.equal(readCorosSyncLive().health.running, true)
++  gate.resolve(reply({ ok: true, fetchedAt: new Date().toISOString(), days: [{ date: '2026-10-20', hrvMs: null, restingHr: 52.25 }], stress: [], recovery: null, issues: ['sleep tool deferred'], raw: {} }))
++  await first; assert.equal(requests, 1); assert.equal(readCorosSyncLive().health.running, false)
++  const day = loadCorosHealth('synthetic-a')!.days[0]
++  assert.equal(day.hrvMs, 48.125); assert.equal(day.restingHr, 52.25); assert.equal(day.steps, 0); assert.equal(day.sleepMinutes, 450)
++  await runCorosHealthSync('auto'); assert.equal(requests, 1)
++}))
++
++test('authorization errors stay visible, retain saved health and allow retry after reauthorization', async () => isolated(async store => {
++  const saved = JSON.stringify({ fetchedAt: '2026-10-20T00:00:00Z', days: [{ date: '2026-10-20', hrvMs: 48.125 }], stress: [], recovery: null, issues: [], raw: {} })
++  store.set('fk-coros-mcp-health-v1:synthetic-a', saved); setCorosMcpLinked('synthetic-a', true)
++  globalThis.fetch = async () => reply({ ok: false, error: 'REAUTHORIZE', message: '授权已过期' }, 401)
++  await assert.rejects(runCorosActivitySync('manual'), (e: any) => e.code === 'TOKEN_EXPIRED')
++  assert.equal(readCorosSyncLive().activities.running, false); assert.ok(readCorosSyncLive().activities.error)
++  assert.equal(store.get('fk-coros-mcp-health-v1:synthetic-a'), saved); assert.equal(store.has('fk-coros-mcp-linked-v1:synthetic-a'), false)
++  invalidateCorosContext(); setCorosMcpLinked('synthetic-a', true)
++  globalThis.fetch = async () => reply(activityBody()); await runCorosActivitySync('manual')
++  assert.equal(readCorosSyncLive().activities.error, null); assert.equal(readCorosSyncLive().activities.result?.rows.length, 1)
++}))
+--- /dev/null
++++ b/src/lib/health/coros-mcp-transport.test.ts
+@@ -0,0 +1,355 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import * as client from './coros-mcp-client'
++import {setEventContext} from '../core/events'
++
++function browser(t: {after(fn: () => void): void}, athlete = 'synthetic-coros-a') {
++  const names = ['fetch', 'window', 'localStorage'] as const
++  const originals = names.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const)
++  const data = new Map<string, string>(), writes: string[] = []
++  const win = new EventTarget()
++  Object.defineProperty(globalThis, 'window', {configurable: true, value: win})
++  Object.defineProperty(globalThis, 'localStorage', {configurable: true, value: {getItem: (key: string) => data.get(key) ?? null, setItem(key: string, value: string) {data.set(key, value); writes.push(key)}, removeItem: (key: string) => data.delete(key)}})
++  setEventContext({athleteId: athlete})
++  client.captureCorosContext()
++  t.after(() => { client.invalidateCorosContext(); for (const [name, original] of originals) original ? Object.defineProperty(globalThis, name, original) : Reflect.deleteProperty(globalThis, name) })
++  return {data, writes, win}
++}
++function response(body: Record<string, unknown>, status = 200) {
++  return new Response(JSON.stringify({ok: true, ...body}), {status, headers: {'content-type': 'application/json'}})
++}
++const statusBody = {connected: true, region: 'cn', host: 'mcpcn.coros.com', refBasis: 'account', renewable: true, since: 1}
++const healthBody = (fetchedAt = '2026-10-22T12:00:00Z', value = 48.125) => ({fetchedAt, days: [{date: '2026-10-22', hrvMs: value}], stress: [{iso: '2026-10-22T09:00:00Z', local: null, value: 33.375}], recovery: {percent: 80.625, level: null, fullRecoveryText: null}, issues: [], raw: {querySleepHrv: 'synthetic source decimal 48.125'}})
++
++test('simultaneous status readers share one request and preserve returned status', async t => {
++  browser(t, 'synthetic-status-readers')
++  let calls = 0
++  const replies: ((r: Response) => void)[] = []
++  globalThis.fetch = (() => {calls++;return new Promise<Response>(resolve => replies.push(resolve))}) as typeof fetch
++  const pending = [client.corosMcpStatus(), client.corosMcpStatus(), client.corosMcpStatus()]
++  await Promise.resolve()
++  replies.forEach(resolve => resolve(response(statusBody)))
++  const values = await Promise.all(pending)
++  assert.equal(calls, 1)
++  assert.equal(values.length, 3); values.forEach(value => assert.equal(value.connected, true))
++})
++
++test('simultaneous health readers share request and commit while preserving decimals', async t => {
++  const box = browser(t, 'synthetic-health-readers')
++  let calls = 0, changes = 0
++  box.win.addEventListener('fk-coros-changed', () => changes++)
++  const replies: ((r: Response) => void)[] = []
++  globalThis.fetch = (() => {calls++;return new Promise<Response>(resolve => replies.push(resolve))}) as typeof fetch
++  const pending = [client.refreshCorosHealth('synthetic-health-readers'), client.refreshCorosHealth('synthetic-health-readers')]
++  await Promise.resolve()
++  replies.forEach(resolve => resolve(response(healthBody())))
++  const values = await Promise.all(pending)
++  assert.equal(calls, 1); assert.equal(box.writes.length, 1); assert.equal(changes, 1)
++  assert.equal(values[0].days[0].hrvMs, 48.125)
++  assert.equal(values[0].stress[0].value, 33.375)
++  assert.equal(values[0].recovery?.percent, 80.625)
++  assert.deepEqual(values[0], values[1])
++})
++
++test('status reads during disconnect wait for revocation without changing the completion context', async t => {
++  const box = browser(t, 'synthetic-disconnect-status')
++  let connected = true, changes = 0
++  box.win.addEventListener(client.COROS_CONTEXT_CHANGED, () => changes++)
++  const requests: {url: string; connected: boolean; resolve: (value: Response) => void}[] = []
++  globalThis.fetch = ((input: RequestInfo | URL) => new Promise<Response>(resolve => requests.push({url: String(input), connected, resolve}))) as typeof fetch
++  const disconnect = client.corosMcpDisconnect()
++  const context = client.captureCorosContext()
++  const status = client.corosMcpStatus()
++  const statusBeforeRevocation = requests.filter(request => request.url.endsWith('/status')).length
++  connected = false
++  requests.find(request => request.url.endsWith('/disconnect'))!.resolve(response({revoked: true}))
++  await disconnect
++  await Promise.resolve()
++  for (const request of requests.filter(request => request.url.endsWith('/status'))) request.resolve(response({...statusBody, connected: request.connected}))
++  const value = await status
++  assert.equal(statusBeforeRevocation, 0)
++  assert.equal(value.connected, false)
++  assert.equal((await client.corosMcpStatus()).connected, false)
++  assert.equal(client.isCurrentCorosContext(context), true)
++  assert.equal(changes, 1)
++})
++
++test('disconnect stops new health, activity and lap reads before they can use the old session', async t => {
++  const athlete = 'synthetic-disconnect-data', box = browser(t, athlete)
++  client.setCorosMcpLinked(athlete, true)
++  const urls: string[] = []
++  let revoke!: (r: Response) => void
++  globalThis.fetch = ((input: RequestInfo | URL) => {
++    const url = String(input); urls.push(url)
++    if (url.endsWith('/disconnect')) return new Promise<Response>(resolve => { revoke = resolve })
++    if (url.endsWith('/health')) return Promise.resolve(response(healthBody()))
++    if (url.includes('/activities?')) return Promise.resolve(response({activities: [], accountRef: 'test', fetchedAt: '2026-10-22T12:00:00Z', issues: [], possiblyTruncated: false}))
++    return Promise.resolve(response({laps: [], issues: []}))
++  }) as typeof fetch
++  const disconnect = client.corosMcpDisconnect()
++  const linkedImmediately = client.corosMcpLinked(athlete)
++  const reads = Promise.allSettled([client.refreshCorosHealth(athlete), client.corosMcpRecent(7), client.corosMcpLaps('synthetic-lap', 100)])
++  revoke(response({revoked: true}))
++  await disconnect
++  const outcomes = await reads
++  const later = await Promise.allSettled([client.refreshCorosHealth(athlete), client.corosMcpRecent(28), client.corosMcpLaps('synthetic-lap', 100)])
++  assert.equal(linkedImmediately, false)
++  assert.equal(urls.filter(url => !url.endsWith('/disconnect')).length, 0)
++  assert.equal(box.writes.filter(key => key.includes('health')).length, 0)
++  for (const outcome of [...outcomes, ...later]) {
++    assert.equal(outcome.status, 'rejected')
++    if (outcome.status === 'rejected') assert.equal(outcome.reason.code, 'TOKEN_EXPIRED')
++  }
++})
++
++test('an older status cannot restore authorization after a newer data read reports TOKEN_EXPIRED', async t => {
++  browser(t, 'synthetic-expired-auth')
++  const context = client.captureCorosContext()
++  let resolveStatus!: (r: Response) => void
++  let calls = 0
++  globalThis.fetch = ((input: RequestInfo | URL) => {
++    calls++
++    return String(input).endsWith('/status') ? new Promise<Response>(resolve => {resolveStatus = resolve}) : Promise.resolve(response({ok: false, error: 'REAUTHORIZE'}, 401))
++  }) as typeof fetch
++  const status = Promise.allSettled([client.corosMcpStatus()])
++  await assert.rejects(client.corosMcpRecent(7), {code: 'TOKEN_EXPIRED'})
++  resolveStatus(response(statusBody))
++  const [outcome] = await status
++  assert.equal(outcome.status, 'rejected')
++  if (outcome.status === 'rejected') assert.equal(outcome.reason.code, 'TOKEN_EXPIRED')
++  assert.equal(client.isCurrentCorosContext(context), true)
++  await assert.rejects(client.corosMcpStatus({force: true}), {code: 'TOKEN_EXPIRED'})
++  await assert.rejects(client.corosMcpLaps('expired-session', 100), {code: 'TOKEN_EXPIRED'})
++  assert.equal(calls, 2)
++  client.invalidateCorosContext()
++  globalThis.fetch = (() => Promise.resolve(response(statusBody))) as typeof fetch
++  assert.equal((await client.corosMcpStatus({force: true})).connected, true)
++})
++
++test('status cache lasts five seconds, supports an explicit refresh and returns independent values', async t => {
++  browser(t, 'synthetic-status-cache')
++  let calls = 0, now = 10_000
++  const originalNow = Date.now
++  Date.now = () => now
++  t.after(() => { Date.now = originalNow })
++  globalThis.fetch = (() => Promise.resolve(response({...statusBody, since: ++calls}))) as typeof fetch
++  const first = await client.corosMcpStatus()
++  first.connected = false
++  now += 4999
++  assert.equal((await client.corosMcpStatus()).connected, true)
++  assert.equal(calls, 1)
++  now++
++  assert.equal((await client.corosMcpStatus()).since, 2)
++  assert.equal((await client.corosMcpStatus({force: true})).since, 3)
++  client.invalidateCorosContext()
++  assert.equal((await client.corosMcpStatus()).since, 4)
++})
++
++test('only identical pending activity and lap paths share work, preserving source identity and decimal values', async t => {
++  browser(t, 'synthetic-paths')
++  const requests: {url: string; resolve: (r: Response) => void}[] = []
++  globalThis.fetch = ((input: RequestInfo | URL) => new Promise<Response>(resolve => requests.push({url: String(input), resolve}))) as typeof fetch
++  const activity = {labelId: 'precise-run', sportType: 100, sportName: 'Run', date: '2026-10-20', startIso: '2026-10-20T07:05:00.000Z', startLocal: null, durationSec: 1810.125, distanceM: 5020.75, avgHr: 150.5, maxHr: null, calories: null, issues: ['source note']}
++  const activities = {activities: [activity], accountRef: 'synthetic-account', fetchedAt: '2026-10-22T12:00:00Z', issues: ['partial source'], possiblyTruncated: true}
++  const laps = {laps: [{index: 1, durationSec: 301.125, distanceM: 1000.25, avgHr: null}], issues: ['lap note']}
++  const now = new Date('2026-10-22T12:00:00Z')
++  const recent = [client.corosMcpRecent(7, now), client.corosMcpRecent(7, now), client.corosMcpRecent(7, now), client.corosMcpRecent(28, now)]
++  const split = [client.corosMcpLaps('precise-run', 100), client.corosMcpLaps('precise-run', 100), client.corosMcpLaps('precise-run', 100), client.corosMcpLaps('precise-run', 200)]
++  for (const request of requests) request.resolve(response(request.url.includes('/activities?') ? activities : laps))
++  const rows = await Promise.all(recent), splitRows = await Promise.all(split)
++  assert.equal(requests.length, 4)
++  assert.equal(new Set(requests.map(request => request.url)).size, 4)
++  assert.equal(rows[0].rows[0].durationSec, 1810.125)
++  assert.equal(rows[0].rows[0].distanceM, 5020.75)
++  assert.equal(rows[0].rows[0].avgHr, 150.5)
++  assert.equal(rows[0].rows[0].maxHr, null)
++  assert.equal(rows[0].rows[0].sourceIdentity, 'coros:synthetic-account:precise-run')
++  assert.equal(rows[0].rows[0].provenance?.recordId, 'precise-run')
++  assert.deepEqual(rows[0].issues, ['partial source']); assert.equal(rows[0].truncated, true)
++  assert.equal(splitRows[0].laps[0].durationSec, 301.125)
++  rows[0].rows[0].distanceM = 1; splitRows[0].laps[0].durationSec = 1
++  assert.equal(rows[1].rows[0].distanceM, 5020.75); assert.equal(splitRows[1].laps[0].durationSec, 301.125)
++  const again = client.corosMcpRecent(7, now)
++  requests.at(-1)!.resolve(response(activities)); await again
++  const lapAgain = client.corosMcpLaps('precise-run', 100)
++  requests.at(-1)!.resolve(response(laps)); await lapAgain
++  assert.equal(requests.length, 6, 'completed activities/laps are not cached')
++})
++
++test('athlete switch aborts old health work and prevents any old-owner commit or return', async t => {
++  const box = browser(t, 'synthetic-owner-a')
++  const context = client.captureCorosContext()
++  let changes = 0
++  box.win.addEventListener(client.COROS_CONTEXT_CHANGED, () => changes++)
++  const requests: {signal: AbortSignal; resolve: (r: Response) => void}[] = []
++  globalThis.fetch = ((_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>(resolve => requests.push({signal: init!.signal!, resolve}))) as typeof fetch
++  const old = Promise.allSettled([client.refreshCorosHealth('synthetic-owner-a')])
++  setEventContext({athleteId: 'synthetic-owner-b'})
++  assert.equal(requests[0].signal.aborted, true)
++  assert.equal(client.isCurrentCorosContext(context), false)
++  assert.equal(changes, 1)
++  const next = client.refreshCorosHealth('synthetic-owner-b')
++  requests[0].resolve(response(healthBody('2026-10-22T11:00:00Z', 40.375)))
++  requests[1].resolve(response(healthBody('2026-10-22T12:00:00Z', 60.125)))
++  const [outcome] = await old
++  assert.equal(outcome.status, 'rejected')
++  if (outcome.status === 'rejected') assert.equal(outcome.reason.code, 'STALE_CONTEXT')
++  assert.equal((await next).days[0].hrvMs, 60.125)
++  assert.deepEqual(box.writes, ['fk-coros-mcp-health-v1:synthetic-owner-b'])
++  await assert.rejects(client.refreshCorosHealth('synthetic-owner-a'), {code: 'STALE_CONTEXT'})
++  assert.equal(requests.length, 2)
++})
++
++test('new authorization releases an old disconnect lane without invalidating the new context', async t => {
++  browser(t, 'synthetic-new-authorization')
++  let resolveDisconnect!: (r: Response) => void, statusCalls = 0
++  globalThis.fetch = ((input: RequestInfo | URL) => String(input).endsWith('/disconnect')
++    ? new Promise<Response>(resolve => { resolveDisconnect = resolve })
++    : (statusCalls++, Promise.resolve(response(statusBody)))) as typeof fetch
++  const disconnect = Promise.allSettled([client.corosMcpDisconnect()])
++  const waiting = Promise.allSettled([client.corosMcpStatus(), client.refreshCorosHealth('synthetic-new-authorization')])
++  client.invalidateCorosContext()
++  const context = client.captureCorosContext()
++  assert.equal((await client.corosMcpStatus()).connected, true)
++  resolveDisconnect(response({revoked: true}))
++  for (const outcome of [...await disconnect, ...await waiting]) {
++    assert.equal(outcome.status, 'rejected')
++    if (outcome.status === 'rejected') assert.equal(outcome.reason.code, 'STALE_CONTEXT')
++  }
++  assert.equal(client.isCurrentCorosContext(context), true)
++  assert.equal((await client.corosMcpStatus()).connected, true)
++  assert.equal(statusCalls, 1, 'old disconnect completion must not clear the new status cache')
++})
++
++test('athlete changes keep the shared-cookie revocation barrier until disconnect settles', async t => {
++  const box = browser(t, 'synthetic-revoke-owner-a')
++  let connected = true, resolveDisconnect!: (r: Response) => void, disconnectSignal!: AbortSignal
++  const urls: string[] = []
++  globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
++    const url = String(input); urls.push(url)
++    if (url.endsWith('/disconnect')) {
++      disconnectSignal = init!.signal!
++      return new Promise<Response>(resolve => {resolveDisconnect = resolve})
++    }
++    return Promise.resolve(response(url.endsWith('/status') ? {...statusBody, connected} : healthBody()))
++  }) as typeof fetch
++  const disconnect = Promise.allSettled([client.corosMcpDisconnect()])
++  const oldContext = client.captureCorosContext()
++  setEventContext({athleteId: 'synthetic-revoke-owner-b'})
++  const wasAborted = disconnectSignal.aborted
++  const health = Promise.allSettled([client.refreshCorosHealth('synthetic-revoke-owner-b')])
++  const status = client.corosMcpStatus()
++  const callsBeforeRevocation = urls.length
++  connected = false
++  resolveDisconnect(response({revoked: true}))
++  await disconnect
++  const [outcome] = await health
++  assert.equal((await status).connected, false)
++  assert.equal(wasAborted, false)
++  assert.equal(callsBeforeRevocation, 1)
++  assert.equal(urls.some(url => url.endsWith('/health')), false)
++  assert.equal(outcome.status, 'rejected')
++  if (outcome.status === 'rejected') assert.equal(outcome.reason.code, 'TOKEN_EXPIRED')
++  assert.equal(client.isCurrentCorosContext(oldContext), false)
++  assert.equal(box.writes.filter(key => key.includes('health')).length, 0)
++})
++
++test('an older fetchedAt cannot overwrite or return in place of newer locally saved health', async t => {
++  const athlete = 'synthetic-freshness', box = browser(t, athlete)
++  const key = 'fk-coros-mcp-health-v1:' + athlete
++  let resolveHealth!: (r: Response) => void
++  globalThis.fetch = (() => new Promise<Response>(resolve => {resolveHealth = resolve})) as typeof fetch
++  const old = client.refreshCorosHealth(athlete)
++  const newer = client.mergeCorosHealth(null, healthBody('2026-10-22T12:10:00Z', 60.125))
++  box.data.set(key, JSON.stringify(newer))
++  resolveHealth(response(healthBody('2026-10-22T12:00:00Z', 40.375)))
++  await assert.rejects(old, {code: 'STALE_DATA'})
++  assert.equal(box.data.get(key), JSON.stringify(newer)); assert.equal(box.writes.length, 0)
++  const next = client.refreshCorosHealth(athlete)
++  resolveHealth(response(healthBody('2026-10-22T12:20:00Z', 61.875)))
++  assert.equal((await next).days[0].hrvMs, 61.875)
++  assert.equal(box.writes.length, 1)
++})
++
++test('quota failure preserves the saved cache and never emits a successful health-write notification', async t => {
++  const athlete = 'synthetic-quota', box = browser(t, athlete), key = 'fk-coros-mcp-health-v1:' + athlete
++  const old = client.mergeCorosHealth(null, healthBody('2026-10-22T11:00:00Z', 40.375))
++  box.data.set(key, JSON.stringify(old))
++  let changes = 0
++  box.win.addEventListener('fk-coros-changed', () => changes++)
++  localStorage.setItem = () => { throw new Error('synthetic quota full') }
++  globalThis.fetch = (() => Promise.resolve(response(healthBody()))) as typeof fetch
++  assert.equal((await client.refreshCorosHealth(athlete)).days[0].hrvMs, 48.125)
++  assert.equal(box.data.get(key), JSON.stringify(old))
++  assert.equal(changes, 0)
++})
++
++test('linked metadata emits only when its persisted state changes', t => {
++  const athlete = 'synthetic-linked', box = browser(t, athlete)
++  let changes = 0
++  box.win.addEventListener('fk-coros-changed', () => changes++)
++  client.setCorosMcpLinked(athlete, false)
++  client.setCorosMcpLinked(athlete, true)
++  client.setCorosMcpLinked(athlete, true)
++  client.setCorosMcpLinked(athlete, false)
++  client.setCorosMcpLinked(athlete, false)
++  assert.equal(changes, 2)
++  assert.equal(client.corosMcpLinked(athlete), false)
++})
++
++test('network, malformed-body and rate-limit failures release pending reads for a manual retry', async t => {
++  browser(t, 'synthetic-retry')
++  const failures = [
++    {code: 'NETWORK_ERROR', fetch: () => Promise.reject(new TypeError('synthetic offline'))},
++    {code: 'NO_BODY', fetch: () => Promise.resolve(new Response('not-json'))},
++    {code: 'RATE_LIMIT', fetch: () => Promise.resolve(response({ok: false, error: 'RATE_LIMIT', message: 'synthetic limit'}, 429))},
++  ]
++  for (const failure of failures) {
++    client.invalidateCorosContext()
++    let calls = 0
++    globalThis.fetch = (() => {calls++;return failure.fetch()}) as typeof fetch
++    const outcomes = await Promise.allSettled([client.corosMcpLaps('retry', 100), client.corosMcpLaps('retry', 100)])
++    assert.equal(calls, 1)
++    for (const outcome of outcomes) {
++      assert.equal(outcome.status, 'rejected')
++      if (outcome.status === 'rejected') assert.equal(outcome.reason.code, failure.code)
++    }
++    globalThis.fetch = (() => {calls++;return Promise.resolve(response({laps: [], issues: []}))}) as typeof fetch
++    assert.deepEqual((await client.corosMcpLaps('retry', 100)).laps, [])
++    assert.equal(calls, 2)
++  }
++})
++
++test('each endpoint has a bounded deadline, aborts its fetch and permits retry after timeout', async t => {
++  browser(t, 'synthetic-timeouts')
++  const originalSet = globalThis.setTimeout, originalClear = globalThis.clearTimeout
++  const timers = new Map<number, {callback: () => void; ms: number}>()
++  let serial = 0
++  globalThis.setTimeout = ((callback: () => void, ms: number) => {const id = ++serial;timers.set(id, {callback, ms});return id}) as unknown as typeof setTimeout
++  globalThis.clearTimeout = ((id: number) => { timers.delete(id) }) as unknown as typeof clearTimeout
++  t.after(() => {globalThis.setTimeout = originalSet;globalThis.clearTimeout = originalClear})
++  const cases = [
++    {read: () => client.corosMcpStatus(), ms: 15_000, body: statusBody},
++    {read: () => client.corosMcpRecent(7), ms: 150_000, body: {activities: [], issues: [], fetchedAt: '2026-10-22T12:00:00Z'}},
++    {read: () => client.corosMcpLaps('timeout', 100), ms: 150_000, body: {laps: [], issues: []}},
++    {read: () => client.refreshCorosHealth('synthetic-timeouts'), ms: 180_000, body: healthBody()},
++    {read: () => client.corosMcpDisconnect(), ms: 35_000, body: {revoked: true}},
++  ]
++  for (const item of cases) {
++    client.invalidateCorosContext()
++    let signal!: AbortSignal
++    globalThis.fetch = ((_input: RequestInfo | URL, init?: RequestInit) => {signal = init!.signal!;return new Promise<Response>(() => {})}) as typeof fetch
++    const result = item.read()
++    const timer = [...timers.values()].at(-1)!
++    assert.equal(timer.ms, item.ms)
++    timer.callback()
++    await assert.rejects(result, {code: 'TIMEOUT', status: 408})
++    assert.equal(signal.aborted, true)
++    assert.equal(timers.size, 0)
++    let retryCalls = 0
++    globalThis.fetch = (() => {retryCalls++;return Promise.resolve(response(item.body))}) as typeof fetch
++    await item.read()
++    assert.equal(retryCalls, 1)
++    assert.equal(timers.size, 0)
++  }
++})
+--- /dev/null
++++ b/src/lib/health/coros-mcp-performance.test.ts
+@@ -0,0 +1,135 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { handleCorosMcp, McpSession, seal, type Auth, type Deps } from './coros-mcp-server'
++
++const NOW = Date.parse('2026-10-22T12:00:00Z'), KEY = 'synthetic-coros-performance'
++const md = { issuer: 'https://mcpcn.coros.com', resource: 'https://mcpcn.coros.com/mcp', authorize: 'https://mcpcn.coros.com/oauth2/authorize', token: 'https://mcpcn.coros.com/oauth2/token', register: 'https://mcpcn.coros.com/connect/register', revoke: null }
++const auth = (): Auth => ({ v: 1, md, cid: 'synthetic-client', region: 'cn', access: 'synthetic-A1', refresh: 'synthetic-R1', expiresAt: NOW + 3600000, ref: '0123456789abcdef', at: NOW })
++const healthNames = ['querySleepOverview', 'querySleepHrv', 'queryRestingHeartRate', 'queryDailyHealthData', 'queryStressTimeSeries', 'queryRecoveryStatus']
++const text: Record<string, string> = {
++  querySleepOverview: 'Sleep Overview\n2026-10-20\nSleep Score: 91\nDaily Sleep: 7h 57min\nMain Sleep Window: 2026-10-20 00:28 - 2026-10-20 08:30',
++  querySleepHrv: 'Sleep HRV\n2026-10-20\nAverage HRV: 48.125 ms',
++  queryRestingHeartRate: 'Resting Heart Rate\n2026-10-20: 52 bpm',
++  queryDailyHealthData: JSON.stringify([{ date: '2026-10-20', steps: 0, activeKcal: 321.25, avgStress: 0 }]),
++  queryStressTimeSeries: '2026-10-20\n09:00 35\n09:15 42',
++  queryRecoveryStatus: 'Recovery: 83% | Level: Good',
++}
++type Options = { statuses?: Record<string, number>; delays?: Record<string, number>; expireTools?: boolean; late401?: boolean; rejectRefresh?: boolean }
++
++/** Real request handler and session, with an in-memory upstream; no real accounts or network. */
++function service(opts: Options = {}) {
++  let active = 0, peak = 0, refreshes = 0, accessNumber = 1, notifyRefresh = () => {}
++  const refreshed = new Promise<void>(resolve => { notifyRefresh = resolve })
++  const calls: { method: string; name?: string; args?: unknown; id?: number }[] = [], usedRefresh = new Set<string>()
++  const fetch = (async (url: string, init: RequestInit = {}) => {
++    active++; peak = Math.max(peak, active)
++    const json = (value: unknown, status = 200, headers: Record<string, string> = {}) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json', ...headers } })
++    try {
++      if (url === md.token) {
++        calls.push({ method: 'refresh' }); refreshes++
++        await new Promise(resolve => setTimeout(resolve, 2))
++        const token = new URLSearchParams(String(init.body)).get('refresh_token')!
++        if (opts.rejectRefresh || usedRefresh.has(token)) return json({ error: 'invalid_grant' }, 400)
++        usedRefresh.add(token); accessNumber++
++        notifyRefresh()
++        return json({ access_token: `synthetic-A${accessNumber}`, refresh_token: `synthetic-R${accessNumber}`, expires_in: 3600 })
++      }
++      assert.equal(url, md.resource)
++      const rpc = JSON.parse(String(init.body)), headers = new Headers(init.headers)
++      calls.push({ method: rpc.method, name: rpc.params?.name, args: rpc.params?.arguments, id: rpc.id })
++      await Promise.resolve()
++      if (rpc.method === 'initialize') return json({ jsonrpc: '2.0', id: rpc.id, result: { protocolVersion: '2025-06-18' } }, 200, { 'mcp-session-id': 'synthetic-session' })
++      assert.equal(headers.get('mcp-session-id'), 'synthetic-session')
++      if (rpc.method === 'notifications/initialized') return new Response(null, { status: 202 })
++      if (opts.expireTools && headers.get('authorization') === 'Bearer synthetic-A1') {
++        if (opts.late401 && rpc.params.name === 'querySleepHrv') { await refreshed; await new Promise(resolve => setTimeout(resolve, 5)) }
++        return new Response(null, { status: 401 })
++      }
++      if (opts.delays?.[rpc.params.name]) await new Promise(resolve => setTimeout(resolve, opts.delays![rpc.params.name]))
++      const status = opts.statuses?.[rpc.params.name] ?? 200
++      if (status !== 200) return new Response(null, { status })
++      return json({ jsonrpc: '2.0', id: rpc.id, result: { content: [{ type: 'text', text: text[rpc.params.name] ?? 'Sport Records (0 records)' }] } })
++    } finally { active-- }
++  }) as unknown as typeof globalThis.fetch
++  return { deps: { fetch, stateKey: KEY, now: () => NOW } as Deps, calls, peak: () => peak, active: () => active, refreshes: () => refreshes }
++}
++async function health(s: ReturnType<typeof service>) {
++  const token = await seal(KEY, auth())
++  const response = await handleCorosMcp(new Request('https://synthetic.example/api/coros-mcp/health', { headers: { cookie: 'fk_cmcp_t0=' + token } }), 'health', s.deps)
++  return { response, body: await response.json() }
++}
++const tools = (s: ReturnType<typeof service>) => s.calls.filter(c => c.method === 'tools/call')
++
++test('health keeps all six tool inputs and original parsed output with at most two concurrent reads', async () => {
++  const s = service({ delays: { querySleepOverview: 3 } }), { response, body } = await health(s)
++  assert.equal(response.status, 200); assert.equal(s.calls.length, 8); assert.equal(s.peak(), 2); assert.equal(s.active(), 0)
++  assert.deepEqual(s.calls.slice(0, 2).map(c => c.method), ['initialize', 'notifications/initialized'])
++  assert.deepEqual(tools(s).map(c => c.name).sort(), [...healthNames].sort())
++  const ids = s.calls.filter(c => c.id != null).map(c => c.id); assert.equal(new Set(ids).size, ids.length)
++  assert.deepEqual(tools(s).find(c => c.name === 'querySleepOverview')!.args, { days: 7 })
++  assert.deepEqual(tools(s).find(c => c.name === 'querySleepHrv')!.args, { startDate: '', endDate: '', days: 7 })
++  assert.deepEqual(tools(s).find(c => c.name === 'queryStressTimeSeries')!.args, { startDate: '', endDate: '', days: 2 })
++  assert.deepEqual(body, {
++    ok: true, accountRef: '0123456789abcdef', fetchedAt: new Date(NOW).toISOString(),
++    days: [{ date: '2026-10-20', sleepScore: 91, sleepMinutes: 477, sleepStart: '2026-10-20T00:28', sleepEnd: '2026-10-20T08:30', hrvMs: 48.125, restingHr: 52, steps: 0, activeKcal: 321.25, avgStress: 0 }],
++    stress: [{ iso: null, local: '2026-10-20T09:00:00', value: 35 }, { iso: null, local: '2026-10-20T09:15:00', value: 42 }],
++    recovery: { percent: 83, level: 'Good', fullRecoveryText: null }, issues: [], raw: text,
++  })
++})
++
++test('simultaneous 401s share a single refresh and preserve the rotated session', async () => {
++  const s = service({ expireTools: true }), session = new McpSession(s.deps, auth())
++  await session.init()
++  const results = await Promise.allSettled([session.tool('querySleepOverview', { days: 7 }), session.tool('querySleepHrv', { days: 7 })])
++  assert.deepEqual(results.map(r => r.status), ['fulfilled', 'fulfilled']); assert.equal(s.refreshes(), 1)
++  assert.equal(session.refreshed, true); assert.equal(s.active(), 0)
++})
++
++test('late 401 for a superseded access token retries without another forced refresh', async () => {
++  const s = service({ expireTools: true, late401: true }), session = new McpSession(s.deps, auth())
++  await session.init()
++  const results = await Promise.allSettled([session.tool('querySleepOverview', { days: 7 }), session.tool('querySleepHrv', { days: 7 })])
++  assert.deepEqual(results.map(r => r.status), ['fulfilled', 'fulfilled']); assert.equal(s.refreshes(), 1)
++  assert.equal(session.refreshed, true)
++})
++
++test('rate limiting stops queued tools and explicitly reports deferred fields while keeping completed values', async () => {
++  const s = service({ statuses: { querySleepOverview: 429 }, delays: { querySleepHrv: 5 } }), { response, body } = await health(s)
++  assert.equal(response.status, 200); assert.equal(body.ok, true); assert.equal(s.active(), 0)
++  assert.deepEqual(tools(s).map(c => c.name), ['querySleepOverview', 'querySleepHrv'])
++  assert.equal(body.days[0].hrvMs, 48.125); assert.equal(body.days[0].sleepMinutes, undefined)
++  assert.deepEqual(body.stress, []); assert.equal(body.recovery, null)
++  assert.equal(body.issues.length, 5); assert.match(body.issues[0], /querySleepOverview.*太频繁/)
++  for (const name of healthNames.slice(2)) assert.ok(body.issues.some((issue: string) => issue.startsWith(name + '：') && /未读取.*重试/.test(issue)), name)
++  assert.deepEqual(Object.keys(body.raw), ['querySleepHrv'])
++  assert.ok(!response.headers.getSetCookie().some(c => /Max-Age=0/.test(c)), '429 does not clear account credentials')
++})
++
++test('auth failure stops the queue, settles active work, clears cookies and returns no success data', async () => {
++  const s = service({ statuses: { querySleepOverview: 403 }, delays: { querySleepHrv: 5 } }), { response, body } = await health(s)
++  assert.equal(response.status, 401); assert.equal(body.ok, false); assert.equal(body.error, 'REAUTHORIZE')
++  assert.equal(s.active(), 0); assert.ok(tools(s).length <= 2); assert.equal(body.days, undefined); assert.equal(body.accountRef, undefined)
++  assert.equal(response.headers.getSetCookie().filter(c => /^fk_cmcp_t/.test(c) && /Max-Age=0/.test(c)).length, 4)
++})
++
++test('ordinary tool failure still fetches other tools and preserves issue order', async () => {
++  const s = service({ statuses: { querySleepOverview: 500, querySleepHrv: 500 }, delays: { querySleepOverview: 5 } }), { response, body } = await health(s)
++  assert.equal(response.status, 200); assert.equal(tools(s).length, 6); assert.equal(s.active(), 0)
++  assert.match(body.issues[0], /^querySleepOverview：/); assert.match(body.issues[1], /^querySleepHrv：/)
++  assert.equal(body.days[0].restingHr, 52); assert.equal(body.days[0].steps, 0); assert.equal(body.days[0].activeKcal, 321.25)
++  assert.equal(body.recovery.percent, 83)
++})
++
++test('an in-flight auth failure takes precedence over an earlier rate limit', async () => {
++  const s = service({ statuses: { querySleepOverview: 429, querySleepHrv: 403 }, delays: { querySleepHrv: 5 } }), { response, body } = await health(s)
++  assert.equal(response.status, 401); assert.equal(body.error, 'REAUTHORIZE'); assert.equal(body.ok, false)
++  assert.equal(body.days, undefined); assert.equal(s.active(), 0); assert.equal(tools(s).length, 2)
++  assert.equal(response.headers.getSetCookie().filter(c => /^fk_cmcp_t/.test(c) && /Max-Age=0/.test(c)).length, 4)
++})
++
++test('refresh rejection remains reauthorization and never produces partial success', async () => {
++  const s = service({ expireTools: true, rejectRefresh: true }), { response, body } = await health(s)
++  assert.equal(response.status, 401); assert.equal(body.error, 'REAUTHORIZE'); assert.equal(body.ok, false)
++  assert.equal(body.days, undefined); assert.equal(s.active(), 0); assert.equal(s.refreshes(), 1)
++  assert.equal(response.headers.getSetCookie().filter(c => /^fk_cmcp_t/.test(c) && /Max-Age=0/.test(c)).length, 4)
++})

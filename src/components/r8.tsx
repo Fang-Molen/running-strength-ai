@@ -1,8 +1,9 @@
 import { stampCN } from "@/lib/ui/activity-format";
-import { CorosAccount } from "@/components/coros-account"
+import { isSyncPlatform, openDeviceSync } from "@/lib/ui/device-sync-navigation"
 import { ImageIntake } from "./image-intake";
 import { loadTrainingActivities, activityWeeks } from "@/lib/ui/training-read-model";
-import { onAppEvent } from "@/lib/core/events";
+import { currentAthleteId, onAppEvent } from "@/lib/core/events";
+import { clearOnboardingSyncDraft, readOnboardingSyncDraft, saveOnboardingSyncDraft } from "@/lib/ui/onboarding-sync-draft";
 import { useEffect, useMemo, useRef, useState } from "react"
 import { niceTicks } from "@/components/trend-chart"
 import { Bell, Camera, ChevronRight, FileUp, Flame, Info, Plus, X } from "lucide-react"
@@ -39,13 +40,14 @@ const read = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(
 export const loadAnswers = (): (Answers & { done?: boolean }) | null => read(ONBOARD_KEY, null)
 
 /* ---------------- 1) 首次引导 ---------------- */
-export function Onboarding({ today, onDone }: { today: string; onDone: () => void }) {
-  const [step, setStep] = useState(0)
+export function Onboarding({ today, onDone, suspended = false }: { today: string; onDone: () => void; suspended?: boolean }) {
+  const [resume] = useState(() => { try { return typeof window === 'undefined' ? null : readOnboardingSyncDraft(sessionStorage, currentAthleteId()) } catch { return null } })
+  const [step, setStep] = useState(resume?.step ?? 0)
   const q = step - 1 // v89.6：第 0 步“关于你”，原 5 题顺延
-  const [me, setMe] = useState<AboutMe>(EMPTY_ME)
+  const [me, setMe] = useState<AboutMe>(resume?.me ?? EMPTY_ME)
   const [added, setAdded] = useState<string[]>([])
-  const [a, setA] = useState<Answers>(DEFAULTS)
-  const [brand, setBrand] = useState<string | null>(null)
+  const [a, setA] = useState<Answers>(resume?.answers ?? DEFAULTS)
+  const [brand, setBrand] = useState<string | null>(resume?.brand ?? null)
   const [accepted, setAccepted] = useState(false)
   const [error, setError] = useState("")
   const week = weekOf(today)
@@ -58,6 +60,7 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
       localStorage.setItem(ONBOARD_SKIPPED_KEY, "1")
       if (localStorage.getItem(ONBOARD_SKIPPED_KEY) !== "1") throw new Error("skip-not-saved")
     } catch { setError("未能保存进入状态，请重试。"); return }
+    try { clearOnboardingSyncDraft(sessionStorage, currentAthleteId()) } catch { /* unavailable session storage */ }
     onDone()
   }
   const finish = (accept: boolean) => {
@@ -73,6 +76,7 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
       if (localStorage.getItem(ONBOARD_KEY) !== answers) throw new Error("answers-not-saved")
       localStorage.removeItem(ONBOARD_SKIPPED_KEY)
       if (localStorage.getItem(ONBOARD_SKIPPED_KEY) !== null) throw new Error("skip-not-cleared")
+      try { clearOnboardingSyncDraft(sessionStorage, currentAthleteId()) } catch { /* unavailable session storage */ }
       setAccepted(true)
     } catch { setError("引导资料未能完整保存，请重试。"); }
   }
@@ -84,7 +88,7 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
   const Opt = ({ on, onClick, label, sub }: { on: boolean; onClick: () => void; label: string; sub?: string }) => <button type="button" aria-pressed={on} onClick={onClick} className={"w-full rounded-2xl border p-3 text-left " + (on ? "border-accent bg-accent/10" : "border-line bg-surface")}><b>{label}</b>{sub ? <span className="block text-xs text-muted">{sub}</span> : null}</button>
   const body = step === 0 ? <AboutStep me={me} onChange={setMe} /> : q === 0 ? <div className="space-y-2">{WATCHES.map(([id, l]) => <Opt key={id} on={a.source === id} onClick={() => { set({ source: id }); setBrand(null) }} label={l} sub={`${GROUP_HINT[id]} · ${TIER_LABEL[TIERS[tierFor({ ...a, source: id })] ? tierFor({ ...a, source: id }) : "basic"]}`} />)}
       {BRANDS[a.source].length ? <select aria-label="品牌" className="fk-cell w-full" value={brand ?? ""} onChange={(e) => setBrand(e.target.value || null)}><option value="">品牌（只决定显示哪份说明）</option>{BRANDS[a.source].map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select> : null}
-      {brand === "coros" ? <CorosAccount compact /> : null}</div>
+      <button type="button" className="min-h-12 w-full rounded-xl border border-line px-3 font-semibold text-accent" onClick={() => { try { saveOnboardingSyncDraft(sessionStorage, currentAthleteId(), { step, me, answers: a, brand }) } catch { /* setup remains usable */ }; openDeviceSync({ provider: isSyncPlatform(brand) ? brand : brand === "apple" ? "apple_health" : undefined }) }}>连接手表或运动软件</button></div>
     : q === 1 ? <div className="space-y-2"><p className="text-xs text-muted">最多选 2 个，第一个算主目标。</p>{GOALS.map(([id, l]) => <Opt key={id} on={a.goals.includes(id)} onClick={() => set({ goals: toggleGoal(a.goals, id) })} label={l} sub={a.goals[0] === id ? "主目标" : undefined} />)}</div>
     : q === 2 ? <div className="space-y-2"><p className="text-xs text-muted">按时间选，不用自我评价。</p>{EXPERIENCE.map(([id, l]) => <Opt key={id} on={a.experience === id} onClick={() => set({ experience: id })} label={`规律训练：${l}`} />)}</div>
     : q === 3 ? <div className="space-y-2">{VENUES.map(([id, l]) => <Opt key={id} on={a.venue === id} onClick={() => set({ venue: id, equipment: PRESET[id] })} label={l} />)}
@@ -93,12 +97,12 @@ export function Onboarding({ today, onDone }: { today: string; onDone: () => voi
       <p className="text-sm font-bold">每次多长</p><div className="grid grid-cols-4 gap-1.5">{([20, 30, 45, 60] as const).map((m) => <button key={m} type="button" className="fk-chip justify-center" aria-pressed={a.minutes === m} onClick={() => set({ minutes: m })}>{m === 60 ? "60+" : m} 分</button>)}</div>
       <p className="text-sm font-bold">通常什么时候练 <span className="text-xs font-normal text-muted">（可选，提醒按这个来）</span></p><div className="grid grid-cols-3 gap-1.5">{WHEN.map(([id, l]) => <button key={id} type="button" className="fk-chip justify-center" aria-pressed={a.when === id} onClick={() => set({ when: a.when === id ? null : id })}>{l}</button>)}</div></div>
     : null
-  return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" role="dialog" aria-label="首次引导">
+  return <div className="fixed inset-0 z-50 overflow-y-auto bg-bg" style={suspended ? { display: "none" } : undefined} role="dialog" aria-label="首次引导">
     <div className="fk-onboard-safe mx-auto max-w-xl px-4 pb-10 pt-5">
       {error ? <p role="alert" className="mb-3 rounded-xl border border-risk p-3 text-sm text-risk">{error}</p> : null}
       {step < 6 ? <>
         <div className="flex items-center gap-3"><span className="text-sm font-bold">{step + 1}/6</span><div className="h-1.5 flex-1 rounded-full bg-line"><div className="h-full rounded-full bg-accent" style={{ width: `${(step + 1) * 100 / 6}%` }} /></div>{step === 0 ? <button type="button" className="min-h-11 shrink-0 px-2 text-sm font-bold" onClick={browse}>先逛逛</button> : null}</div>
-        <h1 className="mt-4 text-2xl font-bold">{["先认识一下你", "你的数据从哪来？（可连佳明/高驰）", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
+        <h1 className="mt-4 text-2xl font-bold">{["先认识一下你", "你的数据从哪来？", "你想练成什么？", "你规律训练多久了？", "在哪练？有什么器械？", "每周能练多少？"][step]}</h1>
         <p className="mt-1 text-xs text-muted">{step === 0 ? "资料只存在这台设备上" : QUESTIONS[q]} · 伤病和饮食等用到时再问</p>
         <div className="mt-4">{body}</div>
         <div className="mt-6 flex gap-2">{step ? <button type="button" className="fk-chip min-h-12 px-4" onClick={() => setStep(step - 1)}>上一步</button> : null}<button type="button" className="fk-primary min-h-12 flex-1" onClick={next}>下一步</button></div>
@@ -349,7 +353,7 @@ export function SettingsHub({ onProfile, onDiet, onBackup, only, initialOpen = n
     {has("d") ? <Row title="手表类型与显示版本" sub={`${w ? WATCHES.find((x) => x[0] === w)?.[1] : unset} · ${TIER_LABEL[tier]}${w && w !== "none" ? (sync ? ` · 最近收到设备数据 ${new Date(sync).toTimeString().slice(0, 5)}${stale ? "（超过 24 小时）" : ""}` : " · 暂无设备数据") : ""}`} open={open === "d"} onToggle={() => tg("d")}>
       <div className="flex flex-wrap gap-1.5">{WATCHES.map(([id, l]) => <button key={id} type="button" className="fk-chip" aria-pressed={w === id} onClick={() => { saveWatch(id, undefined, loadBrand()); setW(id); setT(loadTier()); setStamp(Date.now()) }}>{l}</button>)}</div>
       <p className="mt-2 text-xs font-bold">版本（可手动升降）</p><div className="mt-1 flex flex-wrap gap-1.5" aria-label="版本">{(Object.keys(TIERS) as Tier[]).map((id) => <button key={id} type="button" className="fk-chip" aria-pressed={tier === id} onClick={() => { saveTier(id); setT(id); setStamp(Date.now()) }}>{TIER_LABEL[id]}</button>)}</div><p className="mt-1 text-xs text-muted">{TIERS[tier].desc}</p>
-      <p className="mt-1 text-xs text-muted">这里选的手表类型只决定显示哪些说明和指标，不代表设备已连接。佳明账号的连接与同步结果见「设备连接与同步」；「最近收到设备数据」包含佳明账号同步和文件导入两种来源。</p><ShortcutGuide /></Row> : null}
+      <p className="mt-1 text-sm text-muted">手表类型用于调整指标显示。账号连接和文件导入统一在「设备与数据同步」管理。</p><ShortcutGuide /></Row> : null}
     {has("h") ? <Row title="健康与安全" sub={`伤病：${injText} · 安全提醒 ${s.safetyLevel === "strict" ? "严格" : "标准"}`} open={open === "h"} onToggle={() => tg("h")}><div className="flex gap-1.5">{(["standard", "strict"] as const).map((k) => <button key={k} type="button" className="fk-chip" aria-pressed={s.safetyLevel === k} onClick={() => up({ safetyLevel: k })}>{k === "strict" ? "严格" : "标准"}</button>)}</div><p className="mt-1 text-xs text-muted">胸痛、晕厥等红框提醒不受任何设置影响。</p></Row> : null}
     {has("n") ? <Row title="饮食" sub={`目标：${({ gain: "增肌", cut: "减脂", keep: "保持", run: "跑步表现" } as Record<string, string>)[read<{ goal?: string }>("fk-diet-goal-v1", {}).goal ?? ""] ?? unset} · 忌口：${s.dietAvoid || "无"}`} open={open === "n"} onToggle={() => tg("n")}><button type="button" className="fk-link" onClick={onDiet}>改饮食目标 ›</button><input aria-label="忌口/过敏/素食" placeholder="忌口 / 过敏 / 素食（可选）" value={s.dietAvoid} onChange={(e) => up({ dietAvoid: e.target.value.slice(0, 40) })} className="fk-cell mt-2 w-full" /></Row> : null}
     {has("c") ? <Row title="方坤教练" sub={`${s.coachStyle === "brief" ? "简短" : "详细"} · 数据依据${s.showEvidence ? "显示" : "收起"} · 每周评估`} open={open === "c"} onToggle={() => tg("c")}>

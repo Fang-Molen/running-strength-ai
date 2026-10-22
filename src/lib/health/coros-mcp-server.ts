@@ -102,13 +102,27 @@ async function ensureFresh(deps: Deps, a: Auth, force = false): Promise<boolean>
 // ---------- MCP streamable HTTP ----------
 export class McpSession {
   private id = 0; private session: string | null = null; refreshed = false
+  private refreshing: Promise<boolean> | null = null
   constructor(private deps: Deps, private auth: Auth) {}
+  private async fresh(force = false): Promise<boolean> {
+    if (this.refreshing) return this.refreshing
+    if (!force && this.auth.expiresAt > (this.deps.now ?? Date.now)() + 60_000) return false
+    const pending = ensureFresh(this.deps, this.auth, force)
+    this.refreshing = pending
+    try { return await pending } finally { if (this.refreshing === pending) this.refreshing = null }
+  }
   private async post(body: unknown, retry = true): Promise<Response> {
-    if (await ensureFresh(this.deps, this.auth)) this.refreshed = true
-    const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': PROTOCOL, authorization: 'Bearer ' + this.auth.access }
+    if (await this.fresh()) this.refreshed = true
+    const access = this.auth.access
+    const headers: Record<string, string> = { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': PROTOCOL, authorization: 'Bearer ' + access }
     if (this.session) headers['mcp-session-id'] = this.session
     const r = await safeFetch(this.deps, this.auth.md.resource, { method: 'POST', headers, body: JSON.stringify(body) })
-    if (r.status === 401 && retry) { await r.arrayBuffer().catch(() => null); await ensureFresh(this.deps, this.auth, true); this.refreshed = true; return this.post(body, false) }
+    if (r.status === 401 && retry) {
+      await r.arrayBuffer().catch(() => null)
+      // 并发请求共享刷新；迟到的旧令牌 401 直接用已经更新的凭证重试。
+      if (this.auth.access === access && await this.fresh(true)) this.refreshed = true
+      return this.post(body, false)
+    }
     if (r.status === 401 || r.status === 403) throw new McpError('REAUTHORIZE', '高驰授权已失效，请重新授权', 401)
     if (r.status === 429) throw new McpError('RATE_LIMITED', '高驰请求太频繁，请稍后再试', 429)
     if (!r.ok) throw new McpError('UPSTREAM', `高驰数据服务返回 ${r.status}`)
@@ -194,13 +208,36 @@ export async function handleCorosMcp(req: Request, path: string, deps: Deps): Pr
         const p = parseLaps(await s.tool('queryActivityLapData', { labelId, sportType }))
         return finish({ laps: p.value, issues: p.issues, raw: p.raw })
       }
-      // health：逐个工具调用，单个失败不影响其他；失败如实写进 issues。
+      // health：同一已初始化会话最多并行两个只读工具；解析仍按原顺序，保留字段、原文和问题顺序。
       const days = new Map<string, McpDay>(), issues: string[] = [], raw: Record<string, string> = {}
       const daily: [HealthTool, Record<string, unknown>][] = [['querySleepOverview', { days: 7 }], ['querySleepHrv', { startDate: '', endDate: '', days: 7 }], ['queryRestingHeartRate', { days: 7 }], ['queryDailyHealthData', { days: 7 }]]
-      for (const [name, args] of daily) { try { const r = await s.tool(name, args); raw[name] = (r.content ?? []).map(c => c.text ?? '').join('\n').slice(0, 6000); issues.push(...parseDailyTool(name, r, days)) } catch (e) { if (e instanceof McpError && e.code === 'REAUTHORIZE') throw e; issues.push(`${name}：${e instanceof Error ? e.message : '失败'}`) } }
+      const jobs: [HealthTool | 'queryStressTimeSeries' | 'queryRecoveryStatus', Record<string, unknown>][] = [...daily, ['queryStressTimeSeries', { startDate: '', endDate: '', days: 2 }], ['queryRecoveryStatus', {}]]
+      const outcomes: ({ value: McpToolResult } | { error: unknown } | undefined)[] = []
+      let next = 0, stopped = false
+      const worker = async () => {
+        while (!stopped && next < jobs.length) {
+          const i = next++, [name, args] = jobs[i]
+          try { outcomes[i] = { value: await s.tool(name, args) } }
+          catch (error) {
+            outcomes[i] = { error }
+            if (error instanceof McpError && ['RATE_LIMITED', 'REAUTHORIZE'].includes(error.code)) stopped = true
+          }
+        }
+      }
+      await Promise.all([worker(), worker()])
+      // 已发出的另一个请求必须收尾；任何授权失效都优先返回 401 并清凭证，不返回部分成功数据。
+      for (const r of outcomes) if (r && 'error' in r && r.error instanceof McpError && r.error.code === 'REAUTHORIZE') throw r.error
       let stress: unknown[] = [], recovery: unknown = null
-      try { const p = parseStressSeries(await s.tool('queryStressTimeSeries', { startDate: '', endDate: '', days: 2 })); stress = p.value; raw.queryStressTimeSeries = p.raw; issues.push(...p.issues) } catch (e) { if (e instanceof McpError && e.code === 'REAUTHORIZE') throw e; issues.push(`queryStressTimeSeries：${e instanceof Error ? e.message : '失败'}`) }
-      try { const p = parseRecovery(await s.tool('queryRecoveryStatus', {})); recovery = p.value; raw.queryRecoveryStatus = p.raw; issues.push(...p.issues) } catch (e) { if (e instanceof McpError && e.code === 'REAUTHORIZE') throw e; issues.push(`queryRecoveryStatus：${e instanceof Error ? e.message : '失败'}`) }
+      for (const [i, [name]] of jobs.entries()) {
+        const r = outcomes[i]
+        if (!r) { issues.push(`${name}：高驰限流后已暂停，尚未读取；稍后重试`); continue }
+        try {
+          if ('error' in r) throw r.error
+          if (name === 'queryStressTimeSeries') { const p = parseStressSeries(r.value); stress = p.value; raw[name] = p.raw; issues.push(...p.issues) }
+          else if (name === 'queryRecoveryStatus') { const p = parseRecovery(r.value); recovery = p.value; raw[name] = p.raw; issues.push(...p.issues) }
+          else { raw[name] = (r.value.content ?? []).map(c => c.text ?? '').join('\n').slice(0, 6000); issues.push(...parseDailyTool(name, r.value, days)) }
+        } catch (e) { issues.push(`${name}：${e instanceof Error ? e.message : '失败'}`) }
+      }
       return finish({ days: [...days.values()].sort((x, y) => x.date.localeCompare(y.date)), stress, recovery, issues, raw })
     } catch (e) { return errorResponse(e, s.refreshed && !(e instanceof McpError && e.code === 'REAUTHORIZE') ? tokenCookies(await seal(deps.stateKey, a)) : []) }
   } catch (e) {
