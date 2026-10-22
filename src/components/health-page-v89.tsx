@@ -34,6 +34,18 @@ function freshSub(ms: number, hhmm: string) {
   if (f.state === "STALE") return `${hhmm} · 已${Math.round((f.ageMinutes ?? 0) / 60)}小时未更新`
   return hhmm
 }
+/** v89.10.12：身体电量“已 N 小时未更新”时说明最近一次同步的情况，分清是没同步上，还是同步了但佳明那边还没有新数据。 */
+function syncNote(lastSample: number, today: string): string {
+  try {
+    const r = JSON.parse(localStorage.getItem(garminStorageKey("fk-garmin-sync-report", currentAthleteId())) ?? "null") as { at?: string; status?: string; intraday?: { failed?: string[] } } | null
+    const at = Date.parse(r?.at ?? "")
+    if (!r || !Number.isFinite(at)) return ""
+    const t = clock(at, null)
+    if (r.status !== "ok" && r.status !== "partial") return `；${t} 同步未成功`
+    if ((r.intraday?.failed ?? []).some(f => f.startsWith(today))) return `；${t} 同步时今天的日内数据没取到`
+    return at - lastSample > 20 * 60e3 ? `；${t} 已同步，佳明暂无更新的数据` : `；上次同步 ${t}`
+  } catch { return "" }
+}
 export type HealthTab = "recovery" | "body"
 const TABS: [HealthTab, string][] = [["recovery", "恢复与趋势"], ["body", "身体与记录"]]
 type ExplorerMetric = "bb" | "hr" | "st" | "hrv" | "sleep"
@@ -105,7 +117,7 @@ function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): T
     const bbLast = d?.bb.at(-1)
     if (bbLast) {
       const prev = y ? nearest(y.bb, bbLast[0] - 864e5) : null, dv = prev ? bbLast[1] - prev[1] : null
-      tiles.push({ key: "BB", label: "身体电量", value: String(bbLast[1]), unit: "/100", sub: day === todayDate() ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) : `当天最后 ${clock(bbLast[0], d.offsetMin)}`, stale: day === todayDate() && !freshSub(bbLast[0], "").startsWith("最新") ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) : undefined, delta: dv == null ? null : `较昨日同时刻 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(dv)}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
+      tiles.push({ key: "BB", label: "身体电量", value: String(bbLast[1]), unit: "/100", sub: day === todayDate() ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) : `当天最后 ${clock(bbLast[0], d.offsetMin)}`, stale: day === todayDate() && !freshSub(bbLast[0], "").startsWith("最新") ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) + syncNote(bbLast[0], day) : undefined, delta: dv == null ? null : `较昨日同时刻 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(dv)}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
     } else {
       const p = onDay(v("BODY_BATTERY"), day), q = onDay(v("BODY_BATTERY"), yday), dv = p && q && p.stream === q.stream ? p.value - q.value : null
       tiles.push({ key: "BB", label: "身体电量", value: p ? String(Math.round(p.value)) : null, unit: "/100", sub: p ? p.statistic : "暂无当日读数", delta: dv == null ? null : `较昨日 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(Math.round(dv))}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })

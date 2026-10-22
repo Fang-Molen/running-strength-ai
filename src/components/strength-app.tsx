@@ -22,6 +22,7 @@ import { hasActivePlan, planDay, PLAN_CHANGED_EVT } from "@/lib/plan/active-plan
 import { NoPlanCard, PlanImportPanel } from "@/components/plan-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
+import { checkForNewVersion } from "@/lib/ui/app-version-check";
 import { initVault } from "@/lib/vault";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
@@ -212,7 +213,7 @@ export function StrengthApp() {
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
   useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem("fk-vault-restored")) { sessionStorage.setItem("fk-vault-restored", "1"); location.reload(); } }).catch(() => {}); }, []);
   const [dietSheet, setDietSheet] = useState(false);
-  useEffect(() => { const go = () => { if (document.visibilityState === "visible") window.setTimeout(() => void maybeAutoGarminSync().catch(() => {}), 1500); }; go(); document.addEventListener("visibilitychange", go); window.addEventListener("pageshow", go); window.addEventListener("online", go); const iv = window.setInterval(() => { if (document.visibilityState === "visible") void maybeAutoGarminSync().catch(() => {}); }, 2 * 3600e3 + 5000); return () => { document.removeEventListener("visibilitychange", go); window.removeEventListener("pageshow", go); window.removeEventListener("online", go); window.clearInterval(iv); }; }, []);
+  useEffect(() => { const go = () => { if (document.visibilityState === "visible") window.setTimeout(() => void checkForNewVersion(() => trainingExecutionOpen(loadEvents())).then((reloading) => { if (!reloading) return maybeAutoGarminSync(); }).catch(() => {}), 1500); }; go(); document.addEventListener("visibilitychange", go); window.addEventListener("pageshow", go); window.addEventListener("online", go); const iv = window.setInterval(() => { if (document.visibilityState === "visible") void maybeAutoGarminSync().catch(() => {}); }, 15 * 60e3 + 5000); return () => { document.removeEventListener("visibilitychange", go); window.removeEventListener("pageshow", go); window.removeEventListener("online", go); window.clearInterval(iv); }; }, []);
   const [planSrc, setPlanSrc] = useState<string>("400m-v4");
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}").active; if (v) setPlanSrc(v); } catch { /* keep default */ } }, []);
   const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem("fk-plan-source-v1") || "{}"); localStorage.setItem("fk-plan-source-v1", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };

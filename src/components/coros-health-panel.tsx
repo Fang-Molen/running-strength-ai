@@ -31,7 +31,13 @@ export function CorosHealthPanel({ day }: { day: string }) {
     reload(); window.addEventListener('fk-coros-changed', reload)
     return () => window.removeEventListener('fk-coros-changed', reload)
   }, [athlete, context.generation, live.health.result]) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (linked) void runCorosHealthSync('auto').catch(() => {}) }, [linked, athlete, context.generation])
+  // v89.10.12：除了打开健康页，回到前台时也按原有间隔（本机数据超过 30 分钟）自动重读一次。
+  useEffect(() => {
+    if (!linked) return
+    const go = () => { if (document.visibilityState === 'visible') void runCorosHealthSync('auto').catch(() => {}) }
+    go(); document.addEventListener('visibilitychange', go); window.addEventListener('pageshow', go)
+    return () => { document.removeEventListener('visibilitychange', go); window.removeEventListener('pageshow', go) }
+  }, [linked, athlete, context.generation])
   const today = localDay(new Date().toISOString())
   const trend = useMemo(() => data ? corosTrend(data.days, athlete, today) : [], [data, athlete, today])
   const sessions = useMemo(() => { try { return loadTrainingActivities().filter(r => rowProvider(r) === 'COROS' && r.startedAt && localDay(r.startedAt) === day) } catch { return [] } }, [day, data, athlete])

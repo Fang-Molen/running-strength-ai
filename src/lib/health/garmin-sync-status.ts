@@ -8,7 +8,7 @@ import type { GarminSyncReport } from './garmin-sync-runner'
 import { garminStorageKey } from './garmin-sync-runner'
 export const GARMIN_SYNC_STATUS_EVENT = 'fk-garmin-synced'
 export const GARMIN_KEYS = { report: 'fk-garmin-sync-report', lastAttempt: 'fk-garmin-last-attempt', lastUseful: 'fk-garmin-last-sync', lastFullOk: 'fk-garmin-last-full-ok', autoFail: 'fk-garmin-auto-fail' } as const
-export const AUTO_SYNC_RULE = '打开 App、回到前台或网络恢复时（距上次有效同步超过 5 分钟）自动同步；App 开着时每 2 小时一次；自动同步失败后 30 分钟内不重试。'
+export const AUTO_SYNC_RULE = '打开 App、回到前台或网络恢复时（距上次有效同步超过 5 分钟）自动同步；App 开着时每 15 分钟一次；每次都重取今天和昨天的日内数据。登录失效或佳明限流后 30 分钟内不自动重试，网络等其他失败 5 分钟后再试。'
 export type GarminConnection = 'connected' | 'expired' | 'not_connected'
 export type GarminSyncStatus = {
   connection: GarminConnection; connectionLabel: string

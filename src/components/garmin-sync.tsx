@@ -107,8 +107,9 @@ async function prefetchRecentLaps() {
   } catch { /* optional */ }
 }
 const AUTO_MS = 5 * 60e3;
-let lastTry = 0;
-/** 每次打开/回到前台（距上次 >5 分钟）+ 开着时每 2 小时：已登录、在线才静默同步；失败后 30 分钟内不重试。 */
+let lastTry = 0, shortBackoffUntil = 0;
+/** 每次打开/回到前台/网络恢复（距上次有效同步 >5 分钟）+ 开着时每 15 分钟：已登录、在线才静默同步。
+ * 登录失效或限流后 30 分钟内不自动重试；其他失败（网络、佳明临时故障）5 分钟后再试。 */
 export async function maybeAutoGarminSync(): Promise<void> {
   if (!navigator.onLine || running) return;
   const subjectId = currentAthleteId(), syncGeneration = accountGeneration;
@@ -116,13 +117,19 @@ export async function maybeAutoGarminSync(): Promise<void> {
   const key = (name: string) => garminStorageKey(name, subjectId);
   const last = Date.parse(readGarminSyncStatus(subjectId).lastUsefulSyncAt || "") || 0;
   const failAt = Date.parse(localStorage.getItem(key("fk-garmin-auto-fail")) || "") || 0;
-  if (Date.now() - last < AUTO_MS || Date.now() - failAt < 30 * 60e3 || Date.now() - lastTry < 60e3) return;
+  if (Date.now() - last < AUTO_MS || Date.now() - failAt < 30 * 60e3 || Date.now() - lastTry < 60e3 || Date.now() < shortBackoffUntil) return;
   lastTry = Date.now();
   const st = await api("status", undefined, 10000);
   if (!sameOwner() || !st.body?.loggedIn) return;
   const r = await runGarminSync(() => {}, st.body?.profile?.displayName);
   if (!sameOwner()) return;
-  if (r === "ok" || r === "partial") localStorage.removeItem(key("fk-garmin-auto-fail")); else if (r !== "busy") localStorage.setItem(key("fk-garmin-auto-fail"), new Date().toISOString());
+  // v89.10.12：只有登录失效或佳明限流（429）才 30 分钟不自动重试；回到前台时网络还没恢复、佳明临时 5xx 等只等 5 分钟，
+  // 否则一次网络抖动会让之后半小时每次回到前台都不同步。
+  let limited = false;
+  try { limited = (JSON.parse(localStorage.getItem(key("fk-garmin-sync-report")) || "null")?.errors ?? []).some((e: unknown) => /429|限流/.test(String(e))); } catch { limited = false; }
+  if (r === "ok" || r === "partial") { localStorage.removeItem(key("fk-garmin-auto-fail")); if (limited) shortBackoffUntil = Date.now() + AUTO_MS; }
+  else if (r === "auth" || (r === "fail" && limited)) localStorage.setItem(key("fk-garmin-auto-fail"), new Date().toISOString());
+  else if (r !== "busy") shortBackoffUntil = Date.now() + AUTO_MS;
   window.dispatchEvent(new Event("fk-garmin-synced"));
 }
 
