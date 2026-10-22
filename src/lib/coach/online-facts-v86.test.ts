@@ -34,11 +34,18 @@ test('G04: askOnlineCoach honours setOnline(false) itself — no fetch', async (
   try {
     setOnline(false); const r = await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [] })
     assert.ok('error' in r); assert.equal(calls, 0)
-    setOnline(true); assert.ok('error' in await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [] })); assert.equal(calls, 0)
+    setOnline(true); assert.deepEqual(await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [] }), { text: 'ok' }); assert.equal(calls, 1)
   } finally { globalThis.fetch = orig }
 })
-test('legacy route cannot bypass trusted evidence and budget by supplying only an API key',async()=>{
- const r=await onRequestPost({request:new Request('https://x/api/coach-chat',{method:'POST',body:JSON.stringify({question:'q',facts:'forged'})}),env:{DEEPSEEK_API_KEY:'fake'}});assert.equal(r.status,503);assert.equal((await r.json()).ok,false)
+test('server prompt: no built-in goal; rules forbid invented numbers, fake memory claims, multi-change "只改一项"', async () => {
+  const orig = globalThis.fetch; let sent: any = null
+  globalThis.fetch = (async (_u: string, init: any) => { sent = JSON.parse(init.body); return new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] })) }) as never
+  try {
+    const req = new Request('https://x/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json', 'cf-connecting-ip': '9.9.9.9' }, body: JSON.stringify({ question: 'q', facts: 'f', local: 'l' }) })
+    assert.equal((await onRequestPost({ request: req, env: { DEEPSEEK_API_KEY: 'k' } })).status, 200)
+    const sys = sent.messages[0].content as string
+    assert.doesNotMatch(sys, HARDCODED); assert.match(sys, /目标：未知/); assert.match(sys, /已记住/); assert.match(sys, /只改一项/); assert.match(sys, /不要编/)
+  } finally { globalThis.fetch = orig }
 })
 test('local interval-rest explainer no longer assumes the 400m/53s goal', () => {
   const a = intervalRestAnswer('间歇休息1分钟和8分钟有什么区别？') ?? ''

@@ -25,9 +25,7 @@ test('online coach stays default ON and client cap equals live server clip', () 
     const defaultOn=onlineSetting().on;setOnline(false);console.log(JSON.stringify({defaultOn,afterOff:onlineSetting().on}));
   `], {encoding:'utf8'}))
   assert.deepEqual(values, {defaultOn:true,afterOff:false})
-  assert.match(s,/server\/coach-deepseek\/coach-chat.controller/);assert.doesNotMatch(c,/from [^\n]*server\/coach-deepseek/);
-  const boundary=readFileSync('server/coach-deepseek/lib/coach-request-boundary.ts','utf8');
-  const cap=Number(/ONLINE_QUESTION_MAX = (\d+)/.exec(c)?.[1]),server=Number(/body.question.length > (\d+)/.exec(boundary)?.[1])
+  const cap = Number(/ONLINE_QUESTION_MAX = (\d+)/.exec(c)?.[1]), server = Number(/clip\(body\?\.question, (\d+)\)/.exec(s)?.[1])
   assert.ok(Number.isFinite(cap) && Number.isFinite(server))
   assert.equal(cap, server)
 })

@@ -74,22 +74,19 @@ export function buildFacts(day: string, act: GActivity | null, laps: GLap[] | nu
     const u09 = personalStatsFactLine(personalStatsCards(snap, currentAthleteId(), `${day}T23:59:59`)); if (u09) lines.push(u09) } catch { /* optional */ }
   return lines.join('\n').slice(0, 7800)
 }
-/** 与受控服务端保持相同上限；超限拒绝，不能静默截断安全信息。 */
-export const ONLINE_QUESTION_MAX = 200
-export type OnlineAuthorization = {requestId:string;snapshotId:string;consentId:string;asOf:string}
-export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[]; authorization?: OnlineAuthorization }, ms = 30000): Promise<{ text: string } | { error: string }> {
-  const owner=currentAthleteId(),setting=onlineSetting()
-  if (!setting.on) return { error: '联网分析已关闭，已保留本地分析；没有上传数据' }
-  const q=input.question.trim(),refs=input.authorization
-  if (!q || q.length > ONLINE_QUESTION_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) return {error:'问题格式无效，保留本地分析'}
-  if(!refs||![refs.requestId,refs.snapshotId,refs.consentId,refs.asOf].every(x=>typeof x==='string'&&x.trim()))return {error:'受信任事实授权与费用审批尚未接通，已保留本地分析；没有上传训练或健康记录'}
-  const ac=new AbortController(),t=setTimeout(()=>ac.abort(),Math.min(Math.max(ms,1),30000))
-  const changed=()=>{if(currentAthleteId()!==owner||!onlineSetting().on||onlineSetting().consentAt!==setting.consentAt)ac.abort()}
-  if(typeof window!=='undefined')window.addEventListener('fk-online-features-changed',changed)
+/** 客户端问题上限与线上 /api/coach-chat 一致（v84 线上服务端截断到 1000 字）：超限直接拒绝、不 fetch，避免静默截断。
+ * C03/R14 包里的 200 字上限属于未启用的 server/coach-deepseek 受控入口，线上未路由，故此处不采用 200。 */
+export const ONLINE_QUESTION_MAX = 1000
+export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[] }, ms = 30000): Promise<{ text: string } | { error: string }> {
+  // v86（R1.1 G04）：开关在这里再查一次——用户关掉联网后，任何调用方都不能再发出请求（不只靠界面判断）。
+  if (!onlineSetting().on) return { error: '联网分析已关闭，已保留本地分析；没有上传数据' }
+  const q = input.question.trim()
+  // eslint-disable-next-line no-control-regex -- 有意拒绝控制字符
+  if (!q || q.length > ONLINE_QUESTION_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) return { error: `问题为空、含无效字符或超过${ONLINE_QUESTION_MAX}字，已保留本地分析；没有上传数据` }
+  const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms)
   try {
-    const r=await fetch('/api/coach-chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,requestId:refs.requestId,snapshotId:refs.snapshotId,consentId:refs.consentId,asOf:refs.asOf}),signal:ac.signal})
-    const j=await r.json().catch(()=>({}))
-    changed();if(ac.signal.aborted)return {error:'授权或当前档案已变化，未采用联网结果'}
-    return r.ok&&j.ok===true&&j.planChanged===false&&typeof j.text==='string'&&j.text.trim()?{text:j.text}:{error:j.error||`HTTP ${r.status}`}
-  }catch{return {error:ac.signal.aborted?'联网取消或超时，保留本地分析':'网络不可用，保留本地分析'}}finally{clearTimeout(t);if(typeof window!=='undefined')window.removeEventListener('fk-online-features-changed',changed)}
+    const r = await fetch('/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...input, history: input.history.slice(-6) }), signal: ac.signal })
+    const j = await r.json().catch(() => ({}))
+    return r.ok && typeof j.text === 'string' && j.text.trim() ? { text: j.text } : { error: j.error || `HTTP ${r.status}` }
+  } catch { return { error: ac.signal.aborted ? '联网超时' : '网络不可用' } } finally { clearTimeout(t) }
 }
