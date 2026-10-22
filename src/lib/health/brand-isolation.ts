@@ -2,11 +2,16 @@
  * - 来源只按“稳定来源标识”的前缀判断（garmin: / coros:），不按标题或日期猜。
  * - 跨品牌“可能是同一次活动”只给候选，由用户决定是否保存；绝不自动合并、不自动标完成。
  * - 健康基准（HRV/静息心率/睡眠）本来就按来源+口径分组（recovery-quantitative 的 protocol），这里不跨品牌混算。 */
-export type Provider = 'GARMIN' | 'COROS' | 'OTHER'
+export type Provider = 'GARMIN' | 'COROS' | 'POLAR' | 'SUUNTO' | 'HUAWEI' | 'APPLE_HEALTH' | 'HEALTH_CONNECT' | 'OTHER'
 export function providerOf(identity: string | null | undefined): Provider {
   if (typeof identity !== 'string') return 'OTHER'
   if (identity.startsWith('garmin:')) return 'GARMIN'
   if (identity.startsWith('coros:')) return 'COROS'
+  if (identity.startsWith('polar:')) return 'POLAR'
+  if (identity.startsWith('suunto:')) return 'SUUNTO'
+  if (identity.startsWith('huawei:')) return 'HUAWEI'
+  if (identity.startsWith('apple_health:')) return 'APPLE_HEALTH'
+  if (identity.startsWith('health_connect:')) return 'HEALTH_CONNECT'
   return 'OTHER'
 }
 /** 记录来源字段：provider / accountRef / recordId / measuredAt / receivedAt。缺的就是 null，不补。 */
@@ -21,7 +26,7 @@ export function rowProvider(r: ActLike): Provider {
   const ids = r.originIds ?? [r.id]
   if (ids.some(x => providerOf(x) === 'GARMIN')) return 'GARMIN'
   if (ids.some(x => providerOf(x) === 'COROS')) return 'COROS'
-  return 'OTHER'
+  return ids.map(providerOf).find(p => p !== 'OTHER') ?? 'OTHER'
 }
 const close = (a: number | null, b: number | null, rel: number, abs: number) => a == null || b == null ? null : Math.abs(a - b) <= Math.max(abs, rel * Math.max(a, b))
 /** 跨品牌同一次活动候选：项目相同、开始时间相差 ≤2 分钟、距离或时长接近（且已知的都不矛盾）。只给候选。 */

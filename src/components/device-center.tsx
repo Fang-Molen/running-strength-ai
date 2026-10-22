@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DEVICE_GUIDES } from '@/lib/ui/device-guides'
 import { preflightDeviceFile, type DeviceFilePreflight } from '@/lib/ui/device-import-contract'
 import { parseCsvPreview, type CsvPreview } from '@/lib/ui/device-csv-preview'
 
 /** Guidance only. Deliberately does not create an import record or request device permissions. */
-export function DeviceCenter() {
-  const [selected, setSelected] = useState('coros')
+export function DeviceCenter({ initialBrand = 'coros' }: { initialBrand?: string }) {
+  const [selected, setSelected] = useState(() => DEVICE_GUIDES.some(g => g.id === initialBrand) ? initialBrand : 'coros')
   const [preflight, setPreflight] = useState<DeviceFilePreflight | null>(null)
   const [csvPreview, setCsvPreview] = useState<CsvPreview | null>(null)
   const [csvError, setCsvError] = useState('')
+  const csvGeneration = useRef(0)
+  useEffect(() => () => { csvGeneration.current++ }, [])
   const guide = DEVICE_GUIDES.find((item) => item.id === selected) ?? DEVICE_GUIDES[0]
   return <section className="mt-4 rounded-card border border-line bg-surface p-3 text-sm" aria-labelledby="device-center-heading">
     <h2 id="device-center-heading" className="font-bold">智能设备接入指南</h2>
@@ -44,20 +46,21 @@ export function DeviceCenter() {
       <h3 className="font-bold">CSV 批量本地预览（只读）</h3>
       <p className="mt-1 text-muted">一次查看最多 20 行；仅在当前页面读取，不上传、不保存、不生成训练或身体记录。不同品牌 CSV 字段尚未统一映射。</p>
       <input aria-label="选择 CSV 批量预览文件" type="file" accept=".csv,text/csv" className="mt-2 block w-full max-w-full text-sm" onChange={async (event) => {
+        const generation = ++csvGeneration.current
         const file = event.target.files?.[0]
         event.target.value = ''
         setCsvPreview(null); setCsvError('')
         if (!file) return
         if (!/\.csv$/i.test(file.name) || file.size > 2_000_000) { setCsvError('请选择不超过 2 MB 的 CSV 文件'); return }
-        try { setCsvPreview(parseCsvPreview(await file.text())) }
-        catch (error) { setCsvError(error instanceof Error ? error.message : 'CSV 读取失败') }
+        try { const text = await file.text(); if (generation === csvGeneration.current) setCsvPreview(parseCsvPreview(text)) }
+        catch (error) { if (generation === csvGeneration.current) setCsvError(error instanceof Error ? error.message : 'CSV 读取失败') }
       }} />
       {csvError && <p role="alert" className="mt-2 text-warn">{csvError}</p>}
       {csvPreview && <div className="mt-3" role="status">
         <p>共 {csvPreview.totalRows} 行数据，预览 {csvPreview.rows.length} 行；{csvPreview.headers.length} 列。</p>
         {csvPreview.warnings.map((warning) => <p key={warning} className="text-warn">{warning}</p>)}
         <div className="mt-2 max-h-64 overflow-auto rounded-card border border-line"><table className="min-w-full text-left text-xs"><thead><tr>{csvPreview.headers.map((header, i) => <th key={i} className="border-b border-line p-2">{header || `第${i + 1}列`}</th>)}</tr></thead><tbody>{csvPreview.rows.map((row, i) => <tr key={i}>{csvPreview.headers.map((_, j) => <td key={j} className="border-b border-line p-2">{row[j] ?? '—'}</td>)}</tr>)}</tbody></table></div>
-        <button type="button" className="mt-2 underline" onClick={() => setCsvPreview(null)}>清除预览</button>
+        <button type="button" className="mt-2 underline" onClick={() => { csvGeneration.current++; setCsvPreview(null); setCsvError('') }}>清除预览</button>
       </div>}
     </div>
     <p className="mt-3 text-muted">以实际导入和授权结果为准；本面板预检查通过不等于数据已导入。</p>

@@ -34,7 +34,12 @@ const field = <T,>(value: T | null) => value == null ? { value: null, status: "A
 export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActivity[]): { saved: number; skipped: number; errors: string[] } {
   let saved = 0, skipped = 0
   const errors: string[] = []
-  const have = existingKeys()
+  // One normalized snapshot per save call. Repeat syncs can contain hundreds of
+  // existing activities; reparsing the entire history for each one is quadratic.
+  const imports = coachImports()
+  const importedByDraft = new Map<string, typeof imports[number]>()
+  for (const record of imports) if (!importedByDraft.has(record.draftId)) importedByDraft.set(record.draftId, record)
+  const have = { activities: new Set(importedByDraft.keys()), sigs: loadSigs() }
 
   const result = saveConfirmedHealth(health);
   saved += result.saved; skipped += result.skipped; errors.push(...result.errors);
@@ -42,7 +47,7 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
     if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');continue}
     const draftId = activityDraftId(a)
     if (have.activities.has(draftId) || isDuplicate(a, have)) {
-      const previous=a.sourceIdentity?coachImports().find(x=>x.draftId===draftId):null
+      const previous=a.sourceIdentity?importedByDraft.get(draftId):null
       if(previous&&(previous.sourceRecordIdentity!==a.sourceIdentity||previous.durationSeconds.value!==a.durationSec||previous.totalDistanceMeters.value!==a.distanceM))
         errors.push('同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。')
       else skipped++

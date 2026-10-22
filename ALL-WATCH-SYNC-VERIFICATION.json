@@ -1,0 +1,1160 @@
+{
+  "status": "PASS",
+  "delivery_kind": "complete source update; not deployed",
+  "baseline": {
+    "name": "fangkun-v89.10.6-sync-optimized.zip",
+    "sha256": "174d08fa9dee70275ac9c221a19ce379f91e1112601cb0865f940aaec310ef8f",
+    "files": 1727
+  },
+  "scope": {
+    "modified_existing_source_files": [
+      "src/components/coros-account.tsx",
+      "src/components/coros-health-panel.tsx",
+      "src/components/device-center.tsx",
+      "src/lib/health/coros-mcp-client.ts",
+      "src/lib/health/coros-mcp-server.ts"
+    ],
+    "new_source_and_test_files": [
+      "src/lib/ui/coros-sync-live.ts",
+      "src/lib/ui/coros-sync-live.test.ts",
+      "src/lib/health/coros-mcp-transport.test.ts",
+      "src/lib/health/coros-mcp-performance.test.ts"
+    ],
+    "preserved_source_resource_files": 1716,
+    "preserved_historical_notes": [
+      "UI-DETAILS-README.md",
+      "UI-DETAILS-VERIFICATION.json",
+      "UI-DETAILS.patch",
+      "SYNC-OPTIMIZATION-README.md",
+      "SYNC-OPTIMIZATION-VERIFICATION.json",
+      "SYNC-OPTIMIZATION.patch"
+    ],
+    "deleted_files": []
+  },
+  "current_source_sha256": {
+    "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+    "src/components/coros-health-panel.tsx": "26b5b4d5972a6ac6c50acca617d5b896ed24e39c7c7bc40370af0fc719eb0c9b",
+    "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+    "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+    "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+    "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+    "src/lib/ui/coros-sync-live.test.ts": "9ad392dddfce1b7b1da0f6d98bc3db1258f41ea15c9c4f2bda10d0694054b359",
+    "src/lib/health/coros-mcp-transport.test.ts": "9b63ab77ac4610deb2fc2cd4d44fdf44577f01b231529f139bde99ff67c06362",
+    "src/lib/health/coros-mcp-performance.test.ts": "a8f372411422d5f37e292a815db3c8265a495d501431ff9ebbe60e19b155b301"
+  },
+  "commands_and_tests": {
+    "typecheck": {
+      "exit_code": 0,
+      "command": "npm run typecheck:application"
+    },
+    "production_build": {
+      "exit_code": 0,
+      "prerendered_pages": 1,
+      "note": "Existing generated-output and Nitro-cache cleanup ran before successful build; local loopback prerender only; no database migration or deployment.",
+      "commands": [
+        "node scripts/clean-build-output.mjs",
+        "node scripts/with-app-env.mjs ./node_modules/.bin/vite build"
+      ]
+    },
+    "tests": [
+      {
+        "suite": "server",
+        "tests": 9,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "server-performance",
+        "tests": 8,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "mapping",
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "brand-isolation",
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "csv",
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "file-preflight",
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "transport",
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "live",
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    ],
+    "total_passed": 53,
+    "client_sha256": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b"
+  },
+  "browser": {
+    "status": "PASS",
+    "unexpected_findings": 0,
+    "page_errors": 0,
+    "production_final_build_verified": true,
+    "reports": [
+      {
+        "name": "green-dev-activity-390-light-completed-report.json",
+        "scenario": "activity, status, laps and explicit save",
+        "checks": 17,
+        "status": "PASS"
+      },
+      {
+        "name": "green-dev-health-390-light-completed-report.json",
+        "scenario": "health partial merge and cache observation",
+        "checks": 11,
+        "status": "PASS"
+      },
+      {
+        "name": "green-dev-csv-1024-light-completed-report.json",
+        "scenario": "all-brand guides and CSV ordering",
+        "checks": 9,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-auth-390-dark-completed-report.json",
+        "scenario": "activity authorization expiry",
+        "checks": 7,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-scope-390-dark-completed-report.json",
+        "scenario": "athlete scope invalidation",
+        "checks": 8,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-disconnect-390-light-completed-report.json",
+        "scenario": "disconnect and OAuth barrier",
+        "checks": 13,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-timeout-390-dark-completed-report.json",
+        "scenario": "activity request timeout",
+        "checks": 6,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-health-quota-390-light-completed-report.json",
+        "scenario": "valid first health response with cache quota failure",
+        "checks": 9,
+        "status": "PASS"
+      },
+      {
+        "name": "final-dev-health-auth-390-dark-completed-report.json",
+        "scenario": "first health authorization error without cache",
+        "checks": 9,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-outage-390-light-completed-report.json",
+        "scenario": "service outage and explicit retry",
+        "checks": 7,
+        "status": "PASS"
+      },
+      {
+        "name": "frozen-dev-390-light-background-success-completed-report.json",
+        "scenario": "Garmin optimized behavior preservation",
+        "checks": 17,
+        "status": "PASS"
+      },
+      {
+        "name": "final-production-smoke-390-light-completed-report.json",
+        "scenario": "built app activity remount and completion",
+        "checks": 9,
+        "status": "PASS"
+      }
+    ],
+    "total_checks": 122,
+    "productionEvidence": {
+      "actualHttpScriptsObservedInBrowser": [
+        "http://127.0.0.1:8081/assets/index-E1A2TrQi.js"
+      ],
+      "currentGeneratedEntryRefs": [
+        "/assets/index-BV5Z1n4e.css",
+        "/assets/routes-CuAXp4S5.css",
+        "/assets/index-E1A2TrQi.js",
+        "/assets/rolldown-runtime-hePW80VL.js",
+        "/assets/routes-DinJqBjP.js",
+        "/assets/profile-NbdHdUW4.js",
+        "/assets/events-CmA108LN.js",
+        "/assets/client-DGkamj68.js"
+      ],
+      "observedEntryMatchesCurrentBuild": true,
+      "criticalSourceHashesMatchRunStart": true,
+      "criticalSourceHashes": {
+        "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+        "src/components/coros-health-panel.tsx": "26b5b4d5972a6ac6c50acca617d5b896ed24e39c7c7bc40370af0fc719eb0c9b"
+      }
+    },
+    "generatedAt": "2026-10-22T01:36:43.368926+00:00",
+    "baselineArtifact": "deliverables/fangkun-v89.10.6-sync-optimized.zip",
+    "baselineSha256": "174d08fa9dee70275ac9c221a19ce379f91e1112601cb0865f940aaec310ef8f",
+    "totals": {
+      "cases": 12,
+      "passed": 122,
+      "developmentPassed": 113,
+      "productionPassed": 9,
+      "findings": 0,
+      "pageErrors": 0,
+      "unexpectedConsole": 0
+    },
+    "sourceRoot": "/workspace/scratch/709a4e864be6/fangkun-ui-details-v89.10.6",
+    "currentSourceHashes": {
+      "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+      "src/components/coros-health-panel.tsx": "26b5b4d5972a6ac6c50acca617d5b896ed24e39c7c7bc40370af0fc719eb0c9b",
+      "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+      "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+      "src/components/strength-app.tsx": "cb2cb61b9f3fd992374ed42bb779eed9ccf81f56ceac27b947aec9f9dc00b810",
+      "src/components/settings-center.tsx": "708a7055572a7172613b0e77e7402acf03efac80aaf71825e41740591dc32c5c",
+      "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+      "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+      "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+      "src/lib/ui/device-store.ts": "685db54f5df45e37322f88bdb537f5dc82a1ce0c7faa17ae9c389be6225103d6",
+      "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+      "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+    },
+    "cases": [
+      {
+        "name": "activity, status, laps and explicit save",
+        "report": "green-dev-activity-390-light-completed-report.json",
+        "phase": "initial integrated dev",
+        "status": "PASS",
+        "passed": 17,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 2,
+          "health": 1,
+          "laps": 1,
+          "status": 1,
+          "activityError": null
+        },
+        "screenshots": [
+          "green-dev-activity-390-light-automatic-pending.png",
+          "green-dev-activity-390-light-completed-preview.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "bf30b9b9e8288d2d90f47001ff284a21b7d6f7a3b5448c9de1e5990b122691ee",
+          "src/components/coros-health-panel.tsx": "76f8c2aff6f8ebcaa110ae98b26a357c42f8be4ec3d2bb079a26f633037c9681",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "f4616f2c1697714e88f16b8d34b85168767af3550a2029c2ba088f1b957fddc7",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "ada9ecdf25cb795f0b3334685c89a170efde1d23aaff849a40d343e2a647fcd8",
+        "builtScripts": null
+      },
+      {
+        "name": "health partial merge and cache observation",
+        "report": "green-dev-health-390-light-completed-report.json",
+        "phase": "initial integrated dev",
+        "status": "PASS",
+        "passed": 11,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 0,
+          "health": 2,
+          "laps": 0,
+          "status": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "green-dev-health-390-light-pending-cache.png",
+          "green-dev-health-390-light-partial-complete.png",
+          "green-dev-health-390-light-observed-fresh-result.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "bf30b9b9e8288d2d90f47001ff284a21b7d6f7a3b5448c9de1e5990b122691ee",
+          "src/components/coros-health-panel.tsx": "76f8c2aff6f8ebcaa110ae98b26a357c42f8be4ec3d2bb079a26f633037c9681",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "ad0edd6064e762a58753c9a782d5505ec53187b1298d494c06e9056717ecce16",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "ca996cf6ca76d792f067e3b20a93c28c3f9012d19c179b2017c473544cb27858",
+        "builtScripts": null
+      },
+      {
+        "name": "all-brand guides and CSV ordering",
+        "report": "green-dev-csv-1024-light-completed-report.json",
+        "phase": "initial integrated dev",
+        "status": "PASS",
+        "passed": 9,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": false,
+          "activities": 0,
+          "health": 0,
+          "laps": 0,
+          "status": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "green-dev-csv-1024-light-latest-preview.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "bf30b9b9e8288d2d90f47001ff284a21b7d6f7a3b5448c9de1e5990b122691ee",
+          "src/components/coros-health-panel.tsx": "76f8c2aff6f8ebcaa110ae98b26a357c42f8be4ec3d2bb079a26f633037c9681",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "ad0edd6064e762a58753c9a782d5505ec53187b1298d494c06e9056717ecce16",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "429c819d128d9f90420c26410653ebc42f8bbb49c8ad48c5e1bf6398c36bdc4b",
+        "builtScripts": null
+      },
+      {
+        "name": "activity authorization expiry",
+        "report": "frozen-dev-auth-390-dark-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 7,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 1,
+          "health": 1,
+          "laps": 0,
+          "status": 1,
+          "disconnects": 0,
+          "activityError": "auth"
+        },
+        "screenshots": [
+          "frozen-dev-auth-390-dark-failure-ended.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "81068a637346494a97ce4fd37629b2ec43417117464c729297a00056128c1ac6",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "c53e4a238cc908859e89c2e707db4dc4af893c0480cb7f86ba46f955bcd7a93c",
+        "builtScripts": null
+      },
+      {
+        "name": "athlete scope invalidation",
+        "report": "frozen-dev-scope-390-dark-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 8,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": false,
+          "activities": 1,
+          "health": 1,
+          "laps": 0,
+          "status": 2,
+          "disconnects": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "frozen-dev-scope-390-dark-scope-complete.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "81068a637346494a97ce4fd37629b2ec43417117464c729297a00056128c1ac6",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "552bb6b619d848cf856918ac6d509bec7af2a0c901db97ed28f742e52e9670cc",
+        "builtScripts": null
+      },
+      {
+        "name": "disconnect and OAuth barrier",
+        "report": "frozen-dev-disconnect-390-light-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 13,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": false,
+          "activities": 1,
+          "health": 1,
+          "laps": 0,
+          "status": 2,
+          "disconnects": 1,
+          "activityError": null
+        },
+        "screenshots": [
+          "frozen-dev-disconnect-390-light-revocation-pending.png",
+          "frozen-dev-disconnect-390-light-disconnected-complete.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "81068a637346494a97ce4fd37629b2ec43417117464c729297a00056128c1ac6",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "4685218f67a67251c3ea46a554ea8ae5f27dd2538fcb9df17e0b9d895a38cbd6",
+        "builtScripts": null
+      },
+      {
+        "name": "activity request timeout",
+        "report": "frozen-dev-timeout-390-dark-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 6,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 1,
+          "health": 1,
+          "laps": 0,
+          "status": 1,
+          "disconnects": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "frozen-dev-timeout-390-dark-failure-ended.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "81068a637346494a97ce4fd37629b2ec43417117464c729297a00056128c1ac6",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "5fcbb4baa461cea733a087f2f1f442736a21c6ab1112a181428bedfdf16a1020",
+        "builtScripts": null
+      },
+      {
+        "name": "valid first health response with cache quota failure",
+        "report": "frozen-dev-health-quota-390-light-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 9,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 0,
+          "health": 1,
+          "laps": 0,
+          "status": 0,
+          "disconnects": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "frozen-dev-health-quota-390-light-first-read-ended.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "81068a637346494a97ce4fd37629b2ec43417117464c729297a00056128c1ac6",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "bca79b8697fe5a4a6ed2d42f419fa5fe28a2b2c6fe899f37b472a6b001d07cdf",
+        "builtScripts": null
+      },
+      {
+        "name": "first health authorization error without cache",
+        "report": "final-dev-health-auth-390-dark-completed-report.json",
+        "phase": "final conditional-copy dev",
+        "status": "PASS",
+        "passed": 9,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 0,
+          "health": 1,
+          "laps": 0,
+          "status": 0,
+          "disconnects": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "final-dev-health-auth-390-dark-first-read-ended.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "26b5b4d5972a6ac6c50acca617d5b896ed24e39c7c7bc40370af0fc719eb0c9b",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "01901d3f563bf10a901f0052a1b9c387b35690ff83f7e60abdb22fdd8b68c086",
+        "builtScripts": null
+      },
+      {
+        "name": "service outage and explicit retry",
+        "report": "frozen-dev-outage-390-light-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 7,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 2,
+          "health": 1,
+          "laps": 0,
+          "status": 1,
+          "disconnects": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "frozen-dev-outage-390-light-failure-ended.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "81068a637346494a97ce4fd37629b2ec43417117464c729297a00056128c1ac6",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "949f8a80f7151b842d73085d449a6b3fddf61cbb3dcb59559d742ae3459e727c",
+        "builtScripts": null
+      },
+      {
+        "name": "Garmin optimized behavior preservation",
+        "report": "frozen-dev-390-light-background-success-completed-report.json",
+        "phase": "frozen client dev",
+        "status": "PASS",
+        "passed": 17,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "width": 390,
+          "theme": "light",
+          "listRequests": 1,
+          "maxConcurrent": 5,
+          "elapsedFromFirstListMs": 1546,
+          "apiRequests": 30,
+          "garminProxyRequests": 14,
+          "actualReport": {
+            "at": "2026-10-22T00:30:00.000Z",
+            "status": "ok",
+            "subjectId": "local",
+            "accountScope": "v8j45i",
+            "healthRows": 18,
+            "activityRows": 0,
+            "saved": 18,
+            "skipped": 0,
+            "errors": [],
+            "healthDaysRequested": 3,
+            "coverageDays": [
+              "2026-10-22",
+              "2026-10-21",
+              "2026-10-20"
+            ],
+            "activityLimit": 20,
+            "completeHistory": false,
+            "mode": "RECENT",
+            "intraday": {
+              "requested": 2,
+              "saved": 2,
+              "failed": [],
+              "throttled": false
+            },
+            "requests": 16
+          }
+        },
+        "screenshots": [
+          "frozen-dev-390-light-background-success-slow-active.png",
+          "frozen-dev-390-light-background-success-slow-reopened.png",
+          "frozen-dev-390-light-background-success-health-progress.png",
+          "frozen-dev-390-light-background-success-complete.png"
+        ],
+        "sourceHashesAtRunStart": null,
+        "reportSha256": "1fc7508f7889f2e001451aaa2ba3c2cd9336d5768d680e11a1e47d58c0629628",
+        "builtScripts": null
+      },
+      {
+        "name": "built app activity remount and completion",
+        "report": "final-production-smoke-390-light-completed-report.json",
+        "phase": "final production8081",
+        "status": "PASS",
+        "passed": 9,
+        "findings": 0,
+        "pageErrors": [],
+        "expectedFailures": [],
+        "metrics": {
+          "connected": true,
+          "activities": 1,
+          "health": 1,
+          "laps": 0,
+          "status": 1,
+          "disconnects": 0,
+          "activityError": null
+        },
+        "screenshots": [
+          "final-production-smoke-390-light-automatic-pending.png",
+          "final-production-smoke-390-light-completed-preview.png"
+        ],
+        "sourceHashesAtRunStart": {
+          "src/components/coros-account.tsx": "1f36b1bbe6a559022ed416adaeb04e0638038d83cbdc57ab26ac2dc635f773d5",
+          "src/components/coros-health-panel.tsx": "26b5b4d5972a6ac6c50acca617d5b896ed24e39c7c7bc40370af0fc719eb0c9b",
+          "src/components/device-center.tsx": "f0f7c721f8c59279084f179d741b7c35c7a89b5a6a5a987c3aea55aa4f2c0188",
+          "src/components/device-import.tsx": "dd9d8b002c0dc2811c315dd0837957ec0390f1b0c0e29c521f9176ba4b5f280b",
+          "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+          "src/lib/health/coros-mcp-server.ts": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+          "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef",
+          "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+          "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+        },
+        "reportSha256": "a43b636df7469a891a7acc4f93104a38de19ebf629680f8a2adfd7206e0bf9fa",
+        "builtScripts": [
+          "http://127.0.0.1:8081/assets/index-E1A2TrQi.js"
+        ]
+      }
+    ],
+    "baseline": {
+      "report": "baseline-completed-report.json",
+      "passedPreservationChecks": 5,
+      "expectedFailures": [
+        {
+          "name": "automatic COROS activity job visibly disables sync",
+          "evidence": {
+            "activityRequests": 1,
+            "text": "高驰（COROS）\n已授权\n\n读取近 28 天活动，核对后保存。\n\n立即同步\n断开高驰\n同步说明",
+            "buttonDisabled": false
+          }
+        },
+        {
+          "name": "reopening joins the existing COROS activity request",
+          "evidence": {
+            "activityRequests": 2
+          }
+        },
+        {
+          "name": "late older CSV completion cannot replace latest selection",
+          "evidence": "智能设备接入指南\n\n此面板提供品牌操作指引和文件预检查；实际导入请使用上方“导入手表数据”。选择品牌不会读取设备数据，也不代表账号已经连接。\n\n选择设备品牌\n通用运动设备\nCOROS 高驰\nApple Watch / Apple 健康\nSuunto 颂拓\nPolar 博能\n华为 / 荣耀\n小米 / Redmi\nAmazfit / Zepp\nSamsung Galaxy Watch\n其他设备 / 无手表\nCOROS 高驰\n\n操作入口：COROS App → 活动详情\n\n常见格式：通常可导出 FIT\n\n打开 COROS App 并进入历史活动。\n选择目标活动，在分享或更多选项中查找「导出数据」。\n将 FIT 文件保存到本地，等待导入功能上线。\n\n注意：菜单名称可能随系统及 App 版本变化。\n\n本地文件格式预检查（不导入）\n\n只检查所选文件的名称和大小，不读取内容、不上传、不保存，也不生成训练记录。需要保存数据时请使用上方导入入口并核对预览结果。\n\n选择本地文件\nCSV 批量本地预览（只读）\n\n一次查看最多 20 行；仅在当前页面读取，不上传、不保存、不生成训练或身体记录。不同品牌 CSV 字段尚未统一映射。\n\n共 1 行数据，预览 1 行；2 列。\n\nname\tvalue\nQA_OLDER_A\t1\n清除预览\n\n以实际导入和授权结果为准；本面板预检查通过不等于数据已导入。"
+        }
+      ],
+      "observedRequests": {
+        "activityRequests": 2,
+        "statusRequests": 12
+      }
+    },
+    "consoleReview": {
+      "knownBaselineMissingAssets": [
+        "/fangkun-atlas/figure-female.webp",
+        "/fangshen/care-bust.png"
+      ],
+      "knownBaselineAssetMessages": [
+        {
+          "case": "activity, status, laps and explicit save",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "activity, status, laps and explicit save",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "health partial merge and cache observation",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "health partial merge and cache observation",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "all-brand guides and CSV ordering",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "all-brand guides and CSV ordering",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "activity authorization expiry",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "activity authorization expiry",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "athlete scope invalidation",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "athlete scope invalidation",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "disconnect and OAuth barrier",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "disconnect and OAuth barrier",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "activity request timeout",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "activity request timeout",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "valid first health response with cache quota failure",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "valid first health response with cache quota failure",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "first health authorization error without cache",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "first health authorization error without cache",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "service outage and explicit retry",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "service outage and explicit retry",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "Garmin optimized behavior preservation",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangshen/care-bust.png"
+        },
+        {
+          "case": "Garmin optimized behavior preservation",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8080/fangkun-atlas/figure-female.webp"
+        },
+        {
+          "case": "built app activity remount and completion",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8081/fangshen/care-bust.png"
+        },
+        {
+          "case": "built app activity remount and completion",
+          "message": "Failed to load resource: the server responded with a status of 404 ()",
+          "url": "http://127.0.0.1:8081/fangkun-atlas/figure-female.webp"
+        }
+      ],
+      "intentionalMockFailureMessages": [
+        {
+          "case": "activity authorization expiry",
+          "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+          "url": "http://127.0.0.1:8080/api/coros-mcp/activities?startDate=20261016"
+        },
+        {
+          "case": "first health authorization error without cache",
+          "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+          "url": "http://127.0.0.1:8080/api/coros-mcp/health"
+        },
+        {
+          "case": "service outage and explicit retry",
+          "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+          "url": "http://127.0.0.1:8080/api/coros-mcp/activities?startDate=20261016"
+        }
+      ],
+      "unexpectedMessages": []
+    },
+    "notes": [
+      "All contexts used synthetic data and local mocked APIs; every nonlocal request was blocked. No real account, credential entry, OAuth flow, or upstream service was exercised.",
+      "The timeout case advanced the browser clock151000ms to exercise the real150000ms request timer and AbortController. This is not a measured service latency.",
+      "Initial integrated activity/health/CSV groups preceded the final authorization/disconnect and first-health error fixes. The directly affected final paths were tested separately; each report records its available run-start source hashes. The final production gate used built UI only.",
+      "The one explicit COROS save assertion creates exactly one synthetic source-bound activity inside an isolated test context. Other reads, guide previews, failures and navigation preserve fixture records/profile.",
+      "The former lap-selector harness timeout was corrected for its busy accessible name before the passing activity report. It was not an application failure.",
+      "Two earlier production attempts reached zero assertions because served HTML referenced missing old hashed JS/CSS. The mismatch was resolved by root with a clean build and preview restart. Their archived reports remain as resolved failure history and are excluded from the final count; the final nine-check built-UI gate passed against the current HTTP entry script.",
+      "Browser coverage for other watch brands verifies their existing guide/CSV preview boundary. Parser and import benchmarking are in the separate read-only data audit; no new online account integrations were invented."
+    ],
+    "excludedEvidence": [
+      "pre-rebuild-production-smoke-excluded-report.json",
+      "production-assets-mismatch-report.json",
+      "frozen-dev-health-auth-390-dark-completed-report.json"
+    ],
+    "resolvedProductionFailure": {
+      "status": "RESOLVED",
+      "reason": "Old entry HTML referenced missing hashed JS/CSS; clean build and preview restart restored matching assets.",
+      "finalGate": "final-production-smoke-390-light-completed-report.json"
+    },
+    "appSourceModifiedByBrowserQA": false,
+    "serverRestartedByBrowserQA": false
+  },
+  "server_proof": {
+    "scope": [
+      "src/lib/health/coros-mcp-server.ts",
+      "src/lib/health/coros-mcp-performance.test.ts"
+    ],
+    "baseline_zip_sha256": "174d08fa9dee70275ac9c221a19ce379f91e1112601cb0865f940aaec310ef8f",
+    "before_server_sha256": "1fccb7c35351b5d0db95a36156fdcb30c42d4e09fac2ee2f5028a53177de839c",
+    "after_server_sha256": "d40b043b1a017e78c00db18d8d59d92f8791a189c10a6a40bf47cf678ec620db",
+    "test_sha256": "a8f372411422d5f37e292a815db3c8265a495d501431ff9ebbe60e19b155b301",
+    "unchanged": {
+      "functions/api/coros-mcp/[[path]].js": true,
+      "src/lib/health/coros-mcp-parse.ts": true,
+      "src/lib/health/coros-account-sync.ts": true
+    },
+    "tests": {
+      "performance": 8,
+      "existing_server": 9,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "fail_first_missing_behavior_cases": 4
+    },
+    "benchmark": {
+      "source": "coros-server-before-after.json",
+      "type": "synthetic in-memory 20ms delay per upstream call",
+      "before_median_ms": 165,
+      "after_median_ms": 105,
+      "requests_before_and_after": 8,
+      "peak_before": 1,
+      "peak_after": 2,
+      "full_response_equality": true
+    },
+    "contract": {
+      "handler_signature": "unchanged",
+      "endpoints": "unchanged",
+      "tool_names_arguments_and_data_windows": "unchanged",
+      "authentication_failure": "HTTP401 plus cleared cookies, no success data",
+      "rate_limit": "stop queued tools; retain completed values; explicitly list deferred tools in existing issues array",
+      "refresh_cache_scope": "one McpSession/request only",
+      "global_credential_cache": false,
+      "persistence_schema_parser_changes": false
+    },
+    "limitations": [
+      "Measurements are synthetic; no real COROS or Garmin service was called.",
+      "Upstream request deadline remains25s; no overall server deadline added.",
+      "Separate HTTP requests have independent MCP sessions; no cross-request token cache was introduced."
+    ]
+  },
+  "client_proof": {
+    "kind": "COROS client targeted synthetic before/after verification",
+    "network": "All fetch responses are controlled stubs; zero external requests or real accounts",
+    "state": "Production source frozen",
+    "baseline_zip_sha256": "174d08fa9dee70275ac9c221a19ce379f91e1112601cb0865f940aaec310ef8f",
+    "production_and_test_sha256": {
+      "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+      "src/lib/health/coros-mcp-transport.test.ts": "9b63ab77ac4610deb2fc2cd4d44fdf44577f01b231529f139bde99ff67c06362"
+    },
+    "source_contract_comparison": {
+      "activity_mapping_and_lap_return_unchanged": true,
+      "health_merge_unchanged": true,
+      "brand_trend_unchanged": true,
+      "coros-mcp-parse.ts_unchanged": true,
+      "coros-mcp-daily-v1.mjs_unchanged": true,
+      "coros-crossbrand-trend.mjs_unchanged": true,
+      "brand-isolation.ts_unchanged": true
+    },
+    "changed_files": [
+      "src/lib/health/coros-mcp-client.ts",
+      "src/lib/health/coros-mcp-transport.test.ts"
+    ],
+    "tests": {
+      "transport": {
+        "passed": 15,
+        "failed": 0,
+        "log": "coros-client-transport-final.txt"
+      },
+      "original_mapping_merge_trend": {
+        "passed": 4,
+        "failed": 0,
+        "log": "coros-client-mapping-final.txt"
+      }
+    },
+    "request_work": [
+      {
+        "endpoint": "status",
+        "simultaneous_identical_callers": 3,
+        "before_http_requests": 3,
+        "after_http_requests": 1
+      },
+      {
+        "endpoint": "activities",
+        "simultaneous_identical_callers": 3,
+        "before_http_requests": 3,
+        "after_http_requests": 1,
+        "separate_7_and_28_day_paths": true
+      },
+      {
+        "endpoint": "laps",
+        "simultaneous_identical_callers": 3,
+        "before_http_requests": 3,
+        "after_http_requests": 1,
+        "different_sportType_paths_remain_separate": true
+      },
+      {
+        "endpoint": "health",
+        "simultaneous_identical_callers": 2,
+        "before_http_requests": 2,
+        "after_http_requests": 1,
+        "after_storage_writes": 1,
+        "after_success_events": 1
+      }
+    ],
+    "status_cache": {
+      "duration_ms": 5000,
+      "force_refresh_api": "corosMcpStatus({force:true})",
+      "fresh_object_per_caller": true,
+      "activities_and_laps_have_no_completed_response_cache": true
+    },
+    "deadlines_ms": {
+      "status": 15000,
+      "activities": 150000,
+      "laps": 150000,
+      "health": 180000,
+      "disconnect": 35000
+    },
+    "red_first_observed_failures": [
+      "Original three simultaneous status readers issued three requests instead of one",
+      "Original two simultaneous health readers issued two requests instead of one",
+      "Successful health cache write emitted zero update events instead of one",
+      "Status read started before pending disconnect settled",
+      "Disconnect left linked metadata true and allowed old-session data reads",
+      "Delayed connected=true status fulfilled after a newer activity TOKEN_EXPIRED",
+      "Athlete switch released shared-cookie disconnect barrier and allowed an old-cookie status read"
+    ],
+    "verified_guards": [
+      "Owner mismatch rejects before health fetch",
+      "Athlete switch aborts old reads and blocks old-owner commit/return",
+      "Explicit authorization invalidation rejects old work without clearing imported records",
+      "Cookie-wide revocation barrier survives athlete changes while UI context generation advances",
+      "Data reads during and after successful disconnect reject TOKEN_EXPIRED without a fetch; status waits and reads fresh",
+      "TOKEN_EXPIRED blocks delayed status/data results without incrementing context generation",
+      "Ordinary network, malformed-body, rate-limit and timeout failures release pending work for manual retry",
+      "Older fetchedAt health rejects STALE_DATA without overwriting or returning the older data",
+      "Quota failure preserves stored cache and emits no successful-write event",
+      "HRV, stress, recovery, activity and lap fractional values remain exact; missing values and source identities are retained"
+    ],
+    "integration_api": {
+      "context_event": "COROS_CONTEXT_CHANGED = fk-coros-context-changed",
+      "capture": "captureCorosContext(): Readonly<{athleteId:string,generation:number}>",
+      "guard": "isCurrentCorosContext(context): boolean",
+      "authorization_reset": "invalidateCorosContext(): void",
+      "status": "corosMcpStatus(options?: {force?:boolean})",
+      "disconnect": "corosMcpDisconnect() invalidates synchronously; callers capture their completion context after invocation"
+    },
+    "limits": [
+      "No real-service timing measured; request-count improvement is deterministic synthetic evidence",
+      "Full application typecheck, production build and browser integration are owned by the root agent",
+      "Generic file parser remains unchanged in this client assignment"
+    ]
+  },
+  "independent_auth_review": {
+    "synthetic": true,
+    "isolation": "Node-only mocked fetch and storage. No actual credentials, services, user data, or application source edits.",
+    "sourceHashes": {
+      "src/lib/health/coros-mcp-client.ts": "9c82767c531646c5eda67bbf1b1d5b2c9e5aad780ef76553774c4ca904ba781b",
+      "src/lib/ui/coros-sync-live.ts": "695e6bd827ed32695236ad5c94438dd56c7963bc5fe1953c7a11036096429cef"
+    },
+    "checks": [
+      {
+        "name": "an older connected status cannot undo a newer authorization failure, including a subsequent status read",
+        "status": "PASS",
+        "evidence": {
+          "olderStatus": "TOKEN_EXPIRED",
+          "linked": false,
+          "requests": 2,
+          "contextStillCurrent": true
+        }
+      },
+      {
+        "name": "disconnect blocks new same-scope status, activity, and lap requests before revocation settles",
+        "status": "PASS",
+        "evidence": {
+          "requestsBeforeRevocation": [
+            "/api/coros-mcp/health",
+            "/api/coros-mcp/disconnect"
+          ]
+        }
+      },
+      {
+        "name": "the logout barrier survives an athlete switch, and the aborted prior health response cannot write either athlete",
+        "status": "PASS",
+        "evidence": {
+          "requestsBeforeRevocation": [
+            "/api/coros-mcp/health",
+            "/api/coros-mcp/disconnect"
+          ],
+          "oldCacheUnchanged": true,
+          "newCache": null
+        }
+      },
+      {
+        "name": "after logout, only fresh status is read; queued data reads reject without collection or cache writes",
+        "status": "PASS",
+        "evidence": {
+          "requests": [
+            "/api/coros-mcp/health",
+            "/api/coros-mcp/disconnect",
+            "/api/coros-mcp/status"
+          ],
+          "connected": false,
+          "queuedDataErrors": [
+            "TOKEN_EXPIRED",
+            "TOKEN_EXPIRED",
+            "TOKEN_EXPIRED"
+          ]
+        }
+      },
+      {
+        "name": "the review scenarios leave training/profile and health stores untouched",
+        "status": "PASS",
+        "evidence": {
+          "successfulStorageWriteKeys": [
+            "fk-coros-mcp-linked-v1:synthetic-final-auth-order",
+            "fk-coros-mcp-linked-v1:synthetic-final-disconnect-a"
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  "integration_inventory": {
+    "account_sync": [
+      "Garmin (existing)",
+      "COROS official MCP/OAuth (existing)"
+    ],
+    "shared_file_import": [
+      "Suunto",
+      "Polar",
+      "Apple",
+      "Huawei",
+      "Xiaomi",
+      "supported FIT/GPX/TCX/CSV/JSON/ZIP sources"
+    ],
+    "new_account_connectors_added": []
+  },
+  "preserved_contracts": [
+    "manual COROS28-day/automatic7-day activity windows",
+    "explicit selection before saving activities",
+    "source identities, brand isolation and duplicate rules",
+    "fractional activity/lap values and null-versus-zero semantics",
+    "existing plan/coach data relationships",
+    "health-trend previous/next/today navigation and existing charts",
+    "existing Garmin optimization source files byte-identical to baseline",
+    "no embedded personal plan or imported personal dataset"
+  ],
+  "limits": [
+    "All runtime data and service responses used for verification were synthetic.",
+    "No real watch/vendor/OAuth/model service was exercised and no deployment was performed.",
+    "The165ms to105ms timing comparison uses20ms mock upstream delays; it is not measured live-provider speed.",
+    "Generic local-file parsing was preserved; no across-the-board parsing latency gain is claimed.",
+    "Existing care-bust.png and figure-female.webp404s and existing build chunk warnings remain baseline issues."
+  ]
+}

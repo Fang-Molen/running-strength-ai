@@ -6,12 +6,13 @@ import { METRIC_LABELS, METRIC_UNITS, mergeResults, healthPreviewKey, paceText, 
 import { healthSavedKey, activityDraftId, existingKeys, isDuplicate, saveDeviceRows } from "@/lib/ui/device-store"
 import { SavedBadge } from "@/components/saved-badge"
 import { fmtDurationPrecise as fmtDur } from "@/lib/ui/activity-format"
+import { openDeviceSync } from "@/lib/ui/device-sync-navigation"
 
 export { ocr } from "@/lib/vision/local-ocr";
 import { ocr } from "@/lib/vision/local-ocr";
 import { ImageIntake } from "./image-intake";
 
-export function DeviceImport({ today, onSaved }: { today: string; onSaved: () => void }) {
+export function DeviceImport({ today, onSaved, hideConnectionLink = false }: { today: string; onSaved: () => void; hideConnectionLink?: boolean }) {
   const panel=useRef<HTMLElement>(null)
   const importing = useRef(false);
   const [reading, setReading] = useState(false);
@@ -79,8 +80,8 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
   const nPick = result ? (result.facts??[]).filter(f=>f.quality!=='VALID').length + result.health.filter((x) => pickH[x.key] ?? true).length + result.activities.filter((x) => pickA[x.key]).length : 0
   return <section ref={panel} className="home-card p-4 text-sm" aria-label="导入设备数据">
     <div className="flex items-center justify-between gap-2"><h2 className="text-base font-bold">导入手表数据</h2><SavedBadge stamp={stamp} /></div>
-    <p className="mt-1 text-muted">佳明优先。选文件或截图，自动识别类型 → 核对 → 一次保存。文件在本机解析。图片可选择本地识字或联网识别，均需核对后保存。</p>
-    <button type="button" className="mt-2 min-h-11 text-left text-sm text-accent" data-testid="coros-link" onClick={() => window.dispatchEvent(new Event("fk-open-sync"))}>高驰（COROS）账号登录在「设备连接与同步」 ›</button>
+    <p className="mt-1 text-muted">选择文件或截图，核对后一次保存。文件在本机解析，截图可选本地识字或联网识别。</p>
+    {!hideConnectionLink ? <button type="button" className="mt-2 min-h-11 text-left text-sm text-accent" data-testid="device-connection-link" onClick={() => openDeviceSync()}>连接手表或运动软件 ›</button> : null}
     <label className="fk-drop mt-3">
       <Upload className="size-5" />
       <span className="font-bold">选择文件或截图</span>

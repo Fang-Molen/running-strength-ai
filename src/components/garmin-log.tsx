@@ -4,6 +4,7 @@ import { shortHash } from '@/lib/health/observation';
 import { currentStore } from '@/lib/core/storage';
 import { currentAthleteId } from '@/lib/core/events';
 import { useEffect, useMemo, useState } from "react";
+import { openDeviceSync } from "@/lib/ui/device-sync-navigation";
 import { fmtDistance, fmtDurationPrecise as fmtDuration, fmtSeconds, fmtPace, parseActivityTime } from "@/lib/ui/activity-format";
 import { Dumbbell, Footprints, Activity } from "lucide-react";
 
@@ -65,7 +66,7 @@ function Row({ g, defaultOpen = false, detailOnly = false }: { g: G; defaultOpen
   const [laps, setLaps] = useState<Lap[] | null>(() => load<Record<string, Lap[]>>(garminViewKey(GLAPS_KEY), {})[g.id] ?? null);
   const [state, setState] = useState("");
   const k = kindOf(g.type); const Icon = k === "run" ? Footprints : k === "strength" ? Dumbbell : Activity;
-  useEffect(() => { if (!open || laps || k === "strength") return; setState("加载分段…"); void fetchLaps(g.id).then((l) => { if (l) { const all = load<Record<string, Lap[]>>(garminViewKey(GLAPS_KEY), {}); all[g.id] = l; localStorage.setItem(garminViewKey(GLAPS_KEY), JSON.stringify(all)); setLaps(l); setState(""); } else setState("分段获取失败（需在健康页登录佳明）"); }); }, [open]);
+  useEffect(() => { if (!open || laps || k === "strength") return; setState("加载分段…"); void fetchLaps(g.id).then((l) => { if (l) { const all = load<Record<string, Lap[]>>(garminViewKey(GLAPS_KEY), {}); all[g.id] = l; localStorage.setItem(garminViewKey(GLAPS_KEY), JSON.stringify(all)); setLaps(l); setState(""); } else setState("分段获取失败，请检查佳明连接后重试。"); }); }, [open]);
   const metrics = k === "strength" ? [fmtDur(g.dur), g.sets != null ? `${g.sets} 组` : null, g.reps != null ? `${g.reps} 次` : null, g.avgHr ? `♥${Math.round(g.avgHr)}` : null] : [km(g.dist), fmtDur(g.dur), pace(g.dist, g.dur), g.avgHr ? `♥${Math.round(g.avgHr)}` : null];
   const Wrap = detailOnly ? "div" : "li";
   return <Wrap className={detailOnly ? "" : "border-b border-line last:border-b-0"}>
@@ -78,7 +79,8 @@ function Row({ g, defaultOpen = false, detailOnly = false }: { g: G; defaultOpen
       <div className="grid grid-cols-3 gap-2">
         {([["距离", km(g.dist)], ["时长", fmtDur(g.dur)], ["配速", pace(g.dist, g.dur)], ["平均心率", g.avgHr && Math.round(g.avgHr)], ["最大心率", g.maxHr && Math.round(g.maxHr)], ["步频", g.cad && Math.round(g.cad)], ["爬升", g.elev != null ? `${Math.round(g.elev)} m` : null], ["热量", g.cal && Math.round(g.cal)], ["训练负荷", g.tl && Math.round(g.tl)], ["有氧效果", g.te], ["组数", g.sets], ["次数", g.reps]] as [string, unknown][]).filter(([, v]) => v != null && v !== "—" && v !== 0).map(([l, v]) => <div key={l}><div className="text-xs text-muted">{l}</div><div className="font-bold">{String(v)}</div></div>)}
       </div>
-      {state ? <p className="keep mt-2 text-xs text-muted">{state}</p> : null}
+      {state ? <p className="keep mt-2 text-sm text-muted">{state}</p> : null}
+      {state.startsWith("分段获取失败") ? <button type="button" className="min-h-11 text-sm text-accent" onClick={() => openDeviceSync({ provider: 'garmin' })}>检查佳明连接 ›</button> : null}
       {laps && laps.length ? <div className="mt-3 overflow-x-auto"><table aria-label="佳明分圈" className="w-full whitespace-nowrap text-xs tabular-nums"><thead><tr className="text-muted"><th className="text-left">圈</th><th>距离</th><th>用时</th><th>配速</th><th>心率</th><th>步频</th></tr></thead><tbody>{laps.map((l) => <tr key={l.i} className="text-center"><td className="text-left">{l.i}</td><td className="px-1">{km(l.dist)}</td><td className="px-1">{fmtSeconds(l.dur)}</td><td className="px-1">{pace(l.dist, l.dur) ?? "—"}</td><td className="px-1">{l.avgHr ? Math.round(l.avgHr) : "—"}</td><td>{l.cad ? Math.round(l.cad) : "—"}</td></tr>)}</tbody></table></div> : null}
     </div> : null}
   </Wrap>;

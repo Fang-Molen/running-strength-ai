@@ -238,7 +238,7 @@ export function recoveryExplanation(v: RecoveryProjection): string {
   return [l.summary,...l.groups,...l.evidence,...l.gaps,l.next].join('\n')
 }
 
-const BRAND_ZH = { GARMIN: '佳明', COROS: '高驰' } as const
+const BRAND_ZH = { GARMIN: '佳明', COROS: '高驰', POLAR: '博能', SUUNTO: '颂拓', HUAWEI: '华为', APPLE_HEALTH: '苹果健康', HEALTH_CONNECT: 'Health Connect' } as const
 function brandLabel(identity: string | undefined) { const p = providerOf(identity); return p === 'OTHER' ? '' : ` · ${BRAND_ZH[p]}` }
 /** v89.10.6：导入跑步卡只写记录里真有的字段（标题/距离/用时/配速），不推断类型或肌群；说明它对肌肉恢复意味着什么、可以怎么做。 */
 export function importedRunDetail(r: { title: { value: string | null }; totalDistanceMeters: { value: number | null }; durationSeconds: { value: number | null } }): string {

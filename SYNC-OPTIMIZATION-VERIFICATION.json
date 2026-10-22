@@ -1,0 +1,1142 @@
+{
+  "title": "Fangkun v89.10.6 sync optimization verification",
+  "measurementBoundary": "Local synthetic data and mocked network responses; no real Garmin credentials, health data or live-service latency measurements.",
+  "baseline": {
+    "filename": "fangkun-v89.10.6-ui-polished.zip",
+    "sha256": "eaedffe7fc201eb44499a733ab058785e72f95ea16381d5c5d103643e7829db9"
+  },
+  "sourceAudit": {
+    "baselineSourceFiles": 1717,
+    "changed": [
+      {
+        "path": "src/components/garmin-sync.tsx",
+        "before": "5ab0f98499c33b9a0cf9b2811253b9219d6913bc40574dbbeb52fa6b757e4999",
+        "after": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2"
+      },
+      {
+        "path": "src/components/settings-center.tsx",
+        "before": "f044840e8769c471679ba4b12de2e7024c3b602a0e0f140efd8fa7558a82ab85",
+        "after": "708a7055572a7172613b0e77e7402acf03efac80aaf71825e41740591dc32c5c"
+      },
+      {
+        "path": "src/lib/health/garmin-sync-runner.ts",
+        "before": "23d82b9eb7e2e3bd210f668095e6f251b8252e77ae13596a0980db60c5493307",
+        "after": "c72d312ab3dc229b1781ceac7f90bb13cdb97448a29854f6873590ff871440ce"
+      },
+      {
+        "path": "src/lib/ui/device-store.ts",
+        "before": "a04bf4a5f00f0d22bc6bb1e8f6d9b81213aa0451c156bfaff06b5e9c8c7dfade",
+        "after": "685db54f5df45e37322f88bdb537f5dc82a1ce0c7faa17ae9c389be6225103d6"
+      }
+    ],
+    "added": [
+      {
+        "path": "src/lib/health/garmin-sync-performance.test.ts",
+        "sha256": "9611deececd9f78b1174018bba6d77feedef36fe839e3e6d27da049edade3dfb"
+      },
+      {
+        "path": "src/lib/ui/device-store-sync.test.ts",
+        "sha256": "998c0569899f060ed70f013a7f195d7d1dd215f4087bd6e5b31b5ca46a28a265"
+      },
+      {
+        "path": "src/lib/ui/garmin-sync-live.test.ts",
+        "sha256": "c807bb35d3ae8a46ba4f901b4abfda8c0e9a4b40d60a18c6263382463c4e7cee"
+      },
+      {
+        "path": "src/lib/ui/garmin-sync-live.ts",
+        "sha256": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+      }
+    ],
+    "unchangedCount": 1713,
+    "missing": [],
+    "scopePass": true
+  },
+  "targetedTests": {
+    "scope": "Affected sync runner, planner, intraday, status, activity persistence and live state only",
+    "suites": [
+      {
+        "file": "src/lib/health/garmin-sync-performance.test.ts",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-garmin-sync-performance.log",
+        "tests": 12,
+        "pass": 12,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "file": "src/lib/health/garmin-sync-runner.test.ts",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-garmin-sync-runner.log",
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "file": "src/lib/health/garmin-intraday.test.ts",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-garmin-intraday.log",
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "file": "verification/u11/garmin-sync-plan-u11.test.mjs",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-garmin-sync-plan-u11.log",
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "file": "src/lib/health/garmin-sync-status.test.ts",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-garmin-sync-status.log",
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "file": "src/lib/ui/device-store-sync.test.ts",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-device-store-sync.log",
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "file": "src/lib/ui/garmin-sync-live.test.ts",
+        "exitCode": 0,
+        "log": "/workspace/scratch/709a4e864be6/sync-speed-review-v89.10.6/final-garmin-sync-live.log",
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "skipped": 0
+      }
+    ],
+    "passed": true,
+    "totalTests": 67,
+    "totalPass": 67,
+    "aggregationNote": "Parsed direct Node test reporter summaries; all suite commands returned exit 0."
+  },
+  "applicationTypecheck": {
+    "command": "npm run typecheck:application",
+    "exitCode": 0,
+    "logSha256": "21a44a5a2f683d129108ef13e9d91f90728b909b266878e4f6241a7db1cea65d"
+  },
+  "productionBuild": {
+    "command": "node scripts/with-app-env.mjs ./node_modules/.bin/vite build",
+    "exitCode": 0,
+    "logSha256": "2e2cec88b3c0468320a72b21f1a285917647ff679b2f281341fa59063e6fc84a",
+    "databaseMigrationRun": false,
+    "deployedOnline": false
+  },
+  "browserCases": [
+    {
+      "report": "final-dev-1024-light-background-scope-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 17,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "final-dev-1024-light-manual-timeout-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 15,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "final-dev-390-dark-background-auth-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 16,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "final-dev-390-dark-background-partial-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 17,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "final-dev-390-dark-manual-outage-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 6,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "final-dev-390-light-manual-smart-success-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 16,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "fixed-1024-light-manual-full-success-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 17,
+      "runtimeErrors": 0
+    },
+    {
+      "report": "production-390-light-background-success-completed-report.json",
+      "status": "PASS",
+      "checksPassed": 17,
+      "runtimeErrors": 0
+    }
+  ],
+  "browserSummary": {
+    "status": "PASS",
+    "source": "fangkun-ui-details-v89.10.6",
+    "generatedAt": "2026-10-22T00:51:31.558235+00:00",
+    "summary": "Targeted sync-state, request-scope, error-path and athlete-ownership checks passed; the single requested mobile production smoke passed. No further browser cases were run.",
+    "browser": "Browser plugin not available; Playwright 1.62.1 with existing /tmp/chromium.",
+    "isolation": "Synthetic account, records and delayed local API responses only. All nonlocal network blocked; service workers blocked. No real account, credential or Garmin service used.",
+    "fixedBrowserTime": "2026-10-22T00:30:00.000Z",
+    "timezone": "Asia/Shanghai",
+    "totals": {
+      "cases": 8,
+      "checksPassed": 121,
+      "developmentChecksPassed": 104,
+      "productionChecksPassed": 17,
+      "findings": 0,
+      "uncaughtRuntimeErrors": 0,
+      "unexpectedConsoleMessages": 0
+    },
+    "cases": [
+      {
+        "case": "ordinary manual smart sync",
+        "environment": "dev",
+        "report": "final-dev-390-light-manual-smart-success-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 16,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 390,
+          "height": 900
+        },
+        "theme": "light",
+        "completedAt": "2026-10-22T00:45:46.226Z",
+        "screenshots": [
+          "final-dev-390-light-manual-smart-success-slow-active.png",
+          "final-dev-390-light-manual-smart-success-slow-reopened.png",
+          "final-dev-390-light-manual-smart-success-health-progress.png",
+          "final-dev-390-light-manual-smart-success-complete.png"
+        ],
+        "reportSha256": "c234ff070f6b039095dba1d3311f0f2f226c941cc1945a5da9effc0c641667b7",
+        "syncReceipt": {
+          "status": "ok",
+          "mode": "RECENT",
+          "healthDaysRequested": 3,
+          "activityLimit": 20,
+          "requests": 16,
+          "saved": 18,
+          "skipped": 0
+        }
+      },
+      {
+        "case": "explicit full review",
+        "environment": "dev",
+        "report": "fixed-1024-light-manual-full-success-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 17,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 1024,
+          "height": 900
+        },
+        "theme": "light",
+        "completedAt": "2026-10-22T00:41:39.985Z",
+        "screenshots": [
+          "fixed-1024-light-manual-full-success-slow-active.png",
+          "fixed-1024-light-manual-full-success-slow-reopened.png",
+          "fixed-1024-light-manual-full-success-health-progress.png",
+          "fixed-1024-light-manual-full-success-complete.png"
+        ],
+        "reportSha256": "74629d4ac171746b35bdf31d838d8f6193a1d932cdd4c7c1c5fbbe14d1e2293b",
+        "syncReceipt": {
+          "status": "ok",
+          "mode": "FULL",
+          "healthDaysRequested": 14,
+          "activityLimit": 200,
+          "requests": 49,
+          "saved": 84,
+          "skipped": 0
+        },
+        "verificationPhase": "Validated before the final auth/scope follow-up; collection scope and request plan unchanged. Final production smoke verifies shared busy state and disables the explicit full-review action."
+      },
+      {
+        "case": "background partial result",
+        "environment": "dev",
+        "report": "final-dev-390-dark-background-partial-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 17,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 390,
+          "height": 900
+        },
+        "theme": "dark",
+        "completedAt": "2026-10-22T00:46:26.752Z",
+        "screenshots": [
+          "final-dev-390-dark-background-partial-slow-active.png",
+          "final-dev-390-dark-background-partial-slow-reopened.png",
+          "final-dev-390-dark-background-partial-health-progress.png",
+          "final-dev-390-dark-background-partial-complete.png"
+        ],
+        "reportSha256": "4e534c727842445e4fe59bf4c8c8159f190d646aaca8a549a052fb00044b1ea1",
+        "syncReceipt": {
+          "status": "partial",
+          "mode": "RECENT",
+          "healthDaysRequested": 3,
+          "activityLimit": 20,
+          "requests": 16,
+          "saved": 17,
+          "skipped": 0
+        }
+      },
+      {
+        "case": "background authentication expiry with cookie status still connected",
+        "environment": "dev",
+        "report": "final-dev-390-dark-background-auth-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 16,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 390,
+          "height": 900
+        },
+        "theme": "dark",
+        "completedAt": "2026-10-22T00:45:44.626Z",
+        "screenshots": [
+          "final-dev-390-dark-background-auth-slow-active.png",
+          "final-dev-390-dark-background-auth-slow-reopened.png",
+          "final-dev-390-dark-background-auth-complete.png"
+        ],
+        "reportSha256": "0e5a04c35b2ffd997ad8288db3a0d2659f1abedc446390856dd3b4e4f715fde7",
+        "syncReceipt": {
+          "status": "auth",
+          "mode": "RECENT",
+          "healthDaysRequested": 0,
+          "activityLimit": 200,
+          "requests": 2,
+          "saved": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "case": "athlete scope change during background sync",
+        "environment": "dev",
+        "report": "final-dev-1024-light-background-scope-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 17,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 1024,
+          "height": 900
+        },
+        "theme": "light",
+        "completedAt": "2026-10-22T00:46:26.665Z",
+        "screenshots": [
+          "final-dev-1024-light-background-scope-slow-active.png",
+          "final-dev-1024-light-background-scope-slow-reopened.png",
+          "final-dev-1024-light-background-scope-health-progress.png",
+          "final-dev-1024-light-background-scope-scope-switched.png",
+          "final-dev-1024-light-background-scope-scope-ended.png"
+        ],
+        "reportSha256": "13e6c454cca7b2ef31e18c5efebe02246586a75a94cc16786f2fc0119ade3a79",
+        "ownerWrites": {
+          "keysForNewAthlete": [],
+          "newAutoFail": null,
+          "oldReportAt": "2026-10-21T23:22:00.000Z"
+        }
+      },
+      {
+        "case": "existing 20-second request timeout",
+        "environment": "dev",
+        "report": "final-dev-1024-light-manual-timeout-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 15,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 1024,
+          "height": 900
+        },
+        "theme": "light",
+        "completedAt": "2026-10-22T00:47:33.231Z",
+        "screenshots": [
+          "final-dev-1024-light-manual-timeout-slow-active.png",
+          "final-dev-1024-light-manual-timeout-slow-reopened.png",
+          "final-dev-1024-light-manual-timeout-health-progress.png",
+          "final-dev-1024-light-manual-timeout-complete.png"
+        ],
+        "reportSha256": "d64c48fc452de9081c627cce8b449d370b3211aae6cb3e960bc4782debcfb39a",
+        "syncReceipt": {
+          "status": "partial",
+          "mode": "RECENT",
+          "healthDaysRequested": 3,
+          "activityLimit": 20,
+          "requests": 16,
+          "saved": 18,
+          "skipped": 0
+        }
+      },
+      {
+        "case": "status service 503 outage",
+        "environment": "dev",
+        "report": "final-dev-390-dark-manual-outage-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 6,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 390,
+          "height": 900
+        },
+        "theme": "dark",
+        "completedAt": "2026-10-22T00:47:12.674Z",
+        "screenshots": [
+          "final-dev-390-dark-manual-outage-outage-complete.png"
+        ],
+        "reportSha256": "7203a4f7407a82b6c666c5f3b0211f75b8b848b75d5bcced5afe0a19b3804a71",
+        "syncReceipt": {
+          "status": "fail",
+          "mode": null,
+          "healthDaysRequested": 0,
+          "activityLimit": 200,
+          "requests": 1,
+          "saved": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "case": "production background success, pane reopen, progress and completion",
+        "environment": "production",
+        "report": "production-390-light-background-success-completed-report.json",
+        "status": "PASS",
+        "checksPassed": 17,
+        "findings": 0,
+        "uncaughtRuntimeErrors": 0,
+        "viewport": {
+          "width": 390,
+          "height": 900
+        },
+        "theme": "light",
+        "completedAt": "2026-10-22T00:48:55.209Z",
+        "screenshots": [
+          "production-390-light-background-success-slow-active.png",
+          "production-390-light-background-success-slow-reopened.png",
+          "production-390-light-background-success-health-progress.png",
+          "production-390-light-background-success-complete.png"
+        ],
+        "reportSha256": "fabfa290692dd5e3a7020f92a63ee762d49bb319faf1d64a190a8b2a815ae8ad",
+        "baseUrl": "http://127.0.0.1:8081/",
+        "syncReceipt": {
+          "status": "ok",
+          "mode": "RECENT",
+          "healthDaysRequested": 3,
+          "activityLimit": 20,
+          "requests": 16,
+          "saved": 18,
+          "skipped": 0
+        }
+      }
+    ],
+    "resolvedFindings": [
+      "Automatic background sync no longer leaves the immediate-sync button enabled or the overview on the prior result.",
+      "Shared progress survives closing and reopening the pane and is replaced by completion.",
+      "Background 401 now shows the login form even when the cookie-status endpoint still reports loggedIn true.",
+      "Athlete switching hides the prior progress and receipt and discards late-response writes and retry backoff."
+    ],
+    "requestComparison": {
+      "fixture": "Previously synced account, prior full review today, older intraday cache complete, no new activities.",
+      "ordinarySmartSync": {
+        "mode": "RECENT",
+        "healthDays": 3,
+        "activityLimit": 20,
+        "runnerRequests": 16
+      },
+      "explicitFullReview": {
+        "mode": "FULL",
+        "healthDays": 14,
+        "activityLimit": 200,
+        "runnerRequests": 49
+      },
+      "interpretation": "Deterministic local fixture counts, not real-service throughput or a guaranteed speedup for first sync."
+    },
+    "preservation": "Pre-existing independent health observations and the synthetic athlete profile remained byte-for-byte unchanged in success, partial, auth, timeout, outage and scope-change cases.",
+    "consoleNotes": {
+      "knownMissingAssets": [
+        "/fangkun-atlas/figure-female.webp",
+        "/fangshen/care-bust.png"
+      ],
+      "categories": {
+        "known assets absent from supplied lean source": 16,
+        "deliberately injected local auth/outage/partial/timeout responses": 3
+      },
+      "unexpected": []
+    },
+    "sourceHashesCapturedAt": "After root declared sources frozen and after production smoke completed; hashes describe the final current source snapshot, while each report retains its own execution time.",
+    "currentSourceSha256": {
+      "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+      "src/components/settings-center.tsx": "708a7055572a7172613b0e77e7402acf03efac80aaf71825e41740591dc32c5c",
+      "src/components/strength-app.tsx": "cb2cb61b9f3fd992374ed42bb779eed9ccf81f56ceac27b947aec9f9dc00b810",
+      "src/lib/core/events.ts": "04c00cfb0cd09b6558aa3d9a673604d48daff00cac302e969f74fe88a9b5f3c9",
+      "src/lib/health/garmin-sync-performance.test.ts": "9611deececd9f78b1174018bba6d77feedef36fe839e3e6d27da049edade3dfb",
+      "src/lib/health/garmin-sync-plan-u11.ts": "f1549b3faee4285ac61d848be732963dcdc90680b902eeeadb72a61542cc7c21",
+      "src/lib/health/garmin-sync-runner.ts": "c72d312ab3dc229b1781ceac7f90bb13cdb97448a29854f6873590ff871440ce",
+      "src/lib/health/garmin-sync-status.ts": "b40c4df892dc98b5579f46a77875fa13c47714115088b95deab7bcb2364da0fc",
+      "src/lib/health/sync-status.ts": "598c5eeee5b04a93381b52dab0df14e59a85c43261e3866a01e83108e21eaa74",
+      "src/lib/ui/device-store-sync.test.ts": "998c0569899f060ed70f013a7f195d7d1dd215f4087bd6e5b31b5ca46a28a265",
+      "src/lib/ui/device-store.ts": "685db54f5df45e37322f88bdb537f5dc82a1ce0c7faa17ae9c389be6225103d6",
+      "src/lib/ui/garmin-sync-live.test.ts": "c807bb35d3ae8a46ba4f901b4abfda8c0e9a4b40d60a18c6263382463c4e7cee",
+      "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+    },
+    "sourceFilesChangedFromSyncBaseline": [
+      "src/components/garmin-sync.tsx",
+      "src/components/settings-center.tsx",
+      "src/lib/health/garmin-sync-performance.test.ts",
+      "src/lib/health/garmin-sync-runner.ts",
+      "src/lib/ui/device-store-sync.test.ts",
+      "src/lib/ui/device-store.ts",
+      "src/lib/ui/garmin-sync-live.test.ts",
+      "src/lib/ui/garmin-sync-live.ts"
+    ],
+    "harnessSha256": "3defc41e32135129ac0dc4ea5801e07e0d026dbcfc413a207e51af638d3be456",
+    "baselineEvidence": "baseline-captured-evidence.json",
+    "representativeEvidence": [
+      "production-390-light-background-success-health-progress.png",
+      "production-390-light-background-success-complete.png",
+      "final-dev-390-dark-background-auth-complete.png",
+      "final-dev-1024-light-manual-timeout-complete.png",
+      "final-dev-1024-light-background-scope-scope-ended.png"
+    ],
+    "limitations": [
+      "No real Garmin network, login or account performance was tested.",
+      "Pre-existing avatar/image assets absent from the supplied lean source still return 404.",
+      "Deliberate 401, 503 and timeout console responses are fixture evidence, not unexpected application errors."
+    ],
+    "manualVisualReview": {
+      "status": "PASS",
+      "reviewed": [
+        "production-390-light-background-success-health-progress.png",
+        "production-390-light-background-success-complete.png",
+        "final-dev-390-dark-background-auth-complete.png"
+      ],
+      "observations": "Production mobile card and overview consistently show active progress, then completed success; original card layout remains legible and unclipped. Authentication expiry shows the login form and requires re-login without claiming connected."
+    }
+  },
+  "runnerPerformance": {
+    "scope": [
+      "src/lib/health/garmin-sync-runner.ts",
+      "src/lib/health/garmin-sync-performance.test.ts"
+    ],
+    "before_sha256": "23d82b9eb7e2e3bd210f668095e6f251b8252e77ae13596a0980db60c5493307",
+    "after_sha256": "c72d312ab3dc229b1781ceac7f90bb13cdb97448a29854f6873590ff871440ce",
+    "test_sha256": "9611deececd9f78b1174018bba6d77feedef36fe839e3e6d27da049edade3dfb",
+    "verification": {
+      "fresh_cases": 57,
+      "new_performance_cases": 12,
+      "existing_runner_cases": 21,
+      "existing_intraday_cases": 11,
+      "existing_planner_cases": 10,
+      "new_live_cases_readonly_review": 3,
+      "passes": 57,
+      "failures": 0,
+      "skips": 0,
+      "initial_fail_first_cases": 10,
+      "cursor_correction_fail_first_cases": 1,
+      "unchanged_status_prior_passes": 3
+    },
+    "synthetic_cases": {
+      "initial_empty_intraday_history": {
+        "before_requests": 329,
+        "after_requests": 329,
+        "daily_days": 90,
+        "intraday_days": 28,
+        "peak_inflight": 5,
+        "before_pause_ms": 30800,
+        "after_pause_ms": 9100
+      },
+      "initial_older_intraday_complete": {
+        "before_requests": 277,
+        "after_requests": 277,
+        "before_pause_ms": 30800,
+        "after_pause_ms": 0
+      },
+      "initial_all_endpoints_unavailable": {
+        "before_requests": 329,
+        "after_requests": 13,
+        "before_daily_attempts": 90,
+        "after_daily_attempts": 2,
+        "after_cursor": 14,
+        "full_review_marked": false
+      },
+      "initial_outage_from_offset_30": {
+        "before_requests": 329,
+        "after_requests": 155,
+        "before_daily_attempts": 90,
+        "after_daily_attempts": 32,
+        "after_valid_daily_days": 30,
+        "after_cursor": 30,
+        "full_review_marked": false,
+        "healthy_retry_daily_days": 74,
+        "healthy_retry_cursor": 90
+      },
+      "isolated_today_outage_with_successful_history": {
+        "daily_attempts": 90,
+        "valid_daily_days": 89,
+        "after_cursor": 90,
+        "full_review_marked": false,
+        "healthy_retry_mode": "FULL",
+        "healthy_retry_daily_days": 14
+      }
+    },
+    "limitations": [
+      "All measurements use synthetic in-memory responses, not Garmin service timings.",
+      "One unavailable optional metric deliberately does not stop the job.",
+      "20-second client deadlines, sequential day scheduling, endpoints, proxy/auth, and raw storage are unchanged.",
+      "The final account fence still discards all pending results if account identity cannot be verified."
+    ],
+    "stage": "cursor-review-corrected",
+    "cursor_rule": "Only a wholly unavailable historical offset >=14 blocks historical cursor advancement; any wholly unavailable daily offset prevents the full-review marker."
+  },
+  "activityStoragePerformance": {
+    "kind": "synthetic-memory-store-no-network",
+    "sourceRoot": "/workspace/scratch/709a4e864be6/fangkun-ui-details-v89.10.6",
+    "createdAt": "2026-10-22T00:37:45.467Z",
+    "cases": [
+      {
+        "label": "activity-400-cold",
+        "healthRows": 0,
+        "activityRows": 400,
+        "ms": 2390.97,
+        "result": {
+          "saved": 400,
+          "skipped": 0,
+          "errors": []
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 2005,
+        "writes": 1200,
+        "enumerations": 2,
+        "readChars": 375712200,
+        "writeChars": 130127056,
+        "byKey": {
+          "fr255-vitals-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-events-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fk-device-extra-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 1201,
+            "writes": 400,
+            "readChars": 375646182,
+            "writeChars": 125842964
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 400,
+            "readChars": 0,
+            "writeChars": 4251000
+          },
+          "fr255-training-import-drafts-v1": {
+            "reads": 800,
+            "writes": 400,
+            "readChars": 66018,
+            "writeChars": 33092
+          }
+        }
+      },
+      {
+        "label": "activity-20-duplicates-baseline",
+        "healthRows": 0,
+        "activityRows": 20,
+        "ms": 150.82,
+        "result": {
+          "saved": 0,
+          "skipped": 20,
+          "errors": []
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 25,
+        "writes": 0,
+        "enumerations": 2,
+        "readChars": 13200171,
+        "writeChars": 0,
+        "byKey": {
+          "fr255-vitals-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-events-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fk-device-extra-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 21,
+            "writes": 0,
+            "readChars": 13178970,
+            "writeChars": 0
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 21201,
+            "writeChars": 0
+          }
+        }
+      },
+      {
+        "label": "activity-20-duplicates-candidate",
+        "healthRows": 0,
+        "activityRows": 20,
+        "ms": 7.84,
+        "result": {
+          "saved": 0,
+          "skipped": 20,
+          "errors": []
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 2,
+        "writes": 0,
+        "enumerations": 0,
+        "readChars": 648771,
+        "writeChars": 0,
+        "byKey": {
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 627570,
+            "writeChars": 0
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 21201,
+            "writeChars": 0
+          }
+        }
+      },
+      {
+        "label": "activity-200-duplicates-baseline",
+        "healthRows": 0,
+        "activityRows": 200,
+        "ms": 1288.8,
+        "result": {
+          "saved": 0,
+          "skipped": 200,
+          "errors": []
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 205,
+        "writes": 0,
+        "enumerations": 2,
+        "readChars": 126162771,
+        "writeChars": 0,
+        "byKey": {
+          "fr255-vitals-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-events-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fk-device-extra-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 201,
+            "writes": 0,
+            "readChars": 126141570,
+            "writeChars": 0
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 21201,
+            "writeChars": 0
+          }
+        }
+      },
+      {
+        "label": "activity-200-duplicates-candidate",
+        "healthRows": 0,
+        "activityRows": 200,
+        "ms": 7.52,
+        "result": {
+          "saved": 0,
+          "skipped": 200,
+          "errors": []
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 2,
+        "writes": 0,
+        "enumerations": 0,
+        "readChars": 648771,
+        "writeChars": 0,
+        "byKey": {
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 627570,
+            "writeChars": 0
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 21201,
+            "writeChars": 0
+          }
+        }
+      },
+      {
+        "label": "activity-conflict-baseline",
+        "healthRows": 0,
+        "activityRows": 1,
+        "ms": 12.78,
+        "result": {
+          "saved": 0,
+          "skipped": 0,
+          "errors": [
+            "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。"
+          ]
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 6,
+        "writes": 0,
+        "enumerations": 2,
+        "readChars": 1276341,
+        "writeChars": 0,
+        "byKey": {
+          "fr255-vitals-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-events-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fk-device-extra-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 0,
+            "writeChars": 0
+          },
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 2,
+            "writes": 0,
+            "readChars": 1255140,
+            "writeChars": 0
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 21201,
+            "writeChars": 0
+          }
+        }
+      },
+      {
+        "label": "activity-conflict-candidate",
+        "healthRows": 0,
+        "activityRows": 1,
+        "ms": 6.27,
+        "result": {
+          "saved": 0,
+          "skipped": 0,
+          "errors": [
+            "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。"
+          ]
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 2,
+        "writes": 0,
+        "enumerations": 0,
+        "readChars": 648771,
+        "writeChars": 0,
+        "byKey": {
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 627570,
+            "writeChars": 0
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 0,
+            "readChars": 21201,
+            "writeChars": 0
+          }
+        }
+      },
+      {
+        "label": "activity-other-athlete-candidate",
+        "healthRows": 0,
+        "activityRows": 1,
+        "ms": 16.28,
+        "result": {
+          "saved": 1,
+          "skipped": 0,
+          "errors": []
+        },
+        "healthEvents": 2,
+        "storageEvents": 1,
+        "coachRefreshes": 1,
+        "reads": 7,
+        "writes": 3,
+        "enumerations": 0,
+        "readChars": 2531647,
+        "writeChars": 648907,
+        "byKey": {
+          "fr255-confirmed-training-imports-v1": {
+            "reads": 4,
+            "writes": 1,
+            "readChars": 2510280,
+            "writeChars": 627570
+          },
+          "fk-device-acts-v1": {
+            "reads": 1,
+            "writes": 1,
+            "readChars": 21201,
+            "writeChars": 21254
+          },
+          "fr255-training-import-drafts-v1": {
+            "reads": 2,
+            "writes": 1,
+            "readChars": 166,
+            "writeChars": 83
+          }
+        }
+      }
+    ],
+    "checks": [
+      "duplicate-20: same counts, untouched records and same notifications",
+      "duplicate-200: same counts, untouched records and same notifications",
+      "source-bound changed totals: same conflict error and untouched record",
+      "different athlete: does not reuse previous athlete duplicate identity"
+    ]
+  },
+  "storageEquivalence": {
+    "fixedClock": "2026-10-22T12:00:00.000Z",
+    "checks": [
+      {
+        "name": "mixed cold import including duplicate-in-batch and invalid activity",
+        "results": [
+          {
+            "saved": 4,
+            "skipped": 1,
+            "errors": [
+              "2025-10-20 跑步：没有可确认的跑步实际记录；计划或未记录槽位不能当作实际完成"
+            ]
+          }
+        ],
+        "eventCount": 4,
+        "persistedKeys": 5
+      },
+      {
+        "name": "unchanged mixed import retains timestamps revisions and event sequence",
+        "results": [
+          {
+            "saved": 4,
+            "skipped": 0,
+            "errors": []
+          },
+          {
+            "saved": 0,
+            "skipped": 4,
+            "errors": []
+          }
+        ],
+        "eventCount": 8,
+        "persistedKeys": 5
+      },
+      {
+        "name": "changed activity conflict and stale health source do not overwrite",
+        "results": [
+          {
+            "saved": 3,
+            "skipped": 0,
+            "errors": []
+          },
+          {
+            "saved": 1,
+            "skipped": 0,
+            "errors": [
+              "RHR：来源标识冲突或收到旧版本，未覆盖。",
+              "同一来源活动数值已变化，需核对原记录与更正；未重复计入或覆盖手填更正。"
+            ]
+          }
+        ],
+        "eventCount": 7,
+        "persistedKeys": 5
+      },
+      {
+        "name": "athlete and account identities stay separate",
+        "results": [
+          {
+            "saved": 1,
+            "skipped": 0,
+            "errors": []
+          },
+          {
+            "saved": 2,
+            "skipped": 0,
+            "errors": []
+          },
+          {
+            "saved": 0,
+            "skipped": 1,
+            "errors": []
+          }
+        ],
+        "eventCount": 9,
+        "persistedKeys": 3
+      },
+      {
+        "name": "quota failure preserves exact row results and persisted health",
+        "results": [
+          {
+            "saved": 2,
+            "skipped": 0,
+            "errors": [
+              "2025-10-20 跑步：确认记录保存失败，请重试",
+              "2025-10-20 跑步：确认记录保存失败，请重试"
+            ]
+          }
+        ],
+        "eventCount": 4,
+        "persistedKeys": 2
+      },
+      {
+        "name": "corrupt health stores remain untouched",
+        "results": [
+          {
+            "saved": 1,
+            "skipped": 0,
+            "errors": [
+              "RHR：已有监测记录无法读取，没有覆盖。",
+              "已有健康记录损坏，未覆盖"
+            ]
+          }
+        ],
+        "eventCount": 3,
+        "persistedKeys": 5
+      }
+    ],
+    "identical": "saved/skipped/errors, exact persisted JSON including identities/revisions/timestamps, and ordered health/storage notifications"
+  },
+  "integrationReview": {
+    "review": "read-only integration review",
+    "baseline": "/workspace/scratch/709a4e864be6/deliverables/fangkun-v89.10.6-ui-polished.zip",
+    "sourceRoot": "/workspace/scratch/709a4e864be6/fangkun-ui-details-v89.10.6",
+    "verdict": "NO_BLOCKERS",
+    "blockers": [],
+    "checks": [
+      {
+        "focus": "state ownership",
+        "result": "Live reads are athlete-scoped; mounted subscriptions re-read on ATHLETE_SCOPE_CHANGED. Progress and finalization use subject/account generation fences. Auto backoff writes use the captured subject and re-check ownership after awaits.",
+        "evidence": [
+          "garmin-sync-live.ts:20-43",
+          "garmin-sync.tsx:29-33,61,78-92"
+        ]
+      },
+      {
+        "focus": "stale progress",
+        "result": "Live token generation rejects superseded updates and finishes. Login/MFA/logout clear live state. In-progress display replaces prior report status, with prior details labelled explicitly; final reports remain durable storage outputs.",
+        "evidence": [
+          "garmin-sync-live.ts:29-43",
+          "garmin-sync.tsx:124-127,149-158,173",
+          "settings-center.tsx:99-106"
+        ]
+      },
+      {
+        "focus": "auth completion UI",
+        "result": "Completed auth results expose the login form and cannot be overwritten by a later cookie-only status response. A new login clears the retained auth result before refreshing the connection.",
+        "evidence": [
+          "garmin-sync.tsx:135-158"
+        ]
+      },
+      {
+        "focus": "smart manual versus explicit full",
+        "result": "Immediate sync bypasses automatic cadence/backoff entry points but selects the existing AUTO planning policy; the separate explicit full-review button passes MANUAL. Both buttons disable during the shared live job.",
+        "evidence": [
+          "garmin-sync.tsx:160-165,173,188",
+          "garmin-sync-runner.ts:77-83",
+          "garmin-sync-plan-u11.ts:6-14"
+        ]
+      }
+    ],
+    "method": "Compared requested files against the prior delivered ZIP and inspected directly referenced planner/status contracts. No production edits and no additional test suites executed.",
+    "reviewedSha256": {
+      "src/components/garmin-sync.tsx": "07878d72ceba02b4c304b304c6681aab46b53b8d51e905f35061fd383c08bee2",
+      "src/components/settings-center.tsx": "708a7055572a7172613b0e77e7402acf03efac80aaf71825e41740591dc32c5c",
+      "src/lib/ui/garmin-sync-live.ts": "e1640ea4ab56506c23a50b1b45a14fa9e55e1efac7742719e7a5d695f18a3551"
+    }
+  },
+  "visualReview": [
+    "390 light active progress and completion",
+    "390 dark authentication expiry",
+    "1024 light timeout result"
+  ],
+  "limits": [
+    "Targeted tests only, not the entire repository test suite.",
+    "Real total sync duration still depends on service latency, network conditions and initial history volume.",
+    "Original slim-source asset scope is preserved."
+  ]
+}

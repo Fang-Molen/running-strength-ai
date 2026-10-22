@@ -32,6 +32,6 @@ export function AboutStep({ me, onChange }: { me: AboutMe; onChange: (m: AboutMe
     <label className="block text-sm font-bold">出生年份<input className={field} aria-label="出生年份" inputMode="numeric" value={me.birthYear} maxLength={4} placeholder="例如 2000" onChange={e => set({ birthYear: e.target.value.replace(/\D/g, "") })} /></label>
     <div><p className="text-sm font-bold">主项或目标</p><div className="mt-1 flex flex-wrap gap-1.5">{EVENTS.map(([id, l]) => <button key={id} type="button" className="fk-chip min-h-10" aria-pressed={me.event === id} onClick={() => set({ event: me.event === id ? "" : id })}>{l}</button>)}</div></div>
     {eventMeters(me.event) ? <label className="block text-sm font-bold">这个项目的最好成绩（PB，选填）<input className={field} aria-label="PB" value={me.pb} maxLength={20} placeholder="例如 58秒、2分20、25分" onChange={e => set({ pb: e.target.value })} /></label> : null}
-    <p className="keep text-xs text-muted">没有成绩也可以继续；方坤不会假设你的水平。下一步可以选择连佳明（也可以以后在设置里连）。</p>
+    <p className="keep text-sm text-muted">没有成绩也可以继续。下一步可连接手表或运动软件，也可以稍后在设置里连接。</p>
   </div>
 }

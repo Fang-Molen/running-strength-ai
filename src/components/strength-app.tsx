@@ -8,7 +8,9 @@ import { lazy, Suspense } from "react";
 const RunningTechniqueLibrary = lazy(() => import("@/components/running-technique-library").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 const BodyLabPanel = lazy(() => import("@/components/bodylab/bodylab-panel").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 import { exportFeedback } from "@/components/coach-feedback";
-import { AthletePanel, BackupCenter, HealthPanel, PrivacyPanel, SettingsMenu, SyncStatusPanel, type GarminConnState, type SettingsPane } from "@/components/settings-center";
+import { AthletePanel, BackupCenter, HealthPanel, PrivacyPanel, SettingsMenu, type SettingsPane } from "@/components/settings-center";
+import { DeviceSyncCenter } from "@/components/device-sync-center";
+import { DEVICE_SYNC_OPEN, normalizeSyncRequest, openDeviceSync, readSyncCallback, type SyncCallback, type SyncRequest } from "@/lib/ui/device-sync-navigation";
 import { Plan400Cycle, Plan400TodayCard, Plan400DayHost, TempTrainingList, ensurePlan400Entry, PLAN400_GUIDED_EVT, openPlan400Day } from "@/components/plan400";
 import { occurrenceVoided } from "@/lib/core/training-correction";
 import { RunImportPrompt } from "@/components/plan400-parts";
@@ -18,10 +20,8 @@ import { dayKind, hasRunPart, hasStrength, type V4Day } from "@/lib/ui/plan400-v
 import { matchesScheduledPlanPane } from "@/lib/ui/plan-training-filter";
 import { hasActivePlan, planDay, PLAN_CHANGED_EVT } from "@/lib/plan/active-plan";
 import { NoPlanCard, PlanImportPanel } from "@/components/plan-import";
-import { DeviceImport } from "@/components/device-import";
 import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
-import { GarminSync } from "@/components/garmin-sync";
 import { initVault } from "@/lib/vault";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
@@ -66,7 +66,6 @@ import { MuscleExplorerSheet } from "@/components/muscle-explorer";
 import { ActionPicker } from "@/components/action-picker";
 import { DemoSheet } from "@/components/exercise-editor";
 import { TrainingEditorSheet } from "@/components/training-editor-sheet";
-import { CorosAccount } from "@/components/coros-account";
 import { SchedulePicker, ScheduledTraining } from "@/components/scheduled-training";
 import { MuscleActionList } from "@/components/muscle-action-list";
 import { loadSchedule, saveScheduledEntry, strengthEntry, runEntry } from "@/lib/ui/day-schedule";
@@ -200,9 +199,10 @@ export function StrengthApp() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const prevTab = useRef<"today" | "plan" | "log" | "courses" | "body" | "diet">("today");
   const [settingsPane, setSettingsPaneRaw] = useState<SettingsPane>("menu");
+  const [syncRequest, setSyncRequest] = useState<SyncRequest>({ mode: "accounts" });
+  const [syncCallback, setSyncCallback] = useState<SyncCallback | null>(null);
   const settingsScroll = useRef<HTMLDivElement>(null); const menuScrollTop = useRef(0);
-  const setSettingsPane = (p: SettingsPane) => { const el = settingsScroll.current; if (p !== "menu" && el) menuScrollTop.current = el.scrollTop; setSettingsPaneRaw(p); window.setTimeout(() => { if (settingsScroll.current) settingsScroll.current.scrollTop = p === "menu" ? menuScrollTop.current : 0; }, 0); };
-  const [garminConn, setGarminConn] = useState<GarminConnState>(null);
+  const setSettingsPane = (p: SettingsPane) => { const el = settingsScroll.current; if (p !== "menu" && el) menuScrollTop.current = el.scrollTop; if (p === "sync" || p === "import") { setSyncRequest({ mode: p === "import" ? "files" : "accounts" }); setSyncCallback(null); } setSettingsPaneRaw(p === "import" ? "sync" : p); window.setTimeout(() => { if (settingsScroll.current) settingsScroll.current.scrollTop = p === "menu" ? menuScrollTop.current : 0; }, 0); };
   const [weekPeek, setWeekPeek] = useState<1 | 2 | 3 | 4 | null>(null);
   const [preference, setPreference] = useState<SportGoalPreference>(DEFAULT_SPORT_GOAL);
   const [supportingGoals, setSupportingGoals] = useState<GoalId[]>([]);
@@ -227,8 +227,8 @@ export function StrengthApp() {
   const [quickOpen, setQuickOpen] = useState<{ text: string; n: number } | null>(null);
   const [healthLink, setHealthLink] = useState<string | null>(null);
   useEffect(() => { setHomeLayout(loadLayout()); const lp = readLaunchParams(location.search); if (lp.log != null) setQuickOpen({ text: lp.log, n: Date.now() }); if (lp.health) setHealthLink(lp.health); if (lp.log != null || lp.health) history.replaceState(null, "", location.pathname); }, []);
-  // v89.10：高驰官方授权回跳（/?coros_auth=…）→ 打开“设备连接与同步”显示结果（首次引导未完成时留在引导里）。
-  useEffect(() => { try { if (new URLSearchParams(location.search).has("coros_auth") && (localStorage.getItem(ONBOARD_KEY) || localStorage.getItem(ONBOARD_SKIPPED_KEY))) { setSettingsPane("sync"); setSettingsOpen(true); } } catch { /* ignore */ } }, []);
+  // Every vendor returns to the same connection surface, including during first-run setup.
+  useEffect(() => { const result = readSyncCallback(location.search); if (!result) return; setSyncCallback(result); setSyncRequest({ mode: "accounts", provider: result.provider }); setSettingsPaneRaw("sync"); setSettingsOpen(true); history.replaceState(history.state, "", `${location.pathname}${result.cleanSearch}${location.hash}`); }, []);
   useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY) && !localStorage.getItem(ONBOARD_SKIPPED_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? "null"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);
   const [planLens, setPlanLens] = useState<"all" | "run" | "lift">("all");
   const [clockLabel, setClockLabel] = useState("");
@@ -262,7 +262,7 @@ export function StrengthApp() {
     watch(); const t = setTimeout(watch, 300);
     return () => { clearTimeout(t); ro.disconnect(); };
   }, [tab, offline, offlineShellState]);
-  useEffect(() => { const h = () => { setSettingsPaneRaw("sync"); setSettingsOpen(true); }; window.addEventListener("fk-open-sync", h); return () => window.removeEventListener("fk-open-sync", h); }, []);
+  useEffect(() => { const h = (event: Event) => { setSyncRequest(normalizeSyncRequest((event as CustomEvent).detail)); setSyncCallback(null); setSettingsPaneRaw("sync"); setSettingsOpen(true); window.setTimeout(() => settingsScroll.current?.scrollTo({ top: 0 }), 0); }; window.addEventListener(DEVICE_SYNC_OPEN, h); return () => window.removeEventListener(DEVICE_SYNC_OPEN, h); }, []);
   useEffect(() => { const h = () => { setTab("body"); setTimeout(() => document.getElementById("fk-intraday")?.scrollIntoView({ block: "start", behavior: "smooth" }), 120); }; window.addEventListener("fk-open-intraday", h); return () => window.removeEventListener("fk-open-intraday", h); }, []);
   useEffect(() => { const h = (ev: Event) => { const id = (ev as CustomEvent<string>).detail; const all = loadSchedule().entries; if (all.some(e => e.id === id)) { setCalendar(all); setTimerPicker(false); setExecutionEntryId(id); } }; window.addEventListener("fk-open-scheduled", h); return () => window.removeEventListener("fk-open-scheduled", h); }, []);
   const resumeSession = (id: string) => {
@@ -907,15 +907,15 @@ export function StrengthApp() {
       <div className={tab === "diet" ? "" : "hidden"}><div className="mx-auto max-w-3xl px-3 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
       <div className={tab === "body" ? "" : "hidden"}><div className="mx-auto max-w-3xl px-3 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} onCoach={() => setTab("coach")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
       </div>
-      <StandaloneWelcome />
+      <StandaloneWelcome suspended={settingsOpen || firstRun} />
       {settingsOpen ? (
-        <div ref={settingsScroll} className="fixed inset-0 z-40 overflow-y-auto bg-bg" data-testid="settings-overlay">
+        <div ref={settingsScroll} className="fixed inset-0 z-40 overflow-y-auto bg-bg" data-testid="settings-overlay" role="dialog" aria-modal="true" aria-label={settingsPane === "sync" ? "设备与数据同步" : "个人与设置"}>
         <div className="mx-auto max-w-3xl px-4 pb-nav">
           {/* R5: sticky header — title + close stay reachable below the iPhone notch while long panes scroll. */}
           <div data-testid="settings-header" className="sticky top-0 z-20 -mx-4 flex items-center justify-between border-b border-line bg-bg px-4 pb-2" style={{ paddingTop: "max(6px, env(safe-area-inset-top))" }}>
             <div className="fk-settings-heading">
               {settingsPane === "menu" ? null : <button type="button" className="fk-settings-back" aria-label="返回个人与设置" onClick={() => setSettingsPane("menu")}><ChevronLeft className="size-5" aria-hidden="true" /></button>}
-              <h2 className="font-bold">{({ menu: "个人与设置", athlete: "运动员档案", goals: "训练目标与赛季计划", health: "健康与训练限制", sync: "设备连接与同步", import: "数据导入", backup: "备份与恢复", coach: "教练与提醒", theme: "外观与显示", ai: "AI 服务与联网功能", privacy: "隐私与数据流向" } as Record<SettingsPane, string>)[settingsPane]}</h2>
+              <h2 className="font-bold">{({ menu: "个人与设置", athlete: "运动员档案", goals: "训练目标与赛季计划", health: "健康与训练限制", sync: "设备与数据同步", import: "设备与数据同步", backup: "备份与恢复", coach: "教练与提醒", theme: "外观与显示", ai: "AI 服务与联网功能", privacy: "隐私与数据流向" } as Record<SettingsPane, string>)[settingsPane]}</h2>
             </div>
             <button type="button" onClick={() => setSettingsOpen(false)} className="grid size-11 place-items-center rounded-full bg-surface shadow-sm" aria-label="关闭设置"><X className="size-5" /></button>
           </div>
@@ -923,8 +923,7 @@ export function StrengthApp() {
           {settingsPane === "menu" ? <StorageHint /> : null}
           {settingsPane === "athlete" ? <><AthletePanel profile={profile} onEdit={() => setProfileOpen(true)} /><SettingsHub only={["p", "n"]} initialOpen="p" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "health" ? <><HealthPanel /><SettingsHub only={["h"]} initialOpen="h" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
-          {settingsPane === "sync" ? <><div className="-mx-3"><GarminSync hideBackup onState={setGarminConn} /></div><CorosAccount /><SyncStatusPanel conn={garminConn} /><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
-          {settingsPane === "import" ? <><section className="home-card mt-3 p-4"><h3 className="font-bold">导入手表文件或截图</h3><p className="mt-1 text-xs text-muted">导入的数据会先给你核对，确认后才保存；与佳明账号同步分开记录来源。</p><DeviceImport today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} /></section><button type="button" onClick={() => { setSettingsOpen(false); setTab("body"); window.setTimeout(() => { window.dispatchEvent(new Event("fk-open-health-records")); }, 40); }} className="home-card mt-3 flex min-h-14 w-full items-center justify-between px-4 text-left text-sm"><span><b className="block">健康页 · 设备记录与说明</b><span className="text-xs text-muted">查看已导入的设备数据和各品牌导入说明</span></span><span aria-hidden="true">›</span></button></> : null}
+          {settingsPane === "sync" ? <DeviceSyncCenter today={todayIso} request={syncRequest} callback={syncCallback} onSaved={() => setHomeRev(v => v + 1)}><SettingsHub only={["d"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></DeviceSyncCenter> : null}
           {settingsPane === "coach" ? <SettingsHub only={["c", "r"]} initialOpen="c" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
           {settingsPane === "ai" ? <OnlineFeaturesSettings /> : null}
           {settingsPane === "privacy" ? <><PrivacyPanel /><SettingsHub only={["x"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
@@ -1028,7 +1027,7 @@ export function StrengthApp() {
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}
       {planImportOpen ? <AppSheet title="导入训练计划" label="导入训练计划" footer={null} onClose={() => setPlanImportOpen(false)}><PlanImportPanel onImported={() => { setPlanImportOpen(false); setPlanSrcSaved('400m-v4'); setTab('plan'); }} /></AppSheet> : null}
-      {firstRun ? <Onboarding today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
+      {firstRun ? <Onboarding suspended={settingsOpen} today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <ChromeMetrics />
       <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " hidden" : "")} aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
@@ -1307,14 +1306,14 @@ function round(n: number): number {
   return Math.round(n * 2) / 2;
 }
 
-function StandaloneWelcome() {
+function StandaloneWelcome({ suspended = false }: { suspended?: boolean }) {
   const [show, setShow] = useState(false), [msg, setMsg] = useState("");
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
     let n = 0; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i) ?? ""; if (/^(fr255-(food|body|plan|schedule)|fk-(plan400|garmin-acts|bodylab))/.test(k)) n++; }
     if (standalone && n === 0 && !localStorage.getItem("fk-welcome-standalone-v1")) setShow(true);
   }, []);
-  if (!show) return null;
+  if (!show || suspended) return null;
   const done = () => { localStorage.setItem("fk-welcome-standalone-v1", "1"); setShow(false); };
   return <div className="fixed inset-0 z-[60] overflow-y-auto bg-bg p-4" style={{ paddingTop: "calc(env(safe-area-inset-top) + 12px)" }} role="dialog" aria-label="欢迎">
     <h2 className="text-xl font-bold">欢迎使用主屏幕版方坤</h2>
@@ -1325,7 +1324,7 @@ function StandaloneWelcome() {
       <label className="fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold">选择备份文件导入<input type="file" accept="application/json,.json" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const n = await importVault(f); localStorage.setItem("fk-welcome-standalone-v1", "1"); setMsg(`已恢复 ${n} 项，正在刷新`); setTimeout(() => location.reload(), 800); } catch (err) { setMsg((err as Error).message); } }} /></label>
       {msg ? <p className="keep mt-1 text-xs" aria-live="polite">{msg}</p> : null}
     </section>
-    <div className="-mx-3 mt-3"><GarminSync /></div>
+    <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent px-3 font-bold text-accent-fg" onClick={() => openDeviceSync()}>连接手表或运动软件</button>
     <button type="button" className="mt-3 min-h-11 w-full rounded-xl border border-line text-sm" onClick={done}>跳过，从头开始</button>
   </div>;
 }

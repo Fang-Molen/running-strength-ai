@@ -1,3 +1,36 @@
+.device-sync-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  padding: 4px;
+  background: var(--color-surface);
+}
+
+.device-sync-tabs > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 12px;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.device-sync-tabs > button[aria-selected="true"] {
+  color: var(--color-fg);
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
+.device-sync-center :is(button, a, select, input):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
 .device-account-card,
 .device-sync-panel {
   font-size: 0.875rem;

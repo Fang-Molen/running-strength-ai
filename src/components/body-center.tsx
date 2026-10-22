@@ -4,8 +4,7 @@ import { HEALTH_CHANGED } from "@/lib/health/observation"
 import { onAppEvent } from "@/lib/core/events"
 import { useEffect, useState } from "react"
 import { BodyPanel } from "@/components/body-panel"
-import { DeviceCenter } from "@/components/device-center"
-import { DeviceImport } from "@/components/device-import"
+import { openDeviceSync } from "@/lib/ui/device-sync-navigation"
 import { HealthTiles } from "@/components/health-tiles"
 import { UnifiedRecoveryHostU11 } from "@/components/unified-recovery-host-u11"
 import { SourceGuide, CheckinCard, WatchQuestion, PainLog, RecoveryVerdictCard } from "@/components/health-extras"
@@ -131,8 +130,7 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
     <details id="body-vitals" className="fk-h89-records"><summary>健康数据补录与历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision(v => v + 1)} /></details>
     <details id="body-device-records" className="fk-h89-records" tabIndex={-1}><summary>设备导入与说明</summary>
       {watch === null ? <WatchQuestion onPick={w => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision(v => v + 1) }} /> : watch ? <SourceGuide watch={watch} /> : null}
-      <DeviceImport today={today} onSaved={() => setRevision(v => v + 1)} />
-      <details id="body-devices" className="mt-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">其他品牌导出步骤</summary><DeviceCenter /></details>
+      <DeviceConnectionEntry />
     </details>
   </section>
   if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} />{compact ? null : <UnifiedRecoveryHostU11 day={today} onRecord={openVitals}/>}<div id="body-vitals"><details className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={()=>setRevision(v=>v+1)}/></details></div></div>
@@ -153,10 +151,16 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
     </section>
     </div>
     <section id="body-records" className="mt-3">
-      <div hidden={pane !== "device"}>{watch ? <SourceGuide watch={watch} /> : null}<DeviceImport today={today} onSaved={() => setRevision((value) => value + 1)} /></div>
+      <div hidden={pane !== "device"}>{watch ? <SourceGuide watch={watch} /> : null}<DeviceConnectionEntry /></div>
       <div hidden={pane !== "recovery"} id="body-vitals" className="scroll-mt-6"><details className="home-card p-3" onToggle={() => undefined}><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={() => setRevision((value) => value + 1)} /></details></div>
       <div hidden={compact || pane !== "trend"} id="body-measurements" className="scroll-mt-6"><div className="home-card p-4 mb-3"><h2 className="font-bold">体重与体成分</h2><p className="mt-1 text-sm text-muted">{latest ? `${latest.weight} kg · ${latest.date}` : "未记录"}</p></div><BodyPanel profile={profile} onProfile={onProfile} onSaved={() => setRevision((value) => value + 1)} /><div id="pain-log"><PainLog today={today} /></div></div>
-      <div hidden={pane !== "device"} id="body-devices" className="scroll-mt-6"><details className="home-card mt-3 p-3"><summary className="min-h-10 cursor-pointer text-sm font-bold">其他品牌导出步骤（华为 / 小米 / COROS / Apple）</summary><DeviceCenter /></details></div>
     </section>
+  </div>
+}
+
+function DeviceConnectionEntry() {
+  return <div id="body-devices" className="mt-3 grid gap-2 sm:grid-cols-2">
+    <button type="button" className="min-h-12 rounded-xl bg-accent px-3 font-semibold text-accent-fg" onClick={() => openDeviceSync()}>连接手表或运动软件</button>
+    <button type="button" className="min-h-12 rounded-xl border border-line px-3 font-semibold" onClick={() => openDeviceSync({ mode: 'files' })}>导入文件或截图</button>
   </div>
 }
