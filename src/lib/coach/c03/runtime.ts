@@ -161,7 +161,7 @@ export async function recheckC03Followups(actor?: C03ActorContext) {
   try {
     const c = context(actor), history = readCoachFollowupHistory(c)
     if (history.status !== 'AVAILABLE') return { ok: false, reviewed: [], unchanged: [], reason: history.reason ?? 'HISTORY_UNAVAILABLE' }
-    const keys = [...new Set(history.records.flatMap(r => r.kind === 'HYPOTHESIS' ? r.input.basis.map(b => b.scopeKey) : []))]
+    const keys = [...new Set(history.records.flatMap(r => r.kind === 'HYPOTHESIS' ? r.input.basis.map(b => b.scopeKey).filter(k=>!k.startsWith('batch99:')) : []))]
     if (!keys.length) return { ok: true, reviewed: [], unchanged: [] }
     let current: C03QuerySnapshot[]
     try { current = await readReceipts(keys.map(parseScope), Date.now()) }
@@ -172,7 +172,7 @@ export async function recheckC03Followups(actor?: C03ActorContext) {
         state: 'ERROR', completeRead: false, dataKey: 'UNAVAILABLE', provenanceKey: 'UNAVAILABLE' }))
     }
     if (currentAthleteId() !== c.athleteId) throw Error('SUBJECT_CHANGED')
-    const result = recheckCoachForecastDependencies({ ...c, asOf: Date.now() }, current)
+    const result = recheckCoachForecastDependencies({ ...c, asOf: Date.now() }, current,key=>!key.startsWith('batch99:'))
     if (result.reviewed.length) notify()
     return result
   } catch (e) { return { ok: false, reviewed: [], unchanged: [], reason: e instanceof Error ? e.message : 'C03_RECHECK_FAILED' } }
@@ -193,7 +193,7 @@ export function withdrawDisplayedC03Hypothesis(hypothesisId: string, actor?: C03
 export function startC03FollowupRuntime(): () => void {
   let stopped = false, timer: ReturnType<typeof setTimeout> | null = null
   const enqueue = () => { if (stopped || timer !== null) return; const athlete = currentAthleteId()
-    timer = setTimeout(() => { timer = null; if (!stopped && currentAthleteId() === athlete) void recheckC03Followups().catch(() => {}) }, 0) }
+    timer = setTimeout(() => { timer = null; if (!stopped && currentAthleteId() === athlete) void recheckC03Followups().then(async()=>{if(!stopped&&currentAthleteId()===athlete){const {refreshEvidenceDecisions}=await import('../../health/evidence-history.ts');if(!stopped&&currentAthleteId()===athlete)await refreshEvidenceDecisions()}}).catch(() => {}) }, 0) }
   const unsubscribe = onAppEvent(event => { if (event.athlete_id === currentAthleteId()) enqueue() })
   const changes = ['fk-training-activities-changed', 'fk-plan400-components', 'fk-run-links', 'fk-training-corrected', 'fk-health-changed', 'fk-athlete-scope-changed', 'storage', 'pageshow']
   if (typeof window !== 'undefined') changes.forEach(name => window.addEventListener(name, enqueue))

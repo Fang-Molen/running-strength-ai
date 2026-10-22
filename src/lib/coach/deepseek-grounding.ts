@@ -53,3 +53,21 @@ export function assertDeepSeekNumericGrounding(data: AskCoachData, raw: string):
   const text = [completion.text, typeof completion.nextStep === 'string' ? completion.nextStep : ''].join('\n')
   for (const claim of quantities(text, true)) if (!valid.some(value => same(value, claim))) throw new Error(`UNVERIFIED_MODEL_QUANTITY:${claim.kind}`)
 }
+
+/** Stronger server boundary: numeric statements must be verbatim excerpts of a
+ * cited actual/derived source. A correct number from another source is insufficient.
+ * This does not certify the scientific interpretation of nonnumeric prose. */
+export function assertDeepSeekEvidenceQuotes(data:AskCoachData,raw:string):void{
+ const c=JSON.parse(raw) as {text:string;nextStep?:string|null;citations:string[];evidenceQuotes?:{sourceId:string;quote:string}[]}
+ const briefs=data.series?data.series.points.map(p=>p.brief):data.compare?[data.compare.left,data.compare.right]:[data.brief]
+ let remaining=[c.text,c.nextStep??''].join('\n')
+ const claims=c.evidenceQuotes??[]
+ if(!Array.isArray(claims)||claims.length>48)throw Error('INVALID_EVIDENCE_QUOTES')
+ for(const claim of claims){
+  if(!claim||Object.keys(claim).some(k=>!['sourceId','quote'].includes(k))||typeof claim.quote!=='string'||!claim.quote.trim()||claim.quote.length>1000||!c.citations.includes(claim.sourceId))throw Error('INVALID_EVIDENCE_QUOTE')
+  const sources=briefs.flatMap(b=>b.sources??[]).filter(s=>s.id===claim.sourceId&&s.kind!=='CONTEXT')
+  if(!sources.length||!sources.every(s=>s.detail.includes(claim.quote))||!remaining.includes(claim.quote))throw Error('SOURCE_QUOTE_MISMATCH')
+  remaining=remaining.split(claim.quote).join(' ')
+ }
+ if(quantities(remaining,true).length)throw Error('UNBOUND_NUMERIC_CLAIM')
+}

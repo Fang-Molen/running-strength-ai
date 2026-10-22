@@ -1,3 +1,6 @@
+import { retainEvidenceDecision } from '@/lib/health/evidence-history'
+import { readEvidenceDecision } from '@/lib/health/evidence-decision-host'
+import { evidenceDecisionText } from '@/lib/health/evidence-decision'
 /** R2: two health workspaces, one in-page metric explorer; original health sources and records remain authoritative. */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { classifyFreshness } from "@/lib/health/recovery-freshness-u12"
@@ -134,6 +137,9 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
   useEffect(() => { const h = (e: Event) => { const k = (e as CustomEvent).detail; if (k === "bb" || k === "hr" || k === "st") { setMetric(k); setSpan(1) } }; window.addEventListener("fk-h89-detail", h); window.addEventListener("fk-open-intraday-detail", h); return () => { window.removeEventListener("fk-h89-detail", h); window.removeEventListener("fk-open-intraday-detail", h) } }, [])
   const all = useIntraday()
   const tiles = useTiles(day, rev, all)
+  const decision = useMemo(() => {void rev;try{return readEvidenceDecision(day)}catch{return null}}, [day,rev])
+  const [historyIssue,setHistoryIssue]=useState('')
+  useEffect(()=>{if(decision){const r=retainEvidenceDecision(decision);setHistoryIssue(r.ok?'':'本轮历史判断未保存：'+r.reason)}},[decision?.revision])
   const review = useMemo(() => { void rev; try { return reviewFatigue(loadHealthSnapshot(day), dailyCheckin(day)) } catch { return null } }, [day, rev])
   const emptyMetrics = useMemo(() => {
     void rev
@@ -159,6 +165,7 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
         </div>
       </div>
       {review && review.signals.length ? <p className="keep mt-2 text-sm">{review.action}</p> : null}
+      {decision ? <details className="fk-h89-disclosure" data-testid="batch99-evidence"><summary>负荷、依据与下一步观察</summary>{historyIssue?<p role="status">{historyIssue}；现有历史保留。</p>:null}<div className="keep whitespace-pre-wrap text-sm" data-testid="batch99-decision">{evidenceDecisionText(decision)}</div></details> : null}
       {emptyMetrics ? <SyncNote /> : null}
       <div className="fk-h89-actions">{emptyMetrics ? <button type="button" className="fk-h89-pill" aria-label="导入健康数据" onClick={() => window.dispatchEvent(new Event("fk-open-health-records"))}>导入数据</button> : null}<button type="button" className="fk-h89-pill" aria-label="记录疲劳与疼痛" aria-expanded={checkin} aria-controls="health-checkin" onClick={() => setCheckin(!checkin)}>{checkin ? "收起记录" : "疲劳与疼痛"}</button>{onCoach ? <button type="button" className="fk-h89-pill" onClick={onCoach}>问方坤</button> : null}</div>
     </section>

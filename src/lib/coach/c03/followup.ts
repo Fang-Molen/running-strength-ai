@@ -268,11 +268,11 @@ export function compareCoachFollowupDependencies(saved: readonly C03QuerySnapsho
   }
   return result(blocked ? 'BLOCKED' : changed.length ? 'RECHECK_REQUIRED' : provenanceOnly ? 'PROVENANCE_ONLY' : 'UNCHANGED', changed, reasons)
 }
-export function recheckCoachForecastDependencies(c: C03FollowupContext, current: readonly C03QuerySnapshot[]): { ok: boolean; reviewed: string[]; unchanged: string[]; reason?: string } {
+export function recheckCoachForecastDependencies(c: C03FollowupContext, current: readonly C03QuerySnapshot[], scopeFilter?: (scopeKey:string)=>boolean): { ok: boolean; reviewed: string[]; unchanged: string[]; reason?: string } {
   const read = readCoachFollowupHistory(c)
   if (read.status !== 'AVAILABLE') return { ok: false, reviewed: [], unchanged: [], reason: read.reason! }
   const latest = new Map<string, C03FollowupRecord & { kind: 'HYPOTHESIS' }>()
-  for (const r of read.records) if (r.kind === 'HYPOTHESIS' && (!latest.has(r.input.id) || latest.get(r.input.id)!.input.revision < r.input.revision)) latest.set(r.input.id, r)
+  for (const r of read.records) if (r.kind === 'HYPOTHESIS' && (!scopeFilter || r.input.basis.some(b=>scopeFilter(b.scopeKey))) && (!latest.has(r.input.id) || latest.get(r.input.id)!.input.revision < r.input.revision)) latest.set(r.input.id, r)
   const reviewed: string[] = [], unchanged: string[] = []
   for (const h of latest.values()) {
     if (withdrawn(read.records, h.input.id)) { unchanged.push(h.input.id); continue }

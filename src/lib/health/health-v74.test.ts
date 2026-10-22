@@ -164,7 +164,7 @@ test('known food totals remain partial and no confirmed training import is added
 test('app context remains sourced and bounded in compact model packet',()=>{
  saveDeviceRows([row('SLEEP',7)],[]);const b=assembleCoachBrief(null,day+' 下一次训练怎么安排',null);const p=compactSingleCoachPacket(b,[],[])
  assert.ok(p.current.appData);assert.ok(p.current.sourceIds.includes(b.appData!.sourceId))
- assert.throws(()=>assertCoachData({...b.appData,health:Array(13).fill(b.appData!.health[0])}))
+ assert.throws(()=>assertCoachData({...b.appData,health:Array(17).fill(b.appData!.health[0])}))
  assert.throws(()=>assertCoachPacket({...b,sourceIds:b.sourceIds.filter(s=>s!==b.appData!.sourceId)}))
 })
 test('malformed provenance is rejected before imported health writes',()=>{
@@ -245,15 +245,15 @@ test('v76: Garmin 204/empty day is no-data, not a sync failure; Body Battery use
  assert.equal(x.rows.some(r=>r.metric==='HRV'||r.metric==='SLEEP'),false)
  const bad=garminHealthDay(day,'a',{status:500,body:{}},{status:204,body:{}},{status:204,body:{}},at); assert.equal(bad.failures.length,1)
 })
-test('v76: same day manual/legacy + Garmin sync → Garmin (latest sync) is shown everywhere; explicit source choice still wins',()=>{
+test('batch99: independent Garmin/manual readings stay conflicting until source choice',()=>{
  assert.equal(saveVital({kind:'SLEEP',value:8,observedOn:day,source:'MANUAL'}).ok,true)
  const g=garminHealthDay(day,'acct',{status:200,body:{calendarDate:day,bodyBatteryHighestValue:90}},{status:200,body:{hrvSummary:{calendarDate:day,lastNightAvg:48}}},{status:200,body:{dailySleepDTO:{calendarDate:day,sleepTimeSeconds:6.5*3600}}},at)
  saveDeviceRows(g.rows,[])
  const later=garminHealthDay(day,'acct',{status:200,body:{calendarDate:day,bodyBatteryHighestValue:90,bodyBatteryMostRecentValue:35}},{status:204,body:{}},{status:204,body:{}},day+'T12:00:00Z')
  saveDeviceRows(later.rows,[])
  const s=loadHealthSnapshot(day), sleep=metric(s,'SLEEP'), bb=metric(s,'BODY_BATTERY')
- assert.equal(sleep.state,'AVAILABLE'); assert.equal(sleep.current!.value,6.5); assert.equal(sleep.candidates.length,2)
- assert.equal(bb.current!.value,35)
+ assert.equal(sleep.state,'CONFLICT'); assert.equal(sleep.current,null); assert.equal(sleep.candidates.length,2)
+ assert.equal(bb.state,'CONFLICT'); assert.equal(bb.current,null)
  const manual=sleep.candidates.find(p=>p.value===8)!; saveHealthSource('SLEEP',manual.stream)
  assert.equal(metric(loadHealthSnapshot(day),'SLEEP').current!.value,8)
 })

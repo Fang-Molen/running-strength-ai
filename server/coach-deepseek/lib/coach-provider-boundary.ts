@@ -26,7 +26,7 @@ export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPo
   let parsed: unknown; try { parsed = JSON.parse(message.content); } catch { throw new Error('PROVIDER_JSON'); }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('PROVIDER_JSON');
   const value=parsed as Record<string,unknown>;
-  const allowed=['mode','text','nextStep','citations','medicalReferral','compareIds','seriesIds','planChanged'];
+  const allowed=['mode','text','nextStep','citations','medicalReferral','compareIds','seriesIds','planChanged','evidenceQuotes'];
   if(Object.keys(value).some(k=>!allowed.includes(k)) || !['answer','ask','unavailable'].includes(value.mode as string) || typeof value.text!=='string' || !value.text.trim() || (value.nextStep!==null && typeof value.nextStep!=='string') || !Array.isArray(value.citations) || value.citations.length>100 || value.citations.some(id=>typeof id!=='string'||id.length>120) || typeof value.medicalReferral!=='boolean' || value.planChanged!==false) throw new Error('PROVIDER_SCHEMA');
   for(const key of ['compareIds','seriesIds'])if(value[key]!==null && value[key]!==undefined && (!Array.isArray(value[key]) || (value[key] as unknown[]).some(id=>typeof id!=='string'||id.length>120)))throw new Error('PROVIDER_SCHEMA');
   return message.content;

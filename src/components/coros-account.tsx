@@ -35,8 +35,8 @@ export function CorosAccount({ compact = false }: { compact?: boolean }) {
   const run = async (f: () => Promise<void>) => { if (busyRef.current) return; busyRef.current = true; setBusy(true); setMsg(''); try { await f() } catch (e) { if (corosNeedsLogin(e)) expired(); else setMsg(e instanceof Error ? e.message : '高驰请求失败') } finally { busyRef.current = false; setBusy(false) } }
   /** 已保存过（同一高驰 labelId，含旧登录方式保存的）和“可能与佳明同一次活动”的默认不勾选；绝不自动合并。 */
   const prepare = (list: McpPreview[]) => {
-    const have = existingKeys(), all = logRows(), savedLabels = new Set(all.flatMap(r => r.originIds.map(corosLabelOf)).filter(Boolean) as string[])
-    const d = new Set(list.filter(a => have.activities.has(activityDraftId(a)) || savedLabels.has(a.labelId)).map(a => a.key))
+    const have = existingKeys(), all = logRows(), savedLabels = new Set(all.flatMap(r => r.originIds.filter(id=>id.startsWith('coros:'))).filter(Boolean) as string[])
+    const d = new Set(list.filter(a => have.activities.has(activityDraftId(a)) || !!a.sourceIdentity && savedLabels.has(a.sourceIdentity)).map(a => a.key))
     setLogPairs(crossBrandPairsInLog(all).length)
     const c = new Set(crossBrandCandidates(list.filter(a => !d.has(a.key)).map(asLike), all, 'COROS').keys())
     return { d, c }

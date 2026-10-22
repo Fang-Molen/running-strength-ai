@@ -1,3 +1,5 @@
+import { readEvidenceDecision } from './evidence-decision-host'
+import { evidenceDecisionText } from './evidence-decision'
 import { healthModeSummary } from './mode'
 import { loadWatch } from './legacy-inputs'
 import { z } from 'zod'
@@ -20,13 +22,14 @@ const S=z.string().max(500),N=z.number().finite().nonnegative()
 const DataSchema=z.object({
   mode:z.object({mode:z.enum(['pro','basic','none','unset']),label:S,description:S,available:N,conflicts:N,reminder:S}),
   day:z.string().refine(validDay),sourceId:z.string().max(120),
-  health:z.array(z.object({metric:z.string().max(30),state:z.enum(['AVAILABLE','CONFLICT','STALE','MISSING']),detail:S})).max(12),
+  health:z.array(z.object({metric:z.string().max(30),state:z.enum(['AVAILABLE','CONFLICT','STALE','MISSING']),detail:S})).max(16),
   fatigue:z.object({ruleStatus:z.literal('RESEARCH_CANDIDATE'),automaticPrescription:z.literal(false),state:S,title:S,reasons:z.array(S).max(12),excluded:z.array(S).max(20),action:S,followup:S}),
   balance:z.object({from:z.string().max(10),to:z.string().max(10),plannedRun:N,plannedStrength:N,actualSessions:N,knownMinutes:N,unknownMinutes:N,knownRunKm:N,unknownRunKm:N,groups:z.array(S).max(12),observations:z.array(S).max(20),gaps:z.array(S).max(12),action:S}),
   coreActual:z.object({sessions:N,knownMinutes:N,unknownMinutes:N,sourceIds:z.array(z.string().max(120)).max(100)}),
   nutrition:z.object({count:N,knownKcal:N,pending:N}),
   imports:z.object({count:N,unknownDate:N,latest:z.array(z.object({id:z.string().max(120),day:z.string().max(10),title:z.string().max(120),sport:z.string().max(15),distanceM:N.nullable(),durationSec:N.nullable()})).max(8)}),
   subjective:z.string().max(200),warnings:z.array(S).max(15),planChanged:z.literal(false),
+  decision:z.object({revision:z.string(),text:z.string().max(20000)}).optional(),
   muscleRecovery:z.object({revision:z.string(),summary:z.string(),explanation:z.string(),hasEvidence:z.boolean(),hasObservedRegions:z.boolean(),unreadable:z.boolean()}).optional()
 })
 export type CoachDataContext=z.infer<typeof DataSchema>
@@ -59,6 +62,7 @@ export function readCoachData(day=localDay()):CoachDataContext{
   const recovery=readRecoveryProjection(day)
   result.muscleRecovery={revision:recovery.revision,summary:recovery.review.summary,explanation:recoveryExplanation(recovery),
     hasEvidence:recovery.sources.length>0||recovery.review.gaps.length>0,hasObservedRegions:recovery.review.regions.some(r=>r.state!=='UNKNOWN'),unreadable:recovery.unreadable}
+  try { const decision=readEvidenceDecision(day);result.decision={revision:decision.revision,text:evidenceDecisionText(decision)} } catch { result.warnings.push('综合事实复核暂不可用；保留分项记录') }
   result.sourceId+=':'+shortHash(JSON.stringify(result));return result
 }
 export function dataHasRecords(d:CoachDataContext):boolean{return d.mode.mode!=='unset'||d.warnings.some(x=>x.includes('无法读取'))||d.health.some(x=>x.state!=='MISSING')||d.nutrition.count>0||d.imports.count>0||d.balance.actualSessions>0||d.coreActual.sessions>0||d.balance.plannedRun+d.balance.plannedStrength>0||!d.subjective.includes('未记录')}
@@ -75,6 +79,11 @@ export function answerFromAppData(brief:CoachBrief):string|null{
   const food=/今天|当天|最近/.test(q)&&/饮食|吃|摄入|热量/.test(q)
   const imports=/最近|近期|导入|手表|记录|数据/.test(q)&&/训练|活动|跑步|数据/.test(q)
   if(!health&&!balance&&!food&&!imports)return null
+  if((health||balance)&&d.decision){
+    const caution=health&&/很累|特别疲劳|腿沉|睡不够|状态很差/.test(q)?'你这轮提到的新不适或疲劳需优先核对；不能用手表数据抵消你的感受。下文选项均待核对，先暂缓加量，补充发生时间、部位与热身表现。\n':''
+    const cycle=balance&&brief.daysToCompetition!=null?`距目标比赛${brief.daysToCompetition}天；结合原计划目的复核，不自动补量。\n`:''
+    return `分析日期：${d.day}（本机记录，只读）。\n${caution}${d.decision.text}\n${d.subjective}。证据不足时只作有限解释。\n${cycle}${d.warnings.filter(w=>w.includes('无法读取')).join('；')}`
+  }
   const lines=[`分析日期：${d.day}（本机已保存记录）。`,`${d.mode.label}：${d.mode.description}`]
   if(health){lines.push(...d.health.filter(x=>x.state!=='MISSING'&&['SLEEP','HRV','RHR','BODY_BATTERY','RECOVERY','READINESS'].includes(x.metric)).map(x=>x.detail),d.subjective,`基于已保存记录的判断：${d.fatigue.title}。`,...d.fatigue.reasons,`建议：${d.fatigue.action}`,`跟进：${d.fatigue.followup}`);if(d.fatigue.excluded.length)lines.push(`暂不采用：${d.fatigue.excluded.slice(0,4).join('；')}。`)}
   if(balance){const b=d.balance;lines.push(`近7天（${b.from}—${b.to}）课表：跑步 ${b.plannedRun} 节、力量 ${b.plannedStrength} 节；实际反馈 ${b.actualSessions} 节，已知时长 ${b.knownMinutes} 分钟${b.unknownMinutes?`，另${b.unknownMinutes}节时长未填`:''}。`,`已识别计划肌群：${b.groups.join('、')||'动作信息不足'}。`,...b.observations,...b.gaps,`建议：${b.action}`)}

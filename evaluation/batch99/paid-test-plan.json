@@ -1,0 +1,36 @@
+{
+  "status": "AWAITING_EXPLICIT_BUDGET_APPROVAL",
+  "providerCallsExecuted": 0,
+  "sourceCases": "evaluation/deepseek-development/cases-60.json",
+  "sourceSha256": "09e58ed82559f288e6229e2539bb4a75a96858263c1876da9d92732fb698d393",
+  "caseCount": 60,
+  "fixtureReadiness": "EXISTING_CONCEPTUAL_CASES_REQUIRE_BOUND_SNAPSHOTS; DO_NOT_COUNT_AS_EXECUTED",
+  "smokeCallsMax": 5,
+  "subsequentCallsMax": 60,
+  "abComparison": "60 cases x 2 arms = up to 120 calls; requires separate cap approval, not included in 60-call proposal",
+  "inputTokensPerCallMax": 8000,
+  "outputTokensPerCallMax": 900,
+  "toolRounds": 0,
+  "automaticRetries": 0,
+  "maximumTokensFor60Calls": 534000,
+  "priceVersion": null,
+  "estimatedCost": null,
+  "costReason": "approved current price, cached-token accounting and chosen model version are required before cost estimate",
+  "acceptance": [
+    "fact attribution",
+    "source-qualified numeric claims",
+    "professional review",
+    "latency p50/p95",
+    "input/output/cache/reasoning token usage",
+    "ledger settled cost",
+    "revocation",
+    "duplicate charge prevention"
+  ],
+  "prohibited": [
+    "real health/GPS/identity records",
+    "expected answers in prompts",
+    "unapproved spend",
+    "deployment",
+    "plan write"
+  ]
+}

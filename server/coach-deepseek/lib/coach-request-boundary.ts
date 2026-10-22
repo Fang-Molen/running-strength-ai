@@ -102,6 +102,7 @@ export function aliasCoachInput(input: AskCoachRawInput): { input: AskCoachRawIn
   return { input: aliased, restore(raw) {
     const parsed = JSON.parse(raw);
     for (const key of ['citations','compareIds','seriesIds']) if (Array.isArray(parsed[key])) parsed[key] = parsed[key].map((id: string) => reverse.get(id) ?? id);
+    if(Array.isArray(parsed.evidenceQuotes))parsed.evidenceQuotes=parsed.evidenceQuotes.map((claim:unknown)=>object(claim)?{...claim,sourceId:typeof claim.sourceId==='string'?(reverse.get(claim.sourceId)??claim.sourceId):claim.sourceId}:claim);
     return JSON.stringify(parsed);
   } };
 }

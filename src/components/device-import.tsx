@@ -1,3 +1,4 @@
+import { saveReviewedFacts } from '@/lib/health/unified-fact-store'
 import {DecimalInput} from './decimal-input'
 import { useRef, useState } from "react"
 import { Upload } from "lucide-react"
@@ -55,7 +56,7 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
   function edit(key: string, patch: Partial<DeviceHealthRow>) {
     if (!result) return
     const old=result.health.find(h=>h.key===key);if(!old)return
-    const updated={...old,...patch};updated.key=healthPreviewKey(updated)
+    const updated={...old,...patch,source:old.source.includes('人工更正')?old.source:old.source+' · 人工更正',observation:old.observation?{...old.observation,facts:undefined,previous:[...(old.observation.previous??[]),{value:old.value,syncedAt:old.observation.syncedAt}]}:undefined};updated.key=healthPreviewKey(updated)
     if(patch.day&&updated.observation)updated.observation={...updated.observation,key:`${updated.observation.key}:date:${patch.day}`.slice(0,160),measuredAt:null}
     setResult({...result,health:result.health.map(h=>h.key===key?updated:h)})
     setPickH(p=>({...p,[updated.key]:true}))
@@ -67,12 +68,15 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
     if (!result) return
     const h = result.health.filter((x) => pickH[x.key] ?? true)
     const a = result.activities.filter((x) => pickA[x.key])
+    const rawFacts=[...h.flatMap(x=>x.observation?.facts??[]),...(result.facts??[]).filter(f=>f.quality!=='VALID')]
+    const evidence=saveReviewedFacts(rawFacts)
     const r = saveDeviceRows(h, a)
-    setStatus(`已保存 ${r.saved} 条${r.skipped ? `，跳过已存在 ${r.skipped} 条` : ""}${r.errors.length ? `；${r.errors.length} 条未保存：${r.errors.slice(0, 3).join("；")}` : ""}`)
-    if (r.saved) { setStamp(Date.now()); onSaved() }
+    r.errors.push(...evidence.errors)
+    setStatus(`已保存 ${r.saved} 条读数/活动、${evidence.saved} 条原始证据${r.skipped ? `，跳过已存在 ${r.skipped} 条` : ""}${r.errors.length ? `；${r.errors.length} 条未保存：${r.errors.slice(0, 3).join("；")}` : ""}`)
+    if (r.saved || evidence.saved) { setStamp(Date.now()); onSaved() }
     if (!r.errors.length) setResult(null)
   }
-  const nPick = result ? result.health.filter((x) => pickH[x.key] ?? true).length + result.activities.filter((x) => pickA[x.key]).length : 0
+  const nPick = result ? (result.facts??[]).filter(f=>f.quality!=='VALID').length + result.health.filter((x) => pickH[x.key] ?? true).length + result.activities.filter((x) => pickA[x.key]).length : 0
   return <section ref={panel} className="home-card p-4 text-sm" aria-label="导入设备数据">
     <div className="flex items-center justify-between gap-2"><h2 className="text-base font-bold">导入手表数据</h2><SavedBadge stamp={stamp} /></div>
     <p className="mt-1 text-muted">佳明优先。选文件或截图，自动识别类型 → 核对 → 一次保存。文件在本机解析。图片可选择本地识字或联网识别，均需核对后保存。</p>
@@ -87,6 +91,7 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
     {status ? <p className="mt-2" role="status">{status}</p> : null}
     {result ? <div className="mt-3 space-y-3">
       <p className="text-xs text-muted">识别为：{result.kind}{result.brand && result.brand !== "未知" ? ` · ${result.brand}` : ""}。{result.notes.join(" ")}</p>
+      {result.facts?.length ? <details className="fk-h89-disclosure"><summary>原始证据与缺失状态（{result.facts.length}条）</summary><p>来源、原单位、时区和修订号随核对保存；未佩戴与未知不填0。</p><ul>{result.facts.filter(f=>f.quality!=='VALID').slice(0,20).map((f,i)=><li key={i}>{f.provider} · {f.metric} · {f.day}：{f.quality}</li>)}</ul></details> : null}
       {result.health.length ? <div className="overflow-x-auto rounded-xl border border-line"><table className="fk-table"><thead><tr><th></th><th>日期</th><th>指标</th><th>数值</th><th>来源</th></tr></thead><tbody>
         {result.health.map((h) => <tr key={h.key} className={dup.h.has(h.key) ? "opacity-60" : ""}>
           <td><input type="checkbox" aria-label="保存这条" checked={pickH[h.key] ?? true} onChange={(e) => setPickH({ ...pickH, [h.key]: e.target.checked })} /></td>
@@ -103,7 +108,7 @@ export function DeviceImport({ today, onSaved }: { today: string; onSaved: () =>
           <td>{a.distanceM ? `${(a.distanceM / 1000).toFixed(2)} km` : "—"}</td><td>{fmtDur(a.durationSec)}</td><td>{paceText(a) ?? "—"}</td>
           <td>{a.avgHr ?? "—"}{a.maxHr ? `/${a.maxHr}` : ""}</td></tr>)}
       </tbody></table></div> : null}
-      {result.health.length || result.activities.length ? <button type="button" disabled={!nPick} onClick={save} className="fk-primary w-full">保存选中的 {nPick} 条</button> : null}
+      {result.health.length || result.activities.length || (result.facts??[]).some(f=>f.quality!=='VALID') ? <button type="button" disabled={!nPick} onClick={save} className="fk-primary w-full">保存选中的 {nPick} 条</button> : null}
       {ocrText ? <details className="text-xs"><summary className="min-h-10 cursor-pointer text-muted">查看识别出的原文</summary><pre className="whitespace-pre-wrap text-muted">{ocrText}</pre></details> : null}
     </div> : null}
     <details className="mt-3 text-xs">

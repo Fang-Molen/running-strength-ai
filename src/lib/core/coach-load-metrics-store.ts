@@ -46,7 +46,7 @@ export function projectSavedSessionLoads(input: Sources): SavedSessionLoad[] {
     })
   }
   for (const record of imports) {
-    if ((record.athleteId ?? 'local') !== athleteId || (voided(record.confirmedImportId) && !unknownTimeIds.has(record.confirmedImportId)) || !record.occurredAt.value || Date.parse(record.confirmedAt) > Date.parse(asOf)) continue
+    if ((record.athleteId ?? 'local') !== athleteId || (voided(record.confirmedImportId) && !unknownTimeIds.has(record.confirmedImportId)) || !record.occurredAt.value || !Number.isFinite(Date.parse(record.confirmedAt)) || Date.parse(record.confirmedAt) > Date.parse(asOf) || !Number.isFinite(Date.parse(record.occurredAt.value)) || Date.parse(record.occurredAt.value) > Date.parse(asOf)) continue
     const day = calendarDay(record.occurredAt.value)
     if (!day) continue
     const changes = changesFor(record.confirmedImportId)
@@ -67,8 +67,8 @@ export function readSavedSessionLoads(athleteId = currentAthleteId(), asOf = new
   return projectSavedSessionLoads({ athleteId, asOf, events: loadEvents(), occurrences: listTrainingOccurrences(), imports: coachImports(athleteId, asOf), corrections: listCorrections(), ratings: loadImportRatings() })
 }
 
-export function readLoadCoverage(athleteId = currentAthleteId()): LoadDayConfirmation[] {
-  return readJournal<CoverageAssertion>(LOAD_COVERAGE_PREFIX).flatMap(({ data }) => data && data.athleteId === athleteId && Array.isArray(data.days)
+export function readLoadCoverage(athleteId = currentAthleteId(), asOf = new Date().toISOString()): LoadDayConfirmation[] {
+  return readJournal<CoverageAssertion>(LOAD_COVERAGE_PREFIX).flatMap(({ data }) => data && data.athleteId === athleteId && Number.isFinite(Date.parse(data.recordedAt)) && Date.parse(data.recordedAt)<=Date.parse(asOf) && Array.isArray(data.days)
     ? data.days.filter(day => day && day.athleteId === athleteId && validLoadDay(day.day) && typeof day.fingerprint === 'string') : [])
 }
 

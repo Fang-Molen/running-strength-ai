@@ -1,3 +1,5 @@
+import { appleHealthFacts, parseUnifiedExport } from '../health/unified-import'
+import { currentAthleteId } from '../core/events'
 import { shortHash } from '@/lib/health/observation'
 /**
  * Local-only device data parsing (FIT / GPX / TCX / CSV / Garmin export ZIP / Apple Health ZIP / OCR text).
@@ -5,6 +7,8 @@ import { shortHash } from '@/lib/health/observation'
  */
 export type DeviceActivity = {
   key: string
+  /** Original parser key; preview disambiguation must not change saved import identity. */
+  sourceKey?: string
   /** Verified import channel + account + stable activity ID, when actually available. */
   sourceIdentity?: string
   /** v89.9.4：来源记录（目前只有高驰账号读取会填；佳明与文件导入不填，行为不变）。 */
@@ -24,13 +28,13 @@ export type DeviceActivity = {
   groundContactMs: number | null
   sets: { name: string; reps: number | null; weightKg: number | null; durationSec: number | null }[]
 }
-export type HealthMetric = "RHR" | "HRV" | "SLEEP" | "WEIGHT" | "BODY_BATTERY" | "READINESS" | "STRESS" | "STEPS" | "SPO2" | "RESP"
+export type HealthMetric = "RHR" | "HRV" | "SLEEP" | "WEIGHT" | "BODY_BATTERY" | "READINESS" | "STRESS" | "STEPS" | "SPO2" | "RESP" | "ACTIVE_KCAL" | "RESTING_KCAL" | "TOTAL_KCAL" | "WORKOUT_KCAL"
 export type DeviceHealthRow = { key: string; source: string; metric: HealthMetric; day: string; value: number; observation?: import("../health/observation").Observation; hrvMethod?: import("../nutrition/vitals").HrvMethod }
-export type DeviceParseResult = { kind: string; brand: string; activities: DeviceActivity[]; health: DeviceHealthRow[]; notes: string[] }
+export type DeviceParseResult = { kind: string; brand: string; activities: DeviceActivity[]; health: DeviceHealthRow[]; notes: string[]; facts?: import("../health/unified-facts").UnifiedFact[] }
 
-export const METRIC_LABELS: Record<HealthMetric, string> = { RHR: "静息心率", HRV: "HRV", SLEEP: "睡眠", WEIGHT: "体重", BODY_BATTERY: "身体电量", READINESS: "训练准备度", STRESS: "压力", STEPS: "步数", SPO2: "血氧", RESP: "呼吸" }
-export const METRIC_UNITS: Record<HealthMetric, string> = { RHR: "次/分", HRV: "ms", SLEEP: "小时", WEIGHT: "kg", BODY_BATTERY: "/100", READINESS: "/100", STRESS: "/100", STEPS: "步", SPO2: "%", RESP: "次/分" }
-const RANGE: Record<HealthMetric, [number, number]> = { RHR: [30, 120], HRV: [1, 300], SLEEP: [0.5, 16], WEIGHT: [30, 250], BODY_BATTERY: [0, 100], READINESS: [0, 100], STRESS: [0, 100], STEPS: [0, 100000], SPO2: [70, 100], RESP: [4, 40] }
+export const METRIC_LABELS: Record<HealthMetric, string> = { RHR: "静息心率", HRV: "HRV", SLEEP: "睡眠", WEIGHT: "体重", BODY_BATTERY: "身体电量", READINESS: "训练准备度", STRESS: "压力", STEPS: "步数", SPO2: "血氧", RESP: "呼吸", ACTIVE_KCAL:"活动热量", RESTING_KCAL:"静息热量", TOTAL_KCAL:"全天总热量", WORKOUT_KCAL:"单次运动热量" }
+export const METRIC_UNITS: Record<HealthMetric, string> = { RHR: "次/分", HRV: "ms", SLEEP: "小时", WEIGHT: "kg", BODY_BATTERY: "/100", READINESS: "/100", STRESS: "/100", STEPS: "步", SPO2: "%", RESP: "次/分", ACTIVE_KCAL:"kcal", RESTING_KCAL:"kcal", TOTAL_KCAL:"kcal", WORKOUT_KCAL:"kcal" }
+const RANGE: Record<HealthMetric, [number, number]> = { RHR: [30, 120], HRV: [1, 300], SLEEP: [0.5, 16], WEIGHT: [30, 250], BODY_BATTERY: [0, 100], READINESS: [0, 100], STRESS: [0, 100], STEPS: [0, 100000], SPO2: [70, 100], RESP: [4, 40], ACTIVE_KCAL:[0,100000], RESTING_KCAL:[0,100000], TOTAL_KCAL:[0,100000], WORKOUT_KCAL:[0,100000] }
 
 const r1 = (n: number) => Math.round(n * 10) / 10
 function okMetric(metric: HealthMetric, value: number | null | undefined): value is number {
@@ -360,7 +364,9 @@ export function parseGarminJson(name: string, text: string): DeviceParseResult {
       a.avgHr = typeof o.avgHr === "number" ? Math.round(o.avgHr) : null
       a.maxHr = typeof o.maxHr === "number" ? Math.round(o.maxHr) : null
       a.calories = typeof o.calories === "number" ? Math.round(o.calories) : null
-      res.activities.push(finish(a))
+      if(!Number.isFinite(a.durationSec))a.durationSec=null
+    if(!Number.isFinite(a.distanceM))a.distanceM=null
+    res.activities.push(finish(a))
     }
   }
   return res
@@ -396,34 +402,19 @@ export async function unzip(bytes: Uint8Array, want: (name: string) => boolean):
 }
 export function parseAppleHealthXml(xml: string, sinceDay: string): DeviceParseResult {
   const res: DeviceParseResult = { kind: "Apple 健康", brand: "Apple", activities: [], health: [], notes: [] }
-  const map: Record<string, HealthMetric> = { HKQuantityTypeIdentifierRestingHeartRate: "RHR", HKQuantityTypeIdentifierHeartRateVariabilitySDNN: "HRV", HKQuantityTypeIdentifierBodyMass: "WEIGHT" }
-  const sleep: Record<string, number> = {}
-  for (const m of xml.matchAll(/<Record\s([^>]*?)\/?>/g)) {
-    const attrs = m[1]
-    const type = /type="([^"]+)"/.exec(attrs)?.[1] ?? ""
-    const start = /startDate="([^"]+)"/.exec(attrs)?.[1] ?? ""
-    const day = start.slice(0, 10)
-    if (!day || day < sinceDay) continue
-    if (map[type]) {
-      let v = parseFloat(/value="([^"]+)"/.exec(attrs)?.[1] ?? "")
-      if (map[type] === "WEIGHT" && /unit="lb"/.test(attrs)) v *= 0.4536
-      if (okMetric(map[type], v)) res.health.push(health("Apple 健康导出", map[type], day, v))
-    } else if (type === "HKCategoryTypeIdentifierSleepAnalysis" && /Asleep/.test(attrs)) {
-      const end = /endDate="([^"]+)"/.exec(attrs)?.[1] ?? ""
-      const h = (Date.parse(end.replace(" ", "T").replace(" ", "")) - Date.parse(start.replace(" ", "T").replace(" ", ""))) / 3.6e6
-      const endDay = end.slice(0, 10)
-      if (h > 0 && endDay) sleep[endDay] = (sleep[endDay] ?? 0) + h
-    }
-  }
-  for (const [day, h] of Object.entries(sleep)) if (okMetric("SLEEP", h)) res.health.push(health("Apple 健康导出", "SLEEP", day, h))
+  const parsed = appleHealthFacts(xml,sinceDay,currentAthleteId())
+  res.health=parsed.health;res.facts=parsed.facts;res.notes.push(...parsed.notes)
   for (const m of xml.matchAll(/<Workout\s([^>]*?)>/g)) {
     const attrs = m[1]; const start = /startDate="([^"]+)"/.exec(attrs)?.[1] ?? ""
     if (start.slice(0, 10) < sinceDay) continue
     const a = emptyActivity("Apple 健康导出")
     const [sp, label] = sportFrom(/workoutActivityType="HKWorkoutActivityType(\w+)"/.exec(attrs)?.[1] ?? ""); a.sport = sp; a.sportLabel = label
     a.startIso = Number.isFinite(Date.parse(start.replace(" ", "T").replace(" ", ""))) ? new Date(start.replace(" ", "T").replace(" ", "")).toISOString() : null
-    const dur = parseFloat(/duration="([^"]+)"/.exec(attrs)?.[1] ?? ""); a.durationSec = Number.isFinite(dur) ? Math.round(dur * 60) : null
-    const dist = parseFloat(/totalDistance="([^"]+)"/.exec(attrs)?.[1] ?? ""); a.distanceM = Number.isFinite(dist) ? r1(dist * 1000) : null
+    const dur = parseFloat(/duration="([^"]+)"/.exec(attrs)?.[1] ?? ""); a.durationSec = Number.isFinite(dur) ? ( /durationUnit="s"/.test(attrs) ? dur : /durationUnit="h"/.test(attrs) ? dur*3600 : /durationUnit="min"/.test(attrs) ? dur*60 : NaN ) : null
+    const dist = parseFloat(/totalDistance="([^"]+)"/.exec(attrs)?.[1] ?? ""); a.distanceM = Number.isFinite(dist) ? ( /totalDistanceUnit="km"/.test(attrs) ? dist*1000 : /totalDistanceUnit="mi"/.test(attrs) ? dist*1609.344 : /totalDistanceUnit="m"/.test(attrs) ? dist : NaN ) : null
+    if(!Number.isFinite(a.durationSec))a.durationSec=null
+    if(!Number.isFinite(a.distanceM))a.distanceM=null
+    a.sourceIdentity="apple:"+shortHash(attrs)
     res.activities.push(finish(a))
   }
   res.health = dedupeHealth(res.health)
@@ -431,14 +422,21 @@ export function parseAppleHealthXml(xml: string, sinceDay: string): DeviceParseR
   return res
 }
 
-export function healthPreviewKey(r:DeviceHealthRow):string{return `${r.metric}:${r.day}:${shortHash([r.observation?.sourceId??r.source,r.observation?.statistic??'',r.hrvMethod??''].join('|'))}`}
+export function healthPreviewKey(r:DeviceHealthRow):string{return `${r.metric}:${r.day}:${shortHash([r.observation?.sourceId??r.source,r.observation?.statistic??'',r.hrvMethod??'',r.observation?.facts?r.observation.key:''].join('|'))}`}
 export function dedupeHealth(rows: DeviceHealthRow[]): DeviceHealthRow[] {
   const m = new Map<string, DeviceHealthRow>(); for (const r of rows) {const key=healthPreviewKey(r);m.set(key,{...r,key})} return [...m.values()].sort((a, b) => b.day.localeCompare(a.day))
 }
 export function mergeResults(parts: DeviceParseResult[]): DeviceParseResult {
-  const acts = new Map<string, DeviceActivity>()
-  for (const p of parts) for (const a of p.activities) { const prev = acts.get(a.key); if (!prev || (a.source.includes("FIT") && !prev.source.includes("FIT"))) acts.set(a.key, a) }
-  return { kind: [...new Set(parts.map((p) => p.kind))].join(" + ") || "—", brand: [...new Set(parts.map((p) => p.brand).filter((b) => b !== "未知"))].join("/") || "未知", activities: [...acts.values()].sort((a, b) => (b.startIso ?? "").localeCompare(a.startIso ?? "")), health: dedupeHealth(parts.flatMap((p) => p.health)), notes: [...new Set(parts.flatMap((p) => p.notes))] }
+  const acts = new Map<string, DeviceActivity>(), notes=[...new Set(parts.flatMap(p=>p.notes))]
+  for(const p of parts)for(const a of p.activities){
+    // Similar start/distance does not establish common athlete, device or protocol.
+    const identity=a.sourceIdentity??JSON.stringify([a.source,a.sourceKey??a.key]),content=JSON.stringify({...a,key:undefined,sourceKey:undefined})
+    const key=identity+':'+shortHash(content)
+    if([...acts.values()].some(v=>v.sourceIdentity&&v.sourceIdentity===a.sourceIdentity&&JSON.stringify({...v,key:undefined,sourceKey:undefined})!==content))notes.push('同一来源活动出现不同版本；需核对更正，不能自动任选一条。')
+    if(!acts.has(key))acts.set(key,{...a,sourceKey:a.sourceKey??a.key,key:'preview:'+shortHash(key)})
+  }
+  if(acts.size>1)notes.push('保留不同来源活动；活动条数不代表训练课次，疑似重叠需用户确认。')
+  return { kind:[...new Set(parts.map(p=>p.kind))].join(' + ')||'—',brand:[...new Set(parts.map(p=>p.brand).filter(b=>b!=='未知'))].join('/')||'未知',activities:[...acts.values()].sort((a,b)=>(b.startIso??'').localeCompare(a.startIso??'')),health:dedupeHealth(parts.flatMap(p=>p.health)),notes:[...new Set(notes)],facts:parts.flatMap(p=>p.facts??[]) }
 }
 
 export function detectKind(name: string, head: Uint8Array): "fit" | "gpx" | "tcx" | "csv" | "zip" | "json" | "image" | "unknown" {
@@ -455,6 +453,7 @@ export function detectKind(name: string, head: Uint8Array): "fit" | "gpx" | "tcx
 
 const SINCE_DAYS = 120
 export async function parseDeviceFile(name: string, bytes: Uint8Array, today = new Date().toISOString().slice(0, 10), depth = 0): Promise<DeviceParseResult> {
+  if(/\.json$/i.test(name)){const unified=parseUnifiedExport(new TextDecoder().decode(bytes),currentAthleteId());if(unified)return unified}
   const kind = detectKind(name, bytes.subarray(0, 600))
   const text = () => new TextDecoder().decode(bytes)
   if (kind === "fit") return parseFit(bytes, `FIT · ${name.split("/").pop()}`)
@@ -467,9 +466,16 @@ export async function parseDeviceFile(name: string, bytes: Uint8Array, today = n
     const entries = await unzip(bytes, (n) => /\.(fit|gpx|tcx|csv|zip)$/i.test(n) || /export\.xml$/.test(n) || /(sleep|UDSFile|summarizedActivities|hrv|readiness).*\.json$/i.test(n))
     const parts: DeviceParseResult[] = []
     let fitCount = 0
+    const seenFitBytes=new Set<string>()
     for (const e of entries) {
       if (/export\.xml$/.test(e.name) && !/cda/i.test(e.name)) { parts.push(parseAppleHealthXml(new TextDecoder().decode(e.data), since)); continue }
-      if (/\.fit$/i.test(e.name) && ++fitCount > 400) continue
+      if (/\.fit$/i.test(e.name)) {
+        if(++fitCount>400)continue
+        // Identical archive bytes are duplicate files, unlike similar activity metrics.
+        const fingerprint=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new Uint8Array(e.data)))].map(x=>x.toString(16).padStart(2,'0')).join('')
+        if(seenFitBytes.has(fingerprint)){parts.push({kind:'FIT副本',brand:'未知',health:[],activities:[],notes:['已跳过字节完全相同的FIT文件副本；不同来源的近似活动仍需核对。']});continue}
+        seenFitBytes.add(fingerprint)
+      }
       try { parts.push(await parseDeviceFile(e.name, e.data, today, depth + 1)) } catch { /* skip */ }
     }
     const merged = mergeResults(parts)

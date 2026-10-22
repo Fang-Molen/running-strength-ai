@@ -31,5 +31,6 @@ export async function load(url,context,nextLoad) {
     if(cached)try{await mkdir(cacheDir,{recursive:true});const tmp=cached+'.'+process.pid;await writeFile(tmp,result.outputText);await rename(tmp,cached)}catch{/* a cache failure never skips compilation */}
     return {format:'module',source:result.outputText,shortCircuit:true}
   }
+  if(url.startsWith('file:')&&url.endsWith('.json'))return nextLoad(url,{...context,importAttributes:{...context.importAttributes,type:'json'}})
   return nextLoad(url,context)
 }

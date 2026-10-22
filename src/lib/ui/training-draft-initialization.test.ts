@@ -84,7 +84,7 @@ test('action-library entry matches an existing action by catalog, source or name
     assert.deepEqual(reopened, saved);
   }
   const distinct = { ...first, exercises: [{ ...first.exercises[0], catalogId: undefined, sourceId: undefined, name: '另一个动作' }] };
-  const appended = initializeTrainingDraft({ ...options, existing: distinct, seedAction: { ...action, catalogId: undefined } });
+  const appended = initializeTrainingDraft({ ...options, existing: distinct, seedAction: { ...action, catalogId: null } });
   assert.equal(appended.exercises.length, 2);
   assert.deepEqual(appended.exercises[0], distinct.exercises[0]);
 });

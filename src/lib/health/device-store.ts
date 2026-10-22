@@ -4,11 +4,11 @@ import {currentStore} from '../core/storage'
 import {loadVitals,saveVital,type HrvMethod,type VitalKind} from '../nutrition/vitals'
 import {healthChanged,revisedObservation,shortHash,validDay,validObservation,type Observation} from './observation'
 import {readArray} from './legacy-inputs'
-export type HealthMetric='RHR'|'HRV'|'SLEEP'|'BODY_BATTERY'|'READINESS'|'STRESS'|'STEPS'|'SPO2'|'RESP'|'WEIGHT'
+export type HealthMetric='RHR'|'HRV'|'SLEEP'|'BODY_BATTERY'|'READINESS'|'STRESS'|'STEPS'|'SPO2'|'RESP'|'WEIGHT'|'ACTIVE_KCAL'|'RESTING_KCAL'|'TOTAL_KCAL'|'WORKOUT_KCAL'
 export type DeviceHealthRow={key:string;source:string;metric:HealthMetric;day:string;value:number;hrvMethod?:HrvMethod;observation?:Observation}
 export type ExtraRow={athleteId?:string;metric:HealthMetric;day:string;value:number;source:string;observation?:Observation}
 export const DEVICE_EXTRA_KEY='fk-device-extra-v1'
-const bounds:Partial<Record<HealthMetric,readonly[number,number]>>={BODY_BATTERY:[0,100],READINESS:[0,100],STRESS:[0,100],STEPS:[0,100000],SPO2:[70,100],RESP:[4,40]}
+const bounds:Partial<Record<HealthMetric,readonly[number,number]>>={BODY_BATTERY:[0,100],READINESS:[0,100],STRESS:[0,100],STEPS:[0,100000],SPO2:[70,100],RESP:[4,40],ACTIVE_KCAL:[0,100000],RESTING_KCAL:[0,100000],TOTAL_KCAL:[0,100000],WORKOUT_KCAL:[0,100000]}
 function validExtra(v:unknown):v is ExtraRow{
  if(!v||typeof v!=='object')return false;const r=v as ExtraRow,b=bounds[r.metric];
  return !!b&&typeof r.source==='string'&&r.source.length>0&&validDay(r.day)&&Number.isFinite(r.value)&&r.value>=b[0]&&r.value<=b[1]&&validObservation(r.observation)

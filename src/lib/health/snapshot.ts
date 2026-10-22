@@ -1,3 +1,4 @@
+import { withUnifiedFacts } from './unified-snapshot'
 import { currentAthleteId } from '../core/events'
 import { loadCheckins, checkinsUnreadable, type Checkin } from './legacy-inputs'
 import { loadVitals, type VitalRecord } from '../nutrition/vitals'
@@ -7,7 +8,7 @@ import { healthChanged, localDay, shiftDay, shortHash, validDay, valueText } fro
 
 export const HEALTH_SOURCES_KEY='fk-health-sources-v1'
 function healthSourcesKey(){return currentAthleteId()==='local'?HEALTH_SOURCES_KEY:HEALTH_SOURCES_KEY+':'+encodeURIComponent(currentAthleteId())}
-export const HEALTH_LABELS:Record<string,string>={SLEEP:'睡眠',RHR:'静息心率',HRV:'HRV',NIGHT_HR:'夜间平均心率',RECOVERY:'主观恢复',BODY_BATTERY:'身体电量',READINESS:'训练准备度',STRESS:'压力',STEPS:'步数',SPO2:'血氧',RESP:'呼吸'}
+export const HEALTH_LABELS:Record<string,string>={SLEEP:'睡眠',RHR:'静息心率',HRV:'HRV',NIGHT_HR:'夜间平均心率',RECOVERY:'主观恢复',BODY_BATTERY:'身体电量',READINESS:'训练准备度',STRESS:'压力',STEPS:'步数',SPO2:'血氧',RESP:'呼吸',ACTIVE_KCAL:'活动热量',RESTING_KCAL:'静息热量',TOTAL_KCAL:'全天总热量',WORKOUT_KCAL:'单次运动热量'}
 export type HealthPoint={id:string;metric:string;day:string;value:number;source:string;stream:string;statistic:string;method:string;updatedAt:string;measuredAt:string|null;legacy:boolean;deviceLabel?:string;measurementMethod?:string}
 export type HealthMetricView={metric:string;label:string;state:'AVAILABLE'|'CONFLICT'|'STALE'|'MISSING';current:HealthPoint|null;candidates:HealthPoint[];series:HealthPoint[];availableSources:{id:string;label:string}[];selectedSource:string|null;baseline:{mean:number;count:number;delta:number;start:string;end:string}|null;notes:string[]}
 export type HealthSnapshot={asOf:string;metrics:HealthMetricView[];unreadable:boolean}
@@ -39,7 +40,7 @@ export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:
     const candidates=daily.filter(p=>p.day===lastDay)
     // 用户未指定来源时：同日有佳明账号同步（非旧格式）读数，默认以最新一次佳明同步为准，其余来源保留在 candidates 里可切换。
     const garmin=selectedSource?[]:candidates.filter(isGarminSync).sort((a,b)=>(Date.parse(a.updatedAt)||0)-(Date.parse(b.updatedAt)||0))
-    const preferredGarmin=candidates.length>1&&garmin.length?garmin.at(-1)!:null
+    const preferredGarmin:HealthPoint|null=null // Independent sources require an explicit user choice; brand priority cannot resolve conflict.
     const conflict=candidates.length>1&&!preferredGarmin
     const current=preferredGarmin??(conflict?null:candidates[0]??null)
     const series=current?[...groups.values()].filter(rows=>rows[0].stream===current.stream&&new Set(rows.map(p=>p.value)).size===1).map(rows=>rows.at(-1)!).sort((a,b)=>a.day.localeCompare(b.day)):[]
@@ -61,7 +62,7 @@ export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:
 }
 export function loadHealthSnapshot(asOf=localDay()):HealthSnapshot{
   const v=loadVitals(),snap=buildHealthSnapshot(v.records,loadExtras(),asOf,loadHealthSources(),loadCheckins(currentStore()));snap.unreadable=v.unreadable||extrasUnreadable()||checkinsUnreadable()
-  return snap
+  return withUnifiedFacts(snap)
 }
 export function healthSummaryLine(view:HealthMetricView):string{
   if(view.state==='MISSING')return `${view.label}：无可用记录`

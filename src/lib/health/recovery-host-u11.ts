@@ -106,7 +106,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const close = records.find(r => r.event.event_id === occurrence.closeEventId)?.recordedAt
       const plan = v4 ? `v4run:${v4}` : oid
       add({ athleteId, eventId: oid, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: iso(close) && close >= occurrence.startedAt ? close : occurrence.startedAt,
-        sourceId: oid, actual: 'CONFIRMED', runType }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
+        sourceId: oid, actual: 'CONFIRMED', runType:'UNKNOWN' }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
       phoneRunPlans.add(plan); runDays.add(localDay(new Date(occurrence.startedAt))); if (v4) runDays.add(v4)
     }
     // v89.10.6：先读手表跑步关联——已关联计划课的那条手表跑步，导入记录（同一来源标识）不再重复列出。
@@ -155,7 +155,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       if (phoneRunPlans.has(plan)) continue // 同一节已有逐段记录，只算一次
       const runType = v4 ? v4RunType(planDays().find(x => x.date === v4)) : purposeRunType(l.entry.runComponents?.find(c => c.modality === 'RUNNING')?.purpose)
       add({ athleteId, eventId: l.run.id, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: l.run.startedAt, knownAt: l.run.startedAt,
-        sourceId: l.run.id, actual: 'CONFIRMED', runType }, '已关联手表跑步', `${v4 ? `${planPrefix()}${mdOf(v4)}` : l.entry.title} 计划课 · ${RUN_TYPE_LABEL[runType]}${l.run.distanceM ? ` · ${(l.run.distanceM / 1000).toFixed(1)} km` : ''}`)
+        sourceId: l.run.id, actual: 'CONFIRMED', runType:'UNKNOWN' }, '已关联手表跑步', `${v4 ? `${planPrefix()}${mdOf(v4)}` : l.entry.title} 计划目的（非实际强度） · ${RUN_TYPE_LABEL[runType]}${l.run.distanceM ? ` · ${(l.run.distanceM / 1000).toFixed(1)} km` : ''}`)
       runDays.add(l.run.date); if (v4) runDays.add(v4)
     }
     const watchRaw=currentStore()?.getItem(garminViewKey('fk-garmin-acts-v1'))

@@ -100,11 +100,11 @@ export const BLOCKS = {
     forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule', 'schedule-writer'],
   },
   'coach-online': {
-    desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
+    desc: '联网方坤客户端与受控服务端入口（须可信事实授权与费用审批，密钥只在服务端）',
     files: ['src/lib/coach/online-coach.ts', 'functions/api/coach-chat.js'],
     entry: 'src/lib/coach/online-coach.ts',
     tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts', 'src/lib/coach/online-facts-v86.test.ts'],
-    forbid: ['/c03/', '/plan-execution/', 'server/coach-deepseek', '/components/'],
+    forbid: ['/c03/', '/plan-execution/', '/components/'],
   },
   'c03': {
     desc: 'C03 复盘论证：证据/两种限定解释/长期跟进 journal/保存后复核（仅本地路径）',

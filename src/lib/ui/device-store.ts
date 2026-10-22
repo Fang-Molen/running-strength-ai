@@ -14,7 +14,7 @@ export type {ExtraRow} from '@/lib/health/device-store';
 export function healthSavedKey(row: DeviceHealthRow): string { return `${observationFor(row).key}|${row.value}` }
 export function activityDraftId(a: DeviceActivity): string {
   if(a.sourceIdentity) return 'dev-stable-'+shortHash(JSON.stringify([currentAthleteId(),a.sourceIdentity]))
-  return "dev-" + shortHash(JSON.stringify([currentAthleteId(),a.source,a.key,a.startIso,a.sport,a.durationSec,a.distanceM]))
+  return "dev-" + shortHash(JSON.stringify([currentAthleteId(),a.source,a.sourceKey??a.key,a.startIso,a.sport,a.durationSec,a.distanceM]))
 }
 /** Which rows are already saved, so the confirm table can pre-untick them. */
 const SIG_KEY = "fk-device-acts-v1"
@@ -39,6 +39,7 @@ export function saveDeviceRows(health: DeviceHealthRow[], activities: DeviceActi
   const result = saveConfirmedHealth(health);
   saved += result.saved; skipped += result.skipped; errors.push(...result.errors);
   for (const a of activities) {
+    if(a.sourceIdentity && activities.some(b=>b!==a&&b.sourceIdentity===a.sourceIdentity&&JSON.stringify({...b,key:undefined,sourceKey:undefined})!==JSON.stringify({...a,key:undefined,sourceKey:undefined}))){errors.push('同一来源活动的多个版本存在冲突；先核对更正，未保存任一冲突版本。');continue}
     const draftId = activityDraftId(a)
     if (have.activities.has(draftId) || isDuplicate(a, have)) {
       const previous=a.sourceIdentity?coachImports().find(x=>x.draftId===draftId):null

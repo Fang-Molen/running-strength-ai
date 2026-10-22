@@ -1,6 +1,6 @@
 import { normalizeAskCoachInput, buildCoachModelRequest, interpretCoachModelOutput, coachLocalSafetyTurn } from '../../src/lib/strength/coach-pipeline.ts';
 import { MODEL_DEV_USER_ID } from '../../src/lib/strength/model-access.ts';
-import { assertDeepSeekNumericGrounding } from '../../src/lib/coach/deepseek-grounding.ts';
+import { assertDeepSeekNumericGrounding, assertDeepSeekEvidenceQuotes } from '../../src/lib/coach/deepseek-grounding.ts';
 import { selectDeepSeekRoute, estimateInputTokenUpperBound } from '../../src/lib/coach/deepseek-policy.ts';
 import { parseCoachRequest, assertSnapshotBinding, assertVerifiedPolicy, minimalCoachInput, aliasCoachInput, costMicros } from './lib/coach-request-boundary.ts';
 import { providerReturnedModel, parseProviderUsage, validateProviderReply, boundedResponseJson } from './lib/coach-provider-boundary.ts';
@@ -58,6 +58,14 @@ export async function onRequestPost({request,env={},data={}}) {
     aliased=aliasCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
     modelRequest=buildCoachModelRequest(normalizeAskCoachInput(aliased.input),{profile:'minimal-transport'});
   } catch { return failure('AUTHORIZED_CONTEXT_UNAVAILABLE'); }
+  modelRequest.messages[0].content += '\n所有数字必须逐字引用一条实际/派生证据；增加 evidenceQuotes 数组，每项仅含 sourceId 和 quote，quote 必须是该证据原文且完整出现在正文中；非引用部分不输出新数字。给出竞争解释、缺失信息和有条件的观察建议，不作医学签审。';
+  const authorizationStillValid=async()=>{
+    const currentSubject=await services.authenticate(request);
+    if(!currentSubject||currentSubject.id!==subject.id||!currentSubject.verified)throw Error('REVOKED');
+    const latest=await services.loadAuthorizedSnapshot(currentSubject,refs);
+    assertSnapshotBinding(latest,currentSubject,refs,services.now?.()??Date.now());
+    if(await digest(latest)!==await digest(snapshot))throw Error('SNAPSHOT_CHANGED');
+  };
   const payload={model:policy.model,temperature:policy.temperature,messages:modelRequest.messages,max_tokens:route.outputTokenLimit,stream:false,response_format:{type:'json_object'}};
   // Include serialized non-message options and verified chat-format overhead; never trim safety to fit.
   const {messages,...options}=payload;
@@ -74,6 +82,7 @@ export async function onRequestPost({request,env={},data={}}) {
   catch {return failure('BUDGET_RESERVATION_DENIED',429);}
   if(reservation.status!=='RESERVED')return failure('DUPLICATE_REQUEST',409);
   if(reservation.reservationId!==refs.requestId||reservation.state!=='RESERVED')return failure('RESERVATION_BINDING_INVALID');
+  try { await authorizationStillValid(); } catch { try{await services.ledger.settle({...binding,outcome:'NOT_SENT',actualCostMicros:null,usageHash:null});}catch{} return failure('AUTHORIZATION_CHANGED',403); }
   try { await services.ledger.markDispatched(binding); } catch {return failure('DISPATCH_DENIED',409);}
   const abort=new AbortController(); let timer;
   let reply;
@@ -99,8 +108,11 @@ export async function onRequestPost({request,env={},data={}}) {
   try {
     const raw=validateProviderReply(reply,policy,route);
     const restored=aliased.restore(raw);
+    await authorizationStillValid();
+    assertDeepSeekEvidenceQuotes(canonical,restored);
     assertDeepSeekNumericGrounding(canonical,restored);
-    interpreted=interpretCoachModelOutput(canonical,restored);
+    const parsed=JSON.parse(restored);delete parsed.evidenceQuotes;
+    interpreted=interpretCoachModelOutput(canonical,JSON.stringify(parsed));
     if(interpreted.turn.mode==='unavailable'||interpreted.turn.planChanged!==false)throw new Error('OUTPUT_GUARD');
   } catch {return failure('OUTPUT_REJECTED',502);}
   return json({ok:true,text:interpreted.turn.text,turn:interpreted.turn,compareIds:interpreted.compareIds,seriesIds:interpreted.seriesIds,route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false});
