@@ -58,6 +58,6 @@ test('zero or nonfinite lap heart rate cannot represent a reassuring zero drift'
 
 test('complete valid heart-rate observations retain their measured change', () => {
   const answer = reviewActivity(run, laps([140, 140, 140, 152, 152, 152]), date)
-  assert.match(answer, /后半程掉速 20 秒\/公里、心率还上升 12/)
+  assert.match(answer, /后半程比前半程慢 20 秒\/公里；心率变化 12 bpm/)
 })
 

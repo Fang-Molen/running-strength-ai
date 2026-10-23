@@ -29,7 +29,7 @@ const DataSchema=z.object({
   nutrition:z.object({count:N,knownKcal:N,pending:N}),
   imports:z.object({count:N,unknownDate:N,latest:z.array(z.object({id:z.string().max(120),day:z.string().max(10),title:z.string().max(120),sport:z.string().max(15),distanceM:N.nullable(),durationSec:N.nullable()})).max(8)}),
   subjective:z.string().max(200),warnings:z.array(S).max(15),planChanged:z.literal(false),
-  decision:z.object({revision:z.string(),text:z.string().max(20000)}).optional(),
+  decision:z.object({revision:z.string(),text:z.string().max(20000),safety:z.enum(['URGENT','REVIEW','NO_CLEARANCE']).optional()}).optional(),
   muscleRecovery:z.object({revision:z.string(),summary:z.string(),explanation:z.string(),hasEvidence:z.boolean(),hasObservedRegions:z.boolean(),unreadable:z.boolean()}).optional()
 })
 export type CoachDataContext=z.infer<typeof DataSchema>
@@ -62,7 +62,7 @@ export function readCoachData(day=localDay()):CoachDataContext{
   const recovery=readRecoveryProjection(day)
   result.muscleRecovery={revision:recovery.revision,summary:recovery.review.summary,explanation:recoveryExplanation(recovery),
     hasEvidence:recovery.sources.length>0||recovery.review.gaps.length>0,hasObservedRegions:recovery.review.regions.some(r=>r.state!=='UNKNOWN'),unreadable:recovery.unreadable}
-  try { const decision=readEvidenceDecision(day);result.decision={revision:decision.revision,text:evidenceDecisionText(decision)} } catch { result.warnings.push('综合事实复核暂不可用；保留分项记录') }
+  try { const decision=readEvidenceDecision(day);result.decision={revision:decision.revision,text:evidenceDecisionText(decision),safety:decision.safety as 'URGENT'|'REVIEW'|'NO_CLEARANCE'} } catch { result.warnings.push('综合事实复核暂不可用；保留分项记录') }
   result.sourceId+=':'+shortHash(JSON.stringify(result));return result
 }
 export function dataHasRecords(d:CoachDataContext):boolean{return d.mode.mode!=='unset'||d.warnings.some(x=>x.includes('无法读取'))||d.health.some(x=>x.state!=='MISSING')||d.nutrition.count>0||d.imports.count>0||d.balance.actualSessions>0||d.coreActual.sessions>0||d.balance.plannedRun+d.balance.plannedStrength>0||!d.subjective.includes('未记录')}

@@ -9,16 +9,16 @@ import { localDay } from '@/lib/health/observation'
 
 /** Existing muscle-page disclosure; explicit save action, no automatic training mutation. */
 export function PersonalResponsePanel({value}:{value:RecoveryProjection}){
- const [region,setRegion]=useState<Region>('quads'),[side,setSide]=useState<Side>('UNSPECIFIED'),[trainingId,setTrainingId]=useState(''),[score,setScore]=useState(''),[at,setAt]=useState(''),[notes,setNotes]=useState(''),[message,setMessage]=useState(''),[revision,setRevision]=useState(0)
+ const [measure,setMeasure]=useState<'SORENESS'|'PAIN'|'FUNCTION'|'RECOVERY_FEELING'>('SORENESS'),[region,setRegion]=useState<Region>('quads'),[side,setSide]=useState<Side>('UNSPECIFIED'),[trainingId,setTrainingId]=useState(''),[score,setScore]=useState(''),[at,setAt]=useState(''),[notes,setNotes]=useState(''),[message,setMessage]=useState(''),[revision,setRevision]=useState(0)
  const history=useMemo(()=>{void revision;try{return readRecoveryProjection(localDay(),new Date().toISOString(),24*365).analysis}catch{return value.analysis}},[value.revision,revision])
  const sessions=history.facts.filter((f):f is TrainingFact=>f.kind==='TRAINING'),selected=sessions.find(t=>t.id===trainingId)
  const review=useMemo(()=>reviewPersonalResponse({context:history.context,protocolKey:selected?.protocolKey??'UNCONFIRMED',region,side,training:sessions,responses:readPersonalResponses(history.context.asOf),registeredEndpoint:'SELF_REPORTED_SORENESS_ZERO_V1',settingsVersion:'DESCRIPTIVE_1'}),[history,region,side,trainingId])
  const save=()=>{
-  if(!selected||!at||score.trim()===''||!Number.isFinite(Number(score))||Number(score)<0||Number(score)>10){setMessage('请选择实际训练、观测时刻和0–10酸痛自评分；缺失不会填零。');return}
+  if(!selected||!at||score.trim()===''||!Number.isFinite(Number(score))||Number(score)<0||Number(score)>(measure==='FUNCTION'?1:10)||measure==='FUNCTION'&&!['0','1'].includes(score)||measure==='RECOVERY_FEELING'&&Number(score)<1){setMessage('请选择实际训练、观测时刻和本项有效评分；缺失不会填零。');return}
   if(!Number.isFinite(Date.parse(at))){setMessage('观测时刻无法识别，请重新选择。');return}
   const occurredAt=new Date(at).toISOString(),now=new Date().toISOString()
   if(Date.parse(occurredAt)<Date.parse(selected.endedAt??selected.startedAt)||Date.parse(occurredAt)>Date.parse(now)){setMessage('反馈时刻须在该次训练之后，且不能是未来。');return}
-  const f:ResponseFact={id:'response:'+crypto.randomUUID(),revision:0,athleteId:history.context.athleteId,provider:'MANUAL',accountRef:null,deviceId:null,protocolKey:selected.protocolKey,sourceRecordId:'manual-response',occurredAt,knownAt:now,receivedAt:now,sourceTimeZone:Intl.DateTimeFormat().resolvedOptions().timeZone,status:'CONFIRMED',quality:'AVAILABLE',ownershipReceiptId:null,kind:'RESPONSE',relatedTrainingRefs:[{id:selected.id,revision:selected.revision}],region,side,measure:'SORENESS',value:Number(score),scale:'0-10_HIGH_WORSE',observationProtocol:'SELF_REPORTED_SORENESS_ZERO_V1',elapsedHours:(Date.parse(occurredAt)-Date.parse(selected.endedAt??selected.startedAt))/3600000,functionTaskId:null,notes:notes.trim()||null}
+  const f:ResponseFact={id:'response:'+crypto.randomUUID(),revision:0,athleteId:history.context.athleteId,provider:'MANUAL',accountRef:null,deviceId:null,protocolKey:selected.protocolKey,sourceRecordId:'manual-response',occurredAt,knownAt:now,receivedAt:now,sourceTimeZone:Intl.DateTimeFormat().resolvedOptions().timeZone,status:'CONFIRMED',quality:'AVAILABLE',ownershipReceiptId:null,kind:'RESPONSE',relatedTrainingRefs:[{id:selected.id,revision:selected.revision}],region,side,measure,value:Number(score),scale:measure==='FUNCTION'?'FUNCTION_LIMITATION_0_1':measure==='RECOVERY_FEELING'?'1-10_HIGH_BETTER':'0-10_HIGH_WORSE',observationProtocol:measure==='SORENESS'?'SELF_REPORTED_SORENESS_ZERO_V1':`SELF_REPORT_${measure}_V1`,elapsedHours:(Date.parse(occurredAt)-Date.parse(selected.endedAt??selected.startedAt))/3600000,functionTaskId:measure==='FUNCTION'?'SELF_REPORTED_DAILY_FUNCTION':null,notes:notes.trim()||null}
   f.sourceRecordId=f.id
   const result=savePersonalResponse(f);setMessage(result.ok?'已保存自报反馈；这不表示医学恢复。':'保存失败：'+result.error);if(result.ok)setRevision(n=>n+1)
  }
@@ -29,7 +29,8 @@ export function PersonalResponsePanel({value}:{value:RecoveryProjection}){
    <label>部位<select value={region} onChange={e=>setRegion(e.target.value as Region)}>{REGIONS.map(r=><option key={r} value={r}>{REGION_LABEL[r]}</option>)}</select></label>
    <label>侧别<select value={side} onChange={e=>setSide(e.target.value as Side)}>{(['UNSPECIFIED','LEFT','RIGHT','BILATERAL'] as const).map((s,i)=><option key={s} value={s}>{['待确认','左侧','右侧','双侧'][i]}</option>)}</select></label>
    <label>实际观测时刻<input type="datetime-local" value={at} onChange={e=>setAt(e.target.value)} /></label>
-   <label>自报酸痛（0无酸痛，10最强）<input type="number" min="0" max="10" step="0.1" value={score} onChange={e=>setScore(e.target.value)} /></label>
+   <label>反馈类型<select value={measure} onChange={e=>{setMeasure(e.target.value as typeof measure);setScore('')}}><option value="SORENESS">酸痛</option><option value="PAIN">疼痛</option><option value="FUNCTION">日常功能受限</option><option value="RECOVERY_FEELING">主观恢复</option></select></label>
+   <label>{measure==='FUNCTION'?'功能受限（0无、1有；不是组织恢复许可）':measure==='RECOVERY_FEELING'?'主观恢复（1最差，10最好）':measure==='PAIN'?'疼痛（0无疼痛，10最强）':'自报酸痛（0无酸痛，10最强）'}<input type="number" min={measure==='RECOVERY_FEELING'?1:0} max={measure==='FUNCTION'?1:10} step={measure==='FUNCTION'?1:0.1} value={score} onChange={e=>setScore(e.target.value)} /></label>
    <label>日常功能、睡眠、疾病或中间训练等背景<input value={notes} maxLength={300} onChange={e=>setNotes(e.target.value)} /></label>
    <button type="button" className="fk-h89-pill" onClick={save}>保存这次反馈</button>
   </div>

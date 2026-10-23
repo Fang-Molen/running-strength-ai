@@ -17,7 +17,7 @@ export function retainEvidenceDecision(d:EvidenceDecision){
   const last=versions.at(-1)
   if(last?.kind==='HYPOTHESIS'&&last.input.basis[0]?.provenanceKey===d.revision)continue
   const revision=last?.kind==='HYPOTHESIS'?last.input.revision+1:1
-  const saved=registerCoachHypothesis(c,{id,revision,reviewId:d.revision,observedOccurrenceId:null,explanation:h.possibility,supportEvidence:support.flatMap(e=>e.sourceIds.map(sourceId=>({sourceId,revision:d.revision,fieldPaths:['actual']}))),counterEvidence:[],missing:h.missing,supportingObservations:support.map(e=>e.text),counterConditions:h.against,alternativeExplanations:d.hypotheses.filter(x=>x.id!==h.id).map(x=>x.possibility),nextObservation:h.observe,basis:[basis]})
+  const saved=registerCoachHypothesis(c,{id,revision,reviewId:d.revision,observedOccurrenceId:null,explanation:h.possibility,supportEvidence:support.flatMap(e=>e.sourceIds.map(sourceId=>({sourceId,revision:d.revision,fieldPaths:['actual']}))),counterEvidence:d.evidence.filter(e=>h.counterEvidence?.includes(e.id)).flatMap(e=>e.sourceIds.map(sourceId=>({sourceId,revision:d.revision,fieldPaths:['actual']}))),missing:h.missing,supportingObservations:support.map(e=>e.text),counterConditions:h.against,alternativeExplanations:d.hypotheses.filter(x=>x.id!==h.id).map(x=>x.possibility),nextObservation:h.observe,basis:[basis]})
   if(!saved.ok)return saved
  }
  return {ok:true,reason:'RETAINED_WITH_DEPENDENCIES'}

@@ -2,8 +2,8 @@
  * Reuse/extend equivalent existing domain types; keep an explicit mapping if names differ.
  * One authoritative snapshot supplies offline analysis, UI and online packets.
  */
-export type Provider = 'GARMIN' | 'COROS' | 'APPLE' | 'HUAWEI' | 'MANUAL' | 'APP';
-export type Quality = 'AVAILABLE' | 'PARTIAL' | 'MISSING' | 'CONFLICT' | 'STALE' | 'UNSUPPORTED';
+export type Provider = 'GARMIN' | 'COROS' | 'APPLE' | 'HUAWEI' | 'MANUAL' | 'APP' | 'POLAR' | 'SUUNTO' | 'APPLE_HEALTH' | 'HEALTH_CONNECT' | 'OTHER';
+export type Quality = 'AVAILABLE' | 'PARTIAL' | 'MISSING' | 'CONFLICT' | 'STALE' | 'UNSUPPORTED' | 'UNKNOWN' | 'FAILED' | 'UNAVAILABLE' | 'NOT_RECORDED' | 'PERMISSION_DENIED' | 'NOT_WORN' | 'NULL';
 export type ActualStatus = 'CONFIRMED' | 'UNVERIFIED' | 'PLANNED' | 'RETRACTED';
 export type Region = 'quads' | 'hamstrings' | 'glutes' | 'calves' | 'hip_flexors' |
  'adductors' | 'core' | 'lower_back' | 'chest' | 'back' | 'shoulders' | 'arms' | 'feet';
@@ -22,6 +22,8 @@ export interface EvidenceMeta extends EvidenceRef {
  ownershipReceiptId: string | null;
 }
 export interface MetricFact extends EvidenceMeta {
+ /** DAY uses occurredAt only as a calendar boundary, never as a measurement. */
+ temporalResolution?: 'INSTANT' | 'DAY'; observedAt?: string | null;
  kind: 'METRIC'; metric: string; value: number | null; unit: string;
  statistic: 'SAMPLE' | 'DAILY_TOTAL' | 'DAILY_MEAN' | 'PROVIDER_ASSESSMENT' | 'UNKNOWN';
  windowStart: string | null; windowEnd: string | null;
@@ -43,6 +45,7 @@ export interface StrengthSet {
  completion: 'COMPLETED' | 'SKIPPED' | 'NOT_RECORDED';
 }
 export interface TrainingFact extends EvidenceMeta {
+ runningStructure?: unknown;
  kind: 'TRAINING'; canonicalActivityId: string; occurrenceId: string; componentId: string;
  modality: 'RUN' | 'STRENGTH' | 'JUMP' | 'OTHER';
  startedAt: string; endedAt: string | null;
@@ -66,6 +69,11 @@ export interface EvidenceSnapshot {
  safetyConstraints: { id: string; version: string; scope: string; evidenceRefs: EvidenceRef[] }[];
 }
 export interface MuscleExposureReview {
+ ledger?: { region: Region; status: 'LOW_EXPOSURE' | 'MODERATE_EXPOSURE' | 'HIGH_EXPOSURE' | 'UNKNOWN';
+  supportingFacts: EvidenceRef[]; missingFacts: string[]; conflictingFacts: EvidenceRef[];
+  confidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN'; overlapObserved: boolean;
+  entries: { ref: EvidenceRef; occurredAt: string; modality: TrainingFact['modality']; observedType: string | null;
+   dose: string; side: Side }[] }[];
  snapshotId: string; regions: { region: Region; side: Side; refs: EvidenceRef[];
   runDistanceM: number | null; runWorkSeconds: number | null;
   knownStrengthSets: number; knownStrengthReps: number | null;
@@ -75,6 +83,7 @@ export interface MuscleExposureReview {
 }
 export type CandidateKind = 'KEEP_EXISTING' | 'ADJUST_PENDING_CONFIRMATION' | 'DEFER_AND_REVIEW' | 'REQUEST_MINIMUM_DATA';
 export interface RecoveryAssessment {
+ confidence?: 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN' | 'HOLD';
  snapshotId: string; dataQuality: Quality;
  signalState: 'NO_ADVERSE_SIGNAL_OBSERVED' | 'RECOVERY_CONCERN' | 'MIXED_SIGNALS' | 'INSUFFICIENT';
  safetyState: 'NO_KNOWN_HOLD' | 'HOLD_ACTIVE' | 'ESCALATION_REQUIRED' | 'UNKNOWN';
@@ -82,6 +91,10 @@ export interface RecoveryAssessment {
  hypotheses: { id: string; claim: string; supportingRefs: EvidenceRef[];
   weakeningRefs: EvidenceRef[]; discriminator: string; certainty: 'POSSIBLE' | 'UNRESOLVED' }[];
  candidates: { id: string; kind: CandidateKind; basisRefs: EvidenceRef[];
+  action?: 'KEEP' | 'MODIFY' | 'REDUCE' | 'RECOVERY' | 'SKIP';
+  changedVariable?: 'NONE' | 'EXECUTION_REVIEW' | 'SETS' | 'INTENSITY';
+  reason?: string; observation?: string; supportsWhen?: string; weakensWhen?: string;
+  doNotExecute?: string[]; executionState?: 'OBSERVATION_ONLY' | 'HOST_REVIEW_REQUIRED';
   conditions: string[]; planVersion: string | null; requiresConfirmation: true }[];
  missingDecisionInputs: string[]; medicalClearance: false; automaticPrescription: false;
 }

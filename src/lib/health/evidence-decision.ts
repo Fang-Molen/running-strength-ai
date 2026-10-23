@@ -7,9 +7,9 @@ import type { Checkin } from './legacy-inputs'
 import { detectRedFlags } from '../core/coach-red-flags'
 import { shortHash, shiftDay } from './observation'
 export type DecisionEvidence={id:string;text:string;sourceIds:string[];kind:'ACTUAL'|'DESCRIPTIVE'|'SELF_REPORT'|'GAP'}
-export type DecisionExplanation={id:string;possibility:string;support:string[];against:string[];missing:string[];observe:string;supportsWhen:string;weakensWhen:string;status:'PENDING'}
+export type DecisionExplanation={id:string;possibility:string;support:string[];counterEvidence?:string[];against:string[];missing:string[];observe:string;supportsWhen:string;weakensWhen:string;status:'PENDING'}
 export type DecisionOption={kind:'KEEP'|'ADJUST'|'DEFER'|'PROFESSIONAL';available:boolean;why:string;conditions:string[];doNotExecute:string[];automatic:false}
-export type EvidenceDecisionInput={athleteId:string;day:string;asOf:string;offset:number;snapshot:HealthSnapshot;checkin:Checkin|null;sessions:SavedSessionLoad[];coverage:LoadDayConfirmation[];muscle:{text:string;sourceIds:string[];unreadable:boolean;revision:string;hasPain:boolean};nutrition:{count:number;kcal:number;pending:number;complete?:boolean};question?:string;returnPermission?:'REQUIRED'|'GRANTED'|'UNKNOWN'}
+export type EvidenceDecisionInput={athleteId:string;day:string;asOf:string;offset:number;snapshot:HealthSnapshot;checkin:Checkin|null;sessions:SavedSessionLoad[];coverage:LoadDayConfirmation[];muscle:{text:string;sourceIds:string[];unreadable:boolean;revision:string;hasPain:boolean};nutrition:{count:number;kcal:number|null;pending:number;complete?:boolean};question?:string;returnPermission?:'REQUIRED'|'GRANTED'|'UNKNOWN'}
 export function buildEvidenceDecision(i:EvidenceDecisionInput){
  const evidence:DecisionEvidence[]=[],missing:string[]=[],conflicts:string[]=[]
  const q=quantifyRecoverySnapshot({snapshot:i.snapshot,athleteId:i.athleteId,asOf:i.asOf,calendarOffsetMinutes:i.offset})
@@ -32,7 +32,7 @@ export function buildEvidenceDecision(i:EvidenceDecisionInput){
  }
  if(evidence.some(e=>e.id.startsWith('daily:')))missing.push('日常步数和不同热量口径分别保留，不能与训练AU相加；未佩戴时段未知')
  const n=i.nutrition
- if(n.count)evidence.push({id:'nutrition:recorded',text:`${i.day} 饮食已记录 ${n.count} 条，已知 ${Number(n.kcal.toFixed(1))} kcal，${n.pending} 条能量未知。`,sourceIds:[`nutrition:${i.day}`],kind:'ACTUAL'})
+ if(n.count)evidence.push({id:'nutrition:recorded',text:`${i.day} 饮食已记录 ${n.count} 条，${n.kcal===null?'热量未知':`已知 ${Number(n.kcal.toFixed(1))} kcal`}，${n.pending} 条能量未知。`,sourceIds:[`nutrition:${i.day}`],kind:'ACTUAL'})
  if(!n.complete||n.pending)missing.push('全天饮食完整性或能量口径未确认，不能据此判断热量缺口、REDs或建议减重')
  const fatigue=reviewFatigue({...i.snapshot,metrics:i.snapshot.metrics.map(v=>({...v,baseline:null,current:v.current&&Date.parse(v.current.updatedAt)<=Date.parse(i.asOf)?v.current:null}))},i.checkin),danger=detectRedFlags(i.question??'')
  const urgent=['EMERGENCY','URGENT_MEDICAL'].includes(danger.level)

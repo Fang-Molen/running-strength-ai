@@ -1,3 +1,5 @@
+import { getRunningPlanSnapshot } from '../core/running-plan'
+import { readSavedSessionLoads } from '../core/coach-load-metrics-store'
 import { analysisFromParts } from './analysis-from-parts'
 import { buildMuscleExposure, exposureText } from './muscle-exposure'
 import type { StrengthSet } from './analysis-contract'
@@ -45,7 +47,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
   const endOfDay = new Date(`${day}T23:59:59.999`).getTime()
   const cutoff = Math.min(Date.parse(asOf), endOfDay), effectiveAsOf = new Date(cutoff).toISOString()
   const recent = (time: string) => iso(time) && Date.parse(time) <= cutoff && Date.parse(time) >= cutoff - sourceWindowHours * 3600000
-  let unreadable = !currentStore()
+  let unreadable = !currentStore(), painReviewRequired = false
   const add = (p: TrainingPart, label: string, detail: string, actualSets: number | null = null) => {
     const regionSets: Partial<Record<Region, number>> = {}
     for (const e of p.exercises ?? []) for (const r of exerciseRegions(e.catalogId)) regionSets[r] = (regionSets[r] ?? 0) + (e.actualSets ?? 0)
@@ -62,7 +64,8 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       Date.parse(r.event.timestamp) <= cutoff && iso(r.recordedAt) && Date.parse(r.recordedAt) <= cutoff).map(r => r.event)
     const occurrences = listTrainingOccurrences()
     // v89.2：与训练日志同一份记录——这次训练自己的逐组事件（日志“逐组已记”的同一口径），不再要求原计划快照逐组对齐。
-    const strengthDays = new Set<string>(), runDays = new Set<string>(), phoneRunPlans = new Set<string>()
+    const strengthDays = new Set<string>(), runDays = new Set<string>(), phoneRunPlans = new Set<string>(), phoneOccurrences = new Map<string,string[]>()
+    const loads = readSavedSessionLoads(athleteId,effectiveAsOf)
     for (const occurrence of occurrences) {
       const oid = occurrence.trainingOccurrenceId
       if (!occurrence.startedAt || !recent(occurrence.startedAt)) continue
@@ -70,6 +73,11 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const corrections = readTrainingCorrectionsAsOf(oid,effectiveAsOf)
       if (corrections.unknownCommitTime.length) { gaps.push('训练更正缺少可靠录入时间，历史肌群依据未知'); continue }
       if (corrections.voided) continue
+      const closed = events.find(e=>e.event_id===occurrence.closeEventId)
+      const endedAt=closed&&iso(occurrence.endedAt)&&Date.parse(occurrence.endedAt)<=cutoff?occurrence.endedAt:null
+      const load=loads.find(s=>s.id===oid)
+      const actualProtocols=[...new Set(events.filter(e=>e.payload?.trainingOccurrenceId===oid).map(e=>e.payload?.trainingProtocol).filter((v):v is string=>typeof v==='string'&&!!v.trim()))]
+      const meta={endedAt,protocolKey:actualProtocols.length===1?actualProtocols[0]:null,sessionRpe:load?.sessionRpe??null,sessionRpeScale:load?.sessionRpe!=null?'0-10_SESSION_RPE':null}
       const snapshot = occurrence.trainingPlanSnapshotId ? getTrainingPlanSnapshot(occurrence.trainingPlanSnapshotId) : null
       const latest = new Map<string, (typeof records)[number]>()
       for (const r of records) {
@@ -102,7 +110,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       }
       if (exercises.length) {
         const p: TrainingPart = { athleteId, eventId: oid, occurrenceId: oid, componentId: 'strength', modality: 'STRENGTH', occurredAt: occurrence.startedAt,
-          knownAt: known < occurrence.startedAt ? occurrence.startedAt : known, sourceId: oid, actual: 'CONFIRMED', exercises, strengthSets, revision:listCorrections(oid,effectiveAsOf).length }
+          knownAt: known < occurrence.startedAt ? occurrence.startedAt : known, sourceId: oid, actual: 'CONFIRMED', ...meta, exercises, strengthSets, revision:listCorrections(oid,effectiveAsOf).length }
         add(p, events.some(e=>e.event_id===occurrence.closeEventId) ? '力量逐组记录' : '力量逐组记录（进行中）', exercises.map(e => `${e.name} ${e.actualSets}组`).join('；'), exercises.reduce((n, e) => n + (e.actualSets ?? 0), 0))
         const d = localDay(new Date(occurrence.startedAt)); strengthDays.add(d)
         const v4 = /plan400:(\d{4}-\d\d-\d\d)/.exec(occurrence.sessionId)?.[1]; if (v4) strengthDays.add(v4)
@@ -120,14 +128,21 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const runIds=new Set([...run.repetitions,...run.continuous,...run.recoveries].flatMap(x=>x.sourceEventIds));const close = records.filter(r=>runIds.has(r.event.event_id)).map(r=>r.recordedAt).filter((x):x is string=>!!x&&iso(x)&&Date.parse(x)<=cutoff).sort().at(-1)
       if (!iso(close)) { gaps.push('逐段跑步缺少可靠录入时间，未补造知晓时刻'); continue }
       const plan = v4 ? `v4run:${v4}` : oid
-      add({ athleteId, eventId: oid, occurrenceId: plan, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: iso(close) && close >= occurrence.startedAt ? close : occurrence.startedAt,
-        sourceId: oid, actual: 'CONFIRMED', runType:'UNKNOWN',runSegments,runningStructure:run,revision:listCorrections(oid,effectiveAsOf).length }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
+      const frozen=getRunningPlanSnapshot(oid)
+      const purposes=frozen&&iso(frozen.capturedAt)&&Date.parse(frozen.capturedAt)<=cutoff?frozen.components.flatMap(c=>c.modality==='RUNNING'?[c.purpose]:[]).filter(p=>p!=='UNSPECIFIED'&&p!=='OTHER'):[]
+      const completedRunEvents=events.filter(e=>runIds.has(e.event_id)), explicitTypes=[...new Set(completedRunEvents.map(e=>(e.payload as Record<string,unknown>)?.observedRunType).filter(v=>['EASY','TEMPO','INTERVAL','SPRINT','HILL','LONG','SPEED_ENDURANCE','HILL_SPRINT','ACCELERATION'].includes(String(v))))]
+      // A measured repetition/rest structure can establish intervals, never sprint intensity.
+      const observedType:TrainingPart['runType']=explicitTypes.length===1?explicitTypes[0] as TrainingPart['runType']:run.repetitions.some(r=>r.status==='COMPLETED')&&run.recoveries.some(r=>r.actualRecoverySeconds!==null)?'INTERVAL':'UNKNOWN'
+      add({ athleteId, eventId: oid, occurrenceId: oid, componentId: 'running', modality: 'RUN', occurredAt: occurrence.startedAt, knownAt: iso(close) && close >= occurrence.startedAt ? close : occurrence.startedAt,
+        sourceId: oid, actual: 'CONFIRMED',...meta,plannedPurpose:purposes.length?[...new Set(purposes)].join(' / '):null,runType:observedType,runSegments,runningStructure:run,revision:listCorrections(oid,effectiveAsOf).length }, '逐段跑步记录', `${v4 ? `${planPrefix()}${mdOf(v4)} 计划课` : '计划课'} · ${RUN_TYPE_LABEL[runType]}`)
+      phoneOccurrences.set(plan,[...(phoneOccurrences.get(plan)??[]),oid])
       phoneRunPlans.add(plan); runDays.add(localDay(new Date(occurrence.startedAt))); if (v4) runDays.add(v4)
     }
     // v89.10.6：先读手表跑步关联——已关联计划课的那条手表跑步，导入记录（同一来源标识）不再重复列出。
     let match: ReturnType<typeof loadRunMatch> = { links: [], suggestions: [] }
     try { match = loadRunMatch() } catch { match = { links: [], suggestions: [] } }
     const imports = coachImports(athleteId,effectiveAsOf)
+    const confirmedLinks=loadOwnedComponents(currentStore()).days
     for (const record of imports) {
       if (!record.occurredAt.value || !recent(record.occurredAt.value)) continue
       const corrections = readTrainingCorrectionsAsOf(record.confirmedImportId,effectiveAsOf)
@@ -136,8 +151,13 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       if (listCorrections(record.confirmedImportId,effectiveAsOf).some(c=>c.kind==='FIELD')) {
         gaps.push('导入训练已有更正，肌群分析不再引用更正前明细'); continue
       }
+      const linked=match.links.find(l=>l.by==='user'&&record.sourceRecordIdentity&&[l.run.id,...l.run.originIds].includes(record.sourceRecordIdentity))
+      const linkedDay=linked?/^plan400:(\d{4}-\d\d-\d\d):running$/.exec(linked.entry.id)?.[1]:null
+      const receipt=linkedDay?confirmedLinks[linkedDay]?.running?.device:null
+      const phoneIds=linkedDay?phoneOccurrences.get(`v4run:${linkedDay}`)??[]:[]
+      const confirmedPhone=receipt?.linkedBy==='user'&&iso(receipt.linkedAt)&&Date.parse(receipt.linkedAt)<=cutoff&&phoneIds.length===1?phoneIds[0]:null
       const base = {athleteId,eventId:record.confirmedImportId,occurrenceId:record.confirmedImportId,
-        occurredAt:record.occurredAt.value,knownAt:record.confirmedAt,sourceId:record.confirmedImportId,actual:'CONFIRMED' as const,provenance:record.provenance}
+        occurredAt:record.occurredAt.value,knownAt:record.confirmedAt,sourceId:record.confirmedImportId,actual:'CONFIRMED' as const,provenance:record.provenance??{provider:providerOf(record.sourceRecordIdentity),accountRef:null,recordId:record.sourceRecordIdentity??record.confirmedImportId,measuredAt:record.occurredAt.value,receivedAt:record.confirmedAt},sessionRpe:record.sessionRpe.status==='RECORDED'?record.sessionRpe.value:null,sessionRpeScale:record.sessionRpe.status==='RECORDED'?'0-10_SESSION_RPE':null}
       if (record.sport === 'STRENGTH' || record.sport === 'MIXED') {
         const exercises: NonNullable<TrainingPart['exercises']> = []
         for (const s of record.strengthSets) {
@@ -153,12 +173,13 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
           exercises.map(e=>`${e.name} ${e.actualSets}组`).join('；')||'无法判断具体肌群：只有摘要，没有动作明细',
           exercises.length ? exercises.reduce((n,e)=>n+(e.actualSets??0),0) : null)
       }
-      if (record.sport==='RUNNING'||record.sport==='MIXED')
+      if(confirmedPhone)notes.push('已确认关联的手表跑步与手机逐段记录属于同课：本次只采用手机逐段实际，手表原始记录保留，不永久合并来源。')
+      if (!confirmedPhone&&(record.sport==='RUNNING'||record.sport==='MIXED'))
         add({...base,componentId:'running',modality:'RUN',runType:'UNKNOWN',runningStructure:record.runningSegments,runSegments:record.runningSegments.filter(s=>s.kind!=='RECOVERY').map((s,i)=>({id:s.id,blockId:'import',roundIndex:s.round.value,stepIndex:s.repeat.value??i+1,distanceM:s.distanceMeters.value,durationSeconds:s.durationSeconds.value,restAfterSeconds:s.recoverySeconds.value,rawResolutionSeconds:null,gradePercent:null,surface:null,completion:s.completion==='COMPLETED'?'COMPLETED':s.completion==='SKIPPED'?'SKIPPED':'NOT_RECORDED'}))},`导入的跑步${brandLabel(record.sourceRecordIdentity)}`,importedRunDetail(record))
       for (const [kind,field] of [['PAIN',record.pain],['SORENESS',record.soreness]] as const) {
         if (field.status!=='RECORDED'||!field.value) continue
         const region=regionFromExplicitLabel(field.value.location)
-        if(!region) { gaps.push(`${kind==='PAIN'?'疼痛':'酸痛'}位置未精确到肌群，保留原反馈，请核对具体部位`); continue }
+        if(!region) { if(kind==='PAIN'&&(field.value.intensity===null||field.value.intensity>0))painReviewRequired=true; gaps.push(`${kind==='PAIN'?'疼痛':'酸痛'}位置未精确到肌群，保留原反馈，请核对具体部位`); continue }
         const s: Symptom={...base,eventId:`${base.eventId}:${kind}`,region,kind,severity:field.value.intensity??undefined}
         symptoms.push(s);sources.push({id:s.eventId,label:'导入的局部反馈',occurredAt:s.occurredAt,knownAt:s.knownAt,actualSets:null,detail:`${field.value.location} · ${kind==='PAIN'?'疼痛':'酸痛'} ${s.severity??'程度未知'}`})
       }
@@ -206,6 +227,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     // v89.3（合入 U12 时间线）：自报疼痛不随 72 小时窗口自动消失——超过 36 小时没有新反馈 = 待复核；之后明确报 0 才解除（但不等于组织已恢复）。
     for(const p of rawPain) if((p?.athleteId??'local')===athleteId && validDay(p?.date) && p.date<=day && typeof p.score==='number' && p.score>=0 && p.score<=10) {
       const region=regionFromExplicitLabel(String(p.part??''))
+      if(!region&&p.score>0&&iso(p.recordedAt)&&Date.parse(p.recordedAt)<=cutoff&&(!iso(p.occurredAt)||Date.parse(p.occurredAt)<=cutoff))painReviewRequired=true
       if(region && iso(p.occurredAt) && iso(p.recordedAt) && Date.parse(p.occurredAt)<=cutoff && Date.parse(p.recordedAt)<=cutoff && Date.parse(p.recordedAt)>=Date.parse(p.occurredAt)) {
         painUpdates.push({athleteId,reportId:String(p.id),sourceId:'fk-pain-log-v1',region,kind:'PAIN',severity:p.score,occurredAt:p.occurredAt,knownAt:p.recordedAt,revision:0,status:'RECORDED'})
         painLabel.set(String(p.id),`${p.part} · ${p.score}/10`)
@@ -239,8 +261,8 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
   intraday.warnings.push('午睡时段：佳明午睡字段未核准，自报午睡只有估计时长、没有起止时间，不画进曲线。')
   const analysis=analysisFromParts(athleteId,effectiveAsOf,parts)
   const exposure=buildMuscleExposure(analysis)
-  return {athleteId,day,review,sources,intraday,unreadable,analysis,exposure,parts,
-    revision:shortHash(JSON.stringify([athleteId,day,review.regions,review.gaps,sources,unreadable,parts])),automaticPrescription:false as const}
+  return {athleteId,day,review,sources,intraday,unreadable,painReviewRequired,analysis,exposure,parts,
+    revision:shortHash(JSON.stringify([athleteId,day,review.regions,review.gaps,sources,unreadable,painReviewRequired,parts])),automaticPrescription:false as const}
 }
 export type RecoveryProjection = ReturnType<typeof readRecoveryProjection>
 const STATE_TEXT:Record<string,string>={PAIN_REVIEW:'有自报疼痛，需先核对症状',REPORTED_SORENESS:'有自报酸痛',OVERLAP_OBSERVED:'跑步和力量参与重叠',TRAINING_EXPOSURE:'有已确认训练参与'}

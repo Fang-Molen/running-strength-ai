@@ -39,4 +39,4 @@ export function v4RunType(d: Pick<V4Day, 'title' | 'main'> | undefined): RunType
   if (/恢复|轻松|有氧/.test(d.title) || /轻松跑|慢跑/.test(main)) return 'EASY'
   return 'UNKNOWN'
 }
-export const RUN_TYPE_LABEL: Record<RunType, string> = { EASY: '轻松/恢复跑', TEMPO: '节奏跑', INTERVAL: '间歇/速度耐力', SPRINT: '冲刺', HILL: '坡跑', UNKNOWN: '类型未知' }
+export const RUN_TYPE_LABEL: Record<RunType, string> = { EASY: '轻松/恢复跑', TEMPO: '节奏跑', INTERVAL: '间歇/速度耐力', SPRINT: '冲刺', HILL: '坡跑', LONG: '长跑', SPEED_ENDURANCE: '速度耐力', HILL_SPRINT: '坡道冲刺', ACCELERATION: '加速跑', UNKNOWN: '类型未知' }
