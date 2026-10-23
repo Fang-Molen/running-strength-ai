@@ -332,3 +332,9 @@
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
+
+/* 2026-10-23: presentation-only; retain the original metric and date controls. */
+.fk-recovery-trend-metrics button{font-variant-numeric:tabular-nums}
+.fk-recovery-trend-meta{line-height:1.5}
+.fk-recovery-trend-latest strong{letter-spacing:-.025em}
+.fk-recovery-trend :is(button,summary):focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}

@@ -1,3 +1,9 @@
 /* Scoped to the new food form: the legacy fk-cell rule otherwise wins over utilities. */
 .fk-food-entry .fk-cell{min-height:44px;font-size:16px;min-width:0}
 .fk-food-entry input[type=checkbox]{width:20px;height:20px;flex:none;accent-color:#ff6a1a}
+
+/* Nutrition entry: iOS keyboard zoom protection and accessible taps. */
+.fk-food-entry :is(input,textarea,select){font-size:max(16px,1rem);min-width:0}
+.fk-food-entry :is(button,summary){min-height:44px;touch-action:manipulation}
+.fk-food-entry :is(input,textarea,select,button):focus-visible{outline:2px solid var(--color-accent,#ff6a1a);outline-offset:2px}
+.fk-food-entry{overflow-wrap:anywhere}

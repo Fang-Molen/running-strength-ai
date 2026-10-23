@@ -227,3 +227,10 @@
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
+
+/* Device connection: stable controls, wrapped status. */
+.device-account-card{min-width:0;overflow-wrap:anywhere}
+.device-account-card :is(button,a,select){min-height:44px;touch-action:manipulation}
+.device-account-card :is(input,select){font-size:max(16px,1rem);max-width:100%}
+.device-sync-message{line-height:1.55;word-break:normal}
+@media(max-width:390px){.device-account-card{padding-inline:12px}}

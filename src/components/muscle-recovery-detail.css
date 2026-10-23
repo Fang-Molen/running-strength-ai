@@ -396,3 +396,8 @@
     gap: .5rem 1rem;
   }
 }
+
+/* Muscle detail: touch and chart legibility only. */
+.fk-m89 :is(button,summary),.fk-muscle-stimulus :is(button,summary){touch-action:manipulation}
+.fk-m89 :is(svg,canvas),.fk-muscle-stimulus :is(svg,canvas){max-width:100%}
+.fk-m89 :is(p,li),.fk-muscle-stimulus :is(p,li){overflow-wrap:break-word;line-height:1.55}

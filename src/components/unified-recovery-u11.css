@@ -2,3 +2,10 @@
 .u11-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.u11-tabs button,.u11-regions button,.u11-record{min-height:48px;border:1px solid var(--color-line,#343b45);border-radius:12px;padding:10px 8px;font-size:max(14px,.875rem)}.u11-tabs button[aria-pressed=true],.u11-regions button[aria-pressed=true]{border-color:var(--color-accent,#ff6a1a);color:var(--color-accent,#ff6a1a);background:#ff6a1a12}
 .u11-device-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.u11-device-summary>div{border:1px solid var(--color-line,#343b45);border-radius:14px;padding:12px;min-width:0}.u11-device-summary span{font-size:max(14px,.875rem);color:var(--color-muted)}.u11-device-summary b{font-size:1.6rem}.u11-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:12px 0;font-size:max(14px,.875rem)}
 .u11-legend i,.u11-regions i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}.u11-regions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.u11-evidence{padding:12px;border:1px solid var(--color-line,#343b45);border-radius:14px;margin:12px 0;font-size:max(14px,.875rem);overflow-wrap:anywhere}.u11-limits{margin-top:8px;font-size:max(14px,.875rem)}.u11-limits summary,.u11-evidence summary{cursor:pointer;min-height:44px;padding:10px 0}.u11-limits p{margin-bottom:8px}.u11-muscle .fk-target-stage{height:390px;max-height:60vh;border-radius:16px;margin-top:12px}.u11-muscle .fk-target-controls button{min-height:48px;font-size:max(14px,.875rem)}
+
+/* Recovery layout: readable muscle map, no data changes. */
+.u11-recovery{overflow:hidden}.u11-recovery :is(button,summary){touch-action:manipulation}
+.u11-recovery :is(button,summary):focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}
+.u11-device-summary b{font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+.u11-muscle .fk-target-stage{height:clamp(290px,48vh,410px);max-height:none}
+@media(max-width:360px){.u11-recovery{padding:12px}.u11-tabs{gap:6px}}
