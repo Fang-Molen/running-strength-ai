@@ -17,7 +17,7 @@ import { loadHealthSnapshot, type HealthMetricView } from "@/lib/health/snapshot
 import { reviewFatigue, dailyCheckin } from "@/lib/health/analysis"
 import { currentAthleteId } from "@/lib/core/events"
 import { clock, minuteOfDay, type IntradayDay, type Sample } from "@/lib/health/garmin-intraday"
-import { intradayRecoveryFromStore, typicalDay, type TypicalHour } from "@/lib/health/intraday-recovery-bridge-v89"
+import { intradayRecoveryFromStore, typicalDay, typicalDayExplanation, type TypicalDay, type TypicalHour } from "@/lib/health/intraday-recovery-bridge-v89"
 import type { View as U10View, Metric as U10Metric } from "@/lib/health/intraday-recovery-u10"
 import { readRestHistory, REST_LABELS } from "@/lib/health/rest-store"
 import { eventReadout, restOnDay, restReadout } from "@/lib/health/event-presentation"
@@ -260,7 +260,7 @@ function AllDayTrend({ day, today, onDay: setDay, rev, d, view, metric, onMetric
         <DayChart key={`chart:${day}-${kind}`} d={d} view={view} k={kind} height={190} bandLabels typ={typ ?? undefined} />
         {typ ? <Legend k={kind} typ={typ} /> : null}
         <details className="fk-h89-disclosure" key={`samples:${day}-${kind}`}><summary>逐小时读数与来源 · {samples.length}个样本</summary>
-          <p className="keep mb-2 text-xs text-muted">个人常态由近28天同钟点样本计算；每个钟点至少7天才显示中位数虚线，阴影为四分位范围。不是恢复目标。</p><div className="fk-h89-hours">{hours.map(([hour, values]) => <span key={hour}>{String(hour).padStart(2,"0")}时 <b>{Math.min(...values)}–{Math.max(...values)}</b></span>)}</div>
+          <p className="keep mb-2 text-xs text-muted" data-testid="h89-reference-detail">{typ ? typicalDayExplanation(typ).detail : "暂无可比历史。"}中位数以虚线显示，阴影为四分位范围，不是恢复目标。</p><div className="fk-h89-hours">{hours.map(([hour, values]) => <span key={hour}>{String(hour).padStart(2,"0")}时 <b>{Math.min(...values)}–{Math.max(...values)}</b></span>)}</div>
           <p className="keep text-xs text-muted">佳明手表样本 · 同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", {hour12:false})}{d.offsetMin != null ? ` · 手表时区 UTC${d.offsetMin >= 0 ? "+" : ""}${d.offsetMin / 60}` : ""}</p>
         </details>
       </> : <><MetricSummary day={day} rev={rev} metric={dailyMetric} /><div className="fk-h89-empty" data-testid="intraday-empty"><p>{hideBatteryCurve ? "当前来源暂无可用逐时曲线，未混用其他设备或账号数据。" : `${mdCN(day)}没有${META[kind].label}逐时样本，日汇总与逐时采样分别展示。`}</p>{(() => { const prev = Object.keys(all).filter(x => x < day && (kind === "bb" ? all[x].bb : kind === "hr" ? all[x].hr : all[x].st ?? []).length).sort().at(-1); return prev ? <button type="button" className="mt-1 min-h-11 font-bold text-accent" onClick={() => setDay(prev)}>看最近有数据的 {mdCN(prev)} ›</button> : null })()}</div></>}
@@ -322,11 +322,11 @@ function DayChart({ d, view, k, height, bandLabels = false, typ }: { d: Intraday
   </div>
 }
 
-function Legend({ k, typ }: { k: K; typ: { hours: TypicalHour[]; historyDays: number } }) {
+function Legend({ k, typ }: { k: K; typ: TypicalDay }) {
   return <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted" data-testid="h89-legend">
     <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3" style={{ background: META[k].color }} />手表{META[k].label}</span>
-    {typ.hours.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed" style={{ borderColor: "var(--fk-reference-color, #c4b2ff)" }} />方坤常态 · 近{typ.historyDays}天</span>
-      : <span>个人常态：历史不足7天</span>}
+    {typ.hours.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed" style={{ borderColor: "var(--fk-reference-color, #c4b2ff)" }} />{typicalDayExplanation(typ).label}</span>
+      : <span data-testid="h89-reference-missing">{typicalDayExplanation(typ).label}{typ.unverifiedSourceDays ? ` · ${typ.unverifiedSourceDays}天旧来源待核对` : ""}</span>}
     <span className="flex items-center gap-1"><i className="inline-block size-2.5 rounded-sm bg-[#4a5cff]/50" />睡眠</span>
     <span className="flex items-center gap-1"><i className="inline-block size-2.5 rounded-sm bg-[#ff6a1a]/50" />训练</span>
   </div>

@@ -54,7 +54,8 @@ export async function runGarminSyncJob(host: {
   backfill?: { get: (scope: string) => number; set: (scope: string, upTo: number) => void };
   /** 近 28 天日内样本；今昨重取，更早完整或已核对的日期跳过。
    * 日内失败不阻塞独立日汇总进度，但现代调用会在整体报告中保留失败。 */
-  intraday?: { complete: (day: string) => boolean; save: (days: IntradayDay[]) => number };
+  intraday?: { complete: (day: string) => boolean; save: (days: IntradayDay[]) => number;
+    needsSourceRefresh?: (day: string, sourceId: string) => boolean };
   /** 测试可注入；默认真实等待（节流）。 */
   sleep?: (ms: number) => Promise<void>;
   /** MANUAL 显式完整复核。现代 AUTO 按日期回执增量/续传，跨日不自动全量。
@@ -122,7 +123,9 @@ export async function runGarminSyncJob(host: {
     // receipt, not a synthetic measurement. Auth, 429, 5xx and malformed 200
     // responses still fail validation and remain pending.
     const emptyResource = (r: GarminReply | undefined) => host.dailyProgress && r?.status === 404 ? { status: 204, body: null } : r
-    const intradayNeeded = (d: string, offset: number) => offset < 2 || !host.intraday!.complete(d) &&
+    const intradaySourceId = 'garmin:' + shortHash(account.scope)
+    const sourceRefreshNeeded = (d: string) => !!host.intraday?.needsSourceRefresh?.(d, intradaySourceId)
+    const intradayNeeded = (d: string, offset: number) => offset < 2 || sourceRefreshNeeded(d) || !host.intraday!.complete(d) &&
       !(host.dailyProgress && host.reason !== 'MANUAL' && priorIntraday.has(d))
     let done = 0, dailyThrottled = false, unavailableStreak = 0, serviceUnavailable = false
     let firstUnavailable: number | null = null, firstUnavailableHistory: number | null = null
@@ -137,14 +140,22 @@ export async function runGarminSyncJob(host: {
       if (!ihr && !ist) { intradayStat.failed.push(`${d} 日内请求失败（网络）`); return }
       const hr = emptyResource(ihr), stress = emptyResource(ist), sleep = emptyResource(sl)
       const built = buildIntradayDay({ day: d, now: host.now, hr, stress, sleep, activities: acts })
-      if (built.day) intraday.push({ ...built.day, sourceId: 'garmin:' + shortHash(account.scope) }); else if (built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
+      if (built.day) intraday.push({ ...built.day, sourceId: intradaySourceId }); else if (built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
       if (host.dailyProgress) {
         // Empty valid replies may produce no IntradayDay. Missing transport
         // replies and failed metrics must never be mistaken for checked empties.
         const validReplies = [hr, stress, sleep].every(r => !!r && (r.status === 204 || r.status === 200 && r.body &&
           typeof r.body === 'object' && !Array.isArray(r.body) && r.body.ok !== false && !r.body.error))
         const sleepFailed = sleep ? garminHealthDay(d, account.scope, { status: 204, body: null }, { status: 204, body: null }, sleep, host.now).failures.length : 1
-        if (validReplies && !built.failures.length && !sleepFailed && !built.day?.failedReadings?.length) checkedIntraday.add(d)
+        if (validReplies && !built.failures.length && !sleepFailed && !built.day?.failedReadings?.length) {
+          checkedIntraday.add(d)
+          // A verified empty reread has no measurements. Preserve the old source
+          // in the store archive and retain an empty receipt for this source;
+          // otherwise migration would retry the same unknown cache forever.
+          if (!built.day && sourceRefreshNeeded(d)) intraday.push({schemaVersion: 1, eventTimingVersion: 2,
+            day: d, source: 'garmin', sourceId: intradaySourceId, fetchedAt: host.now,
+            offsetMin: null, hr: [], bb: [], st: [], restingHr: null, sleep: null, training: []})
+        }
         if (built.day && built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
         if ((!validReplies || sleepFailed) && !built.failures.length) intradayStat.failed.push(`${d} 日内部分请求未完成`)
       }

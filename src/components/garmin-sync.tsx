@@ -14,7 +14,7 @@ import { exportVault, importVault, listSnapshots, restoreSnapshot, needsBackupRe
 import { exportFeedback } from "@/components/coach-feedback";
 import { saveGarminActivities, garminViewHas } from "@/components/garmin-log";
 import { shortHash } from "@/lib/health/observation";
-import { saveIntraday, intradayComplete } from "@/lib/health/intraday-store";
+import { saveIntraday, intradayComplete, intradayNeedsSourceRefresh } from "@/lib/health/intraday-store";
 import "./device-settings-detail.css";
 import { beginGarminSyncLive, clearGarminSyncLive, finishGarminSyncLive, readGarminSyncLive, updateGarminSyncLive, useGarminSyncLive } from "@/lib/ui/garmin-sync-live";
 
@@ -56,7 +56,8 @@ export async function runGarminSync(setMsg: (s: string) => void, _whoIn?: string
         if (bound) boundScope = scope;
         return bound;
       },
-      intraday: { complete: d => intradayComplete(d), save: days => saveIntraday(days) },
+      intraday: { complete: d => intradayComplete(d, subjectId), save: days => saveIntraday(days, subjectId),
+        needsSourceRefresh: (d, source) => intradayNeedsSourceRefresh(d, source, subjectId) },
       // 日常按钮按既有规则选择增量；完整复核通过说明区显式触发，仍按账号分别记录。
       reason, activitySeen: garminViewHas,
       fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId)) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId), at) } },

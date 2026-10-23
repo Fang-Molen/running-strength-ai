@@ -8,6 +8,22 @@ export const KEEP_DAYS = 28
 export const RECENT_FULL_DAYS = 7, OLD_DAY_POINTS = 288
 const key = (athlete: string) => `${INTRADAY_KEY}:${encodeURIComponent(athlete)}`
 const valid = (d: any): d is IntradayDay => d && d.schemaVersion === 1 && /^\d{4}-\d\d-\d\d$/.test(d.day) && Array.isArray(d.hr) && Array.isArray(d.bb)
+/** Preserve replaced sources locally; unverified history is never relabelled as a
+ * newly authenticated account. If archiving fails, keep the original active day. */
+function archiveSource(d: IntradayDay, athlete: string): boolean {
+  const s = currentStore(); if (!s) return false
+  const archiveKey = `${key(athlete)}:source-archive`
+  try {
+    const stored = s.getItem(archiveKey)
+    const archive = stored == null ? {schemaVersion: 1, entries: {} as Record<string, IntradayDay>} : JSON.parse(stored)
+    if (archive?.schemaVersion !== 1 || !archive.entries || typeof archive.entries !== 'object' || Array.isArray(archive.entries)) return false
+    const id = JSON.stringify([d.day, d.sourceId ?? null, d.fetchedAt])
+    if (archive.entries[id] && JSON.stringify(archive.entries[id]) !== JSON.stringify(d)) return false
+    archive.entries[id] = d
+    const raw = JSON.stringify(archive); s.setItem(archiveKey, raw)
+    return s.getItem(archiveKey) === raw
+  } catch { return false }
+}
 export function loadIntraday(athlete = currentAthleteId()): Record<string, IntradayDay> {
   try { const raw = JSON.parse(currentStore()?.getItem(key(athlete)) ?? 'null'); const days = raw?.schemaVersion === 1 && raw.days && typeof raw.days === 'object' ? raw.days : {}; return Object.fromEntries(Object.entries(days).filter(([k, v]) => valid(v) && (v as IntradayDay).day === k)) as Record<string, IntradayDay> } catch { return {} }
 }
@@ -19,8 +35,9 @@ export function saveIntraday(days: IntradayDay[], athlete = currentAthleteId()):
   for (const d of days) if (valid(d) && Number.isFinite(Date.parse(d.fetchedAt))) {
     const prior = all[d.day]
     if (prior && Date.parse(d.fetchedAt) < Date.parse(prior.fetchedAt)) continue
+    const sameSource = (prior?.sourceId ?? null) === (d.sourceId ?? null)
+    if (prior && !sameSource && !archiveSource(prior, athlete)) continue
     accepted.add(d.day)
-    const sameSource = !prior?.sourceId || !d.sourceId || prior.sourceId === d.sourceId
     const previous = sameSource ? prior : undefined
     const readingFetchedAt = Object.fromEntries((['hr', 'bb', 'st'] as const).map(metric => [metric,
       d.failedReadings?.includes(metric) && previous
@@ -47,6 +64,12 @@ export function saveIntraday(days: IntradayDay[], athlete = currentAthleteId()):
   return 0
 }
 export function intradayDay(day: string, athlete = currentAthleteId()): IntradayDay | null { return loadIntraday(athlete)[day] ?? null }
+/** Old completeness/read receipts prove coverage, not ownership. A cached day
+ * from another/unknown source must be reread through the current trusted session. */
+export function intradayNeedsSourceRefresh(day: string, sourceId: string, athlete = currentAthleteId()): boolean {
+  const d = intradayDay(day, athlete)
+  return !!d && !!sourceId && d.sourceId !== sourceId
+}
 /** 已过完的一天（按手表当地时区）且是在当天结束 2 小时后抓的、并且确实有样本，才算取全；否则下次同步重取。 */
 export function intradayComplete(day: string, athlete = currentAthleteId()): boolean {
   const d = intradayDay(day, athlete); if (!d || d.eventTimingVersion !== 2 || d.failedReadings?.length || (!d.hr.length && !d.bb.length)) return false

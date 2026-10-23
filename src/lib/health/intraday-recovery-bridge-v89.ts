@@ -48,11 +48,15 @@ export function intradayRecoveryFromStore(days: Record<string, IntradayDay>, ath
 const med = (xs: number[]) => { const a = [...xs].sort((x, y) => x - y), n = a.length; return n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2 }
 const q = (xs: number[], p: number) => { const a = [...xs].sort((x, y) => x - y), k = (a.length - 1) * p, i = Math.floor(k), j = Math.ceil(k); return a[i] + (a[j] - a[i]) * (k - i) }
 export type TypicalHour = { hour: number; median: number; p25: number; p75: number; days: number }
-export function typicalDay(days: Record<string, IntradayDay>, day: string, kind: 'hr' | 'bb' | 'st', minDays = 7, window = 28, asOf?: string): { hours: TypicalHour[]; historyDays: number } {
+export type TypicalDay = { hours: TypicalHour[]; historyDays: number; candidateDays: number;
+  excludedSourceDays: number; unverifiedSourceDays: number; unavailableAtCutoffDays: number; maxHourlyDays: number; minDays: number }
+export function typicalDay(days: Record<string, IntradayDay>, day: string, kind: 'hr' | 'bb' | 'st', minDays = 7, window = 28, asOf?: string): TypicalDay {
   const start = new Date(Date.parse(day + 'T12:00:00Z') - window * 864e5).toISOString().slice(0, 10)
   const cutoff = asOf === undefined ? Infinity : Date.parse(asOf)
-  if (Number.isNaN(cutoff)) return { hours: [], historyDays: 0 }
-  const available = Object.values(days).filter(d => d.day < day && d.day >= start && Date.parse(d.readingFetchedAt?.[kind] ?? d.fetchedAt) <= cutoff)
+  const empty: TypicalDay = {hours: [], historyDays: 0, candidateDays: 0, excludedSourceDays: 0, unverifiedSourceDays: 0, unavailableAtCutoffDays: 0, maxHourlyDays: 0, minDays}
+  if (Number.isNaN(cutoff)) return empty
+  const candidates = Object.values(days).filter(d => d.day < day && d.day >= start && (d[kind] ?? []).some(([t,v]) => Number.isFinite(t) && Number.isFinite(v)))
+  const available = candidates.filter(d => Date.parse(d.readingFetchedAt?.[kind] ?? d.fetchedAt) <= cutoff)
   const identities = new Set(available.map(sourceOf))
   const identity = days[day] ? sourceOf(days[day]) : identities.size === 1 ? [...identities][0] : null
   const prior = identity ? available.filter(d => sourceOf(d) === identity) : []
@@ -61,14 +65,32 @@ export function typicalDay(days: Record<string, IntradayDay>, day: string, kind:
   for (const d of prior) {
     const rows = ((kind === 'hr' ? d.hr : kind === 'bb' ? d.bb : d.st) ?? []).filter(([t,v]) => Number.isFinite(t) && Number.isFinite(v) && t <= cutoff)
     if (!rows.length) continue
-    historyDays++
     const offset = d.offsetMin ?? -new Date(rows[0][0]).getTimezoneOffset(), base = Date.parse(d.day + 'T00:00:00Z') - offset * 60e3
     const hours = new Map<number, number[]>()
     for (const [t, v] of rows) { const h = Math.floor((t - base) / 3600e3); if (h >= 0 && h < 24) hours.set(h, [...(hours.get(h) ?? []), v]) }
+    if (hours.size) historyDays++
     for (const [h, vs] of hours) byHour.set(h, [...(byHour.get(h) ?? []), med(vs)])
   }
   const hours = [...byHour].filter(([, vs]) => vs.length >= minDays).sort((a, b) => a[0] - b[0]).map(([hour, vs]) => ({ hour, median: med(vs), p25: q(vs, .25), p75: q(vs, .75), days: vs.length }))
-  return { hours, historyDays }
+  const excluded = available.filter(d => !identity || sourceOf(d) !== identity)
+  return { hours, historyDays, candidateDays: candidates.length, excludedSourceDays: excluded.length,
+    unverifiedSourceDays: excluded.filter(d => !d.sourceId).length, unavailableAtCutoffDays: candidates.length - available.length,
+    maxHourlyDays: Math.max(0, ...[...byHour.values()].map(vs => vs.length)), minDays }
+}
+
+/** Explain the actual exclusion; absence of a curve does not mean history was deleted. */
+export function typicalDayExplanation(typ: TypicalDay): { label: string; detail: string } {
+  const label = typ.hours.length ? `方坤常态 · 近${typ.historyDays}天`
+    : typ.historyDays < typ.minDays ? `个人常态：同来源 ${typ.historyDays}/${typ.minDays} 天`
+    : `个人常态：同钟点最多 ${typ.maxHourlyDays}/${typ.minDays} 天`
+  const notes = [`近28天内有${typ.candidateDays}天该指标样本，可比历史${typ.historyDays}天；每个钟点至少${typ.minDays}天才显示对比。`]
+  if (typ.unverifiedSourceDays) notes.push(`${typ.unverifiedSourceDays}天旧记录缺少账号来源标识，暂未参与；下次佳明同步将按批次重新核对，旧记录保留。`)
+  const other = typ.excludedSourceDays - typ.unverifiedSourceDays
+  if (other) notes.push(`${other}天来自其他或无法确定的来源，未混入当前对比。`)
+  if (typ.unavailableAtCutoffDays) notes.push(`${typ.unavailableAtCutoffDays}天的接收时间缺失或晚于分析时点，未使用。`)
+  if (!typ.hours.length && typ.historyDays >= typ.minDays) notes.push('已有历史天数足够，但采样钟点不重合；没有补点或补零。')
+  notes.push('按当前记录的账号来源分组；接口未提供具体手表或算法版本时，不能确认换表前后口径一致。')
+  return {label, detail: notes.join('')}
 }
 
 /** v89.10.6 方坤估算·个人常态（日指标版）：与 typicalDay 同一口径——只用这一天之前 ≤window 天、同一序列（同来源）的日值，
