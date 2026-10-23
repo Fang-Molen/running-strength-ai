@@ -4,6 +4,7 @@ import type { McpActivity, McpDay, McpLap, Recovery, StressPoint } from './coros
 import { CorosError, corosSport } from './coros-account-sync'
 import { corosProvenance } from './brand-isolation'
 import { ATHLETE_SCOPE_CHANGED, currentAthleteId } from '../core/events'
+import { healthChanged } from './observation'
 // @ts-ignore 研究模块（纯 JS）：日级标准化 + 同品牌基准
 import { normalizeCorosDailyBatch } from './coros-mcp-daily-v1.mjs'
 // @ts-ignore
@@ -22,7 +23,7 @@ const healthPending = new Map<string, Promise<CorosHealthCache>>()
 let disconnectPending: Promise<void> | null = null
 let disconnectController: AbortController | null = null
 let disconnected = false, authorizationRequired = false
-const staleContext = () => new CorosError('运动员或高驰授权已变化，已忽略本次返回。', 'STALE_CONTEXT', 409)
+const staleContext = () => new CorosError('运动员或高驰授权已改变，已忽略本次返回。', 'STALE_CONTEXT', 409)
 const expiredAuthorization = () => new CorosError('高驰授权已失效，请重新授权。', 'TOKEN_EXPIRED', 401)
 function watchScope() {
   const target = typeof window === 'undefined' ? null : window
@@ -109,7 +110,7 @@ function call(path: string, init?: RequestInit, options: { force?: boolean } = {
   if (read) pending.set(key, request)
   return request.then(copy)
 }
-export type McpStatus = { connected: boolean; region: 'auto' | 'cn' | null; host: string | null; refBasis: 'account' | 'unknown' | null; renewable: boolean; since: number | null }
+export type McpStatus = { sessionScope?: string | null; accountRef?: string | null; ownership?: 'OAUTH_SESSION_ONLY'; athleteOwnershipVerified?: boolean; connected: boolean; region: 'auto' | 'cn' | null; host: string | null; refBasis: 'account' | 'unknown' | null; renewable: boolean; since: number | null }
 export function corosMcpStatus(options: { force?: boolean } = {}): Promise<McpStatus> {
   const context = captureCorosContext()
   // Do not read the old cookie while a disconnect is still revoking it.
@@ -119,7 +120,7 @@ export function corosMcpStatus(options: { force?: boolean } = {}): Promise<McpSt
 export const corosMcpStartUrl = (region: 'auto' | 'cn') => `/api/coros-mcp/start?region=${region}`
 export const corosMcpDisconnect = () => {
   const previous = captureCorosContext()
-  setCorosMcpLinked(previous.athleteId, false)
+  setCorosMcpLinked(previous.athleteId, false, false)
   let settled!: () => void
   const barrier = new Promise<void>(resolve => { settled = resolve })
   // Install the barrier before notifying subscribers; a subscriber may read status immediately.
@@ -166,17 +167,27 @@ export async function corosMcpRecent(days = 28, now = new Date()) {
 export async function corosMcpLaps(labelId: string, sportType: number) { return call(`laps?labelId=${encodeURIComponent(labelId)}&sportType=${sportType}`) as unknown as Promise<{ laps: McpLap[]; issues: string[] }> }
 
 // ---------- 健康缓存（本机，按运动员分开；只存高驰返回并解析成功的值） ----------
-export type CorosHealthCache = { fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: (Recovery & { at: string }) | null; issues: string[]; raw: Record<string, string> }
+export type CorosHealthCache = { athleteId?: string; sessionScope?: string; ownership?: 'OAUTH_SESSION_ONLY'; knownAtByDay?: Record<string,string>; accountRef?: string | null; dayUpdatedAt?: Record<string, Record<string, string>>; fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: (Recovery & { at: string }) | null; issues: string[]; raw: Record<string, string> }
 const hKey = (athlete: string) => `fk-coros-mcp-health-v1:${athlete}`, linkKey = (athlete: string) => `fk-coros-mcp-linked-v1:${athlete}`
 export const corosMcpLinked = (athlete: string) => { try { return localStorage.getItem(linkKey(athlete)) === '1' } catch { return false } }
-export function setCorosMcpLinked(athlete: string, on: boolean) { try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
-export function loadCorosHealth(athlete: string): CorosHealthCache | null { try { const v = JSON.parse(localStorage.getItem(hKey(athlete)) ?? 'null'); return v && Array.isArray(v.days) ? v : null } catch { return null } }
-export function mergeCorosHealth(old: CorosHealthCache | null, b: { fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: Recovery | null; issues: string[]; raw: Record<string, string> }): CorosHealthCache {
+export function setCorosMcpLinked(athlete: string, on: boolean, invalidate = true) { if (!on && invalidate && healthPending.size) invalidateCorosContext(); try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
+export function loadCorosHealth(athlete: string): CorosHealthCache | null { try { const v = JSON.parse(localStorage.getItem(hKey(athlete)) ?? 'null'); return v && Array.isArray(v.days) && (!v.athleteId || v.athleteId===athlete) ? v : null } catch { return null } }
+export function mergeCorosHealth(old: CorosHealthCache | null, b: { accountRef?: string | null; fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: Recovery | null; issues: string[]; raw: Record<string, string> }): CorosHealthCache {
+  // Never merge a different authenticated account into the previous account's cache.
+  const accountRef = b.accountRef ?? null
+  if (old && (old.accountRef ?? null) !== accountRef) old = null
+  const dayUpdatedAt: Record<string, Record<string, string>> = {}
+  for (const d of old?.days ?? []) dayUpdatedAt[d.date] = Object.fromEntries(
+    Object.entries(d).filter(([k, v]) => k !== 'date' && v != null)
+      .map(([k]) => [k, old?.dayUpdatedAt?.[d.date]?.[k] ?? old!.fetchedAt]))
+  for (const d of b.days) for (const [k, v] of Object.entries(d)) if (k !== 'date' && v != null) {
+    (dayUpdatedAt[d.date] ??= {})[k] = b.fetchedAt
+  }
   const days = new Map((old?.days ?? []).map(d => [d.date, d]))
   for (const d of b.days) days.set(d.date, { ...days.get(d.date), ...Object.fromEntries(Object.entries(d).filter(([, v]) => v != null)) } as McpDay)
   const keyOf = (p: StressPoint) => p.iso ?? p.local ?? '', stress = new Map((old?.stress ?? []).map(p => [keyOf(p), p])); for (const p of b.stress) stress.set(keyOf(p), p)
   const cutoff = new Date(Date.parse(b.fetchedAt) - 8 * 86400e3).toISOString().slice(0, 10)
-  return { fetchedAt: b.fetchedAt, days: [...days.values()].sort((x, y) => x.date.localeCompare(y.date)).slice(-90), stress: [...stress.values()].filter(p => keyOf(p).slice(0, 10) >= cutoff).sort((x, y) => keyOf(x).localeCompare(keyOf(y))),
+  return { knownAtByDay: {...old?.knownAtByDay,...Object.fromEntries(b.days.map(d=>[d.date,b.fetchedAt]))}, accountRef, dayUpdatedAt: Object.fromEntries(Object.entries(dayUpdatedAt).sort(([a], [b]) => a.localeCompare(b)).slice(-90)), fetchedAt: b.fetchedAt, days: [...days.values()].sort((x, y) => x.date.localeCompare(y.date)).slice(-90), stress: [...stress.values()].filter(p => keyOf(p).slice(0, 10) >= cutoff).sort((x, y) => keyOf(x).localeCompare(keyOf(y))),
     recovery: b.recovery && b.recovery.percent != null ? { ...b.recovery, at: b.fetchedAt } : old?.recovery ?? null, issues: b.issues, raw: b.raw }
 }
 export function refreshCorosHealth(athlete: string): Promise<CorosHealthCache> {
@@ -187,22 +198,37 @@ export function refreshCorosHealth(athlete: string): Promise<CorosHealthCache> {
   const shared = healthPending.get(key)
   if (shared) return shared.then(copy)
   const request = (async () => {
-    const b = await call('health') as unknown as Parameters<typeof mergeCorosHealth>[1]
+    if (disconnectPending) await disconnectPending
+    requireReadContext(context)
+    if (disconnected) throw expiredAuthorization()
+    const before = await corosMcpStatus({force:true})
+    requireReadContext(context)
+    if (!before.connected || !before.sessionScope) throw new CorosError('授权范围未核对，未写入本地缓存','SCOPE_UNAVAILABLE',409)
+    const b = await call('health') as unknown as Parameters<typeof mergeCorosHealth>[1] & {sessionScope?:string}
+    const after = await corosMcpStatus({force:true})
+    requireReadContext(context)
+    if (!after.connected || b.sessionScope!==before.sessionScope || b.sessionScope!==after.sessionScope) throw new CorosError('账号已改变，丢弃迟到响应','STALE_SCOPE',409)
     requireReadContext(context)
     const old = loadCorosHealth(athlete)
     if (old && Date.parse(b.fetchedAt) < Date.parse(old.fetchedAt)) throw new CorosError('本次返回早于本机记录，已保留较新的高驰数据。', 'STALE_DATA', 409)
-    const next = mergeCorosHealth(old, b)
+    const scopedOld = old?.sessionScope === b.sessionScope ? old : null
+    const next = {...mergeCorosHealth(scopedOld, b), athleteId:athlete, sessionScope:b.sessionScope!, ownership:'OAUTH_SESSION_ONLY' as const}
+    if(old && old.sessionScope!==next.sessionScope) {
+      try {localStorage.setItem(hKey(athlete)+':archive:'+encodeURIComponent(old.sessionScope??'legacy'), JSON.stringify(old))}
+      catch {throw new CorosError('旧账号缓存保存失败，未替换当前缓存','STORAGE_WRITE_FAILED',507)}
+    }
     let saved = false
-    try { localStorage.setItem(hKey(athlete), JSON.stringify(next)); saved = true } catch { /* storage full */ }
-    if (saved) { try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
+    try { const raw = JSON.stringify(next); localStorage.setItem(hKey(athlete), raw); saved = localStorage.getItem(hKey(athlete)) === raw } catch { /* storage full */ }
+    if (!saved) throw new CorosError('高驰数据已取得，但本机保存失败；保留上次数据，请检查存储空间后重试。', 'STORAGE_WRITE_FAILED', 507)
+    healthChanged(); try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ }
     return next
   })().finally(() => { if (healthPending.get(key) === request) healthPending.delete(key) })
   healthPending.set(key, request)
   return request.then(copy)
 }
-/** 同品牌（只高驰）、同指标、同协议的个人基准：至少 7 个此前完整日，否则 null（研究模块 coros-crossbrand-trend）。 */
+/** Descriptive within-cache reference. No browser-created verifiedOwner or fabricated protocol. */
 export function corosTrend(days: McpDay[], athlete: string, today: string) {
-  const batch = { provider: 'COROS_MCP', verifiedOwner: true, athleteId: athlete, accountRef: 'session', days: days.map(d => ({ date: d.date, recordId: 'd-' + d.date, steps: d.steps ?? null, activeEnergyKcal: d.activeKcal ?? null, sleepMinutes: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, sleepHrvMs: d.hrvMs ?? null, final: d.date < today })) }
-  const { facts } = normalizeCorosDailyBatch(batch, athlete)
-  return projectDailyTrend(facts, { provider: 'COROS', referenceDays: 7 }) as { date: string; restingHr: number | null; sleepMinutes: number | null; hrvMs: number | null; steps: number | null; reference: { restingHr: number | null; sleepMinutes: number | null; hrvMs: number | null } }[]
+  const sorted=days.filter(d=>d.date<=today).sort((a,b)=>a.date.localeCompare(b.date))
+  const med=(xs:(number|null|undefined)[])=>{const a=xs.filter((x):x is number=>typeof x==='number'&&Number.isFinite(x)).sort((a,b)=>a-b);return a.length===7?a[3]:null}
+  return sorted.map((d,i)=>{const prev=sorted.slice(0,i).filter(x=>x.date<d.date).slice(-7);return {date:d.date,restingHr:d.restingHr??null,sleepMinutes:d.sleepMinutes??null,hrvMs:d.hrvMs??null,steps:d.steps??null,reference:{restingHr:med(prev.map(x=>x.restingHr)),sleepMinutes:med(prev.map(x=>x.sleepMinutes)),hrvMs:med(prev.map(x=>x.hrvMs))},sampleCount:prev.length,asOf:today,athleteId:athlete,protocol:'PROVIDER_UNSPECIFIED',ownership:'LOCAL_SCOPE_NOT_SERVER_ATHLETE_PROOF'}})
 }

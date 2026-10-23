@@ -1,4 +1,5 @@
 import { withUnifiedFacts } from './unified-snapshot'
+import { loadCorosHealthPoints } from './coros-health-points'
 import { currentAthleteId } from '../core/events'
 import { loadCheckins, checkinsUnreadable, type Checkin } from './legacy-inputs'
 import { loadVitals, type VitalRecord } from '../nutrition/vitals'
@@ -9,7 +10,7 @@ import { healthChanged, localDay, shiftDay, shortHash, validDay, valueText } fro
 export const HEALTH_SOURCES_KEY='fk-health-sources-v1'
 function healthSourcesKey(){return currentAthleteId()==='local'?HEALTH_SOURCES_KEY:HEALTH_SOURCES_KEY+':'+encodeURIComponent(currentAthleteId())}
 export const HEALTH_LABELS:Record<string,string>={SLEEP:'睡眠',RHR:'静息心率',HRV:'HRV',NIGHT_HR:'夜间平均心率',RECOVERY:'主观恢复',BODY_BATTERY:'身体电量',READINESS:'训练准备度',STRESS:'压力',STEPS:'步数',SPO2:'血氧',RESP:'呼吸',ACTIVE_KCAL:'活动热量',RESTING_KCAL:'静息热量',TOTAL_KCAL:'全天总热量',WORKOUT_KCAL:'单次运动热量'}
-export type HealthPoint={id:string;metric:string;day:string;value:number;source:string;stream:string;statistic:string;method:string;updatedAt:string;measuredAt:string|null;legacy:boolean;deviceLabel?:string;measurementMethod?:string}
+export type HealthPoint={id:string;metric:string;day:string;value:number;source:string;stream:string;statistic:string;method:string;updatedAt:string;measuredAt:string|null;legacy:boolean;sourceId?:string;deviceLabel?:string;measurementMethod?:string}
 export type HealthMetricView={metric:string;label:string;state:'AVAILABLE'|'CONFLICT'|'STALE'|'MISSING';current:HealthPoint|null;candidates:HealthPoint[];series:HealthPoint[];availableSources:{id:string;label:string}[];selectedSource:string|null;baseline:{mean:number;count:number;delta:number;start:string;end:string}|null;notes:string[]}
 export type HealthSnapshot={asOf:string;metrics:HealthMetricView[];unreadable:boolean}
 export function loadHealthSources():Record<string,string>{try{const p=JSON.parse(currentStore()?.getItem(healthSourcesKey())??'{}');return p && typeof p==='object' && !Array.isArray(p)?Object.fromEntries(Object.entries(p).filter(([k,v])=>k in HEALTH_LABELS&&typeof v==='string')) as Record<string,string>:{} }catch{return {}}}
@@ -17,17 +18,17 @@ export function saveHealthSource(metric:string,source:string|null):boolean{if(!(
 function legacyStat(metric:string,source:string):string {return /佳明账号同步/.test(source)?({SLEEP:'夜间睡眠总时长',HRV:'昨夜平均；算法未提供',BODY_BATTERY:'当日最高（非当前值）',RHR:'日静息心率',STRESS:'当日平均'}[metric]??'统计口径未提供'):'统计口径未提供'}
 export function healthPoints(vitals:VitalRecord[],extras:ExtraRow[]):HealthPoint[]{
   const out:HealthPoint[]=[]
-  for(const v of vitals){if((v.athleteId??'local')!==currentAthleteId())continue;const source=v.note||({MANUAL:'手工记录',IMAGE_CONFIRMED:'截图核对',DEVICE_CONFIRMED:'设备导入'}[v.source]);const method=v.hrvMethod??'';const statistic=v.observation?.statistic??legacyStat(v.kind,source);out.push({id:v.id,metric:v.kind,day:v.observedOn,value:v.value,source,method,statistic,stream:`${v.observation?.sourceId??`legacy:${shortHash(v.source+':'+source+':'+(v.deviceLabel??'')+':'+(v.measurementMethod??''))}`}|${statistic}|${method}`,updatedAt:v.observation?.syncedAt??v.createdAt,measuredAt:v.observation?.measuredAt??v.observedAt,legacy:!v.observation,deviceLabel:v.deviceLabel,measurementMethod:v.measurementMethod})}
-  for(const [i,e] of extras.entries()){if(!e || typeof e.source!=='string' || typeof e.metric!=='string')continue;const statistic=e.observation?.statistic??legacyStat(e.metric,e.source);out.push({id:e.observation?.key??`extra:${i}`,metric:e.metric,day:e.day,value:e.value,source:e.source,method:'',statistic,stream:`${e.observation?.sourceId??`legacy:${shortHash(e.source)}`}|${statistic}|`,updatedAt:e.observation?.syncedAt??'',measuredAt:e.observation?.measuredAt??null,legacy:!e.observation})}
+  for(const v of vitals){if((v.athleteId??'local')!==currentAthleteId())continue;const source=v.note||({MANUAL:'手工记录',IMAGE_CONFIRMED:'截图核对',DEVICE_CONFIRMED:'设备导入'}[v.source]);const method=v.hrvMethod??'';const statistic=v.observation?.statistic??legacyStat(v.kind,source);out.push({id:v.id,metric:v.kind,day:v.observedOn,value:v.value,source,sourceId:v.observation?.sourceId,method,statistic,stream:`${v.observation?.sourceId??`legacy:${shortHash(v.source+':'+source+':'+(v.deviceLabel??'')+':'+(v.measurementMethod??''))}`}|${statistic}|${method}`,updatedAt:v.observation?.syncedAt??v.createdAt,measuredAt:v.observation?.measuredAt??v.observedAt,legacy:!v.observation,deviceLabel:v.deviceLabel,measurementMethod:v.measurementMethod})}
+  for(const [i,e] of extras.entries()){if(!e || typeof e.source!=='string' || typeof e.metric!=='string')continue;const statistic=e.observation?.statistic??legacyStat(e.metric,e.source);out.push({id:e.observation?.key??`extra:${i}`,metric:e.metric,day:e.day,value:e.value,source:e.source,sourceId:e.observation?.sourceId,method:'',statistic,stream:`${e.observation?.sourceId??`legacy:${shortHash(e.source)}`}|${statistic}|`,updatedAt:e.observation?.syncedAt??'',measuredAt:e.observation?.measuredAt??null,legacy:!e.observation})}
   return out.filter(p=>Number.isFinite(p.value)&&validDay(p.day)&&p.metric in HEALTH_LABELS)
 }
 /** 佳明账号同步写入的带观测元数据的读数（sourceId = garmin:<账号哈希>）。 */
 export const isGarminSync=(p:HealthPoint)=>!p.legacy&&p.stream.startsWith('garmin:')
 /** UI and coach share this read-only projection. No source averaging or date backfill. */
-export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:string,preferred:Record<string,string>={},checkins:Checkin[]=[]):HealthSnapshot{
+export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:string,preferred:Record<string,string>={},checkins:Checkin[]=[],extraPoints:HealthPoint[]=[]):HealthSnapshot{
   if(!validDay(asOf))asOf=localDay()
   const selfSleep:HealthPoint[]=checkins.filter(c=>validDay(c.date)&&Number.isFinite(c.sleep)&&c.sleep!>=0.1&&c.sleep!<=24).map(c=>({id:`checkin-sleep:${c.date}`,metric:'SLEEP',day:c.date,value:c.sleep!,source:'主观打卡',stream:'self:sleep-range',statistic:'自报睡眠区间代表值（非精确测量）',method:'',updatedAt:c.at,measuredAt:null,legacy:false}))
-  const points=[...healthPoints(vitals,extras),...selfSleep].filter(p=>p.day<=asOf)
+  const points=[...healthPoints(vitals,extras),...selfSleep,...extraPoints].filter(p=>p.day<=asOf)
   const metrics=Object.entries(HEALTH_LABELS).map(([metric,label]):HealthMetricView=>{
     const all=points.filter(p=>p.metric===metric).sort((a,b)=>a.day.localeCompare(b.day)||((Date.parse(a.updatedAt)||0)-(Date.parse(b.updatedAt)||0))||a.id.localeCompare(b.id))
     const availableSources=[...new Map(all.map(p=>[p.stream,{id:p.stream,label:`${p.source} · ${p.statistic}${p.method?` · ${p.method}`:''}${p.legacy?' · 旧/手填来源':''}`}])).values()]
@@ -61,7 +62,7 @@ export function buildHealthSnapshot(vitals:VitalRecord[],extras:ExtraRow[],asOf:
   return {asOf,metrics,unreadable:false}
 }
 export function loadHealthSnapshot(asOf=localDay()):HealthSnapshot{
-  const v=loadVitals(),snap=buildHealthSnapshot(v.records,loadExtras(),asOf,loadHealthSources(),loadCheckins(currentStore()));snap.unreadable=v.unreadable||extrasUnreadable()||checkinsUnreadable()
+  const v=loadVitals(),coros=loadCorosHealthPoints(),snap=buildHealthSnapshot(v.records,loadExtras(),asOf,loadHealthSources(),loadCheckins(currentStore()),coros.points);snap.unreadable=v.unreadable||extrasUnreadable()||checkinsUnreadable()||coros.unreadable
   return withUnifiedFacts(snap)
 }
 export function healthSummaryLine(view:HealthMetricView):string{

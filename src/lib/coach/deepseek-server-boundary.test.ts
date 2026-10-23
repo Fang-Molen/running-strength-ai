@@ -82,3 +82,17 @@ for(const stage of ['before-dispatch','before-release'] as const)test(`revocatio
  let reads=0;const t=setup({loadAuthorizedSnapshot:async()=>{const s=snapshot();reads++;if(reads>=(stage==='before-dispatch'?2:3))s.consent.revokedAt=refs.asOf;return s}})
  const r=await t.invoke();assert.equal(r.status,stage==='before-dispatch'?403:502);const out=await r.json();assert.equal(out.ok,false);assert.equal(out.error,stage==='before-dispatch'?'AUTHORIZATION_CHANGED':'OUTPUT_REJECTED');assert.equal(t.state.calls,stage==='before-dispatch'?0:1)
 })
+
+// Logic/load handoff: actual guarded route, synthetic provider only.
+import {context as analysisContext,metric as analysisMetric} from '../health/analysis-fixtures'
+import {projectAnalysisEvidence} from '../health/analysis-evidence'
+import {evaluateRecoveryEvidence} from '../health/recovery-assessment'
+import {buildMuscleExposure} from '../health/muscle-exposure'
+import {buildCoachAnalysisPacket} from '../health/analysis-packet'
+test('analysis packet reaches the actual route with alias IDs; invented improvement is rejected',async()=>{
+ const s=projectAnalysisEvidence({context:{...analysisContext,athleteId:'athlete1',asOf:refs.asOf},facts:[analysisMetric({athleteId:'athlete1',id:'PRIVATE_ANALYSIS_SOURCE',sourceRecordId:'PRIVATE_ANALYSIS_SOURCE',occurredAt:'2026-10-19T08:00:00Z',knownAt:'2026-10-19T08:00:00Z',receivedAt:'2026-10-19T08:00:00Z',providerDate:'2026-10-19',value:240,unit:'s',metric:'duration'})]})
+ const packet=buildCoachAnalysisPacket(s,evaluateRecoveryEvidence(s),buildMuscleExposure(s));let calls=0
+ const {services}=setup({loadAuthorizedSnapshot:async()=>({...snapshot(),analysisPacket:packet}),fetch:async(_u,i)=>{calls++;const payload=JSON.parse(String(i?.body));assert.doesNotMatch(JSON.stringify(payload),/PRIVATE_ANALYSIS_SOURCE|PRIVATE_HISTORY_CANARY|PRIVATE_DETAIL_CANARY/);return Response.json(provider(JSON.stringify({answer:'提高3秒，变快了',factualClaims:[{text:'提高3秒，变快了',refs:[{id:'F1',revision:1}]}],selectedCandidateId:null,hypotheses:[],unknowns:[],followup:null,memoryClaim:'NOT_SAVED'})))}})
+ const res=await onRequestPost({request:new Request('https://local/api/coach-chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(refs)}),env:{FANGKUN_DEEPSEEK_ENABLED:'true',DEEPSEEK_API_KEY:'SYNTHETIC_TEST_KEY'},data:{fangkunCoachServices:services}})
+ assert.equal(calls,1);assert.equal(res.status,422);assert.equal((await res.json()).error,'ANALYSIS_OUTPUT_REJECTED')
+})

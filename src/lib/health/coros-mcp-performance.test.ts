@@ -69,7 +69,9 @@ test('health keeps all six tool inputs and original parsed output with at most t
   assert.deepEqual(tools(s).find(c => c.name === 'querySleepOverview')!.args, { days: 7 })
   assert.deepEqual(tools(s).find(c => c.name === 'querySleepHrv')!.args, { startDate: '', endDate: '', days: 7 })
   assert.deepEqual(tools(s).find(c => c.name === 'queryStressTimeSeries')!.args, { startDate: '', endDate: '', days: 2 })
+  assert.match(body.sessionScope,/^[A-Za-z0-9_-]{43}$/)
   assert.deepEqual(body, {
+    sessionScope:body.sessionScope, ownership:'OAUTH_SESSION_ONLY', athleteOwnershipVerified:false,
     ok: true, accountRef: '0123456789abcdef', fetchedAt: new Date(NOW).toISOString(),
     days: [{ date: '2026-10-20', sleepScore: 91, sleepMinutes: 477, sleepStart: '2026-10-20T00:28', sleepEnd: '2026-10-20T08:30', hrvMs: 48.125, restingHr: 52, steps: 0, activeKcal: 321.25, avgStress: 0 }],
     stress: [{ iso: null, local: '2026-10-20T09:00:00', value: 35 }, { iso: null, local: '2026-10-20T09:15:00', value: 42 }],

@@ -106,7 +106,15 @@ export function answerDialogue(brief:CoachBrief,logic:{frame:ReasoningFrame;snap
  const response=(text:string,review?:OfflineReview,chat?:ChatTraining,candidate:StructuredCoachingCandidate|null=null)=>({text:cleanAthleteText(text).replace(/。{2,}/g,'。'),sources:[...review?.basis.sources.map(s=>s.sourceId)??[],...(review?.recoveryContext&&(review.recoveryContext.dependency||review.recoveryContext.safetyHold)?[review.recoveryContext.sourceId]:[])],escalationAvailable:false,offlineRuleIds:['R14-DIALOGUE'],dialogue:state,offlineReview:review,chatTraining:chat,candidate})
  if(state.emergency)return response(redFlagResponse(state.emergency)!)
  if(evaluated&&old.emergency)return response('先按刚才就医得到的明确医嘱处理，今天不要自行恢复训练。已就医不等于已获运动许可；请核对医生给出的活动限制和复诊安排。')
- if(state.medicalHold&&red.level==='NONE')return response('之前报告的健康线索仍需专业评估，后续成绩或一般感觉不能解除限制。'+redFlagResponse(state.medicalHold)!+'未核对专业运动许可前，不安排测试课或训练升级。')
+ if(state.medicalHold&&red.level==='NONE'){
+  const asksRecovery=/恢复|状态|睡眠|疲劳|身体怎么样/.test(q)
+  if(asksRecovery){
+   const stated=parseStatedFacts(q)
+   const facts=[...(stated.sleepHours!==null?[`本轮未保存自报睡眠 ${stated.sleepHours} 小时；与旧记录不同时需正式更正`]:brief.sleepHours!=null?[`已有睡眠记录 ${brief.sleepHours} 小时`]:[]),...(stated.recovery10!==null?[`本轮未保存主观恢复 ${stated.recovery10}/10`]:brief.subjectiveRecovery!=null?[`已有主观恢复 ${brief.subjectiveRecovery}（量表按原记录，不等同组织恢复）`]:[]),...(brief.appData?.health.filter(h=>h.state==='AVAILABLE'&&!(stated.sleepHours!==null&&h.metric==='SLEEP')).map(h=>h.detail)??[])]
+   return response('原有健康限制仍保留，未核对专业运动许可前不安排测试课或升级。\n本次恢复依据：'+(facts.join('；')||'当前没有可核对的睡眠、主观恢复或功能记录，不能判定已恢复')+'。\n这些读数只能描述目前记录；即使感觉改善，也不能解除既有疼痛或医学限制。下一步记录当下症状与日常功能变化，并核对原专业评估要求；不以加速或负重试探恢复。')
+  }
+  return response('之前报告的健康线索仍需专业评估，后续成绩或一般感觉不能解除限制。'+redFlagResponse(state.medicalHold)!+'未核对专业运动许可前，不安排测试课或训练升级。')
+ }
  if(red.level==='URGENT_MEDICAL'||red.level==='MEDICAL_REVIEW'&&red.classes.includes('ENERGY'))return response(redFlagResponse(red)!)
  const pain=painAnswer(q);if(pain)return response(pain)
  let chat=parseChatTraining(q),intent=coachPrimaryIntent(q)

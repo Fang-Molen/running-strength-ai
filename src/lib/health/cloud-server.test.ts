@@ -355,3 +355,12 @@ test('a failed old callback exchange cannot clear the pending cookie of a fresh 
   const current = await handleWatchCloudRequest(request(`polar/callback?code=new&state=${state}`, cookiesOf(fresh)), 'polar/callback', m.deps)
   assert.equal(current.headers.get('location'), '/?watch_provider=polar&watch_auth=ok')
 })
+
+test('production boundary does not treat browser athlete ID or process-local OAuth maps as verified host binding', async () => {
+ let calls=0
+ const deps={requireTrustedHost:true,env:{},fetch:(async()=>{calls++;throw Error('external forbidden')}) as typeof fetch}
+ const status=await handleWatchCloudRequest(new Request('https://local.invalid/api/watch-cloud/status?athlete=forged'),'status',deps)
+ const body=await status.json();assert.ok(body.providers.every((p:any)=>!p.connected&&!p.configured&&p.reason==='TRUSTED_BINDINGS_MISSING'))
+ const start=await handleWatchCloudRequest(new Request('https://local.invalid/api/watch-cloud/polar/start?athlete=forged'),'polar/start',deps)
+ assert.equal(start.status,503);assert.equal(calls,0)
+})

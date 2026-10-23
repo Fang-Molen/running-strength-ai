@@ -12,7 +12,7 @@ export function parseProviderUsage(reply: unknown): VerifiedProviderUsage | null
   return { promptTokens:u.prompt_tokens, completionTokens:u.completion_tokens, cacheHitTokens:u.prompt_cache_hit_tokens, cacheMissTokens:u.prompt_cache_miss_tokens, reasoningTokens:reasoning === undefined ? null : reasoning as number, totalTokens:u.total_tokens };
 }
 /** Transport metadata is validated independently of scientific/factual output guards. */
-export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPolicy, limits: { inputTokenLimit:number; outputTokenLimit:number }): string {
+export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPolicy, limits: { inputTokenLimit:number; outputTokenLimit:number }, analysisMode=false): string {
   const out = reply as { model?:unknown; choices?:{ finish_reason?:unknown; message?:{ role?:unknown; content?:unknown; tool_calls?:unknown; function_call?:unknown } }[] };
   const usage = parseProviderUsage(reply);
   if (!usage) throw new Error('PROVIDER_USAGE_UNKNOWN');
@@ -26,6 +26,11 @@ export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPo
   let parsed: unknown; try { parsed = JSON.parse(message.content); } catch { throw new Error('PROVIDER_JSON'); }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('PROVIDER_JSON');
   const value=parsed as Record<string,unknown>;
+  if(analysisMode){
+    const allowed=['answer','factualClaims','selectedCandidateId','hypotheses','unknowns','followup','memoryClaim'];
+    if(Object.keys(value).some(k=>!allowed.includes(k))||typeof value.answer!=='string'||!Array.isArray(value.factualClaims)||!Array.isArray(value.hypotheses)||!Array.isArray(value.unknowns)||value.memoryClaim!=='NOT_SAVED')throw Error('PROVIDER_ANALYSIS_SCHEMA');
+    return message.content;
+  }
   const allowed=['mode','text','nextStep','citations','medicalReferral','compareIds','seriesIds','planChanged','evidenceQuotes'];
   if(Object.keys(value).some(k=>!allowed.includes(k)) || !['answer','ask','unavailable'].includes(value.mode as string) || typeof value.text!=='string' || !value.text.trim() || (value.nextStep!==null && typeof value.nextStep!=='string') || !Array.isArray(value.citations) || value.citations.length>100 || value.citations.some(id=>typeof id!=='string'||id.length>120) || typeof value.medicalReferral!=='boolean' || value.planChanged!==false) throw new Error('PROVIDER_SCHEMA');
   for(const key of ['compareIds','seriesIds'])if(value[key]!==null && value[key]!==undefined && (!Array.isArray(value[key]) || (value[key] as unknown[]).some(id=>typeof id!=='string'||id.length>120)))throw new Error('PROVIDER_SCHEMA');

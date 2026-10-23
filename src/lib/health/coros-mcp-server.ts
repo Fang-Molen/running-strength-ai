@@ -183,7 +183,7 @@ export async function handleCorosMcp(req: Request, path: string, deps: Deps): Pr
     }
     if (path === 'status') {
       const a = await readAuth(req, deps.stateKey)
-      return json({ ok: true, connected: !!a, region: a?.region ?? null, host: a ? new URL(a.md.resource).host : null, refBasis: a ? (a.ref ? 'account' : 'unknown') : null, renewable: !!a?.refresh, since: a?.at ?? null })
+      return json({ ok: true, connected: !!a, sessionScope: a ? await pkceChallenge(`${a.md.issuer}|${a.cid}|${a.at}|${a.ref??''}`) : null, accountRef:a?.ref??null, ownership:'OAUTH_SESSION_ONLY', athleteOwnershipVerified:false, region: a?.region ?? null, host: a ? new URL(a.md.resource).host : null, refBasis: a ? (a.ref ? 'account' : 'unknown') : null, renewable: !!a?.refresh, since: a?.at ?? null })
     }
     if (path === 'disconnect' && req.method === 'POST') {
       const a = await readAuth(req, deps.stateKey); let revoked = false
@@ -193,7 +193,8 @@ export async function handleCorosMcp(req: Request, path: string, deps: Deps): Pr
     if (req.method !== 'GET' || !['activities', 'laps', 'health'].includes(path)) return json({ ok: false, error: 'NOT_ALLOWED', message: '不支持的接口' }, 404)
     const a = await readAuth(req, deps.stateKey); if (!a) return json({ ok: false, error: 'NOT_CONNECTED', message: '还没有用高驰授权登录', reauthorize: true }, 401)
     const s = new McpSession(deps, a)
-    const finish = async (body: Record<string, unknown>) => json({ ok: true, accountRef: a.ref, fetchedAt: new Date(now).toISOString(), ...body }, 200, s.refreshed ? tokenCookies(await seal(deps.stateKey, a)) : [])
+    // Scope is server-derived from encrypted OAuth state. It is NOT proof that a browser athlete owns this account.
+    const finish = async (body: Record<string, unknown>) => json({ ok: true, accountRef: a.ref, sessionScope:await pkceChallenge(`${a.md.issuer}|${a.cid}|${a.at}|${a.ref??''}`), ownership:'OAUTH_SESSION_ONLY', athleteOwnershipVerified:false, fetchedAt: new Date(now).toISOString(), ...body }, 200, s.refreshed ? tokenCookies(await seal(deps.stateKey, a)) : [])
     try {
       await s.init()
       if (path === 'activities') {

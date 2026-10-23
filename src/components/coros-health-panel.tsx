@@ -47,12 +47,12 @@ export function CorosHealthPanel({ day }: { day: string }) {
   const sleepBands = (data?.days ?? []).flatMap(d => d.sleepStart && d.sleepEnd ? [[d.sleepStart, d.sleepEnd]] : []).flatMap(([s, e]) => {
     const a = s.slice(0, 10) === day ? minOfLocal(s) : s.slice(0, 10) < day && e.slice(0, 10) >= day ? 0 : null, b = e.slice(0, 10) === day ? minOfLocal(e) : e.slice(0, 10) > day && s.slice(0, 10) <= day ? 1440 : null
     return a != null && b != null && b > a ? [[a, b]] : [] })
-  const trainBands = sessions.map(r => { const a = localMin(r.startedAt); return [a, Math.min(1440, a + Math.max(5, Math.round((r.durationSec ?? 0) / 60)))] })
-  const last = trend.at(-1), days = (data?.days ?? []).slice(-14).reverse()
+  const trainBands = sessions.filter(r=>r.durationSec!=null&&Number.isFinite(r.durationSec)&&r.durationSec>0).map(r => { const a = localMin(r.startedAt); return [a, Math.min(1440, a + r.durationSec! / 60)] })
+  const last = trend.filter(d=>d.date<=day).at(-1), days = (data?.days ?? []).filter(d=>d.date<=day).slice(-14).reverse()
   return <section className="home-card p-4 text-sm" aria-label="高驰健康数据" data-testid="coros-health">
     <div className="flex items-center justify-between"><h3 className="font-bold">高驰健康数据（官方授权）</h3>{linked ? <button type="button" className="min-h-11 px-2 text-accent" disabled={busy} onClick={() => void refresh()}>{busy ? '读取中…' : '刷新'}</button> : null}</div>
     <p className="keep mt-1 text-xs text-muted">{data ? `上次读取 ${new Date(data.fetchedAt).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}。` : '还没读取。'}高驰没有“身体电量”和全天心率曲线，这里不画。时间按高驰账号时区显示（与本机不同时区时待核）。</p>
-    <div className="mt-2 rounded-lg border border-line p-2" data-testid="coros-recovery"><b>高驰恢复度：{data?.recovery?.percent != null ? `${data.recovery.percent}%` : '—'}</b>{data?.recovery?.level ? ` · ${data.recovery.level}` : ''}
+    <div className="mt-2 rounded-lg border border-line p-2" data-testid="coros-recovery"><b>高驰恢复度：{day===today && data?.recovery?.percent != null ? `${data.recovery.percent}%` : '—'}</b>{data?.recovery?.level ? ` · ${data.recovery.level}` : ''}
       <p className="keep text-xs text-muted">这是高驰自己算的数值，只有当前值（{data?.recovery ? `读取于 ${new Date(data.recovery.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}` : '暂无'}），没有历史曲线；不是佳明身体电量，方坤不据此改训练。{data?.recovery?.fullRecoveryText ? ` ${data.recovery.fullRecoveryText}` : ''}</p></div>
     <figure className="mt-2" data-testid="coros-stress-chart"><figcaption className="text-xs font-bold">日内压力（{day}）· <span className="font-normal text-muted">灰色=睡眠，橙色=已保存的高驰训练</span></figcaption>
       {stress.length ? <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={`高驰压力 ${stress.length} 个读数`}>
@@ -60,12 +60,12 @@ export function CorosHealthPanel({ day }: { day: string }) {
         {trainBands.map(([a, b], i) => <rect key={'t' + i} x={x(a)} y={PAD} width={Math.max(2, x(b) - x(a))} height={H - 2 * PAD} fill="#ff6a13" opacity={0.3} />)}
         {[0, 6, 12, 18, 24].map(h => <text key={h} x={x(h * 60)} y={H - 4} fontSize={8} textAnchor="middle" fill="currentColor" opacity={0.6}>{h}:00</text>)}
         {[25, 50, 75].map(v => <line key={v} x1={PAD} x2={W - PAD} y1={y(v)} y2={y(v)} stroke="currentColor" opacity={0.1} />)}
-        <polyline fill="none" stroke="#ff6a13" strokeWidth={1.5} points={stress.map(p => `${x(p.m)},${y(p.v)}`).join(' ')} />
+        {stress.map((p,i)=><circle key={i} cx={x(p.m)} cy={y(p.v)} r={1.8} fill="#ff6a13" />)}
       </svg> : <p className="text-xs text-muted">这一天没有高驰压力读数（高驰只提供最近 7 天内的日内压力；没有就不画）。</p>}</figure>
     <div className="mt-2 overflow-x-auto"><table className="w-full text-xs" data-testid="coros-daily"><thead><tr className="text-muted"><th className="text-left">日期</th><th>HRV(ms)</th><th>静息心率</th><th>睡眠</th><th>睡眠分</th></tr></thead>
       <tbody>{days.map(d => <tr key={d.date} className="border-t border-line"><td>{d.date.slice(5)}</td><td className="text-center">{d.hrvMs ?? '—'}</td><td className="text-center">{d.restingHr ?? '—'}</td><td className="text-center">{hm(d.sleepMinutes)}</td><td className="text-center">{d.sleepScore ?? '—'}</td></tr>)}
       {last ? <tr className="border-t border-line text-muted"><td>个人基准</td><td className="text-center">{last.reference.hrvMs ?? '不足'}</td><td className="text-center">{last.reference.restingHr ?? '不足'}</td><td className="text-center">{last.reference.sleepMinutes != null ? hm(last.reference.sleepMinutes) : '不足'}</td><td /></tr> : null}</tbody></table>
-      <p className="keep text-[11px] text-muted">个人基准 = 此前 7 个完整日的中位数，只用高驰自己的数据，不到 7 天显示“不足”；不和佳明数据混算。—=高驰没给或认不出。</p></div>
+      <p className="keep text-[11px] text-muted">个人参考 = 此前 7 个有记录日的中位数（供应商完整度及测量协议未核验），只用高驰自己的数据，不到 7 天显示“不足”；不和佳明数据混算。—=高驰没给或认不出。</p></div>
     {data?.issues.length ? <details className="mt-2 text-xs"><summary>待核：{data.issues.length} 项高驰返回没认出来</summary><ul className="list-disc pl-4">{data.issues.map((x, i) => <li key={i}>{x}</li>)}</ul>
       {Object.entries(data.raw ?? {}).map(([k, v]) => <details key={k}><summary>{k} 原文</summary><pre className="whitespace-pre-wrap break-all text-[10px]">{v || '（空）'}</pre></details>)}</details> : null}
     {msg ? <p role="status" className="mt-2 text-sm">{msg}</p> : null}

@@ -106,3 +106,9 @@ test('calendar dates are strict rather than normalized into another month',()=>{
   const r=coordinateGlobal({athleteId:'a',today:'2026-02-30',readState:'READY',facts:[],parts:[]})
   assert.equal(r.state,'UNAVAILABLE')
 })
+
+for(const key of ['fk-coros-mcp-health-v1:synthetic-v89-a','fk-garmin-intraday-v1:synthetic-v89-a'])test(`snapshot fence rejects ${key} changing during async receipt read`,async t=>{
+ const f=fixture(t)
+ const snapshot=await readGlobalCoachSnapshot(day,{read:async id=>{f.box.setItem(key,JSON.stringify({fetchedAt:day+'T10:00:00Z',days:[]}));return emptyPlanExecution(id)}})
+ assert.equal(snapshot.result.state,'UNAVAILABLE');assert.match(snapshot.limitations.join(),/更新/)
+})

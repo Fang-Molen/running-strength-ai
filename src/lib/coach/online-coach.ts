@@ -127,6 +127,7 @@ export function buildFacts(today: string, act: GActivity | null, laps: GLap[] | 
     }
   } catch { legacy.push('历史计划记录读取失败，不能把读取失败当作没有记录。') }
   const header = [`今天：${today}`, `查询日期：${day}`, `读取截止时间：${asOf}`,
+    '口径：查询日期读取当前保存版本；饮食与体重缺少完整历史版本链，不能重建过去某时刻已知的全部记录。',
     '范围：当前运动员本机已保存的记录；未关联训练不影响读取饮食、训练、力量和恢复背景。各域缺失或不完整单独标明。',
     '相同来源的训练只计一次；计划不等于完成，旧整课评价不拆给跑步和力量。']
   // Independent budgets prevent a long plan or lap list from silently deleting later domains.

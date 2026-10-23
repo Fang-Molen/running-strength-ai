@@ -1,5 +1,7 @@
-import { loadCheckins } from '@/lib/ui/watch-mode'
-import { buildHealthSnapshot, loadHealthSources } from "@/lib/health/snapshot"
+import { subscribeHealthUpdates } from "@/lib/health/health-subscription"
+import { resolveBodyBattery } from "@/lib/health/health-current"
+import { loadIntraday } from "@/lib/health/intraday-store"
+import { loadHealthSnapshot } from "@/lib/health/snapshot"
 import { HealthSourceDetails } from "./health-source-details"
 import { valueText } from "@/lib/health/observation"
 import { useEffect, useMemo, useState } from "react"
@@ -33,11 +35,14 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed, 
   const [shown, setShown] = useState<TileId[]>(DEFAULT_SHOWN)
   const [open, setOpen] = useState<TileId | null>(null)
   const [editing, setEditing] = useState(false)
+  const [healthRevision, setHealthRevision] = useState(0)
+  useEffect(() => subscribeHealthUpdates(() => setHealthRevision(n => n + 1), { batch: true, reconcile: true }), [])
   const [stamp, setStamp] = useState(0)
   const [extras, setExtras] = useState<ExtraRow[]>([])
   useEffect(() => { setShown(loadPref()) }, [])
-  useEffect(() => { setExtras(loadExtras()) }, [revision])
-  const snapshot=useMemo(()=>buildHealthSnapshot(vitals,extras,today,loadHealthSources(),loadCheckins()),[vitals,extras,today,revision])
+  useEffect(() => { setExtras(loadExtras()) }, [revision, healthRevision])
+  const snapshot=useMemo(()=>loadHealthSnapshot(today),[vitals,extras,today,revision,healthRevision])
+  const battery = useMemo(() => resolveBodyBattery(snapshot.metrics.find(m => m.metric === "BODY_BATTERY"), loadIntraday()[today], today), [snapshot, today])
   const series = useMemo(() => {
     const s: Record<TileId, Point[]> = { RHR: [], HRV: [], SLEEP: [], WEIGHT: [], BODY_BATTERY: [], READINESS: [], RECOVERY: [], STRESS: [] }
     for(const view of snapshot.metrics)if(view.metric in s)for(const p of view.series)s[view.metric as TileId].push({day:p.day,value:p.value,source:p.source})
@@ -63,8 +68,10 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed, 
     <div className="fk-tile-grid mt-3">
       {tiles.map((t) => {
         const view=snapshot.metrics.find(m=>m.metric===t.id)
-        const pts = series[t.id]; const last = pts.at(-1)
-        const delta = view?.baseline ? Math.round(view.baseline.delta*10)/10 : null
+        const pts = series[t.id]; const last = t.id === "BODY_BATTERY" && battery.value != null
+          ? {day:today,value:battery.value,source:battery.statistic} : pts.at(-1)
+        const conflict = view?.state === "CONFLICT" || t.id === "BODY_BATTERY" && battery.basis === "CONFLICT"
+        const delta = t.id !== "BODY_BATTERY" && view?.baseline ? Math.round(view.baseline.delta*10)/10 : null
         const good = null
         const isOpen = open === t.id
         const Icon = t.icon
@@ -72,7 +79,7 @@ export function HealthTiles({ vitals, checks, today, revision, onJump, allowed, 
         return <div key={t.id} className={"fk-tile " + (isOpen ? "fk-tile-open" : "")}>
           <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : t.id)} className="w-full text-left">
             <p className="flex items-center gap-1 text-xs text-muted"><Icon className="size-3.5" />{t.name}<span className="ml-auto">{isOpen ? "收起" : "›"}</span></p>
-            <p className={last ? "mt-1.5 text-[1.6rem] font-bold leading-none" : "mt-1.5 text-base font-bold text-muted"}>{view?.state==='CONFLICT'?"来源待核对":last?valueText(t.id,last.value):"— 未记录"}</p>
+            <p className={last ? "mt-1.5 text-[1.6rem] font-bold leading-none" : "mt-1.5 text-base font-bold text-muted"}>{conflict?"来源待核对":last?valueText(t.id,last.value):"— 未记录"}</p>
             <p className="mt-1 text-xs text-muted">{last ? <>{stale ? `${last.day.slice(5)} · ` : "今天 · "}{delta != null ? <span className={good == null ? "" : good ? "text-[#269775]" : "text-[#c0612b]"}>较前7天可比均值 {delta > 0 ? "+" : ""}{delta}</span> : "点开核对来源"}</> : "导入或手填后显示"}</p>
           </button>
           {isOpen ? <>{view?<HealthSourceDetails view={view}/>:null}<TileDetail points={pts} unit={t.unit} onRecord={() => onJump(t.id === "WEIGHT" ? "body-measurements" : t.id === "BODY_BATTERY" || t.id === "READINESS" || t.id === "STRESS" ? "body-devices" : "body-vitals")} /></> : null}

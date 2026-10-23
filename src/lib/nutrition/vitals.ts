@@ -124,7 +124,7 @@ export function validateVital(draft: VitalDraft): { ok: true; value: number; uni
   if (!(VITAL_KINDS as readonly string[]).includes(draft.kind)) return { ok: false, reason: "请选择指标。" }
   if (!isDate(draft.observedOn)) return { ok: false, reason: "日期不正确。" }
   const range = RANGES[draft.kind]
-  if (typeof draft.value !== "number" || !Number.isFinite(draft.value) || draft.value < range.min || draft.value > range.max || (range.integer && !Number.isInteger(draft.value))) {
+  if (typeof draft.value !== "number" || !Number.isFinite(draft.value) || draft.value < range.min || draft.value > range.max || (range.integer && !(draft.source === "DEVICE_CONFIRMED" && draft.observation && ["HRV", "RHR", "NIGHT_HR"].includes(draft.kind)) && !Number.isInteger(draft.value))) {
     return { ok: false, reason: `${VITAL_LABELS[draft.kind]}需在 ${range.min}–${range.max}${range.integer ? " 的整数" : ""}。` }
   }
   const clock = draft.observedAt == null || draft.observedAt === "" ? null : draft.observedAt

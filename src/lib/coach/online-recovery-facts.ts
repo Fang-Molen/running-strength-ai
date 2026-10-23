@@ -5,6 +5,7 @@ import {readRecoveryContext} from '../core/coach-recovery-context'
 import {readRecoveryProjection} from '../health/recovery-host-u11'
 import {loadHealthSnapshot,type HealthMetricView,type HealthPoint} from '../health/snapshot'
 import {loadIntraday} from '../health/intraday-store'
+import {resolveBodyBattery} from '../health/health-current'
 import {localDay,validDay} from '../health/observation'
 import {REGION_LABEL,type RegionState} from '../health/muscle-recovery-u11'
 
@@ -44,6 +45,15 @@ export function onlineRecoveryFacts(day:string,asOf:string):Facts{
   if(health.unreadable)summary.push(`${day} 部分健康来源无法读取，未视为没有记录或恢复正常。`)
   for(const metric of ['SLEEP','RHR','HRV','BODY_BATTERY','READINESS','STRESS'] as const){
    const view=health.metrics.find(v=>v.metric===metric),known=view?dailyPoint(view,day,asOf):{point:null,state:'MISSING' as const}
+   if(metric==='BODY_BATTERY'){
+    const reading=resolveBodyBattery(view,loadIntraday(owner)[day],day,asOf)
+    if(reading.basis==='CONFLICT')metrics.push('身体电量：来源或独立记录冲突，未取平均')
+    else if(reading.value!==null){
+     const timing=reading.basis==='DAILY_SUMMARY'?/最高|MAX/i.test(reading.statistic)?'当日最高，非当前电量':'日汇总，非当前电量':reading.measuredAt?`测量 ${reading.measuredAt}`:`同步 ${reading.syncedAt}；测量时间未提供`
+     metrics.push(`身体电量：${round(reading.value)}/100（${timing}，非实时恢复许可）`)
+    }else metrics.push('身体电量：截至分析时点无可用记录')
+    continue
+   }
    const fact=context.quantitative.facts.find(f=>f.metric===metric)
    if(['SLEEP','RHR','HRV'].includes(metric)&&fact){
     const method=metric==='HRV'&&known.point&&['RMSSD','SDNN'].includes(known.point.method)?`（${known.point.method}）`:metric==='HRV'?'（算法未确认）':''
@@ -51,7 +61,7 @@ export function onlineRecoveryFacts(day:string,asOf:string):Facts{
    }else if(known.state==='CONFLICT')metrics.push(`${labels[metric]}：来源或独立记录冲突，未取平均`)
    else if(known.point&&known.state==='STALE')metrics.push(`${labels[metric]}：仅有 ${known.point.day} 历史记录，不代表 ${day} 状态`)
    else if(!['SLEEP','RHR','HRV'].includes(metric)&&known.point){
-    const qualifier=metric==='BODY_BATTERY'?/最高|MAX/i.test(known.point.statistic)?'（当日最高，非当前电量）':'（设备日记录，非实时恢复许可）':'（设备日记录）'
+    const qualifier='（设备日记录）'
     metrics.push(`${labels[metric]}：${round(known.point.value)}${units[metric]}${qualifier}`)
    }else metrics.push(`${labels[metric]}：截至分析时点无可用记录`)
   }
@@ -84,7 +94,12 @@ export function onlineRecoveryFacts(day:string,asOf:string):Facts{
   const intra=loadIntraday(owner)[day]
   if(intra&&time(intra.fetchedAt)&&Date.parse(intra.fetchedAt)<=Date.parse(asOf)){
    const bits=(['HEART_RATE','BODY_BATTERY','STRESS'] as const).flatMap(metric=>{
-    const view=muscle.intraday.metrics[metric],point=view.latest,label=metric==='HEART_RATE'?'心率':metric==='BODY_BATTERY'?'身体电量':'压力'
+    if(metric==='BODY_BATTERY'){
+     const reading=resolveBodyBattery(health.metrics.find(v=>v.metric===metric),intra,day,asOf)
+     // A summary-only current reading remains in the summary; don't send a competing old "latest" value.
+     return reading.basis==='INTRADAY'&&reading.measuredAt?[`身体电量 ${round(reading.value!) }，测量 ${reading.measuredAt}`]:[]
+    }
+    const view=muscle.intraday.metrics[metric],point=view.latest,label=metric==='HEART_RATE'?'心率':'压力'
     return view.status==='SOURCE_CONFLICT'?[`${label}来源冲突`]:point&&time(point.measuredAt)&&Date.parse(point.measuredAt)<=Date.parse(asOf)?[`${label} ${round(point.value)}，测量 ${point.measuredAt}`]:[]
    })
    if(bits.length)details.push(clip(`${day} 手表日内：${bits.join('；')}。仅代表所列测量时刻，不是肌肉恢复或训练许可。`,350))

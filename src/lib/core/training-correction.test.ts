@@ -149,7 +149,7 @@ test('asOf void and restore keep their commit order without changing callback-co
   t.mock.timers.tick(3600000);assert.ok(appendCorrection({trainingOccurrenceId:'cutoff',kind:'RESTORE',reason:'合成恢复'}))
   assert.equal(readTrainingCorrectionsAsOf('cutoff',before).voided,false);assert.equal(readTrainingCorrectionsAsOf('cutoff',removedAt).voided,true);assert.equal(readTrainingCorrectionsAsOf('cutoff',new Date().toISOString()).voided,false)
   assert.ok(appendCorrection({trainingOccurrenceId:'second',kind:'VOID',reason:'合成作废'}))
-  assert.deepEqual(['cutoff','second'].filter(occurrenceVoided),['second'])
+  assert.deepEqual(['cutoff','second'].filter(id=>occurrenceVoided(id)),['second'])
 })
 test('missing or malformed correction commit timestamps are reported without inferring from at',()=>{
   setStoreBackend(memory())

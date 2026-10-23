@@ -43,8 +43,8 @@ function nextId(): string {
   return `corr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-export function listCorrections(trainingOccurrenceId?: string): TrainingCorrection[] {
-  const rows = loadAll()
+export function listCorrections(trainingOccurrenceId?: string, asOf?: string): TrainingCorrection[] {
+  const rows = loadAll().filter(r=>typeof asOf !== 'string' || !!r.recordedAt && Number.isFinite(Date.parse(r.recordedAt)) && Date.parse(r.recordedAt)<=Date.parse(asOf) && Date.parse(r.at)<=Date.parse(asOf))
   return trainingOccurrenceId ? rows.filter((row) => row.trainingOccurrenceId === trainingOccurrenceId) : rows
 }
 
@@ -95,9 +95,9 @@ export function appendCorrection(input: {
   return saved ? row : null
 }
 
-export function occurrenceVoided(trainingOccurrenceId: string): boolean {
+export function occurrenceVoided(trainingOccurrenceId: string, asOf?: string): boolean {
   let voided = false
-  for (const row of listCorrections(trainingOccurrenceId)) {
+  for (const row of listCorrections(trainingOccurrenceId,asOf)) {
     if (row.kind === "VOID") voided = true
     if (row.kind === "RESTORE") voided = false
   }
@@ -105,7 +105,7 @@ export function occurrenceVoided(trainingOccurrenceId: string): boolean {
 }
 
 export function voidedOccurrenceIds(): string[] {
-  return listTrainingOccurrences().map((item) => item.trainingOccurrenceId).filter(occurrenceVoided)
+  return listTrainingOccurrences().map((item) => item.trainingOccurrenceId).filter(id=>occurrenceVoided(id))
 }
 
 export function effectiveField(trainingOccurrenceId: string, field: CorrectionField, setKey: string | null, original: string | null): { value: string | null; corrected: boolean } {
@@ -148,8 +148,8 @@ function parseCorrectionNumber(value: string): number | null {
 
 type StrengthCorrectionOptions = { corrections: readonly TrainingCorrection[] }
 
-export function effectiveStrengthNumber(trainingOccurrenceId: string, field: "weight" | "reps", setKey: string, original: number | null, options?: StrengthCorrectionOptions): EffectiveNumber {
-  const hits = (options?.corrections ?? listCorrections(trainingOccurrenceId)).filter((row) => row.trainingOccurrenceId === trainingOccurrenceId && row.kind === "FIELD" && row.field === field && (row.setKey ?? null) === setKey)
+export function effectiveStrengthNumber(trainingOccurrenceId: string, field: "weight" | "reps", setKey: string, original: number | null, options?: StrengthCorrectionOptions | string): EffectiveNumber {
+  const hits = (typeof options === 'string' ? readTrainingCorrectionsAsOf(trainingOccurrenceId, options).rows : options?.corrections ?? listCorrections(trainingOccurrenceId)).filter((row) => row.trainingOccurrenceId === trainingOccurrenceId && row.kind === "FIELD" && row.field === field && (row.setKey ?? null) === setKey)
   const last = hits.at(-1)
   if (!last) return { value: original, status: "ORIGINAL" }
   const parsed = parseCorrectionNumber(last.newValue)
@@ -157,7 +157,7 @@ export function effectiveStrengthNumber(trainingOccurrenceId: string, field: "we
   return { value: parsed, status: "CORRECTED" }
 }
 
-export function effectiveStrengthFields(payload: Record<string, unknown> | undefined, options?: StrengthCorrectionOptions): {
+export function effectiveStrengthFields(payload: Record<string, unknown> | undefined, options?: StrengthCorrectionOptions | string): {
   binding: "BOUND" | "UNBOUND"
   identity: StrengthIdentity | null
   weight: EffectiveNumber

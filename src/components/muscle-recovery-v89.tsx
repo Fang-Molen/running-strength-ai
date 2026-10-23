@@ -10,6 +10,7 @@ import "./muscle-target-card.css"
 import "./recovery-trend-detail.css"
 import "./muscle-recovery-detail.css"
 import { MuscleStimulusChartV90 } from "./muscle-stimulus-chart-v90"
+import { PersonalResponsePanel } from './personal-response-panel'
 
 type API = { setView: (v: string) => void; selectKey: (k: string | null) => void; setOverlays: (v: { keys: string[]; color: string }[]) => void; destroy: () => void }
 /** 4 级图例（效果图同款层级，但措辞按证据：不是疲劳测量）。 */
@@ -35,6 +36,7 @@ export function MuscleRecoveryV89({ day, trend, onCoach }: { day: string; trend:
       {tab === "run" ? <Loads value={value} modality="RUN" /> : null}
       {tab === "trend" ? trend : null}
       <Advice value={value} onCoach={onCoach} />
+      <PersonalResponsePanel value={value} />
     </>}
   </div>
 }

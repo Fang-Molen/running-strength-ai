@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": [
+      "node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "files": [
+    "src/lib/health/health-current.ts",
+    "src/lib/health/health-subscription.ts",
+    "src/lib/health/coros-mcp-client.ts",
+    "src/lib/health/intraday-store.ts",
+    "src/lib/health/snapshot.ts",
+    "src/lib/health/garmin-sync-runner.ts",
+    "src/lib/health/health-view-state.ts",
+    "src/lib/health/intraday-recovery-bridge-v89.ts"
+  ]
+}

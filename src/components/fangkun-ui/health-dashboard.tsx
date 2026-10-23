@@ -4,7 +4,7 @@ import {type FoodEntry,type Meal,MEALS} from '@/lib/nutrition/log'
 import {nutritionTotals} from '@/lib/nutrition/ui-records'
 import {type BodyCheck} from '@/lib/nutrition/body'
 import {loadHealthSnapshot,healthSummaryLine} from '@/lib/health/snapshot'
-import {HEALTH_CHANGED} from '@/lib/health/observation'
+import {subscribeHealthUpdates} from '@/lib/health/health-subscription'
 import {currentAthleteId} from '@/lib/core/events'
 import {loadProfile} from '@/lib/strength/profile'
 const num=(v:number|null|undefined)=>v==null?'待记录':Number(v.toFixed(1)).toString()
@@ -13,7 +13,7 @@ export default function HealthDashboard({date,rows,checks,gender,onGender,onReco
  const totals=nutritionTotals(rows),available=checks.filter(r=>r.date<=date),latest=available.at(-1),series=available.filter(r=>typeof r[metric]==='number'&&Number.isFinite(r[metric])).slice(-8),min=Math.min(...series.map(r=>r[metric]!)),max=Math.max(...series.map(r=>r[metric]!)),delta=series.length>1?series.at(-1)![metric]!-series[0][metric]!:null
  // Existing unowned legacy vital/profile stores belong only to the local athlete.
  const [,setHealthRevision]=useState(0)
- useEffect(()=>{const update=()=>setHealthRevision(n=>n+1);window.addEventListener(HEALTH_CHANGED,update);window.addEventListener('storage',update);return()=>{window.removeEventListener(HEALTH_CHANGED,update);window.removeEventListener('storage',update)}},[])
+ useEffect(()=>subscribeHealthUpdates(()=>setHealthRevision(n=>n+1),{batch:true,reconcile:true}),[])
  const health=loadHealthSnapshot(date),profile=currentAthleteId()==='local'?loadProfile():null,height=profile?.heightCm.trim()?Number(profile.heightCm):null
 
  const mealIcons=[Sun,Sun,Moon,Coffee]

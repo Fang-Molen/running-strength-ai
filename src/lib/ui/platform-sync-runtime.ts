@@ -31,9 +31,9 @@ export function createPlatformSyncRuntime(deps: RuntimeDeps) {
   const statusAt = new Map<RemotePlatform, number>(), listeners = new Set<() => void>(), revoking = new Set<RemotePlatform>()
   const now = deps.now ?? Date.now
   const emit = () => listeners.forEach(f => f())
-  function checkScope() {
+  function checkScope(force = false) {
     const next = deps.owner()
-    if (next === owner) return
+    if (!force && next === owner) return
     scope++; owner = next
     for (const job of jobs.values()) job.controller.abort()
     jobs.clear(); states.clear(); generations.clear(); statusAt.clear()
@@ -150,7 +150,7 @@ export function createPlatformSyncRuntime(deps: RuntimeDeps) {
   function startUrl(p: Exclude<RemotePlatform, 'apple_health' | 'health_connect'>): string { return route(p, 'start', snapshot(p).owner) }
   return { snapshot, refresh, read, disconnect, permission, unlockStrava, startUrl, invalidate,
     subscribe: (fn: () => void) => { listeners.add(fn); return () => { listeners.delete(fn) } },
-    scopeChanged: () => { checkScope(); emit() },
+    scopeChanged: () => { checkScope(true); emit() },
     saved: (p: RemotePlatform, message: string, clear: boolean) => patch(p, { ...(clear ? { preview: null } : {}), notice: message, error: '' }),
   }
 }

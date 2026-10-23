@@ -12,10 +12,10 @@ import { CheckinCard, PainLog } from "./health-extras"
 import { loadWatch } from "@/lib/ui/watch-mode"
 import { MuscleRecoveryV89 } from "./muscle-recovery-v89"
 import { CorosHealthPanel } from "./coros-health-panel"
-import { HEALTH_CHANGED, shiftDay, valueText } from "@/lib/health/observation"
+import { shiftDay, valueText } from "@/lib/health/observation"
 import { loadHealthSnapshot, type HealthMetricView } from "@/lib/health/snapshot"
 import { reviewFatigue, dailyCheckin } from "@/lib/health/analysis"
-import { onAppEvent, currentAthleteId } from "@/lib/core/events"
+import { currentAthleteId } from "@/lib/core/events"
 import { clock, minuteOfDay, type IntradayDay, type Sample } from "@/lib/health/garmin-intraday"
 import { intradayRecoveryFromStore, typicalDay, type TypicalHour } from "@/lib/health/intraday-recovery-bridge-v89"
 import type { View as U10View, Metric as U10Metric } from "@/lib/health/intraday-recovery-u10"
@@ -23,6 +23,9 @@ import { readRestHistory, REST_LABELS } from "@/lib/health/rest-store"
 import { eventReadout, restOnDay, restReadout } from "@/lib/health/event-presentation"
 import { garminStorageKey } from "@/lib/health/garmin-sync-runner"
 import { loadIntraday } from "@/lib/health/intraday-store"
+import { resolveBodyBattery, type CurrentHealthReading } from "@/lib/health/health-current"
+import { subscribeHealthUpdates } from "@/lib/health/health-subscription"
+import { reconcileHealthDay, intradayMatchesSource } from "@/lib/health/health-view-state"
 import { todayDate } from "@/lib/nutrition/body"
 import "./health-v89.css"
 
@@ -60,7 +63,7 @@ const hmDelta = (h: number) => { const m = Math.round(Math.abs(h) * 60); return 
 
 function useHealthRev() {
   const [rev, setRev] = useState(0)
-  useEffect(() => { const f = () => setRev(x => x + 1); const off = onAppEvent(f); window.addEventListener(HEALTH_CHANGED, f); window.addEventListener("storage", f); window.addEventListener("fk-garmin-synced", f); return () => { off(); window.removeEventListener(HEALTH_CHANGED, f); window.removeEventListener("storage", f); window.removeEventListener("fk-garmin-synced", f) } }, [])
+  useEffect(() => subscribeHealthUpdates(() => setRev(x => x + 1), { batch: true, reconcile: true }), [])
   return rev
 }
 
@@ -68,9 +71,19 @@ export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }:
   const today = todayDate()
   const [tab, setTab] = useState<HealthTab>("recovery")
   // v89.10.6：今天还没同步到手表逐时样本（如刚过零点）时，默认打开最近 3 天内有样本的那天；可随时点“今天”回来。
-  const [day, setDay] = useState(() => { try { const all = loadIntraday(), has = (x: string) => !!(all[x]?.bb.length || all[x]?.hr.length); if (has(today)) return today; for (let i = 1; i <= 3; i++) { const x = shiftDay(today, -i); if (has(x)) return x } } catch { /* ignore */ } return today })
+  const [day, setSelectedDay] = useState(() => { try { const all = loadIntraday(), has = (x: string) => !!(all[x]?.bb.length || all[x]?.hr.length); if (has(today)) return today; for (let i = 1; i <= 3; i++) { const x = shiftDay(today, -i); if (has(x)) return x } } catch { /* ignore */ } return today })
   const [muscle, setMuscle] = useState(false)
   const rev = useHealthRev()
+  const historyPinned = useRef(false), previousToday = useRef(today)
+  const setDay = (next: string) => { historyPinned.current = next !== today; setSelectedDay(next) }
+  useEffect(() => {
+    const current = loadIntraday()[today]
+    const hasTodayData = !!(current?.bb.length || current?.hr.length || current?.st?.length)
+      || loadHealthSnapshot(today).metrics.some(m => m.current?.day === today || m.candidates.some(p => p.day === today))
+    const next = reconcileHealthDay({ day, today, previousToday: previousToday.current, historyPinned: historyPinned.current, hasTodayData })
+    previousToday.current = today
+    if (next !== day) setSelectedDay(next)
+  }, [day, today, rev])
   useEffect(() => {
     const showTrend = () => { setTab("recovery"); jumpTo("fk-intraday") }
     const showRecords = () => { setTab("body"); requestAnimationFrame(() => { const d = document.getElementById("body-device-records"); if (d instanceof HTMLDetailsElement) d.open = true; jumpTo("body-device-records") }) }
@@ -105,6 +118,16 @@ function DaySwitch({ day, today, onDay }: { day: string; today: string; onDay: (
 function onDay(view: HealthMetricView | undefined, day: string) { return view?.series.find(p => p.day === day) ?? (view?.current?.day === day ? view.current : null) }
 function nearest(rows: Sample[], t: number, within = 30 * 60e3) { let best: Sample | null = null; for (const p of rows) if (Math.abs(p[0] - t) <= within && (!best || Math.abs(p[0] - t) < Math.abs(best[0] - t))) best = p; return best }
 
+function batteryCaption(reading: CurrentHealthReading, day: string, offset?: number | null): string {
+  if (reading.value == null) return reading.statistic
+  if (reading.basis === "DAILY_SUMMARY") return reading.statistic
+  if (reading.measuredAt) {
+    const t = Date.parse(reading.measuredAt), hhmm = clock(t, offset ?? null)
+    return day === todayDate() ? freshSub(t, hhmm) : `测量于 ${hhmm}`
+  }
+  return `${reading.syncedAt ? clock(Date.parse(reading.syncedAt), offset ?? null) + "同步 · " : ""}测量时间未提供`
+}
+const decimalText = (value: number) => String(Number(value.toFixed(2)))
 type Tile = { key: string; label: string; value: string | null; unit: string; sub: string; delta: string | null; tone: "up" | "down" | "flat" | null; note?: string; stale?: string }
 function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): Tile[] {
   return useMemo(() => {
@@ -113,19 +136,23 @@ function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): T
     const v = (m: string) => snap.metrics.find(x => x.metric === m)
     const d = all[day], y = all[yday]
     const tiles: Tile[] = []
-    // 身体电量：有日内样本用当天最后一个读数（今天=最新），否则用日记录（注明统计口径）。
-    const bbLast = d?.bb.at(-1)
-    if (bbLast) {
-      const prev = y ? nearest(y.bb, bbLast[0] - 864e5) : null, dv = prev ? bbLast[1] - prev[1] : null
-      tiles.push({ key: "BB", label: "身体电量", value: String(bbLast[1]), unit: "/100", sub: day === todayDate() ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) : `当天最后 ${clock(bbLast[0], d.offsetMin)}`, stale: day === todayDate() && !freshSub(bbLast[0], "").startsWith("最新") ? freshSub(bbLast[0], clock(bbLast[0], d.offsetMin)) + syncNote(bbLast[0], day) : undefined, delta: dv == null ? null : `较昨日同时刻 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(dv)}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
-    } else {
-      const p = onDay(v("BODY_BATTERY"), day), q = onDay(v("BODY_BATTERY"), yday), dv = p && q && p.stream === q.stream ? p.value - q.value : null
-      tiles.push({ key: "BB", label: "身体电量", value: p ? String(Math.round(p.value)) : null, unit: "/100", sub: p ? p.statistic : "暂无当日读数", delta: dv == null ? null : `较昨日 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${Math.abs(Math.round(dv))}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
-    }
+    // Tiles, trend headings and coach facts resolve the same source and timestamps.
+    const bb = resolveBodyBattery(v("BODY_BATTERY"), d, day)
+    const bbSub = batteryCaption(bb, day, d?.offsetMin)
+    const sameSource = !!d?.sourceId && d.sourceId === y?.sourceId
+    const prev = bb.basis === "INTRADAY" && bb.measuredAt && y && sameSource
+      ? nearest(y.bb, Date.parse(bb.measuredAt) - 864e5) : null
+    const dv = prev && bb.value != null ? bb.value - prev[1] : null
+    tiles.push({ key: "BB", label: "身体电量", value: bb.value == null ? null : decimalText(bb.value), unit: "/100", sub: bbSub,
+      stale: bb.measuredAt && day === todayDate() && !bbSub.startsWith("最新") ? bbSub + syncNote(Date.parse(bb.measuredAt), day) : undefined,
+      delta: dv == null ? null : `较昨日同时刻 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${decimalText(Math.abs(dv))}`,
+      tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
     const daily = (key: string, metric: string, label: string, unit: string, fmt: (x: number) => string, dfmt: (x: number) => string, fallback?: number | null) => {
-      const p = onDay(v(metric), day), q = onDay(v(metric), yday), val = p?.value ?? fallback ?? null
+      const metricView = v(metric), p = onDay(metricView, day), q = onDay(metricView, yday)
+      const canFallback = metricView?.state !== "CONFLICT" && !metricView?.selectedSource && !metricView?.availableSources.length
+      const val = p?.value ?? (canFallback ? fallback : null) ?? null
       const dv = p && q && p.stream === q.stream ? p.value - q.value : null
-      tiles.push({ key, label, value: val == null ? null : fmt(val), unit, sub: p ? p.source : fallback != null ? "佳明日内" : "暂无", delta: dv == null ? null : `较昨日 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${dfmt(Math.abs(dv))}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
+      tiles.push({ key, label, value: val == null ? null : fmt(val), unit, sub: p ? p.source : metricView?.state === "CONFLICT" ? "来源待核对" : canFallback && fallback != null ? "佳明日内" : "暂无", delta: dv == null ? null : `较昨日 ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${dfmt(Math.abs(dv))}`, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
     }
     daily("RHR", "RHR", "静息心率", "bpm", x => String(Math.round(x)), x => String(Math.round(x)), d?.restingHr ?? null)
     // v89.1：佳明的睡眠/HRV 记在“醒来那天”。今天还没睡醒前（如凌晨）没有今天的值，显示最近一晚（昨天日期）并注明。
@@ -135,7 +162,7 @@ function useTiles(day: string, rev: number, all: Record<string, IntradayDay>): T
       tiles.push({ key, label, value: p ? fmt(p.value) : null, unit, sub: p ? `最近一晚 ${yday.slice(5)}` : "暂无", delta: p ? `最近一晚 ${yday.slice(5)}${dv == null ? "" : ` ${dv > 0 ? "↑" : dv < 0 ? "↓" : ""}${dfmt(Math.abs(dv))}`}` : null, tone: dv == null ? null : dv > 0 ? "up" : dv < 0 ? "down" : "flat" })
     }
     night("SLEEP", "SLEEP", "睡眠时长", "", hm, hmDelta)
-    night("HRV", "HRV", "HRV", "ms", x => String(Math.round(x)), x => `${Math.round(x)} ms`)
+    night("HRV", "HRV", "HRV", "ms", decimalText, x => `${decimalText(x)} ms`)
     return tiles
   }, [day, rev, all])
 }
@@ -178,13 +205,13 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
       </div>
       {review && review.signals.length ? <p className="keep mt-2 text-sm">{review.action}</p> : null}
       {decision ? <details className="fk-h89-disclosure" data-testid="batch99-evidence"><summary>负荷、依据与下一步观察</summary>{historyIssue?<p role="status">{historyIssue}；现有历史保留。</p>:null}<div className="keep whitespace-pre-wrap text-sm" data-testid="batch99-decision">{evidenceDecisionText(decision)}</div></details> : null}
-      {emptyMetrics ? <SyncNote /> : null}
+      {emptyMetrics ? <SyncNote rev={rev} /> : null}
       <div className="fk-h89-actions">{emptyMetrics ? <button type="button" className="fk-h89-pill" aria-label="导入健康数据" onClick={() => window.dispatchEvent(new Event("fk-open-health-records"))}>导入数据</button> : null}<button type="button" className="fk-h89-pill" aria-label="记录疲劳与疼痛" aria-expanded={checkin} aria-controls="health-checkin" onClick={() => setCheckin(!checkin)}>{checkin ? "收起记录" : "疲劳与疼痛"}</button>{onCoach ? <button type="button" className="fk-h89-pill" onClick={onCoach}>问方坤</button> : null}</div>
     </section>
     {checkin ? <div id="health-checkin"><CheckinCard key={day} today={day} watch={loadWatch() ?? "none"} onSaved={() => undefined} onPain={() => setPain(true)} />{pain ? <PainLog key={day} today={day} /> : null}<details className="fk-h89-disclosure"><summary>疲劳与疼痛历史</summary><div className="fk-h89-metrics" role="group" aria-label="主观记录指标">{([["fatigue","疲劳"],["pain","疼痛"]] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={subjective === id} onClick={() => setSubjective(id)}>{label}</button>)}</div>{trend(subjective, day)}</details></div> : null}
     {!emptyMetrics ? <div className="fk-h89-tiles" data-testid="h89-tiles">{tiles.map(t => <button type="button" key={t.key} className="fk-h89-tile text-left" data-testid={`h89-tile-${t.key}`} onClick={() => select(t.key === "SLEEP" ? "sleep" : t.key === "HRV" ? "hrv" : t.key === "BB" ? "bb" : "hr", true)}>
       <p className="keep text-xs text-muted">{t.label}</p>
-      <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? "暂无"}</b>{t.value && t.unit ? <span className="ml-0.5 text-[10px] text-muted">{t.unit}</span> : null}</p>
+      <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? (t.sub === "来源待核对" ? "待核对" : "暂无")}</b>{t.value && t.unit ? <span className="ml-0.5 text-[10px] text-muted">{t.unit}</span> : null}</p>
       {t.value && t.key === "BB" && !t.stale ? <p className="keep text-[11px] text-muted">{t.sub}</p> : null}
       {t.delta ? <p className="keep text-[10px] text-muted">{t.delta}</p> : null}{t.stale ? <p className="keep text-[10px] text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
     </button>)}</div> : null}
@@ -208,8 +235,12 @@ function AllDayTrend({ day, today, onDay: setDay, rev, d, view, metric, onMetric
   const all = useIntraday()
   const dailyMetric = EXPLORER.find(([id]) => id === metric)![2]
   const kind: K | null = metric === "bb" || metric === "hr" || metric === "st" ? metric : null
-  const samples = d && kind ? (kind === "bb" ? d.bb : kind === "hr" ? d.hr : d.st ?? []) : []
-  const typ = useMemo(() => kind ? typicalDay(all, day, kind) : null, [all, day, kind])
+  const metricView = useMemo(() => { void rev; return loadHealthSnapshot(day).metrics.find(m => m.metric === dailyMetric) }, [day, rev, dailyMetric])
+  const battery = useMemo(() => { void rev; return resolveBodyBattery(metricView, d, day) }, [metricView, d, day, rev])
+  const hideBatteryCurve = !!kind && (!intradayMatchesSource(metricView, d) ||
+    kind === "bb" && (battery.basis === "CONFLICT" || !!metricView?.selectedSource && battery.value == null))
+  const samples = d && kind && !hideBatteryCurve ? (kind === "bb" ? d.bb : kind === "hr" ? d.hr : d.st ?? []) : []
+  const typ = useMemo(() => kind ? typicalDay(all, day, kind, 7, 28, new Date().toISOString()) : null, [all, day, kind])
   const latest = samples.at(-1)
   const hours = useMemo(() => { const map = new Map<number, number[]>(); if (d) for (const [time, value] of samples) { const hour = Math.floor(minuteOfDay(time, d.day, d.offsetMin) / 60); if (hour >= 0 && hour < 24) map.set(hour, [...(map.get(hour) ?? []), value]) }; return [...map].sort((a,b) => a[0]-b[0]) }, [samples, d])
   const unit = kind ? META[kind].unit : metric === "hrv" ? "ms" : "小时"
@@ -224,16 +255,17 @@ function AllDayTrend({ day, today, onDay: setDay, rev, d, view, metric, onMetric
     </div> : null}
     {span === 1 && kind ? <>
       {latest && d ? <>
-        <div className="fk-h89-reading"><div><span>{META[kind].label} · {clock(latest[0], d.offsetMin)}</span><p><strong>{latest[1]}</strong> <small>{unit}</small></p></div><div><span>当天范围</span><p>{Math.min(...samples.map(p => p[1]))}–{Math.max(...samples.map(p => p[1]))}</p></div></div>
+        <div className="fk-h89-reading"><div><span>{META[kind].label} · {kind === "bb" ? batteryCaption(battery, day, d.offsetMin) : clock(latest[0], d.offsetMin)}</span><p><strong>{kind === "bb" ? battery.value ?? "待核对" : latest[1]}</strong> <small>{unit}</small></p></div><div><span>采样范围</span><p>{Math.min(...samples.map(p => p[1]))}–{Math.max(...samples.map(p => p[1]))}</p></div></div>
+        {kind === "bb" && battery.basis !== "INTRADAY" ? <p className="keep text-xs text-muted" data-testid="h89-curve-last">曲线最后采样：{clock(latest[0], d.offsetMin)} · {latest[1]}/100；与上方同步摘要分别保留。</p> : null}
         <DayChart key={`chart:${day}-${kind}`} d={d} view={view} k={kind} height={190} bandLabels typ={typ ?? undefined} />
         {typ ? <Legend k={kind} typ={typ} /> : null}
         <details className="fk-h89-disclosure" key={`samples:${day}-${kind}`}><summary>逐小时读数与来源 · {samples.length}个样本</summary>
           <p className="keep mb-2 text-xs text-muted">个人常态由近28天同钟点样本计算；每个钟点至少7天才显示中位数虚线，阴影为四分位范围。不是恢复目标。</p><div className="fk-h89-hours">{hours.map(([hour, values]) => <span key={hour}>{String(hour).padStart(2,"0")}时 <b>{Math.min(...values)}–{Math.max(...values)}</b></span>)}</div>
           <p className="keep text-xs text-muted">佳明手表样本 · 同步于 {new Date(d.fetchedAt).toLocaleString("zh-CN", {hour12:false})}{d.offsetMin != null ? ` · 手表时区 UTC${d.offsetMin >= 0 ? "+" : ""}${d.offsetMin / 60}` : ""}</p>
         </details>
-      </> : <div className="fk-h89-empty" data-testid="intraday-empty"><p>{mdCN(day)}没有{META[kind].label}逐时样本{day === today ? "（今天的数据同步后才有）" : ""}。</p>{(() => { const prev = Object.keys(all).filter(x => x < day && (kind === "bb" ? all[x].bb : kind === "hr" ? all[x].hr : all[x].st ?? []).length).sort().at(-1); return prev ? <button type="button" className="mt-1 min-h-11 font-bold text-accent" onClick={() => setDay(prev)}>看最近有数据的 {mdCN(prev)} ›</button> : null })()}</div>}
+      </> : <><MetricSummary day={day} rev={rev} metric={dailyMetric} /><div className="fk-h89-empty" data-testid="intraday-empty"><p>{hideBatteryCurve ? "当前来源暂无可用逐时曲线，未混用其他设备或账号数据。" : `${mdCN(day)}没有${META[kind].label}逐时样本，日汇总与逐时采样分别展示。`}</p>{(() => { const prev = Object.keys(all).filter(x => x < day && (kind === "bb" ? all[x].bb : kind === "hr" ? all[x].hr : all[x].st ?? []).length).sort().at(-1); return prev ? <button type="button" className="mt-1 min-h-11 font-bold text-accent" onClick={() => setDay(prev)}>看最近有数据的 {mdCN(prev)} ›</button> : null })()}</div></>}
       {view?.warnings.filter(w => /冲突/.test(w)).map(w => <p key={w} className="keep text-xs text-amber-400">{w}</p>)}
-      {showSyncNote ? <SyncNote /> : null}
+      {showSyncNote ? <SyncNote rev={rev} /> : null}
       <p className="keep mt-2 text-xs text-muted">{kind === "st" ? "压力是设备估算读数，不是心理诊断。" : kind === "bb" ? "身体电量是设备估算，不代表肌肉已恢复或可以加量。" : "全天心率来自手表样本，和每日静息心率分别展示。"}</p>
     </> : <>
       <MetricSummary day={day} rev={rev} metric={dailyMetric} />
@@ -245,8 +277,8 @@ function AllDayTrend({ day, today, onDay: setDay, rev, d, view, metric, onMetric
 }
 
 /** v89.1：日内补取失败不再静默——显示上次同步的日内结果。 */
-function SyncNote() {
-  const r = useMemo(() => { try { return JSON.parse(localStorage.getItem(garminStorageKey("fk-garmin-sync-report", currentAthleteId())) ?? "null")?.intraday as { requested: number; saved: number; failed: string[]; throttled: boolean } | undefined } catch { return undefined } }, [])
+function SyncNote({ rev }: { rev: number }) {
+  const r = useMemo(() => { try { return JSON.parse(localStorage.getItem(garminStorageKey("fk-garmin-sync-report", currentAthleteId())) ?? "null")?.intraday as { requested: number; saved: number; failed: string[]; throttled: boolean } | undefined } catch { return undefined } }, [rev])
   if (!r || (!r.failed.length && !r.throttled)) return null
   return <p className="keep mt-1 text-xs text-amber-400" data-testid="h89-sync-note">上次同步日内：取 {r.requested} 天，存 {r.saved} 天{r.throttled ? "；佳明限流，剩下的下次同步再补" : ""}{r.failed.length ? `；${r.failed.slice(0, 2).join("；")}` : ""}</p>
 }
@@ -255,7 +287,7 @@ function DayChart({ d, view, k, height, bandLabels = false, typ }: { d: Intraday
   const ref = useRef<SVGSVGElement>(null), [pick, setPick] = useState<Sample | null>(null)
   const [W, setWidth] = useState(360)
   useEffect(() => { const node = ref.current; if (!node) return; const resize = () => { const width = Math.round(node.getBoundingClientRect().width); if (width > 0) setWidth(width) }; resize(); const observer = new ResizeObserver(resize); observer.observe(node); return () => observer.disconnect() }, [pts.length > 0])
-  useEffect(() => setPick(null), [d.day, k])
+  useEffect(() => setPick(null), [d, k])
   const top = bandLabels ? 26 : 8, bottom = 16, left = 24, ph = height - top - bottom, pw = W - left - 4
   // v89.1：图上画“方坤估算·个人常态”（全天 24 小时，近 28 天同钟点），U10 的同情境参考区间仍给方坤做事实。
   const refRows = typ?.hours ?? []
@@ -330,6 +362,11 @@ function eventReadoutTime(value: string, offset: number) {
 
 function MetricSummary({ day, rev, metric }: { day: string; rev: number; metric: string }) {
   const view = useMemo(() => { void rev; return loadHealthSnapshot(day).metrics.find(m => m.metric === metric) }, [day, rev, metric])
+  const all = useIntraday()
+  const battery = metric === "BODY_BATTERY" ? resolveBodyBattery(view, all[day], day) : null
   const p = onDay(view, day) ?? ((metric === "HRV" || metric === "SLEEP") && day === todayDate() ? onDay(view, shiftDay(day, -1)) : null)
-  return <><div className="fk-h89-reading" data-testid="health-metric-summary"><div><span>{view?.label ?? metric}{p && p.day !== day ? ` · 最近一晚 ${p.day.slice(5)}` : ` · ${mdCN(day)}`}</span><p><strong>{p ? valueText(metric, p.value) : "暂无"}</strong></p></div><p className="keep text-xs text-muted">{p ? `${p.source} · ${p.statistic}${p.method ? ` · ${p.method}` : ""}` : view?.state === "CONFLICT" ? "来源存在冲突，请在身体与记录中核对。" : "所选日期没有记录"}</p></div>{view ? <details className="fk-h89-disclosure" key={`${day}-${metric}`}><summary>来源与比较依据</summary><HealthSourceDetails view={view} /></details> : null}</>
+  const value = battery ? battery.value : p?.value
+  const conflict = battery?.basis === "CONFLICT" || view?.state === "CONFLICT"
+  const description = battery ? batteryCaption(battery, day, all[day]?.offsetMin) : p ? `${p.source} · ${p.statistic}${p.method && p.method !== "UNSPECIFIED" ? ` · ${p.method}` : ""}` : conflict ? "来源存在冲突，请在身体与记录中核对。" : "所选日期没有记录"
+  return <><div className="fk-h89-reading" data-testid="health-metric-summary"><div><span>{view?.label ?? metric}{!battery && p && p.day !== day ? ` · 最近一晚 ${p.day.slice(5)}` : ` · ${mdCN(day)}`}</span><p><strong>{value != null ? valueText(metric, value) : conflict ? "待核对" : "暂无"}</strong></p></div><p className="keep text-xs text-muted">{description}</p></div>{view ? <details className="fk-h89-disclosure" key={`${day}-${metric}`}><summary>来源与比较依据</summary><HealthSourceDetails view={view} /></details> : null}</>
 }

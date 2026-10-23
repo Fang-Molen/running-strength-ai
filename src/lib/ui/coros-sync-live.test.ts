@@ -68,11 +68,11 @@ test('old authorization completion cannot replace the new pending job', async ()
 }))
 
 test('shared health job preserves partial existing values and releases busy state after completion', async () => isolated(async store => {
-  store.set('fk-coros-mcp-health-v1:synthetic-a', JSON.stringify({ fetchedAt: '2026-10-20T00:00:00Z', days: [{ date: '2026-10-20', hrvMs: 48.125, sleepMinutes: 450, steps: 0 }], stress: [], recovery: null, issues: [], raw: {} }))
-  const gate = deferred<Response>(); let requests = 0; globalThis.fetch = async () => { requests++; return gate.promise }
+  store.set('fk-coros-mcp-health-v1:synthetic-a', JSON.stringify({sessionScope:'synthetic-session',accountRef:'synthetic-account', fetchedAt: '2026-10-20T00:00:00Z', days: [{ date: '2026-10-20', hrvMs: 48.125, sleepMinutes: 450, steps: 0 }], stress: [], recovery: null, issues: [], raw: {} }))
+  const gate = deferred<Response>(); let requests = 0; globalThis.fetch = async input => String(input).endsWith('/status') ? reply({ok:true,connected:true,sessionScope:'synthetic-session',accountRef:'synthetic-account'}) : (requests++,gate.promise)
   const first = runCorosHealthSync('manual'); await flush(); const again = runCorosHealthSync('manual')
   assert.equal(first, again); assert.equal(readCorosSyncLive().health.running, true)
-  gate.resolve(reply({ ok: true, fetchedAt: new Date().toISOString(), days: [{ date: '2026-10-20', hrvMs: null, restingHr: 52.25 }], stress: [], recovery: null, issues: ['sleep tool deferred'], raw: {} }))
+  gate.resolve(reply({ ok: true, sessionScope:'synthetic-session',accountRef:'synthetic-account', fetchedAt: new Date().toISOString(), days: [{ date: '2026-10-20', hrvMs: null, restingHr: 52.25 }], stress: [], recovery: null, issues: ['sleep tool deferred'], raw: {} }))
   await first; assert.equal(requests, 1); assert.equal(readCorosSyncLive().health.running, false)
   const day = loadCorosHealth('synthetic-a')!.days[0]
   assert.equal(day.hrvMs, 48.125); assert.equal(day.restingHr, 52.25); assert.equal(day.steps, 0); assert.equal(day.sleepMinutes, 450)

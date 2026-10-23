@@ -5,6 +5,8 @@ import { currentStore } from '../core/storage'
 import { storeKeys } from '../core/storage-journal'
 import { readCoachData, type CoachDataContext } from '../health/coach-data'
 import { loadHealthSnapshot, healthSummaryLine } from '../health/snapshot'
+import { loadIntraday } from '../health/intraday-store'
+import { resolveBodyBattery } from '../health/health-current'
 import { HEALTH_CHANGED, localDay, shortHash, validDay } from '../health/observation'
 import { loadEntries, nutrientOf } from '../nutrition/log'
 import { readPendingFeedback } from '../ui/pending-feedback-host'
@@ -16,7 +18,7 @@ import { coordinateGlobal, type Evidence, type GlobalResult, type Task } from '.
 
 export const GLOBAL_COACH_EVENTS = [
   HEALTH_CHANGED, ATHLETE_SCOPE_CHANGED, C03_FOLLOWUP_CHANGED_EVENT, PLAN_EXECUTION_EVENT,
-  'fk-food-changed', 'fk-garmin-synced', 'fk-schedule-changed', 'fk-training-activities-changed',
+  'fk-coros-changed', 'fk-food-changed', 'fk-garmin-synced', 'fk-schedule-changed', 'fk-training-activities-changed',
   'fk-training-corrected', 'fk-plan400-changed', 'fk-plan400-components', 'fk-run-links',
   'storage', 'pageshow', 'focus',
 ] as const
@@ -38,7 +40,7 @@ function sourceFingerprint() {
   const store = currentStore()
   if (!store) throw Error('STORAGE_UNAVAILABLE')
   const keys = storeKeys(store).filter(key =>
-    /^(fr255-(events|event-journal|running-tx|training-|confirmed-training|vitals|food-log)|fk-(health-|pain-log|checkin|device-|watch-|plan400|schedule|run-links|today-checklist)|fangkun-import-session-ratings)/.test(key)).sort()
+    /^(fr255-(events|event-journal|running-tx|training-|confirmed-training|vitals|food-log)|fk-(health-|coros-mcp-health|garmin-intraday|pain-log|checkin|device-|watch-|plan400|schedule|run-links|today-checklist)|fangkun-import-session-ratings)/.test(key)).sort()
   return JSON.stringify(keys.map(key=>[key,store.getItem(key)]))
 }
 export function feedbackTasks(items: readonly PendingItem[], athleteId: string): Task[] {
@@ -78,7 +80,17 @@ export async function readGlobalCoachSnapshot(
     data = readCoachData(day)
     const health = loadHealthSnapshot(day)
     if (health.unreadable) limitations.push('部分健康来源无法读取，未视为正常。')
-    evidence = health.metrics.map(metric => {
+    evidence = health.metrics.map((metric): HostEvidence => {
+      if (metric.metric === 'BODY_BATTERY') {
+        const current = resolveBodyBattery(metric, loadIntraday(athleteId)[day], day)
+        const availability = health.unreadable ? 'ERROR' : current.basis === 'CONFLICT' ? 'CONFLICT' : current.value === null ? 'MISSING' : 'AVAILABLE'
+        const timing = current.basis === 'DAILY_SUMMARY' ? current.statistic : current.measuredAt ? `测量 ${current.measuredAt}` : `同步 ${current.syncedAt ?? '时间未知'}；测量时间未提供`
+        return { id: `health:${athleteId}:BODY_BATTERY`, athleteId, domain: 'HEALTH', availability,
+          revision: revision([current, metric.selectedSource]), observedAt: current.measuredAt, knownAt: current.syncedAt,
+          summary: current.value == null ? `身体电量：${current.statistic}` : `身体电量：${current.value}/100 · ${day} · ${timing}；不是恢复许可`,
+          sourceId: current.sourceId ?? 'health:BODY_BATTERY:unresolved', metric: metric.metric, unit: '/100',
+          value: current.value, quality: current.value === null ? 'UNKNOWN' : 'RECORDED', coverage: 'RECORDED_ONLY' }
+      }
       const p = metric.current
       return { id: `health:${athleteId}:${metric.metric}`, athleteId, domain: 'HEALTH', availability: health.unreadable ? 'ERROR' : metric.state,
         revision: revision([metric.state, metric.current, metric.candidates, metric.selectedSource]),

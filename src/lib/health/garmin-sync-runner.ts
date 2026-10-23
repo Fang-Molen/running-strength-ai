@@ -137,7 +137,7 @@ export async function runGarminSyncJob(host: {
       if (!ihr && !ist) { intradayStat.failed.push(`${d} 日内请求失败（网络）`); return }
       const hr = emptyResource(ihr), stress = emptyResource(ist), sleep = emptyResource(sl)
       const built = buildIntradayDay({ day: d, now: host.now, hr, stress, sleep, activities: acts })
-      if (built.day) intraday.push(built.day); else if (built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
+      if (built.day) intraday.push({ ...built.day, sourceId: 'garmin:' + shortHash(account.scope) }); else if (built.failures.length) intradayStat.failed.push(...built.failures.slice(0, 2))
       if (host.dailyProgress) {
         // Empty valid replies may produce no IntradayDay. Missing transport
         // replies and failed metrics must never be mistaken for checked empties.

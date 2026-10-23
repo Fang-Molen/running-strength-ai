@@ -1,0 +1,7 @@
+{
+  "release": "v89.10.11-health-sync-r2",
+  "sourceBaseline": "v89.10.11",
+  "storageMigrationRequired": false,
+  "userDataResetRequired": false,
+  "note": "Source release marker only; not a claim of provider authorization or live validation."
+}
