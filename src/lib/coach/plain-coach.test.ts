@@ -13,18 +13,20 @@ test('default link: most recent, or the asked day', () => {
   assert.equal(pickDefaultActivity('复盘前天', [older, run], '2026-10-19')!.id, 2)
   assert.equal(pickDefaultActivity('今天跑得怎么样', [older, run], '2026-10-19'), null)
 })
-test('review is conclusion-first, plain, with reason and next-session prescription, no stock hedging', () => {
+test('review preserves numbers, purpose uncertainty and observation-only next step', () => {
   const t = reviewActivity(run, null, '2026-10-19')
   assert.match(t, /^结论：2026-10-18 6\.01 km 31:38/); assert.match(t, /5'16"\/km/); assert.match(t, /心率 144/)
   assert.match(t, /为什么：/)
   // v86（R1.1）：没有用户在用的计划/目标时，不再套内置 V4 课表和“400米53秒”目标。
   assert.doesNotMatch(t, /53秒|12\/28|按你在用的计划/); assert.match(t, /还没有在资料里设定目标成绩/); assert.match(t, /下一课怎么练：按你自己的计划安排/)
-  assert.doesNotMatch(t, /尚无可核对|尚未关联|可撤回|已批准原课程|还需证据|无法判断|UNKNOWN/)
+  assert.match(t, /训练目的：UNKNOWN/); assert.match(t, /解释一/); assert.match(t, /解释二/); assert.match(t, /任何变更须确认/); assert.doesNotMatch(t, /乳酸清除|线粒体|减1组|24–48小时恢复/)
   assert.match(t, /加载分段/)
 })
 test('v86: review uses the V4 plan and the profile goal only when they are the user\'s own', async () => {
   const { setStoreBackend } = await import('../core/storage.ts')
   const m = new Map<string, string>([['fk-plan400-v4-log', JSON.stringify({ '2026-10-18': { done: 'done' } })], ['fr255-profile-v1', JSON.stringify({ marks: [{ meters: 400, goal: '58', recent: '', deadline: '' }] })]])
+  // Synthetic owned plan: the slim source intentionally excludes private athlete fixtures.
+  m.set('fk-plan-doc-v1', JSON.stringify({schema:'fangkun-plan-v1',tag:'V4',plan:{name:'synthetic',weeks:[],shiftDays:0,days:[{date:'2026-10-18',title:'基础训练',main:['连续跑'],aux:[],strength:[]},{date:'2026-10-19',title:'速度耐力＋力量A',main:['正式主课：150m×3'],aux:[],strength:[]}]}}))
   setStoreBackend({ getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => { m.set(k, v) } })
   try {
     const t = reviewActivity(run, null, '2026-10-19')
@@ -34,22 +36,22 @@ test('v86: review uses the V4 plan and the profile goal only when they are the u
 test('review with laps reads pace drift and HR drift', () => {
   const laps = [1, 2, 3, 4, 5, 6].map(i => ({ i, dist: 1000, dur: 300 + (i > 3 ? 20 : 0), avgHr: 140 + (i > 3 ? 12 : 0), maxHr: 160, cad: 170, elev: 0, speed: null }))
   const t = reviewActivity(run, laps, '2026-10-19')
-  assert.match(t, /后半程掉速 20 秒\/公里、心率还上升 12/); assert.match(t, /心率漂移/)
+  assert.match(t, /后半程比前半程慢 20 秒\/公里；心率变化 12 bpm/); assert.match(t, /不把它当作疲劳诊断/)
   assert.match(activityFacts(run, laps).join('\n'), /第4段 1\.00 km 5'20"\/km 心率152/)
 })
-test('400m×8 1min vs 8min: clear physiological contrast and how to use, plus a concrete test', () => {
+test('interval comparison explains conditions without inventing an all-out test', () => {
   const t = intervalRestAnswer('400米×8，组间休息1分钟和8分钟有什么区别？')!
-  assert.match(t, /^结论：/); assert.match(t, /乳酸耐受/); assert.match(t, /速度耐力/); assert.match(t, /不完全恢复/); assert.match(t, /速度质量/); assert.match(t, /比赛配速/); assert.match(t, /接近完全恢复/)
-  assert.match(t, /怎么用：/); assert.match(t, /300 米全力计时/)
-  assert.doesNotMatch(t, /UNKNOWN|还需证据|判断边界|不能仅凭/)
+  assert.match(t, /^结论：/); assert.match(t, /实际速度、组数、完成质量和教练意图/); assert.match(t, /速度质量/); assert.match(t, /不保证组织完全恢复/)
+  assert.match(t, /怎么用：/); assert.match(t, /原批准课程/); assert.match(t, /只比较一个变量/); assert.doesNotMatch(t, /300 米全力计时|相差超过2秒|休息10分钟/)
+  assert.match(t, /出现疼痛不做试探测试/)
   assert.equal(intervalRestAnswer('今天吃什么'), null)
   assert.ok(intervalRestAnswer('400米×8，休1分钟和休8分钟有什么区别'))
   assert.ok(intervalRestAnswer('400m x8 歇1分钟 vs 歇8分钟'))
 })
-test('even pace with +8 bpm is described as mild drift, not "no drift"', () => {
+test('pace and HR changes are numerical observations without an uncalibrated fatigue threshold', () => {
   const laps = [[1000,312,138],[1000,313,141],[1000,315,143],[1000,317,146],[1000,318,149],[1010,323,151]].map(([d,t,h],i)=>({ i: i+1, dist: d, dur: t, avgHr: h, maxHr: h+6, cad: 172, elev: 0, speed: null }))
   const t = reviewActivity(run, laps, '2026-10-19')
-  assert.match(t, /^结论：/); assert.match(t, /轻度心率漂移/); assert.doesNotMatch(t, /心率没明显飘/)
+  assert.match(t, /^结论：/); assert.match(t, /心率变化 8 bpm/); assert.doesNotMatch(t, /轻度心率漂移|心率没明显飘|已经恢复/)
 })
 test('free questions are not review asks (no auto-binding)', () => { for (const q of ['明天怎么安排','运动后为什么酸痛','我800米PB两分钟，怎么提高','下周训练计划怎么安排']) assert.equal(isReviewAsk(q), false, q) })
 test('reported-result review is not hijacked by the interval concept answer', () => {

@@ -390,11 +390,12 @@ export function CoachSheet({
       const conversation = extractConversationContext(memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING"), value);
       const contextual = detectRedFlags(value).level!=='NONE'||local.offlineRuleIds?.length||local.reasoning?.scopeOccurrenceIds.length?null:contextualFollowup(value, conversation);
       // 安全门：急症/疼痛/必须保留的安全约束 → 只用本地安全回答，不联网、不替换。
-      const redFlag = detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
+      const chainHold = brief.appData?.decision?.safety==='URGENT'||brief.appData?.decision?.safety==='REVIEW';
+      const redFlag = chainHold || detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
       // v87：待审知识预览、单纯换算、无候选的剩余任务只在本地展示，不联网、不被跑步复盘替换。
       const keepLocal = answerStaysLocal(local);
-      let shown = local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
-      if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today);
+      let shown = chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
+      if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {

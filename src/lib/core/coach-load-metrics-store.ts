@@ -1,7 +1,7 @@
 import { calendarDay } from './coach-calendar.ts'
 import { coachImports } from './coach-import-evidence.ts'
 import { loadImportRatings, type ImportRating } from './coach-import-rating.ts'
-import { currentAthleteId, loadEvents } from './events.ts'
+import { currentAthleteId, loadCommittedEventRecords } from './events.ts'
 import { projectOccurrenceEvidence } from './evidence.ts'
 import { listTrainingOccurrences, type TrainingOccurrence } from './occurrence.ts'
 import { readJournal, appendJournal } from './storage-journal.ts'
@@ -64,7 +64,7 @@ export function projectSavedSessionLoads(input: Sources): SavedSessionLoad[] {
 }
 
 export function readSavedSessionLoads(athleteId = currentAthleteId(), asOf = new Date().toISOString()): SavedSessionLoad[] {
-  return projectSavedSessionLoads({ athleteId, asOf, events: loadEvents(), occurrences: listTrainingOccurrences(), imports: coachImports(athleteId, asOf), corrections: listCorrections(), ratings: loadImportRatings() })
+  return projectSavedSessionLoads({ athleteId, asOf, events: loadCommittedEventRecords().filter(r=>r.recordedAt&&Number.isFinite(Date.parse(r.recordedAt))&&Date.parse(r.recordedAt)<=Date.parse(asOf)).map(r=>r.event), occurrences: listTrainingOccurrences(), imports: coachImports(athleteId, asOf), corrections: listCorrections(), ratings: loadImportRatings() })
 }
 
 export function readLoadCoverage(athleteId = currentAthleteId(), asOf = new Date().toISOString()): LoadDayConfirmation[] {

@@ -23,7 +23,7 @@ test('model DTO aliases identity and only exact numeric/unit/direction claims pa
  const s=projectAnalysisEvidence({context,facts:[metric({id:'PRIVATE_ACCOUNT',sourceRecordId:'private-source'})]}),p=buildCoachAnalysisPacket(s,evaluateRecoveryEvidence(s),buildMuscleExposure(s)),w=analysisModelView(p)
  assert.doesNotMatch(JSON.stringify(w.view),/PRIVATE_ACCOUNT|private-source|SYN-A/)
  const o=w.view.observations[0],r=w.restore({answer:o.text,factualClaims:[{text:o.text,refs:o.evidenceRefs}],hypotheses:[],selectedCandidateId:null,unknowns:[],followup:null,memoryClaim:'NOT_SAVED'})
- assert.equal(validateCoachAnalysisReply(r,p).status,'ACCEPTED_STRUCTURALLY');assert.equal(validateCoachAnalysisReply({...r,answer:o.text+'因此你一定恢复好了'},p).status,'NEEDS_SEMANTIC_REVIEW')
+ assert.equal(validateCoachAnalysisReply(r,p).status,'ACCEPTED_STRUCTURALLY');assert.equal(validateCoachAnalysisReply({...r,answer:r.answer+'因此你一定恢复好了'},p).status,'NEEDS_SEMANTIC_REVIEW')
 })
 test('personal response persists append-only, survives reread and stays athlete scoped',t=>{
  const before=currentAthleteId(),map=new Map<string,string>();setEventContext({athleteId:'SYN-A'});setStoreBackend({getItem:k=>map.get(k)??null,setItem:(k,v)=>{map.set(k,v)},keys:()=>[...map.keys()]});t.after(()=>{setStoreBackend(null);setEventContext({athleteId:before})})

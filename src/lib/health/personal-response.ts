@@ -4,10 +4,10 @@ export type ResponseTimeline={trainingRef:ReturnType<typeof refOf>;timeOrigin:'T
 export const quantile=(values:number[],p:number):number|null=>{if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),x=(a.length-1)*p,l=Math.floor(x);return a[l]+(a[Math.ceil(x)]-a[l])*(x-l)}
 /** Exact-dose matching is deliberately conservative: no unvalidated similarity tolerance. */
 export function responseProtocol(t:TrainingFact):string|null {
- if(!t.protocolKey||!t.deviceId||!t.accountRef)return null
+ if(!t.protocolKey||!['APP','MANUAL'].includes(t.provider)&&(!t.deviceId||!t.accountRef))return null
  if(t.modality==='STRENGTH'&&(!t.strengthSets.length||t.strengthSets.some(s=>s.completion==='COMPLETED'&&(!s.catalogId||!s.catalogVersion||s.side==='UNSPECIFIED'||s.loadKg===null||s.loadBasis==='UNKNOWN'||s.reps===null&&s.holdSeconds===null||s.rir===null||!s.rangeProtocol))))return null
  if(t.modality==='RUN'&&(!t.runSegments.length||t.runSegments.some(s=>s.completion==='COMPLETED'&&(s.distanceM===null||s.durationSeconds===null||s.surface===null))))return null
- return stableJson([t.athleteId,t.provider,t.accountRef,t.deviceId,t.protocolKey,t.modality,t.strengthSets.map(({id,...s})=>s),t.runSegments.map(({id,...s})=>s)])
+ return stableJson([t.athleteId,t.provider,t.accountRef,t.deviceId,t.protocolKey,t.modality,t.strengthSets.map(({id,...s})=>s),t.runSegments.map(({id,blockId,...s})=>({...s,blockOrdinal:[...new Set(t.runSegments.map(x=>x.blockId))].indexOf(blockId)}))])
 }
 export function reviewPersonalResponse(input:PersonalResponseInput):PersonalResponseReview & {timeline:ResponseTimeline[];windows:{hours:number;sessionCount:number;median:number|null;iqr:[number,number]|null}[]} {
  const s=projectAnalysisEvidence({context:input.context,facts:[...input.training,...input.responses]})
@@ -33,4 +33,17 @@ export function reviewPersonalResponse(input:PersonalResponseInput):PersonalResp
  const evidenceRefs=[...training,...responses].map(refOf),missingCount=timeline.filter(t=>!t.observations.length).length
  const status=!training.length?'UNCALIBRATED':!comparator?'NOT_COMPARABLE':comparable.some(t=>t.observations.length)?'DESCRIPTIVE':'INSUFFICIENT'
  return {status,endpoint:input.registeredEndpoint,independentSessionCount:new Set(training.map(t=>t.canonicalActivityId)).size,observationCount:timeline.reduce((n,t)=>n+t.observations.length,0),intervalCensoredCount:timeline.filter(t=>t.endpointInterval).length,rightCensoredCount:timeline.filter(t=>t.rightCensoredAt!==null).length,missingCount,comparator,estimateInterval:null,unit:null,validationReportId:null,evidenceRefs,caveats:['未校准：仅描述真实观测，不预测组织恢复或许可训练','未登记的终点不拟合；缺失与72小时后仍有症状者保留','同一训练多次随访不作为独立样本','睡眠、疾病、测量条件缺少时，不能排除混杂'],isTissueRecoveryPrediction:false,canAuthorizeTraining:false,timeline,windows}
+}
+
+/** Descriptive follow-up trace; only complete same-protocol records form a comparator. */
+export function personalHistorySummary(training:TrainingFact[],responses:ResponseFact[],context:PersonalResponseInput['context']) {
+ const valid=projectAnalysisEvidence({context,facts:[...training,...responses]}),ts=valid.facts.filter((f):f is TrainingFact=>f.kind==='TRAINING'),rs=valid.facts.filter((f):f is ResponseFact=>f.kind==='RESPONSE')
+ const latest=ts.sort((a,b)=>a.startedAt.localeCompare(b.startedAt)).at(-1),key=latest?responseProtocol(latest):null
+ const matched=key?ts.filter(t=>responseProtocol(t)===key):[]
+ const linked=rs.filter(r=>r.relatedTrainingRefs.some(x=>matched.some(t=>t.id===x.id&&t.revision===x.revision)))
+ const windows=[24,48,72].map(hours=>{
+  const observations=linked.flatMap(r=>{const t=matched.find(t=>r.relatedTrainingRefs.some(x=>x.id===t.id&&x.revision===t.revision));if(!t?.endedAt||(Date.parse(r.occurredAt)-Date.parse(t.endedAt))/36e5!==hours)return [];return [{trainingRef:refOf(t),ref:refOf(r),measure:r.measure,scale:r.scale,value:r.value,notes:r.notes}]})
+  return {hours,sessionCount:new Set(observations.map(o=>o.trainingRef.id)).size,observations}
+ })
+ return {status:key?'DESCRIPTIVE' as const:'NOT_COMPARABLE' as const,matchedSessionCount:new Set(matched.map(t=>t.canonicalActivityId)).size,recordedResponseCount:rs.length,windows,evidenceRefs:[...matched,...linked].map(refOf),caveat:'只描述同来源同协议的实际观测；24/48/72h不是恢复处方，缺测不插值，睡眠、前置训练等混杂仍需核对。不能形成固定恢复型标签。'}
 }

@@ -11,8 +11,8 @@ const sourceKey = (f:AnalysisFact) => stableJson([sourceScope(f),f.sourceRecordI
 const number = (n:unknown) => n===null || typeof n==='number' && Number.isFinite(n) && n>=0
 export function validAnalysisFact(f:AnalysisFact):boolean {
  if(!f||!f.id||!f.sourceRecordId||!f.athleteId||!Number.isSafeInteger(f.revision)||f.revision<0||![f.occurredAt,f.knownAt,f.receivedAt].every(exactInstant)||Date.parse(f.knownAt)<Date.parse(f.occurredAt)||Date.parse(f.receivedAt)<Date.parse(f.occurredAt))return false
- if(!['APP','MANUAL','GARMIN','COROS','APPLE','HUAWEI'].includes(f.provider)||!['CONFIRMED','UNVERIFIED','PLANNED','RETRACTED'].includes(f.status))return false
- if(!['AVAILABLE','PARTIAL','MISSING','CONFLICT','STALE','UNSUPPORTED'].includes(f.quality))return false
+ if(!['APP','MANUAL','GARMIN','COROS','APPLE','HUAWEI','POLAR','SUUNTO','APPLE_HEALTH','HEALTH_CONNECT','OTHER'].includes(f.provider)||!['CONFIRMED','UNVERIFIED','PLANNED','RETRACTED'].includes(f.status))return false
+ if(!['AVAILABLE','PARTIAL','MISSING','CONFLICT','STALE','UNSUPPORTED','UNKNOWN','FAILED','UNAVAILABLE','NOT_RECORDED','PERMISSION_DENIED','NOT_WORN','NULL'].includes(f.quality))return false
  if(f.kind==='METRIC')return number(f.value)&&!!f.unit&&[f.windowStart,f.windowEnd].every(x=>x===null||exactInstant(x))&&!(f.windowStart&&f.windowEnd&&Date.parse(f.windowEnd)<Date.parse(f.windowStart))
  if(f.kind==='RESPONSE')return (f.value===null||Number.isFinite(f.value))&&!!f.scale&&Array.isArray(f.relatedTrainingRefs)
  if(f.kind!=='TRAINING'||!exactInstant(f.startedAt)||f.endedAt!==null&&(!exactInstant(f.endedAt)||Date.parse(f.endedAt)<Date.parse(f.startedAt)))return false
@@ -41,7 +41,7 @@ export function projectAnalysisEvidence(input:ProjectionInput):EvidenceSnapshot 
   if(new Set(top.map(semantic)).size>1||top.some(f=>f.quality==='CONFLICT')){conflicts.push({refs:top.map(refOf),reason:'SAME_SOURCE_REVISION_CONFLICT'});continue}
   const f=top.sort((a,b)=>a.receivedAt.localeCompare(b.receivedAt))[top.length-1]
   if(f.status!=='CONFIRMED'){excluded.push({ref:refOf(f),reason:f.status});continue}
-  if(['MISSING','STALE','UNSUPPORTED'].includes(f.quality)){gaps.push(`${f.id}: ${f.quality}`);excluded.push({ref:refOf(f),reason:f.quality});continue}
+  if(['MISSING','STALE','UNSUPPORTED','UNKNOWN','FAILED','UNAVAILABLE','NOT_RECORDED','PERMISSION_DENIED','NOT_WORN','NULL'].includes(f.quality)){gaps.push(`${f.id}: ${f.quality}`);excluded.push({ref:refOf(f),reason:f.quality});continue}
   facts.push(structuredClone(f))
  }
  // Explicit multi-device canonical mapping: retain raw sources in the input journal, count only the selected component.
@@ -61,7 +61,7 @@ export function projectAnalysisEvidence(input:ProjectionInput):EvidenceSnapshot 
 /** Separate same-protocol daily reference; never sum revisions or average devices. */
 export function analysisReference(snapshot:EvidenceSnapshot,current:MetricFact){
  if(!current.accountRef||!current.deviceId||!current.protocolKey||/UNKNOWN|UNSPECIFIED/i.test(current.protocolKey))return {sampleCount:0,median:null,deltaPercent:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current)}
- const rows=snapshot.facts.filter((f):f is MetricFact=>f.kind==='METRIC'&&f.metric===current.metric&&sourceScope(f)===sourceScope(current)&&f.unit===current.unit&&f.statistic===current.statistic&&!!f.providerDate&&!!current.providerDate&&f.providerDate<current.providerDate&&f.isFinal===true&&f.value!==null)
+ const rows=snapshot.facts.filter((f):f is MetricFact=>f.kind==='METRIC'&&f.metric===current.metric&&sourceScope(f)===sourceScope(current)&&f.unit===current.unit&&f.statistic===current.statistic&&!!f.providerDate&&!!current.providerDate&&f.providerDate<current.providerDate&&Date.parse(current.providerDate)-Date.parse(f.providerDate)<=30*86400000&&f.isFinal===true&&f.value!==null)
  const days=new Map<string,MetricFact[]>();for(const f of rows)days.set(f.providerDate!,[...(days.get(f.providerDate!)??[]),f])
  const values=[...days.values()].filter(xs=>new Set(xs.map(x=>x.value)).size===1).map(xs=>xs[0].value!).sort((a,b)=>a-b)
  const median=values.length?values.length%2?values[(values.length-1)/2]:(values[values.length/2-1]+values[values.length/2])/2:null
