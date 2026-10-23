@@ -51,7 +51,10 @@ test('store: per athlete, newest 28 days kept (v89.1), old days compacted, compl
   assert.ok(all['2026-10-10'].hr.length <= 288 && all['2026-10-31'].hr.length > 288, 'older days compacted, recent days full')
   assert.equal(intradayComplete('2026-10-30'), true)
   saveIntraday([buildIntradayDay({ day: '2026-10-31', now: '2026-10-31T02:00:00Z', hr: ok(fixtureHeartRate('2026-10-31', 2)), stress: ok(fixtureStress('2026-10-31', 2)) }).day!])
-  assert.equal(intradayComplete('2026-10-31'), false, 'fetched before local day end → refetch')
+  assert.equal(intradayComplete('2026-10-31'), true, 'late older fetch cannot roll back an already complete day')
+  // A genuinely first, unfinished day must still be re-fetched.
+  saveIntraday([buildIntradayDay({ day: '2026-11-01', now: '2026-11-01T02:00:00Z', hr: ok(fixtureHeartRate('2026-11-01', 2)), stress: ok(fixtureStress('2026-11-01', 2)) }).day!])
+  assert.equal(intradayComplete('2026-11-01'), false, 'first fetch before day end remains incomplete')
   assert.deepEqual(loadIntraday('other'), {})
 })
 test('sync runner: fetches dailyHeartRate/dailyStress for recent days only, saves after fence, failures non-fatal', async () => {

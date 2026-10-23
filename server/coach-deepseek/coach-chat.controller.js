@@ -4,6 +4,7 @@ import { assertDeepSeekNumericGrounding, assertDeepSeekEvidenceQuotes } from '..
 import { selectDeepSeekRoute, estimateInputTokenUpperBound } from '../../src/lib/coach/deepseek-policy.ts';
 import { parseCoachRequest, assertSnapshotBinding, assertVerifiedPolicy, minimalCoachInput, aliasCoachInput, costMicros } from './lib/coach-request-boundary.ts';
 import { providerReturnedModel, parseProviderUsage, validateProviderReply, boundedResponseJson } from './lib/coach-provider-boundary.ts';
+import { validateCoachAnalysisReply, analysisModelView } from '../../src/lib/health/analysis-packet.ts';
 
 /** @param {unknown} value @param {number} [status] */
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'} });
@@ -32,10 +33,16 @@ export async function onRequestPost({request,env={},data={}}) {
   let refs;
   try { refs=parseCoachRequest(await boundedResponseJson(new Response(request.body,{headers:request.headers}),4096)); } catch(error) { const tooLarge=error instanceof Error && error.message==='PROVIDER_BODY_CAP'; return failure(tooLarge?'REQUEST_TOO_LARGE':'REQUEST_INVALID',tooLarge?413:400); }
   if (Date.parse(refs.asOf)>now) return failure('AS_OF_FUTURE',400);
-  let snapshot, canonical, aliased, modelRequest, policy, route;
+  /** @type {import('./lib/coach-service-contract.ts').AuthorizedCoachSnapshot} */
+  let snapshot;
+  let canonical, aliased, modelRequest, policy, route;
+  /** @type {ReturnType<typeof analysisModelView>|null} */
+  let analysisWire=null;
   try {
-    snapshot=await services.loadAuthorizedSnapshot(subject,refs);
-    assertSnapshotBinding(snapshot,subject,refs,now);
+    const loaded=await services.loadAuthorizedSnapshot(subject,refs);
+    assertSnapshotBinding(loaded,subject,refs,now);
+    if(!loaded)throw Error('SNAPSHOT_MISSING');
+    snapshot=loaded;
     canonical=normalizeAskCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
     const urgentSafety=coachLocalSafetyTurn(canonical);
     if(urgentSafety)return json({ok:true,text:urgentSafety.text,turn:urgentSafety,model:null,route:'LOCAL',planChanged:false});
@@ -57,8 +64,15 @@ export async function onRequestPost({request,env={},data={}}) {
     if(typeof env.DEEPSEEK_API_KEY!=='string'||!env.DEEPSEEK_API_KEY.trim())return failure('SERVICE_KEY_MISSING');
     aliased=aliasCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
     modelRequest=buildCoachModelRequest(normalizeAskCoachInput(aliased.input),{profile:'minimal-transport'});
+    if(snapshot.analysisPacket){
+      const packet=snapshot.analysisPacket;
+      if(packet.context.athleteId!==snapshot.athleteId||packet.context.asOf!==snapshot.asOf||packet.writeAuthority!=='NONE'||packet.assessment.snapshotId!==packet.snapshotId||packet.exposure.snapshotId!==packet.snapshotId||packet.permittedFacts.some(f=>f.athleteId!==snapshot.athleteId||Date.parse(f.knownAt)>Date.parse(snapshot.asOf)))throw Error('ANALYSIS_PACKET_BINDING');
+      analysisWire=analysisModelView(packet);
+      // Send selected calculated quotations only; no GPS, identity, raw journal or full page.
+      modelRequest.messages=[{role:'system',content:'返回 JSON: answer,factualClaims[{text,refs[{id,revision}]}],selectedCandidateId,hypotheses,unknowns,followup,memoryClaim。事实必须完整逐字引用提供的 observations。仅选择允许的候选ID；不得改数值、方向或解除限制。memoryClaim=NOT_SAVED。新解释会标待复核，不能直接成为处方。'}, {role:'user',content:JSON.stringify({question:refs.question,...analysisWire.view})}];
+    }
   } catch { return failure('AUTHORIZED_CONTEXT_UNAVAILABLE'); }
-  modelRequest.messages[0].content += '\n所有数字必须逐字引用一条实际/派生证据；增加 evidenceQuotes 数组，每项仅含 sourceId 和 quote，quote 必须是该证据原文且完整出现在正文中；非引用部分不输出新数字。给出竞争解释、缺失信息和有条件的观察建议，不作医学签审。';
+  if(!snapshot.analysisPacket) modelRequest.messages[0].content += '\n所有数字必须逐字引用一条实际/派生证据；增加 evidenceQuotes 数组，每项仅含 sourceId 和 quote，quote 必须是该证据原文且完整出现在正文中；非引用部分不输出新数字。给出竞争解释、缺失信息和有条件的观察建议，不作医学签审。';
   const authorizationStillValid=async()=>{
     const currentSubject=await services.authenticate(request);
     if(!currentSubject||currentSubject.id!==subject.id||!currentSubject.verified)throw Error('REVOKED');
@@ -106,7 +120,14 @@ export async function onRequestPost({request,env={},data={}}) {
   if(settlement?.state!=='SETTLED'||settlement?.overrun)return failure('BILLING_REQUIRES_REVIEW');
   let interpreted;
   try {
-    const raw=validateProviderReply(reply,policy,route);
+    const raw=validateProviderReply(reply,policy,route,!!snapshot.analysisPacket);
+    if(snapshot.analysisPacket){
+      await authorizationStillValid();
+      if(!analysisWire)throw Error('ANALYSIS_CONTEXT_MISSING');
+      const parsed=analysisWire.restore(JSON.parse(raw)),validation=validateCoachAnalysisReply(parsed,snapshot.analysisPacket);
+      if(validation.status!=='ACCEPTED_STRUCTURALLY')return json({ok:false,error:validation.status==='REJECTED'?'ANALYSIS_OUTPUT_REJECTED':'ANALYSIS_SEMANTIC_REVIEW_REQUIRED',validation,text:'联网解释尚未通过事实或语义复核；保留本地事实、原有限制与正式课表。',planChanged:false},422);
+      return json({ok:true,text:parsed.answer,analysisReply:parsed,validation,usage,costMicros:actualCost,currency:policy.currency,planChanged:false});
+    }
     const restored=aliased.restore(raw);
     await authorizationStillValid();
     assertDeepSeekEvidenceQuotes(canonical,restored);

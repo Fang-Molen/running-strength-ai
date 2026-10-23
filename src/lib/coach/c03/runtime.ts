@@ -193,9 +193,20 @@ export function withdrawDisplayedC03Hypothesis(hypothesisId: string, actor?: C03
 export function startC03FollowupRuntime(): () => void {
   let stopped = false, timer: ReturnType<typeof setTimeout> | null = null
   const enqueue = () => { if (stopped || timer !== null) return; const athlete = currentAthleteId()
-    timer = setTimeout(() => { timer = null; if (!stopped && currentAthleteId() === athlete) void recheckC03Followups().then(async()=>{if(!stopped&&currentAthleteId()===athlete){const {refreshEvidenceDecisions}=await import('../../health/evidence-history.ts');if(!stopped&&currentAthleteId()===athlete)await refreshEvidenceDecisions()}}).catch(() => {}) }, 0) }
+    timer = setTimeout(() => {
+      timer = null
+      if (stopped || currentAthleteId() !== athlete) return
+      void recheckC03Followups().then(async () => {
+        if (stopped || currentAthleteId() !== athlete) return
+        const { refreshEvidenceDecisions } = await import('../../health/evidence-history.ts')
+        if (stopped || currentAthleteId() !== athlete) return
+        await refreshEvidenceDecisions()
+        // Both histories must finish before the final view notification.
+        if (!stopped && currentAthleteId() === athlete) notify()
+      }).catch(() => {})
+    }, 0) }
   const unsubscribe = onAppEvent(event => { if (event.athlete_id === currentAthleteId()) enqueue() })
-  const changes = ['fk-training-activities-changed', 'fk-plan400-components', 'fk-run-links', 'fk-training-corrected', 'fk-health-changed', 'fk-athlete-scope-changed', 'storage', 'pageshow']
+  const changes = ['fk-training-activities-changed', 'fk-plan400-components', 'fk-run-links', 'fk-training-corrected', 'fk-health-changed', 'fk-coros-changed', 'fk-athlete-scope-changed', 'storage', 'pageshow']
   if (typeof window !== 'undefined') changes.forEach(name => window.addEventListener(name, enqueue))
   enqueue()
   return () => { stopped = true; if (timer !== null) clearTimeout(timer); unsubscribe();

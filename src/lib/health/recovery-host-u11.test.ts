@@ -157,7 +157,7 @@ test('v89.2 V4 free-text moves logged set by set reach muscle view, log and coac
   const ex=recoveryExplanation(v);assert.equal(ex.split('分腿蹲 2组').length-1,1,'依据只列一次，不按肌群重复')
   const data=readCoachData(v.day);assert.match(data.muscleRecovery!.explanation,/分腿蹲 2组/);assert.equal(data.muscleRecovery!.hasObservedRegions,true)
 })
-test('v89.2 linked watch run uses the planned session type; unlinked runs get one short note',t=>{
+test('linked display cache without committed source cannot fabricate participation or muscle recruitment',t=>{
   const f=fixture(t);setEventContext({athleteId:'local'})
   f.map.set(garminViewKey('fk-garmin-acts-v1'),JSON.stringify({
     a:{id:101,start:'2026-10-19T09:00:00Z',type:'running',dist:3000,dur:1500,athleteId:'local'},
@@ -165,9 +165,10 @@ test('v89.2 linked watch run uses the planned session type; unlinked runs get on
     c:{id:103,start:'2026-10-20T09:00:00Z',type:'running',dist:4000,dur:1500,athleteId:'local'}}))
   assert.ok(setRunDevice('2026-10-19',{sourceIdentity:'garmin:101',source:'garmin',linkedBy:'user'},undefined,f.box))
   const v=readRecoveryProjection('2026-10-20','2026-10-20T20:00:00Z')
-  const run=v.sources.find(s=>s.id.endsWith('|RUN'))!;assert.match(run.detail,/间歇\/速度耐力/)
-  assert.ok(v.review.regions.find(r=>r.region==='hip_flexors')!.runEventIds.length)
-  assert.deepEqual(v.review.gaps.filter(g=>/手表跑步/.test(g)),['2 条手表跑步未关联计划课：类型未知，未计入肌群（可在日志里关联）'])
+  assert.equal(v.sources.some(s=>s.id.endsWith('|RUN')),false)
+  assert.equal(v.review.regions.find(r=>r.region==='hip_flexors')!.runEventIds.length,0)
+  assert.ok(v.review.gaps.some(g=>/知晓时刻|入库时间|确认导入|历史时间/.test(g)))
+  assert.deepEqual(v.review.gaps.filter(g=>/手表跑步/.test(g)),['已关联手表跑步缺少已确认导入及入库时间；日志关联保留，本次冻结分析暂不引用其数值。','2 条手表跑步未关联计划课：类型未知，未计入肌群（可在日志里关联）'])
 })
 test('v89.2 library aliases point at real library entries; planned run types come from plan text only',()=>{
   const keys=new Set(ACTIONS.map(a=>a.key))

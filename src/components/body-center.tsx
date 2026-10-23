@@ -1,7 +1,6 @@
 import { loadExtras } from "@/lib/ui/device-store"
 import { HealthModeNote } from "@/components/health-mode-note"
-import { HEALTH_CHANGED } from "@/lib/health/observation"
-import { onAppEvent } from "@/lib/core/events"
+import { subscribeHealthUpdates } from "@/lib/health/health-subscription"
 import { useEffect, useState } from "react"
 import { BodyPanel } from "@/components/body-panel"
 import { openDeviceSync } from "@/lib/ui/device-sync-navigation"
@@ -72,10 +71,7 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
   useEffect(() => { if (active) setRevision(value => value + 1) }, [active])
   useEffect(() => {
     const refresh = () => {setRevision(value => value + 1);setWatch(loadWatch());setTier(loadTier())}
-    const unsubscribe = onAppEvent(refresh)
-    window.addEventListener("storage", refresh)
-    window.addEventListener(HEALTH_CHANGED,refresh)
-    return () => { unsubscribe(); window.removeEventListener("storage", refresh);window.removeEventListener(HEALTH_CHANGED,refresh) }
+    return subscribeHealthUpdates(refresh, { batch: true, reconcile: true })
   }, [])
   const [revision, setRevision] = useState(0)
   const [checks, setChecks] = useState<BodyCheck[]>([])

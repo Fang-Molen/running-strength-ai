@@ -107,3 +107,12 @@ test('an application error inside an HTTP 200 response is never accepted as a su
   assert.equal(rt.snapshot('polar').preview, null)
   assert.equal(rt.snapshot('polar').status, null)
 })
+
+test('A to B to A scope notifications invalidate old work even when the final owner string matches', async () => {
+  const gate=deferred<Response>();let owner='a'
+  const rt=createPlatformSyncRuntime({owner:()=>owner,fetch:async()=>gate.promise})
+  const pending=rt.read('polar'), rejected=assert.rejects(pending,/失效|取消/)
+  owner='b';rt.scopeChanged();owner='a';rt.scopeChanged()
+  gate.resolve(json(preview));await rejected
+  assert.equal(rt.snapshot('polar').owner,'a');assert.equal(rt.snapshot('polar').preview,null)
+})

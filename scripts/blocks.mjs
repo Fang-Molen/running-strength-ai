@@ -1,6 +1,13 @@
 // 方坤区块表（唯一出处）：docs/modules.md 的说明、npm run test:block:<名>、npm run check:blocks 都读这里。
 // files：区块源码（不含测试）；tests：只跑这些测试即可复测本区块；forbid：区块源码不得 import 的路径片段。
 export const BLOCKS = {
+  'logic-load-core': {
+    label: '复合负荷只读分析',
+    files: ['src/lib/health/analysis-evidence.ts','src/lib/health/muscle-exposure.ts','src/lib/health/recovery-assessment.ts','src/lib/health/personal-response.ts','src/lib/health/analysis-packet.ts'],
+    entry: 'src/lib/health/analysis-evidence.ts',
+    tests: ['src/lib/health/analysis-evidence.test.ts','src/lib/health/analysis-acceptance.test.ts','src/lib/health/analysis-hardening.test.ts','src/lib/health/analysis-integration.test.ts'],
+    forbid: ['/components/', 'schedule-writer', 'online-coach', 'deepseek', 'plan-execution', 'storage-journal'],
+  },
   'read-model': {
     desc: '训练读模型：各页同一份训练事实投影（V4 分项、记录合并、只算一次）',
     files: ['src/lib/ui/training-read-model.ts', 'src/lib/ui/plan400-view.ts', 'src/lib/ui/v4-exec.ts', 'src/lib/ui/running-actual-totals.ts', 'src/lib/ui/log-range.ts', 'src/lib/ui/pending-feedback.ts', 'src/lib/ui/makeup.ts'],
@@ -100,11 +107,11 @@ export const BLOCKS = {
     forbid: ['/components/', 'online-coach', 'deepseek', '/plan-execution/', 'day-schedule', 'schedule-writer'],
   },
   'coach-online': {
-    desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
+    desc: '联网方坤事实读取与受控服务端（须可信事实授权与费用审批）',
     files: ['src/lib/coach/online-coach.ts', 'src/lib/coach/online-nutrition-facts.ts', 'src/lib/coach/online-training-facts.ts', 'src/lib/coach/online-recovery-facts.ts', 'functions/api/coach-chat.js'],
     entry: 'src/lib/coach/online-coach.ts',
     tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts', 'src/lib/coach/online-facts-v86.test.ts', 'src/lib/coach/online-facts-linkage.test.ts', 'src/lib/coach/online-chat-transport.test.ts', 'src/lib/coach/online-nutrition-facts.test.ts', 'src/lib/coach/online-training-facts.test.ts', 'src/lib/coach/online-recovery-facts.test.ts'],
-    forbid: ['/c03/', '/plan-execution/', 'server/coach-deepseek', '/components/'],
+    forbid: ['/c03/', '/plan-execution/', '/components/'],
   },
   'c03': {
     desc: 'C03 复盘论证：证据/两种限定解释/长期跟进 journal/保存后复核（仅本地路径）',

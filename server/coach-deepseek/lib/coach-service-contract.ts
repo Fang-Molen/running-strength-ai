@@ -1,4 +1,5 @@
 import type { AskCoachRawInput } from '../../../src/lib/strength/coach-pipeline.ts';
+import type { CoachAnalysisPacket } from '../../../src/lib/health/analysis-contract.ts';
 
 /** Only server middleware may construct these ports. No request/body value is a port. */
 export type VerifiedCoachSubject = { id: string; verified: true; athleteIds: string[] };
@@ -15,6 +16,8 @@ export type AuthorizedCoachSnapshot = {
   scope: { purpose: 'coach_explanation'; occurrenceIds: string[] };
   consent: { id: string; subjectId: string; purpose: 'coach_explanation'; grantedAt: string; expiresAt: string; revokedAt: string | null };
   rawInput: AskCoachRawInput;
+  /** Constructed and minimized by the trusted host after consent; never accepted from request JSON. */
+  analysisPacket?: CoachAnalysisPacket;
 };
 export type LedgerBinding = { requestId: string; ownerId: string; contextHash: string; modelHash: string; configHash: string };
 export type CoachLedgerCaps = {

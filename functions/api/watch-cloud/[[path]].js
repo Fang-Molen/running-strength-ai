@@ -6,6 +6,7 @@ export async function onRequest({ request, env, params, data }) {
   return handleWatchCloudRequest(request, path, {
     fetch: (input, init) => fetch(input, init),
     env,
+    requireTrustedHost: true,
     ...(typeof data?.watchCloudConsumeState === 'function' ? { consumeState: data.watchCloudConsumeState } : {}),
   })
 }

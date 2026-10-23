@@ -18,8 +18,11 @@ function browser(t: {after(fn: () => void): void}, athlete = 'synthetic-coros-a'
 function response(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify({ok: true, ...body}), {status, headers: {'content-type': 'application/json'}})
 }
-const statusBody = {connected: true, region: 'cn', host: 'mcpcn.coros.com', refBasis: 'account', renewable: true, since: 1}
-const healthBody = (fetchedAt = '2026-10-22T12:00:00Z', value = 48.125) => ({fetchedAt, days: [{date: '2026-10-22', hrvMs: value}], stress: [{iso: '2026-10-22T09:00:00Z', local: null, value: 33.375}], recovery: {percent: 80.625, level: null, fullRecoveryText: null}, issues: [], raw: {querySleepHrv: 'synthetic source decimal 48.125'}})
+const statusBody = {sessionScope:'synthetic-session', accountRef:'synthetic-account', connected: true, region: 'cn', host: 'mcpcn.coros.com', refBasis: 'account', renewable: true, since: 1}
+const healthBody = (fetchedAt = '2026-10-22T12:00:00Z', value = 48.125) => ({sessionScope:'synthetic-session',accountRef:'synthetic-account',fetchedAt, days: [{date: '2026-10-22', hrvMs: value}], stress: [{iso: '2026-10-22T09:00:00Z', local: null, value: 33.375}], recovery: {percent: 80.625, level: null, fullRecoveryText: null}, issues: [], raw: {querySleepHrv: 'synthetic source decimal 48.125'}})
+
+const flush = () => new Promise<void>(resolve=>setImmediate(resolve))
+function scopedHealthFetch(read: typeof fetch): typeof fetch { return ((url,init)=>String(url).endsWith('/status') ? Promise.resolve(response(statusBody)) : read(url,init)) as typeof fetch }
 
 test('simultaneous status readers share one request and preserve returned status', async t => {
   browser(t, 'synthetic-status-readers')
@@ -39,9 +42,9 @@ test('simultaneous health readers share request and commit while preserving deci
   let calls = 0, changes = 0
   box.win.addEventListener('fk-coros-changed', () => changes++)
   const replies: ((r: Response) => void)[] = []
-  globalThis.fetch = (() => {calls++;return new Promise<Response>(resolve => replies.push(resolve))}) as typeof fetch
+  globalThis.fetch = scopedHealthFetch((() => {calls++;return new Promise<Response>(resolve => replies.push(resolve))}) as typeof fetch)
   const pending = [client.refreshCorosHealth('synthetic-health-readers'), client.refreshCorosHealth('synthetic-health-readers')]
-  await Promise.resolve()
+  await flush()
   replies.forEach(resolve => resolve(response(healthBody())))
   const values = await Promise.all(pending)
   assert.equal(calls, 1); assert.equal(box.writes.length, 1); assert.equal(changes, 1)
@@ -182,13 +185,15 @@ test('athlete switch aborts old health work and prevents any old-owner commit or
   let changes = 0
   box.win.addEventListener(client.COROS_CONTEXT_CHANGED, () => changes++)
   const requests: {signal: AbortSignal; resolve: (r: Response) => void}[] = []
-  globalThis.fetch = ((_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>(resolve => requests.push({signal: init!.signal!, resolve}))) as typeof fetch
+  globalThis.fetch = scopedHealthFetch(((_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>(resolve => requests.push({signal: init!.signal!, resolve}))) as typeof fetch)
   const old = Promise.allSettled([client.refreshCorosHealth('synthetic-owner-a')])
+  await flush()
   setEventContext({athleteId: 'synthetic-owner-b'})
   assert.equal(requests[0].signal.aborted, true)
   assert.equal(client.isCurrentCorosContext(context), false)
   assert.equal(changes, 1)
   const next = client.refreshCorosHealth('synthetic-owner-b')
+  await flush()
   requests[0].resolve(response(healthBody('2026-10-22T11:00:00Z', 40.375)))
   requests[1].resolve(response(healthBody('2026-10-22T12:00:00Z', 60.125)))
   const [outcome] = await old
@@ -258,14 +263,16 @@ test('an older fetchedAt cannot overwrite or return in place of newer locally sa
   const athlete = 'synthetic-freshness', box = browser(t, athlete)
   const key = 'fk-coros-mcp-health-v1:' + athlete
   let resolveHealth!: (r: Response) => void
-  globalThis.fetch = (() => new Promise<Response>(resolve => {resolveHealth = resolve})) as typeof fetch
+  globalThis.fetch = scopedHealthFetch((() => new Promise<Response>(resolve => {resolveHealth = resolve})) as typeof fetch)
   const old = client.refreshCorosHealth(athlete)
-  const newer = client.mergeCorosHealth(null, healthBody('2026-10-22T12:10:00Z', 60.125))
+  const newer = {...client.mergeCorosHealth(null, healthBody('2026-10-22T12:10:00Z', 60.125)),sessionScope:'synthetic-session'}
   box.data.set(key, JSON.stringify(newer))
+  await flush()
   resolveHealth(response(healthBody('2026-10-22T12:00:00Z', 40.375)))
   await assert.rejects(old, {code: 'STALE_DATA'})
   assert.equal(box.data.get(key), JSON.stringify(newer)); assert.equal(box.writes.length, 0)
   const next = client.refreshCorosHealth(athlete)
+  await flush()
   resolveHealth(response(healthBody('2026-10-22T12:20:00Z', 61.875)))
   assert.equal((await next).days[0].hrvMs, 61.875)
   assert.equal(box.writes.length, 1)
@@ -273,13 +280,13 @@ test('an older fetchedAt cannot overwrite or return in place of newer locally sa
 
 test('quota failure preserves the saved cache and never emits a successful health-write notification', async t => {
   const athlete = 'synthetic-quota', box = browser(t, athlete), key = 'fk-coros-mcp-health-v1:' + athlete
-  const old = client.mergeCorosHealth(null, healthBody('2026-10-22T11:00:00Z', 40.375))
+  const old = {...client.mergeCorosHealth(null, healthBody('2026-10-22T11:00:00Z', 40.375)),sessionScope:'synthetic-session'}
   box.data.set(key, JSON.stringify(old))
   let changes = 0
   box.win.addEventListener('fk-coros-changed', () => changes++)
   localStorage.setItem = () => { throw new Error('synthetic quota full') }
-  globalThis.fetch = (() => Promise.resolve(response(healthBody()))) as typeof fetch
-  assert.equal((await client.refreshCorosHealth(athlete)).days[0].hrvMs, 48.125)
+  globalThis.fetch = scopedHealthFetch((() => Promise.resolve(response(healthBody()))) as typeof fetch)
+  await assert.rejects(client.refreshCorosHealth(athlete), /保存失败/)
   assert.equal(box.data.get(key), JSON.stringify(old))
   assert.equal(changes, 0)
 })
@@ -338,8 +345,9 @@ test('each endpoint has a bounded deadline, aborts its fetch and permits retry a
   for (const item of cases) {
     client.invalidateCorosContext()
     let signal!: AbortSignal
-    globalThis.fetch = ((_input: RequestInfo | URL, init?: RequestInit) => {signal = init!.signal!;return new Promise<Response>(() => {})}) as typeof fetch
+    globalThis.fetch = (item.ms===180_000 ? scopedHealthFetch : (fn:typeof fetch)=>fn)(((_input: RequestInfo | URL, init?: RequestInit) => {signal = init!.signal!;return new Promise<Response>(() => {})}) as typeof fetch)
     const result = item.read()
+    await flush()
     const timer = [...timers.values()].at(-1)!
     assert.equal(timer.ms, item.ms)
     timer.callback()
@@ -347,7 +355,7 @@ test('each endpoint has a bounded deadline, aborts its fetch and permits retry a
     assert.equal(signal.aborted, true)
     assert.equal(timers.size, 0)
     let retryCalls = 0
-    globalThis.fetch = (() => {retryCalls++;return Promise.resolve(response(item.body))}) as typeof fetch
+    globalThis.fetch = (item.ms===180_000 ? scopedHealthFetch : (fn:typeof fetch)=>fn)((() => {retryCalls++;return Promise.resolve(response(item.body))}) as typeof fetch)
     await item.read()
     assert.equal(retryCalls, 1)
     assert.equal(timers.size, 0)

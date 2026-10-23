@@ -12,6 +12,10 @@ export type Span = [number, number]   // [UTC ms start, end]
 export type IntradayDay = {
   schemaVersion: 1; day: string; source: 'garmin'; fetchedAt: string; offsetMin: number | null
   eventTimingVersion?: 2
+  /** Opaque provider/account scope, never credentials. Absent in legacy caches. */
+  sourceId?: string
+  /** Receipt time per metric; partial failures retain the previous receipt. */
+  readingFetchedAt?: Partial<Record<'hr' | 'bb' | 'st', string>>
   /** Failed metric requests must not erase previously cached samples on event-only syncs. */
   failedReadings?: ('hr' | 'bb' | 'st')[]
   hr: Sample[]; bb: Sample[]; /** v89：压力（dailyStress.stressValuesArray，负值=无读数；字段名待核） */ st?: Sample[]; restingHr: number | null; sleep: Span | null; training: { start: number; end: number; label: string; id?: string }[]

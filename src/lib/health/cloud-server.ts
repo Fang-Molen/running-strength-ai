@@ -7,7 +7,7 @@
 import { CLOUD_PROVIDERS, type CloudProvider, type CloudStatus, type CloudPreview } from './cloud-types.ts'
 import { authorizationUrl, CloudFault, exchangeGrant, providerConfigured, readProviderPreview, refreshGrant, revokeGrant, type ActiveCloudProvider, type CloudGrant } from './cloud-providers.ts'
 
-export type CloudServerDeps = { env: Record<string, string | undefined>; fetch: typeof fetch; now?: () => number; consumeState?: (nonce: string, expiresAt: number) => Promise<boolean> }
+export type CloudServerDeps = { /** Production adapters stay closed until shared identity, atomic state, refresh lock and revocation ports are implemented. */ requireTrustedHost?: boolean; env: Record<string, string | undefined>; fetch: typeof fetch; now?: () => number; consumeState?: (nonce: string, expiresAt: number) => Promise<boolean> }
 type Pending = { v: 1; provider: ActiveCloudProvider; owner: string; origin: string; state: string; callback: string; issuedAt: number; expiresAt: number }
 type Session = { v: 1; provider: ActiveCloudProvider; owner: string; origin: string; sid: string; generation: string; issuedAt: number; expiresAt: number; grant: CloudGrant }
 type Config = { origin: string; key: string }
@@ -172,6 +172,12 @@ function errorResponse(error: unknown, cookies: string[] = []): Response {
 }
 
 export async function handleWatchCloudRequest(request: Request, path: string, dependencies: CloudServerDeps): Promise<Response> {
+  // The standalone handler below is suitable for synthetic contract tests. Browser
+  // athlete labels and process-local maps are insufficient production authority.
+  if (dependencies.requireTrustedHost) {
+    if (path.replace(/^\/+|\/+$/g,'') === 'status') return json({providers:CLOUD_PROVIDERS.map(provider=>({provider,configured:false,connected:false,accountRef:null,reason:'TRUSTED_BINDINGS_MISSING'}))})
+    return json({ok:false,error:'TRUSTED_BINDINGS_MISSING',message:'平台服务端账号归属与共享授权存储尚未接通；当前可使用文件导入。'},503)
+  }
   const deps = { ...dependencies, deadlineAt: clock(dependencies) + 45000 }
   const url = new URL(request.url), segments = path.replace(/^\/+|\/+$/g, '').split('/'), provider = CLOUD_PROVIDERS.includes(segments[0] as CloudProvider) ? segments[0] as CloudProvider : null
   const action = segments[1], settings = config(deps.env), now = clock(deps)

@@ -1,7 +1,8 @@
 /** Read-only training-exposure and symptom map. NOT measured muscle fatigue. */
+import type { TrainingFact, StrengthSet } from './analysis-contract'
 import { exerciseById } from '../strength/catalog'
 export type Region='quads'|'hamstrings'|'glutes'|'calves'|'hip_flexors'|'adductors'|'core'|'lower_back'|'chest'|'back'|'shoulders'|'arms'|'feet'
-export type TrainingPart={athleteId:string;eventId:string;occurrenceId?:string;componentId?:string;modality:'RUN'|'STRENGTH';occurredAt:string;knownAt:string;sourceId:string;actual:'CONFIRMED'|'UNVERIFIED'|'PLANNED'|'RETRACTED';runType?:'EASY'|'TEMPO'|'INTERVAL'|'SPRINT'|'HILL'|'UNKNOWN';exercises?:{catalogId?:string;name?:string;actualSets?:number|null;verified:boolean}[];revision?:number}
+export type TrainingPart={athleteId:string;eventId:string;occurrenceId?:string;componentId?:string;modality:'RUN'|'STRENGTH';occurredAt:string;knownAt:string;sourceId:string;actual:'CONFIRMED'|'UNVERIFIED'|'PLANNED'|'RETRACTED';runType?:'EASY'|'TEMPO'|'INTERVAL'|'SPRINT'|'HILL'|'UNKNOWN';exercises?:{catalogId?:string;name?:string;actualSets?:number|null;verified:boolean}[];revision?:number;strengthSets?:StrengthSet[];runSegments?:TrainingFact['runSegments'];runningStructure?:unknown;endedAt?:string|null;sessionRpe?:number|null;protocolKey?:string|null;provenance?:import('./brand-isolation').Provenance}
 export type Symptom={athleteId:string;eventId:string;occurredAt:string;knownAt:string;region:Region;kind:'SORENESS'|'PAIN';severity?:number;sourceId:string;revision?:number}
 export type RegionState='PAIN_REVIEW'|'REPORTED_SORENESS'|'OVERLAP_OBSERVED'|'TRAINING_EXPOSURE'|'UNKNOWN'
 export type RegionReview={region:Region;state:RegionState;runEventIds:string[];strengthEventIds:string[];symptomEventIds:string[];notes:string[]}

@@ -6,7 +6,7 @@ export const config = { maxDuration: 60 }
 
 async function watchCloud(request: Request): Promise<Response> {
   const path = new URL(request.url).pathname.replace(/^\/api\/watch-cloud\/?/, '')
-  return handleWatchCloudRequest(request, path, { fetch: (input, init) => fetch(input, init), env: {
+  return handleWatchCloudRequest(request, path, { requireTrustedHost: true, fetch: (input, init) => fetch(input, init), env: {
     WATCH_CLOUD_PUBLIC_ORIGIN: process.env.WATCH_CLOUD_PUBLIC_ORIGIN,
     WATCH_CLOUD_STATE_KEY: process.env.WATCH_CLOUD_STATE_KEY,
     STATE_KEY: process.env.STATE_KEY,

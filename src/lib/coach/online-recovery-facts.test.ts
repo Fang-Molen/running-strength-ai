@@ -102,3 +102,22 @@ test('an explicit zero-step record stays available without filling absent energy
  const out=text(onlineRecoveryFacts(day,asOf));assert.match(out,/步数[:：]\s*0\s*步/)
  assert.doesNotMatch(out,/活动热量[:：]|静息热量[:：]|全天总热量[:：]|单次运动热量[:：]/)
 })
+
+test('coach and health tile use newer most-recent Body Battery, without calling receipt time a measurement',t=>{
+ fixture(t)
+ const row=health('BODY_BATTERY',41,day,`${day}T11:50:00Z`,'garmin:live')
+ row.observation!.statistic='同步时最近值'
+ assert.deepEqual(saveDeviceRows([row]).errors,[])
+ saveIntraday([{schemaVersion:1,day,source:'garmin',sourceId:'garmin:live',fetchedAt:`${day}T09:00:00Z`,offsetMin:0,hr:[],bb:[[Date.parse(`${day}T08:27:00Z`),50]],restingHr:null,sleep:null,training:[]}])
+ const facts=onlineRecoveryFacts(day,asOf),out=text(facts)
+ assert.match(facts.summary.join('\n'),/身体电量：41\/100/)
+ assert.match(out,/测量时间未提供/)
+ assert.match(out,/同步.*11:50/)
+ assert.doesNotMatch(out,/测量\s+2026-10-22T11:50/)
+})
+test('coach uses newer measured Body Battery when day summary is older',t=>{
+ fixture(t)
+ const row=health('BODY_BATTERY',41,day,`${day}T09:00:00Z`,'garmin:live');row.observation!.statistic='同步时最近值';saveDeviceRows([row])
+ saveIntraday([{schemaVersion:1,day,source:'garmin',sourceId:'garmin:live',fetchedAt:`${day}T11:59:00Z`,offsetMin:0,hr:[],bb:[[Date.parse(`${day}T11:58:00Z`),39]],restingHr:null,sleep:null,training:[]}])
+ const facts=onlineRecoveryFacts(day,asOf);assert.match(facts.summary.join('\n'),/身体电量：39\/100/);assert.match(text(facts),/测量.*11:58/)
+})

@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, HeartPulse, BatteryMedium } from "lucide-react";
 import { Sheet } from "./sheet";
-import { HEALTH_CHANGED } from "@/lib/health/observation";
+import { subscribeHealthUpdates } from "@/lib/health/health-subscription";
 import { loadIntraday } from "@/lib/health/intraday-store";
 import { clock, minuteOfDay, summarizeDay, type IntradayDay, type Sample } from "@/lib/health/garmin-intraday";
 
@@ -16,14 +16,14 @@ const W = 360;
 
 export function useIntraday(): Record<string, IntradayDay> {
   const [rev, setRev] = useState(0);
-  useEffect(() => { const f = () => setRev(x => x + 1); window.addEventListener(HEALTH_CHANGED, f); window.addEventListener("storage", f); window.addEventListener("fk-garmin-synced", f); return () => { window.removeEventListener(HEALTH_CHANGED, f); window.removeEventListener("storage", f); window.removeEventListener("fk-garmin-synced", f); }; }, []);
+  useEffect(() => subscribeHealthUpdates(() => setRev(x => x + 1), { batch: true, reconcile: true }), []);
   return useMemo(() => loadIntraday(), [rev]);
 }
 
 export function IntradayChart({ d, kind, height = 96, interactive = true, axis = true }: { d: IntradayDay; kind: Kind; height?: number; interactive?: boolean; axis?: boolean }) {
   const m = META[kind], pts = kind === "hr" ? d.hr : d.bb;
   const [pick, setPick] = useState<Sample | null>(null);
-  useEffect(() => setPick(null), [d.day, kind]);
+  useEffect(() => setPick(null), [d, kind]);
   const ref = useRef<SVGSVGElement>(null);
   const top = 14, bottom = axis ? 16 : 4, H = height, ph = H - top - bottom;
   const vals = pts.map(p => p[1]);
