@@ -1,20 +1,29 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #eaf3f8;
-  --color-surface: #ffffff;
-  --color-surface-2: #f3f8fb;
-  --color-fg: #183f56;
-  --color-muted: #5c7686;
-  --color-line: #d5e4ee;
-  --color-accent: #2182bd;
-  --color-accent-fg: #ffffff;
-  --color-warn: #8a5a22;
-  --color-risk: #8e3d34;
-  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    sans-serif;
-  --radius-card: 1.25rem;
+  /* Base tokens for anything rendered outside the app shell (boot fallback,
+     route errors). They match the Fangkun identity dark palette so the first
+     paint no longer flashes the retired light-blue theme; the shell itself
+     re-maps every token in fangkun-identity.css. */
+  --color-bg: #121314;
+  --color-surface: #1d1f21;
+  --color-surface-2: #282b2d;
+  --color-fg: #f4f5f5;
+  --color-text: #f4f5f5;
+  --color-muted: #b4b6b8;
+  --color-line: #373c40;
+  --color-accent: #ff8b45;
+  --color-accent-fg: #27180e;
+  --color-warn: #edc476;
+  --color-risk: #ff9c93;
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Hiragino Sans GB",
+    "Microsoft YaHei", sans-serif;
+  --radius-card: 1rem;
 }
+
+/* `dark:` follows the in-app appearance setting (data-theme on the shell),
+   not the operating system, so the light/dark choice in 外观与显示 stays coherent. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @layer base {
   button:not(:disabled),
@@ -23,7 +32,7 @@
   }
 
   html {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   body {
@@ -65,8 +74,30 @@ textarea {
   font-size: 16px;
 }
 
+/* Boot fallback while the client-only training app reads local storage. */
+@keyframes fk-boot-pulse {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+}
+
+.fk-boot-mark {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  font-size: 1.75rem;
+  font-weight: 800;
+  animation: fk-boot-pulse 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fang-bob {
+  .fang-bob,
+  .fk-boot-mark {
     animation: none;
   }
 }
@@ -261,7 +292,7 @@ textarea {
 }
 
 /* UI-05: compact, read-only training-science relationship on Fangkun hub. */
-.fangkun-mechanism-rail { border: 1px solid var(--line, #e3ebef); border-radius: 14px; padding: 10px 12px; background: color-mix(in srgb, var(--surface, #ffffff) 90%, #dcecf5 10%); }
+.fangkun-mechanism-rail { border: 1px solid var(--color-line); border-radius: 14px; padding: 10px 12px; background: var(--color-surface); }
 @media (max-width: 365px) { .fangkun-mechanism-rail { padding: 9px 10px; } }
 
 
@@ -527,7 +558,7 @@ html, body { background: #0b0b0d; }
 .product-ui .ui03-header.fk-coach-head button.size-11 { width: 2.5rem; height: 2.5rem; }
 .fk-coach-tabs.product-segments { padding: 3px; border-radius: 12px; }
 .fk-coach-tabs.product-segments button { min-height: 30px; padding: 3px 8px; border-radius: 9px; }
-.fk-coach-sheet .product-chat-intro { padding: 8px 4px; }
+.fk-coach-sheet .product-chat-intro { padding: 8px 0; }
 .fk-coach-quick { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .fk-coach-quick::-webkit-scrollbar { display: none; }
 .fk-coach-status[open] { flex-basis: 100%; border-radius: var(--radius-card, 14px); }

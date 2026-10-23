@@ -16,7 +16,7 @@ export const Route = createRootRoute({
         name: "description",
         content: "跑步力量课和每天热量。成绩目标、期限和体重目标可以自己设，也能把力量课导出到佳明。",
       },
-      { name: "theme-color", content: "#0b0b0d" },
+      { name: "theme-color", content: "#121314" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },

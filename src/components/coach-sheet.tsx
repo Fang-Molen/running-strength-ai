@@ -876,7 +876,7 @@ export function CoachSheet({
             enterKeyHint="send"
             className="h-11 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 outline-none"
           />
-          <button type="submit" disabled={sending} aria-label="发送" className="grid size-11 shrink-0 place-items-center rounded-full bg-[#183f56] text-white disabled:opacity-50">
+          <button type="submit" disabled={sending} aria-label="发送" className="grid size-11 shrink-0 place-items-center rounded-full bg-[var(--color-accent)] text-[var(--color-accent-fg)] disabled:opacity-50">
             <Send className="size-4" />
           </button>
         </form>

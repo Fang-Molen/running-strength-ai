@@ -125,11 +125,17 @@ html:has(.app-wallpaper.product-ui[data-theme="light"]) body {
   border-bottom: 1px solid var(--fk-identity-line);
   padding-top: calc(env(safe-area-inset-top) + .375rem) !important;
   padding-bottom: .375rem !important;
-  padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+  padding-inline: 0 !important;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
-.app-wallpaper.product-ui .ui03-header-inner { min-height: 3rem !important; gap: .75rem; }
+/* The gutter lives on the inner row, exactly like .ui03-main, so the title,
+   status lines and cards share one left edge at every width. */
+.app-wallpaper.product-ui .ui03-header-inner {
+  min-height: 3rem !important;
+  gap: .75rem;
+  padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+}
 .app-wallpaper.product-ui .ui03-title { font-size: var(--fk-page-title); line-height: 1.2; font-weight: 650; letter-spacing: -.035em; }
 .app-wallpaper.product-ui .ui03-subtitle { margin-top: .25rem; font-size: .875rem; line-height: 1.4; white-space: normal; }
 .app-wallpaper.product-ui .ui03-settings { border: 0; border-radius: .75rem; background: var(--fk-identity-inset); box-shadow: none; }
