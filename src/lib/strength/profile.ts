@@ -26,6 +26,17 @@ export type Profile = {
 };
 
 const KEY = "fr255-profile-v1";
+/** When the athlete profile was last saved, so pages can tell which value is current. */
+export const PROFILE_SAVED_AT_KEY = "fr255-profile-v1-saved-at";
+export const PROFILE_CHANGED = "fk-profile-changed";
+export function profileSavedAt(): string | null {
+  try {
+    const v = localStorage.getItem(PROFILE_SAVED_AT_KEY);
+    return v && Number.isFinite(Date.parse(v)) ? v : null;
+  } catch {
+    return null;
+  }
+}
 
 export const PRESETS = [
   { meters: 400, label: "400" },
@@ -87,9 +98,11 @@ export function saveProfile(profile: Profile) {
   const previous = loadProfile();
   try {
     localStorage.setItem(KEY, JSON.stringify(profile));
+    localStorage.setItem(PROFILE_SAVED_AT_KEY, new Date().toISOString());
   } catch {
     /* private mode */
   }
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(PROFILE_CHANGED));
   const marksChanged = JSON.stringify(previous.marks) !== JSON.stringify(profile.marks);
   const aimChanged = previous.aim !== profile.aim || previous.targetKg !== profile.targetKg;
   if (marksChanged || aimChanged) {

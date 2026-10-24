@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { activityLabel, aimLabel, computePlan, todayEatTarget } from "@/lib/nutrition/calc";
+import { effectiveNutritionProfile } from "@/lib/coach/loop/effective-host";
 import { DayCard } from "@/components/day-card";
 import { catalogSize, parseFoodLine, searchFoods, type FoodHit } from "@/lib/nutrition/lookup";
 import { MEALS, addEntriesBatch, loadEntries, removeEntry, todayEaten, todayEntries, type FoodEntry, type Meal } from "@/lib/nutrition/log";
@@ -7,7 +8,7 @@ import { distanceLabel } from "@/lib/strength/agent";
 import type { Profile } from "@/lib/strength/profile";
 
 export function FuelPanel({ profile, onEdit, onSaved, revision = 0 }: { profile: Profile; onEdit: () => void; onSaved?: () => void; revision?: number }) {
-  const plan = computePlan(profile);
+  const plan = computePlan(effectiveNutritionProfile(profile));
   const [entries, setEntries] = useState<FoodEntry[]>([]);
   const [meal, setMeal] = useState<Meal>("午餐");
   const [showDevice, setShowDevice] = useState(false);

@@ -154,7 +154,7 @@ test('only identical pending activity and lap paths share work, preserving sourc
   globalThis.fetch = ((input: RequestInfo | URL) => new Promise<Response>(resolve => requests.push({url: String(input), resolve}))) as typeof fetch
   const activity = {labelId: 'precise-run', sportType: 100, sportName: 'Run', date: '2026-10-20', startIso: '2026-10-20T07:05:00.000Z', startLocal: null, durationSec: 1810.125, distanceM: 5020.75, avgHr: 150.5, maxHr: null, calories: null, issues: ['source note']}
   const activities = {activities: [activity], accountRef: 'synthetic-account', fetchedAt: '2026-10-22T12:00:00Z', issues: ['partial source'], possiblyTruncated: true}
-  const laps = {laps: [{index: 1, durationSec: 301.125, distanceM: 1000.25, avgHr: null}], issues: ['lap note']}
+  const laps = {laps: [{index: 1, timeSec: 301.125, distanceRaw: 1000.25, avgHr: null}], issues: ['lap note']}
   const now = new Date('2026-10-22T12:00:00Z')
   const recent = [client.corosMcpRecent(7, now), client.corosMcpRecent(7, now), client.corosMcpRecent(7, now), client.corosMcpRecent(28, now)]
   const split = [client.corosMcpLaps('precise-run', 100), client.corosMcpLaps('precise-run', 100), client.corosMcpLaps('precise-run', 100), client.corosMcpLaps('precise-run', 200)]
@@ -169,9 +169,9 @@ test('only identical pending activity and lap paths share work, preserving sourc
   assert.equal(rows[0].rows[0].sourceIdentity, 'coros:synthetic-account:precise-run')
   assert.equal(rows[0].rows[0].provenance?.recordId, 'precise-run')
   assert.deepEqual(rows[0].issues, ['partial source']); assert.equal(rows[0].truncated, true)
-  assert.equal(splitRows[0].laps[0].durationSec, 301.125)
-  rows[0].rows[0].distanceM = 1; splitRows[0].laps[0].durationSec = 1
-  assert.equal(rows[1].rows[0].distanceM, 5020.75); assert.equal(splitRows[1].laps[0].durationSec, 301.125)
+  assert.equal(splitRows[0].laps[0].timeSec, 301.125)
+  rows[0].rows[0].distanceM = 1; splitRows[0].laps[0].timeSec = 1
+  assert.equal(rows[1].rows[0].distanceM, 5020.75); assert.equal(splitRows[1].laps[0].timeSec, 301.125)
   const again = client.corosMcpRecent(7, now)
   requests.at(-1)!.resolve(response(activities)); await again
   const lapAgain = client.corosMcpLaps('precise-run', 100)

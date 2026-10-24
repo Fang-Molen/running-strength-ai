@@ -1,0 +1,1590 @@
+[
+  {
+    "sampleId": "c6c27757-8520-45a4-ae89-b505ba1dfcd6",
+    "caseId": "A03",
+    "arm": "A",
+    "phase": "pilot",
+    "coverageHash": "0b7fbcaa9ffe1b3a9b2b834aa7b6ca0d33c6ba1d569dbe4b0e4b2bf4278732e0",
+    "snapshotId": "analysis:ynxizu",
+    "requestHash": "36a8d7af1f015fb7dfca808d24221b31c044fc06a81e6dcd0e400550b26482d5",
+    "generationHash": "2fc7a1dfdb59cfdac4f69238ebde43f220f948b444d3e5cf8ea864b37830f303",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "2668a19b-3376-4f06-b225-986544735aaa",
+      "object": "chat.completion",
+      "created": 1792774293,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"F1@1｜S1｜发生 2026-10-18T10:00:00Z；可知 2026-10-18T11:00:00Z｜CONFIRMED/AVAILABLE：课次 O1/running｜RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次\",\"F1@1：区块 main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED\",\"F1@1：区块 main 第1轮/步骤2：200 m/31 s；组休 120 s；COMPLETED\",\"F1@1：各段共同 rawResolutionSeconds=1，gradePercent=null，surface=null（null=未记录）\",\"F2@1｜S1｜发生 2026-10-18T10:00:00Z；可知 2026-10-18T11:00:00Z｜CONFIRMED/AVAILABLE：课次 O1/strength｜STRENGTH；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次\",\"F2@1：back-squat（版本 U11_1）第1组：8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL）；RPE/RIR/量表/保持/离心/幅度 均未记录；COMPLETED\",\"F2@1：back-squat（版本 U11_1）第2组：8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL）；RPE/RIR/量表/保持/离心/幅度 均未记录；COMPLETED\",\"背景 completedComponents=[RUN,STRENGTH]，planIsActual=false（背景不代替实际）\",\"账号/设备均为临时别名；S1 账号未记录、设备未记录；同组未知设备不证明同一设备\"],\"explanations\":[\"跑步实际完成：依据 F1@1 两个 main 步骤均 COMPLETED，可确认完成 2×200 m（分别 30 s、31 s），组休各 120 s；时长/RPE/坡度/表面等未记录，不推断。\",\"深蹲实际完成：依据 F2@1 两组 back-squat 均 COMPLETED，可确认 2 组×8 次×20 kg（TOTAL_EXTERNAL，BILATERAL）；RPE/RIR/幅度等未记录，不推断。\"],\"counterevidence\":[\"跑步解释的反证：F1@1 的课次级时长、RPE、跳跃均未记录，且 gradePercent/surface=null，不能据此推断整体跑步负荷或环境条件。\",\"深蹲解释的反证：F2@1 的 RPE/RIR/量表/保持/离心/幅度均未记录，不能据此推断动作质量、强度或技术细节。\"],\"missing\":[\"跑步课次级：类型、RPE、时长 s、跳跃次数未记录\",\"跑步各段：gradePercent、surface 未记录\",\"深蹲课次级：类型、RPE、时长 s、跳跃次数未记录\",\"深蹲动作级：RPE、RIR、量表、保持 s、离心 s、幅度未记录\",\"S1 账号、设备未记录；不能证明跑步与深蹲为同一设备\"],\"observation\":\"同一课次 O1 下记录 RUN 与 STRENGTH 两个课次条目，发生/可知时间相同（2026-10-18T10:00:00Z / 11:00:00Z），均为 CONFIRMED/AVAILABLE；跑步 2 个 main 步骤 COMPLETED，深蹲 2 组 COMPLETED；多项字段为 null（未记录），不是 0。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 686,
+        "completion_tokens": 849,
+        "total_tokens": 1535,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 686
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"F1@1｜S1｜发生 2026-10-18T10:00:00Z；可知 2026-10-18T11:00:00Z｜CONFIRMED/AVAILABLE：课次 O1/running｜RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次\",\"F1@1：区块 main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED\",\"F1@1：区块 main 第1轮/步骤2：200 m/31 s；组休 120 s；COMPLETED\",\"F1@1：各段共同 rawResolutionSeconds=1，gradePercent=null，surface=null（null=未记录）\",\"F2@1｜S1｜发生 2026-10-18T10:00:00Z；可知 2026-10-18T11:00:00Z｜CONFIRMED/AVAILABLE：课次 O1/strength｜STRENGTH；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次\",\"F2@1：back-squat（版本 U11_1）第1组：8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL）；RPE/RIR/量表/保持/离心/幅度 均未记录；COMPLETED\",\"F2@1：back-squat（版本 U11_1）第2组：8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL）；RPE/RIR/量表/保持/离心/幅度 均未记录；COMPLETED\",\"背景 completedComponents=[RUN,STRENGTH]，planIsActual=false（背景不代替实际）\",\"账号/设备均为临时别名；S1 账号未记录、设备未记录；同组未知设备不证明同一设备\"],\"explanations\":[\"跑步实际完成：依据 F1@1 两个 main 步骤均 COMPLETED，可确认完成 2×200 m（分别 30 s、31 s），组休各 120 s；时长/RPE/坡度/表面等未记录，不推断。\",\"深蹲实际完成：依据 F2@1 两组 back-squat 均 COMPLETED，可确认 2 组×8 次×20 kg（TOTAL_EXTERNAL，BILATERAL）；RPE/RIR/幅度等未记录，不推断。\"],\"counterevidence\":[\"跑步解释的反证：F1@1 的课次级时长、RPE、跳跃均未记录，且 gradePercent/surface=null，不能据此推断整体跑步负荷或环境条件。\",\"深蹲解释的反证：F2@1 的 RPE/RIR/量表/保持/离心/幅度均未记录，不能据此推断动作质量、强度或技术细节。\"],\"missing\":[\"跑步课次级：类型、RPE、时长 s、跳跃次数未记录\",\"跑步各段：gradePercent、surface 未记录\",\"深蹲课次级：类型、RPE、时长 s、跳跃次数未记录\",\"深蹲动作级：RPE、RIR、量表、保持 s、离心 s、幅度未记录\",\"S1 账号、设备未记录；不能证明跑步与深蹲为同一设备\"],\"observation\":\"同一课次 O1 下记录 RUN 与 STRENGTH 两个课次条目，发生/可知时间相同（2026-10-18T10:00:00Z / 11:00:00Z），均为 CONFIRMED/AVAILABLE；跑步 2 个 main 步骤 COMPLETED，深蹲 2 组 COMPLETED；多项字段为 null（未记录），不是 0。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 686,
+      "completionTokens": 849,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 686,
+      "reasoningTokens": null,
+      "totalTokens": 1535
+    },
+    "latencyMs": 4492,
+    "ledgerCostMicros": "1225",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "5220be82-7315-4ff6-97d9-fe9220e7b5a9",
+    "caseId": "A03",
+    "arm": "B",
+    "phase": "pilot",
+    "coverageHash": "0b7fbcaa9ffe1b3a9b2b834aa7b6ca0d33c6ba1d569dbe4b0e4b2bf4278732e0",
+    "snapshotId": "analysis:ynxizu",
+    "requestHash": "68613e0cbdc15744c028594014cbcb2d7e1abd7c4963b1521231036d9ea43148",
+    "generationHash": "2fc7a1dfdb59cfdac4f69238ebde43f220f948b444d3e5cf8ea864b37830f303",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "a042c2de-dbda-4104-8201-d8bfb941fe25",
+      "object": "chat.completion",
+      "created": 1792774297,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"component\":\"RUN\",\"session\":\"O1/running\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"未记录\",\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"blocks\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distanceMeters\":200,\"seconds\":30,\"restSeconds\":120,\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distanceMeters\":200,\"seconds\":31,\"restSeconds\":120,\"status\":\"COMPLETED\"}],\"derived\":{\"confirmedRunMeters\":400,\"pureRunSeconds\":61,\"note\":\"轮次与间歇按原记录保留，不冒充整课用时\"}},{\"id\":\"F2\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"component\":\"STRENGTH\",\"session\":\"O1/strength\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"未记录\",\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"exercise\":\"back-squat\",\"exerciseVersion\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rom\":null,\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rom\":null,\"status\":\"COMPLETED\"}],\"derived\":{\"confirmedSets\":2,\"confirmedReps\":16,\"note\":\"只描述实际剂量，不代表组织受力或恢复\"}},{\"id\":\"CTX\",\"note\":\"completedComponents=[RUN,STRENGTH]；planIsActual=false；背景不代替实际\",\"account\":null,\"device\":null}],\"explanations\":[{\"id\":\"E1\",\"text\":\"跑步部分实际完成：main 第1轮/步骤1 200 m/30 s、第2步 200 m/31 s，均 COMPLETED，组休各 120 s；合计 400 m、纯跑 61 s。\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"counterevidence\":\"若原始记录更正为未完成或距离/秒数被改写，则此解释失效；RPE、时长、跳跃为 null 不补零。\"},{\"id\":\"E2\",\"text\":\"力量部分实际完成：back-squat（U11_1）2 组 × 8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL），均 COMPLETED，合计 16 次。\",\"basisRefs\":[{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若组记录被更正为未完成、或负荷/次数/单位被修订，则此解释失效；RPE/RIR/离心/幅度为 null 不推断。\"}],\"counterevidence\":[\"F1 与 F2 的 originalPurpose 均为“重复跑原批准协议”，但实际类型为未记录；计划意图不证明目标已实现，不能据此宣称协议被复现。\",\"账号与设备均为临时别名且未记录；同组未知设备不证明同一设备，不能合并为同一设备事实。\",\"null 表示未记录，不是 0；RPE、时长、跳跃、HRV、睡眠等缺失不得补零或推断。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录（不妨碍"
+          },
+          "logprobs": null,
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1384,
+        "completion_tokens": 900,
+        "total_tokens": 2284,
+        "prompt_tokens_details": {
+          "cached_tokens": 640
+        },
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 744
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"component\":\"RUN\",\"session\":\"O1/running\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"未记录\",\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"blocks\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distanceMeters\":200,\"seconds\":30,\"restSeconds\":120,\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distanceMeters\":200,\"seconds\":31,\"restSeconds\":120,\"status\":\"COMPLETED\"}],\"derived\":{\"confirmedRunMeters\":400,\"pureRunSeconds\":61,\"note\":\"轮次与间歇按原记录保留，不冒充整课用时\"}},{\"id\":\"F2\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"component\":\"STRENGTH\",\"session\":\"O1/strength\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"未记录\",\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"exercise\":\"back-squat\",\"exerciseVersion\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rom\":null,\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rom\":null,\"status\":\"COMPLETED\"}],\"derived\":{\"confirmedSets\":2,\"confirmedReps\":16,\"note\":\"只描述实际剂量，不代表组织受力或恢复\"}},{\"id\":\"CTX\",\"note\":\"completedComponents=[RUN,STRENGTH]；planIsActual=false；背景不代替实际\",\"account\":null,\"device\":null}],\"explanations\":[{\"id\":\"E1\",\"text\":\"跑步部分实际完成：main 第1轮/步骤1 200 m/30 s、第2步 200 m/31 s，均 COMPLETED，组休各 120 s；合计 400 m、纯跑 61 s。\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"counterevidence\":\"若原始记录更正为未完成或距离/秒数被改写，则此解释失效；RPE、时长、跳跃为 null 不补零。\"},{\"id\":\"E2\",\"text\":\"力量部分实际完成：back-squat（U11_1）2 组 × 8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL），均 COMPLETED，合计 16 次。\",\"basisRefs\":[{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若组记录被更正为未完成、或负荷/次数/单位被修订，则此解释失效；RPE/RIR/离心/幅度为 null 不推断。\"}],\"counterevidence\":[\"F1 与 F2 的 originalPurpose 均为“重复跑原批准协议”，但实际类型为未记录；计划意图不证明目标已实现，不能据此宣称协议被复现。\",\"账号与设备均为临时别名且未记录；同组未知设备不证明同一设备，不能合并为同一设备事实。\",\"null 表示未记录，不是 0；RPE、时长、跳跃、HRV、睡眠等缺失不得补零或推断。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录（不妨碍",
+    "usage": {
+      "promptTokens": 1384,
+      "completionTokens": 900,
+      "cacheHitTokens": 640,
+      "cacheMissTokens": 744,
+      "reasoningTokens": null,
+      "totalTokens": 2284
+    },
+    "latencyMs": 4634,
+    "ledgerCostMicros": "1308",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [
+      "ANSWER_TRANSPORT_INVALID"
+    ],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "e5b2d688-b33d-41e7-806d-65f4807560b3",
+    "caseId": "A03",
+    "arm": "A",
+    "phase": "pilot",
+    "coverageHash": "0b7fbcaa9ffe1b3a9b2b834aa7b6ca0d33c6ba1d569dbe4b0e4b2bf4278732e0",
+    "snapshotId": "analysis:ynxizu",
+    "requestHash": "ef9f2415040eb274efde7f240ffab4fe60750086dd3ec0da3dae9668cb595e1b",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "8d6493a3-5a26-476e-b327-d7c20c6e6085",
+      "object": "chat.completion",
+      "created": 1792775170,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":{\"running\":{\"source\":\"F1@1｜S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"segments\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distanceMeters\":200,\"seconds\":30,\"restSeconds\":120,\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distanceMeters\":200,\"seconds\":31,\"restSeconds\":120,\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},\"strength\":{\"source\":\"F2@1｜S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"exercise\":\"back-squat\",\"version\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rangeOfMotion\":null,\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rangeOfMotion\":null,\"status\":\"COMPLETED\"}]},\"background\":{\"completedComponents\":[\"RUN\",\"STRENGTH\"],\"planIsActual\":false},\"account\":null,\"device\":null,\"dataCutoff\":\"2026-10-19T12:00:00Z\",\"timezone\":\"UTC\"},\"explanations\":{\"running\":\"F1@1 记录 main 两段 200 m 均 COMPLETED（30 s、31 s），可支持跑步部分已实际完成；但类型、RPE、时长、跳跃、坡度、地面均未记录，不能补零或推断。\",\"strength\":\"F2@1 记录 back-squat 两组各 8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL）均 COMPLETED，可支持深蹲部分已实际完成；RPE/RIR/量表/保持/离心/幅度未记录，不能推断。\"},\"counterevidence\":{\"running\":\"背景 completedComponents 含 RUN，但 planIsActual=false，背景不等于实际；若仅凭背景会与 F1@1 的原始记录重复或混淆计划与实际。\",\"strength\":\"F2@1 的“原目的”写为“重复跑原批准协议”，与 STRENGTH 课次标签不一致，提示目的字段可能沿用或误填，不能据此判定深蹲计划内容。\"},\"missing\":[\"跑步：类型、RPE、总时长、跳跃次数、坡度%、地面\",\"深蹲：RPE、RIR、量表、保持秒数、离心秒数、幅度\",\"账号与设备均为未记录（null），不推断相同设备\",\"跑步与深蹲是否同一节、同一设备、同一账号：未记录，不能确认\"],\"observation\":\"两条来源均为 S1、发生时间同为 2026-10-18T10:00:00Z、可知时间同为 11:00:00Z，且均 CONFIRMED/AVAILABLE；跑步有 2 段 200 m 完成记录，深蹲有 2 组 8×20 kg 完成记录。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 686,
+        "completion_tokens": 825,
+        "total_tokens": 1511,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 174
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":{\"running\":{\"source\":\"F1@1｜S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"segments\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distanceMeters\":200,\"seconds\":30,\"restSeconds\":120,\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distanceMeters\":200,\"seconds\":31,\"restSeconds\":120,\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},\"strength\":{\"source\":\"F2@1｜S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"durationSeconds\":null,\"jumps\":null,\"exercise\":\"back-squat\",\"version\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rangeOfMotion\":null,\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"loadKg\":20,\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":null,\"rir\":null,\"scale\":null,\"holdSeconds\":null,\"eccentricSeconds\":null,\"rangeOfMotion\":null,\"status\":\"COMPLETED\"}]},\"background\":{\"completedComponents\":[\"RUN\",\"STRENGTH\"],\"planIsActual\":false},\"account\":null,\"device\":null,\"dataCutoff\":\"2026-10-19T12:00:00Z\",\"timezone\":\"UTC\"},\"explanations\":{\"running\":\"F1@1 记录 main 两段 200 m 均 COMPLETED（30 s、31 s），可支持跑步部分已实际完成；但类型、RPE、时长、跳跃、坡度、地面均未记录，不能补零或推断。\",\"strength\":\"F2@1 记录 back-squat 两组各 8 次 × 20 kg（TOTAL_EXTERNAL，BILATERAL）均 COMPLETED，可支持深蹲部分已实际完成；RPE/RIR/量表/保持/离心/幅度未记录，不能推断。\"},\"counterevidence\":{\"running\":\"背景 completedComponents 含 RUN，但 planIsActual=false，背景不等于实际；若仅凭背景会与 F1@1 的原始记录重复或混淆计划与实际。\",\"strength\":\"F2@1 的“原目的”写为“重复跑原批准协议”，与 STRENGTH 课次标签不一致，提示目的字段可能沿用或误填，不能据此判定深蹲计划内容。\"},\"missing\":[\"跑步：类型、RPE、总时长、跳跃次数、坡度%、地面\",\"深蹲：RPE、RIR、量表、保持秒数、离心秒数、幅度\",\"账号与设备均为未记录（null），不推断相同设备\",\"跑步与深蹲是否同一节、同一设备、同一账号：未记录，不能确认\"],\"observation\":\"两条来源均为 S1、发生时间同为 2026-10-18T10:00:00Z、可知时间同为 11:00:00Z，且均 CONFIRMED/AVAILABLE；跑步有 2 段 200 m 完成记录，深蹲有 2 组 8×20 kg 完成记录。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 686,
+      "completionTokens": 825,
+      "cacheHitTokens": 512,
+      "cacheMissTokens": 174,
+      "reasoningTokens": null,
+      "totalTokens": 1511
+    },
+    "latencyMs": 4879,
+    "ledgerCostMicros": "1046",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "4a1e0d18-17a3-4772-a383-44001f7fe70f",
+    "caseId": "A03",
+    "arm": "B",
+    "phase": "pilot",
+    "coverageHash": "0b7fbcaa9ffe1b3a9b2b834aa7b6ca0d33c6ba1d569dbe4b0e4b2bf4278732e0",
+    "snapshotId": "analysis:ynxizu",
+    "requestHash": "4a50fdecc5865620ef98d5a271b16befb3a0dfac58981773ce75eabec7d7ecde",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "d89db97c-41b3-49df-99c9-1fd0cf926e74",
+      "object": "chat.completion",
+      "created": 1792775175,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":{\"run\":{\"source\":\"F1@1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"session\":\"O1/running\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"blocks\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distance\":\"200 m\",\"time\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"400 m\",\"pureRunTime\":\"61 s\",\"rpe\":\"未记录\",\"duration\":\"未记录 s\",\"jumps\":\"未记录 次\",\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},\"strength\":{\"source\":\"F2@1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"session\":\"O1/strength\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"exercise\":\"back-squat\",\"version\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"load\":\"20 kg\",\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":\"未记录\",\"rir\":\"未记录\",\"scale\":\"未记录\",\"hold\":\"未记录 s\",\"eccentric\":\"未记录 s\",\"range\":\"未记录\",\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"load\":\"20 kg\",\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":\"未记录\",\"rir\":\"未记录\",\"scale\":\"未记录\",\"hold\":\"未记录 s\",\"eccentric\":\"未记录 s\",\"range\":\"未记录\",\"status\":\"COMPLETED\"}],\"totalSets\":2,\"totalReps\":16,\"duration\":\"未记录 s\",\"jumps\":\"未记录 次\"},\"account\":\"未记录\",\"device\":\"未记录\",\"planIsActual\":false,\"completedComponents\":[\"RUN\",\"STRENGTH\"]},\"explanations\":[{\"id\":\"E1\",\"text\":\"跑步与深蹲均按记录完成：跑步 2×200 m（30 s、31 s，组休 120 s），深蹲 2×8 次×20 kg；仅描述实际剂量，不推断整课用时或组织受力。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若原始记录更正为未完成、剂量或轮次不同，或来源/身份冲突，则此解释减弱。\"},{\"id\":\"E2\",\"text\":\"原计划目的为“重复跑原批准协议”，但实际类型记录为 UNKNOWN；计划意图不证明目标已实现，也不证明跑步与力量属于同一设备或同一课次结构。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若找到已批准计划版本且明确包含 RUN 与 STRENGTH 的同节结构，并确认实际类型，则此解释减弱。\"}],\"counterevidence\":[\"F1/F2 均为 CONFIRMED/AVAILABLE，但账号、设备未记录；同组未知设备不证明同一设备。\",\"RPE、RIR、时长、跳跃、坡度、表面、离心、幅度等均为 null（未记录），不是 0，不能补零或推断。\",\"计划目的不等于实际完成；planIsActual=false。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"HRV未记录，不补零\",\"跑步与力量是否同一设备/同一课次结构未记录\",\"RPE、RIR、时长、跳跃、坡度、表面、离心、幅度未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\"},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1384,
+        "completion_tokens": 995,
+        "total_tokens": 2379,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 232
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":{\"run\":{\"source\":\"F1@1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"session\":\"O1/running\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"blocks\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distance\":\"200 m\",\"time\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"400 m\",\"pureRunTime\":\"61 s\",\"rpe\":\"未记录\",\"duration\":\"未记录 s\",\"jumps\":\"未记录 次\",\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},\"strength\":{\"source\":\"F2@1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"session\":\"O1/strength\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"exercise\":\"back-squat\",\"version\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"load\":\"20 kg\",\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":\"未记录\",\"rir\":\"未记录\",\"scale\":\"未记录\",\"hold\":\"未记录 s\",\"eccentric\":\"未记录 s\",\"range\":\"未记录\",\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"load\":\"20 kg\",\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":\"未记录\",\"rir\":\"未记录\",\"scale\":\"未记录\",\"hold\":\"未记录 s\",\"eccentric\":\"未记录 s\",\"range\":\"未记录\",\"status\":\"COMPLETED\"}],\"totalSets\":2,\"totalReps\":16,\"duration\":\"未记录 s\",\"jumps\":\"未记录 次\"},\"account\":\"未记录\",\"device\":\"未记录\",\"planIsActual\":false,\"completedComponents\":[\"RUN\",\"STRENGTH\"]},\"explanations\":[{\"id\":\"E1\",\"text\":\"跑步与深蹲均按记录完成：跑步 2×200 m（30 s、31 s，组休 120 s），深蹲 2×8 次×20 kg；仅描述实际剂量，不推断整课用时或组织受力。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若原始记录更正为未完成、剂量或轮次不同，或来源/身份冲突，则此解释减弱。\"},{\"id\":\"E2\",\"text\":\"原计划目的为“重复跑原批准协议”，但实际类型记录为 UNKNOWN；计划意图不证明目标已实现，也不证明跑步与力量属于同一设备或同一课次结构。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若找到已批准计划版本且明确包含 RUN 与 STRENGTH 的同节结构，并确认实际类型，则此解释减弱。\"}],\"counterevidence\":[\"F1/F2 均为 CONFIRMED/AVAILABLE，但账号、设备未记录；同组未知设备不证明同一设备。\",\"RPE、RIR、时长、跳跃、坡度、表面、离心、幅度等均为 null（未记录），不是 0，不能补零或推断。\",\"计划目的不等于实际完成；planIsActual=false。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"HRV未记录，不补零\",\"跑步与力量是否同一设备/同一课次结构未记录\",\"RPE、RIR、时长、跳跃、坡度、表面、离心、幅度未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\"},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1384,
+      "completionTokens": 995,
+      "cacheHitTokens": 1152,
+      "cacheMissTokens": 232,
+      "reasoningTokens": null,
+      "totalTokens": 2379
+    },
+    "latencyMs": 4992,
+    "ledgerCostMicros": "1271",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "c664e565-67dd-47b8-ba09-7083e226a949",
+    "caseId": "C03",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "3006a6533baaec446e1fa2a5f940d8426ec4743ad905874c61e08e8a3c55c5a7",
+    "snapshotId": "analysis:1y9n8ji",
+    "requestHash": "b45c507a520f60fe3da2f7383178d9c64144f5e37f4615cf13213f6a2a6dde4a",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "5cd416de-607b-45cc-8b41-2a8fecf845e5",
+      "object": "chat.completion",
+      "created": 1792775209,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"计划：基础期 4×1000 m，目标 240 s/组，组休 120 s（来源：背景 planned；S1）\",\"实际：4 组均 COMPLETED，用时依次 238 s、240 s、241 s、240 s，组休均 120 s（来源：F1@1｜S1｜2026-10-18T10:00:00Z）\",\"教练意图：稳定节奏（来源：背景 coachIntent）\",\"RPE、类型、时长、跳跃次数、坡度、地面均未记录（null，非 0）（来源：F1@1｜S1）\",\"账号、设备均未记录；同组未知设备不证明同一设备（来源：S1）\"],\"explanations\":[\"解释A：实际配速围绕目标 240 s 小幅波动（238–241 s），与“稳定节奏”意图一致，属按计划完成。\",\"解释B：第3组 241 s 略高于目标、第1组 238 s 略低于目标，属正常秒级波动，不构成计划偏离。\"],\"counterevidence\":[\"解释A反证：单次课次、无 RPE 与主观/环境记录，无法确认节奏稳定是能力体现还是当日状态；仅凭 4 组用时不足以排除偶然。\",\"解释B反证：rawResolutionSeconds=1，238/240/241/240 s 的差异在记录分辨率内可分辨，但缺少历史同协议数据，无法判断波动是否属该跑者常态。\"],\"missing\":[\"RPE（未记录）\",\"训练类型（未记录）\",\"课次时长（未记录）\",\"跳跃次数（未记录）\",\"坡度、地面（null）\",\"账号、设备（未记录）\",\"历史同协议课次数据（未提供）\"],\"observation\":\"4×1000 m 全部完成，用时 238/240/241/240 s，组休 120 s，与计划目标 240 s 及教练“稳定节奏”意图在数值上吻合；但主观负荷与环境信息缺失。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 545,
+        "completion_tokens": 459,
+        "total_tokens": 1004,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 545
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"计划：基础期 4×1000 m，目标 240 s/组，组休 120 s（来源：背景 planned；S1）\",\"实际：4 组均 COMPLETED，用时依次 238 s、240 s、241 s、240 s，组休均 120 s（来源：F1@1｜S1｜2026-10-18T10:00:00Z）\",\"教练意图：稳定节奏（来源：背景 coachIntent）\",\"RPE、类型、时长、跳跃次数、坡度、地面均未记录（null，非 0）（来源：F1@1｜S1）\",\"账号、设备均未记录；同组未知设备不证明同一设备（来源：S1）\"],\"explanations\":[\"解释A：实际配速围绕目标 240 s 小幅波动（238–241 s），与“稳定节奏”意图一致，属按计划完成。\",\"解释B：第3组 241 s 略高于目标、第1组 238 s 略低于目标，属正常秒级波动，不构成计划偏离。\"],\"counterevidence\":[\"解释A反证：单次课次、无 RPE 与主观/环境记录，无法确认节奏稳定是能力体现还是当日状态；仅凭 4 组用时不足以排除偶然。\",\"解释B反证：rawResolutionSeconds=1，238/240/241/240 s 的差异在记录分辨率内可分辨，但缺少历史同协议数据，无法判断波动是否属该跑者常态。\"],\"missing\":[\"RPE（未记录）\",\"训练类型（未记录）\",\"课次时长（未记录）\",\"跳跃次数（未记录）\",\"坡度、地面（null）\",\"账号、设备（未记录）\",\"历史同协议课次数据（未提供）\"],\"observation\":\"4×1000 m 全部完成，用时 238/240/241/240 s，组休 120 s，与计划目标 240 s 及教练“稳定节奏”意图在数值上吻合；但主观负荷与环境信息缺失。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 545,
+      "completionTokens": 459,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 545,
+      "reasoningTokens": null,
+      "totalTokens": 1004
+    },
+    "latencyMs": 3498,
+    "ledgerCostMicros": "715",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "254e6d66-d7c1-4b88-9c64-6c83cb6cb502",
+    "caseId": "C03",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "3006a6533baaec446e1fa2a5f940d8426ec4743ad905874c61e08e8a3c55c5a7",
+    "snapshotId": "analysis:1y9n8ji",
+    "requestHash": "b122efcf19099c17beb14a3d7becaaa3d88e6618ab453865a961e2a29e31519b",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "634e6835-53f2-4abf-ac8a-d01d5f917bec",
+      "object": "chat.completion",
+      "created": 1792775213,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"text\":\"基础期计划：4×1000米，目标240秒/组，组休120秒，教练意图稳定节奏。\",\"source\":\"背景 planned/coachIntent\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"实际完成4组1000米，用时238/240/241/240秒，组休120秒，均COMPLETED。\",\"source\":\"F1@1\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"已确认跑步总距离4000米，纯跑用时959秒；轮次与间歇按原记录保留，不冒充整课用时。\",\"source\":\"F1@1 确定性计算\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"RPE、时长、跳跃次数、坡度、地面均未记录（null，不是0）。\",\"source\":\"F1@1\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"账号、设备均为临时别名且未记录；同组未知设备不证明同一设备。\",\"source\":\"S1\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]}],\"explanations\":[{\"text\":\"实际四组用时238–241秒，围绕240秒目标小幅波动，与“稳定节奏”意图方向一致；但意图不证明目标已实现，且无RPE/热身/恢复反馈佐证。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}],\"counterevidence\":\"缺少RPE、热身功能表现及24/48/72h反馈；单一课次不能证明节奏稳定性。\"},{\"text\":\"四组均按计划完成且组休120秒，说明本次实际剂量与计划剂量在距离、组数、组休上一致；但类型、RPE未记录，不能推断训练性质或生理反应。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}],\"counterevidence\":\"实际类型UNKNOWN、RPE未记录；设备与账号未记录，无法排除记录口径差异。\"}],\"counterevidence\":[\"RPE未记录，无法评估主观负荷是否与稳定节奏一致。\",\"缺少原热身或日常功能表现，无法判断完成质量。\",\"睡眠、HRV未记录，不补零，不能用于恢复判断。\",\"当前疼痛情况未知，安全状态UNKNOWN。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录\",\"RPE未记录\",\"训练类型未记录\",\"设备与账号未记录\"],\"observation\":\"原计划4×1000米@240秒、组休120秒；实际238/240/241/240秒、组休120秒，4组COMPLETED，纯跑959秒；RPE、类型、坡度、地面、设备均未记录。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量；记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈。\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1100,
+        "completion_tokens": 717,
+        "total_tokens": 1817,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 588
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"text\":\"基础期计划：4×1000米，目标240秒/组，组休120秒，教练意图稳定节奏。\",\"source\":\"背景 planned/coachIntent\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"实际完成4组1000米，用时238/240/241/240秒，组休120秒，均COMPLETED。\",\"source\":\"F1@1\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"已确认跑步总距离4000米，纯跑用时959秒；轮次与间歇按原记录保留，不冒充整课用时。\",\"source\":\"F1@1 确定性计算\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"RPE、时长、跳跃次数、坡度、地面均未记录（null，不是0）。\",\"source\":\"F1@1\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]},{\"text\":\"账号、设备均为临时别名且未记录；同组未知设备不证明同一设备。\",\"source\":\"S1\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}]}],\"explanations\":[{\"text\":\"实际四组用时238–241秒，围绕240秒目标小幅波动，与“稳定节奏”意图方向一致；但意图不证明目标已实现，且无RPE/热身/恢复反馈佐证。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}],\"counterevidence\":\"缺少RPE、热身功能表现及24/48/72h反馈；单一课次不能证明节奏稳定性。\"},{\"text\":\"四组均按计划完成且组休120秒，说明本次实际剂量与计划剂量在距离、组数、组休上一致；但类型、RPE未记录，不能推断训练性质或生理反应。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1}],\"counterevidence\":\"实际类型UNKNOWN、RPE未记录；设备与账号未记录，无法排除记录口径差异。\"}],\"counterevidence\":[\"RPE未记录，无法评估主观负荷是否与稳定节奏一致。\",\"缺少原热身或日常功能表现，无法判断完成质量。\",\"睡眠、HRV未记录，不补零，不能用于恢复判断。\",\"当前疼痛情况未知，安全状态UNKNOWN。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录\",\"RPE未记录\",\"训练类型未记录\",\"设备与账号未记录\"],\"observation\":\"原计划4×1000米@240秒、组休120秒；实际238/240/241/240秒、组休120秒，4组COMPLETED，纯跑959秒；RPE、类型、坡度、地面、设备均未记录。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量；记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈。\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1100,
+      "completionTokens": 717,
+      "cacheHitTokens": 512,
+      "cacheMissTokens": 588,
+      "reasoningTokens": null,
+      "totalTokens": 1817
+    },
+    "latencyMs": 4466,
+    "ledgerCostMicros": "1040",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "5e1425f6-7aab-4848-bfe0-6c830f449744",
+    "caseId": "C04",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "aa689288ee2702de9772800dc5a49dc0217e651df88ee702e7bbcf409d0b6e5d",
+    "snapshotId": "analysis:1y9n8ji",
+    "requestHash": "b999d0599c7596f44cf02af6b323f28e9e70832beb575d4b60b0fba1a6598924",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "68889414-d990-4e3a-a35e-03cfeb9dada3",
+      "object": "chat.completion",
+      "created": 1792775221,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"S1/F1@1：2026-10-18T10:00:00Z 发生，2026-10-18T11:00:00Z 可知，CONFIRMED/AVAILABLE，MANUAL/P1，账号/设备未记录\",\"课次 O1/running：原目的为重复跑原批准协议；类型、RPE、时长、跳跃均未记录\",\"计划（背景，非实际）：4×1000 m，目标240 s，组休120 s，教练意图保持节奏\",\"实际：第1轮238 s、第2轮240 s、第3轮241 s、第4轮240 s，均COMPLETED，组休均120 s\",\"各段共同：rawResolutionSeconds=1，gradePercent=null，surface=null\",\"资料截止2026-10-19T12:00:00Z；比赛日期2026-10-26，A级，备赛期\"],\"explanations\":[\"解释A：实际四段为238/240/241/240 s，围绕240 s目标波动（-2/0/+1/0 s），与“保持节奏”的意图相符；反证：RPE、类型、时长未记录，无法确认主观节奏稳定性，且第3段+1 s存在轻微偏离。\",\"解释B：第1段238 s快于目标、第3段241 s慢于目标，提示配速存在小幅前后波动；反证：仅单次课次、分辨率1 s、坡度/路面未记录，且无既往同协议对照，不能据此判定节奏控制失败或能力变化。\"],\"counterevidence\":[\"解释A反证：RPE未记录、类型未记录、时长未记录，无法验证主观节奏与整体负荷\",\"解释B反证：单次课次、1 s分辨率、坡度/路面null、无历史同协议数据，波动幅度小且可能属正常误差\"],\"missing\":[\"账号、设备（均为临时别名/未记录）\",\"课次类型、RPE、时长、跳跃次数\",\"坡度、路面\",\"既往同协议4×1000 m记录（用于对照）\",\"休息执行质量（仅记录120 s，未记录实际休息方式/是否走停）\"],\"observation\":\"赛前7天（2026-10-18）完成4×1000 m，实际238/240/241/240 s，组休120 s，全部COMPLETED；目标240 s，教练意图保持节奏。数据来源S1，单次课次，分辨率1 s。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 570,
+        "completion_tokens": 554,
+        "total_tokens": 1124,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 186
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"S1/F1@1：2026-10-18T10:00:00Z 发生，2026-10-18T11:00:00Z 可知，CONFIRMED/AVAILABLE，MANUAL/P1，账号/设备未记录\",\"课次 O1/running：原目的为重复跑原批准协议；类型、RPE、时长、跳跃均未记录\",\"计划（背景，非实际）：4×1000 m，目标240 s，组休120 s，教练意图保持节奏\",\"实际：第1轮238 s、第2轮240 s、第3轮241 s、第4轮240 s，均COMPLETED，组休均120 s\",\"各段共同：rawResolutionSeconds=1，gradePercent=null，surface=null\",\"资料截止2026-10-19T12:00:00Z；比赛日期2026-10-26，A级，备赛期\"],\"explanations\":[\"解释A：实际四段为238/240/241/240 s，围绕240 s目标波动（-2/0/+1/0 s），与“保持节奏”的意图相符；反证：RPE、类型、时长未记录，无法确认主观节奏稳定性，且第3段+1 s存在轻微偏离。\",\"解释B：第1段238 s快于目标、第3段241 s慢于目标，提示配速存在小幅前后波动；反证：仅单次课次、分辨率1 s、坡度/路面未记录，且无既往同协议对照，不能据此判定节奏控制失败或能力变化。\"],\"counterevidence\":[\"解释A反证：RPE未记录、类型未记录、时长未记录，无法验证主观节奏与整体负荷\",\"解释B反证：单次课次、1 s分辨率、坡度/路面null、无历史同协议数据，波动幅度小且可能属正常误差\"],\"missing\":[\"账号、设备（均为临时别名/未记录）\",\"课次类型、RPE、时长、跳跃次数\",\"坡度、路面\",\"既往同协议4×1000 m记录（用于对照）\",\"休息执行质量（仅记录120 s，未记录实际休息方式/是否走停）\"],\"observation\":\"赛前7天（2026-10-18）完成4×1000 m，实际238/240/241/240 s，组休120 s，全部COMPLETED；目标240 s，教练意图保持节奏。数据来源S1，单次课次，分辨率1 s。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 570,
+      "completionTokens": 554,
+      "cacheHitTokens": 384,
+      "cacheMissTokens": 186,
+      "reasoningTokens": null,
+      "totalTokens": 1124
+    },
+    "latencyMs": 3797,
+    "ledgerCostMicros": "723",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "47da0dd6-acfb-4af1-80f2-b59a8af7893c",
+    "caseId": "C04",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "aa689288ee2702de9772800dc5a49dc0217e651df88ee702e7bbcf409d0b6e5d",
+    "snapshotId": "analysis:1y9n8ji",
+    "requestHash": "be1b5f28ea0cf4b4b0f98b594d8a412aa3f3c2af36740d0c6eda86f8cbc883b7",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "0d4e3bdc-5663-474d-bcbd-a4a31b3adc44",
+      "object": "chat.completion",
+      "created": 1792775217,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"text\":\"2026-10-18T10:00:00Z 完成4×1000米重复跑，各段用时238/240/241/240秒，组休120秒，共4000米，纯跑用时959秒。\",\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"text\":\"计划：4×1000米，目标240秒，休息120秒；教练意图保持节奏。\",\"source\":\"背景\",\"note\":\"计划不等于实际达成\"},{\"text\":\"实际类型未记录（UNKNOWN），RPE未记录，时长未记录，坡度/路面未记录。\",\"source\":\"F1\"},{\"text\":\"资料截止2026-10-19T12:00:00Z；比赛日2026-10-26，A级优先。\",\"source\":\"背景\"}],\"explanations\":[{\"text\":\"实际四段为238/240/241/240秒，围绕目标240秒波动（-2/0/+1/0秒），与“保持节奏”意图在数值上一致。\",\"evidenceRefs\":[\"F1\"],\"counterevidence\":[\"RPE未记录，无法确认主观强度是否稳定\",\"类型未记录，无法确认执行方式与原批准协议一致\"]},{\"text\":\"赛前7天完成4×1000米且组休120秒，总纯跑959秒，属于已确认的赛前重复跑负荷记录。\",\"evidenceRefs\":[\"F1\"],\"counterevidence\":[\"缺少热身、睡眠、HRV及24/48/72小时反馈，不能判断恢复状态\",\"无疼痛与功能信息，不能推断耐受良好\"]}],\"counterevidence\":[\"RPE未记录，不能以配速稳定替代主观负荷稳定\",\"类型未记录，不能断言完全按原批准协议执行\",\"缺少疼痛、睡眠、HRV及赛后反馈，不能推断恢复或医学许可\"],\"missing\":[\"当前是否疼痛、位置及是否影响动作\",\"原热身或日常功能表现\",\"睡眠记录\",\"HRV记录（不补零）\",\"RPE\",\"训练类型\",\"24/48/72小时反馈\"],\"observation\":\"已确认跑步4000米，纯跑959秒；四段238/240/241/240秒，组休120秒；轮次与间歇按原记录保留，不冒充整课用时。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1125,
+        "completion_tokens": 575,
+        "total_tokens": 1700,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1125
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"text\":\"2026-10-18T10:00:00Z 完成4×1000米重复跑，各段用时238/240/241/240秒，组休120秒，共4000米，纯跑用时959秒。\",\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"text\":\"计划：4×1000米，目标240秒，休息120秒；教练意图保持节奏。\",\"source\":\"背景\",\"note\":\"计划不等于实际达成\"},{\"text\":\"实际类型未记录（UNKNOWN），RPE未记录，时长未记录，坡度/路面未记录。\",\"source\":\"F1\"},{\"text\":\"资料截止2026-10-19T12:00:00Z；比赛日2026-10-26，A级优先。\",\"source\":\"背景\"}],\"explanations\":[{\"text\":\"实际四段为238/240/241/240秒，围绕目标240秒波动（-2/0/+1/0秒），与“保持节奏”意图在数值上一致。\",\"evidenceRefs\":[\"F1\"],\"counterevidence\":[\"RPE未记录，无法确认主观强度是否稳定\",\"类型未记录，无法确认执行方式与原批准协议一致\"]},{\"text\":\"赛前7天完成4×1000米且组休120秒，总纯跑959秒，属于已确认的赛前重复跑负荷记录。\",\"evidenceRefs\":[\"F1\"],\"counterevidence\":[\"缺少热身、睡眠、HRV及24/48/72小时反馈，不能判断恢复状态\",\"无疼痛与功能信息，不能推断耐受良好\"]}],\"counterevidence\":[\"RPE未记录，不能以配速稳定替代主观负荷稳定\",\"类型未记录，不能断言完全按原批准协议执行\",\"缺少疼痛、睡眠、HRV及赛后反馈，不能推断恢复或医学许可\"],\"missing\":[\"当前是否疼痛、位置及是否影响动作\",\"原热身或日常功能表现\",\"睡眠记录\",\"HRV记录（不补零）\",\"RPE\",\"训练类型\",\"24/48/72小时反馈\"],\"observation\":\"已确认跑步4000米，纯跑959秒；四段238/240/241/240秒，组休120秒；轮次与间歇按原记录保留，不冒充整课用时。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1125,
+      "completionTokens": 575,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 1125,
+      "reasoningTokens": null,
+      "totalTokens": 1700
+    },
+    "latencyMs": 3973,
+    "ledgerCostMicros": "1028",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "1a2ccee6-5ee1-43e6-8b43-9d7f9462ab73",
+    "caseId": "C07",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "3540e4ff2fa0e702772f9dc29a263c029b0113ffe8c926cc3e7996bb545e4385",
+    "snapshotId": "analysis:1x4ui1q",
+    "requestHash": "33a4ee009ad4574625e65b11cf5705d3c44a4286a279ab036f6201fa27adaf5f",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "0063bd6e-6089-4430-b921-d920bd421c03",
+      "object": "chat.completion",
+      "created": 1792775225,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O1/running；原目的重复跑原批准协议；类型未记录；RPE未记录；时长未记录；跳跃未记录\"},{\"id\":\"P\",\"source\":\"背景coachIntent/planned\",\"content\":\"计划控制节奏；1000m×4，目标240s/段，组休120s\"},{\"id\":\"A1\",\"source\":\"S1\",\"content\":\"第1段1000m/230s，组休120s，COMPLETED\"},{\"id\":\"A2\",\"source\":\"S1\",\"content\":\"第2段1000m/240s，组休120s，COMPLETED\"},{\"id\":\"A3\",\"source\":\"S1\",\"content\":\"第3段1000m/250s，组休120s，COMPLETED\"},{\"id\":\"A4\",\"source\":\"S1\",\"content\":\"第4段1000m/260s，组休120s，COMPLETED\"},{\"id\":\"R\",\"source\":\"S1\",\"content\":\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"实际分段呈230/240/250/260s递增，前段快于计划240s、后段慢于计划240s，与“前快后慢”的观察一致；可能反映起始配速偏快导致后程衰减。\",\"counterevidence\":\"若后段慢由非配速因素（如未记录的坡度/路面/风）造成，则不能归因于配速策略；但gradePercent与surface均为null，无法排除或确认。\"},{\"id\":\"E2\",\"text\":\"计划为匀速控制节奏（每段240s），实际为逐段递增用时，说明节奏控制未按计划执行。\",\"counterevidence\":\"若计划本意允许递增或负分割以外的节奏安排，则“未按计划”不成立；但背景planned明确为4×1000m/240s，未见变更记录。\"}],\"counterevidence\":[\"坡度gradePercent=null、路面surface=null，无法排除环境因素对分段用时的影响。\",\"RPE未记录、时长未记录，无法评估主观强度与恢复质量。\",\"类型未记录，无法确认是否为重复跑以外的执行形式。\"],\"missing\":[\"RPE\",\"课次时长\",\"类型\",\"坡度\",\"路面\",\"恢复质量（仅有组休120s记录，无主观/生理恢复指标）\",\"设备与账号信息（均为临时别名/未记录）\"],\"observation\":\"实际4段1000m用时依次230s、240s、250s、260s，组休均120s；相对计划240s/段，第1段快10s，第2段持平，第3段慢10s，第4段慢20s，呈前快后慢。\",\"candidate\":\"MODIFY\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 524,
+        "completion_tokens": 650,
+        "total_tokens": 1174,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 524
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O1/running；原目的重复跑原批准协议；类型未记录；RPE未记录；时长未记录；跳跃未记录\"},{\"id\":\"P\",\"source\":\"背景coachIntent/planned\",\"content\":\"计划控制节奏；1000m×4，目标240s/段，组休120s\"},{\"id\":\"A1\",\"source\":\"S1\",\"content\":\"第1段1000m/230s，组休120s，COMPLETED\"},{\"id\":\"A2\",\"source\":\"S1\",\"content\":\"第2段1000m/240s，组休120s，COMPLETED\"},{\"id\":\"A3\",\"source\":\"S1\",\"content\":\"第3段1000m/250s，组休120s，COMPLETED\"},{\"id\":\"A4\",\"source\":\"S1\",\"content\":\"第4段1000m/260s，组休120s，COMPLETED\"},{\"id\":\"R\",\"source\":\"S1\",\"content\":\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"实际分段呈230/240/250/260s递增，前段快于计划240s、后段慢于计划240s，与“前快后慢”的观察一致；可能反映起始配速偏快导致后程衰减。\",\"counterevidence\":\"若后段慢由非配速因素（如未记录的坡度/路面/风）造成，则不能归因于配速策略；但gradePercent与surface均为null，无法排除或确认。\"},{\"id\":\"E2\",\"text\":\"计划为匀速控制节奏（每段240s），实际为逐段递增用时，说明节奏控制未按计划执行。\",\"counterevidence\":\"若计划本意允许递增或负分割以外的节奏安排，则“未按计划”不成立；但背景planned明确为4×1000m/240s，未见变更记录。\"}],\"counterevidence\":[\"坡度gradePercent=null、路面surface=null，无法排除环境因素对分段用时的影响。\",\"RPE未记录、时长未记录，无法评估主观强度与恢复质量。\",\"类型未记录，无法确认是否为重复跑以外的执行形式。\"],\"missing\":[\"RPE\",\"课次时长\",\"类型\",\"坡度\",\"路面\",\"恢复质量（仅有组休120s记录，无主观/生理恢复指标）\",\"设备与账号信息（均为临时别名/未记录）\"],\"observation\":\"实际4段1000m用时依次230s、240s、250s、260s，组休均120s；相对计划240s/段，第1段快10s，第2段持平，第3段慢10s，第4段慢20s，呈前快后慢。\",\"candidate\":\"MODIFY\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 524,
+      "completionTokens": 650,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 524,
+      "reasoningTokens": null,
+      "totalTokens": 1174
+    },
+    "latencyMs": 4270,
+    "ledgerCostMicros": "938",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "eb735927-4c04-47f9-8d3d-7384b5fcbc74",
+    "caseId": "C07",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "3540e4ff2fa0e702772f9dc29a263c029b0113ffe8c926cc3e7996bb545e4385",
+    "snapshotId": "analysis:1x4ui1q",
+    "requestHash": "043cd0a2d1bd63d5b90d216a9b72e794375819083ed4b4578cb119d12673f9f9",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "c374511a-a386-4b55-b955-c24784144509",
+      "object": "chat.completion",
+      "created": 1792775229,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[{\"text\":\"原计划：1000 m×4，目标240 s/组，组休120 s（来源：背景 planned；非实际执行）\",\"source\":\"background.planned\"},{\"text\":\"实际：1000 m×4，逐段230 s、240 s、250 s、260 s，组休均120 s，均COMPLETED（来源：F1@1/S1）\",\"source\":\"F1@1\"},{\"text\":\"纯跑用时980 s；已确认跑步4000 m；轮次与间歇按原记录保留，不冒充整课用时（来源：F1@1/S1）\",\"source\":\"F1@1\"},{\"text\":\"RPE未记录、时长未记录、类型未记录、坡度/地面未记录（null，不推断为0）\",\"source\":\"F1@1\"},{\"text\":\"资料截止2026-10-19T12:00:00Z；账号/设备为临时别名，同组未知设备不证明同一设备\",\"source\":\"context\"}],\"explanations\":[{\"text\":\"前快后慢可能反映配速控制不足或起步偏快导致后段衰减；反证：若后续同协议逐段更均匀，或分段差异落在记录分辨率/测量误差内，则该解释减弱\",\"counterevidence\":\"缺少RPE、睡眠、热身与设备一致性记录，无法确认机制\"},{\"text\":\"前快后慢也可能由恢复不足或后段疲劳累积造成；反证：若24/48/72h反馈稳定且同协议重复表现均匀，则该解释减弱\",\"counterevidence\":\"恢复反馈与HRV未记录（不补零），不能确认\"}],\"counterevidence\":[\"无RPE、睡眠、HRV、疼痛/功能记录，不能归因于单一因素\",\"设备/账号为临时别名，同组未知设备不证明同一设备\",\"计划意图不证明目标已实现；实际类型UNKNOWN\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"RPE未记录\",\"恢复反馈（24/48/72h）未记录\"],\"observation\":\"原计划意图为控制节奏；实际逐段230→260 s呈前快后慢，组休均120 s且四组COMPLETED；纯跑980 s/4000 m。仅记录观察，不据此改写已完成课。\",\"candidate\":[{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[\"F1@1\"],\"reason\":\"现有证据不支持自动改变训练量；缺RPE与恢复反馈\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true}],\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1079,
+        "completion_tokens": 587,
+        "total_tokens": 1666,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 567
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[{\"text\":\"原计划：1000 m×4，目标240 s/组，组休120 s（来源：背景 planned；非实际执行）\",\"source\":\"background.planned\"},{\"text\":\"实际：1000 m×4，逐段230 s、240 s、250 s、260 s，组休均120 s，均COMPLETED（来源：F1@1/S1）\",\"source\":\"F1@1\"},{\"text\":\"纯跑用时980 s；已确认跑步4000 m；轮次与间歇按原记录保留，不冒充整课用时（来源：F1@1/S1）\",\"source\":\"F1@1\"},{\"text\":\"RPE未记录、时长未记录、类型未记录、坡度/地面未记录（null，不推断为0）\",\"source\":\"F1@1\"},{\"text\":\"资料截止2026-10-19T12:00:00Z；账号/设备为临时别名，同组未知设备不证明同一设备\",\"source\":\"context\"}],\"explanations\":[{\"text\":\"前快后慢可能反映配速控制不足或起步偏快导致后段衰减；反证：若后续同协议逐段更均匀，或分段差异落在记录分辨率/测量误差内，则该解释减弱\",\"counterevidence\":\"缺少RPE、睡眠、热身与设备一致性记录，无法确认机制\"},{\"text\":\"前快后慢也可能由恢复不足或后段疲劳累积造成；反证：若24/48/72h反馈稳定且同协议重复表现均匀，则该解释减弱\",\"counterevidence\":\"恢复反馈与HRV未记录（不补零），不能确认\"}],\"counterevidence\":[\"无RPE、睡眠、HRV、疼痛/功能记录，不能归因于单一因素\",\"设备/账号为临时别名，同组未知设备不证明同一设备\",\"计划意图不证明目标已实现；实际类型UNKNOWN\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"RPE未记录\",\"恢复反馈（24/48/72h）未记录\"],\"observation\":\"原计划意图为控制节奏；实际逐段230→260 s呈前快后慢，组休均120 s且四组COMPLETED；纯跑980 s/4000 m。仅记录观察，不据此改写已完成课。\",\"candidate\":[{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[\"F1@1\"],\"reason\":\"现有证据不支持自动改变训练量；缺RPE与恢复反馈\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true}],\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1079,
+      "completionTokens": 587,
+      "cacheHitTokens": 512,
+      "cacheMissTokens": 567,
+      "reasoningTokens": null,
+      "totalTokens": 1666
+    },
+    "latencyMs": 4612,
+    "ledgerCostMicros": "878",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "277fb256-910c-427c-854e-a7950591b9e3",
+    "caseId": "D01",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "9c10b3cbf13e56425890c3c7ef805dad858e750b7c7234385846da4d2e8b2e2a",
+    "snapshotId": "analysis:1yecdth",
+    "requestHash": "85e689d8a3047a7c1e001f93b8c82d19b11686fd512c04098d5a502b7e8536d5",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "ca1959eb-63a7-4453-ad33-9753dffbb657",
+      "object": "chat.completion",
+      "created": 1792775239,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/NOT_RECORDED\",\"content\":\"HRV未记录（null），非0\",\"unit\":\"ms\"},{\"id\":\"F2\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O1/running，原目的重复跑原批准协议，RPE 7（CR10），时长未记录，跳跃未记录\",\"segments\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distance\":\"200 m\",\"duration\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":3,\"distance\":\"200 m\",\"duration\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F3\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"睡眠7 h，统计SAMPLE，能量口径未记录\",\"unit\":\"h\"}],\"explanations\":[{\"text\":\"实际分段与整课RPE 7（CR10）提示该课为中等偏上强度重复跑，睡眠7 h为可参考恢复背景；HRV缺失仅表示未记录。\",\"counterevidence\":\"RPE为单次主观值，无时长与类型记录，无法据此确认强度负荷；睡眠为SAMPLE统计，能量口径未记录，不能证明恢复充分。\"},{\"text\":\"三段200 m用时30/31/32 s呈轻微递增，可能反映后段疲劳或配速控制变化。\",\"counterevidence\":\"仅3段、分辨率1 s，坡度与地面未记录，差异在测量与配速波动范围内，不能证明疲劳趋势。\"}],\"counterevidence\":[\"HRV未记录不等于低HRV或恢复不足。\",\"时长未记录不等于0；跳跃未记录不等于0次。\",\"同组未知设备不证明同一设备；账号/设备为临时别名。\"],\"missing\":[\"HRV（ms）\",\"课次类型\",\"课次时长（s）\",\"跳跃次数\",\"坡度（%）\",\"地面类型\",\"能量口径\"],\"observation\":\"有实际分段（3×200 m，30/31/32 s，组休120 s，均COMPLETED）、整课RPE 7（CR10）与睡眠7 h；HRV未记录（null）。资料截止2026-10-19T12:00:00Z，时区UTC。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 599,
+        "completion_tokens": 625,
+        "total_tokens": 1224,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 215
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/NOT_RECORDED\",\"content\":\"HRV未记录（null），非0\",\"unit\":\"ms\"},{\"id\":\"F2\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O1/running，原目的重复跑原批准协议，RPE 7（CR10），时长未记录，跳跃未记录\",\"segments\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distance\":\"200 m\",\"duration\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":3,\"distance\":\"200 m\",\"duration\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F3\",\"source\":\"S1\",\"time\":\"2026-10-18T10:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"睡眠7 h，统计SAMPLE，能量口径未记录\",\"unit\":\"h\"}],\"explanations\":[{\"text\":\"实际分段与整课RPE 7（CR10）提示该课为中等偏上强度重复跑，睡眠7 h为可参考恢复背景；HRV缺失仅表示未记录。\",\"counterevidence\":\"RPE为单次主观值，无时长与类型记录，无法据此确认强度负荷；睡眠为SAMPLE统计，能量口径未记录，不能证明恢复充分。\"},{\"text\":\"三段200 m用时30/31/32 s呈轻微递增，可能反映后段疲劳或配速控制变化。\",\"counterevidence\":\"仅3段、分辨率1 s，坡度与地面未记录，差异在测量与配速波动范围内，不能证明疲劳趋势。\"}],\"counterevidence\":[\"HRV未记录不等于低HRV或恢复不足。\",\"时长未记录不等于0；跳跃未记录不等于0次。\",\"同组未知设备不证明同一设备；账号/设备为临时别名。\"],\"missing\":[\"HRV（ms）\",\"课次类型\",\"课次时长（s）\",\"跳跃次数\",\"坡度（%）\",\"地面类型\",\"能量口径\"],\"observation\":\"有实际分段（3×200 m，30/31/32 s，组休120 s，均COMPLETED）、整课RPE 7（CR10）与睡眠7 h；HRV未记录（null）。资料截止2026-10-19T12:00:00Z，时区UTC。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 599,
+      "completionTokens": 625,
+      "cacheHitTokens": 384,
+      "cacheMissTokens": 215,
+      "reasoningTokens": null,
+      "totalTokens": 1224
+    },
+    "latencyMs": 4035,
+    "ledgerCostMicros": "817",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "2633454b-c451-4f44-b223-3dbd60272f2d",
+    "caseId": "D01",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "9c10b3cbf13e56425890c3c7ef805dad858e750b7c7234385846da4d2e8b2e2a",
+    "snapshotId": "analysis:1yecdth",
+    "requestHash": "a34b123bdaac3f9ca81e4753104d7d6949c3f789ce6c911acf2b48552c91911e",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "ede2c049-f902-49aa-9493-39c0c31cbc4b",
+      "object": "chat.completion",
+      "created": 1792775234,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"F1@1｜S1｜2026-10-18T10:00:00Z｜CONFIRMED/NOT_RECORDED：hrv=未记录 ms，统计 SAMPLE，日期 2026-10-18，能量口径未记录\",\"F2@1｜S1｜2026-10-18T10:00:00Z｜CONFIRMED/AVAILABLE：课次 O1/running｜RUN，原目的 重复跑原批准协议，类型 未记录，RPE 7（CR10），时长 未记录 s，跳跃 未记录 次\",\"F2@1 分段：main 第1轮/步骤1 200 m/30 s，组休 120 s，COMPLETED；步骤2 200 m/31 s，组休 120 s，COMPLETED；步骤3 200 m/32 s，组休 120 s，COMPLETED；各段共同 rawResolutionSeconds=1，gradePercent=null，surface=null\",\"F2@1 已确认跑步 600 m，纯跑用时 93 s（30+31+32）；轮次与间歇按原记录保留，不冒充整课用时\",\"F3@1｜S1｜2026-10-18T10:00:00Z｜CONFIRMED/AVAILABLE：sleep=7 h，统计 SAMPLE，日期 2026-10-18，能量口径未记录\",\"资料截止 2026-10-19T12:00:00Z，时区 UTC；账号/设备均为临时别名，null 表示未记录，不推断相同设备\"],\"explanations\":[\"解释A（测量背景）：睡眠与测量背景可能参与当前状态；单一睡眠或 HRV 读数不足以判断恢复不良。支持：F3 7 h 睡眠；反证：F2 分段完成且 RPE 7，若同协议表现稳定则削弱“恢复不良”判断\",\"解释B（训练剂量）：原目的为重复跑原批准协议，实际类型 UNKNOWN；计划意图不证明目标已实现。支持：F2 原目的与实际类型未记录；反证：F2 三段均 COMPLETED 且组休 120 s 按记录保留，若更正后暴露消失则削弱该解释\"],\"counterevidence\":[\"F2 三段均 COMPLETED，纯跑 93 s，RPE 7（CR10），未显示中断或未完成\",\"F3 睡眠 7 h 已记录，不构成恢复不良的直接证据\",\"F1 HRV 未记录，不能补零，也不能据此推断恢复状态\"],\"missing\":[\"F1: NOT_RECORDED（HRV 未记录，不补零）\",\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"F2 类型未记录、时长未记录 s、跳跃未记录 次\",\"各段 gradePercent=null、surface=null\",\"账号与设备未记录，同组未知设备不证明同一设备\"],\"observation\":\"已确认跑步 600 m，纯跑用时 93 s；第1轮 200 m/30 s，组休 120 s；第1轮 200 m/31 s，组休 120 s；第1轮 200 m/32 s，组休 120 s；轮次与间歇按原记录保留，不冒充整课用时。整课 RPE 7（CR10）；混合课不把同一个整课 RPE 当作两份负荷。2026-10-18 F3 7 h（MANUAL / S6）；不是医学许可。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1360,
+        "completion_tokens": 792,
+        "total_tokens": 2152,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1360
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"F1@1｜S1｜2026-10-18T10:00:00Z｜CONFIRMED/NOT_RECORDED：hrv=未记录 ms，统计 SAMPLE，日期 2026-10-18，能量口径未记录\",\"F2@1｜S1｜2026-10-18T10:00:00Z｜CONFIRMED/AVAILABLE：课次 O1/running｜RUN，原目的 重复跑原批准协议，类型 未记录，RPE 7（CR10），时长 未记录 s，跳跃 未记录 次\",\"F2@1 分段：main 第1轮/步骤1 200 m/30 s，组休 120 s，COMPLETED；步骤2 200 m/31 s，组休 120 s，COMPLETED；步骤3 200 m/32 s，组休 120 s，COMPLETED；各段共同 rawResolutionSeconds=1，gradePercent=null，surface=null\",\"F2@1 已确认跑步 600 m，纯跑用时 93 s（30+31+32）；轮次与间歇按原记录保留，不冒充整课用时\",\"F3@1｜S1｜2026-10-18T10:00:00Z｜CONFIRMED/AVAILABLE：sleep=7 h，统计 SAMPLE，日期 2026-10-18，能量口径未记录\",\"资料截止 2026-10-19T12:00:00Z，时区 UTC；账号/设备均为临时别名，null 表示未记录，不推断相同设备\"],\"explanations\":[\"解释A（测量背景）：睡眠与测量背景可能参与当前状态；单一睡眠或 HRV 读数不足以判断恢复不良。支持：F3 7 h 睡眠；反证：F2 分段完成且 RPE 7，若同协议表现稳定则削弱“恢复不良”判断\",\"解释B（训练剂量）：原目的为重复跑原批准协议，实际类型 UNKNOWN；计划意图不证明目标已实现。支持：F2 原目的与实际类型未记录；反证：F2 三段均 COMPLETED 且组休 120 s 按记录保留，若更正后暴露消失则削弱该解释\"],\"counterevidence\":[\"F2 三段均 COMPLETED，纯跑 93 s，RPE 7（CR10），未显示中断或未完成\",\"F3 睡眠 7 h 已记录，不构成恢复不良的直接证据\",\"F1 HRV 未记录，不能补零，也不能据此推断恢复状态\"],\"missing\":[\"F1: NOT_RECORDED（HRV 未记录，不补零）\",\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"F2 类型未记录、时长未记录 s、跳跃未记录 次\",\"各段 gradePercent=null、surface=null\",\"账号与设备未记录，同组未知设备不证明同一设备\"],\"observation\":\"已确认跑步 600 m，纯跑用时 93 s；第1轮 200 m/30 s，组休 120 s；第1轮 200 m/31 s，组休 120 s；第1轮 200 m/32 s，组休 120 s；轮次与间歇按原记录保留，不冒充整课用时。整课 RPE 7（CR10）；混合课不把同一个整课 RPE 当作两份负荷。2026-10-18 F3 7 h（MANUAL / S6）；不是医学许可。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1360,
+      "completionTokens": 792,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 1360,
+      "reasoningTokens": null,
+      "totalTokens": 2152
+    },
+    "latencyMs": 4214,
+    "ledgerCostMicros": "1359",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "44eccf2f-16d2-440e-bdfa-e0d0c50ebbdf",
+    "caseId": "D04",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "ba18c657b4fc78b1732da58e9fbd7cbb296198dffa6b3808048f390460fb2641",
+    "snapshotId": "analysis:s9taqf",
+    "requestHash": "17b36d527a67d378703a514220b8366b04c0c6421767a21efd583d390a98c3fb",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "d76d91e3-9447-4a75-afd4-e4e282e0fe25",
+      "object": "chat.completion",
+      "created": 1792775243,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"date\":\"2026-10-10\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F2\",\"source\":\"S2\",\"date\":\"2026-10-10\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F3\",\"source\":\"S1\",\"date\":\"2026-10-11\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F4\",\"source\":\"S2\",\"date\":\"2026-10-11\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F5\",\"source\":\"S1\",\"date\":\"2026-10-12\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F6\",\"source\":\"S2\",\"date\":\"2026-10-12\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F7\",\"source\":\"S1\",\"date\":\"2026-10-13\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F8\",\"source\":\"S2\",\"date\":\"2026-10-13\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F9\",\"source\":\"S1\",\"date\":\"2026-10-14\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F10\",\"source\":\"S2\",\"date\":\"2026-10-14\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F11\",\"source\":\"S2\",\"date\":\"2026-10-18\",\"metric\":\"rmssd\",\"value\":48,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F12\",\"source\":\"S1\",\"date\":\"2026-10-18\",\"metric\":\"rhr\",\"value\":60,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F13\",\"source\":\"S3\",\"date\":\"2026-10-18\",\"metric\":\"session\",\"value\":\"O1/running\",\"detail\":\"RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F13-seg1\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED\"},{\"id\":\"F13-seg2\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤2：200 m/31 s；组休 120 s；COMPLETED\"},{\"id\":\"F13-seg3\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤3：200 m/32 s；组休 120 s；COMPLETED\"},{\"id\":\"F13-seg4\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤4：200 m/33 s；组休 120 s；COMPLETED\"},{\"id\":\"baseline\",\"detail\":\"baselineWindow 2026-10-10 至 2026-10-14，complete=true，protocolConfirmed=true；RHR 基线 50 bpm，RMSSD 基线 60 ms（同协议个人基线，来自F1-F10）\"},{\"id\":\"today\",\"detail\":\"2026-10-18：RHR 60 bpm（F12），RMSSD 48 ms（F11）\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"今日RHR较同协议基线升高（60 vs 50 bpm，+10 bpm，来源F12/F1-F9），RMSSD较基线降低（48 vs 60 ms，-12 ms，来源F11/F2-F10），与当日训练课次O1（F13）在时间上同日出现；可能反映当日自主神经状态相对基线偏离。\",\"counterevidence\":\"仅有单日偏离数据，无同日前后对照；课次类型、RPE、时长均未记录（F13），无法确定训练负荷与生理偏离的因果方向；S3账号/设备未记录，不能证明与S1/S2同一设备。\"},{\"id\":\"E2\",\"text\":\"实际分段为30/31/32/33秒、组休120秒（F13-seg1至seg4），属于已完成的分段执行记录，可与“重复跑原批准协议”的原目的对照。\",\"counterevidence\":\"原批准协议的具体目标配速/分段未在给定事实中记录，无法判定实际分段是否符合原计划；类型、RPE、时长未记录，无法评估执行强度。\"}],\"counterevidence\":[\"E1反证：单日偏离，无同日前后对照；训练负荷未记录；设备/账号未记录不证明同一设备。\",\"E2反证：原批准协议目标分段未记录，无法判定符合性。\"],\"missing\":[\"2026-10-18课次O1的类型（未记录）\",\"2026-10-18课次O1的RPE（未记录）\",\"2026-10-18课次O1的时长（未记录 s）\",\"2026-10-18课次O1的跳跃次数（未记录 次）\",\"各段坡度%（null）\",\"各段地面（null）\",\"S3账号（未记录）\",\"S3设备（未记录）\",\"原批准协议的目标分段/配速（未在事实中记录）\",\"2026-10-15至2026-10-17的RHR/RMSSD（未提供）\"],\"observation\":\"同协议个人基线RHR 50 bpm、RMSSD 60 ms（2026-10-10至10-14，complete=true，protocolConfirmed=true）；2026-10-18 RHR 60 bpm、RMSSD 48 ms；同日课次O1/running实际分段30/31/32/33秒，组休120秒，四段均COMPLETED。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1499,
+        "completion_tokens": 1475,
+        "total_tokens": 2974,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1499
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"date\":\"2026-10-10\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F2\",\"source\":\"S2\",\"date\":\"2026-10-10\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F3\",\"source\":\"S1\",\"date\":\"2026-10-11\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F4\",\"source\":\"S2\",\"date\":\"2026-10-11\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F5\",\"source\":\"S1\",\"date\":\"2026-10-12\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F6\",\"source\":\"S2\",\"date\":\"2026-10-12\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F7\",\"source\":\"S1\",\"date\":\"2026-10-13\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F8\",\"source\":\"S2\",\"date\":\"2026-10-13\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F9\",\"source\":\"S1\",\"date\":\"2026-10-14\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F10\",\"source\":\"S2\",\"date\":\"2026-10-14\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F11\",\"source\":\"S2\",\"date\":\"2026-10-18\",\"metric\":\"rmssd\",\"value\":48,\"unit\":\"ms\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F12\",\"source\":\"S1\",\"date\":\"2026-10-18\",\"metric\":\"rhr\",\"value\":60,\"unit\":\"bpm\",\"stat\":\"SAMPLE\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F13\",\"source\":\"S3\",\"date\":\"2026-10-18\",\"metric\":\"session\",\"value\":\"O1/running\",\"detail\":\"RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"id\":\"F13-seg1\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED\"},{\"id\":\"F13-seg2\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤2：200 m/31 s；组休 120 s；COMPLETED\"},{\"id\":\"F13-seg3\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤3：200 m/32 s；组休 120 s；COMPLETED\"},{\"id\":\"F13-seg4\",\"source\":\"S3\",\"detail\":\"main 第1轮/步骤4：200 m/33 s；组休 120 s；COMPLETED\"},{\"id\":\"baseline\",\"detail\":\"baselineWindow 2026-10-10 至 2026-10-14，complete=true，protocolConfirmed=true；RHR 基线 50 bpm，RMSSD 基线 60 ms（同协议个人基线，来自F1-F10）\"},{\"id\":\"today\",\"detail\":\"2026-10-18：RHR 60 bpm（F12），RMSSD 48 ms（F11）\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"今日RHR较同协议基线升高（60 vs 50 bpm，+10 bpm，来源F12/F1-F9），RMSSD较基线降低（48 vs 60 ms，-12 ms，来源F11/F2-F10），与当日训练课次O1（F13）在时间上同日出现；可能反映当日自主神经状态相对基线偏离。\",\"counterevidence\":\"仅有单日偏离数据，无同日前后对照；课次类型、RPE、时长均未记录（F13），无法确定训练负荷与生理偏离的因果方向；S3账号/设备未记录，不能证明与S1/S2同一设备。\"},{\"id\":\"E2\",\"text\":\"实际分段为30/31/32/33秒、组休120秒（F13-seg1至seg4），属于已完成的分段执行记录，可与“重复跑原批准协议”的原目的对照。\",\"counterevidence\":\"原批准协议的具体目标配速/分段未在给定事实中记录，无法判定实际分段是否符合原计划；类型、RPE、时长未记录，无法评估执行强度。\"}],\"counterevidence\":[\"E1反证：单日偏离，无同日前后对照；训练负荷未记录；设备/账号未记录不证明同一设备。\",\"E2反证：原批准协议目标分段未记录，无法判定符合性。\"],\"missing\":[\"2026-10-18课次O1的类型（未记录）\",\"2026-10-18课次O1的RPE（未记录）\",\"2026-10-18课次O1的时长（未记录 s）\",\"2026-10-18课次O1的跳跃次数（未记录 次）\",\"各段坡度%（null）\",\"各段地面（null）\",\"S3账号（未记录）\",\"S3设备（未记录）\",\"原批准协议的目标分段/配速（未在事实中记录）\",\"2026-10-15至2026-10-17的RHR/RMSSD（未提供）\"],\"observation\":\"同协议个人基线RHR 50 bpm、RMSSD 60 ms（2026-10-10至10-14，complete=true，protocolConfirmed=true）；2026-10-18 RHR 60 bpm、RMSSD 48 ms；同日课次O1/running实际分段30/31/32/33秒，组休120秒，四段均COMPLETED。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1499,
+      "completionTokens": 1475,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 1499,
+      "reasoningTokens": null,
+      "totalTokens": 2974
+    },
+    "latencyMs": 6858,
+    "ledgerCostMicros": "2220",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "4474c80e-8184-415e-9304-5e933b94d153",
+    "caseId": "D04",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "ba18c657b4fc78b1732da58e9fbd7cbb296198dffa6b3808048f390460fb2641",
+    "snapshotId": "analysis:s9taqf",
+    "requestHash": "49031a4a9b1aaa70752d878b570c2bacd25e0db84a341cb880783614e1449629",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "dd714be7-7386-483e-9eda-54b9a55b6859",
+      "object": "chat.completion",
+      "created": 1792775250,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-10\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-10\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-11\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F4\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-11\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F5\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-12\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F6\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-12\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F7\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-13\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F8\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-13\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F9\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-14\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F10\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-14\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F11\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-18\",\"metric\":\"rmssd\",\"value\":48,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F12\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-18\",\"metric\":\"rhr\",\"value\":60,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F13\",\"revision\":1,\"source\":\"S3\",\"date\":\"2026-10-18\",\"session\":\"O1/running\",\"plannedPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"segments\":[{\"round\":1,\"step\":1,\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":2,\"distance\":\"200 m\",\"duration\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":3,\"distance\":\"200 m\",\"duration\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":4,\"distance\":\"200 m\",\"duration\":\"33 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"800 m\",\"pureRunTime\":\"126 s\",\"rpe\":null,\"duration\":null,\"jumps\":null}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[\"F11\",\"F12\"],\"counterevidence\":[\"F13：同协议分段30/31/32/33秒均COMPLETED，若训练表现稳定则削弱“当前训练能力下降”的解释\",\"F11/F12与基线F1-F10来源组不同（S1/S2同账号A1设备D1，但null不推断相同设备；S3账号设备未记录），测量条件可比性未确认\"],\"certainty\":\"UNRESOLVED\"}],\"counterevidence\":[\"F13显示同协议4段200 m均COMPLETED，纯跑126 s；若该表现与既往可比，则削弱“恢复能力下降”解释\",\"基线窗口2026-10-10至2026-10-14 complete=true且protocolConfirmed=true，但当前日2026-10-18的测量条件（睡眠、压力、设备一致性）未记录，无法排除测量背景解释\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"RPE未记录（F13）\",\"课次类型未记录（F13 actualType=UNKNOWN）\",\"时长未记录（F13）\",\"跳跃次数未记录（F13）\",\"坡度、地面未记录（F13 gradePercent=null, surface=null）\",\"2026-10-18测量条件与设备一致性未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"reason\":\"现有证据不支持自动改变训练量\",\"planVersion\":\"synthetic-approved-plan\"},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 2508,
+        "completion_tokens": 1162,
+        "total_tokens": 3670,
+        "prompt_tokens_details": {
+          "cached_tokens": 1408
+        },
+        "prompt_cache_hit_tokens": 1408,
+        "prompt_cache_miss_tokens": 1100
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-10\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-10\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-11\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F4\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-11\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F5\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-12\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F6\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-12\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F7\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-13\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F8\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-13\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F9\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-14\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F10\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-14\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F11\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-18\",\"metric\":\"rmssd\",\"value\":48,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F12\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-18\",\"metric\":\"rhr\",\"value\":60,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F13\",\"revision\":1,\"source\":\"S3\",\"date\":\"2026-10-18\",\"session\":\"O1/running\",\"plannedPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"segments\":[{\"round\":1,\"step\":1,\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":2,\"distance\":\"200 m\",\"duration\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":3,\"distance\":\"200 m\",\"duration\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":4,\"distance\":\"200 m\",\"duration\":\"33 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"800 m\",\"pureRunTime\":\"126 s\",\"rpe\":null,\"duration\":null,\"jumps\":null}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[\"F11\",\"F12\"],\"counterevidence\":[\"F13：同协议分段30/31/32/33秒均COMPLETED，若训练表现稳定则削弱“当前训练能力下降”的解释\",\"F11/F12与基线F1-F10来源组不同（S1/S2同账号A1设备D1，但null不推断相同设备；S3账号设备未记录），测量条件可比性未确认\"],\"certainty\":\"UNRESOLVED\"}],\"counterevidence\":[\"F13显示同协议4段200 m均COMPLETED，纯跑126 s；若该表现与既往可比，则削弱“恢复能力下降”解释\",\"基线窗口2026-10-10至2026-10-14 complete=true且protocolConfirmed=true，但当前日2026-10-18的测量条件（睡眠、压力、设备一致性）未记录，无法排除测量背景解释\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"RPE未记录（F13）\",\"课次类型未记录（F13 actualType=UNKNOWN）\",\"时长未记录（F13）\",\"跳跃次数未记录（F13）\",\"坡度、地面未记录（F13 gradePercent=null, surface=null）\",\"2026-10-18测量条件与设备一致性未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"reason\":\"现有证据不支持自动改变训练量\",\"planVersion\":\"synthetic-approved-plan\"},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 2508,
+      "completionTokens": 1162,
+      "cacheHitTokens": 1408,
+      "cacheMissTokens": 1100,
+      "reasoningTokens": null,
+      "totalTokens": 3670
+    },
+    "latencyMs": 5265,
+    "ledgerCostMicros": "1733",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "2dcf44e0-1d65-4fde-a346-8e7e1368b7f9",
+    "caseId": "D05",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "7f711a75e2732720f378b6513bfd928331d02313641379efb89cf3febf11c646",
+    "snapshotId": "analysis:1i68qn6",
+    "requestHash": "76abb7b903deed204e0dda9c9b1b828ab1a6d050a025cc7104327ce9cd936310",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "62ec1159-b4f9-492c-a648-98be5d7882a7",
+      "object": "chat.completion",
+      "created": 1792775259,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"time\":\"2026-10-19T10:00:00Z\",\"knownAt\":\"2026-10-19T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"logged_intake=400 kcal\",\"statistics\":\"SAMPLE\",\"date\":\"2026-10-19\",\"energyBasis\":\"未记录\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"仅早餐记录400 kcal，全天摄入未知，无法判断全天能量不足；掉速原因待核对。\",\"counterevidence\":\"若后续记录显示全天摄入接近或达到2000 kcal目标，则全天能量不足解释不成立。\"},{\"id\":\"E2\",\"text\":\"掉速可能由非能量因素（如训练负荷、恢复、环境等）导致，但当前无相关记录。\",\"counterevidence\":\"若存在训练负荷、恢复或环境记录并指向能量不足，则该解释被削弱。\"}],\"counterevidence\":[\"全天摄入为UNKNOWN，不能以400 kcal推断全天能量不足。\",\"未记录不等于0；缺失数据不能作为能量不足的证据。\"],\"missing\":[\"全天能量摄入（fullDayIntake=UNKNOWN）\",\"除早餐外的餐次记录\",\"掉速发生的时间、幅度与情境\",\"训练负荷、恢复、环境等相关记录\",\"能量口径（未记录）\"],\"observation\":\"资料截止2026-10-19T12:00:00Z；仅有一条早餐记录400 kcal（S1/F1，统计SAMPLE），全天摄入未知；背景中dailyTargetKcal=2000为计划目标（targetIsPlan=true），非实际摄入。\",\"candidate\":\"待核对\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 346,
+        "completion_tokens": 366,
+        "total_tokens": 712,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 218
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"time\":\"2026-10-19T10:00:00Z\",\"knownAt\":\"2026-10-19T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"logged_intake=400 kcal\",\"statistics\":\"SAMPLE\",\"date\":\"2026-10-19\",\"energyBasis\":\"未记录\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"仅早餐记录400 kcal，全天摄入未知，无法判断全天能量不足；掉速原因待核对。\",\"counterevidence\":\"若后续记录显示全天摄入接近或达到2000 kcal目标，则全天能量不足解释不成立。\"},{\"id\":\"E2\",\"text\":\"掉速可能由非能量因素（如训练负荷、恢复、环境等）导致，但当前无相关记录。\",\"counterevidence\":\"若存在训练负荷、恢复或环境记录并指向能量不足，则该解释被削弱。\"}],\"counterevidence\":[\"全天摄入为UNKNOWN，不能以400 kcal推断全天能量不足。\",\"未记录不等于0；缺失数据不能作为能量不足的证据。\"],\"missing\":[\"全天能量摄入（fullDayIntake=UNKNOWN）\",\"除早餐外的餐次记录\",\"掉速发生的时间、幅度与情境\",\"训练负荷、恢复、环境等相关记录\",\"能量口径（未记录）\"],\"observation\":\"资料截止2026-10-19T12:00:00Z；仅有一条早餐记录400 kcal（S1/F1，统计SAMPLE），全天摄入未知；背景中dailyTargetKcal=2000为计划目标（targetIsPlan=true），非实际摄入。\",\"candidate\":\"待核对\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 346,
+      "completionTokens": 366,
+      "cacheHitTokens": 128,
+      "cacheMissTokens": 218,
+      "reasoningTokens": null,
+      "totalTokens": 712
+    },
+    "latencyMs": 2768,
+    "ledgerCostMicros": "506",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "e407cd7c-9d63-4c90-b786-bad19c74c391",
+    "caseId": "D05",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "7f711a75e2732720f378b6513bfd928331d02313641379efb89cf3febf11c646",
+    "snapshotId": "analysis:1i68qn6",
+    "requestHash": "e6906bdcda259dba45b2bc791f8dee750b278e327e15ca3d028df9d4796109f8",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "8a152b94-3d6a-416b-b458-9d064476ae26",
+      "object": "chat.completion",
+      "created": 1792775255,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1/MANUAL/P1\",\"time\":\"2026-10-19T10:00:00Z\",\"knownAt\":\"2026-10-19T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"logged_intake=400 kcal；统计=SAMPLE；日期=2026-10-19；能量口径=未记录\",\"note\":\"早餐记录，非全天摄入\"}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[{\"id\":\"F1\",\"revision\":1}],\"weakeningRefs\":[],\"certainty\":\"UNRESOLVED\",\"counterevidence\":\"若热身功能正常、可比训练表现稳定，会削弱“当前训练能力下降”的判断；若生活条件未变但表现持续下降，应重新检查训练解释\",\"discriminator\":\"核对睡眠完整性、生活压力和同设备同协议个人基线\"}],\"counterevidence\":[\"全天能量不足导致掉速：缺少全天摄入记录（fullDayIntake=UNKNOWN），仅早餐400 kcal不能证明全天能量不足\",\"测量条件/生活背景解释：缺少睡眠、HRV、生活压力与同设备同协议基线，无法确认或排除\"],\"missing\":[\"全天摄入未记录（fullDayIntake=UNKNOWN），不补零\",\"能量口径未记录\",\"睡眠未记录，不补零\",\"HRV未记录，不补零\",\"当前是否疼痛、位置、是否影响动作未记录\",\"原热身或日常功能表现未记录\",\"近期实际训练明细未确认\"],\"observation\":\"2026-10-19 logged_intake=400 kcal（MANUAL / S1，F1 rev1）；为早餐记录，不是全天摄入；不是医学许可。\",\"candidate\":{\"id\":\"C1\",\"kind\":\"REQUEST_MINIMUM_DATA\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\",\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈\",\"supportsWhen\":\"相同协议和实际剂量下重复出现相同反应\",\"weakensWhen\":\"更正后暴露消失，或同协议表现和反馈稳定\",\"doNotExecute\":[\"医学限制未解除\",\"来源、身份或实际剂量有冲突\",\"缺少已批准课程或明确变更剂量\"],\"executionState\":\"OBSERVATION_ONLY\",\"conditions\":[\"先确认原课程目的及当前热身表现\",\"不新增测试剂量；不凭单一HRV、厂商分数或酸痛消失放行\",\"只比较一个变量：如已有批准的减组方案则只减组，其余保持；没有方案时只记录观察，不编造剂量\",\"任何变更须本人确认、宿主核对最新事实及计划版本；已完成课不改写\"],\"planVersion\":\"synthetic-approved-plan\",\"requiresConfirmation\":true},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 910,
+        "completion_tokens": 655,
+        "total_tokens": 1565,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 910
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1/MANUAL/P1\",\"time\":\"2026-10-19T10:00:00Z\",\"knownAt\":\"2026-10-19T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"logged_intake=400 kcal；统计=SAMPLE；日期=2026-10-19；能量口径=未记录\",\"note\":\"早餐记录，非全天摄入\"}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[{\"id\":\"F1\",\"revision\":1}],\"weakeningRefs\":[],\"certainty\":\"UNRESOLVED\",\"counterevidence\":\"若热身功能正常、可比训练表现稳定，会削弱“当前训练能力下降”的判断；若生活条件未变但表现持续下降，应重新检查训练解释\",\"discriminator\":\"核对睡眠完整性、生活压力和同设备同协议个人基线\"}],\"counterevidence\":[\"全天能量不足导致掉速：缺少全天摄入记录（fullDayIntake=UNKNOWN），仅早餐400 kcal不能证明全天能量不足\",\"测量条件/生活背景解释：缺少睡眠、HRV、生活压力与同设备同协议基线，无法确认或排除\"],\"missing\":[\"全天摄入未记录（fullDayIntake=UNKNOWN），不补零\",\"能量口径未记录\",\"睡眠未记录，不补零\",\"HRV未记录，不补零\",\"当前是否疼痛、位置、是否影响动作未记录\",\"原热身或日常功能表现未记录\",\"近期实际训练明细未确认\"],\"observation\":\"2026-10-19 logged_intake=400 kcal（MANUAL / S1，F1 rev1）；为早餐记录，不是全天摄入；不是医学许可。\",\"candidate\":{\"id\":\"C1\",\"kind\":\"REQUEST_MINIMUM_DATA\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\",\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈\",\"supportsWhen\":\"相同协议和实际剂量下重复出现相同反应\",\"weakensWhen\":\"更正后暴露消失，或同协议表现和反馈稳定\",\"doNotExecute\":[\"医学限制未解除\",\"来源、身份或实际剂量有冲突\",\"缺少已批准课程或明确变更剂量\"],\"executionState\":\"OBSERVATION_ONLY\",\"conditions\":[\"先确认原课程目的及当前热身表现\",\"不新增测试剂量；不凭单一HRV、厂商分数或酸痛消失放行\",\"只比较一个变量：如已有批准的减组方案则只减组，其余保持；没有方案时只记录观察，不编造剂量\",\"任何变更须本人确认、宿主核对最新事实及计划版本；已完成课不改写\"],\"planVersion\":\"synthetic-approved-plan\",\"requiresConfirmation\":true},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 910,
+      "completionTokens": 655,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 910,
+      "reasoningTokens": null,
+      "totalTokens": 1565
+    },
+    "latencyMs": 3986,
+    "ledgerCostMicros": "1059",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "45ccbf59-7e98-4bff-a400-1a0850aaa52c",
+    "caseId": "E01",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "71bf78e95381d7e8e0bc6dd6c8ecfea7c077955eeaac3570579c01ec5dd2c7e5",
+    "snapshotId": "analysis:1pvnw6o",
+    "requestHash": "c11777cc8864871e7d64038e0cb4d7b64b6490e5de1b1b5005ccadf435163da3",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "a703b4d2-f0b2-4452-8645-a98368d8d50f",
+      "object": "chat.completion",
+      "created": 1792775262,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"occurred\":\"2026-10-15T10:00:00Z\",\"known\":\"2026-10-15T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O1/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"34 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"38 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"42 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F2\",\"source\":\"S1\",\"occurred\":\"2026-10-16T10:00:00Z\",\"known\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O2/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"33 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"36 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"39 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F3\",\"source\":\"S1\",\"occurred\":\"2026-10-17T10:00:00Z\",\"known\":\"2026-10-17T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O3/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"34 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"36 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F4\",\"source\":\"S1\",\"occurred\":\"2026-10-18T10:00:00Z\",\"known\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O4/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"BG\",\"source\":\"背景\",\"note\":\"Third older course is synthetic supplement; no real athlete observations\",\"isBackground\":true,\"notSubstituteForActual\":true},{\"id\":\"S1\",\"source\":\"S1\",\"account\":null,\"device\":null,\"note\":\"同组未知设备不证明同一设备\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"新一次更稳定可解释为组内配速离散度下降：F1 200 m 用时 30/34/38/42 s（极差 12 s），F2 30/33/36/39 s（极差 9 s），F3 30/32/34/36 s（极差 6 s），F4 30/30/31/30 s（极差 1 s）；来源 S1。\",\"counterevidence\":\"极差缩小仅反映计时数值离散度，未记录 RPE、类型、时长、坡度、地面（均为 null），不能排除疲劳、配速策略或环境差异；且账号/设备未记录，不能证明条件完全一致（S1）。\"},{\"id\":\"E2\",\"text\":\"新一次更稳定可解释为后段掉速减少：F1 第4步 42 s 较第1步 30 s 慢 12 s；F2 慢 9 s；F3 慢 6 s；F4 第4步 30 s 与第1步 30 s 持平；来源 S1。\",\"counterevidence\":\"仅 4 个 200 m 步骤、单次课内数据，样本小；RPE 与时长未记录（null），无法判断主观强度或总负荷是否相同；设备与账号未记录，不能推断同一设备（S1）。\"}],\"counterevidence\":[{\"id\":\"CE1\",\"text\":\"所有课次 RPE、类型、时长、跳跃次数、坡度、地面均为 null（未记录，不是 0），无法验证同目标同休息同计时之外的条件一致性；来源 S1。\"},{\"id\":\"CE2\",\"text\":\"账号与设备均为临时别名/未记录；同组未知设备不证明同一设备，不能把差异或稳定性归因于同一设备条件；来源 S1。\"},{\"id\":\"CE3\",\"text\":\"背景注明第三份更早课程为合成补充、无真实运动员观察；该背景不替代实际记录，也不支持稳定性结论。\"}],\"missing\":[\"RPE（F1-F4 均为 null）\",\"课次类型（F1-F4 均为 null）\",\"时长（F1-F4 均为 null s）\",\"跳跃次数（F1-F4 均为 null 次）\",\"坡度 gradePercent（F1-F4 均为 null）\",\"地面 surface（F1-F4 均为 null）\",\"账号（S1 未记录）\",\"设备（S1 未记录）\",\"正式计划/计划变更记录（未提供）\"],\"observation\":\"在 S1 的 F1-F4 中，四次课均为 200 m×4、组休 120 s、COMPLETED，第1步均为 30 s；第2-4步用时逐次下降（F1 34/38/42 s，F2 33/36/39 s，F3 32/34/36 s，F4 30/31/30 s），组内极差由 12 s 降至 1 s。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1234,
+        "completion_tokens": 1592,
+        "total_tokens": 2826,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1234
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"occurred\":\"2026-10-15T10:00:00Z\",\"known\":\"2026-10-15T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O1/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"34 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"38 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"42 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F2\",\"source\":\"S1\",\"occurred\":\"2026-10-16T10:00:00Z\",\"known\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O2/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"33 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"36 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"39 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F3\",\"source\":\"S1\",\"occurred\":\"2026-10-17T10:00:00Z\",\"known\":\"2026-10-17T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O3/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"34 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"36 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"F4\",\"source\":\"S1\",\"occurred\":\"2026-10-18T10:00:00Z\",\"known\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O4/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration\":null,\"jumps\":null,\"segments\":[{\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":2,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":3,\"distance\":\"200 m\",\"time\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"step\":4,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"common\":{\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}},{\"id\":\"BG\",\"source\":\"背景\",\"note\":\"Third older course is synthetic supplement; no real athlete observations\",\"isBackground\":true,\"notSubstituteForActual\":true},{\"id\":\"S1\",\"source\":\"S1\",\"account\":null,\"device\":null,\"note\":\"同组未知设备不证明同一设备\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"新一次更稳定可解释为组内配速离散度下降：F1 200 m 用时 30/34/38/42 s（极差 12 s），F2 30/33/36/39 s（极差 9 s），F3 30/32/34/36 s（极差 6 s），F4 30/30/31/30 s（极差 1 s）；来源 S1。\",\"counterevidence\":\"极差缩小仅反映计时数值离散度，未记录 RPE、类型、时长、坡度、地面（均为 null），不能排除疲劳、配速策略或环境差异；且账号/设备未记录，不能证明条件完全一致（S1）。\"},{\"id\":\"E2\",\"text\":\"新一次更稳定可解释为后段掉速减少：F1 第4步 42 s 较第1步 30 s 慢 12 s；F2 慢 9 s；F3 慢 6 s；F4 第4步 30 s 与第1步 30 s 持平；来源 S1。\",\"counterevidence\":\"仅 4 个 200 m 步骤、单次课内数据，样本小；RPE 与时长未记录（null），无法判断主观强度或总负荷是否相同；设备与账号未记录，不能推断同一设备（S1）。\"}],\"counterevidence\":[{\"id\":\"CE1\",\"text\":\"所有课次 RPE、类型、时长、跳跃次数、坡度、地面均为 null（未记录，不是 0），无法验证同目标同休息同计时之外的条件一致性；来源 S1。\"},{\"id\":\"CE2\",\"text\":\"账号与设备均为临时别名/未记录；同组未知设备不证明同一设备，不能把差异或稳定性归因于同一设备条件；来源 S1。\"},{\"id\":\"CE3\",\"text\":\"背景注明第三份更早课程为合成补充、无真实运动员观察；该背景不替代实际记录，也不支持稳定性结论。\"}],\"missing\":[\"RPE（F1-F4 均为 null）\",\"课次类型（F1-F4 均为 null）\",\"时长（F1-F4 均为 null s）\",\"跳跃次数（F1-F4 均为 null 次）\",\"坡度 gradePercent（F1-F4 均为 null）\",\"地面 surface（F1-F4 均为 null）\",\"账号（S1 未记录）\",\"设备（S1 未记录）\",\"正式计划/计划变更记录（未提供）\"],\"observation\":\"在 S1 的 F1-F4 中，四次课均为 200 m×4、组休 120 s、COMPLETED，第1步均为 30 s；第2-4步用时逐次下降（F1 34/38/42 s，F2 33/36/39 s，F3 32/34/36 s，F4 30/31/30 s），组内极差由 12 s 降至 1 s。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1234,
+      "completionTokens": 1592,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 1234,
+      "reasoningTokens": null,
+      "totalTokens": 2826
+    },
+    "latencyMs": 7228,
+    "ledgerCostMicros": "2281",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "8d6c8bca-2e64-4d8b-81e6-0608ef0fc48c",
+    "caseId": "E01",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "71bf78e95381d7e8e0bc6dd6c8ecfea7c077955eeaac3570579c01ec5dd2c7e5",
+    "snapshotId": "analysis:1pvnw6o",
+    "requestHash": "a196eedadfa00f5199b21894590c7723f7f4ee6b03428551a2dc7de74f20b366",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "f580c728-2ac4-4d49-bf7e-6f3026d948a8",
+      "object": "chat.completion",
+      "created": 1792775270,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"F1@1（S1，2026-10-15T10:00:00Z）：200 m 分段用时 30 s/34 s/38 s/42 s，组休 120 s，4/4 COMPLETED；纯跑用时 154 s；分段极差 12 s。\",\"F2@1（S1，2026-10-16T10:00:00Z）：200 m 分段用时 30 s/33 s/36 s/39 s，组休 120 s，4/4 COMPLETED；纯跑用时 138 s；分段极差 9 s。\",\"F3@1（S1，2026-10-17T10:00:00Z）：200 m 分段用时 30 s/32 s/34 s/36 s，组休 120 s，4/4 COMPLETED；纯跑用时 132 s；分段极差 6 s。\",\"F4@1（S1，2026-10-18T10:00:00Z）：200 m 分段用时 30 s/30 s/31 s/30 s，组休 120 s，4/4 COMPLETED；纯跑用时 121 s；分段极差 1 s。\",\"F1–F4 原目的均为“重复跑原批准协议”；实际类型、RPE、时长、跳跃均为未记录（null），不推断为 0。\",\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null。\",\"账号/设备均为临时别名；未记录=null，不推断相同设备。\",\"背景标注：第三次较旧课程为合成补充，无真实运动员观察。\",\"资料截止 2026-10-19T12:00:00Z；时区 UTC。\"],\"explanations\":[{\"text\":\"“新一次更稳定”可解释为分段用时离散度下降：F1→F4 分段极差 12 s→9 s→6 s→1 s，纯跑用时 154 s→138 s→132 s→121 s；在相同 200 m/组休 120 s 结构下，F4 的分段更集中。\",\"counterevidence\":\"F1–F4 的 RPE、类型、时长、睡眠、HRV、坡度、地面均未记录；无重复测量或设备一致性证据；不能排除配速策略、疲劳状态、环境或记录差异；不证明训练因果或能力提升。\"},{\"text\":\"“三次同目标同休息同计时”可解释为原目的、组休 120 s 与 200 m 分段结构在 F1–F4 记录中一致，且均为 4/4 COMPLETED。\",\"counterevidence\":\"“同目标”仅为原计划目的，实际类型 UNKNOWN；设备未记录且临时别名不证明同一设备；第三次较旧课程为合成补充；计时分辨率 1 s 但无独立计时设备核验；不能据此宣称协议完全等同或已达成目标。\"}],\"counterevidence\":[\"缺少 RPE、睡眠、HRV、疼痛/功能状态、坡度、地面、设备一致性；null 不补零。\",\"F3 背景为合成补充，无真实运动员观察，不能作为真实趋势锚点。\",\"计划目的不等于实际类型或目标已实现。\",\"不诊断、不编造能力分、不宣称因果或医学许可。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"HRV 未记录，不补零\",\"RPE 未记录\",\"实际训练类型未记录\",\"设备/账号一致性未记录\",\"坡度、地面未记录\",\"24/48/72h 反馈未记录\"],\"observation\":\"在已确认的 F1–F4 中，相同 200 m×4、组休 120 s 结构下，分段用时极差由 12 s 降至 1 s，纯跑用时由 154 s 降至 121 s；但 RPE、类型、睡眠、HRV、疼痛/功能、设备与坡度/地面均缺失，不能据此判断稳定性提升的因果或能力变化。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 2285,
+        "completion_tokens": 914,
+        "total_tokens": 3199,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 1133
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"F1@1（S1，2026-10-15T10:00:00Z）：200 m 分段用时 30 s/34 s/38 s/42 s，组休 120 s，4/4 COMPLETED；纯跑用时 154 s；分段极差 12 s。\",\"F2@1（S1，2026-10-16T10:00:00Z）：200 m 分段用时 30 s/33 s/36 s/39 s，组休 120 s，4/4 COMPLETED；纯跑用时 138 s；分段极差 9 s。\",\"F3@1（S1，2026-10-17T10:00:00Z）：200 m 分段用时 30 s/32 s/34 s/36 s，组休 120 s，4/4 COMPLETED；纯跑用时 132 s；分段极差 6 s。\",\"F4@1（S1，2026-10-18T10:00:00Z）：200 m 分段用时 30 s/30 s/31 s/30 s，组休 120 s，4/4 COMPLETED；纯跑用时 121 s；分段极差 1 s。\",\"F1–F4 原目的均为“重复跑原批准协议”；实际类型、RPE、时长、跳跃均为未记录（null），不推断为 0。\",\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null。\",\"账号/设备均为临时别名；未记录=null，不推断相同设备。\",\"背景标注：第三次较旧课程为合成补充，无真实运动员观察。\",\"资料截止 2026-10-19T12:00:00Z；时区 UTC。\"],\"explanations\":[{\"text\":\"“新一次更稳定”可解释为分段用时离散度下降：F1→F4 分段极差 12 s→9 s→6 s→1 s，纯跑用时 154 s→138 s→132 s→121 s；在相同 200 m/组休 120 s 结构下，F4 的分段更集中。\",\"counterevidence\":\"F1–F4 的 RPE、类型、时长、睡眠、HRV、坡度、地面均未记录；无重复测量或设备一致性证据；不能排除配速策略、疲劳状态、环境或记录差异；不证明训练因果或能力提升。\"},{\"text\":\"“三次同目标同休息同计时”可解释为原目的、组休 120 s 与 200 m 分段结构在 F1–F4 记录中一致，且均为 4/4 COMPLETED。\",\"counterevidence\":\"“同目标”仅为原计划目的，实际类型 UNKNOWN；设备未记录且临时别名不证明同一设备；第三次较旧课程为合成补充；计时分辨率 1 s 但无独立计时设备核验；不能据此宣称协议完全等同或已达成目标。\"}],\"counterevidence\":[\"缺少 RPE、睡眠、HRV、疼痛/功能状态、坡度、地面、设备一致性；null 不补零。\",\"F3 背景为合成补充，无真实运动员观察，不能作为真实趋势锚点。\",\"计划目的不等于实际类型或目标已实现。\",\"不诊断、不编造能力分、不宣称因果或医学许可。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"HRV 未记录，不补零\",\"RPE 未记录\",\"实际训练类型未记录\",\"设备/账号一致性未记录\",\"坡度、地面未记录\",\"24/48/72h 反馈未记录\"],\"observation\":\"在已确认的 F1–F4 中，相同 200 m×4、组休 120 s 结构下，分段用时极差由 12 s 降至 1 s，纯跑用时由 154 s 降至 121 s；但 RPE、类型、睡眠、HRV、疼痛/功能、设备与坡度/地面均缺失，不能据此判断稳定性提升的因果或能力变化。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 2285,
+      "completionTokens": 914,
+      "cacheHitTokens": 1152,
+      "cacheMissTokens": 1133,
+      "reasoningTokens": null,
+      "totalTokens": 3199
+    },
+    "latencyMs": 5358,
+    "ledgerCostMicros": "1444",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "8093d3f9-52b4-47d4-b41b-ec1511de9e9f",
+    "caseId": "E04",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "a2fa04e191071710bbd8a054d1df434885c4a09aab8f0e90f61514bb264e67ca",
+    "snapshotId": "analysis:1vocg8q",
+    "requestHash": "ac1b90d4fdb99cb65a8e990337716b7370e8e5f49747093fe25f600afdb5d05e",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "014b9047-1d8e-4547-ba4e-e754758289ae",
+      "object": "chat.completion",
+      "created": 1792775281,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[{\"id\":\"F1@1\",\"text\":\"2026-10-16T10:00:00Z 自报恢复感觉=3（量表1-10，越高越好），协议SELF_REPORT，部位/距训练/功能/备注未记录\",\"source\":\"S1\"},{\"id\":\"F2@1\",\"text\":\"2026-10-16T10:00:00Z 课次O1/running，原目的重复跑原批准协议；RPE、时长、跳跃未记录；main第1轮4步200m分别30/31/32/33 s，组休均120 s，均COMPLETED；rawResolutionSeconds=1，坡度/地面未记录\",\"source\":\"S1\"},{\"id\":\"F3@1\",\"text\":\"2026-10-18T10:00:00Z 自报恢复感觉=8（量表1-10，越高越好），协议SELF_REPORT，部位/距训练/功能/备注未记录\",\"source\":\"S1\"},{\"id\":\"F4@1\",\"text\":\"2026-10-18T10:00:00Z 课次O2/running，原目的重复跑原批准协议；RPE、时长、跳跃未记录；main第1轮4步200m分别30/31/32/33 s，组休均120 s，均COMPLETED；rawResolutionSeconds=1，坡度/地面未记录\",\"source\":\"S1\"},{\"id\":\"H0\",\"text\":\"原历史假设：近期疲劳影响后程；status=PENDING，knownAt=2026-10-16T12:00:00Z，supportingRefs=F2@1、F1@1，weakeningRefs为空\",\"source\":\"历史假设记录\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"原假设认为近期疲劳影响后程；若疲劳是主因，恢复反馈改善后后程减速应减轻。但O2恢复感觉=8（F3@1）较O1的3（F1@1）改善，而O2后程仍为32/33 s（F4@1），与O1的32/33 s（F2@1）相同，故该解释被削弱。\",\"counterevidence\":\"F3@1恢复感觉=8与F4@1后程32/33 s；对比F1@1=3与F2@1后程32/33 s\"},{\"id\":\"E2\",\"text\":\"后程同样变慢可能由非疲劳因素（如固定配速策略、协议执行方式或未记录的坡度/地面等）导致；两次课次后程秒数一致（F2@1、F4@1），而恢复反馈不同（F1@1、F3@1），提示后程模式与恢复感觉未同步变化。\",\"counterevidence\":\"F2@1与F4@1均记录原目的重复跑原批准协议且各步秒数完全相同；但坡度、地面、RPE、时长均未记录，无法排除其他因素\"}],\"missing\":[\"O1/O2的RPE未记录\",\"O1/O2时长未记录\",\"O1/O2跳跃次数未记录\",\"坡度gradePercent未记录\",\"地面surface未记录\",\"恢复感觉的部位、距训练时间、功能、备注未记录\",\"账号/设备为临时别名，设备未记录；同组未知设备不证明同一设备\",\"无后程减速的独立客观指标（如分段计时以外的疲劳标志）\"],\"observation\":\"两次同协议计时课（O1 2026-10-16、O2 2026-10-18）main第1轮4步200m均为30/31/32/33 s、组休120 s；恢复感觉由3升至8；后程（第3、4步）仍同样变慢。\",\"candidate\":\"MODIFY\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1064,
+        "completion_tokens": 832,
+        "total_tokens": 1896,
+        "prompt_tokens_details": {
+          "cached_tokens": 896
+        },
+        "prompt_cache_hit_tokens": 896,
+        "prompt_cache_miss_tokens": 168
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[{\"id\":\"F1@1\",\"text\":\"2026-10-16T10:00:00Z 自报恢复感觉=3（量表1-10，越高越好），协议SELF_REPORT，部位/距训练/功能/备注未记录\",\"source\":\"S1\"},{\"id\":\"F2@1\",\"text\":\"2026-10-16T10:00:00Z 课次O1/running，原目的重复跑原批准协议；RPE、时长、跳跃未记录；main第1轮4步200m分别30/31/32/33 s，组休均120 s，均COMPLETED；rawResolutionSeconds=1，坡度/地面未记录\",\"source\":\"S1\"},{\"id\":\"F3@1\",\"text\":\"2026-10-18T10:00:00Z 自报恢复感觉=8（量表1-10，越高越好），协议SELF_REPORT，部位/距训练/功能/备注未记录\",\"source\":\"S1\"},{\"id\":\"F4@1\",\"text\":\"2026-10-18T10:00:00Z 课次O2/running，原目的重复跑原批准协议；RPE、时长、跳跃未记录；main第1轮4步200m分别30/31/32/33 s，组休均120 s，均COMPLETED；rawResolutionSeconds=1，坡度/地面未记录\",\"source\":\"S1\"},{\"id\":\"H0\",\"text\":\"原历史假设：近期疲劳影响后程；status=PENDING，knownAt=2026-10-16T12:00:00Z，supportingRefs=F2@1、F1@1，weakeningRefs为空\",\"source\":\"历史假设记录\"}],\"explanations\":[{\"id\":\"E1\",\"text\":\"原假设认为近期疲劳影响后程；若疲劳是主因，恢复反馈改善后后程减速应减轻。但O2恢复感觉=8（F3@1）较O1的3（F1@1）改善，而O2后程仍为32/33 s（F4@1），与O1的32/33 s（F2@1）相同，故该解释被削弱。\",\"counterevidence\":\"F3@1恢复感觉=8与F4@1后程32/33 s；对比F1@1=3与F2@1后程32/33 s\"},{\"id\":\"E2\",\"text\":\"后程同样变慢可能由非疲劳因素（如固定配速策略、协议执行方式或未记录的坡度/地面等）导致；两次课次后程秒数一致（F2@1、F4@1），而恢复反馈不同（F1@1、F3@1），提示后程模式与恢复感觉未同步变化。\",\"counterevidence\":\"F2@1与F4@1均记录原目的重复跑原批准协议且各步秒数完全相同；但坡度、地面、RPE、时长均未记录，无法排除其他因素\"}],\"missing\":[\"O1/O2的RPE未记录\",\"O1/O2时长未记录\",\"O1/O2跳跃次数未记录\",\"坡度gradePercent未记录\",\"地面surface未记录\",\"恢复感觉的部位、距训练时间、功能、备注未记录\",\"账号/设备为临时别名，设备未记录；同组未知设备不证明同一设备\",\"无后程减速的独立客观指标（如分段计时以外的疲劳标志）\"],\"observation\":\"两次同协议计时课（O1 2026-10-16、O2 2026-10-18）main第1轮4步200m均为30/31/32/33 s、组休120 s；恢复感觉由3升至8；后程（第3、4步）仍同样变慢。\",\"candidate\":\"MODIFY\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1064,
+      "completionTokens": 832,
+      "cacheHitTokens": 896,
+      "cacheMissTokens": 168,
+      "reasoningTokens": null,
+      "totalTokens": 1896
+    },
+    "latencyMs": 5128,
+    "ledgerCostMicros": "1055",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "ba2a94f4-4597-4879-9fb2-564dce316944",
+    "caseId": "E04",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "a2fa04e191071710bbd8a054d1df434885c4a09aab8f0e90f61514bb264e67ca",
+    "snapshotId": "analysis:1vocg8q",
+    "requestHash": "eafff18a15565d176dddae44a87ab8fc2107fdc933ae8348f6cf23b1bb655555",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "aad609e5-fa3c-44fd-8e2e-5f8c3a76876f",
+      "object": "chat.completion",
+      "created": 1792775275,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-16T10:00:00Z\",\"knownAt\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"RECOVERY_FEELING=3；量表1-10_HIGH_BETTER；协议SELF_REPORT；部位未记录；距训练未记录h\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-16T10:00:00Z\",\"knownAt\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O1/running；原目的重复跑原批准协议；类型未记录；RPE未记录；时长未记录s；分段200m：30s/31s/32s/33s，组休120s，均COMPLETED；分辨率1s，坡度null，地面null\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"RECOVERY_FEELING=8；量表1-10_HIGH_BETTER；协议SELF_REPORT；部位未记录；距训练未记录h\"},{\"id\":\"F4\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O2/running；原目的重复跑原批准协议；类型未记录；RPE未记录；时长未记录s；分段200m：30s/31s/32s/33s，组休120s，均COMPLETED；分辨率1s，坡度null，地面null\"},{\"id\":\"H1\",\"revision\":1,\"content\":\"历史假设：近期疲劳影响后程；status=PENDING；knownAt=2026-10-16T12:00:00Z；supportingRefs=F2@1,F1@1；weakeningRefs=[]\"},{\"id\":\"CALC\",\"content\":\"两次课纯跑用时均为126s（30+31+32+33）；分段极差3s→3s；有效4/4，未完成/未记录0，跳过0；来源F2@1,F4@1\"}],\"explanations\":[{\"id\":\"E1\",\"claim\":\"近期疲劳影响后程（原假设）\",\"status\":\"PENDING\",\"supportingRefs\":[\"F2@1\",\"F1@1\"],\"counterevidenceRefs\":[\"F3@1\",\"F4@1\",\"F1@1\",\"F2@1\"],\"note\":\"恢复自报3→8改善，但后段与首段用时差仍为3s→3s；若恢复改善而该变化仍存在，则削弱疲劳的单一解释；不能据相关性自动撤回旧判断\"},{\"id\":\"E2\",\"claim\":\"实际执行节奏或休息安排差异可能参与反应（execution-context）\",\"status\":\"UNRESOLVED\",\"supportingRefs\":[\"F4@1\"],\"counterevidenceRefs\":[\"F2@1\",\"F4@1\"],\"note\":\"两次记录组休均为120s、分段速度相同；若条件相同但反应仍改变，则削弱执行差异解释；逐组RPE未记录，无法完整对照\"},{\"id\":\"E3\",\"claim\":\"近期实际训练可能参与当前反应（training-response）\",\"status\":\"POSSIBLE\",\"supportingRefs\":[\"F4@1\",\"F3@1\"],\"counterevidenceRefs\":[\"F2@1\",\"F4@1\"],\"note\":\"尚不能确认因果或损伤；需同协议重复并记录24/48/72h反馈\"}],\"counterevidence\":[{\"refs\":[\"F3@1\",\"F1@1\"],\"content\":\"同协议自报恢复由3改善至8（1-10_HIGH_BETTER）\"},{\"refs\":[\"F2@1\",\"F4@1\"],\"content\":\"恢复改善后后段与首段用时差仍为3s→3s，分段序列完全一致（30/31/32/33s）\"},{\"refs\":[\"F2@1\",\"F4@1\"],\"content\":\"两次组休均为120s，执行节奏记录一致，削弱执行差异解释\"}],\"missing\":[\"当前是否疼痛、部位、是否影响动作\",\"原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"RPE未记录（F2、F4）\",\"课次类型未记录\",\"坡度、地面未记录\",\"距训练时间未记录\",\"RECOVERY_FEELING部位、侧别、功能未记录\"],\"observation\":\"两次同协议计时课（2026-10-16与2026-10-18）分段用时完全相同（200m×4：30/31/32/33s，组休120s），纯跑用时均126s；自报恢复由3升至8，但后程变慢模式未变。\",\"candidate\":[{\"id\":\"C1\",\"action\":\"KEEP\",\"kind\":\"REQUEST_MINIMUM_DATA\",\"changedVariable\":\"NONE\",\"basisRefs\":[\"F4@1\",\"F3@1\",\"F2@1\",\"F1@1\"],\"reason\":\"现有证据不支持自动改变训练量\",\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈\",\"supportsWhen\":\"相同协议和实际剂量下重复出现相同反应\",\"weakensWhen\":\"更正后暴露消失，或同协议表现和反馈稳定\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true}],\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 2247,
+        "completion_tokens": 1308,
+        "total_tokens": 3555,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 2247
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-16T10:00:00Z\",\"knownAt\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"RECOVERY_FEELING=3；量表1-10_HIGH_BETTER；协议SELF_REPORT；部位未记录；距训练未记录h\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-16T10:00:00Z\",\"knownAt\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O1/running；原目的重复跑原批准协议；类型未记录；RPE未记录；时长未记录s；分段200m：30s/31s/32s/33s，组休120s，均COMPLETED；分辨率1s，坡度null，地面null\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"RECOVERY_FEELING=8；量表1-10_HIGH_BETTER；协议SELF_REPORT；部位未记录；距训练未记录h\"},{\"id\":\"F4\",\"revision\":1,\"source\":\"S1\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"content\":\"课次O2/running；原目的重复跑原批准协议；类型未记录；RPE未记录；时长未记录s；分段200m：30s/31s/32s/33s，组休120s，均COMPLETED；分辨率1s，坡度null，地面null\"},{\"id\":\"H1\",\"revision\":1,\"content\":\"历史假设：近期疲劳影响后程；status=PENDING；knownAt=2026-10-16T12:00:00Z；supportingRefs=F2@1,F1@1；weakeningRefs=[]\"},{\"id\":\"CALC\",\"content\":\"两次课纯跑用时均为126s（30+31+32+33）；分段极差3s→3s；有效4/4，未完成/未记录0，跳过0；来源F2@1,F4@1\"}],\"explanations\":[{\"id\":\"E1\",\"claim\":\"近期疲劳影响后程（原假设）\",\"status\":\"PENDING\",\"supportingRefs\":[\"F2@1\",\"F1@1\"],\"counterevidenceRefs\":[\"F3@1\",\"F4@1\",\"F1@1\",\"F2@1\"],\"note\":\"恢复自报3→8改善，但后段与首段用时差仍为3s→3s；若恢复改善而该变化仍存在，则削弱疲劳的单一解释；不能据相关性自动撤回旧判断\"},{\"id\":\"E2\",\"claim\":\"实际执行节奏或休息安排差异可能参与反应（execution-context）\",\"status\":\"UNRESOLVED\",\"supportingRefs\":[\"F4@1\"],\"counterevidenceRefs\":[\"F2@1\",\"F4@1\"],\"note\":\"两次记录组休均为120s、分段速度相同；若条件相同但反应仍改变，则削弱执行差异解释；逐组RPE未记录，无法完整对照\"},{\"id\":\"E3\",\"claim\":\"近期实际训练可能参与当前反应（training-response）\",\"status\":\"POSSIBLE\",\"supportingRefs\":[\"F4@1\",\"F3@1\"],\"counterevidenceRefs\":[\"F2@1\",\"F4@1\"],\"note\":\"尚不能确认因果或损伤；需同协议重复并记录24/48/72h反馈\"}],\"counterevidence\":[{\"refs\":[\"F3@1\",\"F1@1\"],\"content\":\"同协议自报恢复由3改善至8（1-10_HIGH_BETTER）\"},{\"refs\":[\"F2@1\",\"F4@1\"],\"content\":\"恢复改善后后段与首段用时差仍为3s→3s，分段序列完全一致（30/31/32/33s）\"},{\"refs\":[\"F2@1\",\"F4@1\"],\"content\":\"两次组休均为120s，执行节奏记录一致，削弱执行差异解释\"}],\"missing\":[\"当前是否疼痛、部位、是否影响动作\",\"原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"RPE未记录（F2、F4）\",\"课次类型未记录\",\"坡度、地面未记录\",\"距训练时间未记录\",\"RECOVERY_FEELING部位、侧别、功能未记录\"],\"observation\":\"两次同协议计时课（2026-10-16与2026-10-18）分段用时完全相同（200m×4：30/31/32/33s，组休120s），纯跑用时均126s；自报恢复由3升至8，但后程变慢模式未变。\",\"candidate\":[{\"id\":\"C1\",\"action\":\"KEEP\",\"kind\":\"REQUEST_MINIMUM_DATA\",\"changedVariable\":\"NONE\",\"basisRefs\":[\"F4@1\",\"F3@1\",\"F2@1\",\"F1@1\"],\"reason\":\"现有证据不支持自动改变训练量\",\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈\",\"supportsWhen\":\"相同协议和实际剂量下重复出现相同反应\",\"weakensWhen\":\"更正后暴露消失，或同协议表现和反馈稳定\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true}],\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 2247,
+      "completionTokens": 1308,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 2247,
+      "reasoningTokens": null,
+      "totalTokens": 3555
+    },
+    "latencyMs": 6138,
+    "ledgerCostMicros": "2244",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "af7e2948-93ab-4ec5-99a5-f7100174b023",
+    "caseId": "E05",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "f8d44e02b9247245542ab2ab9fe0b5743371f2919e637fe6ee77a873512e95e0",
+    "snapshotId": "analysis:5bba0r",
+    "requestHash": "216564b21a53fc55a31541af48dbab315cd39244d84af991cb9222bb7e26fdce",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "8f6ae937-c7ed-4718-89b4-02a4e90b5fee",
+      "object": "chat.completion",
+      "created": 1792775286,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"occurred\":\"2026-10-15T10:00:00Z\",\"known\":\"2026-10-15T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O1/running\",\"purpose\":\"重复跑原批准协议\",\"block\":\"main 第1轮/步骤1\",\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"result\":\"COMPLETED\",\"RPE\":null,\"jumpCount\":null,\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},{\"id\":\"F2\",\"source\":\"S1\",\"occurred\":\"2026-10-16T10:00:00Z\",\"known\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/PARTIAL\",\"session\":\"O2/running\",\"purpose\":\"重复跑原批准协议\",\"block\":\"main 第1轮/步骤1\",\"distance\":\"200 m\",\"duration\":null,\"rest\":\"120 s\",\"result\":\"NOT_RECORDED\",\"RPE\":null,\"jumpCount\":null,\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},{\"id\":\"F3\",\"source\":\"S1\",\"occurred\":\"2026-10-18T10:00:00Z\",\"known\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O3/running\",\"purpose\":\"重复跑原批准协议\",\"block\":\"main 第1轮/步骤1\",\"distance\":\"200 m\",\"duration\":\"35 s\",\"rest\":\"120 s\",\"result\":\"COMPLETED\",\"RPE\":null,\"jumpCount\":null,\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}],\"explanations\":[{\"text\":\"连续观察中的未完成指F2的NOT_RECORDED（未记录），不利结果指F3的35 s慢于F1的30 s；两者均来自S1，时间顺序为10-15、10-16、10-18。\",\"basis\":[\"F1\",\"F2\",\"F3\"]},{\"text\":\"F2的NOT_RECORDED可能只是记录缺失而非实际未完成；F3的35 s与F1的30 s存在5 s差异，但RPE、类型、坡度、地表均未记录，不能归因于能力变化。\",\"basis\":[\"F2\",\"F3\"]}],\"counterevidence\":[{\"explanationIndex\":0,\"text\":\"F2状态为CONFIRMED/PARTIAL且结果为NOT_RECORDED，null表示未记录，不是0，也不是已确认的未完成；因此“一次未完成”只能作为记录层面的缺失，不能确认实际未完成。\",\"basis\":[\"F2\"]},{\"explanationIndex\":1,\"text\":\"F3为COMPLETED且时长35 s，F1为COMPLETED且时长30 s；两者均为单次200 m记录，RPE、类型、坡度、地表未记录，缺少可比条件，不能排除记录误差或条件差异。\",\"basis\":[\"F1\",\"F3\"]}],\"missing\":[\"F2时长未记录（null，不是0）\",\"F1/F2/F3的RPE均未记录\",\"F1/F2/F3的类型均未记录\",\"F1/F2/F3的跳跃次数均未记录\",\"F1/F2/F3的坡度、地表均未记录\",\"账号、设备均未记录；同组未知设备不证明同一设备\"],\"observation\":\"S1中三次课次均记录为重复跑原批准协议；F1在2026-10-15完成200 m/30 s，F2在2026-10-16的200 m时长未记录且结果为NOT_RECORDED，F3在2026-10-18完成200 m/35 s。资料截止2026-10-19T12:00:00Z。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 726,
+        "completion_tokens": 859,
+        "total_tokens": 1585,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 726
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"source\":\"S1\",\"occurred\":\"2026-10-15T10:00:00Z\",\"known\":\"2026-10-15T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O1/running\",\"purpose\":\"重复跑原批准协议\",\"block\":\"main 第1轮/步骤1\",\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"result\":\"COMPLETED\",\"RPE\":null,\"jumpCount\":null,\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},{\"id\":\"F2\",\"source\":\"S1\",\"occurred\":\"2026-10-16T10:00:00Z\",\"known\":\"2026-10-16T11:00:00Z\",\"status\":\"CONFIRMED/PARTIAL\",\"session\":\"O2/running\",\"purpose\":\"重复跑原批准协议\",\"block\":\"main 第1轮/步骤1\",\"distance\":\"200 m\",\"duration\":null,\"rest\":\"120 s\",\"result\":\"NOT_RECORDED\",\"RPE\":null,\"jumpCount\":null,\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},{\"id\":\"F3\",\"source\":\"S1\",\"occurred\":\"2026-10-18T10:00:00Z\",\"known\":\"2026-10-18T11:00:00Z\",\"status\":\"CONFIRMED/AVAILABLE\",\"session\":\"O3/running\",\"purpose\":\"重复跑原批准协议\",\"block\":\"main 第1轮/步骤1\",\"distance\":\"200 m\",\"duration\":\"35 s\",\"rest\":\"120 s\",\"result\":\"COMPLETED\",\"RPE\":null,\"jumpCount\":null,\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null}],\"explanations\":[{\"text\":\"连续观察中的未完成指F2的NOT_RECORDED（未记录），不利结果指F3的35 s慢于F1的30 s；两者均来自S1，时间顺序为10-15、10-16、10-18。\",\"basis\":[\"F1\",\"F2\",\"F3\"]},{\"text\":\"F2的NOT_RECORDED可能只是记录缺失而非实际未完成；F3的35 s与F1的30 s存在5 s差异，但RPE、类型、坡度、地表均未记录，不能归因于能力变化。\",\"basis\":[\"F2\",\"F3\"]}],\"counterevidence\":[{\"explanationIndex\":0,\"text\":\"F2状态为CONFIRMED/PARTIAL且结果为NOT_RECORDED，null表示未记录，不是0，也不是已确认的未完成；因此“一次未完成”只能作为记录层面的缺失，不能确认实际未完成。\",\"basis\":[\"F2\"]},{\"explanationIndex\":1,\"text\":\"F3为COMPLETED且时长35 s，F1为COMPLETED且时长30 s；两者均为单次200 m记录，RPE、类型、坡度、地表未记录，缺少可比条件，不能排除记录误差或条件差异。\",\"basis\":[\"F1\",\"F3\"]}],\"missing\":[\"F2时长未记录（null，不是0）\",\"F1/F2/F3的RPE均未记录\",\"F1/F2/F3的类型均未记录\",\"F1/F2/F3的跳跃次数均未记录\",\"F1/F2/F3的坡度、地表均未记录\",\"账号、设备均未记录；同组未知设备不证明同一设备\"],\"observation\":\"S1中三次课次均记录为重复跑原批准协议；F1在2026-10-15完成200 m/30 s，F2在2026-10-16的200 m时长未记录且结果为NOT_RECORDED，F3在2026-10-18完成200 m/35 s。资料截止2026-10-19T12:00:00Z。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 726,
+      "completionTokens": 859,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 726,
+      "reasoningTokens": null,
+      "totalTokens": 1585
+    },
+    "latencyMs": 4531,
+    "ledgerCostMicros": "1249",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "9090f38d-8f4b-4d6c-9be5-ed8022faca72",
+    "caseId": "E05",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "f8d44e02b9247245542ab2ab9fe0b5743371f2919e637fe6ee77a873512e95e0",
+    "snapshotId": "analysis:5bba0r",
+    "requestHash": "4175f5ef3701757df83ae06de97e4df434f9e2dfe84325d07bbc0ebc399fb1fc",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "33127512-1e94-47e6-b121-d1d930da706d",
+      "object": "chat.completion",
+      "created": 1792775291,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"date\":\"2026-10-15\",\"course\":\"O1/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration_s\":null,\"block\":\"main 第1轮/步骤1 200 m/30 s\",\"rest_s\":120,\"status\":\"COMPLETED\",\"resolution_s\":1,\"gradePercent\":null,\"surface\":null,\"source\":\"S1\",\"revision\":1},{\"id\":\"F2\",\"date\":\"2026-10-16\",\"course\":\"O2/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration_s\":null,\"block\":\"main 第1轮/步骤1 200 m/未记录 s\",\"rest_s\":120,\"status\":\"NOT_RECORDED\",\"resolution_s\":1,\"gradePercent\":null,\"surface\":null,\"source\":\"S1\",\"revision\":1},{\"id\":\"F3\",\"date\":\"2026-10-18\",\"course\":\"O3/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration_s\":null,\"block\":\"main 第1轮/步骤1 200 m/35 s\",\"rest_s\":120,\"status\":\"COMPLETED\",\"resolution_s\":1,\"gradePercent\":null,\"surface\":null,\"source\":\"S1\",\"revision\":1}],\"explanations\":[{\"id\":\"E1\",\"text\":\"连续观察中一次未完成/未记录（F2）与一次不利结果（F3 用时35 s 慢于 F1 的30 s）可能反映同一协议下表现波动或疲劳累积。\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1},{\"id\":\"F3\",\"revision\":1}],\"counterevidence\":[\"F2 为 NOT_RECORDED 而非明确未完成，缺失不等于失败\",\"F1 与 F3 各仅1次记录，无法区分波动与趋势\",\"RPE、睡眠、HRV、疼痛均未记录，无法归因\"],\"status\":\"待验证\"},{\"id\":\"E2\",\"text\":\"F3 的35 s 相对 F1 的30 s 可能属于正常单次波动，而非不利趋势。\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F3\",\"revision\":1}],\"counterevidence\":[\"仅两次可比记录，样本不足\",\"F2 缺失使连续序列不完整\",\"未记录坡度、地面、RPE，无法排除条件差异\"],\"status\":\"待验证\"}],\"counterevidence\":[\"F2 状态为 NOT_RECORDED，不能等同未完成或失败\",\"F1 与 F3 各1次有效记录，不足以确立趋势\",\"RPE、睡眠、HRV、疼痛、坡度、地面均未记录，不能推断因果\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录，不补零\",\"F2 实际用时未记录\",\"各课次 RPE 未记录\",\"坡度、地面未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；只比较一个变量，不新增测试剂量。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"reason\":\"现有证据不支持自动改变训练量\"},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1433,
+        "completion_tokens": 772,
+        "total_tokens": 2205,
+        "prompt_tokens_details": {
+          "cached_tokens": 640
+        },
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 793
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"date\":\"2026-10-15\",\"course\":\"O1/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration_s\":null,\"block\":\"main 第1轮/步骤1 200 m/30 s\",\"rest_s\":120,\"status\":\"COMPLETED\",\"resolution_s\":1,\"gradePercent\":null,\"surface\":null,\"source\":\"S1\",\"revision\":1},{\"id\":\"F2\",\"date\":\"2026-10-16\",\"course\":\"O2/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration_s\":null,\"block\":\"main 第1轮/步骤1 200 m/未记录 s\",\"rest_s\":120,\"status\":\"NOT_RECORDED\",\"resolution_s\":1,\"gradePercent\":null,\"surface\":null,\"source\":\"S1\",\"revision\":1},{\"id\":\"F3\",\"date\":\"2026-10-18\",\"course\":\"O3/running\",\"purpose\":\"重复跑原批准协议\",\"type\":null,\"rpe\":null,\"duration_s\":null,\"block\":\"main 第1轮/步骤1 200 m/35 s\",\"rest_s\":120,\"status\":\"COMPLETED\",\"resolution_s\":1,\"gradePercent\":null,\"surface\":null,\"source\":\"S1\",\"revision\":1}],\"explanations\":[{\"id\":\"E1\",\"text\":\"连续观察中一次未完成/未记录（F2）与一次不利结果（F3 用时35 s 慢于 F1 的30 s）可能反映同一协议下表现波动或疲劳累积。\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1},{\"id\":\"F3\",\"revision\":1}],\"counterevidence\":[\"F2 为 NOT_RECORDED 而非明确未完成，缺失不等于失败\",\"F1 与 F3 各仅1次记录，无法区分波动与趋势\",\"RPE、睡眠、HRV、疼痛均未记录，无法归因\"],\"status\":\"待验证\"},{\"id\":\"E2\",\"text\":\"F3 的35 s 相对 F1 的30 s 可能属于正常单次波动，而非不利趋势。\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F3\",\"revision\":1}],\"counterevidence\":[\"仅两次可比记录，样本不足\",\"F2 缺失使连续序列不完整\",\"未记录坡度、地面、RPE，无法排除条件差异\"],\"status\":\"待验证\"}],\"counterevidence\":[\"F2 状态为 NOT_RECORDED，不能等同未完成或失败\",\"F1 与 F3 各1次有效记录，不足以确立趋势\",\"RPE、睡眠、HRV、疼痛、坡度、地面均未记录，不能推断因果\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录，不补零\",\"F2 实际用时未记录\",\"各课次 RPE 未记录\",\"坡度、地面未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；只比较一个变量，不新增测试剂量。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"reason\":\"现有证据不支持自动改变训练量\"},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1433,
+      "completionTokens": 772,
+      "cacheHitTokens": 640,
+      "cacheMissTokens": 793,
+      "reasoningTokens": null,
+      "totalTokens": 2205
+    },
+    "latencyMs": 4294,
+    "ledgerCostMicros": "1169",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "92242b4b-c96d-4532-9e0a-c6031f60ed8d",
+    "caseId": "E06",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "bce7c5be5d64ae86bde2d0b3d86fa1fe1f03c49af157cafee2f59bfbda7d73d6",
+    "snapshotId": "analysis:5uymmx",
+    "requestHash": "346faf096b876344c64024c2c823c488ef132e7844d2244a76b4af5946de0438",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "2f118c93-d0a3-4693-9f10-c0b3a9e9023e",
+      "object": "chat.completion",
+      "created": 1792775299,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[\"资料截止 2026-10-10T12:00:00Z（UTC）。\",\"F1@1｜S1｜发生 2026-10-09T10:00:00Z；可知 2026-10-09T11:00:00Z｜CONFIRMED/AVAILABLE。\",\"课次 O1/running｜RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次。\",\"各段共同：rawResolutionSeconds=1，gradePercent=null，surface=null。\",\"区块 main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED。\",\"背景 predictionModelApproved=false（背景，不代替实际）。\",\"账号/设备均为临时别名；null 表示未记录，不推断相同设备。\",\"S1 组账号未记录、设备未记录；同组未知设备不证明同一设备。\"],\"explanations\":[\"解释A：10月15日的测试与更正属于资料截止 2026-10-10T12:00:00Z 之后才可见的信息，因此在10月10日预测时不可用。\",\"解释B：10月15日的测试与更正虽然后来可见，但10月10日预测所依据的 F1@1 已在 2026-10-09T11:00:00Z 可知，故预测并非完全无据。\"],\"counterevidence\":[\"对解释A的反证：现有记录未给出10月15日测试与更正的具体可知时间，无法仅凭截止时间证明其在10月10日不可见。\",\"对解释B的反证：F1@1 为 CONFIRMED/AVAILABLE 仅说明该条记录可知，未记录其内容是否足以支撑对10月15日测试与更正的预测。\"],\"missing\":[\"10月15日测试与更正的具体内容、发生时间与可知时间未记录。\",\"O1 的课次类型、RPE、时长、跳跃次数未记录（null，不是0）。\",\"各段 gradePercent、surface 未记录（null）。\",\"S1 的账号与设备未记录；不能推断与其他记录为同一设备。\"],\"observation\":\"在资料截止 2026-10-10T12:00:00Z 时，可用的 S1 记录为 F1@1（2026-10-09T10:00:00Z 发生，11:00:00Z 可知，CONFIRMED/AVAILABLE）及 O1 的 main 第1轮/步骤1（200 m/30 s，组休 120 s，COMPLETED）；10月15日测试与更正不在截止前记录中。\",\"candidate\":\"待核对\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 403,
+        "completion_tokens": 610,
+        "total_tokens": 1013,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 147
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[\"资料截止 2026-10-10T12:00:00Z（UTC）。\",\"F1@1｜S1｜发生 2026-10-09T10:00:00Z；可知 2026-10-09T11:00:00Z｜CONFIRMED/AVAILABLE。\",\"课次 O1/running｜RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录；时长 未记录 s；跳跃 未记录 次。\",\"各段共同：rawResolutionSeconds=1，gradePercent=null，surface=null。\",\"区块 main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED。\",\"背景 predictionModelApproved=false（背景，不代替实际）。\",\"账号/设备均为临时别名；null 表示未记录，不推断相同设备。\",\"S1 组账号未记录、设备未记录；同组未知设备不证明同一设备。\"],\"explanations\":[\"解释A：10月15日的测试与更正属于资料截止 2026-10-10T12:00:00Z 之后才可见的信息，因此在10月10日预测时不可用。\",\"解释B：10月15日的测试与更正虽然后来可见，但10月10日预测所依据的 F1@1 已在 2026-10-09T11:00:00Z 可知，故预测并非完全无据。\"],\"counterevidence\":[\"对解释A的反证：现有记录未给出10月15日测试与更正的具体可知时间，无法仅凭截止时间证明其在10月10日不可见。\",\"对解释B的反证：F1@1 为 CONFIRMED/AVAILABLE 仅说明该条记录可知，未记录其内容是否足以支撑对10月15日测试与更正的预测。\"],\"missing\":[\"10月15日测试与更正的具体内容、发生时间与可知时间未记录。\",\"O1 的课次类型、RPE、时长、跳跃次数未记录（null，不是0）。\",\"各段 gradePercent、surface 未记录（null）。\",\"S1 的账号与设备未记录；不能推断与其他记录为同一设备。\"],\"observation\":\"在资料截止 2026-10-10T12:00:00Z 时，可用的 S1 记录为 F1@1（2026-10-09T10:00:00Z 发生，11:00:00Z 可知，CONFIRMED/AVAILABLE）及 O1 的 main 第1轮/步骤1（200 m/30 s，组休 120 s，COMPLETED）；10月15日测试与更正不在截止前记录中。\",\"candidate\":\"待核对\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 403,
+      "completionTokens": 610,
+      "cacheHitTokens": 256,
+      "cacheMissTokens": 147,
+      "reasoningTokens": null,
+      "totalTokens": 1013
+    },
+    "latencyMs": 3759,
+    "ledgerCostMicros": "778",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "62891784-da73-4516-9bc6-bb608060b137",
+    "caseId": "E06",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "bce7c5be5d64ae86bde2d0b3d86fa1fe1f03c49af157cafee2f59bfbda7d73d6",
+    "snapshotId": "analysis:5uymmx",
+    "requestHash": "5bdb7704e00c99e1536609f603335c6901362c30c9aa24ff98ba888230bc7a1c",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "91c0fc21-ebbc-4b9d-8cfd-7000f35e8423",
+      "object": "chat.completion",
+      "created": 1792775295,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"F1@1｜S1｜发生 2026-10-09T10:00:00Z；可知 2026-10-09T11:00:00Z｜CONFIRMED/AVAILABLE\",\"课次 O1/running｜RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录（未记录）；时长 未记录 s；跳跃 未记录 次\",\"区块 main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED\",\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null（null=未记录）\",\"资料截止 2026-10-10T12:00:00Z；时区 UTC；未记录=null，不是0\",\"背景 predictionModelApproved=false（不代替实际）\"],\"explanations\":[{\"text\":\"已确认的200 m/30 s与组休120 s可能反映原批准协议的一次重复跑，但类型未记录，不能据此认定目标已实现。\",\"evidenceRefs\":[\"F1@1\"]},{\"text\":\"10月15日的测试与更正未出现在截止2026-10-10T12:00:00Z的资料中，属于未来/缺失信息，不能用于10月10日的判断。\",\"evidenceRefs\":[\"资料截止 2026-10-10T12:00:00Z\"]}],\"counterevidence\":[{\"text\":\"若后续可见的10月15日更正显示该200 m/30 s并非原协议或剂量不同，则“重复原批准协议”的解释被削弱。\",\"evidenceRefs\":[\"missing:10月15日测试与更正\"]},{\"text\":\"若同协议重复出现相同表现与24/48/72h反馈稳定，则“需要最小数据请求”的候选被削弱。\",\"evidenceRefs\":[\"C1.supportsWhen/weakensWhen\"]}],\"missing\":[\"10月15日的测试与更正（在截止时点不可见）\",\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"课次类型未记录\",\"RPE未记录\",\"时长未记录\",\"跳跃次数未记录\",\"坡度%未记录\",\"表面未记录\"],\"observation\":\"仅记录：已确认完成200 m/30 s第1轮，组休120 s；类型、RPE、时长、跳跃、坡度、表面均为null（未记录，不是0）。不冒充整课用时。\",\"candidate\":\"KEEP\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 905,
+        "completion_tokens": 559,
+        "total_tokens": 1464,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 905
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"F1@1｜S1｜发生 2026-10-09T10:00:00Z；可知 2026-10-09T11:00:00Z｜CONFIRMED/AVAILABLE\",\"课次 O1/running｜RUN；原目的 重复跑原批准协议；类型 未记录；RPE 未记录（未记录）；时长 未记录 s；跳跃 未记录 次\",\"区块 main 第1轮/步骤1：200 m/30 s；组休 120 s；COMPLETED\",\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null（null=未记录）\",\"资料截止 2026-10-10T12:00:00Z；时区 UTC；未记录=null，不是0\",\"背景 predictionModelApproved=false（不代替实际）\"],\"explanations\":[{\"text\":\"已确认的200 m/30 s与组休120 s可能反映原批准协议的一次重复跑，但类型未记录，不能据此认定目标已实现。\",\"evidenceRefs\":[\"F1@1\"]},{\"text\":\"10月15日的测试与更正未出现在截止2026-10-10T12:00:00Z的资料中，属于未来/缺失信息，不能用于10月10日的判断。\",\"evidenceRefs\":[\"资料截止 2026-10-10T12:00:00Z\"]}],\"counterevidence\":[{\"text\":\"若后续可见的10月15日更正显示该200 m/30 s并非原协议或剂量不同，则“重复原批准协议”的解释被削弱。\",\"evidenceRefs\":[\"missing:10月15日测试与更正\"]},{\"text\":\"若同协议重复出现相同表现与24/48/72h反馈稳定，则“需要最小数据请求”的候选被削弱。\",\"evidenceRefs\":[\"C1.supportsWhen/weakensWhen\"]}],\"missing\":[\"10月15日的测试与更正（在截止时点不可见）\",\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"课次类型未记录\",\"RPE未记录\",\"时长未记录\",\"跳跃次数未记录\",\"坡度%未记录\",\"表面未记录\"],\"observation\":\"仅记录：已确认完成200 m/30 s第1轮，组休120 s；类型、RPE、时长、跳跃、坡度、表面均为null（未记录，不是0）。不冒充整课用时。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 905,
+      "completionTokens": 559,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 905,
+      "reasoningTokens": null,
+      "totalTokens": 1464
+    },
+    "latencyMs": 3724,
+    "ledgerCostMicros": "943",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "643b3972-a410-4143-a58e-b668dcb6cccf",
+    "caseId": "F03",
+    "arm": "A",
+    "phase": "evaluation",
+    "coverageHash": "3e8e93228ed58f866742e6e87887f342cc7ec4af7aeba46a9edcb6810e7e0420",
+    "snapshotId": "analysis:ii6eqc",
+    "requestHash": "eab982429db3cf37f4bd3ef7e71712a654eb95d09dc22b718691b8f2b3604c45",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "b070560f-b8e6-431c-91d1-bb2cad51dbf3",
+      "object": "chat.completion",
+      "created": 1792775303,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"facts\":[\"F1@1（S1，CONFIRMED/AVAILABLE）：2026-10-18T10:00:00Z 自报 FUNCTION=1（FUNCTION_LIMITATION_0_1），部位 hamstrings，功能 WALKING，备注“拉伤后走路痛”；距训练未记录，侧别 UNSPECIFIED，关联 UNRESOLVED。\",\"F2@1（S1，CONFIRMED/AVAILABLE）：2026-10-18T10:00:00Z 自报 PAIN=4（0-10_HIGH_WORSE），部位 hamstrings，功能未记录，备注“拉伤后走路痛”；距训练未记录，侧别 UNSPECIFIED。\",\"F3@1（S1，CONFIRMED/AVAILABLE）：2026-10-18 readiness=90/100，统计口径 SAMPLE，日期 2026-10-18，能量口径未记录。\",\"资料截止 2026-10-19T12:00:00Z；时区 UTC。账号/设备均为临时别名，未记录=null，不推断相同设备。\"],\"explanations\":[{\"explanation\":\"走路痛与功能受限（FUNCTION=1、PAIN=4）可能反映拉伤后局部负荷耐受下降，与手表 readiness=90 属不同测量口径，二者可并存。\",\"counterevidence\":\"若后续记录显示走路痛已消失或 FUNCTION 恢复至 0，则该解释被削弱；当前无此类反证记录。\"},{\"explanation\":\"readiness=90/100 为 SAMPLE 统计口径，可能不涵盖症状或功能维度，因此“手表状态正常”不能排除拉伤相关走路痛。\",\"counterevidence\":\"若存在同一时间窗、同一口径且包含症状/功能的设备记录显示正常，则该解释被削弱；当前未记录此类反证。\"}],\"counterevidence\":[\"F3 readiness=90/100 与 F1/F2 的症状与功能受限并存，构成对“手表正常即无问题”的反证；但 readiness 口径为 SAMPLE，不能直接否定症状记录。\",\"F1 与 F2 均标注关联 UNRESOLVED、侧别 UNSPECIFIED，不能据此确认同一损伤事件或同一侧别。\"],\"missing\":[\"professionalClearance：NOT_RECORDED（无专业许可/评估记录）。\",\"F1/F2 距训练时间：未记录（null），不能推断为0。\",\"F1/F2 侧别：UNSPECIFIED。\",\"F1/F2 关联：UNRESOLVED（revision 1）。\",\"F2 功能：未记录。\",\"F3 能量口径：未记录。\",\"账号与设备：未记录；同组未知设备不证明同一设备。\"],\"observation\":\"2026-10-18T10:00:00Z 自报腘绳肌拉伤后走路痛：FUNCTION=1（0-1 量表，越高越受限）、PAIN=4（0-10，越高越痛）；同日 readiness=90/100（SAMPLE 口径）。无专业许可记录，距训练时间、侧别、关联均未明确。\",\"candidate\":\"RECOVERY\",\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 565,
+        "completion_tokens": 690,
+        "total_tokens": 1255,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 565
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"facts\":[\"F1@1（S1，CONFIRMED/AVAILABLE）：2026-10-18T10:00:00Z 自报 FUNCTION=1（FUNCTION_LIMITATION_0_1），部位 hamstrings，功能 WALKING，备注“拉伤后走路痛”；距训练未记录，侧别 UNSPECIFIED，关联 UNRESOLVED。\",\"F2@1（S1，CONFIRMED/AVAILABLE）：2026-10-18T10:00:00Z 自报 PAIN=4（0-10_HIGH_WORSE），部位 hamstrings，功能未记录，备注“拉伤后走路痛”；距训练未记录，侧别 UNSPECIFIED。\",\"F3@1（S1，CONFIRMED/AVAILABLE）：2026-10-18 readiness=90/100，统计口径 SAMPLE，日期 2026-10-18，能量口径未记录。\",\"资料截止 2026-10-19T12:00:00Z；时区 UTC。账号/设备均为临时别名，未记录=null，不推断相同设备。\"],\"explanations\":[{\"explanation\":\"走路痛与功能受限（FUNCTION=1、PAIN=4）可能反映拉伤后局部负荷耐受下降，与手表 readiness=90 属不同测量口径，二者可并存。\",\"counterevidence\":\"若后续记录显示走路痛已消失或 FUNCTION 恢复至 0，则该解释被削弱；当前无此类反证记录。\"},{\"explanation\":\"readiness=90/100 为 SAMPLE 统计口径，可能不涵盖症状或功能维度，因此“手表状态正常”不能排除拉伤相关走路痛。\",\"counterevidence\":\"若存在同一时间窗、同一口径且包含症状/功能的设备记录显示正常，则该解释被削弱；当前未记录此类反证。\"}],\"counterevidence\":[\"F3 readiness=90/100 与 F1/F2 的症状与功能受限并存，构成对“手表正常即无问题”的反证；但 readiness 口径为 SAMPLE，不能直接否定症状记录。\",\"F1 与 F2 均标注关联 UNRESOLVED、侧别 UNSPECIFIED，不能据此确认同一损伤事件或同一侧别。\"],\"missing\":[\"professionalClearance：NOT_RECORDED（无专业许可/评估记录）。\",\"F1/F2 距训练时间：未记录（null），不能推断为0。\",\"F1/F2 侧别：UNSPECIFIED。\",\"F1/F2 关联：UNRESOLVED（revision 1）。\",\"F2 功能：未记录。\",\"F3 能量口径：未记录。\",\"账号与设备：未记录；同组未知设备不证明同一设备。\"],\"observation\":\"2026-10-18T10:00:00Z 自报腘绳肌拉伤后走路痛：FUNCTION=1（0-1 量表，越高越受限）、PAIN=4（0-10，越高越痛）；同日 readiness=90/100（SAMPLE 口径）。无专业许可记录，距训练时间、侧别、关联均未明确。\",\"candidate\":\"RECOVERY\",\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 565,
+      "completionTokens": 690,
+      "cacheHitTokens": 0,
+      "cacheMissTokens": 565,
+      "reasoningTokens": null,
+      "totalTokens": 1255
+    },
+    "latencyMs": 4916,
+    "ledgerCostMicros": "998",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  },
+  {
+    "sampleId": "8eca3919-3b2d-4a14-8a23-21b79e2f18f8",
+    "caseId": "F03",
+    "arm": "B",
+    "phase": "evaluation",
+    "coverageHash": "3e8e93228ed58f866742e6e87887f342cc7ec4af7aeba46a9edcb6810e7e0420",
+    "snapshotId": "analysis:ii6eqc",
+    "requestHash": "67c050587165d72136761922940e741d5e88681723480a2b5aabf5522afc56fc",
+    "generationHash": "c428c413b51009df21546063730cbdbf6bdc144bb3f5f7b5149c2dbb9ec9a97f",
+    "requestedModel": "deepseek-flash",
+    "configuredRelease": "DeepSeek-V4.1-Flash-1017",
+    "returnedModel": "deepseek-flash",
+    "returnedVersion": null,
+    "systemFingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+    "providerResponse": {
+      "id": "3f094cde-6d9b-4cd2-8969-d50a5c9b27d6",
+      "object": "chat.completion",
+      "created": 1792775308,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"measure\":\"FUNCTION\",\"value\":1,\"scale\":\"FUNCTION_LIMITATION_0_1\",\"site\":\"hamstrings\",\"side\":\"UNSPECIFIED\",\"protocol\":\"SELF_REPORT\",\"function\":\"WALKING\",\"note\":\"拉伤后走路痛\",\"hoursSinceTraining\":null,\"link\":\"UNRESOLVED\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"measure\":\"PAIN\",\"value\":4,\"scale\":\"0-10_HIGH_WORSE\",\"site\":\"hamstrings\",\"side\":\"UNSPECIFIED\",\"protocol\":\"SELF_REPORT\",\"function\":null,\"note\":\"拉伤后走路痛\",\"hoursSinceTraining\":null,\"link\":\"UNRESOLVED\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"measure\":\"readiness\",\"value\":90,\"scale\":\"/100\",\"statistic\":\"SAMPLE\",\"date\":\"2026-10-18\",\"energyBasis\":null}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[{\"id\":\"F3\",\"revision\":1}],\"counterevidenceRefs\":[],\"discriminator\":\"核对睡眠完整性、生活压力和同设备同协议个人基线；若热身功能正常、可比训练表现稳定则削弱“当前训练能力下降”，若生活条件未变但表现持续下降则重新检查训练解释\",\"certainty\":\"UNRESOLVED\"},{\"id\":\"symptom-limitation\",\"claim\":\"自报腘绳肌走路痛（PAIN 4/10）与功能受限（FUNCTION 1/1）提示当前步行相关负荷耐受下降，但自报不等于组织恢复或医学诊断\",\"supportingRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidenceRefs\":[{\"id\":\"F3\",\"revision\":1}],\"discriminator\":\"若专业许可记录出现且步行痛在24/48/72h消退、同协议功能恢复正常，则削弱该解释；若症状持续或加重则需重新评估\",\"certainty\":\"UNRESOLVED\"}],\"counterevidence\":[{\"explanationId\":\"symptom-limitation\",\"ref\":{\"id\":\"F3\",\"revision\":1},\"note\":\"readiness 90/100 与症状并存，说明单一 readiness 指标不能排除功能受限，也不构成医学许可\"}],\"missing\":[\"professionalClearance 未记录（NOT_RECORDED）\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"近期实际训练明细未确认\",\"距训练时间未记录\",\"侧别未记录\",\"能量口径未记录\",\"F1/F2 关联 UNRESOLVED\"],\"observation\":\"2026-10-18 readiness 90/100（F3）；腘绳肌 FUNCTION 1（F1）与 PAIN 4/10（F2）均为 2026-10-18T10:00:00Z 自报；手表状态正常不等于医学许可或组织恢复。\",\"candidate\":{\"id\":\"C1\",\"action\":\"SKIP\",\"kind\":\"DEFER_AND_REVIEW\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F3\",\"revision\":1},{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"reason\":\"疼痛/现有安全限制优先\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"conditions\":[\"暂不执行诱发疼痛的内容；走原安全路径核对症状和专业许可，不自动写入停训课表\"],\"doNotExecute\":[\"医学限制未解除\",\"来源、身份或实际剂量有冲突\",\"缺少已批准课程或明确变更剂量\"]},\"planChanged\":false}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1201,
+        "completion_tokens": 959,
+        "total_tokens": 2160,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 689
+      },
+      "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501"
+    },
+    "rawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"measure\":\"FUNCTION\",\"value\":1,\"scale\":\"FUNCTION_LIMITATION_0_1\",\"site\":\"hamstrings\",\"side\":\"UNSPECIFIED\",\"protocol\":\"SELF_REPORT\",\"function\":\"WALKING\",\"note\":\"拉伤后走路痛\",\"hoursSinceTraining\":null,\"link\":\"UNRESOLVED\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"measure\":\"PAIN\",\"value\":4,\"scale\":\"0-10_HIGH_WORSE\",\"site\":\"hamstrings\",\"side\":\"UNSPECIFIED\",\"protocol\":\"SELF_REPORT\",\"function\":null,\"note\":\"拉伤后走路痛\",\"hoursSinceTraining\":null,\"link\":\"UNRESOLVED\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"measure\":\"readiness\",\"value\":90,\"scale\":\"/100\",\"statistic\":\"SAMPLE\",\"date\":\"2026-10-18\",\"energyBasis\":null}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[{\"id\":\"F3\",\"revision\":1}],\"counterevidenceRefs\":[],\"discriminator\":\"核对睡眠完整性、生活压力和同设备同协议个人基线；若热身功能正常、可比训练表现稳定则削弱“当前训练能力下降”，若生活条件未变但表现持续下降则重新检查训练解释\",\"certainty\":\"UNRESOLVED\"},{\"id\":\"symptom-limitation\",\"claim\":\"自报腘绳肌走路痛（PAIN 4/10）与功能受限（FUNCTION 1/1）提示当前步行相关负荷耐受下降，但自报不等于组织恢复或医学诊断\",\"supportingRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidenceRefs\":[{\"id\":\"F3\",\"revision\":1}],\"discriminator\":\"若专业许可记录出现且步行痛在24/48/72h消退、同协议功能恢复正常，则削弱该解释；若症状持续或加重则需重新评估\",\"certainty\":\"UNRESOLVED\"}],\"counterevidence\":[{\"explanationId\":\"symptom-limitation\",\"ref\":{\"id\":\"F3\",\"revision\":1},\"note\":\"readiness 90/100 与症状并存，说明单一 readiness 指标不能排除功能受限，也不构成医学许可\"}],\"missing\":[\"professionalClearance 未记录（NOT_RECORDED）\",\"睡眠未记录\",\"HRV未记录（不补零）\",\"近期实际训练明细未确认\",\"距训练时间未记录\",\"侧别未记录\",\"能量口径未记录\",\"F1/F2 关联 UNRESOLVED\"],\"observation\":\"2026-10-18 readiness 90/100（F3）；腘绳肌 FUNCTION 1（F1）与 PAIN 4/10（F2）均为 2026-10-18T10:00:00Z 自报；手表状态正常不等于医学许可或组织恢复。\",\"candidate\":{\"id\":\"C1\",\"action\":\"SKIP\",\"kind\":\"DEFER_AND_REVIEW\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F3\",\"revision\":1},{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"reason\":\"疼痛/现有安全限制优先\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"conditions\":[\"暂不执行诱发疼痛的内容；走原安全路径核对症状和专业许可，不自动写入停训课表\"],\"doNotExecute\":[\"医学限制未解除\",\"来源、身份或实际剂量有冲突\",\"缺少已批准课程或明确变更剂量\"]},\"planChanged\":false}",
+    "usage": {
+      "promptTokens": 1201,
+      "completionTokens": 959,
+      "cacheHitTokens": 512,
+      "cacheMissTokens": 689,
+      "reasoningTokens": null,
+      "totalTokens": 2160
+    },
+    "latencyMs": 4791,
+    "ledgerCostMicros": "1361",
+    "currency": "USD",
+    "priceVersion": "user-accepted-packaged-20261023-peak-current-price-unverified",
+    "costBasis": "TOKEN_USAGE_AT_PINNED_PRICE_NOT_PROVIDER_INVOICE",
+    "state": "SETTLED",
+    "transportErrors": [],
+    "scientificScore": null,
+    "modelQualityScore": null
+  }
+]

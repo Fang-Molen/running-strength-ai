@@ -26,9 +26,9 @@ test('in-page lock serialises async writers when Web Locks are unavailable (repo
     else Reflect.deleteProperty(globalThis, 'navigator')
   }
 })
-test('every source writer of fk-schedule-v1 goes through saveSchedule with its writer label', () => {
+test('every source writer of fk-schedule-v1 goes through the central schedule writer with its writer label', () => {
   const files: Record<string, string> = { 'today-board': 'src/components/today-board.tsx', 'today-board-sync': 'src/components/today-board.tsx', 'onboarding-r8': 'src/components/r8.tsx', 'unmarked-plans': 'src/components/unmarked-plans.tsx', 'schedule-progress': 'src/lib/ui/schedule-progress.ts', 'guided-discard': 'src/lib/ui/guided-discard.ts', 'scheduled-entry': 'src/lib/ui/day-schedule.ts' }
-  for (const w of SCHEDULE_WRITERS) assert.match(readFileSync(files[w], 'utf8'), new RegExp(`saveSchedule\\([^;]*'${w}'\\)`), w)
+  for (const w of SCHEDULE_WRITERS) assert.match(readFileSync(files[w], 'utf8'), new RegExp(`(?:saveSchedule|updateSchedule)\\([^;]*'${w}'(?:,|\\))`), w)
   const ds = readFileSync('src/lib/ui/day-schedule.ts', 'utf8')
   assert.match(ds, /commitScheduleRaw\(box, raw, writer\)/); assert.doesNotMatch(ds, /setItem\(SCHEDULE_KEY/)
 })

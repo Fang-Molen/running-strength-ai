@@ -20,7 +20,8 @@ import { loadEntries, removeEntry, todayEntries, aggregate, nutrientOf, MEALS, t
 import { loadChecks, removeCheck, upsertCheck, todayDate, type BodyCheck } from "@/lib/nutrition/body";
 import { shiftDay } from "@/lib/health/observation";
 import { loadVitals } from "@/lib/nutrition/vitals";
-import { computePlan } from "@/lib/nutrition/calc";
+import { nutritionPlanGate } from "@/lib/nutrition/calc";
+import { effectiveNutritionProfile } from "@/lib/coach/loop/effective-host";
 import { TrendChart, MultiTrend, type Pt } from "@/components/trend-chart";
 import { typicalDaily, type TypicalDaily } from "@/lib/health/intraday-recovery-bridge-v89";
 import { loadCheckins, saveCheckin } from "@/lib/ui/watch-mode";
@@ -57,7 +58,9 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, onCoach, only, slot }: {
   const [healthRev,setHealthRev]=useState(0);
   useEffect(()=>{const f=()=>{setHealthRev(x=>x+1);setChecks([...loadChecks()].sort((a,b)=>a.date.localeCompare(b.date)));};window.addEventListener(HEALTH_CHANGED,f);window.addEventListener('storage',f);window.addEventListener('focus',f);const t=window.setInterval(f,60000);return()=>{window.removeEventListener(HEALTH_CHANGED,f);window.removeEventListener('storage',f);window.removeEventListener('focus',f);window.clearInterval(t)}},[]);
   const vitals = useMemo(() => loadVitals().records, [healthRev]);
-  const plan = useMemo(() => computePlan(profile), [profile]);
+  // Shared current weight/age/sex/height, so this page, health and the coach agree.
+  const planGate = useMemo(() => nutritionPlanGate(effectiveNutritionProfile(profile)), [profile, checks, healthRev]);
+  const plan = planGate.plan;
   const last = checks[checks.length - 1];
   const weight = n(last?.weight) ?? n(profile.weightKg);
   const height = n(profile.heightCm);
@@ -108,7 +111,7 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, onCoach, only, slot }: {
       </section> : null}
       <section className="fk-dash-card p-2">
         <button type="button" onClick={onAdvice ?? onFood} className="fk-dash-title text-sm"><Lightbulb className="size-4" />营养建议与练前练后 ›</button>
-        {plan ? <div className="mt-1 divide-y divide-line">{tip(Beef, "蛋白质", `建议 ${plan.protein} g/天${weight ? `（${f1(plan.protein / weight)} g/kg）` : ""}`, "protein")}{tip(Droplet, "碳水", `建议 ${plan.carb} g；练前 1–3 小时为主`, "carb")}{tip(Flame, "脂肪", `约 ${plan.fat} g/天`, "fat")}{tip(Leaf, "膳食纤维", "建议每日 25 g 以上", "fiber")}</div> : <><p className="mt-2 text-sm text-muted">填写身体资料后可计算每日营养目标。</p><div className="mt-2 grid grid-cols-4 gap-1">{([["protein", "蛋白质"], ["carb", "碳水"], ["fat", "脂肪"], ["fiber", "膳食纤维"]] as const).map(([id, label]) => <button key={id} type="button" className="min-h-11 rounded-xl border border-line text-xs" onClick={() => setSheet(id)}>{label}</button>)}</div></>}
+        {plan?.notes?.length ? <ul className="mt-2 space-y-1 text-xs text-muted" data-testid="nutrition-plan-notes">{plan.notes.map(note => <li key={note}>{note}</li>)}</ul> : null}{plan ? <div className="mt-1 divide-y divide-line">{tip(Beef, "蛋白质", `建议 ${plan.protein} g/天${weight ? `（${f1(plan.protein / weight)} g/kg）` : ""}`, "protein")}{tip(Droplet, "碳水", `建议 ${plan.carb} g；练前 1–3 小时为主`, "carb")}{tip(Flame, "脂肪", `约 ${plan.fat} g/天`, "fat")}{tip(Leaf, "膳食纤维", "建议每日 25 g 以上", "fiber")}</div> : <><p className="mt-2 text-sm text-muted" data-testid="nutrition-plan-paused">{planGate.paused ? planGate.reason : "填写身体资料后可计算每日营养目标。"}</p><div className="mt-2 grid grid-cols-4 gap-1">{([["protein", "蛋白质"], ["carb", "碳水"], ["fat", "脂肪"], ["fiber", "膳食纤维"]] as const).map(([id, label]) => <button key={id} type="button" className="min-h-11 rounded-xl border border-line text-xs" onClick={() => setSheet(id)}>{label}</button>)}</div></>}
       </section>
     </div>
 

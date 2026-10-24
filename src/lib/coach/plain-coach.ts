@@ -6,7 +6,7 @@ import { currentAthleteId } from '../core/events'
 import { ownedBy } from '../core/ownership'
 /** 方坤面向用户的“成熟教练”表达层：事实 → 目的 → 限定解释 → 观察；不生成未经批准的训练剂量。
  * 只读：不写计划、不改记录。内部事实/审计模型不变，这里只组织文字与联网上下文。 */
-import { planDays, hasActivePlan, planTag, PLAN_DOC_KEY, planPrefix } from '../plan/active-plan'
+import { planDays, hasActivePlan, planTag, planDocumentKey, planPrefix } from '../plan/active-plan'
 export type GActivity = { id: number | string; sourceIdentity?: string; name: string; type: string; start: string; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; cal: number | null; sets: number | null; reps: number | null; tl: number | null; te: number | null; ate?: number | null; rpe?: number | null }
 export type GLap = { i: number; dist: number | null; dur: number | null; avgHr: number | null; maxHr: number | null; cad: number | null; elev: number | null; speed: number | null }
 
@@ -32,7 +32,7 @@ const browserStore = (): Store => currentStore() as Store
 export function plan400Active(store: Store = browserStore()): boolean {
   const has = (k: string, pick: (v: any) => unknown) => { try { const v = JSON.parse(store?.getItem(k) ?? 'null'); const x = v && pick(v); return !!x && typeof x === 'object' && Object.keys(x).length > 0 } catch { return false } }
   // v89.6：计划只来自本机已导入/生成的计划文档；没有文档 = 没有计划（旧记录照常是事实）。
-  let stored = false; try { stored = store?.getItem(PLAN_DOC_KEY) != null } catch { stored = false }
+  let stored = false; try { stored = store?.getItem(planDocumentKey()) != null } catch { stored = false }
   return hasActivePlan(store) && (stored || has('fk-plan400-v4-log', v => v) || has('fk-plan400-v4-components-v1', v => v.days))
 }
 const mmss = (s: number) => s >= 60 ? `${Math.floor(s / 60)}分${String(Math.round((s % 60) * 100) / 100).padStart(2, '0')}秒` : `${s}秒`

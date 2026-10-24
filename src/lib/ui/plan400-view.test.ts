@@ -1,14 +1,15 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { currentWeek, dateConflicts, dayKind, dayOf, dayStatus, entryLink, hasStrength, primaryCta, progressCounts, shiftSummary, weekDays, type V4Plan } from './plan400-view.ts'
 
-const raw = readFileSync(new URL('../../../test-fixtures/private/plan400-v4.json', import.meta.url), 'utf8')
+const raw = readFileSync(new URL('../../../test-fixtures/synthetic/plan400-v4.json', import.meta.url), 'utf8')
 const plan = JSON.parse(raw) as V4Plan
 
-test('V4 source plan is untouched (checksum pinned before UI work)', () => {
-  assert.equal(createHash('sha256').update(raw).digest('hex'), '7a59a75ed693c147b763e5285f838b828d0c702e3d59aca5927e0efd21c5e282')
+test('public synthetic fixture stays immutable during view projections (not the private V4 checksum)', () => {
+  assert.equal(createHash('sha256').update(raw).digest('hex'), '6de961750547d1f3b6989efd193c833bf343ea284ecc535982b655d5075579fb')
 })
 test('71 = 70 calendar days (W1–W10 incl. rest/recovery) + 1 final test; not 71 training sessions', () => {
   const c = progressCounts(plan, {})

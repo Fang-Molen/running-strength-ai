@@ -3,7 +3,7 @@ import { Bot, Check, ChevronDown, Dumbbell, Footprints, Pencil, Plus, RefreshCw,
 import type { Plan, Session } from "@/lib/strength/model"
 import type { RunningPlan } from "@/lib/core/running-plan"
 import { clearActual, dedupeEntries, REASON_LABELS, SWAP_LABELS, applyAction, findConflicts, logActual, review, swapProposal, weekOf, weekSummary, type Conflict, type ConflictAction, type DeviationReason, type Intensity, type ScheduleEntry, type SwapReason } from "@/lib/ui/day-schedule-rules"
-import { loadSchedule, proposeWeek, readRecovery, saveSchedule, saveScheduledEntry, syncFangkun, type ScheduleStore } from "@/lib/ui/day-schedule"
+import { loadSchedule, proposeWeek, readRecovery, updateSchedule, saveScheduledEntry, syncFangkun, type ScheduleStore } from "@/lib/ui/day-schedule"
 import { syncActualToLog } from "@/lib/ui/checklist-log"
 import { PARTS, injuryAdvice, loadInjury, needsInjuryAsk, saveInjury, type Injury, type InjuryStore, type Part } from "@/lib/ui/injury"
 import { displayName } from "@/lib/strength/model"
@@ -31,25 +31,25 @@ export function TodayBoard({ plan, runPlans, today, onOpenRun, onOpenLift, onExe
   const [adding, setAdding] = useState(false)
   const [stamp, setStamp] = useState(0)
   const [note, setNote] = useState("")
-  useEffect(() => { const refresh = () => setStore(loadSchedule()); const s = syncFangkun(loadSchedule()); setStore(s); saveSchedule(s, 'today-board-sync'); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh); return () => { window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); }; }, [revision])
+  useEffect(() => { const refresh = () => setStore(loadSchedule()); setStore(loadSchedule()); void updateSchedule(syncFangkun, 'today-board-sync').then(refresh); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh); return () => { window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); }; }, [revision])
   useEffect(() => { setDay(today) }, [today])
   useEffect(() => { if (selectedDate) setDay(selectedDate); }, [selectedDate]);
   const week = useMemo(() => weekOf(day || today), [day, today])
   const conflicts = useMemo(() => findConflicts(store.entries, week, today, readRecovery(today), store.acks), [store, week, today])
   const summary = useMemo(() => weekSummary(store.entries, week, today), [store, week, today])
-  const commit = (next: ScheduleStore) => { if (!saveSchedule(next, 'today-board')) { setNote("保存结果尚未核实，请刷新核对当前记录后再重试。"); return false; } setStore(next); setStamp(Date.now()); return true; }
+  const commit = async (next: ScheduleStore) => { if (!await updateSchedule(()=>next, 'today-board', store)) { setNote("保存结果尚未核实，请刷新核对当前记录后再重试。"); return false; } setStore(next); setStamp(Date.now()); return true; }
   const setEntries = (entries: ScheduleEntry[]) => commit({ ...store, entries })
   const act = (c: Conflict, a: ConflictAction) => commit(a === "ack" ? { ...store, acks: [...store.acks, c.id] } : { ...store, entries: applyAction(store.entries, c, a) })
   const sessionOf = (e: ScheduleEntry) => e.modality === "strength" ? plan.sessions.find((s) => s.id === e.refId) : undefined
   const [undo, setUndo] = useState<{ entries: ScheduleEntry[]; id: string; label: string } | null>(null)
   const lastTap = useRef(0)
   useEffect(() => { if (!undo) return; const t = setTimeout(() => setUndo(null), 5000); return () => clearTimeout(t) }, [undo])
-  const restore = () => { if (!undo) return; if (!setEntries(undo.entries)) return; const e = undo.entries.find((x) => x.id === undo.id); if (e) syncActualToLog(e, sessionOf(e)); setUndo(null) }
-  const saveActual = (e: ScheduleEntry, actual: Parameters<typeof logActual>[2] | null) => {
+  const restore = async () => { if (!undo) return; if (!await setEntries(undo.entries)) return; const e = undo.entries.find((x) => x.id === undo.id); if (e) syncActualToLog(e, sessionOf(e)); setUndo(null) }
+  const saveActual = async (e: ScheduleEntry, actual: Parameters<typeof logActual>[2] | null) => {
     const now = Date.now(); if (now - lastTap.current < 400) return; lastTap.current = now
     const prev = store.entries
     const cur = prev.find((x) => x.id === e.id)?.actual
-    const entries = actual === null || (cur && cur.outcome === actual.outcome && actual.outcome === "as_planned") ? clearActual(prev, e.id) : logActual(prev, e.id, actual); if (!setEntries(entries)) return;
+    const entries = actual === null || (cur && cur.outcome === actual.outcome && actual.outcome === "as_planned") ? clearActual(prev, e.id) : logActual(prev, e.id, actual); if (!await setEntries(entries)) return;
     setUndo({ entries: prev, id: e.id, label: entries.find((x) => x.id === e.id)?.actual ? "已记录" : "已改回待做" })
     const r = syncActualToLog(entries.find((x) => x.id === e.id)!, sessionOf(e)); setNote(r.ok ? (r.reason ?? (actual?.outcome === "missed" ? "已记下没练，原因会给方坤参考。" : "已记入训练日志，方坤可见。")) : `日志未同步：${r.reason}`)
   }

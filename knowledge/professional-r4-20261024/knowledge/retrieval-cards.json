@@ -1,0 +1,569 @@
+[
+  {
+    "id": "K01",
+    "title": "能力分项",
+    "tasks": [
+      "capability"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "event",
+      "recentResults"
+    ],
+    "text": "分别记录速度、专项耐力、有氧表现、力量/爆发、动作经验和耐受。每项显示证据日期、条件及可信度；缺项留空，不从5km成绩推断100m或深蹲能力。",
+    "insufficient": "追问缺失且会改变下一步选择的一项；不要求全套测试。",
+    "sourceIds": [
+      "S07"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K02",
+    "title": "新用户起点",
+    "tasks": [
+      "baseline"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "experience",
+      "trainingHistory"
+    ],
+    "text": "优先近期实际完成记录，再参考同项目历史；目标成绩单列，群体等级只作背景。初始基线标为暂定，不给新手套高水平选手训练耐受。",
+    "insufficient": "无历史时先记录既有活动和可用时间；避免安排最大测试。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K03",
+    "title": "个人基线更新",
+    "tasks": [
+      "baseline"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "metric",
+      "device",
+      "measurementProtocol"
+    ],
+    "text": "同来源同协议序列建立个人常态，保留窗口、样本量、缺失率与异常。疾病、赛前、减量期另标，设备更换分段。显示中位数与离散程度；窗口长度是产品配置而非生理定律。",
+    "insufficient": "不足时显示样本不足；不能拿群体正常范围当个人恢复基线。",
+    "sourceIds": [
+      "S06"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K04",
+    "title": "疲劳证据整合",
+    "tasks": [
+      "fatigue"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "symptoms",
+      "recentTraining"
+    ],
+    "text": "将主观疲劳、局部酸痛、表现、睡眠、HRV及静息心率分别列证据。先检查时间、设备与测量条件，再形成可能解释；冲突保留，疼痛独立处理。",
+    "insufficient": "只输出观察与补记，不能从HRV单次下降宣布过度训练。",
+    "sourceIds": [
+      "S06",
+      "S08"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K05",
+    "title": "个人响应学习",
+    "tasks": [
+      "fatigue"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "baselineVersion",
+      "outcomeHistory"
+    ],
+    "text": "对齐训练前指标、当课完成和之后反应；先描述关联，再检验是否在相似条件重复。排查热、病、时间、测量误差；旧判断随新证据支持、削弱或撤回。",
+    "insufficient": "不凭一次好/坏训练调整永久阈值；不把相关当因果。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K06",
+    "title": "负荷量纲",
+    "tasks": [
+      "load"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "loadMethod",
+      "dailyObservations"
+    ],
+    "text": "sRPE=整课分钟×整课RPE，手表负荷单列。7日均值/28日均值是描述比值，注明重叠窗口；已知休息为0，缺失为未知。不得将7日总量除28日日均后称同一比值。",
+    "insufficient": "分母为0或缺失时不给比值；不由ACWR算伤病概率。",
+    "sourceIds": [
+      "S05"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K07",
+    "title": "训练可比性",
+    "tasks": [
+      "running"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "event",
+      "start",
+      "timing",
+      "surface",
+      "restSeconds",
+      "purpose"
+    ],
+    "text": "按距离、计时、起跑、组休、场地、目标比较；条件不齐只作参考。配速快了但休息更长不是自动进步；重复间衰减、完成质量与用力共同解释。",
+    "insufficient": "只问改变结论的关键条件；环境和设备差异明确标注。",
+    "sourceIds": [
+      "S07",
+      "S11"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K08",
+    "title": "短跑质量",
+    "tasks": [
+      "running"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "experience",
+      "purpose",
+      "approvedSession"
+    ],
+    "text": "加速、最高速、专项耐力分别建课型。高质量速度课不能因时间少直接压缩组休；先减少获批准的重复或改课。表现与技术明显下降时停止质量段并复盘。",
+    "insufficient": "不把精英表中的次数、距离和休息直接发给新手。",
+    "sourceIds": [
+      "S11"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K09",
+    "title": "中距离专项",
+    "tasks": [
+      "running"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "event",
+      "trainingPhase",
+      "approvedSession"
+    ],
+    "text": "800/1500要记录有氧、速度与专项耐力目的；同样间歇距离可以有不同目标。课表需明确速度锚点、恢复方式与终止条件。",
+    "insufficient": "缺个体锚点不捏造精确配速；不能套马拉松模板。",
+    "sourceIds": [
+      "S07"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K10",
+    "title": "长跑结构",
+    "tasks": [
+      "running"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "event",
+      "trainingPhase",
+      "trainingHistory"
+    ],
+    "text": "区分轻松、阈值、专项与长距离；以已验证个人锚点解释目的。按当前历史和可用时间讨论结构，世界级训练只作背景。",
+    "insufficient": "不能把固定80/20或精英跑量当所有人的处方。",
+    "sourceIds": [
+      "S15"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K11",
+    "title": "新手走跑",
+    "tasks": [
+      "running"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "experience",
+      "symptoms"
+    ],
+    "text": "可展示NHS渐进走跑入口与休息日原则；先适应再进阶，重复阶段允许。既往不适或无法完成时先核对原因。",
+    "insufficient": "9周是课程框架，不是保证；整套课程需链接原版或获许可资源。",
+    "sourceIds": [
+      "S13"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K12",
+    "title": "力量目标",
+    "tasks": [
+      "strength"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "goal",
+      "experience",
+      "equipment"
+    ],
+    "text": "先区分最大力量、肌肥大、爆发力、一般健康和专项辅助；选择动作模式后才填组次负荷休息。每个动作保留可替代动作与限制。",
+    "insufficient": "不能用统一3×8回答所有目标。",
+    "sourceIds": [
+      "S01"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K13",
+    "title": "力量进阶",
+    "tasks": [
+      "strength"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "approvedSession",
+      "completedSets",
+      "technique",
+      "effort"
+    ],
+    "text": "比较计划与实际、动作质量、剩余次数/主观用力和恢复；只有已有进阶规则且约束满足才生成待确认建议。一次只改可解释变量，保留前值。",
+    "insufficient": "RIR自评不熟悉标低可靠；不凭总吨位自动加重。",
+    "sourceIds": [
+      "S01"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K14",
+    "title": "跑力协同",
+    "tasks": [
+      "strength"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "priority",
+      "weeklySchedule"
+    ],
+    "text": "区分最大力量、肌肥大和爆发力结局；冲突时按当前主目标安排先后、时段和恢复。关键速度课与高疲劳下肢力量需一起看。",
+    "insufficient": "研究的分组间隔不等于个人恢复阈值，不承诺隔3小时就无干扰。",
+    "sourceIds": [
+      "S02",
+      "S14"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K15",
+    "title": "动作替换",
+    "tasks": [
+      "strength"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "targetPattern",
+      "equipment",
+      "restrictions"
+    ],
+    "text": "按动作模式、主要目标、单/双侧、技能与负荷方式匹配；肌群相同不代表可互换。展示替换理由与需重设的重量/次数。",
+    "insufficient": "伤病限制先过滤；不把康复动作作为治疗处方。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K16",
+    "title": "热身生成",
+    "tasks": [
+      "warmup"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "sport",
+      "mainSession",
+      "availableMinutes"
+    ],
+    "text": "跑前和力量前分别选一般升温、动态活动、专项预备。力量包含主动作渐进预备组；跑步匹配轻松跑或速度课。5/15/30/40分钟是用户预算，不是保证适配任意主课的剂量。",
+    "insufficient": "时间不足优先调整主课或选择已批准短版；不硬压关键准备。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K17",
+    "title": "漏练重排",
+    "tasks": [
+      "planning"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "goal",
+      "weeklySchedule",
+      "missedSessions"
+    ],
+    "text": "保留关键目标、可用时间及恢复约束，先取消低优先级内容，不将漏练全部堆回。保存原计划和待确认版本。",
+    "insufficient": "不能把完成率低直接判定懒惰或加惩罚课。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K18",
+    "title": "耐力赛前减量",
+    "tasks": [
+      "planning"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "event",
+      "raceDate",
+      "trainingHistory"
+    ],
+    "text": "提供研究范围作为教练讨论参考；保持技术/强度刺激不等于保持总工作量。依据最近负荷、经验和状态提出多个候选，不自动改计划。",
+    "insufficient": "范围不适用于所有项目，亚组最佳不等于个人最佳。",
+    "sourceIds": [
+      "S12"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K19",
+    "title": "饮食记录完整性",
+    "tasks": [
+      "nutrition"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "foodEntries"
+    ],
+    "text": "名字只能用于匹配候选；确认食物、品牌/做法、可食份量及营养基准。每项营养独立记录值/未知/来源，部分和照常显示，不能空缺当0。",
+    "insufficient": "只输入名字不应凭空补齐所有营养；估计值明确标注可编辑。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K20",
+    "title": "能量与目标",
+    "tasks": [
+      "nutrition"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "goal",
+      "weightHistory",
+      "trainingSchedule"
+    ],
+    "text": "先区分摄入、静息估算、运动消耗与总消耗，避免活动因子和运动重复计入。目标调整结合趋势、表现与约束，缺数据先收集。",
+    "insufficient": "不凭单日体重改热量；缺乏依据不编造固定缺口。",
+    "sourceIds": [
+      "S03",
+      "S04"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K21",
+    "title": "碳水匹配",
+    "tasks": [
+      "nutrition"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "trainingDuration",
+      "trainingIntensity",
+      "weightKg"
+    ],
+    "text": "使用训练场景对应的参考范围，算术换算与个人目标分开；全天需求与运动中补给不可混为一项。根据胃肠耐受与食物偏好落实。",
+    "insufficient": "范围不代表人人取上限；份量不明不宣称营养精确。",
+    "sourceIds": [
+      "S09"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K22",
+    "title": "蛋白匹配",
+    "tasks": [
+      "nutrition"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "goal",
+      "weightKg",
+      "trainingContext"
+    ],
+    "text": "选择对应训练/目标的来源区间，注明来源差异。食物优先；每日分配到实际餐次，核对总量一致。",
+    "insufficient": "不能把不同来源上下限拼成新推荐或默认补剂必需。",
+    "sourceIds": [
+      "S09",
+      "S10"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K23",
+    "title": "补水观察",
+    "tasks": [
+      "nutrition"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "duration",
+      "environment",
+      "fluidHistory"
+    ],
+    "text": "以实际饮水、时长和前后体重等观察设计个体讨论；不同环境分开。汗率估计只是输入，不自动要求全部补足；不鼓励过量饮水。",
+    "insufficient": "缺少汗钠等资料不生成精确电解质处方；异常症状转专业处理。",
+    "sourceIds": [
+      "S09"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K24",
+    "title": "饮食风险边界",
+    "tasks": [
+      "nutrition"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "symptoms",
+      "goal"
+    ],
+    "text": "能量不足疑虑、反复不适及高限制饮食提示需专业评估；只记录支持与缺失证据，不诊断REDs、不套未核验临床评分。",
+    "insufficient": "特殊人群、临床营养和补剂用药相互作用不自动处方。",
+    "sourceIds": [
+      "S04"
+    ],
+    "basis": "SOURCED_SYNTHESIS_AND_PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K25",
+    "title": "建议可执行性",
+    "tasks": [
+      "communication"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "question",
+      "verifiedFacts"
+    ],
+    "text": "先回答原问题：完成什么、是否符合目的、下一次注意什么。引用2–3个关键事实，解释和来源折叠。建议包含原因、动作、观察和撤回条件。",
+    "insufficient": "不要把内部规则号、检索日志和重复免责声明堆给用户。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K26",
+    "title": "证据修订",
+    "tasks": [
+      "memory"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "athleteId",
+      "recordRevision",
+      "dependencies"
+    ],
+    "text": "事实、推断、假设、计划分开。更正沿依赖图失效并重算；撤回记录可追溯。新的结果不能仅因与旧判断一致就升级为事实。",
+    "insufficient": "身份、版本或来源冲突先停写；不以模型生成的approved字段授权。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K27",
+    "title": "用户差异",
+    "tasks": [
+      "capability"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "experience",
+      "event",
+      "constraints"
+    ],
+    "text": "同成绩也可能动作经验、训练耐受、恢复与资源不同；能力是分项画像，基线是个人常态，两者分开。目标可行性给依据和缺口，不保证达标日期。",
+    "insufficient": "不以性别、年龄或设备档位替代个人能力。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  },
+  {
+    "id": "K28",
+    "title": "健康同步",
+    "tasks": [
+      "data"
+    ],
+    "population": "healthy_adult",
+    "required": [
+      "source",
+      "metric",
+      "date",
+      "unit"
+    ],
+    "text": "保留原始值、转换值、采集时间、同步时间和来源。手表睡眠心率不等于静息心率；夜间HRV不与即时HRV混算。人工修订叠加保留，同步不覆盖。",
+    "insufficient": "换设备分段；无字段与未授权明确显示，不能补假值。",
+    "sourceIds": [],
+    "basis": "PRODUCT_PROTOCOL",
+    "status": "REFERENCE_ONLY",
+    "autoExecute": false
+  }
+]

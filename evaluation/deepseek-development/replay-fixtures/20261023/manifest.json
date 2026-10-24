@@ -1,0 +1,10 @@
+{
+  "provenance": "Immutable captured synthetic evaluation artifacts, not regenerated model outputs",
+  "calls": 26,
+  "realNewGenerationCalls": 0,
+  "files": {
+    "frozen-preparation-v2.json": "d50b974d764a539f1f9bca46062ab4a5077117b315de61969122fd8f518b1b79",
+    "actual-requests-26.json": "dfcee93f0ff5f03e7d0f1c5daa1fabba9707009eeb43adb385daa49fb527377f",
+    "provider-receipts-26.json": "b761fc592a6dc758b3e6c2248a5aac8c8f279a347ba12f0e42e76678fe002206"
+  }
+}

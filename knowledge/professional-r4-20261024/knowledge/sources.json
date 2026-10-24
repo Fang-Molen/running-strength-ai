@@ -1,0 +1,141 @@
+{
+  "reviewDate": "2026-10-24",
+  "reviewType": "targeted evidence review, not systematic review or scientific certification",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "ACSM 2026 resistance training official update",
+      "url": "https://acsm.org/resistance-training-guidelines-update-2026/",
+      "access": "官方发布正文已读；原始立场全文访问失败",
+      "scope": "健康成人；不能替代竞技运动员专项方案",
+      "supports": "规律参与、目标分化和可执行性；不要求人人力竭或复杂周期。",
+      "limitations": "原始立场全文、效应细节及其更正状态未完整核查"
+    },
+    {
+      "id": "S02",
+      "title": "Schumann et al. concurrent training meta-analysis (2022 issue)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8891239/",
+      "access": "全文页面可访问，核对摘要、方法人群和主要结果",
+      "scope": "健康成人、至少4周并行训练、与相同力量方案比较",
+      "supports": "最大力量/肌肥大与爆发力结局不同；同课并行的爆发力适应可能受影响。",
+      "limitations": "不证明某个人要固定间隔3小时，更不推导次日精确疲劳"
+    },
+    {
+      "id": "S03",
+      "title": "IAAF 2019 Nutrition for Athletics",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30952204/",
+      "access": "原始共识摘要已读；官网PDF403",
+      "scope": "田径运动员，按项目与训练比赛场景调整",
+      "supports": "营养应个体化、周期化、实用，食物优先。",
+      "limitations": "未据摘要生成精确剂量或完整食物库"
+    },
+    {
+      "id": "S04",
+      "title": "IOC REDs 2023 consensus",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37752011/",
+      "access": "原始摘要及2024更正记录已读；正文与更正PDF访问失败",
+      "scope": "运动员的健康/表现与低能量可用性；临床评估范围",
+      "supports": "复杂状态需要临床评估，应用不能从一餐或单指标确诊。",
+      "limitations": "更正内容未核验，不纳入CAT2算法、诊断阈值或临床处方"
+    },
+    {
+      "id": "S05",
+      "title": "Impellizzeri et al. ACWR conceptual issues (2020)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32502973/",
+      "access": "原始文章摘要已读",
+      "scope": "ACWR作为伤病因果指标与干预工具的方法学问题",
+      "supports": "负荷比不能直接转换为个人伤病概率或自动加减量指令。",
+      "limitations": "不是说训练负担无需关注；不把一个批判性文章当所有负荷模型终审"
+    },
+    {
+      "id": "S06",
+      "title": "Buchheit HR monitoring (2014)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24578692/",
+      "access": "检索摘要含关键解释段；页面访问不稳定",
+      "scope": "心率指标用于监测训练状态",
+      "supports": "解释变化应考虑测量误差、重要变化和训练情境。",
+      "limitations": "不据此指定固定HRV阈值或固定个人基线样本量"
+    },
+    {
+      "id": "S07",
+      "title": "Haugen et al. world-class 800/1500 training review (2021)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34021488/",
+      "access": "原始题录/检索摘要核对；全文被验证码拦截",
+      "scope": "世界级800/1500运动员，混合研究与训练实践",
+      "supports": "专项训练结构不同；冠军训练不是普通用户处方。",
+      "limitations": "400m与3K-10K具体处方不能由此外推；本包不复制冠军跑量"
+    },
+    {
+      "id": "S08",
+      "title": "Sleep and athlete expert consensus (2021)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33144349/",
+      "access": "原始题录、期刊检索摘要及作者机构摘要核对",
+      "scope": "运动员睡眠；个体化评估",
+      "supports": "结合感知需求和训练/生活情境，不从单晚记录断言能力改变。",
+      "limitations": "全文未完整审查；不生成失眠治疗或精确恢复时长"
+    },
+    {
+      "id": "S09",
+      "title": "USADA Fueling for Performance (2026 guide)",
+      "url": "https://www.usada.org/wp-content/uploads/2026-TS-Nutrition-Guide.pdf",
+      "access": "官方PDF文本已读第1-5印刷页相关内容",
+      "scope": "运动营养教育参考，非每个人的强制处方",
+      "supports": "碳水与活动等级对应，蛋白目标区分恢复增肌与能量限制情境。",
+      "limitations": "仅作为带条件参考区间；不替代临床营养评估"
+    },
+    {
+      "id": "S10",
+      "title": "AIS isolated protein: what is it",
+      "url": "https://www.ausport.gov.au/ais/nutrition/supplements/group_a/sports-foods2/isolated-protein-supplement2/what-is-it",
+      "access": "官方页面正文第60-69行已读",
+      "scope": "运动员蛋白与减重情境",
+      "supports": "不同目标范围不同，分配和食物来源也需要考虑。",
+      "limitations": "与S09范围不完全相同；不能机械取并集/最高值或自动建议补剂"
+    },
+    {
+      "id": "S11",
+      "title": "Haugen et al. Sprint training review (2019)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6872694/",
+      "access": "全文；Table 2与相邻正文核读",
+      "scope": "精英短跑实践，不是新手剂量",
+      "supports": "加速、最高速、速度耐力需区分；质量下降时结束",
+      "limitations": "科学与最佳实践混合，不代表每个训练剂量经过随机试验"
+    },
+    {
+      "id": "S12",
+      "title": "Wang et al. Taper meta-analysis (2023)",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0282838",
+      "access": "全文摘要、结论核读",
+      "scope": "耐力运动员赛前减量",
+      "supports": "研究中减量41–60%、保持强度频率、6–21天有表现获益",
+      "limitations": "亚组均值不确定个体最优；不直接迁移短跑或伤后回归"
+    },
+    {
+      "id": "S13",
+      "title": "NHS Couch to 5K running plan",
+      "url": "https://www.nhs.uk/better-health/get-active/get-running-with-couch-to-5k/couch-to-5k-running-plan/",
+      "access": "官方完整页面",
+      "scope": "初学跑步者",
+      "supports": "渐进走跑；9周框架、每周3次、跑步间休息日、起始5分钟步行",
+      "limitations": "不能根据9周框架承诺人人9周达标；不替代医疗评估"
+    },
+    {
+      "id": "S14",
+      "title": "Llanos-Lagos et al. Strength methods and running economy (2024)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38165636/",
+      "access": "原始文献索引摘要；PMC全文验证码未读",
+      "scope": "中长跑者、跑步经济性结局",
+      "supports": "高负荷及组合力量方法对跑步经济性有参考价值",
+      "limitations": "摘要级证据；不推导具体课表、完赛成绩提升幅度"
+    },
+    {
+      "id": "S15",
+      "title": "Haugen et al. World-class distance runners review (2022)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35362850/",
+      "access": "原始索引摘要；全文访问受限",
+      "scope": "世界级长跑训练特征",
+      "supports": "项目与训练阶段影响结构，作为精英背景资料",
+      "limitations": "仅背景，不自动输出精英周跑量或强度比例"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import {withScheduleLock} from './schedule-writer'
 /* v81（用户 t513）：逐组引导“放弃本次，不记录”。
  * 事件日志只追加不删除：放弃 = 关闭进行中的课次（TRAINING_INTERRUPTED，payload.discarded=true，不发 AI_DECISION_INTERRUPTED）
  * ＋ 追加一条 VOID 更正（与“作废记录”同一机制；日志/复盘/五维/方坤读取都已排除作废课次）
@@ -43,4 +44,10 @@ export function discardGuided(sessionId: string): boolean {
   try { const enc = encodeURIComponent(sessionId); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i) ?? ''; if ((k.startsWith('rs-rest-v1:') && k.includes(':' + enc)) || ((k.startsWith('fk-runner-draft-v71:') || k.startsWith('fr255-runner-draft-v1:')) && k.includes(':' + sessionId + ':'))) localStorage.removeItem(k) } } catch { /* node / storage unavailable */ }
   try { for (const n of ['fk-schedule-changed', 'fk-training-activities-changed', 'fk-plan400-components']) window.dispatchEvent(new Event(n)) } catch { /* node */ }
   return true
+}
+
+/** Production entrypoint; synchronous projection is retained for isolated replay. */
+export async function discardGuidedCoordinated(sessionId:string):Promise<boolean>{
+ const owner=currentAthleteId()
+ return (await withScheduleLock(()=>currentAthleteId()===owner?discardGuided(sessionId):false)).value
 }

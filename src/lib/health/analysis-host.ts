@@ -4,7 +4,8 @@ import { currentAthleteId } from '../core/events'
 import { readRecoveryProjection } from './recovery-host-u11'
 import { loadHealthSnapshot, HEALTH_LABELS } from './snapshot'
 import { dailyCheckin } from './analysis'
-import { loadEntries, aggregate } from '../nutrition/log'
+import { loadEntries, aggregate, nutrientOf } from '../nutrition/log'
+import {buildR4Review} from '../coach/r4/assessment'
 import { readUnifiedFacts } from './unified-fact-store'
 import { exactInstant } from './unified-facts'
 import { projectAnalysisEvidence, analysisDigest } from './analysis-evidence'
@@ -16,9 +17,10 @@ import { personalHistorySummary } from './personal-response'
 import { detectRedFlags } from '../core/coach-red-flags'
 import { localDay } from './observation'
 import { loadCorosHealth } from './coros-mcp-client'
+import { readTrainingModelReview, trainingModelSummary } from '../coach/training-models/host'
 
 /** One read-only projection supplies the existing health/coach/muscle consumers. */
-export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),question=''){
+export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),question='',options:{r4ReferencePreview?:boolean}={}){
  const muscle=readRecoveryProjection(day,asOf,90*24),context={...muscle.analysis.context},athleteId=currentAthleteId(),facts:AnalysisFact[]=[...muscle.analysis.facts],gaps=[...muscle.review.gaps]
  const meta=(id:string,occurredAt:string,knownAt:string)=>({id,revision:0,athleteId,provider:'MANUAL' as const,accountRef:null,deviceId:null,protocolKey:null,sourceRecordId:id,occurredAt,knownAt,receivedAt:knownAt,sourceTimeZone:null,status:'CONFIRMED' as const,quality:'PARTIAL' as const,ownershipReceiptId:null})
  const raw=readUnifiedFacts(context.asOf)
@@ -60,7 +62,10 @@ export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),questi
  const snapshot=projectAnalysisEvidence({context,facts,gaps,safetyConstraints}),exposure=buildMuscleExposure(snapshot),assessment=evaluateRecoveryEvidence(snapshot,exposure)
  const personal=personalHistorySummary(snapshot.facts.filter((f):f is TrainingFact=>f.kind==='TRAINING'),snapshot.facts.filter((f):f is ResponseFact=>f.kind==='RESPONSE'),context)
  if(personal.status==='DESCRIPTIVE'&&personal.evidenceRefs.length)assessment.observations.push({text:`个人历史：${personal.matchedSessionCount}次同来源同协议实际训练；${personal.windows.map(w=>`${w.hours}h有${w.sessionCount}次观测`).join('、')}。${personal.caveat}`,evidenceRefs:personal.evidenceRefs})
- const packet=buildCoachAnalysisPacket(snapshot,assessment,exposure)
- return {snapshot,exposure,assessment,packet,nutrition,personal,muscle,coros:corosDay?{...corosDay,accountRef:coros?.accountRef??null,sessionScope:coros?.sessionScope??null,receivedAt:coros?.knownAtByDay?.[day]??coros?.fetchedAt,measuredAt:null,athleteOwnershipVerified:false}:null,revision:analysisDigest([day,snapshot.facts,snapshot.gaps,snapshot.conflicts,snapshot.safetyConstraints,nutrition,corosDay??null]),automaticPrescription:false as const}
+ const packet=buildCoachAnalysisPacket(snapshot,assessment,exposure,{question})
+ // R4 remains an explicitly requested, read-only review preview until app acceptance.
+ const professionalReference=options.r4ReferencePreview===true?buildR4Review(snapshot,question||'当前已记录事实',{foods:foods.map(f=>({kcal:nutrientOf(f,'kcal'),protein:nutrientOf(f,'protein'),carb:nutrientOf(f,'carb'),fat:nutrientOf(f,'fat'),fiber:nutrientOf(f,'fiber')}))}):null
+ const trainingModels=readTrainingModelReview(snapshot,assessment)
+ return {snapshot,exposure,assessment,packet,nutrition,personal,muscle,trainingModels,professionalReference,coros:corosDay?{...corosDay,accountRef:coros?.accountRef??null,sessionScope:coros?.sessionScope??null,receivedAt:coros?.knownAtByDay?.[day]??coros?.fetchedAt,measuredAt:null,athleteOwnershipVerified:false}:null,revision:analysisDigest([day,snapshot.facts,snapshot.gaps,snapshot.conflicts,snapshot.safetyConstraints,nutrition,corosDay??null]),automaticPrescription:false as const}
 }
-export function analysisText(a:ReturnType<typeof readAnalysis>){return [exposureText(a.exposure),...a.assessment.observations.map(o=>o.text),...a.assessment.hypotheses.map(h=>`可能解释：${h.claim}。现有反证 ${h.weakeningRefs.length} 条；下一次观察：${h.discriminator}`),a.nutrition.recordCount?`${a.nutrition.loggedKcal===null?'饮食已记，热量未知':`饮食已记 ${a.nutrition.loggedKcal} kcal`}；${a.nutrition.unknownEnergyCount}条热量未知；${a.nutrition.note}`:'餐食完整性待确认，不计算热量缺口。',a.coros?`高驰 ${a.coros.date} 日级记录：${a.coros.hrvMs!=null?`HRV ${a.coros.hrvMs} ms；`:''}${a.coros.sleepMinutes!=null?`睡眠 ${a.coros.sleepMinutes} 分钟；`:''}测量时刻未知，不作为今天的实测或训练许可。`:'',`数据充分性 ${a.assessment.dataQuality}；安全状态 ${a.assessment.safetyState}。`,...a.assessment.candidates.flatMap(c=>[`候选 ${c.action??c.kind}：${c.reason??''}；${c.observation??''}；待确认，不写入计划`,...c.conditions]),a.assessment.missingDecisionInputs[0]??'下一次保留同协议观察，不能从相关性确认因果。'].filter(Boolean).join('\n')}
+export function analysisText(a:ReturnType<typeof readAnalysis>){return [exposureText(a.exposure),trainingModelSummary(a.trainingModels.review),...a.assessment.observations.map(o=>o.text),...a.assessment.hypotheses.map(h=>`可能解释：${h.claim}。现有反证 ${h.weakeningRefs.length} 条；下一次观察：${h.discriminator}`),a.nutrition.recordCount?`${a.nutrition.loggedKcal===null?'饮食已记，热量未知':`饮食已记 ${a.nutrition.loggedKcal} kcal`}；${a.nutrition.unknownEnergyCount}条热量未知；${a.nutrition.note}`:'餐食完整性待确认，不计算热量缺口。',a.coros?`高驰 ${a.coros.date} 日级记录：${a.coros.hrvMs!=null?`HRV ${a.coros.hrvMs} ms；`:''}${a.coros.sleepMinutes!=null?`睡眠 ${a.coros.sleepMinutes} 分钟；`:''}测量时刻未知，不作为今天的实测或训练许可。`:'',`数据充分性 ${a.assessment.dataQuality}；安全状态 ${a.assessment.safetyState}。`,...a.assessment.candidates.flatMap(c=>[`候选 ${c.action??c.kind}：${c.reason??''}；${c.observation??''}；待确认，不写入计划`,...c.conditions]),a.assessment.missingDecisionInputs[0]??'下一次保留同协议观察，不能从相关性确认因果。'].filter(Boolean).join('\n')}

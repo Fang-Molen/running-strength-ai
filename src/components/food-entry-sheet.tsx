@@ -9,7 +9,7 @@ import {todayDate} from '@/lib/nutrition/body';
 import {MEALS,type Meal,type FoodEntry,type NutrientKey} from '@/lib/nutrition/log';
 import {changeFoodAmount,commitFoodDraft,draftFromEntry,draftFromProduct,emptyFoodDraft,foodPreview,NUTRIENT_KEYS,NUTRIENT_LABELS,type NutritionDraft} from '@/lib/nutrition/entry-workflow';
 import {isOnlineOn} from '@/lib/ui/online-features';
-import {visionStatus} from '@/lib/vision/client';
+import {visionInfo,visionStatusText,type VisionStatus} from '@/lib/vision/client';
 
 const unitOf=(k:NutrientKey)=>k==='kcal'?'kcal':'g';
 const fmtN=(v:number|null|undefined,k:NutrientKey)=>v==null?'—':`${v}${k==='kcal'?' kcal':' g'}`;
@@ -19,8 +19,8 @@ export function FoodEntrySheet({meal,entry,initialDate,onClose,onSaved}:{meal:Me
  const draftKey='fk-food-draft-v2:'+actor.current;
  const [draft,setDraft]=useState<NutritionDraft>(()=>{if(entry)return draftFromEntry(entry);try{const d=JSON.parse(localStorage.getItem(draftKey)||'null');if(d?.values&&NUTRIENT_KEYS.every(k=>typeof d.values[k]==='string')&&typeof d.name==='string')return d}catch{/* untouched invalid draft */}return emptyFoodDraft()});
  const [date,setDate]=useState(entry?.date||initialDate||todayDate()),[mealValue,setMeal]=useState(entry?.meal||meal),[ready,setReady]=useState(0),[dbError,setDbError]=useState(''),[manual,setManual]=useState(!!entry),[error,setError]=useState(''),[busy,setBusy]=useState(false);const saving=useRef(false);const [scanned,setScanned]=useState<NutrientKey[]>([]);
- const [est,setEst]=useState<{busy:boolean;msg:string;note?:string}>({busy:false,msg:''}),[vision,setVision]=useState<boolean|null>(null),[showValues,setShowValues]=useState(false);
- useEffect(()=>{let live=true;void loadCn().then(()=>live&&setReady(v=>v+1)).catch(()=>live&&setDbError('食物库暂未加载，可自己填写；未知项留空。'));void loadUsda().then(()=>live&&setReady(v=>v+1)).catch(()=>{});void visionStatus().then(v=>live&&setVision(v)).catch(()=>live&&setVision(false));return()=>{live=false}},[]);
+ const [est,setEst]=useState<{busy:boolean;msg:string;note?:string}>({busy:false,msg:''}),[vision,setVision]=useState<VisionStatus|null>(null),[showValues,setShowValues]=useState(false);
+ useEffect(()=>{let live=true;void loadCn().then(()=>live&&setReady(v=>v+1)).catch(()=>live&&setDbError('食物库暂未加载，可自己填写；未知项留空。'));void loadUsda().then(()=>live&&setReady(v=>v+1)).catch(()=>{});void visionInfo().then(v=>live&&setVision(v));return()=>{live=false}},[]);
  useEffect(()=>{if(entry||currentAthleteId()!==actor.current)return;try{localStorage.setItem(draftKey,JSON.stringify(draft))}catch{/* input remains in component */}},[draft,draftKey,entry]);
  const set=(patch:Partial<NutritionDraft>)=>{setDraft(x=>({...x,...patch,...(patch.values||patch.unit||patch.basis?{quantityReference:undefined}:{})}));setError('')};
  const picked=manual||!!draft.selected||!!draft.retained;
@@ -60,8 +60,8 @@ export function FoodEntrySheet({meal,entry,initialDate,onClose,onSaved}:{meal:Me
    <div className="grid grid-cols-3 gap-1.5">{NUTRIENT_KEYS.map(k=><label key={k} className="text-[11px] text-muted">{NUTRIENT_LABELS[k]}（{unitOf(k)}）<input aria-label={'填写'+NUTRIENT_LABELS[k]} type="number" min="0" step="any" placeholder="未知" value={draft.values[k]} onChange={e=>set({values:{...draft.values,[k]:e.target.value},userEdited:[...new Set([...draft.userEdited,k])] as NutrientKey[]})} className={cell+(scanned.includes(k)?' ring-2 ring-accent':'')}/></label>)}</div></>:null}
  </section>:null}
  {!entry?<FoodLabelScan onResult={(r,filled)=>{setDraft(d=>({...emptyFoodDraft(),name:d.name.trim()||r.name||'包装食品（标签识别）',brand:r.brand||d.brand,basis:r.basis,unit:r.basis==='serv'?'份':'g',amount:r.basis==='serv'?'1':r.basis==='this'?(r.servingGrams?String(r.servingGrams):d.amount):'',values:Object.fromEntries(NUTRIENT_KEYS.map(k=>[k,r.values[k]==null?'':String(r.values[k])])) as NutritionDraft['values'],userEdited:[]}));setScanned(filled);setManual(true);setShowValues(true);setError('')}}>
-  {vision?<details className="mt-2"><summary className="min-h-10 cursor-pointer text-xs text-accent" data-testid="dish-photo-status">菜品照片（没有文字）→ 识图估算（DeepSeek，估算·待核）</summary><FoodPhotoReview meal={mealValue} date={date} onSaved={onSaved}/></details>
-   :<p className="keep mt-2 text-xs text-muted" data-testid="dish-photo-status">菜品照片（没有文字）识别：{vision===null?'检查中…':'未配置（服务端缺 DEEPSEEK_API_KEY）'}</p>}
+  {vision?.configured?<details className="mt-2"><summary className="min-h-10 cursor-pointer text-xs text-accent" data-testid="dish-photo-status">菜品照片（没有文字）→ 识图估算（DeepSeek，估算·待核）</summary><FoodPhotoReview meal={mealValue} date={date} onSaved={onSaved}/></details>
+   :<p className="keep mt-2 text-xs text-muted" data-testid="dish-photo-status">菜品照片（没有文字）识别：{visionStatusText(vision)}</p>}
  </FoodLabelScan>:null}
  {entry?<p className="keep text-xs text-muted">保存更正会保留原值及来源历史。</p>:null}
  </div></Sheet>

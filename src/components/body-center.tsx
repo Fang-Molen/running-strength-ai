@@ -12,6 +12,7 @@ import { VitalsPanel, type ImportHint } from "@/components/vitals-panel"
 import { loadChecks, todayDate, type BodyCheck } from "@/lib/nutrition/body"
 import { latestOnDay, loadVitals, type VitalKind, type VitalRecord } from "@/lib/nutrition/vitals"
 import { computePlan } from "@/lib/nutrition/calc"
+import { effectiveNutritionProfile } from "@/lib/coach/loop/effective-host"
 import { todayEntries } from "@/lib/nutrition/log"
 import { loadConfirmedTrainingImports } from "@/lib/core/training-import"
 import type { Profile } from "@/lib/strength/profile"
@@ -111,7 +112,7 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
     { name: "主观恢复", ...vitalParts(latestInSpan(vitals, "RECOVERY", today, span), "RECOVERY"), bars: spark(vitals, "RECOVERY", today, span), target: "body-vitals" },
     { name: "酸痛", value: "未记录", unit: "", empty: true, bars: [], target: "body-records" },
   ]
-  const nutrition = computePlan(profile)
+  const nutrition = computePlan(effectiveNutritionProfile(profile))
   const todayVitalsCount = (["HRV", "RHR", "NIGHT_HR", "SLEEP", "RECOVERY"] as VitalKind[]).filter((kind) => today && latestOnDay(vitals, kind, today)).length
   const bodyRecordedToday = latest?.date === today
 

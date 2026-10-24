@@ -1,7 +1,8 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { dateConflicts, loadDateConfirm, migrateUserConfirmedDates, saveDateConfirm, shiftedText, DATE_CONFIRM_KEY, type V4Plan } from './plan400-view.ts'
-import planJson from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
+import planJson from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' }
 const plan = planJson as unknown as V4Plan
 const mem = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => { m.set(k, v) }, m } }
 test('v89.6 不再按个人计划自动写日期确认；已有确认保留；手动确认照常', () => {

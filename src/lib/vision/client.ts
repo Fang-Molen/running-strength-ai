@@ -2,9 +2,29 @@ import { validateVisionResult, type VisionMode, type VisionResult } from './cont
 // v78：不再需要访问码（服务端同源 + 限频）。保留这两个导出以兼容旧调用，访问码不再使用、不存储。
 export const setVisionAccess = (_value: string) => { void _value; };
 export const hasVisionAccess = () => true;
-export type VisionStatus = { configured: boolean; provider: string | null; model: string | null; needs: string[] };
+export type VisionStatus = { configured: boolean; provider: string | null; model: string | null; needs: string[]; state: 'READY' | 'UNCONFIGURED' | 'OFFLINE' | 'NETWORK' | 'HTTP' | 'PROTOCOL' | 'TIMEOUT' };
+export function visionStatusText(info: VisionStatus | null): string {
+  if (!info) return '检查中…';
+  if (info.state === 'READY') return `服务端已配置（${info.provider ?? ''} ${info.model ?? ''}），尚未验证实际识别；点识别才上传所选图片。`;
+  if (info.state === 'UNCONFIGURED') return '服务端确认尚未配置图片识别服务；可继续手动填写或本机识字。';
+  const reason = { OFFLINE: '当前离线', NETWORK: '连接失败', HTTP: '服务请求未成功', PROTOCOL: '服务未返回有效状态', TIMEOUT: '状态检查超时或已取消' }[info.state];
+  return `${reason}，配置状态未知；可继续手动填写或本机识字。`;
+}
 export async function visionInfo(signal?: AbortSignal): Promise<VisionStatus> {
-  try { const r = await fetch('/api/vision', { cache: 'no-store', signal }); if (!r.ok || !/application\/json/.test(r.headers.get('content-type') || '')) return { configured: false, provider: null, model: null, needs: [] }; const j = await r.json(); return { configured: j.configured === true, provider: j.provider ?? null, model: j.model ?? null, needs: Array.isArray(j.needs) ? j.needs : [] } } catch { return { configured: false, provider: null, model: null, needs: [] } }
+  const unavailable = (state: VisionStatus['state']): VisionStatus => ({ state, configured: false, provider: null, model: null, needs: [] });
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return unavailable('OFFLINE');
+  const controller = new AbortController(), abort = () => controller.abort();
+  const timer = setTimeout(abort, 5000); signal?.addEventListener('abort', abort, { once: true });
+  if (signal?.aborted) abort();
+  try {
+    const r = await fetch('/api/vision', { cache: 'no-store', credentials: 'same-origin', redirect: 'error', signal: controller.signal });
+    if (!r.ok) return unavailable('HTTP');
+    if (!/application\/json/.test(r.headers.get('content-type') || '')) return unavailable('PROTOCOL');
+    const j = await r.json().catch(() => null);
+    if (!j || typeof j.configured !== 'boolean') return unavailable('PROTOCOL');
+    return { configured: j.configured, state: j.configured ? 'READY' : 'UNCONFIGURED', provider: typeof j.provider === 'string' ? j.provider : null, model: typeof j.model === 'string' ? j.model : null, needs: Array.isArray(j.needs) ? j.needs.filter((n: unknown) => typeof n === 'string') : [] };
+  } catch { return unavailable(controller.signal.aborted ? 'TIMEOUT' : 'NETWORK'); }
+  finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); }
 }
 export async function visionStatus(signal?: AbortSignal): Promise<boolean> {
   const r = await fetch('/api/vision', { cache: 'no-store', signal });

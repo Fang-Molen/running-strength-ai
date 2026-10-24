@@ -10,7 +10,7 @@ const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x ===
 export function parseCoachRequest(body: unknown): CoachSnapshotRefs & { requestId: string } {
   const keys = ['question', 'requestId', 'snapshotId', 'consentId', 'asOf'];
   if (!object(body) || Object.keys(body).length !== keys.length || Object.keys(body).some(k => !keys.includes(k))) throw new Error('REQUEST_FIELDS');
-  if (typeof body.question !== 'string' || !body.question.trim() || body.question.length > 200 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(body.question)) throw new Error('QUESTION_INVALID');
+  if (typeof body.question !== 'string' || !body.question.trim() || body.question.length > 1000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(body.question)) throw new Error('QUESTION_INVALID');
   if (typeof body.requestId !== 'string' || !/^[A-Za-z0-9_-]{8,100}$/.test(body.requestId)) throw new Error('REQUEST_ID_INVALID');
   if (typeof body.snapshotId !== 'string' || !ID.test(body.snapshotId) || typeof body.consentId !== 'string' || !ID.test(body.consentId) || !validTime(body.asOf)) throw new Error('REFS_INVALID');
   return { question: body.question.trim(), requestId: body.requestId, snapshotId: body.snapshotId, consentId: body.consentId, asOf: body.asOf };

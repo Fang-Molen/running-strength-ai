@@ -41,11 +41,12 @@ export function loadSchedule(): ScheduleStore {
   return { entries: v.entries.filter(e => ownsEntry(e, athlete)), acks: v.acksByAthlete?.[athlete] ?? (athlete === 'local' ? v.acks : []) }
 }
 /** v87：所有写入方都走这里 → schedule-writer 闸口（修订号 + 写入方标记）。 */
-export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown'): boolean {
+export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown', audit?:{id:string;athleteId:string;kind:'R4_MOVE'|'R4_SWAP'|'R4_UNDO';at:string;before:ScheduleEntry;after:ScheduleEntry;proposalId:string;reason?:string;second?:{before:ScheduleEntry;after:ScheduleEntry}}): boolean {
   try {
     const box = currentStore(), read = readScheduleDocument(), athlete = currentAthleteId()
     if (!box || !read.ok || !Array.isArray(s.entries) || !Array.isArray(s.acks) || new Set(s.entries.map(e=>e.id)).size!==s.entries.length) return false
     const original = read.value
+    if(audit&&(writer!=='plan-execution'||audit.athleteId!==athlete||!audit.id||!Number.isFinite(Date.parse(audit.at))))return false
     // 其他运动员的行原样保留、不可被当前档案改写；当前档案（含旧的无归属本机历史，仅 local）可正常编辑。
     const protectedRows = original.entries.filter(e => !ownsEntry(e, athlete))
     const protectedIds = new Set(protectedRows.map(e => e.id))
@@ -58,12 +59,25 @@ export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown
       // 旧无归属行改动时不补 athleteId（不隐式迁移）；新行显式写当前 athleteId。
       next.push(old && old.athleteId == null && entry.athleteId == null ? entry : { ...entry, athleteId: athlete })
     }
-    const raw = JSON.stringify({ ...original, entries: [...protectedRows, ...next], acksByAthlete: { ...original.acksByAthlete, [athlete]: s.acks.slice(-200) } })
+    const oldAudit=(original as typeof original&{r4Receipts?:unknown}).r4Receipts
+    if(audit&&oldAudit!==undefined&&!Array.isArray(oldAudit))return false
+    const raw = JSON.stringify({ ...original, entries: [...protectedRows, ...next], acksByAthlete: { ...original.acksByAthlete, [athlete]: s.acks.slice(-200) },...(audit?{r4Receipts:[...(Array.isArray(oldAudit)?oldAudit:[]),audit]}:{}) })
     const changed = box.getItem(SCHEDULE_KEY) !== raw
     if (!commitScheduleRaw(box, raw, writer).ok) return false
     if (changed && typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed'));
     return true;
   } catch { return false }
+}
+/** UI writers reread under the same lock as R4 confirmation. A stale displayed
+ * calendar is rejected instead of overwriting another tab's confirmed change. */
+export async function updateSchedule(update:(current:ScheduleStore)=>ScheduleStore,writer:ScheduleWriter,expected?:ScheduleStore):Promise<boolean>{
+  const owner=currentAthleteId()
+  return (await withScheduleLock(()=>{
+    if(currentAthleteId()!==owner)return false
+    const current=loadSchedule()
+    if(expected&&JSON.stringify(current)!==JSON.stringify(expected))return false
+    return saveSchedule(update(current),writer)
+  })).value
 }
 /** Merge only the edited slot into a fresh calendar. No template or past result is replaced. */
 export async function saveScheduledEntry(entry: ScheduleEntry, previous?: ScheduleEntry): Promise<{ ok: boolean; reason?: string }> {

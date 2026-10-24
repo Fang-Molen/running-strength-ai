@@ -1,7 +1,7 @@
 import { stampCN } from "@/lib/ui/activity-format";
 import { useEffect, useState } from "react"
 import { ONLINE_FEATURES, onlineFeatures, setOnlineFeature } from "@/lib/ui/online-features"
-import { visionInfo, type VisionStatus } from "@/lib/vision/client"
+import { visionInfo, visionStatusText, type VisionStatus } from "@/lib/vision/client"
 /** 设置 → AI 服务与联网功能：逐项开关（默认全开，t473），同意时间；图片识别状态如实显示。 */
 export function OnlineFeaturesSettings() {
   const [rec, setRec] = useState(() => onlineFeatures()), [vision, setVision] = useState<VisionStatus | null>(null)
@@ -14,6 +14,6 @@ export function OnlineFeaturesSettings() {
       <span><b className="block">{f.title}</b><span className="keep block text-xs text-muted">{f.sends}</span></span>
     </label>)}
     <div className="border-t border-line pt-2"><b className="block">菜品照片 / 截图图片识别</b>
-      <span className="keep block text-xs text-muted">{vision == null ? "检查中…" : vision.configured ? `已配置：${vision.provider ?? ""} ${vision.model ?? ""}，点识别才上传图片。` : "未配置：服务端缺 DEEPSEEK_API_KEY。营养标签、小票、体脂秤照片仍可用本机识字 + 联网整理。"}</span></div>
+      <span className="keep block text-xs text-muted">{visionStatusText(vision)}</span></div>
   </section>
 }

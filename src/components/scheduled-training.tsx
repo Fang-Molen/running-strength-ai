@@ -4,7 +4,7 @@ import { TrainingDecisionCard } from './training-decision-card';
 import { TrackRunner } from './track-session';
 import { resolveScheduledCourse, scheduleExecutionId, scheduledChoices } from '@/lib/ui/scheduled-execution';
 import { loadSchedule } from '@/lib/ui/day-schedule';
-import { syncScheduleProgress } from '@/lib/ui/schedule-progress';
+import { syncScheduleProgressCoordinated as syncScheduleProgress } from '@/lib/ui/schedule-progress';
 import { listTrackPlans, openTrackOccurrence, startTrackSessionSafely, describeTrackPlan } from '@/lib/ui/running-workouts';
 import { getRunningPlan } from '@/lib/core/running-plan';
 import { listTrainingOccurrences } from '@/lib/core/occurrence';
@@ -33,9 +33,9 @@ export function ScheduledTraining({ entry, plan, onClose, onEdit, onChanged, onR
   const ownIds = [course.strength?.id, course.run?.planId], openOther = listTrainingOccurrences().find(o => o.lifecycle === 'IN_PROGRESS' && !ownIds.includes(o.sessionId));
   const otherWarmup = loadWarmups().find(r => r.status === 'IN_PROGRESS' && r.entryId !== entry.id);
   const mainLive = listTrainingOccurrences().some(o => o.lifecycle === 'IN_PROGRESS' && ownIds.includes(o.sessionId));
-  const after = () => { syncScheduleProgress(); setRevision(n => n + 1); onChanged(); };
-  useEffect(() => { const unsubscribe = onAppEvent(() => { syncScheduleProgress(); setRevision(n => n + 1); }); return unsubscribe; }, []);
-  useEffect(() => { const sync = () => setRevision(n => n + 1); window.addEventListener('fk-warmup-changed', sync); window.addEventListener('storage', sync); return () => { window.removeEventListener('fk-warmup-changed', sync); window.removeEventListener('storage', sync); }; }, []);
+  const after = async () => { await syncScheduleProgress(); setRevision(n => n + 1); onChanged(); };
+  useEffect(() => { const unsubscribe = onAppEvent(async () => { await syncScheduleProgress(); setRevision(n => n + 1); }); return unsubscribe; }, []);
+  useEffect(() => { const sync = () => setRevision(n => n + 1); window.addEventListener('fk-training-corrected', sync); window.addEventListener('fk-warmup-changed', sync); window.addEventListener('storage', sync); return () => { window.removeEventListener('fk-training-corrected', sync); window.removeEventListener('fk-warmup-changed', sync); window.removeEventListener('storage', sync); }; }, []);
   const blocked = (targetId?: string) => {
     if (entry.date > localDate()) return '这是未来日期的安排，可查看或编辑，到训练当天再开始。';
     return targetId ? activeTrainingBlock(targetId) || scheduledWarmupBlock(entry.id, targetId, entry.warmup) : null;

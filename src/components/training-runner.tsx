@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { emptySets, deviationOf, executionOf, mainDeviation, mergeSets, outcomeReason, recordSet, setLine, stepRest, totalsOf, type SetRecord } from "@/lib/core/execution"
 import { completeTraining, interruptTraining, recordPain } from "@/lib/core/training-decision"
-import { discardGuided } from "@/lib/ui/guided-discard"
+import { discardGuidedCoordinated as discardGuided } from "@/lib/ui/guided-discard"
 import { getTrainingOccurrence, closeTrainingOccurrence } from "@/lib/core/occurrence"
 import { ExerciseContent } from "@/components/exercise-content"
 import { nextRunnerCursor, runnerInput } from "@/lib/strength/runner-input"
@@ -295,7 +295,7 @@ function TrainingRunnerInner({
         {!endAsk ? <button type="button" className="mt-3 h-11 text-sm text-risk" onClick={() => setEndAsk(true)}>结束训练</button>
         : <div className="mt-3 grid gap-2" role="group" aria-label="结束训练方式">
           <button type="button" className="h-12 rounded-2xl border border-line text-sm font-bold" onClick={() => { if(!interruptFromRunner(decisionId, session.id)){setSaveError("结束未核实保存，请重试。");return;} clearRest(); clearGuided(); onDone({ completed: false, interrupted: true, sets, pain }) }}>保存已做的组（记为中断）</button>
-          <button type="button" className="h-12 rounded-2xl border border-risk text-sm font-bold text-risk" onClick={() => { if (!window.confirm("放弃本次？已做的组不会保存，日志、复盘和五维都不会出现这次记录。")) return; if(!discardGuided(session.id)){setSaveError("放弃未核实保存，请重试。");return;} clearRest(); clearGuided(); onDone({ completed: false, interrupted: false, discarded: true, sets: [], pain: false }) }}>放弃本次，不记录</button>
+          <button type="button" className="h-12 rounded-2xl border border-risk text-sm font-bold text-risk" onClick={async () => { if (!window.confirm("放弃本次？已做的组不会保存，日志、复盘和五维都不会出现这次记录。")) return; if(!await discardGuided(session.id)){setSaveError("放弃未核实保存，请重试。");return;} clearRest(); clearGuided(); onDone({ completed: false, interrupted: false, discarded: true, sets: [], pain: false }) }}>放弃本次，不记录</button>
           <button type="button" className="h-11 text-sm text-muted" onClick={() => setEndAsk(false)}>取消</button>
         </div>}
       </div>

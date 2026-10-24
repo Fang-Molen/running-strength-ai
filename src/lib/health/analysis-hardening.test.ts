@@ -46,6 +46,6 @@ test('exact approved disclaimer cannot authorize a new medical or automatic plan
 test('unreviewed followup or unknowns cannot hide new prescriptions outside answer',()=>{
  const s=projectAnalysisEvidence({context,facts:[metric()]}),p=buildCoachAnalysisPacket(s,evaluateRecoveryEvidence(s),buildMuscleExposure(s)),o=p.assessment.observations[0]
  const r={answer:o.text,factualClaims:[{text:o.text,refs:o.evidenceRefs}],hypotheses:[],selectedCandidateId:null,unknowns:[],followup:null,memoryClaim:'NOT_SAVED' as const}
- assert.equal(validateCoachAnalysisReply({...r,followup:'明天增加8组力量'},p).status,'NEEDS_SEMANTIC_REVIEW')
- assert.equal(validateCoachAnalysisReply({...r,unknowns:['你已经取得医学许可']},p).status,'NEEDS_SEMANTIC_REVIEW')
+ assert.equal(validateCoachAnalysisReply({...r,followup:'明天增加8组力量'},p).status,'REJECTED')
+ assert.equal(validateCoachAnalysisReply({...r,unknowns:['你已经取得医学许可']},p).status,'REJECTED')
 })

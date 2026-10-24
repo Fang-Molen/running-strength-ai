@@ -1,3 +1,4 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -5,7 +6,7 @@ import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor
 import { dayOf, dayStatus, type V4Plan } from './plan400-view.ts'
 
 process.env.TZ = 'Asia/Shanghai'
-const plan = JSON.parse(readFileSync(new URL('../../../test-fixtures/private/plan400-v4.json', import.meta.url), 'utf8')) as V4Plan
+const plan = JSON.parse(readFileSync(new URL('../../../test-fixtures/synthetic/plan400-v4.json', import.meta.url), 'utf8')) as V4Plan
 const d1019 = dayOf(plan, '2026-10-19')!   // 速度耐力＋力量A
 const d1020 = dayOf(plan, '2026-10-20')!   // 低强度恢复
 const garmin = { id: 'garmin:cn%3At:1', source: 'garmin', sport: 'RUNNING', startedAt: '2026-10-19T09:05:00.000Z', date: '2026-10-19', distanceM: 5230, durationSec: 1932, avgHr: 156, title: '跑步' }

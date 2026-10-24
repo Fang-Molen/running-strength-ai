@@ -20,6 +20,8 @@ export const GLOBAL_COACH_EVENTS = [
   HEALTH_CHANGED, ATHLETE_SCOPE_CHANGED, C03_FOLLOWUP_CHANGED_EVENT, PLAN_EXECUTION_EVENT,
   'fk-coros-changed', 'fk-food-changed', 'fk-garmin-synced', 'fk-schedule-changed', 'fk-training-activities-changed',
   'fk-training-corrected', 'fk-plan400-changed', 'fk-plan400-components', 'fk-run-links',
+  // Shared profile, personal-coach conditions and coach suggestions also refresh every view.
+  'fk-profile-changed', 'fk-personal-profile-changed', 'fk-coach-suggestions-changed', 'fk-coach-notes-changed',
   'storage', 'pageshow', 'focus',
 ] as const
 export type HostEvidence = Evidence & {

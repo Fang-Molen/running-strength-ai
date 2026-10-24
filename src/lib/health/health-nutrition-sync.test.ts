@@ -35,7 +35,7 @@ function fixture(t:test.TestContext){
 function health(date=day,sleep=23400,at=before){return garminHealthDay(date,'qa-watch-account',{status:200,body:{calendarDate:date,restingHeartRate:55,bodyBatteryMostRecentValue:73,averageStressLevel:24,totalSteps:4567}},{status:200,body:{hrvSummary:{calendarDate:date,lastNightAvg:62}}},{status:200,body:{dailySleepDTO:{calendarDate:date,sleepTimeSeconds:sleep}}},at).rows}
 const saveDeviceRows=(rows:ReturnType<typeof health>)=>saveImportedRows(rows,[])
 function mealInput(meal:FoodSaveInput['meal']='早餐',date=day):FoodSaveInput{return{draft:{...draftFromProduct(cereal),amount:'100'},date,meal,acknowledged:true,athleteId:currentAthleteId()}}
-function saveMeal(input=mealInput()){const r=commitFoodDraft(input);assert.equal(r.ok,true,JSON.stringify(r));if(!r.ok)throw Error(r.reason);return r.row}
+function saveMeal(input=mealInput()){const r=commitFoodDraft(input);if(!r.ok)throw Error(r.reason);assert.equal(r.ok,true,JSON.stringify(r));return r.row}
 const legacy=(patch:Partial<FoodEntry>={}):FoodEntry=>({id:'qa-unestimated',date:day,meal:'加餐',name:'合成未估算餐',kcal:0,label:'未估算',athleteId:currentAthleteId(),recordedAt:before,...patch})
 
 test('confirmed watch health is idempotent and the newest revision reaches both health and coach',async t=>{

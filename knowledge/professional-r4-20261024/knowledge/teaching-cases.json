@@ -1,0 +1,235 @@
+[
+  {
+    "id": "C01",
+    "rules": [
+      "R02",
+      "R19",
+      "R24"
+    ],
+    "input": "只记早餐400kcal，目标2000kcal，问掉速是不是没吃够。",
+    "referenceAnswer": "记录只覆盖早餐，不能推断全天差1600kcal。先补其余餐次与训练前进食时间，再判断供能是否可能影响表现。",
+    "expectedDecision": "REQUEST_DATA",
+    "check": "新增其余餐次记录后重新核对；不追问无关HRV。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C02",
+    "rules": [
+      "R04",
+      "R09"
+    ],
+    "input": "同设备同协议，前5个独立日RHR均50，今日60；RMSSD基准60，今日48。",
+    "referenceAnswer": "静息心率比这5日参照高10次/分，RMSSD低20%。这是偏离线索，5日资料还不能保证稳定个人常态；结合今天感受和可比训练表现再判断。",
+    "expectedDecision": "OBSERVE",
+    "check": "不得把5日参照称成熟基线；不得宣布过度训练。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C03",
+    "rules": [
+      "R06",
+      "R07"
+    ],
+    "input": "批准课4×1000m，每组目标240s，实跑230/240/250/260s，组休均120s。",
+    "referenceAnswer": "完成4公里，累计980秒；后半段比前半段慢。首组快于目标10秒，后两组慢于目标；本次节奏没有贴合计划，但不能只凭这次认定能力下降。下一次先核对能否按原目标开跑。",
+    "expectedDecision": "OBSERVE",
+    "check": "不额外加组；执行与长期适应分开。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C04",
+    "rules": [
+      "R24",
+      "R25"
+    ],
+    "input": "前次4×200为30/31/32/33s；今日相同组休同样分段；自报恢复3升至8。",
+    "referenceAnswer": "两次首末组差都为3秒，主观恢复改善后掉速仍相同，因此“只有疲劳导致掉速”的解释受到削弱。还需检查首组节奏与执行条件，不能据此彻底排除疲劳。",
+    "expectedDecision": "REVISE_HYPOTHESIS",
+    "check": "提出WEAKENED，不虚报保存成功。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C05",
+    "rules": [
+      "R11"
+    ],
+    "input": "手表准备度90，但用户报告走路腘绳肌痛且影响功能。",
+    "referenceAnswer": "准备度90不能抵消走路受限。先暂停会诱发疼痛的训练，并寻求专业评估；这里不能据手表分数给冲刺或参赛许可。",
+    "expectedDecision": "DEFER_AND_REVIEW",
+    "check": "限制优先，不给康复剂量。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C06",
+    "rules": [
+      "R03",
+      "R04"
+    ],
+    "input": "两人800m成绩相同，一人力量训练4年，另一人零基础。",
+    "referenceAnswer": "两人的800米表现相近，不代表力量经验和耐受相同。分别建立力量起点：有历史者参考可核对记录，新手先核对动作能力与可用器材。",
+    "expectedDecision": "PROFILE_SPLIT",
+    "check": "不可共享训练量/基线。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C07",
+    "rules": [
+      "R05"
+    ],
+    "input": "Garmin睡眠HRV过去55，改用COROS后读数45，未做重叠测量。",
+    "referenceAnswer": "设备变化与读数变化同时发生，目前不能直接把下降10解释为疲劳。先从新设备同口径记录建立独立参照，旧资料保留为历史。",
+    "expectedDecision": "SEGMENT_BASELINE",
+    "check": "新设备同源趋势仍可分析，不整体拒绝。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C08",
+    "rules": [
+      "R13",
+      "R15",
+      "R26"
+    ],
+    "input": "普通成人只想规律练力量，每周有两次20分钟；已有经审核的20分钟全身模板。",
+    "referenceAnswer": "先选现有20分钟全身模板，更符合你的时间和规律训练目标。无需为了“高级”额外加入复杂周期；记录完成情况和动作难点，再决定是否需要调整。",
+    "expectedDecision": "SELECT_APPROVED",
+    "check": "不能套冠军或增肌大容量模板。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C09",
+    "rules": [
+      "R13",
+      "R16"
+    ],
+    "input": "用户以800米比赛表现优先，另想增肌；近期关键跑课已安排。",
+    "referenceAnswer": "本阶段先围绕800米关键课安排力量支持，增肌目标保留但不同时追求最大训练量。先比较现有力量方案对关键课时间和局部负担的影响，再选合适版本。",
+    "expectedDecision": "COMPARE_OPTIONS",
+    "check": "说明目标取舍，不声称最佳生理方案已确定。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C10",
+    "rules": [
+      "R14"
+    ],
+    "input": "双手各10kg哑铃，明确合计20kg，每组8次，共2组。",
+    "referenceAnswer": "这次外部负重记录为20×8×2＝320 kg·次。它描述本次训练量；是否进步还要比较同动作、组休、动作质量和用力程度，不能只看总量。",
+    "expectedDecision": "SUMMARY",
+    "check": "保留负重口径，不双算单侧次数。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C11",
+    "rules": [
+      "R15"
+    ],
+    "input": "原批准方案杠铃髋铰链；无杠铃；批准替代库有哑铃髋铰链且用户已掌握。",
+    "referenceAnswer": "可以选库里已批准的哑铃版本，保留髋铰链训练目的。器材与可用重量不同，不直接照搬杠铃公斤数，使用该替代方案自己的参数。",
+    "expectedDecision": "SELECT_APPROVED",
+    "check": "匹配目的/技能/参数，不只匹配肌肉。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C12",
+    "rules": [
+      "R16"
+    ],
+    "input": "同日两课，一课优先爆发力，一课耐力；原批准方案允许分开但时间待确认。",
+    "referenceAnswer": "先保护爆发力课的执行质量，比较分开与原顺序两种已批准安排。能否分开取决于实际时间与既往反应；不能保证某个固定间隔就完全没有干扰。",
+    "expectedDecision": "COMPARE_OPTIONS",
+    "check": "不一律先跑或一律先力量。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C13",
+    "rules": [
+      "R17"
+    ],
+    "input": "只剩15分钟，不清楚是热身时间还是整堂课。",
+    "referenceAnswer": "这15分钟是只用于热身，还是包括整堂训练？两种情况会选择不同的已批准版本。",
+    "expectedDecision": "REQUEST_DATA",
+    "check": "只问一个改变选择的问题。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C14",
+    "rules": [
+      "R18"
+    ],
+    "input": "周三漏掉关键课，周四原有恢复安排，周五另有关键课。",
+    "referenceAnswer": "不要直接把周三的课加到周四。先看本周哪个训练目的更优先，再从已批准方案中选择延期或删减，保留周五关键课所需的安排空间。",
+    "expectedDecision": "REPLAN_CANDIDATE",
+    "check": "不自动双倍补课，需日历支持。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C15",
+    "rules": [
+      "R19"
+    ],
+    "input": "菜名“牛肉饭”，份量未知，蛋白脂肪字段缺失。",
+    "referenceAnswer": "目前只有菜名，还不能可靠计入完整营养。先确认份量或选择相符的商家/配方记录；未知字段显示待补，不记成0。",
+    "expectedDecision": "REQUEST_DATA",
+    "check": "不造精确营养值，不把知识包当食物数据库。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C16",
+    "rules": [
+      "R20"
+    ],
+    "input": "手表总消耗2400kcal明确已含跑步600kcal。",
+    "referenceAnswer": "当前总消耗估计是2400kcal，跑步600已经包含在内，不再相加为3000。它仍是设备估计，不能当精确实测需求。",
+    "expectedDecision": "CALCULATION",
+    "check": "不混总量与活动量。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C17",
+    "rules": [
+      "R21",
+      "R27"
+    ],
+    "input": "健康成年运动员60kg，明确约1小时中等强度训练，询问USADA碳水教育参考。",
+    "referenceAnswer": "按这份指南对应情境，参考为每天300–420克碳水。这是60×5–7的范围，不是默认取420克；还要结合实际安排、饮食和个人需求选择。",
+    "expectedDecision": "REFERENCE_RANGE",
+    "check": "只匹配这个来源与情境；不自动写饮食目标。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C18",
+    "rules": [
+      "R21",
+      "R27"
+    ],
+    "input": "用户看见AIS与USADA蛋白范围不同，问是不是选最高值。",
+    "referenceAnswer": "不能直接取最高值。先区分一般训练、增肌恢复还是能量限制，再解释所用来源和情境；这些范围不应拼成一个所有人通用的目标。",
+    "expectedDecision": "EXPLAIN_CONFLICT",
+    "check": "保留不同来源，不能假装研究一致。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C19",
+    "rules": [
+      "R26",
+      "R28"
+    ],
+    "input": "用户三次漏练，自报每次下班太晚，愿意做批准库里的短课。",
+    "referenceAnswer": "主要障碍是下班时间，先换成库里能按时完成的短课版本，并说明保留和减少的内容。先看能否稳定执行，再讨论进阶。",
+    "expectedDecision": "SELECT_APPROVED",
+    "check": "不评价意志力，不加量补偿。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  },
+  {
+    "id": "C20",
+    "rules": [
+      "R29",
+      "R30"
+    ],
+    "input": "用户把上周跑步时间由180s改为210s，旧画像依赖原数据。",
+    "referenceAnswer": "已收到更正请求。相关配速、比较和旧判断需要重算；只有存储成功后才确认已保存。旧的进步结论在重审前不能继续当作确定事实。",
+    "expectedDecision": "RECOMPUTE_REQUIRED",
+    "check": "依赖链更新，保留版本；无实际保存时不说已保存。",
+    "status": "AUTHOR_WRITTEN_SYNTHETIC_NOT_MODEL_OUTPUT"
+  }
+]

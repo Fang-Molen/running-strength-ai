@@ -1,3 +1,4 @@
+import {currentAthleteId} from '../core/events'
 /**
  * v89.6：计划是数据，不是代码。应用里不再内置任何个人课表；当前运动员的计划只来自本机存储
  * （用户自己导入的计划/备份文件，或首次引导由本地规则生成并确认的计划）。
@@ -8,11 +9,13 @@ import type { V4Day, V4Plan } from '../ui/plan400-view'
 
 export const PLAN_DOC_KEY = 'fk-plan-doc-v1'
 export const PLAN_DOC_PREV_KEY = 'fk-plan-doc-prev-v1'
+export const planDocumentKey = (owner=currentAthleteId()) => owner==='local'?PLAN_DOC_KEY:PLAN_DOC_KEY+':'+encodeURIComponent(owner)
+const previousPlanKey = () => currentAthleteId()==='local'?PLAN_DOC_PREV_KEY:PLAN_DOC_PREV_KEY+':'+encodeURIComponent(currentAthleteId())
 export const PLAN_DOC_SCHEMA = 'fangkun-plan-v1'
 export const PLAN_CHANGED_EVT = 'fk-plan-doc-changed'
 export type ProfileMarkDefault = { meters: number; goal?: string; recent?: string; deadline?: string }
 /** profileDefaults：随计划文件带来的个人资料默认值（只在资料对应项为空时填入，导入预览里列出）。 */
-export type PlanDoc = { schema: typeof PLAN_DOC_SCHEMA; label?: string; tag?: string; importedAt?: string; plan: V4Plan; profileDefaults?: { marks?: ProfileMarkDefault[] } }
+export type PlanDoc = { athleteId?: string; schema: typeof PLAN_DOC_SCHEMA; label?: string; tag?: string; importedAt?: string; plan: V4Plan; profileDefaults?: { marks?: ProfileMarkDefault[] } }
 
 type Store = { getItem(k: string): string | null }
 const store = (): Store | null => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }
@@ -30,20 +33,20 @@ export function validatePlanDoc(x: unknown): { ok: true; doc: PlanDoc } | { ok: 
   if (!p.days.every(isDay)) return { ok: false, reason: '计划里有训练日格式不对（需要日期、标题和内容行）。' }
   if (new Set((p.days as V4Day[]).map(d => d.date)).size !== p.days.length) return { ok: false, reason: '计划里有重复日期。' }
   const plan: V4Plan = { name: typeof p.name === 'string' ? p.name.slice(0, 80) : '导入的计划', shiftDays: Number(p.shiftDays) || 0, weeks: Array.isArray(p.weeks) ? p.weeks as V4Plan['weeks'] : [], days: p.days as V4Day[], ...(p.final && typeof p.final === 'object' ? { final: p.final as V4Day } : {}) }
-  return { ok: true, doc: { schema: PLAN_DOC_SCHEMA, label: typeof o.label === 'string' ? o.label.slice(0, 40) : undefined, tag: typeof o.tag === 'string' ? o.tag.slice(0, 12) : undefined, importedAt: typeof o.importedAt === 'string' ? o.importedAt : undefined, plan, ...profileDefaultsOf(o.profileDefaults) } }
+  return { ok: true, doc: { ...(typeof o.athleteId==='string'?{athleteId:o.athleteId}:{}), schema: PLAN_DOC_SCHEMA, label: typeof o.label === 'string' ? o.label.slice(0, 40) : undefined, tag: typeof o.tag === 'string' ? o.tag.slice(0, 12) : undefined, importedAt: typeof o.importedAt === 'string' ? o.importedAt : undefined, plan, ...profileDefaultsOf(o.profileDefaults) } }
 }
 
-let cache: { raw: string | null; doc: PlanDoc | null } | null = null
+let cache: { owner:string; raw: string | null; doc: PlanDoc | null } | null = null
 /** 当前运动员已保存的计划文档；没有或损坏 → null。 */
 export function activePlanDoc(s: Store | null = store()): PlanDoc | null {
-  const test = (globalThis as { __FK_TEST_PLAN_DOC__?: PlanDoc }).__FK_TEST_PLAN_DOC__ // 仅测试夹具注入；应用里永远不设
+  const test = import.meta.env?.PROD===true||currentAthleteId()!=='local'?undefined:(globalThis as { __FK_TEST_PLAN_DOC__?: PlanDoc }).__FK_TEST_PLAN_DOC__ // 仅测试夹具注入；应用里永远不设
   let raw: string | null = null
-  try { raw = s?.getItem(PLAN_DOC_KEY) ?? null } catch { raw = null }
+  try { raw = s?.getItem(planDocumentKey()) ?? null } catch { raw = null }
   if (raw == null) return test ?? null
-  if (cache && cache.raw === raw) return cache.doc
+  if (cache && cache.owner === currentAthleteId() && cache.raw === raw) return cache.doc
   let doc: PlanDoc | null = null
-  try { const v = validatePlanDoc(JSON.parse(raw)); doc = v.ok ? v.doc : null } catch { doc = null }
-  cache = { raw, doc }
+  try { const v = validatePlanDoc(JSON.parse(raw)); doc = v.ok&&(!v.doc.athleteId||v.doc.athleteId===currentAthleteId()) ? v.doc : null } catch { doc = null }
+  cache = { owner:currentAthleteId(), raw, doc }
   return doc
 }
 export const activePlan = (s?: Store | null): V4Plan | null => activePlanDoc(s === undefined ? store() : s)?.plan ?? null
@@ -61,23 +64,24 @@ type WStore = Store & { setItem(k: string, v: string): void; removeItem(k: strin
 /** 确认后写入（预览由调用方先用 validatePlanDoc 展示）；旧计划存一份供“撤销导入”。读回校验。 */
 export function savePlanDoc(doc: PlanDoc, s: WStore = localStorage): { ok: true } | { ok: false; reason: string } {
   try {
-    const prev = s.getItem(PLAN_DOC_KEY), raw = JSON.stringify({ ...doc, importedAt: new Date().toISOString() })
-    s.setItem(PLAN_DOC_PREV_KEY, JSON.stringify({ raw: prev, at: new Date().toISOString() }))
-    s.setItem(PLAN_DOC_KEY, raw)
-    if (s.getItem(PLAN_DOC_KEY) !== raw) { if (prev == null) s.removeItem(PLAN_DOC_KEY); else s.setItem(PLAN_DOC_KEY, prev); return { ok: false, reason: '保存校验失败（可能存储空间不足），未做修改。' } }
+    if(doc.athleteId&&doc.athleteId!==currentAthleteId())return {ok:false,reason:'计划归属与当前档案不一致，未覆盖。'}
+    const prev = s.getItem(planDocumentKey()), raw = JSON.stringify({ ...doc, athleteId:currentAthleteId(), importedAt: new Date().toISOString() })
+    s.setItem(previousPlanKey(), JSON.stringify({ raw: prev, at: new Date().toISOString() }))
+    s.setItem(planDocumentKey(), raw)
+    if (s.getItem(planDocumentKey()) !== raw) { if (prev == null) s.removeItem(planDocumentKey()); else s.setItem(planDocumentKey(), prev); return { ok: false, reason: '保存校验失败（可能存储空间不足），未做修改。' } }
     notify(); return { ok: true }
   } catch { return { ok: false, reason: '保存失败（可能存储空间不足），未做修改。' } }
 }
 /** 撤销最近一次导入/生成：恢复之前的计划（之前没有就回到“未导入计划”）。训练记录不受影响。 */
 export function undoPlanDoc(s: WStore = localStorage): boolean {
   try {
-    const p = JSON.parse(s.getItem(PLAN_DOC_PREV_KEY) || 'null') as { raw: string | null } | null
+    const p = JSON.parse(s.getItem(previousPlanKey()) || 'null') as { raw: string | null } | null
     if (!p) return false
-    if (p.raw == null) s.removeItem(PLAN_DOC_KEY); else s.setItem(PLAN_DOC_KEY, p.raw)
-    s.removeItem(PLAN_DOC_PREV_KEY); notify(); return true
+    if (p.raw == null) s.removeItem(planDocumentKey()); else s.setItem(planDocumentKey(), p.raw)
+    s.removeItem(previousPlanKey()); notify(); return true
   } catch { return false }
 }
-export const canUndoPlanDoc = (s: Store | null = store()): boolean => { try { return !!s?.getItem(PLAN_DOC_PREV_KEY) } catch { return false } }
+export const canUndoPlanDoc = (s: Store | null = store()): boolean => { try { return !!s?.getItem(previousPlanKey()) } catch { return false } }
 function notify() { cache = null; try { window.dispatchEvent(new Event(PLAN_CHANGED_EVT)) } catch { /* node */ } }
 
 function profileDefaultsOf(x: unknown): { profileDefaults?: { marks: ProfileMarkDefault[] } } {

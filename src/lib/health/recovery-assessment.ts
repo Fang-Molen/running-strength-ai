@@ -1,6 +1,7 @@
 import type { EvidenceSnapshot, RecoveryAssessment, MetricFact, ResponseFact, MuscleExposureReview, TrainingFact } from './analysis-contract'
 import { refOf, analysisReference } from './analysis-evidence'
 import { trainingDose, buildMuscleExposure } from './muscle-exposure'
+import { describeAnalysisHistory } from './analysis-history'
 import { REGION_LABEL } from './muscle-recovery-u11'
 
 /** Evidence changes explanations; no physiological threshold authorizes a prescription. */
@@ -20,7 +21,11 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
  for(const f of training){
   observations.push({text:`原计划目的：${f.plannedPurpose??'UNKNOWN（待确认）'}；实际类型：${f.observedType??'UNKNOWN'}。计划意图不证明目标已经实现。`,evidenceRefs:[refOf(f)]})
   const d=trainingDose(f)
-  observations.push({text:f.modality==='RUN'?`已确认跑步 ${d.distanceM??'未知'} m，纯跑用时 ${d.workSeconds??'未知'} s；${d.segments.map(r=>`第${r.roundIndex??'?'}轮 ${r.distanceM??'未知'} m/${r.durationSeconds??'未知'} s，组休 ${r.restAfterSeconds??'未知'} s`).join('；')}；轮次与间歇按原记录保留，不冒充整课用时。`:f.modality==='JUMP'?`已确认跳跃接触 ${f.jumpContacts??'未知'} 次；未测着地力，不推断组织负荷。`:`已确认力量 ${d.sets} 组，${d.reps??'未知'} 次；${d.setDetails.join('；')}；只描述实际剂量，不代表组织受力或恢复。`,evidenceRefs:[refOf(f)]})
+  const distance=d.complete.distance?`${d.distanceM} m`:`已知距离小计 ${d.distanceM??'未知'} m（总距离未知，部分分段缺少距离或完成状态）`
+  const work=d.complete.work?`纯跑用时 ${d.workSeconds} s`:`已知用时小计 ${d.workSeconds??'未知'} s（纯跑总用时未知，部分分段缺少用时或完成状态）`
+  const sets=d.complete.sets?`${d.sets} 组`:`已知完成组小计 ${d.sets} 组（总组数未知）`
+  const reps=d.complete.reps?`${d.reps} 次`:`已知次数小计 ${d.reps??'未知'} 次（总次数未知）`
+  observations.push({text:f.modality==='RUN'?`已确认跑步 ${distance}，${work}；${d.segments.map(r=>`第${r.roundIndex??'?'}轮 ${r.distanceM??'未知'} m/${r.durationSeconds??'未知'} s，组休 ${r.restAfterSeconds??'未知'} s`).join('；')}；轮次与间歇按原记录保留，不冒充整课用时。`:f.modality==='JUMP'?`已确认跳跃接触 ${f.jumpContacts??'未知'} 次；未测着地力，不推断组织负荷。`:`已确认力量 ${sets}，${reps}；${d.setDetails.join('；')}；只描述实际剂量，不代表组织受力或恢复。`,evidenceRefs:[refOf(f)]})
   if(f.sessionRpe!==null)observations.push({text:`整课 RPE ${f.sessionRpe}（${f.sessionRpeScale??'口径待核'}）；混合课不把同一个整课RPE当作两份负荷。`,evidenceRefs:[refOf(f)]})
  }
  const currentMetrics=metrics.filter(f=>!metrics.some(o=>o.metric===f.metric&&o.provider===f.provider&&o.accountRef===f.accountRef&&o.deviceId===f.deviceId&&o.protocolKey===f.protocolKey&&(o.providerDate??o.occurredAt)>(f.providerDate??f.occurredAt)))
@@ -28,9 +33,10 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
   if(f.kind==='METRIC'){
    if(f.value===null){missing.push(`${f.metric}未知（${f.quality}）`);continue}
    const b=analysisReference(s,f)
-   observations.push({text:`${f.providerDate??f.occurredAt} ${f.metric} ${f.value} ${f.unit}（${f.provider} / ${f.protocolKey??'协议未知'}）${f.temporalResolution==='DAY'?'；日级记录，测量时刻未知':''}${b.deltaPercent!==null?`；较此前同协议 ${b.sampleCount} 日中位数 ${b.median} ${f.unit} 变化 ${Number(b.deltaPercent.toFixed(2))}%`:''}；不是医学许可。`,evidenceRefs:[refOf(f)]})
+   observations.push({text:`${f.providerDate??f.occurredAt} ${f.metric} ${f.value} ${f.unit}（${f.provider} / ${f.protocolKey??'协议未知'}）${f.temporalResolution==='DAY'?'；日级记录，测量时刻未知':''}${b.deltaPercent!==null?`；较此前同协议 ${b.sampleCount} 日中位数 ${b.median} ${f.unit} 变化 ${Number(b.deltaPercent.toFixed(2))}%${b.absoluteDelta!==null?`，绝对变化 ${b.absoluteDelta} ${f.unit}`:''}${b.logRatio!==null?`；lnRMSSD 比值变化 ${Number(b.logRatio.toFixed(6))}`:''}`:''}；不是医学许可。`,evidenceRefs:[refOf(f),...b.sourceRefs]})
   }else if(f.kind==='RESPONSE')observations.push({text:`${f.region?REGION_LABEL[f.region]+' ':''}${f.measure} ${f.value??'未知'}（${f.scale}），${f.occurredAt} 自报；不能等同组织恢复。`,evidenceRefs:[refOf(f)]})
  }
+ observations.push(...describeAnalysisHistory(s))
  const overlap=(exposure.ledger??[]).filter(r=>r.overlapObserved)
  for(const r of overlap)observations.push({text:`${REGION_LABEL[r.region]}近期跑步＋力量重复暴露；${r.entries.map(e=>e.dose).join('；')}。缺少个人校准，不输出肌肉恢复百分比。`,evidenceRefs:r.supportingFacts})
  // An absence report only weakens an explanation; it never overrides an active pain restriction.
@@ -47,7 +53,7 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
  if(!responses.some(f=>f.measure==='PAIN'))missing.push('当前是否疼痛、在哪里、是否影响动作？')
  if(!responses.some(f=>f.measure==='FUNCTION'))missing.push('缺少原热身或日常功能表现')
  if(!sleep.length)missing.push('睡眠未记录，不妨碍已确认训练的分析')
- if(!metrics.some(f=>/HRV/i.test(f.metric)))missing.push('HRV未记录，不补零')
+ if(!metrics.some(f=>/^(HRV|RMSSD|LN_RMSSD)$/i.test(f.metric)))missing.push('HRV未记录，不补零')
  if(!training.length)missing.push('近期实际训练明细未确认')
  if(!s.context.planVersion)missing.push('下一课目的、日期与计划版本待核对')
  const action:NonNullable<RecoveryAssessment['candidates'][number]['action']>=hold?'SKIP':overlap.length&&limitedFunction.length?'REDUCE':overlap.length&&reaction.some(f=>f.measure==='SORENESS'&&f.value!>0)?'MODIFY':'KEEP'

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Camera, ChevronDown, Droplets, Utensils } from "lucide-react"
 import type { Profile } from "@/lib/strength/profile"
 import { computePlan } from "@/lib/nutrition/calc"
+import { effectiveNutritionProfile } from "@/lib/coach/loop/effective-host"
 import { FuelPanel } from "@/components/fuel-panel"
 import { nutrientOf, addEntry, addEntriesBatch, loadEntries, todayEntries } from "@/lib/nutrition/log"
 import { bodyTrend } from "@/lib/nutrition/body"
@@ -27,7 +28,7 @@ function useFuel(profile: Profile, revision = 0, goal: FuelGoal = "keep", servin
     setState({ sessions: confirmedSessionsOn(localDay()), signs: loadSigns(), logged: days.filter((d) => byDay.has(d)).map((d) => ({ kcal: byDay.get(d)!, trainingDay: confirmedSessionsOn(d).length > 0 })), week: bodyTrend().weekDelta })
   }, [revision])
   const kg = Number(profile.weightKg)
-  const plan = computePlan({ ...profile, aim: GOAL_AIM[goal] })
+  const plan = computePlan({ ...effectiveNutritionProfile(profile), aim: GOAL_AIM[goal] })
   const targets = useMemo(() => goalTargets(goal, kg, state.sessions, servingAdjust), [goal, kg, state.sessions, servingAdjust])
   const flags = useMemo(() => fuelFlags({ targetKcal: plan?.kcal ?? null, bmr: plan?.bmr ?? null, aim: plan?.aim ?? null, dayType: targets?.type ?? "rest", loggedDays: state.logged, weekWeightDeltaKg: state.week, signs: state.signs }), [plan?.kcal, plan?.bmr, plan?.aim, targets?.type, state])
   return { ...state, kg: kg >= 30 ? kg : null, plan, targets, flags, setSigns: (s: Signs) => { try { localStorage.setItem(SIGNS_KEY, JSON.stringify(s)) } catch { /* ignore */ } setState({ ...state, signs: s }) } }

@@ -21,11 +21,21 @@ const SYSTEM = `你是“方坤”，一位经验丰富的跑步/短跑与体能
 1. 用平实的中文，像成熟教练当面说话。先给结论，再讲原因；只有事实足够时才给下一课建议，并说明依据。
 2. 目标只用“事实”里写明的或用户这次说出的；事实写“目标：未知”时就当未知，不要假设任何距离、成绩或比赛日期。没有写明的课表、日期或课次一律不提。
 3. 用户给了数字（分段、用时、休息、RPE、疼痛、心率、睡眠等）就先用这些数字算清楚（平均、差值、掉速、波动）再判断；没给的数字不要编，不要替用户的RPE或主观感受解释含义。
-4. 数据不够判断时直说缺什么，并给出一个具体可做的测试：做什么、怎么做、记录哪几项（例如“下次同样的课，记下每段用时、组间实际休息秒数和整课RPE”）。不要硬给完整处方。
+4. 信息不足也要有用：先回答已有事实能支持的部分，再给通用或条件式建议（“如果……就……”）；只有依赖缺项的精确判断才说暂不确定，并说明缺什么、给一个具体可做的测试（做什么、怎么做、记录哪几项）。不要硬给依赖缺项的完整处方。
+4a. 你做的假设必须写明“假设：……”，不能写成用户事实。每次最多追问一两个会改变建议的问题；事实或对话里已有的资料不要重复追问。用户补充资料后，说明建议哪里变了、为什么变。
+4b. 你可以建议移动、对调、替换、取消或减量某节课，以及配套热身、恢复和饮食；只写成建议，说明原因、影响和不确定性，由用户在应用里确认后才会修改计划。不建议自动加量。
 5. 不要说“记下了”“已记住”“已保存”“已帮你更新”——你不能保存或修改任何数据。你也不能修改用户的训练计划；如需调整，告诉用户可以在计划页自己改。
 6. 建议“只改一项”时，真的只改一个变量（距离、组数、休息、配速中的一个），其余保持原样，并写明改的是哪一项。
 7. 安全：出现胸痛、晕厥、呼吸困难、心悸、急性受伤或剧烈疼痛等，先让对方停止训练并就医，不给训练处方；用户明确说“没有”“0分”“不痛”的症状不算出现。疼痛时不建议加量。
-8. 不使用术语堆砌和免责声明；不要说“可撤回”“候选”“审计”“已批准原课程”等系统用语。回答控制在 350 字以内，分段清楚。`;
+8. 不使用术语堆砌和免责声明；不要说“可撤回”“候选”“审计”“已批准原课程”等系统用语。按问题需要组织长度，最多不超过 1000 字，不为凑字数而写；分段清楚。`;
+// Answers keep the 1000-character limit; cut at the last sentence end instead of mid-sentence.
+const ANSWER_MAX = 1000;
+const capAnswer = (text) => {
+  if (text.length <= ANSWER_MAX) return text;
+  const head = text.slice(0, ANSWER_MAX);
+  const end = Math.max(head.lastIndexOf("。"), head.lastIndexOf("\n"));
+  return (end > ANSWER_MAX * 0.6 ? head.slice(0, end + 1) : head) + "（已达1000字上限）";
+};
 const clip = (v, n) => typeof v === "string" ? v.slice(0, n) : "";
 export async function onRequestPost({ request, env }) {
   if (!env.DEEPSEEK_API_KEY) return json({ error: "联网分析服务未配置" }, 503);
@@ -40,10 +50,10 @@ export async function onRequestPost({ request, env }) {
     { role: "user", content: `事实（来自用户本机记录，已去除账号与位置）：\n${facts || "（无）"}\n\n本地规则引擎的参考结论（可采纳或修正，但不要与事实矛盾）：\n${local || "（无）"}\n\n问题：${question}` }];
   try {
     const r = await fetch("https://api.deepseek.com/chat/completions", { method: "POST", headers: { "content-type": "application/json", authorization: `Bearer ${env.DEEPSEEK_API_KEY}` },
-      body: JSON.stringify({ model: env.COACH_MODEL || "deepseek-chat", temperature: 0.4, max_tokens: 900, messages }) });
+      body: JSON.stringify({ model: env.COACH_MODEL || "deepseek-chat", temperature: 0.4, max_tokens: 1600, messages }) });
     if (!r.ok) return json({ error: `联网分析服务返回 ${r.status}` }, 502);
     const out = (await r.json())?.choices?.[0]?.message?.content || "";
     if (!out.trim()) return json({ error: "联网分析没有返回内容" }, 502);
-    return json({ text: out.slice(0, 4000), model: env.COACH_MODEL || "deepseek-chat" });
+    return json({ text: capAnswer(out), model: env.COACH_MODEL || "deepseek-chat" });
   } catch { return json({ error: "联网分析失败" }, 502); }
 }

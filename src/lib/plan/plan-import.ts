@@ -1,3 +1,4 @@
+import {currentAthleteId} from '../core/events'
 /** v89.6：导入计划/备份文件 —— 先预览、确认后写入、可撤销。纯逻辑，供界面和测试共用。 */
 import type { Mark, Profile } from '../strength/profile'
 import { inspectAnyBackup, restoreAnyBackup, backupUndoSnapshot, undoBackupSnapshot, type BackupPreview } from '../ui/backup-center'
@@ -34,7 +35,7 @@ export function previewImport(raw: string, storage: Store, profile: Profile): Im
   return { ok: true, kind: 'backup', preview, profileChanges: [] }
 }
 
-export type ImportUndo = { keys: { key: string; previous: string | null }[]; profileBefore: string | null }
+export type ImportUndo = { athleteId?:string; keys: { key: string; previous: string | null }[]; profileBefore: string | null }
 /** 确认后调用。返回撤销所需快照；失败时原有数据不变（restoreAnyBackup 会逐项回退）。 */
 export function confirmImport(raw: string, storage: Store, profile: Profile, saveProfile: (p: Profile) => void): { ok: true; undo: ImportUndo | null; restored: number } | { ok: false; reason: string } {
   const snap = backupUndoSnapshot(raw, storage), profileBefore = storage.getItem('fr255-profile-v1')
@@ -45,9 +46,10 @@ export function confirmImport(raw: string, storage: Store, profile: Profile, sav
     const v = validatePlanDoc(parsed)
     if (v.ok) { const m = mergeProfileDefaults(profile, v.doc.profileDefaults?.marks); if (m.changes.length) saveProfile(m.profile) }
   }
-  return { ok: true, restored: r.restored, undo: snap ? { keys: snap, profileBefore } : null }
+  return { ok: true, restored: r.restored, undo: snap ? { athleteId:currentAthleteId(), keys: snap, profileBefore } : null }
 }
 export function undoImport(u: ImportUndo, storage: Store): boolean {
+  if((u.athleteId??'local')!==currentAthleteId())return false
   const ok = undoBackupSnapshot(u.keys, storage)
   try { if (u.profileBefore == null) storage.removeItem('fr255-profile-v1'); else storage.setItem('fr255-profile-v1', u.profileBefore) } catch { return false }
   return ok

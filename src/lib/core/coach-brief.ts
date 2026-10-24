@@ -17,6 +17,7 @@ import { readTrainingFact } from "./fact-read.ts"
 import { readTrainingContext } from "./training-decision.ts"
 import type { Plan } from "@/lib/strength/model"
 import { computePlan, todayEatTarget } from "@/lib/nutrition/calc"
+import { effectiveNutritionProfile } from "@/lib/coach/loop/effective-host"
 import { loadDay } from "@/lib/nutrition/day"
 import { loadEntries } from "@/lib/nutrition/log"
 import { loadProfile } from "@/lib/strength/profile"
@@ -24,6 +25,9 @@ import { calendarDay } from "./coach-calendar.ts"
 import { assertCoachFuel, fuelClaimNeedsSource, fuelForTraining, unsupportedFuelConclusion, type CoachFuel } from "./coach-fuel.ts"
 import { assertCoachReturn, projectCoachReturn, type CoachReturnView } from "./coach-return.ts"
 import { assertCoachNextSession, nextSessionAdviceNeedsSource, projectCoachNextSession, type CoachNextSessionView } from "./coach-next-session.ts"
+
+/** Questions and answers keep the 1000-character limit; the old 200-character cap is withdrawn. */
+export const COACH_QUESTION_MAX = 1000
 
 export type CoachConstraint = {
   increaseBlocked: boolean
@@ -65,7 +69,7 @@ export type CoachBrief = {
 }
 
 export function assertCoachPacket(b: CoachBrief): void {
-  if (!b || typeof b.question !== "string" || b.question.trim().length === 0 || b.question.length > 200 ||
+  if (!b || typeof b.question !== "string" || b.question.trim().length === 0 || b.question.length > COACH_QUESTION_MAX ||
     (b.occurrenceId !== null && typeof b.occurrenceId !== "string") ||
     (b.soreness !== undefined && typeof b.soreness !== "boolean") ||
     (b.musculoskeletalState !== undefined && b.musculoskeletalState !== null && !["NO_RELEVANT_EVIDENCE", "SIGNAL_PRESENT", "INSUFFICIENT_EVIDENCE", "CONFLICTING_EVIDENCE"].includes(b.musculoskeletalState)) ||
@@ -195,7 +199,7 @@ function assembleSessionCoachBrief(plan: Plan | null, question: string, selected
   const fact = occurrenceId ? readTrainingFact(occurrenceId) : null
   const context = readTrainingContext(plan)
   const todayDay = calendarDay(new Date().toISOString())
-  const nutritionPlan = computePlan(loadProfile())
+  const nutritionPlan = computePlan(effectiveNutritionProfile(loadProfile()))
   const target = nutritionPlan && loadDay().date === todayDay ? todayEatTarget(nutritionPlan) : nutritionPlan?.kcal ?? null
   const fuel = fuelForTraining(latest?.startedAt ?? null, new Date().toISOString(), loadEntries(), target)
   const rpe = recordedNumber(subjective?.sessionRpe)
@@ -222,7 +226,7 @@ function assembleSessionCoachBrief(plan: Plan | null, question: string, selected
   sources.push(...readLinkedCoachSources(undefined,question))
   const includedSources = sources.slice(0, 100)
   return deriveCoachBrief({
-    question: question.slice(0, 200),
+    question: question.slice(0, COACH_QUESTION_MAX),
     occurrenceId,
     runningStructure: execution?.availability === "AVAILABLE" ? "AVAILABLE" : "UNAVAILABLE",
     sessionRpe: rpe,
@@ -534,7 +538,7 @@ export function softenUnrecordedSets(brief: Pick<CoachBrief, "plannedSetCount" |
 
 export function recordCoachChoice(input: { choice: "accept" | "reject" | "modify"; question: string; note?: string }): { planChanged: false } {
   const type = input.choice === "accept" ? "USER_ACCEPTED" : input.choice === "reject" ? "USER_REJECTED" : "USER_MODIFIED"
-  dispatchEvent(type, { source: "COACH_07_1", question: input.question.slice(0, 200), note: input.note?.slice(0, 200) ?? "" })
+  dispatchEvent(type, { source: "COACH_07_1", question: input.question.slice(0, COACH_QUESTION_MAX), note: input.note?.slice(0, 200) ?? "" })
   return { planChanged: false }
 }
 

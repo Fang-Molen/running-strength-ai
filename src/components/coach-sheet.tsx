@@ -2,6 +2,11 @@ import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'
 import { CoachAnswerView } from "@/components/coach-answer-view";
 import { CoachIntegrationPanel } from '@/components/coach-integration-panel';
 import { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';
+import { TrainingModelPanel } from '@/components/training-model-panel';
+import { PersonalCoachPanel } from '@/components/personal-coach-panel';
+import { personalAnswer } from '@/lib/coach/personal/host';
+import { readR4CoachAnswer } from '@/lib/coach/r4/answer';
+import { R4AnswerStatus } from '@/components/r4-answer-status';
 import { CoachC03FollowupPanel } from '@/components/coach-c03-followup-panel';
 import { registerDisplayedC03Review } from '@/lib/coach/c03/runtime';
 import type { LocalCoachAnswer } from '@/lib/core/coach-local-first';
@@ -43,6 +48,7 @@ import { acceptIssued, issueTrainingDecision, overrideIssued, rejectIssued } fro
 import { abilityRows, competitionView, latestReviewableCompletion, limiterFrom, sessionFromCompleted, toneFor, trendText } from "@/lib/core/coach-view";
 import { readCoachOpenView } from "@/lib/core/coach-open";
 import { loadEvents, onAppEvent } from "@/lib/core/events";
+import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89";
 import { appendCoachNotice, noticeForCoachEvent, type CoachActivityNotice } from "@/lib/core/coach-activity-watch";
 import { chooseAction, createTrainingDecision, firstPlannedSet, readTrainingContext } from "@/lib/core/training-decision";
 import { refreshAthleteState } from "@/lib/core/state";
@@ -73,6 +79,8 @@ import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/stren
 import type { Plan } from "@/lib/strength/model";
 import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";
 import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps, buildFacts, askOnlineCoach } from "@/lib/coach/online-coach";
+import { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";
+import { readEffectiveProfile } from "@/lib/coach/loop/effective-host";
 import { fetchLaps } from "@/components/garmin-log";
 import { activityLocalDay, fmtDistance } from "@/lib/ui/activity-format";
 
@@ -244,12 +252,25 @@ export function CoachSheet({
   useEffect(() => onAppEvent(event => {
     if (event.athlete_id !== currentAthleteId()) return;
     setActivityNotices(current => appendCoachNotice(current, noticeForCoachEvent(event)));
-    setRecordRevision(value => value + 1);
-    // Do not silently bind new events to a prior session.
-    const starts = loadEvents().filter(item => item.event_type === "TRAINING_STARTED");
-    const available = listTrainingOccurrences().filter(item => starts.some(start => start.event_id === item.startEventId));
-    setOccurrences(available);
   }), []);
+
+  useEffect(() => {
+    // Reuse the host's after-commit subscription: device, food and cross-tab
+    // writes do not all produce a core AppEvent. Never create a new decision.
+    const refresh = () => {
+      setRecordRevision(value => value + 1);
+      const starts = loadEvents().filter(item => item.event_type === "TRAINING_STARTED");
+      setOccurrences(listTrainingOccurrences().filter(item => starts.some(start => start.event_id === item.startEventId)));
+      try {
+        const view = readCoachOpenView();
+        setAthlete(view.athlete); setPending(view.pending); setInbox(view.inbox);
+        setCompletedDecisionId(view.completedDecisionId);
+      } catch { /* Individual panels retain their own unavailable-data handling. */ }
+    };
+    const off = subscribeGlobalCoach(refresh);
+    refresh();
+    return off;
+  }, []);
 
   useEffect(() => {
     if (link === "unbound") {
@@ -377,6 +398,21 @@ export function CoachSheet({
         let failed=false;const devices=await listConfirmedDeviceEvidence().catch(()=>{failed=true;return []});
         try{periodReview=readCoachReviewWorkspace(athleteId,calendarDay(asOf)!,Number(periodIntent[1]),asOf,devices,failed).period}catch{/* Existing formal-evidence response remains available. */}
       }
+      // One judgement chain: R4 knowledge, personal goals, training calculations and
+      // recovery feed the same answer below. Nothing returns early here, so the
+      // existing local analysis and the optional DeepSeek analysis always still run.
+      const personalSafe = !brief.pain && !brief.constraints.medicalReferral
+        && detectRedFlags(value).level === 'NONE' && !reviewed?.reasoning.safety.mustRetain
+        && brief.appData?.decision?.safety !== 'URGENT' && brief.appData?.decision?.safety !== 'REVIEW';
+      let r4: ReturnType<typeof readR4CoachAnswer> | null = null;
+      let personalText: string | null = null;
+      if (personalSafe) {
+        try { r4 = recordOccurrence || periodIntent ? null : readR4CoachAnswer(value, asOf); } catch { /* Existing factual response remains available if the saved profile is unreadable. */ }
+        try { personalText = personalAnswer(value, asOf); } catch { /* Existing factual local response remains available. */ }
+      }
+      let effectiveProfile: ReturnType<typeof readEffectiveProfile> | null = null;
+      try { effectiveProfile = readEffectiveProfile(); } catch { /* Unknown stays unknown; the answer continues. */ }
+      const unified = composeUnifiedSupplement({ question: value, r4, personalText, effective: effectiveProfile });
       const local = answerLocally(brief,reviewed?{frame:reviewed.reasoning,snapshot:reviewed.review.audit.snapshot}:undefined,coachContextMemory,periodReview,memory.dialogue??emptyDialogue(athleteId));
       if (currentAthleteId() !== athleteId) { setSending(false); return; }
       if(!useCloud&&local.candidate){const savedAdvice=commitDisplayedCoachAdvice(local,value);if(!savedAdvice.ok)local.text+='\n本次建议历史保存失败，请先保留此回答；没有修改正式计划。'}
@@ -397,22 +433,24 @@ export function CoachSheet({
       let shown = chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
       if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
+      if (!redFlag && unified.localSection) shown = `${shown}\n\n${unified.localSection}`;
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
         // Capture the online cutoff after any awaited device reads, so edits made during that wait use the latest view.
         // Local prose remains the offline fallback. Upload one dated fact snapshot, without a second, older context path.
         const factsAsOf = new Date().toISOString();
-        const r = await askOnlineCoach({ question: value, facts: buildFacts(today, linkedAct, linkedLaps, {
+        const r = await askOnlineCoach({ question: value, facts: unified.appendToFacts(buildFacts(today, linkedAct, linkedLaps, {
           goalTarget: memory.dialogue?.goalTarget ?? null, question: value, asOf: factsAsOf, selectedOccurrenceId: effectiveSelected,
-        }), local: '', history: memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
+        })), local: '', history: memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
         if ("text" in r) { shown = r.text; label = "联网分析"; } else { label = `本地分析 · 联网失败（${r.error}）`; }
         setNotice(linkNotice);
-      }
+      } else if (cloudRequested && !capable.independent) label = '本地分析 · 联网授权未核定';
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
+      if (!redFlag && unified.followUps) shown += `\n\n${unified.followUps}`;
       const messageId = `${Date.now()}-local`;
       if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
-      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
+      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(r4?{r4Basis:{question:value,day:r4.day,athleteId,version:r4.basisVersion}}:{}),...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
       setOnlineRequest(null);
       setTurnId(null);
       setFace(brief.pain ? "guard" : "focus");
@@ -521,6 +559,8 @@ export function CoachSheet({
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
         {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-review-tools"><summary className="min-h-11 cursor-pointer font-bold">更多复盘与协调工具（按需展开）</summary><div className="mt-2 space-y-3">
         {coordinationPanel ?? null}
+        {section === 'review' && <PersonalCoachPanel key={`personal-${athleteScope}`} />}
+        {section === 'review' && <TrainingModelPanel key={athleteScope} revision={recordRevision} />}
         {section === 'review' && <CoachPlanChangePanel revision={recordRevision} />}
         {section === 'review' && <CoachC03FollowupPanel revision={recordRevision} />}
         {section === 'review' && <CoachOfflineLoopPanel plan={plan} revision={recordRevision} />}
@@ -723,8 +763,9 @@ export function CoachSheet({
               }
             >
               {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
-              {message.role==='coach'&&message.id.endsWith('-learning')?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
-              {message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
+              {message.r4Basis&&message.id.endsWith("-r4-refresh")?<p data-testid="r4-coach-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'&&message.id.endsWith('-learning')?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
+              {message.r4Basis?<R4AnswerStatus basis={message.r4Basis} onRefresh={a=>setMemory(current=>current?.athleteId===a.athleteId?{...current,messages:[...current.messages,{id:`${Date.now()}-r4-refresh`,role:'coach' as const,text:a.text,r4Basis:{question:a.question,day:a.day,athleteId:a.athleteId,version:a.basisVersion}}].slice(-40)}:current)}/>:null}
+              {!(message.r4Basis&&message.id.endsWith("-r4-refresh"))&&message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
               {knowledgeReview.get(message.id)?<p data-testid="coach-knowledge-review" role="status" className="keep mt-1 text-xs text-amber-400">这条回答引用的知识卡已变化或批准已失效，结论需要复核（原回答保留）。</p>:null}
               {message.factDetails?<details data-testid="coach-fact-details" className="mt-2 text-xs"><summary className="min-h-8 cursor-pointer">查看分段核算详情</summary><p className="whitespace-pre-wrap break-words">{message.factDetails}</p></details>:null}
               {message.role==='coach'?<CoachAnswerFeedbackForm messageId={message.id} answer={message.text}/>:null}
@@ -756,7 +797,7 @@ export function CoachSheet({
         <div className="fk-coach-dock flex flex-wrap items-center gap-1.5">
         <details data-testid="coach-status-row" className="fk-coach-status shrink-0 rounded-full border border-line text-xs"><summary className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 px-2.5 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="max-h-[45dvh] overflow-y-auto px-2 pb-2">
         <p className="mb-2 px-1 text-muted">{statusLine} · {connectivity}</p>
-        <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：经服务端调用 DeepSeek，只发送去标识化的训练数值、分段、恢复指标和计划目标，不发送账号或位置；离线或失败时自动用本地分析。急症/疼痛问题始终本地处理。</span></label>
+        <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：开关不代表 DeepSeek 已连接。受信服务、快照和本次授权齐备后才可发送最小必要资料；当前继续使用本地分析。急症/疼痛问题始终本地处理。</span></label>
         <details className="coach-network-card mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限"><summary className="min-h-11 cursor-pointer font-bold">联网与隐私权限（按需展开）</summary>
           <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
           <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); setOnlineFeature('coachRefs', e.target.checked); }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>

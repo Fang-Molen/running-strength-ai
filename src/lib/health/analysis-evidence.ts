@@ -22,6 +22,7 @@ export function validAnalysisFact(f:AnalysisFact):boolean {
 }
 export type ProjectionInput = EvidenceInput & {
  safetyConstraints?: EvidenceSnapshot['safetyConstraints']; gaps?:string[];
+ priorHypotheses?: EvidenceSnapshot['priorHypotheses'];
  /** Only explicit host confirmations. Timestamp proximity is never a mapping. */
  canonicalSelections?: {canonicalActivityId:string;componentId:string;selectedRef:EvidenceRef;receiptId:string}[];
 }
@@ -55,15 +56,17 @@ export function projectAnalysisEvidence(input:ProjectionInput):EvidenceSnapshot 
   else if(!conflicts.some(c=>c.refs.some(x=>x.id===f.id)))conflicts.push({refs:peers.map(refOf),reason:'CANONICAL_SOURCE_SELECTION_REQUIRED'})
  }
  const safetyConstraints=input.safetyConstraints??[]
- const inputDigest=analysisDigest([context,selected.sort((a,b)=>a.id.localeCompare(b.id)),excluded,conflicts,gaps,safetyConstraints])
- return {context:{...context},snapshotId:inputDigest,inputDigest,facts:selected,excluded,gaps:[...new Set(gaps)],conflicts,safetyConstraints}
+ const priorHypotheses=(input.priorHypotheses??[]).filter(h=>h.athleteId===context.athleteId&&exactInstant(h.knownAt)&&Date.parse(h.knownAt)<=now&&h.id&&h.claim&&['PENDING','SUPPORTED','WEAKENED','WITHDRAWN'].includes(h.status)&&Array.isArray(h.supportingRefs)&&Array.isArray(h.weakeningRefs)).map(h=>structuredClone(h))
+ const inputDigest=analysisDigest([priorHypotheses,context,selected.sort((a,b)=>a.id.localeCompare(b.id)),excluded,conflicts,gaps,safetyConstraints])
+ return {context:{...context},snapshotId:inputDigest,inputDigest,facts:selected,excluded,gaps:[...new Set(gaps)],conflicts,safetyConstraints,priorHypotheses}
 }
 /** Separate same-protocol daily reference; never sum revisions or average devices. */
 export function analysisReference(snapshot:EvidenceSnapshot,current:MetricFact){
- if(!current.accountRef||!current.deviceId||!current.protocolKey||/UNKNOWN|UNSPECIFIED/i.test(current.protocolKey))return {sampleCount:0,median:null,deltaPercent:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current)}
+ if(!current.accountRef||!current.deviceId||!current.protocolKey||/UNKNOWN|UNSPECIFIED/i.test(current.protocolKey))return {sampleCount:0,median:null,deltaPercent:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current),sourceRefs:[] as EvidenceRef[],absoluteDelta:null as number|null,logRatio:null as number|null}
  const rows=snapshot.facts.filter((f):f is MetricFact=>f.kind==='METRIC'&&f.metric===current.metric&&sourceScope(f)===sourceScope(current)&&f.unit===current.unit&&f.statistic===current.statistic&&!!f.providerDate&&!!current.providerDate&&f.providerDate<current.providerDate&&Date.parse(current.providerDate)-Date.parse(f.providerDate)<=30*86400000&&f.isFinal===true&&f.value!==null)
  const days=new Map<string,MetricFact[]>();for(const f of rows)days.set(f.providerDate!,[...(days.get(f.providerDate!)??[]),f])
- const values=[...days.values()].filter(xs=>new Set(xs.map(x=>x.value)).size===1).map(xs=>xs[0].value!).sort((a,b)=>a-b)
+ const baseline=[...days.values()].filter(xs=>new Set(xs.map(x=>x.value)).size===1).map(xs=>xs[0])
+ const values=baseline.map(x=>x.value!).sort((a,b)=>a-b)
  const median=values.length?values.length%2?values[(values.length-1)/2]:(values[values.length/2-1]+values[values.length/2])/2:null
- return {sampleCount:values.length,median,deltaPercent:median&&current.value!==null?(current.value-median)/median*100:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current)}
+ return {sampleCount:values.length,median,deltaPercent:median&&current.value!==null?(current.value-median)/median*100:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current),sourceRefs:baseline.map(refOf),absoluteDelta:median!==null&&current.value!==null?current.value-median:null,logRatio:/rmssd/i.test(current.metric)&&!/^ln_/i.test(current.metric)&&median!==null&&median>0&&current.value!==null&&current.value>0?Math.log(current.value/median):null}
 }

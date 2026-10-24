@@ -1,7 +1,8 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 // v84：合入 Codex 1019y 包时按 v83 口径改写的验收（读模型只有一套：v83 的 v4DayFact / applyV4Fact）
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' }
 import { dayStatus, progressCounts, type V4Plan } from './plan400-view'
 import { phoneRows, mergeActivities, garminRows, linkRuns, occurrenceStrengthTotals } from './training-read-model'
 import { parseQuickLog } from './quick-log'

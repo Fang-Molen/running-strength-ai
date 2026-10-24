@@ -1,0 +1,198 @@
+{
+  "status": "EDUCATIONAL_REFERENCE_NOT_AUTOPRESCRIPTION",
+  "references": [
+    {
+      "id": "N-CARB",
+      "sourceId": "S09",
+      "location": "PDF page 5 / printed page 3, carbohydrate table",
+      "unit": "g/kg/day",
+      "contexts": [
+        {
+          "activity": "low intensity/skill",
+          "range": [
+            3,
+            5
+          ]
+        },
+        {
+          "activity": "approximately 1h moderate",
+          "range": [
+            5,
+            7
+          ]
+        },
+        {
+          "activity": "approximately 1-3h moderate-high",
+          "range": [
+            6,
+            10
+          ]
+        },
+        {
+          "activity": "approximately 4-5h moderate-high",
+          "range": [
+            8,
+            12
+          ]
+        }
+      ],
+      "constraints": [
+        "必须匹配实际训练而非目标等级",
+        "整日参考不是训练中补给",
+        "不是默认取上限",
+        "临床营养需求另行评估"
+      ]
+    },
+    {
+      "id": "N-PROTEIN-USADA",
+      "sourceId": "S09",
+      "location": "PDF page 6 / printed page 4",
+      "unit": "g/kg/day",
+      "contexts": [
+        {
+          "goal": "muscle building/recovery",
+          "range": [
+            1.6,
+            1.8
+          ]
+        },
+        {
+          "goal": "maintain muscle in calorie deficit",
+          "range": [
+            2,
+            2.2
+          ]
+        }
+      ],
+      "constraints": [
+        "不是所有用户目标",
+        "热量限制本身需另有合理依据",
+        "不自动映射到蛋白粉"
+      ]
+    },
+    {
+      "id": "N-PROTEIN-AIS",
+      "sourceId": "S10",
+      "location": "What is it, main body",
+      "unit": "g/kg/day",
+      "contexts": [
+        {
+          "goal": "heavy training",
+          "range": [
+            1.2,
+            1.6
+          ]
+        },
+        {
+          "goal": "athlete weight loss",
+          "range": [
+            1.6,
+            2.4
+          ]
+        }
+      ],
+      "constraints": [
+        "与USADA目标情境及表述不同",
+        "不机械合并为1.2-2.4通用范围",
+        "选择来源和目标时记录理由"
+      ]
+    },
+    {
+      "id": "STRENGTH-ACSM",
+      "sourceId": "S01",
+      "location": "Further Takeaways",
+      "contexts": [
+        {
+          "goal": "strength",
+          "reference": "80% 1RM; 2–3 sets/exercise"
+        },
+        {
+          "goal": "hypertrophy",
+          "reference": "approximately 10 sets/muscle/week"
+        },
+        {
+          "goal": "power",
+          "reference": "30–70% 1RM; fast concentric intent"
+        }
+      ],
+      "constraints": [
+        "仅官方摘要层的健康成人教育参考",
+        "不是完整处方；仍缺个体负荷/动作能力/休息/排程",
+        "无测试1RM不得虚构",
+        "不能把增肌量当专项跑者最低要求"
+      ]
+    },
+    {
+      "id": "STRENGTH-2026",
+      "sourceId": "S01",
+      "location": "官方2026更新摘要",
+      "contexts": [
+        {
+          "goal": "strength",
+          "load": "约80% 1RM",
+          "sets": "2–3"
+        },
+        {
+          "goal": "hypertrophy",
+          "volume": "约10组/肌群/周"
+        },
+        {
+          "goal": "power",
+          "load": "30–70% 1RM",
+          "execution": "快速向心"
+        }
+      ],
+      "guard": "健康成人目标参考；不是每项动作均用这些值，不直接给新手最大测试"
+    },
+    {
+      "id": "SPRINT-ACCEL",
+      "sourceId": "S11",
+      "location": "Table 2",
+      "distanceM": [
+        10,
+        50
+      ],
+      "recoveryMinutes": [
+        2,
+        7
+      ],
+      "guard": "精英短跑实践参考；速度质量优先；不据此自动拼次数与周频率"
+    },
+    {
+      "id": "SPRINT-MAXV",
+      "sourceId": "S11",
+      "location": "Table 2",
+      "flyingDistanceM": [
+        10,
+        30
+      ],
+      "recoveryMinutes": [
+        4,
+        15
+      ],
+      "guard": "飞跑段不含助跑；不直接作为400m或初学者处方"
+    },
+    {
+      "id": "TAPER-ENDURANCE",
+      "sourceId": "S12",
+      "location": "摘要与结论",
+      "volumeReductionPercent": [
+        41,
+        60
+      ],
+      "durationDays": [
+        6,
+        21
+      ],
+      "guard": "耐力研究范围；保持强度/频率是研究条件，个体最优未确定"
+    },
+    {
+      "id": "BEGINNER-RUN",
+      "sourceId": "S13",
+      "location": "计划介绍",
+      "runsPerWeek": 3,
+      "warmupWalkMinutes": 5,
+      "guard": "渐进走跑课程框架；跑间休息日；不能保证固定周期适应"
+    }
+  ]
+}

@@ -1,0 +1,785 @@
+{
+  "version": "FK-PRO-R3",
+  "scope": "general adult nonclinical coaching support; no autonomous dose prescription",
+  "rules": [
+    {
+      "id": "R01",
+      "domain": "身份与事实",
+      "trigger": "多人或多设备资料",
+      "requiredInputs": [
+        "athleteId",
+        "eventTime",
+        "timeZone",
+        "sourceId",
+        "revision"
+      ],
+      "decision": "先隔离用户、保留事件时间与同步时间；冲突字段逐项核对",
+      "insufficient": "不能确认属于谁或哪一天时，不进入个人画像",
+      "minimalQuestion": "只追问冲突身份或日期",
+      "forbiddenInference": "把朋友PB当本人能力",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R02",
+      "domain": "任务与目标",
+      "trigger": "用户提出训练/饮食问题",
+      "requiredInputs": [
+        "requestedOutcome",
+        "primaryGoal",
+        "secondaryGoal",
+        "goalPriority"
+      ],
+      "decision": "先匹配所问任务；复合目标保留优先级和冲突",
+      "insufficient": "目标冲突未解决时，给取舍选项而非悄悄替用户决定",
+      "minimalQuestion": "只问会改变方案的主目标",
+      "forbiddenInference": "减脂用户一律给比赛补给模板",
+      "basisType": "PRODUCT",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R03",
+      "domain": "能力画像",
+      "trigger": "初始评估或更新能力",
+      "requiredInputs": [
+        "event",
+        "verifiedPerformance",
+        "protocol",
+        "trainingHistory"
+      ],
+      "decision": "按专项、力量、技术、耐受分项陈述已知与未知",
+      "insufficient": "单一成绩只支持相应条件的表现，不推导所有能力",
+      "minimalQuestion": "优先补最影响目标的缺项",
+      "forbiddenInference": "跑得快就认定能承受更大力量量",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S07"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R04",
+      "domain": "个人基线",
+      "trigger": "与历史比较",
+      "requiredInputs": [
+        "metricDefinition",
+        "device",
+        "protocol",
+        "preAsOfRecords",
+        "context"
+      ],
+      "decision": "按可比情境生成描述基线；当前值与未来值不纳入参照",
+      "insufficient": "样本不足仅描述已有记录，不编造正常区间",
+      "minimalQuestion": "缺设备/协议则先核对",
+      "forbiddenInference": "同等级用户共享相同HRV基线",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S06"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R05",
+      "domain": "换设备与漂移",
+      "trigger": "设备/算法/阶段改变",
+      "requiredInputs": [
+        "oldSource",
+        "newSource",
+        "overlap",
+        "baselineVersion"
+      ],
+      "decision": "将新旧分段；有可验证桥接才换算，保留长期锚点与近期趋势",
+      "insufficient": "无桥接时停止数值跨设备结论，仍可做同源分析",
+      "minimalQuestion": "问切换日期，不要求重填所有历史",
+      "forbiddenInference": "滚动均值把持续恶化吸收为健康",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S06"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R06",
+      "domain": "训练目的",
+      "trigger": "课后复盘",
+      "requiredInputs": [
+        "declaredPurpose",
+        "planSnapshot",
+        "actual",
+        "criterionVersion"
+      ],
+      "decision": "分别输出完成情况、刺激执行证据和适应效果证据",
+      "insufficient": "无预声明判据时目的达成为UNKNOWN，单课不证明长期适应",
+      "minimalQuestion": "问本课目的或关键执行条件",
+      "forbiddenInference": "全部跑完等于有效提升能力",
+      "basisType": "PRODUCT",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R07",
+      "domain": "跑步可比性",
+      "trigger": "间歇/成绩比较",
+      "requiredInputs": [
+        "distance",
+        "time",
+        "start",
+        "timing",
+        "rest",
+        "surface",
+        "conditions",
+        "purpose"
+      ],
+      "decision": "先比较相同协议；不匹配的只作参考，掉速由代码计算",
+      "insufficient": "距离/组休/计时缺失时不下能力退步结论",
+      "minimalQuestion": "优先问组休或计时变化",
+      "forbiddenInference": "把4×200和2轮4×200展平成同课",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S07"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R08",
+      "domain": "专项周期",
+      "trigger": "安排未来训练",
+      "requiredInputs": [
+        "event",
+        "eventDate",
+        "phase",
+        "recentToleratedWork",
+        "keySession",
+        "availability"
+      ],
+      "decision": "以主项目和阶段选择已批准课程，先排关键课再配支持课",
+      "insufficient": "资料不足时不给完整确定配速或冠军训练量",
+      "minimalQuestion": "问近期实际与可用时间中最缺的一项",
+      "forbiddenInference": "固定每周三次强度适用于所有人",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S07"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R09",
+      "domain": "疲劳解释",
+      "trigger": "状态或表现变化",
+      "requiredInputs": [
+        "comparablePerformance",
+        "subjectiveState",
+        "loadContext",
+        "sleep",
+        "HRMetric"
+      ],
+      "decision": "先区分测量/情境、执行变化、可能疲劳；允许多个原因共存",
+      "insufficient": "单HRV/心率/准备度只作线索，不能宣布恢复或诊断",
+      "minimalQuestion": "问能区分解释的最小信息",
+      "forbiddenInference": "HRV正常排除腿部疲劳",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S06",
+        "S08"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R10",
+      "domain": "负荷评估",
+      "trigger": "周/月负担变化",
+      "requiredInputs": [
+        "window",
+        "units",
+        "denominator",
+        "coverage",
+        "formulaVersion"
+      ],
+      "decision": "分别报告跑量、强度暴露、力量组数、sRPE等口径",
+      "insufficient": "缺日记录不是休息0；负荷比不生成伤病概率",
+      "minimalQuestion": "核对分母与记录覆盖",
+      "forbiddenInference": "ACWR超过1.3就一律减半",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S05"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R11",
+      "domain": "疼痛与限制",
+      "trigger": "用户报告疼痛或功能受限",
+      "requiredInputs": [
+        "symptoms",
+        "function",
+        "existingRestrictions"
+      ],
+      "decision": "保留限制并转人工/专业评估路径，不允许准备度覆盖限制",
+      "insufficient": "没有临床解除依据时不输出康复完成或参赛许可",
+      "minimalQuestion": "只补影响即时处理的症状事实",
+      "forbiddenInference": "设备90分即批准疼痛冲刺",
+      "basisType": "PRODUCT",
+      "sourceIds": [
+        "S04"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R12",
+      "domain": "睡眠与生活",
+      "trigger": "睡眠差/出差/压力",
+      "requiredInputs": [
+        "sleepOpportunity",
+        "subjectiveSleep",
+        "travel",
+        "schedule",
+        "source"
+      ],
+      "decision": "考虑训练和生活安排；与个人可比记录一起解释",
+      "insufficient": "单夜或设备睡眠分不直接推算比赛损失",
+      "minimalQuestion": "问是否与实际感受/作息相符",
+      "forbiddenInference": "固定八小时以下自动取消训练",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S08"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R13",
+      "domain": "力量目标",
+      "trigger": "新建或修改力量课",
+      "requiredInputs": [
+        "goal",
+        "experience",
+        "equipment",
+        "approvedTemplate",
+        "restrictions"
+      ],
+      "decision": "分清一般健康、力量、增肌、爆发力、跑步支持；选对应课程",
+      "insufficient": "没有合格模板不填虚构组次/重量/休息",
+      "minimalQuestion": "问经验或器材限制",
+      "forbiddenInference": "增肌十组规则强塞赛前800m运动员",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S01"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R14",
+      "domain": "力量进阶",
+      "trigger": "完成力量后要求加重",
+      "requiredInputs": [
+        "actualSets",
+        "reps",
+        "loadConvention",
+        "rest",
+        "RIR_RPE",
+        "technique",
+        "repeatExposure"
+      ],
+      "decision": "核对同动作同条件表现和执行质量，再选择原计划允许的一个进阶变量",
+      "insufficient": "未知RIR或缺技术资料不伪造；单次完成不证明长期耐受",
+      "minimalQuestion": "补最关键执行字段",
+      "forbiddenInference": "只看总吨位高就判定力量变强",
+      "basisType": "PRODUCT",
+      "sourceIds": [
+        "S01"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R15",
+      "domain": "动作替换",
+      "trigger": "器材/偏好限制",
+      "requiredInputs": [
+        "movementPurpose",
+        "availableEquipment",
+        "skill",
+        "restrictions",
+        "approvedAlternatives"
+      ],
+      "decision": "按动作目的与负担选择可执行替代，并说明不完全等价之处",
+      "insufficient": "找不到合格替代则保留缺项，不按同一肌群随便替换",
+      "minimalQuestion": "问器材或不会做的环节",
+      "forbiddenInference": "深蹲和腿伸展只因同肌群就完全等价",
+      "basisType": "PRODUCT",
+      "sourceIds": [
+        "S01"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R16",
+      "domain": "跑力协调",
+      "trigger": "同日/相邻日跑步力量",
+      "requiredInputs": [
+        "keyOutcome",
+        "calendar",
+        "sessionPurposes",
+        "localExposure",
+        "priorResponse"
+      ],
+      "decision": "比较维持、换序、分开、替代几个已批准选项，展示关键课影响",
+      "insufficient": "不能从群体研究生成固定个人恢复小时数",
+      "minimalQuestion": "问哪个课是当前关键课",
+      "forbiddenInference": "间隔3小时保证无干扰",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S02"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R17",
+      "domain": "热身与短时课",
+      "trigger": "用户选择5/15/30-40分钟",
+      "requiredInputs": [
+        "sessionType",
+        "keyTask",
+        "totalTime",
+        "approvedWarmup"
+      ],
+      "decision": "分别选跑前/力量前热身模板；区分总训练时间与热身时间",
+      "insufficient": "不足以完成所选课准备时换批准的短课，不硬压所有动作",
+      "minimalQuestion": "问可用时长指热身还是整课",
+      "forbiddenInference": "同一热身表机械缩短适用所有项目",
+      "basisType": "PRODUCT",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R18",
+      "domain": "漏练重排",
+      "trigger": "错过训练或比赛日期变化",
+      "requiredInputs": [
+        "missedPurpose",
+        "newCalendar",
+        "keySessions",
+        "approvedAlternatives"
+      ],
+      "decision": "保留目标优先级并重排候选，明确删除/延期内容",
+      "insufficient": "不自动补双倍、挤掉恢复或静默改变比赛目标",
+      "minimalQuestion": "问剩余可用时段",
+      "forbiddenInference": "周三没练周四加倍补",
+      "basisType": "PRODUCT",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R19",
+      "domain": "饮食完整性",
+      "trigger": "饮食记录和营养汇总",
+      "requiredInputs": [
+        "food",
+        "portion",
+        "cookedState",
+        "nutrientSource",
+        "dayCoverage"
+      ],
+      "decision": "按已确认记录计算已知摄入与缺项；照片/名称先匹配候选和份量",
+      "insufficient": "不完整日记不判断全天不足，未知营养不当0",
+      "minimalQuestion": "问其余餐次或份量中最影响判断的一项",
+      "forbiddenInference": "早餐400kcal推断全天缺1600kcal",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R20",
+      "domain": "能量口径",
+      "trigger": "手表和饮食能量对比",
+      "requiredInputs": [
+        "totalVsActiveEnergy",
+        "exerciseIncluded",
+        "intakeCoverage",
+        "weightTrend"
+      ],
+      "decision": "明确总/活动/净消耗口径，只使用不重复的估计路线",
+      "insufficient": "没有口径不把活动消耗再加到含运动的总量",
+      "minimalQuestion": "核对设备字段语义",
+      "forbiddenInference": "总消耗2400再加已含其中的跑步600",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R21",
+      "domain": "营养方案",
+      "trigger": "用户要控重/增肌/表现饮食",
+      "requiredInputs": [
+        "goal",
+        "activityContext",
+        "bodyMass",
+        "allergies",
+        "foodAccess",
+        "healthScope"
+      ],
+      "decision": "用带来源且情境匹配的参考范围提出餐食方向，再由份量数据库落地",
+      "insufficient": "不强制最高范围；不完整数据不生成精准热量赤字",
+      "minimalQuestion": "只补影响份量/过敏/目标的字段",
+      "forbiddenInference": "所有人固定459g碳水",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S03",
+        "S09",
+        "S10"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R22",
+      "domain": "营养冲突与风险",
+      "trigger": "减重目标与表现/健康限制冲突",
+      "requiredInputs": [
+        "goalPriority",
+        "intakeCoverage",
+        "symptoms",
+        "clinicalRestrictions"
+      ],
+      "decision": "先说明目标冲突；保留健康限制；需要临床处理时转专业人员",
+      "insufficient": "不以单一能量可用性数值诊断REDs，不自动增大赤字",
+      "minimalQuestion": "核对记录后再讨论目标选择",
+      "forbiddenInference": "用一日体重下降认定减脂成功",
+      "basisType": "PRODUCT",
+      "sourceIds": [
+        "S04"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R23",
+      "domain": "补剂",
+      "trigger": "用户要求补剂或比赛补给",
+      "requiredInputs": [
+        "event",
+        "need",
+        "medicalContext",
+        "productVerification"
+      ],
+      "decision": "优先常规食物和既有方案；补剂另行核对需求、风险与规则",
+      "insufficient": "没有可靠资料不编剂量，不承诺产品无污染",
+      "minimalQuestion": "问具体产品和用途",
+      "forbiddenInference": "营养不完整先推补剂套餐",
+      "basisType": "METHOD",
+      "sourceIds": [
+        "S03"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R24",
+      "domain": "原因与反证",
+      "trigger": "解释掉速/疲劳/停滞",
+      "requiredInputs": [
+        "hypothesis",
+        "evidenceRefs",
+        "alternativeConditions"
+      ],
+      "decision": "每命题单独标支持/削弱/未知，寻找真正区分解释的观察",
+      "insufficient": "缺失不是反证；关联不等于因果；不凑固定两种解释",
+      "minimalQuestion": "只问可能改变当前解释的信息",
+      "forbiddenInference": "未来可能变好被写成现有反证",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R25",
+      "domain": "长期响应",
+      "trigger": "多次训练后的个人规律",
+      "requiredInputs": [
+        "comparableExposures",
+        "responseTimes",
+        "confounders",
+        "corrections"
+      ],
+      "decision": "保存可核对关联及适用条件，新记录更新支持/削弱",
+      "insufficient": "不从一次异常永久贴标签；不为证明假设诱导高风险试验",
+      "minimalQuestion": "优先利用已有正常训练观察",
+      "forbiddenInference": "一次没睡好就判定此人不耐强度",
+      "basisType": "METHOD",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R26",
+      "domain": "执行适配",
+      "trigger": "反复漏练或不执行建议",
+      "requiredInputs": [
+        "reportedBarrier",
+        "availableTime",
+        "equipment",
+        "preferences"
+      ],
+      "decision": "区分不能做、不会做、不愿做和不适，给具体替代",
+      "insufficient": "原因未知先问，不判断意志薄弱",
+      "minimalQuestion": "询问主要阻碍",
+      "forbiddenInference": "漏练自动加提醒/加量惩罚",
+      "basisType": "PRODUCT",
+      "sourceIds": [
+        "S01"
+      ],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R27",
+      "domain": "知识选择",
+      "trigger": "检索到指南/模型或冲突",
+      "requiredInputs": [
+        "source",
+        "version",
+        "population",
+        "outcome",
+        "scope",
+        "access",
+        "correction"
+      ],
+      "decision": "检索到段落不等于规则有效；范围重叠也不机械合并；冲突保留",
+      "insufficient": "未读原文的数值和未审临床算法不能自动执行",
+      "minimalQuestion": "需要时定向补证据，而不是全库塞入",
+      "forbiddenInference": "来源新就无条件覆盖更适合的人群研究",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R28",
+      "domain": "解释与沟通",
+      "trigger": "生成用户回答",
+      "requiredInputs": [
+        "task",
+        "knownFacts",
+        "decision",
+        "uncertainty",
+        "nextObservation"
+      ],
+      "decision": "先回答当前问题，再给两三个关键事实与下一步；依据可展开",
+      "insufficient": "不能把简短变成无依据，也不能说已保存/已改课表",
+      "minimalQuestion": "无必要不追问",
+      "forbiddenInference": "所有问题输出长篇热身与三天观察",
+      "basisType": "PRODUCT",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R29",
+      "domain": "更正与删除",
+      "trigger": "用户更改/撤销事实",
+      "requiredInputs": [
+        "factRevision",
+        "derivedDependencies",
+        "hypothesisVersion",
+        "authorization"
+      ],
+      "decision": "依赖失效→重算→重审→版本提案；删除传播至缓存/画像",
+      "insufficient": "写入失败不能显示成功，旧记录保留按授权政策",
+      "minimalQuestion": "只核对更正范围",
+      "forbiddenInference": "修改份量后营养页与教练仍用旧值",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    },
+    {
+      "id": "R30",
+      "domain": "范围与放行",
+      "trigger": "准备上线某能力",
+      "requiredInputs": [
+        "implemented",
+        "domainReviewed",
+        "behaviorEvidence",
+        "realWorkflow"
+      ],
+      "decision": "分能力记录证据和失败；规则/测试/效果三种状态分开",
+      "insufficient": "未知不当合格；不拿其他模块高分抵消关键错误",
+      "minimalQuestion": "只补阻断项",
+      "forbiddenInference": "16项结构测试通过等于专业教练",
+      "basisType": "ENGINEERING",
+      "sourceIds": [],
+      "status": "RESEARCH_CANDIDATE",
+      "autoExecute": false,
+      "validationNeeded": [
+        "host integration",
+        "semantic counterexample",
+        "independent domain review where applicable"
+      ]
+    }
+  ]
+}

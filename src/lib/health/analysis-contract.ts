@@ -9,6 +9,21 @@ export type Region = 'quads' | 'hamstrings' | 'glutes' | 'calves' | 'hip_flexors
  'adductors' | 'core' | 'lower_back' | 'chest' | 'back' | 'shoulders' | 'arms' | 'feet';
 export type Side = 'LEFT' | 'RIGHT' | 'BILATERAL' | 'UNSPECIFIED';
 export interface EvidenceRef { id: string; revision: number; }
+export type PriorAnalysisHypothesis = HistoricalAnalysisHypothesis;
+/** Deterministic host result, never an LLM-invented measurement or a prescription. */
+export interface DerivedFact {
+ id:string; metric:string; value:number; unit:string;
+ formula:string; formulaVersion:'FK_DERIVED_1'; text:string; evidenceRefs:EvidenceRef[];
+ scope:{athleteId:string;asOf:string;occurrenceId:string|null;providerScopes:string[]};
+ inputs:{ref:EvidenceRef;field:string;value:number;unit:string}[];
+ /** Planned calendar context is not a measured training-fact revision. */
+ contextSources?:{kind:'ANALYSIS_AS_OF'|'COMPETITION_DATE';value:string;athleteId:string;asOf:string;version:string|null}[];
+}
+export interface AnalysisPacketOptions { question?:string; competitionDate?:string|null; }
+export interface AnalysisFactRequirements {
+ question:string; requiredFactRefs:EvidenceRef[]; requiredDerivedFactIds:string[];
+ availableFields:string[]; genuinelyMissing:string[]; conflicts:string[];
+}
 export interface Context {
  athleteId: string; asOf: string; timeZone: string; planVersion: string | null;
  consentVersion: string; analysisVersion: string;
@@ -61,8 +76,12 @@ export interface ResponseFact extends EvidenceMeta {
 }
 export type AnalysisFact = MetricFact | TrainingFact | ResponseFact;
 export interface EvidenceInput { context: Context; facts: AnalysisFact[]; }
+export interface HistoricalAnalysisHypothesis {
+ id:string;athleteId:string;claim:string;knownAt:string;status:'PENDING'|'SUPPORTED'|'WEAKENED'|'WITHDRAWN';supportingRefs:EvidenceRef[];weakeningRefs:EvidenceRef[]
+}
 export interface EvidenceSnapshot {
  context: Context; snapshotId: string; inputDigest: string; facts: AnalysisFact[];
+ priorHypotheses?: HistoricalAnalysisHypothesis[];
  excluded: { ref: EvidenceRef; reason: string }[];
  gaps: string[]; conflicts: { refs: EvidenceRef[]; reason: string }[];
  /** Existing safety restrictions are supplied by trusted host, not inferred from silence. */
@@ -116,12 +135,16 @@ export interface CoachAnalysisPacket {
  permittedFacts: AnalysisFact[]; assessment: RecoveryAssessment; exposure: MuscleExposureReview;
  allowedCandidateIds: string[]; knowledgeRefs: { id: string; version: string; approvalReceipt: string }[];
  writeAuthority: 'NONE';
+ derivedFacts?:DerivedFact[]; requirements?:AnalysisFactRequirements;
+ safetyConstraints?:EvidenceSnapshot['safetyConstraints'];
+ calendarContext?:{competitionDate:string;source:'HOST_COMPETITION_DATE';version:string|null};
 }
 export interface CoachAnalysisReply {
  answer: string; factualClaims: { text: string; refs: EvidenceRef[] }[];
  selectedCandidateId: string | null; hypotheses: RecoveryAssessment['hypotheses'];
  unknowns: string[]; followup: string | null;
  memoryClaim: 'NOT_SAVED' | 'HOST_RECEIPT_REQUIRED';
+ derivedFactIds?:string[];
 }
 export interface ReplyValidation {
  status: 'ACCEPTED_STRUCTURALLY' | 'REJECTED' | 'NEEDS_SEMANTIC_REVIEW';

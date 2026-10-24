@@ -16,7 +16,7 @@ export function subscribeHealthUpdates(refresh: () => void, options: HealthSubsc
     queued = true
     queueMicrotask(() => { queued = false; if (!disposed) refresh() })
   }
-  const names = [HEALTH_CHANGED, 'storage', 'fk-garmin-synced', 'fk-coros-changed', ATHLETE_SCOPE_CHANGED, 'focus', 'pageshow']
+  const names = [HEALTH_CHANGED, 'fk-training-corrected', 'fk-food-changed', 'storage', 'fk-garmin-synced', 'fk-coros-changed', ATHLETE_SCOPE_CHANGED, 'focus', 'pageshow']
   const off = onAppEvent(notify)
   for (const name of names) target?.addEventListener(name, notify)
   const visible = () => { if (documentTarget?.visibilityState === 'visible') notify() }

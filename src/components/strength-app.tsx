@@ -1,3 +1,4 @@
+import {PlanCourseDateSheet} from './plan-course-date-sheet'
 import { OnlineFeaturesSettings } from "./online-features-settings";
 import { startC03FollowupRuntime } from '@/lib/coach/c03/runtime';
 import { onlineFeatures } from "@/lib/ui/online-features";
@@ -70,7 +71,7 @@ import { TrainingEditorSheet } from "@/components/training-editor-sheet";
 import { SchedulePicker, ScheduledTraining } from "@/components/scheduled-training";
 import { MuscleActionList } from "@/components/muscle-action-list";
 import { loadSchedule, saveScheduledEntry, strengthEntry, runEntry } from "@/lib/ui/day-schedule";
-import { syncScheduleProgress } from "@/lib/ui/schedule-progress";
+import { syncScheduleProgressCoordinated as syncScheduleProgress } from "@/lib/ui/schedule-progress";
 import { scheduleExecutionId, scheduledChoices } from "@/lib/ui/scheduled-execution";
 import type { ScheduleEntry } from "@/lib/ui/day-schedule-rules";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
@@ -169,6 +170,7 @@ export function StrengthApp() {
   const [hubPane, setHubPane] = useState<"run" | "lift">("run");
   const [pickerMuscle, setPickerMuscle] = useState(false);
   const [selectedDate, setSelectedDate] = useState(localDayIso());
+  const [courseDatesOpen,setCourseDatesOpen]=useState(false);
   const [calendar, setCalendar] = useState<ScheduleEntry[]>([]);
   const [timerPicker, setTimerPicker] = useState(false), [executionEntryId, setExecutionEntryId] = useState<string | null>(null);
   const [actionLibrary, setActionLibrary] = useState(false);
@@ -249,10 +251,10 @@ export function StrengthApp() {
   const [editorOpen, setEditorOpen] = useState(false);
   const trainingDecision = useRef<string | null>(null);
   useEffect(() => {
-    const refresh = () => { syncScheduleProgress(); setCalendar(loadSchedule().entries); setHomeRev(n => n + 1); };
+    const refresh = async () => { await syncScheduleProgress(); setCalendar(loadSchedule().entries); setHomeRev(n => n + 1); };
     refresh(); const unsubscribe = onAppEvent(refresh);
-    window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh);
-    return () => { unsubscribe(); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); };
+    window.addEventListener('fk-training-corrected', refresh); window.addEventListener('fk-schedule-changed', refresh); window.addEventListener('storage', refresh);
+    return () => { unsubscribe(); window.removeEventListener('fk-training-corrected', refresh); window.removeEventListener('fk-schedule-changed', refresh); window.removeEventListener('storage', refresh); };
   }, []);
   const openScheduled = (entry: ScheduleEntry) => { setCalendar(loadSchedule().entries); setTimerPicker(false); setExecutionEntryId(entry.id); };
   // Reserve space for the coach header, tabs and live offline/preparation notice.
@@ -685,6 +687,7 @@ export function StrengthApp() {
         {tab === "plan" && hubPane === "lift" && planSrc === "400m-v4" ? <Plan400Cycle today={todayIso} lens="lift" /> : null}
         {tab === "plan" && hubPane === "lift" && !hasImportedPlan && !hasScheduledForPane ? <NoPlanCard onImported={() => setPlanSrcSaved('400m-v4')} /> : null}
         {tab === "plan" && hubPane === "lift" && hasImportedPlan && planSrc !== "400m-v4" ? <PlanSourceCard active={planSrc} onChange={setPlanSrcSaved} onGenerate={() => { setPlanSrcSaved('generated'); setCoachLink('ask'); setCoachFocus(null); setTab('coach'); }} /> : null}
+        {tab === "plan" && hasScheduledForPane ? <button type="button" data-testid="plan-reorder" className="mb-3 min-h-12 w-full rounded-xl border border-line text-sm font-bold text-accent" onClick={()=>setCourseDatesOpen(true)}>移动或交换训练</button> : null}
         {tab === "plan" && hasScheduledForPane ? <TempTrainingList today={todayIso} entries={calendar} modality={hubPane === "run" ? "run" : "strength"} title={hubPane === "run" ? "自建跑步" : "自建力量"} addLabel="查看今天" onAdd={() => setTab("today")} onOpen={openScheduled} empty="还没有训练安排。" /> : null}
         {tab === 'plan' && hasScheduledForPane && !hasImportedPlan ? <button type="button" className="mb-3 min-h-12 w-full rounded-xl border border-line text-sm" onClick={() => setPlanImportOpen(true)}>导入计划或备份</button> : null}
         {tab === "courses" && hubPane === "lift" ? <>
@@ -1192,6 +1195,7 @@ export function StrengthApp() {
         }); } finally {builderSaving.current=false;}
       }} /></Sheet> : null}
       {muscleOpen ? <MuscleExplorerSheet onClose={() => setMuscleOpen(false)} onShow={setMuscleDemo} onAdd={action => { setMuscleOpen(false); setTrainingEditor({ date: selectedDate, seedAction: action }); }} /> : null}
+      {courseDatesOpen ? <PlanCourseDateSheet onClose={()=>setCourseDatesOpen(false)} /> : null}
       {trainingEditor ? <TrainingEditorSheet templates={plan} key={`${trainingEditor.date}:${trainingEditor.initial?.id ?? trainingEditor.template?.id ?? 'new-training'}`} {...trainingEditor} onClose={() => setTrainingEditor(null)} onSave={async entry => { const result = await saveScheduledEntry(entry, trainingEditor.initial); if (result.ok) { setCalendar(loadSchedule().entries); setSelectedDate(entry.date); setHomeRev(n => n + 1); } return result; }} /> : null}
       {timerPicker ? <SchedulePicker date={selectedDate} onClose={() => setTimerPicker(false)} onChoose={openScheduled} onAdd={() => { setTimerPicker(false); setTrainingEditor({ date: selectedDate }); }} /> : null}
       {executionEntryId && calendar.find(e => e.id === executionEntryId) ? <ScheduledTraining key={executionEntryId} entry={calendar.find(e => e.id === executionEntryId)!} plan={plan} onClose={() => setExecutionEntryId(null)} onEdit={() => { const entry = calendar.find(e => e.id === executionEntryId)!; setExecutionEntryId(null); editScheduled(entry); }} onChanged={() => { setCalendar(loadSchedule().entries); setHomeRev(n => n + 1); }} onResumeOther={id => { setExecutionEntryId(null); resumeSession(id); }} /> : null}

@@ -30,8 +30,8 @@ afterEach(() => { setStoreBackend(null); setEventContext({ athleteId: 'local' })
 const rows = (facts: UnifiedFact[]) => mergeResults([parseUnifiedExport(JSON.stringify({ schema: 'fangkun-device-facts-v1', facts }), owner)!]).health
 function edited(row: DeviceHealthRow, patch: Partial<Pick<DeviceHealthRow, 'day' | 'value'>>) {
   const result = editReviewedHealthRow(row, patch)
-  assert.equal(result.ok, true, result.ok ? undefined : result.reason)
   if (!result.ok) throw new Error(result.reason)
+  assert.equal(result.ok, true)
   return result.row
 }
 function save(row: DeviceHealthRow) {

@@ -1,3 +1,4 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 // v83 整改包验收（L1 纯函数 / L2 存储模拟）。编号对应 02_验收与测试 的 A01–A22 / N01–N24。
 // L3（真实浏览器）见 qa/v83-matrix.mjs；L4（真实 Garmin/真机）未做，不在这里声称通过。
 process.env.TZ = 'Asia/Shanghai'
@@ -5,7 +6,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' }
 import { v4DayFact, dayStatus, progressCounts, type V4Day, type V4Plan } from './plan400-view.ts'
 import { v4ExecFrom } from './v4-exec.ts'
 import { phoneRows, garminRows, linkRuns, mergeActivities } from './training-read-model.ts'
@@ -65,9 +66,9 @@ test('A07/A08/N14：分段课同日唯一手表跑步只是候选；两条都列
   linkRuns([...phoneRows(mem(), NOW), ...garminRows(garmin)], mem(), NOW)
   const f = v4DayFact(D, undefined, { runCandidates: 1 }); assert.equal(f.running?.state, 'candidate'); assert.equal(f.actualRun, false); assert.equal(f.overall, null)
 })
-test('A17：V4 原始 JSON hash 不变；W1 从 10/19 开始（+7 天）', () => {
-  const h = createHash('sha256').update(readFileSync(new URL('../../../test-fixtures/private/plan400-v4.json', import.meta.url))).digest('hex')
-  assert.equal(h, '7a59a75ed693c147b763e5285f838b828d0c702e3d59aca5927e0efd21c5e282'); assert.equal(days[0].date, '2026-10-19')
+test('A17：公开合成夹具 hash 固定（不冒充用户原始 V4 校验）；W1 从 10/19 开始（+7 天）', () => {
+  const h = createHash('sha256').update(readFileSync(new URL('../../../test-fixtures/synthetic/plan400-v4.json', import.meta.url))).digest('hex')
+  assert.equal(h, '6de961750547d1f3b6989efd193c833bf343ea284ecc535982b655d5075579fb'); assert.equal(days[0].date, '2026-10-19')
 })
 test('A18/A19：更正留历史；同一份存储读两次结果一致（刷新不重复、不丢）', () => {
   const s = mem(); saveComponent('2026-10-19', 'strength', { status: 'done', rpe: 6 }, s); saveComponent('2026-10-19', 'strength', { rpe: 7 }, s)

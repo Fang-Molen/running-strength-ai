@@ -1,0 +1,46 @@
+{
+  "version": "FK_REAL_RESPONSE_REPLAY_GT_1.0.0",
+  "frozenAt": "2026-10-24",
+  "reason": "Preregistered from the captured actual provider requests and raw replies before executing this replay. Independent artifact checker /root/derived_facts reviewed each event without replay-result access; this is an agent review, not professional scientific certification.",
+  "artifacts": {
+    "provider-receipts-26.json": "b761fc592a6dc758b3e6c2248a5aac8c8f279a347ba12f0e42e76678fe002206",
+    "actual-requests-26.json": "dfcee93f0ff5f03e7d0f1c5daa1fabba9707009eeb43adb385daa49fb527377f",
+    "frozen-preparation-v2.json": "d50b974d764a539f1f9bca46062ab4a5077117b315de61969122fd8f518b1b79"
+  },
+  "denominatorPolicy": "14 distinct critical error events across 8 saved replies. Key = sampleId + metric/error family. Repeated E01B 154-second claims count once. Truncation and volume omission in the same A03B reply count separately. Explicit RMSSD baseline sample count n=5 is one obligation per D04 answer; an additional RHR count omission stays supplemental to avoid double-counting the same baseline-summary gap. Schema rejection, generic unsupported-number flags, capabilities, overall answer grades and C04 input ambiguity are excluded. This is a selected event audit, not prevalence or generalization performance.",
+  "criticalEvents": [
+    {"id":"A03A_900_VOLUME_OMITTED","sampleId":"c6c27757-8520-45a4-ae89-b505ba1dfcd6","kind":"DERIVED_OMISSION","metric":"STRENGTH_EXTERNAL_VOLUME_KG_REPS","expected":320,"unit":"kg·reps","evidence":"Two completed TOTAL_EXTERNAL sets, 20 kg × 8 reps each; raw answer gives sets and loads but no 320 total."},
+    {"id":"A03B_900_VOLUME_OMITTED","sampleId":"5220be82-7315-4ff6-97d9-fe9220e7b5a9","kind":"DERIVED_OMISSION","metric":"STRENGTH_EXTERNAL_VOLUME_KG_REPS","expected":320,"unit":"kg·reps","evidence":"Truncated original raw answer gives 2 sets and 16 reps but no 320 total; still an omission in the delivered bytes."},
+    {"id":"A03A_8192_VOLUME_OMITTED","sampleId":"e5b2d688-b33d-41e7-806d-65f4807560b3","kind":"DERIVED_OMISSION","metric":"STRENGTH_EXTERNAL_VOLUME_KG_REPS","expected":320,"unit":"kg·reps","evidence":"Expanded-cap saved answer repeats two 8×20 sets but no 320 total."},
+    {"id":"A03B_8192_VOLUME_OMITTED","sampleId":"4a1e0d18-17a3-4772-a383-44001f7fe70f","kind":"DERIVED_OMISSION","metric":"STRENGTH_EXTERNAL_VOLUME_KG_REPS","expected":320,"unit":"kg·reps","evidence":"Expanded-cap answer includes totalSets=2,totalReps=16; no 320 total."},
+    {"id":"D04A_RMSSD_PERCENT_OMITTED","sampleId":"44eccf2f-16d2-440e-bdfa-e0d0c50ebbdf","kind":"DERIVED_OMISSION","metric":"RMSSD_CHANGE_PERCENT","expected":-20,"unit":"%","evidence":"Raw answer states 48 vs 60 and -12 ms, but omits (48-60)/60×100=-20%."},
+    {"id":"D04A_RMSSD_LOG_OMITTED","sampleId":"44eccf2f-16d2-440e-bdfa-e0d0c50ebbdf","kind":"DERIVED_OMISSION","metric":"RMSSD_LOG_RATIO","expected":-0.2231435513142097,"unit":"ln-ratio","evidence":"No ln(48/60) summary in raw answer."},
+    {"id":"D04A_BASELINE_COUNT_OMITTED","sampleId":"44eccf2f-16d2-440e-bdfa-e0d0c50ebbdf","kind":"DERIVED_OMISSION","metric":"RMSSD_BASELINE_SAMPLES","expected":5,"unit":"days","evidence":"Raw baseline dates are present; an explicit five-valid-day baseline sample summary is absent."},
+    {"id":"D04B_RMSSD_PERCENT_OMITTED","sampleId":"4474c80e-8184-415e-9304-5e933b94d153","kind":"DERIVED_OMISSION","metric":"RMSSD_CHANGE_PERCENT","expected":-20,"unit":"%","evidence":"Raw baseline/current rows are present; derived percentage is absent even though old B prompt supplied it."},
+    {"id":"D04B_RMSSD_LOG_OMITTED","sampleId":"4474c80e-8184-415e-9304-5e933b94d153","kind":"DERIVED_OMISSION","metric":"RMSSD_LOG_RATIO","expected":-0.2231435513142097,"unit":"ln-ratio","evidence":"Old B prompt supplies ln=-0.223144; saved reply omits log-ratio summary."},
+    {"id":"D04B_BASELINE_COUNT_OMITTED","sampleId":"4474c80e-8184-415e-9304-5e933b94d153","kind":"DERIVED_OMISSION","metric":"RMSSD_BASELINE_SAMPLES","expected":5,"unit":"days","evidence":"Explicit n=5 baseline sample summary absent; do not count baseline values 50 or 60 as missing."},
+    {"id":"D04B_RHR_CHANGE_OMITTED","sampleId":"4474c80e-8184-415e-9304-5e933b94d153","kind":"DERIVED_OMISSION","metric":"RHR_CHANGE_BPM","expected":10,"unit":"bpm","evidence":"Saved B reply gives baseline/current raw rows but no +10 bpm change. A reply already gives +10 and is not an error event."},
+    {"id":"E01B_WRONG_WORK_SECONDS","sampleId":"8d6c8bca-2e64-4d8b-81e6-0608ef0fc48c","kind":"NUMERIC_CONTRADICTION","metric":"RUN_WORK_SECONDS","sourceId":"s3","actual":154,"expected":144,"unit":"s","evidence":"Actual old F1=s3: 30+34+38+42=144 s. Saved B states 154 s in facts, explanation and observation; count one source/metric error, not three."},
+    {"id":"A03B_ORIGINAL_900_TRUNCATION","sampleId":"5220be82-7315-4ff6-97d9-fe9220e7b5a9","kind":"TRANSPORT_TRUNCATION","expected":900,"unit":"tokens","evidence":"Actual providerRequest max_tokens=900; provider finish_reason=length, completion_tokens=900; raw answer ends inside a string and is invalid JSON."},
+    {"id":"D05A_PLAN_TARGET_SUFFICIENCY","sampleId":"2dcf44e0-1d65-4fde-a346-8e7e1368b7f9","kind":"SEMANTIC_UNSUPPORTED_RULE_OUT","evidence":"若后续记录显示全天摄入接近或达到2000 kcal目标，则全天能量不足解释不成立。","reason":"Meeting a planned 2000 kcal target does not establish actual needs/expenditure or rule out energy insufficiency; generic unsupported 2000 or schema flags do not detect this semantic inference."}
+  ],
+  "negativeControls": [
+    {"id":"D01B_SUPPLIED_OLD_ALIAS","sampleId":"2633454b-c451-4f44-b223-3dbd60272f2d","evidence":"MANUAL / S6","reason":"Exact phrase exists in actual old B providerRequest; echo is not alias invention."},
+    {"id":"D04A_RHR_CHANGE_PRESENT","sampleId":"44eccf2f-16d2-440e-bdfa-e0d0c50ebbdf","evidence":"+10 bpm","reason":"A already contains correct RHR absolute change; must not score an omission."},
+    {"id":"F03A_PAIN_HOLD","sampleId":"643b3972-a410-4143-a58e-b668dcb6cccf","reason":"Walking pain/function limitation remain present; readiness does not grant medical clearance."},
+    {"id":"F03B_PAIN_HOLD","sampleId":"8eca3919-3b2d-4a14-8a23-21b79e2f18f8","reason":"B keeps SKIP/OBSERVATION_ONLY and pain restrictions; no medical clearance."},
+    {"id":"E06A_ASOF_BOUNDARY","sampleId":"92242b4b-c96d-4532-9e0a-c6031f60ed8d","reason":"Only known-v1 is available before cutoff; later test/correction is not used as a known performance result."},
+    {"id":"E06B_ASOF_BOUNDARY","sampleId":"62891784-da73-4516-9bc6-bb608060b137","reason":"B explicitly calls later data unavailable at cutoff; future numeric results absent."}
+  ],
+  "inputVersionDefects": [
+    {"caseId":"C04","arm":"A","reason":"Question says seven days before race. Race 2026-10-26 minus training 2026-10-18 is eight days; minus asOf 2026-10-19 is seven. Origin is input-date ambiguity, excluded from model wins/errors."},
+    {"caseId":"C04","arm":"B","reason":"Same seven-versus-eight-day input ambiguity; deterministic host must state both date anchors."}
+  ],
+  "semanticReviewLimits": [
+    "No automated model judge, no professional-capability score, no new provider calls.",
+    "Strict runtime schema rejection is reported separately and cannot validate substantive error detection.",
+    "Numeric catalogue matching does not prove source binding, causal reasoning, training suitability or nutrition adequacy.",
+    "Known D05A semantic unsupported rule-out is intentionally required to appear as missed when no specific deterministic semantic checker exists.",
+    "Positive controls below are synthetic canonical host statements, not corrected or newly generated model answers."
+  ]
+}

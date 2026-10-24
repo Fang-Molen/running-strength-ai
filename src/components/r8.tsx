@@ -9,7 +9,7 @@ import { niceTicks } from "@/components/trend-chart"
 import { Bell, Camera, ChevronRight, FileUp, Flame, Info, Plus, X } from "lucide-react"
 import { DEFAULTS, EQUIPMENT, EXPERIENCE, GOALS, ONBOARD_KEY, ONBOARD_SKIPPED_KEY, PRESET, QUESTIONS, VENUES, WHEN, goalLabel, previewWeek, tierFor, toggleGoal, type Answers } from "@/lib/ui/first-run"
 import { BRANDS, GROUP_HINT, TIERS, TIER_LABEL, WATCHES, gateRecovery, loadBrand, loadTier, loadWatch, saveTier, saveWatch, type Tier, type WatchId } from "@/lib/ui/watch-mode"
-import { loadSchedule, saveSchedule } from "@/lib/ui/day-schedule"
+import { loadSchedule, updateSchedule } from "@/lib/ui/day-schedule"
 import { addDays, weekOf, weekSummary, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
 import { parseQuickLog, type Parsed } from "@/lib/ui/quick-log"
 import { computeStreak } from "@/lib/ui/streak"
@@ -63,13 +63,13 @@ export function Onboarding({ today, onDone, suspended = false }: { today: string
     try { clearOnboardingSyncDraft(sessionStorage, currentAthleteId()) } catch { /* unavailable session storage */ }
     onDone()
   }
-  const finish = (accept: boolean) => {
+  const finish = async (accept: boolean) => {
     setError("")
     try {
       saveWatch(a.source, undefined, brand)
       const s = loadSchedule(); const ids = new Set(s.entries.map((e) => e.id))
       const add = preview.filter((e) => !ids.has(e.id)).map(({ why, ...e }) => ({ ...e, status: accept ? "planned" : "proposed", swapReason: why } as ScheduleEntry))
-      if (!saveSchedule({ ...s, entries: [...s.entries, ...add] }, 'onboarding-r8')) { setError("训练建议未能保存，请重试。"); return }
+      if (!await updateSchedule(()=>({ ...s, entries: [...s.entries, ...add] }), 'onboarding-r8',s)) { setError("训练建议未能保存，请重试。"); return }
       saveAboutMe(me, a.days.length); setAdded(current => [...new Set([...current, ...add.map((e) => e.id)])])
       const answers = JSON.stringify({ ...a, done: true, at: new Date().toISOString() })
       localStorage.setItem(ONBOARD_KEY, answers)
@@ -114,7 +114,7 @@ export function Onboarding({ today, onDone, suspended = false }: { today: string
         <div className="mt-4 grid grid-cols-2 gap-2"><button type="button" className="fk-primary min-h-12" onClick={() => finish(true)}>接受</button><button type="button" className="fk-chip min-h-12 justify-center" onClick={() => finish(false)}>逐个调整</button></div>
         <p className="mt-2 text-xs text-muted">“逐个调整”会放到首页的待确认卡上：接受 / 自己改 / 换一个 / 不要。</p>
       </> : <>
-        {added.length ? <button type="button" data-testid="onboard-undo" className="mb-3 min-h-11 w-full rounded-xl border border-line text-sm" onClick={() => { const s = loadSchedule(); const ids = new Set(added); saveSchedule({ ...s, entries: s.entries.filter((e) => !ids.has(e.id)) }, "onboarding-r8"); setAdded([]) }}>撤销刚加入的 {added.length} 节（回到没有计划）</button> : null}<Bell className="size-10 text-accent" /><h1 className="mt-3 text-2xl font-bold">要不要到点提醒你？</h1>
+        {added.length ? <button type="button" data-testid="onboard-undo" className="mb-3 min-h-11 w-full rounded-xl border border-line text-sm" onClick={async () => { const ids = new Set(added); if(await updateSchedule(s=>({ ...s, entries: s.entries.filter((e) => !ids.has(e.id)) }), "onboarding-r8"))setAdded([]) }}>撤销刚加入的 {added.length} 节（回到没有计划）</button> : null}<Bell className="size-10 text-accent" /><h1 className="mt-3 text-2xl font-bold">要不要到点提醒你？</h1>
         <p className="mt-1 text-sm text-muted">到点提醒你今天的课；晚上还没记录再提醒一次。每天最多 2 条，随时可在设置里关。</p>
         <button type="button" className="fk-primary mt-5 min-h-12 w-full" onClick={askNotify}>打开提醒</button>
         <button type="button" className="fk-link mt-3 w-full text-center text-sm" onClick={onDone}>暂不需要</button>

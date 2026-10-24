@@ -1,5 +1,5 @@
 import { stampCN, fmtDurationPrecise } from "@/lib/ui/activity-format";
-import { loadSchedule, saveSchedule } from "@/lib/ui/day-schedule"
+import { loadSchedule, updateSchedule } from "@/lib/ui/day-schedule"
 import { logActual, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
 import { syncActualToLog } from "@/lib/ui/checklist-log"
 import type { Plan } from "@/lib/strength/model"
@@ -9,9 +9,9 @@ export { unmarkedEntries } from "@/lib/ui/unmarked"
 const SRC: Record<string, string> = { custom: "自定", fangkun: "方坤" }
 export function UnmarkedPlans({ items, plan, onChanged, suggestions = [] }: { items: ScheduleEntry[]; plan: Plan; onChanged: () => void; suggestions?: { entry: ScheduleEntry; runs: ActivityRow[] }[] }) {
   if (!items.length) return null
-  const mark = (e: ScheduleEntry, outcome: "as_planned" | "missed") => {
+  const mark = async (e: ScheduleEntry, outcome: "as_planned" | "missed") => {
     const store = loadSchedule(), next = logActual(store.entries, e.id, { outcome, minutes: null, intensity: null, note: "", reasons: [] })
-    if (!saveSchedule({ ...store, entries: next }, 'unmarked-plans')) return
+    if (!await updateSchedule(()=>({ ...store, entries: next }), 'unmarked-plans', store)) return
     const saved = next.find(x => x.id === e.id); if (saved) syncActualToLog(saved, e.modality === "strength" ? plan.sessions.find(s => s.id === e.refId) : undefined)
     onChanged()
   }

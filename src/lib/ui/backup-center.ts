@@ -5,9 +5,10 @@
  *  - 旧版 fangkun-data.json（r8 SettingsHub exportAll，只含 COLLECTED 8 个键，值为已解析 JSON）
  * 规则：先预检（新增/覆盖/相同/跳过），确认后才写；写入失败逐项回退；凭据类键永不导入/导出。
  */
+import { currentAthleteId } from '../core/events'
 import { COLLECTED } from './app-settings.ts'
 import { LOCAL_BACKUP_KIND, inspectLocalBackup, restoreLocalBackup } from '../core/trial.ts'
-import { PLAN_DOC_KEY, PLAN_DOC_SCHEMA, validatePlanDoc } from '../plan/active-plan.ts'
+import { planDocumentKey, PLAN_DOC_SCHEMA, validatePlanDoc } from '../plan/active-plan.ts'
 
 export type BackupFormat = 'vault' | 'local' | 'legacy-r8' | 'plan'
 export const FORMAT_LABEL: Record<BackupFormat, string> = { plan: '训练计划文件（fangkun-plan-v1，只含计划，不含训练记录）', vault: '全部数据备份（fangkun-backup-日期.json）', local: '训练记录备份（running-strength-backup.json，仅 fr255- 开头的数据）', 'legacy-r8': '旧版「导出全部（JSON）」（fangkun-data.json，8 类数据）' }
@@ -31,7 +32,8 @@ function planOf(raw: string): Plan | { error: string } {
   if (o.schema === PLAN_DOC_SCHEMA) {
     const v = validatePlanDoc(o)
     if (!v.ok) return { error: `${v.reason}未做任何修改。` }
-    return { entries: [{ key: PLAN_DOC_KEY, value: JSON.stringify(v.doc) }], skipped: [], format: 'plan', exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : null, version: PLAN_DOC_SCHEMA }
+    if (v.doc.athleteId && v.doc.athleteId !== currentAthleteId()) return { error: '计划归属与当前档案不一致，未做任何修改。' }
+    return { entries: [{ key: planDocumentKey(), value: JSON.stringify({...v.doc, athleteId:currentAthleteId()}) }], skipped: [], format: 'plan', exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : null, version: PLAN_DOC_SCHEMA }
   }
   if (o.kind === LOCAL_BACKUP_KIND) return { entries: [], skipped: [], format: 'local', exportedAt: typeof o.exportedAt === 'string' ? o.exportedAt : null, version: typeof o.version === 'string' ? o.version : null }
   if (o.format === 'fangkun-vault-backup') {

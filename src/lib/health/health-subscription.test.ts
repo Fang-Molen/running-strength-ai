@@ -4,7 +4,7 @@ import { subscribeHealthUpdates } from './health-subscription'
 import { setEventContext } from '../core/events'
 test('health subscriber hears every provider save, foreground and athlete change, and removes all listeners',()=>{
  const old=Object.getOwnPropertyDescriptor(globalThis,'window'),win=new EventTarget();Object.defineProperty(globalThis,'window',{configurable:true,value:win});let calls=0
- try{const off=subscribeHealthUpdates(()=>calls++);for(const name of ['fk-health-changed','fk-garmin-synced','fk-coros-changed','storage','focus','pageshow'])win.dispatchEvent(new Event(name));assert.equal(calls,6);setEventContext({athleteId:'other-live-test'});assert.equal(calls,7);off();win.dispatchEvent(new Event('fk-health-changed'));setEventContext({athleteId:'local'});assert.equal(calls,7)}finally{old?Object.defineProperty(globalThis,'window',old):Reflect.deleteProperty(globalThis,'window')}
+ try{const off=subscribeHealthUpdates(()=>calls++);for(const name of ['fk-training-corrected','fk-food-changed','fk-health-changed','fk-garmin-synced','fk-coros-changed','storage','focus','pageshow'])win.dispatchEvent(new Event(name));assert.equal(calls,8);setEventContext({athleteId:'other-live-test'});assert.equal(calls,9);off();win.dispatchEvent(new Event('fk-health-changed'));setEventContext({athleteId:'local'});assert.equal(calls,9)}finally{old?Object.defineProperty(globalThis,'window',old):Reflect.deleteProperty(globalThis,'window')}
 })
 test('batched subscriptions reconcile after installation and coalesce a synchronous save burst',async()=>{
  const old=Object.getOwnPropertyDescriptor(globalThis,'window'),win=new EventTarget();Object.defineProperty(globalThis,'window',{configurable:true,value:win});let calls=0

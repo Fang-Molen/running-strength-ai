@@ -1,8 +1,9 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 // v87.2（用户 2026-10-20）：10-19 的力量A 没做，10-20 补练 → 记录在 10-20、10-19 显示“力量补练于 10月20日”、周统计算在 10-20、只算一次。
 process.env.TZ = 'Asia/Shanghai'
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' }
 import { linkRuns, phoneRows, garminRows, detachMakeup, type ActivityRow } from './training-read-model.ts'
 import { setRunDevice, saveComponent } from './plan400-components-store.ts'
 import { v4ExecFrom } from './v4-exec.ts'

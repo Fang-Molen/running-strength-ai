@@ -1,0 +1,86 @@
+{
+  "version": "R4-20261024",
+  "status": "KNOWLEDGE_HANDOFF_NOT_APP_RELEASE",
+  "cards": 28,
+  "sources": 15,
+  "referenceGroups": 9,
+  "runtimeTestsPassed": 14,
+  "files": [
+    {
+      "path": "CODEX-TASK.md",
+      "sha256": "9eba17f70c7c271a876dd7b5546d0adc54a02e95c3632d3a6ba66279d8e24799"
+    },
+    {
+      "path": "README.md",
+      "sha256": "338c7dc1192c443bb8ad821e049d60719ed3eba5c4b890fe3bbf223c0c53889b"
+    },
+    {
+      "path": "archive/FANGKUN-Professional-Review-R3-Unified.zip",
+      "sha256": "d7101e921c0b24c67206c49d994c581007f12c25241c949e24c67b4d36f4a55b"
+    },
+    {
+      "path": "docs/DOMAIN-WORKFLOWS.md",
+      "sha256": "ca988123161e5b98997b1e45c29f1380fc1eee7b48d31886e93afac3bb3c2fb2"
+    },
+    {
+      "path": "docs/INTEGRATION-AND-GATES.md",
+      "sha256": "993febbc68213cfac891fa615a84ee0764eb2a6ab5cb9c0bc79ed2c506d50821"
+    },
+    {
+      "path": "docs/实现合同.md",
+      "sha256": "7cb0f9db6fe248c34e65662884fdefbfbefbd7d48565bab418c09619e7c507dd"
+    },
+    {
+      "path": "docs/课程与饮食模板.md",
+      "sha256": "9460d3a1ee90e419ca788817b68bc3d263c85f520dcaad6b6732e7dfbb99f5cd"
+    },
+    {
+      "path": "docs/验收案例.md",
+      "sha256": "551dc6000fcce4f03105d207bc142d82ff3a86a3619150f77b8482e758dbc6d0"
+    },
+    {
+      "path": "knowledge/professional-rules.json",
+      "sha256": "4111da4b2f07fb8d855c0c0ce55f8a7eafe1f61b8e9dec08dd16e1d339cdcd3a"
+    },
+    {
+      "path": "knowledge/reference-ranges.json",
+      "sha256": "481e941d631db98d019554252efb29f9e3bae16cd8f19b7d5ed2d04abdd66f63"
+    },
+    {
+      "path": "knowledge/retrieval-cards.json",
+      "sha256": "a9384f4f18cddd53553f58a76dad69dc2b08eaa657d5e88b8301fcb600cc862b"
+    },
+    {
+      "path": "knowledge/sources.json",
+      "sha256": "a7b72bb2ea8fafcaaa5180f3ed2b53de6ae61a2d75dd9ae929a5a89d3a4d49cb"
+    },
+    {
+      "path": "knowledge/teaching-cases.json",
+      "sha256": "251cf712c534573f8e3f437da71d1fd3381f4f2500574d9ade23cc5b02e9a3ea"
+    },
+    {
+      "path": "knowledge/专业操作手册.md",
+      "sha256": "7de017a315e31e61ebcf723d4a84e76b8287e6f3ceeee1d6ec575080d824915a"
+    },
+    {
+      "path": "runtime/example.mjs",
+      "sha256": "af05b1b37119618fb9e90f55b5cbd5d67aac411602af2b886fdd7061ed448fbf"
+    },
+    {
+      "path": "runtime/kb.mjs",
+      "sha256": "26fcdbc3464e2422adf83078ae0a45555e8ae010abbc28a0d7d3d5375970f5a1"
+    },
+    {
+      "path": "runtime/kb.test.mjs",
+      "sha256": "789bc7c6d63daf45836e29fb26232f0bdab629c5e7fbda4fe96a879a3d45e415"
+    },
+    {
+      "path": "runtime/red-test.txt",
+      "sha256": "8669c47a7dfa93afab13c9cd348f50b6f082f2cbdad1804785fc037922e8dc71"
+    },
+    {
+      "path": "runtime/test-results.txt",
+      "sha256": "5e224ec625b04818a753b2027cc57cbf94400dab07965bc2e8c8136dc002f902"
+    }
+  ]
+}

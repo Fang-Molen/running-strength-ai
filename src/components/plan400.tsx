@@ -11,7 +11,7 @@ import { loadSchedule, saveScheduledEntry } from "@/lib/ui/day-schedule";
 import { v4MovedOut } from "@/lib/ui/v4-effective-move";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import { scheduleExecutionId } from "@/lib/ui/scheduled-execution";
-import { discardGuided, guidedLive, latestOccurrence } from "@/lib/ui/guided-discard";
+import { discardGuidedCoordinated as discardGuided, guidedLive, latestOccurrence } from "@/lib/ui/guided-discard";
 import { KIND_LABEL, STATUS_LABEL, currentWeek, dateConflicts, dayKind, dayOf, entryLink, dayStatus, hasStrength, joinLines, primaryCta, componentCta, comboShort, progressCounts, shiftSummary, loadDateConfirm, saveDateConfirm, clearDateConfirm, migrateUserConfirmedDates, shiftedText, DATE_CONFIRM_KEY, strengthEntryId, weekDays, type DayStatus, type V4Day, type V4Log, type V4Plan } from "@/lib/ui/plan400-view";
 import { comboView, deviceRunFacts, deviceRunsOn, recoveryTiming, sharedSleepFor, type ComboView, type ComponentState, type DeviceRun } from "@/lib/ui/plan400-components";
 import { loadTrainingActivities } from "@/lib/ui/training-read-model";
@@ -76,7 +76,7 @@ function GuidedLiveActions({ date, onClose }: { date: string; onClose: () => voi
   if (!live) return msg ? <p role="status" className="keep text-xs text-muted" data-testid="guided-discarded">{msg}</p> : null;
   return <div className="flex gap-2 rounded-xl border border-accent/60 p-2" data-testid="guided-live-actions">
     <button type="button" className="min-h-11 flex-1 rounded-xl bg-accent text-sm font-bold text-accent-fg" onClick={() => { onClose(); window.dispatchEvent(new CustomEvent("fk-open-scheduled", { detail: strengthEntryId(date) })); }}>继续引导</button>
-    <button type="button" className="min-h-11 flex-1 rounded-xl border border-risk text-sm font-bold text-risk" onClick={() => { if (!window.confirm("放弃本次逐组引导？已做的组不会保存，日志、复盘和五维都不会出现这次记录。")) return; if (discardGuided(sid)) { setMsg("已放弃本次，力量回到未记录。"); setRev((n) => n + 1); } else setMsg("放弃未能核实保存，请重试。"); }}>放弃本次</button>
+    <button type="button" className="min-h-11 flex-1 rounded-xl border border-risk text-sm font-bold text-risk" onClick={async () => { if (!window.confirm("放弃本次逐组引导？已做的组不会保存，日志、复盘和五维都不会出现这次记录。")) return; if (await discardGuided(sid)) { setMsg("已放弃本次，力量回到未记录。"); setRev((n) => n + 1); } else setMsg("放弃未能核实保存，请重试。"); }}>放弃本次</button>
   </div>;
 }
 function strengthLive(date: string): boolean {

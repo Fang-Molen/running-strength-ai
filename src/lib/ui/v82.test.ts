@@ -1,3 +1,4 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -15,7 +16,7 @@ import { dispatchEvent } from '@/lib/core/events';
 import { emptySets, recordSet, executionOf } from '@/lib/core/execution';
 import { occurrenceVoided } from '@/lib/core/training-correction';
 import { interruptFromRunner } from '@/components/training-runner';
-import plan from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' };
+import plan from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' };
 
 const dose = (n: string) => ({ unit: /侧桥|平板/.test(n) ? 'sec' as const : 'reps' as const, perSide: /分腿|抗旋|侧桥|台阶/.test(n) });
 function memory() { const map = new Map<string, string>(); return { keys: () => [...map.keys()], getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => { map.set(k, v); }, removeItem: (k: string) => { map.delete(k); } }; }

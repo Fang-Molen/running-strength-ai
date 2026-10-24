@@ -4,6 +4,7 @@ import { loadPlan } from "@/lib/strength/model"
 import { loadProfile } from "@/lib/strength/profile"
 import { bodyTrend } from "@/lib/nutrition/body"
 import { computePlan, todayEatTarget } from "@/lib/nutrition/calc"
+import { effectiveNutritionProfile } from "@/lib/coach/loop/effective-host"
 import { formatDuration, loadDay } from "@/lib/nutrition/day"
 import { todayEaten, todayEntries } from "@/lib/nutrition/log"
 import { loadEvents, onAppEvent } from "./events.ts"
@@ -144,7 +145,7 @@ export function deriveAthleteState(): AthleteState {
     state.training.weeklySessions = profile.days || null
     state.training.recentRunningVolume = day.runs.reduce((sum, run) => sum + run.km, 0) || null
     state.training.confidence = day.runs.length ? 0.4 : 0.2
-    const nutrition = computePlan(profile)
+    const nutrition = computePlan(effectiveNutritionProfile(profile))
     const eaten = todayEaten()
     const protein = todayEntries().reduce((sum, item) => sum + (item.protein ?? 0), 0)
     if (nutrition) {

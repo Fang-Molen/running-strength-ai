@@ -1,6 +1,7 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import planJson from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
+import planJson from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' }
 import { dayStatus, type V4Plan } from './plan400-view'
 import { currentAthleteId, setEventContext, EVENTS_KEY } from '../core/events'
 import { writeEnvelope, setStoreBackend } from '../core/storage'

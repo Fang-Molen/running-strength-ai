@@ -40,8 +40,9 @@ function fixture(t: test.TestContext) {
 }
 function beginRun(planId = 'audit-run') {
   assert.equal(saveRunningPlan({ planId, planSlotId: planId, components: [{ componentId: 'run', modality: 'RUNNING', purpose: 'UNSPECIFIED', structure: { kind: 'CONTINUOUS', plannedDistanceMeters: 400, plannedDurationSeconds: null } }] }).ok, true)
-  const started = startTrackSession(planId); assert.equal(started.ok, true)
+  const started = startTrackSession(planId)
   if (!started.ok) throw Error(started.reason)
+  assert.equal(started.ok, true)
   return started.trainingOccurrenceId
 }
 const session: Session = { id: 'audit-strength', name: '合成力量课', moves: [{ id: 'squat', catalogId: 'back-squat', customName: '', sets: 1, mode: 'reps', amount: 8, restSec: 60, weightKg: 40 }] }
@@ -171,14 +172,16 @@ test('stale running write callbacks cannot mutate another athlete before any res
   const f = fixture(t), id = beginRun(), draft = emptyDraft('200x4x2')
   draft.repRestSeconds = 60; draft.roundRestSeconds = 180
   assert.equal(confirmTrackPlan('200x4x2', draft).ok, true)
-  const intervals = startTrackSession('track-200-4-2'); assert.equal(intervals.ok, true)
+  const intervals = startTrackSession('track-200-4-2')
   if (!intervals.ok) throw Error(intervals.reason)
+  assert.equal(intervals.ok, true)
   const intervalView = projectRunningExecution(intervals.trainingOccurrenceId, loadEvents())
   assert.ok(intervalView.repetitions[0]); assert.ok(intervalView.recoveries[0])
   const ended = beginRun('audit-feedback')
   assert.equal(commitTrackContinuous(ended, 'run', '90.1', '400').ok, true)
   assert.equal(finishTrackSession(ended, 'COMPLETED', null, null).ok, true)
-  const followupAt = new Date(Date.parse(getTrainingOccurrence(ended)!.startedAt) + 24 * 3600000)
+  const endedStart = getTrainingOccurrence(ended)?.startedAt; assert.ok(endedStart)
+  const followupAt = new Date(Date.parse(endedStart) + 24 * 3600000)
   const before = [...f.data]
   setEventContext({ athleteId: 'synthetic-training-b' })
   assert.equal(commitTrackSlot(intervalView.repetitions[0], 'complete', '33.5', '200').ok, false)

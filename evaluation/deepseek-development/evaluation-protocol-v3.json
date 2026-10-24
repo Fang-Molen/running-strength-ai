@@ -1,0 +1,25 @@
+{
+  "version": "FK_FACT_PACKET_3_20261024",
+  "supersedes": "V89.10.16-PUBLIC-DEVELOPMENT-1 input framing only; frozen questions/rubric are not overwritten",
+  "originalCatalogSHA256": "09e58ed82559f288e6229e2539bb4a75a96858263c1876da9d92732fb698d393",
+  "originalRubricSHA256": "fb74cb7e1c8ce72bef7c182db2b518cf33cb1c01bdc28763c291d5e0c1b8a9fb",
+  "corrections": [
+    {
+      "caseId": "D01",
+      "issue": "Separate alias namespaces in oldprocessedview exposed MANUAL / S6 while neutral facts used S1. Actualoldprompt supplied S6; cannot classifymodelas inventing it.",
+      "correction": "Use one deterministic sourceScope/provider/account/device/protocol alias map for bothneutralandprocessedviews; preserve rawsource locally and source references in outputs."
+    },
+    {
+      "caseId": "C04",
+      "issue": "Originalprompt calls course7daysbeforecompetition althoughcourse2026-10-18 tocompetition2026-10-26 is8calendar days;analysisasOf2026-10-19 is7daysbeforecompetition.",
+      "trainingDate": "2026-10-18",
+      "analysisAsOf": "2026-10-19T12:00:00Z",
+      "competitionDate": "2026-10-26",
+      "daysFromTraining": 8,
+      "daysFromAnalysis": 7,
+      "correction": "Version3 question adds explicit date reference wording to BOTH arms and code generates bothDerivedFacts. Originalprompt/expected remainbyte-identical; oldproviderrequests/answers archived withSHA."
+    }
+  ],
+  "paidExecution": "DISABLED_BY_TASK; no newcalls or newcampaign bootstrap",
+  "reproducibility": "Actual26requests/answersandfrozenv2preparation archived in replay-fixtures/20261023; protocolVersion=legacy-v2 loads capture instead of recomputing with new code."
+}

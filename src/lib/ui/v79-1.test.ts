@@ -1,10 +1,11 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 // v79.1：V4 整天状态也看分项 key；时间按北京时间显示（不受设备时区影响）
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { dayStatus, partsDayStatus, progressCounts, type V4Plan } from './plan400-view.ts'
 import { stampCN } from './activity-format.ts'
-const plan = JSON.parse(readFileSync(new URL('../../../test-fixtures/private/plan400-v4.json', import.meta.url), 'utf8')) as V4Plan
+const plan = JSON.parse(readFileSync(new URL('../../../test-fixtures/synthetic/plan400-v4.json', import.meta.url), 'utf8')) as V4Plan
 const d = plan.days.find(x => x.date === '2026-10-19')!   // 速度耐力＋力量A：跑步 + 力量
 const rest = plan.days.find(x => /休息/.test(x.title))!
 test('分项推整天状态：只有旧 log 时不变；分项都完成 → done；一项跳过 → 部分完成（进行中，v84）；都跳过 → skipped', () => {

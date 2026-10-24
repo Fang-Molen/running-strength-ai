@@ -1,7 +1,8 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 // v88（R2 B12/B13）：组合课跑步、力量各自状态；改期后原日期不再催评分
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import V4 from '../../../test-fixtures/private/plan400-v4.json' with { type: 'json' }
+import V4 from '../../../test-fixtures/synthetic/plan400-v4.json' with { type: 'json' }
 import { componentCta, comboShort, dayStatus, type V4Day } from './plan400-view.ts'
 import { pendingFeedback } from './pending-feedback.ts'
 const D = (V4 as { days: V4Day[] }).days.find(d => d.date === '2026-10-19')!, T = '2026-10-19'

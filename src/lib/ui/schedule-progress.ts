@@ -1,4 +1,5 @@
-import { loadEvents } from '@/lib/core/events';
+import {withScheduleLock} from './schedule-writer'
+import { currentAthleteId, loadEvents } from '@/lib/core/events';
 import { listTrainingOccurrences, getTrainingPlanSnapshot } from '@/lib/core/occurrence';
 import { executionOf } from '@/lib/core/execution';
 import { projectRunningExecution } from '@/lib/core/running-execution';
@@ -7,7 +8,7 @@ import { loadSchedule, saveSchedule } from './day-schedule';
 import { scheduleExecutionId } from './scheduled-execution';
 import type { Actual, ScheduleEntry } from './day-schedule-rules';
 import { runningActualTotals } from './running-actual-totals';
-import { occurrenceVoided } from '@/lib/core/training-correction';
+import { effectiveStrengthFields, occurrenceVoided } from '@/lib/core/training-correction';
 
 /** Project only verified, closed occurrences. Planned minutes never become actual minutes. */
 export function syncScheduleProgress(): boolean {
@@ -35,7 +36,7 @@ export function syncScheduleProgress(): boolean {
           return (e.id == null || e.id === m.moveId) && e.sets.trim() !== '' && e.reps.trim() !== '' && e.weight.trim() !== '' && Number(e.sets) === m.sets && Number(e.reps) === m.amount && Number(e.weight) === m.weightKg && (e.unit === 'sec' ? 'seconds' : 'reps') === m.mode;
         }) : start?.payload.selectedAction === 'ORIGINAL_PLAN';
         exact = exact && samePrescription;
-        exact = exact && fact?.extraSetCount === 0 && state.sets.length > 0 && state.sets.every(s => s.completed && !s.skipped && s.effective !== 'UNKNOWN' && s.actualAmount === s.plannedAmount && s.actualWeight === s.plannedWeight);
+        exact = exact && fact?.extraSetCount === 0 && state.sets.length > 0 && state.sets.every(s => {const corrected=effectiveStrengthFields({...s,trainingOccurrenceId:o.trainingOccurrenceId});return s.completed && !s.skipped && s.effective !== 'UNKNOWN' && (s.mode==='seconds'?s.actualAmount:corrected.reps.value) === s.plannedAmount && corrected.weight.value === s.plannedWeight});
       } else {
         const view = projectRunningExecution(o.trainingOccurrenceId, events), slots = [...view.repetitions, ...view.continuous];
         complete = complete && view.availability === 'AVAILABLE' && slots.length > 0 && slots.every(s => s.status === 'COMPLETED');
@@ -50,4 +51,10 @@ export function syncScheduleProgress(): boolean {
     changed = true; return { ...entry, actual, status: complete ? 'done' as const : 'planned' as const };
   });
   return !changed || saveSchedule({ ...store, entries }, 'schedule-progress');
+}
+
+/** Production entrypoint; synchronous projection is retained for isolated replay. */
+export async function syncScheduleProgressCoordinated():Promise<boolean>{
+ const owner=currentAthleteId()
+ return (await withScheduleLock(()=>currentAthleteId()===owner?syncScheduleProgress():false)).value
 }

@@ -1,3 +1,4 @@
+import '../../../test-fixtures/synthetic/install-plan.ts'
 // v77：手机上记的力量课（各版本存储形态）都要进日志；日期按这节课的日期（用户时区），不是保存时间。
 process.env.TZ = 'Asia/Shanghai'
 import test from 'node:test'

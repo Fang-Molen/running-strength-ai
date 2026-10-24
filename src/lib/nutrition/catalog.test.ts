@@ -67,8 +67,9 @@ test("brand-specific workout export is gone and device copy remains", () => {
   const source = files.filter(path => !citationData.has(path)).map(path => readFileSync(path, "utf8")).join("\n")
   const citations = files.filter(path => citationData.has(path)).map(path => readFileSync(path, "utf8")).join("\n")
   assert.match(citations, /Garmin Vivosmart 4/)
-  assert.doesNotMatch(citations, /export\s+(?:async\s+)?function\s+(?:exportGarmin|writeGarmin|createGarmin)/i)
-  assert.doesNotMatch(source, /export\s+(?:async\s+)?function\s+(?:exportGarmin|writeGarmin|createGarmin)/i) // v74 explicitly includes read-only device imports; do not forbid their type names.
+  assert.doesNotMatch(citations, /export\s+(?:async\s+)?function\s+(?:exportGarmin|writeGarmin(?!DailyProgress\b)|createGarmin)/i)
+  // DailyProgress writes a local import receipt, not a device workout export.
+  assert.doesNotMatch(source, /export\s+(?:async\s+)?function\s+(?:exportGarmin|writeGarmin(?!DailyProgress\b)|createGarmin)/i) // v74 explicitly includes read-only device imports; do not forbid their type names.
   assert.equal(source.includes("尚未记录设备总消耗"), true)
   assert.equal(source.includes("手表总消耗"), true)
 })

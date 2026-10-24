@@ -1,3 +1,4 @@
+import {ATHLETE_SCOPE_CHANGED,currentAthleteId} from '@/lib/core/events'
 import type React from "react"
 import { useEffect, useState } from "react"
 import { FileUp, Undo2 } from "lucide-react"
@@ -9,21 +10,23 @@ const notify = () => { window.dispatchEvent(new Event(PLAN_CHANGED_EVT)); window
 /** 计划变化时重新渲染（导入、撤销、其他标签页）。 */
 export function usePlanRevision(): number {
   const [rev, setRev] = useState(0)
-  useEffect(() => { const f = () => setRev(v => v + 1); window.addEventListener(PLAN_CHANGED_EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(PLAN_CHANGED_EVT, f); window.removeEventListener("storage", f) } }, [])
+  useEffect(() => { const f = () => setRev(v => v + 1); window.addEventListener(ATHLETE_SCOPE_CHANGED, f); window.addEventListener(PLAN_CHANGED_EVT, f); window.addEventListener("storage", f); return () => { window.removeEventListener(ATHLETE_SCOPE_CHANGED, f); window.removeEventListener(PLAN_CHANGED_EVT, f); window.removeEventListener("storage", f) } }, [])
   return rev
 }
 
 /** v89.6：通用「导入计划/备份文件」：选文件 → 预览 → 确认写入 → 可撤销。任何用户都能用；应用不内置任何个人计划。 */
 export function PlanImportPanel({ onImported }: { onImported?: () => void }) {
+  const [owner,setOwner]=useState(currentAthleteId)
+  useEffect(()=>{const reset=()=>{setOwner(currentAthleteId());setRaw(null);setPv(null);setUndo(null);setMsg('当前档案已切换，请重新选择导入文件。')};window.addEventListener(ATHLETE_SCOPE_CHANGED,reset);return()=>window.removeEventListener(ATHLETE_SCOPE_CHANGED,reset)},[])
   const [raw, setRaw] = useState<string | null>(null), [pv, setPv] = useState<ImportPreview | null>(null)
   const [undo, setUndo] = useState<ImportUndo | null>(null), [msg, setMsg] = useState("")
   const pick = async (f: File) => {
     setMsg(""); setUndo(null)
     if (f.size > 20 * 1024 * 1024) { setMsg("文件过大（上限 20MB），未做任何修改。"); return }
-    const text = await f.text(); setRaw(text); setPv(previewImport(text, localStorage, loadProfile()))
+    const actor=currentAthleteId(); const text = await f.text(); if(actor!==currentAthleteId())return; setOwner(actor); setRaw(text); setPv(previewImport(text, localStorage, loadProfile()))
   }
   const confirm = () => {
-    if (!raw) return
+    if (!raw || owner!==currentAthleteId()) return
     const r = confirmImport(raw, localStorage, loadProfile(), saveProfile)
     setPv(null); setRaw(null)
     if (!r.ok) { setMsg(r.reason); return }

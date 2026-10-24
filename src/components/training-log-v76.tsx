@@ -94,7 +94,7 @@ export function TrainingLogPage({ today, plan, onAsk, onNavigate }: { today: str
   const [openId, setOpenId] = useState<string | null>(null)
   const [focusDay, setFocusDay] = useState<string | null>(null)
   const [entry, setEntry] = useState<Record<string, boolean>>({})
-  useEffect(() => { const up = () => setRev(n => n + 1), off = onAppEvent(up); const names = ["fk-training-activities-changed", "fk-run-links", "fk-plan400-components", "storage", "fk-garmin-synced", "fk-schedule-changed", "fk-plan400-changed", "focus", "pageshow"]; for (const n of names) window.addEventListener(n, up); return () => { off(); for (const n of names) window.removeEventListener(n, up) } }, [])
+  useEffect(() => { const up = () => setRev(n => n + 1), off = onAppEvent(up); const names = ["fk-training-corrected", "fk-training-activities-changed", "fk-run-links", "fk-plan400-components", "storage", "fk-garmin-synced", "fk-schedule-changed", "fk-plan400-changed", "focus", "pageshow"]; for (const n of names) window.addEventListener(n, up); return () => { off(); for (const n of names) window.removeEventListener(n, up) } }, [])
   const setFilter = (next: Partial<typeof f>) => { const v = { ...f, ...next }; setF(v); setFocusDay(null); try { localStorage.setItem(FILTER_KEY, JSON.stringify(v)) } catch { /* session only */ } }
   const rows = useMemo(() => { try { return loadTrainingActivities() } catch { return [] } }, [rev])
   const s = useMemo(() => summarize(rows, f.range, f.kind, today), [rows, f, today])
