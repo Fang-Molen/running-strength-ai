@@ -11,6 +11,7 @@ import "./recovery-trend-detail.css"
 import "./muscle-recovery-detail.css"
 import { MuscleStimulusChartV90 } from "./muscle-stimulus-chart-v90"
 import { PersonalResponsePanel } from './personal-response-panel'
+import { readRecoveryTrainingHistory } from '@/lib/health/recovery-history'
 
 type API = { setView: (v: string) => void; selectKey: (k: string | null) => void; setOverlays: (v: { keys: string[]; color: string }[]) => void; destroy: () => void }
 /** 4 级图例（效果图同款层级，但措辞按证据：不是疲劳测量）。 */
@@ -110,22 +111,31 @@ function MuscleStatus({ value }: { value: RecoveryProjection }) {
 }
 
 function Loads({ value, modality }: { value: RecoveryProjection; modality: "STRENGTH" | "RUN" }) {
-  const rows = value.sources.filter(s => s.id.endsWith(`|${modality}`)).sort((a, b) => (b.occurredAt ?? "").localeCompare(a.occurredAt ?? ""))
+  const [hours, setHours] = useState(168)
+  const [history, setHistory] = useState<ReturnType<typeof readRecoveryTrainingHistory> | null>(null)
+  useEffect(() => {
+    const refresh = () => { try { setHistory(readRecoveryTrainingHistory(value.day, new Date().toISOString(), hours)) } catch { setHistory(null) } }
+    refresh(); return subscribeGlobalCoach(refresh)
+  }, [value.day, value.revision, hours])
+  const rows = history?.rows.filter(s => s.modality === modality) ?? []
   const regions = value.review.regions.filter(r => (modality === "RUN" ? r.runEventIds : r.strengthEventIds).length)
   const includedRuns = new Set(regions.flatMap(r => r.runEventIds))
-  const all = value.review.gaps.filter(g => modality === "RUN" ? /跑步/.test(g) : /力量|动作|组次|组记录/.test(g))
+  const all = (history?.projection.review.gaps ?? value.review.gaps).filter(g => modality === "RUN" ? /跑步/.test(g) : /力量|动作|组次|组记录/.test(g))
   // v89.2：未关联的手表跑步 / 只有摘要的手表力量 = 一句短说明直接显示；其余放进“未纳入的记录”
   const short = all.filter(g => /^\d+ 条手表/.test(g)), gaps = all.filter(g => !short.includes(g))
   return <section className="space-y-2" aria-label={modality === "RUN" ? "跑步影响" : "力量负荷"}>
-    <b>{modality === "RUN" ? "近 72 小时跑步" : "近 72 小时力量（按实际完成组）"}</b>
+    <b>{modality === "RUN" ? "跑步记录与影响" : "力量记录与负荷（按实际完成组）"}</b>
+    <label className="block text-sm">记录范围<select aria-label="训练记录范围" value={hours} onChange={e => setHours(Number(e.target.value))} className="ml-2 rounded border p-2">{[[72, '近 3 天'], [168, '近 7 天'], [336, '近 14 天']].map(([h, label]) => <option key={h} value={h}>{label}</option>)}</select></label>
+    <p className="keep text-xs text-muted" data-testid="muscle-history-coverage">所选范围读取到 {rows.length} 条{modality === 'RUN' ? '跑步' : '力量'}记录，其中 {rows.filter(r => r.status === 'HISTORICAL').length} 条早于 72 小时。肌肉状态仍只标记近 72 小时参与；更早记录可在这里查看，不代表仍在疲劳。</p>
+    {!history || history.projection.unreadable ? <p role="status">部分训练来源读取失败，当前条数不代表完整记录；原记录保留。</p> : null}
     {rows.length ? rows.map(s => modality === "RUN" ? <details key={s.id} className="fk-m89-card fk-muscle-run-record" data-testid="m89-run-source">
       <summary>
-        <span className="fk-muscle-run-heading"><b>{s.label}</b><span className="fk-muscle-run-status" data-included={includedRuns.has(s.id)}>{includedRuns.has(s.id) ? "已计入负荷" : "未计入负荷"}</span></span>
+        <span className="fk-muscle-run-heading"><b>{s.label}</b><span className="fk-muscle-run-status" data-included={includedRuns.has(s.id)}>{s.status === 'HISTORICAL' ? '历史记录 · 超过72小时' : includedRuns.has(s.id) ? "近期训练参与" : "已读取 · 肌群依据不足"}</span></span>
         <span className="fk-muscle-run-facts">{conciseRunDetail(s.detail)}</span>
         <span className="fk-muscle-run-footer"><time dateTime={s.occurredAt ?? undefined}>{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</time><span className="fk-muscle-run-more">说明</span></span>
       </summary>
       <div className="fk-muscle-run-detail"><p className="keep">{s.detail}</p></div>
-    </details> : <div key={s.id} className="fk-m89-card"><p className="text-sm font-bold">{s.label}{s.actualSets != null ? ` · 实际 ${s.actualSets} 组` : ""}</p><p className="text-sm">{s.detail}</p><p className="keep text-[11px] text-muted">{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</p></div>)
+    </details> : <div key={s.id} className="fk-m89-card" data-testid="m89-strength-source"><p className="text-sm font-bold">{s.label}{s.actualSets != null ? ` · 实际 ${s.actualSets} 组` : ""}</p><p className="text-xs text-muted">{s.status === 'HISTORICAL' ? '历史记录 · 超过72小时' : s.status === 'RECENT_EXPOSURE' ? '近期训练参与' : '已读取 · 肌群依据不足'}</p><p className="text-sm">{s.detail}</p><p className="keep text-[11px] text-muted">{s.occurredAt ? new Date(s.occurredAt).toLocaleString("zh-CN", { hour12: false }) : "时间未知"}</p></div>)
       : <p className="text-sm text-muted">暂无{modality === "RUN" ? "可判断肌群的已确认跑步" : "已确认的逐组力量记录"}。</p>}
     {regions.length ? <p className="text-sm">涉及：{regions.map(r => REGION_LABEL[r.region]).join("、")}</p> : null}
     {short.map(g => <p key={g} className="keep text-xs text-muted" data-testid="m89-watch-note">{g}</p>)}
