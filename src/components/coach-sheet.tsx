@@ -733,6 +733,7 @@ export function CoachSheet({
         ))}
         {chatLoad && <CoachChatLoadPanel key={chatLoad.id} question={chatLoad.question} draftId={chatLoad.id} selectedOccurrenceId={chatLoad.occurrenceId} onSaved={() => setRecordRevision(n => n + 1)} />}
         {chatTraining&&<CoachChatTrainingPanel key={chatTraining.id} chat={chatTraining} selectedOccurrenceId={selectedOccurrenceId} onSaved={occurrenceId=>{setRecordRevision(n=>n+1);setChatTraining(chat=>chat?{...chat,savedOccurrenceId:occurrenceId}:chat);setMemory(m=>m?.dialogue?.lastTraining?.id===chatTraining.id?{...m,dialogue:{...m.dialogue,lastTraining:{...m.dialogue.lastTraining,savedOccurrenceId:occurrenceId}}}:m)}}/>}
+        {sending && memory?.messages[memory.messages.length - 1]?.role === "user" ? <div className="flex" role="status" aria-label="方坤正在回答"><p className="fk-bubble-coach fk-typing" aria-hidden="true"><span /><span /><span /></p></div> : null}
         <div ref={bottom} />
         </div>
       </div>

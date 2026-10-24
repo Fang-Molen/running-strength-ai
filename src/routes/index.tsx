@@ -11,6 +11,10 @@ function Home() {
       <div className="flex flex-col items-center gap-4 text-center">
         <span className="fk-boot-mark" aria-hidden="true">坤</span>
         <p className="text-sm text-muted">正在读取本地训练记录…</p>
+        <div className="mt-2 flex w-64 max-w-full flex-col gap-2" aria-hidden="true">
+          <div className="fk-skeleton h-3" />
+          <div className="fk-skeleton h-3 w-4/5 self-center" />
+        </div>
       </div>
     </main>
   }><StrengthApp /></ClientOnly>;
