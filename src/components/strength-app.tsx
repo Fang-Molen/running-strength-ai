@@ -604,9 +604,9 @@ export function StrengthApp() {
   return (
     <div className={"app-wallpaper product-ui fk-identity bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-dvh")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-UI-R1-20261021" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
       <header className={"ui03-header fk-page-header px-4 pt-1 pb-1" + (tab === "coach" ? " fk-coach-head" : "")}>
-        <div className="ui03-header-inner mx-auto flex max-w-3xl items-center justify-between gap-3">
+        <div className="ui03-header-inner fk-page mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
-            {tab === "today" ? <div className="fk-brand-lockup"><h1>FANGKUN</h1><span>方坤</span></div> : <>
+            {tab === "today" ? <><div className="fk-brand-lockup fk-mobile-only"><h1>FANGKUN</h1><span>方坤</span></div><h1 className="ui03-title fk-desk-only">今天</h1></> : <>
             <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
             {tab === "coach" || !headerHint ? null : <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>}</>}
           </div>
@@ -616,15 +616,15 @@ export function StrengthApp() {
           <button type="button" onClick={() => { menuScrollTop.current = 0; setSettingsPaneRaw("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>
         </div>
       </header>
-      {offline ? <p className="mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已缓存页面和本机记录可继续使用；方坤本地问答仍可用。</p> : null}
-      {!offline && offlineShellState !== "ready" ? <p role="status" className="mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">{offlineShellState === "preparing" ? "离线功能准备中…" : "离线功能暂不可用"}</p> : null}
-      {planSaveFailed ? <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-4 pb-2 text-sm">
+      {offline ? <p className="fk-page mx-auto max-w-3xl px-4 pb-2 text-sm text-muted">当前没有网络。已缓存页面和本机记录可继续使用；方坤本地问答仍可用。</p> : null}
+      {!offline && offlineShellState !== "ready" ? <p role="status" className="fk-page mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">{offlineShellState === "preparing" ? "离线功能准备中…" : "离线功能暂不可用"}</p> : null}
+      {planSaveFailed ? <div className="fk-page mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-4 pb-2 text-sm">
         <p>{planConflict || PLAN_SAVE_FAIL}</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (navigator.locks?.request) void navigator.locks.request(PLAN_KEY, () => { const result = savePlanCompared(localStorage, planRaw.current, plan); if(result.ok){planRaw.current=result.raw;setPlanSaveFailed(false);setPlanConflict("");}else setPlanConflict(result.reason); }); }}>再存一次</button>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { setSettingsPaneRaw("backup"); setSettingsOpen(true); }}>下载备份</button>
       </div> : null}
 
-      {inTraining ? <div className="fk-training-hub mx-auto max-w-3xl px-4">
+      {inTraining ? <div className="fk-training-hub fk-page mx-auto max-w-3xl px-4">
         <nav className="fk-training-tabs" aria-label="训练视图">
           {([['plan', '计划'], ['log', '记录'], ['courses', '课程']] as const).map(([id, label]) => <button key={id} type="button" aria-current={tab === id ? "page" : undefined} onClick={() => setTab(id)}>{label}</button>)}
         </nav>
@@ -635,9 +635,10 @@ export function StrengthApp() {
           {tab === "plan" ? <button type="button" className="fk-primary flex items-center justify-center gap-1 px-4" onClick={() => setTrainingEditor({ date: selectedDate, initialType: hubPane === 'run' ? 'run' : 'strength' })}><Plus className="size-4" />添加训练</button> : null}
         </div> : null}
       </div> : null}
-      <main className={"ui03-main mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "today" || tab === "plan" || tab === "courses" ? "" : " hidden")}>
+      <main className={"ui03-main fk-page mx-auto max-w-3xl px-3 pt-2 pb-nav" + (tab === "plan" || tab === "courses" ? " fk-main-train" : "") + (tab === "today" || tab === "plan" || tab === "courses" ? "" : " hidden")}>
         {tab === "today" ? (
-          <div className="flex flex-col">
+          <div className="fk-today-grid">
+          <div className="fk-today-main flex flex-col">
             {/* R4: hero intro removed to keep 今日 short; status lives in the strip below. */}
 
             <div className="fk-today-date"><span className="fk-date-day">{todayIso.slice(8, 10)}</span><div className="fk-date-context"><b>{Number(todayIso.slice(5, 7))}月 · 周{"日一二三四五六"[new Date(todayIso + "T12:00:00").getDay()]}</b></div></div>{planSrc === "400m-v4" ? <Plan400TodayCard today={todayIso} onReview={() => setTab("log")} /> : null}<HomeHeader today={todayIso} revision={homeRev} trainingStarted={hasTrainingContent} onRecovery={() => { setBodyPane("recovery"); setTab("body"); }} onOverride={(o) => setDayOverride(o)} layout={homeLayout} onEdit={() => setEditHome(true)} onQuick={quickAction} />
@@ -651,6 +652,25 @@ export function StrengthApp() {
               <button type="button" className="flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left text-sm" onClick={openTimer}><span className="font-bold">计时与逐组记录</span><span aria-hidden="true" className="text-muted">›</span></button>
             </section> : null}
             <div style={{ order: 100 }} className="h-20" aria-hidden="true" />
+          </div>
+          {/* Desktop-only rail: shortcuts into existing flows; hidden below 1024px. */}
+          <aside className="fk-today-rail" aria-label="快捷操作">
+            <section className="home-card fk-rail-card">
+              <h2 className="fk-rail-title">快捷操作</h2>
+              <div className="fk-rail-actions">
+                <button type="button" onClick={() => window.dispatchEvent(new Event("fk-open-quicklog"))}><Plus className="size-5" aria-hidden="true" /><span>记一笔<small>快速记录今天的训练</small></span></button>
+                <button type="button" onClick={() => setTrainingEditor({ date: selectedDate, initialType: "strength" })}><Dumbbell className="size-5" aria-hidden="true" /><span>添加训练<small>安排到所选日期</small></span></button>
+                <button type="button" onClick={() => { setTab("diet"); setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }}><Utensils className="size-5" aria-hidden="true" /><span>记录饮食<small>餐次与营养</small></span></button>
+                <button type="button" onClick={() => { setBodyPane("recovery"); setTab("body"); }}><Scale className="size-5" aria-hidden="true" /><span>查看恢复<small>睡眠、心率与疲劳</small></span></button>
+                <button type="button" onClick={() => setPlanImportOpen(true)}><ClipboardList className="size-5" aria-hidden="true" /><span>导入计划<small>课表或备份文件</small></span></button>
+              </div>
+            </section>
+            <section className="home-card fk-rail-card fk-rail-coach">
+              <h2 className="fk-rail-title">问方坤</h2>
+              <p>说说你的目标，或选一节训练一起看。方坤会先核对事实，再解释与建议。</p>
+              <button type="button" className="fk-primary" onClick={() => { prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }}><MessageCircle className="size-4" aria-hidden="true" />开始对话</button>
+            </section>
+          </aside>
           </div>
         ) : null}
         {workspaceMounted ? <section hidden={!workspaceOpen||tab!=="today"} aria-label="训练工作区" className="mb-4 space-y-3 rounded-card border border-line bg-surface p-4">
@@ -916,8 +936,8 @@ export function StrengthApp() {
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready && !!todayCoord, todayParts: todayCoord?.parts, todayUnplanned: todayCoord?.unplanned, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
-      <div className={tab === "diet" ? "" : "hidden"}><div className="ui03-main mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
-      <div className={tab === "body" ? "" : "hidden"}><div className="ui03-main mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} onCoach={() => setTab("coach")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
+      <div className={tab === "diet" ? "" : "hidden"}><div className="ui03-main fk-page fk-desk-diet mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
+      <div className={tab === "body" ? "" : "hidden"}><div className="ui03-main fk-page fk-desk-body mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} onCoach={() => setTab("coach")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
       </div>
       <StandaloneWelcome suspended={settingsOpen || firstRun} />
       {settingsOpen ? (
@@ -1035,14 +1055,15 @@ export function StrengthApp() {
       ) : null}
       <Plan400DayHost today={todayIso} />
       <RunImportPrompt today={todayIso} />
-      {true ? <QuickLog hideFab openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} /> : null}
+      <QuickLog hideFab openWith={quickOpen} today={todayIso} onSaved={() => setHomeRev((v) => v + 1)} onFile={() => { setBodyPane("device"); setTab("body"); }} />
       {editHome ? <HomeEditor layout={homeLayout} onChange={setHomeLayout} onClose={() => setEditHome(false)} /> : null}
       {healthLink ? <HealthLinkSheet text={healthLink} onClose={() => { setHealthLink(null); setHomeRev((v) => v + 1); }} /> : null}
       {planImportOpen ? <AppSheet title="导入训练计划" label="导入训练计划" footer={null} onClose={() => setPlanImportOpen(false)}><PlanImportPanel onImported={() => { setPlanImportOpen(false); setPlanSrcSaved('400m-v4'); setTab('plan'); }} /></AppSheet> : null}
       {firstRun ? <Onboarding suspended={settingsOpen} today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <ChromeMetrics />
-      <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " hidden" : "")} aria-label="主导航">
+      <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " fk-dock-coach" : "")} aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
+          <div className="fk-side-brand fk-desk-only" aria-hidden="true"><span className="fk-side-mark">坤</span><span><b>FANGKUN</b><small>方坤 · 训练教练</small></span></div>
           {(
             [
               ["today", "今天", House],
@@ -1064,6 +1085,10 @@ export function StrengthApp() {
               <span className="ui03-tab-label">{label}</span>
             </button>
           ))}
+          <button type="button" className="ui03-tab fk-side-settings fk-desk-only text-muted" onClick={() => { menuScrollTop.current = 0; setSettingsPaneRaw("menu"); setSettingsOpen(true); }} aria-label="个人与数据">
+            <span className="ui03-tab-icon grid h-8 min-w-12 place-items-center"><Settings className="size-5" /></span>
+            <span className="ui03-tab-label">设置</span>
+          </button>
         </div>
       </nav>
 
