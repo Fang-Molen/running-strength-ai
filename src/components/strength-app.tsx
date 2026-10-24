@@ -1358,7 +1358,8 @@ function ChromeMetrics() {
     const ro = nav ? new ResizeObserver(navH) : null; if (nav && ro) ro.observe(nav);
     const mo = new MutationObserver(() => { sheet(); navH(); }); mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
     navH(); sheet(); kb();
-    window.visualViewport?.addEventListener("resize", kb); document.addEventListener("focusin", kb); document.addEventListener("focusout", () => setTimeout(kb, 50)); window.addEventListener("resize", navH);
+    window.visualViewport?.addEventListener("resize", kb); document.addEventListener("focusin", kb); const settle = () => { [50, 200, 400, 800, 1500].forEach(ms => setTimeout(() => { kb(); const v = window.visualViewport; const a = document.activeElement as HTMLElement | null; const typing = !!a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable); if (!typing && (!v || v.height >= window.innerHeight * 0.75) && (window.scrollY !== 0 || (v?.offsetTop ?? 0) !== 0)) window.scrollTo(0, 0); }, ms)); };
+    document.addEventListener("focusout", settle); window.addEventListener("resize", () => { navH(); settle(); }); window.addEventListener("orientationchange", settle); document.addEventListener("visibilitychange", settle); window.addEventListener("pageshow", settle);
     return () => { ro?.disconnect(); mo.disconnect(); window.visualViewport?.removeEventListener("resize", kb); document.removeEventListener("focusin", kb); window.removeEventListener("resize", navH); };
   }, []);
   return null;

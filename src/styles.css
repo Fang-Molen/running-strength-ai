@@ -518,7 +518,8 @@ html, body { background: #0b0b0d; }
 .app-wallpaper.product-ui .fk-dash-card .fk-dash-title svg, .app-wallpaper.product-ui .fk-dash-card li > svg:first-child { color: var(--fk-text-2); }
 .app-wallpaper.product-ui .fk-dash-card svg.text-accent { color: var(--fk-text-2); }
 /* R6 方坤对话页：紧凑顶栏 + 单行状态/快捷问题，让对话区占满屏幕；高度跟随 visualViewport（键盘弹出时输入框不被遮挡） */
-.fk-coach-shell { position: fixed; inset-inline: 0; top: var(--fk-vvtop, 0px); height: var(--fk-vvh, 100dvh); }
+.fk-coach-shell { position: fixed; inset-inline: 0; top: 0; height: 100dvh; }
+.fk-kb .fk-coach-shell { top: var(--fk-vvtop, 0px); height: var(--fk-vvh, 100dvh); }
 @supports not (height: 100dvh) { .fk-coach-shell { height: var(--fk-vvh, 100vh); } }
 .product-ui .ui03-header.fk-coach-head { padding-bottom: 0; }
 .product-ui .ui03-header.fk-coach-head .ui03-header-inner { min-height: 40px; }
