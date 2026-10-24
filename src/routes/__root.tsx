@@ -4,6 +4,7 @@ import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import "../styles.css";
 import "../fangkun-identity.css";
 import "../fangkun-desktop.css";
+import "../fangkun-motion.css";
 
 const APP_NAME = "方坤 测试版";
 

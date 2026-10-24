@@ -1,0 +1,135 @@
+/* Fangkun motion, 2026-10-25.
+ * Presentation only. Transform/opacity animations, 150–350ms, shared easing
+ * tokens. Everything is gated on `prefers-reduced-motion: no-preference`, so
+ * a reduced-motion setting gets the previous, static UI.
+ * Animations use `animation-fill-mode: backwards`, so no transform remains
+ * after they finish (fixed-position descendants keep the viewport as their
+ * containing block, and existing transforms such as centred dialogs apply).
+ * Import last, after fangkun-desktop.css.
+ */
+
+:root {
+  --fk-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --fk-ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --fk-ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --fk-dur-fast: 150ms;
+  --fk-dur: 240ms;
+  --fk-dur-slow: 350ms;
+  --fk-stagger: 40ms;
+}
+
+@keyframes fk-fade-up { from { opacity: 0; transform: translateY(10px); } }
+@keyframes fk-fade { from { opacity: 0; } }
+@keyframes fk-sheet-up { from { transform: translateY(100%); } }
+@keyframes fk-dialog-in { from { opacity: 0; transform: translateY(calc(-50% + 12px)) scale(.97); } }
+@keyframes fk-drawer-in { from { transform: translateX(100%); } }
+@keyframes fk-page-in { from { opacity: 0; transform: translateX(14px); } }
+@keyframes fk-grow-x { from { transform: scaleX(0); } }
+@keyframes fk-indicator-x { from { transform: scaleX(0); opacity: 0; } }
+@keyframes fk-indicator-y { from { transform: scaleY(0); opacity: 0; } }
+@keyframes fk-pop { 40% { transform: scale(1.18); } }
+@keyframes fk-bubble-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+@keyframes fk-typing { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+@keyframes fk-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+
+/* Typing indicator dots (static when motion is reduced). */
+.fk-typing { display: inline-flex; align-items: center; gap: .3rem; min-height: 2.5rem; }
+.fk-typing > span { width: .45rem; height: .45rem; border-radius: 999px; background: var(--color-muted); opacity: .6; }
+
+/* Skeleton shimmer for loading placeholders. */
+.fk-skeleton {
+  border-radius: .75rem;
+  background: linear-gradient(90deg, var(--color-surface-2) 0%, color-mix(in srgb, var(--color-surface-2) 55%, var(--color-surface)) 50%, var(--color-surface-2) 100%);
+  background-size: 200% 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- Theme switch ---------- */
+  .app-wallpaper.product-ui { transition: background-color var(--fk-dur-slow) var(--fk-ease-in-out), color var(--fk-dur-slow) var(--fk-ease-in-out); }
+
+  /* ---------- Page transitions ----------
+     Tab panels are toggled with display, which restarts these on every switch. */
+  .app-wallpaper.product-ui :is(.ui03-main, .fk-training-hub) { animation: fk-page-in var(--fk-dur) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui .ui03-header .ui03-title { animation: fk-fade var(--fk-dur) var(--fk-ease-out) backwards; }
+
+  /* Staggered card entrance (top-level cards only, not cards nested in cards). */
+  .app-wallpaper.product-ui :is(.home-card, .fk-dash-card, .fk-h89-card, .fk-panel, .fk-course-card, .fk-rail-card, .fk-h89-disclosure, .fangkun-hub, .fangkun-next):not(:is(.home-card, .fk-dash-card, .fk-h89-card, .fk-panel) *) {
+    animation: fk-fade-up var(--fk-dur-slow) var(--fk-ease-out) backwards;
+  }
+  .app-wallpaper.product-ui :is(.fk-today-main, .fk-today-rail, .space-y-3:not([data-testid="coach-messages"]), .fk-main-train) > :nth-child(2) { animation-delay: calc(var(--fk-stagger) * 1); }
+  .app-wallpaper.product-ui :is(.fk-today-main, .fk-today-rail, .space-y-3:not([data-testid="coach-messages"]), .fk-main-train) > :nth-child(3) { animation-delay: calc(var(--fk-stagger) * 2); }
+  .app-wallpaper.product-ui :is(.fk-today-main, .fk-today-rail, .space-y-3:not([data-testid="coach-messages"]), .fk-main-train) > :nth-child(4) { animation-delay: calc(var(--fk-stagger) * 3); }
+  .app-wallpaper.product-ui :is(.fk-today-main, .fk-today-rail, .space-y-3:not([data-testid="coach-messages"]), .fk-main-train) > :nth-child(5) { animation-delay: calc(var(--fk-stagger) * 4); }
+  .app-wallpaper.product-ui :is(.fk-today-main, .fk-today-rail, .space-y-3:not([data-testid="coach-messages"]), .fk-main-train) > :nth-child(n + 6) { animation-delay: calc(var(--fk-stagger) * 5); }
+  .app-wallpaper.product-ui .fk-today-rail { animation: fk-fade-up var(--fk-dur-slow) var(--fk-ease-out) 80ms backwards; }
+
+  /* List rows and settings rows. */
+  .app-wallpaper.product-ui :is(.fk-course-row, .fk-check-row, .fk-date-rail) { animation: fk-fade var(--fk-dur) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui .fk-today-date { animation: fk-fade-up var(--fk-dur-slow) var(--fk-ease-out) backwards; }
+
+  /* ---------- Navigation ---------- */
+  .app-wallpaper.product-ui .ui03-tab-active::after { animation: fk-indicator-x var(--fk-dur) var(--fk-ease-spring) backwards; }
+  .app-wallpaper.product-ui .ui03-tab-active .ui03-tab-icon svg { animation: fk-pop var(--fk-dur-slow) var(--fk-ease-out); }
+  .app-wallpaper.product-ui .ui03-tab .ui03-tab-icon svg { transition: transform var(--fk-dur-fast) var(--fk-ease-out); }
+  .app-wallpaper.product-ui .ui03-tab:active .ui03-tab-icon svg { transform: scale(.88); }
+  .app-wallpaper.product-ui .fk-training-tabs button[aria-current="page"]::after { animation: fk-indicator-x var(--fk-dur) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui :is(.product-segments, .fk-h89-tabs, .fk-h89-period, .fk-h89-seg) button { transition: background-color var(--fk-dur) var(--fk-ease-out), color var(--fk-dur) var(--fk-ease-out), box-shadow var(--fk-dur) var(--fk-ease-out); }
+
+  /* ---------- Press and hover feedback ---------- */
+  .app-wallpaper.product-ui button:not(:disabled),
+  .app-wallpaper.product-ui a.bg-accent,
+  .app-wallpaper.product-ui summary {
+    transition: transform var(--fk-dur-fast) var(--fk-ease-out), background-color var(--fk-dur-fast) var(--fk-ease-out), border-color var(--fk-dur-fast) var(--fk-ease-out), color var(--fk-dur-fast) var(--fk-ease-out), opacity var(--fk-dur-fast) var(--fk-ease-out);
+  }
+  .app-wallpaper.product-ui button:not(:disabled):active { transform: scale(.97); }
+  .app-wallpaper.product-ui :is(.fk-primary, .fk-orange-btn, .fk-chip, .fk-tick, .fk-set):not(:disabled):active { transform: scale(.95); }
+  .fk-tick[aria-pressed="true"], .fk-set[aria-pressed="true"] { animation: fk-pop var(--fk-dur-slow) var(--fk-ease-out); }
+
+  /* Disclosure chevrons rotate smoothly. */
+  .app-wallpaper.product-ui details > summary svg { transition: transform var(--fk-dur) var(--fk-ease-out); }
+  .app-wallpaper.product-ui details[open] > :not(summary) { animation: fk-fade-up var(--fk-dur) var(--fk-ease-out) backwards; }
+
+  /* ---------- Overlays ---------- */
+  .fixed.inset-0:has(> .fk-sheet) { animation: fk-fade var(--fk-dur) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui .fk-sheet { animation: fk-sheet-up var(--fk-dur-slow) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui [data-testid="settings-overlay"] { animation: fk-page-in var(--fk-dur) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui .fixed.inset-0.bg-bg[role="dialog"]:not([data-testid="settings-overlay"]) { animation: fk-fade-up var(--fk-dur) var(--fk-ease-out) backwards; }
+
+  /* ---------- Data: bars, rings, numbers ---------- */
+  .app-wallpaper.product-ui :is(.fk-bar, [role="progressbar"]) > * { transform-origin: left center; animation: fk-grow-x 600ms var(--fk-ease-out) 120ms backwards; }
+  .app-wallpaper.product-ui svg circle[stroke-dasharray] { transition: stroke-dashoffset 600ms var(--fk-ease-out), stroke-dasharray 600ms var(--fk-ease-out); }
+  .app-wallpaper.product-ui :is(.fk-date-day, .fk-h89-reading strong, .fk-metric-value) { animation: fk-fade-up var(--fk-dur-slow) var(--fk-ease-out) backwards; }
+
+  /* ---------- Chat ---------- */
+  .app-wallpaper.product-ui :is(.fk-bubble-coach, .fk-bubble-user) { animation: fk-bubble-in var(--fk-dur) var(--fk-ease-out) backwards; }
+  .app-wallpaper.product-ui .fk-bubble-user { transform-origin: right bottom; }
+  .fk-typing > span { animation: fk-typing 1.1s var(--fk-ease-in-out) infinite; }
+  .fk-typing > span:nth-child(2) { animation-delay: .15s; }
+  .fk-typing > span:nth-child(3) { animation-delay: .3s; }
+
+  /* ---------- Loading ---------- */
+  .fk-skeleton { animation: fk-shimmer 1.4s linear infinite; }
+}
+
+/* Desktop: dialogs scale in centred, settings slides from the right.
+   Hover lift is limited to cards that never contain an overlay, because a
+   transform would re-anchor fixed-position sheets rendered inside them. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .app-wallpaper.product-ui .fk-sheet { animation-name: fk-dialog-in; animation-duration: var(--fk-dur); }
+  .app-wallpaper.product-ui [data-testid="settings-overlay"] { animation-name: fk-drawer-in; animation-duration: var(--fk-dur-slow); }
+  .app-wallpaper.product-ui .ui03-dock .ui03-tab-active::after { animation-name: fk-indicator-y; }
+}
+
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .app-wallpaper.product-ui :is(button.fk-h89-card, .fk-rail-card) {
+    transition: transform var(--fk-dur) var(--fk-ease-out), border-color var(--fk-dur) var(--fk-ease-out), box-shadow var(--fk-dur) var(--fk-ease-out);
+  }
+  .app-wallpaper.product-ui :is(button.fk-h89-card, .fk-rail-card):hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--fk-identity-action) 45%, var(--fk-identity-line));
+    box-shadow: 0 10px 28px rgb(0 0 0 / .12);
+  }
+  .app-wallpaper.product-ui .fk-rail-actions button:hover svg,
+  .app-wallpaper.product-ui .ui03-dock .ui03-tab:hover .ui03-tab-icon svg { transform: translateX(2px); }
+  .app-wallpaper.product-ui .fk-rail-actions button svg { transition: transform var(--fk-dur-fast) var(--fk-ease-out); }
+}
