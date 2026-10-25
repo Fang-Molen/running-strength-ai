@@ -11,7 +11,7 @@ import { localDay } from '@/lib/health/observation'
 import { loadProfile } from '@/lib/strength/profile'
 import { createPersonalStore } from '@/lib/coach/personal/store'
 import {
-  applyChange, decide, emptySuggestionDocument, evaluateOutcome, generateSuggestions, mergeSuggestions,
+  applyChange, decide, emptySuggestionDocument, targetBasis, evaluateOutcome, generateSuggestions, mergeSuggestions,
   noteFor, recheckTarget, reviewNotes, sanitizeEdit, visibleSuggestions,
   type CoachSuggestion, type Decision, type GenerationInput, type SuggestionDocument, type ProposedChange,
 } from './suggestions'
@@ -66,7 +66,7 @@ function ownedEntries(): ScheduleEntry[] {
 }
 
 /** Everything the rules need, read fresh. Unknown stays null. */
-export function readGenerationInput(now = new Date()): GenerationInput {
+export function readGenerationInput(now = new Date()): GenerationInput & { profileVersion: string } {
   const athleteId = currentAthleteId(), today = localDay(now), entries = ownedEntries()
   let safetyState: string | null = null
   try { safetyState = readAnalysis(today, now.toISOString()).assessment.safetyState } catch { safetyState = null }
@@ -83,8 +83,9 @@ export function readGenerationInput(now = new Date()): GenerationInput {
   const startedIds = new Set(entries.filter(e => r4CourseStarted(e)).map(e => e.id))
   let profileVersion = ''
   try { profileVersion = readEffectiveProfile().version } catch { profileVersion = '' }
+  const generationProfileVersion = profileVersion
   const basisVersion = digest([entries.map(e => [e.id, e.date, e.minutes, e.intensity, e.status, e.actual?.outcome ?? null]), safetyState, recovery, events, availableMinutes, profileVersion])
-  return { athleteId, today, now: now.toISOString(), entries, safetyState, recovery, events, availableMinutes, startedIds, basisVersion }
+  return { athleteId, today, now: now.toISOString(), entries, safetyState, recovery, events, availableMinutes, startedIds, basisVersion, profileVersion: generationProfileVersion }
 }
 
 /** Recompute suggestions and the feedback loop. Writes only suggestion/notes state, never the plan. */
@@ -92,8 +93,9 @@ export async function refreshSuggestions(now = new Date()): Promise<SuggestionDo
   return withLock(() => {
     const input = readGenerationInput(now), before = readSuggestionDocument(input.athleteId)
     let doc = mergeSuggestions(before, generateSuggestions(input), input.now)
-    doc = { ...doc, suggestions: doc.suggestions.map(s => evaluateOutcome(s, input.entries, input.safetyState, input.basisVersion, input.now)) }
-    doc = { ...doc, notes: reviewNotes(doc.notes, doc.suggestions, input.basisVersion, input.now) }
+    const targetId = (s: CoachSuggestion) => s.receipt?.after[0]?.id ?? s.target.entryId
+    doc = { ...doc, suggestions: doc.suggestions.map(s => evaluateOutcome(s, input.entries, input.safetyState, targetBasis(input, targetId(s)), input.now)) }
+    doc = { ...doc, notes: reviewNotes(doc.notes, doc.suggestions, n => targetBasis(input, n.entryId ?? ''), input.now) }
     const fresh = visibleSuggestions(doc, input.now).filter(s => !before.suggestions.some(b => b.id === s.id))
     const comparable = (d: SuggestionDocument) => JSON.stringify([d.suggestions, d.notes])
     if (comparable(doc) !== comparable(before) && writeDocument(doc, before.revision) && fresh.length) notifyNewSuggestions(fresh)
@@ -159,8 +161,10 @@ export async function decideSuggestion(id: string, decision: Decision): Promise<
       if (!saved) return { ok: false, message: '日历在确认时发生变化或写入失败，请刷新核对；计划未改动' }
       receipt = { before: [checked], after: [after], at: now }
     }
-    const next = { ...decide(s, decision, now), change, receipt }
-    const note = noteFor(next, now, change)
+    // The accepted change becomes the new reference; only later corrections trigger review.
+    const acceptedBasis = targetBasis(readGenerationInput(), checked.id)
+    const next = { ...decide(s, decision, now), change, receipt, acceptedBasis }
+    const note = { ...noteFor(next, now, change), basisVersion: acceptedBasis }
     const latest = readSuggestionDocument(owner)
     writeDocument({ ...latest, suggestions: latest.suggestions.map(x => x.id === id ? next : x), notes: [...latest.notes.filter(n => n.id !== note.id), note] }, latest.revision)
     return { ok: true, message: '已按你的确认修改计划，并保存方坤备注；可以撤销。' }
@@ -188,7 +192,8 @@ export async function undoSuggestion(id: string): Promise<ExecutionResult> {
     const next = { ...s, status: 'UNDONE' as const, history: [...s.history, { at: now, action: 'UNDONE' as const }] }
     const latest = readSuggestionDocument(owner)
     const suggestions = latest.suggestions.map(x => x.id === id ? next : x)
-    writeDocument({ ...latest, suggestions, notes: reviewNotes(latest.notes, suggestions, readGenerationInput().basisVersion, now) }, latest.revision)
+    const input = readGenerationInput()
+    writeDocument({ ...latest, suggestions, notes: reviewNotes(latest.notes, suggestions, n => targetBasis(input, n.entryId ?? ''), now) }, latest.revision)
     return { ok: true, message: '已撤销，恢复原安排；建议和撤销记录都保留。' }
   })
 }

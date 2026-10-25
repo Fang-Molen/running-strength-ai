@@ -65,7 +65,9 @@ export function composeUnifiedSupplement(input: {
       for (const item of next[1].split('、')) questions.push(`请补充「${item}」——它会改变知识参考或课程的选择。`)
       continue
     }
-    lines.push(line)
+    // The chat view folds everything after a line starting with 依据： into the
+    // record-basis drawer; keep this section visible by labelling sources differently.
+    lines.push(line.replace(/^依据：/, '参考来源：'))
   }
 
   const population = input.r4?.conditions?.population

@@ -24,6 +24,8 @@ export type ChatMessage = {
   factDetails?: string;
   /** Host-generated R4 reference answer; never a knowledge approval receipt. */
   r4Basis?: {question:string;day:string;athleteId:string;version:string};
+  /** Personal goals, R4 reference and follow-up questions shown as their own visible block. */
+  supplement?: string;
   /** v87：本回答用过的经批准知识卡（版本+内容哈希），用于知识变化后复核。 */
   knowledgeUses?: import('@/lib/coach/knowledge/complete').CompleteKnowledgeUse[];
 };

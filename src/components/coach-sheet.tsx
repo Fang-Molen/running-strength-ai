@@ -438,7 +438,8 @@ export function CoachSheet({
       let shown = chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
       if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
-      if (!redFlag && unified.localSection) shown = `${shown}\n\n${unified.localSection}`;
+      // Shown as its own visible block under the answer; DeepSeek receives the same content as facts.
+      let supplement = !redFlag ? [unified.localSection, unified.followUps].filter(Boolean).join("\n\n") : "";
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
@@ -448,14 +449,13 @@ export function CoachSheet({
         const r = await askOnlineCoach({ question: value, facts: unified.appendToFacts(buildFacts(today, linkedAct, linkedLaps, {
           goalTarget: memory.dialogue?.goalTarget ?? null, question: value, asOf: factsAsOf, selectedOccurrenceId: effectiveSelected,
         })), local: '', history: memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-6).map(m => ({ role: m.role, text: m.text.slice(0, 400) })) });
-        if ("text" in r) { shown = r.text; label = "联网分析"; } else { label = `本地分析 · 联网失败（${r.error}）`; }
+        if ("text" in r) { shown = r.text; label = "联网分析"; supplement = ""; } else { label = `本地分析 · 联网失败（${r.error}）`; }
         setNotice(linkNotice);
       } else if (cloudRequested && !capable.independent) label = '本地分析 · 联网授权未核定';
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
-      if (!redFlag && unified.followUps) shown += `\n\n${unified.followUps}`;
       const messageId = `${Date.now()}-local`;
       if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
-      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(r4?{r4Basis:{question:value,day:r4.day,athleteId,version:r4.basisVersion}}:{}),...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
+      setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(r4?{r4Basis:{question:value,day:r4.day,athleteId,version:r4.basisVersion}}:{}),...(supplement?{supplement}:{}),...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
       setOnlineRequest(null);
       setTurnId(null);
       setFace(brief.pain ? "guard" : "focus");
@@ -562,9 +562,9 @@ export function CoachSheet({
         </div>
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
+        {section === 'review' && <CoachSuggestionsPanel key={`suggestions-${athleteScope}`} />}
         {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-review-tools"><summary className="min-h-11 cursor-pointer font-bold">更多复盘与协调工具（按需展开）</summary><div className="mt-2 space-y-3">
         {coordinationPanel ?? null}
-        {section === 'review' && <CoachSuggestionsPanel key={`suggestions-${athleteScope}`} />}
         {section === 'review' && <PersonalCoachPanel key={`personal-${athleteScope}`} />}
         {section === 'review' && <TrainingModelPanel key={athleteScope} revision={recordRevision} />}
         {section === 'review' && <CoachPlanChangePanel revision={recordRevision} />}
@@ -771,6 +771,7 @@ export function CoachSheet({
               {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
               {message.r4Basis&&message.id.endsWith("-r4-refresh")?<p data-testid="r4-coach-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'&&message.id.endsWith('-learning')?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
               {message.r4Basis?<R4AnswerStatus basis={message.r4Basis} onRefresh={a=>setMemory(current=>current?.athleteId===a.athleteId?{...current,messages:[...current.messages,{id:`${Date.now()}-r4-refresh`,role:'coach' as const,text:a.text,r4Basis:{question:a.question,day:a.day,athleteId:a.athleteId,version:a.basisVersion}}].slice(-40)}:current)}/>:null}
+              {message.supplement?<div data-testid="coach-supplement" className="mt-2 whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-2 text-sm leading-relaxed">{message.supplement}</div>:null}
               {!(message.r4Basis&&message.id.endsWith("-r4-refresh"))&&message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
               {knowledgeReview.get(message.id)?<p data-testid="coach-knowledge-review" role="status" className="keep mt-1 text-xs text-amber-400">这条回答引用的知识卡已变化或批准已失效，结论需要复核（原回答保留）。</p>:null}
               {message.factDetails?<details data-testid="coach-fact-details" className="mt-2 text-xs"><summary className="min-h-8 cursor-pointer">查看分段核算详情</summary><p className="whitespace-pre-wrap break-words">{message.factDetails}</p></details>:null}

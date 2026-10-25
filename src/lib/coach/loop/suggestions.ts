@@ -52,6 +52,8 @@ export type CoachSuggestion = {
   deferredUntil?: string
   /** Snapshot of the entries before and after an accepted change, for undo. */
   receipt?: { before: ScheduleEntry[]; after: ScheduleEntry[]; courseProposalId?: string; at: string }
+  /** Session-relevant basis right after the athlete's accepted change; the change itself is not a correction. */
+  acceptedBasis?: string
   outcome?: { state: OutcomeState; reasons: string[]; checkedAt: string }
   history: { at: string; action: SuggestionAction; note?: string }[]
 }
@@ -92,6 +94,18 @@ export type GenerationInput = {
 }
 
 const DAY = 86400000
+const hash = (value: unknown) => {
+  const text = JSON.stringify(value)
+  let h = 2166136261
+  for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619) }
+  return (h >>> 0).toString(16)
+}
+/** Inputs relevant to one session only: its planned fields, safety, recovery, events,
+ * time limit and profile. Logging other sessions or completing this one is not a correction. */
+export function targetBasis(input: Pick<GenerationInput, 'entries' | 'safetyState' | 'recovery' | 'events' | 'availableMinutes'> & { profileVersion?: string }, entryId: string): string {
+  const e = input.entries.find(x => x.id === entryId)
+  return hash([e ? [e.date, e.minutes, e.intensity, e.modality, e.lowerHeavy] : null, input.safetyState, input.recovery, input.events, input.availableMinutes, input.profileVersion ?? ''])
+}
 const addDays = (day: string, n: number) => new Date(Date.parse(`${day}T12:00:00Z`) + n * DAY).toISOString().slice(0, 10)
 const daysBetween = (a: string, b: string) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / DAY)
 const isKey = (e: { intensity: Intensity; lowerHeavy: boolean }) => e.intensity === 'HARD' || e.lowerHeavy
@@ -343,6 +357,7 @@ export function decide(s: CoachSuggestion, d: Decision, now: string): CoachSugge
 
 /** Long-term loop: after the session date, compare what actually happened. */
 export function evaluateOutcome(s: CoachSuggestion, entries: ScheduleEntry[], safetyState: string | null, currentBasis: string, now: string): CoachSuggestion {
+  // currentBasis is the session-relevant basis (targetBasis) for accepted suggestions.
   const accepted = s.status === 'ACCEPTED' || s.status === 'EDITED_ACCEPTED'
   if (!accepted && s.status !== 'REJECTED') return s
   const reasons: string[] = []
@@ -350,7 +365,7 @@ export function evaluateOutcome(s: CoachSuggestion, entries: ScheduleEntry[], sa
   const id = s.receipt?.after[0]?.id ?? s.target.entryId
   const e = entries.find(x => x.id === id)
   const day = e?.date ?? s.target.date
-  if (s.basis.version !== currentBasis && s.outcome?.state !== 'WITHDRAWN' && s.history.every(h => h.action !== 'BASIS_CHANGED')) {
+  if (accepted && s.acceptedBasis && s.acceptedBasis !== currentBasis && s.outcome?.state !== 'WITHDRAWN') {
     reasons.push('建议依据的数据之后被更正或补充，原判断需要复核')
   }
   if (Date.parse(now) >= Date.parse(`${day}T23:59:59Z`)) {
@@ -372,13 +387,14 @@ export function evaluateOutcome(s: CoachSuggestion, entries: ScheduleEntry[], sa
 
 /** Coach notes follow their suggestion: a weakened/withdrawn judgement or a corrected
  * basis marks the note for review instead of deleting it. */
-export function reviewNotes(notes: CoachNote[], suggestions: CoachSuggestion[], currentBasis: string, now: string): CoachNote[] {
+export function reviewNotes(notes: CoachNote[], suggestions: CoachSuggestion[], currentBasis: string | ((note: CoachNote) => string), now: string): CoachNote[] {
+  const basisOf = typeof currentBasis === 'function' ? currentBasis : () => currentBasis
   return notes.map(n => {
     const s = suggestions.find(x => x.id === n.suggestionId)
     let next: CoachNote['status'] = n.status, reason = ''
     if (s?.status === 'UNDONE') { next = 'WITHDRAWN'; reason = '对应调整已撤销' }
     else if (s?.outcome?.state === 'WITHDRAWN') { next = 'WITHDRAWN'; reason = s.outcome.reasons.join('；') }
-    else if (n.basisVersion !== currentBasis && n.status === 'CURRENT') { next = 'NEEDS_REVIEW'; reason = '依据的数据已更正或补充' }
+    else if (n.basisVersion !== basisOf(n) && n.status === 'CURRENT') { next = 'NEEDS_REVIEW'; reason = '依据的数据已更正或补充' }
     if (next === n.status) return n
     return { ...n, status: next, history: [...n.history, { at: now, status: next, reason }] }
   })
