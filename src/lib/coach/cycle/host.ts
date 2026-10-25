@@ -17,7 +17,7 @@ import { activePlanDoc, planDocumentKey } from "../../plan/active-plan";
 import { r4CourseStarted } from "../r4/courses";
 import { localDay } from "../../health/observation";
 import { buildCycleDraft, cycleBasis, type CycleDraft } from "./planner";
-import { validateCycleGoal, type CycleGoal, type CycleInput } from "./types";
+import { validateCycleGoal, type CycleGoal, type CycleInput, type CycleRequest } from "./types";
 export const CYCLE_CHANGED = "fk-cycle-changed";
 const prefix = (kind: string) => `fk-cycle:${kind}:${encodeURIComponent(currentAthleteId())}:`;
 export type CycleDocument = {
@@ -83,7 +83,7 @@ export async function saveCycleGoal(
     })
   ).value;
 }
-export function readCycleContext(now = new Date().toISOString()): CycleInput {
+export function readCycleContext(now = new Date().toISOString(), request?: CycleRequest): CycleInput {
   const c = readR5Context(now),
     saved = readCycleGoal();
   const goal: CycleGoal = saved ?? {
@@ -112,6 +112,7 @@ export function readCycleContext(now = new Date().toISOString()): CycleInput {
     safetyState: c.hold ? ("HOLD_ACTIVE" as const) : c.analysis.assessment.safetyState,
   };
   return {
+    request,
     snapshot: { ...c.analysis.snapshot, safetyConstraints: c.analysis.snapshot.safetyConstraints },
     recovery,
     entries: c.entries,
@@ -277,14 +278,14 @@ export function refreshCycleFeedback(now = new Date().toISOString()) {
   if (updated && typeof window !== "undefined") window.dispatchEvent(new Event(CYCLE_CHANGED));
   return readCycleDocuments();
 }
-export async function prepareCycle(now = new Date().toISOString()) {
+export async function prepareCycle(now = new Date().toISOString(), request?: CycleRequest) {
   requireR5Scope();
   const owner = currentAthleteId();
   return (
     await withScheduleLock(() => {
       if (currentAthleteId() !== owner) throw Error("身份已变化");
       refreshCycleFeedback(now);
-      const input = readCycleContext(now),
+      const input = readCycleContext(now,request),
         draft = buildCycleDraft(input),
         prior = readCycleDocuments(),
         same = prior.find(
@@ -316,7 +317,7 @@ export async function prepareCycle(now = new Date().toISOString()) {
 }
 export function cycleRevisionState(d: CycleDocument, now = new Date().toISOString()) {
   try {
-    return (d.acceptedBasis ?? d.draft.basisVersion) === cycleBasis(readCycleContext(now))
+    return (d.acceptedBasis ?? d.draft.basisVersion) === cycleBasis(readCycleContext(now,d.draft.request))
       ? "CURRENT"
       : "NEEDS_REVIEW";
   } catch {
@@ -397,7 +398,7 @@ export async function decideCycle(
           return { ok: true as const, message: "本周候选已撤销，原课表和实际历史保留" };
         }
         if (d.status !== "PENDING") return fail("草案已处理，不重复写入");
-        const input = readCycleContext(now);
+        const input = readCycleContext(now,d.draft.request);
         if (!input.goal.revision) return fail("先确认周期目标与训练背景；条件草案已保留");
         if (
           Date.parse(now) < Date.parse(d.draft.generatedAt) ||
@@ -431,7 +432,7 @@ export async function decideCycle(
         save({
           ...d,
           status: "ACCEPTED",
-          acceptedBasis: cycleBasis(readCycleContext(now)),
+          acceptedBasis: cycleBasis(readCycleContext(now,d.draft.request)),
           history: [...d.history, { at: now, action: "ACCEPTED_FIRST_WEEK" }],
         });
         changed();

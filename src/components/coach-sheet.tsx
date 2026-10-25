@@ -1,3 +1,4 @@
+import { cycleRequestFromText } from '@/lib/coach/cycle/request';
 import { CoachCyclePanel } from '@/components/coach-cycle-panel';
 import { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';
 import { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';
@@ -331,8 +332,9 @@ export function CoachSheet({
     const athleteId = memory.athleteId;
     if (currentAthleteId() !== athleteId) return;
     const r5 = prepareR5Command(value);
-    if(r5.kind==='NONE' && /周期|备赛|阶段计划/.test(value) && !/朋友|队友|假设|举例/.test(value)) {
-      let reply='';try{const d=await prepareCycle();reply=`已依据当前保存资料生成${d.draft.weeks.length}周周期草案。${cycleCoachSummary()}\n请在「复盘→个体周期计划」核对比赛目标、训练背景和差异；尚未确认的目标先保存，正式课表不会自动改变。`;}catch(e){reply=e instanceof Error?e.message:'周期依据暂不可核对，原计划保留';}
+    const cycleRequest=cycleRequestFromText(value);
+    if(r5.kind==='NONE' && cycleRequest) {
+      let reply='';try{const d=await prepareCycle(new Date().toISOString(),cycleRequest.request);reply=`已依据当前保存资料生成${d.draft.weeks.length}周周期草案。${cycleCoachSummary()}\n请在「复盘→个体周期计划」核对比赛目标、训练背景和差异；尚未确认的目标先保存，正式课表不会自动改变。`;}catch(e){reply=e instanceof Error?e.message:'周期依据暂不可核对，原计划保留';}
       if(currentAthleteId()!==athleteId)return;
       const id=crypto.randomUUID();setMemory(current=>current?.athleteId===athleteId?{...current,messages:[...current.messages,{id:id+'-user',role:'user' as const,text:value},{id:id+'-cycle',role:'coach' as const,text:reply.slice(0,1000)}].slice(-40)}:current);setDraft('');return;
     }

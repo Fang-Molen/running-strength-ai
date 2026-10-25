@@ -1,3 +1,4 @@
+import { buildAdaptiveReview } from '../../health/adaptive-review';
 import { assessAthleteHistory } from '../assessment/history';
 /** Read-only, source-separated athlete portrait over the established fact projection. */
 import { projectAnalysisEvidence, refOf, analysisDigest } from "../../health/analysis-evidence";
@@ -55,7 +56,7 @@ export function buildAthletePortrait(input: CycleInput) {
     owner = snapshot.context.athleteId,
     now = Date.parse(snapshot.context.asOf),
     today = localDay(new Date(now));
-  const facts = snapshot.facts.filter((f) => Date.parse(f.occurredAt) >= now - 90 * 86400000),
+  const facts = snapshot.facts.filter((f) => Date.parse(f.occurredAt) >= now - (input.request?.historyDays ?? 90) * 86400000),
     training = facts.filter((f): f is TrainingFact => f.kind === "TRAINING");
   const model = adaptTrainingModelInput({ ...snapshot, facts }, input.recovery);
   const performances = model.performances.map((p) => ({
@@ -139,7 +140,8 @@ export function buildAthletePortrait(input: CycleInput) {
     athleteId: owner,
     asOf: snapshot.context.asOf,
     performances,
-    history: assessAthleteHistory({ ...snapshot, facts, safetyConstraints: input.snapshot.safetyConstraints }),
+    adaptive: buildAdaptiveReview({...snapshot, facts, safetyConstraints:input.snapshot.safetyConstraints}),
+    history: assessAthleteHistory({ ...snapshot, facts, safetyConstraints: input.snapshot.safetyConstraints }, input.request?.historyDays ?? 90),
     training,
     derived,
     weeks,

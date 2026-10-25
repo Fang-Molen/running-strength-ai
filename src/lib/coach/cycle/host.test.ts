@@ -287,3 +287,13 @@ test("older accepted draft can be undone after a newer draft exists", async (t) 
   assert.equal((await decideCycle(d.id, "UNDO", now)).ok, true);
   assert.equal(loadSchedule().entries.length, 6);
 });
+test('explicit four-week window survives version check, confirmation and undo without changing goal',async(t)=>{
+ setup(t);
+ const g=cycleFixture().goal;await saveCycleGoal({...g,horizonWeeks:8},0,now);
+ const before=loadSchedule().entries.length;
+ const d=await prepareCycle(now,{historyDays:14,horizonWeeks:4});
+ assert.equal(d.draft.weeks.length,4);assert.equal(readCycleGoal()!.horizonWeeks,8);assert.equal(cycleRevisionState(d,now),'CURRENT');assert.equal(loadSchedule().entries.length,before);
+ assert.equal(d.draft.weeks[0].canConfirm,true,'manual actual course should remain usable');
+ assert.equal((await decideCycle(d.id,'ACCEPT',now)).ok,true);
+ assert.equal((await decideCycle(d.id,'UNDO',now)).ok,true);assert.equal(loadSchedule().entries.length,before);
+});

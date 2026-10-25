@@ -31,6 +31,10 @@ export type ImportedRunningSegment = {
 }
 
 export type ImportedStrengthSet = {
+  loadBasis?: ImportField<'TOTAL_EXTERNAL'|'PER_HAND'|'ASSISTANCE'|'BODYWEIGHT'|'UNKNOWN'>
+  side?: ImportField<'LEFT'|'RIGHT'|'BILATERAL'|'UNSPECIFIED'>
+  rir?: ImportField<number>
+  rangeProtocol?: ImportField<string>
   id: string
   exerciseName: ImportField<string>
   setOrdinal: ImportField<number>
@@ -43,6 +47,7 @@ export type ImportedStrengthSet = {
 }
 
 export type TrainingImportCandidate = {
+  observedRunType?: ImportField<'EASY'|'TEMPO'|'INTERVAL'|'SPRINT'|'HILL'|'LONG'|'SPEED_ENDURANCE'|'UNKNOWN'>
   comparisonContext?: {deviceId: ImportField<string>; protocolKey: ImportField<string>; surface: ImportField<string>; gradePercent: ImportField<number>}
   sport: ImportSport
   occurredAt: ImportField<string>
@@ -174,6 +179,10 @@ function strengthSet(raw: unknown, index: number): ImportedStrengthSet {
   const completion = item.completion === "COMPLETED" || item.completion === "SKIPPED" ? item.completion : "NOT_RECORDED"
   return {
     id: stringValue(item.id, 80) ?? `set-${index + 1}`,
+    ...(item.loadBasis?{loadBasis:field(item.loadBasis,v=>['TOTAL_EXTERNAL','PER_HAND','ASSISTANCE','BODYWEIGHT','UNKNOWN'].includes(String(v))?v as NonNullable<ImportedStrengthSet['loadBasis']>['value']:null)}:{}),
+    ...(item.side?{side:field(item.side,v=>['LEFT','RIGHT','BILATERAL','UNSPECIFIED'].includes(String(v))?v as NonNullable<ImportedStrengthSet['side']>['value']:null)}:{}),
+    ...(item.rir?{rir:field(item.rir,v=>numberValue(v,0,20))}:{}),
+    ...(item.rangeProtocol?{rangeProtocol:field(item.rangeProtocol,v=>stringValue(v,80))}:{}),
     exerciseName: field(item.exerciseName, (value) => stringValue(value, 80)),
     setOrdinal: field(item.setOrdinal, (value) => integerValue(value, 1, 100)),
     weightKg: field(item.weightKg, (value) => numberValue(value, 0, 1_000)),
@@ -196,6 +205,7 @@ export function normalizeTrainingImportCandidate(raw: unknown): TrainingImportCa
   return {
     sport,
     ...(comparisonContext ? {comparisonContext} : {}),
+    ...(item.observedRunType?{observedRunType:field(item.observedRunType,v=>['EASY','TEMPO','INTERVAL','SPRINT','HILL','LONG','SPEED_ENDURANCE','UNKNOWN'].includes(String(v))?v as NonNullable<TrainingImportCandidate['observedRunType']>['value']:null)}:{}),
     occurredAt: field(item.occurredAt, (value) => stringValue(value, 40)),
     title: field(item.title, (value) => stringValue(value, 120)),
     durationSeconds: field(item.durationSeconds, (value) => numberValue(value, 0.1, 1_000_000)),

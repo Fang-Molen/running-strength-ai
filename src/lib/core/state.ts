@@ -114,7 +114,8 @@ export function deriveAthleteState(): AthleteState {
   const state = emptyAthleteState()
   try {
     const coach = loadCoach()
-    const fatigue = recordedCoachFatigue(coach)
+    // Legacy scores remain stored for history, never measured recovery evidence.
+    const fatigue: number | null = null
     const band = fatigue == null ? null : (coach.band || bandOf(coach.fatigue))
     const profile = loadProfile()
     const plan = loadPlan()
@@ -133,7 +134,7 @@ export function deriveAthleteState(): AthleteState {
     if (state.recovery.restingHR != null) missing.splice(missing.indexOf("没有静息心率"), 1)
     if (fatigue == null) missing.push("疲劳未记录，默认值不是恢复证据")
     if (!painKnown) missing.push("疼痛未记录，不能当成没有疼痛")
-    state.recovery.confidence = fatigue == null ? 0 : 0.8
+    state.recovery.confidence = 0
     if (plan?.cycle) {
       state.training.currentCycle = plan.cycle.block
       state.training.currentWeek = plan.cycle.week

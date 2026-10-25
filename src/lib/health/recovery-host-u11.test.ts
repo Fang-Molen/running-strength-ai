@@ -58,7 +58,8 @@ test('completion-only V4 feedback is UNKNOWN and does not borrow planned muscle 
   assert.equal(global.data?.muscleRecovery?.hasObservedRegions,false)
 })
 test('void and field corrections invalidate old muscle evidence immediately without rewriting originals',t=>{
-  t.mock.timers.enable({apis:['Date'],now:new Date(now)})
+  // The projection ends at local day-end. Commit within that day in UTC and Asia/Shanghai.
+  t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-20T12:00:00Z')})
   const f=fixture(t);training(f)
   const before=readRecoveryProjection(day,now);assert.equal(before.sources[0].actualSets,2)
   const oldJournal=[...f.map].filter(([k])=>k.startsWith(EVENT_JOURNAL_PREFIX))

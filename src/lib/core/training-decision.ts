@@ -433,7 +433,8 @@ function strengthSnapshot(events = excludeVoidedTrainingEvents(loadEvents())): S
 export function readTrainingContext(plan: Plan | null): TrainingContext {
   const events = excludeVoidedTrainingEvents(loadEvents())
   const coach = loadCoach()
-  const fatigue = recordedCoachFatigue(coach)
+  // Read current symptoms and actual execution below; do not consume the legacy score.
+  const fatigue: number | null = null
   const day = loadDay()
   const profile = loadProfile()
   const deadlines = profile.marks.map((mark) => daysUntil(mark.deadline)).filter((dayCount): dayCount is number => dayCount !== null)

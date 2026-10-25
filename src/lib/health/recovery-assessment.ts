@@ -41,7 +41,7 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
  for(const r of overlap)observations.push({text:`${REGION_LABEL[r.region]}近期跑步＋力量重复暴露；${r.entries.map(e=>e.dose).join('；')}。缺少个人校准，不输出肌肉恢复百分比。`,evidenceRefs:r.supportingFacts})
  // An absence report only weakens an explanation; it never overrides an active pain restriction.
  const pain=responses.some(f=>f.measure==='PAIN'&&f.value!==null&&f.value>0)
- const noPain=responses.filter(f=>f.measure==='PAIN'&&f.value===0)
+ const noPain=responses.filter(f=>f.measure==='PAIN'&&f.value===0&&f.scale==='0-10_HIGH_WORSE')
  const normalFunction=responses.filter(f=>f.measure==='FUNCTION'&&f.scale==='FUNCTION_LIMITATION_0_1'&&f.value===0)
  const limitedFunction=responses.filter(f=>f.measure==='FUNCTION'&&f.scale==='FUNCTION_LIMITATION_0_1'&&f.value===1)
  const reaction=responses.filter(f=>['SORENESS','SUBJECTIVE_FATIGUE','RECOVERY_FEELING','FUNCTION'].includes(f.measure)&&f.value!==null)
@@ -56,8 +56,16 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
  if(!metrics.some(f=>/^(HRV|RMSSD|LN_RMSSD)$/i.test(f.metric)))missing.push('HRV未记录，不补零')
  if(!training.length)missing.push('近期实际训练明细未确认')
  if(!s.context.planVersion)missing.push('下一课目的、日期与计划版本待核对')
+ // A current explicit check-in is an observation, never physiological clearance.
+ const current=(f:ResponseFact)=>Date.parse(f.occurredAt)>=Date.parse(s.context.asOf)-24*36e5;
+ const currentPain=noPain.filter(current),currentFunction=normalFunction.filter(current);
+ const currentConcern=reaction.some(f=>current(f)&&f.value!==null&&((f.measure==='SORENESS'||f.measure==='SUBJECTIVE_FATIGUE')&&f.scale==='0-10_HIGH_WORSE'&&f.value>0));
+ // Intermediate recovery ratings are unresolved; do not invent a physiological clearance cutoff.
+ const recoveryUnresolved=reaction.some(f=>current(f)&&f.measure==='RECOVERY_FEELING'&&(f.scale!=='1-10_HIGH_BETTER'||f.value!==10));
+ const pairedCurrent=currentPain.some(p=>currentFunction.some(f=>f.region===p.region&&f.side===p.side));
+ const observedNoAdverse=pairedCurrent&&!recoveryUnresolved&&!hold&&!responseConflict&&!s.conflicts.length&&currentPain.length>0&&currentFunction.length>0&&!currentConcern;
  const action:NonNullable<RecoveryAssessment['candidates'][number]['action']>=hold?'SKIP':overlap.length&&limitedFunction.length?'REDUCE':overlap.length&&reaction.some(f=>f.measure==='SORENESS'&&f.value!>0)?'MODIFY':'KEEP'
  const kind=hold?'DEFER_AND_REVIEW':action!=='KEEP'?'ADJUST_PENDING_CONFIRMATION':s.conflicts.length||missing.length?'REQUEST_MINIMUM_DATA':'KEEP_EXISTING'
  const conditions=hold?['暂不执行诱发疼痛的内容；走原安全路径核对症状和专业许可，不自动写入停训课表']:['先确认原课程目的及当前热身表现','不新增测试剂量；不凭单一HRV、厂商分数或酸痛消失放行','只比较一个变量：如已有批准的减组方案则只减组，其余保持；没有方案时只记录观察，不编造剂量','任何变更须本人确认、宿主核对最新事实及计划版本；已完成课不改写']
- return {snapshotId:s.snapshotId,dataQuality:s.conflicts.length?'CONFLICT':!s.facts.length?'MISSING':missing.length?'PARTIAL':'AVAILABLE',signalState:!s.facts.length?'INSUFFICIENT':pain||limitedFunction.length?'RECOVERY_CONCERN':reaction.length&&normalFunction.length?'MIXED_SIGNALS':'INSUFFICIENT',safetyState:escalate?'ESCALATION_REQUIRED':hold?'HOLD_ACTIVE':noPain.length?'NO_KNOWN_HOLD':'UNKNOWN',confidence:hold?'HOLD':s.conflicts.length?'UNKNOWN':'LOW',observations,hypotheses:hypotheses.slice(0,2),candidates:[{id:`${s.inputDigest}:${kind}:${action}`,kind,action,changedVariable:action==='REDUCE'?'SETS':action==='MODIFY'?'EXECUTION_REVIEW':'NONE',basisRefs:[...new Map(observations.flatMap(o=>o.evidenceRefs).map(r=>[r.id+'@'+r.revision,r])).values()],reason:hold?'疼痛/现有安全限制优先':overlap.length?'有实际跑步＋力量参与重叠，先用功能和后续反馈区分解释':'现有证据不支持自动改变训练量',observation:'记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈',supportsWhen:'相同协议和实际剂量下重复出现相同反应',weakensWhen:'更正后暴露消失，或同协议表现和反馈稳定',doNotExecute:['医学限制未解除','来源、身份或实际剂量有冲突','缺少已批准课程或明确变更剂量'],executionState:'OBSERVATION_ONLY',conditions,planVersion:s.context.planVersion,requiresConfirmation:true}],missingDecisionInputs:[...new Set(missing)],medicalClearance:false,automaticPrescription:false}
+ return {snapshotId:s.snapshotId,dataQuality:s.conflicts.length?'CONFLICT':!s.facts.length?'MISSING':missing.length?'PARTIAL':'AVAILABLE',signalState:!s.facts.length?'INSUFFICIENT':pain||limitedFunction.length?'RECOVERY_CONCERN':observedNoAdverse?'NO_ADVERSE_SIGNAL_OBSERVED':reaction.length&&normalFunction.length?'MIXED_SIGNALS':'INSUFFICIENT',safetyState:escalate?'ESCALATION_REQUIRED':hold?'HOLD_ACTIVE':pairedCurrent?'NO_KNOWN_HOLD':'UNKNOWN',confidence:hold?'HOLD':s.conflicts.length?'UNKNOWN':'LOW',observations,hypotheses:hypotheses.slice(0,2),candidates:[{id:`${s.inputDigest}:${kind}:${action}`,kind,action,changedVariable:action==='REDUCE'?'SETS':action==='MODIFY'?'EXECUTION_REVIEW':'NONE',basisRefs:[...new Map(observations.flatMap(o=>o.evidenceRefs).map(r=>[r.id+'@'+r.revision,r])).values()],reason:hold?'疼痛/现有安全限制优先':overlap.length?'有实际跑步＋力量参与重叠，先用功能和后续反馈区分解释':'现有证据不支持自动改变训练量',observation:'记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈',supportsWhen:'相同协议和实际剂量下重复出现相同反应',weakensWhen:'更正后暴露消失，或同协议表现和反馈稳定',doNotExecute:['医学限制未解除','来源、身份或实际剂量有冲突','缺少已批准课程或明确变更剂量'],executionState:'OBSERVATION_ONLY',conditions,planVersion:s.context.planVersion,requiresConfirmation:true}],missingDecisionInputs:[...new Set(missing)],medicalClearance:false,automaticPrescription:false}
 }

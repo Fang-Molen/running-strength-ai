@@ -1,3 +1,5 @@
+import { supportsRepeatedCourse } from './actual-structure';
+import { actualCourseSeeds } from './actual-seeds';
 import { analysisDigest, refOf } from "../../health/analysis-evidence";
 import { addDays, weekOf, type ScheduleEntry } from "../../ui/day-schedule-rules";
 import { localDay } from "../../health/observation";
@@ -31,6 +33,7 @@ export function cycleBasis(input: CycleInput) {
     ],
     input.entries,
     input.goal,
+    input.request ?? null,
     input.profileVersion,
     input.training.version,
     input.calendarVersion,
@@ -39,8 +42,9 @@ export function cycleBasis(input: CycleInput) {
 }
 export function buildCycleDraft(input: CycleInput) {
   validateCycleGoal(input.goal);
+  if(input.request && (![14,28,42].includes(input.request.historyDays)||!Number.isInteger(input.request.horizonWeeks)||input.request.horizonWeeks<1||input.request.horizonWeeks>52))throw Error("规划窗口无效");
   const portrait = buildAthletePortrait(input),
-    g = input.goal,
+    g = input.request ? {...input.goal,horizonWeeks:input.request.horizonWeeks} : input.goal,
     owner = portrait.athleteId,
     today = localDay(new Date(input.snapshot.context.asOf));
   if (g.athleteId !== owner) throw Error("周期目标不属于当前用户");
@@ -64,14 +68,14 @@ export function buildCycleDraft(input: CycleInput) {
     "阶段划分和单变量门槛是可复核产品策略；没有经过个人效果验证。",
   ];
   const entries = input.entries.filter((e) => (e.athleteId ?? "local") === owner),
-    actual = validActualEntries(input, portrait.training).filter(
+    actual = [...validActualEntries(input, portrait.training), ...actualCourseSeeds(portrait.training, input.entries)].filter(
       (e) =>
         e.actual &&
         e.actual.outcome !== "missed" &&
         e.status === "done" &&
         e.date < start &&
         e.date <= today &&
-        e.date >= addDays(today, -42) &&
+        e.date >= addDays(today, -(input.request?.historyDays ?? 42)+1) &&
         Date.parse(e.actual.at) <= now &&
         !e.actual.reasons.includes("pain") &&
         !e.actual.reasons.includes("tired") &&
@@ -79,7 +83,17 @@ export function buildCycleDraft(input: CycleInput) {
         e.actual.executionState !== "PARTIAL" &&
         e.actual.executionState !== "INTERRUPTED",
     );
-  const maxWeeklyMinutes = Math.max(0, ...portrait.weeks.map((w) => w.minutes ?? 0)) || null;
+  const recentWindows=portrait.adaptive.windows;
+  const manualWeeks=[0,1].map(i=>{
+    const end=addDays(today,-7*i),start=addDays(end,-6);
+    const rows=actual.filter(e=>e.date>=start&&e.date<=end&&!e.actual?.occurrenceIds?.length);
+    return {minutes:rows.length&&rows.every(e=>e.actual?.minutes!==null)?rows.reduce((n,e)=>n+e.actual!.minutes!,0):null,sessionCount:rows.length};
+  });
+  const budgetRows=input.request?.historyDays===14?recentWindows.map((w,i)=>({...w,minutes:w.minutes===null?manualWeeks[i].minutes:w.minutes+(manualWeeks[i].minutes??0),sessionCount:w.sessionCount+manualWeeks[i].sessionCount})):portrait.weeks;
+  const maxWeeklyMinutes = Math.max(0, ...budgetRows.map(w => w.minutes ?? 0)) || null;
+  const modalityLimit={run:Math.max(0,...recentWindows.map(w=>w.runSessions)),strength:Math.max(0,...recentWindows.map(w=>w.strengthSessions))};
+  const strengthSetLimit=Math.max(0,...recentWindows.map(w=>w.strengthSets??0));
+  const runDistanceLimit=Math.max(0,...recentWindows.map(w=>w.runDistanceM??0));
   const historicalKeyWeeks = new Map<string, number>();
   for (const e of actual) {
     if (e.actual?.intensity === "HARD" || e.lowerHeavy) {
@@ -88,7 +102,7 @@ export function buildCycleDraft(input: CycleInput) {
     }
   }
   const maxKeySessions = Math.max(0, ...historicalKeyWeeks.values());
-  const maxWeeklySessions = Math.max(0, ...portrait.weeks.map((w) => w.observedSessions)) || null;
+  const maxWeeklySessions = Math.max(0, ...budgetRows.map(w => "sessionCount" in w ? w.sessionCount : w.observedSessions)) || null;
   const days = input.training.days?.value ?? [],
     limit = input.training.minutes?.value ?? null;
   const allowed = new Set(days),
@@ -121,6 +135,7 @@ export function buildCycleDraft(input: CycleInput) {
     TAPER: "减少执行量，保留熟悉节奏；不临时补课或引入新刺激",
     REVIEW: "暂停诱发症状的训练，先复核功能、限制与实际反馈",
   };
+  const proposedKeyDates:string[]=[];
   const weeks = Array.from({ length: weekCount }, (_, index) => {
     const from = addDays(start, index * 7),
       to = addDays(from, 6),
@@ -136,7 +151,7 @@ export function buildCycleDraft(input: CycleInput) {
     const existingUnknown =
       input.importedDates.some((day) => day >= from && day <= to) ||
       existing.some((e) => !Number.isFinite(e.minutes) || e.minutes <= 0);
-    const keyDates = entries
+    const keyDates = [...proposedKeyDates,...entries
       .filter(
         (e) =>
           e.date >= addDays(from, -1) &&
@@ -144,7 +159,7 @@ export function buildCycleDraft(input: CycleInput) {
           !["rejected", "skipped"].includes(e.status) &&
           keyCourse(e),
       )
-      .map((e) => e.date);
+      .map((e) => e.date)];
     let spent = existing.reduce((sum, e) => sum + (Number.isFinite(e.minutes) ? e.minutes : 0), 0),
       keyCount = existing.filter(keyCourse).length,
       proposedExtra = 0;
@@ -166,6 +181,9 @@ export function buildCycleDraft(input: CycleInput) {
       return rank(a) - rank(b) || b.date.localeCompare(a.date) || a.id.localeCompare(b.id);
     });
     const used = new Set<string>();
+    const counts={run:existing.filter(e=>e.modality==='run').length,strength:existing.filter(e=>e.modality==='strength').length};
+    let strengthSets=existing.flatMap(e=>e.exercises??[]).reduce((n,e)=>n+Number(e.sets||0),0);
+    let runDistance=existing.filter(e=>e.modality==='run').reduce((n,e)=>n+(plannedRunDose(e).distanceM??0),0);
     for (const day of weekOf(from)) {
       if (g.raceDate && day >= g.raceDate) {
         sessions.push({
@@ -197,14 +215,19 @@ export function buildCycleDraft(input: CycleInput) {
         warnings.push(`${day}已有原课表，周期草案不覆盖；请先在原课确认调整`);
         continue;
       }
-      let seed = candidates.find(
+      const ordered=candidates.slice().sort((a,b)=>{
+        const rate=(e:ScheduleEntry)=>e.modality==='rest'?Infinity:counts[e.modality]/Math.max(1,modalityLimit[e.modality]);
+        return rate(a)-rate(b);
+      });
+      let seed = ordered.find(
         (e) =>
           !used.has(e.id) &&
+          (e.modality==='rest'||!modalityLimit[e.modality]||counts[e.modality]<modalityLimit[e.modality]) &&
           (!keyCourse(e) ||
             (keyCount < maxKeySessions &&
               keyDates.every((d) => Math.abs(daysBetween(d, day)) > 1))),
       );
-      if (phase === "BASE") seed = candidates.find((e) => !used.has(e.id) && !keyCourse(e));
+
       if (!seed || hold) {
         sessions.push({
           date: day,
@@ -255,6 +278,9 @@ export function buildCycleDraft(input: CycleInput) {
       }
       if (after.modality === "run") {
         const dose = plannedRunDose(after);
+        const runFacts=portrait.training.filter(t=>t.modality==='RUN'&&refs.some(r=>r.id===t.id));
+        if(after.runComponents?.some(c=>c.modality==='RUNNING'&&!supportsRepeatedCourse(c,runFacts)))
+          missing.push('间歇原计划缺少逐段、轮次和实际间歇的一致证据，不能从总跑量复制');
         const pure = refs.length
           ? portrait.training
               .filter((t) => refs.some((r) => r.id === t.id) && t.modality === "RUN")
@@ -300,7 +326,7 @@ export function buildCycleDraft(input: CycleInput) {
           const completed = linked
             .flatMap((t) => t.strengthSets)
             .filter(
-              (s) => s.completion === "COMPLETED" && !!e.catalogId && s.catalogId === e.catalogId,
+              (s) => s.completion === "COMPLETED" && !!e.catalogId && s.catalogId?.replace(/^local:/,'') === e.catalogId.replace(/^local:/,''),
             );
           if (!completed.length || !/^\d+$/.test(e.sets) || completed.length < Number(e.sets))
             missing.push("原动作组数缺少同次已完成逐组依据");
@@ -328,7 +354,7 @@ export function buildCycleDraft(input: CycleInput) {
             )
           )
             missing.push("原负重缺少同口径实际依据，需核对");
-          const equipment = exerciseContent(e.catalogId ?? null)?.equipment ?? ["器材要求待补全"];
+          const equipment = exerciseContent(e.catalogId?.replace(/^local:/,'') ?? null)?.equipment ?? ["器材要求待补全"];
           const available = String(input.training.equipment?.value ?? "UNKNOWN");
           if (
             equipment.some(
@@ -342,6 +368,15 @@ export function buildCycleDraft(input: CycleInput) {
             missing.push("当前器材不支持原动作或动作器材要求尚未核定");
         }
         if (!input.training.equipment) missing.push("器材尚未确认");
+      }
+      const responseGroup=portrait.adaptive.groups.find(group=>group.trainingRefs.some(r=>refs.some(ref=>ref.id===r.id&&ref.revision===r.revision)));
+      const feedbackReduction=after.modality==='strength'&&responseGroup?.state==='REVIEW_DOSE';
+      const strengthReviewWeek=after.modality==='strength'&&index===3&&phase!=='TAPER';
+      if ((feedbackReduction||strengthReviewWeek)&&changedVariable==='NONE') {
+        if(after.exercises?.some(e=>Number(e.sets)>1)) {
+          after.exercises=after.exercises.map(e=>({...e,sets:String(Math.max(1,Number(e.sets)-1))}));
+          changedVariable='SETS';
+        }else if(feedbackReduction)missing.push('已有单组且反复出现症状，需要另选动作或暂缓，不能凭空减至零组');
       }
       if (phase === "TAPER" && changedVariable === "NONE") {
         let cut = false;
@@ -389,7 +424,7 @@ export function buildCycleDraft(input: CycleInput) {
           : null;
       };
       const seedProtocol = sourceProtocol(seed);
-      const canConsiderProgression = input.recovery.signalState === "NO_ADVERSE_SIGNAL_OBSERVED" && !portrait.history.planning.reviewExecution;
+      const canConsiderProgression = input.recovery.signalState === "NO_ADVERSE_SIGNAL_OBSERVED" && !portrait.history.planning.reviewExecution && (!input.request || responseGroup?.state === "OBSERVED_TOLERANCE");
       let isProgression = false;
       const comparable = actual.filter(
         (e) =>
@@ -448,19 +483,26 @@ export function buildCycleDraft(input: CycleInput) {
         missing.push("训练经验不足，先核对熟悉的低强度课程");
       if (input.training.conflicts.length) missing.push("个人条件来源有冲突，需先核对");
       if (concerns && keyCourse(after)) missing.push("当前恢复信息不足或存在担忧，暂不复制关键课");
+      const proposedSets=(after.exercises??[]).reduce((n,e)=>n+Number(e.sets),0);
+      const proposedDistance=after.modality==='run'?plannedRunDose(after).distanceM:null;
+      if(after.modality==='strength'&&strengthSetLimit&&strengthSets+proposedSets>strengthSetLimit)missing.push('力量周组数超过近两周已记录剂量，先复核而非自动增加');
+      if(after.modality==='run'&&runDistanceLimit&&proposedDistance!==null&&runDistance+proposedDistance>runDistanceLimit)missing.push('跑步周距离超过近两周已记录剂量，先复核而非自动增加');
       const candidate = missing.length ? null : { ...after, minutes: doseMinutes! };
       if (candidate) {
         spent += candidate.minutes;
+        if(candidate.modality!=='rest')counts[candidate.modality]++;
+        strengthSets+=proposedSets;runDistance+=proposedDistance??0;
         if (isProgression) proposedExtra = g.proposeExtraMinutes ?? 0;
         if (keyCourse(candidate)) {
           keyDates.push(day);
+          proposedKeyDates.push(day);
           keyCount++;
         }
       }
       sessions.push({
         date: day,
         purpose: `${phaseLabels[phase]}：${priorityLabels[g.priority]}`,
-        reason: phasePurposes[phase] + (isProgression ? "；候选增时仍需逐周确认，不自动累加" : ""),
+        reason: phasePurposes[phase] + (feedbackReduction?'；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况':strengthReviewWeek?'；第四周力量复核：候选每动作减一组，非固定生理恢复周期':'') + (isProgression ? "；候选增时仍需逐周确认，不自动累加" : ""),
         observation: "记录实际剂量、RPE与次日疼痛/功能；一次成功不等于长期耐受",
         withdrawWhen: "疼痛/功能变化、执行困难、目标或来源更正时撤回并重算",
         candidate,
@@ -480,6 +522,8 @@ export function buildCycleDraft(input: CycleInput) {
       end: to,
       phase,
       purpose: phasePurposes[phase],
+      strengthFocus: index===3?'复核周：熟悉动作减组候选，负重和次数不增加':index===0?'建立已完成剂量起点，记录逐组RIR及次日反馈':index===1?'重复同剂量观察可执行性，不自动加重量':'根据已发生反馈复核；无证据不增加组数或负重',
+      doseBudget:{runSessions:modalityLimit.run,strengthSessions:modalityLimit.strength,runDistanceM:runDistanceLimit||null,strengthSets:strengthSetLimit||null},
       sessions,
       existingSessions: existing.map((e) => ({
         date: e.date,
@@ -520,8 +564,9 @@ export function buildCycleDraft(input: CycleInput) {
     },
   ];
   return {
+    request: input.request,
     schema: 1 as const,
-    version: "R6_CYCLE_1" as const,
+    version: "R8_CYCLE_2" as const,
     athleteId: owner,
     generatedAt: input.snapshot.context.asOf,
     start,
@@ -539,7 +584,7 @@ export function buildCycleDraft(input: CycleInput) {
     automaticExecution: false as const,
     professionalValidation: "NOT_PROVEN" as const,
     sourceEntries: actual
-      .filter((e) => weeks.some((w) => w.sessions.some((s) => s.sourceEntryIds.includes(e.id))))
+      .filter((e) => input.entries.some(original=>original.id===e.id) && weeks.some((w) => w.sessions.some((s) => s.sourceEntryIds.includes(e.id))))
       .map((e) => ({ id: e.id, version: analysisDigest(e) })),
     sourceIds:
       family === "MIDDLE"

@@ -1,3 +1,4 @@
+import { adaptiveSummary } from '@/lib/health/adaptive-review';
 import { historySummary } from '@/lib/coach/assessment/history';
 import { cycleCourseLines } from "@/lib/coach/cycle/display";
 import { useEffect, useState } from "react";
@@ -17,13 +18,15 @@ import { buildAthletePortrait } from "@/lib/coach/cycle/portrait";
 import { phaseLabels, priorityLabels, type CycleGoal } from "@/lib/coach/cycle/types";
 import { CYCLE_SOURCES } from "@/lib/coach/cycle/prompt";
 import { subscribeHealthUpdates } from "@/lib/health/health-subscription";
+const intensityLabel = {EASY:'轻松',MODERATE:'中等',HARD:'高强度'};
+const variableLabel = {NONE:'保持剂量',DURATION:'时长',REPEAT_COUNT:'重复次数',SETS:'组数',EXECUTION:'执行安排'};
 const initial = {
   eventMeters: "",
   raceDate: "",
   targetSeconds: "",
   experience: "UNKNOWN",
   priority: "BALANCED",
-  horizonWeeks: "8",
+  horizonWeeks: "4",
   taperDays: "7",
   proposeExtraMinutes: "",
 };
@@ -149,6 +152,7 @@ export function CoachCyclePanel() {
           生成周期草案
         </button>
       </div>
+      <button className="mt-2 min-h-11 rounded-xl border border-line px-3 text-sm" disabled={busy} onClick={()=>void action(async()=>{await prepareCycle(new Date().toISOString(),{historyDays:14,horizonWeeks:4});return '已按最近两周实际记录生成四周跑步与力量草案；目标与正式课表未改变';})}>按近两周生成四周草案</button>
       <p className="mt-2 text-xs text-muted">
         按已确认目标、实际训练与可用时间规划。远期周是有条件安排；不会自行修改正式课表。
       </p>
@@ -286,6 +290,7 @@ export function CoachCyclePanel() {
           </p>
           <p data-testid="r7-history" className="mt-2 whitespace-pre-line text-xs leading-relaxed">{historySummary(portrait.history)}</p>
           <details className="mt-2 text-xs"><summary className="min-h-10 cursor-pointer">本次画像引用的实际记录</summary>{portrait.history.sessions.slice(0,6).map(s=><p key={s.ref.id} className="mt-2 break-words">{s.date} · {s.provider} · 设备 {s.deviceId??'未知'} · 协议 {s.protocol??'未知'} · {s.ref.id}@{s.ref.revision}</p>)}</details>
+          <p data-testid="r8-adaptive" className="mt-2 whitespace-pre-line text-xs leading-relaxed">{adaptiveSummary(portrait.adaptive)}</p>
           {portrait.performances.map((p) => (
             <p key={p.ref.id} className="mt-2 break-words text-xs">
               {p.date} · {p.meters}米 / {p.seconds}秒 · {p.source}
@@ -327,6 +332,7 @@ export function CoachCyclePanel() {
                 {i ? "（到期重算）" : ""}
               </summary>
               <p className="mt-1 text-sm">{w.purpose}</p>
+              {w.strengthFocus&&<p className="mt-2 text-xs">力量周期：{w.strengthFocus}</p>}
               {w.existingSessions?.map((e, j) => (
                 <p key={j} className="mt-2 text-xs">
                   原课保留：{e.date} · {e.title} · {e.minutes}分钟 · {e.intensity}
@@ -340,13 +346,13 @@ export function CoachCyclePanel() {
                     </b>
                     <p>
                       {s.candidate
-                        ? `${s.candidate.minutes}分钟 · ${s.candidate.intensity}`
+                        ? `${s.candidate.minutes}分钟 · ${intensityLabel[s.candidate.intensity]}`
                         : "条件安排，尚无可确认的执行剂量"}
                     </p>
                     {s.candidate && (
                       <>
                         <p className="mt-1 text-xs">
-                          变更：原日历此日无课程 → 新增上述课程；调整变量：{s.changedVariable}
+                          变更：原日历此日无课程 → 新增上述课程；调整变量：{variableLabel[s.changedVariable]}
                         </p>
                         {cycleCourseLines(s.candidate).map((line, k) => (
                           <p key={k} className="mt-1 text-xs">
@@ -383,7 +389,7 @@ export function CoachCyclePanel() {
             <summary className="min-h-10 cursor-pointer text-sm">解释、反证与参考</summary>
             {d.draft.hypotheses.map((h, i) => (
               <p className="mt-2 text-xs" key={i}>
-                可能解释{i + 1}：{h.claim}；支持{h.support.length}条，反证{h.counter.length}条。
+                可能解释{i + 1}：{h.claim}；关联事实{h.support.length}条，待核对的反向线索{h.counter.length}条；不代表独立因果证据。
                 {h.discriminator}
               </p>
             ))}
