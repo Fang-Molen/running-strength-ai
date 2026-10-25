@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "name": "confirmed goal is separate from actual and calendar",
+      "target": 120,
+      "actualSessions": 6
+    },
+    {
+      "name": "eight-week preview preserves calendar",
+      "weeks": [
+        {
+          "start": "2026-10-26",
+          "phase": "BASE",
+          "conditional": false
+        },
+        {
+          "start": "2026-11-02",
+          "phase": "BASE",
+          "conditional": true
+        },
+        {
+          "start": "2026-11-09",
+          "phase": "BUILD",
+          "conditional": true
+        },
+        {
+          "start": "2026-11-16",
+          "phase": "BUILD",
+          "conditional": true
+        },
+        {
+          "start": "2026-11-23",
+          "phase": "BUILD",
+          "conditional": true
+        },
+        {
+          "start": "2026-11-30",
+          "phase": "SPECIFIC",
+          "conditional": true
+        },
+        {
+          "start": "2026-12-07",
+          "phase": "SPECIFIC",
+          "conditional": true
+        },
+        {
+          "start": "2026-12-14",
+          "phase": "TAPER",
+          "conditional": true
+        }
+      ],
+      "calendarBefore": 6,
+      "calendarAfter": 6
+    },
+    {
+      "name": "first-week-only confirmation",
+      "before": 6,
+      "after": 9,
+      "futureWrites": 0
+    },
+    {
+      "name": "compensating undo preserves all past rows",
+      "afterUndo": 6
+    },
+    {
+      "name": "race-date counterfactual changes phase",
+      "before": "BASE",
+      "after": "TAPER"
+    },
+    {
+      "name": "pain and function changes retract executable plan",
+      "hold": true,
+      "canConfirm": false
+    }
+  ],
+  "errors": [],
+  "modelRequests": [],
+  "screenshots": [
+    "/workspace/screenshots/r6/01-goal-confirm.png",
+    "/workspace/screenshots/r6/02-cycle-first-week.png",
+    "/workspace/screenshots/r6/03-cycle-confirmed.png",
+    "/workspace/screenshots/r6/04-near-race-revision.png",
+    "/workspace/screenshots/r6/05-pain-hold.png",
+    "/workspace/screenshots/r6/06-mobile.png",
+    "/workspace/screenshots/r6/07-desktop.png"
+  ],
+  "synthetic": true
+}

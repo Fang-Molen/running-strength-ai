@@ -1,3 +1,4 @@
+import { cycleCoachSummary, readCycleGoal } from './cycle/host'
 import { loadEntries as readNutritionSourceForFreshness } from '../nutrition/log'
 import { readEffectiveProfile } from './loop/effective-host'
 import { readEffectiveTrainingProfile } from './loop/effective-training'
@@ -187,7 +188,9 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
   if (input.facts.length > 8000) return { error: '本轮事实摘要超过发送上限，已保留本地分析；没有上传数据' }
   // The live proxy caps Content-Length in bytes. Chinese text must not be budgeted as one byte per character.
   // Keep the full current facts and question; only older conversation and the optional local explanation shrink.
-  const payload = { question: q, facts: input.facts, local: '', history: [] as typeof input.history }
+  const cycle = cycleCoachSummary();
+  const cycleFacts = cycle && input.facts.length + cycle.length + 2 <= 8000 ? input.facts + '\n\n' + cycle : input.facts;
+  const payload = { question: q, facts: cycleFacts, local: '', history: [] as typeof input.history }
   const bytes = () => new TextEncoder().encode(JSON.stringify(payload)).length
   const limit = 23_500
   const baseSize = bytes()
@@ -213,7 +216,7 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
   const ownerAtRequest=currentAthleteId(), cutoff=new Date().toISOString(), analysisDayAtRequest=analysisDay(q,null,localDayOf(cutoff))
   let verified:ReturnType<typeof readAnalysis>
   try{verified=readAnalysis(analysisDayAtRequest,cutoff,q)}catch{return {error:'当前事实或安全依据不可核对，已保留本地回答'}}
-  const contextVersion=()=>analysisDigest([readEffectiveProfile().version,readEffectiveTrainingProfile().version,readScheduleDocument(),readNutritionSourceForFreshness(),currentStore()?.getItem('fk-plan-doc-v1')??null]);
+  const contextVersion=()=>analysisDigest([readEffectiveProfile().version,readEffectiveTrainingProfile().version,readScheduleDocument(),readNutritionSourceForFreshness(),readCycleGoal(),currentStore()?.getItem('fk-plan-doc-v1')??null]);
   const contextAtRequest=contextVersion();
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms)
   try {

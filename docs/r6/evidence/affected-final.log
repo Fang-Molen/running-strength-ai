@@ -1,0 +1,31 @@
+✔ unbound free chat sends meal and measured weight as facts: 你看我的饮食，我应该吃哪些高热量的食物才能增重？ (185.392034ms)
+✔ unbound free chat sends meal and measured weight as facts: 你不是可以读取我饮食健康里面的东西吗？ (43.651314ms)
+✔ unbound native strength retains actual load, repetitions and RPE at the provider boundary (30.678554ms)
+✔ daily recovery retains quantitative readings, subjective recovery and independent rest (44.006068ms)
+✔ unknown nutrition stays unknown while an explicit recorded zero remains zero (14.957089ms)
+✔ unreadable food and health storage remain errors in the final domain summaries (10.741613ms)
+✔ future-known and future-day records are excluded by the request as-of boundary (30.520088ms)
+✔ foreign food, body, health and legacy V4 records never enter the final provider request (29.471572ms)
+✔ long context preserves all three domain summaries and discloses omitted details (33.904092ms)
+✔ the requested historical day is preserved in final provider nutrition and health (14.060638ms)
+✔ food corrections and deletions are reflected by the next real outgoing request (35.304531ms)
+✔ online off stops the client before either proxy or provider receives a request (4.950198ms)
+✔ provider system defines current-record reading and prioritises new facts over old denial (6.546896ms)
+✔ maximal Chinese chat uses at most 24000 UTF-8 request bytes while preserving formal facts (480.774886ms)
+ℹ Actual UTF-8 request: 23499 bytes; facts: 3872 chars; retained local: 2952 chars; retained history: 2 entries; real proxy status: 200
+✔ complete facts that cannot fit UTF-8 byte cap are rejected before any request (1.183444ms)
+✔ complete facts that cannot fit proxy fact character cap are rejected before any request (0.444709ms)
+✔ CAS write: expected revision must match; content-identical write is not a revision (8.426928ms)
+✔ in-page lock serialises async writers when Web Locks are unavailable (reported as not cross-page coordinated) (11.358161ms)
+✔ every source writer of fk-schedule-v1 goes through the central schedule writer with its writer label (3.296521ms)
+✔ metadata failure never claims saved; retry repairs the same write exactly once (0.783714ms)
+✔ silent metadata loss is detected and failed intent does not alter the document (0.317762ms)
+✔ recovery cannot overwrite a newer document or silently reset a corrupt revision (0.378642ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9596.70281

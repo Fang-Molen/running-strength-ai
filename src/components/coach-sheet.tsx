@@ -1,3 +1,5 @@
+import { CoachCyclePanel } from '@/components/coach-cycle-panel';
+import { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';
 import { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';
 import { CoachR5Panel } from '@/components/coach-r5-panel';
 import { CoachWeeklyPanel } from '@/components/coach-weekly-panel';
@@ -329,6 +331,11 @@ export function CoachSheet({
     const athleteId = memory.athleteId;
     if (currentAthleteId() !== athleteId) return;
     const r5 = prepareR5Command(value);
+    if(r5.kind==='NONE' && /周期|备赛|阶段计划/.test(value) && !/朋友|队友|假设|举例/.test(value)) {
+      let reply='';try{const d=await prepareCycle();reply=`已依据当前保存资料生成${d.draft.weeks.length}周周期草案。${cycleCoachSummary()}\n请在「复盘→个体周期计划」核对比赛目标、训练背景和差异；尚未确认的目标先保存，正式课表不会自动改变。`;}catch(e){reply=e instanceof Error?e.message:'周期依据暂不可核对，原计划保留';}
+      if(currentAthleteId()!==athleteId)return;
+      const id=crypto.randomUUID();setMemory(current=>current?.athleteId===athleteId?{...current,messages:[...current.messages,{id:id+'-user',role:'user' as const,text:value},{id:id+'-cycle',role:'coach' as const,text:reply.slice(0,1000)}].slice(-40)}:current);setDraft('');return;
+    }
     if (r5.kind !== 'NONE') {
       let reply = r5.kind === 'PROPOSAL' ? '已生成修改差异，请在下方确认卡核对；接受前不会写入正式资料或计划。' : r5.kind === 'ANSWER' ? r5.text : '正在汇总本周实际记录与下周草案。';
       if (r5.kind === 'WEEKLY') { try { await generateWeeklyDraft(); reply = '周复盘与下周草案已生成，请在「复盘」查看事实、差异和限制；确认前不生效。'; } catch (e) { reply = e instanceof Error ? e.message : '周复盘生成失败，计划未改变。'; } }
@@ -578,6 +585,7 @@ export function CoachSheet({
         </div>
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
+        {section === 'review' && <CoachCyclePanel key={`cycle-${athleteScope}`} />}
         {section === 'review' && <CoachWeeklyPanel />}
         {section === 'review' && <CoachR5Panel />}
         {section === 'review' && <CoachSuggestionsPanel key={`suggestions-${athleteScope}`} />}
