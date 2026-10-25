@@ -229,8 +229,8 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
     setCoachAssessment(assessImportedTraining(result.record))
     setTrend(assessImportedTrainingTrend(loadConfirmedTrainingImports()))
     setStep("result")
-    // Duplicate confirmation never starts another paid model request.
-    if (!result.duplicate) await requestReview(result.record)
+    // Confirmation alone must not start a paid model request.
+    // Saving actuals is offline. Model review requires the separate explicit button.
     confirmInFlight.current = false
   }
 
@@ -263,6 +263,7 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
           </label>
           {images.length ? <p className="mt-2 text-sm text-muted">已准备 {images.length} 张，合计 {(images.reduce((sum, item) => sum + item.bytes, 0) / 1024 / 1024).toFixed(1)} MB。只用于本次服务端提取，提取后立即从页面内存清除。</p> : null}
         </section>
+        <button type="button" disabled={busy} onClick={()=>{setDraft(createTrainingImportDraft({},'TEXT',['user-edited']));setConfirmedRecord(null);setReview(null);setMessage('手动核对实际记录；确认前不保存，不调用模型。');setStep('review')}} className="mt-4 min-h-12 w-full rounded-card border border-line font-bold">手动录入实际训练（离线）</button>
         <button type="button" disabled={busy} onClick={extract} className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-card bg-accent font-bold text-accent-fg disabled:opacity-60">{busy ? <LoaderCircle className="size-5 animate-spin" /> : null}{busy ? "正在提取事实" : "生成可校对草稿"}</button>
         {busy ? <div role="status" aria-live="polite" className="mt-3 rounded-card border border-line bg-surface p-4 text-sm"><p className="font-bold">正在整理训练事实，请稍候</p><p className="mt-1 text-muted">最多等待 50 秒。这不是完成百分比。完成后进入人工核对，不会自动保存。请勿重复点击。</p></div> : null}
         {message ? <p role="status" aria-live="polite" className="mt-3 rounded-card bg-surface-2 p-3 text-sm">{message}</p> : null}
@@ -296,8 +297,22 @@ export function TrainingImportSheet({ onClose }: { onClose: () => void }) {
 
         {(draft.sport === "RUNNING" || draft.sport === "MIXED") ? <section id="import-running" className="mt-3 scroll-mt-24 rounded-card border border-line bg-surface p-3">
           <div className="flex items-center justify-between"><h3 className="font-bold">跑步实际分段</h3><button type="button" onClick={() => patch({ runningSegments: [...draft.runningSegments, { id: `run-${Date.now()}`, kind: "REPETITION", round: empty<number>(), repeat: empty<number>(), distanceMeters: empty<number>(), durationSeconds: empty<number>(), recoverySeconds: empty<number>(), completion: "NOT_RECORDED", sourceIds: ["user-edited"] }] })} className="flex h-10 items-center gap-1 rounded-full px-3 text-sm font-bold text-accent"><Plus className="size-4" />添加</button></div>
+          <details className="mt-3 rounded-card border border-line p-3">
+            <summary className="min-h-10 cursor-pointer text-sm font-bold">比较条件（可选，确认后用于历史比较）</summary>
+            <p className="mb-2 text-xs text-muted">只填写这次实际情况。同协议需路线、训练目的与执行方式一致；换设备请改设备标识。留空仍可分析已有分段，不会补成相同条件。</p>
+            <div className="grid grid-cols-2 gap-2">
+              {([['deviceId','实际设备标识'],['protocolKey','实际比较协议'],['surface','实际场地']] as const).map(([key,label])=><label key={key} className="min-w-0 text-xs">{label}<input aria-label={label} maxLength={key==='protocolKey'?100:60} value={draft.comparisonContext?.[key]?.value??''} onChange={e=>patch({comparisonContext:{deviceId:empty<string>(),protocolKey:empty<string>(),surface:empty<string>(),gradePercent:empty<number>(),...draft.comparisonContext,[key]:recorded(e.target.value.trim()||null)}})} className="mt-1 h-11 w-full min-w-0 rounded-card border border-line px-2" /></label>)}
+              <label className="min-w-0 text-xs">实际坡度（%）<DecimalInput aria-label="实际坡度" min={-40} max={40} nullable value={draft.comparisonContext?.gradePercent?.value??null} onCommit={value=>patch({comparisonContext:{deviceId:empty<string>(),protocolKey:empty<string>(),surface:empty<string>(),...draft.comparisonContext,gradePercent:recorded(value)}})} className="mt-1 h-11 w-full min-w-0 rounded-card border border-line px-2" /></label>
+            </div>
+          </details>
           <div className="mt-2 space-y-3">{draft.runningSegments.map((segment, index) => <div key={segment.id} className="rounded-card bg-bg p-3">
             <div className="flex justify-between"><b>分段 {index + 1}</b><button type="button" onClick={() => patch({ runningSegments: draft.runningSegments.filter((_, i) => i !== index) })} aria-label="删除分段"><Trash2 className="size-4 text-risk" /></button></div>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <label className="min-w-0 text-xs">分段结构<select aria-label={`分段${index+1}结构`} value={segment.kind} onChange={e=>patchRun(index,{kind:e.target.value as ImportedRunningSegment['kind']})} className="mt-1 h-11 w-full min-w-0 rounded-card border border-line px-1"><option value="UNKNOWN">未知</option><option value="CONTINUOUS">连续跑</option><option value="REPETITION">重复跑</option><option value="RECOVERY">恢复段</option></select></label>
+              <label className="min-w-0 text-xs">间歇位置<select aria-label={`分段${index+1}间歇位置`} value={segment.recoveryScope??'UNSPECIFIED'} onChange={e=>patchRun(index,{recoveryScope:e.target.value as ImportedRunningSegment['recoveryScope']})} className="mt-1 h-11 w-full min-w-0 rounded-card border border-line px-1"><option value="UNSPECIFIED">未知或不适用</option><option value="AFTER_REPEAT">这次重复之后</option><option value="AFTER_ROUND">这轮之后</option></select></label>
+              <label className="min-w-0 text-xs">分段平均心率<DecimalInput aria-label={`分段${index+1}平均心率`} min={20} max={240} integer nullable value={segment.averageHeartRateBpm?.value??null} onCommit={value=>patchRun(index,{averageHeartRateBpm:recorded(value)})} className="mt-1 h-11 w-full min-w-0 rounded-card border border-line px-2" /></label>
+              <label className="min-w-0 text-xs">心率采集方式<select aria-label={`分段${index+1}心率采集方式`} value={segment.heartRateMethod?.value??''} onChange={e=>patchRun(index,{heartRateMethod:recorded(e.target.value||null)})} className="mt-1 h-11 w-full min-w-0 rounded-card border border-line px-1"><option value="">未知</option><option value="CHEST_STRAP">胸带</option><option value="WRIST_OPTICAL">腕部光电</option><option value="MANUAL">手动测量</option>{segment.heartRateMethod?.value&&!['CHEST_STRAP','WRIST_OPTICAL','MANUAL'].includes(segment.heartRateMethod.value)&&<option value={segment.heartRateMethod.value}>{segment.heartRateMethod.value}</option>}</select></label>
+            </div>
             <div className="mt-2 grid grid-cols-3 gap-2"><DecimalInput aria-label="轮" placeholder="轮"  min={1} nullable integer value={segment.round.value} onCommit={value=>patchRun(index, { round:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="次" placeholder="次"  min={1} nullable integer value={segment.repeat.value} onCommit={value=>patchRun(index, { repeat:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><select aria-label="完成状态" value={segment.completion} onChange={(e) => patchRun(index, { completion: e.target.value as ImportedRunningSegment["completion"] })} className="h-11 min-w-0 rounded-card border border-line px-1"><option value="COMPLETED">完成</option><option value="SKIPPED">跳过</option><option value="NOT_RECORDED">未记录</option></select><DecimalInput aria-label="距离米" placeholder="距离m"  min={0} nullable value={segment.distanceMeters.value} onCommit={value=>patchRun(index, { distanceMeters:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="用时秒" placeholder="用时s"  min={0} nullable value={segment.durationSeconds.value} onCommit={value=>patchRun(index, { durationSeconds:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /><DecimalInput aria-label="恢复秒" placeholder="恢复s"  min={0} nullable value={segment.recoverySeconds.value} onCommit={value=>patchRun(index, { recoverySeconds:recorded(value) })} className="h-11 min-w-0 rounded-card border border-line px-2" /></div>
           </div>)}</div>
         </section> : null}

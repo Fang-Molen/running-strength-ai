@@ -156,7 +156,10 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const receipt=linkedDay?confirmedLinks[linkedDay]?.running?.device:null
       const phoneIds=linkedDay?phoneOccurrences.get(`v4run:${linkedDay}`)??[]:[]
       const confirmedPhone=receipt?.linkedBy==='user'&&iso(receipt.linkedAt)&&Date.parse(receipt.linkedAt)<=cutoff&&phoneIds.length===1?phoneIds[0]:null
-      const base = {athleteId,eventId:record.confirmedImportId,occurrenceId:record.confirmedImportId,
+      const cc=record.comparisonContext
+      const base = {sourceKind:!record.sourceRecordIdentity&&!record.provenance?'MANUAL_IMPORT' as const:undefined,
+        deviceId:cc?.deviceId.status==='RECORDED'?cc.deviceId.value:null,protocolKey:cc?.protocolKey.status==='RECORDED'?cc.protocolKey.value:null,
+        athleteId,eventId:record.confirmedImportId,occurrenceId:record.confirmedImportId,
         occurredAt:record.occurredAt.value,knownAt:record.confirmedAt,sourceId:record.confirmedImportId,actual:'CONFIRMED' as const,provenance:record.provenance??{provider:providerOf(record.sourceRecordIdentity),accountRef:null,recordId:record.sourceRecordIdentity??record.confirmedImportId,measuredAt:record.occurredAt.value,receivedAt:record.confirmedAt},sessionRpe:record.sessionRpe.status==='RECORDED'?record.sessionRpe.value:null,sessionRpeScale:record.sessionRpe.status==='RECORDED'?'0-10_SESSION_RPE':null}
       if (record.sport === 'STRENGTH' || record.sport === 'MIXED') {
         const exercises: NonNullable<TrainingPart['exercises']> = []
@@ -175,7 +178,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       }
       if(confirmedPhone)notes.push('已确认关联的手表跑步与手机逐段记录属于同课：本次只采用手机逐段实际，手表原始记录保留，不永久合并来源。')
       if (!confirmedPhone&&(record.sport==='RUNNING'||record.sport==='MIXED'))
-        add({...base,componentId:'running',modality:'RUN',runType:'UNKNOWN',runningStructure:record.runningSegments,runSegments:record.runningSegments.filter(s=>s.kind!=='RECOVERY').map((s,i)=>({id:s.id,blockId:'import',roundIndex:s.round.value,stepIndex:s.repeat.value??i+1,distanceM:s.distanceMeters.value,durationSeconds:s.durationSeconds.value,restAfterSeconds:s.recoverySeconds.value,rawResolutionSeconds:null,gradePercent:null,surface:null,completion:s.completion==='COMPLETED'?'COMPLETED':s.completion==='SKIPPED'?'SKIPPED':'NOT_RECORDED'}))},`导入的跑步${brandLabel(record.sourceRecordIdentity)}`,importedRunDetail(record))
+        add({...base,componentId:'running',modality:'RUN',runType:'UNKNOWN',runningStructure:record.runningSegments,runSegments:record.runningSegments.filter(s=>s.kind!=='RECOVERY').map((s,i)=>({id:s.id,blockId:'import',roundIndex:s.round.value,stepIndex:s.repeat.value??i+1,restScope:s.recoveryScope??'UNSPECIFIED',kind:s.kind==='CONTINUOUS'?'CONTINUOUS':s.kind==='REPETITION'?'REPETITION':'UNKNOWN',averageHeartRateBpm:s.averageHeartRateBpm?.status==='RECORDED'?s.averageHeartRateBpm.value:null,heartRateMethod:s.heartRateMethod?.status==='RECORDED'?s.heartRateMethod.value:null,distanceM:s.distanceMeters.status==='RECORDED'?s.distanceMeters.value:null,durationSeconds:s.durationSeconds.status==='RECORDED'?s.durationSeconds.value:null,restAfterSeconds:s.recoverySeconds.status==='RECORDED'?s.recoverySeconds.value:null,rawResolutionSeconds:null,gradePercent:cc?.gradePercent.status==='RECORDED'?cc.gradePercent.value:null,surface:cc?.surface.status==='RECORDED'?cc.surface.value:null,completion:s.completion==='COMPLETED'?'COMPLETED':s.completion==='SKIPPED'?'SKIPPED':'NOT_RECORDED'}))},`导入的跑步${brandLabel(record.sourceRecordIdentity)}`,importedRunDetail(record))
       for (const [kind,field] of [['PAIN',record.pain],['SORENESS',record.soreness]] as const) {
         if (field.status!=='RECORDED'||!field.value) continue
         const region=regionFromExplicitLabel(field.value.location)

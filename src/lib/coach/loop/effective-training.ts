@@ -42,7 +42,7 @@ export function readEffectiveTrainingProfile() {
   const other = <T>(value: T): Known<T> | null =>
     pp ? { value, source: "PERSONAL_COACH", at: pat, version: `personal:r${pp.revision}` } : null;
   const conflicts: string[] = [];
-  const pick = <T>(field: string, a: Known<T> | null, b: Known<T> | null) => {
+  const pick = <T>(field: string, a: Known<T> | null, b: Known<T> | null): Known<T> | null => {
     if (a && b && JSON.stringify(a.value) !== JSON.stringify(b.value))
       conflicts.push(`${field}在运动员档案与私人教练资料不一致；按时间优先并保留冲突，需核对。`);
     return (

@@ -1,0 +1,123 @@
+
+> test:r189
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-r189.test.ts src/lib/core/segment-rpe.test.ts src/lib/strength/demo.test.ts src/lib/nutrition/timing.test.ts src/lib/core/coach-r189-dialogue-integrity.test.ts src/lib/core/coach-r189-provenance.test.ts
+
+✔ R189 profile rejects other or negated PB: 我的朋友800米PB120秒，我主项1500米 (156.05397ms)
+✔ R189 profile rejects other or negated PB: 我不是800米PB120秒，我主项1500米 (34.254421ms)
+✔ R189 profile rejects other or negated PB: 我的队友16岁，800米PB120秒，我主项1500米 (6.773278ms)
+✔ R189 a repeated training performance is not a personal best or main event (15.431021ms)
+✔ R189 own explicit PB after another athlete remains attributable (18.956598ms)
+✔ R189 switching event never relabels the previous event PB (75.860966ms)
+✔ R189 same-course follow-up retains purpose through JSON persistence (205.255526ms)
+✔ R189 corrected purpose is retained but never borrowed by another course (72.591087ms)
+✔ R189 explicitly unknown purpose clears the prior interpretation (80.118727ms)
+✔ R189 confirmed saved course retains purpose while reading corrected formal facts (138.723316ms)
+✔ R189 malformed saved purpose context fails validation safely (0.811335ms)
+✔ R189 implausible race numbers remain reported input, not accepted derived analysis (27.226405ms)
+✔ R189 provenance planned values never become actual: 今天计划400米×4，目标60、61、62、63秒，明天做 (9.84253ms)
+✔ R189 provenance planned values never become actual: 我准备明天400米×4，60、61、62、63秒 (0.906228ms)
+✔ R189 provenance planned values never become actual: 这节课计划400米×4，目标60、61、62、63秒，还没完成 (5.562463ms)
+✔ R189 provenance planned values never become actual: 我明天计划练50分钟，整课RPE7 (0.248639ms)
+✔ R189 provenance planned values never become actual: 今天400米×4，目标60、61、62、63秒 (1.767634ms)
+✔ R189 provenance planned values never become actual: 今天400米×4，目标平均65秒，整课RPE7 (1.602217ms)
+✔ R189 provenance actual reports survive separate plan clauses: 原计划400米×4目标60秒，实际65、66、67、68秒，组间3分钟 (6.258349ms)
+✔ R189 provenance actual reports survive separate plan clauses: 今天400米×4，65、66、67、68秒，明天练什么 (1.695843ms)
+✔ R189 provenance actual reports survive separate plan clauses: 今天400米×4，实际65、66、67、68秒，明天目标60、61、62、63秒 (0.771611ms)
+✔ R189 provenance clock-form time is already seconds, never multiplied twice (4.840548ms)
+✔ R189 provenance actual per-rep time cannot override explicit target (3.49558ms)
+✔ R189 provenance slower than target is not called an overspeed start (0.774085ms)
+✔ R189 provenance fast start explanation cites the measured target difference (0.292674ms)
+✔ R189 provenance target clocks and minute units are explicit (5.651835ms)
+✔ R189 provenance invalid or excluded actual inputs never reach target arithmetic (2.00631ms)
+✔ R189 provenance actual race survives a distinct goal: 今天800米用时1:54.32，前400米累计54.1秒，目标成绩1:52，请复盘今天 (4.317004ms)
+✔ R189 provenance actual race survives a distinct goal: 目标800米成绩1:52，今天800米用时1:54.32，前400米累计54.1秒，复盘 (0.882348ms)
+✔ R189 provenance future or another athlete race is not self actual: 明天800米成绩1:54.32，前400米累计54.1秒 (0.110034ms)
+✔ R189 provenance future or another athlete race is not self actual: 我的朋友800米用时1:54.32，前400米累计54.1秒 (0.058194ms)
+✔ R189 provenance future or another athlete race is not self actual: 目标800米成绩1:54.32，前400米累计54.1秒 (0.515793ms)
+✔ R189 provenance explicit prior-course reference: 刚才的分段说明什么 (0.591261ms)
+✔ R189 provenance explicit prior-course reference: 再复盘一下这节课 (0.630714ms)
+✔ R189 provenance explicit prior-course reference: 复盘 (0.215099ms)
+✔ R189 provenance explicit prior-course reference: 帮我复盘今天 (0.35554ms)
+✔ R189 provenance coaching concepts do not bind prior course: 复盘时为什么要记录RPE (0.328712ms)
+✔ R189 provenance coaching concepts do not bind prior course: 为什么要复盘 (0.046088ms)
+✔ R189 provenance coaching concepts do not bind prior course: 什么是训练复盘 (0.031029ms)
+✔ R189 provenance coaching concepts do not bind prior course: 复盘需要哪些数据 (0.146861ms)
+✔ R189 provenance coaching concepts do not bind prior course: 明天练什么 (0.148001ms)
+✔ R189 arrest 队友倒地没有反应，只有叹息样呼吸 (54.82755ms)
+✔ R189 arrest 他跑完叫不醒，抽泣样呼吸 (4.614741ms)
+✔ R189 arrest 队友倒地抽搐后没有反应 (2.459649ms)
+✔ R189 scoped nonactual 我现在没有胸痛，没有呼吸困难，没有晕倒 (2.096307ms)
+✔ R189 scoped nonactual 假设队友没有反应也没有正常呼吸怎么办 (0.707336ms)
+✔ R189 heat mild has cooling and explicit escalation (4.387188ms)
+✔ R189 cardiac warning is not cardiac arrest AED script (5.336745ms)
+✔ R189 seconds 1:54.32 (7.675056ms)
+✔ R189 seconds 2'03.125 (7.274971ms)
+✔ R189 seconds 59.875 (0.658123ms)
+✔ R189 seconds 1:60.1 (0.502884ms)
+✔ R189 seconds 缺 (1.446201ms)
+✔ R189 count is not event and hundredths retained (276.008448ms)
+✔ R189 paired distance/time arrays do not turn meters into seconds (4.851814ms)
+✔ R189 mismatched arrays stay unresolved (3.045869ms)
+✔ R189 target values do not become actual times (5.714287ms)
+✔ R189 exact two rounds retained (1.688173ms)
+✔ R189 minute PB parses without inventing a completed session (27.452265ms)
+✔ R189 cumulative splits derive exact unreported tail and never interpolate 600 (1.724288ms)
+✔ R189 conflicting total is not silently preferred (0.48199ms)
+✔ R189 cumulative report actually enters review text (125.059603ms)
+✔ R189 nominal proposals preserve raw, never auto apply (0.713349ms)
+✔ R189 free question does not bind prior training 明天怎么安排 (0.153842ms)
+✔ R189 free question does not bind prior training 运动后为什么酸痛 (6.735244ms)
+✔ R189 free question does not bind prior training 我800米PB两分钟，怎么提高 (0.198503ms)
+✔ R189 free question does not bind prior training 下周训练计划怎么安排 (0.161515ms)
+✔ R189 free follow-up does not reuse stale chat course (38.409595ms)
+✔ R189 unknown purpose stays unknown even in a stage (38.501263ms)
+✔ R189 supplied course purpose changes interpretation but not actual facts (53.169118ms)
+✔ R189 medical hold still dominates next-step observation (4.827728ms)
+✔ R189 chat UI scopes selected record only for explicit review (2.179959ms)
+✔ R189 set RPE zero is explicit and never becomes session RPE (16.404244ms)
+✔ R189 segment rating idempotence and append-only revisions (4.936521ms)
+✔ R189 unknown segment, unit or athlete cannot accept rating (1.69875ms)
+✔ R189 failed optional rating preserves completed set and retry succeeds once (4.810531ms)
+✔ R189 voided training hides and blocks segment RPE without deleting evidence; restore recovers it (7.725427ms)
+✔ R189 a corrected set keeps its stable RPE identity and original evidence (2.062046ms)
+✔ R189 duplicate strength attempts invalidate the group RPE instead of choosing the latest event (3.101188ms)
+✔ R189 strength group must exist in its frozen plan even when a completion event claims it (6.799813ms)
+✔ R189 optional eating clock rejects blank/invalid and preserves local calendar date and clock time (13.188142ms)
+✔ R189 no end time means no invented post-session window (2.355558ms)
+✔ R189 run and strength keep separate actual windows; a recorded meal is not adequacy (0.940101ms)
+✔ R189 nutrition windows isolate athlete and preserve unknown type; void invalidates a window (40.079046ms)
+✔ R189 running windows use occurrence frozen snapshot, not plan ID lookup (10.23397ms)
+✔ R189 all 76 catalog IDs use exact supplied motion mapping and preserve FIT key (2.184261ms)
+✖ R189 every mapped motion exists and has valid duration/frames, local vendor/model present (114.134691ms)
+✔ R189 add to today appends exact default dose only after caller request, preserves old plan (15.781106ms)
+✔ R189 duplicate action, stale plan, unknown load, and dropped write never claim saved (4.878551ms)
+✔ R189 undo refuses to overwrite subsequent edits (5.918091ms)
+✔ R189 lazy entry does not import viewer or download assets on app boot; old figure absent (1.089149ms)
+ℹ tests 91
+ℹ suites 0
+ℹ pass 90
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23097.271728
+
+✖ failing tests:
+
+test at src/lib/strength/demo.test.ts:23:1
+✖ R189 every mapped motion exists and has valid duration/frames, local vendor/model present (114.134691ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(existsSync(new URL('../../../public/demo3d/' + name, import.meta.url)))
+
+      at TestContext.<anonymous> (file:///workspace/scratch/caf58e1ec24d/fangkun/src/lib/strength/demo.test.ts:34:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

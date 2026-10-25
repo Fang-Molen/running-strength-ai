@@ -61,7 +61,7 @@ export function commitScheduleRaw(box: Box, raw: string, writer: ScheduleWriter,
 let tail: Promise<unknown> = Promise.resolve()
 /** 共享写锁。coordinated=false 表示只在本页内互斥（没有 Web Locks）。 */
 export async function withScheduleLock<T>(work: () => T | Promise<T>): Promise<{ value: T; coordinated: boolean }> {
-  if (typeof navigator !== 'undefined' && navigator.locks?.request) return { value: await navigator.locks.request(SCHEDULE_WRITE_LOCK, work) as T, coordinated: true }
+  if (typeof navigator !== 'undefined' && navigator.locks?.request) return { value: await navigator.locks.request(SCHEDULE_WRITE_LOCK, async () => work()) as T, coordinated: true }
   const run = tail.then(work); tail = run.catch(() => {})
   return { value: await run, coordinated: false }
 }
