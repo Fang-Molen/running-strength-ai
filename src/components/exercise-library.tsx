@@ -5,7 +5,7 @@ import { characterReference, type Gender } from '@/lib/strength/approved-motion'
 import { validateVideoManifest } from '@/lib/character/identity'
 import type { MuscleId } from '@/lib/strength/demo/types'
 import './exercise-demo.css'
-import { poseCardUrl, POSE_CARD_LABEL, defaultPoseGender } from '@/lib/strength/pose-cards-r8'
+import { poseCardUrl, POSE_CARD_LABEL, defaultPoseGender, POSE_PATTERNS, posePattern } from '@/lib/strength/pose-cards-r8'
 import RunningTechniqueLibrary from './running-technique-library'
 import './running-technique-library.css'
 
@@ -54,8 +54,8 @@ function StrengthLibrary({ onSelect }: { onSelect: (id: string) => void }) {
   <div className="maps" onClick={event=>{const target=(event.target as Element).closest('[data-m]');const m=target?.getAttribute('data-m') as MuscleId|null;if(m&&MUSCLES[m])setMuscle(m===muscle?null:m)}}>{(['front','back'] as const).map((v,i)=><div key={v}><div dangerouslySetInnerHTML={{__html:muscleMapSVG(v,[],[],{selected:muscle?[muscle]:[]})}}/>{i?'背面':'正面'}</div>)}</div>
   <div className="selbar"><span>{muscle?'肌肉：'+MUSCLES[muscle]:'点人体图按肌肉筛选'} · {rows.length} 个</span>{muscle?<button type="button" onClick={()=>setMuscle(null)}>清除</button>:null}</div>
   <label className="only3d"><input type="checkbox" checked={onlyApproved} onChange={e=>setOnlyApproved(e.target.checked)}/>只看已审核同角色视频（当前{approvedCount}个）</label>
-  <p className="note">缩略图为 R8 姿势示意（程序化简化人形，待审核，不是标准教学）；缺图的动作仍显示人物外观参考。有合格同角色素材才显示视频。</p>
-  <div className="list">{rows.map(e=><button type="button" className="item" key={e.id} onClick={()=>onSelect(e.id)}><Thumb gender={gender} exerciseId={e.id}/><div style={{textAlign:'left',minWidth:0}}><b>{e.name_zh}{hasApproved(e.id)?<em className="b3">已审核视频</em>:null}</b><small>{e.category} · {e.equipment.join('、')}</small></div></button>)}</div>
+  <p className="note">按动作模式分组，点开分组看动作，点动作看起始、过程、到位三帧写实示意（教练组审核中）。缺帧会写明缺哪一帧，不补图。</p>
+  <div role="list" aria-label="按动作模式分组">{[...POSE_PATTERNS,'其他'].map(p=>{const items=rows.filter(e=>posePattern(e.id)===p);if(!items.length)return null;const open=!!(q||muscle||g!=='全部'||eq!=='全部'||onlyApproved);return <details className="pgroup" key={p+(open?'-o':'')} open={open}><summary>{p}<span>{items.length} 个</span></summary><div className="list">{items.map(e=><button type="button" className="item" key={e.id} onClick={()=>onSelect(e.id)}><Thumb gender={gender} exerciseId={e.id}/><div style={{textAlign:'left',minWidth:0}}><b>{e.name_zh}{hasApproved(e.id)?<em className="b3">已审核视频</em>:null}</b><small>{e.category} · {e.equipment.join('、')}</small></div></button>)}</div></details>})}</div>
   {rows.length===0?<p className="note">当前筛选下没有符合要求的动作，或尚无审核通过的同角色视频。可取消已审核过滤继续查看图文。</p>:null}
   <p className="note">肌肉映射待教练组审校。浏览、搜索和筛选不会加入训练。</p>
  </section>

@@ -3,18 +3,21 @@ import { demoData, mount2d, mount3d, type DemoPlayer, type DemoView } from '@/li
 import { has3d } from '@/lib/strength/demo'
 import { FangkunExerciseVideo } from './fangkun-unified-video'
 import { defaultPoseGender } from '@/lib/strength/pose-cards-r8'
+import PoseFrames from './pose-frames'
 import type { Gender } from '@/lib/character/identity'
 import './exercise-demo.css'
 /** Shared by library, training execution and plan editor; exact catalogue ID is retained. */
 export default function ExerciseDemo({catalogId,onAdd}:{catalogId:string;onAdd?:()=>void;compact?:boolean}){
  const [gender,setGender]=useState<Gender>(defaultPoseGender)
+ const [showTrace,setShowTrace]=useState(false)
  const exercise=demoData.exercises.find(e=>e.id===catalogId)
  if(!exercise)return <p className="text-sm text-muted">暂无动作演示。</p>
  return <section className="fk-demo fk-demo-unified" aria-label={`${exercise.name_zh}演示`}>
   <div className="ctrl" role="group" aria-label="新版人物">{(['male','female'] as const).map(g=><button type="button" key={g} aria-pressed={gender===g} onClick={()=>setGender(g)}>{g==='male'?'男性':'女性'}</button>)}</div>
   <FangkunExerciseVideo exerciseId={catalogId} title={exercise.name_zh} gender={gender}/>
-  <h3 className="mt-3 text-sm font-bold">动作轨迹示意</h3>
-  <GenericDemo catalogId={catalogId}/>
+  <h3 className="mt-3 text-sm font-bold">关键帧示意</h3>
+  <PoseFrames exerciseId={catalogId} gender={gender}/>
+  <details className="mt-3" onToggle={e=>setShowTrace((e.currentTarget as HTMLDetailsElement).open)}><summary className="text-sm font-bold">旧版动作轨迹示意（较粗糙，点开才加载）</summary>{showTrace?<GenericDemo catalogId={catalogId}/>:null}</details>
   {onAdd&&<button type="button" className="add" onClick={onAdd}>加入今天训练</button>}
  </section>
 }
