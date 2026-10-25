@@ -461,7 +461,7 @@ export function CoachSheet({
       if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
       // Shown as its own visible block under the answer; DeepSeek receives the same content as facts.
-      let supplement = !redFlag ? [unified.localSection, unified.followUps].filter(Boolean).join("\n\n") : "";
+      let supplement = !redFlag && local.localOnly !== 'HISTORY_ASSESSMENT' ? [unified.localSection, unified.followUps].filter(Boolean).join("\n\n") : "";
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");

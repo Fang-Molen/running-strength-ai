@@ -1,3 +1,4 @@
+import { historySummary, isHistoryQuestion } from './assessment/history'
 import { cycleCoachSummary, readCycleGoal } from './cycle/host'
 import { loadEntries as readNutritionSourceForFreshness } from '../nutrition/log'
 import { readEffectiveProfile } from './loop/effective-host'
@@ -76,6 +77,7 @@ export function buildFacts(today: string, act: GActivity | null, laps: GLap[] | 
   }
   const day = analysisDay(known.question ?? '', selectedStart, today)
   const store = currentStore() as Pick<Storage, 'getItem'> | null, p = planFor(day, store, known.goalTarget ?? null)
+  const history = isHistoryQuestion(known.question ?? '') ? historySummary(readAnalysis(day, asOf, known.question).history) : null
   const profile = [`目标：${p.goal ?? '未知（用户没有设定具体成绩目标；不要假设任何目标）'}`]
   const marks = userMarks(store); if (marks.length) profile.push(`用户资料成绩：${marks.join('；')}`)
   if (p.today) profile.push(`用户在用的计划·${day === today ? '今天' : day}（计划，不是实际）：${p.today}`)
@@ -140,7 +142,7 @@ export function buildFacts(today: string, act: GActivity | null, laps: GLap[] | 
     '相同来源的训练只计一次；计划不等于完成，旧整课评价不拆给跑步和力量。']
   // Independent budgets prevent a long plan or lap list from silently deleting later domains.
   // Total budgets, headings and separators stay below the existing 7800/8000 client/server limit.
-  return [header.join('\n'), boundedSection('资料与计划', profile, 650),
+  return [header.join('\n'), ...(history ? [boundedSection('历史执行画像（不是能力诊断）', history.split('\n'), 1100)] : []), boundedSection('资料与计划', profile, 650),
     boundedSection('饮食', [...nutrition.summary, ...nutrition.details], 1450),
     boundedSection('训练与力量', [...training.summary, ...linked, ...training.details.slice(0, 4), ...legacy, ...watch, ...training.details.slice(4)], 1750),
     boundedSection('健康与恢复', [...recovery.summary, ...recovery.details], 1500)].join('\n\n')

@@ -1,0 +1,38 @@
+✔ confirmed actual segment heart rate reaches the shared analysis and disappears after void without rewriting originals (377.477695ms)
+✔ same-protocol prior dates give hand-calculated pace/HR/RPE changes without claiming capacity (69.071743ms)
+✔ shorter recovery prevents pooled heart-rate and pace claims (4.769706ms)
+✔ new device prevents pooled heart-rate and pace claims (7.638631ms)
+✔ different account prevents pooled heart-rate and pace claims (5.75702ms)
+✔ different course distance prevents pooled heart-rate and pace claims (4.888249ms)
+✔ unknown terrain retains descriptive pace but withholds heart-rate comparison and progression (5.686614ms)
+✔ missing one HR or one work duration does not silently average the remaining segments (15.18372ms)
+✔ heart-rate summaries weight actual duration, not lap count or planned distance (1.717696ms)
+✔ same-day runs are not independent baseline days (7.940247ms)
+✔ foreign, planned, future-known and retracted records cannot enter the portrait (5.200898ms)
+✔ same occurrence running and strength stay separate while days are counted once (5.754079ms)
+✔ revision changes withdraw old comparison and do not retain its reference (8.882867ms)
+✔ normal execution cannot release an explicit pain restriction (2.961121ms)
+✔ repeated matching deterioration blocks proposed progression even with optimistic device recovery (61.978761ms)
+✔ empty history remains partial and asks at most two questions within the answer limit (0.341645ms)
+✔ unknown current device never bridges incompatible historical device baselines (2.257561ms)
+✔ missing outcome data does not invent support or counterevidence for physiological explanations (2.576358ms)
+✔ rest after round cannot be pooled with rest after repetition (4.052711ms)
+✔ training import keeps two rounds with four repetitions instead of flattening structure (7.826868ms)
+✔ missing, ambiguous and conflicting fields do not become zero (0.551419ms)
+✔ confirmation is actual-only, source-backed and idempotent (27.280111ms)
+✔ critical conflicts block confirmation (14.405042ms)
+✔ review requires numeric provenance and rejects plan or long-term claims for actual-only records (25.503191ms)
+✔ plan-only slots and invalid or unzoned dates cannot be confirmed as actual training (3.246653ms)
+✔ feedback conflicts block confirmation; ambiguous feedback stays unavailable rather than confirmed (2.484888ms)
+✔ server consistency normalization rebuilds citations and never trusts supplied source descriptions (1.70881ms)
+✔ review rejects numeric substrings, unknown citations, invalid boundary and unsolicited progression (5.486607ms)
+✔ compact model fields normalize without turning absent into zero (4.422115ms)
+✔ high RPE with pain and soreness needs a recovery question and both body sources (17.959703ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12494.294308

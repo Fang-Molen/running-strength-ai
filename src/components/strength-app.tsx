@@ -616,6 +616,7 @@ export function StrengthApp() {
             {tab === "coach" || !headerHint ? null : <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>}</>}
           </div>
           <div className="flex shrink-0 items-center gap-2">
+          {inTraining ? <button type="button" onClick={()=>setTrainingImportOpen(true)} className="min-h-11 shrink-0 rounded-full border border-line px-3 text-sm">补录实际训练</button> : null}
           {tab === "today" ? <button type="button" aria-label="记一笔" onClick={() => window.dispatchEvent(new Event("fk-open-quicklog"))} className="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><Plus className="size-4" />记一笔</button> : null}
           {tab === "coach" ? <button type="button" onClick={() => setTab(prevTab.current)} className="grid size-11 shrink-0 place-items-center rounded-xl border border-line" aria-label="关闭方坤"><X className="size-5" /></button> : null}
           <button type="button" onClick={() => { menuScrollTop.current = 0; setSettingsPaneRaw("menu"); setSettingsOpen(true); }} className="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><Settings className="size-5" /></button></div>

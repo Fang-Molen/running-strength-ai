@@ -1,3 +1,4 @@
+import { historySummary } from '@/lib/coach/assessment/history';
 import { cycleCourseLines } from "@/lib/coach/cycle/display";
 import { useEffect, useState } from "react";
 import {
@@ -283,6 +284,8 @@ export function CoachCyclePanel() {
             可核实成绩 {portrait.performances.length} 条；实际跑力明细 {portrait.training.length}{" "}
             条。不合成全能等级。
           </p>
+          <p data-testid="r7-history" className="mt-2 whitespace-pre-line text-xs leading-relaxed">{historySummary(portrait.history)}</p>
+          <details className="mt-2 text-xs"><summary className="min-h-10 cursor-pointer">本次画像引用的实际记录</summary>{portrait.history.sessions.slice(0,6).map(s=><p key={s.ref.id} className="mt-2 break-words">{s.date} · {s.provider} · 设备 {s.deviceId??'未知'} · 协议 {s.protocol??'未知'} · {s.ref.id}@{s.ref.revision}</p>)}</details>
           {portrait.performances.map((p) => (
             <p key={p.ref.id} className="mt-2 break-words text-xs">
               {p.date} · {p.meters}米 / {p.seconds}秒 · {p.source}

@@ -1,3 +1,4 @@
+import { assessAthleteHistory } from '../assessment/history';
 /** Read-only, source-separated athlete portrait over the established fact projection. */
 import { projectAnalysisEvidence, refOf, analysisDigest } from "../../health/analysis-evidence";
 import { deriveAnalysisFacts } from "../../health/analysis-derived";
@@ -138,6 +139,7 @@ export function buildAthletePortrait(input: CycleInput) {
     athleteId: owner,
     asOf: snapshot.context.asOf,
     performances,
+    history: assessAthleteHistory({ ...snapshot, facts, safetyConstraints: input.snapshot.safetyConstraints }),
     training,
     derived,
     weeks,

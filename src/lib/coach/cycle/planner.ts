@@ -53,8 +53,9 @@ export function buildCycleDraft(input: CycleInput) {
       ["HOLD_ACTIVE", "ESCALATION_REQUIRED"].includes(input.recovery.safetyState) ||
       input.training.restrictions.length > 0 ||
       input.snapshot.safetyConstraints.length > 0;
-  const concerns = input.recovery.signalState !== "NO_ADVERSE_SIGNAL_OBSERVED";
+  const concerns = input.recovery.signalState !== "NO_ADVERSE_SIGNAL_OBSERVED" || portrait.history.planning.reviewExecution;
   const warnings = [
+    ...portrait.history.planning.reasons,
     ...(!g.raceDate ? ["比赛日期未知，生成滚动规划，不假设赛期"] : []),
     ...(g.raceDate && g.raceDate < start
       ? ["比赛位于本周或已过期：下周只做恢复与复核，不补造备赛期"]
@@ -388,7 +389,7 @@ export function buildCycleDraft(input: CycleInput) {
           : null;
       };
       const seedProtocol = sourceProtocol(seed);
-      const canConsiderProgression = input.recovery.signalState === "NO_ADVERSE_SIGNAL_OBSERVED";
+      const canConsiderProgression = input.recovery.signalState === "NO_ADVERSE_SIGNAL_OBSERVED" && !portrait.history.planning.reviewExecution;
       let isProgression = false;
       const comparable = actual.filter(
         (e) =>

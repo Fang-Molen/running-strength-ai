@@ -46,6 +46,9 @@ export interface MetricFact extends EvidenceMeta {
  energyKind: 'ACTIVE' | 'RESTING' | 'TOTAL' | 'WORKOUT' | 'UNKNOWN' | null;
 }
 export interface RunSegment {
+ restScope?: 'AFTER_REPEAT' | 'AFTER_ROUND' | 'UNSPECIFIED';
+ averageHeartRateBpm?: number | null; heartRateMethod?: string | null;
+ kind?: 'CONTINUOUS' | 'REPETITION' | 'UNKNOWN';
  id: string; blockId: string; roundIndex: number | null; stepIndex: number;
  distanceM: number | null; durationSeconds: number | null;
  restAfterSeconds: number | null; rawResolutionSeconds: number | null;

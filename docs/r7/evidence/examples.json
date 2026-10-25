@@ -1,0 +1,266 @@
+[
+  {
+    "name": "同条件：5分00秒到5分30秒，心率150到156，RPE5到7",
+    "synthetic": true,
+    "answer": "2026-10-22对比此前2个独立训练日：记录条件匹配，工作段均配速慢30秒/公里；分段加权心率变化+6次/分；同量表RPE变化+2。不据此断言体能升降。\n近90天读取到3个实际训练日，跑步3条分项、力量实际明细未知；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-22：已完成分段1段，合计1000米，工作段均配速5分30秒/公里；已记分段加权心率156次/分（胸带）。这是训练执行记录，不等同最大能力。\n待检验解释：本次执行更吃力，可能与近期负荷或恢复变化有关。目前缺少区分原因的直接证据。\n待检验解释：差异也可能来自配速策略、环境、间歇或测量变化。目前缺少区分原因的直接证据。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": {
+      "current": {
+        "id": "22",
+        "revision": 1
+      },
+      "baselineRefs": [
+        {
+          "id": "18",
+          "revision": 1
+        },
+        {
+          "id": "15",
+          "revision": 1
+        }
+      ],
+      "status": "DIRECT",
+      "reasons": [],
+      "priorDays": 2,
+      "paceDeltaSecondsPerKm": 30,
+      "heartRateDeltaBpm": 6,
+      "rpeDelta": 2,
+      "text": "2026-10-22对比此前2个独立训练日：记录条件匹配，工作段均配速慢30秒/公里；分段加权心率变化+6次/分；同量表RPE变化+2。不据此断言体能升降。",
+      "explanations": [
+        {
+          "claim": "本次执行更吃力，可能与近期负荷或恢复变化有关",
+          "support": [],
+          "counter": [],
+          "missing": [
+            "需要同期睡眠、疼痛及主观状态的关联观察，不能从相关性确认因果"
+          ]
+        },
+        {
+          "claim": "差异也可能来自配速策略、环境、间歇或测量变化",
+          "support": [],
+          "counter": [],
+          "missing": [
+            "同路线天气与测量一致性；匹配字段仍不能排除未记录因素"
+          ]
+        }
+      ]
+    },
+    "planning": {
+      "reviewExecution": false,
+      "hold": false,
+      "allowAutomaticIncrease": false,
+      "reasons": []
+    },
+    "version": "analysis:1joxtxz",
+    "actualStrengthSets": 0
+  },
+  {
+    "name": "换设备：不计算跨设备能力变化",
+    "synthetic": true,
+    "answer": "2026-10-22对比此前1个独立训练日：不可直接比较，不计算配速变化；心率不作跨次差值。设备不同。单次对照不是稳定个人基线。不据此断言体能升降。\n近90天读取到3个实际训练日，跑步3条分项、力量实际明细未知；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-22：已完成分段1段，合计1000米，工作段均配速5分30秒/公里；已记分段加权心率156次/分（胸带）。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": {
+      "current": {
+        "id": "22",
+        "revision": 1
+      },
+      "baselineRefs": [
+        {
+          "id": "18",
+          "revision": 1
+        }
+      ],
+      "status": "NOT_COMPARABLE",
+      "reasons": [
+        "设备不同"
+      ],
+      "priorDays": 1,
+      "paceDeltaSecondsPerKm": null,
+      "heartRateDeltaBpm": null,
+      "rpeDelta": null,
+      "text": "2026-10-22对比此前1个独立训练日：不可直接比较，不计算配速变化；心率不作跨次差值。设备不同。单次对照不是稳定个人基线。不据此断言体能升降。",
+      "explanations": []
+    },
+    "planning": {
+      "reviewExecution": false,
+      "hold": false,
+      "allowAutomaticIncrease": false,
+      "reasons": []
+    },
+    "version": "analysis:1azsvx0",
+    "actualStrengthSets": 0
+  },
+  {
+    "name": "改间歇：不能直接认定退步",
+    "synthetic": true,
+    "answer": "2026-10-22对比此前1个独立训练日：不可直接比较，不计算配速变化；心率不作跨次差值。间歇不同。单次对照不是稳定个人基线。不据此断言体能升降。\n近90天读取到3个实际训练日，跑步3条分项、力量实际明细未知；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-22：已完成分段1段，合计1000米，工作段均配速5分30秒/公里；已记分段加权心率156次/分（胸带）。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": {
+      "current": {
+        "id": "22",
+        "revision": 1
+      },
+      "baselineRefs": [
+        {
+          "id": "18",
+          "revision": 1
+        }
+      ],
+      "status": "NOT_COMPARABLE",
+      "reasons": [
+        "间歇不同"
+      ],
+      "priorDays": 1,
+      "paceDeltaSecondsPerKm": null,
+      "heartRateDeltaBpm": null,
+      "rpeDelta": null,
+      "text": "2026-10-22对比此前1个独立训练日：不可直接比较，不计算配速变化；心率不作跨次差值。间歇不同。单次对照不是稳定个人基线。不据此断言体能升降。",
+      "explanations": []
+    },
+    "planning": {
+      "reviewExecution": false,
+      "hold": false,
+      "allowAutomaticIncrease": false,
+      "reasons": []
+    },
+    "version": "analysis:1oi5uee",
+    "actualStrengthSets": 0
+  },
+  {
+    "name": "缺心率：保留配速计算而不补心率",
+    "synthetic": true,
+    "answer": "2026-10-22对比此前2个独立训练日：记录条件匹配，工作段均配速慢30秒/公里；心率不作跨次差值；同量表RPE变化+2。不据此断言体能升降。\n近90天读取到3个实际训练日，跑步3条分项、力量实际明细未知；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-22：已完成分段1段，合计1000米，工作段均配速5分30秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n待检验解释：本次执行更吃力，可能与近期负荷或恢复变化有关。目前缺少区分原因的直接证据。\n待检验解释：差异也可能来自配速策略、环境、间歇或测量变化。目前缺少区分原因的直接证据。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": {
+      "current": {
+        "id": "22",
+        "revision": 1
+      },
+      "baselineRefs": [
+        {
+          "id": "18",
+          "revision": 1
+        },
+        {
+          "id": "15",
+          "revision": 1
+        }
+      ],
+      "status": "DIRECT",
+      "reasons": [],
+      "priorDays": 2,
+      "paceDeltaSecondsPerKm": 30,
+      "heartRateDeltaBpm": null,
+      "rpeDelta": 2,
+      "text": "2026-10-22对比此前2个独立训练日：记录条件匹配，工作段均配速慢30秒/公里；心率不作跨次差值；同量表RPE变化+2。不据此断言体能升降。",
+      "explanations": [
+        {
+          "claim": "本次执行更吃力，可能与近期负荷或恢复变化有关",
+          "support": [],
+          "counter": [],
+          "missing": [
+            "需要同期睡眠、疼痛及主观状态的关联观察，不能从相关性确认因果"
+          ]
+        },
+        {
+          "claim": "差异也可能来自配速策略、环境、间歇或测量变化",
+          "support": [],
+          "counter": [],
+          "missing": [
+            "同路线天气与测量一致性；匹配字段仍不能排除未记录因素"
+          ]
+        }
+      ]
+    },
+    "planning": {
+      "reviewExecution": false,
+      "hold": false,
+      "allowAutomaticIncrease": false,
+      "reasons": []
+    },
+    "version": "analysis:1vsrsth",
+    "actualStrengthSets": 0
+  },
+  {
+    "name": "跑力混合：同一训练分别保留跑步和两组力量",
+    "synthetic": true,
+    "answer": "近90天读取到1个实际训练日，跑步1条分项、力量已记录2个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-22：已完成分段1段，合计1000米，工作段均配速5分30秒/公里；已记分段加权心率156次/分（胸带）。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": null,
+    "planning": {
+      "reviewExecution": false,
+      "hold": false,
+      "allowAutomaticIncrease": false,
+      "reasons": []
+    },
+    "version": "analysis:w8d6zo",
+    "actualStrengthSets": 2
+  },
+  {
+    "name": "疼痛限制：心率正常仍不能放行",
+    "synthetic": true,
+    "answer": "已有疼痛或安全限制优先，不能由心率或设备分数解除\n2026-10-22对比此前2个独立训练日：记录条件匹配，工作段均配速变化0秒/公里；分段加权心率变化0次/分；同量表RPE变化0。不据此断言体能升降。\n近90天读取到3个实际训练日，跑步3条分项、力量实际明细未知；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-22：已完成分段1段，合计1000米，工作段均配速5分00秒/公里；已记分段加权心率150次/分（胸带）。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": {
+      "current": {
+        "id": "22",
+        "revision": 1
+      },
+      "baselineRefs": [
+        {
+          "id": "18",
+          "revision": 1
+        },
+        {
+          "id": "15",
+          "revision": 1
+        }
+      ],
+      "status": "DIRECT",
+      "reasons": [],
+      "priorDays": 2,
+      "paceDeltaSecondsPerKm": 0,
+      "heartRateDeltaBpm": 0,
+      "rpeDelta": 0,
+      "text": "2026-10-22对比此前2个独立训练日：记录条件匹配，工作段均配速变化0秒/公里；分段加权心率变化0次/分；同量表RPE变化0。不据此断言体能升降。",
+      "explanations": []
+    },
+    "planning": {
+      "reviewExecution": false,
+      "hold": true,
+      "allowAutomaticIncrease": false,
+      "reasons": [
+        "已有疼痛或安全限制优先，不能由心率或设备分数解除"
+      ]
+    },
+    "version": "analysis:6xr9yk",
+    "actualStrengthSets": 0
+  },
+  {
+    "name": "撤销最新记录：旧差值不再沿用",
+    "synthetic": true,
+    "answer": "2026-10-18对比此前1个独立训练日：记录条件匹配，工作段均配速变化0秒/公里；分段加权心率变化0次/分；同量表RPE变化0。单次对照不是稳定个人基线。不据此断言体能升降。\n近90天读取到2个实际训练日，跑步2条分项、力量实际明细未知；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-18：已完成分段1段，合计1000米，工作段均配速5分00秒/公里；已记分段加权心率150次/分（胸带）。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "latestComparison": {
+      "current": {
+        "id": "18",
+        "revision": 1
+      },
+      "baselineRefs": [
+        {
+          "id": "15",
+          "revision": 1
+        }
+      ],
+      "status": "DIRECT",
+      "reasons": [],
+      "priorDays": 1,
+      "paceDeltaSecondsPerKm": 0,
+      "heartRateDeltaBpm": 0,
+      "rpeDelta": 0,
+      "text": "2026-10-18对比此前1个独立训练日：记录条件匹配，工作段均配速变化0秒/公里；分段加权心率变化0次/分；同量表RPE变化0。单次对照不是稳定个人基线。不据此断言体能升降。",
+      "explanations": []
+    },
+    "planning": {
+      "reviewExecution": false,
+      "hold": false,
+      "allowAutomaticIncrease": false,
+      "reasons": []
+    },
+    "version": "analysis:ir09eo",
+    "actualStrengthSets": 0
+  }
+]

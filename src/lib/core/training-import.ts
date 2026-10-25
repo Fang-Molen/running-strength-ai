@@ -43,6 +43,7 @@ export type ImportedStrengthSet = {
 }
 
 export type TrainingImportCandidate = {
+  comparisonContext?: {deviceId: ImportField<string>; protocolKey: ImportField<string>; surface: ImportField<string>; gradePercent: ImportField<number>}
   sport: ImportSport
   occurredAt: ImportField<string>
   title: ImportField<string>
@@ -187,11 +188,14 @@ function strengthSet(raw: unknown, index: number): ImportedStrengthSet {
 export function normalizeTrainingImportCandidate(raw: unknown): TrainingImportCandidate {
   const item = raw && typeof raw === "object" ? raw as Record<string, unknown> : {}
   const sport: ImportSport = item.sport === "RUNNING" || item.sport === "STRENGTH" || item.sport === "MIXED" ? item.sport : "UNKNOWN"
+  const cc = item.comparisonContext && typeof item.comparisonContext === 'object' ? item.comparisonContext as Record<string, unknown> : null
+  const comparisonContext = cc ? {deviceId:field(cc.deviceId,v=>stringValue(v,60)),protocolKey:field(cc.protocolKey,v=>stringValue(v,100)),surface:field(cc.surface,v=>stringValue(v,60)),gradePercent:field(cc.gradePercent,v=>numberValue(v,-40,40))} : undefined
   const runningStructure = item.runningStructure === "REPEATED" || item.runningStructure === "CONTINUOUS" || item.runningStructure === "MIXED" ? item.runningStructure : "UNAVAILABLE"
   const runningSegments = Array.isArray(item.runningSegments) ? item.runningSegments.slice(0, 48).map(runningSegment) : []
   const strengthSets = Array.isArray(item.strengthSets) ? item.strengthSets.slice(0, 80).map(strengthSet) : []
   return {
     sport,
+    ...(comparisonContext ? {comparisonContext} : {}),
     occurredAt: field(item.occurredAt, (value) => stringValue(value, 40)),
     title: field(item.title, (value) => stringValue(value, 120)),
     durationSeconds: field(item.durationSeconds, (value) => numberValue(value, 0.1, 1_000_000)),
