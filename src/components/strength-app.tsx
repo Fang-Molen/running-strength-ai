@@ -1,3 +1,4 @@
+import { CoachSuggestionsPanel, useSuggestionCount } from "@/components/coach-suggestions-panel";
 import {PlanCourseDateSheet} from './plan-course-date-sheet'
 import { OnlineFeaturesSettings } from "./online-features-settings";
 import { startC03FollowupRuntime } from '@/lib/coach/c03/runtime';
@@ -124,6 +125,7 @@ const FEELS: { id: Feel; label: string; hint: string }[] = [
 ];
 
 export function StrengthApp() {
+  const suggestionCount = useSuggestionCount();
   useEffect(() => startC03FollowupRuntime(), []);
   const [bodyPane, setBodyPane] = useState<BodyPane>("recovery");
   const [, setDataRevision] = useState(0);
@@ -650,6 +652,8 @@ export function StrengthApp() {
               onOpenLift={(sessionId) => { if (!workspaceOpen) { setCourseChoice(`lift:${sessionId}`); const i = plan.sessions.findIndex((x) => x.id === sessionId); if (i >= 0) setActive(i); } openDetail(); }}
               onFood={() => { setTab("diet"); }}
               onAskCoach={() => { setCoachLink("ask"); setCoachFocus(null); setTab("coach"); }} /></div>
+            {/* Coach suggestions waiting for confirmation; shown only when there is one. */}
+            <div style={{ order: homeLayout.order.indexOf("week") }} className="mb-3"><CoachSuggestionsPanel compact /></div>
             {hasTrainingContent ? <section id="detail-record" aria-label="本日训练执行入口" style={{ order: homeLayout.order.indexOf("detail") }} className="mb-3 px-1">
               <button type="button" className="flex min-h-12 w-full items-center justify-between rounded-xl border border-line px-4 text-left text-sm" onClick={openTimer}><span className="font-bold">计时与逐组记录</span><span aria-hidden="true" className="text-muted">›</span></button>
             </section> : null}
@@ -1086,6 +1090,7 @@ export function StrengthApp() {
             >
               <span className={"ui03-tab-icon grid h-8 min-w-12 place-items-center rounded-2xl " + ((tab === id || (id === "plan" && inTraining)) ? "stat-run" : "")}><Icon className="size-5" strokeWidth={(tab === id || (id === "plan" && inTraining)) ? 2.4 : 2} /></span>
               <span className="ui03-tab-label">{label}</span>
+              {id === "coach" && suggestionCount ? <span className="fk-tab-badge" aria-label={`${suggestionCount} 条建议待确认`}>{suggestionCount}</span> : null}
             </button>
           ))}
           <button type="button" className="ui03-tab fk-side-settings fk-desk-only text-muted" onClick={() => { menuScrollTop.current = 0; setSettingsPaneRaw("menu"); setSettingsOpen(true); }} aria-label="个人与数据">

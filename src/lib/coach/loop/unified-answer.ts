@@ -49,6 +49,8 @@ export function composeUnifiedSupplement(input: {
   personalText: string | null
   /** Shared current profile; when given, its sources and conflicts are used. */
   effective?: EffectiveProfile | null
+  /** Open suggestions and tracked outcomes, so the coach can explain and revise them. */
+  suggestionLines?: string[]
 }): UnifiedSupplement {
   const questions: string[] = []
   // Conflicting values change advice the most, so they are asked first.
@@ -101,6 +103,7 @@ export function composeUnifiedSupplement(input: {
       ...(input.effective ? describeEffectiveProfile(input.effective).map(line => `当前有效资料｜${line}`) : []),
       ...assumptions.map(text => `假设（不是用户事实）：${text}`),
       ...lines,
+      ...(input.suggestionLines ?? []),
       ...(unique.length ? [`尚缺、会改变建议的信息：${unique.join(' ')}`] : []),
     ]
     if (!blockParts.length) return facts

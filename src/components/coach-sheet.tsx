@@ -81,6 +81,9 @@ import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, l
 import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps, buildFacts, askOnlineCoach } from "@/lib/coach/online-coach";
 import { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";
 import { readEffectiveProfile } from "@/lib/coach/loop/effective-host";
+import { readSuggestionDocument } from "@/lib/coach/loop/suggestion-host";
+import { suggestionFacts } from "@/lib/coach/loop/suggestions";
+import { CoachSuggestionsPanel } from "@/components/coach-suggestions-panel";
 import { fetchLaps } from "@/components/garmin-log";
 import { activityLocalDay, fmtDistance } from "@/lib/ui/activity-format";
 
@@ -412,7 +415,9 @@ export function CoachSheet({
       }
       let effectiveProfile: ReturnType<typeof readEffectiveProfile> | null = null;
       try { effectiveProfile = readEffectiveProfile(); } catch { /* Unknown stays unknown; the answer continues. */ }
-      const unified = composeUnifiedSupplement({ question: value, r4, personalText, effective: effectiveProfile });
+      let suggestionLines: string[] = [];
+      try { suggestionLines = suggestionFacts(readSuggestionDocument(athleteId), asOf); } catch { /* Suggestions are optional context. */ }
+      const unified = composeUnifiedSupplement({ question: value, r4, personalText, effective: effectiveProfile, suggestionLines });
       const local = answerLocally(brief,reviewed?{frame:reviewed.reasoning,snapshot:reviewed.review.audit.snapshot}:undefined,coachContextMemory,periodReview,memory.dialogue??emptyDialogue(athleteId));
       if (currentAthleteId() !== athleteId) { setSending(false); return; }
       if(!useCloud&&local.candidate){const savedAdvice=commitDisplayedCoachAdvice(local,value);if(!savedAdvice.ok)local.text+='\n本次建议历史保存失败，请先保留此回答；没有修改正式计划。'}
@@ -559,6 +564,7 @@ export function CoachSheet({
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
         {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-review-tools"><summary className="min-h-11 cursor-pointer font-bold">更多复盘与协调工具（按需展开）</summary><div className="mt-2 space-y-3">
         {coordinationPanel ?? null}
+        {section === 'review' && <CoachSuggestionsPanel key={`suggestions-${athleteScope}`} />}
         {section === 'review' && <PersonalCoachPanel key={`personal-${athleteScope}`} />}
         {section === 'review' && <TrainingModelPanel key={athleteScope} revision={recordRevision} />}
         {section === 'review' && <CoachPlanChangePanel revision={recordRevision} />}

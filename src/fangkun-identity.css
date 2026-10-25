@@ -338,3 +338,17 @@ html:has(.app-wallpaper.product-ui[data-theme="light"]) body {
 @media (prefers-reduced-motion: reduce) {
   .app-wallpaper.product-ui :is(.ui03-tab-icon, .fk-training-tabs button, .fk-h89-disclosure > summary::after) { transition: none; }
 }
+
+/* Coach suggestions: count badge on the 方坤 tab, and the suggestion cards. */
+.ui03-tab { position: relative; }
+.fk-tab-badge {
+  position: absolute; top: .375rem; left: calc(50% + .5rem);
+  min-width: 1.125rem; height: 1.125rem; padding: 0 .3rem; border-radius: 999px;
+  display: grid; place-items: center; font-size: .6875rem; font-weight: 700; line-height: 1;
+  background: var(--color-accent); color: var(--color-accent-fg);
+}
+@media (min-width: 1024px) {
+  .app-wallpaper.product-ui .ui03-dock .fk-tab-badge { position: static; margin-left: auto; }
+}
+.app-wallpaper.product-ui .fk-suggestion-card { border-inline-start: 3px solid var(--color-accent); }
+.app-wallpaper.product-ui .fk-suggestion-card dt { font-size: .8125rem; }
