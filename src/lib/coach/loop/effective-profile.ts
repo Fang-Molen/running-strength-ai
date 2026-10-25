@@ -40,6 +40,7 @@ export type EffectiveProfileInput = {
   profile: Profile | null
   /** When the athlete profile was last saved; null for profiles saved before this was recorded. */
   profileSavedAt?: string | null
+  profileFieldSavedAt?: Record<string,string|null>
   checks: BodyCheck[]
   personal: { profile: PersonalProfile | null; profileSavedAt: string | null } | null
 }
@@ -95,9 +96,9 @@ export function resolveEffectiveProfile(input: EffectiveProfileInput): Effective
   // Weight: the most recent dated value is current; measurements win ties; undated last.
   const check = latestCheck(input.checks)
   const weights: Known<number>[] = []
-  if (check) weights.push({ value: check.weight, source: 'BODY_MEASUREMENT', at: check.recordedAt ?? check.date, version: `body:${check.date}:${check.id}` })
+  if (check) weights.push({ value: check.weight, source: 'BODY_MEASUREMENT', at: check.date, version: `body:${check.date}:${check.id}` })
   if (num(personal?.weightKg) !== null) weights.push({ value: personal!.weightKg!, source: 'PERSONAL_COACH', at: personalAt, version: personalVersion })
-  if (num(profile?.weightKg) !== null) weights.push({ value: num(profile!.weightKg)!, source: 'ATHLETE_PROFILE', at: profileAt, version: profileVersion })
+  if (num(profile?.weightKg) !== null) weights.push({ value: num(profile!.weightKg)!, source: 'ATHLETE_PROFILE', at: input.profileFieldSavedAt && 'weightKg' in input.profileFieldSavedAt ? input.profileFieldSavedAt.weightKg : profileAt, version: profileVersion })
   weights.sort(newestFirst)
   const weightKg = weights[0] ?? null
   // Values recorded more than two weeks before the current one are history, not a conflict.
@@ -108,7 +109,7 @@ export function resolveEffectiveProfile(input: EffectiveProfileInput): Effective
   // Age, sex, height: the more recently saved entry wins; the other fills gaps.
   const pick = <T,>(field: 'age' | 'sex' | 'heightCm', fromPersonal: T | null, fromProfile: T | null, same: (a: T, b: T) => boolean): Field<T> => {
     const a: Known<T> | null = fromPersonal !== null ? { value: fromPersonal, source: 'PERSONAL_COACH', at: personalAt, version: personalVersion } : null
-    const b: Known<T> | null = fromProfile !== null ? { value: fromProfile, source: 'ATHLETE_PROFILE', at: profileAt, version: profileVersion } : null
+    const b: Known<T> | null = fromProfile !== null ? { value: fromProfile, source: 'ATHLETE_PROFILE', at: input.profileFieldSavedAt && field in input.profileFieldSavedAt ? input.profileFieldSavedAt[field] : profileAt, version: profileVersion } : null
     if (a && b && !same(a.value, b.value)) conflicts.push({ field, values: [a, b].map(k => ({ value: String(k.value), source: k.source, at: k.at })) })
     return [a, b].filter((k): k is Known<T> => k !== null).sort(newestFirst)[0] ?? null
   }
@@ -122,7 +123,7 @@ export function resolveEffectiveProfile(input: EffectiveProfileInput): Effective
   let goal: Field<EffectiveGoal> = null
   const goals: Known<EffectiveGoal>[] = []
   if (personalGoal) goals.push({ value: personalGoal, source: 'PERSONAL_COACH', at: personalAt, version: personalVersion })
-  if (profileGoal) goals.push({ value: profileGoal, source: 'ATHLETE_PROFILE', at: profileAt, version: profileVersion })
+  if (profileGoal) goals.push({ value: profileGoal, source: 'ATHLETE_PROFILE', at: input.profileFieldSavedAt && 'aim' in input.profileFieldSavedAt ? input.profileFieldSavedAt.aim : profileAt, version: profileVersion })
   goal = goals.sort(newestFirst)[0] ?? null
   if (personalGoal && profileGoal && !(COMPATIBLE[profileGoal] ?? [profileGoal]).includes(personalGoal))
     conflicts.push({ field: 'goal', values: [

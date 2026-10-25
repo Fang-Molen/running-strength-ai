@@ -16,6 +16,11 @@ import {detectRedFlags} from '../../core/coach-red-flags'
 import {readEffectiveProfile} from '../loop/effective-host'
 import {withEffectivePersonal} from '../loop/effective-profile'
 
+/** Union of requested modalities; neither service masks the other. */
+export function selectR4CourseTasks(tasks:readonly string[],modality:string):boolean {
+ if(tasks.includes('planning')||tasks.includes('warmup'))return true
+ return tasks.includes('strength')&&modality==='strength'||tasks.includes('running')&&modality==='run'
+}
 const goals={HYPERTROPHY:'增肌',FAT_LOSS:'减脂',WEIGHT_MAINTENANCE:'维持体重',RUN_PERFORMANCE:'跑步表现'}
 const labels:Record<string,string>={event:'专项',start:'起跑方式',timing:'计时方式',surface:'场地',restSeconds:'组间休息',purpose:'训练目的',approvedSession:'可信审批的课程',mainSession:'所选主课',trainingPhase:'训练阶段',trainingDuration:'实际训练时长',trainingIntensity:'训练强度口径',weightKg:'当前体重',symptoms:'当前症状',weeklySchedule:'本周完整安排',missedSessions:'实际漏练的课',trainingHistory:'训练历史',goal:'目标',experience:'训练经验',equipment:'器材',foodEntries:'饮食记录',technique:'动作质量',effort:'用力程度',completedSets:'实际完成组数',restrictions:'身体限制',targetPattern:'原动作目的'}
 /** Only host-read facts/profile reach applicability. Question text cannot approve anything. */
@@ -44,7 +49,7 @@ export function readR4CoachAnswer(question:string,asOf=new Date().toISOString(),
  if(baseline){fields.metric=baseline.metric;fields.device=baseline.device;fields.measurementProtocol=baseline.protocol}
  const calendar=readScheduleDocument(),entries=calendar.ok?loadSchedule().entries.filter(e=>(e.athleteId??'local')===owner):[]
  // Saved course candidates carry user ownership, not a fabricated knowledge approval.
- const courses=entries.filter(e=>isR4CourseCandidate(e)&&e.date>=day).filter(e=>tasks.includes('strength')?e.modality==='strength':tasks.includes('running')?e.modality==='run':tasks.includes('planning')||tasks.includes('warmup')).map(e=>({id:e.id,title:e.title,date:e.date,minutes:e.minutes,components:e.runComponents??[],version:analysisDigest(e),authority:'USER_SAVED_COURSE' as const}))
+ const courses=entries.filter(e=>isR4CourseCandidate(e)&&e.date>=day).filter(e=>selectR4CourseTasks(tasks,e.modality)||e.trainingType==='mixed'&&tasks.some(t=>t==='strength'||t==='running')).map(e=>({id:e.id,title:e.title,date:e.date,minutes:e.minutes,components:e.runComponents??[],version:analysisDigest(e),authority:'USER_SAVED_COURSE' as const}))
  if(calendar.ok&&p){fields.priority=goals[p.goal];if(entries.length)fields.weeklySchedule=entries.map(e=>({id:e.id,date:e.date,status:e.status}));const missed=entries.filter(e=>e.actual?.outcome==='missed');if(missed.length)fields.missedSessions=missed.map(e=>({id:e.id,date:e.date}))}
  const selection=retrieveR4({question,tasks,population:conditions.population,fields,limit:4})
  const knowledge=selection.cards.filter(c=>{

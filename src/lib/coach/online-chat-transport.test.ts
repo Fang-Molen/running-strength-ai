@@ -108,10 +108,10 @@ function finalFacts(body: ProviderBody): string {
   assert.ok(content.startsWith('事实（'), 'The live proxy must put current facts in its final user message')
   return content.slice(content.indexOf('\n') + 1).split('\n\n本地规则引擎')[0]
 }
-async function send(f: ReturnType<typeof fixture>, question = FIRST, options: { asOf?: string; local?: string; history?: Body['history']; selectedOccurrenceId?: string | null } = {}) {
+async function send(f: ReturnType<typeof fixture>, question = FIRST, options: { asOf?: string; local?: string; history?: Body['history']; selectedOccurrenceId?: string | null; expectAuditRejection?:boolean } = {}) {
   const facts = buildFacts(DAY, null, null, { question, asOf: options.asOf ?? new Date().toISOString(), selectedOccurrenceId: options.selectedOccurrenceId ?? null })
   const result = await askOnlineCoach({ question, facts, local: options.local ?? '', history: options.history ?? [] })
-  assert.deepEqual(result, { text: REPLY })
+  if(options.expectAuditRejection)assert.ok('error' in result&&/核验/.test(result.error));else assert.deepEqual(result, { text: REPLY })
   assert.equal(f.client.at(-1)!.facts, facts)
   const provider = f.provider.at(-1)!
   assert.equal(finalFacts(provider), facts, 'The live proxy must not silently drop any assembled facts')
@@ -136,7 +136,7 @@ for (const question of [FIRST, FOLLOWUP]) test(`unbound free chat sends meal and
 
 test('unbound native strength retains actual load, repetitions and RPE at the provider boundary', async t => {
   const f = fixture(t); seedAll(t, f)
-  const { facts } = await send(f, '看看我的力量训练记录')
+  const { facts } = await send(f, '看看我的力量训练记录',{expectAuditRejection:true})
   const training = domain(facts, '训练与力量')
   has(training, /40\s*(?:kg|公斤|千克)/i, 'Actual strength weight must survive assembly and proxy forwarding')
   has(training, /8\s*次/, 'Actual completed repetitions must survive assembly and proxy forwarding')

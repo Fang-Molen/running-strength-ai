@@ -1,3 +1,4 @@
+import { SymptomPanel } from '@/components/symptom-panel'
 import { loadExtras } from "@/lib/ui/device-store"
 import { HealthModeNote } from "@/components/health-mode-note"
 import { subscribeHealthUpdates } from "@/lib/health/health-subscription"
@@ -130,13 +131,14 @@ export function BodyCenter({ profile, onProfile, onEdit, initialPane = "recovery
       <DeviceConnectionEntry />
     </details>
   </section>
-  if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} />{compact ? null : <UnifiedRecoveryHostU11 day={today} onRecord={openVitals}/>}<div id="body-vitals"><details className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={()=>setRevision(v=>v+1)}/></details></div></div>
+  if (watch === null) return <div className={compact ? "min-w-0" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}><SymptomPanel /><WatchQuestion onPick={(w) => { saveWatch(w); setWatch(w); setTier(loadTier()); setRevision((v) => v + 1) }} />{compact ? null : <UnifiedRecoveryHostU11 day={today} onRecord={openVitals}/>}<div id="body-vitals"><details className="home-card p-3"><summary className="min-h-11 cursor-pointer text-sm font-bold">更多手动记录 · 历史</summary><VitalsPanel revision={revision} importHints={hints} onSaved={()=>setRevision(v=>v+1)}/></details></div></div>
   const hasWatch = watch != null && watch !== "none"
   return <div className={compact ? "" : "mx-auto max-w-3xl px-3 pt-2 pb-nav"}>
     {compact ? null : <nav className="product-segments mb-3" aria-label="身体工作区">
       {([["recovery", "今日恢复"], ["trend", "身体指标"]] as const).map(([id, label]) => <button type="button" key={id} aria-pressed={pane === id} onClick={() => setPane(id)}>{label}</button>)}
     </nav>}
     <div hidden={pane !== "recovery"}>
+      <SymptomPanel />
       {!compact?<HealthModeNote day={today}/>:null}
       {compact ? null : <RecoveryVerdictCard today={today} revision={revision} watch={watch} onImport={() => setPane("device")} />}
       {watch && !compact ? <CheckinCard today={today} watch={watch} onSaved={() => setRevision((v) => v + 1)} onPain={() => { setPane("trend"); window.setTimeout(() => document.getElementById("pain-log")?.scrollIntoView({ block: "start" }), 40) }} /> : null}

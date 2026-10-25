@@ -14,7 +14,7 @@ export function resolveScheduledCourse(entry: ScheduleEntry, plan: Pick<Plan, 's
   const errors: string[] = [];
   let strength: Session | null = null, run: RunningPlan | null = null;
   if (entry.modality === 'rest' || entry.status === 'proposed' || ['skipped', 'rejected'].includes(entry.status)) return { entry, strength, run, errors: ['这节训练尚未确认或已取消，不能开始执行。'] };
-  const wantsStrength = entry.modality === 'strength';
+  const wantsStrength = entry.modality === 'strength' || entry.trainingType === 'mixed';
   const wantsRun = entry.modality === 'run' || entry.trainingType === 'mixed';
   if (wantsStrength) {
     let moves: Move[] = [];

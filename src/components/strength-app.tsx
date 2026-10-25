@@ -1,3 +1,4 @@
+import { CoachWeeklyBootstrap } from '@/components/coach-weekly-panel';
 import { CoachSuggestionsPanel, useSuggestionCount } from "@/components/coach-suggestions-panel";
 import {PlanCourseDateSheet} from './plan-course-date-sheet'
 import { OnlineFeaturesSettings } from "./online-features-settings";
@@ -940,6 +941,7 @@ export function StrengthApp() {
         {notice ? <p className="mt-4 text-sm text-warn">{notice}</p> : null}
       </main>
       {tab === "log" ? <TrainingLogPage today={todayIso} plan={plan} onNavigate={(next) => setTab(next as typeof tab)} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
+      <CoachWeeklyBootstrap ready={ready} />
       {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready && !!todayCoord, todayParts: todayCoord?.parts, todayUnplanned: todayCoord?.unplanned, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}

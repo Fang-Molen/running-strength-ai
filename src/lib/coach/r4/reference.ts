@@ -57,3 +57,8 @@ export function summarizeR4Nutrition(input:unknown){
  for(const key of nutrientKeys)totals[key]=rows.length?nutritionTotal(rows.map(r=>Object.fromEntries(nutrientKeys.map(k=>[k,r[k]??null]))),key):{knownSum:null,missing:0,status:'UNKNOWN'}
  return {...totals,coverage:'UNKNOWN' as const,energyDeficit:null,autoExecute:false as const}
 }
+
+/** Resolve existing knowledge evidence; callers must still establish applicability. */
+export function readR4Sources(ids: readonly string[]) {
+ return sourceData.sources.filter(s=>ids.includes(s.id)).map(s=>structuredClone(s))
+}
