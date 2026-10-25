@@ -1,6 +1,6 @@
 /** Browser reader for the shared effective profile. Reading never writes. */
 import { currentAthleteId } from '@/lib/core/events'
-import { loadProfile, profileSavedAt, type Profile } from '@/lib/strength/profile'
+import { loadProfile, profileSavedAt, profileFieldTimes, type Profile } from '@/lib/strength/profile'
 import { loadChecks } from '@/lib/nutrition/body'
 import { createPersonalStore } from '@/lib/coach/personal/store'
 import { resolveEffectiveProfile, withEffectiveBody, type EffectiveProfile } from './effective-profile'
@@ -22,7 +22,7 @@ function readPersonal() {
 export function readEffectiveProfile(profile: Profile = loadProfile()): EffectiveProfile {
   let checks: ReturnType<typeof loadChecks> = []
   try { checks = loadChecks() } catch { checks = [] }
-  return resolveEffectiveProfile({ profile, profileSavedAt: profileSavedAt(), checks, personal: readPersonal() })
+  return resolveEffectiveProfile({ profile, profileSavedAt: profileSavedAt(), profileFieldSavedAt:profileFieldTimes(), checks, personal: readPersonal() })
 }
 
 /** The athlete profile with the shared current weight/age/sex/height applied, for nutrition. */

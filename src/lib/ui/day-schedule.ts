@@ -19,6 +19,7 @@ import { loadFeedback } from "@/lib/ui/assessment-store"
 import { adaptProposal, adaptation, addDays, weekOf, type Recovery, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
 import { commitScheduleRaw, withScheduleLock, type ScheduleWriter } from "@/lib/ui/schedule-writer"
 
+export type R5ScheduleAudit={id:string;athleteId:string;kind:'R5_CHANGE'|'R5_UNDO';at:string;before:ScheduleEntry;after:ScheduleEntry;proposalId:string;pairs:import('../coach/r5/commands').SchedulePair[];reason:string}
 export const SCHEDULE_KEY = "fk-schedule-v1"
 export type ScheduleStore = { entries: ScheduleEntry[]; acks: string[] }
 type OwnedScheduleDocument = ScheduleStore & { acksByAthlete?: Record<string, string[]> }
@@ -41,7 +42,7 @@ export function loadSchedule(): ScheduleStore {
   return { entries: v.entries.filter(e => ownsEntry(e, athlete)), acks: v.acksByAthlete?.[athlete] ?? (athlete === 'local' ? v.acks : []) }
 }
 /** v87：所有写入方都走这里 → schedule-writer 闸口（修订号 + 写入方标记）。 */
-export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown', audit?:{id:string;athleteId:string;kind:'R4_MOVE'|'R4_SWAP'|'R4_UNDO';at:string;before:ScheduleEntry;after:ScheduleEntry;proposalId:string;reason?:string;second?:{before:ScheduleEntry;after:ScheduleEntry}}): boolean {
+export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown', audit?:R5ScheduleAudit|{id:string;athleteId:string;kind:'R4_MOVE'|'R4_SWAP'|'R4_UNDO';at:string;before:ScheduleEntry;after:ScheduleEntry;proposalId:string;reason?:string;second?:{before:ScheduleEntry;after:ScheduleEntry}}): boolean {
   try {
     const box = currentStore(), read = readScheduleDocument(), athlete = currentAthleteId()
     if (!box || !read.ok || !Array.isArray(s.entries) || !Array.isArray(s.acks) || new Set(s.entries.map(e=>e.id)).size!==s.entries.length) return false

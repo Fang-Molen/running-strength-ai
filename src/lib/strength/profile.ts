@@ -1,5 +1,6 @@
 import { clockSeconds, daysUntil, distanceLabel, formatTime, kindFor, type RunGoal } from "./agent";
-import { dispatchEvent } from "@/lib/core/events";
+import { currentStore } from "@/lib/core/storage";
+import { currentAthleteId, dispatchEvent } from "@/lib/core/events";
 
 export type Mark = {
   meters: number;
@@ -23,21 +24,38 @@ export type Profile = {
   marks: Mark[];
   limit: string;
   note: string;
+  trainingDays?: number[];
+  equipment?: "NONE" | "DUMBBELLS" | "GYM" | "UNKNOWN";
 };
 
 const KEY = "fr255-profile-v1";
+export const profileStorageKey = () => currentAthleteId() === "local" ? KEY : KEY + ":" + encodeURIComponent(currentAthleteId());
+const profileTimeKey = () => currentAthleteId() === "local" ? PROFILE_SAVED_AT_KEY : PROFILE_SAVED_AT_KEY + ":" + encodeURIComponent(currentAthleteId());
 /** When the athlete profile was last saved, so pages can tell which value is current. */
 export const PROFILE_SAVED_AT_KEY = "fr255-profile-v1-saved-at";
 export const PROFILE_CHANGED = "fk-profile-changed";
 export function profileSavedAt(): string | null {
   try {
-    const v = localStorage.getItem(PROFILE_SAVED_AT_KEY);
+    const box=currentStore();
+    const p=JSON.parse(box?.getItem(profileStorageKey())??"null");
+    const v = p?._savedAt ?? box?.getItem(profileTimeKey());
     return v && Number.isFinite(Date.parse(v)) ? v : null;
   } catch {
     return null;
   }
 }
 
+/** Field-level save dates prevent an unrelated goal/note edit from refreshing old body values. */
+export function profileFieldTimes(): Record<string,string|null> {
+ try { const v=JSON.parse(currentStore()?.getItem(profileStorageKey())??'null'); return v?._fieldSavedAt??{}; } catch { return {}; }
+}
+export function nextProfileFieldTimes(previous:Record<string,unknown>|null,patch:Record<string,unknown>,at:string) {
+ const times:Record<string,string|null>={...(previous?._fieldSavedAt as Record<string,string|null>??{})};
+ for(const field of ['weightKg','age','sex','heightCm','aim','targetKg','trainingDays','equipment','limit','note','days','minutes'])
+   if(!(field in times))times[field]=typeof previous?._savedAt==='string'?previous._savedAt:profileSavedAt();
+ for(const [k,v] of Object.entries(patch))if(JSON.stringify(previous?.[k])!==JSON.stringify(v))times[k]=at;
+ return times;
+}
 export const PRESETS = [
   { meters: 400, label: "400" },
   { meters: 800, label: "800" },
@@ -67,9 +85,9 @@ export function emptyProfile(): Profile {
 }
 
 export function loadProfile(): Profile {
-  if (typeof localStorage === "undefined") return emptyProfile();
+  if (!currentStore()) return emptyProfile();
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = currentStore()!.getItem(profileStorageKey());
     if (!raw) return emptyProfile();
     const parsed = JSON.parse(raw) as Partial<Profile>;
     const base = emptyProfile();
@@ -88,6 +106,8 @@ export function loadProfile(): Profile {
       marks: readMarks(parsed.marks, base.marks),
       limit: String(parsed.limit ?? "").slice(0, 80),
       note: String(parsed.note ?? "").slice(0, 120),
+      ...(Array.isArray(parsed.trainingDays)?{trainingDays:[...new Set(parsed.trainingDays.filter(d=>Number.isInteger(d)&&d>=0&&d<=6))]}:{}),
+      ...(["NONE","DUMBBELLS","GYM","UNKNOWN"].includes(parsed.equipment??"")?{equipment:parsed.equipment}:{}),
     };
   } catch {
     return emptyProfile();
@@ -97,10 +117,13 @@ export function loadProfile(): Profile {
 export function saveProfile(profile: Profile) {
   const previous = loadProfile();
   try {
-    localStorage.setItem(KEY, JSON.stringify(profile));
-    localStorage.setItem(PROFILE_SAVED_AT_KEY, new Date().toISOString());
+    const box=currentStore(); if(!box)return false;
+    const old=JSON.parse(box.getItem(profileStorageKey())??"null");
+    const at=new Date().toISOString();
+    box.setItem(profileStorageKey(), JSON.stringify({ ...profile, _savedAt:at, _r5Receipts:old?._r5Receipts??[], _fieldSavedAt:nextProfileFieldTimes(old,profile as unknown as Record<string,unknown>,at) }));
+    box.setItem(profileTimeKey(), at);
   } catch {
-    /* private mode */
+    return false;
   }
   if (typeof window !== "undefined") window.dispatchEvent(new Event(PROFILE_CHANGED));
   const marksChanged = JSON.stringify(previous.marks) !== JSON.stringify(profile.marks);
@@ -111,6 +134,7 @@ export function saveProfile(profile: Profile) {
   }
   const competition = profile.marks.some((mark, index) => mark.deadline !== previous.marks[index]?.deadline && mark.deadline);
   if (competition) dispatchEvent("COMPETITION_UPDATED", { marks: profile.marks.filter((mark) => mark.deadline) });
+  return true;
 }
 
 export function goalsFromProfile(profile: Profile): RunGoal[] {
@@ -167,7 +191,7 @@ export function profileError(profile: Profile): string {
   const age = Number(profile.age);
   const fat = Number(profile.bodyFat);
   const target = Number(profile.targetKg);
-  if (profile.age && (age < 12 || age > 80)) return "年龄写成 12 到 80。";
+  if (profile.age && (!Number.isFinite(age) || age <= 0 || age > 120)) return "请核对实际年龄。公式不适用时仍可记录并获得一般建议。";
   if (profile.bodyFat && (fat < 3 || fat > 60)) return "体脂写成百分比，比如 20。";
   if (profile.targetKg && (target < 35 || target > 200)) return "目标体重写成公斤。";
   if (profile.marks.some((mark) => mark.deadline && daysUntil(mark.deadline) === null)) return "期限用日期，比如 2027-06-01。";

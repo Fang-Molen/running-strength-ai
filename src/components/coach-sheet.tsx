@@ -1,3 +1,7 @@
+import { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';
+import { CoachR5Panel } from '@/components/coach-r5-panel';
+import { CoachWeeklyPanel } from '@/components/coach-weekly-panel';
+import { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';
 import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'
 import { CoachAnswerView } from "@/components/coach-answer-view";
 import { CoachIntegrationPanel } from '@/components/coach-integration-panel';
@@ -324,6 +328,16 @@ export function CoachSheet({
     if (!value || !memory || sending) return;
     const athleteId = memory.athleteId;
     if (currentAthleteId() !== athleteId) return;
+    const r5 = prepareR5Command(value);
+    if (r5.kind !== 'NONE') {
+      let reply = r5.kind === 'PROPOSAL' ? '已生成修改差异，请在下方确认卡核对；接受前不会写入正式资料或计划。' : r5.kind === 'ANSWER' ? r5.text : '正在汇总本周实际记录与下周草案。';
+      if (r5.kind === 'WEEKLY') { try { await generateWeeklyDraft(); reply = '周复盘与下周草案已生成，请在「复盘」查看事实、差异和限制；确认前不生效。'; } catch (e) { reply = e instanceof Error ? e.message : '周复盘生成失败，计划未改变。'; } }
+      if (currentAthleteId() !== athleteId) return;
+      const id = crypto.randomUUID();
+      setMemory(current => current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: id+'-user', role: 'user' as const, text: value }, { id: id+'-r5', role: 'coach' as const, text: reply.slice(0,1000) }].slice(-40) } : current);
+      setDraft(''); setNotice(''); setRetryQuestion(null); setOnlineRequest(null); setFace(r5.kind === 'PROPOSAL' && r5.command.kind === 'SYMPTOM' ? 'guard' : 'focus');
+      return;
+    }
     // An exact knowledge-library request is a read-only educational response.
     // Do this before any fact extraction, training linkage or model invocation.
     const learningAnswer = answerLearningQuestion(value);
@@ -416,7 +430,7 @@ export function CoachSheet({
       let effectiveProfile: ReturnType<typeof readEffectiveProfile> | null = null;
       try { effectiveProfile = readEffectiveProfile(); } catch { /* Unknown stays unknown; the answer continues. */ }
       let suggestionLines: string[] = [];
-      try { suggestionLines = suggestionFacts(readSuggestionDocument(athleteId), asOf); } catch { /* Suggestions are optional context. */ }
+      try { suggestionLines = [...suggestionFacts(readSuggestionDocument(athleteId), asOf), r5CurrentFacts(asOf)]; } catch { /* Suggestions are optional context. */ }
       const unified = composeUnifiedSupplement({ question: value, r4, personalText, effective: effectiveProfile, suggestionLines });
       const local = answerLocally(brief,reviewed?{frame:reviewed.reasoning,snapshot:reviewed.review.audit.snapshot}:undefined,coachContextMemory,periodReview,memory.dialogue??emptyDialogue(athleteId));
       if (currentAthleteId() !== athleteId) { setSending(false); return; }
@@ -432,10 +446,11 @@ export function CoachSheet({
       const contextual = detectRedFlags(value).level!=='NONE'||local.offlineRuleIds?.length||local.reasoning?.scopeOccurrenceIds.length?null:contextualFollowup(value, conversation);
       // 安全门：急症/疼痛/必须保留的安全约束 → 只用本地安全回答，不联网、不替换。
       const chainHold = brief.appData?.decision?.safety==='URGENT'||brief.appData?.decision?.safety==='REVIEW';
-      const redFlag = chainHold || detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
+      const r5Hold = readR5Context(asOf).hold;
+      const redFlag = r5Hold || chainHold || detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
       // v87：待审知识预览、单纯换算、无候选的剩余任务只在本地展示，不联网、不被跑步复盘替换。
       const keepLocal = answerStaysLocal(local);
-      let shown = chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
+      let shown = r5Hold ? readR5Context(asOf).safety.message : chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
       if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
       // Shown as its own visible block under the answer; DeepSeek receives the same content as facts.
@@ -453,6 +468,7 @@ export function CoachSheet({
         setNotice(linkNotice);
       } else if (cloudRequested && !capable.independent) label = '本地分析 · 联网授权未核定';
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
+      if(shown.length+supplement.length>1000){const keep=Math.min(shown.length,700);supplement=supplement.slice(0,1000-keep);shown=shown.slice(0,1000-supplement.length);}
       const messageId = `${Date.now()}-local`;
       if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
       setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(r4?{r4Basis:{question:value,day:r4.day,athleteId,version:r4.basisVersion}}:{}),...(supplement?{supplement}:{}),...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
@@ -521,7 +537,7 @@ export function CoachSheet({
       setTurnId(result.ok && result.turn.mode === "answer" ? coachId : null);
       setTurnQuestion(value);
       setFace(!result.ok ? "care" : guarded ? "guard" : result.turn.mode === "answer" ? "focus" : "encourage");
-      setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: coachId, role: "coach" as const, text: presentCoachAnswer(reply, persona),...(result.ok&&result.analysisBasis?{analysisBasis:result.analysisBasis}:{}) }].slice(-40) } : current));
+      setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: coachId, role: "coach" as const, text: presentCoachAnswer(reply, persona).slice(0,1000),...(result.ok&&result.analysisBasis?{analysisBasis:result.analysisBasis}:{}) }].slice(-40) } : current));
     } catch {
       setFace("care");
       setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: `${Date.now()}-fallback`, role: "coach" as const, text: failure("INTERRUPTED") }].slice(-40) } : current));
@@ -562,6 +578,8 @@ export function CoachSheet({
         </div>
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
+        {section === 'review' && <CoachWeeklyPanel />}
+        {section === 'review' && <CoachR5Panel />}
         {section === 'review' && <CoachSuggestionsPanel key={`suggestions-${athleteScope}`} />}
         {section === 'review' && <details className="rounded-xl border border-line p-3" data-testid="v91-review-tools"><summary className="min-h-11 cursor-pointer font-bold">更多复盘与协调工具（按需展开）</summary><div className="mt-2 space-y-3">
         {coordinationPanel ?? null}
@@ -781,6 +799,7 @@ export function CoachSheet({
         ))}
         {chatLoad && <CoachChatLoadPanel key={chatLoad.id} question={chatLoad.question} draftId={chatLoad.id} selectedOccurrenceId={chatLoad.occurrenceId} onSaved={() => setRecordRevision(n => n + 1)} />}
         {chatTraining&&<CoachChatTrainingPanel key={chatTraining.id} chat={chatTraining} selectedOccurrenceId={selectedOccurrenceId} onSaved={occurrenceId=>{setRecordRevision(n=>n+1);setChatTraining(chat=>chat?{...chat,savedOccurrenceId:occurrenceId}:chat);setMemory(m=>m?.dialogue?.lastTraining?.id===chatTraining.id?{...m,dialogue:{...m.dialogue,lastTraining:{...m.dialogue.lastTraining,savedOccurrenceId:occurrenceId}}}:m)}}/>}
+        {section === 'chat' ? <CoachR5Panel /> : null}
         {sending && memory?.messages[memory.messages.length - 1]?.role === "user" ? <div className="flex" role="status" aria-label="方坤正在回答"><p className="fk-bubble-coach fk-typing" aria-hidden="true"><span /><span /><span /></p></div> : null}
         <div ref={bottom} />
         </div>
@@ -922,6 +941,7 @@ export function CoachSheet({
             onFocus={(event) => event.currentTarget.scrollIntoView({ block: "nearest" })}
             placeholder="输入你的问题"
             aria-label="输入你的问题"
+            maxLength={1000}
             enterKeyHint="send"
             className="h-11 min-w-0 flex-1 rounded-full border border-line bg-surface px-4 outline-none"
           />

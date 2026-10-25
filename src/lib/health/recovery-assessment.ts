@@ -15,7 +15,7 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
   const time=Date.parse(f.occurredAt),previous=old?Date.parse(old[0].occurredAt):-Infinity
   if(time>previous)latest.set(k,[f]);else if(time===previous)old!.push(f)
  }
- const responses=[...latest.values()].flat().filter(f=>f.measure==='PAIN'||Date.parse(f.occurredAt)>=Date.parse(s.context.asOf)-72*36e5)
+ const responses=[...latest.values()].flat().filter(f=>(f.measure==='PAIN'||f.measure==='FUNCTION')||Date.parse(f.occurredAt)>=Date.parse(s.context.asOf)-72*36e5)
  const responseConflict=[...latest.values()].some(rows=>new Set(rows.map(r=>JSON.stringify([r.value,r.scale]))).size>1)
  if(responseConflict)missing.push('同来源同刻反馈矛盾，保留各条；不得选择无痛值解除限制')
  for(const f of training){
@@ -45,7 +45,7 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
  const normalFunction=responses.filter(f=>f.measure==='FUNCTION'&&f.scale==='FUNCTION_LIMITATION_0_1'&&f.value===0)
  const limitedFunction=responses.filter(f=>f.measure==='FUNCTION'&&f.scale==='FUNCTION_LIMITATION_0_1'&&f.value===1)
  const reaction=responses.filter(f=>['SORENESS','SUBJECTIVE_FATIGUE','RECOVERY_FEELING','FUNCTION'].includes(f.measure)&&f.value!==null)
- const hold=pain||responseConflict||s.safetyConstraints.length>0,escalate=s.safetyConstraints.some(c=>c.scope==='EMERGENCY'||c.scope==='URGENT_MEDICAL')
+ const hold=pain||limitedFunction.length>0||responseConflict||s.safetyConstraints.length>0,escalate=s.safetyConstraints.some(c=>c.scope==='EMERGENCY'||c.scope==='URGENT_MEDICAL')
  if(training.length&&reaction.length)hypotheses.push({id:'training-response',claim:overlap.length?`${overlap.map(r=>REGION_LABEL[r.region]).join('、')}的跑步与力量刺激重叠可能参与当前反应；尚不能确认因果或损伤`:'近期实际训练可能参与当前反应；尚不能确认因果或损伤',supportingRefs:[...training,...reaction].map(refOf),weakeningRefs:[...noPain,...normalFunction].map(refOf),discriminator:'下一次已有批准且不诱发症状的同协议课程，先记录原热身的功能、分段/逐组完成情况与休息；再记录24/48/72小时酸痛、疼痛和主观恢复。若相近实际剂量下表现稳定、反应不再出现，会削弱此解释；不新增试探剂量。',certainty:'POSSIBLE'})
  const sleep=currentMetrics.filter(f=>/SLEEP|sleep/.test(f.metric)),contextMetrics=currentMetrics.filter(f=>!f.metric.includes('饮食'))
  if(contextMetrics.length)hypotheses.push({id:'measurement-context',claim:sleep.length?'睡眠与测量背景可能参与当前状态；单一睡眠或HRV读数不足以判断恢复不良':'测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化',supportingRefs:contextMetrics.map(refOf),weakeningRefs:normalFunction.map(refOf),discriminator:'核对睡眠完整性、生活压力和同设备同协议个人基线。若热身功能正常、可比训练表现稳定，会削弱“当前训练能力下降”的判断；若生活条件未变但表现持续下降，应重新检查训练解释。',certainty:'UNRESOLVED'})

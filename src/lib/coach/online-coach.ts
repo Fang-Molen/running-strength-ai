@@ -1,3 +1,10 @@
+import { loadEntries as readNutritionSourceForFreshness } from '../nutrition/log'
+import { readEffectiveProfile } from './loop/effective-host'
+import { readEffectiveTrainingProfile } from './loop/effective-training'
+import { readScheduleDocument } from '../ui/day-schedule'
+import { analysisDigest } from '../health/analysis-evidence'
+import { readAnalysis } from '../health/analysis-host'
+import { guardR5Reply } from './r5/guard'
 import { planPrefix } from '../plan/active-plan'
 import { partLine, loadOwnedComponents } from '../ui/plan400-components-store'
 /** 方坤联网分析（用户 t460 明确要求“一直保持联网”）：默认开启并记录一次同意；用户可在方坤里关闭。
@@ -203,10 +210,20 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
     }
     payload.local = low ? source.slice(0, low).replace(/[\uD800-\uDBFF]$/, '') + marker : ''
   }
+  const ownerAtRequest=currentAthleteId(), cutoff=new Date().toISOString(), analysisDayAtRequest=analysisDay(q,null,localDayOf(cutoff))
+  let verified:ReturnType<typeof readAnalysis>
+  try{verified=readAnalysis(analysisDayAtRequest,cutoff,q)}catch{return {error:'当前事实或安全依据不可核对，已保留本地回答'}}
+  const contextVersion=()=>analysisDigest([readEffectiveProfile().version,readEffectiveTrainingProfile().version,readScheduleDocument(),readNutritionSourceForFreshness(),currentStore()?.getItem('fk-plan-doc-v1')??null]);
+  const contextAtRequest=contextVersion();
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms)
   try {
     const r = await fetch('/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), signal: ac.signal })
     const j = await r.json().catch(() => ({}))
-    return r.ok && typeof j.text === 'string' && j.text.trim() ? { text: j.text } : { error: j.error || `HTTP ${r.status}` }
+    if(!r.ok||typeof j.text!=='string'||!j.text.trim())return {error:j.error||`HTTP ${r.status}`}
+    if(currentAthleteId()!==ownerAtRequest)return {error:'身份已变化，未显示其他账号的模型回答'}
+    const latest=readAnalysis(analysisDayAtRequest,new Date().toISOString(),q)
+    if(latest.revision!==verified.revision||contextAtRequest!==contextVersion())return {error:'模型等待期间训练或安全依据已变化，已保留本地回答'}
+    const check=guardR5Reply(j.text,verified.packet)
+    return check.ok?{text:j.text.slice(0,1000)}:{error:'模型内容未通过数值、来源或安全核验，已保留本地回答'}
   } catch { return { error: ac.signal.aborted ? '联网超时' : '网络不可用' } } finally { clearTimeout(t) }
 }

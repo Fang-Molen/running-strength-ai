@@ -1,3 +1,4 @@
+import { SymptomPanel } from './symptom-panel'
 import { retainEvidenceDecision } from '@/lib/health/evidence-history'
 import { readEvidenceDecision } from '@/lib/health/evidence-decision-host'
 import { evidenceDecisionText } from '@/lib/health/evidence-decision'
@@ -93,6 +94,7 @@ export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }:
   }, [])
   return <div className="fk-health-v89 space-y-3" data-testid="health-v89">
     <nav className="fk-h89-tabs" aria-label="健康分区">{TABS.map(([id, l]) => <button key={id} type="button" aria-pressed={tab === id} aria-controls={`health-${id}`} onClick={() => setTab(id)}>{l}</button>)}</nav>
+    <SymptomPanel />
     <div id="health-recovery" hidden={tab !== "recovery"} className="space-y-3">
       <DaySwitch day={day} today={today} onDay={setDay} />
       <CorosHealthPanel day={day} />

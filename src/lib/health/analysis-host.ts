@@ -1,3 +1,6 @@
+import { readEffectiveTrainingProfile } from '../coach/loop/effective-training'
+import { readSymptoms, symptomResponses } from './symptom-store'
+import { reviewSymptoms } from './symptom-review'
 import { importedResponseFacts } from './analysis-followup'
 import type { AnalysisFact, MetricFact, ResponseFact, TrainingFact } from './analysis-contract'
 import { currentAthleteId } from '../core/events'
@@ -51,8 +54,11 @@ export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),questi
  const training=facts.filter((f):f is TrainingFact=>f.kind==='TRAINING')
  const responseRows=[...readPersonalResponses(context.asOf),...importedResponseFacts(athleteId,context.asOf,training)]
  for(const f of responseRows){if(f.relatedTrainingRefs.length&&!f.relatedTrainingRefs.every(r=>training.some(t=>t.id===r.id&&t.revision===r.revision))){gaps.push('历史反馈依赖的训练已更正/撤销或超出读取窗口，未绑定到新版本');continue}facts.push(f)}
+ const symptoms=readSymptoms(context.asOf),symptomReview=reviewSymptoms(symptoms,day,14)
+ facts.push(...symptomResponses(symptoms))
  const flags=detectRedFlags(question),pain=muscle.painReviewRequired||muscle.review.regions.some(r=>r.state==='PAIN_REVIEW')||ci?.pain==='mild'||ci?.pain==='sharp'
- const safetyConstraints=[...(pain?[{id:'existing-pain',version:muscle.revision,scope:'PAIN_REVIEW',evidenceRefs:[]}]:[]),...(flags.level!=='NONE'?[{id:'existing-red-flags',version:'CURRENT',scope:flags.level,evidenceRefs:[]}]:[])]
+ const restrictions=readEffectiveTrainingProfile().restrictions.filter(r=>!/^健康筛查：UNKNOWN$/.test(r.value))
+ const safetyConstraints=[...restrictions.map((r,i)=>({id:'profile-restriction:'+i,version:r.version,scope:'PAIN_REVIEW',evidenceRefs:[]})),...symptomReview.constraints,...(pain?[{id:'existing-pain',version:muscle.revision,scope:'PAIN_REVIEW',evidenceRefs:[]}]:[]),...(flags.level!=='NONE'?[{id:'existing-red-flags',version:'CURRENT',scope:flags.level,evidenceRefs:[]}]:[])]
  const foods=loadEntries().filter(f=>(f.athleteId??'local')===athleteId&&f.date===day&&exactInstant(f.recordedAt)&&Date.parse(f.recordedAt)<=Date.parse(context.asOf))
  const energy=aggregate(foods).kcal
  const nutrition={recordCount:foods.length,loggedKcal:energy.known ? energy.sum : null,unknownEnergyCount:energy.pending,dayComplete:false as const,energyDeficitKcal:null,sources:foods.map(f=>({id:f.id,source:f.source,food:f.name,portion:f.amount??f.grams??null,portionUnit:f.unit??(f.grams!=null?'g':'UNKNOWN'),uncertainty:f.nutritionSource?.uncertainty??'UNKNOWN',knownAt:f.recordedAt})),note:'只合计已记录食物；全天完整度与估计误差未知。先补餐食/分量，不诊断摄入不足，不重复加活动与训练热量。'}

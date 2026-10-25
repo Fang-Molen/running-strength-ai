@@ -1,3 +1,4 @@
+import { effectiveNutritionProfile } from '@/lib/coach/loop/effective-host';
 import { stampCN } from "@/lib/ui/activity-format";
 /* R1「个人与数据」：一级三组入口 + 二级页（同步状态、备份恢复、隐私、健康）。只做展示与入口整理，存储键与业务写入沿用原实现。 */
 import { CorosStatusRows } from "@/components/coros-account";
@@ -216,7 +217,7 @@ export function HealthPanel() {
 export function AthletePanel({ profile, onEdit }: { profile: Profile; onEdit: () => void }) {
   return <section className="home-card mt-3 p-4 text-sm" aria-label="运动员档案" data-testid="athlete-panel">
     <h3 className="font-bold">运动员档案</h3>
-    <ul className="mt-2 space-y-1.5">{athleteLines(profile).map((t, i) => <li key={i}>{t}</li>)}</ul>
+    <ul className="mt-2 space-y-1.5">{athleteLines(effectiveNutritionProfile(profile)).map((t, i) => <li key={i}>{t}</li>)}</ul>
     <button type="button" className="mt-3 min-h-11 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={onEdit}>编辑基本信息</button>
   </section>;
 }
