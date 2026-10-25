@@ -1,0 +1,42 @@
+{
+  "cases": [
+    {
+      "name": "ten confirmed actual imports create four-week run/strength draft without writing calendar",
+      "weeks": 4,
+      "firstWeek": 5
+    },
+    {
+      "name": "confirmation writes only five first-week courses",
+      "count": 5
+    },
+    {
+      "name": "undo restores empty future calendar; actual imports retained"
+    },
+    {
+      "name": "two linked soreness observations revise strength from three sets to two",
+      "sets": [
+        "2",
+        "2"
+      ]
+    },
+    {
+      "name": "natural-language month request produces offline confirmed-facts draft"
+    },
+    {
+      "name": "pain overrides earlier tolerated dose and blocks confirmation"
+    }
+  ],
+  "errors": [],
+  "modelRequests": [],
+  "screenshots": [
+    "/workspace/screenshots/r8/01-portrait.png",
+    "/workspace/screenshots/r8/02-confirm-card.png",
+    "/workspace/screenshots/r8/08-confirm-controls.png",
+    "/workspace/screenshots/r8/03-feedback-revision.png",
+    "/workspace/screenshots/r8/04-chat.png",
+    "/workspace/screenshots/r8/05-pain-hold.png",
+    "/workspace/screenshots/r8/06-mobile.png",
+    "/workspace/screenshots/r8/07-desktop.png"
+  ],
+  "synthetic": true
+}

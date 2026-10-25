@@ -1,0 +1,66 @@
+{
+  "baseline": "0d8f4ca8239cedcce869918f4b44faacad281fa4",
+  "sourceFiles": {
+    "src/components/coach-cycle-panel.tsx": "7fbe59e65c191402ebb23eb6732866075228a363e52dc2334f6ec98a2bf08244",
+    "src/components/coach-sheet.tsx": "1f9b72913f87bec30a94d1ebfe33db87a2152dcf6a336cc934f89b0b9f2606d6",
+    "src/components/training-import-sheet.tsx": "2b601672ddf6aaaf7bd5cdfedbfb7c8488635a5da4c2ce8a304db64a4abf5076",
+    "src/lib/coach/assessment/history.ts": "ac201d12d01e38d4de317b1add672875409e9ea8831c058f6942cf01dbf86e80",
+    "src/lib/coach/cycle/actual-seeds.ts": "532a417e398954854b67ccbcd4ee25fbb9fe803690327937bfb200f2fdefa5a6",
+    "src/lib/coach/cycle/actual-structure.ts": "611de1659b5466a5429c07d27036037966405c59786af1ae476bbb841da7f46b",
+    "src/lib/coach/cycle/adaptive-import.test.ts": "e3d4b4689654608419e3707a5dc58d12bb9fb6839c6ecbc4b7ad52b4009c0351",
+    "src/lib/coach/cycle/adaptive.test.ts": "45632e41b2a55217f3c025cccaa6b6a5f320e116a9ccc421ddbc8ead7bf6154d",
+    "src/lib/coach/cycle/host.test.ts": "2112e08a3dc9a1a890965399567c7676f99f41c6501abb891bad87b4d3eece66",
+    "src/lib/coach/cycle/host.ts": "933b50899ac27ee350194b7acaf8665c9a571310c962fa6c090b7a504ca83bda",
+    "src/lib/coach/cycle/planner.ts": "a345aeecbc270c797795be468c91f01a5df66e0d952e057a8e195358f1950346",
+    "src/lib/coach/cycle/portrait.ts": "4048e53aedb140ba2d30074d5662cc9bd50b6d746353bc69197e8d0d201353d1",
+    "src/lib/coach/cycle/request.ts": "a4607ee9291a58ce640c74586fdbd6372d6ebb577fe9efc9fbcf28a750c24548",
+    "src/lib/coach/cycle/types.ts": "d6184d639449a176dbe0c9489082ec50cae0b94be9f62e4b037dabcbc7fd1a0f",
+    "src/lib/core/state.ts": "ac774e44d02200eda9f7e4db64ebb2825a325d555d4df1336b064055fa2f476b",
+    "src/lib/core/training-decision.ts": "a67842269aaff81f90ba3e598d4329eedf65ddc5b3ebb6dc0e2edb9ebfe70421",
+    "src/lib/core/training-import.ts": "bb7f3884529417f733ec39fc7aa8f0fc3824b23bdea0bf0c467e74301928456e",
+    "src/lib/health/adaptive-review.ts": "d9b3d1b30c229b6848a065e74aa39fe7c9d89ff672ef1bfcfb81923b4499010e",
+    "src/lib/health/analysis-host.ts": "ca961dbd1aa3da621c4a179d5149b057c6df09a3414d5a052f7677179ed0ff71",
+    "src/lib/health/coach-chain-v14.test.ts": "92d01d3e31108d9bf6b569930f00d17f865cd77b35e6e4f9758563b93f396e52",
+    "src/lib/health/recovery-assessment.ts": "3ad2b09ed28dbc952bb985c2f582b2a7d898efbab0302e3b47aafd4f5134f051",
+    "src/lib/health/recovery-host-u11.test.ts": "bc92683ea9e7e98d770ed66f57d0831b68ac8ff07e4fbe9d1843dc01b772ba5f",
+    "src/lib/health/recovery-host-u11.ts": "e54eb42459fd855144733af7f84bdec67c5c3bf588c5f0ce8dc185cfc2b88c9f"
+  },
+  "typecheck": {
+    "command": "./node_modules/.bin/tsc --noEmit",
+    "exit": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "exit": 0,
+    "migration": "SKIPPED_NO_DATABASE_URL"
+  },
+  "focused": {
+    "pass": 146,
+    "fail": 0
+  },
+  "fullSweep": {
+    "pass": 3982,
+    "fail": 8,
+    "postSweepFixes": 2,
+    "knownRemainingFailures": 6,
+    "rerunFullAfterFixes": false
+  },
+  "browser": {
+    "scenarios": 6,
+    "errors": 0,
+    "modelRequests": 0,
+    "syntheticData": true
+  },
+  "paidModelCalls": 0,
+  "deployment": false,
+  "smoke": {
+    "devExit": 0,
+    "builtExit": 0,
+    "viewports": 4,
+    "pageErrors": 0,
+    "consoleErrors": 0,
+    "horizontalOverflow": false,
+    "divergesFromBaseline": false,
+    "brandWarning": "existing share-card placeholder"
+  }
+}

@@ -1,3 +1,4 @@
+import { buildAdaptiveReview, adaptiveSummary } from './adaptive-review';
 import { assessAthleteHistory, historySummary } from '../coach/assessment/history'
 import { readEffectiveTrainingProfile } from '../coach/loop/effective-training'
 import { readSymptoms, symptomResponses } from './symptom-store'
@@ -69,12 +70,14 @@ export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),questi
  const snapshot=projectAnalysisEvidence({context,facts,gaps,safetyConstraints}),exposure=buildMuscleExposure(snapshot),assessment=evaluateRecoveryEvidence(snapshot,exposure)
  const personal=personalHistorySummary(snapshot.facts.filter((f):f is TrainingFact=>f.kind==='TRAINING'),snapshot.facts.filter((f):f is ResponseFact=>f.kind==='RESPONSE'),context)
  if(personal.status==='DESCRIPTIVE'&&personal.evidenceRefs.length)assessment.observations.push({text:`个人历史：${personal.matchedSessionCount}次同来源同协议实际训练；${personal.windows.map(w=>`${w.hours}h有${w.sessionCount}次观测`).join('、')}。${personal.caveat}`,evidenceRefs:personal.evidenceRefs})
+ const adaptive=buildAdaptiveReview(snapshot)
+ assessment.observations.push({text:adaptiveSummary(adaptive),evidenceRefs:[...adaptive.windows.flatMap(w=>w.refs),...adaptive.groups.flatMap(g=>g.evidenceRefs)]})
  const history=assessAthleteHistory(snapshot)
  assessment.observations.push(...history.observations)
  const packet=buildCoachAnalysisPacket(snapshot,assessment,exposure,{question})
  // R4 remains an explicitly requested, read-only review preview until app acceptance.
  const professionalReference=options.r4ReferencePreview===true?buildR4Review(snapshot,question||'当前已记录事实',{foods:foods.map(f=>({kcal:nutrientOf(f,'kcal'),protein:nutrientOf(f,'protein'),carb:nutrientOf(f,'carb'),fat:nutrientOf(f,'fat'),fiber:nutrientOf(f,'fiber')}))}):null
  const trainingModels=readTrainingModelReview(snapshot,assessment)
- return {snapshot,exposure,assessment,packet,history,nutrition,personal,muscle,trainingModels,professionalReference,coros:corosDay?{...corosDay,accountRef:coros?.accountRef??null,sessionScope:coros?.sessionScope??null,receivedAt:coros?.knownAtByDay?.[day]??coros?.fetchedAt,measuredAt:null,athleteOwnershipVerified:false}:null,revision:analysisDigest([day,snapshot.facts,snapshot.gaps,snapshot.conflicts,snapshot.safetyConstraints,nutrition,corosDay??null]),automaticPrescription:false as const}
+ return {snapshot,exposure,assessment,packet,history,adaptive,nutrition,personal,muscle,trainingModels,professionalReference,coros:corosDay?{...corosDay,accountRef:coros?.accountRef??null,sessionScope:coros?.sessionScope??null,receivedAt:coros?.knownAtByDay?.[day]??coros?.fetchedAt,measuredAt:null,athleteOwnershipVerified:false}:null,revision:analysisDigest([day,snapshot.facts,snapshot.gaps,snapshot.conflicts,snapshot.safetyConstraints,nutrition,corosDay??null]),automaticPrescription:false as const}
 }
 export function analysisText(a:ReturnType<typeof readAnalysis>){return [historySummary(a.history),exposureText(a.exposure),trainingModelSummary(a.trainingModels.review),...a.assessment.observations.map(o=>o.text),...a.assessment.hypotheses.map(h=>`可能解释：${h.claim}。现有反证 ${h.weakeningRefs.length} 条；下一次观察：${h.discriminator}`),a.nutrition.recordCount?`${a.nutrition.loggedKcal===null?'饮食已记，热量未知':`饮食已记 ${a.nutrition.loggedKcal} kcal`}；${a.nutrition.unknownEnergyCount}条热量未知；${a.nutrition.note}`:'餐食完整性待确认，不计算热量缺口。',a.coros?`高驰 ${a.coros.date} 日级记录：${a.coros.hrvMs!=null?`HRV ${a.coros.hrvMs} ms；`:''}${a.coros.sleepMinutes!=null?`睡眠 ${a.coros.sleepMinutes} 分钟；`:''}测量时刻未知，不作为今天的实测或训练许可。`:'',`数据充分性 ${a.assessment.dataQuality}；安全状态 ${a.assessment.safetyState}。`,...a.assessment.candidates.flatMap(c=>[`候选 ${c.action??c.kind}：${c.reason??''}；${c.observation??''}；待确认，不写入计划`,...c.conditions]),a.assessment.missingDecisionInputs[0]??'下一次保留同协议观察，不能从相关性确认因果。'].filter(Boolean).join('\n')}

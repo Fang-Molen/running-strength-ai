@@ -250,13 +250,14 @@ function compare(current: RunObservation, prior: RunObservation[]): HistoricalCo
       : [],
   };
 }
-export function assessAthleteHistory(input: EvidenceSnapshot) {
+export function assessAthleteHistory(input: EvidenceSnapshot, windowDays = 90) {
+  if (!Number.isInteger(windowDays) || windowDays < 1 || windowDays > 90) throw Error("INVALID_HISTORY_WINDOW");
   const snapshot = projectAnalysisEvidence({
       context: input.context,
       facts: input.facts,
       safetyConstraints: input.safetyConstraints,
     }),
-    cutoff = Date.parse(snapshot.context.asOf) - 90 * 86400000;
+    cutoff = Date.parse(snapshot.context.asOf) - windowDays * 86400000;
   const training = snapshot.facts
     .filter((f): f is TrainingFact => f.kind === "TRAINING" && Date.parse(f.occurredAt) >= cutoff)
     .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt) || a.id.localeCompare(b.id));
@@ -303,7 +304,7 @@ export function assessAthleteHistory(input: EvidenceSnapshot) {
   const hold = snapshot.safetyConstraints.length > 0;
   const observations = [
     {
-      text: `近90天读取到${days}个实际训练日，跑步${sessions.length}条分项、${actualStrengthSets ? `力量已记录${actualStrengthSets}个实际完成组` : "力量实际明细未知"}；仅代表记录覆盖，空白日期不认定休息或漏练。`,
+      text: `近${windowDays}天读取到${days}个实际训练日，跑步${sessions.length}条分项、${actualStrengthSets ? `力量已记录${actualStrengthSets}个实际完成组` : "力量实际明细未知"}；仅代表记录覆盖，空白日期不认定休息或漏练。`,
       evidenceRefs: training.map(refOf),
     },
     ...sessions.slice(0, 1).map((s) => ({ text: s.text, evidenceRefs: [s.ref] })),

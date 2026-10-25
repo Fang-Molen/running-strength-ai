@@ -1,0 +1,4858 @@
+{
+  "synthetic": true,
+  "notUserData": true,
+  "baseline": {
+    "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+    "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+    "hold": false,
+    "weeks": [
+      {
+        "start": "2026-10-26",
+        "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+        "confirmable": true,
+        "minutes": 100,
+        "courses": [
+          {
+            "date": "2026-10-26",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "3",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+            "missing": []
+          },
+          {
+            "date": "2026-10-27",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+            "missing": []
+          },
+          {
+            "date": "2026-10-28",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+            "missing": []
+          },
+          {
+            "date": "2026-10-30",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "3",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+            "missing": []
+          },
+          {
+            "date": "2026-10-31",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+            "missing": []
+          }
+        ]
+      },
+      {
+        "start": "2026-11-02",
+        "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+        "confirmable": false,
+        "minutes": 100,
+        "courses": [
+          {
+            "date": "2026-11-02",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "3",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-03",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-04",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-06",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "3",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-07",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          }
+        ]
+      },
+      {
+        "start": "2026-11-09",
+        "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+        "confirmable": false,
+        "minutes": 100,
+        "courses": [
+          {
+            "date": "2026-11-09",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "3",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-10",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-11",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-13",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "3",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-14",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          }
+        ]
+      },
+      {
+        "start": "2026-11-16",
+        "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+        "confirmable": false,
+        "minutes": 100,
+        "courses": [
+          {
+            "date": "2026-11-16",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "2",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+            "missing": []
+          },
+          {
+            "date": "2026-11-17",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-18",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          },
+          {
+            "date": "2026-11-20",
+            "title": "熟悉全身力量",
+            "modality": "strength",
+            "minutes": 20,
+            "exercises": [
+              {
+                "catalogId": "glute-bridge",
+                "name": "臀桥",
+                "sets": "2",
+                "reps": "10",
+                "weight": "0",
+                "rpe": "",
+                "unit": "reps",
+                "restSec": 60
+              }
+            ],
+            "run": [],
+            "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+            "missing": []
+          },
+          {
+            "date": "2026-11-21",
+            "title": "轻松跑",
+            "modality": "run",
+            "minutes": 20,
+            "exercises": [],
+            "run": [
+              {
+                "componentId": "run",
+                "modality": "RUNNING",
+                "purpose": "EASY_AEROBIC",
+                "structure": {
+                  "kind": "CONTINUOUS",
+                  "plannedDistanceMeters": 3000,
+                  "plannedDistanceMaxMeters": null,
+                  "plannedDurationSeconds": 1200
+                }
+              }
+            ],
+            "reason": "围绕综合发展发展；一次只讨论一个变量",
+            "missing": []
+          }
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "重复课后酸痛反馈",
+      "before": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈2次、支持已观察耐受0次、缺随访4次、叠加干扰0次。同口径训练后重复记录到症状，提出单变量调整并复核；不能确认训练致因\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "疼痛限制优先",
+      "before": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "ability": "已有疼痛或安全限制优先，不能由心率或设备分数解除\n2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": true,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": false,
+            "minutes": null,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-10-27",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-10-28",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-10-30",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-10-31",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": null,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-03",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-04",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-06",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-07",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": null,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-10",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-11",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-13",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-14",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": null,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-17",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-18",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-20",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              },
+              {
+                "date": "2026-11-21",
+                "title": "安全复核与恢复观察",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "暂停诱发症状的训练，先复核功能、限制与实际反馈",
+                "missing": [
+                  "安全限制尚未解除"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "力量负重缺失",
+      "before": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": false,
+            "minutes": 20,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "基础与动作：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "基础与动作：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-10-30",
+                "title": "基础与动作：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-10-31",
+                "title": "基础与动作：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 20,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-06",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-07",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 20,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-13",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-14",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 20,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-20",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              },
+              {
+                "date": "2026-11-21",
+                "title": "能力发展：综合发展",
+                "modality": null,
+                "minutes": null,
+                "exercises": [],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": [
+                  "原负重缺少同口径实际依据，需核对"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "更正实际记录使旧随访失配",
+      "before": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈2次、支持已观察耐受0次、缺随访4次、叠加干扰0次。同口径训练后重复记录到症状，提出单变量调整并复核；不能确认训练致因\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈1次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "目标改成800米90秒不能改变实测能力",
+      "before": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "ability": "2026-10-23对比此前5个独立训练日：有限可比，工作段均配速变化0秒/公里；心率不作跨次差值；同量表RPE变化0。设备未完整记录、间歇未知、结构字段未知。不据此断言体能升降。\n近14天读取到10个实际训练日，跑步6条分项、力量已记录12个实际完成组；仅代表记录覆盖，空白日期不认定休息或漏练。\n2026-10-23：已完成分段1段，合计3000米，工作段均配速6分40秒/公里；心率或采集方法不足。这是训练执行记录，不等同最大能力。\n缺项仍保持未知；当前执行表现不能代替最大能力、组织恢复或医疗判断。\n待核对：这些课的路线、间歇和设备是否一致？\n待核对：近期是否有疼痛、睡眠或主观吃力程度变化？",
+        "personalResponse": "近两周实际记录：\n2026-10-19至2026-10-25：5次；跑步9000米；力量6组（仅已记录部分）\n2026-10-12至2026-10-18：5次；跑步9000米；力量6组（仅已记录部分）\n跑步可比6次，症状反馈0次、支持已观察耐受0次、缺随访6次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n力量可比4次，症状反馈0次、支持已观察耐受0次、缺随访4次、叠加干扰0次。独立且可比的后续反馈不足，不推断恢复速度\n未校准个人最佳剂量、恢复时间或比赛能力。",
+        "hold": false,
+        "weeks": [
+          {
+            "start": "2026-10-26",
+            "strengthFocus": "建立已完成剂量起点，记录逐组RIR及次日反馈",
+            "confirmable": true,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-10-26",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-27",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-28",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-30",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              },
+              {
+                "date": "2026-10-31",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "保留熟悉活动，围绕综合发展建立可持续安排并核对动作",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-02",
+            "strengthFocus": "重复同剂量观察可执行性，不自动加重量",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-02",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-03",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-04",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-06",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-07",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-09",
+            "strengthFocus": "根据已发生反馈复核；无证据不增加组数或负重",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-09",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-10",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-11",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-13",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "3",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-14",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          },
+          {
+            "start": "2026-11-16",
+            "strengthFocus": "复核周：熟悉动作减组候选，负重和次数不增加",
+            "confirmable": false,
+            "minutes": 100,
+            "courses": [
+              {
+                "date": "2026-11-16",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-17",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-18",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              },
+              {
+                "date": "2026-11-20",
+                "title": "熟悉全身力量",
+                "modality": "strength",
+                "minutes": 20,
+                "exercises": [
+                  {
+                    "catalogId": "glute-bridge",
+                    "name": "臀桥",
+                    "sets": "2",
+                    "reps": "10",
+                    "weight": "0",
+                    "rpe": "",
+                    "unit": "reps",
+                    "restSec": 60
+                  }
+                ],
+                "run": [],
+                "reason": "围绕综合发展发展；一次只讨论一个变量；第四周力量复核：候选每动作减一组，非固定生理恢复周期",
+                "missing": []
+              },
+              {
+                "date": "2026-11-21",
+                "title": "轻松跑",
+                "modality": "run",
+                "minutes": 20,
+                "exercises": [],
+                "run": [
+                  {
+                    "componentId": "run",
+                    "modality": "RUNNING",
+                    "purpose": "EASY_AEROBIC",
+                    "structure": {
+                      "kind": "CONTINUOUS",
+                      "plannedDistanceMeters": 3000,
+                      "plannedDistanceMaxMeters": null,
+                      "plannedDurationSeconds": 1200
+                    }
+                  }
+                ],
+                "reason": "围绕综合发展发展；一次只讨论一个变量",
+                "missing": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

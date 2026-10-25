@@ -21,7 +21,9 @@ export type CycleGoal = {
   proposeExtraMinutes: number | null;
   source: "USER_CONFIRMED_GOAL";
 };
+export type CycleRequest = { historyDays: 14 | 28 | 42; horizonWeeks: number };
 export type CycleInput = {
+  request?: CycleRequest;
   snapshot: EvidenceSnapshot;
   recovery: RecoveryAssessment;
   entries: readonly ScheduleEntry[];
