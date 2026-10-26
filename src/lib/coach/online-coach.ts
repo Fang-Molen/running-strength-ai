@@ -229,6 +229,7 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
     const latest=readAnalysis(analysisDayAtRequest,new Date().toISOString(),q)
     if(latest.revision!==verified.revision||contextAtRequest!==contextVersion())return {error:'模型等待期间训练或安全依据已变化，已保留本地回答'}
     const check=guardR5Reply(j.text,verified.packet)
-    return check.ok?{text:j.text.slice(0,1000)}:{error:'模型内容未通过数值、来源或安全核验，已保留本地回答'}
+    const why: Record<string, string> = { UNBOUND_NUMERIC_SOURCE: '含无来源数字', UNAUTHORIZED_WRITE_OR_CLEARANCE: '含未授权修改或解除限制', ACTIVE_HOLD_RELEASE: '安全限制未解除时给了放行', DIAGNOSIS_CLAIM: '含诊断结论' }
+    return check.ok?{text:j.text.slice(0,1000)}:{error:`模型内容未通过核验（${check.errors.map(e => why[e] ?? e).join('、')}），已保留本地回答`}
   } catch { return { error: ac.signal.aborted ? '联网超时' : '网络不可用' } } finally { clearTimeout(t) }
 }
