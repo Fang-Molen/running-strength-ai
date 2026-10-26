@@ -127,7 +127,7 @@ async function scientificFixture(){
  const knowledge={fixture:'synthetic-host-knowledge'}
  const knowledgeVersion=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(knowledge))))].map(x=>x.toString(16).padStart(2,'0')).join('')
  const source=JSON.stringify({owner:p.context.athleteId,context:{...p.context,asOf:undefined},facts:p.permittedFacts,entries:[before],knowledge})
- const version=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(source)))].map(x=>x.toString(16).padStart(2,'0')).join('')
+ const version=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(source))))].map(x=>x.toString(16).padStart(2,'0')).join('')
  const decision={athleteId:p.context.athleteId,asOf:p.context.asOf,version,knowledgeVersion,input,comparison:selectTrainingModels(input),source,safety:{hold:false,message:'保持现有限制'},candidates:[{id:'private-candidate',option:'C',action:'DEFER',title:'暂缓本课',sessionId:before.id,changedVariable:'SESSION_EXECUTION',before,after:{...before,status:'skipped'},reason:'资料不足，保留原剂量再复核',evidence:[{id:p.permittedFacts[0].id,revision:1}],evidenceIds:[],risks:['不自动补课'],observationMetrics:['疼痛与功能'],reschedule:null,requiresConfirmation:true,canConfirm:true,blockedReasons:[]}]}
  return {f,decision}
 }
