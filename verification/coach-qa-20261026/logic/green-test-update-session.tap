@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: multi-part filtering keeps stable variants and selecting the same action does not add volume
+ok 1 - multi-part filtering keeps stable variants and selecting the same action does not add volume
+  ---
+  duration_ms: 1.49091
+  type: 'test'
+  ...
+# Subtest: empty, unknown, blank and malformed parameters never become a zero-dose or normal candidate
+ok 2 - empty, unknown, blank and malformed parameters never become a zero-dose or normal candidate
+  ---
+  duration_ms: 0.574381
+  type: 'test'
+  ...
+# Subtest: explicit repetition retains independent parameters, order and side convention without doubling volume
+ok 3 - explicit repetition retains independent parameters, order and side convention without doubling volume
+  ---
+  duration_ms: 1.149713
+  type: 'test'
+  ...
+# Subtest: preview and initial builder view do not write the plan or claim personal suitability
+ok 4 - preview and initial builder view do not write the plan or claim personal suitability
+  ---
+  duration_ms: 9.482807
+  type: 'test'
+  ...
+# Subtest: confirmed append preserves old course identities and is verified in one value
+ok 5 - confirmed append preserves old course identities and is verified in one value
+  ---
+  duration_ms: 0.426346
+  type: 'test'
+  ...
+# Subtest: quota failure and dropped writes cannot report successful course creation; draft can retry
+ok 6 - quota failure and dropped writes cannot report successful course creation; draft can retry
+  ---
+  duration_ms: 0.214205
+  type: 'test'
+  ...
+# Subtest: two stale tabs cannot lose the first confirmed course; refreshed tab appends both
+ok 7 - two stale tabs cannot lose the first confirmed course; refreshed tab appends both
+  ---
+  duration_ms: 0.255728
+  type: 'test'
+  ...
+# Subtest: content inventory distinguishes unavailable variants, legacy licenses and sourced new schematics
+ok 8 - content inventory distinguishes unavailable variants, legacy licenses and sourced new schematics
+  ---
+  duration_ms: 0.309979
+  type: 'test'
+  ...
+# Subtest: shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls
+ok 9 - shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls
+  ---
+  duration_ms: 40.76044
+  type: 'test'
+  ...
+# Subtest: blank input, zero repetitions and invalid count never confirm a set; zero weight remains explicit
+ok 10 - blank input, zero repetitions and invalid count never confirm a set; zero weight remains explicit
+  ---
+  duration_ms: 0.51459
+  type: 'test'
+  ...
+# Subtest: after refresh rest target advances to that same unrecorded group, not the following group
+ok 11 - after refresh rest target advances to that same unrecorded group, not the following group
+  ---
+  duration_ms: 0.257661
+  type: 'test'
+  ...
+# Subtest: close event failure leaves the occurrence open and can retry without a false success
+ok 12 - close event failure leaves the occurrence open and can retry without a false success
+  ---
+  duration_ms: 2.537787
+  type: 'test'
+  ...
+# Subtest: partial write on closing cannot report success, retry reuses the saved close event
+ok 13 - partial write on closing cannot report success, retry reuses the saved close event
+  ---
+  duration_ms: 0.86406
+  type: 'test'
+  ...
+# Subtest: interruption storage failure retains open identity and does not announce a completed course
+ok 14 - interruption storage failure retains open identity and does not announce a completed course
+  ---
+  duration_ms: 0.637105
+  type: 'test'
+  ...
+# Subtest: partial execution closes the occurrence but never claims every planned set completed
+ok 15 - partial execution closes the occurrence but never claims every planned set completed
+  ---
+  duration_ms: 0.439016
+  type: 'test'
+  ...
+# Subtest: long execution-draft identities remain restorable through the existing backup validator
+ok 16 - long execution-draft identities remain restorable through the existing backup validator
+  ---
+  duration_ms: 0.641823
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.923758

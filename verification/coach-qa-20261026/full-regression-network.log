@@ -1,0 +1,1220 @@
+
+> test
+> node --test --test-concurrency=3 'scripts/**/*.test.mjs' && node --experimental-strip-types --test --test-concurrency=3 src/lib/body/scale-parse.test.ts src/lib/ui/decimal.test.ts src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts && node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/core.test.ts src/lib/coach/stated/stated.test.ts src/lib/coach/stated/r11-behavior.test.ts src/lib/coach/online-facts-v86.test.ts src/lib/coach/online-facts-linkage.test.ts src/lib/coach/online-chat-transport.test.ts src/lib/coach/online-nutrition-facts.test.ts src/lib/coach/online-training-facts.test.ts src/lib/coach/online-recovery-facts.test.ts src/lib/coach/stated/direct-v87.test.ts src/lib/coach/knowledge/complete.test.ts src/lib/coach/knowledge/entry.test.ts src/lib/coach/knowledge/approval.test.ts src/lib/coach/knowledge/approval-integrity.test.ts src/lib/coach/knowledge/scope.test.ts src/lib/coach/plan-execution/loop-v87.test.ts src/lib/ui/schedule-writer.test.ts src/lib/coach/review-view/review-view.test.ts src/components/coach-review-plain.test.tsx src/lib/core/canonical.test.ts src/lib/core/occurrence.test.ts src/lib/core/training-fact.test.ts src/lib/core/fact-read.test.ts src/lib/core/training-summary.test.ts src/lib/core/evidence.test.ts src/lib/core/performance-evidence.test.ts src/lib/core/recovery-evidence.test.ts src/lib/core/evidence-profile.test.ts src/lib/core/evidence-interpretation.test.ts src/lib/core/evidence-inference.test.ts src/lib/core/evidence-fatigue.test.ts src/lib/core/evidence-recovery.test.ts src/lib/core/evidence-musculoskeletal.test.ts src/lib/core/evidence-bundle.test.ts src/lib/core/evidence-provenance.test.ts src/lib/core/evidence-availability.test.ts src/lib/core/evidence-consistency.test.ts src/lib/core/historical-occurrences.test.ts src/lib/core/historical-facts.test.ts src/lib/core/historical-availability.test.ts src/lib/core/historical-evidence.test.ts src/lib/core/import-history.test.ts src/lib/core/running-plan.test.ts src/lib/core/running-execution.test.ts src/lib/core/running-execution-rest.test.ts src/lib/core/coach-brief.test.ts src/lib/core/coach-model-packet.test.ts src/lib/core/coach-output-budget.test.ts src/lib/core/coach-stream.test.ts src/lib/core/coach-open.test.ts src/lib/core/coach-fuel.test.ts src/lib/core/coach-compare.test.ts src/lib/core/coach-series.test.ts src/lib/core/coach-return.test.ts src/lib/core/coach-next-session.test.ts src/lib/core/hydration.test.tsx src/lib/core/training-decision.test.ts src/lib/core/fk-r4-p0.test.ts src/lib/core/training-correction.test.ts src/lib/core/training-correction-projection.test.ts src/lib/core/coach-view.test.tsx src/lib/core/brain-loop.test.ts src/lib/core/training-import.test.ts src/lib/core/import-retention.test.ts src/lib/core/training-coach.test.ts src/lib/core/training-model.test.ts src/lib/core/coach-plan.test.ts src/lib/core/coach-competency.test.ts src/lib/core/coach-plan-display.test.tsx src/lib/core/training-followup.test.ts src/lib/core/training-followup-display.test.tsx src/lib/core/coach-knowledge.test.ts src/lib/core/coach-knowledge-display.test.tsx src/lib/core/import-completeness.test.ts src/lib/core/running-observation.test.ts src/lib/core/running-round-analysis.test.ts src/lib/core/trial.test.ts src/lib/ui/training-log-view.test.ts src/lib/ui/pending-feedback.test.ts src/lib/ui/v79-1.test.ts src/lib/ui/makeup.test.ts src/lib/health/personal-stats-host.test.ts src/lib/ui/combo-parts-v88.test.ts src/lib/ui/v4-effective-move.test.mjs src/lib/ui/v4-effective-move-ui.test.mjs src/lib/ui/v4-effective-pending.test.ts verification/u09/personal-uncertainty.test.mjs src/lib/ui/sport-goal.test.ts src/lib/ui/running-workouts.test.ts src/lib/ui/sw-reload.test.ts src/lib/strength/model-access.test.ts src/lib/strength/persist.test.ts src/lib/strength/session-builder.test.tsx src/lib/nutrition/vitals.test.ts && npm run test:cognition && npm run test:v4 && npm run test:r188 && npm run test:r189 && npm run test:health-v74 && npm run test:live-kept && npm run test:k20 && npm run test:ui-v69 && npm run test:v84 && npm run test:ui-r5 && npm run test:v88-2 && npm run test:coach-loop && npm run test:r5 && npm run test:cycle
+
+✔ the pinned source contains genuine separate named muscle meshes, not a coloured skin model (7.260045ms)
+✔ the study model stands on y=0 without posing its feet, and quantized skeleton merging retains real dimensions (2.528412ms)
+✔ separate source muscle geometry supports direct ray intersections without a UV region lookup (2.366797ms)
+✔ the camera fit includes head and feet at all permitted angles and several phone aspect ratios (22.319309ms)
+✔ muscle role aliases keep hamstrings and precise soleus distinct, including selections on a left/right mesh (0.946715ms)
+✔ the anatomy shader binds real material uniforms and substitutes an existing Three.js shader chunk (0.232993ms)
+✔ v89.10.2: every muscle-layer mesh has a Chinese name with side prefix, never raw English (0.737679ms)
+✔ pinned compressed R9 asset, under 2.5 MB, 78 regions + feet outline (2.749599ms)
+✔ every 肌肉恢复 region maps to at least one R9 mesh (so real-log colouring has a target) (3.153651ms)
+✔ grounded at y=0, realistic height, blockers opaque and not muscles (2.340679ms)
+✔ non-canvas app with no custom card gets a soft BRAND NOTE (utility exception) (6.275275ms)
+✔ non-canvas app with a compliant card is silent (1.020837ms)
+✔ card file without site.json card=custom warns (0.621753ms)
+✔ card file with missing site.json warns for card=custom (3.954926ms)
+✔ card file with invalid site.json warns for card=custom (1.99856ms)
+✔ oversized card warns for non-canvas apps too (0.7917ms)
+✔ canvas app with no card warns 'missing' and missing og:type (0.486748ms)
+✔ canvas card without type still warns for og:type (0.52055ms)
+✔ oversized card warns on the scraper budget (jpg and legacy png) (1.720488ms)
+✔ compliant game (custom card + site.json type + x-banner) is silent (0.740874ms)
+✔ __root.tsx og:type no longer satisfies the canvas gate (0.575983ms)
+✔ oversized x-banner warns on the same scraper budget as og.jpg (2.687895ms)
+✔ legacy png + site.json type still needs the X feed card (0.746512ms)
+✔ siteDeclaresOgTypeGame reads the site contract (0.29002ms)
+✔ a fresh og-pending marker silences the whole gate view (0.378935ms)
+✔ a stale og-pending marker is ignored and the warnings return (0.318753ms)
+✔ the marker goes stale on the clock, not on the file (0.291622ms)
+✔ no marker means nothing is in flight (0.200574ms)
+✔ parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest (0.304972ms)
+✔ cli: a game missing its card reports JSON and exits 1 (56.802715ms)
+✔ cli: a compliant game passes (42.601625ms)
+✔ cli: the task's own marker is reported, not honoured (41.356441ms)
+✔ cli: a bad argument fails with JSON on stderr (39.216767ms)
+✔ cli: a non-game with no card fails too — the pass exists to produce one (47.070825ms)
+✔ cli: --placeholder-ok is how a plain-utility pass reports no card as expected (101.435093ms)
+✔ cli: a non-game with a compliant card passes (62.800217ms)
+✔ project contract and AGENTS.md name the marker path and bound this script uses (0.645128ms)
+✔ the sections that own the brand-task prohibition never affirm a wait (1.100208ms)
+✔ project contract tells the pass to self-check with the flag this CLI accepts (0.308477ms)
+✔ normalizes whitespace before hashing (1.506724ms)
+✔ nullish and blank body text normalize to the empty string (0.225633ms)
+✔ body text prefix is normalized and capped (0.118469ms)
+✔ identical runs do not diverge (0.636926ms)
+✔ status change diverges (0.282789ms)
+✔ title change diverges (0.129426ms)
+✔ title comparison is skipped when either side lacks one (0.119451ms)
+✔ canvas disappearing diverges; canvas appearing does not (0.351673ms)
+✔ horizontal overflow appearing diverges; clearing does not (0.27691ms)
+✔ new console errors diverge (0.208816ms)
+✔ errors already present in the baseline do not re-diverge (0.195657ms)
+✔ body text collapse diverges (0.101754ms)
+✔ body text dropping to zero reports collapse (0.115105ms)
+✔ zero-length baseline reports growth via the hash branch, not collapse (0.130408ms)
+✔ hash mismatch with a trivial length delta and same page start is tolerated (0.06657ms)
+✔ hash mismatch with a trivial length delta but changed page start diverges (0.071939ms)
+✔ prefix check is skipped when either side lacks a prefix (0.099571ms)
+✔ length-delta tolerance boundary: 50 tolerated, 51 diverges (500-char baseline) (0.077878ms)
+✔ length-delta floor dominates small baselines: 20 tolerated, 21 diverges (100-char baseline) (0.068254ms)
+✔ collapse boundary: exactly half is 'changed', one below is 'collapsed' (0.075334ms)
+✔ missing baseline viewport diverges (0.066942ms)
+✔ empty or null baseline diverges for every viewport (0.167504ms)
+✔ degenerate current verdict fails closed (0.212062ms)
+✔ multiple signals across viewports all accumulate (0.101103ms)
+✔ baselineComparison round-trips a valid baseline (0.199152ms)
+✔ baselineComparison fails closed on malformed or wrong-shape baselines (0.255016ms)
+✔ parseSmokeArgs defaults (0.194114ms)
+✔ parseSmokeArgs consumes --baseline without shifting positionals (0.077357ms)
+✔ parseSmokeArgs rejects a trailing --baseline flag (0.061823ms)
+✔ parseSmokeArgs supports the --baseline= form (0.064829ms)
+✔ parseSmokeArgs rejects unknown flags instead of treating them as positionals (0.06609ms)
+✔ parseSmokeArgs env fallback and flag precedence (0.069726ms)
+✔ derivedPaths handles .png, .PNG, and extensionless inputs (0.192591ms)
+✔ exitCodeFor: clean run exits 0 (0.155195ms)
+✔ exitCodeFor: errors in any single viewport exit 2 (0.133493ms)
+✔ exitCodeFor: navigation failure in any viewport exits 1, beating errors (0.105129ms)
+✔ exitCodeFor: 4xx boundary and missing status (0.0925ms)
+✔ exitCodeFor: no viewport data is a failure (0.060362ms)
+✔ browser-smoke wires the guard and verdict helpers (0.286895ms)
+✔ browser-smoke file I/O only touches guarded paths (0.360416ms)
+✔ the flag predicate matches src/lib/auth (1.085406ms)
+✔ reads the value a live dev server resolved (0.380637ms)
+✔ a server started without the flag reads as sign-in on (0.186082ms)
+✔ agreement passes (0.200033ms)
+✔ divergence fails in either direction (0.256479ms)
+✔ an unobservable dev server is indeterminate, not agreement (0.129607ms)
+✔ a dev server that cannot be reached probes as null (0.241316ms)
+✔ a server without the endpoint probes as null, not as agreement (0.312153ms)
+✔ only a divergence warns the smoke verdict (1.004492ms)
+✔ the build side resolves the template's shipped app-env (0.591918ms)
+✔ the CLI reports rather than silently passing when run via a symlink (84.388164ms)
+✔ every block passes its import boundary and lists existing tests (11.389896ms)
+✔ plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断) (0.327266ms)
+✔ online coach stays default ON and client cap equals trusted server rejection limit (1253.24985ms)
+✔ knowledge complete package stays PENDING with zero production approvals (no self-approval) (0.806633ms)
+✔ clean rebuild removes stale HTML and Nitro manifests but preserves source, dependencies, assets and data (2.070118ms)
+✔ injects before </head> (4.168369ms)
+✔ injects the extensions script without a project id (0.72559ms)
+✔ injects project id on the script and meta when provided (0.446937ms)
+✔ does not duplicate grok:app_id (0.605728ms)
+✔ omits x:creator tags without both creator values (0.764128ms)
+✔ injects x:creator tags when both creator values are set (0.228286ms)
+✔ escapes x:creator values (0.731159ms)
+✔ does not duplicate x:creator tags (0.486327ms)
+✔ platform chrome overwrites share-card metas and always sets og:title (0.369671ms)
+✔ does not duplicate twitter:card or og:title (0.491766ms)
+✔ a baked site.image is treated as a custom card (0.449041ms)
+✔ baked identity does not need a workspace filesystem (0.274937ms)
+✔ a public card file wins over a baked site without card=custom (0.300565ms)
+✔ public/og.png wins when jpg is absent (0.223148ms)
+✔ resolveOgCardAsset: disk file, then bake, then empty (placeholder) (0.187204ms)
+✔ snapshotOgIdentity stamps card=custom from a public card file (0.209918ms)
+✔ snapshotOgIdentity stamps banner from public/x-banner.jpg (0.187664ms)
+✔ emits x:game:image for a public host when site.banner is set (0.203829ms)
+✔ does not emit x:game:image without a public host or banner (0.185551ms)
+✔ site title Grok App is a real name, not a sentinel (0.220995ms)
+✔ published grok.me slug is still a title fallback (0.256379ms)
+✔ rejects Vercel system hosts as og:image origins (0.112501ms)
+✔ published VITE_PUBLIC_HOSTNAME wins over request Host for og:image (0.239583ms)
+✔ vercel Host without a public hostname emits no og:image (0.262157ms)
+✔ emits og:image for a public host and prefers a custom card (0.27681ms)
+✔ placeholder og:image appends site.color when it is 6-digit hex (0.243609ms)
+✔ document title entities are not double-escaped on og:title (0.15837ms)
+✔ site.json title wins over the host slug (0.130498ms)
+✔ injects into documents with no head element (0.307726ms)
+✔ streaming injector matches </HEAD> case-insensitively (0.435761ms)
+✔ omits the extensions script when the deployer disables it (0.579348ms)
+✔ keeps the extensions script on commercial when the deployer enables it (0.212382ms)
+✔ does not duplicate the extensions script (0.217801ms)
+✔ is idempotent (0.528251ms)
+✔ home screen title stays the product name (0.253154ms)
+✔ streaming injector handles </head> split across chunks (0.769667ms)
+✔ streaming injector passes post-head chunks through untouched (0.417502ms)
+✔ streaming injector falls back when no </head> is seen (0.474419ms)
+✔ detects install query (0.208066ms)
+✔ filters non-document paths (0.358464ms)
+✔ strips install params from the app link (0.172962ms)
+✔ names the install page from host slug (0.117819ms)
+✔ rejects hosts that are not plain slugs (0.061333ms)
+✔ install page uses the product home-screen name (0.227665ms)
+✔ escapes host-derived values in the install page (0.282138ms)
+✔ renders the manifest with the fixed home-screen name (0.536353ms)
+✔ vite config keeps the nitro serverDir wiring (0.157239ms)
+✔ nitro middleware and its bundled assets exist (1.531371ms)
+✔ vite plugin bakes og identity as a virtual module (0.117678ms)
+✔ _migrations keys on basename, not path (1.481777ms)
+✔ a file already applied from another directory does not re-apply (0.635884ms)
+✔ pending migrations are returned in name order (6.592273ms)
+✔ non-.sql entries are dropped (readdir also yields the auth/ directory) (0.186443ms)
+✔ the auth schema ships outside the globbed directory (0.530344ms)
+✔ this workspace's auth schema copy is byte-identical to its source (0.177369ms)
+✔ the copy check reads both files and catches an edit (0.562363ms)
+✔ skull, teeth, eyes, nose/ear cartilage are excluded before the supporting skeleton is merged (7.871232ms)
+✔ facial expression muscles are hidden and unpickable, but all 362 muscle meshes and catalogue muscles remain (1.190875ms)
+✔ a neutral, opaque head encloses the removed skull and blocks picks from front, sides and back (148.634766ms)
+✔ the crotch panel is no longer a protruding sphere and is coloured like the integrated shorts (125.873913ms)
+✔ major muscles are still pickable under the shorts paint and on the thighs (99.05023ms)
+✔ materials are matte with no metallic sheen; the shorts shader keeps selection uniforms (0.538156ms)
+✔ front abdomen tap reaches rectus abdominis under the external-oblique aponeurosis, and selecting it uncovers it (51.423113ms)
+✔ Nitro receives the unchanged install tutorial as a bundled string (1.276885ms)
+✔ Nitro retains platform branding identity while leaving ordinary modules alone (0.675234ms)
+✔ static compatibility skips only a missing Nitro server entry after successful prerender (1.823995ms)
+✔ preview restart does not count a terminated zombie as a port owner (1.040728ms)
+✔ parsePreviewArgs accepts the two actions (3.376498ms)
+✔ parsePreviewArgs rejects missing, unknown and extra arguments (0.390532ms)
+✔ parsePid reads a pidfile and rejects junk (0.35678ms)
+✔ parsePgid reads the pgrp field past a comm containing spaces (0.549814ms)
+✔ parseListenerInodes picks LISTEN sockets on the wanted port only (0.769577ms)
+✔ parseListenerInodes reads the tcp6 dump the same way (1.797935ms)
+✔ looksLikePreviewProcess matches the npm wrapper and its vite child (0.572448ms)
+✔ looksLikePreviewProcess spares the sibling scripts and re-used pids (0.454409ms)
+✔ previewOwners trusts port owners and dedupes the pidfile pid (0.536974ms)
+✔ previewOwners adds a pidfile pid whose command line is still the preview (0.564496ms)
+✔ previewOwners drops a stale pidfile pid re-used by another process (0.424043ms)
+✔ previewOwners drops a pidfile pid that no longer exists (0.373937ms)
+✔ previewOwners on a free port with no pidfile signals nothing (0.259553ms)
+✔ stopOutcome fails when a pid survives or the port is still held (4.686875ms)
+✔ stopOutcome reports a verified free port (0.254907ms)
+✔ stopOutcome fails on a listener whose owner cannot be attributed (0.268046ms)
+✔ terminatePids SIGTERMs live pids and skips dead ones (4.308992ms)
+✔ terminatePids escalates to SIGKILL when SIGTERM is ignored (0.41533ms)
+✔ terminatePids reports a pid that survives SIGKILL as stubborn (0.430233ms)
+✔ terminatePids on a free port signals nothing (0.167043ms)
+✔ preview: a successful sign-out clears the token, then redirects (3.930108ms)
+✔ preview: a rejected sign-out still clears the token and redirects (0.458285ms)
+✔ preview: a sign-out that throws synchronously still clears and redirects (0.376501ms)
+✔ preview: a sign-out that never settles clears and redirects once the wait expires (7.890872ms)
+✔ preview: no bearer means nothing to invalidate, so no request is made (0.528211ms)
+✔ preview: a stored bearer is still invalidated server-side (0.194404ms)
+✔ deployed: a confirmed sign-out clears the token, then redirects (0.38249ms)
+✔ deployed: a sign-out that never settles throws and does NOT redirect (21.430977ms)
+✔ deployed: a rejected sign-out throws and does NOT redirect (4.283683ms)
+✔ deployed: the timeout is distinguishable from a rejection (20.818108ms)
+✔ settleWithin reports the outcome and never rejects (21.219171ms)
+✔ settleWithin waits its full window, then gives up rather than hanging (0.768275ms)
+✔ pre-sign-in: the preview clear gives up at the preview bound (0.625078ms)
+✔ pre-sign-in: a deployed session gets the deployed window, not the preview one (0.976711ms)
+✔ pre-sign-in: a failed clear never blocks sign-in (0.25712ms)
+✔ pre-sign-in: the preview skips the request when there is no bearer (0.129246ms)
+✔ every sign-out bound comes from one rule (0.207514ms)
+✔ the defaults are bounded, and deployed waits longer than preview (0.218061ms)
+✔ archives and exported user data bypass service worker (1.606786ms)
+✔ normal navigation cache behavior is retained (0.275217ms)
+✔ downloads are excluded from service worker interception (1.082701ms)
+✔ HTML responses cannot be cached as JavaScript assets (0.182597ms)
+✔ no-store resources are not cached (0.156197ms)
+✔ offline missing resources return 503 rather than fake success (0.196378ms)
+✔ the shell cache version moves off fr255-shell-1 and only owns its own prefix (1.392771ms)
+✔ activation deletes old shell caches, keeps foreign caches, and drops poisoned JavaScript (42.098878ms)
+✔ a rebuilt shell restores a valid script offline and still rejects HTML and archives (1.916415ms)
+✔ legacy GLB is not intercepted by the shell and private health APIs bypass it (0.704258ms)
+✔ revocable new motion manifest / models bypass stale service worker cache (0.723567ms)
+✔ explicit root prefetch caches the shell before any controlled navigation (0.937852ms)
+✔ prefetch marker does not cache unmarked requests, queries, other paths, private responses or writes (0.887696ms)
+✔ keeps VITE_-prefixed string entries (1.984277ms)
+✔ drops non-VITE keys, non-string values and malformed documents (0.304312ms)
+✔ a missing app-env.json is a clean no-op (0.499738ms)
+✔ reads the app env from a workspace (0.338413ms)
+✔ an explicit process-env override wins over the file (0.214665ms)
+✔ the template ships auth off (0.278192ms)
+✔ vite loadEnv resolves the wrapped value (0.233994ms)
+✔ the wrapped command runs with the app env applied (109.059705ms)
+✔ the wrapped command sees an explicit override, not the file value (99.426115ms)
+✔ the wrapper propagates the command's exit code (75.109624ms)
+✔ a signal-killed command is never reported as success (85.865764ms)
+✔ the CLI still runs when invoked through a symlinked path (77.160458ms)
+✔ parseWriteAtomicArgs needs exactly a staged file and a target (2.214827ms)
+✔ stagingError refuses a temp inside public/ and a no-op move (0.226083ms)
+✔ handOver replaces the target and clears the staged file (0.453317ms)
+✔ handOver creates a missing target directory (0.273094ms)
+✔ an interrupted pass leaves the target on its old bytes, temp-free (0.777969ms)
+✔ a failed hand-over creates no directory for the target it never wrote (0.240744ms)
+✔ a staged file on another filesystem is refused, not copied (0.334847ms)
+✔ cli: hands the file over, and refuses a temp staged in public/ (77.958968ms)
+✔ cli: relative paths follow the script's root, not the caller's cwd (32.898001ms)
+✔ every hand-over the project contract prints is one this script accepts (0.743888ms)
+✔ cli: a missing staged file fails without touching the target (45.744855ms)
+ℹ tests 236
+ℹ suites 0
+ℹ pass 236
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2174.606306
+▶ callTool failure memo
+  ✔ replays an identical failure within the memo window without refetching (5.634431ms)
+  ✔ keys by token identity so a reminted token shares the memo entry (1.709712ms)
+  ✔ sweeps expired entries on write so unique keys do not accumulate (2.272826ms)
+  ✔ never memoizes login-required 401s (0.889047ms)
+✔ callTool failure memo (11.769031ms)
+▶ callTool in the workspace preview vs deployed
+  ✔ returns pending (no loginRequired) when the preview has no token yet (0.625648ms)
+  ✔ returns a plain error (no sign-in CTA) when a deployed app has no token (0.347046ms)
+  ✔ treats a gate 401 in the preview as pending and parks the rejected token (0.960997ms)
+  ✔ keeps loginRequired for a gate 401 on a deployed app (0.868036ms)
+✔ callTool in the workspace preview vs deployed (3.251238ms)
+▶ callTool
+  ✔ resolves ok:false for non-serializable args instead of rejecting (0.394948ms)
+✔ callTool (0.528411ms)
+▶ isLoginRequired
+  ✔ is true only for login-required failures (0.163928ms)
+✔ isLoginRequired (0.235236ms)
+▶ redirectToLoginIfRequired
+  ✔ no-ops when login is not required (0.332184ms)
+  ✔ navigates to the server-built loginUrl in the browser (0.167374ms)
+  ✔ opens a new tab instead of navigating when framed (0.128324ms)
+  ✔ falls back to navigation when framed and the popup is blocked (0.109105ms)
+  ✔ returns false when the result has no loginUrl (0.116526ms)
+  ✔ returns false on the server (no window) (0.075986ms)
+✔ redirectToLoginIfRequired (1.303456ms)
+▶ GoogleCalendarTools
+  ✔ does not expose a list_events name (0.21824ms)
+✔ GoogleCalendarTools (0.293766ms)
+▶ classifyCallToolError
+  ✔ returns null for successful results (0.201846ms)
+  ✔ classifies a pending preview token as pending before any other kind (0.116076ms)
+  ✔ classifies a deployed missing token as error, not a login CTA (0.078138ms)
+  ✔ classifies gate loginRequired without a missing-token message as login (0.095955ms)
+  ✔ classifies not_connected and failed_precondition (0.140453ms)
+  ✔ classifies scope_denied without claiming a missing grant (0.137319ms)
+  ✔ classifies access_denied (0.07924ms)
+  ✔ falls back to a generic error with the raw message (0.638398ms)
+✔ classifyCallToolError (1.823214ms)
+▶ readinessProbeDelayMs
+  ✔ backs off through the schedule and then holds the last delay (1.606045ms)
+  ✔ clamps a negative attempt to the first delay (0.236799ms)
+✔ readinessProbeDelayMs (3.233973ms)
+▶ readinessProbeExhausted
+  ✔ gives up only once the total wait budget has elapsed (0.290901ms)
+✔ readinessProbeExhausted (0.453328ms)
+▶ verifyGateIdentityToken
+  ✔ returns the identity for a valid token (14.289762ms)
+  ✔ omits optional claims as nulls (2.575134ms)
+  ✔ rejects a wrong audience (3.729784ms)
+  ✔ rejects a wrong issuer (2.00527ms)
+  ✔ rejects an expired token (10.828054ms)
+  ✔ rejects a token without exp (5.893725ms)
+  ✔ rejects a token signed by a different key with the same kid (1.748791ms)
+  ✔ refetches the JWKS when the kid rotates (2.767225ms)
+✔ verifyGateIdentityToken (46.221767ms)
+▶ gateIdentityFromHeaders
+  ✔ verifies the header token end to end and fails closed without it (43.953219ms)
+  ✔ activates on a deployed-shaped request without GROK_GATE_ORIGIN (1.848953ms)
+  ✔ verifies a preview-audience token with no gate env vars via the loopback default (1.51742ms)
+  ✔ rejects a wrong-issuer token in the loopback default mode (1.600316ms)
+  ✔ verifies a preview-audience token when only GROK_GATE_ORIGIN is set (3.355777ms)
+  ✔ rejects a preview-audience token when GROK_PROJECT_ID is set (1.309194ms)
+  ✔ rejects an app-audience token in preview mode (1.324228ms)
+✔ gateIdentityFromHeaders (55.689921ms)
+▶ gateIdentityEnabled
+  ✔ is enabled by default with no gate env vars (0.180113ms)
+  ✔ is disabled when VITE_AUTH_ENABLED is false (0.117719ms)
+✔ gateIdentityEnabled (0.454899ms)
+▶ gateTokenAudience
+  ✔ pins app:<id> when GROK_PROJECT_ID is set, even alongside GROK_GATE_ORIGIN (0.151329ms)
+  ✔ pins preview when GROK_PROJECT_ID is unset (0.100993ms)
+✔ gateTokenAudience (0.413066ms)
+▶ gateIdentityUserInfo
+  ✔ falls back to a synthetic email and name for sub-only claims (0.196548ms)
+  ✔ keeps real claims, lowercasing the email and marking it verified (0.147724ms)
+✔ gateIdentityUserInfo (0.467188ms)
+▶ sessionBoundToGateIdentity
+  ✔ keeps the session when it is bound to the same gate sub (0.169747ms)
+  ✔ rotates when the session belongs to a different gate sub (0.092991ms)
+  ✔ rotates when the session user has no gate-bound account (0.096626ms)
+✔ sessionBoundToGateIdentity (0.505036ms)
+▶ resolveSignInGateState
+  ✔ is pending while the session check is in flight, user or not (3.606117ms)
+  ✔ is signed_in once a user is present (0.207044ms)
+  ✔ is signed_out only after the check resolved with no user (0.281657ms)
+✔ resolveSignInGateState (7.140585ms)
+✔ app screenshot text (2.424636ms)
+✔ missing stay absent, 斤 converted, suspicious flagged (0.378053ms)
+✔ muscle rate is not muscle mass (0.180684ms)
+✔ json normalise (0.307786ms)
+✔ keeps trailing dot while typing (1.094148ms)
+✔ 56.4 typed keystroke by keystroke (0.77161ms)
+✔ comma and Chinese comma accepted (0.206714ms)
+✔ single dot, junk stripped, empty is null (0.13252ms)
+ℹ tests 63
+ℹ suites 16
+ℹ pass 63
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 548.554201
+✔ plain review card: section titles visible, evidence collapsed behind 查看依据 (19.597248ms)
+✔ unsigned mutations of an inspection Map cannot grant authority (1.962986ms)
+✔ approved values are immutable and deleting an inspection entry cannot revoke private state (56.399351ms)
+✔ approval cannot be used before review time (7.362901ms)
+✔ revocation wins timestamp ties irrespective of receipt naming (10.826742ms)
+✔ conflicting duplicate receipt IDs grant no approval (3.078997ms)
+✔ receipt object changed during verification cannot change verified scope (6.585283ms)
+✔ invalid or expired trusted key validity cannot approve (3.612797ms)
+✔ production: no trusted reviewer keys, all 48 cards PENDING, zero approvals (22.951823ms)
+✔ a valid signed receipt from a trusted human reviewer approves exactly that card version + hash (11.654807ms)
+✔ self-approval paths are rejected: JSON labels, forged/missing signatures, model reviewers, wrong hash/version/sources, future time (3.84554ms)
+✔ revocation receipt removes the approval (2.499619ms)
+✔ approved general education is selected before answering; personal review never gets a post-hoc appendix (47.039618ms)
+✔ historical judgments that used knowledge are marked NEEDS_REVIEW when card hash/version or approval changes (C03 comparator) (3.814883ms)
+✔ local trusted-admin import stores raw receipts, re-verifies on load, and production load approves nothing (4.154027ms)
+✔ import snapshots callers and revocation updates active consumers immediately (3.707521ms)
+✔ corrupt approval storage cannot be overwritten by an import or retain active approval (1.763143ms)
+✔ all imported card/source content hashes match the content-bound registry (12.941799ms)
+✔ six complete domains preserve pending states and no production examples (0.885152ms)
+✔ production cannot use any of the 48 cards, even with all field names and a forged approval flag (1.283375ms)
+✔ default mode is production; caller omission never enables a research payload (0.171009ms)
+✔ preview includes exact versions, source read levels, missing keys and no personal eligibility (0.406456ms)
+✔ presence of declared keys never proves appropriate population or values (0.211701ms)
+✔ task/domain constraints exclude unrelated cards and cap previews (1.097203ms)
+✔ invalid domain, mode, task and non-finite bounds fail closed (0.292534ms)
+✔ knowledge cannot be backdated to an earlier snapshot or used from a future query (0.17168ms)
+✔ returned preview objects cannot mutate the immutable catalogue (0.274677ms)
+✔ explicit card and relevant topic preview return bounded source-labelled text (1.14766ms)
+✔ unknown card or unspecified topic never fabricates an entry or asks an athlete questionnaire (0.394538ms)
+✔ methods describe current task process rather than forcing causal speculation into arithmetic (0.447208ms)
+✔ unchanged preview receipts reuse C03 dependency comparison without authorizing a plan (0.768945ms)
+✔ card version/content changes require review rather than an opposite conclusion (0.515781ms)
+✔ changed source content also triggers applicability review (0.231992ms)
+✔ future-known or empty-scope dependency receipts remain blocked (0.260314ms)
+✔ real offline message entry renders a bounded research preview with no formal candidate (35.010233ms)
+✔ HRV research preview lists pending cards with sources and stays local (34.711955ms)
+✖ ordinary explanation carries no pending application text; production retrieval yields zero approved uses (9.99382ms)
+✔ JSON labels claiming APPROVED cannot self-approve: every card stays PENDING and not production eligible (1.668549ms)
+✔ sufficient arithmetic stays short and works without personal health data (2.653172ms)
+✔ research preview and plain conversion use a zero-budget local route even when complexity is requested (0.611668ms)
+✔ current emergency retains priority over a research preview request (6.822933ms)
+✔ negated emergency words do not block a preview (v86 negation handling kept) (2.862108ms)
+✔ new knowledge does not authorize a dose when the host has no approved remaining-work candidates (1.125025ms)
+✖ coach sheet keeps local-only answers off the online coach path (1.275674ms)
+✔ personal application requires matching approved population, declared prerequisites and task (16.321191ms)
+✔ unbound free chat retains meal and measured weight in local facts: 你看我的饮食，我应该吃哪些高热量的食物才能增重？ (76.484769ms)
+✔ unbound free chat retains meal and measured weight in local facts: 你不是可以读取我饮食健康里面的东西吗？ (13.414816ms)
+✔ unbound native strength retains actual load, repetitions and RPE at the local fact boundary (10.645067ms)
+✔ daily recovery retains quantitative readings, subjective recovery and independent rest (10.437022ms)
+✔ unknown nutrition stays unknown while an explicit recorded zero remains zero (4.154828ms)
+✔ unreadable food and health storage remain errors in the local domain summaries (3.286051ms)
+✔ future-known and future-day records are excluded by the request as-of boundary (10.061412ms)
+✔ foreign food, body, health and legacy V4 records never enter the local snapshot (11.573965ms)
+✔ long context preserves all three domain summaries and discloses omitted details (11.917587ms)
+✔ the requested historical day is preserved in local nutrition and health (4.065222ms)
+✔ food corrections and deletions are reflected by the next local projection (13.909225ms)
+✔ online off stops the client before either proxy or provider receives a request (2.748957ms)
+✔ new local records remain readable when old chat denies visibility, without authorizing upload (2.606511ms)
+✔ large Chinese context retains local domain facts without uploading unauthorised records (238.510386ms)
+ℹ Preserved local fact summary: 3872 characters; model uploads: 0
+✔ oversized local facts (UTF-8 byte cap) do not bypass missing server authorization (0.367827ms)
+✔ oversized local facts (proxy fact character cap) do not bypass missing server authorization (0.246603ms)
+✔ unbound chat preserves independently labelled diet, training and recovery availability (43.735609ms)
+✔ yesterday and explicit date queries resolve the actual fact date with the request cutoff (8.880062ms)
+✔ legacy V4 fallback never sends another athlete even when it is the only saved record (3.194142ms)
+✔ an explicitly owned legacy record remains readable for a non-default athlete (3.088582ms)
+✔ owned legacy V4 actuals remain available without importing a plan and without arbitrary notes (4.230583ms)
+✔ foreign component detail cannot re-enter an otherwise owned V4 projection (3.961195ms)
+✔ future saved legacy facts and future watch observations are absent at a fixed request cutoff (3.685186ms)
+✔ long plan text cannot erase domain availability and omission is explicit (2.323692ms)
+✔ rebuilding an online snapshot does not mutate the saved data (2.036607ms)
+✔ a confirmed watch record and its optional view cache are one source in an unbound request (11.003771ms)
+✔ manual watch corrections withdraw old cached totals in unbound, selected and V4-linked requests (12.785122ms)
+✔ a voided confirmed watch record is not resurrected by a stale cache or selected activity (8.62242ms)
+✔ no user plan / goal → facts say goal unknown and carry no bundled plan (60.552673ms)
+✔ goal comes from the user: profile target or explicitly stated chat goal (5.920766ms)
+✔ plan lines require an actual imported plan, not just an old log, and are labelled as plan (5.233383ms)
+✔ G04: askOnlineCoach honours setOnline(false) itself — no fetch (38.633344ms)
+✔ server does not treat a client fact snapshot or API key as authority (2.472608ms)
+✔ local interval-rest explainer no longer assumes the 400m/53s goal (0.499037ms)
+✔ confirmed food-sheet records provide daily totals, recent dates and actual meal macros without a training link (20.679198ms)
+✔ the nutrition-and-health panel save path reaches the same read-only facts (2.226576ms)
+✔ unknown nutrients remain unknown while an explicit recorded zero remains zero (0.9236ms)
+✔ legacy food without a recordedAt remains visible with an explicit unknown save time (1.026897ms)
+✔ future meals and other athletes do not enter food totals or weight facts (0.99618ms)
+✔ repeated calls reread food corrections, deletions, body measurements and athlete changes (7.130209ms)
+✔ unreadable legacy nutrition is a read failure instead of a false empty record claim (0.656405ms)
+✔ malformed event sources and unavailable key enumeration are reported rather than silently ignored (0.842688ms)
+✔ body read failure does not hide valid food records or pretend that weight is absent (1.198777ms)
+✔ nutrition packets cap detail count and omit IDs, location, note, photo and raw source metadata (5.743887ms)
+✔ no meals in the requested week does not erase older records, and latest measured weight stays dated (0.571827ms)
+✔ unlinked recovery includes dated key metrics, subjective feedback, and independently recorded nap (39.79087ms)
+✔ known-after-request readings are excluded from both daily health and minute samples (3.783595ms)
+✔ historical day is preserved, and athlete switching cannot expose previous recovery (3.119649ms)
+✔ current changes use a comparable seven-day recovery baseline without leaking source labels (8.066659ms)
+✔ independent conflicting health sources are retained as a conflict instead of a preferred number (1.900381ms)
+✔ muscle recovery keeps confirmed exposure and does not transmit custom exercise or session names (10.087512ms)
+✔ unreadable health records and missing records have different output (3.194542ms)
+✔ recovery packet reads do not mutate existing health or rest records (2.001875ms)
+✔ available health recovery, steps and calorie components retain their own measurement scopes (2.792413ms)
+✔ additional health metrics exclude future-known values and preserve independent-source conflicts (1.618464ms)
+✔ an explicit zero-step record stays available without filling absent energy fields (1.249284ms)
+✔ coach and health tile use newer most-recent Body Battery, without calling receipt time a measurement (1.929875ms)
+✔ coach uses newer measured Body Battery when day summary is older (1.327312ms)
+✔ unlinked chat includes completed native strength actual values and completion RPE without private labels (32.281827ms)
+✔ an open session retains recorded timed sets while its whole-session status remains unfinished (4.620144ms)
+✔ weight corrections and deletion are reflected on each read, with prior asOf preserving the earlier value (6.65603ms)
+✔ future committed work and another athlete never enter the current request even when selected (4.712704ms)
+✔ completed native running stays separate from strength and carries actual distance and duration (9.948031ms)
+✔ selected older native training gets detail priority while the day summary stays on the requested date (23.880661ms)
+✔ conflicting whole-session RPE is not averaged or replaced by the completion value (1.737945ms)
+✔ unreadable training containers differ from a clean empty history (0.764459ms)
+✔ a malformed running transaction is reported instead of an empty training history (0.478094ms)
+✔ reading a mixed native training history is storage read-only (1.235213ms)
+✔ confirmed totals-only running remains a dated actual import without invented segments or whole-session completion (3.653118ms)
+✔ a confirmed duration-only strength import has actual seconds and does not fabricate sets or running distance (0.958503ms)
+✔ visible import total corrections withdraw old totals and preserve their historical asOf values (2.291073ms)
+✔ corrected import segments remain segment values while aggregate distance and duration are withdrawn (1.986791ms)
+✔ a legitimate import feedback withdrawal supersedes RPE without being mislabelled a source conflict (1.365189ms)
+✔ the real strength-page completion feedback is readable without inventing plan sets or load (0.825201ms)
+✔ editing strength feedback keeps one dated report and a later skip withdraws its completion claim (1.175532ms)
+✔ strength completion feedback requires current owner and a reliable journal time at the cutoff (1.891388ms)
+✔ voiding and restoring a dated strength completion report obey their known-time boundary (1.486353ms)
+✔ an occurrence-bound completion and an unbound event used as its close never create extra reports (1.891147ms)
+✔ a real confirmed Garmin import is readable without an optional watch cache and retains owner/asOf/void boundaries (2.296251ms)
+✔ one shared lock name for schedule writers and the plan executor (0.843979ms)
+✔ every schedule write bumps one revision with the writer label; no change = no bump (2.574252ms)
+✔ preview → confirm → idempotent re-confirm → undo, without touching or duplicating fk-schedule-v1 rows (26.988858ms)
+✔ CAS: another writer changing the schedule between preview and confirm blocks the write (6.099096ms)
+✔ confirm requires the explicit confirmation token and the exact reviewed diff (4.878125ms)
+✔ production host stays BLOCKED_UNCOORDINATED: the app controller cannot confirm (5.432365ms)
+✔ session label: date + type + distance + duration + pace; nothing invented (1.76151ms)
+✔ sessions newest first (0.943801ms)
+✔ plain review: four plain sections, numbers from the review only, jargon only in evidence (1.904978ms)
+✔ plan comparison only when a plan exists; safety review shows only the safety card (0.580219ms)
+✔ no data: says so plainly and asks for concrete records (0.318122ms)
+✔ pain recorded → next step is stop/assess, not a pace prescription (0.282147ms)
+✔ whole-session totals only (no splits): use the picked session record, no invented splits (0.562032ms)
+✔ seconds to minutes is exact and bounded (10.261941ms)
+✔ long or mixed questions are not reduced to a single conversion (1.296184ms)
+✔ remaining work with no approved candidate never invents a dose (0.497845ms)
+✔ B06-like: planned and actual time are not merged (85.168538ms)
+✔ C05-like: per-rep target is not stored as a race goal (25.033128ms)
+✔ D04-like: negated fever/chest pain with pain 0 → no emergency, numbers used (42.917905ms)
+✔ C04-like: pain 0 is not a pain flag; splits are computed (14.651631ms)
+✔ D01-like: pain 0 is not a pain flag; splits are computed (9.630469ms)
+✔ G03-like: pain 0 is not a pain flag; splits are computed (6.914241ms)
+✔ F04-like: "当前没有晕厥胸痛或急性骨痛" is not an emergency; risk numbers stated (7.599691ms)
+✔ E04-like: given splits are never reported as missing (10.347376ms)
+✔ G01-like: given splits are never reported as missing (8.494506ms)
+✔ G04-like: given splits are never reported as missing (7.283691ms)
+✔ F03-like: 走路不痛 after an unassessed strain → no sprint approval, progressive retest (5.909067ms)
+✔ STD vs CF: changing one stated number changes the visible answer (21.139335ms)
+✔ plan vs actual stay separate; deviation uses plan as denominator (14.614058ms)
+✔ splits with target/rest/RPE are parsed and averaged (3.194463ms)
+✔ scores like 恢复6/10 are not splits; sleep and RHR/HRV vs baseline computed (6.58309ms)
+✔ no numbers → no stated section (0.439686ms)
+✔ negated symptoms do not trip the emergency gate; real red flags still do (14.376493ms)
+✔ ready state keeps the plan and does not require confirmation (5.893554ms)
+✔ high fatigue suggests less volume and does not write the plan (5.935103ms)
+✔ pain does not increase load and does not invent a diagnosis (0.457985ms)
+✔ a near competition does not become more load (0.386786ms)
+✔ an increase candidate is removed when fatigue or pain is present (0.219022ms)
+✔ an expired decision cannot be executed (0.729977ms)
+✔ override keeps the original decision (0.696316ms)
+✔ rejecting a suggestion does not remove it (0.492566ms)
+✔ one completed session does not change ability (1.114069ms)
+✔ issuing twice reuses the open decision (1.599144ms)
+✔ clicking accept twice records one execution and does not drop another set (1.04864ms)
+✔ an accept that stopped after the event does not run again (0.694693ms)
+✔ reject stays rejected after another look and does not change the plan (0.469732ms)
+✔ a modification keeps the original advice and does not execute it twice (0.81824ms)
+✔ an expired decision stays expired when opened again (0.544766ms)
+✔ an older suggestion cannot run after a newer one exists (1.086107ms)
+✔ accept then reopen does not ask again or change ability (3.11661ms)
+✔ empty canonical storage is an empty list and does not invent a session (1.772056ms)
+✔ a canonical record round-trips without changing identity or the original plan (7.662095ms)
+✔ two occurrences of the same plan slot keep different canonical ids (0.491435ms)
+✔ corrupt canonical storage follows the envelope fallback and keeps valid records (0.623194ms)
+✔ duplicate attempts, links and lifecycle survive storage without being rewritten (0.841255ms)
+✔ migration does not invent a canonical snapshot or rewrite the plan (0.23084ms)
+✔ snapshot stays at four sets after the plan is reduced to three (0.511805ms)
+✔ snapshot keeps the old weight after a manual change (0.223959ms)
+✔ snapshot keeps the old plan after a chat replacement (0.289969ms)
+✔ snapshot stays before advanceCycle changes the prescription (1.085976ms)
+✔ legacy events can be classified without inventing an original plan (0.386395ms)
+✔ actual attempts stay separate from the original plan (0.85739ms)
+✔ legacy event counts and canonical snapshots stay separate (4.361877ms)
+✔ a seconds change is only a difference and later plan edits do not rewrite the snapshot (0.546208ms)
+✔ editing the plan does not start a training (0.420398ms)
+✔ coach brief separates enough evidence from gaps and frozen limits (7.542464ms)
+✔ legacy and mixed sessions stay traceable, and rejection does not change the plan (31.920674ms)
+✔ explicitly confirmed follow-up evidence is bound once; duplicate and old data cannot be silently resolved (12.215437ms)
+✔ coach cites bound recovery and soreness without treating soreness as pain (35.202144ms)
+✔ a bound pain or soreness return boundary is not erased by a missing RPE (1.360803ms)
+✔ conflicting recovery is unresolved while bound pain remains distinct and cited (2.57305ms)
+✔ confirmed body feedback writes only its own bound event and does not infer an injury (4.372879ms)
+✔ coach will not duplicate a recovery already recorded through subjective feedback (7.121766ms)
+✔ high RPE without recovery must ask, and soreness return must separate pain (1.39205ms)
+✔ conflicting recovery must be asked with both scores and cannot be resolved or prescribed (1.528347ms)
+✔ R2 wording: high-RPE recovery fallback never re-asks an already recorded RPE (0.714483ms)
+✔ R3: high RPE + no recovery/sleep keeps analysis, strips increase advice, appends follow-up; other checks still apply (0.577866ms)
+✔ R4: question-shaped nextStep is merged into one follow-up (no duplicate question, no fake 'candidate') (0.565697ms)
+✔ interval pairs stay on their own started events (83.257922ms)
+✔ a coherent runner plan passes the expert coaching quality gate (1.353692ms)
+✔ a prohibition against failure is not treated as prescribing failure (2.918444ms)
+✔ hard-day stacking, strength to failure and missing deload lower coaching quality (1.737955ms)
+✔ missing recovery cannot be ignored by a promised progression (0.203168ms)
+✔ the existing structural guard and coaching audit agree on unsafe availability (1.027448ms)
+✔ negated failure boundaries pass while later affirmative prescriptions still fail (0.515081ms)
+✔ race output and quality contracts reject a build hidden in a later phase (0.31625ms)
+✔ fuel stays on the Shanghai training day and absence is unknown, never zero (16.392049ms)
+✔ fuel answers require both sources and cannot turn partial logs into a cause (6.263705ms)
+✔ knowledge UI separates general sources from athlete facts and writes nothing (12.303201ms)
+✔ review shows energy and sleep knowledge with population and inference limitations (4.061457ms)
+✖ learning sources respect existing local and offline network policy (28.325934ms)
+✔ unknown sex stays unknown instead of being displayed as female (1.340392ms)
+✔ absent voluntary background neither guesses sex nor psychological symptoms (1.504631ms)
+✔ background is whitelisted and rejects invented clinical or instruction enums (0.44157ms)
+✔ sex changes metadata only; identical evidence keeps the same knowledge and safety boundaries (0.997122ms)
+✔ support preference adapts communication without prescribing a diagnosis or punitive load (2.648575ms)
+✔ general evidence remains bounded, sourced, population-qualified and subordinate to personal facts (0.519438ms)
+✔ knowledge cannot replace the source for a personal training number (7.42141ms)
+✔ coach questions are routed before the model sees the packet (1.184145ms)
+✔ next-session packet retains measured running evidence and required safety context (1.510611ms)
+✔ running and fuel packets retain mandatory safety sources without unrelated running payload (0.407348ms)
+✔ next-session envelope never manufactures permission to increase (2.171302ms)
+✔ missing recovery, conflicts, pain and low recovery have distinct envelopes (0.354257ms)
+✔ a next-session recommendation must cite every source that triggered its envelope (0.804319ms)
+✔ race window, deload, soreness and short sleep do not approve progression (0.365785ms)
+✔ opening coach view reads existing state without creating decisions or refreshing storage (14.683584ms)
+✔ opening a completed training does not silently record outcome learning (1.12174ms)
+✔ return answers use a shorter output budget than a three-point series (1.44445ms)
+✔ a newly rendered running candidate visibly includes its actual stop conditions (9.088217ms)
+✔ a strength candidate renders its own stopping boundary instead of a generic running instruction (0.811129ms)
+✔ planning asks for goal, recent performance and unresolved recovery instead of inventing them (1.343387ms)
+✔ a recent result at another distance cannot stand in for the goal distance (0.343972ms)
+✔ a sourced conservative run and strength plan remains a draft requiring confirmation (5.107012ms)
+✔ plan guard blocks excess training, back-to-back hard days and race-window build (0.776537ms)
+✔ race-window protection applies to every phase rather than just the first (0.582523ms)
+✔ planning recovery preserves both records and blocks conflict before a candidate can form (1.661068ms)
+✔ planning recovery rejects invalid scores, rebuilds source details and does not treat missing as zero (0.644006ms)
+✔ pain blocks hard effort even when the intensity label is moderate, and ability claims stay rejected (0.537014ms)
+✔ missing weekly volume cannot be converted into a fabricated progression percentage (0.405275ms)
+✔ accept, reject and modify stay on the candidate and never apply an existing plan (1.676241ms)
+✔ an explicit schedule modification becomes a sourced constraint on the next candidate (0.630726ms)
+✔ invalid input numbers and incoherent sources are rejected instead of clamped or defaulted (0.815527ms)
+✔ a short declared duration cannot conceal a longer running or strength prescription (0.347497ms)
+✔ repeated hard work needs recovery and easy days cannot hide hard effort (0.306945ms)
+✔ oversized output and partly fabricated citation lists are not silently truncated (0.299854ms)
+✔ return projection never turns missing evidence into medical clearance (0.750167ms)
+✔ bound pain, soreness and context-only pain stay separate (0.684187ms)
+✔ conflict and high RPE recovery gap block staged conclusions (0.128736ms)
+✔ a longitudinal series keeps only the same completed slot with each source (34.322228ms)
+✔ missing, conflicting, same-day, and recovery gaps cannot become a trend or load increase (2.881317ms)
+✔ series routing accepts three to six unique allowed ids (0.495922ms)
+✔ a recovery trend needs one cited recovery score from every occurrence (2.488452ms)
+✔ coach SSE joins split structured output and reports the first content once (30.738698ms)
+✔ coach SSE accepts a complete stop event even if the transport omits DONE (0.827374ms)
+✔ coach SSE never marks a partial connection close as complete (0.550705ms)
+✔ coach SSE rejects a token-limit finish even when DONE arrives (1.297117ms)
+✔ coach SSE rejects malformed upstream events (1.092926ms)
+✔ a finished session shows the plan, the actual work, and no fake deviation (7.11785ms)
+✔ a short session keeps the set and load deviation (0.298853ms)
+✔ high fatigue and pain do not propose more load (1.55708ms)
+✔ missing numbers stay unknown and one miss does not lower ability (1.473984ms)
+✔ no race, no history, and an expired decision stay off the current screen (0.331543ms)
+✔ run sentence stays a draft until something else confirms it (2.534853ms)
+✔ confirmed run is an event with an id, and a broken store does not throw (3.706399ms)
+✔ migration does not rewrite the existing plan key (0.44844ms)
+✔ a run sentence is not a fact until confirm, then state can rebuild (4.048147ms)
+✔ one easy run does not lower ability (0.224861ms)
+✔ high fatigue and pain cannot increase load, and profile is not overwritten (2.377765ms)
+✔ override keeps the original and the new value (0.322429ms)
+✔ missing training availability is null, not an empty normal state (1.988014ms)
+✔ no cited evidence stays distinct from a normal state (10.115835ms)
+✔ a missing training has no evidence bundle (1.620617ms)
+✔ a bundle keeps the three domain results unchanged (9.787166ms)
+✔ a real bundle is structurally consistent and a changed conclusion is not (12.095886ms)
+✔ a missing training has no fatigue evidence (1.188291ms)
+✔ one clear signal is present and is not a fatigue diagnosis (8.237878ms)
+✔ mixed records stay separate and do not confirm fatigue (5.159341ms)
+✔ a missing training has no inference (1.147289ms)
+✔ unique records support only the rule they directly meet (8.768162ms)
+✔ missing and repeated evidence stay unknown without a write (1.981293ms)
+✔ recorded evidence becomes a direct observation and missing training stays null (9.081406ms)
+✔ multiple and unbound records are not collapsed into a score (3.217437ms)
+✔ a missing training has no musculoskeletal evidence (1.997918ms)
+✔ bound pain and soreness stay separate records (9.917203ms)
+✔ multiple sites stay listed and unbound records stay out (2.851372ms)
+✔ a known training profile keeps only evidence bound to that start (10.62101ms)
+✔ a training with no subjective evidence stays absent rather than zero (0.846283ms)
+✔ provenance is empty rather than null when a training has no cited evidence (7.579199ms)
+✔ the same evidence stays attached to each domain that cites it (1.971278ms)
+✔ a missing training has no recovery evidence (1.76802ms)
+✔ sleep and subjective recovery are signals, not a recovery diagnosis (15.374066ms)
+✔ combined records stay separate and do not impair recovery by formula (4.839305ms)
+✔ an explicit start id is bound and a missing id stays unbound (1.103182ms)
+✔ missing pain is not no-pain and repeated values stay separate (1.350718ms)
+✔ evidence reading does not write or change the frozen fact (7.640973ms)
+✔ a full log of three completed sets reads a ratio of 1 (6.925489ms)
+✔ a full log of two completed sets reads a ratio of 2/3 (0.701493ms)
+✔ a missing start does not become a fact or a zero completion (0.533448ms)
+✔ an empty confirmed window reads completion 0 and stays in progress (0.607862ms)
+✔ the later plan does not change the earlier training (0.578607ms)
+✔ a repeated close does not create an end time (0.821325ms)
+✔ the adapter only reads through the frozen fact projection (0.246353ms)
+✔ P0-01 heuristic fatigue index alone cannot establish READY/recovery (1.356747ms)
+✔ P0-02 reduction only for identified move; never increases 1-set move (0.465856ms)
+✔ P0-03 separate occurrences of same plan must not combine strength sets (4.700835ms)
+✔ P0-04 completion must not be counted as correct coach prediction (0.469211ms)
+✔ P0-03 integrated two starts, two completions, distinct occurrence IDs and RPE (3.205309ms)
+✔ P0-03 legacy reused session ID without occurrence marker must degrade to UNKNOWN (0.434119ms)
+✔ P0-03 even when two athlete IDs reuse a slot, sets are never combined (4.106766ms)
+✔ P0-01 low heuristic does not override competition or deload restrictions (0.298523ms)
+✔ P0-01 pain, rehab and unknown remain protective; low index cannot authorize increased load (0.28362ms)
+✔ P0-02 single set and duplicate move identities cannot increase or modify other moves (0.70607ms)
+✔ P0-03 switching back to an athlete never selects the latest other-athlete session (0.466427ms)
+✔ P0-03 empty occurrence IDs cannot legitimize mixing repeated legacy sessions (0.400677ms)
+✔ P0-03 legacy unbound sets cannot borrow RPE from a bound completion (0.289199ms)
+✔ P0-03 completing an athlete session cannot bind to another athlete occurrence (1.611593ms)
+✔ P0-04 feedback preserves historical records and formal plan; repeated reads do not create validation successes (0.581151ms)
+✔ domain availability stays separate for each training and does not become good or bad (22.269959ms)
+✔ a history window keeps each training's own fact and evidence (21.305386ms)
+✔ historical facts are the existing single-training facts, not guessed zeros (8.161472ms)
+✔ an empty or invalid window is not treated as a normal history (1.383337ms)
+✔ only real starts inside the half-open window are returned, in start order (11.154659ms)
+✖ first render does not depend on browser training and day records (55.034257ms)
+✔ declared structures cover the real long sessions and ignore a bare total (1.469027ms)
+✔ nine source slots against eight extracted rows stay partial (0.611477ms)
+✔ unknown totals stay unknown and acknowledgement does not invent completeness (5.591586ms)
+✔ manual rows close a known gap without claiming the model extracted them (0.194996ms)
+✔ an empty coach does not turn fatigue 20 or pain false into a normal state (3.692127ms)
+✔ confirmed performances stay out of the evidence reader until after they happened (5.104848ms)
+✔ retainNewest：未超限原样；超限去掉发生时间最早的，不看写入顺序 (1.524531ms)
+✔ 佳明 200 条（新的在前）同步两次：最近的课在复盘选课里、每条只存一次、第二次不重写 (835.560646ms)
+✔ 旧版只剩最旧 100 条的存储：升级后再同步，补回最近的课，原有记录（含确认时间）不变、不重复 (709.64752ms)
+✔ a direct start snapshots the current four-set plan (10.452605ms)
+✔ edits do not become the training plan (1.961403ms)
+✔ reps, seconds, rest, mode, order, and movement edits are the saved plan (2.780485ms)
+✔ five edits then a later start use only the final saved plan (0.714663ms)
+✔ reopening after an edit uses the saved plan, not yesterday's edit snapshot (0.253815ms)
+✔ advance and template changes snapshot the plan in effect at start (1.353812ms)
+✔ an empty plan is known and an unreadable plan stays unknown (0.418354ms)
+✔ a second start before close stays on the first occurrence (0.414538ms)
+✔ the same slot next week is a new occurrence after the first one closes (0.452056ms)
+✔ old starts are not backfilled from edit snapshots (0.451284ms)
+✔ the runner close separates the next real start (1.430779ms)
+✔ the runner interrupt also frees the next start (0.507599ms)
+✔ a duplicate start stays on the first occurrence until the runner completes it (0.449251ms)
+✔ a second close removes the unique end time and a pre-session note does not close (1.387563ms)
+✔ legacy set counting stays on event count and does not use the training snapshot (0.196037ms)
+✔ strength actuals keep their units and stay unbound without a start id (2.792434ms)
+✔ a run without a start id stays unbound and its rpe is not a session rpe (0.725991ms)
+✔ performance reading does not write or change the frozen fact (6.184495ms)
+✔ subjective evidence binds only to an explicit start and keeps its own time (2.398646ms)
+✔ recovery evidence does not rewrite the frozen fact or the store (6.085746ms)
+✔ continuous running stays one identity and does not copy the plan (11.084803ms)
+✔ recovery slots stay structural and zero is not the plan (4.213317ms)
+✔ mixed session and legacy runs do not leak into strength facts (2.207616ms)
+✔ completed and skipped repetitions keep actuals separate from the plan (10.246573ms)
+✔ invalid identities are rejected and conflicts stay unresolved (10.212832ms)
+✔ eight and nine slots keep their rounds until a real ending (2.946616ms)
+✔ legacy runs and strength facts stay outside repetition projection (2.666822ms)
+✔ recorded parts stay partial, skipped is not missing, and unrecorded is not zero (1.631523ms)
+✔ mixed distances do not compare raw seconds or invent a pace (0.261366ms)
+✔ continuous, dose-less warmup, and legacy absence stay distinct (14.139068ms)
+✔ repeated structures keep rounds and ordered steps (3.601139ms)
+✔ invalid plans are rejected and a started snapshot ignores later edits (1.011263ms)
+✔ 200m × 4 × 2 preserves both rounds, slot targets and sources without inferring ability (12.721845ms)
+✔ skipped, unrecorded and conflict remain separate; partial times cannot compare whole rounds (0.381739ms)
+✔ different actual distances and missing actual distance never borrow the planned distance (0.386647ms)
+✔ mixed strength stays outside observations and separate running steps never merge (0.235157ms)
+✔ legacy unavailable and stale snapshot or partial projection cannot become an observation (0.407748ms)
+✔ within-round direction and a sudden last repeat stay arithmetic, without a pace-drop label (0.309629ms)
+✔ a continuous component is not split into invented rounds (0.145501ms)
+✔ a single uploaded interval session gets a sourced within-session observation, not an ability verdict (7.53361ms)
+✔ pain and soreness remain separate and pain blocks progression language (0.557025ms)
+✔ strength review says recorded completion and never treats unrecorded sets as not done (0.676435ms)
+✔ completed continuous run gets a sourced pace; unrecorded or aggregate-only running does not (1.400213ms)
+✔ partial repetition records cannot be cherry-picked into a first-to-last change (0.554471ms)
+✔ low recovery without pain and short sleep keep their distinct sources and do not invent injury (1.3658ms)
+✔ three matching sessions form an observation but never establish capability change or auto progression (18.152046ms)
+✔ different structures or missing recovery do not become a progression recommendation (5.25101ms)
+✔ duplicates, incomplete slots and mixed distances cannot manufacture a comparable trend (2.542775ms)
+✔ partial completeness stays out of full-session trend while legacy records still compare (3.715342ms)
+✔ decision formulas do not read the correction projection (1.006606ms)
+✔ strength weight and reps follow one projection through correct, void, restore and correct again (14.710529ms)
+✔ unbound, unmatched and unreadable corrections do not invent a strength value (1.29979ms)
+✔ squat 40x8 corrects to 55x10 across log, evidence, summary and coach review (9.383714ms)
+✔ different corrected sets are listed once and are not added together (1.417549ms)
+✔ void and restore stay append-only and resolve to one effective state (5.131188ms)
+✔ a field correction keeps the original text and the latest value wins (1.159758ms)
+✔ a voided occurrence is hidden from later reads without deleting its events (3.731296ms)
+✔ voiding one occurrence does not hide the next independent session or turn it into zero load (14.243361ms)
+✔ correction storage does not reuse the event or occurrence keys (0.225201ms)
+✔ asOf correction reads preserve old strength fields while default reads still apply current edits (2.491487ms)
+✔ asOf void and restore keep their commit order without changing callback-compatible current reads (0.818611ms)
+✔ missing or malformed correction commit timestamps are reported without inferring from at (0.838912ms)
+✔ A low legacy index stays cautious and keeps the original plan (1.368194ms)
+✔ B high fatigue does not increase the load (0.215567ms)
+✔ C a hard run blocks an automatic weight increase (0.188406ms)
+✔ D pain blocks a load increase (0.228146ms)
+✔ E a near competition does not add load after one bad session (0.139962ms)
+✔ F G H I J rejecting, modifying, interrupting and finishing stay tied to the decision (4.171523ms)
+✔ K one miss does not change ability (0.239242ms)
+✔ L missing data stays unknown (0.210029ms)
+✔ M a decision exists without a model key (0.183318ms)
+✔ a recorded sleep value is visible and an empty record stays null (1.346732ms)
+✔ recorded HRV and resting heart rate stay on the context and off the decision (0.491455ms)
+✔ a run RPE and several stored runs are visible without a made-up type (0.579669ms)
+✔ completed strength sets are visible and do not change the adjustment (1.125266ms)
+✔ a pain event is visible without becoming the decision pain flag (1.164205ms)
+✔ missing context facts stay null (0.307856ms)
+✔ two trainings on the same slot stay different facts (12.792542ms)
+✔ completion counts stay with the snapshot and do not treat gaps as skips (0.899433ms)
+✔ a missing start is an unknown window, not zero completed sets (0.60033ms)
+✔ duration uses only reliable start and end times (1.473018ms)
+✔ the fact projection does not read legacy plan counting (0.414929ms)
+✔ recovery panel visibly distinguishes unknown and transparent rules without writing on render (11.299839ms)
+✔ saved follow-up renders its concrete source and separate soreness boundary, even when model is busy (4.039023ms)
+✔ follow-up is append-only in its own store; read/reopen never writes or modifies original training (11.764424ms)
+✔ same submit id is idempotent; changed payload and cross-record reuse do not overwrite (2.845754ms)
+✔ elapsed windows use absolute training timestamp, not confirmation or UTC day slices (1.484841ms)
+✔ only real confirmed records accept nonempty, bounded, correctly timed feedback (1.697143ms)
+✔ unknown is not zero or absence; explicit no pain never grants clearance; soreness stays distinct (1.314272ms)
+✔ exactly one score per window permits sourced self-report comparison, never recovery approval (0.589203ms)
+✔ multiple same-window reports preserve each value and time, without selecting or averaging (1.24677ms)
+✔ early or late feedback cannot fill missing windows; caution cites actual low recovery/pain/sleep (0.49477ms)
+✔ stored identities and elapsed windows are checked; duplicate corruption cannot fabricate evidence (0.887745ms)
+✔ training import keeps two rounds with four repetitions instead of flattening structure (1.925339ms)
+✔ missing, ambiguous and conflicting fields do not become zero (1.33925ms)
+✔ confirmation is actual-only, source-backed and idempotent (4.054426ms)
+✔ critical conflicts block confirmation (0.957692ms)
+✔ review requires numeric provenance and rejects plan or long-term claims for actual-only records (1.642099ms)
+✔ plan-only slots and invalid or unzoned dates cannot be confirmed as actual training (1.648399ms)
+✔ feedback conflicts block confirmation; ambiguous feedback stays unavailable rather than confirmed (0.44176ms)
+✔ server consistency normalization rebuilds citations and never trusts supplied source descriptions (0.564756ms)
+✔ review rejects numeric substrings, unknown citations, invalid boundary and unsolicited progression (0.981307ms)
+✔ compact model fields normalize without turning absent into zero (0.322419ms)
+✔ high RPE with pain and soreness needs a recovery question and both body sources (0.970492ms)
+✔ training transport requests strict low-effort SSE once and traces only stage metadata (31.608936ms)
+✔ partial stream, token limit, DONE without stop and invalid JSON are never adopted or retried (2.214346ms)
+✔ reasoning SSE above the frozen 64KB coach cap is adopted only inside the training byte cap (7.212303ms)
+✔ timeout, upstream rejection and network interruption remain distinct (1.047768ms)
+✔ one finished training keeps its own ratio (7.072661ms)
+✔ a missing start stays unknown and an empty window stays zero (1.031714ms)
+✔ a later plan and a repeated close do not rewrite the summary (1.005154ms)
+✔ duplicate attempts stay unresolved and two trainings stay separate (2.022816ms)
+✔ an unknown training keeps the combined total unknown (1.134109ms)
+✔ the summary only reads facts and does not write (0.262868ms)
+✔ pain with high RPE and missing recovery stays closed in the trial (0.954807ms)
+✔ backup restores listed keys and does not delete anything else (0.53418ms)
+✔ 没有数据 → 三项都是“数据不足”，事实行不写数字 (3.019978ms)
+✔ 14 天静息心率 → 有描述统计；事实行标明只读、不是许可 (8.472043ms)
+✔ 旧手工记录（统计口径未提供）→ 不当成可比序列，不出趋势 (0.619989ms)
+✔ 宿主传本地日期/无时区时间也能用（不误报“冲突”） (0.367257ms)
+✔ vitals stay independent, keep same-day rows, and do not invent trends (6.756362ms)
+✔ unreadable vitals are not overwritten (0.326034ms)
+✔ model access fails closed before any model call (2.384294ms)
+✔ the live gate stays closed and does not touch the network (0.212452ms)
+✔ all five model handlers consult the gate before the key or the network (0.716957ms)
+✔ plan and coach saves report quota failure and leave the old value (1.148291ms)
+✔ offline shell does not cache model calls and expires old shell caches (0.558327ms)
+✔ multi-part filtering keeps stable variants and selecting the same action does not add volume (1.815763ms)
+✔ empty, unknown, blank and malformed parameters never become a zero-dose or normal candidate (0.759832ms)
+✔ explicit repetition retains independent parameters, order and side convention without doubling volume (1.228763ms)
+✔ preview and initial builder view do not write the plan or claim personal suitability (7.775437ms)
+✔ confirmed append preserves old course identities and is verified in one value (0.449081ms)
+✔ quota failure and dropped writes cannot report successful course creation; draft can retry (0.980666ms)
+✔ two stale tabs cannot lose the first confirmed course; refreshed tab appends both (0.483834ms)
+✔ content inventory distinguishes unavailable variants, legacy licenses and sourced new schematics (0.360797ms)
+✖ shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls (63.417746ms)
+✔ blank input, zero repetitions and invalid count never confirm a set; zero weight remains explicit (0.711899ms)
+✔ after refresh rest target advances to that same unrecorded group, not the following group (0.796688ms)
+✔ close event failure leaves the occurrence open and can retry without a false success (4.084902ms)
+✔ partial write on closing cannot report success, retry reuses the saved close event (2.223771ms)
+✔ interruption storage failure retains open identity and does not announce a completed course (0.912093ms)
+✔ partial execution closes the occurrence but never claims every planned set completed (0.491295ms)
+✔ long execution-draft identities remain restorable through the existing backup validator (0.631888ms)
+✔ 跑步完成（关联手表）、力量没开始 → 主按钮“开始力量部分”，列表“跑步完成·力量待练”，整天不算完成 (3.161833ms)
+✔ 力量做完、跑步没做 → “开始跑步部分”；两项都完成 → 查看记录；正在逐组 → 继续训练 (1.810825ms)
+✔ 原日期已改期且没有实际 → 不催；有真实跑步 → 仍要评价 (0.95664ms)
+✔ 执行日期 = 开始时间的本地日期（strengthOn） (1.813349ms)
+✔ 唯一出处：执行日期 ＞ 用户填的实际日期 ＞ 计划当天 (0.341818ms)
+✔ 10-19 计划：跑步当天做（手表已关联）＋力量 10-20 逐组补练 → 10-19 整课完成、标“力量补练于 10月20日”；记录分两天、各算一次 (15.29438ms)
+✔ 手动补练（力量评价里填实际日期 10-20，没有逐组记录）→ 10-20 一条力量、10-19 不再按力量计；没跑步时 10-19 那条不计数 (1.358559ms)
+✔ 计划当天做的执行不受影响：仍并成同一条 (0.920215ms)
+✔ 候选未确认 → 待补“确认手表跑步”；点过稍后 → 仍在列表（标已推迟） (3.204998ms)
+✔ 已确认关联但没评价 → 待评价；填了跑步评价 → 离开列表；力量逐组完成没评价 → 待评价 (0.447749ms)
+✔ 未来日期、14 天外不进列表 (1.934222ms)
+✔ v83: 跑步已手动评价但同日手表跑步未确认 → 仍待确认 (0.521461ms)
+✔ v87.1: 恢复课（非组合）在课后整课表填了反馈（fk-plan400-v4-log）→ 不再待评价；稍后过也一样消失 (0.704989ms)
+✔ v87.1: 组合课的旧整课分不复制给分项 → 仍待分项评价 (0.232512ms)
+✔ v88.1: 组合课跑步已关联、没填 RPE，但 24h 跑步腿感填了“无” → 不再待补；只填力量酸痛 → 跑步仍待补；48–72h 从不进列表 (1.23382ms)
+✔ continuous running summaries show the prescribed dose rather than execution identities (2.406598ms)
+✔ 200m x 4 x 2 keeps two rounds and does not repeat a write (10.972222ms)
+✔ 400m plus 200m keeps combination order (0.860475ms)
+✔ custom 600 400 300 keeps two rounds and an empty target (2.456274ms)
+✔ a started snapshot stays when the plan is edited (2.359406ms)
+✔ one repeat cannot store a between-rep rest (0.140874ms)
+✔ today track card reads the saved plan and does not invent readiness (1.95897ms)
+✔ explicit running course selection never reads progress from another open course (0.615633ms)
+✔ CAS write: expected revision must match; content-identical write is not a revision (2.210391ms)
+✔ in-page lock serialises async writers when Web Locks are unavailable (reported as not cross-page coordinated) (11.020335ms)
+✔ every source writer of fk-schedule-v1 goes through the central schedule writer with its writer label (1.139147ms)
+✔ metadata failure never claims saved; retry repairs the same write exactly once (0.410592ms)
+✔ silent metadata loss is detected and failed intent does not alter the document (0.306545ms)
+✔ recovery cannot overwrite a newer document or silently reset a corrupt revision (0.252573ms)
+✔ missing or corrupt preference falls back to track without touching other keys (1.420423ms)
+✔ primary and secondary goals persist and an identical secondary is dropped (0.702845ms)
+✔ switching the preference does not rewrite training, body, or event records (0.264181ms)
+✔ home follows the primary goal and sport without inventing a fourth prescription (0.17809ms)
+✔ an open training blocks the service worker reload and a finished one does not (1.723913ms)
+✔ a second start reopens training and an interrupted session can reload later (0.205671ms)
+✔ an update does not reload, and the one-time first load does not repeat (0.159041ms)
+✔ first load includes dynamic route chunks absent from document script tags (0.568031ms)
+✔ resource history does not add private APIs, exports, arbitrary documents or foreign URLs (0.257621ms)
+✔ shanghai day does not invent a date for empty or invalid times (19.64524ms)
+✔ imports and occurrences stay counted apart on the same day (0.959134ms)
+✔ log titles use a real name and never an internal id (0.214585ms)
+✔ device local clock is not the raw timestamp (0.256299ms)
+✔ unknown and duplicate close stay unconfirmed, and void is its own status (0.179241ms)
+✔ ensure V4 entry does not recreate a moved original date (1.040328ms)
+✔ original V4 day displays moved history (0.129926ms)
+✔ original V4 day does not expose main start CTA after move (0.18468ms)
+✔ original V4 date suppresses new after/during feedback after move (0.144289ms)
+✔ moved V4 entry shows on target day even if target has its own V4 plan (0.095335ms)
+✔ advanced feedback is collapsible, core RPE remains (0.281777ms)
+✔ pending feedback ignores moved original date without actual through shared host (0.916069ms)
+✔ original day has no moved badge until actually moved (1.827961ms)
+✔ original moved day has history-only state (0.292564ms)
+✔ target date still shows moved entry when another plan is present (0.466056ms)
+✔ missing plan entry does not claim move (0.743447ms)
+✔ invalid dates do not become moves (0.165541ms)
+✔ move preview retains stable identity and reports target existing plans (0.419496ms)
+✔ duplicate request is not a second move (0.209297ms)
+✔ combined course cannot silently move only strength (0.174234ms)
+✔ completed course cannot move actual history (0.253685ms)
+✔ existing actual blocks move (1.498467ms)
+✔ skipped/rejected blocks ordinary move (0.135405ms)
+✔ same ID repeated is conflict not silent first-match (0.13191ms)
+✔ malformed dates fail safely (0.114373ms)
+✔ cannot change unrelated or non-V4 entry (0.130438ms)
+✔ can move an already moved course again without losing original source (0.152101ms)
+✔ rehearsal does not modify input (0.112741ms)
+✔ moving run-only entry preserves modality (0.124429ms)
+✔ read-only projection never invents completion (0.113272ms)
+✔ 原日改期、没有实际：不再催确认旧日手表候选 (2.199695ms)
+✔ 原日改期、没有实际：不再催旧日评分 (0.282848ms)
+✔ 即使错误改期，原日已有真实跑步仍保留其待评价任务 (0.363912ms)
+✔ 分项推整天状态：只有旧 log 时不变；分项都完成 → done；一项跳过 → 部分完成（进行中，v84）；都跳过 → skipped (3.194582ms)
+✔ 手表跑步关联只算跑步有记录：整天 in_progress，不会 done (0.285763ms)
+✔ 进度计数也读分项 (0.855527ms)
+✔ stampCN：UTC 时间戳按北京时间显示，与设备时区无关 (16.047667ms)
+✔ 源码里不再把 ISO 时间戳直接截成显示文本 (1.407144ms)
+✔ v87.1: 恢复课（只有跑步）确认关联手表跑步 → 整天已完成，首页不再“继续训练”；组合课力量仍要自己记录 (1.1612ms)
+✔ valid series retains n and provenance (11.857135ms)
+✔ different athlete and protocol never mix (0.401739ms)
+✔ unknown and future revisions do not backfill (0.841596ms)
+✔ same observation retransmission deduplicates (0.147694ms)
+✔ conflicting revisions cannot be silently chosen (0.165932ms)
+✔ different same-day observations conflict (0.161696ms)
+✔ missing days not zero-filled (0.245622ms)
+✔ invalid numeric and timestamps are excluded (0.622133ms)
+✔ descriptive statistics match known values (0.518326ms)
+✔ constant series sd zero but no imaginary confidence (0.612879ms)
+✔ OLS slope, t confidence, PI are separate (0.612518ms)
+✔ highly serially correlated residuals suppress CIs (0.696606ms)
+✔ too few observations suppress regression (0.193183ms)
+✔ chronological forecast with holdout and no future leakage (1.547576ms)
+✔ short history cannot claim finite 95% conformal interval (0.307957ms)
+✔ a shift in holdout lowers coverage; do not hide failure (0.790368ms)
+✔ paired difference and interval (0.251181ms)
+✔ duplicate pair identifiers rejected (0.112039ms)
+✔ health adapter preserves V87 source and as-of (0.651708ms)
+✔ health adapter blocks unknown method HRV and unreadable snapshot (0.788755ms)
+✔ missing days block day-ahead prediction (0.607671ms)
+✔ future-dated observation is excluded even if recordedAt claims past (0.169547ms)
+✔ conflicted source cannot generate summary (0.124598ms)
+✔ later corrections cannot change as-of historical statistics (0.334487ms)
+✔ UI card does not show a fake interval after regime shift (1.333111ms)
+✔ UI card clearly marks historical data, not current state (0.237681ms)
+✔ bridge makes a precommitted read-only decision draft with source revision (1.08178ms)
+✔ bridge blocks stale series and uncertain forecasts (0.790288ms)
+✔ real V87 decision calibration accepts U09 draft and audits future outcome (1.080408ms)
+✔ realistic per-day revisions require a trusted source-wide version (1.340482ms)
+ℹ tests 586
+ℹ suites 0
+ℹ pass 581
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26398.628697
+
+✖ failing tests:
+
+test at src/lib/coach/knowledge/entry.test.ts:49:1
+✖ ordinary explanation carries no pending application text; production retrieval yields zero approved uses (9.99382ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/knowledge/entry.test.ts:52:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/knowledge/entry.test.ts:107:1
+✖ coach sheet keeps local-only answers off the online coach path (1.275674ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /if \(!redFlag && !keepLocal && onlineSetting\(\)\.on/. Input:
+  
+  "import { cycleRequestFromText } from '@/lib/coach/cycle/request';\n" +
+    "import { CoachCyclePanel } from '@/components/coach-cycle-panel';\n" +
+    "import { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';\n" +
+    "import { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';\n" +
+    "import { CoachR5Panel } from '@/components/coach-r5-panel';\n" +
+    "import { CoachWeeklyPanel } from '@/components/coach-weekly-panel';\n" +
+    "import { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';\n" +
+    "import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'\n" +
+    'import { CoachAnswerView } from "@/components/coach-answer-view";\n' +
+    "import { CoachIntegrationPanel } from '@/components/coach-integration-panel';\n" +
+    "import { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';\n" +
+    "import { readR6Decision } from '@/lib/coach/r6/runtime';\n" +
+    "import { r6Question, r6DecisionText } from '@/lib/coach/r6/presentation';\n" +
+    "import { R6DecisionPanel } from '@/components/r6-decision-panel';\n" +
+    "import { TrainingModelPanel } from '@/components/training-model-panel';\n" +
+    "import { PersonalCoachPanel } from '@/components/personal-coach-panel';\n" +
+    "import { personalAnswer } from '@/lib/coach/personal/host';\n" +
+    "import { readR4CoachAnswer } from '@/lib/coach/r4/answer';\n" +
+    "import { R4AnswerStatus } from '@/components/r4-answer-status';\n" +
+    "import { CoachC03FollowupPanel } from '@/components/coach-c03-followup-panel';\n" +
+    "import { registerDisplayedC03Review } from '@/lib/coach/c03/runtime';\n" +
+    "import type { LocalCoachAnswer } from '@/lib/core/coach-local-first';\n" +
+    "import { readCoachMemory } from '@/lib/core/coach-context-memory';\n" +
+    "import { detectRedFlags } from '@/lib/core/coach-red-flags';\n" +
+    "import { CoachChatLoadPanel } from '@/components/coach-chat-load-panel';\n" +
+    "import { CoachChatTrainingPanel } from '@/components/coach-chat-training-panel';\n" +
+    "import { emptyDialogue } from '@/lib/core/coach-dialogue';\n" +
+    "import {commitDisplayedCoachAdvice} from '@/lib/core/coach-p7-runtime';\n" +
+    "import type { ChatTraining } from '@/lib/core/coach-chat-evidence';\n" +
+    "import { chatLoadPreview } from '@/lib/core/coach-chat-load';\n" +
+    "import { readCoachReviewWorkspace } from '@/lib/core/coach-review-workspace';\n" +
+    "import { calendarDay } from '@/lib/core/coach-calendar';\n" +
+    "import { occurrenceVoided } from '@/lib/core/training-correction';\n" +
+    "import { confirmImportedSessionRpe } from '@/lib/core/coach-import-rating';\n" +
+    "import { reportedSessionRpes } from '@/lib/core/coach-claim-scope';\n" +
+    "import { formatComputedFacts } from '@/lib/core/coach-reasoning';\n" +
+    'import { listConfirmedDeviceEvidence } from "@/lib/core/device-evidence-idb";\n' +
+    'import { CoachAnswerFeedbackForm } from "@/components/coach-answer-feedback";\n' +
+    'import { attachLinkedSources, deviceCoachSources } from "@/lib/core/coach-linked-context";\n' +
+    'import { coachImports } from "@/lib/core/coach-import-evidence";\n' +
+    'import { LearningLibrary } from "@/components/learning-library";\n' +
+    'import { answerLearningQuestion } from "@/lib/education/knowledge-presentation";\n' +
+    'import { setOnlineFeature } from "@/lib/ui/online-features";\n' +
+    'import { CoachCognitionPanel } from "@/components/coach-cognition-panel";\n' +
+    "import { CoachFirstWeekPanel } from '@/components/coach-first-week-panel';\n" +
+    "import { CoachLoadMetricsPanel } from '@/components/coach-load-metrics-panel';\n" +
+    "import { firstWeekGoalFromText } from '@/lib/core/coach-first-week';\n" +
+    'import type { CoachCognition } from "@/lib/core/coach-cognition";\n' +
+    'import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";\n' +
+    'import { BookOpen, Send, X } from "lucide-react";\n' +
+    'import { FangShen, type FangFace } from "@/components/fang-shen";\n' +
+    'import { executeDecision, loadDecisions, recordOverride, rejectDecision } from "@/lib/core";\n' +
+    'import { RunningRoundReadout } from "@/components/running-round-readout";\n' +
+    'import { DeviceEvidenceImport } from "@/components/device-evidence-import";\n' +
+    'import { CoachStrengthEditPanel, type CoachStrengthAction } from "@/components/coach-strength-edit-panel";\n' +
+    'import { CoachStatusCard, DecisionCard, DecisionInbox, SessionReview, TodayState } from "@/components/coach-panels";\n' +
+    'import { acceptIssued, issueTrainingDecision, overrideIssued, rejectIssued } from "@/lib/core/brain-loop";\n' +
+    'import { abilityRows, competitionView, latestReviewableCompletion, limiterFrom, sessionFromCompleted, toneFor, trendText } from "@/lib/core/coach-view";\n' +
+    'import { readCoachOpenView } from "@/lib/core/coach-open";\n' +
+    'import { loadEvents, onAppEvent } from "@/lib/core/events";\n' +
+    'import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89";\n' +
+    'import { appendCoachNotice, noticeForCoachEvent, type CoachActivityNotice } from "@/lib/core/coach-activity-watch";\n' +
+    'import { chooseAction, createTrainingDecision, firstPlannedSet, readTrainingContext } from "@/lib/core/training-decision";\n' +
+    'import { refreshAthleteState } from "@/lib/core/state";\n' +
+    'import type { AthleteState, DecisionRecord } from "@/lib/core/types";\n' +
+    'import { fatigueLabel } from "@/lib/strength/agent";\n' +
+    'import { askCoach } from "@/lib/strength/coach-ai";\n' +
+    'import { currentAthleteId } from "@/lib/core/events";\n' +
+    'import { readFormalEvidenceRows } from "@/lib/core/coach-v4-formal-rows-store";\n' +
+    "import { buildCoachModelRequest, normalizeAskCoachInput, normalizeV4 } from '@/lib/strength/coach-pipeline';\n" +
+    "import { latestReasoningBasis, reasoningReadFailure } from '@/lib/core/coach-reasoning';\n" +
+    'import { answerLocally, answerStaysLocal } from "@/lib/core/coach-local-first";\n' +
+    'import { loadInstalledKnowledgeLedger, KNOWLEDGE_APPROVALS_KEY } from "@/lib/coach/knowledge/approval-store";\n' +
+    'import { subscribeKnowledgeLedger } from "@/lib/coach/knowledge/approval";\n' +
+    'import { reviewKnowledgeJudgments } from "@/lib/coach/knowledge/history";\n' +
+    "import { isNativeRecordInspection } from '@/lib/core/dialogue-e1';\n" +
+    'import { offlineCapability, localModelFallback, type CoachFailure } from "@/lib/core/coach-offline";\n' +
+    'import { saveOfflineReview } from "@/lib/core/coach-offline-loop";\n' +
+    'import { CoachOfflineLoopPanel } from "@/components/coach-offline-loop-panel";\n' +
+    'import { COACH_NETWORK_MODE_KEY, COACH_PUBLIC_REFERENCES, authorizeNetworkAction, parseCoachNetworkMode, type CoachNetworkMode } from "@/lib/core/coach-network-policy";\n' +
+    'import { PERSONAS, PERSONA_KEY, parsePersona, presentCoachAnswer, type CoachPersona } from "@/lib/core/coach-persona";\n' +
+    'import { extractConversationContext, contextualFollowup } from "@/lib/core/coach-conversation-context";\n' +
+    'import { assembleCoachBrief, recordCoachBodyEvidence, recordCoachChoice, recordCoachEvidence, type CoachBrief } from "@/lib/core/coach-brief";\n' +
+    'import { formatTrainingWhen, listBoundTrainings, orderOccurrenceIds, sameCalendarDay, separateBriefs } from "@/lib/core/coach-compare";\n' +
+    'import { assembleCoachSeries, toggleSeriesId } from "@/lib/core/coach-series";\n' +
+    'import { listTrainingOccurrences } from "@/lib/core/occurrence";\n' +
+    'import type { CoachFuel } from "@/lib/core/coach-fuel";\n' +
+    'import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";\n' +
+    'import type { Plan } from "@/lib/strength/model";\n' +
+    'import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";\n' +
+    'import { CoachOnlineRequest } from "./coach-online-request";\n' +
+    'import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps } from "@/lib/coach/online-coach";\n' +
+    'import { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";\n' +
+    'import { readEffectiveProfile } from "@/lib/coach/loop/effective-host";\n' +
+    'import { readSuggestionDocument } from "@/lib/coach/loop/suggestion-host";\n' +
+    'import { suggestionFacts } from "@/lib/coach/loop/suggestions";\n' +
+    'import { CoachSuggestionsPanel } from "@/components/coach-suggestions-panel";\n' +
+    'import { fetchLaps } from "@/components/garmin-log";\n' +
+    'import { activityLocalDay, fmtDistance } from "@/lib/ui/activity-format";\n' +
+    '\n' +
+    'function latestSessionRpe(events: { event_type: string; payload: Record<string, unknown> }[]): number | null {\n' +
+    '  for (const event of [...events].reverse()) {\n' +
+    '    if (event.event_type !== "RPE_RECORDED") continue\n' +
+    '    const payload = event.payload\n' +
+    '    if (payload.evidenceType === "SUBJECTIVE_RECOVERY") continue\n' +
+    '    const session = payload.evidenceType === "SESSION_RPE" ? payload.value : typeof payload.rpe === "number" ? payload.rpe : null\n' +
+    '    if (payload.evidenceType !== "SESSION_RPE" && typeof payload.rpe !== "number") continue\n' +
+    '    if (typeof session === "number" && Number.isInteger(session) && session >= 1 && session <= 10) return session\n' +
+    '  }\n' +
+    '  return null\n' +
+    '}\n' +
+    '\n' +
+    'export function CoachSheet({\n' +
+    '  plan,\n' +
+    '  activeId,\n' +
+    '  onClose,\n' +
+    '  onJump,\n' +
+    '  embedded = false,\n' +
+    '  focusOccurrenceId = null,\n' +
+    '  link = "ask",\n' +
+    '  onControlledStrengthEdit,\n' +
+    '  coordinationPanel,\n' +
+    '  onNavigate,\n' +
+    '  questionDraft,\n' +
+    '  onQuestionDraftConsumed,\n' +
+    '}: {\n' +
+    '  plan: Plan;\n' +
+    '  activeId?: string;\n' +
+    '  onClose: () => void;\n' +
+    '  onJump?: (tab: "body") => void;\n' +
+    '  embedded?: boolean;\n' +
+    '  focusOccurrenceId?: string | null;\n' +
+    '  link?: "ask" | "bound" | "unbound";\n' +
+    '  onControlledStrengthEdit?: CoachStrengthAction;\n' +
+    '  coordinationPanel?: ReactNode;\n' +
+    '  onNavigate?: (tab: "plan" | "body" | "log" | "diet") => void;\n' +
+    '  questionDraft?: string | null;\n' +
+    '  onQuestionDraftConsumed?: () => void;\n' +
+    '}) {\n' +
+    '  const [section, setSectionState] = useState<"chat" | "learn" | "review">("chat");\n' +
+    '  const messagePane = useRef<HTMLDivElement>(null);\n' +
+    '  const currentSection = useRef(section);\n' +
+    '  const sectionScroll = useRef({ chat: 0, learn: 0, review: 0 });\n' +
+    '  const [fromLibrary, setFromLibrary] = useState(false);\n' +
+    '  const setSection = useCallback((next: "chat" | "learn" | "review") => {\n' +
+    '    if (next === currentSection.current) return;\n' +
+    '    sectionScroll.current[currentSection.current] = messagePane.current?.scrollTop ?? 0;\n' +
+    '    currentSection.current = next;\n' +
+    '    setSectionState(next);\n' +
+    '  }, []);\n' +
+    '  useLayoutEffect(() => {\n' +
+    '    if (messagePane.current) messagePane.current.scrollTop = sectionScroll.current[section];\n' +
+    '  }, [section]);\n' +
+    '  useEffect(() => {\n' +
+    "    const openReview = () => setSection('review');\n" +
+    "    window.addEventListener('fk-coach-review-open', openReview);\n" +
+    '    retu'... 64983 more characters
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/knowledge/entry.test.ts:110:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `import { cycleRequestFromText } from '@/lib/coach/cycle/request';\nimport { CoachCyclePanel } from '@/components/coach-cycle-panel';\nimport { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';\nimport { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';\nimport { CoachR5Panel } from '@/components/coach-r5-panel';\nimport { CoachWeeklyPanel } from '@/components/coach-weekly-panel';\nimport { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';\nimport {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'\nimport { CoachAnswerView } from "@/components/coach-answer-view";\nimport { CoachIntegrationPanel } from '@/components/coach-integration-panel';\nimport { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';\nimport { readR6Decision } from '@/lib/coach/r6/runtime';\nimport { r6Question, r6DecisionText } from '@/lib/coach/r6/presentation';\nimport { R6DecisionPanel } from '@/components/r6-decision-panel';\nimport { TrainingModelPanel } from '@/components/training-model-panel';\nimport { PersonalCoachPanel } from '@/components/personal-coach-panel';\nimport { personalAnswer } from '@/lib/coach/personal/host';\nimport { readR4CoachAnswer } from '@/lib/coach/r4/answer';\nimport { R4AnswerStatus } from '@/components/r4-answer-status';\nimport { CoachC03FollowupPanel } from '@/components/coach-c03-followup-panel';\nimport { registerDisplayedC03Review } from '@/lib/coach/c03/runtime';\nimport type { LocalCoachAnswer } from '@/lib/core/coach-local-first';\nimport { readCoachMemory } from '@/lib/core/coach-context-memory';\nimport { detectRedFlags } from '@/lib/core/coach-red-flags';\nimport { CoachChatLoadPanel } from '@/components/coach-chat-load-panel';\nimport { CoachChatTrainingPanel } from '@/components/coach-chat-training-panel';\nimport { emptyDialogue } from '@/lib/core/coach-dialogue';\nimport {commitDisplayedCoachAdvice} from '@/lib/core/coach-p7-runtime';\nimport type { ChatTraining } from '@/lib/core/coach-chat-evidence';\nimport { chatLoadPreview } from '@/lib/core/coach-chat-load';\nimport { readCoachReviewWorkspace } from '@/lib/core/coach-review-workspace';\nimport { calendarDay } from '@/lib/core/coach-calendar';\nimport { occurrenceVoided } from '@/lib/core/training-correction';\nimport { confirmImportedSessionRpe } from '@/lib/core/coach-import-rating';\nimport { reportedSessionRpes } from '@/lib/core/coach-claim-scope';\nimport { formatComputedFacts } from '@/lib/core/coach-reasoning';\nimport { listConfirmedDeviceEvidence } from "@/lib/core/device-evidence-idb";\nimport { CoachAnswerFeedbackForm } from "@/components/coach-answer-feedback";\nimport { attachLinkedSources, deviceCoachSources } from "@/lib/core/coach-linked-context";\nimport { coachImports } from "@/lib/core/coach-import-evidence";\nimport { LearningLibrary } from "@/components/learning-library";\nimport { answerLearningQuestion } from "@/lib/education/knowledge-presentation";\nimport { setOnlineFeature } from "@/lib/ui/online-features";\nimport { CoachCognitionPanel } from "@/components/coach-cognition-panel";\nimport { CoachFirstWeekPanel } from '@/components/coach-first-week-panel';\nimport { CoachLoadMetricsPanel } from '@/components/coach-load-metrics-panel';\nimport { firstWeekGoalFromText } from '@/lib/core/coach-first-week';\nimport type { CoachCognition } from "@/lib/core/coach-cognition";\nimport { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";\nimport { BookOpen, Send, X } from "lucide-react";\nimport { FangShen, type FangFace } from "@/components/fang-shen";\nimport { executeDecision, loadDecisions, recordOverride, rejectDecision } from "@/lib/core";\nimport { RunningRoundReadout } from "@/components/running-round-readout";\nimport { DeviceEvidenceImport } from "@/components/device-evidence-import";\nimport { CoachStrengthEditPanel, type CoachStrengthAction } from "@/components/coach-strength-edit-panel";\nimport { CoachStatusCard, DecisionCard, DecisionInbox, SessionReview, TodayState } from "@/components/coach-panels";\nimport { acceptIssued, issueTrainingDecision, overrideIssued, rejectIssued } from "@/lib/core/brain-loop";\nimport { abilityRows, competitionView, latestReviewableCompletion, limiterFrom, sessionFromCompleted, toneFor, trendText } from "@/lib/core/coach-view";\nimport { readCoachOpenView } from "@/lib/core/coach-open";\nimport { loadEvents, onAppEvent } from "@/lib/core/events";\nimport { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89";\nimport { appendCoachNotice, noticeForCoachEvent, type CoachActivityNotice } from "@/lib/core/coach-activity-watch";\nimport { chooseAction, createTrainingDecision, firstPlannedSet, readTrainingContext } from "@/lib/core/training-decision";\nimport { refreshAthleteState } from "@/lib/core/state";\nimport type { AthleteState, DecisionRecord } from "@/lib/core/types";\nimport { fatigueLabel } from "@/lib/strength/agent";\nimport { askCoach } from "@/lib/strength/coach-ai";\nimport { currentAthleteId } from "@/lib/core/events";\nimport { readFormalEvidenceRows } from "@/lib/core/coach-v4-formal-rows-store";\nimport { buildCoachModelRequest, normalizeAskCoachInput, normalizeV4 } from '@/lib/strength/coach-pipeline';\nimport { latestReasoningBasis, reasoningReadFailure } from '@/lib/core/coach-reasoning';\nimport { answerLocally, answerStaysLocal } from "@/lib/core/coach-local-first";\nimport { loadInstalledKnowledgeLedger, KNOWLEDGE_APPROVALS_KEY } from "@/lib/coach/knowledge/approval-store";\nimport { subscribeKnowledgeLedger } from "@/lib/coach/knowledge/approval";\nimport { reviewKnowledgeJudgments } from "@/lib/coach/knowledge/history";\nimport { isNativeRecordInspection } from '@/lib/core/dialogue-e1';\nimport { offlineCapability, localModelFallback, type CoachFailure } from "@/lib/core/coach-offline";\nimport { saveOfflineReview } from "@/lib/core/coach-offline-loop";\nimport { CoachOfflineLoopPanel } from "@/components/coach-offline-loop-panel";\nimport { COACH_NETWORK_MODE_KEY, COACH_PUBLIC_REFERENCES, authorizeNetworkAction, parseCoachNetworkMode, type CoachNetworkMode } from "@/lib/core/coach-network-policy";\nimport { PERSONAS, PERSONA_KEY, parsePersona, presentCoachAnswer, type CoachPersona } from "@/lib/core/coach-persona";\nimport { extractConversationContext, contextualFollowup } from "@/lib/core/coach-conversation-context";\nimport { assembleCoachBrief, recordCoachBodyEvidence, recordCoachChoice, recordCoachEvidence, type CoachBrief } from "@/lib/core/coach-brief";\nimport { formatTrainingWhen, listBoundTrainings, orderOccurrenceIds, sameCalendarDay, separateBriefs } from "@/lib/core/coach-compare";\nimport { assembleCoachSeries, toggleSeriesId } from "@/lib/core/coach-series";\nimport { listTrainingOccurrences } from "@/lib/core/occurrence";\nimport type { CoachFuel } from "@/lib/core/coach-fuel";\nimport { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";\nimport type { Plan } from "@/lib/strength/model";\nimport { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";\nimport { CoachOnlineRequest } from "./coach-online-request";\nimport { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps } from "@/lib/coach/online-coach";\nimport { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";\nimport { readEffectiveProfile } from "@/lib/coach/loop/effective-host";\nimport { readSuggestionDocument } from "@/lib/coach/loop/suggestion-host";\nimport { suggestionFacts } from "@/lib/coach/loop/suggestions";\nimport { CoachSuggestionsPanel } from "@/components/coach-suggestions-panel";\nimport { fetchLaps } from "@/components/garmin-log";\nimport { activityLocalDay, fmtDistance } from "@/lib/ui/activity-format";\n\nfunction latestSessionRpe(events: { event_type: string; payload: Record<string, unknown> }[]): number | null {\n  for (const event of [...events].reverse()) {\n    if (event.event_type !== "RPE_RECORDED") continue\n    const payload = event.payload\n    if (payload.evidenceType === "SUBJECTIVE_RECOVERY") continue\n    const session = payload.evidenceType === "SESSION_RPE" ? payload.value : typeof payload.rpe === "number" ? payload.rpe : null\n    if (payload.evidenceType !== "SESSION_RPE" && typeof payload.rpe !== "number") continue\n    if (typeof session === "number" && Number.isInteger(session) && session >= 1 && session <= 10) return session\n  }\n  return null\n}\n\nexport function CoachSheet({\n  plan,\n  activeId,\n  onClose,\n  onJump,\n  embedded = false,\n  focusOccurrenceId = null,\n  link = "ask",\n  onControlledStrengthEdit,\n  coordinationPanel,\n  onNavigate,\n  questionDraft,\n  onQuestionDraftConsumed,\n}: {\n  plan: Plan;\n  activeId?: string;\n  onClose: () => void;\n  onJump?: (tab: "body") => void;\n  embedded?: boolean;\n  focusOccurrenceId?: string | null;\n  link?: "ask" | "bound" | "unbound";\n  onControlledStrengthEdit?: CoachStrengthAction;\n  coordinationPanel?: ReactNode;\n  onNavigate?: (tab: "plan" | "body" | "log" | "diet") => void;\n  questionDraft?: string | null;\n  onQuestionDraftConsumed?: () => void;\n}) {\n  const [section, setSectionState] = useState<"chat" | "learn" | "review">("chat");\n  const messagePane = useRef<HTMLDivElement>(null);\n  const currentSection = useRef(section);\n  const sectionScroll = useRef({ chat: 0, learn: 0, review: 0 });\n  const [fromLibrary, setFromLibrary] = useState(false);\n  const setSection = useCallback((next: "chat" | "learn" | "review") => {\n    if (next === currentSection.current) return;\n    sectionScroll.current[currentSection.current] = messagePane.current?.scrollTop ?? 0;\n    currentSection.current = next;\n    setSectionState(next);\n  }, []);\n  useLayoutEffect(() => {\n    if (messagePane.current) messagePane.current.scrollTop = sectionScroll.current[section];\n  }, [section]);\n  useEffect(() => {\n    const openReview = () => setSection('review');\n    window.addEventListener('fk-coach-review-open', openReview);\n    retu`... 64983 more characters,
+    expected: /if \(!redFlag && !keepLocal && onlineSetting\(\)\.on/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/core/coach-knowledge-display.test.tsx:27:1
+✖ learning sources respect existing local and offline network policy (28.325934ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /来源与核验范围/. Input:
+  
+  '<section class="learning-library min-w-0 space-y-3" aria-label="方坤运动知识库"><div class="fk-reader-heading"><h2>运动知识</h2><button type="button">动作与热身 ↗</button></div><div class="relative"><label class="sr-only" for="fk-lesson-search">搜索运动知识、文献与关键词</label><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><input id="fk-lesson-search" type="search" maxLength="100" enterKeyHint="search" autoComplete="off" placeholder="想了解什么？如热身、增肌、HRV" class="min-h-12 w-full rounded-xl border border-line bg-surface pl-10 pr-12 text-base" value=""/></div><div role="tablist" aria-label="知识阅读方式" class="fk-reader-modes"><button role="tab" type="button" id="fk-reader-reading" aria-selected="true" aria-controls="fk-learning-results" tabindex="0">读知识</button><button role="tab" type="button" id="fk-reader-references" aria-selected="false" aria-controls="fk-learning-results" tabindex="-1">查资料</button></div><div role="group" aria-label="按运动主题筛选" class="fk-learning-topics flex gap-2 overflow-x-auto pb-1"><button type="button" aria-pressed="true" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-accent text-accent">全部</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">跑步</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">力量</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">恢复</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">饮食</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">训练安排</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">动作与热身</button></div><div class="flex flex-wrap items-center justify-between gap-2 text-xs text-muted"><span role="status" aria-live="polite">共 61 篇知识</span></div><div id="fk-learning-results" role="tabpanel" aria-labelledby="fk-reader-reading" tabindex="0" class="space-y-2"><details name="fk-learning-article" data-knowledge-id="EDU001" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">加速、跑得快、维持速度，有什么区别？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">起速快、最高速度快、后程稳，是三个不同目标。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>加速：从慢到快</li><li>最高速度：能跑到多快</li><li>速度耐力：能把高速保持多久</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>记下每段用时、休息时间和后几组的动作变化。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">一次短跑成绩，不能说明所有能力。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>加速关注从低速提升速度的过程；最高速度关注快速跑姿与动作质量；速度耐力关注高速状态的持续或重复能力。训练距离、速度、组间恢复与总量应服务于明确目标。</p><p>适用范围：短距离计时不能单独判断哪种能力不足。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">The Training and Development of Elite Sprint Performance</p><p class="mt-1 text-muted">2019 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对全文中的相关章节</p><p class="mt-1 text-muted">精英短跑实践存在证据空白；不复制其训练剂量到普通用户。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU002" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">400米后程掉速，先看什么？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">先看前后程分段，再比较当时的条件。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>前程策略、疲劳和比赛环境都可能影响后程</li><li>一场比赛不足以确定原因</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>分别记下前200米和后200米，再对照几场相似比赛。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">不能只凭掉速就断定某块肌肉弱。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>400米分段变化可能受到出发策略、最高速度、速度耐力、比赛环境和疲劳等因素共同影响。单场比赛只能提出假设，不能证明唯一原因。</p><p>适用范围：一次掉速不能诊断乳酸耐受或具体肌群缺陷。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">The Training and Development of Elite Sprint Performance</p><p class="mt-1 text-muted">2019 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对全文中的相关章节</p><p class="mt-1 text-muted">精英短跑实践存在证据空白；不复制其训练剂量到普通用户。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU003" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">练800米，为什么既要速度也要耐力？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">既要跑得快，也要把速度维持下去。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>训练会涉及有氧、比赛配速、速度和力量</li><li>各部分怎么分配，要看基础和比赛阶段</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>一起看比赛分段、专项课表现和训练后的恢复。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">一次1000米训练，不能保证800米能跑出某个成绩。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>训练内容可包括有氧基础、比赛配速、速度和力量等，但比例取决于运动员背景、阶段与赛季安排。不能直接复制精英选手的周训练量。</p><p>适用范围：不能把单次1000米成绩直接换算为800米比赛保证。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">Crossing the Golden Training Divide: World-Class 800- and 1500-m Runners</p><p class="mt-1 text-muted">2021 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对摘要与关键要点</p><p class="mt-1 text-muted">材料偏男性及精英实践；类别用于组织观察，不从一次训练给个人定型。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU004" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">1500米，为什么要看每圈用时？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">平均配速看不出中途的快慢变化。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>耐力、速度和比赛战术都会影响成绩</li><li>分段能看出节奏变化，但不能单独解释原因</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>把每圈用时与目标比较，同时记下场地和计时方式。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">单次训练不能精确预测比赛成绩。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>1500米表现受到有氧能力、专项速度、节奏变化与战术影响。分段记录能帮助理解节奏，但不自动解释生理原因。</p><p>适用范围：仅凭某次训练配速无法给出精确比赛预测。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">Crossing the Golden Training Divide: World-Class 800- and 1500-m Runners</p><p class="mt-1 text-muted">2021 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对摘要与关键要点</p><p class="mt-1 text-muted">材料偏男性及精英实践；类别用于组织观察，不从一次训练给个人定型。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU005" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-p'... 14422 more characters
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-knowledge-display.test.tsx:32:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<section class="learning-library min-w-0 space-y-3" aria-label="方坤运动知识库"><div class="fk-reader-heading"><h2>运动知识</h2><button type="button">动作与热身 ↗</button></div><div class="relative"><label class="sr-only" for="fk-lesson-search">搜索运动知识、文献与关键词</label><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><input id="fk-lesson-search" type="search" maxLength="100" enterKeyHint="search" autoComplete="off" placeholder="想了解什么？如热身、增肌、HRV" class="min-h-12 w-full rounded-xl border border-line bg-surface pl-10 pr-12 text-base" value=""/></div><div role="tablist" aria-label="知识阅读方式" class="fk-reader-modes"><button role="tab" type="button" id="fk-reader-reading" aria-selected="true" aria-controls="fk-learning-results" tabindex="0">读知识</button><button role="tab" type="button" id="fk-reader-references" aria-selected="false" aria-controls="fk-learning-results" tabindex="-1">查资料</button></div><div role="group" aria-label="按运动主题筛选" class="fk-learning-topics flex gap-2 overflow-x-auto pb-1"><button type="button" aria-pressed="true" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-accent text-accent">全部</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">跑步</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">力量</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">恢复</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">饮食</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">训练安排</button><button type="button" aria-pressed="false" class="min-h-11 shrink-0 rounded-full border px-3 text-sm border-line text-muted">动作与热身</button></div><div class="flex flex-wrap items-center justify-between gap-2 text-xs text-muted"><span role="status" aria-live="polite">共 61 篇知识</span></div><div id="fk-learning-results" role="tabpanel" aria-labelledby="fk-reader-reading" tabindex="0" class="space-y-2"><details name="fk-learning-article" data-knowledge-id="EDU001" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">加速、跑得快、维持速度，有什么区别？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">起速快、最高速度快、后程稳，是三个不同目标。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>加速：从慢到快</li><li>最高速度：能跑到多快</li><li>速度耐力：能把高速保持多久</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>记下每段用时、休息时间和后几组的动作变化。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">一次短跑成绩，不能说明所有能力。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>加速关注从低速提升速度的过程；最高速度关注快速跑姿与动作质量；速度耐力关注高速状态的持续或重复能力。训练距离、速度、组间恢复与总量应服务于明确目标。</p><p>适用范围：短距离计时不能单独判断哪种能力不足。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">The Training and Development of Elite Sprint Performance</p><p class="mt-1 text-muted">2019 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对全文中的相关章节</p><p class="mt-1 text-muted">精英短跑实践存在证据空白；不复制其训练剂量到普通用户。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU002" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">400米后程掉速，先看什么？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">先看前后程分段，再比较当时的条件。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>前程策略、疲劳和比赛环境都可能影响后程</li><li>一场比赛不足以确定原因</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>分别记下前200米和后200米，再对照几场相似比赛。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">不能只凭掉速就断定某块肌肉弱。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>400米分段变化可能受到出发策略、最高速度、速度耐力、比赛环境和疲劳等因素共同影响。单场比赛只能提出假设，不能证明唯一原因。</p><p>适用范围：一次掉速不能诊断乳酸耐受或具体肌群缺陷。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">The Training and Development of Elite Sprint Performance</p><p class="mt-1 text-muted">2019 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对全文中的相关章节</p><p class="mt-1 text-muted">精英短跑实践存在证据空白；不复制其训练剂量到普通用户。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU003" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">练800米，为什么既要速度也要耐力？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">既要跑得快，也要把速度维持下去。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>训练会涉及有氧、比赛配速、速度和力量</li><li>各部分怎么分配，要看基础和比赛阶段</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>一起看比赛分段、专项课表现和训练后的恢复。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">一次1000米训练，不能保证800米能跑出某个成绩。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>训练内容可包括有氧基础、比赛配速、速度和力量等，但比例取决于运动员背景、阶段与赛季安排。不能直接复制精英选手的周训练量。</p><p>适用范围：不能把单次1000米成绩直接换算为800米比赛保证。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">Crossing the Golden Training Divide: World-Class 800- and 1500-m Runners</p><p class="mt-1 text-muted">2021 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对摘要与关键要点</p><p class="mt-1 text-muted">材料偏男性及精英实践；类别用于组织观察，不从一次训练给个人定型。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU004" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-pointer list-none [&amp;::-webkit-details-marker]:hidden"><span class="flex items-start justify-between gap-2 font-semibold"><span class="min-w-0 flex-1 break-words">1500米，为什么要看每圈用时？</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down fk-learning-chevron shrink-0 text-muted" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span class="fk-reader-conclusion mt-2 block text-sm font-normal text-muted">平均配速看不出中途的快慢变化。</span></summary><div class="fk-learning-reading mt-3 space-y-3 border-t border-line pt-3 text-sm"><ul class="fk-reader-points" data-testid="reading-points"><li>耐力、速度和比赛战术都会影响成绩</li><li>分段能看出节奏变化，但不能单独解释原因</li></ul><div class="fk-reader-practice"><h3>平时怎么用</h3><p>把每圈用时与目标比较，同时记下场地和计时方式。</p></div><p class="keep text-xs leading-relaxed text-muted" data-testid="reading-note">单次训练不能精确预测比赛成绩。</p><details class="fk-learning-sources border-t border-line"><summary class="min-h-11 cursor-pointer content-center text-xs text-muted">详细说明与来源</summary><div class="space-y-3 pb-3 text-xs leading-relaxed"><p>1500米表现受到有氧能力、专项速度、节奏变化与战术影响。分段记录能帮助理解节奏，但不自动解释生理原因。</p><p>适用范围：仅凭某次训练配速无法给出精确比赛预测。</p><div class="border-t border-line pt-3"><p class="break-words font-medium">Crossing the Golden Training Divide: World-Class 800- and 1500-m Runners</p><p class="mt-1 text-muted">2021 · 研究与最佳实践整合综述</p><p class="mt-1 text-muted">已核对摘要与关键要点</p><p class="mt-1 text-muted">材料偏男性及精英实践；类别用于组织观察，不从一次训练给个人定型。</p></div><p class="text-muted">要打开原文，请在下方「文献阅读设置」中允许外部链接。</p></div></details></div></details><details name="fk-learning-article" data-knowledge-id="EDU005" class="fk-learning-article home-card min-w-0 p-4"><summary class="min-h-11 cursor-p'... 14422 more characters,
+    expected: /来源与核验范围/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/core/hydration.test.tsx:9:1
+✖ first render does not depend on browser training and day records (55.034257ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /这天还没有安排|没有其他自建或方坤的训练/. Input:
+  
+  '<div class="app-wallpaper product-ui fk-identity bg-bg text-fg min-h-dvh" data-testid="training-app" data-ready="false" data-offline-ready="false" data-candidate-version="FK-UI-R1-20261021" data-wallpaper="plain" data-theme="light"><header class="ui03-header fk-page-header px-4 pt-1 pb-1"><div class="ui03-header-inner fk-page mx-auto flex max-w-3xl items-center justify-between gap-3"><div class="min-w-0"><div class="fk-brand-lockup fk-mobile-only"><h1>FANGKUN</h1><span>方坤</span></div><h1 class="ui03-title fk-desk-only">今天</h1></div><div class="flex shrink-0 items-center gap-2"><button type="button" aria-label="记一笔" class="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>记一笔</button><button type="button" class="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings size-5" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div></div></header><p role="status" class="fk-page mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">离线功能准备中…</p><main class="ui03-main fk-page mx-auto max-w-3xl px-3 pt-2 pb-nav"><div class="fk-today-grid"><div class="fk-today-main flex flex-col"><div class="fk-today-date"><span class="fk-date-day">26</span><div class="fk-date-context"><b>10<!-- -->月 · 周<!-- -->一</b></div></div><section class="home-card mb-3 p-4" aria-label="今日训练主卡" data-testid="today-main-card" data-status="not_started"><div class="flex items-center justify-between gap-2"><p class="text-sm text-muted">今日训练</p><span class="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-bold border-line text-fg">未开始</span></div><h2 class="mt-1 text-xl font-bold">速度耐力＋力量A</h2><p class="text-xs text-muted">10/26<!-- --> <!-- -->周一<!-- --> · <span class="shrink-0 rounded-full bg-surface-2 px-2 py-0.5 text-[11px] text-muted">训练课<!-- --> + 力量</span></p><ul class="mt-2 space-y-1 text-sm leading-6"><li class="line-clamp-2">主课：速度耐力＋力量A正式主课：180m×3，组间7—9分钟，RPE7—8，最后一组不力竭</li><li class="line-clamp-2">辅助：40—60m渐进×3</li><li class="line-clamp-2">力量：A2：分腿蹲2—3×4/腿、RDL2×5、臀推2×5、提踵2×6、抗旋2×8；RPE6—7</li></ul><button type="button" class="mt-3 min-h-12 w-full rounded-xl bg-accent text-base font-bold text-accent-fg" data-testid="today-primary-cta">开始今日训练</button><div class="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" class="min-h-11 text-accent">查看课表</button></div></section><div style="order:4"><section aria-label="本周训练" class="home-card mb-3 px-3 py-3"><div class="flex items-center justify-between px-1"><h2 class="text-lg font-bold">今日训练</h2><span aria-live="polite" class="fk-saved "></span></div><div class="mt-2 grid grid-cols-7 gap-1" role="tablist" aria-label="本周"><button type="button" role="tab" aria-selected="true" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-accent bg-accent text-accent-fg"><span class="opacity-80">今天</span><b class="text-sm">26</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent-fg ring-accent-fg" title="V4：速度耐力＋力量A"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周二</span><b class="text-sm">27</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：恢复"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周三</span><b class="text-sm">28</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：专项耐力"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周四</span><b class="text-sm">29</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：恢复"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周五</span><b class="text-sm">30</b><span class="mt-0.5 flex h-2 gap-0.5"></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周六</span><b class="text-sm">31</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：容量节奏＋力量B"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周日</span><b class="text-sm">1</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：恢复"></i></span></button></div><div class="mt-3 space-y-2"></div></section></div><div style="order:4" class="mb-3"></div><div style="order:100" class="h-20" aria-hidden="true"></div></div><aside class="fk-today-rail" aria-label="快捷操作"><section class="home-card fk-rail-card"><h2 class="fk-rail-title">快捷操作</h2><div class="fk-rail-actions"><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus size-5" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg><span>记一笔<small>快速记录今天的训练</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dumbbell size-5" aria-hidden="true"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path><path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path><path d="m9.6 14.4 4.8-4.8"></path></svg><span>添加训练<small>安排到所选日期</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils size-5" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg><span>记录饮食<small>餐次与营养</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale size-5" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg><span>查看恢复<small>睡眠、心率与疲劳</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list size-5" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg><span>导入计划<small>课表或备份文件</small></span></button></div></section><section class="home-card fk-rail-card fk-rail-coach"><h2 class="fk-rail-title">问方坤</h2><p>说说你的目标，或选一节训练一起看。方坤会先核对事实，再解释与建议。</p><button type="button" class="fk-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle size-4" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>开始对话</button></section></aside></div></main><div class="hidden"><div class="ui03-main fk-page fk-desk-diet mx-auto max-w-3xl px-4 pt-3 pb-nav"></div></div><div class="hidden"><div class="ui03-main fk-page fk-desk-body mx-auto max-w-3xl px-4 pt-3 pb-nav"></div'... 4952 more characters
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/hydration.test.tsx:44:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<div class="app-wallpaper product-ui fk-identity bg-bg text-fg min-h-dvh" data-testid="training-app" data-ready="false" data-offline-ready="false" data-candidate-version="FK-UI-R1-20261021" data-wallpaper="plain" data-theme="light"><header class="ui03-header fk-page-header px-4 pt-1 pb-1"><div class="ui03-header-inner fk-page mx-auto flex max-w-3xl items-center justify-between gap-3"><div class="min-w-0"><div class="fk-brand-lockup fk-mobile-only"><h1>FANGKUN</h1><span>方坤</span></div><h1 class="ui03-title fk-desk-only">今天</h1></div><div class="flex shrink-0 items-center gap-2"><button type="button" aria-label="记一笔" class="flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-line px-3 text-sm font-bold text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus size-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>记一笔</button><button type="button" class="ui03-settings grid size-11 shrink-0 place-items-center rounded-full bg-surface shadow-sm" aria-label="个人与数据"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings size-5" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div></div></header><p role="status" class="fk-page mx-auto max-w-3xl px-4 pb-2 text-xs text-muted">离线功能准备中…</p><main class="ui03-main fk-page mx-auto max-w-3xl px-3 pt-2 pb-nav"><div class="fk-today-grid"><div class="fk-today-main flex flex-col"><div class="fk-today-date"><span class="fk-date-day">26</span><div class="fk-date-context"><b>10<!-- -->月 · 周<!-- -->一</b></div></div><section class="home-card mb-3 p-4" aria-label="今日训练主卡" data-testid="today-main-card" data-status="not_started"><div class="flex items-center justify-between gap-2"><p class="text-sm text-muted">今日训练</p><span class="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-bold border-line text-fg">未开始</span></div><h2 class="mt-1 text-xl font-bold">速度耐力＋力量A</h2><p class="text-xs text-muted">10/26<!-- --> <!-- -->周一<!-- --> · <span class="shrink-0 rounded-full bg-surface-2 px-2 py-0.5 text-[11px] text-muted">训练课<!-- --> + 力量</span></p><ul class="mt-2 space-y-1 text-sm leading-6"><li class="line-clamp-2">主课：速度耐力＋力量A正式主课：180m×3，组间7—9分钟，RPE7—8，最后一组不力竭</li><li class="line-clamp-2">辅助：40—60m渐进×3</li><li class="line-clamp-2">力量：A2：分腿蹲2—3×4/腿、RDL2×5、臀推2×5、提踵2×6、抗旋2×8；RPE6—7</li></ul><button type="button" class="mt-3 min-h-12 w-full rounded-xl bg-accent text-base font-bold text-accent-fg" data-testid="today-primary-cta">开始今日训练</button><div class="mt-1 flex flex-wrap gap-x-4 text-sm"><button type="button" class="min-h-11 text-accent">查看课表</button></div></section><div style="order:4"><section aria-label="本周训练" class="home-card mb-3 px-3 py-3"><div class="flex items-center justify-between px-1"><h2 class="text-lg font-bold">今日训练</h2><span aria-live="polite" class="fk-saved "></span></div><div class="mt-2 grid grid-cols-7 gap-1" role="tablist" aria-label="本周"><button type="button" role="tab" aria-selected="true" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-accent bg-accent text-accent-fg"><span class="opacity-80">今天</span><b class="text-sm">26</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent-fg ring-accent-fg" title="V4：速度耐力＋力量A"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周二</span><b class="text-sm">27</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：恢复"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周三</span><b class="text-sm">28</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：专项耐力"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周四</span><b class="text-sm">29</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：恢复"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周五</span><b class="text-sm">30</b><span class="mt-0.5 flex h-2 gap-0.5"></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周六</span><b class="text-sm">31</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：容量节奏＋力量B"></i></span></button><button type="button" role="tab" aria-selected="false" class="flex min-h-16 flex-col items-center justify-center rounded-xl border text-xs border-line bg-surface-2"><span class="opacity-80">周日</span><b class="text-sm">1</b><span class="mt-0.5 flex h-2 gap-0.5"><i class="size-1.5 rounded-full ring-1 bg-accent ring-accent" title="V4：恢复"></i></span></button></div><div class="mt-3 space-y-2"></div></section></div><div style="order:4" class="mb-3"></div><div style="order:100" class="h-20" aria-hidden="true"></div></div><aside class="fk-today-rail" aria-label="快捷操作"><section class="home-card fk-rail-card"><h2 class="fk-rail-title">快捷操作</h2><div class="fk-rail-actions"><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus size-5" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg><span>记一笔<small>快速记录今天的训练</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dumbbell size-5" aria-hidden="true"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"></path><path d="m2.5 21.5 1.4-1.4"></path><path d="m20.1 3.9 1.4-1.4"></path><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"></path><path d="m9.6 14.4 4.8-4.8"></path></svg><span>添加训练<small>安排到所选日期</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils size-5" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path><path d="M7 2v20"></path><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path></svg><span>记录饮食<small>餐次与营养</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale size-5" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg><span>查看恢复<small>睡眠、心率与疲劳</small></span></button><button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list size-5" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg><span>导入计划<small>课表或备份文件</small></span></button></div></section><section class="home-card fk-rail-card fk-rail-coach"><h2 class="fk-rail-title">问方坤</h2><p>说说你的目标，或选一节训练一起看。方坤会先核对事实，再解释与建议。</p><button type="button" class="fk-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle size-4" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>开始对话</button></section></aside></div></main><div class="hidden"><div class="ui03-main fk-page fk-desk-diet mx-auto max-w-3xl px-4 pt-3 pb-nav"></div></div><div class="hidden"><div class="ui03-main fk-page fk-desk-body mx-auto max-w-3xl px-4 pt-3 pb-nav"></div'... 4952 more characters,
+    expected: /这天还没有安排|没有其他自建或方坤的训练/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/strength/session-builder.test.tsx:116:1
+✖ shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls (63.417746ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /怎么做/. Input:
+  
+  '<div class="flex flex-wrap gap-2 text-xs"><span class="rounded-md border border-line px-2 py-1">手臂</span><span class="rounded-md border border-line px-2 py-1">哑铃</span></div><section class="fk-dash-card mt-3" aria-label="新版动作演示区域"><h2 class="fk-dash-title">动作示范</h2><!--$!--><template data-msg="Switched to client rendering because the server rendering aborted due to:\n' +
+    '\n' +
+    'The server used &quot;renderToString&quot; which does not support Suspense. If you intended for this Suspense boundary to render the fallback content on the server consider throwing an Error somewhere within the Suspense boundary. If you intended to have the server wait for the suspended component please switch to &quot;renderToPipeableStream&quot; which supports Suspense on the server" data-cstck="\n' +
+    '    at Lazy (&lt;anonymous&gt;)\n' +
+    '    at Suspense (&lt;anonymous&gt;)\n' +
+    '    at section (&lt;anonymous&gt;)\n' +
+    '    at DemoBlock (file:///workspace/fangkun-qa-repair/src/components/exercise-editor.tsx:38:22)\n' +
+    '    at ExerciseDetailBody (file:///workspace/fangkun-qa-repair/src/components/exercise-editor.tsx:41:38)\n' +
+    '    at ExerciseContent (file:///workspace/fangkun-qa-repair/src/components/exercise-content.tsx:8:35)"></template><p class="p-4 text-sm">演示加载中…</p><!--/$--></section><section class="fk-dash-card fk-target-card mt-3" aria-label="目标肌群"><header><h2 class="fk-dash-title">相关部位</h2></header><div class="fk-target-stage"><canvas aria-label="可点选的独立肌肉3D模型"></canvas><div class="fk-target-status" role="status"><p class="keep">正在打开肌群模型…</p></div></div><div class="fk-target-controls" role="group" aria-label="肌群视角"><button type="button" disabled="" aria-pressed="true">正面</button><button type="button" disabled="" aria-pressed="false">左侧</button><button type="button" disabled="" aria-pressed="false">右侧</button><button type="button" disabled="" aria-pressed="false">背面</button></div><div class="fk-target-controls" role="group" aria-label="肌群范围"><button type="button" disabled="" aria-pressed="true">全身</button><button type="button" disabled="" aria-pressed="false">小腿</button><button type="button" disabled="" aria-pressed="false">足部</button><button type="button" disabled="">复原</button></div><div class="fk-target-layer" role="group" aria-label="肌肉层次"><button type="button" disabled="" aria-pressed="true">表层肌</button><button type="button" disabled="" aria-pressed="false">深层肌</button></div><div class="fk-target-legend"><span><i class="main"></i>主要参与</span><span><i class="aux"></i>辅助参与</span><span><i class="selected"></i>已选中</span></div><div class="fk-target-muscles" aria-label="主要肌群"><b>主要</b><button type="button" class="main">肱二头肌</button><button type="button" class="main">前臂</button></div></section><div class="fk-dash-card mt-3 text-sm"><h3 class="fk-dash-title">动作步骤</h3><ol class="mt-2 list-decimal space-y-2 pl-5"><li>站直，双脚与髋同宽</li><li>上臂贴近身体两侧</li><li>掌心相对（中立握），像握锤子</li><li>保持中立握屈肘上举</li><li>顶端停 1 秒</li><li>控制放下</li></ol><section class="mt-3"><h4 class="font-bold">注意事项</h4><ul class="mt-1 list-disc space-y-1 pl-5"><li>肘外侧不适减轻重量</li></ul></section><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">呼吸与易错点</summary><ul class="list-disc space-y-1 pl-5"><li>放下吸气</li><li>举起呼气</li><li>上臂前后摆动</li><li>身体后仰借力</li><li>下放不完全</li><li>手腕弯曲</li></ul></details><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">简化与进阶</summary><ul class="list-disc space-y-1 pl-5"><li>简化：较轻哑铃</li><li>进阶：交替锤式弯举</li><li>进阶：加重</li></ul></details></div>'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/strength/session-builder.test.tsx:118:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<div class="flex flex-wrap gap-2 text-xs"><span class="rounded-md border border-line px-2 py-1">手臂</span><span class="rounded-md border border-line px-2 py-1">哑铃</span></div><section class="fk-dash-card mt-3" aria-label="新版动作演示区域"><h2 class="fk-dash-title">动作示范</h2><!--$!--><template data-msg="Switched to client rendering because the server rendering aborted due to:\n\nThe server used &quot;renderToString&quot; which does not support Suspense. If you intended for this Suspense boundary to render the fallback content on the server consider throwing an Error somewhere within the Suspense boundary. If you intended to have the server wait for the suspended component please switch to &quot;renderToPipeableStream&quot; which supports Suspense on the server" data-cstck="\n    at Lazy (&lt;anonymous&gt;)\n    at Suspense (&lt;anonymous&gt;)\n    at section (&lt;anonymous&gt;)\n    at DemoBlock (file:///workspace/fangkun-qa-repair/src/components/exercise-editor.tsx:38:22)\n    at ExerciseDetailBody (file:///workspace/fangkun-qa-repair/src/components/exercise-editor.tsx:41:38)\n    at ExerciseContent (file:///workspace/fangkun-qa-repair/src/components/exercise-content.tsx:8:35)"></template><p class="p-4 text-sm">演示加载中…</p><!--/$--></section><section class="fk-dash-card fk-target-card mt-3" aria-label="目标肌群"><header><h2 class="fk-dash-title">相关部位</h2></header><div class="fk-target-stage"><canvas aria-label="可点选的独立肌肉3D模型"></canvas><div class="fk-target-status" role="status"><p class="keep">正在打开肌群模型…</p></div></div><div class="fk-target-controls" role="group" aria-label="肌群视角"><button type="button" disabled="" aria-pressed="true">正面</button><button type="button" disabled="" aria-pressed="false">左侧</button><button type="button" disabled="" aria-pressed="false">右侧</button><button type="button" disabled="" aria-pressed="false">背面</button></div><div class="fk-target-controls" role="group" aria-label="肌群范围"><button type="button" disabled="" aria-pressed="true">全身</button><button type="button" disabled="" aria-pressed="false">小腿</button><button type="button" disabled="" aria-pressed="false">足部</button><button type="button" disabled="">复原</button></div><div class="fk-target-layer" role="group" aria-label="肌肉层次"><button type="button" disabled="" aria-pressed="true">表层肌</button><button type="button" disabled="" aria-pressed="false">深层肌</button></div><div class="fk-target-legend"><span><i class="main"></i>主要参与</span><span><i class="aux"></i>辅助参与</span><span><i class="selected"></i>已选中</span></div><div class="fk-target-muscles" aria-label="主要肌群"><b>主要</b><button type="button" class="main">肱二头肌</button><button type="button" class="main">前臂</button></div></section><div class="fk-dash-card mt-3 text-sm"><h3 class="fk-dash-title">动作步骤</h3><ol class="mt-2 list-decimal space-y-2 pl-5"><li>站直，双脚与髋同宽</li><li>上臂贴近身体两侧</li><li>掌心相对（中立握），像握锤子</li><li>保持中立握屈肘上举</li><li>顶端停 1 秒</li><li>控制放下</li></ol><section class="mt-3"><h4 class="font-bold">注意事项</h4><ul class="mt-1 list-disc space-y-1 pl-5"><li>肘外侧不适减轻重量</li></ul></section><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">呼吸与易错点</summary><ul class="list-disc space-y-1 pl-5"><li>放下吸气</li><li>举起呼气</li><li>上臂前后摆动</li><li>身体后仰借力</li><li>下放不完全</li><li>手腕弯曲</li></ul></details><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">简化与进阶</summary><ul class="list-disc space-y-1 pl-5"><li>简化：较轻哑铃</li><li>进阶：交替锤式弯举</li><li>进阶：加重</li></ul></details></div>',
+    expected: /怎么做/,
+    operator: 'match',
+    diff: 'simple'
+  }
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

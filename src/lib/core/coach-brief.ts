@@ -286,6 +286,11 @@ type CoachModelJson = { mode?: string; text?: string; citations?: string[]; next
 const SYMPTOM_WORSENING = /(?:疼痛|酸痛|痛感|症状|不适|疼|痛|跑后|跑完|训练后|运动后|练完)(?:(?!可以|建议|下次|再|能|应)[^。；，、\n]){0,6}?加重/g
 
 function withoutNegatedIncrease(clause: string): string {
+  // "Insufficient evidence to approve" is a prohibition. Keep double negation
+  // and any later affirmative clause available to the normal proposal guard.
+  if (/(?:不是|并非|不认为|不能说|并不觉得).{0,10}不足以/.test(clause)) return clause
+  clause = clause.replace(/不足以(?:(?!但|不过|然而|可是|可以|建议|下次|不|未|无|没)[^。；，、\n]){0,12}?(?:加量|加重|增加|提高|提升|提速|加组|延长距离|上调负荷)/g,
+    (match, offset: number) => /不|未|无|没|非/.test(clause.slice(0, offset)) ? match : "")
   // K13: "不支持/不允许/不批准/限制…增加" are prohibitions too. "限制" only counts
   // when it is not itself lifted (不再限制、解除限制、取消限制、放开限制、没有限制).
   return clause
@@ -294,7 +299,8 @@ function withoutNegatedIncrease(clause: string): string {
 }
 
 function mentionsProposedIncrease(text: string): boolean {
-  return text.split(/[。；，、\n]/).some((clause) => /(?:下次|下一课|接下来|建议|可以|应该|必须|可考虑|批准).{0,16}(?:加量|加(?:\d+|一|两|几)?(?:组|次|课|节)|加重|提速|增加|提高|提升|延长距离|上调负荷|冲强度)/.test(withoutNegatedIncrease(clause)))
+  return text.split(/[。；，、\n]/).some((clause) => /(?:下次|下一课|接下来|建议|可以|应该|必须|可考虑|批准).{0,16}(?:加量|加(?:\d+|一|两|几)?(?:组|次|课|节)|加重|提速|增加|提高|提升|延长距离|上调负荷|冲强度)/.test(withoutNegatedIncrease(clause))
+    || /(?:不是|并非|不认为|不能说|并不觉得).{0,10}不足以.{0,12}(?:加量|加重|增加|提高|提升|提速|加组|延长距离|上调负荷)/.test(clause))
 }
 
 function stillProposesIncrease(text: string): boolean {

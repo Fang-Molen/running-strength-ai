@@ -1,0 +1,15 @@
+✔ only owned actual scalar evidence is sent; no plans, foreign devices or unknown scales (8.435387ms)
+✔ explicit zero stays zero; out of range, future and expired records are omitted (0.392385ms)
+✔ explicit consent creates snapshot, sends only reference, validates exact numeric quote and revokes (50.199409ms)
+✔ no consent, changed evidence or disabled preference cannot upload (8.926813ms)
+✔ changed evidence after snapshot prevents provider call and revokes authorization (2.951374ms)
+✔ server cannot replace displayed consent facts or introduce an unsupported numeric prescription (6.844246ms)
+✔ identity changes and cancellation during a pending response cannot deliver its text (8.552945ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.184611

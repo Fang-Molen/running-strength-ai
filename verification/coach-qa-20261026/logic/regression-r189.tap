@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: R189 arrest 队友倒地没有反应，只有叹息样呼吸
+ok 1 - R189 arrest 队友倒地没有反应，只有叹息样呼吸
+  ---
+  duration_ms: 9.691613
+  type: 'test'
+  ...
+# Subtest: R189 arrest 他跑完叫不醒，抽泣样呼吸
+ok 2 - R189 arrest 他跑完叫不醒，抽泣样呼吸
+  ---
+  duration_ms: 0.928007
+  type: 'test'
+  ...
+# Subtest: R189 arrest 队友倒地抽搐后没有反应
+ok 3 - R189 arrest 队友倒地抽搐后没有反应
+  ---
+  duration_ms: 0.572618
+  type: 'test'
+  ...
+# Subtest: R189 scoped nonactual 我现在没有胸痛，没有呼吸困难，没有晕倒
+ok 4 - R189 scoped nonactual 我现在没有胸痛，没有呼吸困难，没有晕倒
+  ---
+  duration_ms: 0.435811
+  type: 'test'
+  ...
+# Subtest: R189 scoped nonactual 假设队友没有反应也没有正常呼吸怎么办
+ok 5 - R189 scoped nonactual 假设队友没有反应也没有正常呼吸怎么办
+  ---
+  duration_ms: 0.424694
+  type: 'test'
+  ...
+# Subtest: R189 heat mild has cooling and explicit escalation
+ok 6 - R189 heat mild has cooling and explicit escalation
+  ---
+  duration_ms: 0.442642
+  type: 'test'
+  ...
+# Subtest: R189 cardiac warning is not cardiac arrest AED script
+ok 7 - R189 cardiac warning is not cardiac arrest AED script
+  ---
+  duration_ms: 0.497655
+  type: 'test'
+  ...
+# Subtest: R189 seconds 1:54.32
+ok 8 - R189 seconds 1:54.32
+  ---
+  duration_ms: 0.351303
+  type: 'test'
+  ...
+# Subtest: R189 seconds 2'03.125
+ok 9 - R189 seconds 2'03.125
+  ---
+  duration_ms: 0.300436
+  type: 'test'
+  ...
+# Subtest: R189 seconds 59.875
+ok 10 - R189 seconds 59.875
+  ---
+  duration_ms: 0.229548
+  type: 'test'
+  ...
+# Subtest: R189 seconds 1:60.1
+ok 11 - R189 seconds 1:60.1
+  ---
+  duration_ms: 0.146472
+  type: 'test'
+  ...
+# Subtest: R189 seconds 缺
+ok 12 - R189 seconds 缺
+  ---
+  duration_ms: 0.182096
+  type: 'test'
+  ...
+# Subtest: R189 count is not event and hundredths retained
+ok 13 - R189 count is not event and hundredths retained
+  ---
+  duration_ms: 36.544347
+  type: 'test'
+  ...
+# Subtest: R189 paired distance/time arrays do not turn meters into seconds
+ok 14 - R189 paired distance/time arrays do not turn meters into seconds
+  ---
+  duration_ms: 1.192969
+  type: 'test'
+  ...
+# Subtest: R189 mismatched arrays stay unresolved
+ok 15 - R189 mismatched arrays stay unresolved
+  ---
+  duration_ms: 0.820764
+  type: 'test'
+  ...
+# Subtest: R189 target values do not become actual times
+ok 16 - R189 target values do not become actual times
+  ---
+  duration_ms: 1.128411
+  type: 'test'
+  ...
+# Subtest: R189 exact two rounds retained
+ok 17 - R189 exact two rounds retained
+  ---
+  duration_ms: 0.374037
+  type: 'test'
+  ...
+# Subtest: R189 minute PB parses without inventing a completed session
+ok 18 - R189 minute PB parses without inventing a completed session
+  ---
+  duration_ms: 5.262048
+  type: 'test'
+  ...
+# Subtest: R189 cumulative splits derive exact unreported tail and never interpolate 600
+ok 19 - R189 cumulative splits derive exact unreported tail and never interpolate 600
+  ---
+  duration_ms: 0.464064
+  type: 'test'
+  ...
+# Subtest: R189 conflicting total is not silently preferred
+ok 20 - R189 conflicting total is not silently preferred
+  ---
+  duration_ms: 0.122075
+  type: 'test'
+  ...
+# Subtest: R189 cumulative report actually enters review text
+ok 21 - R189 cumulative report actually enters review text
+  ---
+  duration_ms: 28.062658
+  type: 'test'
+  ...
+# Subtest: R189 nominal proposals preserve raw, never auto apply
+ok 22 - R189 nominal proposals preserve raw, never auto apply
+  ---
+  duration_ms: 0.275287
+  type: 'test'
+  ...
+# Subtest: R189 free question does not bind prior training 明天怎么安排
+ok 23 - R189 free question does not bind prior training 明天怎么安排
+  ---
+  duration_ms: 0.093993
+  type: 'test'
+  ...
+# Subtest: R189 free question does not bind prior training 运动后为什么酸痛
+ok 24 - R189 free question does not bind prior training 运动后为什么酸痛
+  ---
+  duration_ms: 0.054202
+  type: 'test'
+  ...
+# Subtest: R189 free question does not bind prior training 我800米PB两分钟，怎么提高
+ok 25 - R189 free question does not bind prior training 我800米PB两分钟，怎么提高
+  ---
+  duration_ms: 0.048443
+  type: 'test'
+  ...
+# Subtest: R189 free question does not bind prior training 下周训练计划怎么安排
+ok 26 - R189 free question does not bind prior training 下周训练计划怎么安排
+  ---
+  duration_ms: 0.088193
+  type: 'test'
+  ...
+# Subtest: R189 free follow-up does not reuse stale chat course
+ok 27 - R189 free follow-up does not reuse stale chat course
+  ---
+  duration_ms: 10.448442
+  type: 'test'
+  ...
+# Subtest: R189 unknown purpose stays unknown even in a stage
+ok 28 - R189 unknown purpose stays unknown even in a stage
+  ---
+  duration_ms: 4.92095
+  type: 'test'
+  ...
+# Subtest: R189 supplied course purpose changes interpretation but not actual facts
+ok 29 - R189 supplied course purpose changes interpretation but not actual facts
+  ---
+  duration_ms: 10.727755
+  type: 'test'
+  ...
+# Subtest: R189 medical hold still dominates next-step observation
+ok 30 - R189 medical hold still dominates next-step observation
+  ---
+  duration_ms: 1.607027
+  type: 'test'
+  ...
+# Subtest: R189 chat UI scopes selected record only for explicit review
+ok 31 - R189 chat UI scopes selected record only for explicit review
+  ---
+  duration_ms: 0.562022
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 132.758332

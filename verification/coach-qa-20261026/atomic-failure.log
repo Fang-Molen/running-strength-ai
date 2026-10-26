@@ -1,0 +1,136 @@
+TAP version 13
+# Subtest: parseWriteAtomicArgs needs exactly a staged file and a target
+ok 1 - parseWriteAtomicArgs needs exactly a staged file and a target
+  ---
+  duration_ms: 2.239435
+  type: 'test'
+  ...
+# Subtest: stagingError refuses a temp inside public/ and a no-op move
+ok 2 - stagingError refuses a temp inside public/ and a no-op move
+  ---
+  duration_ms: 0.201876
+  type: 'test'
+  ...
+# Subtest: handOver replaces the target and clears the staged file
+ok 3 - handOver replaces the target and clears the staged file
+  ---
+  duration_ms: 0.48158
+  type: 'test'
+  ...
+# Subtest: handOver creates a missing target directory
+ok 4 - handOver creates a missing target directory
+  ---
+  duration_ms: 0.554941
+  type: 'test'
+  ...
+# Subtest: an interrupted pass leaves the target on its old bytes, temp-free
+ok 5 - an interrupted pass leaves the target on its old bytes, temp-free
+  ---
+  duration_ms: 0.675373
+  type: 'test'
+  ...
+# Subtest: a failed hand-over creates no directory for the target it never wrote
+ok 6 - a failed hand-over creates no directory for the target it never wrote
+  ---
+  duration_ms: 0.318113
+  type: 'test'
+  ...
+# Subtest: a staged file on another filesystem is refused, not copied
+ok 7 - a staged file on another filesystem is refused, not copied
+  ---
+  duration_ms: 0.341698
+  type: 'test'
+  ...
+# Subtest: cli: hands the file over, and refuses a temp staged in public/
+not ok 8 - cli: hands the file over, and refuses a temp staged in public/
+  ---
+  duration_ms: 59.455679
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/write-atomic.test.mjs:127:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /stage outside/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/write-atomic.test.mjs:147:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: relative paths follow the script's root, not the caller's cwd
+not ok 9 - cli: relative paths follow the script's root, not the caller's cwd
+  ---
+  duration_ms: 30.163062
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/write-atomic.test.mjs:151:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /stage outside/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/write-atomic.test.mjs:162:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: every hand-over the project contract prints is one this script accepts
+ok 10 - every hand-over the project contract prints is one this script accepts
+  ---
+  duration_ms: 0.990802
+  type: 'test'
+  ...
+# Subtest: cli: a missing staged file fails without touching the target
+not ok 11 - cli: a missing staged file fails without touching the target
+  ---
+  duration_ms: 33.146544
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/write-atomic.test.mjs:186:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /\[write-atomic\]/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/write-atomic.test.mjs:195:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 8
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 140.202118

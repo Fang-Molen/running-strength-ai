@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: current-message pain and dangerous symptoms gate every command before interception
+ok 1 - current-message pain and dangerous symptoms gate every command before interception
+  ---
+  duration_ms: 11.928072
+  type: 'test'
+  ...
+# Subtest: historical measurement correction cannot outrank a newer current profile measurement
+ok 2 - historical measurement correction cannot outrank a newer current profile measurement
+  ---
+  duration_ms: 48.874202
+  type: 'test'
+  ...
+# Subtest: undo of a symptom refuses subsequent health revisions
+ok 3 - undo of a symptom refuses subsequent health revisions
+  ---
+  duration_ms: 19.58497
+  type: 'test'
+  ...
+# Subtest: array profile patches and newly introduced optional fields restore absence on undo
+ok 4 - array profile patches and newly introduced optional fields restore absence on undo
+  ---
+  duration_ms: 20.407547
+  type: 'test'
+  ...
+# Subtest: legacy unowned body measurement is restored by a valid compensating projection
+ok 5 - legacy unowned body measurement is restored by a valid compensating projection
+  ---
+  duration_ms: 8.432494
+  type: 'test'
+  ...
+# Subtest: a note-only save never confirms UI defaults as minutes or weekly frequency
+ok 6 - a note-only save never confirms UI defaults as minutes or weekly frequency
+  ---
+  duration_ms: 21.136533
+  type: 'test'
+  ...
+# Subtest: local clause binding preserves current weight and exact requested weekday
+ok 7 - local clause binding preserves current weight and exact requested weekday
+  ---
+  duration_ms: 5.550864
+  type: 'test'
+  ...
+# Subtest: multiple supported profile fields are retained in one explicit diff
+ok 8 - multiple supported profile fields are retained in one explicit diff
+  ---
+  duration_ms: 5.096927
+  type: 'test'
+  ...
+# Subtest: week draft uses actual ceilings and becomes non-executable when the ceiling is unknown
+ok 9 - week draft uses actual ceilings and becomes non-executable when the ceiling is unknown
+  ---
+  duration_ms: 2.502594
+  type: 'test'
+  ...
+# Subtest: calendar receipts recover weekly accept and undo after journal failures
+ok 10 - calendar receipts recover weekly accept and undo after journal failures
+  ---
+  duration_ms: 34.111522
+  type: 'test'
+  ...
+# Subtest: ordinary undo receipts remain authoritative when the card journal cannot save
+ok 11 - ordinary undo receipts remain authoritative when the card journal cannot save
+  ---
+  duration_ms: 8.702002
+  type: 'test'
+  ...
+# Subtest: an in-flight online answer is rejected after a new profile restriction is confirmed
+ok 12 - an in-flight online answer is rejected after a new profile restriction is confirmed
+  ---
+  duration_ms: 388.402167
+  type: 'test'
+  ...
+# Subtest: online numbers matching another known metric do not establish factual source binding
+ok 13 - online numbers matching another known metric do not establish factual source binding
+  ---
+  duration_ms: 10.990051
+  type: 'test'
+  ...
+# Subtest: same-timestamp weekly regeneration surfaces the newest revised document
+ok 14 - same-timestamp weekly regeneration surfaces the newest revised document
+  ---
+  duration_ms: 12.55965
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 625.905392

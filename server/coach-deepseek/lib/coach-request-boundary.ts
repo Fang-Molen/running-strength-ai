@@ -64,13 +64,15 @@ export function minimalCoachInput(raw: AskCoachRawInput, question: string): AskC
     };
     const sources = new Map<string,NonNullable<CoachBrief['sources']>[number]>();
     const add = (id: string, kind: 'FACT'|'DERIVED'|'CONTEXT', detail: string) => { if (allowedSourceIds.has(id)) sources.set(id,{id,kind,detail}); };
-    if (b.occurrenceId) add(b.occurrenceId,'FACT','训练开始；服务端已核对所选训练归属');
+    const selfReported = b.sources.some(s => s.detail?.includes('用户申报'));
+    const provenance = selfReported ? '；用户申报，未验证设备或实验室来源' : '';
+    if (b.occurrenceId) add(b.occurrenceId,'FACT',`训练开始；服务端已核对所选训练归属${provenance}`);
     for (const s of b.sources ?? []) {
       if (s.kind !== 'FACT') continue;
       const m = s.detail?.match(/^(SESSION_RPE|SUBJECTIVE_RECOVERY|SLEEP|PAIN|SORENESS)\s[^:：]{0,40}[:：]\s*(\d+(?:\.\d+)?)(小时|\/10)/);
-      if (m && finite(Number(m[2]),0,m[1] === 'SLEEP' ? 24 : 10) !== null) add(s.id,'FACT',`${m[1]} 已记录：${Number(m[2])}${m[1] === 'SLEEP' ? '小时' : '/10'}；绑定本次训练，不是诊断`);
+      if (m && finite(Number(m[2]),0,m[1] === 'SLEEP' ? 24 : 10) !== null) add(s.id,'FACT',`${m[1]} 已记录：${Number(m[2])}${m[1] === 'SLEEP' ? '小时' : '/10'}；绑定本次训练，不是诊断${provenance}`);
     }
-    for (const s of running) for (const id of s.sourceEventIds) add(id,'FACT',`${s.kind} ${s.position}：${s.status}；实际 ${s.actual}`);
+    for (const s of running) for (const id of s.sourceEventIds) add(id,'FACT',`${s.kind} ${s.position}：${s.status}；实际 ${s.actual}${provenance}`);
     if (parts.daysToCompetition != null) add('context:competition','CONTEXT',`距比赛 ${parts.daysToCompetition} 天；原计划背景，不是实际训练事实`);
     if (parts.week !== null || parts.bias) add('context:cycle','CONTEXT',`第 ${parts.week ?? '?'} 周，${parts.bias ?? '未记录'}；原计划背景`);
     parts.sources = [...sources.values()]; parts.sourceIds = parts.sources.map(s => s.id);

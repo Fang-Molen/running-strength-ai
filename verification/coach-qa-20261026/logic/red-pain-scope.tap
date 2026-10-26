@@ -1,0 +1,208 @@
+TAP version 13
+# Subtest: colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？
+ok 1 - colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？
+  ---
+  duration_ms: 36.282172
+  type: 'test'
+  ...
+# Subtest: colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？
+ok 2 - colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？
+  ---
+  duration_ms: 5.951903
+  type: 'test'
+  ...
+# Subtest: colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？
+ok 3 - colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？
+  ---
+  duration_ms: 2.307888
+  type: 'test'
+  ...
+# Subtest: colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？
+ok 4 - colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？
+  ---
+  duration_ms: 29.533861
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。
+ok 5 - denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。
+  ---
+  duration_ms: 0.280305
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。
+ok 6 - denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。
+  ---
+  duration_ms: 0.155165
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？
+ok 7 - denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？
+  ---
+  duration_ms: 0.247846
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。
+ok 8 - denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。
+  ---
+  duration_ms: 0.207545
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。
+ok 9 - denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。
+  ---
+  duration_ms: 0.169708
+  type: 'test'
+  ...
+# Subtest: historical pain remains history and current pain after a turn remains current
+ok 10 - historical pain remains history and current pain after a turn remains current
+  ---
+  duration_ms: 0.495451
+  type: 'test'
+  ...
+# Subtest: body-part pain negation is scoped through body and lists: 现在跟腱不疼。
+not ok 11 - body-part pain negation is scoped through body and lists: 现在跟腱不疼。
+  ---
+  duration_ms: 0.996831
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:40:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'MEDICAL_REVIEW'
+    - 'NONE'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'NONE'
+  actual: 'MEDICAL_REVIEW'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:41:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: body-part pain negation is scoped through body and lists: 现在膝盖没有痛。
+not ok 12 - body-part pain negation is scoped through body and lists: 现在膝盖没有痛。
+  ---
+  duration_ms: 0.286214
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:40:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'MEDICAL_REVIEW'
+    - 'NONE'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'NONE'
+  actual: 'MEDICAL_REVIEW'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:41:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: body-part pain negation is scoped through body and lists: 没有腿疼、膝盖疼。
+not ok 13 - body-part pain negation is scoped through body and lists: 没有腿疼、膝盖疼。
+  ---
+  duration_ms: 0.433607
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:40:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'MEDICAL_REVIEW'
+    - 'NONE'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'NONE'
+  actual: 'MEDICAL_REVIEW'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:41:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: double-negative pain report cannot clear the pain boundary
+not ok 14 - double-negative pain report cannot clear the pain boundary
+  ---
+  duration_ms: 0.288508
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:43:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'NONE'
+    - 'MEDICAL_REVIEW'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'MEDICAL_REVIEW'
+  actual: 'NONE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:44:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: a resolved recent report is historical, while a later pain assertion stays current
+not ok 15 - a resolved recent report is historical, while a later pain assertion stays current
+  ---
+  duration_ms: 0.25757
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:48:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 10
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 98.503326

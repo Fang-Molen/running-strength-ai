@@ -66,8 +66,16 @@ test('content inventory distinguishes unavailable variants, legacy licenses and 
   assert.equal(exerciseContent('goblet')!.provenance.license,'历史许可未核清');
 });
 test('shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls',()=>{
-  const html=renderToString(<ExerciseContent catalogId="hammer"/>);assert.match(html,/怎么做/);assert.match(html,/准备/);assert.match(html,/动作要领尚待逐条专业审校/);assert.match(html,/新版动作演示区域/);assert.match(html,/未验收时显示今晚角色外观参考/);assert.doesNotMatch(html,/<iframe|(?:src|href)="https?:|加入今天训练|保存训练/);
-  assert.match(renderToString(<ExerciseContent catalogId="bb-bench"/>),/常见错误/);assert.equal(exerciseContent(null),null);
+  const writes:string[]=[];setStoreBackend({getItem:()=>null,setItem:key=>{writes.push(key)}});
+  try {
+    const html=renderToString(<ExerciseContent catalogId="hammer"/>);
+    assert.match(html,/动作步骤/);assert.match(html,/<ol[^>]*>.*<li>站直，双脚与髋同宽<\/li>/);
+    assert.match(html,/注意事项/);assert.match(html,/肘外侧不适减轻重量/);
+    assert.match(html,/新版动作演示区域/);assert.match(html,/<canvas aria-label="可点选的独立肌肉3D模型"/);
+    assert.doesNotMatch(html,/<iframe|(?:src|href)="https?:|加入今天训练|保存训练/);
+    assert.match(renderToString(<ExerciseContent catalogId="bb-bench"/>),/呼吸与易错点/);assert.equal(exerciseContent(null),null);
+    assert.deepEqual(writes,[]);
+  } finally {setStoreBackend(null)}
 });
 test('blank input, zero repetitions and invalid count never confirm a set; zero weight remains explicit',()=>{
   for(const [w,a] of [['','8'],['0',''],['0','0'],['-1','8'],['0','2.5']])assert.equal(runnerInput(w!,a!,'reps'),null);

@@ -1,0 +1,49 @@
+TAP version 13
+# Subtest: every block passes its import boundary and lists existing tests
+ok 1 - every block passes its import boundary and lists existing tests
+  ---
+  duration_ms: 10.067001
+  type: 'test'
+  ...
+# Subtest: plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断)
+ok 2 - plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断)
+  ---
+  duration_ms: 0.306144
+  type: 'test'
+  ...
+# Subtest: online coach stays default ON and client cap equals trusted server rejection limit
+not ok 3 - online coach stays default ON and client cap equals trusted server rejection limit
+  ---
+  duration_ms: 2160.89439
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/check-blocks.test.mjs:19:1'
+  failureType: 'testCodeFailure'
+  error: 'spawnSync /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node EPERM'
+  code: 'EPERM'
+  stack: |-
+    Object.spawnSync (node:internal/child_process:1160:20)
+    spawnSync (node:child_process:928:24)
+    execFileSync (node:child_process:971:15)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/check-blocks.test.mjs:21:29)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: knowledge complete package stays PENDING with zero production approvals (no self-approval)
+ok 4 - knowledge complete package stays PENDING with zero production approvals (no self-approval)
+  ---
+  duration_ms: 0.816748
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 3
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2180.164231

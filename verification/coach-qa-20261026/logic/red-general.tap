@@ -1,0 +1,204 @@
+TAP version 13
+# Subtest: 无个人记录也能解释：为什么力量训练能帮助跑步？
+ok 1 - 无个人记录也能解释：为什么力量训练能帮助跑步？
+  ---
+  duration_ms: 24.730939
+  type: 'test'
+  ...
+# Subtest: 无个人记录也能解释：间歇跑组间休息长短有什么区别？
+ok 2 - 无个人记录也能解释：间歇跑组间休息长短有什么区别？
+  ---
+  duration_ms: 3.730555
+  type: 'test'
+  ...
+# Subtest: 无个人记录也能解释：什么是轻松跑？
+ok 3 - 无个人记录也能解释：什么是轻松跑？
+  ---
+  duration_ms: 1.974563
+  type: 'test'
+  ...
+# Subtest: 个人处方和危险症状不走一般知识捷径
+ok 4 - 个人处方和危险症状不走一般知识捷径
+  ---
+  duration_ms: 24.940593
+  type: 'test'
+  ...
+# Subtest: 轻松跑教学解释目的、交谈强度和停止条件，并保留现有来源
+not ok 5 - 轻松跑教学解释目的、交谈强度和停止条件，并保留现有来源
+  ---
+  duration_ms: 2.250641
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:35:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /低强度|轻松活动/. Input:
+    
+    '轻松跑优先看是否轻松可控，不为追配速增加负担。\n\n以上是一般训练知识，不代表已经评估你的个人能力，也没有修改计划。'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    轻松跑优先看是否轻松可控，不为追配速增加负担。
+    
+    以上是一般训练知识，不代表已经评估你的个人能力，也没有修改计划。
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:40:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 礼貌教学请求不等于个人处方：请给我解释轻松跑是什么。
+not ok 6 - 礼貌教学请求不等于个人处方：请给我解释轻松跑是什么。
+  ---
+  duration_ms: 32.329794
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:51:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'GENERAL_EDUCATION'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'GENERAL_EDUCATION'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:55:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 礼貌教学请求不等于个人处方：我想了解间歇跑组间休息的原理。
+not ok 7 - 礼貌教学请求不等于个人处方：我想了解间歇跑组间休息的原理。
+  ---
+  duration_ms: 1.935764
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:51:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'GENERAL_EDUCATION'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'GENERAL_EDUCATION'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:55:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 含个人经历的原因问题不转成一般教学：昨天间歇跑为什么掉速？
+not ok 8 - 含个人经历的原因问题不转成一般教学：昨天间歇跑为什么掉速？
+  ---
+  duration_ms: 1.050963
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:65:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected "actual" to be strictly unequal to:
+    
+    'GENERAL_EDUCATION'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'GENERAL_EDUCATION'
+  actual: 'GENERAL_EDUCATION'
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:68:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 含个人经历的原因问题不转成一般教学：最近深蹲提高了，为什么跑步反而变慢？
+not ok 9 - 含个人经历的原因问题不转成一般教学：最近深蹲提高了，为什么跑步反而变慢？
+  ---
+  duration_ms: 0.746411
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:65:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected "actual" to be strictly unequal to:
+    
+    'GENERAL_EDUCATION'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'GENERAL_EDUCATION'
+  actual: 'GENERAL_EDUCATION'
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:68:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 含个人经历的原因问题不转成一般教学：这次轻松跑为什么心率这么高？
+not ok 10 - 含个人经历的原因问题不转成一般教学：这次轻松跑为什么心率这么高？
+  ---
+  duration_ms: 0.917651
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:65:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected "actual" to be strictly unequal to:
+    
+    'GENERAL_EDUCATION'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'GENERAL_EDUCATION'
+  actual: 'GENERAL_EDUCATION'
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-general-question.test.ts:68:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 含个人经历的原因问题不转成一般教学：为什么我的力量训练没有帮助跑步？
+ok 11 - 含个人经历的原因问题不转成一般教学：为什么我的力量训练没有帮助跑步？
+  ---
+  duration_ms: 1.14129
+  type: 'test'
+  ...
+# Subtest: 含个人经历的原因问题不转成一般教学：请给我解释昨天间歇跑为什么掉速。
+ok 12 - 含个人经历的原因问题不转成一般教学：请给我解释昨天间歇跑为什么掉速。
+  ---
+  duration_ms: 4.535356
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 6
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 115.278741

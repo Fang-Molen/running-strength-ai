@@ -1,3 +1,4 @@
+import { generalKnowledgeAnswer } from './coach-general-question'
 import { readAnalysis } from '../health/analysis-host'
 import { historySummary, isHistoryQuestion } from '../coach/assessment/history'
 import { sleepHoursText } from '../health/observation'
@@ -42,7 +43,7 @@ export type LocalCoachAnswer = {
   /** v87：本回答用到的“经受信回执批准”的知识卡（含版本与内容哈希）；随消息保存，知识变化后据此复核。 */
   knowledgeUses?: CompleteKnowledgeUse[];
   /** v87：只在本地展示的回答（待审资料预览、单纯换算、无候选的剩余任务）。联网方坤不替换、不发送。 */
-  localOnly?: 'HISTORY_ASSESSMENT'|'APPROVED_KNOWLEDGE_EDUCATION'|'KNOWLEDGE_PREVIEW'|'DIRECT_CALCULATION'|'REMAINING_WORK_NO_CANDIDATE';
+  localOnly?: 'GENERAL_EDUCATION'|'HISTORY_ASSESSMENT'|'APPROVED_KNOWLEDGE_EDUCATION'|'KNOWLEDGE_PREVIEW'|'DIRECT_CALCULATION'|'REMAINING_WORK_NO_CANDIDATE';
   c03?: { brief: C03MetricBrief; review: ReturnType<typeof buildC03ObservationReview> };
   expression?: { version: 'E1'; coverage: 'CONFIRMED_RECORD_INSPECTION_ONLY'; sourceRevision: string };
   dialogue?: CoachDialogue;
@@ -309,6 +310,8 @@ export function answerLocally(brief:CoachBrief,logic?:{frame:ReasoningFrame;snap
  }
  const education=previewSafe?answerApprovedKnowledgeEducation(brief.question,logic?.snapshot.asOf):null
  if(education)return {text:education.text,knowledgeUses:education.uses,localOnly:'APPROVED_KNOWLEDGE_EDUCATION',dialogue,sources:[],candidate:null,escalationAvailable:false}
+ const general=previewSafe?generalKnowledgeAnswer(brief.question):null
+ if(general)return {text:general.text,localOnly:'GENERAL_EDUCATION',dialogue,sources:general.sources,candidate:null,escalationAvailable:false}
  return answerLocallyStated(brief,logic,memory,periodReview,dialogue,red)
 }
 function answerLocallyStated(brief:CoachBrief,logic:{frame:ReasoningFrame;snapshot:EvolutionSnapshot}|undefined,memory:readonly CoachContextMemory[],periodReview:PeriodReview|undefined,dialogue:CoachDialogue|undefined,red:ReturnType<typeof detectRedFlags>):LocalCoachAnswer{

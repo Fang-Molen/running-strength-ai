@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-10-26",
+  "method": "GET_ONLY_NO_MODEL_CALLS",
+  "endpoints": [
+    {
+      "path": "/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "server": "envoy",
+      "etag": null,
+      "title": "方坤 测试版"
+    },
+    {
+      "path": "/sw.js",
+      "status": 200,
+      "contentType": "application/javascript",
+      "server": "envoy",
+      "etag": "\"e2371e13c59823c85a1fc6efb8382911\"",
+      "title": null,
+      "versionLines": [
+        "const CACHE = \"fr255-shell-v89-11-1\"",
+        "const DEMO_CACHE=\"fk-demo3d-v74-paired\"",
+        "const CACHE_PREFIX = \"fr255-shell-\"",
+        "  return key.startsWith(CACHE_PREFIX)"
+      ]
+    },
+    {
+      "path": "/api/coach-chat",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "server": "envoy",
+      "etag": null,
+      "title": "方坤 测试版"
+    },
+    {
+      "path": "/api/auth/get-session",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "server": "envoy",
+      "etag": null,
+      "title": "方坤 测试版"
+    }
+  ]
+}

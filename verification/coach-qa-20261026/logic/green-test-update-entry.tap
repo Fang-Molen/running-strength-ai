@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: real offline message entry renders a bounded research preview with no formal candidate
+ok 1 - real offline message entry renders a bounded research preview with no formal candidate
+  ---
+  duration_ms: 24.67837
+  type: 'test'
+  ...
+# Subtest: HRV research preview lists pending cards with sources and stays local
+ok 2 - HRV research preview lists pending cards with sources and stays local
+  ---
+  duration_ms: 26.017901
+  type: 'test'
+  ...
+# Subtest: ordinary explanation carries no pending application text; production retrieval yields zero approved uses
+ok 3 - ordinary explanation carries no pending application text; production retrieval yields zero approved uses
+  ---
+  duration_ms: 14.083129
+  type: 'test'
+  ...
+# Subtest: JSON labels claiming APPROVED cannot self-approve: every card stays PENDING and not production eligible
+ok 4 - JSON labels claiming APPROVED cannot self-approve: every card stays PENDING and not production eligible
+  ---
+  duration_ms: 1.532453
+  type: 'test'
+  ...
+# Subtest: sufficient arithmetic stays short and works without personal health data
+ok 5 - sufficient arithmetic stays short and works without personal health data
+  ---
+  duration_ms: 3.125248
+  type: 'test'
+  ...
+# Subtest: research preview and plain conversion use a zero-budget local route even when complexity is requested
+ok 6 - research preview and plain conversion use a zero-budget local route even when complexity is requested
+  ---
+  duration_ms: 0.944912
+  type: 'test'
+  ...
+# Subtest: current emergency retains priority over a research preview request
+ok 7 - current emergency retains priority over a research preview request
+  ---
+  duration_ms: 8.138106
+  type: 'test'
+  ...
+# Subtest: negated emergency words do not block a preview (v86 negation handling kept)
+ok 8 - negated emergency words do not block a preview (v86 negation handling kept)
+  ---
+  duration_ms: 3.630914
+  type: 'test'
+  ...
+# Subtest: new knowledge does not authorize a dose when the host has no approved remaining-work candidates
+ok 9 - new knowledge does not authorize a dose when the host has no approved remaining-work candidates
+  ---
+  duration_ms: 1.58322
+  type: 'test'
+  ...
+# Subtest: online explanation begins with review and cannot upload without per-turn consent
+ok 10 - online explanation begins with review and cannot upload without per-turn consent
+  ---
+  duration_ms: 11.277987
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 105.707261

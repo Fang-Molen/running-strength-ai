@@ -1,3 +1,4 @@
+import { readCoachResponse } from './online-service'
 import { historySummary, isHistoryQuestion } from './assessment/history'
 import { readCycleGoal } from './cycle/host'
 import { loadEntries as readNutritionSourceForFreshness } from '../nutrition/log'
@@ -191,7 +192,7 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
   // These are opaque lookup references, never credentials. Only the existing
   // server resolver can verify their subject, consent, scope and expiry.
   const id = /^[A-Za-z0-9_.:/-]{1,120}$/
-  if (!ref || !id.test(ref.snapshotId) || !id.test(ref.consentId) || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(ref.asOf) || !Number.isFinite(Date.parse(ref.asOf)) || Date.parse(ref.asOf) > Date.now()) return { error: '当前没有可核验的联网分析授权，已保留本地回答；没有上传记录' }
+  if (!ref || !id.test(ref.snapshotId) || !id.test(ref.consentId) || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(ref.asOf) || !Number.isFinite(Date.parse(ref.asOf)) || Date.parse(ref.asOf) > Date.now()) return { error: '个人资料的服务端授权快照尚未建立或已失效，已保留本地回答；没有上传记录' }
   const payload = { question: q, requestId: crypto.randomUUID(), snapshotId: ref.snapshotId, consentId: ref.consentId, asOf: ref.asOf }
   if (new TextEncoder().encode(JSON.stringify(payload)).length > 4096) return { error: '问题超过发送上限，已保留本地回答；没有上传记录' }
   const ownerAtRequest=currentAthleteId(), cutoff=ref.asOf, analysisDayAtRequest=analysisDay(q,null,localDayOf(cutoff))
@@ -202,8 +203,8 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
   const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms)
   try {
     const r = await fetch('/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), signal: ac.signal })
-    const j = await r.json().catch(() => ({}))
-    if(!r.ok||j.ok!==true||j.planChanged!==false||typeof j.text!=='string'||!j.text.trim()||j.text.length>1000)return {error:'联网回答未通过服务端核验，已保留本地回答'}
+    const j = await readCoachResponse(r)
+    if ('error' in j) return j
     if(currentAthleteId()!==ownerAtRequest)return {error:'身份已变化，未显示其他账号的模型回答'}
     const latest=readAnalysis(analysisDayAtRequest,new Date().toISOString(),q)
     if(latest.revision!==verified.revision||contextAtRequest!==contextVersion())return {error:'模型等待期间训练或安全依据已变化，已保留本地回答'}

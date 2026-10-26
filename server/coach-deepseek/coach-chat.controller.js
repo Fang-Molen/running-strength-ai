@@ -1,3 +1,4 @@
+import { trustedBindingsPresent } from './coach-status.js';
 import { normalizeAskCoachInput, buildCoachModelRequest, interpretCoachModelOutput, coachLocalSafetyTurn } from '../../src/lib/strength/coach-pipeline.ts';
 import { MODEL_DEV_USER_ID } from '../../src/lib/strength/model-access.ts';
 import { assertDeepSeekNumericGrounding, assertDeepSeekEvidenceQuotes } from '../../src/lib/coach/deepseek-grounding.ts';
@@ -7,6 +8,8 @@ import { providerReturnedModel, parseProviderUsage, validateProviderReply, bound
 import { r6ScientificModelView } from './lib/coach-r6-handoff.ts';
 import { composeVerifiedAnalysisAnswer } from '../../src/lib/health/analysis-reply-validation.ts';
 import { validateCoachAnalysisReply, analysisModelView, bindAnalysisPacketQuestion, assertCoachAnalysisPacketIntegrity } from '../../src/lib/health/analysis-packet.ts';
+import { parseCoachDeclarations, declarationCoachInput } from './lib/coach-declarations.ts';
+import { COACH_DISCLOSURE_VERSION, declarationQuote } from './lib/coach-declaration-contract.ts';
 
 /** @param {unknown} value @param {number} [status] */
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'} });
@@ -25,7 +28,7 @@ const failure = (code,status=503) => json({ok:false,error:code,text:'联网解�
 export async function onRequestPost({request,env={},data={}}) {
   const services = data.fangkunCoachServices;
   if (env.FANGKUN_DEEPSEEK_ENABLED !== 'true') return failure('SERVICE_DISABLED');
-  if (!services || typeof services.authenticate !== 'function' || typeof services.loadAuthorizedSnapshot !== 'function' || typeof services.getVerifiedPolicy !== 'function' || !services.ledger || typeof services.ledger.reserve !== 'function' || typeof services.ledger.markDispatched !== 'function' || typeof services.ledger.settle !== 'function') return failure('TRUSTED_BINDINGS_MISSING');
+  if (!services || !trustedBindingsPresent(services)) return failure('TRUSTED_BINDINGS_MISSING');
   const now = services.now?.() ?? Date.now();
   let subject;
   try { subject=await services.authenticate(request); } catch { return failure('AUTH_UNAVAILABLE'); }
@@ -47,7 +50,10 @@ export async function onRequestPost({request,env={},data={}}) {
     assertSnapshotBinding(loaded,subject,refs,now);
     if(!loaded)throw Error('SNAPSHOT_MISSING');
     snapshot=loaded;
-    canonical=normalizeAskCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
+    const prepared=snapshot.provenance==='USER_DECLARED'
+      ? declarationCoachInput(parseCoachDeclarations({question:refs.question,declarations:snapshot.declarations,consent:{purpose:'coach_explanation',disclosureVersion:COACH_DISCLOSURE_VERSION}},Date.parse(snapshot.asOf)))
+      : minimalCoachInput(snapshot.rawInput,refs.question);
+    canonical=normalizeAskCoachInput(prepared);
     const urgentSafety=coachLocalSafetyTurn(canonical);
     if(urgentSafety)return json({ok:true,text:urgentSafety.text,turn:urgentSafety,model:null,route:'LOCAL',planChanged:false});
     // Trusted snapshots can contain a stronger cross-domain gate than pain alone.
@@ -66,8 +72,15 @@ export async function onRequestPost({request,env={},data={}}) {
     if(route.kind==='LOCAL')return json({ok:true,route:'LOCAL',model:null,text:'请查看本地训练复盘中的已核对事实；当前问题由本地计算处理。',planChanged:false});
     policy=await services.getVerifiedPolicy(); assertVerifiedPolicy(policy,now);
     if(typeof env.DEEPSEEK_API_KEY!=='string'||!env.DEEPSEEK_API_KEY.trim())return failure('SERVICE_KEY_MISSING');
-    aliased=aliasCoachInput(minimalCoachInput(snapshot.rawInput,refs.question));
+    aliased=aliasCoachInput(prepared);
     modelRequest=buildCoachModelRequest(normalizeAskCoachInput(aliased.input),{profile:'minimal-transport'});
+    if(snapshot.provenance==='USER_DECLARED') {
+      // Scalar declarations carry neither sport nor completed-workout counts.
+      // Do not expose the legacy brief's empty structural counters as history.
+      modelRequest.messages[1].content=JSON.stringify({question:refs.question,provenance:'USER_DECLARED',facts:aliased.input.brief.sources,
+        safety:{pain:canonical.brief.pain,soreness:canonical.brief.soreness,increaseBlocked:canonical.brief.constraints.increaseBlocked},
+        unknowns:['运动项目','训练开始与完成','分段结构','实际训练数量'],writeAuthority:'NONE'});
+    }
     if(snapshot.analysisPacket){
       const packet=bindAnalysisPacketQuestion(snapshot.analysisPacket,refs.question);
       assertCoachAnalysisPacketIntegrity(packet);
@@ -79,6 +92,7 @@ export async function onRequestPost({request,env={},data={}}) {
     }
   } catch { return failure('AUTHORIZED_CONTEXT_UNAVAILABLE'); }
   if(!snapshot.analysisPacket) modelRequest.messages[0].content += '\n所有数字必须逐字引用一条实际/派生证据；增加 evidenceQuotes 数组，每项仅含 sourceId 和 quote，quote 必须是该证据的完整原文且完整出现在正文中，不能只截取数字或单位；非引用部分不输出新数字。给出竞争解释、缺失信息和有条件的观察建议，不作医学签审。';
+  if(snapshot.provenance==='USER_DECLARED') modelRequest.messages[0].content += '\n本次事实均为用户明确申报的独立标量，服务器仅核对身份、归属、版本与单位，并未验证设备或实验室原始记录。不能描述成设备、实验室或医疗来源已核验。标量不是训练开始或完成证据，不推定运动项目、连续跑、分段、完成数量或训练趋势。sources中完整原句可引用；除此之外只写不含新数字的有条件解释。';
   const authorizationStillValid=async()=>{
     const currentSubject=await services.authenticate(request);
     if(!currentSubject||currentSubject.id!==subject.id||!currentSubject.verified)throw Error('REVOKED');
@@ -141,9 +155,34 @@ export async function onRequestPost({request,env={},data={}}) {
     await authorizationStillValid();
     assertDeepSeekEvidenceQuotes(canonical,restored);
     assertDeepSeekNumericGrounding(canonical,restored);
-    const parsed=JSON.parse(restored);delete parsed.evidenceQuotes;
+    const parsed=JSON.parse(restored);
+    /** @type {string[]} */
+    let declaredFacts=[];
+    if(snapshot.provenance==='USER_DECLARED') {
+      const allowed=new Set((snapshot.declarations??[]).map(declarationQuote));
+      const claims=parsed.evidenceQuotes??[];
+      if(claims.some(/** @param {{quote:string}} claim */ claim=>!allowed.has(claim.quote)))throw Error('DECLARATION_QUOTE_MISMATCH');
+      declaredFacts=[...new Set(/** @type {string[]} */ (claims.map(/** @param {{quote:string}} claim */ claim=>claim.quote)))];
+      // Numeric/source checks above cover the whole original reply. The legacy
+      // workout-only prose guard cannot interpret scalar facts as a workout;
+      // remove only exact verified sentences, then the host reattaches them.
+      for(const quote of declaredFacts) {
+        parsed.text=parsed.text.split(quote).join('');
+        if(typeof parsed.nextStep==='string')parsed.nextStep=parsed.nextStep.split(quote).join('');
+      }
+      if(!parsed.text.trim())parsed.text='这些申报资料尚不能单独确认恢复状态或批准加量。';
+      if(typeof parsed.nextStep==='string'&&!parsed.nextStep.trim())parsed.nextStep=null;
+    }
+    delete parsed.evidenceQuotes;
     interpreted=interpretCoachModelOutput(canonical,JSON.stringify(parsed));
     if(interpreted.turn.mode==='unavailable'||interpreted.turn.planChanged!==false||interpreted.turn.text.length>1000)throw new Error('OUTPUT_GUARD');
+    if(snapshot.provenance==='USER_DECLARED') {
+      const promoted=String(parsed.text).split(/[。；，,\n]|但是|然而|不过|但|却/).some(clause=>!/(?:未|没有|不能|无法|尚未|并未).{0,8}(?:核验|验证|证实)/.test(clause)&&/(?:设备|实验室|医疗|手表|Garmin|COROS).{0,8}(?:已核验|已验证|证实)|(?:已核验|已验证).{0,8}(?:设备|实验室|医疗|手表|Garmin|COROS)/i.test(clause));
+      if(promoted)throw new Error('SOURCE_VERIFICATION_OVERCLAIM');
+      const disclosure=snapshot.declarations?.length?'本次资料为用户申报，未核验设备或实验室原始记录。':'本次未提供个人记录，以下解释不代表个人评估。';
+      interpreted.turn={...interpreted.turn,text:[disclosure,...declaredFacts,interpreted.turn.text].join('\n')};
+      if(interpreted.turn.text.length>1000)throw new Error('ANSWER_LIMIT_EXCEEDED');
+    }
   } catch {return failure('OUTPUT_REJECTED',502);}
   return json({ok:true,text:interpreted.turn.text,turn:interpreted.turn,compareIds:interpreted.compareIds,seriesIds:interpreted.seriesIds,route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false});
 }

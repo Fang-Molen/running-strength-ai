@@ -147,7 +147,7 @@ function authPopupPlugin(): Plugin {
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
-export default defineConfig(({ command, isPreview }) => ({
+export default defineConfig(({ command, isPreview, mode }) => ({
   server: {
     host: "0.0.0.0",
     port: 8080,
@@ -161,7 +161,7 @@ export default defineConfig(({ command, isPreview }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
     // Compatibility for the locked Nitro beta's static-preset final build stage.
-    ...(command === "build" ? [staticNitroBuildCompat()] : []),
+    ...(command === "build" && mode !== "server" ? [staticNitroBuildCompat()] : []),
     pgliteBootstrapPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
@@ -174,7 +174,8 @@ export default defineConfig(({ command, isPreview }) => ({
     ...(command === "build" || isPreview
       ? [
           nitro({
-            preset: "static",
+            // Explicit opt-in: static Pages output has no TanStack server API runtime.
+            preset: mode === "server" ? "node-server" : "static",
             serverDir: "./server",
             rolldownConfig: { plugins: [nitroPwaBundle()] },
             vercel: { functions: { maxDuration: 60 } },

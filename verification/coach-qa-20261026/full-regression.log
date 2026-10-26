@@ -1,0 +1,53 @@
+
+> test
+> node --test --test-concurrency=3 'scripts/**/*.test.mjs' && node --experimental-strip-types --test --test-concurrency=3 src/lib/body/scale-parse.test.ts src/lib/ui/decimal.test.ts src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts && node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/core.test.ts src/lib/coach/stated/stated.test.ts src/lib/coach/stated/r11-behavior.test.ts src/lib/coach/online-facts-v86.test.ts src/lib/coach/online-facts-linkage.test.ts src/lib/coach/online-chat-transport.test.ts src/lib/coach/online-nutrition-facts.test.ts src/lib/coach/online-training-facts.test.ts src/lib/coach/online-recovery-facts.test.ts src/lib/coach/stated/direct-v87.test.ts src/lib/coach/knowledge/complete.test.ts src/lib/coach/knowledge/entry.test.ts src/lib/coach/knowledge/approval.test.ts src/lib/coach/knowledge/approval-integrity.test.ts src/lib/coach/knowledge/scope.test.ts src/lib/coach/plan-execution/loop-v87.test.ts src/lib/ui/schedule-writer.test.ts src/lib/coach/review-view/review-view.test.ts src/components/coach-review-plain.test.tsx src/lib/core/canonical.test.ts src/lib/core/occurrence.test.ts src/lib/core/training-fact.test.ts src/lib/core/fact-read.test.ts src/lib/core/training-summary.test.ts src/lib/core/evidence.test.ts src/lib/core/performance-evidence.test.ts src/lib/core/recovery-evidence.test.ts src/lib/core/evidence-profile.test.ts src/lib/core/evidence-interpretation.test.ts src/lib/core/evidence-inference.test.ts src/lib/core/evidence-fatigue.test.ts src/lib/core/evidence-recovery.test.ts src/lib/core/evidence-musculoskeletal.test.ts src/lib/core/evidence-bundle.test.ts src/lib/core/evidence-provenance.test.ts src/lib/core/evidence-availability.test.ts src/lib/core/evidence-consistency.test.ts src/lib/core/historical-occurrences.test.ts src/lib/core/historical-facts.test.ts src/lib/core/historical-availability.test.ts src/lib/core/historical-evidence.test.ts src/lib/core/import-history.test.ts src/lib/core/running-plan.test.ts src/lib/core/running-execution.test.ts src/lib/core/running-execution-rest.test.ts src/lib/core/coach-brief.test.ts src/lib/core/coach-model-packet.test.ts src/lib/core/coach-output-budget.test.ts src/lib/core/coach-stream.test.ts src/lib/core/coach-open.test.ts src/lib/core/coach-fuel.test.ts src/lib/core/coach-compare.test.ts src/lib/core/coach-series.test.ts src/lib/core/coach-return.test.ts src/lib/core/coach-next-session.test.ts src/lib/core/hydration.test.tsx src/lib/core/training-decision.test.ts src/lib/core/fk-r4-p0.test.ts src/lib/core/training-correction.test.ts src/lib/core/training-correction-projection.test.ts src/lib/core/coach-view.test.tsx src/lib/core/brain-loop.test.ts src/lib/core/training-import.test.ts src/lib/core/import-retention.test.ts src/lib/core/training-coach.test.ts src/lib/core/training-model.test.ts src/lib/core/coach-plan.test.ts src/lib/core/coach-competency.test.ts src/lib/core/coach-plan-display.test.tsx src/lib/core/training-followup.test.ts src/lib/core/training-followup-display.test.tsx src/lib/core/coach-knowledge.test.ts src/lib/core/coach-knowledge-display.test.tsx src/lib/core/import-completeness.test.ts src/lib/core/running-observation.test.ts src/lib/core/running-round-analysis.test.ts src/lib/core/trial.test.ts src/lib/ui/training-log-view.test.ts src/lib/ui/pending-feedback.test.ts src/lib/ui/v79-1.test.ts src/lib/ui/makeup.test.ts src/lib/health/personal-stats-host.test.ts src/lib/ui/combo-parts-v88.test.ts src/lib/ui/v4-effective-move.test.mjs src/lib/ui/v4-effective-move-ui.test.mjs src/lib/ui/v4-effective-pending.test.ts verification/u09/personal-uncertainty.test.mjs src/lib/ui/sport-goal.test.ts src/lib/ui/running-workouts.test.ts src/lib/ui/sw-reload.test.ts src/lib/strength/model-access.test.ts src/lib/strength/persist.test.ts src/lib/strength/session-builder.test.tsx src/lib/nutrition/vitals.test.ts && npm run test:cognition && npm run test:v4 && npm run test:r188 && npm run test:r189 && npm run test:health-v74 && npm run test:live-kept && npm run test:k20 && npm run test:ui-v69 && npm run test:v84 && npm run test:ui-r5 && npm run test:v88-2 && npm run test:coach-loop && npm run test:r5 && npm run test:cycle
+
+✔ scripts/anatomy-model.test.mjs (990.627019ms)
+✔ scripts/anatomy-r9.test.mjs (574.947302ms)
+✖ scripts/brand-check.test.mjs (729.629177ms)
+✔ scripts/browser-smoke-verdict.test.mjs (133.17301ms)
+✖ scripts/check-auth-invariant.test.mjs (199.938553ms)
+✖ scripts/check-blocks.test.mjs (4259.522119ms)
+✔ scripts/clean-build-output.test.mjs (107.358262ms)
+✔ scripts/grok-pwa-plugin.test.mjs (150.345156ms)
+✔ scripts/migration-plan.test.mjs (116.10326ms)
+✔ scripts/muscle3d-friendly.test.mjs (1457.962829ms)
+✔ scripts/nitro-pwa-bundle.test.mjs (112.879186ms)
+✔ scripts/preview-zombie.test.mjs (101.789847ms)
+✔ scripts/preview.test.mjs (111.184362ms)
+✔ scripts/sign-out-plan.test.mjs (185.959683ms)
+✔ scripts/sw-archive-safety.test.mjs (160.174417ms)
+✔ scripts/sw-cache-integrity.test.mjs (119.146271ms)
+✔ scripts/sw-migration.test.mjs (248.881916ms)
+✖ scripts/with-app-env.test.mjs (1018.304195ms)
+✖ scripts/write-atomic.test.mjs (434.433265ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 14
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5014.215991
+
+✖ failing tests:
+
+test at scripts/brand-check.test.mjs:1:1
+✖ scripts/brand-check.test.mjs (729.629177ms)
+  'test failed'
+
+test at scripts/check-auth-invariant.test.mjs:1:1
+✖ scripts/check-auth-invariant.test.mjs (199.938553ms)
+  'test failed'
+
+test at scripts/check-blocks.test.mjs:1:1
+✖ scripts/check-blocks.test.mjs (4259.522119ms)
+  'test failed'
+
+test at scripts/with-app-env.test.mjs:1:1
+✖ scripts/with-app-env.test.mjs (1018.304195ms)
+  'test failed'
+
+test at scripts/write-atomic.test.mjs:1:1
+✖ scripts/write-atomic.test.mjs (434.433265ms)
+  'test failed'

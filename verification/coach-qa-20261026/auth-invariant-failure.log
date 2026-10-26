@@ -1,0 +1,93 @@
+TAP version 13
+# Subtest: the flag predicate matches src/lib/auth
+ok 1 - the flag predicate matches src/lib/auth
+  ---
+  duration_ms: 1.011874
+  type: 'test'
+  ...
+# Subtest: reads the value a live dev server resolved
+ok 2 - reads the value a live dev server resolved
+  ---
+  duration_ms: 0.286334
+  type: 'test'
+  ...
+# Subtest: a server started without the flag reads as sign-in on
+ok 3 - a server started without the flag reads as sign-in on
+  ---
+  duration_ms: 0.142736
+  type: 'test'
+  ...
+# Subtest: agreement passes
+ok 4 - agreement passes
+  ---
+  duration_ms: 0.161475
+  type: 'test'
+  ...
+# Subtest: divergence fails in either direction
+ok 5 - divergence fails in either direction
+  ---
+  duration_ms: 0.187614
+  type: 'test'
+  ...
+# Subtest: an unobservable dev server is indeterminate, not agreement
+ok 6 - an unobservable dev server is indeterminate, not agreement
+  ---
+  duration_ms: 0.100312
+  type: 'test'
+  ...
+# Subtest: a dev server that cannot be reached probes as null
+ok 7 - a dev server that cannot be reached probes as null
+  ---
+  duration_ms: 0.173352
+  type: 'test'
+  ...
+# Subtest: a server without the endpoint probes as null, not as agreement
+ok 8 - a server without the endpoint probes as null, not as agreement
+  ---
+  duration_ms: 0.399826
+  type: 'test'
+  ...
+# Subtest: only a divergence warns the smoke verdict
+ok 9 - only a divergence warns the smoke verdict
+  ---
+  duration_ms: 0.707983
+  type: 'test'
+  ...
+# Subtest: the build side resolves the template's shipped app-env
+ok 10 - the build side resolves the template's shipped app-env
+  ---
+  duration_ms: 0.471365
+  type: 'test'
+  ...
+# Subtest: the CLI reports rather than silently passing when run via a symlink
+not ok 11 - the CLI reports rather than silently passing when run via a symlink
+  ---
+  duration_ms: 55.998204
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/check-auth-invariant.test.mjs:98:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /could not read the dev server's resolved VITE_AUTH_ENABLED/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/check-auth-invariant.test.mjs:109:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 65.948257

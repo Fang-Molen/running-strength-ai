@@ -1,0 +1,40 @@
+✔ HTML fallback and 404 identify missing API instead of reporting HTTP 200 success (23.284439ms)
+✔ untrusted error payload never reaches rendering as an object (1.189613ms)
+✔ known provider errors yield actionable safe messages; arbitrary provider text is hidden (0.353036ms)
+✔ configuration probe sends no personal data and does not claim connectivity (1.1149ms)
+✔ a static app response is not mistaken for configured DeepSeek (0.400687ms)
+✔ success requires the trusted response contract and bounded text (2.026036ms)
+✔ trusted binding failure is configuration failure rather than network failure (0.342149ms)
+✔ prototype property names cannot become rendered error objects (1.792037ms)
+✖ successful rule processing is distinct from a provider-generated answer (1.799558ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.201049
+
+✖ failing tests:
+
+test at src/lib/coach/online-service.test.ts:55:1
+✖ successful rule processing is distinct from a provider-generated answer (1.799558ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  -   source: 'LOCAL',
+      text: '规则分析'
+    }
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/online-service.test.ts:56:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Object],
+    expected: [Object],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

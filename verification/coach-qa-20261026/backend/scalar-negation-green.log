@@ -1,0 +1,16 @@
+✔ K14-STR-b: hedged outcome '不一定会导致体重显著增加' is not an increase proposal (3.566557ms)
+✔ hedged-outcome exemption does not hide a proposal (1.841962ms)
+✔ internal field names, enums and source ids are scrubbed from visible text (1.14139ms)
+✔ K12-YOUTH-1: ask-mode referral in nextStep is kept in the visible text (0.289989ms)
+✔ ask-mode nextStep with training advice is still dropped, not promoted (0.564526ms)
+✔ next-session packet carries running sources; required sources visible in every intent (0.87726ms)
+✔ K12-CORR-1: verbal correction is detected and reaches the high-RPE prompt (0.425555ms)
+✔ insufficient evidence to authorize an increase preserves the explanation, not a training-selection fallback (0.566619ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28.953561

@@ -32,8 +32,10 @@ test("learning sources respect existing local and offline network policy", () =>
     const allowed = authorizeNetworkAction({ ...setting, action: "open-public-reference" }).allowed;
     const html = renderToStaticMarkup(<LearningLibrary publicReferencesAllowed={allowed} />);
     assert.doesNotMatch(html, /href="https?:/);
-    assert.match(html, /来源与核验范围/);
-    assert.match(html, /教学候选资料/);
+    assert.match(html, /详细说明与来源/);
+    assert.match(html, /适用范围：/);
+    assert.match(html, /id="fk-reader-reading" aria-selected="true"/);
+    assert.match(html, /id="fk-reader-references" aria-selected="false"/);
   }
   const html = renderToStaticMarkup(<LearningLibrary publicReferencesAllowed={authorizeNetworkAction({ mode: "public-knowledge", online: true, action: "open-public-reference" }).allowed} />);
   assert.match(html, /href="https?:/);

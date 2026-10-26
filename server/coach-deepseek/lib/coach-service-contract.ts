@@ -5,6 +5,9 @@ import type { CoachAnalysisPacket } from '../../../src/lib/health/analysis-contr
 export type VerifiedCoachSubject = { id: string; verified: true; athleteIds: string[] };
 export type CoachSnapshotRefs = { snapshotId: string; consentId: string; asOf: string; question: string };
 export type AuthorizedCoachSnapshot = {
+  provenance?: 'USER_DECLARED';
+  /** Canonical persisted scalar declarations; never executable/client-derived packets. */
+  declarations?: import('../../../src/lib/coach/online-contract.ts').CoachDeclaration[];
   subjectId: string;
   athleteId: string;
   snapshotId: string;

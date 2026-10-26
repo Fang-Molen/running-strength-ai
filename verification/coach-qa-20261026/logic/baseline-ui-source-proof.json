@@ -1,0 +1,56 @@
+{
+  "baseline": "1d57de0",
+  "archivePaths": [
+    "src",
+    "scripts",
+    "evaluation",
+    "test-fixtures",
+    "knowledge",
+    "package.json",
+    "tsconfig.json"
+  ],
+  "files": [
+    {
+      "path": "src/lib/core/coach-knowledge-display.test.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "c9e2794897ccb9b0dc3bd14d5eb2e351fad76e0f9fc1ba69b2cb2f7b15eaaaac",
+      "currentSha256": "c9e2794897ccb9b0dc3bd14d5eb2e351fad76e0f9fc1ba69b2cb2f7b15eaaaac"
+    },
+    {
+      "path": "src/lib/core/hydration.test.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "a15c1f4b5a3f56769106f40d4d600f7c3c84b05229cae3b2bec478596fafecc7",
+      "currentSha256": "a15c1f4b5a3f56769106f40d4d600f7c3c84b05229cae3b2bec478596fafecc7"
+    },
+    {
+      "path": "src/lib/strength/session-builder.test.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "a86199132589688ffbac61815ea9aedd9753baebf8e0fb0cdee00fd20a79a996",
+      "currentSha256": "a86199132589688ffbac61815ea9aedd9753baebf8e0fb0cdee00fd20a79a996"
+    },
+    {
+      "path": "src/components/learning-library.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "e31a8cb30bcb039a4140090e3bfca4b0bc5f7bea31806ad2a71948d0fa306477",
+      "currentSha256": "e31a8cb30bcb039a4140090e3bfca4b0bc5f7bea31806ad2a71948d0fa306477"
+    },
+    {
+      "path": "src/components/strength-app.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "adbb6f8ae264791cfb29e7252754261f629de6fc395013a6e6632f9d94b243c7",
+      "currentSha256": "adbb6f8ae264791cfb29e7252754261f629de6fc395013a6e6632f9d94b243c7"
+    },
+    {
+      "path": "src/components/exercise-editor.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "7ac28773d5af0e0fe32a99f4e3fe9d65856bdaeccda896e747a023ca8bbf06ca",
+      "currentSha256": "7ac28773d5af0e0fe32a99f4e3fe9d65856bdaeccda896e747a023ca8bbf06ca"
+    },
+    {
+      "path": "src/components/exercise-content.tsx",
+      "identicalToUntouched1d57de0": true,
+      "baselineSha256": "21a4ce889144ac32df745fcac8daaa45b6c9a3d6904b8a38a61d4b6595f02c59",
+      "currentSha256": "21a4ce889144ac32df745fcac8daaa45b6c9a3d6904b8a38a61d4b6595f02c59"
+    }
+  ]
+}

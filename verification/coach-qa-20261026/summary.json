@@ -1,0 +1,54 @@
+{
+  "base": "1d57de0d413f365ff3ece4b63f859f94298706ba",
+  "branch": "codex/coach-qa-repair",
+  "date": "2026-10-26",
+  "engineering": {
+    "fullRegression": {
+      "command": "npm test",
+      "exitCode": 0,
+      "stages": 18,
+      "testExecutions": 4140,
+      "failures": 0,
+      "notUniqueCapabilityCount": true
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    "staticBuild": {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    "serverBuild": {
+      "command": "npm run build:server",
+      "exitCode": 0
+    },
+    "browser": {
+      "devCases": 5,
+      "productionCases": 5,
+      "productionFollowupCases": 2,
+      "uncaughtErrors": 0,
+      "provider": "mocked",
+      "authentication": "synthetic signed identity checked by actual handler",
+      "database": "temporary disk PGlite, not production PostgreSQL",
+      "serviceWorkers": "blocked for deterministic interaction testing"
+    },
+    "nodeRuntimeProbe": {
+      "exitCode": 0,
+      "actualBuiltServer": true,
+      "statusGet": 200,
+      "disabledPost": 503
+    }
+  },
+  "paidModelCallsThisSession": 0,
+  "historicalFeesOtherEnvironments": "UNKNOWN_PENDING_RECONCILIATION",
+  "deployed": false,
+  "productionDatabaseModified": false,
+  "realDeepSeekCapabilityVerified": false,
+  "liveConnectivityRestored": false,
+  "reviewFindingsResolved": [
+    "auth redirects preserve safe Location and Set-Cookie",
+    "LOCAL response no longer labeled model explanation",
+    "negated approval no longer mistaken for dose increase"
+  ]
+}

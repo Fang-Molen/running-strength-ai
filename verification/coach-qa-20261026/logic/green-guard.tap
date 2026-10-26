@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: numbered explanation is formatting, not a fabricated measured value
+ok 1 - numbered explanation is formatting, not a fabricated measured value
+  ---
+  duration_ms: 23.462178
+  type: 'test'
+  ...
+# Subtest: metric paraphrases still require full source binding
+ok 2 - metric paraphrases still require full source binding
+  ---
+  duration_ms: 6.551632
+  type: 'test'
+  ...
+# Subtest: negated clearance must pass but a later affirmative release must still fail
+ok 3 - negated clearance must pass but a later affirmative release must still fail
+  ---
+  duration_ms: 1.792818
+  type: 'test'
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 你目前不能解除疼痛限制。
+ok 4 - scoped negative with subject or evidence stays usable: 你目前不能解除疼痛限制。
+  ---
+  duration_ms: 1.334963
+  type: 'test'
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: HRV正常不代表可以继续跑步。
+ok 5 - scoped negative with subject or evidence stays usable: HRV正常不代表可以继续跑步。
+  ---
+  duration_ms: 0.46135
+  type: 'test'
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 目前还不能解除疼痛限制。
+ok 6 - scoped negative with subject or evidence stays usable: 目前还不能解除疼痛限制。
+  ---
+  duration_ms: 0.294266
+  type: 'test'
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 我没有已经替你修改计划。
+ok 7 - scoped negative with subject or evidence stays usable: 我没有已经替你修改计划。
+  ---
+  duration_ms: 0.226814
+  type: 'test'
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 不能确诊为肌腱炎。
+ok 8 - scoped negative with subject or evidence stays usable: 不能确诊为肌腱炎。
+  ---
+  duration_ms: 0.24416
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不能解除疼痛限制，但可以继续跑步。
+ok 9 - turns and double negation do not authorize release: 不能解除疼痛限制，但可以继续跑步。
+  ---
+  duration_ms: 0.387387
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不能解除疼痛限制,可以继续跑步。
+ok 10 - turns and double negation do not authorize release: 不能解除疼痛限制,可以继续跑步。
+  ---
+  duration_ms: 0.298592
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不能解除疼痛限制\\n可以继续跑步。
+ok 11 - turns and double negation do not authorize release: 不能解除疼痛限制\\n可以继续跑步。
+  ---
+  duration_ms: 0.656545
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 并不是不能解除疼痛限制。
+ok 12 - turns and double negation do not authorize release: 并不是不能解除疼痛限制。
+  ---
+  duration_ms: 0.152431
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不是不可以继续跑步。
+ok 13 - turns and double negation do not authorize release: 不是不可以继续跑步。
+  ---
+  duration_ms: 0.251011
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不代表不能解除疼痛限制。
+ok 14 - turns and double negation do not authorize release: 不代表不能解除疼痛限制。
+  ---
+  duration_ms: 0.21105
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 你不必担心，继续跑步。
+ok 15 - turns and double negation do not authorize release: 你不必担心，继续跑步。
+  ---
+  duration_ms: 0.236128
+  type: 'test'
+  ...
+# Subtest: list markers do not become factual numbers: 1、先核对当前症状。\\n2）再核对实际记录。
+ok 16 - list markers do not become factual numbers: 1、先核对当前症状。\\n2）再核对实际记录。
+  ---
+  duration_ms: 0.284662
+  type: 'test'
+  ...
+# Subtest: list markers do not become factual numbers: （1）先看睡眠。\\n（2）再看日常活动。
+ok 17 - list markers do not become factual numbers: （1）先看睡眠。\\n（2）再看日常活动。
+  ---
+  duration_ms: 1.177184
+  type: 'test'
+  ...
+# Subtest: list markers do not become factual numbers: - 1. 先核对当前症状。\\n- 2. 再核对实际记录。
+ok 18 - list markers do not become factual numbers: - 1. 先核对当前症状。\\n- 2. 再核对实际记录。
+  ---
+  duration_ms: 0.31612
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 1.5公里慢跑。
+ok 19 - list normalization retains unbound quantities: 1.5公里慢跑。
+  ---
+  duration_ms: 0.542372
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 1、跑5公里。
+ok 20 - list normalization retains unbound quantities: 1、跑5公里。
+  ---
+  duration_ms: 0.242798
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 1、HRV为40 bpm。
+ok 21 - list normalization retains unbound quantities: 1、HRV为40 bpm。
+  ---
+  duration_ms: 0.209768
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: １、跑５公里。
+ok 22 - list normalization retains unbound quantities: １、跑５公里。
+  ---
+  duration_ms: 0.235016
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 两组冲刺。
+ok 23 - list normalization retains unbound quantities: 两组冲刺。
+  ---
+  duration_ms: 0.157509
+  type: 'test'
+  ...
+# Subtest: host-owned factual sentences retain exact full-width punctuation and binding
+ok 24 - host-owned factual sentences retain exact full-width punctuation and binding
+  ---
+  duration_ms: 3.961306
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 71.474663

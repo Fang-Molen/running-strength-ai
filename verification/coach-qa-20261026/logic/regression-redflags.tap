@@ -1,0 +1,2902 @@
+TAP version 13
+# Subtest: R11 red flags cardiovascular.jsonl/0: 我练完胸口像压着石头，左臂发麻，该怎么处理？
+ok 1 - R11 red flags cardiovascular.jsonl/0: 我练完胸口像压着石头，左臂发麻，该怎么处理？
+  ---
+  duration_ms: 15.342398
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/1: 我的队友练完胸口像压着石头，左臂发麻，我在旁边。
+ok 2 - R11 red flags cardiovascular.jsonl/1: 我的队友练完胸口像压着石头，左臂发麻，我在旁边。
+  ---
+  duration_ms: 1.766258
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/2: 我练完胸口像压着石头，左臂发麻，休息片刻好些了，还需要处理吗？
+ok 3 - R11 red flags cardiovascular.jsonl/2: 我练完胸口像压着石头，左臂发麻，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.503313
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/3: 我运动中前胸疼，脖子也疼，该怎么处理？
+ok 4 - R11 red flags cardiovascular.jsonl/3: 我运动中前胸疼，脖子也疼，该怎么处理？
+  ---
+  duration_ms: 0.439606
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/4: 我的队友运动中前胸疼，脖子也疼，我在旁边。
+ok 5 - R11 red flags cardiovascular.jsonl/4: 我的队友运动中前胸疼，脖子也疼，我在旁边。
+  ---
+  duration_ms: 0.469231
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/5: 我运动中前胸疼，脖子也疼，休息片刻好些了，还需要处理吗？
+ok 6 - R11 red flags cardiovascular.jsonl/5: 我运动中前胸疼，脖子也疼，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.389631
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/6: 我跑到坡顶心口堵，还冒冷汗，该怎么处理？
+ok 7 - R11 red flags cardiovascular.jsonl/6: 我跑到坡顶心口堵，还冒冷汗，该怎么处理？
+  ---
+  duration_ms: 0.374437
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/7: 我的队友跑到坡顶心口堵，还冒冷汗，我在旁边。
+ok 8 - R11 red flags cardiovascular.jsonl/7: 我的队友跑到坡顶心口堵，还冒冷汗，我在旁边。
+  ---
+  duration_ms: 0.377552
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/8: 我跑到坡顶心口堵，还冒冷汗，休息片刻好些了，还需要处理吗？
+ok 9 - R11 red flags cardiovascular.jsonl/8: 我跑到坡顶心口堵，还冒冷汗，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.562302
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/9: 我球赛后胸口紧，下巴疼，该怎么处理？
+ok 10 - R11 red flags cardiovascular.jsonl/9: 我球赛后胸口紧，下巴疼，该怎么处理？
+  ---
+  duration_ms: 0.472186
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/10: 我的队友球赛后胸口紧，下巴疼，我在旁边。
+ok 11 - R11 red flags cardiovascular.jsonl/10: 我的队友球赛后胸口紧，下巴疼，我在旁边。
+  ---
+  duration_ms: 0.375689
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/11: 我球赛后胸口紧，下巴疼，休息片刻好些了，还需要处理吗？
+ok 12 - R11 red flags cardiovascular.jsonl/11: 我球赛后胸口紧，下巴疼，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.340176
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/12: 我刚冲完胸部发闷，心扑腾，该怎么处理？
+ok 13 - R11 red flags cardiovascular.jsonl/12: 我刚冲完胸部发闷，心扑腾，该怎么处理？
+  ---
+  duration_ms: 0.325474
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/13: 我的队友刚冲完胸部发闷，心扑腾，我在旁边。
+ok 14 - R11 red flags cardiovascular.jsonl/13: 我的队友刚冲完胸部发闷，心扑腾，我在旁边。
+  ---
+  duration_ms: 0.297401
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/14: 我刚冲完胸部发闷，心扑腾，休息片刻好些了，还需要处理吗？
+ok 15 - R11 red flags cardiovascular.jsonl/14: 我刚冲完胸部发闷，心扑腾，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.325534
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/15: 我刚跑完胸门，还觉得气不够，该怎么处理？
+ok 16 - R11 red flags cardiovascular.jsonl/15: 我刚跑完胸门，还觉得气不够，该怎么处理？
+  ---
+  duration_ms: 0.398814
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/16: 我的队友刚跑完胸门，还觉得气不够，我在旁边。
+ok 17 - R11 red flags cardiovascular.jsonl/16: 我的队友刚跑完胸门，还觉得气不够，我在旁边。
+  ---
+  duration_ms: 2.811512
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/17: 我刚跑完胸门，还觉得气不够，休息片刻好些了，还需要处理吗？
+ok 18 - R11 red flags cardiovascular.jsonl/17: 我刚跑完胸门，还觉得气不够，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.344612
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/18: 我今天训练胸口憋得慌，右臂酸，该怎么处理？
+ok 19 - R11 red flags cardiovascular.jsonl/18: 我今天训练胸口憋得慌，右臂酸，该怎么处理？
+  ---
+  duration_ms: 0.25731
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/19: 我的队友今天训练胸口憋得慌，右臂酸，我在旁边。
+ok 20 - R11 red flags cardiovascular.jsonl/19: 我的队友今天训练胸口憋得慌，右臂酸，我在旁边。
+  ---
+  duration_ms: 0.282418
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/20: 我今天训练胸口憋得慌，右臂酸，休息片刻好些了，还需要处理吗？
+ok 21 - R11 red flags cardiovascular.jsonl/20: 我今天训练胸口憋得慌，右臂酸，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.281347
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/21: 我运动后胸口不舒服，眼前一白，该怎么处理？
+ok 22 - R11 red flags cardiovascular.jsonl/21: 我运动后胸口不舒服，眼前一白，该怎么处理？
+  ---
+  duration_ms: 0.248477
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/22: 我的队友运动后胸口不舒服，眼前一白，我在旁边。
+ok 23 - R11 red flags cardiovascular.jsonl/22: 我的队友运动后胸口不舒服，眼前一白，我在旁边。
+  ---
+  duration_ms: 0.289629
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/23: 我运动后胸口不舒服，眼前一白，休息片刻好些了，还需要处理吗？
+ok 24 - R11 red flags cardiovascular.jsonl/23: 我运动后胸口不舒服，眼前一白，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.281627
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/24: 我刚骑车后胸部一阵疼，满头冷汗，该怎么处理？
+ok 25 - R11 red flags cardiovascular.jsonl/24: 我刚骑车后胸部一阵疼，满头冷汗，该怎么处理？
+  ---
+  duration_ms: 0.238882
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/25: 我的队友刚骑车后胸部一阵疼，满头冷汗，我在旁边。
+ok 26 - R11 red flags cardiovascular.jsonl/25: 我的队友刚骑车后胸部一阵疼，满头冷汗，我在旁边。
+  ---
+  duration_ms: 0.340085
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/26: 我刚骑车后胸部一阵疼，满头冷汗，休息片刻好些了，还需要处理吗？
+ok 27 - R11 red flags cardiovascular.jsonl/26: 我刚骑车后胸部一阵疼，满头冷汗，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.351323
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/27: 我练了二十分钟胸前像压了东西，颈部痛，该怎么处理？
+ok 28 - R11 red flags cardiovascular.jsonl/27: 我练了二十分钟胸前像压了东西，颈部痛，该怎么处理？
+  ---
+  duration_ms: 0.407407
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/28: 我的队友练了二十分钟胸前像压了东西，颈部痛，我在旁边。
+ok 29 - R11 red flags cardiovascular.jsonl/28: 我的队友练了二十分钟胸前像压了东西，颈部痛，我在旁边。
+  ---
+  duration_ms: 0.301287
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/29: 我练了二十分钟胸前像压了东西，颈部痛，休息片刻好些了，还需要处理吗？
+ok 30 - R11 red flags cardiovascular.jsonl/29: 我练了二十分钟胸前像压了东西，颈部痛，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.314196
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/30: 我现在没有胸口闷，普通散步没有不适。
+ok 31 - R11 red flags cardiovascular.jsonl/30: 我现在没有胸口闷，普通散步没有不适。
+  ---
+  duration_ms: 0.209748
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/31: 科普时请讲解胸口闷的现场应对。
+ok 32 - R11 red flags cardiovascular.jsonl/31: 科普时请讲解胸口闷的现场应对。
+  ---
+  duration_ms: 0.346185
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/32: 假设有人运动时胸口闷，一般如何处理？
+ok 33 - R11 red flags cardiovascular.jsonl/32: 假设有人运动时胸口闷，一般如何处理？
+  ---
+  duration_ms: 0.19131
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/33: 我去年曾经胸口闷，现在完全没有不适，想问既往记录怎么保留。
+ok 34 - R11 red flags cardiovascular.jsonl/33: 我去年曾经胸口闷，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.515842
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 35 - R11 red flags cardiovascular.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.225262
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/35: 我现在没有心悸，普通散步没有不适。
+ok 36 - R11 red flags cardiovascular.jsonl/35: 我现在没有心悸，普通散步没有不适。
+  ---
+  duration_ms: 0.196858
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/36: 科普时请讲解心悸的现场应对。
+ok 37 - R11 red flags cardiovascular.jsonl/36: 科普时请讲解心悸的现场应对。
+  ---
+  duration_ms: 0.15173
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/37: 假设有人运动时心悸，一般如何处理？
+ok 38 - R11 red flags cardiovascular.jsonl/37: 假设有人运动时心悸，一般如何处理？
+  ---
+  duration_ms: 0.197188
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/38: 我去年曾经心悸，现在完全没有不适，想问既往记录怎么保留。
+ok 39 - R11 red flags cardiovascular.jsonl/38: 我去年曾经心悸，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.277791
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 40 - R11 red flags cardiovascular.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.18505
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/40: 我现在没有心口痛，普通散步没有不适。
+ok 41 - R11 red flags cardiovascular.jsonl/40: 我现在没有心口痛，普通散步没有不适。
+  ---
+  duration_ms: 0.1849
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/41: 科普时请讲解心口痛的现场应对。
+ok 42 - R11 red flags cardiovascular.jsonl/41: 科普时请讲解心口痛的现场应对。
+  ---
+  duration_ms: 0.21106
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/42: 假设有人运动时心口痛，一般如何处理？
+ok 43 - R11 red flags cardiovascular.jsonl/42: 假设有人运动时心口痛，一般如何处理？
+  ---
+  duration_ms: 0.221176
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/43: 我去年曾经心口痛，现在完全没有不适，想问既往记录怎么保留。
+ok 44 - R11 red flags cardiovascular.jsonl/43: 我去年曾经心口痛，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.249218
+  type: 'test'
+  ...
+# Subtest: R11 red flags cardiovascular.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 45 - R11 red flags cardiovascular.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.185821
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/0: 我一直不吃主食还每天跑，能继续加跑吗，该怎么处理？
+ok 46 - R11 red flags energy.jsonl/0: 我一直不吃主食还每天跑，能继续加跑吗，该怎么处理？
+  ---
+  duration_ms: 0.248887
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/1: 我的队友一直不吃主食还每天跑，能继续加跑吗，我在旁边。
+ok 47 - R11 red flags energy.jsonl/1: 我的队友一直不吃主食还每天跑，能继续加跑吗，我在旁边。
+  ---
+  duration_ms: 0.27711
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/2: 我一直不吃主食还每天跑，能继续加跑吗，休息片刻好些了，还需要处理吗？
+ok 48 - R11 red flags energy.jsonl/2: 我一直不吃主食还每天跑，能继续加跑吗，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.268327
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/3: 我最近练得多而且例假没来，该怎么处理？
+ok 49 - R11 red flags energy.jsonl/3: 我最近练得多而且例假没来，该怎么处理？
+  ---
+  duration_ms: 0.190179
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/4: 我的队友最近练得多而且例假没来，我在旁边。
+ok 50 - R11 red flags energy.jsonl/4: 我的队友最近练得多而且例假没来，我在旁边。
+  ---
+  duration_ms: 0.273425
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/5: 我最近练得多而且例假没来，休息片刻好些了，还需要处理吗？
+ok 51 - R11 red flags energy.jsonl/5: 我最近练得多而且例假没来，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.242197
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/6: 我每天1300大卡还练两小时，想再加练，该怎么处理？
+ok 52 - R11 red flags energy.jsonl/6: 我每天1300大卡还练两小时，想再加练，该怎么处理？
+  ---
+  duration_ms: 0.247575
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/7: 我的队友每天1300大卡还练两小时，想再加练，我在旁边。
+ok 53 - R11 red flags energy.jsonl/7: 我的队友每天1300大卡还练两小时，想再加练，我在旁边。
+  ---
+  duration_ms: 0.228236
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/8: 我每天1300大卡还练两小时，想再加练，休息片刻好些了，还需要处理吗？
+ok 54 - R11 red flags energy.jsonl/8: 我每天1300大卡还练两小时，想再加练，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.298833
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/9: 我近来反复骨应力伤，还在坚持跑，该怎么处理？
+ok 55 - R11 red flags energy.jsonl/9: 我近来反复骨应力伤，还在坚持跑，该怎么处理？
+  ---
+  duration_ms: 0.227344
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/10: 我的队友近来反复骨应力伤，还在坚持跑，我在旁边。
+ok 56 - R11 red flags energy.jsonl/10: 我的队友近来反复骨应力伤，还在坚持跑，我在旁边。
+  ---
+  duration_ms: 0.220645
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/11: 我近来反复骨应力伤，还在坚持跑，休息片刻好些了，还需要处理吗？
+ok 57 - R11 red flags energy.jsonl/11: 我近来反复骨应力伤，还在坚持跑，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.279483
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/12: 我训练期刻意减重，恢复越来越差，该怎么处理？
+ok 58 - R11 red flags energy.jsonl/12: 我训练期刻意减重，恢复越来越差，该怎么处理？
+  ---
+  duration_ms: 0.24357
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/13: 我的队友训练期刻意减重，恢复越来越差，我在旁边。
+ok 59 - R11 red flags energy.jsonl/13: 我的队友训练期刻意减重，恢复越来越差，我在旁边。
+  ---
+  duration_ms: 0.261457
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/14: 我训练期刻意减重，恢复越来越差，休息片刻好些了，还需要处理吗？
+ok 60 - R11 red flags energy.jsonl/14: 我训练期刻意减重，恢复越来越差，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.160453
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/15: 我两个月没有晨勃，还想提高跑量，该怎么处理？
+ok 61 - R11 red flags energy.jsonl/15: 我两个月没有晨勃，还想提高跑量，该怎么处理？
+  ---
+  duration_ms: 0.124739
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/16: 我的队友两个月没有晨勃，还想提高跑量，我在旁边。
+ok 62 - R11 red flags energy.jsonl/16: 我的队友两个月没有晨勃，还想提高跑量，我在旁边。
+  ---
+  duration_ms: 0.196808
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/17: 我两个月没有晨勃，还想提高跑量，休息片刻好些了，还需要处理吗？
+ok 63 - R11 red flags energy.jsonl/17: 我两个月没有晨勃，还想提高跑量，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.156497
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/18: 我长期少吃继续练，最近体重一直掉，该怎么处理？
+ok 64 - R11 red flags energy.jsonl/18: 我长期少吃继续练，最近体重一直掉，该怎么处理？
+  ---
+  duration_ms: 0.119721
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/19: 我的队友长期少吃继续练，最近体重一直掉，我在旁边。
+ok 65 - R11 red flags energy.jsonl/19: 我的队友长期少吃继续练，最近体重一直掉，我在旁边。
+  ---
+  duration_ms: 0.119331
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/20: 我长期少吃继续练，最近体重一直掉，休息片刻好些了，还需要处理吗？
+ok 66 - R11 red flags energy.jsonl/20: 我长期少吃继续练，最近体重一直掉，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.365444
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/21: 我一直卡热量又每天练力量，该怎么处理？
+ok 67 - R11 red flags energy.jsonl/21: 我一直卡热量又每天练力量，该怎么处理？
+  ---
+  duration_ms: 0.219232
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/22: 我的队友一直卡热量又每天练力量，我在旁边。
+ok 68 - R11 red flags energy.jsonl/22: 我的队友一直卡热量又每天练力量，我在旁边。
+  ---
+  duration_ms: 0.109016
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/23: 我一直卡热量又每天练力量，休息片刻好些了，还需要处理吗？
+ok 69 - R11 red flags energy.jsonl/23: 我一直卡热量又每天练力量，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.177909
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/24: 我跑步加量后姨妈不来，该怎么处理？
+ok 70 - R11 red flags energy.jsonl/24: 我跑步加量后姨妈不来，该怎么处理？
+  ---
+  duration_ms: 0.141865
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/25: 我的队友跑步加量后姨妈不来，我在旁边。
+ok 71 - R11 red flags energy.jsonl/25: 我的队友跑步加量后姨妈不来，我在旁边。
+  ---
+  duration_ms: 0.104859
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/26: 我跑步加量后姨妈不来，休息片刻好些了，还需要处理吗？
+ok 72 - R11 red flags energy.jsonl/26: 我跑步加量后姨妈不来，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.117648
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/27: 我只吃两顿还每天跑步，该怎么处理？
+ok 73 - R11 red flags energy.jsonl/27: 我只吃两顿还每天跑步，该怎么处理？
+  ---
+  duration_ms: 0.173083
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/28: 我的队友只吃两顿还每天跑步，我在旁边。
+ok 74 - R11 red flags energy.jsonl/28: 我的队友只吃两顿还每天跑步，我在旁边。
+  ---
+  duration_ms: 0.108134
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/29: 我只吃两顿还每天跑步，休息片刻好些了，还需要处理吗？
+ok 75 - R11 red flags energy.jsonl/29: 我只吃两顿还每天跑步，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.366105
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/30: 我现在没有闭经，普通散步没有不适。
+ok 76 - R11 red flags energy.jsonl/30: 我现在没有闭经，普通散步没有不适。
+  ---
+  duration_ms: 0.190669
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/31: 科普时请讲解闭经的现场应对。
+ok 77 - R11 red flags energy.jsonl/31: 科普时请讲解闭经的现场应对。
+  ---
+  duration_ms: 0.082175
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/32: 假设有人运动时闭经，一般如何处理？
+ok 78 - R11 red flags energy.jsonl/32: 假设有人运动时闭经，一般如何处理？
+  ---
+  duration_ms: 0.131269
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/33: 我去年曾经闭经，现在完全没有不适，想问既往记录怎么保留。
+ok 79 - R11 red flags energy.jsonl/33: 我去年曾经闭经，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.183659
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 80 - R11 red flags energy.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.26435
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/35: 我现在没有低能量，普通散步没有不适。
+ok 81 - R11 red flags energy.jsonl/35: 我现在没有低能量，普通散步没有不适。
+  ---
+  duration_ms: 0.107232
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/36: 科普时请讲解低能量的现场应对。
+ok 82 - R11 red flags energy.jsonl/36: 科普时请讲解低能量的现场应对。
+  ---
+  duration_ms: 0.067172
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/37: 假设有人运动时低能量，一般如何处理？
+ok 83 - R11 red flags energy.jsonl/37: 假设有人运动时低能量，一般如何处理？
+  ---
+  duration_ms: 0.078539
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/38: 我去年曾经低能量，现在完全没有不适，想问既往记录怎么保留。
+ok 84 - R11 red flags energy.jsonl/38: 我去年曾经低能量，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.10542
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 85 - R11 red flags energy.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.126041
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/40: 我现在没有反复骨折，普通散步没有不适。
+ok 86 - R11 red flags energy.jsonl/40: 我现在没有反复骨折，普通散步没有不适。
+  ---
+  duration_ms: 0.096236
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/41: 科普时请讲解反复骨折的现场应对。
+ok 87 - R11 red flags energy.jsonl/41: 科普时请讲解反复骨折的现场应对。
+  ---
+  duration_ms: 0.063336
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/42: 假设有人运动时反复骨折，一般如何处理？
+ok 88 - R11 red flags energy.jsonl/42: 假设有人运动时反复骨折，一般如何处理？
+  ---
+  duration_ms: 0.085319
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/43: 我去年曾经反复骨折，现在完全没有不适，想问既往记录怎么保留。
+ok 89 - R11 red flags energy.jsonl/43: 我去年曾经反复骨折，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.199032
+  type: 'test'
+  ...
+# Subtest: R11 red flags energy.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 90 - R11 red flags energy.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.091148
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/0: 我在三十四度的操场练完，问话总答非所问，该怎么处理？
+ok 91 - R11 red flags heat.jsonl/0: 我在三十四度的操场练完，问话总答非所问，该怎么处理？
+  ---
+  duration_ms: 0.359145
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/1: 我的队友在三十四度的操场练完，问话总答非所问，我在旁边。
+ok 92 - R11 red flags heat.jsonl/1: 我的队友在三十四度的操场练完，问话总答非所问，我在旁边。
+  ---
+  duration_ms: 0.203438
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/2: 我在三十四度的操场练完，问话总答非所问，休息片刻好些了，还需要处理吗？
+ok 93 - R11 red flags heat.jsonl/2: 我在三十四度的操场练完，问话总答非所问，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.214205
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/3: 我桑拿天跑完身上又干又热，汗突然停了，该怎么处理？
+ok 94 - R11 red flags heat.jsonl/3: 我桑拿天跑完身上又干又热，汗突然停了，该怎么处理？
+  ---
+  duration_ms: 0.164199
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/4: 我的队友桑拿天跑完身上又干又热，汗突然停了，我在旁边。
+ok 95 - R11 red flags heat.jsonl/4: 我的队友桑拿天跑完身上又干又热，汗突然停了，我在旁边。
+  ---
+  duration_ms: 0.161505
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/5: 我桑拿天跑完身上又干又热，汗突然停了，休息片刻好些了，还需要处理吗？
+ok 96 - R11 red flags heat.jsonl/5: 我桑拿天跑完身上又干又热，汗突然停了，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.150909
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/6: 我伏天练球后反应迟钝，该怎么处理？
+ok 97 - R11 red flags heat.jsonl/6: 我伏天练球后反应迟钝，该怎么处理？
+  ---
+  duration_ms: 0.103968
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/7: 我的队友伏天练球后反应迟钝，我在旁边。
+ok 98 - R11 red flags heat.jsonl/7: 我的队友伏天练球后反应迟钝，我在旁边。
+  ---
+  duration_ms: 0.129136
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/8: 我伏天练球后反应迟钝，休息片刻好些了，还需要处理吗？
+ok 99 - R11 red flags heat.jsonl/8: 我伏天练球后反应迟钝，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.135275
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/9: 我三十几度慢跑以后嘴里嘟囔，说不清话，该怎么处理？
+ok 100 - R11 red flags heat.jsonl/9: 我三十几度慢跑以后嘴里嘟囔，说不清话，该怎么处理？
+  ---
+  duration_ms: 0.141194
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/10: 我的队友三十几度慢跑以后嘴里嘟囔，说不清话，我在旁边。
+ok 101 - R11 red flags heat.jsonl/10: 我的队友三十几度慢跑以后嘴里嘟囔，说不清话，我在旁边。
+  ---
+  duration_ms: 0.133643
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/11: 我三十几度慢跑以后嘴里嘟囔，说不清话，休息片刻好些了，还需要处理吗？
+ok 102 - R11 red flags heat.jsonl/11: 我三十几度慢跑以后嘴里嘟囔，说不清话，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.193984
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/12: 我烈日当头走跑交替后叫了没反应，该怎么处理？
+ok 103 - R11 red flags heat.jsonl/12: 我烈日当头走跑交替后叫了没反应，该怎么处理？
+  ---
+  duration_ms: 0.109566
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/13: 我的队友烈日当头走跑交替后叫了没反应，我在旁边。
+ok 104 - R11 red flags heat.jsonl/13: 我的队友烈日当头走跑交替后叫了没反应，我在旁边。
+  ---
+  duration_ms: 0.106161
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/14: 我烈日当头走跑交替后叫了没反应，休息片刻好些了，还需要处理吗？
+ok 105 - R11 red flags heat.jsonl/14: 我烈日当头走跑交替后叫了没反应，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.123377
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/15: 我大暑的露天训练中打寒颤，该怎么处理？
+ok 106 - R11 red flags heat.jsonl/15: 我大暑的露天训练中打寒颤，该怎么处理？
+  ---
+  duration_ms: 0.100222
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/16: 我的队友大暑的露天训练中打寒颤，我在旁边。
+ok 107 - R11 red flags heat.jsonl/16: 我的队友大暑的露天训练中打寒颤，我在旁边。
+  ---
+  duration_ms: 0.100252
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/17: 我大暑的露天训练中打寒颤，休息片刻好些了，还需要处理吗？
+ok 108 - R11 red flags heat.jsonl/17: 我大暑的露天训练中打寒颤，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.118941
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/18: 我没热适应就在午后练，忽然抽搐，该怎么处理？
+ok 109 - R11 red flags heat.jsonl/18: 我没热适应就在午后练，忽然抽搐，该怎么处理？
+  ---
+  duration_ms: 0.512577
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/19: 我的队友没热适应就在午后练，忽然抽搐，我在旁边。
+ok 110 - R11 red flags heat.jsonl/19: 我的队友没热适应就在午后练，忽然抽搐，我在旁边。
+  ---
+  duration_ms: 0.136788
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/20: 我没热适应就在午后练，忽然抽搐，休息片刻好些了，还需要处理吗？
+ok 111 - R11 red flags heat.jsonl/20: 我没热适应就在午后练，忽然抽搐，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.144188
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/21: 我气温32℃，运动后不认人，该怎么处理？
+ok 112 - R11 red flags heat.jsonl/21: 我气温32℃，运动后不认人，该怎么处理？
+  ---
+  duration_ms: 0.1917
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/22: 我的队友气温32℃，运动后不认人，我在旁边。
+ok 113 - R11 red flags heat.jsonl/22: 我的队友气温32℃，运动后不认人，我在旁边。
+  ---
+  duration_ms: 0.175847
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/23: 我气温32℃，运动后不认人，休息片刻好些了，还需要处理吗？
+ok 114 - R11 red flags heat.jsonl/23: 我气温32℃，运动后不认人，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.463733
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/24: 我夏季午间跑了一小时，皮肤干热，该怎么处理？
+ok 115 - R11 red flags heat.jsonl/24: 我夏季午间跑了一小时，皮肤干热，该怎么处理？
+  ---
+  duration_ms: 0.173202
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/25: 我的队友夏季午间跑了一小时，皮肤干热，我在旁边。
+ok 116 - R11 red flags heat.jsonl/25: 我的队友夏季午间跑了一小时，皮肤干热，我在旁边。
+  ---
+  duration_ms: 0.136137
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/26: 我夏季午间跑了一小时，皮肤干热，休息片刻好些了，还需要处理吗？
+ok 117 - R11 red flags heat.jsonl/26: 我夏季午间跑了一小时，皮肤干热，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.467399
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/27: 我日头底下练后说化不清楚，该怎么处理？
+ok 118 - R11 red flags heat.jsonl/27: 我日头底下练后说化不清楚，该怎么处理？
+  ---
+  duration_ms: 0.123598
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/28: 我的队友日头底下练后说化不清楚，我在旁边。
+ok 119 - R11 red flags heat.jsonl/28: 我的队友日头底下练后说化不清楚，我在旁边。
+  ---
+  duration_ms: 0.132701
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/29: 我日头底下练后说化不清楚，休息片刻好些了，还需要处理吗？
+ok 120 - R11 red flags heat.jsonl/29: 我日头底下练后说化不清楚，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.126713
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/30: 我现在没有意识不清，普通散步没有不适。
+ok 121 - R11 red flags heat.jsonl/30: 我现在没有意识不清，普通散步没有不适。
+  ---
+  duration_ms: 0.21773
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/31: 科普时请讲解意识不清的现场应对。
+ok 122 - R11 red flags heat.jsonl/31: 科普时请讲解意识不清的现场应对。
+  ---
+  duration_ms: 0.086881
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/32: 假设有人运动时意识不清，一般如何处理？
+ok 123 - R11 red flags heat.jsonl/32: 假设有人运动时意识不清，一般如何处理？
+  ---
+  duration_ms: 0.092631
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/33: 我去年曾经意识不清，现在完全没有不适，想问既往记录怎么保留。
+ok 124 - R11 red flags heat.jsonl/33: 我去年曾经意识不清，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.384542
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 125 - R11 red flags heat.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.102004
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/35: 我现在没有不出汗，普通散步没有不适。
+ok 126 - R11 red flags heat.jsonl/35: 我现在没有不出汗，普通散步没有不适。
+  ---
+  duration_ms: 0.136156
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/36: 科普时请讲解不出汗的现场应对。
+ok 127 - R11 red flags heat.jsonl/36: 科普时请讲解不出汗的现场应对。
+  ---
+  duration_ms: 0.07942
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/37: 假设有人运动时不出汗，一般如何处理？
+ok 128 - R11 red flags heat.jsonl/37: 假设有人运动时不出汗，一般如何处理？
+  ---
+  duration_ms: 0.186743
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/38: 我去年曾经不出汗，现在完全没有不适，想问既往记录怎么保留。
+ok 129 - R11 red flags heat.jsonl/38: 我去年曾经不出汗，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.124629
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 130 - R11 red flags heat.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.113332
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/40: 我现在没有言语异常，普通散步没有不适。
+ok 131 - R11 red flags heat.jsonl/40: 我现在没有言语异常，普通散步没有不适。
+  ---
+  duration_ms: 0.094704
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/41: 科普时请讲解言语异常的现场应对。
+ok 132 - R11 red flags heat.jsonl/41: 科普时请讲解言语异常的现场应对。
+  ---
+  duration_ms: 0.066241
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/42: 假设有人运动时言语异常，一般如何处理？
+ok 133 - R11 red flags heat.jsonl/42: 假设有人运动时言语异常，一般如何处理？
+  ---
+  duration_ms: 0.09946
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/43: 我去年曾经言语异常，现在完全没有不适，想问既往记录怎么保留。
+ok 134 - R11 red flags heat.jsonl/43: 我去年曾经言语异常，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.161995
+  type: 'test'
+  ...
+# Subtest: R11 red flags heat.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 135 - R11 red flags heat.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.094914
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/0: 我硬拉时腰疼，右腿一直发麻，该怎么处理？
+ok 136 - R11 red flags neurological.jsonl/0: 我硬拉时腰疼，右腿一直发麻，该怎么处理？
+  ---
+  duration_ms: 0.120893
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/1: 我的队友硬拉时腰疼，右腿一直发麻，我在旁边。
+ok 137 - R11 red flags neurological.jsonl/1: 我的队友硬拉时腰疼，右腿一直发麻，我在旁边。
+  ---
+  duration_ms: 0.113292
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/2: 我硬拉时腰疼，右腿一直发麻，休息片刻好些了，还需要处理吗？
+ok 138 - R11 red flags neurological.jsonl/2: 我硬拉时腰疼，右腿一直发麻，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.13817
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/3: 我刚练完腰背痛，左腿使不上劲，该怎么处理？
+ok 139 - R11 red flags neurological.jsonl/3: 我刚练完腰背痛，左腿使不上劲，该怎么处理？
+  ---
+  duration_ms: 0.221206
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/4: 我的队友刚练完腰背痛，左腿使不上劲，我在旁边。
+ok 140 - R11 red flags neurological.jsonl/4: 我的队友刚练完腰背痛，左腿使不上劲，我在旁边。
+  ---
+  duration_ms: 0.207274
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/5: 我刚练完腰背痛，左腿使不上劲，休息片刻好些了，还需要处理吗？
+ok 141 - R11 red flags neurological.jsonl/5: 我刚练完腰背痛，左腿使不上劲，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.17814
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/6: 我蹲起时腰闪了，腿有放电感，该怎么处理？
+ok 142 - R11 red flags neurological.jsonl/6: 我蹲起时腰闪了，腿有放电感，该怎么处理？
+  ---
+  duration_ms: 0.131589
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/7: 我的队友蹲起时腰闪了，腿有放电感，我在旁边。
+ok 143 - R11 red flags neurological.jsonl/7: 我的队友蹲起时腰闪了，腿有放电感，我在旁边。
+  ---
+  duration_ms: 0.136897
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/8: 我蹲起时腰闪了，腿有放电感，休息片刻好些了，还需要处理吗？
+ok 144 - R11 red flags neurological.jsonl/8: 我蹲起时腰闪了，腿有放电感，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.183157
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/9: 我今天后背疼，双腿麻木，该怎么处理？
+ok 145 - R11 red flags neurological.jsonl/9: 我今天后背疼，双腿麻木，该怎么处理？
+  ---
+  duration_ms: 0.114364
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/10: 我的队友今天后背疼，双腿麻木，我在旁边。
+ok 146 - R11 red flags neurological.jsonl/10: 我的队友今天后背疼，双腿麻木，我在旁边。
+  ---
+  duration_ms: 0.142086
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/11: 我今天后背疼，双腿麻木，休息片刻好些了，还需要处理吗？
+ok 147 - R11 red flags neurological.jsonl/11: 我今天后背疼，双腿麻木，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.134965
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/12: 我训练中腰痛，脚使不上力，该怎么处理？
+ok 148 - R11 red flags neurological.jsonl/12: 我训练中腰痛，脚使不上力，该怎么处理？
+  ---
+  duration_ms: 0.11242
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/13: 我的队友训练中腰痛，脚使不上力，我在旁边。
+ok 149 - R11 red flags neurological.jsonl/13: 我的队友训练中腰痛，脚使不上力，我在旁边。
+  ---
+  duration_ms: 0.112541
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/14: 我训练中腰痛，脚使不上力，休息片刻好些了，还需要处理吗？
+ok 150 - R11 red flags neurological.jsonl/14: 我训练中腰痛，脚使不上力，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.128505
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/15: 我刚搬完器械背痛，腿像过电，该怎么处理？
+ok 151 - R11 red flags neurological.jsonl/15: 我刚搬完器械背痛，腿像过电，该怎么处理？
+  ---
+  duration_ms: 0.111439
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/16: 我的队友刚搬完器械背痛，腿像过电，我在旁边。
+ok 152 - R11 red flags neurological.jsonl/16: 我的队友刚搬完器械背痛，腿像过电，我在旁边。
+  ---
+  duration_ms: 0.110818
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/17: 我刚搬完器械背痛，腿像过电，休息片刻好些了，还需要处理吗？
+ok 153 - R11 red flags neurological.jsonl/17: 我刚搬完器械背痛，腿像过电，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.160603
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/18: 我今天腰扭了，腿无力，该怎么处理？
+ok 154 - R11 red flags neurological.jsonl/18: 我今天腰扭了，腿无力，该怎么处理？
+  ---
+  duration_ms: 0.115605
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/19: 我的队友今天腰扭了，腿无力，我在旁边。
+ok 155 - R11 red flags neurological.jsonl/19: 我的队友今天腰扭了，腿无力，我在旁边。
+  ---
+  duration_ms: 0.109857
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/20: 我今天腰扭了，腿无力，休息片刻好些了，还需要处理吗？
+ok 156 - R11 red flags neurological.jsonl/20: 我今天腰扭了，腿无力，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.127203
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/21: 我练完脊柱周围疼，下肢电击感，该怎么处理？
+ok 157 - R11 red flags neurological.jsonl/21: 我练完脊柱周围疼，下肢电击感，该怎么处理？
+  ---
+  duration_ms: 0.111418
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/22: 我的队友练完脊柱周围疼，下肢电击感，我在旁边。
+ok 158 - R11 red flags neurological.jsonl/22: 我的队友练完脊柱周围疼，下肢电击感，我在旁边。
+  ---
+  duration_ms: 0.143788
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/23: 我练完脊柱周围疼，下肢电击感，休息片刻好些了，还需要处理吗？
+ok 159 - R11 red flags neurological.jsonl/23: 我练完脊柱周围疼，下肢电击感，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.207074
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/24: 我刚跑后腰很痛，右腿没劲，该怎么处理？
+ok 160 - R11 red flags neurological.jsonl/24: 我刚跑后腰很痛，右腿没劲，该怎么处理？
+  ---
+  duration_ms: 0.195216
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/25: 我的队友刚跑后腰很痛，右腿没劲，我在旁边。
+ok 161 - R11 red flags neurological.jsonl/25: 我的队友刚跑后腰很痛，右腿没劲，我在旁边。
+  ---
+  duration_ms: 0.272973
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/26: 我刚跑后腰很痛，右腿没劲，休息片刻好些了，还需要处理吗？
+ok 162 - R11 red flags neurological.jsonl/26: 我刚跑后腰很痛，右腿没劲，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.149076
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/27: 我训练后腰背疼，脚麻木，该怎么处理？
+ok 163 - R11 red flags neurological.jsonl/27: 我训练后腰背疼，脚麻木，该怎么处理？
+  ---
+  duration_ms: 0.114633
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/28: 我的队友训练后腰背疼，脚麻木，我在旁边。
+ok 164 - R11 red flags neurological.jsonl/28: 我的队友训练后腰背疼，脚麻木，我在旁边。
+  ---
+  duration_ms: 0.111319
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/29: 我训练后腰背疼，脚麻木，休息片刻好些了，还需要处理吗？
+ok 165 - R11 red flags neurological.jsonl/29: 我训练后腰背疼，脚麻木，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.215096
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/30: 我现在没有单侧无力，普通散步没有不适。
+ok 166 - R11 red flags neurological.jsonl/30: 我现在没有单侧无力，普通散步没有不适。
+  ---
+  duration_ms: 0.137759
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/31: 科普时请讲解单侧无力的现场应对。
+ok 167 - R11 red flags neurological.jsonl/31: 科普时请讲解单侧无力的现场应对。
+  ---
+  duration_ms: 0.076065
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/32: 假设有人运动时单侧无力，一般如何处理？
+ok 168 - R11 red flags neurological.jsonl/32: 假设有人运动时单侧无力，一般如何处理？
+  ---
+  duration_ms: 0.135025
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/33: 我去年曾经单侧无力，现在完全没有不适，想问既往记录怎么保留。
+ok 169 - R11 red flags neurological.jsonl/33: 我去年曾经单侧无力，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.238302
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 170 - R11 red flags neurological.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.125581
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/35: 我现在没有言语不清，普通散步没有不适。
+ok 171 - R11 red flags neurological.jsonl/35: 我现在没有言语不清，普通散步没有不适。
+  ---
+  duration_ms: 0.140453
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/36: 科普时请讲解言语不清的现场应对。
+ok 172 - R11 red flags neurological.jsonl/36: 科普时请讲解言语不清的现场应对。
+  ---
+  duration_ms: 0.109837
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/37: 假设有人运动时言语不清，一般如何处理？
+ok 173 - R11 red flags neurological.jsonl/37: 假设有人运动时言语不清，一般如何处理？
+  ---
+  duration_ms: 0.080312
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/38: 我去年曾经言语不清，现在完全没有不适，想问既往记录怎么保留。
+ok 174 - R11 red flags neurological.jsonl/38: 我去年曾经言语不清，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.11183
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 175 - R11 red flags neurological.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.078569
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/40: 我现在没有尿失禁，普通散步没有不适。
+ok 176 - R11 red flags neurological.jsonl/40: 我现在没有尿失禁，普通散步没有不适。
+  ---
+  duration_ms: 0.081754
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/41: 科普时请讲解尿失禁的现场应对。
+ok 177 - R11 red flags neurological.jsonl/41: 科普时请讲解尿失禁的现场应对。
+  ---
+  duration_ms: 0.057347
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/42: 假设有人运动时尿失禁，一般如何处理？
+ok 178 - R11 red flags neurological.jsonl/42: 假设有人运动时尿失禁，一般如何处理？
+  ---
+  duration_ms: 0.071809
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/43: 我去年曾经尿失禁，现在完全没有不适，想问既往记录怎么保留。
+ok 179 - R11 red flags neurological.jsonl/43: 我去年曾经尿失禁，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.094954
+  type: 'test'
+  ...
+# Subtest: R11 red flags neurological.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 180 - R11 red flags neurological.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.105379
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/0: 我流感刚好，跑步后心跳忽快忽慢，该怎么处理？
+ok 181 - R11 red flags post_illness.jsonl/0: 我流感刚好，跑步后心跳忽快忽慢，该怎么处理？
+  ---
+  duration_ms: 0.143007
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/1: 我的队友流感刚好，跑步后心跳忽快忽慢，我在旁边。
+ok 182 - R11 red flags post_illness.jsonl/1: 我的队友流感刚好，跑步后心跳忽快忽慢，我在旁边。
+  ---
+  duration_ms: 0.118019
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/2: 我流感刚好，跑步后心跳忽快忽慢，休息片刻好些了，还需要处理吗？
+ok 183 - R11 red flags post_illness.jsonl/2: 我流感刚好，跑步后心跳忽快忽慢，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.193192
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/3: 我新冠转阴后今天心扑腾，该怎么处理？
+ok 184 - R11 red flags post_illness.jsonl/3: 我新冠转阴后今天心扑腾，该怎么处理？
+  ---
+  duration_ms: 0.353686
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/4: 我的队友新冠转阴后今天心扑腾，我在旁边。
+ok 185 - R11 red flags post_illness.jsonl/4: 我的队友新冠转阴后今天心扑腾，我在旁边。
+  ---
+  duration_ms: 0.146392
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/5: 我新冠转阴后今天心扑腾，休息片刻好些了，还需要处理吗？
+ok 186 - R11 red flags post_illness.jsonl/5: 我新冠转阴后今天心扑腾，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.169246
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/6: 我咳嗽还没好，训练后心慌，该怎么处理？
+ok 187 - R11 red flags post_illness.jsonl/6: 我咳嗽还没好，训练后心慌，该怎么处理？
+  ---
+  duration_ms: 0.443953
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/7: 我的队友咳嗽还没好，训练后心慌，我在旁边。
+ok 188 - R11 red flags post_illness.jsonl/7: 我的队友咳嗽还没好，训练后心慌，我在旁边。
+  ---
+  duration_ms: 0.167033
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/8: 我咳嗽还没好，训练后心慌，休息片刻好些了，还需要处理吗？
+ok 189 - R11 red flags post_illness.jsonl/8: 我咳嗽还没好，训练后心慌，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.180634
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/9: 我病刚好一跑心里扑通，该怎么处理？
+ok 190 - R11 red flags post_illness.jsonl/9: 我病刚好一跑心里扑通，该怎么处理？
+  ---
+  duration_ms: 0.098819
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/10: 我的队友病刚好一跑心里扑通，我在旁边。
+ok 191 - R11 red flags post_illness.jsonl/10: 我的队友病刚好一跑心里扑通，我在旁边。
+  ---
+  duration_ms: 0.09237
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/11: 我病刚好一跑心里扑通，休息片刻好些了，还需要处理吗？
+ok 192 - R11 red flags post_illness.jsonl/11: 我病刚好一跑心里扑通，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.110658
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/12: 我退热后运动心跳乱，该怎么处理？
+ok 193 - R11 red flags post_illness.jsonl/12: 我退热后运动心跳乱，该怎么处理？
+  ---
+  duration_ms: 0.089896
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/13: 我的队友退热后运动心跳乱，我在旁边。
+ok 194 - R11 red flags post_illness.jsonl/13: 我的队友退热后运动心跳乱，我在旁边。
+  ---
+  duration_ms: 0.091919
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/14: 我退热后运动心跳乱，休息片刻好些了，还需要处理吗？
+ok 195 - R11 red flags post_illness.jsonl/14: 我退热后运动心跳乱，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.106732
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/15: 我感染后刚练心脏漏跳，该怎么处理？
+ok 196 - R11 red flags post_illness.jsonl/15: 我感染后刚练心脏漏跳，该怎么处理？
+  ---
+  duration_ms: 0.090717
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/16: 我的队友感染后刚练心脏漏跳，我在旁边。
+ok 197 - R11 red flags post_illness.jsonl/16: 我的队友感染后刚练心脏漏跳，我在旁边。
+  ---
+  duration_ms: 0.122416
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/17: 我感染后刚练心脏漏跳，休息片刻好些了，还需要处理吗？
+ok 198 - R11 red flags post_illness.jsonl/17: 我感染后刚练心脏漏跳，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.172601
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/18: 我感冒后今天一直心悸，该怎么处理？
+ok 199 - R11 red flags post_illness.jsonl/18: 我感冒后今天一直心悸，该怎么处理？
+  ---
+  duration_ms: 0.169186
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/19: 我的队友感冒后今天一直心悸，我在旁边。
+ok 200 - R11 red flags post_illness.jsonl/19: 我的队友感冒后今天一直心悸，我在旁边。
+  ---
+  duration_ms: 0.100212
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/20: 我感冒后今天一直心悸，休息片刻好些了，还需要处理吗？
+ok 201 - R11 red flags post_illness.jsonl/20: 我感冒后今天一直心悸，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.11232
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/21: 我咽痛之后练跑感觉心跳不规则，该怎么处理？
+ok 202 - R11 red flags post_illness.jsonl/21: 我咽痛之后练跑感觉心跳不规则，该怎么处理？
+  ---
+  duration_ms: 0.094834
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/22: 我的队友咽痛之后练跑感觉心跳不规则，我在旁边。
+ok 203 - R11 red flags post_illness.jsonl/22: 我的队友咽痛之后练跑感觉心跳不规则，我在旁边。
+  ---
+  duration_ms: 0.119241
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/23: 我咽痛之后练跑感觉心跳不规则，休息片刻好些了，还需要处理吗？
+ok 204 - R11 red flags post_illness.jsonl/23: 我咽痛之后练跑感觉心跳不规则，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 5.940575
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/24: 我病后跑步心突突，该怎么处理？
+ok 205 - R11 red flags post_illness.jsonl/24: 我病后跑步心突突，该怎么处理？
+  ---
+  duration_ms: 0.235307
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/25: 我的队友病后跑步心突突，我在旁边。
+ok 206 - R11 red flags post_illness.jsonl/25: 我的队友病后跑步心突突，我在旁边。
+  ---
+  duration_ms: 0.168865
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/26: 我病后跑步心突突，休息片刻好些了，还需要处理吗？
+ok 207 - R11 red flags post_illness.jsonl/26: 我病后跑步心突突，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.137569
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/27: 我发烧好后今天心荒，该怎么处理？
+ok 208 - R11 red flags post_illness.jsonl/27: 我发烧好后今天心荒，该怎么处理？
+  ---
+  duration_ms: 0.101203
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/28: 我的队友发烧好后今天心荒，我在旁边。
+ok 209 - R11 red flags post_illness.jsonl/28: 我的队友发烧好后今天心荒，我在旁边。
+  ---
+  duration_ms: 0.096767
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/29: 我发烧好后今天心荒，休息片刻好些了，还需要处理吗？
+ok 210 - R11 red flags post_illness.jsonl/29: 我发烧好后今天心荒，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.207785
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/30: 我现在没有病后心悸，普通散步没有不适。
+ok 211 - R11 red flags post_illness.jsonl/30: 我现在没有病后心悸，普通散步没有不适。
+  ---
+  duration_ms: 0.228517
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/31: 科普时请讲解病后心悸的现场应对。
+ok 212 - R11 red flags post_illness.jsonl/31: 科普时请讲解病后心悸的现场应对。
+  ---
+  duration_ms: 0.095044
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/32: 假设有人运动时病后心悸，一般如何处理？
+ok 213 - R11 red flags post_illness.jsonl/32: 假设有人运动时病后心悸，一般如何处理？
+  ---
+  duration_ms: 0.091869
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/33: 我去年曾经病后心悸，现在完全没有不适，想问既往记录怎么保留。
+ok 214 - R11 red flags post_illness.jsonl/33: 我去年曾经病后心悸，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.119011
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 215 - R11 red flags post_illness.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.087763
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/35: 我现在没有感冒，普通散步没有不适。
+ok 216 - R11 red flags post_illness.jsonl/35: 我现在没有感冒，普通散步没有不适。
+  ---
+  duration_ms: 0.087873
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/36: 科普时请讲解感冒的现场应对。
+ok 217 - R11 red flags post_illness.jsonl/36: 科普时请讲解感冒的现场应对。
+  ---
+  duration_ms: 0.067172
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/37: 假设有人运动时感冒，一般如何处理？
+ok 218 - R11 red flags post_illness.jsonl/37: 假设有人运动时感冒，一般如何处理？
+  ---
+  duration_ms: 0.083707
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/38: 我去年曾经感冒，现在完全没有不适，想问既往记录怎么保留。
+ok 219 - R11 red flags post_illness.jsonl/38: 我去年曾经感冒，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.15804
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 220 - R11 red flags post_illness.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.091459
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/40: 我现在没有呼吸困难，普通散步没有不适。
+ok 221 - R11 red flags post_illness.jsonl/40: 我现在没有呼吸困难，普通散步没有不适。
+  ---
+  duration_ms: 0.222317
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/41: 科普时请讲解呼吸困难的现场应对。
+ok 222 - R11 red flags post_illness.jsonl/41: 科普时请讲解呼吸困难的现场应对。
+  ---
+  duration_ms: 0.252352
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/42: 假设有人运动时呼吸困难，一般如何处理？
+ok 223 - R11 red flags post_illness.jsonl/42: 假设有人运动时呼吸困难，一般如何处理？
+  ---
+  duration_ms: 0.138741
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/43: 我去年曾经呼吸困难，现在完全没有不适，想问既往记录怎么保留。
+ok 224 - R11 red flags post_illness.jsonl/43: 我去年曾经呼吸困难，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.15831
+  type: 'test'
+  ...
+# Subtest: R11 red flags post_illness.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 225 - R11 red flags post_illness.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.097297
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/0: 我练后喘不上气，站着也费劲，该怎么处理？
+ok 226 - R11 red flags respiratory.jsonl/0: 我练后喘不上气，站着也费劲，该怎么处理？
+  ---
+  duration_ms: 0.122776
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/1: 我的队友练后喘不上气，站着也费劲，我在旁边。
+ok 227 - R11 red flags respiratory.jsonl/1: 我的队友练后喘不上气，站着也费劲，我在旁边。
+  ---
+  duration_ms: 0.208456
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/2: 我练后喘不上气，站着也费劲，休息片刻好些了，还需要处理吗？
+ok 228 - R11 red flags respiratory.jsonl/2: 我练后喘不上气，站着也费劲，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.142196
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/3: 我今天运动后嘴唇发紫，该怎么处理？
+ok 229 - R11 red flags respiratory.jsonl/3: 我今天运动后嘴唇发紫，该怎么处理？
+  ---
+  duration_ms: 0.096396
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/4: 我的队友今天运动后嘴唇发紫，我在旁边。
+ok 230 - R11 red flags respiratory.jsonl/4: 我的队友今天运动后嘴唇发紫，我在旁边。
+  ---
+  duration_ms: 0.096536
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/5: 我今天运动后嘴唇发紫，休息片刻好些了，还需要处理吗？
+ok 231 - R11 red flags respiratory.jsonl/5: 我今天运动后嘴唇发紫，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.172151
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/6: 我跑了一趟后一句话说不完，该怎么处理？
+ok 232 - R11 red flags respiratory.jsonl/6: 我跑了一趟后一句话说不完，该怎么处理？
+  ---
+  duration_ms: 0.102325
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/7: 我的队友跑了一趟后一句话说不完，我在旁边。
+ok 233 - R11 red flags respiratory.jsonl/7: 我的队友跑了一趟后一句话说不完，我在旁边。
+  ---
+  duration_ms: 0.096696
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/8: 我跑了一趟后一句话说不完，休息片刻好些了，还需要处理吗？
+ok 234 - R11 red flags respiratory.jsonl/8: 我跑了一趟后一句话说不完，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.112821
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/9: 我运动后呼吸困难，该怎么处理？
+ok 235 - R11 red flags respiratory.jsonl/9: 我运动后呼吸困难，该怎么处理？
+  ---
+  duration_ms: 0.094954
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/10: 我的队友运动后呼吸困难，我在旁边。
+ok 236 - R11 red flags respiratory.jsonl/10: 我的队友运动后呼吸困难，我在旁边。
+  ---
+  duration_ms: 0.341958
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/11: 我运动后呼吸困难，休息片刻好些了，还需要处理吗？
+ok 237 - R11 red flags respiratory.jsonl/11: 我运动后呼吸困难，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.177098
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/12: 我刚游完说不出完整句子，该怎么处理？
+ok 238 - R11 red flags respiratory.jsonl/12: 我刚游完说不出完整句子，该怎么处理？
+  ---
+  duration_ms: 0.104909
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/13: 我的队友刚游完说不出完整句子，我在旁边。
+ok 239 - R11 red flags respiratory.jsonl/13: 我的队友刚游完说不出完整句子，我在旁边。
+  ---
+  duration_ms: 0.098069
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/14: 我刚游完说不出完整句子，休息片刻好些了，还需要处理吗？
+ok 240 - R11 red flags respiratory.jsonl/14: 我刚游完说不出完整句子，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.215296
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/15: 我刚上坡嘴唇青紫，该怎么处理？
+ok 241 - R11 red flags respiratory.jsonl/15: 我刚上坡嘴唇青紫，该怎么处理？
+  ---
+  duration_ms: 0.146312
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/16: 我的队友刚上坡嘴唇青紫，我在旁边。
+ok 242 - R11 red flags respiratory.jsonl/16: 我的队友刚上坡嘴唇青紫，我在旁边。
+  ---
+  duration_ms: 0.100713
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/17: 我刚上坡嘴唇青紫，休息片刻好些了，还需要处理吗？
+ok 243 - R11 red flags respiratory.jsonl/17: 我刚上坡嘴唇青紫，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.150128
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/18: 我练球后严重气短，该怎么处理？
+ok 244 - R11 red flags respiratory.jsonl/18: 我练球后严重气短，该怎么处理？
+  ---
+  duration_ms: 0.337822
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/19: 我的队友练球后严重气短，我在旁边。
+ok 245 - R11 red flags respiratory.jsonl/19: 我的队友练球后严重气短，我在旁边。
+  ---
+  duration_ms: 0.119211
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/20: 我练球后严重气短，休息片刻好些了，还需要处理吗？
+ok 246 - R11 red flags respiratory.jsonl/20: 我练球后严重气短，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.21754
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/21: 我刚结束训练透不过气，该怎么处理？
+ok 247 - R11 red flags respiratory.jsonl/21: 我刚结束训练透不过气，该怎么处理？
+  ---
+  duration_ms: 0.142426
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/22: 我的队友刚结束训练透不过气，我在旁边。
+ok 248 - R11 red flags respiratory.jsonl/22: 我的队友刚结束训练透不过气，我在旁边。
+  ---
+  duration_ms: 0.147043
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/23: 我刚结束训练透不过气，休息片刻好些了，还需要处理吗？
+ok 249 - R11 red flags respiratory.jsonl/23: 我刚结束训练透不过气，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.12522
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/24: 我运动后说句话就喘，该怎么处理？
+ok 250 - R11 red flags respiratory.jsonl/24: 我运动后说句话就喘，该怎么处理？
+  ---
+  duration_ms: 0.093852
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/25: 我的队友运动后说句话就喘，我在旁边。
+ok 251 - R11 red flags respiratory.jsonl/25: 我的队友运动后说句话就喘，我在旁边。
+  ---
+  duration_ms: 0.093602
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/26: 我运动后说句话就喘，休息片刻好些了，还需要处理吗？
+ok 252 - R11 red flags respiratory.jsonl/26: 我运动后说句话就喘，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.181084
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/27: 我跑完嘴唇发蓝，该怎么处理？
+ok 253 - R11 red flags respiratory.jsonl/27: 我跑完嘴唇发蓝，该怎么处理？
+  ---
+  duration_ms: 0.102636
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/28: 我的队友跑完嘴唇发蓝，我在旁边。
+ok 254 - R11 red flags respiratory.jsonl/28: 我的队友跑完嘴唇发蓝，我在旁边。
+  ---
+  duration_ms: 0.091428
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/29: 我跑完嘴唇发蓝，休息片刻好些了，还需要处理吗？
+ok 255 - R11 red flags respiratory.jsonl/29: 我跑完嘴唇发蓝，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.165461
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/30: 我现在没有严重气短，普通散步没有不适。
+ok 256 - R11 red flags respiratory.jsonl/30: 我现在没有严重气短，普通散步没有不适。
+  ---
+  duration_ms: 0.133732
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/31: 科普时请讲解严重气短的现场应对。
+ok 257 - R11 red flags respiratory.jsonl/31: 科普时请讲解严重气短的现场应对。
+  ---
+  duration_ms: 0.089756
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/32: 假设有人运动时严重气短，一般如何处理？
+ok 258 - R11 red flags respiratory.jsonl/32: 假设有人运动时严重气短，一般如何处理？
+  ---
+  duration_ms: 0.09227
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/33: 我去年曾经严重气短，现在完全没有不适，想问既往记录怎么保留。
+ok 259 - R11 red flags respiratory.jsonl/33: 我去年曾经严重气短，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.129586
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 260 - R11 red flags respiratory.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.23761
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/35: 我现在没有嘴唇发紫，普通散步没有不适。
+ok 261 - R11 red flags respiratory.jsonl/35: 我现在没有嘴唇发紫，普通散步没有不适。
+  ---
+  duration_ms: 0.140282
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/36: 科普时请讲解嘴唇发紫的现场应对。
+ok 262 - R11 red flags respiratory.jsonl/36: 科普时请讲解嘴唇发紫的现场应对。
+  ---
+  duration_ms: 0.080032
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/37: 假设有人运动时嘴唇发紫，一般如何处理？
+ok 263 - R11 red flags respiratory.jsonl/37: 假设有人运动时嘴唇发紫，一般如何处理？
+  ---
+  duration_ms: 0.161585
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/38: 我去年曾经嘴唇发紫，现在完全没有不适，想问既往记录怎么保留。
+ok 264 - R11 red flags respiratory.jsonl/38: 我去年曾经嘴唇发紫，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.113682
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 265 - R11 red flags respiratory.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.074943
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/40: 我现在没有呼吸困难，普通散步没有不适。
+ok 266 - R11 red flags respiratory.jsonl/40: 我现在没有呼吸困难，普通散步没有不适。
+  ---
+  duration_ms: 0.079731
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/41: 科普时请讲解呼吸困难的现场应对。
+ok 267 - R11 red flags respiratory.jsonl/41: 科普时请讲解呼吸困难的现场应对。
+  ---
+  duration_ms: 0.061894
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/42: 假设有人运动时呼吸困难，一般如何处理？
+ok 268 - R11 red flags respiratory.jsonl/42: 假设有人运动时呼吸困难，一般如何处理？
+  ---
+  duration_ms: 0.07266
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/43: 我去年曾经呼吸困难，现在完全没有不适，想问既往记录怎么保留。
+ok 269 - R11 red flags respiratory.jsonl/43: 我去年曾经呼吸困难，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.096786
+  type: 'test'
+  ...
+# Subtest: R11 red flags respiratory.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 270 - R11 red flags respiratory.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.073762
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/0: 我慢跑途中差点昏倒，该怎么处理？
+ok 271 - R11 red flags syncope.jsonl/0: 我慢跑途中差点昏倒，该怎么处理？
+  ---
+  duration_ms: 0.121274
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/1: 我的队友慢跑途中差点昏倒，我在旁边。
+ok 272 - R11 red flags syncope.jsonl/1: 我的队友慢跑途中差点昏倒，我在旁边。
+  ---
+  duration_ms: 0.088124
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/2: 我慢跑途中差点昏倒，休息片刻好些了，还需要处理吗？
+ok 273 - R11 red flags syncope.jsonl/2: 我慢跑途中差点昏倒，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.205953
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/3: 我练完站起来眼前发白，该怎么处理？
+ok 274 - R11 red flags syncope.jsonl/3: 我练完站起来眼前发白，该怎么处理？
+  ---
+  duration_ms: 0.093602
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/4: 我的队友练完站起来眼前发白，我在旁边。
+ok 275 - R11 red flags syncope.jsonl/4: 我的队友练完站起来眼前发白，我在旁边。
+  ---
+  duration_ms: 0.376611
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/5: 我练完站起来眼前发白，休息片刻好些了，还需要处理吗？
+ok 276 - R11 red flags syncope.jsonl/5: 我练完站起来眼前发白，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.186683
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/6: 我刚绕操场跑着跑着晕过去，该怎么处理？
+ok 277 - R11 red flags syncope.jsonl/6: 我刚绕操场跑着跑着晕过去，该怎么处理？
+  ---
+  duration_ms: 0.098149
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/7: 我的队友刚绕操场跑着跑着晕过去，我在旁边。
+ok 278 - R11 red flags syncope.jsonl/7: 我的队友刚绕操场跑着跑着晕过去，我在旁边。
+  ---
+  duration_ms: 0.900045
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/8: 我刚绕操场跑着跑着晕过去，休息片刻好些了，还需要处理吗？
+ok 279 - R11 red flags syncope.jsonl/8: 我刚绕操场跑着跑着晕过去，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.121274
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/9: 我运动时突然断片，该怎么处理？
+ok 280 - R11 red flags syncope.jsonl/9: 我运动时突然断片，该怎么处理？
+  ---
+  duration_ms: 0.088534
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/10: 我的队友运动时突然断片，我在旁边。
+ok 281 - R11 red flags syncope.jsonl/10: 我的队友运动时突然断片，我在旁边。
+  ---
+  duration_ms: 0.080693
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/11: 我运动时突然断片，休息片刻好些了，还需要处理吗？
+ok 282 - R11 red flags syncope.jsonl/11: 我运动时突然断片，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.096867
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/12: 我今天热身后眼前一黑，该怎么处理？
+ok 283 - R11 red flags syncope.jsonl/12: 我今天热身后眼前一黑，该怎么处理？
+  ---
+  duration_ms: 0.07874
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/13: 我的队友今天热身后眼前一黑，我在旁边。
+ok 284 - R11 red flags syncope.jsonl/13: 我的队友今天热身后眼前一黑，我在旁边。
+  ---
+  duration_ms: 0.079801
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/14: 我今天热身后眼前一黑，休息片刻好些了，还需要处理吗？
+ok 285 - R11 red flags syncope.jsonl/14: 我今天热身后眼前一黑，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.141394
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/15: 我训练中昏过去几秒，该怎么处理？
+ok 286 - R11 red flags syncope.jsonl/15: 我训练中昏过去几秒，该怎么处理？
+  ---
+  duration_ms: 0.089285
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/16: 我的队友训练中昏过去几秒，我在旁边。
+ok 287 - R11 red flags syncope.jsonl/16: 我的队友训练中昏过去几秒，我在旁边。
+  ---
+  duration_ms: 0.081524
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/17: 我训练中昏过去几秒，休息片刻好些了，还需要处理吗？
+ok 288 - R11 red flags syncope.jsonl/17: 我训练中昏过去几秒，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.203659
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/18: 我上坡刚跑完要晕了，该怎么处理？
+ok 289 - R11 red flags syncope.jsonl/18: 我上坡刚跑完要晕了，该怎么处理？
+  ---
+  duration_ms: 0.0922
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/19: 我的队友上坡刚跑完要晕了，我在旁边。
+ok 290 - R11 red flags syncope.jsonl/19: 我的队友上坡刚跑完要晕了，我在旁边。
+  ---
+  duration_ms: 0.083557
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/20: 我上坡刚跑完要晕了，休息片刻好些了，还需要处理吗？
+ok 291 - R11 red flags syncope.jsonl/20: 我上坡刚跑完要晕了，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.095074
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/21: 我刚打球险些倒下，该怎么处理？
+ok 292 - R11 red flags syncope.jsonl/21: 我刚打球险些倒下，该怎么处理？
+  ---
+  duration_ms: 0.129266
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/22: 我的队友刚打球险些倒下，我在旁边。
+ok 293 - R11 red flags syncope.jsonl/22: 我的队友刚打球险些倒下，我在旁边。
+  ---
+  duration_ms: 0.187324
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/23: 我刚打球险些倒下，休息片刻好些了，还需要处理吗？
+ok 294 - R11 red flags syncope.jsonl/23: 我刚打球险些倒下，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.153062
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/24: 我运动后失去意识，该怎么处理？
+ok 295 - R11 red flags syncope.jsonl/24: 我运动后失去意识，该怎么处理？
+  ---
+  duration_ms: 0.109406
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/25: 我的队友运动后失去意识，我在旁边。
+ok 296 - R11 red flags syncope.jsonl/25: 我的队友运动后失去意识，我在旁边。
+  ---
+  duration_ms: 0.090317
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/26: 我运动后失去意识，休息片刻好些了，还需要处理吗？
+ok 297 - R11 red flags syncope.jsonl/26: 我运动后失去意识，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.155606
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/27: 我刚跑完晕到在地上，该怎么处理？
+ok 298 - R11 red flags syncope.jsonl/27: 我刚跑完晕到在地上，该怎么处理？
+  ---
+  duration_ms: 0.152751
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/28: 我的队友刚跑完晕到在地上，我在旁边。
+ok 299 - R11 red flags syncope.jsonl/28: 我的队友刚跑完晕到在地上，我在旁边。
+  ---
+  duration_ms: 0.131829
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/29: 我刚跑完晕到在地上，休息片刻好些了，还需要处理吗？
+ok 300 - R11 red flags syncope.jsonl/29: 我刚跑完晕到在地上，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.121134
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/30: 我现在没有晕厥，普通散步没有不适。
+ok 301 - R11 red flags syncope.jsonl/30: 我现在没有晕厥，普通散步没有不适。
+  ---
+  duration_ms: 0.122506
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/31: 科普时请讲解晕厥的现场应对。
+ok 302 - R11 red flags syncope.jsonl/31: 科普时请讲解晕厥的现场应对。
+  ---
+  duration_ms: 0.075254
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/32: 假设有人运动时晕厥，一般如何处理？
+ok 303 - R11 red flags syncope.jsonl/32: 假设有人运动时晕厥，一般如何处理？
+  ---
+  duration_ms: 0.117999
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/33: 我去年曾经晕厥，现在完全没有不适，想问既往记录怎么保留。
+ok 304 - R11 red flags syncope.jsonl/33: 我去年曾经晕厥，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.120723
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 305 - R11 red flags syncope.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.089827
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/35: 我现在没有眼前发黑，普通散步没有不适。
+ok 306 - R11 red flags syncope.jsonl/35: 我现在没有眼前发黑，普通散步没有不适。
+  ---
+  duration_ms: 0.130618
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/36: 科普时请讲解眼前发黑的现场应对。
+ok 307 - R11 red flags syncope.jsonl/36: 科普时请讲解眼前发黑的现场应对。
+  ---
+  duration_ms: 0.076917
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/37: 假设有人运动时眼前发黑，一般如何处理？
+ok 308 - R11 red flags syncope.jsonl/37: 假设有人运动时眼前发黑，一般如何处理？
+  ---
+  duration_ms: 0.179382
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/38: 我去年曾经眼前发黑，现在完全没有不适，想问既往记录怎么保留。
+ok 309 - R11 red flags syncope.jsonl/38: 我去年曾经眼前发黑，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.120893
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 310 - R11 red flags syncope.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.122606
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/40: 我现在没有晕倒，普通散步没有不适。
+ok 311 - R11 red flags syncope.jsonl/40: 我现在没有晕倒，普通散步没有不适。
+  ---
+  duration_ms: 0.13196
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/41: 科普时请讲解晕倒的现场应对。
+ok 312 - R11 red flags syncope.jsonl/41: 科普时请讲解晕倒的现场应对。
+  ---
+  duration_ms: 0.071448
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/42: 假设有人运动时晕倒，一般如何处理？
+ok 313 - R11 red flags syncope.jsonl/42: 假设有人运动时晕倒，一般如何处理？
+  ---
+  duration_ms: 0.082124
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/43: 我去年曾经晕倒，现在完全没有不适，想问既往记录怎么保留。
+ok 314 - R11 red flags syncope.jsonl/43: 我去年曾经晕倒，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.150278
+  type: 'test'
+  ...
+# Subtest: R11 red flags syncope.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 315 - R11 red flags syncope.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.092851
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/0: 我15岁想做卧推1RM，该怎么处理？
+ok 316 - R11 red flags youth.jsonl/0: 我15岁想做卧推1RM，该怎么处理？
+  ---
+  duration_ms: 0.242267
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/1: 我的队友15岁想做卧推1RM，我在旁边。
+ok 317 - R11 red flags youth.jsonl/1: 我的队友15岁想做卧推1RM，我在旁边。
+  ---
+  duration_ms: 0.153242
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/2: 我15岁想做卧推1RM，休息片刻好些了，还需要处理吗？
+ok 318 - R11 red flags youth.jsonl/2: 我15岁想做卧推1RM，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.170218
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/3: 我初二想冲最大重量，该怎么处理？
+ok 319 - R11 red flags youth.jsonl/3: 我初二想冲最大重量，该怎么处理？
+  ---
+  duration_ms: 0.093512
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/4: 我的队友初二想冲最大重量，我在旁边。
+ok 320 - R11 red flags youth.jsonl/4: 我的队友初二想冲最大重量，我在旁边。
+  ---
+  duration_ms: 0.135134
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/5: 我初二想冲最大重量，休息片刻好些了，还需要处理吗？
+ok 321 - R11 red flags youth.jsonl/5: 我初二想冲最大重量，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.110468
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/6: 我高一新生要做深蹲极限测试，该怎么处理？
+ok 322 - R11 red flags youth.jsonl/6: 我高一新生要做深蹲极限测试，该怎么处理？
+  ---
+  duration_ms: 0.183028
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/7: 我的队友高一新生要做深蹲极限测试，我在旁边。
+ok 323 - R11 red flags youth.jsonl/7: 我的队友高一新生要做深蹲极限测试，我在旁边。
+  ---
+  duration_ms: 0.093872
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/8: 我高一新生要做深蹲极限测试，休息片刻好些了，还需要处理吗？
+ok 324 - R11 red flags youth.jsonl/8: 我高一新生要做深蹲极限测试，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.107573
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/9: 我16岁每天练力量还要冲重量，该怎么处理？
+ok 325 - R11 red flags youth.jsonl/9: 我16岁每天练力量还要冲重量，该怎么处理？
+  ---
+  duration_ms: 0.085459
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/10: 我的队友16岁每天练力量还要冲重量，我在旁边。
+ok 326 - R11 red flags youth.jsonl/10: 我的队友16岁每天练力量还要冲重量，我在旁边。
+  ---
+  duration_ms: 0.084728
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/11: 我16岁每天练力量还要冲重量，休息片刻好些了，还需要处理吗？
+ok 327 - R11 red flags youth.jsonl/11: 我16岁每天练力量还要冲重量，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.150258
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/12: 我小学队员想测1RM，该怎么处理？
+ok 328 - R11 red flags youth.jsonl/12: 我小学队员想测1RM，该怎么处理？
+  ---
+  duration_ms: 0.098149
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/13: 我的队友小学队员想测1RM，我在旁边。
+ok 329 - R11 red flags youth.jsonl/13: 我的队友小学队员想测1RM，我在旁边。
+  ---
+  duration_ms: 0.083737
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/14: 我小学队员想测1RM，休息片刻好些了，还需要处理吗？
+ok 330 - R11 red flags youth.jsonl/14: 我小学队员想测1RM，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.103457
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/15: 我14岁准备最大重量试举，该怎么处理？
+ok 331 - R11 red flags youth.jsonl/15: 我14岁准备最大重量试举，该怎么处理？
+  ---
+  duration_ms: 0.083356
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/16: 我的队友14岁准备最大重量试举，我在旁边。
+ok 332 - R11 red flags youth.jsonl/16: 我的队友14岁准备最大重量试举，我在旁边。
+  ---
+  duration_ms: 0.081473
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/17: 我14岁准备最大重量试举，休息片刻好些了，还需要处理吗？
+ok 333 - R11 red flags youth.jsonl/17: 我14岁准备最大重量试举，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.103007
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/18: 我未成年新手想冲硬拉极限，该怎么处理？
+ok 334 - R11 red flags youth.jsonl/18: 我未成年新手想冲硬拉极限，该怎么处理？
+  ---
+  duration_ms: 0.082365
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/19: 我的队友未成年新手想冲硬拉极限，我在旁边。
+ok 335 - R11 red flags youth.jsonl/19: 我的队友未成年新手想冲硬拉极限，我在旁边。
+  ---
+  duration_ms: 0.079069
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/20: 我未成年新手想冲硬拉极限，休息片刻好些了，还需要处理吗？
+ok 336 - R11 red flags youth.jsonl/20: 我未成年新手想冲硬拉极限，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.098749
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/21: 我初三准备测卧推1RM，该怎么处理？
+ok 337 - R11 red flags youth.jsonl/21: 我初三准备测卧推1RM，该怎么处理？
+  ---
+  duration_ms: 0.114604
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/22: 我的队友初三准备测卧推1RM，我在旁边。
+ok 338 - R11 red flags youth.jsonl/22: 我的队友初三准备测卧推1RM，我在旁边。
+  ---
+  duration_ms: 0.130668
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/23: 我初三准备测卧推1RM，休息片刻好些了，还需要处理吗？
+ok 339 - R11 red flags youth.jsonl/23: 我初三准备测卧推1RM，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.115174
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/24: 我13岁要测试最大重量，该怎么处理？
+ok 340 - R11 red flags youth.jsonl/24: 我13岁要测试最大重量，该怎么处理？
+  ---
+  duration_ms: 0.081263
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/25: 我的队友13岁要测试最大重量，我在旁边。
+ok 341 - R11 red flags youth.jsonl/25: 我的队友13岁要测试最大重量，我在旁边。
+  ---
+  duration_ms: 0.090487
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/26: 我13岁要测试最大重量，休息片刻好些了，还需要处理吗？
+ok 342 - R11 red flags youth.jsonl/26: 我13岁要测试最大重量，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.162627
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/27: 我高二想在家做1RM，该怎么处理？
+ok 343 - R11 red flags youth.jsonl/27: 我高二想在家做1RM，该怎么处理？
+  ---
+  duration_ms: 0.132812
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/28: 我的队友高二想在家做1RM，我在旁边。
+ok 344 - R11 red flags youth.jsonl/28: 我的队友高二想在家做1RM，我在旁边。
+  ---
+  duration_ms: 0.152992
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/29: 我高二想在家做1RM，休息片刻好些了，还需要处理吗？
+ok 345 - R11 red flags youth.jsonl/29: 我高二想在家做1RM，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.214335
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/30: 我现在没有晕倒，普通散步没有不适。
+ok 346 - R11 red flags youth.jsonl/30: 我现在没有晕倒，普通散步没有不适。
+  ---
+  duration_ms: 0.223149
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/31: 科普时请讲解晕倒的现场应对。
+ok 347 - R11 red flags youth.jsonl/31: 科普时请讲解晕倒的现场应对。
+  ---
+  duration_ms: 0.074823
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/32: 假设有人运动时晕倒，一般如何处理？
+ok 348 - R11 red flags youth.jsonl/32: 假设有人运动时晕倒，一般如何处理？
+  ---
+  duration_ms: 0.083767
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/33: 我去年曾经晕倒，现在完全没有不适，想问既往记录怎么保留。
+ok 349 - R11 red flags youth.jsonl/33: 我去年曾经晕倒，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.116456
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 350 - R11 red flags youth.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.096366
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/35: 我现在没有心慌，普通散步没有不适。
+ok 351 - R11 red flags youth.jsonl/35: 我现在没有心慌，普通散步没有不适。
+  ---
+  duration_ms: 0.139432
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/36: 科普时请讲解心慌的现场应对。
+ok 352 - R11 red flags youth.jsonl/36: 科普时请讲解心慌的现场应对。
+  ---
+  duration_ms: 0.069766
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/37: 假设有人运动时心慌，一般如何处理？
+ok 353 - R11 red flags youth.jsonl/37: 假设有人运动时心慌，一般如何处理？
+  ---
+  duration_ms: 0.089927
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/38: 我去年曾经心慌，现在完全没有不适，想问既往记录怎么保留。
+ok 354 - R11 red flags youth.jsonl/38: 我去年曾经心慌，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.110548
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 355 - R11 red flags youth.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.083566
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/40: 我现在没有胸痛，普通散步没有不适。
+ok 356 - R11 red flags youth.jsonl/40: 我现在没有胸痛，普通散步没有不适。
+  ---
+  duration_ms: 0.088093
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/41: 科普时请讲解胸痛的现场应对。
+ok 357 - R11 red flags youth.jsonl/41: 科普时请讲解胸痛的现场应对。
+  ---
+  duration_ms: 0.067413
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/42: 假设有人运动时胸痛，一般如何处理？
+ok 358 - R11 red flags youth.jsonl/42: 假设有人运动时胸痛，一般如何处理？
+  ---
+  duration_ms: 0.080222
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/43: 我去年曾经胸痛，现在完全没有不适，想问既往记录怎么保留。
+ok 359 - R11 red flags youth.jsonl/43: 我去年曾经胸痛，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.15182
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 360 - R11 red flags youth.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.185451
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/0: 我初二每天只吃一顿还跑步，该怎么处理？
+ok 361 - R11 red flags youth_energy.jsonl/0: 我初二每天只吃一顿还跑步，该怎么处理？
+  ---
+  duration_ms: 0.15794
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/1: 我的队友初二每天只吃一顿还跑步，我在旁边。
+ok 362 - R11 red flags youth_energy.jsonl/1: 我的队友初二每天只吃一顿还跑步，我在旁边。
+  ---
+  duration_ms: 0.098059
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/2: 我初二每天只吃一顿还跑步，休息片刻好些了，还需要处理吗？
+ok 363 - R11 red flags youth_energy.jsonl/2: 我初二每天只吃一顿还跑步，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.113032
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/3: 我15岁练跑同时不吃晚饭，该怎么处理？
+ok 364 - R11 red flags youth_energy.jsonl/3: 我15岁练跑同时不吃晚饭，该怎么处理？
+  ---
+  duration_ms: 0.090788
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/4: 我的队友15岁练跑同时不吃晚饭，我在旁边。
+ok 365 - R11 red flags youth_energy.jsonl/4: 我的队友15岁练跑同时不吃晚饭，我在旁边。
+  ---
+  duration_ms: 0.090988
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/5: 我15岁练跑同时不吃晚饭，休息片刻好些了，还需要处理吗？
+ok 366 - R11 red flags youth_energy.jsonl/5: 我15岁练跑同时不吃晚饭，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.153823
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/6: 我16岁最近月经停了，还想训练，该怎么处理？
+ok 367 - R11 red flags youth_energy.jsonl/6: 我16岁最近月经停了，还想训练，该怎么处理？
+  ---
+  duration_ms: 0.121133
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/7: 我的队友16岁最近月经停了，还想训练，我在旁边。
+ok 368 - R11 red flags youth_energy.jsonl/7: 我的队友16岁最近月经停了，还想训练，我在旁边。
+  ---
+  duration_ms: 0.109316
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/8: 我16岁最近月经停了，还想训练，休息片刻好些了，还需要处理吗？
+ok 369 - R11 red flags youth_energy.jsonl/8: 我16岁最近月经停了，还想训练，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.129617
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/9: 我高一为控体重天天加练，该怎么处理？
+ok 370 - R11 red flags youth_energy.jsonl/9: 我高一为控体重天天加练，该怎么处理？
+  ---
+  duration_ms: 0.09236
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/10: 我的队友高一为控体重天天加练，我在旁边。
+ok 371 - R11 red flags youth_energy.jsonl/10: 我的队友高一为控体重天天加练，我在旁边。
+  ---
+  duration_ms: 0.090998
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/11: 我高一为控体重天天加练，休息片刻好些了，还需要处理吗？
+ok 372 - R11 red flags youth_energy.jsonl/11: 我高一为控体重天天加练，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.156397
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/12: 我初三每天1400kcal还练球，该怎么处理？
+ok 373 - R11 red flags youth_energy.jsonl/12: 我初三每天1400kcal还练球，该怎么处理？
+  ---
+  duration_ms: 0.090357
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/13: 我的队友初三每天1400kcal还练球，我在旁边。
+ok 374 - R11 red flags youth_energy.jsonl/13: 我的队友初三每天1400kcal还练球，我在旁边。
+  ---
+  duration_ms: 0.276339
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/14: 我初三每天1400kcal还练球，休息片刻好些了，还需要处理吗？
+ok 375 - R11 red flags youth_energy.jsonl/14: 我初三每天1400kcal还练球，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.26392
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/15: 我14岁长期少吃又加跑，该怎么处理？
+ok 376 - R11 red flags youth_energy.jsonl/15: 我14岁长期少吃又加跑，该怎么处理？
+  ---
+  duration_ms: 0.107894
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/16: 我的队友14岁长期少吃又加跑，我在旁边。
+ok 377 - R11 red flags youth_energy.jsonl/16: 我的队友14岁长期少吃又加跑，我在旁边。
+  ---
+  duration_ms: 0.135215
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/17: 我14岁长期少吃又加跑，休息片刻好些了，还需要处理吗？
+ok 378 - R11 red flags youth_energy.jsonl/17: 我14岁长期少吃又加跑，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.155055
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/18: 我小学队员反复骨应力伤还训练，该怎么处理？
+ok 379 - R11 red flags youth_energy.jsonl/18: 我小学队员反复骨应力伤还训练，该怎么处理？
+  ---
+  duration_ms: 0.15142
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/19: 我的队友小学队员反复骨应力伤还训练，我在旁边。
+ok 380 - R11 red flags youth_energy.jsonl/19: 我的队友小学队员反复骨应力伤还训练，我在旁边。
+  ---
+  duration_ms: 0.090487
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/20: 我小学队员反复骨应力伤还训练，休息片刻好些了，还需要处理吗？
+ok 381 - R11 red flags youth_energy.jsonl/20: 我小学队员反复骨应力伤还训练，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.114263
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/21: 我未成年跑者节食后月经紊乱，该怎么处理？
+ok 382 - R11 red flags youth_energy.jsonl/21: 我未成年跑者节食后月经紊乱，该怎么处理？
+  ---
+  duration_ms: 0.226543
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/22: 我的队友未成年跑者节食后月经紊乱，我在旁边。
+ok 383 - R11 red flags youth_energy.jsonl/22: 我的队友未成年跑者节食后月经紊乱，我在旁边。
+  ---
+  duration_ms: 0.105049
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/23: 我未成年跑者节食后月经紊乱，休息片刻好些了，还需要处理吗？
+ok 384 - R11 red flags youth_energy.jsonl/23: 我未成年跑者节食后月经紊乱，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.152811
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/24: 我高二练力量却一直压低摄入，该怎么处理？
+ok 385 - R11 red flags youth_energy.jsonl/24: 我高二练力量却一直压低摄入，该怎么处理？
+  ---
+  duration_ms: 0.209117
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/25: 我的队友高二练力量却一直压低摄入，我在旁边。
+ok 386 - R11 red flags youth_energy.jsonl/25: 我的队友高二练力量却一直压低摄入，我在旁边。
+  ---
+  duration_ms: 0.12525
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/26: 我高二练力量却一直压低摄入，休息片刻好些了，还需要处理吗？
+ok 387 - R11 red flags youth_energy.jsonl/26: 我高二练力量却一直压低摄入，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.118199
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/27: 我13岁训练期不吃主食，该怎么处理？
+ok 388 - R11 red flags youth_energy.jsonl/27: 我13岁训练期不吃主食，该怎么处理？
+  ---
+  duration_ms: 0.113372
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/28: 我的队友13岁训练期不吃主食，我在旁边。
+ok 389 - R11 red flags youth_energy.jsonl/28: 我的队友13岁训练期不吃主食，我在旁边。
+  ---
+  duration_ms: 0.093662
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/29: 我13岁训练期不吃主食，休息片刻好些了，还需要处理吗？
+ok 390 - R11 red flags youth_energy.jsonl/29: 我13岁训练期不吃主食，休息片刻好些了，还需要处理吗？
+  ---
+  duration_ms: 0.108124
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/30: 我现在没有闭经，普通散步没有不适。
+ok 391 - R11 red flags youth_energy.jsonl/30: 我现在没有闭经，普通散步没有不适。
+  ---
+  duration_ms: 0.087362
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/31: 科普时请讲解闭经的现场应对。
+ok 392 - R11 red flags youth_energy.jsonl/31: 科普时请讲解闭经的现场应对。
+  ---
+  duration_ms: 0.064879
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/32: 假设有人运动时闭经，一般如何处理？
+ok 393 - R11 red flags youth_energy.jsonl/32: 假设有人运动时闭经，一般如何处理？
+  ---
+  duration_ms: 0.166772
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/33: 我去年曾经闭经，现在完全没有不适，想问既往记录怎么保留。
+ok 394 - R11 red flags youth_energy.jsonl/33: 我去年曾经闭经，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.170318
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 395 - R11 red flags youth_energy.jsonl/34: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.084358
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/35: 我现在没有节食，普通散步没有不适。
+ok 396 - R11 red flags youth_energy.jsonl/35: 我现在没有节食，普通散步没有不适。
+  ---
+  duration_ms: 0.109466
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/36: 科普时请讲解节食的现场应对。
+ok 397 - R11 red flags youth_energy.jsonl/36: 科普时请讲解节食的现场应对。
+  ---
+  duration_ms: 0.08581
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/37: 假设有人运动时节食，一般如何处理？
+ok 398 - R11 red flags youth_energy.jsonl/37: 假设有人运动时节食，一般如何处理？
+  ---
+  duration_ms: 0.074413
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/38: 我去年曾经节食，现在完全没有不适，想问既往记录怎么保留。
+ok 399 - R11 red flags youth_energy.jsonl/38: 我去年曾经节食，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.090658
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 400 - R11 red flags youth_energy.jsonl/39: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.070376
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/40: 我现在没有骨应力伤，普通散步没有不适。
+ok 401 - R11 red flags youth_energy.jsonl/40: 我现在没有骨应力伤，普通散步没有不适。
+  ---
+  duration_ms: 0.07915
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/41: 科普时请讲解骨应力伤的现场应对。
+ok 402 - R11 red flags youth_energy.jsonl/41: 科普时请讲解骨应力伤的现场应对。
+  ---
+  duration_ms: 0.092981
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/42: 假设有人运动时骨应力伤，一般如何处理？
+ok 403 - R11 red flags youth_energy.jsonl/42: 假设有人运动时骨应力伤，一般如何处理？
+  ---
+  duration_ms: 0.105991
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/43: 我去年曾经骨应力伤，现在完全没有不适，想问既往记录怎么保留。
+ok 404 - R11 red flags youth_energy.jsonl/43: 我去年曾经骨应力伤，现在完全没有不适，想问既往记录怎么保留。
+  ---
+  duration_ms: 0.21776
+  type: 'test'
+  ...
+# Subtest: R11 red flags youth_energy.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+ok 405 - R11 red flags youth_energy.jsonl/44: 我今天轻松走了一会儿，只有一点普通疲倦。
+  ---
+  duration_ms: 0.089967
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 队友在34度跑完皮肤干热且答非所问/休息后继续下一组，RPE多少？
+ok 406 - R11 full pipeline safety overrides 队友在34度跑完皮肤干热且答非所问/休息后继续下一组，RPE多少？
+  ---
+  duration_ms: 8.482048
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 队友在34度跑完皮肤干热且答非所问/若不缓解再打120，明天减量。
+ok 407 - R11 full pipeline safety overrides 队友在34度跑完皮肤干热且答非所问/若不缓解再打120，明天减量。
+  ---
+  duration_ms: 4.07652
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 队友在34度跑完皮肤干热且答非所问/可能是心肌炎，今天轻松跑。
+ok 408 - R11 full pipeline safety overrides 队友在34度跑完皮肤干热且答非所问/可能是心肌炎，今天轻松跑。
+  ---
+  duration_ms: 0.89752
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我今天跑完胸口疼，左臂发麻，歇后缓解了/休息后继续下一组，RPE多少？
+ok 409 - R11 full pipeline safety overrides 我今天跑完胸口疼，左臂发麻，歇后缓解了/休息后继续下一组，RPE多少？
+  ---
+  duration_ms: 1.91264
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我今天跑完胸口疼，左臂发麻，歇后缓解了/若不缓解再打120，明天减量。
+ok 410 - R11 full pipeline safety overrides 我今天跑完胸口疼，左臂发麻，歇后缓解了/若不缓解再打120，明天减量。
+  ---
+  duration_ms: 3.166761
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我今天跑完胸口疼，左臂发麻，歇后缓解了/可能是心肌炎，今天轻松跑。
+ok 411 - R11 full pipeline safety overrides 我今天跑完胸口疼，左臂发麻，歇后缓解了/可能是心肌炎，今天轻松跑。
+  ---
+  duration_ms: 1.25966
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我练完腰疼，右腿发麻/休息后继续下一组，RPE多少？
+ok 412 - R11 full pipeline safety overrides 我练完腰疼，右腿发麻/休息后继续下一组，RPE多少？
+  ---
+  duration_ms: 1.36587
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我练完腰疼，右腿发麻/若不缓解再打120，明天减量。
+ok 413 - R11 full pipeline safety overrides 我练完腰疼，右腿发麻/若不缓解再打120，明天减量。
+  ---
+  duration_ms: 1.383558
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我练完腰疼，右腿发麻/可能是心肌炎，今天轻松跑。
+ok 414 - R11 full pipeline safety overrides 我练完腰疼，右腿发麻/可能是心肌炎，今天轻松跑。
+  ---
+  duration_ms: 1.39156
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我女儿16岁停经还在每天训练/休息后继续下一组，RPE多少？
+ok 415 - R11 full pipeline safety overrides 我女儿16岁停经还在每天训练/休息后继续下一组，RPE多少？
+  ---
+  duration_ms: 1.037493
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我女儿16岁停经还在每天训练/若不缓解再打120，明天减量。
+ok 416 - R11 full pipeline safety overrides 我女儿16岁停经还在每天训练/若不缓解再打120，明天减量。
+  ---
+  duration_ms: 1.223696
+  type: 'test'
+  ...
+# Subtest: R11 full pipeline safety overrides 我女儿16岁停经还在每天训练/可能是心肌炎，今天轻松跑。
+ok 417 - R11 full pipeline safety overrides 我女儿16岁停经还在每天训练/可能是心肌炎，今天轻松跑。
+  ---
+  duration_ms: 1.12796
+  type: 'test'
+  ...
+# Subtest: R11 pseudo-negation 我非常累且胸口痛
+ok 418 - R11 pseudo-negation 我非常累且胸口痛
+  ---
+  duration_ms: 0.25022
+  type: 'test'
+  ...
+# Subtest: R11 pseudo-negation 我觉得没事儿但胸口发紧
+ok 419 - R11 pseudo-negation 我觉得没事儿但胸口发紧
+  ---
+  duration_ms: 0.144359
+  type: 'test'
+  ...
+# Subtest: R11 pseudo-negation 我不一定晕倒但今天眼前发黑
+ok 420 - R11 pseudo-negation 我不一定晕倒但今天眼前发黑
+  ---
+  duration_ms: 0.134994
+  type: 'test'
+  ...
+# Subtest: R11 pseudo-negation 我没有胸痛，不过心跳一直乱
+ok 421 - R11 pseudo-negation 我没有胸痛，不过心跳一直乱
+  ---
+  duration_ms: 0.203669
+  type: 'test'
+  ...
+# Subtest: R11 a historical nonmedical activity is not a historical symptom
+ok 422 - R11 a historical nonmedical activity is not a historical symptom
+  ---
+  duration_ms: 0.21729
+  type: 'test'
+  ...
+# Subtest: R11 sustained resting numeric heart rate gets prompt medical review
+ok 423 - R11 sustained resting numeric heart rate gets prompt medical review
+  ---
+  duration_ms: 0.282518
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 跑步时胸口发紧，如果休息后缓解能继续吗？
+ok 424 - R11 clause scope retains actual symptoms: 跑步时胸口发紧，如果休息后缓解能继续吗？
+  ---
+  duration_ms: 0.347236
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 刚跑完胸闷，如果不难受了还用看医生吗？
+ok 425 - R11 clause scope retains actual symptoms: 刚跑完胸闷，如果不难受了还用看医生吗？
+  ---
+  duration_ms: 0.25121
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 跑步时胸口发紧。如何预防下次再发生？
+ok 426 - R11 clause scope retains actual symptoms: 跑步时胸口发紧。如何预防下次再发生？
+  ---
+  duration_ms: 0.172791
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 上周感冒，现在跑步胸口发紧。
+ok 427 - R11 clause scope retains actual symptoms: 上周感冒，现在跑步胸口发紧。
+  ---
+  duration_ms: 0.211781
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 去年曾经头晕；现在队友跑完胸口发紧。
+ok 428 - R11 clause scope retains actual symptoms: 去年曾经头晕；现在队友跑完胸口发紧。
+  ---
+  duration_ms: 0.239824
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 请解释胸痛的知识；我现在跑完胸口发紧。
+ok 429 - R11 clause scope retains actual symptoms: 请解释胸痛的知识；我现在跑完胸口发紧。
+  ---
+  duration_ms: 0.161024
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 假如跑步胸闷怎么办？我现在刚跑完胸口发紧。
+ok 430 - R11 clause scope retains actual symptoms: 假如跑步胸闷怎么办？我现在刚跑完胸口发紧。
+  ---
+  duration_ms: 0.100702
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 我现在跑完胸口发紧；去年也曾经胸闷。
+ok 431 - R11 clause scope retains actual symptoms: 我现在跑完胸口发紧；去年也曾经胸闷。
+  ---
+  duration_ms: 0.08527
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 上周感冒现在跑步胸口发紧
+ok 432 - R11 clause scope retains actual symptoms: 上周感冒现在跑步胸口发紧
+  ---
+  duration_ms: 0.119712
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 跑步时胸口发紧如果休息后缓解能继续吗
+ok 433 - R11 clause scope retains actual symptoms: 跑步时胸口发紧如果休息后缓解能继续吗
+  ---
+  duration_ms: 0.165912
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 刚跑完胸闷想了解怎么处理
+ok 434 - R11 clause scope retains actual symptoms: 刚跑完胸闷想了解怎么处理
+  ---
+  duration_ms: 0.088434
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains actual symptoms: 上周感冒现在跑步胸口发紧如果缓解能继续吗
+ok 435 - R11 clause scope retains actual symptoms: 上周感冒现在跑步胸口发紧如果缓解能继续吗
+  ---
+  duration_ms: 0.132631
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 如果跑步胸闷，左臂发麻，应该怎么办？
+ok 436 - R11 clause scope retains nonactual symptoms: 如果跑步胸闷，左臂发麻，应该怎么办？
+  ---
+  duration_ms: 0.209818
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 假设我今天跑步胸闷，心跳很快，休息后缓解了。
+ok 437 - R11 clause scope retains nonactual symptoms: 假设我今天跑步胸闷，心跳很快，休息后缓解了。
+  ---
+  duration_ms: 0.137418
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 请解释运动后胸闷，左臂发麻的一般知识。
+ok 438 - R11 clause scope retains nonactual symptoms: 请解释运动后胸闷，左臂发麻的一般知识。
+  ---
+  duration_ms: 0.090758
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 科普：有人今天跑完胸口发紧，心跳很快，应该怎样处理？
+ok 439 - R11 clause scope retains nonactual symptoms: 科普：有人今天跑完胸口发紧，心跳很快，应该怎样处理？
+  ---
+  duration_ms: 0.094724
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 上周跑步胸口发紧，左臂发麻，休息后缓解了。
+ok 440 - R11 clause scope retains nonactual symptoms: 上周跑步胸口发紧，左臂发麻，休息后缓解了。
+  ---
+  duration_ms: 0.137569
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 我现在没有胸痛；如果跑步胸闷，左臂发麻，应该怎么办？
+ok 441 - R11 clause scope retains nonactual symptoms: 我现在没有胸痛；如果跑步胸闷，左臂发麻，应该怎么办？
+  ---
+  duration_ms: 0.254856
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 假设静坐休息20分钟，心率是145次；我现在没有不适。
+ok 442 - R11 clause scope retains nonactual symptoms: 假设静坐休息20分钟，心率是145次；我现在没有不适。
+  ---
+  duration_ms: 0.164399
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 上周静坐休息20分钟，心率是145次；现在心率是70次且没有不适。
+ok 443 - R11 clause scope retains nonactual symptoms: 上周静坐休息20分钟，心率是145次；现在心率是70次且没有不适。
+  ---
+  duration_ms: 0.146172
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 如果现在跑步胸口发紧怎么办
+ok 444 - R11 clause scope retains nonactual symptoms: 如果现在跑步胸口发紧怎么办
+  ---
+  duration_ms: 0.082075
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 请解释现在运动后胸口发紧应当怎么处理
+ok 445 - R11 clause scope retains nonactual symptoms: 请解释现在运动后胸口发紧应当怎么处理
+  ---
+  duration_ms: 0.129867
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 我现在读了跑步胸闷的知识，想了解怎样应对。
+ok 446 - R11 clause scope retains nonactual symptoms: 我现在读了跑步胸闷的知识，想了解怎样应对。
+  ---
+  duration_ms: 0.198461
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 如果现在静坐休息20分钟心率145次怎么办
+ok 447 - R11 clause scope retains nonactual symptoms: 如果现在静坐休息20分钟心率145次怎么办
+  ---
+  duration_ms: 0.120874
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 假设34度时跑步，皮肤干热；我现在没有不适。
+ok 448 - R11 clause scope retains nonactual symptoms: 假设34度时跑步，皮肤干热；我现在没有不适。
+  ---
+  duration_ms: 0.188696
+  type: 'test'
+  ...
+# Subtest: R11 clause scope retains nonactual symptoms: 假设跑步者每天摄入1200大卡，我现在训练后没有不适。
+ok 449 - R11 clause scope retains nonactual symptoms: 假设跑步者每天摄入1200大卡，我现在训练后没有不适。
+  ---
+  duration_ms: 0.099581
+  type: 'test'
+  ...
+# Subtest: R11 urgent reply covers concurrent cardiovascular and neurological symptoms
+ok 450 - R11 urgent reply covers concurrent cardiovascular and neurological symptoms
+  ---
+  duration_ms: 0.818771
+  type: 'test'
+  ...
+# Subtest: R11 urgent reply retains respiratory, illness, energy and youth actions together
+ok 451 - R11 urgent reply retains respiratory, illness, energy and youth actions together
+  ---
+  duration_ms: 0.452486
+  type: 'test'
+  ...
+# Subtest: R11 mixed temporal context keeps full pipeline emergency override: 跑步时胸口发紧，如果休息后缓解能继续吗？
+ok 452 - R11 mixed temporal context keeps full pipeline emergency override: 跑步时胸口发紧，如果休息后缓解能继续吗？
+  ---
+  duration_ms: 0.772862
+  type: 'test'
+  ...
+# Subtest: R11 mixed temporal context keeps full pipeline emergency override: 跑步时胸口发紧。如何预防下次再发生？
+ok 453 - R11 mixed temporal context keeps full pipeline emergency override: 跑步时胸口发紧。如何预防下次再发生？
+  ---
+  duration_ms: 0.771229
+  type: 'test'
+  ...
+# Subtest: R11 mixed temporal context keeps full pipeline emergency override: 上周感冒，现在跑步胸口发紧。
+ok 454 - R11 mixed temporal context keeps full pipeline emergency override: 上周感冒，现在跑步胸口发紧。
+  ---
+  duration_ms: 0.821506
+  type: 'test'
+  ...
+# Subtest: R11 unbound medical-review turn replaces model training advice: 我训练时膝盖痛。
+ok 455 - R11 unbound medical-review turn replaces model training advice: 我训练时膝盖痛。
+  ---
+  duration_ms: 0.503514
+  type: 'test'
+  ...
+# Subtest: R11 unbound medical-review turn replaces model training advice: 我16岁，想做1RM极限测试。
+ok 456 - R11 unbound medical-review turn replaces model training advice: 我16岁，想做1RM极限测试。
+  ---
+  duration_ms: 0.328939
+  type: 'test'
+  ...
+# Subtest: R11 generated same-level medical language cannot replace the input pain category
+ok 457 - R11 generated same-level medical language cannot replace the input pain category
+  ---
+  duration_ms: 0.431203
+  type: 'test'
+  ...
+# Subtest: R11 family report identifies the affected other person: 妹妹
+ok 458 - R11 family report identifies the affected other person: 妹妹
+  ---
+  duration_ms: 0.160513
+  type: 'test'
+  ...
+# Subtest: R11 family report identifies the affected other person: 姐姐
+ok 459 - R11 family report identifies the affected other person: 姐姐
+  ---
+  duration_ms: 0.103877
+  type: 'test'
+  ...
+# Subtest: R11 family report identifies the affected other person: 弟弟
+ok 460 - R11 family report identifies the affected other person: 弟弟
+  ---
+  duration_ms: 0.095826
+  type: 'test'
+  ...
+# Subtest: R11 family report identifies the affected other person: 哥哥
+ok 461 - R11 family report identifies the affected other person: 哥哥
+  ---
+  duration_ms: 0.093933
+  type: 'test'
+  ...
+# Subtest: R11 family report identifies the affected other person: 母亲
+ok 462 - R11 family report identifies the affected other person: 母亲
+  ---
+  duration_ms: 0.088254
+  type: 'test'
+  ...
+# Subtest: R11 family report identifies the affected other person: 父亲
+ok 463 - R11 family report identifies the affected other person: 父亲
+  ---
+  duration_ms: 0.086992
+  type: 'test'
+  ...
+# Subtest: R11 a first-person symptom report remains SELF
+ok 464 - R11 a first-person symptom report remains SELF
+  ---
+  duration_ms: 0.252894
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 所选训练记录：疼痛0/10，睡眠7小时。
+ok 465 - R11 precaution or unknown pain is not an actual symptom: 所选训练记录：疼痛0/10，睡眠7小时。
+  ---
+  duration_ms: 0.140553
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 疼痛评分：0分。
+ok 466 - R11 precaution or unknown pain is not an actual symptom: 疼痛评分：0分。
+  ---
+  duration_ms: 0.09893
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 现在有无局部疼痛或不适？
+ok 467 - R11 precaution or unknown pain is not an actual symptom: 现在有无局部疼痛或不适？
+  ---
+  duration_ms: 0.143578
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 出现疼痛时停止。
+ok 468 - R11 precaution or unknown pain is not an actual symptom: 出现疼痛时停止。
+  ---
+  duration_ms: 0.112311
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 疼痛加重时应停止相关动作。
+ok 469 - R11 precaution or unknown pain is not an actual symptom: 疼痛加重时应停止相关动作。
+  ---
+  duration_ms: 0.119161
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 停止条件：疼痛加重、动作变形。
+ok 470 - R11 precaution or unknown pain is not an actual symptom: 停止条件：疼痛加重、动作变形。
+  ---
+  duration_ms: 0.144279
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 疼痛变化还需核对。
+ok 471 - R11 precaution or unknown pain is not an actual symptom: 疼痛变化还需核对。
+  ---
+  duration_ms: 0.084578
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 疼痛记录未知。
+ok 472 - R11 precaution or unknown pain is not an actual symptom: 疼痛记录未知。
+  ---
+  duration_ms: 0.070878
+  type: 'test'
+  ...
+# Subtest: R11 precaution or unknown pain is not an actual symptom: 出现局部疼痛加重、动作变形、步态改变就停止相关训练。
+ok 473 - R11 precaution or unknown pain is not an actual symptom: 出现局部疼痛加重、动作变形、步态改变就停止相关训练。
+  ---
+  duration_ms: 0.123838
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 我现在疼痛，程度还需核对。
+ok 474 - R11 actual or nonzero pain remains medical review: 我现在疼痛，程度还需核对。
+  ---
+  duration_ms: 0.23743
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 我疼痛程度待核对。
+ok 475 - R11 actual or nonzero pain remains medical review: 我疼痛程度待核对。
+  ---
+  duration_ms: 0.083346
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 我训练时膝盖痛。
+ok 476 - R11 actual or nonzero pain remains medical review: 我训练时膝盖痛。
+  ---
+  duration_ms: 0.137147
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 疼痛0.5/10。
+ok 477 - R11 actual or nonzero pain remains medical review: 疼痛0.5/10。
+  ---
+  duration_ms: 0.155125
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 疼痛1/10。
+ok 478 - R11 actual or nonzero pain remains medical review: 疼痛1/10。
+  ---
+  duration_ms: 0.07889
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 膝盖痛，记录却是疼痛0/10。
+ok 479 - R11 actual or nonzero pain remains medical review: 膝盖痛，记录却是疼痛0/10。
+  ---
+  duration_ms: 0.177018
+  type: 'test'
+  ...
+# Subtest: R11 actual or nonzero pain remains medical review: 我出现疼痛时停止了训练。
+ok 480 - R11 actual or nonzero pain remains medical review: 我出现疼痛时停止了训练。
+  ---
+  duration_ms: 0.093832
+  type: 'test'
+  ...
+# Subtest: R11 a conditional stop rule cannot downgrade an earlier actual emergency
+ok 481 - R11 a conditional stop rule cannot downgrade an earlier actual emergency
+  ---
+  duration_ms: 0.131659
+  type: 'test'
+  ...
+# Subtest: R11 model stop conditions do not override valid unbound general analysis
+ok 482 - R11 model stop conditions do not override valid unbound general analysis
+  ---
+  duration_ms: 6.875753
+  type: 'test'
+  ...
+1..482
+# tests 482
+# suites 0
+# pass 482
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 236.587412

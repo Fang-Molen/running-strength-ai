@@ -1,0 +1,143 @@
+TAP version 13
+# Subtest: multi-part filtering keeps stable variants and selecting the same action does not add volume
+ok 1 - multi-part filtering keeps stable variants and selecting the same action does not add volume
+  ---
+  duration_ms: 1.825488
+  type: 'test'
+  ...
+# Subtest: empty, unknown, blank and malformed parameters never become a zero-dose or normal candidate
+ok 2 - empty, unknown, blank and malformed parameters never become a zero-dose or normal candidate
+  ---
+  duration_ms: 0.84385
+  type: 'test'
+  ...
+# Subtest: explicit repetition retains independent parameters, order and side convention without doubling volume
+ok 3 - explicit repetition retains independent parameters, order and side convention without doubling volume
+  ---
+  duration_ms: 1.131776
+  type: 'test'
+  ...
+# Subtest: preview and initial builder view do not write the plan or claim personal suitability
+ok 4 - preview and initial builder view do not write the plan or claim personal suitability
+  ---
+  duration_ms: 6.716555
+  type: 'test'
+  ...
+# Subtest: confirmed append preserves old course identities and is verified in one value
+ok 5 - confirmed append preserves old course identities and is verified in one value
+  ---
+  duration_ms: 0.380838
+  type: 'test'
+  ...
+# Subtest: quota failure and dropped writes cannot report successful course creation; draft can retry
+ok 6 - quota failure and dropped writes cannot report successful course creation; draft can retry
+  ---
+  duration_ms: 0.322959
+  type: 'test'
+  ...
+# Subtest: two stale tabs cannot lose the first confirmed course; refreshed tab appends both
+ok 7 - two stale tabs cannot lose the first confirmed course; refreshed tab appends both
+  ---
+  duration_ms: 0.256759
+  type: 'test'
+  ...
+# Subtest: content inventory distinguishes unavailable variants, legacy licenses and sourced new schematics
+ok 8 - content inventory distinguishes unavailable variants, legacy licenses and sourced new schematics
+  ---
+  duration_ms: 0.274927
+  type: 'test'
+  ...
+# Subtest: shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls
+not ok 9 - shared exercise view exposes local 3D and readable cues without remote embeds or plan mutation controls
+  ---
+  duration_ms: 19.361151
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/lib/strength/session-builder.test.tsx:116:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /怎么做/. Input:
+    
+    '<div class="flex flex-wrap gap-2 text-xs"><span class="rounded-md border border-line px-2 py-1">手臂</span><span class="rounded-md border border-line px-2 py-1">哑铃</span></div><section class="fk-dash-card mt-3" aria-label="新版动作演示区域"><h2 class="fk-dash-title">动作示范</h2><!--$!--><template data-msg="Switched to client rendering because the server rendering aborted due to:\n' +
+      '\n' +
+      'The server used &quot;renderToString&quot; which does not support Suspense. If you intended for this Suspense boundary to render the fallback content on the server consider throwing an Error somewhere within the Suspense boundary. If you intended to have the server wait for the suspended component please switch to &quot;renderToPipeableStream&quot; which supports Suspense on the server" data-cstck="\n' +
+      '    at Lazy (&lt;anonymous&gt;)\n' +
+      '    at Suspense (&lt;anonymous&gt;)\n' +
+      '    at section (&lt;anonymous&gt;)\n' +
+      '    at DemoBlock (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/components/exercise-editor.tsx:38:22)\n' +
+      '    at ExerciseDetailBody (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/components/exercise-editor.tsx:41:38)\n' +
+      '    at ExerciseContent (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/components/exercise-content.tsx:8:35)"></template><p class="p-4 text-sm">演示加载中…</p><!--/$--></section><section class="fk-dash-card fk-target-card mt-3" aria-label="目标肌群"><header><h2 class="fk-dash-title">相关部位</h2></header><div class="fk-target-stage"><canvas aria-label="可点选的独立肌肉3D模型"></canvas><div class="fk-target-status" role="status"><p class="keep">正在打开肌群模型…</p></div></div><div class="fk-target-controls" role="group" aria-label="肌群视角"><button type="button" disabled="" aria-pressed="true">正面</button><button type="button" disabled="" aria-pressed="false">左侧</button><button type="button" disabled="" aria-pressed="false">右侧</button><button type="button" disabled="" aria-pressed="false">背面</button></div><div class="fk-target-controls" role="group" aria-label="肌群范围"><button type="button" disabled="" aria-pressed="true">全身</button><button type="button" disabled="" aria-pressed="false">小腿</button><button type="button" disabled="" aria-pressed="false">足部</button><button type="button" disabled="">复原</button></div><div class="fk-target-layer" role="group" aria-label="肌肉层次"><button type="button" disabled="" aria-pressed="true">表层肌</button><button type="button" disabled="" aria-pressed="false">深层肌</button></div><div class="fk-target-legend"><span><i class="main"></i>主要参与</span><span><i class="aux"></i>辅助参与</span><span><i class="selected"></i>已选中</span></div><div class="fk-target-muscles" aria-label="主要肌群"><b>主要</b><button type="button" class="main">肱二头肌</button><button type="button" class="main">前臂</button></div></section><div class="fk-dash-card mt-3 text-sm"><h3 class="fk-dash-title">动作步骤</h3><ol class="mt-2 list-decimal space-y-2 pl-5"><li>站直，双脚与髋同宽</li><li>上臂贴近身体两侧</li><li>掌心相对（中立握），像握锤子</li><li>保持中立握屈肘上举</li><li>顶端停 1 秒</li><li>控制放下</li></ol><section class="mt-3"><h4 class="font-bold">注意事项</h4><ul class="mt-1 list-disc space-y-1 pl-5"><li>肘外侧不适减轻重量</li></ul></section><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">呼吸与易错点</summary><ul class="list-disc space-y-1 pl-5"><li>放下吸气</li><li>举起呼气</li><li>上臂前后摆动</li><li>身体后仰借力</li><li>下放不完全</li><li>手腕弯曲</li></ul></details><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">简化与进阶</summary><ul class="list-disc space-y-1 pl-5"><li>简化：较轻哑铃</li><li>进阶：交替锤式弯举</li><li>进阶：加重</li></ul></details></div>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    <div class="flex flex-wrap gap-2 text-xs"><span class="rounded-md border border-line px-2 py-1">手臂</span><span class="rounded-md border border-line px-2 py-1">哑铃</span></div><section class="fk-dash-card mt-3" aria-label="新版动作演示区域"><h2 class="fk-dash-title">动作示范</h2><!--$!--><template data-msg="Switched to client rendering because the server rendering aborted due to:
+    
+    The server used &quot;renderToString&quot; which does not support Suspense. If you intended for this Suspense boundary to render the fallback content on the server consider throwing an Error somewhere within the Suspense boundary. If you intended to have the server wait for the suspended component please switch to &quot;renderToPipeableStream&quot; which supports Suspense on the server" data-cstck="
+        at Lazy (&lt;anonymous&gt;)
+        at Suspense (&lt;anonymous&gt;)
+        at section (&lt;anonymous&gt;)
+        at DemoBlock (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/components/exercise-editor.tsx:38:22)
+        at ExerciseDetailBody (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/components/exercise-editor.tsx:41:38)
+        at ExerciseContent (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/components/exercise-content.tsx:8:35)"></template><p class="p-4 text-sm">演示加载中…</p><!--/$--></section><section class="fk-dash-card fk-target-card mt-3" aria-label="目标肌群"><header><h2 class="fk-dash-title">相关部位</h2></header><div class="fk-target-stage"><canvas aria-label="可点选的独立肌肉3D模型"></canvas><div class="fk-target-status" role="status"><p class="keep">正在打开肌群模型…</p></div></div><div class="fk-target-controls" role="group" aria-label="肌群视角"><button type="button" disabled="" aria-pressed="true">正面</button><button type="button" disabled="" aria-pressed="false">左侧</button><button type="button" disabled="" aria-pressed="false">右侧</button><button type="button" disabled="" aria-pressed="false">背面</button></div><div class="fk-target-controls" role="group" aria-label="肌群范围"><button type="button" disabled="" aria-pressed="true">全身</button><button type="button" disabled="" aria-pressed="false">小腿</button><button type="button" disabled="" aria-pressed="false">足部</button><button type="button" disabled="">复原</button></div><div class="fk-target-layer" role="group" aria-label="肌肉层次"><button type="button" disabled="" aria-pressed="true">表层肌</button><button type="button" disabled="" aria-pressed="false">深层肌</button></div><div class="fk-target-legend"><span><i class="main"></i>主要参与</span><span><i class="aux"></i>辅助参与</span><span><i class="selected"></i>已选中</span></div><div class="fk-target-muscles" aria-label="主要肌群"><b>主要</b><button type="button" class="main">肱二头肌</button><button type="button" class="main">前臂</button></div></section><div class="fk-dash-card mt-3 text-sm"><h3 class="fk-dash-title">动作步骤</h3><ol class="mt-2 list-decimal space-y-2 pl-5"><li>站直，双脚与髋同宽</li><li>上臂贴近身体两侧</li><li>掌心相对（中立握），像握锤子</li><li>保持中立握屈肘上举</li><li>顶端停 1 秒</li><li>控制放下</li></ol><section class="mt-3"><h4 class="font-bold">注意事项</h4><ul class="mt-1 list-disc space-y-1 pl-5"><li>肘外侧不适减轻重量</li></ul></section><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">呼吸与易错点</summary><ul class="list-disc space-y-1 pl-5"><li>放下吸气</li><li>举起呼气</li><li>上臂前后摆动</li><li>身体后仰借力</li><li>下放不完全</li><li>手腕弯曲</li></ul></details><details class="mt-2"><summary class="min-h-11 cursor-pointer py-2 font-bold">简化与进阶</summary><ul class="list-disc space-y-1 pl-5"><li>简化：较轻哑铃</li><li>进阶：交替锤式弯举</li><li>进阶：加重</li></ul></details></div>
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/verification/coach-qa-20261026/logic/baseline-ui-scratch/src/lib/strength/session-builder.test.tsx:118:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: blank input, zero repetitions and invalid count never confirm a set; zero weight remains explicit
+ok 10 - blank input, zero repetitions and invalid count never confirm a set; zero weight remains explicit
+  ---
+  duration_ms: 0.374708
+  type: 'test'
+  ...
+# Subtest: after refresh rest target advances to that same unrecorded group, not the following group
+ok 11 - after refresh rest target advances to that same unrecorded group, not the following group
+  ---
+  duration_ms: 0.213854
+  type: 'test'
+  ...
+# Subtest: close event failure leaves the occurrence open and can retry without a false success
+ok 12 - close event failure leaves the occurrence open and can retry without a false success
+  ---
+  duration_ms: 3.183908
+  type: 'test'
+  ...
+# Subtest: partial write on closing cannot report success, retry reuses the saved close event
+ok 13 - partial write on closing cannot report success, retry reuses the saved close event
+  ---
+  duration_ms: 0.643366
+  type: 'test'
+  ...
+# Subtest: interruption storage failure retains open identity and does not announce a completed course
+ok 14 - interruption storage failure retains open identity and does not announce a completed course
+  ---
+  duration_ms: 0.716677
+  type: 'test'
+  ...
+# Subtest: partial execution closes the occurrence but never claims every planned set completed
+ok 15 - partial execution closes the occurrence but never claims every planned set completed
+  ---
+  duration_ms: 0.627601
+  type: 'test'
+  ...
+# Subtest: long execution-draft identities remain restorable through the existing backup validator
+ok 16 - long execution-draft identities remain restorable through the existing backup validator
+  ---
+  duration_ms: 0.855878
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 15
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69.384267

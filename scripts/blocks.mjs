@@ -108,10 +108,17 @@ export const BLOCKS = {
   },
   'coach-online': {
     desc: '联网方坤客户端（默认开启，/api/coach-chat，密钥只在服务端）',
-    files: ['src/lib/coach/online-coach.ts', 'src/lib/coach/online-nutrition-facts.ts', 'src/lib/coach/online-training-facts.ts', 'src/lib/coach/online-recovery-facts.ts', 'functions/api/coach-chat.js'],
+    files: ['src/lib/coach/online-coach.ts', 'src/lib/coach/online-nutrition-facts.ts', 'src/lib/coach/online-training-facts.ts', 'src/lib/coach/online-recovery-facts.ts', 'src/lib/coach/online-service.ts'],
     entry: 'src/lib/coach/online-coach.ts',
     tests: ['src/lib/coach/online-coach.test.ts', 'src/lib/coach/coach-facts-v83.test.ts', 'src/lib/coach/coach-fact-boundary-p0.test.ts', 'src/lib/coach/online-facts-v86.test.ts', 'src/lib/coach/online-facts-linkage.test.ts', 'src/lib/coach/online-chat-transport.test.ts', 'src/lib/coach/online-nutrition-facts.test.ts', 'src/lib/coach/online-training-facts.test.ts', 'src/lib/coach/online-recovery-facts.test.ts'],
     forbid: ['/c03/', '/plan-execution/', 'server/coach-deepseek', '/components/'],
+  },
+  'coach-api': {
+    desc: '服务端受信联网入口与无调用状态检查',
+    files: ['functions/api/coach-chat.js', 'server/coach-deepseek/coach-status.js'],
+    entry: 'functions/api/coach-chat.js',
+    tests: ['server/coach-deepseek/coach-status.test.mjs', 'src/lib/coach/deepseek-server-boundary.test.ts'],
+    forbid: ['/components/', '/plan-execution/'],
   },
   'c03': {
     desc: 'C03 复盘论证：证据/两种限定解释/长期跟进 journal/保存后复核（仅本地路径）',

@@ -10,33 +10,64 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiCoachChatRouteImport } from './routes/api/coach-chat'
+import { Route as ApiCoachSnapshotRouteImport } from './routes/api/coach-snapshot'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCoachChatRoute = ApiCoachChatRouteImport.update({
+  id: '/api/coach-chat',
+  path: '/api/coach-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCoachSnapshotRoute = ApiCoachSnapshotRouteImport.update({
+  id: '/api/coach-snapshot',
+  path: '/api/coach-snapshot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/coach-chat': typeof ApiCoachChatRoute
+  '/api/coach-snapshot': typeof ApiCoachSnapshotRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/coach-chat': typeof ApiCoachChatRoute
+  '/api/coach-snapshot': typeof ApiCoachSnapshotRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/coach-chat': typeof ApiCoachChatRoute
+  '/api/coach-snapshot': typeof ApiCoachSnapshotRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/coach-chat' | '/api/coach-snapshot' | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/coach-chat' | '/api/coach-snapshot' | '/api/auth/$'
+  id:
+    '__root__' | '/' | '/api/coach-chat' | '/api/coach-snapshot' | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiCoachChatRoute: typeof ApiCoachChatRoute
+  ApiCoachSnapshotRoute: typeof ApiCoachSnapshotRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +79,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/coach-chat': {
+      id: '/api/coach-chat'
+      path: '/api/coach-chat'
+      fullPath: '/api/coach-chat'
+      preLoaderRoute: typeof ApiCoachChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach-snapshot': {
+      id: '/api/coach-snapshot'
+      path: '/api/coach-snapshot'
+      fullPath: '/api/coach-snapshot'
+      preLoaderRoute: typeof ApiCoachSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiCoachChatRoute: ApiCoachChatRoute,
+  ApiCoachSnapshotRoute: ApiCoachSnapshotRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

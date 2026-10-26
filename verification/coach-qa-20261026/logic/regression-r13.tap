@@ -1,0 +1,664 @@
+TAP version 13
+# Subtest: 自行生成 R13 arrest/我现在心跳突然停了，人叫不醒
+ok 1 - 自行生成 R13 arrest/我现在心跳突然停了，人叫不醒
+  ---
+  duration_ms: 13.159943
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 arrest/我的同伴现在心跳突然停了，人叫不醒
+ok 2 - 自行生成 R13 arrest/我的同伴现在心跳突然停了，人叫不醒
+  ---
+  duration_ms: 0.908547
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 arrest/我现在倒在地上毫无反应，没有正常呼吸
+ok 3 - 自行生成 R13 arrest/我现在倒在地上毫无反应，没有正常呼吸
+  ---
+  duration_ms: 0.693492
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 arrest/我的同伴现在倒在地上毫无反应，没有正常呼吸
+ok 4 - 自行生成 R13 arrest/我的同伴现在倒在地上毫无反应，没有正常呼吸
+  ---
+  duration_ms: 0.660892
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 arrest/我现在倒地后怎么叫都没反应
+ok 5 - 自行生成 R13 arrest/我现在倒地后怎么叫都没反应
+  ---
+  duration_ms: 0.487239
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 arrest/我的同伴现在倒地后怎么叫都没反应
+ok 6 - 自行生成 R13 arrest/我的同伴现在倒地后怎么叫都没反应
+  ---
+  duration_ms: 0.279313
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 allergy/我现在吃了花生后嗓子眼堵住了，嘴唇也肿起来
+ok 7 - 自行生成 R13 allergy/我现在吃了花生后嗓子眼堵住了，嘴唇也肿起来
+  ---
+  duration_ms: 5.305414
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 allergy/我的同伴现在吃了花生后嗓子眼堵住了，嘴唇也肿起来
+ok 8 - 自行生成 R13 allergy/我的同伴现在吃了花生后嗓子眼堵住了，嘴唇也肿起来
+  ---
+  duration_ms: 0.82385
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 allergy/我现在被蜂蜇了之后脸肿，喘气费劲
+ok 9 - 自行生成 R13 allergy/我现在被蜂蜇了之后脸肿，喘气费劲
+  ---
+  duration_ms: 0.393767
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 allergy/我的同伴现在被蜂蜇了之后脸肿，喘气费劲
+ok 10 - 自行生成 R13 allergy/我的同伴现在被蜂蜇了之后脸肿，喘气费劲
+  ---
+  duration_ms: 0.592228
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 allergy/我现在进食后喉咙越来越紧，呼吸越来越困难
+ok 11 - 自行生成 R13 allergy/我现在进食后喉咙越来越紧，呼吸越来越困难
+  ---
+  duration_ms: 0.312133
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 allergy/我的同伴现在进食后喉咙越来越紧，呼吸越来越困难
+ok 12 - 自行生成 R13 allergy/我的同伴现在进食后喉咙越来越紧，呼吸越来越困难
+  ---
+  duration_ms: 0.275007
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我现在左手忽然无力，拿不住杯子，讲话含混
+ok 13 - 自行生成 R13 stroke/我现在左手忽然无力，拿不住杯子，讲话含混
+  ---
+  duration_ms: 0.410092
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我的同伴现在左手忽然无力，拿不住杯子，讲话含混
+ok 14 - 自行生成 R13 stroke/我的同伴现在左手忽然无力，拿不住杯子，讲话含混
+  ---
+  duration_ms: 0.318833
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我现在半边脸发麻，舌头打结
+ok 15 - 自行生成 R13 stroke/我现在半边脸发麻，舌头打结
+  ---
+  duration_ms: 2.54567
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我的同伴现在半边脸发麻，舌头打结
+ok 16 - 自行生成 R13 stroke/我的同伴现在半边脸发麻，舌头打结
+  ---
+  duration_ms: 0.612188
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我现在右腿突然抬不起来，眼前的东西有重影
+ok 17 - 自行生成 R13 stroke/我现在右腿突然抬不起来，眼前的东西有重影
+  ---
+  duration_ms: 0.737358
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我的同伴现在右腿突然抬不起来，眼前的东西有重影
+ok 18 - 自行生成 R13 stroke/我的同伴现在右腿突然抬不起来，眼前的东西有重影
+  ---
+  duration_ms: 0.386346
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我现在左手使不上力，手机总是掉下去
+ok 19 - 自行生成 R13 stroke/我现在左手使不上力，手机总是掉下去
+  ---
+  duration_ms: 0.309319
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 stroke/我的同伴现在左手使不上力，手机总是掉下去
+ok 20 - 自行生成 R13 stroke/我的同伴现在左手使不上力，手机总是掉下去
+  ---
+  duration_ms: 0.254416
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 breathing/我现在呼吸非常困难，指甲变紫了
+ok 21 - 自行生成 R13 breathing/我现在呼吸非常困难，指甲变紫了
+  ---
+  duration_ms: 0.287316
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 breathing/我的同伴现在呼吸非常困难，指甲变紫了
+ok 22 - 自行生成 R13 breathing/我的同伴现在呼吸非常困难，指甲变紫了
+  ---
+  duration_ms: 0.418695
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 breathing/我现在呼吸费力，口唇已经发紫
+ok 23 - 自行生成 R13 breathing/我现在呼吸费力，口唇已经发紫
+  ---
+  duration_ms: 0.39566
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 breathing/我的同伴现在呼吸费力，口唇已经发紫
+ok 24 - 自行生成 R13 breathing/我的同伴现在呼吸费力，口唇已经发紫
+  ---
+  duration_ms: 0.456392
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 breathing/我现在喘不上气，嘴唇青紫
+ok 25 - 自行生成 R13 breathing/我现在喘不上气，嘴唇青紫
+  ---
+  duration_ms: 0.46188
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 breathing/我的同伴现在喘不上气，嘴唇青紫
+ok 26 - 自行生成 R13 breathing/我的同伴现在喘不上气，嘴唇青紫
+  ---
+  duration_ms: 2.579751
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 heat/我现在闷热场地里吐了好几次，皮肤干烫
+ok 27 - 自行生成 R13 heat/我现在闷热场地里吐了好几次，皮肤干烫
+  ---
+  duration_ms: 0.400448
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 heat/我的同伴现在闷热场地里吐了好几次，皮肤干烫
+ok 28 - 自行生成 R13 heat/我的同伴现在闷热场地里吐了好几次，皮肤干烫
+  ---
+  duration_ms: 0.33637
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 heat/我现在在烈日下跑，开始胡言乱语
+ok 29 - 自行生成 R13 heat/我现在在烈日下跑，开始胡言乱语
+  ---
+  duration_ms: 0.266664
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 heat/我的同伴现在在烈日下跑，开始胡言乱语
+ok 30 - 自行生成 R13 heat/我的同伴现在在烈日下跑，开始胡言乱语
+  ---
+  duration_ms: 0.626951
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 heat/我现在炎热天气运动后一直吐
+ok 31 - 自行生成 R13 heat/我现在炎热天气运动后一直吐
+  ---
+  duration_ms: 0.176828
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 heat/我的同伴现在炎热天气运动后一直吐
+ok 32 - 自行生成 R13 heat/我的同伴现在炎热天气运动后一直吐
+  ---
+  duration_ms: 0.201576
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 rhythm/我现在心率200一直下不来，感觉快晕过去了
+ok 33 - 自行生成 R13 rhythm/我现在心率200一直下不来，感觉快晕过去了
+  ---
+  duration_ms: 0.327998
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 rhythm/我的同伴现在心率200一直下不来，感觉快晕过去了
+ok 34 - 自行生成 R13 rhythm/我的同伴现在心率200一直下不来，感觉快晕过去了
+  ---
+  duration_ms: 0.218982
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 rhythm/我现在病刚好就心悸，胸口一阵疼
+ok 35 - 自行生成 R13 rhythm/我现在病刚好就心悸，胸口一阵疼
+  ---
+  duration_ms: 0.360497
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 rhythm/我的同伴现在病刚好就心悸，胸口一阵疼
+ok 36 - 自行生成 R13 rhythm/我的同伴现在病刚好就心悸，胸口一阵疼
+  ---
+  duration_ms: 0.269388
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 rhythm/我现在流感后心脏乱跳，胸前像压了石头
+ok 37 - 自行生成 R13 rhythm/我现在流感后心脏乱跳，胸前像压了石头
+  ---
+  duration_ms: 0.276389
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 rhythm/我的同伴现在流感后心脏乱跳，胸前像压了石头
+ok 38 - 自行生成 R13 rhythm/我的同伴现在流感后心脏乱跳，胸前像压了石头
+  ---
+  duration_ms: 0.47201
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 cauda/我现在腰剧痛，两条腿都无力，排尿控制不住
+ok 39 - 自行生成 R13 cauda/我现在腰剧痛，两条腿都无力，排尿控制不住
+  ---
+  duration_ms: 0.557435
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 cauda/我的同伴现在腰剧痛，两条腿都无力，排尿控制不住
+ok 40 - 自行生成 R13 cauda/我的同伴现在腰剧痛，两条腿都无力，排尿控制不住
+  ---
+  duration_ms: 0.258792
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 cauda/我现在腰部疼得厉害，双腿发麻，大便失禁
+ok 41 - 自行生成 R13 cauda/我现在腰部疼得厉害，双腿发麻，大便失禁
+  ---
+  duration_ms: 0.338834
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 cauda/我的同伴现在腰部疼得厉害，双腿发麻，大便失禁
+ok 42 - 自行生成 R13 cauda/我的同伴现在腰部疼得厉害，双腿发麻，大便失禁
+  ---
+  duration_ms: 0.240044
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 cauda/我现在腰痛，双腿没劲，排便失控
+ok 43 - 自行生成 R13 cauda/我现在腰痛，双腿没劲，排便失控
+  ---
+  duration_ms: 0.319845
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 cauda/我的同伴现在腰痛，双腿没劲，排便失控
+ok 44 - 自行生成 R13 cauda/我的同伴现在腰痛，双腿没劲，排便失控
+  ---
+  duration_ms: 0.381718
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 lumbar/我现在腰里像过电一样，右腿发麻
+ok 45 - 自行生成 R13 lumbar/我现在腰里像过电一样，右腿发麻
+  ---
+  duration_ms: 0.484044
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 lumbar/我的同伴现在腰里像过电一样，右腿发麻
+ok 46 - 自行生成 R13 lumbar/我的同伴现在腰里像过电一样，右腿发麻
+  ---
+  duration_ms: 0.372545
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 lumbar/我现在腰有电击感，左腿麻木
+ok 47 - 自行生成 R13 lumbar/我现在腰有电击感，左腿麻木
+  ---
+  duration_ms: 0.488901
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 lumbar/我的同伴现在腰有电击感，左腿麻木
+ok 48 - 自行生成 R13 lumbar/我的同伴现在腰有电击感，左腿麻木
+  ---
+  duration_ms: 0.325353
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 bone/我现在胫骨有一点按着疼，而且越跑越痛
+ok 49 - 自行生成 R13 bone/我现在胫骨有一点按着疼，而且越跑越痛
+  ---
+  duration_ms: 0.432656
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 bone/我的同伴现在胫骨有一点按着疼，而且越跑越痛
+ok 50 - 自行生成 R13 bone/我的同伴现在胫骨有一点按着疼，而且越跑越痛
+  ---
+  duration_ms: 0.36265
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 bone/我现在足背局部压痛，跑起来越来越疼
+ok 51 - 自行生成 R13 bone/我现在足背局部压痛，跑起来越来越疼
+  ---
+  duration_ms: 0.38864
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 bone/我的同伴现在足背局部压痛，跑起来越来越疼
+ok 52 - 自行生成 R13 bone/我的同伴现在足背局部压痛，跑起来越来越疼
+  ---
+  duration_ms: 0.417874
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 刚才有点头晕，休息后已经好了
+ok 53 - 自行生成 R13 ordinary discomfort: 刚才有点头晕，休息后已经好了
+  ---
+  duration_ms: 21.055743
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 刚跑完轻微头晕，现在完全缓解了
+ok 54 - 自行生成 R13 ordinary discomfort: 刚跑完轻微头晕，现在完全缓解了
+  ---
+  duration_ms: 4.335454
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 刚才轻度头晕，目前恢复正常
+ok 55 - 自行生成 R13 ordinary discomfort: 刚才轻度头晕，目前恢复正常
+  ---
+  duration_ms: 1.369807
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 跑后肌肉酸痛
+ok 56 - 自行生成 R13 ordinary discomfort: 跑后肌肉酸痛
+  ---
+  duration_ms: 0.867986
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 运动时抽筋
+ok 57 - 自行生成 R13 ordinary discomfort: 运动时抽筋
+  ---
+  duration_ms: 1.23351
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 慢跑有点岔气
+ok 58 - 自行生成 R13 ordinary discomfort: 慢跑有点岔气
+  ---
+  duration_ms: 0.942398
+  type: 'test'
+  ...
+# Subtest: 自行生成 R13 ordinary discomfort: 训练后有点疲劳
+ok 59 - 自行生成 R13 ordinary discomfort: 训练后有点疲劳
+  ---
+  duration_ms: 0.833925
+  type: 'test'
+  ...
+# Subtest: 自行生成 resolved severe symptom retained: 我刚跑完胸口疼，休息后已经好了
+ok 60 - 自行生成 resolved severe symptom retained: 我刚跑完胸口疼，休息后已经好了
+  ---
+  duration_ms: 0.243549
+  type: 'test'
+  ...
+# Subtest: 自行生成 resolved severe symptom retained: 我刚才晕倒了，现在完全缓解了
+ok 61 - 自行生成 resolved severe symptom retained: 我刚才晕倒了，现在完全缓解了
+  ---
+  duration_ms: 0.205161
+  type: 'test'
+  ...
+# Subtest: 自行生成 resolved severe symptom retained: 我轻微头晕，休息后已经好了，但是右手无力、口齿不清
+ok 62 - 自行生成 resolved severe symptom retained: 我轻微头晕，休息后已经好了，但是右手无力、口齿不清
+  ---
+  duration_ms: 0.268697
+  type: 'test'
+  ...
+# Subtest: scenario replies remain 2–4 sentences through every persona
+ok 63 - scenario replies remain 2–4 sentences through every persona
+  ---
+  duration_ms: 1.41196
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 1: 是否出现胸痛？
+ok 64 - 自行生成 full pipeline nonassertion 1: 是否出现胸痛？
+  ---
+  duration_ms: 7.489546
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 2: 有没有胸口发紧？
+ok 65 - 自行生成 full pipeline nonassertion 2: 有没有胸口发紧？
+  ---
+  duration_ms: 1.586575
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 3: 请问呼吸是否困难？
+ok 66 - 自行生成 full pipeline nonassertion 3: 请问呼吸是否困难？
+  ---
+  duration_ms: 0.820655
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 4: 请问有头晕、心慌吗？
+ok 67 - 自行生成 full pipeline nonassertion 4: 请问有头晕、心慌吗？
+  ---
+  duration_ms: 0.606018
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 5: 现在有无单侧无力？
+ok 68 - 自行生成 full pipeline nonassertion 5: 现在有无单侧无力？
+  ---
+  duration_ms: 0.630666
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 6: 请确认有没有口齿不清。
+ok 69 - 自行生成 full pipeline nonassertion 6: 请确认有没有口齿不清。
+  ---
+  duration_ms: 0.584936
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 7: 你的嘴唇有没有发紫？
+ok 70 - 自行生成 full pipeline nonassertion 7: 你的嘴唇有没有发紫？
+  ---
+  duration_ms: 0.563174
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 8: 是否有皮肤干烫的情况？
+ok 71 - 自行生成 full pipeline nonassertion 8: 是否有皮肤干烫的情况？
+  ---
+  duration_ms: 0.71206
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 9: 有无喉咙发紧、面部肿胀？
+ok 72 - 自行生成 full pipeline nonassertion 9: 有无喉咙发紧、面部肿胀？
+  ---
+  duration_ms: 0.779462
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 10: 请问是否拿不住东西？
+ok 73 - 自行生成 full pipeline nonassertion 10: 请问是否拿不住东西？
+  ---
+  duration_ms: 0.854055
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 11: 有没有排尿失控？
+ok 74 - 自行生成 full pipeline nonassertion 11: 有没有排尿失控？
+  ---
+  duration_ms: 0.680753
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 12: 请问是否曾晕倒？
+ok 75 - 自行生成 full pipeline nonassertion 12: 请问是否曾晕倒？
+  ---
+  duration_ms: 0.675254
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 13: 确认没有胸痛之前，不安排强度。
+ok 76 - 自行生成 full pipeline nonassertion 13: 确认没有胸痛之前，不安排强度。
+  ---
+  duration_ms: 0.704108
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 14: 确认没有头晕、心慌之前，先核对反馈。
+ok 77 - 自行生成 full pipeline nonassertion 14: 确认没有头晕、心慌之前，先核对反馈。
+  ---
+  duration_ms: 0.437974
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 15: 在确认没有呼吸困难之前，暂缓讨论训练。
+ok 78 - 自行生成 full pipeline nonassertion 15: 在确认没有呼吸困难之前，暂缓讨论训练。
+  ---
+  duration_ms: 0.480138
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 16: 确认没有腰痛和腿麻之后再核对记录。
+ok 79 - 自行生成 full pipeline nonassertion 16: 确认没有腰痛和腿麻之后再核对记录。
+  ---
+  duration_ms: 0.498305
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 17: 如果出现胸痛，立即停止活动并求助。
+ok 80 - 自行生成 full pipeline nonassertion 17: 如果出现胸痛，立即停止活动并求助。
+  ---
+  duration_ms: 0.615443
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 18: 若有口唇发紫，立即联系急救。
+ok 81 - 自行生成 full pipeline nonassertion 18: 若有口唇发紫，立即联系急救。
+  ---
+  duration_ms: 0.570215
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 19: 一旦出现口齿不清，应停止活动并求助。
+ok 82 - 自行生成 full pipeline nonassertion 19: 一旦出现口齿不清，应停止活动并求助。
+  ---
+  duration_ms: 0.458384
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 20: 假如发生喉咙发紧，应及时求助。
+ok 83 - 自行生成 full pipeline nonassertion 20: 假如发生喉咙发紧，应及时求助。
+  ---
+  duration_ms: 0.409631
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 21: 万一出现单侧无力，不继续运动。
+ok 84 - 自行生成 full pipeline nonassertion 21: 万一出现单侧无力，不继续运动。
+  ---
+  duration_ms: 0.392726
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 22: 出现疼痛时停止相关动作。
+ok 85 - 自行生成 full pipeline nonassertion 22: 出现疼痛时停止相关动作。
+  ---
+  duration_ms: 0.365354
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 23: 头晕加重时应停止运动。
+ok 86 - 自行生成 full pipeline nonassertion 23: 头晕加重时应停止运动。
+  ---
+  duration_ms: 0.618027
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 24: 停止条件：胸痛、呼吸困难、晕倒。
+ok 87 - 自行生成 full pipeline nonassertion 24: 停止条件：胸痛、呼吸困难、晕倒。
+  ---
+  duration_ms: 0.555322
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 25: 没有胸痛。
+ok 88 - 自行生成 full pipeline nonassertion 25: 没有胸痛。
+  ---
+  duration_ms: 0.59331
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 26: 你没有心悸。
+ok 89 - 自行生成 full pipeline nonassertion 26: 你没有心悸。
+  ---
+  duration_ms: 1.064404
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 27: 目前没有头晕。
+ok 90 - 自行生成 full pipeline nonassertion 27: 目前没有头晕。
+  ---
+  duration_ms: 0.896078
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 28: 你现在没有口齿不清。
+ok 91 - 自行生成 full pipeline nonassertion 28: 你现在没有口齿不清。
+  ---
+  duration_ms: 1.018504
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 29: 并无呼吸困难。
+ok 92 - 自行生成 full pipeline nonassertion 29: 并无呼吸困难。
+  ---
+  duration_ms: 0.529123
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 30: 没有喉咙发紧，也没有嘴唇肿胀。
+ok 93 - 自行生成 full pipeline nonassertion 30: 没有喉咙发紧，也没有嘴唇肿胀。
+  ---
+  duration_ms: 0.377522
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 31: 没有意识不清、没有晕倒。
+ok 94 - 自行生成 full pipeline nonassertion 31: 没有意识不清、没有晕倒。
+  ---
+  duration_ms: 0.456312
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 32: 你否认腰痛和腿麻。
+ok 95 - 自行生成 full pipeline nonassertion 32: 你否认腰痛和腿麻。
+  ---
+  duration_ms: 0.590435
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 33: 胸痛是否发生还需要确认。
+ok 96 - 自行生成 full pipeline nonassertion 33: 胸痛是否发生还需要确认。
+  ---
+  duration_ms: 0.406626
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 34: 头晕记录未知。
+ok 97 - 自行生成 full pipeline nonassertion 34: 头晕记录未知。
+  ---
+  duration_ms: 2.079743
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 35: 呼吸不适的情况尚需核对。
+ok 98 - 自行生成 full pipeline nonassertion 35: 呼吸不适的情况尚需核对。
+  ---
+  duration_ms: 0.381027
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 36: 疼痛评分未记录。
+ok 99 - 自行生成 full pipeline nonassertion 36: 疼痛评分未记录。
+  ---
+  duration_ms: 0.606109
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 37: 你有胸痛吗？
+ok 100 - 自行生成 full pipeline nonassertion 37: 你有胸痛吗？
+  ---
+  duration_ms: 0.76508
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 38: 你会出现心慌吗？
+ok 101 - 自行生成 full pipeline nonassertion 38: 你会出现心慌吗？
+  ---
+  duration_ms: 2.187196
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 39: 心跳异常属于需要留意的信号。
+ok 102 - 自行生成 full pipeline nonassertion 39: 心跳异常属于需要留意的信号。
+  ---
+  duration_ms: 0.787925
+  type: 'test'
+  ...
+# Subtest: 自行生成 full pipeline nonassertion 40: 讲解如何识别严重过敏。
+ok 103 - 自行生成 full pipeline nonassertion 40: 讲解如何识别严重过敏。
+  ---
+  duration_ms: 0.855177
+  type: 'test'
+  ...
+# Subtest: 自行生成 generated present assertion escalates: 你现在胸口疼。
+ok 104 - 自行生成 generated present assertion escalates: 你现在胸口疼。
+  ---
+  duration_ms: 0.401809
+  type: 'test'
+  ...
+# Subtest: 自行生成 generated present assertion escalates: 你已经出现口齿不清。
+ok 105 - 自行生成 generated present assertion escalates: 你已经出现口齿不清。
+  ---
+  duration_ms: 0.356861
+  type: 'test'
+  ...
+# Subtest: 自行生成 generated present assertion escalates: 目前嘴唇发紫，呼吸非常困难。
+ok 106 - 自行生成 generated present assertion escalates: 目前嘴唇发紫，呼吸非常困难。
+  ---
+  duration_ms: 0.370531
+  type: 'test'
+  ...
+# Subtest: 自行生成 generated present assertion escalates: 当事人现在晕倒了。
+ok 107 - 自行生成 generated present assertion escalates: 当事人现在晕倒了。
+  ---
+  duration_ms: 0.305113
+  type: 'test'
+  ...
+# Subtest: 自行生成 generated present assertion escalates: 你仍然心慌。
+ok 108 - 自行生成 generated present assertion escalates: 你仍然心慌。
+  ---
+  duration_ms: 0.352364
+  type: 'test'
+  ...
+# Subtest: generated question never cancels preflight emergency or changes affected person
+ok 109 - generated question never cancels preflight emergency or changes affected person
+  ---
+  duration_ms: 2.800076
+  type: 'test'
+  ...
+1..109
+# tests 109
+# suites 0
+# pass 109
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 164.090592

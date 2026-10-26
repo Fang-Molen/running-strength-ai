@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？
+not ok 1 - colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？
+  ---
+  duration_ms: 6.657291
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:9:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'NONE'
+    - 'MEDICAL_REVIEW'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'MEDICAL_REVIEW'
+  actual: 'NONE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:13:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？
+not ok 2 - colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？
+  ---
+  duration_ms: 1.082221
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:9:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'NONE'
+    - 'MEDICAL_REVIEW'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'MEDICAL_REVIEW'
+  actual: 'NONE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:13:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？
+not ok 3 - colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？
+  ---
+  duration_ms: 0.412896
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:9:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'NONE'
+    - 'MEDICAL_REVIEW'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'MEDICAL_REVIEW'
+  actual: 'NONE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:13:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？
+not ok 4 - colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？
+  ---
+  duration_ms: 0.258632
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:9:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'NONE'
+    - 'MEDICAL_REVIEW'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'MEDICAL_REVIEW'
+  actual: 'NONE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:13:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。
+ok 5 - denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。
+  ---
+  duration_ms: 0.320576
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。
+ok 6 - denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。
+  ---
+  duration_ms: 0.294046
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？
+ok 7 - denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？
+  ---
+  duration_ms: 0.260074
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。
+ok 8 - denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。
+  ---
+  duration_ms: 0.140904
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。
+ok 9 - denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。
+  ---
+  duration_ms: 0.189538
+  type: 'test'
+  ...
+# Subtest: historical pain remains history and current pain after a turn remains current
+not ok 10 - historical pain remains history and current pain after a turn remains current
+  ---
+  duration_ms: 2.110459
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:31:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'NONE'
+    - 'MEDICAL_REVIEW'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'MEDICAL_REVIEW'
+  actual: 'NONE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-colloquial-pain.test.ts:36:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 5
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 30.9984

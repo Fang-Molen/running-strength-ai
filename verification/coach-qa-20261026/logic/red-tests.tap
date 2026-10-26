@@ -1,0 +1,25 @@
+✖ src/lib/coach/r5/guard-conversation.test.ts (1085.509599ms)
+✖ src/lib/core/coach-colloquial-pain.test.ts (3545.743056ms)
+✖ src/lib/core/coach-general-question.test.ts (3536.012059ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3557.761834
+
+✖ failing tests:
+
+test at src/lib/coach/r5/guard-conversation.test.ts:1:1
+✖ src/lib/coach/r5/guard-conversation.test.ts (1085.509599ms)
+  'test failed'
+
+test at src/lib/core/coach-colloquial-pain.test.ts:1:1
+✖ src/lib/core/coach-colloquial-pain.test.ts (3545.743056ms)
+  'test failed'
+
+test at src/lib/core/coach-general-question.test.ts:1:1
+✖ src/lib/core/coach-general-question.test.ts (3536.012059ms)
+  'test failed'

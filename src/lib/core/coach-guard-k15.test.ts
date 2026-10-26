@@ -88,3 +88,13 @@ test("K12-CORR-1: verbal correction is detected and reaches the high-RPE prompt"
   assert.match(coachSystemPrompt("candidate-route", "NEXT_SESSION", false, true, false, "RPE 9是记错了，实际是6"), /训练记录里更正/)
   assert.doesNotMatch(coachSystemPrompt("candidate-route", "NEXT_SESSION", false, true, false, "下次怎么练"), /口头更正了数值：/)
 })
+
+// A lack of evidence is a restriction; a later contrast or double negation is not.
+test("insufficient evidence to authorize an increase preserves the explanation, not a training-selection fallback",()=>{
+ const text="可先核对这条记录与当前感受是否一致；单项资料不足以确认恢复或批准加量。";
+ assert.match(guardCoachResponse(general(),reply(text,[])).text,/可先核对这条记录与当前感受是否一致/);
+ assert.doesNotMatch(guardCoachResponse(general(),reply(text,[])).text,/请先选择一条有训练开始事件/);
+ for(const text of ["单项资料不足以批准加量，但是可以增加跑量。","并非资料不足以批准加量。","我不认为资料不足以支持增加跑量。"]){
+  assert.match(guardCoachResponse(general(),reply(text,[])).text,/请先选择一条有训练开始事件/,text);
+ }
+});

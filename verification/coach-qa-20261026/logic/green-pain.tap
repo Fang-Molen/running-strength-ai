@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？
+ok 1 - colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？
+  ---
+  duration_ms: 49.757365
+  type: 'test'
+  ...
+# Subtest: colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？
+ok 2 - colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？
+  ---
+  duration_ms: 7.594734
+  type: 'test'
+  ...
+# Subtest: colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？
+ok 3 - colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？
+  ---
+  duration_ms: 3.380435
+  type: 'test'
+  ...
+# Subtest: colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？
+ok 4 - colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？
+  ---
+  duration_ms: 34.206151
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。
+ok 5 - denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。
+  ---
+  duration_ms: 0.568352
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。
+ok 6 - denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。
+  ---
+  duration_ms: 0.286364
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？
+ok 7 - denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？
+  ---
+  duration_ms: 0.409581
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。
+ok 8 - denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。
+  ---
+  duration_ms: 0.971804
+  type: 'test'
+  ...
+# Subtest: denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。
+ok 9 - denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。
+  ---
+  duration_ms: 0.257851
+  type: 'test'
+  ...
+# Subtest: historical pain remains history and current pain after a turn remains current
+ok 10 - historical pain remains history and current pain after a turn remains current
+  ---
+  duration_ms: 0.94332
+  type: 'test'
+  ...
+# Subtest: body-part pain negation is scoped through body and lists: 现在跟腱不疼。
+ok 11 - body-part pain negation is scoped through body and lists: 现在跟腱不疼。
+  ---
+  duration_ms: 0.198771
+  type: 'test'
+  ...
+# Subtest: body-part pain negation is scoped through body and lists: 现在膝盖没有痛。
+ok 12 - body-part pain negation is scoped through body and lists: 现在膝盖没有痛。
+  ---
+  duration_ms: 0.161565
+  type: 'test'
+  ...
+# Subtest: body-part pain negation is scoped through body and lists: 没有腿疼、膝盖疼。
+ok 13 - body-part pain negation is scoped through body and lists: 没有腿疼、膝盖疼。
+  ---
+  duration_ms: 0.81123
+  type: 'test'
+  ...
+# Subtest: double-negative pain report cannot clear the pain boundary
+ok 14 - double-negative pain report cannot clear the pain boundary
+  ---
+  duration_ms: 0.46164
+  type: 'test'
+  ...
+# Subtest: a resolved recent report is historical, while a later pain assertion stays current
+ok 15 - a resolved recent report is historical, while a later pain assertion stays current
+  ---
+  duration_ms: 1.025595
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 131.461766

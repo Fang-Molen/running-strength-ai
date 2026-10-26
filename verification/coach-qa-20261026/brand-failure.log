@@ -1,0 +1,282 @@
+TAP version 13
+# Subtest: non-canvas app with no custom card gets a soft BRAND NOTE (utility exception)
+ok 1 - non-canvas app with no custom card gets a soft BRAND NOTE (utility exception)
+  ---
+  duration_ms: 2.040713
+  type: 'test'
+  ...
+# Subtest: non-canvas app with a compliant card is silent
+ok 2 - non-canvas app with a compliant card is silent
+  ---
+  duration_ms: 0.880665
+  type: 'test'
+  ...
+# Subtest: card file without site.json card=custom warns
+ok 3 - card file without site.json card=custom warns
+  ---
+  duration_ms: 0.434599
+  type: 'test'
+  ...
+# Subtest: card file with missing site.json warns for card=custom
+ok 4 - card file with missing site.json warns for card=custom
+  ---
+  duration_ms: 0.486197
+  type: 'test'
+  ...
+# Subtest: card file with invalid site.json warns for card=custom
+ok 5 - card file with invalid site.json warns for card=custom
+  ---
+  duration_ms: 1.085145
+  type: 'test'
+  ...
+# Subtest: oversized card warns for non-canvas apps too
+ok 6 - oversized card warns for non-canvas apps too
+  ---
+  duration_ms: 0.409681
+  type: 'test'
+  ...
+# Subtest: canvas app with no card warns 'missing' and missing og:type
+ok 7 - canvas app with no card warns 'missing' and missing og:type
+  ---
+  duration_ms: 0.387487
+  type: 'test'
+  ...
+# Subtest: canvas card without type still warns for og:type
+ok 8 - canvas card without type still warns for og:type
+  ---
+  duration_ms: 0.434378
+  type: 'test'
+  ...
+# Subtest: oversized card warns on the scraper budget (jpg and legacy png)
+ok 9 - oversized card warns on the scraper budget (jpg and legacy png)
+  ---
+  duration_ms: 1.672796
+  type: 'test'
+  ...
+# Subtest: compliant game (custom card + site.json type + x-banner) is silent
+ok 10 - compliant game (custom card + site.json type + x-banner) is silent
+  ---
+  duration_ms: 0.673381
+  type: 'test'
+  ...
+# Subtest: __root.tsx og:type no longer satisfies the canvas gate
+ok 11 - __root.tsx og:type no longer satisfies the canvas gate
+  ---
+  duration_ms: 0.642424
+  type: 'test'
+  ...
+# Subtest: oversized x-banner warns on the same scraper budget as og.jpg
+ok 12 - oversized x-banner warns on the same scraper budget as og.jpg
+  ---
+  duration_ms: 0.640541
+  type: 'test'
+  ...
+# Subtest: legacy png + site.json type still needs the X feed card
+ok 13 - legacy png + site.json type still needs the X feed card
+  ---
+  duration_ms: 0.317511
+  type: 'test'
+  ...
+# Subtest: siteDeclaresOgTypeGame reads the site contract
+ok 14 - siteDeclaresOgTypeGame reads the site contract
+  ---
+  duration_ms: 0.14518
+  type: 'test'
+  ...
+# Subtest: a fresh og-pending marker silences the whole gate view
+ok 15 - a fresh og-pending marker silences the whole gate view
+  ---
+  duration_ms: 0.221005
+  type: 'test'
+  ...
+# Subtest: a stale og-pending marker is ignored and the warnings return
+ok 16 - a stale og-pending marker is ignored and the warnings return
+  ---
+  duration_ms: 0.227245
+  type: 'test'
+  ...
+# Subtest: the marker goes stale on the clock, not on the file
+ok 17 - the marker goes stale on the clock, not on the file
+  ---
+  duration_ms: 0.451965
+  type: 'test'
+  ...
+# Subtest: no marker means nothing is in flight
+ok 18 - no marker means nothing is in flight
+  ---
+  duration_ms: 0.247425
+  type: 'test'
+  ...
+# Subtest: parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest
+ok 19 - parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest
+  ---
+  duration_ms: 0.236629
+  type: 'test'
+  ...
+# Subtest: cli: a game missing its card reports JSON and exits 1
+not ok 20 - cli: a game missing its card reports JSON and exits 1
+  ---
+  duration_ms: 37.976445
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:235:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:239:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a compliant game passes
+not ok 21 - cli: a compliant game passes
+  ---
+  duration_ms: 35.454223
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:246:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:254:25)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: the task's own marker is reported, not honoured
+not ok 22 - cli: the task's own marker is reported, not honoured
+  ---
+  duration_ms: 30.747322
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:257:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:261:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a bad argument fails with JSON on stderr
+not ok 23 - cli: a bad argument fails with JSON on stderr
+  ---
+  duration_ms: 28.608376
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:266:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:269:21)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a non-game with no card fails too — the pass exists to produce one
+not ok 24 - cli: a non-game with no card fails too — the pass exists to produce one
+  ---
+  duration_ms: 28.795754
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:272:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:276:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: --placeholder-ok is how a plain-utility pass reports no card as expected
+not ok 25 - cli: --placeholder-ok is how a plain-utility pass reports no card as expected
+  ---
+  duration_ms: 29.46541
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:284:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:288:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a non-game with a compliant card passes
+not ok 26 - cli: a non-game with a compliant card passes
+  ---
+  duration_ms: 33.003322
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:297:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/brand-check.test.mjs:301:25)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: project contract and AGENTS.md name the marker path and bound this script uses
+ok 27 - project contract and AGENTS.md name the marker path and bound this script uses
+  ---
+  duration_ms: 0.549603
+  type: 'test'
+  ...
+# Subtest: the sections that own the brand-task prohibition never affirm a wait
+ok 28 - the sections that own the brand-task prohibition never affirm a wait
+  ---
+  duration_ms: 0.840584
+  type: 'test'
+  ...
+# Subtest: project contract tells the pass to self-check with the flag this CLI accepts
+ok 29 - project contract tells the pass to self-check with the flag this CLI accepts
+  ---
+  duration_ms: 0.447589
+  type: 'test'
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 22
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 254.268997

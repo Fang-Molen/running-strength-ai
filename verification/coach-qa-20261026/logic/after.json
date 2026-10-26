@@ -1,0 +1,205 @@
+{
+  "synthetic": true,
+  "answers": [
+    {
+      "question": "什么是轻松跑？",
+      "safety": {
+        "scene": "UNKNOWN",
+        "level": "NONE",
+        "classes": [],
+        "subject": "UNKNOWN",
+        "negated": false,
+        "temporal": "KNOWLEDGE",
+        "evidence": []
+      },
+      "localOnly": "GENERAL_EDUCATION",
+      "staysLocal": true,
+      "text": "轻松跑是以轻松活动为目的的低强度跑步；用交谈是否轻松和主观感受来核对强度，不要求所有人采用同一配速。\n\n轻松跑优先看是否轻松可控，不为追配速增加负担。\n\n若交谈明显费力，先放慢或转步行；天气热时选择凉爽时段，记录整课感受；疼痛、头晕或异常气短时停止并按症状评估。\n\n以上是一般训练知识，不代表已经评估你的个人能力，也没有修改计划。",
+      "sources": [
+        "PB-HEART",
+        "PB-HEAT"
+      ],
+      "candidate": null
+    },
+    {
+      "question": "请给我解释轻松跑是什么。",
+      "safety": {
+        "scene": "UNKNOWN",
+        "level": "NONE",
+        "classes": [],
+        "subject": "SELF",
+        "negated": false,
+        "temporal": "CURRENT",
+        "evidence": []
+      },
+      "localOnly": "GENERAL_EDUCATION",
+      "staysLocal": true,
+      "text": "轻松跑是以轻松活动为目的的低强度跑步；用交谈是否轻松和主观感受来核对强度，不要求所有人采用同一配速。\n\n轻松跑优先看是否轻松可控，不为追配速增加负担。\n\n若交谈明显费力，先放慢或转步行；天气热时选择凉爽时段，记录整课感受；疼痛、头晕或异常气短时停止并按症状评估。\n\n以上是一般训练知识，不代表已经评估你的个人能力，也没有修改计划。",
+      "sources": [
+        "PB-HEART",
+        "PB-HEAT"
+      ],
+      "candidate": null
+    },
+    {
+      "question": "昨天间歇跑为什么掉速？",
+      "safety": {
+        "scene": "UNKNOWN",
+        "level": "NONE",
+        "classes": [],
+        "subject": "UNKNOWN",
+        "negated": false,
+        "temporal": "CURRENT",
+        "evidence": []
+      },
+      "localOnly": null,
+      "staysLocal": false,
+      "text": "结论：间歇复盘先看分段与恢复，掉速原因仍需区分。\n关键事实：当前没有选定可引用的实际课次；可以先按下列步骤核对，不把计划写成已完成。\n判断依据：可用的研修原则（教学候选，不是你的训练事实，也不批准个人剂量）：\n比较之前确认任务可比：先看恢复间隔、起跑方式、距离、天气和任务目的是否变化；相同距离不是相同实验条件。 [FK5R1:C03]\n从训练目的选择刺激：结合实际速度、次数、间歇、项目与阶段解释任务；同样距离可承担不同目的，主课/辅助由本节目标决定。 [FK5R1:P03]\n改变最关键的变量：先确认训练目的，再比较次数、间歇、速度目标、安排日期和技术复杂度的变更；尽量避免同时改变所有变量。 [FK5R1:D02]\n这些原则仍须结合你当前提供的条件；不知道的部分只限制相关结论，不替代已知事实分析。\n训练反馈未知；缺失不代表恢复正常。\n尚未指定某次训练；不能把其他日期的记录当作本次证据。 先记录下一节熟悉训练的实际内容和感受，今天不急着加量。\n记录来源：运动偏好/目标：田径 / 跑步；专项成绩；不是成绩事实 [linked:goal-preference]\n本地分析仅供参考；没有修改计划或记录。\n下次建议：核对首段是否偏快、实际组间恢复及末组动作；下次先按同一目的记录这些条件，仅在无痛且恢复核对后讨论一个变量，动作明显变形或不适时结束。\n缺失数据/待确认：请确认课次目的、记录是否完整以及当前身体反应；这些会改变下一步选择。\n本地知识摘要：\n 教学候选；手册提供，未独立复核。重复跑与间歇复盘：先看同课次、同轮次、同距离和记录方法的实际用时；均匀、加快或掉速是观察，不是能力与疲劳的诊断。末组快可能是留余量，也可能只是冲刺；掉速可能与起跑过快、恢复或当天状态有关。 缩短恢复也是增加密度；先核对同类课完成、当前睡眠/症状、目标与恢复，不能把“先缩恢复”写成通用进阶路线。（好教练手册参考编号 16）\n 教学候选；手册提供，未独立复核。酸痛、疼痛与功能：先区分弥散肌肉酸痛与局部锐痛、骨点压痛、肿胀、夜间痛和功能变化。疼痛加重、跑姿改变或日常活动受影响时停止诱发动作并寻求评估。 低疼痛分数不等于获准训练；跟腱康复疼痛模型不能直接推广到未诊断疼痛或所有部位。（好教练手册参考编号 17）\n[FK5R1:C03] 教学候选；不是正式个人决策规则。比较之前确认任务可比：先看恢复间隔、起跑方式、距离、天气和任务目的是否变化；相同距离不是相同实验条件。（FK5R1:S01、FK5R1:S02、FK5R1:S07）",
+      "sources": [
+        "运动偏好/目标：田径 / 跑步；专项成绩；不是成绩事实 [linked:goal-preference]",
+        "FK5R1:C03",
+        "FK5R1:P03",
+        "FK5R1:D02",
+        "PB-INTERVAL",
+        "PB-PAIN"
+      ],
+      "candidate": null
+    },
+    {
+      "question": "我昨天跑完腿疼，间歇跑怎么安排？",
+      "safety": {
+        "scene": "UNKNOWN",
+        "level": "MEDICAL_REVIEW",
+        "classes": [
+          "PAIN"
+        ],
+        "subject": "SELF",
+        "negated": false,
+        "temporal": "CURRENT",
+        "evidence": [
+          "腿疼"
+        ]
+      },
+      "localOnly": null,
+      "staysLocal": false,
+      "text": "先停止诱发疼痛的动作，必要时寻求运动医学或康复专业评估；低疼痛分数不等于可以继续。具体何时出现，目前是否持续或影响日常活动？",
+      "sources": [],
+      "candidate": null
+    },
+    {
+      "question": "膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？",
+      "safety": {
+        "scene": "UNKNOWN",
+        "level": "MEDICAL_REVIEW",
+        "classes": [
+          "PAIN"
+        ],
+        "subject": "UNKNOWN",
+        "negated": false,
+        "temporal": "CURRENT",
+        "evidence": [
+          "膝盖越来越疼"
+        ]
+      },
+      "localOnly": null,
+      "staysLocal": false,
+      "text": "先停止诱发疼痛的动作，必要时寻求运动医学或康复专业评估；低疼痛分数不等于可以继续。具体何时出现，目前是否持续或影响日常活动？",
+      "sources": [],
+      "candidate": null
+    },
+    {
+      "question": "为什么力量训练能帮助跑步？",
+      "safety": {
+        "scene": "UNKNOWN",
+        "level": "NONE",
+        "classes": [],
+        "subject": "UNKNOWN",
+        "negated": false,
+        "temporal": "CURRENT",
+        "evidence": []
+      },
+      "localOnly": "GENERAL_EDUCATION",
+      "staysLocal": true,
+      "text": "最大力量的变化与专项跑步成绩是不同的测量结果，不能直接相互替代。\n\n力量训练可能改善潜在施力能力，但跑步成绩还取决于高速触地条件下的力学应用、技术、速度训练、体重、恢复及测试条件。\n\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。",
+      "sources": [
+        "PB-STRENGTH",
+        "FK5R1:P04"
+      ],
+      "candidate": null
+    }
+  ],
+  "guards": [
+    {
+      "text": "你目前不能解除疼痛限制。",
+      "result": {
+        "ok": true,
+        "errors": [],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    },
+    {
+      "text": "HRV正常不代表可以继续跑步。",
+      "result": {
+        "ok": true,
+        "errors": [],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    },
+    {
+      "text": "不能解除疼痛限制，但可以继续跑步。",
+      "result": {
+        "ok": false,
+        "errors": [
+          "ACTIVE_HOLD_RELEASE"
+        ],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    },
+    {
+      "text": "1、先核对当前症状。\n2）再核对实际记录。",
+      "result": {
+        "ok": true,
+        "errors": [],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    },
+    {
+      "text": "不能不解除疼痛限制。",
+      "result": {
+        "ok": false,
+        "errors": [
+          "UNAUTHORIZED_WRITE_OR_CLEARANCE"
+        ],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    },
+    {
+      "text": "记录中的HRV为40 ms。",
+      "result": {
+        "ok": false,
+        "errors": [
+          "UNBOUND_NUMERIC_SOURCE"
+        ],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    },
+    {
+      "text": "1. 跑5公里。",
+      "result": {
+        "ok": false,
+        "errors": [
+          "UNSUPPORTED_NUMERIC_CLAIM",
+          "UNBOUND_NUMERIC_SOURCE"
+        ],
+        "professionalValidation": "NOT_PROVEN",
+        "semanticReviewRequired": true
+      }
+    }
+  ]
+}

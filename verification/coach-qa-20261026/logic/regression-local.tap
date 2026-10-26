@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: configured health mode cannot replace load facts with a daily fatigue summary
+ok 1 - configured health mode cannot replace load facts with a daily fatigue summary
+  ---
+  duration_ms: 120.568876
+  type: 'test'
+  ...
+# Subtest: load routing keeps emergency and persistent medical safety ahead of arithmetic
+ok 2 - load routing keeps emergency and persistent medical safety ahead of arithmetic
+  ---
+  duration_ms: 12.909403
+  type: 'test'
+  ...
+# Subtest: 双阈值适合我吗
+ok 3 - 双阈值适合我吗
+  ---
+  duration_ms: 6.705837
+  type: 'test'
+  ...
+# Subtest: 热量缺口怎么计算
+ok 4 - 热量缺口怎么计算
+  ---
+  duration_ms: 4.16179
+  type: 'test'
+  ...
+# Subtest: 铁蛋白低吃什么
+ok 5 - 铁蛋白低吃什么
+  ---
+  duration_ms: 1.526584
+  type: 'test'
+  ...
+# Subtest: 胸痛呼吸困难怎么办
+ok 6 - 胸痛呼吸困难怎么办
+  ---
+  duration_ms: 0.958263
+  type: 'test'
+  ...
+# Subtest: 今天训练怎么样
+ok 7 - 今天训练怎么样
+  ---
+  duration_ms: 1.850636
+  type: 'test'
+  ...
+# Subtest: no false evidence and pain safety
+ok 8 - no false evidence and pain safety
+  ---
+  duration_ms: 1.06892
+  type: 'test'
+  ...
+# Subtest: recovery decision uses reported sleep and effort without promoting them to stored facts
+ok 9 - recovery decision uses reported sleep and effort without promoting them to stored facts
+  ---
+  duration_ms: 11.201353
+  type: 'test'
+  ...
+# Subtest: absent device metrics cannot divert an exertion decision into device audit
+ok 10 - absent device metrics cannot divert an exertion decision into device audit
+  ---
+  duration_ms: 9.230495
+  type: 'test'
+  ...
+# Subtest: reported effort with missing recovery asks instead of granting high intensity
+ok 11 - reported effort with missing recovery asks instead of granting high intensity
+  ---
+  duration_ms: 3.96416
+  type: 'test'
+  ...
+# Subtest: planned, negated, third-party and invalid values are not current recovery observations
+ok 12 - planned, negated, third-party and invalid values are not current recovery observations
+  ---
+  duration_ms: 44.230921
+  type: 'test'
+  ...
+# Subtest: bound evidence stays separate from a new report and all conflicting records are retained
+ok 13 - bound evidence stays separate from a new report and all conflicting records are retained
+  ---
+  duration_ms: 13.867386
+  type: 'test'
+  ...
+# Subtest: current emergency and existing device conflicts keep priority over recovery decisions
+ok 14 - current emergency and existing device conflicts keep priority over recovery decisions
+  ---
+  duration_ms: 7.101166
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 250.330285

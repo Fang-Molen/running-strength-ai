@@ -16,8 +16,8 @@ test('plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认�
   assert.doesNotMatch(host, /calendarCoverage:\s*['"]COMPLETE['"]/)
   assert.doesNotMatch(host, /['"]ALLOW_DATE_MOVE['"]/)
 })
-test('online coach stays default ON and client cap equals live server clip', () => {
-  const c = readFileSync('src/lib/coach/online-coach.ts', 'utf8'), s = readFileSync('functions/api/coach-chat.js', 'utf8')
+test('online coach stays default ON and client cap equals trusted server rejection limit', () => {
+  const c = readFileSync('src/lib/coach/online-coach.ts', 'utf8'), s = readFileSync('server/coach-deepseek/lib/coach-request-boundary.ts', 'utf8')
   const values = JSON.parse(execFileSync(process.execPath, ['--import', './scripts/test-register.mjs', '--input-type=module', '-e', `
     import { setStoreBackend } from './src/lib/core/storage.ts';
     import { onlineSetting, setOnline } from './src/lib/coach/online-coach.ts';
@@ -25,7 +25,7 @@ test('online coach stays default ON and client cap equals live server clip', () 
     const defaultOn=onlineSetting().on;setOnline(false);console.log(JSON.stringify({defaultOn,afterOff:onlineSetting().on}));
   `], {encoding:'utf8'}))
   assert.deepEqual(values, {defaultOn:true,afterOff:false})
-  const cap = Number(/ONLINE_QUESTION_MAX = (\d+)/.exec(c)?.[1]), server = Number(/clip\(body\?\.question, (\d+)\)/.exec(s)?.[1])
+  const cap = Number(/ONLINE_QUESTION_MAX = (\d+)/.exec(c)?.[1]), server = Number(/body\.question\.length > (\d+)/.exec(s)?.[1])
   assert.ok(Number.isFinite(cap) && Number.isFinite(server))
   assert.equal(cap, server)
 })

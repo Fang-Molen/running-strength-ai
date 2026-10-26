@@ -56,7 +56,9 @@ export const SYMPTOM_DIMENSIONS={
  unilateral:/(?:左|右)(?:手|胳膊|手臂|腿|脚).{0,5}(?:无力|抬不起来|使不上劲|使不上力|没力气|没劲|拿不住|握不住)|(?:一只|一边的?)(?:手|腿).{0,5}(?:无力|拿不住|使不上劲)|(?:半边|一侧)(?:脸|面部).{0,5}(?:麻|没感觉|下垂)|(?:单侧|一侧|半边|左半边|右半边).{0,7}(?:无力|瘫|动不了|没力)|一边胳膊.{0,4}(?:抬不|无力)|突发剧烈头痛/g,
  illness:/发烧|发热|退烧|退热|感冒|流感|感染|新冠|转阴|阳过|病后|病刚好|生病|咽痛|咳嗽|鼻塞/g,
  energy:/闭经|停经|月经(?:紊乱|不调|推迟|停了|不来|没来|变少)|经期紊乱|没来月经|不来月经|姨妈(?:不来|没来|停了|不来了)|大姨妈.{0,4}(?:没来|不来)|例假.{0,4}(?:没来|不来|停了)|反复骨折|骨应力|应力性骨折|低能量|red-s|reds|极端少吃|节食|控体重|控制体重|刻意减重|不吃晚饭|不吃主食|长期少吃|每天只吃|一天只吃|只吃[一二两三\d]顿|压低摄入|食量压低|卡热量|催吐|厌食|晨勃(?:减少|没了|消失)|没有晨勃|性欲(?:下降|低下)|激素偏低/g,
- pain:/疼痛|刺痛|锐痛|骨头.{0,8}痛|膝盖.{0,7}痛|跟腱.{0,5}疼|小腿.{0,5}痛|腘绳肌.{0,5}伤|跛行|夜间痛|静息痛|关节卡住|局部肿胀|带伤|大腿后侧.{0,5}(?:酸痛|紧绷)/g,
+ // Keep the body part in each match so existing negation/temporal scoping
+ // applies to “没有腿疼”; do not absorb 不/没 or convert ordinary 酸痛.
+ pain:/疼痛|刺痛|锐痛|(?:大腿|小腿|腿|膝盖|膝关节|脚踝|脚跟|脚底|足底|跟腱|肩膀|手腕|胳膊|髋部)(?:内侧|外侧|前侧|后侧)?(?:有点|有些|一直|还是|仍然|越来越|特别|很|一阵阵?|隐隐)?(?:疼|痛)|骨头.{0,8}痛|膝盖.{0,7}痛|跟腱.{0,5}疼|小腿.{0,5}痛|腘绳肌.{0,5}伤|跛行|夜间痛|静息痛|关节卡住|局部肿胀|带伤|大腿后侧.{0,5}(?:酸痛|紧绷)/g,
  arrest:/心(?:跳|脏)(?:突然|骤然|已经)?(?:骤停|停止|停了|不跳了)|(?:没|没有|无)(?:心跳|脉搏)|(?:叫不醒|喊不醒|没有反应|毫无反应).{0,8}(?:没呼吸|没有正常呼吸|不呼吸)/g,
  collapse:/倒(?:在)?地(?:上)?|倒下|躺在地上/g,
  unresponsive:/无反应|没反应|没有反应|毫无反应|叫不醒|喊不醒|叫不应|喊不应|(?:叫|喊|呼唤).{0,5}(?:不回应|不应|不醒)/g,
@@ -81,6 +83,26 @@ export const SYMPTOM_DIMENSIONS={
 } as const
 export type SymptomDimension=keyof typeof SYMPTOM_DIMENSIONS
 type Hit={dimension:SymptomDimension;text:string;negated:boolean;temporal:RedFlagTemporal}
+/** Pain matches may include the body part before a negator, or occur in a denied list. */
+function painMentionNegated(clause:string,index:number,mention:string):boolean{
+ const before=clause.slice(0,index).replace(SYMPTOM_DIMENSIONS.pain,'疼痛')
+ const scoped=before+mention+clause.slice(index+mention.length)
+ const assertion=before+mention
+ // “不是没有腿疼” is an assertion, not absence of pain.
+ if(/(?:不是|并非|不代表|不能说|无法说).{0,12}(?:没有|无|不)/.test(assertion))return false
+ const symptom=[...mention.matchAll(/[疼痛]/g)].at(-1)?.index
+ return /(?:不是|并非)$/.test(before)
+  || negatedAt(scoped,before.length,mention.length)
+  || symptom!==undefined&&negatedAt(scoped,before.length+symptom,mention.length-symptom)
+}
+/** Only explicit resolution of an ordinary recent body-part report changes its time scope.
+ * Historical evidence still requests review; it never grants training clearance. */
+function resolvedRecentPain(clause:string,nextClause:string,mention:string):boolean{
+ if(!/昨天|前天|上次/.test(clause)||!/腿|膝|脚|足|跟腱|肩|腕|胳膊|髋/.test(mention))return false
+ if(/锐痛|刺痛|剧痛|骨|肿胀|跛行|走路|行走|负重|加重|越来越/.test(clause))return false
+ const resolution=clause.slice(clause.indexOf(mention)+mention.length)+'，'+nextClause
+ return /(?:现在|目前)(?:已经|已)?(?:完全好了|完全缓解|完全不疼了|完全不痛了|不疼了|不痛了)/.test(resolution)
+}
 export function detectRedFlags(text:string,context:RedFlagContext={}):RedFlagResult{
  const q=normalizeCoachText(text).slice(0,16000)
  const subject:RedFlagSubject=context.subject??(/队友|学员|孩子|女儿|儿子|同伴|同学|朋友|妹妹|姐姐|弟弟|哥哥|母亲|父亲|妈妈|爸爸|家人|妻子|丈夫|他(?:现在|刚|跑|练|说|的|已经)|她(?:现在|刚|跑|练|说|的|已经)|有人/.test(q)?'OTHER':/我|本人|咱/.test(q)?'SELF':'UNKNOWN')
@@ -88,11 +110,12 @@ export function detectRedFlags(text:string,context:RedFlagContext={}):RedFlagRes
  const clauses=temporalContextClauses(q)
  const currentText=clauses.filter(clause=>clause.temporal==='CURRENT').map(clause=>clause.text).join('，')
  const hits:Hit[]=[]
- for(const {text:clause,temporal} of clauses){
+ for(const [clauseIndex,{text:clause,temporal}] of clauses.entries()){
   for(const [dimension,re] of Object.entries(SYMPTOM_DIMENSIONS) as [SymptomDimension,RegExp][]){
    for(const m of clause.matchAll(re)){
-    const negated=negatedAt(clause,m.index??0,m[0].length)
-    hits.push({dimension,text:m[0],negated,temporal:temporal==='CURRENT'?unassertedAt(clause,m.index??0,m[0].length)??temporal:temporal})
+    const negated=dimension==='pain'?painMentionNegated(clause,m.index??0,m[0]):negatedAt(clause,m.index??0,m[0].length)
+    const resolved=dimension==='pain'&&resolvedRecentPain(clause,clauses[clauseIndex+1]?.text??'',m[0])
+    hits.push({dimension,text:m[0],negated,temporal:temporal==='CURRENT'?unassertedAt(clause,m.index??0,m[0].length)??(resolved?'HISTORY':temporal):temporal})
    }
   }
  }

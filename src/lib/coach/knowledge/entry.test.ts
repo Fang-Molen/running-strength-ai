@@ -11,6 +11,11 @@ import { selectDeepSeekRoute } from '../deepseek-policy.ts'
 import { offlineCapability } from '../../core/coach-offline.ts'
 import { selectCompleteKnowledge, completeKnowledgeInventory } from './complete.ts'
 import { readFileSync } from 'node:fs'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { CoachOnlineRequest } from '../../../components/coach-online-request'
+import { prepareOnlineExplanation, runOnlineExplanation } from '../online-session'
+import { setOnline } from '../online-coach'
 
 function ask(q:string) {
   const box=firstWeekMemory();setStoreBackend(box)
@@ -37,7 +42,9 @@ test('HRV research preview lists pending cards with sources and stays local',()=
 })
 test('ordinary explanation carries no pending application text; production retrieval yields zero approved uses',()=>{
   const a=ask('为什么训练后感觉疲劳，应该怎样理解恢复指标？')
-  assert.equal(a.knowledgePreview,undefined);assert.equal(answerStaysLocal(a),false)
+  assert.equal(a.knowledgePreview,undefined);assert.equal(answerStaysLocal(a),true)
+  assert.equal(a.localOnly,'GENERAL_EDUCATION');assert.equal(a.escalationAvailable,false);assert.equal(a.candidate,null)
+  assert.ok(a.text.length>30&&a.text.length<=1000)
   assert.doesNotMatch(a.text,/待专业审核|资料中的应用提案/)
   const prod=selectCompleteKnowledge({task:'recovery',domains:['RECOVERY'],mode:'PRODUCTION'})
   assert.equal(prod.status,'NO_APPROVED_KNOWLEDGE');assert.deepEqual(prod.uses,[]);assert.ok(prod.held>0)
@@ -76,8 +83,26 @@ test('new knowledge does not authorize a dose when the host has no approved rema
   assert.doesNotMatch(a.text,/\d+\s*(?:组|次|kg|公斤|%)/,'no invented sets, reps, load or percentage')
   assert.equal(a.localOnly,'REMAINING_WORK_NO_CANDIDATE')
 })
-test('coach sheet keeps local-only answers off the online coach path',()=>{
-  const src=readFileSync(new URL('../../../components/coach-sheet.tsx',import.meta.url),'utf8')
-  assert.match(src,/const keepLocal = answerStaysLocal\(local\)/)
-  assert.match(src,/if \(!redFlag && !keepLocal && onlineSetting\(\)\.on/)
+test('online explanation begins with review and cannot upload without per-turn consent',async()=>{
+  const local=ask('什么是轻松跑？')
+  assert.equal(answerStaysLocal(local),true)
+  const box=firstWeekMemory();setStoreBackend(box)
+  try {
+    setOnline(true) // Existing preference is not consent for this question.
+    const before=new Map(box.data),question='今天训练后状态怎么观察？'
+    let callbacks=0,requests=0,headerReads=0
+    const html=renderToStaticMarkup(createElement(CoachOnlineRequest,{question,disabled:false,
+      onAnswer:()=>{callbacks++},onNotice:()=>{callbacks++},onDismiss:()=>{callbacks++}}))
+    assert.match(html,/核对资料并联网解释/)
+    assert.doesNotMatch(html,/同意发送这些资料/,'initial rendering must not skip the disclosure review')
+    const preview=prepareOnlineExplanation(question)
+    const result=await runOnlineExplanation(preview,{consent:false},{
+      current:()=>({owner:preview.owner,sourceVersion:preview.sourceVersion,enabled:true}),
+      headers:async()=>{headerReads++;return {}},
+      fetch:async()=>{requests++;throw Error('unconfirmed request reached transport')},
+    })
+    assert.ok('error'in result);assert.match(result.error,/需要确认/)
+    assert.equal(requests,0);assert.equal(headerReads,0);assert.equal(callbacks,0)
+    assert.deepEqual(box.data,before,'review and a refused upload cannot write personal records')
+  } finally {setStoreBackend(null)}
 })

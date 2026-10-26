@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: current weight needs confirmation, syncs effective body, rejects duplicate and compensates undo
+ok 1 - current weight needs confirmation, syncs effective body, rejects duplicate and compensates undo
+  ---
+  duration_ms: 95.953482
+  type: 'test'
+  ...
+# Subtest: target weight and historical correction never become a new current measurement
+ok 2 - target weight and historical correction never become a new current measurement
+  ---
+  duration_ms: 29.73717
+  type: 'test'
+  ...
+# Subtest: Thursday change is previewed, preserves the strength component, and undo restores full intervals
+ok 3 - Thursday change is previewed, preserves the strength component, and undo restores full intervals
+  ---
+  duration_ms: 16.046456
+  type: 'test'
+  ...
+# Subtest: stale confirmation and account switch never write another scope
+ok 4 - stale confirmation and account switch never write another scope
+  ---
+  duration_ms: 5.218341
+  type: 'test'
+  ...
+# Subtest: reduce one set changes actual executable exercises and does not modify completed rows
+ok 5 - reduce one set changes actual executable exercises and does not modify completed rows
+  ---
+  duration_ms: 6.627437
+  type: 'test'
+  ...
+# Subtest: symptom worsening and limited function remain holds despite normal readiness or a later zero
+ok 6 - symptom worsening and limited function remain holds despite normal readiness or a later zero
+  ---
+  duration_ms: 17.972625
+  type: 'test'
+  ...
+# Subtest: symptom revisions preserve history but retract invalid evidence
+ok 7 - symptom revisions preserve history but retract invalid evidence
+  ---
+  duration_ms: 0.862367
+  type: 'test'
+  ...
+# Subtest: weekly totals use actual run and strength components, retain unknowns and split device protocols
+ok 8 - weekly totals use actual run and strength components, retain unknowns and split device protocols
+  ---
+  duration_ms: 9.750601
+  type: 'test'
+  ...
+# Subtest: next-week draft caps every dose dimension and never creates evidence or unsolicited volume
+ok 9 - next-week draft caps every dose dimension and never creates evidence or unsolicited volume
+  ---
+  duration_ms: 1.132487
+  type: 'test'
+  ...
+# Subtest: R4 mixed queries retain both modalities and single-service queries stay scoped
+ok 10 - R4 mixed queries retain both modalities and single-service queries stay scoped
+  ---
+  duration_ms: 0.235347
+  type: 'test'
+  ...
+# Subtest: goal edit must not re-date an old profile weight above a newer measurement
+ok 11 - goal edit must not re-date an old profile weight above a newer measurement
+  ---
+  duration_ms: 8.333673
+  type: 'test'
+  ...
+# Subtest: ambiguous current and target weights cannot be conflated
+ok 12 - ambiguous current and target weights cannot be conflated
+  ---
+  duration_ms: 0.66023
+  type: 'test'
+  ...
+# Subtest: weekly draft is idempotent on open, applies only on confirmation and undo preserves unrelated rows
+ok 13 - weekly draft is idempotent on open, applies only on confirmation and undo preserves unrelated rows
+  ---
+  duration_ms: 246.990138
+  type: 'test'
+  ...
+# Subtest: weekly stale drafts are rejected after a symptom correction or plan edit
+ok 14 - weekly stale drafts are rejected after a symptom correction or plan edit
+  ---
+  duration_ms: 15.067932
+  type: 'test'
+  ...
+# Subtest: the online safety audit rejects fabricated numbers, unauthorized writes and pain clearance
+ok 15 - the online safety audit rejects fabricated numbers, unauthorized writes and pain clearance
+  ---
+  duration_ms: 14.750181
+  type: 'test'
+  ...
+# Subtest: mixed run/strength remains executable in both components after the chat edit
+ok 16 - mixed run/strength remains executable in both components after the chat edit
+  ---
+  duration_ms: 1.94595
+  type: 'test'
+  ...
+# Subtest: easy-run replacement cannot silently triple the duration of a short interval component
+ok 17 - easy-run replacement cannot silently triple the duration of a short interval component
+  ---
+  duration_ms: 0.727934
+  type: 'test'
+  ...
+# Subtest: existing functional limitation is a safety hold even when pain was not recorded
+ok 18 - existing functional limitation is a safety hold even when pain was not recorded
+  ---
+  duration_ms: 1.480594
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 511.023402

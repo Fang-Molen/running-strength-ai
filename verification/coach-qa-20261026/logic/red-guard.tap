@@ -1,0 +1,288 @@
+TAP version 13
+# Subtest: numbered explanation is formatting, not a fabricated measured value
+ok 1 - numbered explanation is formatting, not a fabricated measured value
+  ---
+  duration_ms: 6.434534
+  type: 'test'
+  ...
+# Subtest: metric paraphrases still require full source binding
+ok 2 - metric paraphrases still require full source binding
+  ---
+  duration_ms: 3.859941
+  type: 'test'
+  ...
+# Subtest: negated clearance must pass but a later affirmative release must still fail
+ok 3 - negated clearance must pass but a later affirmative release must still fail
+  ---
+  duration_ms: 5.084007
+  type: 'test'
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 你目前不能解除疼痛限制。
+not ok 4 - scoped negative with subject or evidence stays usable: 你目前不能解除疼痛限制。
+  ---
+  duration_ms: 1.582879
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:32:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:33:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: HRV正常不代表可以继续跑步。
+not ok 5 - scoped negative with subject or evidence stays usable: HRV正常不代表可以继续跑步。
+  ---
+  duration_ms: 0.41551
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:32:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:33:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 目前还不能解除疼痛限制。
+not ok 6 - scoped negative with subject or evidence stays usable: 目前还不能解除疼痛限制。
+  ---
+  duration_ms: 0.449281
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:32:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:33:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 我没有已经替你修改计划。
+not ok 7 - scoped negative with subject or evidence stays usable: 我没有已经替你修改计划。
+  ---
+  duration_ms: 0.400868
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:32:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:33:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: scoped negative with subject or evidence stays usable: 不能确诊为肌腱炎。
+ok 8 - scoped negative with subject or evidence stays usable: 不能确诊为肌腱炎。
+  ---
+  duration_ms: 0.208546
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不能解除疼痛限制，但可以继续跑步。
+ok 9 - turns and double negation do not authorize release: 不能解除疼痛限制，但可以继续跑步。
+  ---
+  duration_ms: 0.509262
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不能解除疼痛限制,可以继续跑步。
+ok 10 - turns and double negation do not authorize release: 不能解除疼痛限制,可以继续跑步。
+  ---
+  duration_ms: 0.378824
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不能解除疼痛限制\\n可以继续跑步。
+ok 11 - turns and double negation do not authorize release: 不能解除疼痛限制\\n可以继续跑步。
+  ---
+  duration_ms: 0.264511
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 并不是不能解除疼痛限制。
+ok 12 - turns and double negation do not authorize release: 并不是不能解除疼痛限制。
+  ---
+  duration_ms: 0.364282
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不是不可以继续跑步。
+ok 13 - turns and double negation do not authorize release: 不是不可以继续跑步。
+  ---
+  duration_ms: 0.237821
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 不代表不能解除疼痛限制。
+ok 14 - turns and double negation do not authorize release: 不代表不能解除疼痛限制。
+  ---
+  duration_ms: 1.900301
+  type: 'test'
+  ...
+# Subtest: turns and double negation do not authorize release: 你不必担心，继续跑步。
+ok 15 - turns and double negation do not authorize release: 你不必担心，继续跑步。
+  ---
+  duration_ms: 0.197499
+  type: 'test'
+  ...
+# Subtest: list markers do not become factual numbers: 1、先核对当前症状。\\n2）再核对实际记录。
+not ok 16 - list markers do not become factual numbers: 1、先核对当前症状。\\n2）再核对实际记录。
+  ---
+  duration_ms: 0.70618
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:40:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:41:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: list markers do not become factual numbers: （1）先看睡眠。\\n（2）再看日常活动。
+not ok 17 - list markers do not become factual numbers: （1）先看睡眠。\\n（2）再看日常活动。
+  ---
+  duration_ms: 0.9502
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:40:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:41:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: list markers do not become factual numbers: - 1. 先核对当前症状。\\n- 2. 再核对实际记录。
+ok 18 - list markers do not become factual numbers: - 1. 先核对当前症状。\\n- 2. 再核对实际记录。
+  ---
+  duration_ms: 0.258022
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 1.5公里慢跑。
+ok 19 - list normalization retains unbound quantities: 1.5公里慢跑。
+  ---
+  duration_ms: 0.289248
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 1、跑5公里。
+ok 20 - list normalization retains unbound quantities: 1、跑5公里。
+  ---
+  duration_ms: 0.221516
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 1、HRV为40 bpm。
+ok 21 - list normalization retains unbound quantities: 1、HRV为40 bpm。
+  ---
+  duration_ms: 0.253114
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: １、跑５公里。
+ok 22 - list normalization retains unbound quantities: １、跑５公里。
+  ---
+  duration_ms: 0.363031
+  type: 'test'
+  ...
+# Subtest: list normalization retains unbound quantities: 两组冲刺。
+not ok 23 - list normalization retains unbound quantities: 两组冲刺。
+  ---
+  duration_ms: 0.337111
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:44:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/coach/r5/guard-conversation.test.ts:45:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 16
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 44.616234

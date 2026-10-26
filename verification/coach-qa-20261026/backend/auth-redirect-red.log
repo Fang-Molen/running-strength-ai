@@ -1,0 +1,50 @@
+✔ Cloudflare binding preserves URL, same-origin identity headers and method, without provider I/O (27.408601ms)
+✔ JSON cannot install service binding; backend redirect and failures stay explicit (2.518743ms)
+✔ Pages status checks use bound backend and do not post data (0.569233ms)
+✖ auth callback forwards a safe browser redirect and its session cookie without following it (1.229344ms)
+✖ auth redirects allow only public origin or the configured HTTPS issuer (0.544535ms)
+✔ Pages HTTPS proxy uses configured destination and Node restores only its configured public origin (1.981905ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.755118
+
+✖ failing tests:
+
+test at server/coach-deepseek/coach-backend-adapter.test.mjs:36:1
+✖ auth callback forwards a safe browser redirect and its session cookie without following it (1.229344ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 302
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/server/coach-deepseek/coach-backend-adapter.test.mjs:43:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 302,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server/coach-deepseek/coach-backend-adapter.test.mjs:45:1
+✖ auth redirects allow only public origin or the configured HTTPS issuer (0.544535ms)
+  AssertionError [ERR_ASSERTION]: /login
+  
+  503 !== 302
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/server/coach-deepseek/coach-backend-adapter.test.mjs:48:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 302,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

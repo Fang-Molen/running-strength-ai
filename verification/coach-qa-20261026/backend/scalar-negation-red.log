@@ -1,0 +1,39 @@
+✔ K14-STR-b: hedged outcome '不一定会导致体重显著增加' is not an increase proposal (4.219127ms)
+✔ hedged-outcome exemption does not hide a proposal (1.55031ms)
+✔ internal field names, enums and source ids are scrubbed from visible text (1.262735ms)
+✔ K12-YOUTH-1: ask-mode referral in nextStep is kept in the visible text (0.27037ms)
+✔ ask-mode nextStep with training advice is still dropped, not promoted (0.499588ms)
+✔ next-session packet carries running sources; required sources visible in every intent (0.824941ms)
+✔ K12-CORR-1: verbal correction is detected and reaches the high-RPE prompt (0.285463ms)
+✖ insufficient evidence to authorize an increase preserves the explanation, not a training-selection fallback (0.768886ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17.177911
+
+✖ failing tests:
+
+test at src/lib/core/coach-guard-k15.test.ts:85:1
+✖ insufficient evidence to authorize an increase preserves the explanation, not a training-selection fallback (0.768886ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /可先核对这条记录与当前感受是否一致/. Input:
+  
+  '请先选择一条有训练开始事件的记录，我才能核对这次训练。'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/src/lib/core/coach-guard-k15.test.ts:87:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '请先选择一条有训练开始事件的记录，我才能核对这次训练。',
+    expected: /可先核对这条记录与当前感受是否一致/,
+    operator: 'match',
+    diff: 'simple'
+  }

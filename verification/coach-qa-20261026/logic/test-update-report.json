@@ -1,0 +1,89 @@
+{
+  "scope": "Only four test files changed in this follow-up; no UI or product guard edits.",
+  "baseline": "Untouched git archive of 1d57de0: src, scripts, evaluation, test-fixtures, knowledge, package.json, tsconfig.json; node_modules symlinked to installed locked dependencies.",
+  "baselineProof": "baseline-ui-source-proof.json",
+  "baselineRuns": [
+    {
+      "log": "baseline-ui-knowledge.tap",
+      "tests": 3,
+      "pass": 2,
+      "fail": 1
+    },
+    {
+      "log": "baseline-ui-hydration.tap",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1
+    },
+    {
+      "log": "baseline-ui-session.tap",
+      "tests": 16,
+      "pass": 15,
+      "fail": 1
+    }
+  ],
+  "rootCauses": [
+    {
+      "file": "src/lib/coach/knowledge/entry.test.ts",
+      "cause": "Two old expectations contradicted the requested behavior: general teaching no longer requires online escalation; coach sheet now stages a separate review/consent component instead of automatically invoking transport.",
+      "repair": "Assert general local classification, <=1000 output, no candidate, no escalation. Replace source-code regex with real initial review component render and no-consent call through real online-session orchestration; transport/header access/callbacks remain zero and store unchanged."
+    },
+    {
+      "file": "src/lib/core/coach-knowledge-display.test.tsx",
+      "cause": "Already failing on untouched master: library initial view uses reading/references tabs and detailed source/applicability disclosure, not the former titles.",
+      "repair": "Assert current reading/reference tabs and source/applicability disclosure; keep external-link prohibition in local/offline modes and allowed-link test."
+    },
+    {
+      "file": "src/lib/core/hydration.test.tsx",
+      "cause": "Already failing on untouched master: first render can show the shared private plan fixture and current week shell; former empty-state/statistics text is no longer guaranteed.",
+      "repair": "Assert week shell and week tabs; retain exact SSR equality with/without browser records and all private field non-disclosure assertions."
+    },
+    {
+      "file": "src/lib/strength/session-builder.test.tsx",
+      "cause": "Already failing on untouched master: canonical exercise detail uses action steps, safety notes and breathing/error headings; old captions belong to prior UI.",
+      "repair": "Assert readable ordered steps, concrete safety instruction and local 3D canvas; retain no external embeds/no save controls and add zero store writes."
+    }
+  ],
+  "currentRuns": [
+    {
+      "file": "src/lib/coach/knowledge/entry.test.ts",
+      "log": "green-test-update-entry.tap",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/coach/knowledge/entry.test.ts"
+    },
+    {
+      "file": "src/lib/core/coach-knowledge-display.test.tsx",
+      "log": "green-test-update-knowledge.tap",
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-knowledge-display.test.tsx"
+    },
+    {
+      "file": "src/lib/core/hydration.test.tsx",
+      "log": "green-test-update-hydration.tap",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/hydration.test.tsx"
+    },
+    {
+      "file": "src/lib/strength/session-builder.test.tsx",
+      "log": "green-test-update-session.tap",
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/strength/session-builder.test.tsx"
+    }
+  ],
+  "totalTests": 30,
+  "totalPass": 30,
+  "totalFail": 0,
+  "limitations": [
+    "Focused direct node:test runs only; full suite/build/browser remain root-owned.",
+    "The consent test verifies initial render and the real no-consent boundary; browser interaction coverage is separate.",
+    "No source, test, numerical or safety guards were relaxed to change product behavior."
+  ]
+}

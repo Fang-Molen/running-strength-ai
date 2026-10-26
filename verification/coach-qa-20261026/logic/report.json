@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-26",
+  "synthetic": true,
+  "baseline": "1d57de0d413f365ff3ece4b63f859f94298706ba plus the 16-file handoff patch, captured before logic edits",
+  "baselineOutput": "before-handoff.json",
+  "afterOutput": "after.json",
+  "comparison": "comparison.json",
+  "replayCommand": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs verification/coach-qa-20261026/logic/replay.ts",
+  "testRuns": [
+    {
+      "testFile": "src/lib/core/coach-general-question.test.ts",
+      "log": "green-general.tap",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-general-question.test.ts"
+    },
+    {
+      "testFile": "src/lib/coach/r5/guard-conversation.test.ts",
+      "log": "green-guard.tap",
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/coach/r5/guard-conversation.test.ts"
+    },
+    {
+      "testFile": "src/lib/core/coach-colloquial-pain.test.ts",
+      "log": "green-pain.tap",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-colloquial-pain.test.ts"
+    },
+    {
+      "testFile": "src/lib/core/coach-local-first.test.ts",
+      "log": "regression-local.tap",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-local-first.test.ts"
+    },
+    {
+      "testFile": "src/lib/core/coach-r13-safety.test.ts",
+      "log": "regression-r13.tap",
+      "tests": 109,
+      "pass": 109,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-r13-safety.test.ts"
+    },
+    {
+      "testFile": "src/lib/core/coach-r185-p0.test.ts",
+      "log": "regression-r185.tap",
+      "tests": 34,
+      "pass": 34,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-r185-p0.test.ts"
+    },
+    {
+      "testFile": "src/lib/core/coach-r189.test.ts",
+      "log": "regression-r189.tap",
+      "tests": 31,
+      "pass": 31,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-r189.test.ts"
+    },
+    {
+      "testFile": "src/lib/coach/r5/r5.test.ts",
+      "log": "regression-r5.tap",
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/coach/r5/r5.test.ts"
+    },
+    {
+      "testFile": "src/lib/core/coach-red-flags.test.ts",
+      "log": "regression-redflags.tap",
+      "tests": 482,
+      "pass": 482,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/core/coach-red-flags.test.ts"
+    },
+    {
+      "testFile": "src/lib/coach/r5/review-findings.test.ts",
+      "log": "regression-review-findings.tap",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test-reporter=tap src/lib/coach/r5/review-findings.test.ts"
+    }
+  ],
+  "totalTests": 753,
+  "totalPassed": 753,
+  "totalFailed": 0,
+  "implementationFiles": [
+    "src/lib/core/coach-general-question.ts",
+    "src/lib/core/coach-red-flags.ts",
+    "src/lib/coach/r5/guard.ts"
+  ],
+  "changes": [
+    "Ordinary general education stays local, including polite first-person teaching requests; dated/personal experiences remain on the analysis path.",
+    "Easy-run education reuses the existing offline rule, includes talk effort and stop conditions, and retains existing source identifiers.",
+    "Body-part pain vocabulary and pain-specific negation/list/temporal scope preserve active symptoms despite normal HRV; historical resolution never grants clearance.",
+    "R5 list markers and scoped negative statements no longer fail harmlessly; canonical fact text remains exact, while unbound Arabic/full-width/Chinese numeric doses, unit mismatches and affirmative/double-negated clearance remain rejected."
+  ],
+  "limitations": [
+    "No paid provider calls, deployment, merge, commit or push were performed.",
+    "Full npm test, typecheck, build and browser validation are left to root as assigned.",
+    "These deterministic engineering checks do not establish professional coaching/scientific correctness or exhaustive natural-language coverage.",
+    "Numeric R5 claims still require exact host-owned factual sentences; semanticReviewRequired remains true.",
+    "The inherited personal-analysis chain returns 1060 characters for the synthetic dated interval why question; general education responses meet the <=1000 requirement.",
+    "Node v24 --test child execution reported only file-level failures under the injected no-network hook; direct node:test files produced detailed assertions and counts. Initial file-run diagnostics remain in red-tests.tap; meaningful failures are captured in red-general.tap, red-pain.tap, red-guard.tap, red-binding.tap, red-pain-scope.tap."
+  ],
+  "artifactSha256": {
+    "before-handoff.json": "574003921d28f451f1655e19740efaed840164a2a8c20dfd2ae9070f44b96992",
+    "after.json": "2584fc491fd19b40928ac5e66536576f5b98c0c4374a89578205a28b1dba0985",
+    "comparison.json": "8588f788915223763e40a9b597ab3a05ad788fe6e8b7e971057c5e8d58a596c5",
+    "replay.ts": "1aaf8244cbda2dbcc68ab2fd7d0a729c64e03014175c6c9904be15bc654528d0"
+  }
+}

@@ -1,0 +1,68 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {writeFile,mkdir} from 'node:fs/promises';
+const base=process.env.QA_URL??'http://127.0.0.1:8080',label=process.env.QA_LABEL??'dev';
+const out='/workspace/screenshots/coach-qa-20261026';await mkdir(out,{recursive:true});
+const harness='http://127.0.0.1:8092';
+const control=async(path,body)=>{const r=await fetch(harness+path,{...(body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{})});assert.ok(r.ok,`${path}: ${r.status}`);return r.json()};
+const {token}=await control('/__test/session',{subject:'alice'});
+await control('/__test/provider',{mode:'normal'});
+const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage']});
+const results=[],errors=[],requests=[];let activePage;
+try{
+ const context=await browser.newContext({viewport:{width:1280,height:900},serviceWorkers:'block'});
+ // Unrelated Garmin integration is intentionally disconnected in this synthetic fixture.
+ await context.route('**/api/garmin/status',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({configured:false,connected:false,authenticated:false})}));
+ await context.route('**/api/coach-*',async route=>{
+  const request=route.request(),path=new URL(request.url()).pathname;
+  const headers={...request.headers(),'x-grok-identity':token,origin:'http://127.0.0.1:8080'};
+  delete headers.host;
+  const body=request.postData();
+  const entry={method:request.method(),path,keys:body?Object.keys(JSON.parse(body)):[]};requests.push(entry);
+  const response=await context.request.fetch(harness+path,{method:request.method(),headers,...(body?{data:body}:{}),timeout:40000});
+  entry.status=response.status();entry.response=await response.json().catch(()=>null);
+  await route.fulfill({response});
+ });
+ const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error'&&!m.text().includes('Failed to load resource: the server responded with a status of 502'))errors.push(m.text()+' '+JSON.stringify(m.location()))});
+ await page.goto(base,{waitUntil:'domcontentloaded'});await page.locator('[data-testid="training-app"][data-ready="true"]').waitFor();
+ if(await page.getByRole('button',{name:'先逛逛',exact:true}).isVisible())await page.getByRole('button',{name:'先逛逛',exact:true}).click();
+ await page.getByRole('button',{name:'切换到方坤',exact:true}).click();
+ const send=async q=>{await page.getByRole('textbox',{name:'输入你的问题',exact:true}).fill(q);await page.getByRole('button',{name:'发送',exact:true}).click();await page.getByRole('button',{name:'发送',exact:true}).isEnabled();await page.waitForTimeout(250)};
+ await send('什么是轻松跑？');
+ let text=await page.getByTestId('coach-messages').innerText();assert.match(text,/交谈|低强度/);assert.doesNotMatch(text,/授权失败|服务端授权快照尚未/);assert.equal(requests.length,0);
+ results.push({case:'general_without_records',output:text,networkRequests:0});
+ await page.evaluate(()=>{const now=new Date(),day=now.toISOString().slice(0,10);localStorage.setItem('fk-checkin-v1',JSON.stringify([{athleteId:'local',date:day,at:new Date(now.valueOf()-60000).toISOString(),sleep:7,recovery:6,recoveryScale:10,pain:'none'}]));window.dispatchEvent(new Event('fk-health-changed'))});
+ await send('今天训练后状态怎么观察？');
+ await page.getByRole('button',{name:'核对资料并联网解释',exact:true}).waitFor({timeout:5000});
+ const localBefore=await page.getByTestId('coach-messages').innerText();
+ await page.getByRole('button',{name:'核对资料并联网解释',exact:true}).click();
+ const preview=await page.getByTestId('coach-online-preview').innerText();assert.match(preview,/7小时/);assert.equal(requests.length,0);
+ await page.screenshot({path:`${out}/${label}-consent-desktop.png`});
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:`${out}/${label}-consent-mobile.png`});
+ assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
+ await page.getByRole('button',{name:'同意发送这些资料',exact:true}).click();
+ await page.getByTestId('coach-messages').getByText(/【联网模型解释】/).waitFor({timeout:15000});
+ text=await page.getByTestId('coach-messages').innerText();assert.ok(text.includes(localBefore));assert.match(text,/用户申报(?:睡眠时长：7小时|主观恢复程度：6\/10)/);assert.match(text,/可先核对这条记录与当前感受是否一致/);
+ const chat=requests.find(r=>r.path==='/api/coach-chat'&&r.method==='POST');assert.deepEqual(chat.keys.sort(),['asOf','consentId','question','requestId','snapshotId']);
+ results.push({case:'consented_real_handler_mock_provider',preview,output:text,requests:[...requests]});
+ await page.screenshot({path:`${out}/${label}-answer-mobile.png`});
+ await control('/__test/provider',{mode:'wrong-unit'});
+ await send('请继续解释今天训练后的状态');await page.getByRole('button',{name:'核对资料并联网解释',exact:true}).click();
+ const beforeWrong=await page.getByTestId('coach-messages').innerText();await page.getByRole('button',{name:'同意发送这些资料',exact:true}).click();
+ await page.getByText(/模型回答未通过事实或安全核验/).waitFor({timeout:15000});
+ assert.equal(await page.getByTestId('coach-messages').innerText(),beforeWrong);
+ results.push({case:'wrong_unit_rejected_local_answer_retained',output:beforeWrong});
+ await control('/__test/provider',{mode:'delayed'});
+ await send('现在的训练反馈该如何理解？');await page.getByRole('button',{name:'核对资料并联网解释',exact:true}).click();await page.getByRole('button',{name:'同意发送这些资料',exact:true}).click();
+ for(let i=0;i<40;i++){if((await control('/__test/status')).pending)break;await page.waitForTimeout(100)}
+ assert.equal((await control('/__test/status')).pending,1);
+ const beforeCancel=await page.getByTestId('coach-messages').innerText();await page.getByRole('button',{name:'取消本轮联网',exact:true}).click();await control('/__test/release',{});await page.waitForTimeout(800);
+ assert.equal(await page.getByTestId('coach-messages').innerText(),beforeCancel);
+ results.push({case:'cancelled_response_not_displayed',output:beforeCancel});
+ await send('我昨天跑完腿疼，间歇跑怎么安排？');text=await page.getByTestId('coach-messages').innerText();assert.match(text,/疼痛|暂停|停止/);assert.equal(await page.getByTestId('coach-online-request').count(),0);
+ results.push({case:'colloquial_pain_stays_local',output:text});
+ assert.deepEqual(errors,[]);
+ await writeFile(`verification/coach-qa-20261026/browser-${label}-results.json`,JSON.stringify({synthetic:true,provider:'mocked, native outbound blocked',api:'real HTTP handler + verified signed synthetic identity + disk PGlite',results,errors,ledger:await control('/__test/status')},null,2));
+ console.log(JSON.stringify({ok:true,label,cases:results.length,requests:requests.length,errors}));
+ await context.close();
+}catch(error){await writeFile(`verification/coach-qa-20261026/browser-${label}-failure.json`,JSON.stringify({error:String(error),page:await activePage?.locator('body').innerText(),results,errors,requests},null,2));throw error}finally{await browser.close()}

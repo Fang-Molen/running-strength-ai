@@ -1,0 +1,14 @@
+✔ Cloudflare binding preserves URL, same-origin identity headers and method, without provider I/O (23.398812ms)
+✔ JSON cannot install service binding; backend redirect and failures stay explicit (2.385497ms)
+✔ Pages status checks use bound backend and do not post data (0.531136ms)
+✔ auth callback forwards a safe browser redirect and its session cookie without following it (0.46864ms)
+✔ auth redirects allow only public origin or the configured HTTPS issuer (1.027067ms)
+✔ Pages HTTPS proxy uses configured destination and Node restores only its configured public origin (1.99212ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35.534261

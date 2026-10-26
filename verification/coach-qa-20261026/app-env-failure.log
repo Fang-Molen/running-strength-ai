@@ -1,0 +1,133 @@
+TAP version 13
+# Subtest: keeps VITE_-prefixed string entries
+ok 1 - keeps VITE_-prefixed string entries
+  ---
+  duration_ms: 1.278358
+  type: 'test'
+  ...
+# Subtest: drops non-VITE keys, non-string values and malformed documents
+ok 2 - drops non-VITE keys, non-string values and malformed documents
+  ---
+  duration_ms: 0.172832
+  type: 'test'
+  ...
+# Subtest: a missing app-env.json is a clean no-op
+ok 3 - a missing app-env.json is a clean no-op
+  ---
+  duration_ms: 0.372525
+  type: 'test'
+  ...
+# Subtest: reads the app env from a workspace
+ok 4 - reads the app env from a workspace
+  ---
+  duration_ms: 0.279083
+  type: 'test'
+  ...
+# Subtest: an explicit process-env override wins over the file
+ok 5 - an explicit process-env override wins over the file
+  ---
+  duration_ms: 0.177579
+  type: 'test'
+  ...
+# Subtest: the template ships auth off
+ok 6 - the template ships auth off
+  ---
+  duration_ms: 0.190479
+  type: 'test'
+  ...
+# Subtest: vite loadEnv resolves the wrapped value
+ok 7 - vite loadEnv resolves the wrapped value
+  ---
+  duration_ms: 0.216197
+  type: 'test'
+  ...
+# Subtest: the wrapped command runs with the app env applied
+not ok 8 - the wrapped command runs with the app env applied
+  ---
+  duration_ms: 67.742496
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/with-app-env.test.mjs:76:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '' !== 'false'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'false'
+  actual: ''
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/with-app-env.test.mjs:83:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: the wrapped command sees an explicit override, not the file value
+not ok 9 - the wrapped command sees an explicit override, not the file value
+  ---
+  duration_ms: 68.835282
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/with-app-env.test.mjs:86:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '' !== 'true'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'true'
+  actual: ''
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/with-app-env.test.mjs:92:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: the wrapper propagates the command's exit code
+ok 10 - the wrapper propagates the command's exit code
+  ---
+  duration_ms: 66.94363
+  type: 'test'
+  ...
+# Subtest: a signal-killed command is never reported as success
+ok 11 - a signal-killed command is never reported as success
+  ---
+  duration_ms: 65.819506
+  type: 'test'
+  ...
+# Subtest: the CLI still runs when invoked through a symlinked path
+not ok 12 - the CLI still runs when invoked through a symlinked path
+  ---
+  duration_ms: 59.169712
+  type: 'test'
+  location: '/workspace/fangkun-qa-repair/scripts/with-app-env.test.mjs:116:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '' !== 'false'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'false'
+  actual: ''
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-qa-repair/scripts/with-app-env.test.mjs:127:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 9
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 338.672489
