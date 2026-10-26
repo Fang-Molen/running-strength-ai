@@ -109,3 +109,5 @@ export function aliasCoachInput(input: AskCoachRawInput): { input: AskCoachRawIn
 export function costMicros(inputTokens: number, outputTokens: number, p: VerifiedDeepSeekPolicy, cachedTokens = 0): string {
   return ((BigInt(inputTokens - cachedTokens) * BigInt(p.inputMicrosPerMillion) + BigInt(cachedTokens) * BigInt(p.cachedInputMicrosPerMillion) + BigInt(outputTokens) * BigInt(p.outputMicrosPerMillion) + 999999n) / 1000000n).toString();
 }
+
+export { attachR6ScientificDecision } from './coach-r6-handoff';

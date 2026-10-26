@@ -1,0 +1,19 @@
+{
+  "policy": "Supplemental posthoc adjudication of the old numeric-contradiction list; distinct denominator from the preregistered 14 error events. No model judge.",
+  "beforePrecisionFix": {
+    "snapshotFile": "legacy-diagnostics-before-precision-fix.json",
+    "sha256": "42a98119cfc80546285555284b880febbbd44c5c5d39a3db24d137e117978a62",
+    "numericFindingDenominator": 23,
+    "trueClaimOccurrences": 3,
+    "falsePositives": 20,
+    "underlyingNumericErrorEvents": 1,
+    "reviewer": "Independent artifact checker /root/derived_facts reviewed actual source fields and raw answers"
+  },
+  "current": {
+    "numericFindingDenominator": 2,
+    "trueClaimOccurrences": 2,
+    "knownRepeatedTrueOccurrencesNotFlagged": 1,
+    "falsePositives": 0,
+    "unadjudicated": 0
+  }
+}

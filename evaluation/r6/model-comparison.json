@@ -1,0 +1,4312 @@
+{
+  "base": "50872a8",
+  "baselineExecutedAt": "2026-10-26T01:28:33.366Z",
+  "initialBaselineExecutedAt": "2026-10-26T01:21:04.603Z",
+  "baselineMethod": "Executed original 50872a8 selection.ts and candidates.ts via transient sibling modules; component purposes corrected to match declared session purposes.",
+  "scientificallyValidated": false,
+  "cases": [
+    {
+      "id": "no_lt2_double",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 1500,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "ADVANCED",
+          "doubleThresholdExperience": true,
+          "lactateMonitoring": true,
+          "coachSupervision": true,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "THRESHOLD",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "同测试、同口径的实测阈值分区"
+            ]
+          },
+          {
+            "method": "POLARIZED",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "同测试、同口径的实测阈值分区"
+            ]
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "个体实测阈值"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          }
+        ],
+        "missing": [
+          "阈值课缺少个体实测阈值依据：session-1"
+        ],
+        "notes": []
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "INSUFFICIENT",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "同测试、同口径的实测阈值分区"
+            ]
+          },
+          {
+            "method": "POLARIZED",
+            "status": "INSUFFICIENT",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "同测试、同口径的实测阈值分区"
+            ]
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "INSUFFICIENT",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "同测试、同口径的实测阈值分区"
+            ]
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "个体实测阈值"
+            ]
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "个体实测阈值"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          }
+        ],
+        "missing": [
+          "阈值课缺少个体实测阈值依据：session-1"
+        ],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "base_phase",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 5000,
+          "phase": "BASE",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "THRESHOLD",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "missing": [],
+        "notes": []
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "基础阶段先讨论低强度基础和已有耐受；这是当前条件下的讨论顺序，不代表金字塔普遍优越。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          }
+        ],
+        "missing": [],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "competition_phase",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 5000,
+          "phase": "TAPER",
+          "raceDate": "2026-10-26",
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "THRESHOLD",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONDITIONAL",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONDITIONAL",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "missing": [],
+        "notes": [
+          "比赛临近：7日为产品保守复核窗口，不是统一生理减量规则。"
+        ]
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "比赛临近，优先维持熟悉内容，不依据标签重排训练。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "比赛临近，优先维持熟悉内容，不依据标签重排训练。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "比赛临近，优先维持熟悉内容，不依据标签重排训练。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          }
+        ],
+        "missing": [],
+        "notes": [
+          "比赛临近：7日为产品保守复核窗口，不是统一生理减量规则。",
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "event_400_strength_overlap",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 400,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "SPEED",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "strength",
+            "date": "2026-10-25",
+            "purpose": "STRENGTH",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "strength",
+                  "modality": "STRENGTH",
+                  "strengthSessionId": "existing-strength"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONDITIONAL",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONDITIONAL",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "strength",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          }
+        ],
+        "missing": [
+          "力量剂量继续由既有力量模块复核，不从跑步模型修改：strength"
+        ],
+        "notes": [
+          "同日力量与关键跑步课需核对先后、间隔和目的；不以固定小时数保证恢复。"
+        ]
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "strength",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "与跑步重叠的肌群负荷需按动作与目的复核。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "strength",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "与跑步重叠的肌群负荷需按动作与目的复核。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          }
+        ],
+        "missing": [
+          "力量剂量由既有力量模块按实际动作与训练目的复核。：strength",
+          "保留已熟悉且已有批准的目的和剂量；缺HRV本身不是暂停依据。：strength"
+        ],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。",
+          "同日力量与关键跑步课需核对先后、间隔和目的；不以固定小时数保证恢复。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "event_800_strength_overlap",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 800,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "SPEED",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "strength",
+            "date": "2026-10-25",
+            "purpose": "STRENGTH",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "strength",
+                  "modality": "STRENGTH",
+                  "strengthSessionId": "existing-strength"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONDITIONAL",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONDITIONAL",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "strength",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          }
+        ],
+        "missing": [
+          "力量剂量继续由既有力量模块复核，不从跑步模型修改：strength"
+        ],
+        "notes": [
+          "同日力量与关键跑步课需核对先后、间隔和目的；不以固定小时数保证恢复。"
+        ]
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "strength",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "与跑步重叠的肌群负荷需按动作与目的复核。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "strength",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "与跑步重叠的肌群负荷需按动作与目的复核。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          }
+        ],
+        "missing": [
+          "力量剂量由既有力量模块按实际动作与训练目的复核。：strength",
+          "保留已熟悉且已有批准的目的和剂量；缺HRV本身不是暂停依据。：strength"
+        ],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。",
+          "同日力量与关键跑步课需核对先后、间隔和目的；不以固定小时数保证恢复。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "same_plan_stable",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [
+            {
+              "id": "PAIN",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "PAIN",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "PAIN",
+              "value": 0,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            },
+            {
+              "id": "FUNCTION",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "FUNCTION",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "FUNCTION",
+              "value": 0,
+              "scale": "FUNCTION_LIMITATION_0_1",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": "usual-warmup",
+              "notes": null
+            },
+            {
+              "id": "SORENESS",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "SORENESS",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "SORENESS",
+              "value": 0,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            }
+          ],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 1500,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "SPEED",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "missing": [],
+        "notes": []
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          }
+        ],
+        "missing": [],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "same_plan_fatigued",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [
+            {
+              "id": "PAIN",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "PAIN",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "PAIN",
+              "value": 0,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            },
+            {
+              "id": "FUNCTION",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "FUNCTION",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "FUNCTION",
+              "value": 0,
+              "scale": "FUNCTION_LIMITATION_0_1",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": "usual-warmup",
+              "notes": null
+            },
+            {
+              "id": "SORENESS",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "SORENESS",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "SORENESS",
+              "value": 3,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            }
+          ],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 1500,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "MIXED_SIGNALS",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "SPEED",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "REPETITION_SPEED",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          }
+        ],
+        "missing": [],
+        "notes": []
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数不会降低单次速度要求；疲劳、疼痛或动作变化可破坏重复质量。",
+            "observation": "核对原热身动作、原组休下的逐次完成质量与主观状态，再记录次日反应；不加最大努力测试。"
+          }
+        ],
+        "missing": [
+          "速度、VO2与专项高强度更依赖动作和重复质量；当前反应不支持仅凭正常HRV保留或减次数后继续原强度。：session-1"
+        ],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "normal_hrv_pain",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [
+            {
+              "id": "PAIN",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "PAIN",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "PAIN",
+              "value": 2,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            },
+            {
+              "id": "FUNCTION",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "FUNCTION",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "FUNCTION",
+              "value": 0,
+              "scale": "FUNCTION_LIMITATION_0_1",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": "usual-warmup",
+              "notes": null
+            },
+            {
+              "id": "HRV",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "HRV",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "METRIC",
+              "metric": "HRV",
+              "value": 65,
+              "unit": "ms",
+              "statistic": "SAMPLE",
+              "windowStart": null,
+              "windowEnd": null,
+              "providerDate": null,
+              "isFinal": true,
+              "energyKind": null
+            }
+          ],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [
+            {
+              "id": "pain",
+              "version": "1",
+              "scope": "PAIN",
+              "evidenceRefs": [
+                {
+                  "id": "PAIN",
+                  "revision": 0
+                }
+              ]
+            }
+          ],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 1500,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "NO_ADVERSE_SIGNAL_OBSERVED",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "THRESHOLD",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "TEMPO_THRESHOLD",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "HOLD",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "HOLD",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "HOLD",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "HOLD",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          }
+        ],
+        "missing": [
+          "安全状态或证据版本尚未核定，保留暂停/复核选项。"
+        ],
+        "notes": [
+          "已有安全限制，模型选择不能解除限制。"
+        ]
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "HOLD",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "HOLD",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "HOLD",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "HOLD",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "HOLD",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "HOLD",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "HOLD",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "减少次数仍保留原强度，不能把减量视为恢复完成；阈值失配或反应恶化时暂停。",
+            "observation": "保留原组休下的分段、RPE与已有阈值监测，观察训练后及次日反应；不补造乳酸值。"
+          }
+        ],
+        "missing": [
+          "安全状态或证据版本尚未核定，保留暂停/复核选项。"
+        ],
+        "notes": [
+          "已有安全限制，模型选择不能解除限制。",
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    },
+    {
+      "id": "no_hrv_actual_feedback",
+      "input": {
+        "context": {
+          "athleteId": "athlete-a",
+          "asOf": "2026-10-23T12:00:00.000Z",
+          "timeZone": "Asia/Shanghai",
+          "planVersion": "v4-1",
+          "consentVersion": "local",
+          "analysisVersion": "training-models-1"
+        },
+        "snapshot": {
+          "context": {
+            "athleteId": "athlete-a",
+            "asOf": "2026-10-23T12:00:00.000Z",
+            "timeZone": "Asia/Shanghai",
+            "planVersion": "v4-1",
+            "consentVersion": "local",
+            "analysisVersion": "training-models-1"
+          },
+          "snapshotId": "analysis:1so40d6",
+          "inputDigest": "analysis:1so40d6",
+          "facts": [
+            {
+              "id": "PAIN",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "PAIN",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "PAIN",
+              "value": 0,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            },
+            {
+              "id": "FUNCTION",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "FUNCTION",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "FUNCTION",
+              "value": 0,
+              "scale": "FUNCTION_LIMITATION_0_1",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": "usual-warmup",
+              "notes": null
+            },
+            {
+              "id": "SORENESS",
+              "revision": 0,
+              "athleteId": "athlete-a",
+              "provider": "MANUAL",
+              "accountRef": null,
+              "deviceId": null,
+              "protocolKey": "track-measured-v1",
+              "sourceRecordId": "SORENESS",
+              "occurredAt": "2026-10-23T10:00:00.000Z",
+              "knownAt": "2026-10-23T10:01:00.000Z",
+              "receivedAt": "2026-10-23T10:01:00.000Z",
+              "sourceTimeZone": "Asia/Shanghai",
+              "status": "CONFIRMED",
+              "quality": "AVAILABLE",
+              "ownershipReceiptId": null,
+              "kind": "RESPONSE",
+              "measure": "SORENESS",
+              "value": 2,
+              "scale": "0-10_HIGH_WORSE",
+              "relatedTrainingRefs": [],
+              "region": null,
+              "side": "UNSPECIFIED",
+              "observationProtocol": "current-checkin",
+              "elapsedHours": null,
+              "functionTaskId": null,
+              "notes": null
+            }
+          ],
+          "excluded": [],
+          "gaps": [],
+          "conflicts": [],
+          "safetyConstraints": [],
+          "priorHypotheses": []
+        },
+        "thresholds": [
+          {
+            "id": "LT1",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT1",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT1",
+            "value": 3,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          },
+          {
+            "id": "LT2",
+            "revision": 0,
+            "athleteId": "athlete-a",
+            "provider": "MANUAL",
+            "accountRef": null,
+            "deviceId": null,
+            "protocolKey": "track-measured-v1",
+            "sourceRecordId": "LT2",
+            "occurredAt": "2026-10-20T09:00:00.000Z",
+            "knownAt": "2026-10-20T10:00:00.000Z",
+            "receivedAt": "2026-10-20T10:00:00.000Z",
+            "sourceTimeZone": "Asia/Shanghai",
+            "status": "CONFIRMED",
+            "quality": "AVAILABLE",
+            "ownershipReceiptId": null,
+            "marker": "LT2",
+            "value": 4,
+            "unit": "m/s",
+            "testId": "lab-test-1",
+            "method": "LAB_REPORT_DEFINED_LACTATE",
+            "modality": "RUNNING",
+            "validUntil": null
+          }
+        ],
+        "performances": [],
+        "zoneSegments": [],
+        "window": {
+          "startAt": "2026-10-16T00:00:00.000Z",
+          "endAt": "2026-10-23T00:00:00.000Z",
+          "complete": true,
+          "totalRunSeconds": 100,
+          "basis": "TIME_IN_ZONE"
+        },
+        "profile": {
+          "eventMeters": 1500,
+          "phase": "BUILD",
+          "raceDate": null,
+          "experience": "TRAINED",
+          "doubleThresholdExperience": false,
+          "lactateMonitoring": false,
+          "coachSupervision": false,
+          "twoSessionsAvailable": true,
+          "sourceRefs": [
+            {
+              "id": "profile",
+              "revision": 0
+            }
+          ]
+        },
+        "recovery": {
+          "snapshotId": "analysis:1so40d6",
+          "dataQuality": "AVAILABLE",
+          "signalState": "MIXED_SIGNALS",
+          "safetyState": "NO_KNOWN_HOLD",
+          "observations": [],
+          "hypotheses": [],
+          "candidates": [],
+          "missingDecisionInputs": [
+            "HRV未记录，不补零"
+          ],
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "sessions": [
+          {
+            "id": "session-1",
+            "date": "2026-10-25",
+            "purpose": "EASY",
+            "familiar": true,
+            "executionState": "NOT_STARTED",
+            "sourceRefs": [
+              {
+                "id": "plan:v4",
+                "revision": 0
+              }
+            ],
+            "plan": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "EASY_AEROBIC",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "before": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "EASY_AEROBIC",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "sessionId": "session-1",
+            "action": "RECOVERY",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null
+          }
+        ],
+        "missing": [],
+        "notes": []
+      },
+      "after": {
+        "methods": [
+          {
+            "method": "PYRAMIDAL",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "POLARIZED",
+            "status": "CONSIDER",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "THRESHOLD_ORIENTED",
+            "status": "CONDITIONAL",
+            "dimension": "DISTRIBUTION",
+            "conditionalRank": {
+              "priority": "COMPARE",
+              "withinDimension": "DISTRIBUTION",
+              "reason": "同层保留并列比较；不按精英/普通水平自动选极化或金字塔。",
+              "universalBest": false
+            },
+            "candidateAllowed": true,
+            "missing": []
+          },
+          {
+            "method": "SINGLE_THRESHOLD",
+            "status": "CONDITIONAL",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "ORGANIZATION",
+              "reason": "已有熟悉单课时先核对它；避免在资料不足时新增第二课。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": []
+          },
+          {
+            "method": "DOUBLE_THRESHOLD",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "条件齐备才复核已存在的同日双课；不因更高水平而优先。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "既有双课耐受记录",
+              "乳酸与主观负荷监测条件",
+              "教练复核"
+            ]
+          },
+          {
+            "method": "BLOCK",
+            "status": "INSUFFICIENT",
+            "dimension": "ORGANIZATION",
+            "conditionalRank": {
+              "priority": "DEFER",
+              "withinDimension": "ORGANIZATION",
+              "reason": "缺直接依据与个体跨周记录，暂不进入课表候选。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "针对项目与人群的直接证据",
+              "已有训练块的执行记录、跨周耐受和恢复响应"
+            ]
+          },
+          {
+            "method": "EVENT_SPECIFIC",
+            "status": "CONDITIONAL",
+            "dimension": "EVENT",
+            "conditionalRank": {
+              "priority": "CONSIDER_FIRST",
+              "withinDimension": "EVENT",
+              "reason": "先明确专项需求与当前阶段，再比较分布与课次组织；不同距离不互相排名。",
+              "universalBest": false
+            },
+            "candidateAllowed": false,
+            "missing": [
+              "近期同协议专项比赛/连续测试及分段"
+            ]
+          }
+        ],
+        "candidates": [
+          {
+            "sessionId": "session-1",
+            "action": "SKIP",
+            "changedVariable": "SESSION_EXECUTION",
+            "after": null,
+            "risk": "轻松目的仍可能受疼痛或动作改变影响；原强度和总量不增加。",
+            "observation": "记录原热身/日常功能、主观用力及次日疼痛或酸痛；不新增测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "KEEP",
+            "changedVariable": "NONE",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "EASY_AEROBIC",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 4,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "轻松目的仍可能受疼痛或动作改变影响；原强度和总量不增加。",
+            "observation": "记录原热身/日常功能、主观用力及次日疼痛或酸痛；不新增测试。"
+          },
+          {
+            "sessionId": "session-1",
+            "action": "REDUCE",
+            "changedVariable": "REPEAT_COUNT",
+            "after": {
+              "runningPlanSchemaVersion": 1,
+              "planId": "v4",
+              "planSlotId": "v4:2026-10-25",
+              "components": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "EASY_AEROBIC",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b1",
+                        "roundCount": 2,
+                        "recoveryAfterRoundSeconds": 180,
+                        "steps": [
+                          {
+                            "stepId": "s1",
+                            "plannedDistanceMeters": 400,
+                            "plannedDurationSeconds": 80,
+                            "repeatCount": 3,
+                            "recoveryAfterRepeatSeconds": 60,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "risk": "轻松目的仍可能受疼痛或动作改变影响；原强度和总量不增加。",
+            "observation": "记录原热身/日常功能、主观用力及次日疼痛或酸痛；不新增测试。"
+          }
+        ],
+        "missing": [],
+        "notes": [
+          "条件排序只表示本轮复核先后；不同维度不互斥，也没有通用最优方法。"
+        ]
+      },
+      "changed": true
+    }
+  ],
+  "afterExecutedAt": "2026-10-26T01:29:06.256Z"
+}

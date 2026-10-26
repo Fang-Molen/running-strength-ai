@@ -9,6 +9,9 @@ import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'
 import { CoachAnswerView } from "@/components/coach-answer-view";
 import { CoachIntegrationPanel } from '@/components/coach-integration-panel';
 import { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';
+import { readR6Decision } from '@/lib/coach/r6/runtime';
+import { r6Question, r6DecisionText } from '@/lib/coach/r6/presentation';
+import { R6DecisionPanel } from '@/components/r6-decision-panel';
 import { TrainingModelPanel } from '@/components/training-model-panel';
 import { PersonalCoachPanel } from '@/components/personal-coach-panel';
 import { personalAnswer } from '@/lib/coach/personal/host';
@@ -458,12 +461,16 @@ export function CoachSheet({
       const r5Hold = readR5Context(asOf).hold;
       const redFlag = r5Hold || chainHold || detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
       // v87：待审知识预览、单纯换算、无候选的剩余任务只在本地展示，不联网、不被跑步复盘替换。
-      const keepLocal = answerStaysLocal(local);
-      let shown = r5Hold ? readR5Context(asOf).safety.message : chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona);
+      let r6Answer: string | null = null;
+      if (!redFlag && !recordOccurrence && r6Question(value)) {
+        try { const d=await readR6Decision(today,asOf); if(currentAthleteId()!==athleteId){setSending(false);return;} r6Answer=r6DecisionText(d); } catch { /* Keep trustworthy local answer if the decision sources are unavailable. */ }
+      }
+      const keepLocal = answerStaysLocal(local) || !!r6Answer;
+      let shown = r6Answer ?? (r5Hold ? readR5Context(asOf).safety.message : chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona));
       if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
       // Shown as its own visible block under the answer; DeepSeek receives the same content as facts.
-      let supplement = !redFlag && local.localOnly !== 'HISTORY_ASSESSMENT' ? [unified.localSection, unified.followUps].filter(Boolean).join("\n\n") : "";
+      let supplement = !r6Answer && !redFlag && local.localOnly !== 'HISTORY_ASSESSMENT' ? [unified.localSection, unified.followUps].filter(Boolean).join("\n\n") : "";
       let label = "本地分析";
       if (!redFlag && !keepLocal && onlineSetting().on && navigator.onLine !== false) {
         setNotice("联网分析中…");
@@ -477,7 +484,7 @@ export function CoachSheet({
         setNotice(linkNotice);
       } else if (cloudRequested && !capable.independent) label = '本地分析 · 联网授权未核定';
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
-      if(shown.length+supplement.length>1000){const keep=Math.min(shown.length,700);supplement=supplement.slice(0,1000-keep);shown=shown.slice(0,1000-supplement.length);}
+      if(!r6Answer&&shown.length+supplement.length>1000){const keep=Math.min(shown.length,700);supplement=supplement.slice(0,1000-keep);shown=shown.slice(0,1000-supplement.length);}
       const messageId = `${Date.now()}-local`;
       if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
       setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(r4?{r4Basis:{question:value,day:r4.day,athleteId,version:r4.basisVersion}}:{}),...(supplement?{supplement}:{}),...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
@@ -587,6 +594,7 @@ export function CoachSheet({
         </div>
         <div hidden={section !== "review"} className="space-y-3" aria-label="训练复盘工作区">
         {section === 'review' && <div className="rounded-xl border border-line bg-surface p-3 text-sm"><b>复盘中心</b><p className="mt-1 text-muted">同一份训练事实供日志、健康和方坤共享；这里查看建议与变化，不重复填写评分。</p><button type="button" className="mt-2 min-h-11 rounded-lg border border-line px-3 text-accent" onClick={() => onNavigate?.('log')}>查看训练日志与单次记录 ›</button></div>}
+        {section === 'review' && <R6DecisionPanel key={'r6-'+athleteScope} />}
         {section === 'review' && <CoachCyclePanel key={`cycle-${athleteScope}`} />}
         {section === 'review' && <CoachWeeklyPanel />}
         {section === 'review' && <CoachR5Panel />}

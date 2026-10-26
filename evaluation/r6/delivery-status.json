@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "base": "50872a8cf0d5cd2a399bbe91250f5a9006bed2e0",
+  "baselineVersion": "V89.11.1",
+  "branch": "codex/r6-scientific-decisions",
+  "releaseStatus": "SOURCE_DELIVERY_ACCEPTANCE_PENDING",
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0
+  },
+  "focusedTests": {
+    "inputs": 14,
+    "newModelDecisions": 12,
+    "runtime": 19,
+    "source": "Executed focused suite reports; not full regression"
+  },
+  "concentratedRegression": "NOT_RUN",
+  "productionBuild": "NOT_RUN",
+  "browserClosedLoop": "NOT_RUN_COMMAND_INTERRUPTED_BEFORE_START",
+  "historicalEvidenceFilesUnchanged": 210,
+  "syntheticProgramComparisons": 9,
+  "historicalModelRepliesReplayed": 26,
+  "replayedErrorsDetected": 13,
+  "replayedErrorsTotal": 14,
+  "newPaidModelCalls": 0,
+  "newLiveModelEvaluation": false,
+  "humanProfessionalEvaluation": false,
+  "deployment": false,
+  "formalUserRecordsModified": false,
+  "otherEnvironmentHistoricalFees": "UNRECONCILED_NOT_ZERO",
+  "operationalLimit": "No production server authorized snapshot/auth-consent-budget binding; UI uses local analysis",
+  "newServerR6Adapter": "TYPECHECKED_NOT_CLOSED_LOOP_TESTED"
+}

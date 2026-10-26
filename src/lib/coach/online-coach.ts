@@ -1,5 +1,5 @@
 import { historySummary, isHistoryQuestion } from './assessment/history'
-import { cycleCoachSummary, readCycleGoal } from './cycle/host'
+import { readCycleGoal } from './cycle/host'
 import { loadEntries as readNutritionSourceForFreshness } from '../nutrition/log'
 import { readEffectiveProfile } from './loop/effective-host'
 import { readEffectiveTrainingProfile } from './loop/effective-training'
@@ -9,8 +9,8 @@ import { readAnalysis } from '../health/analysis-host'
 import { guardR5Reply } from './r5/guard'
 import { planPrefix } from '../plan/active-plan'
 import { partLine, loadOwnedComponents } from '../ui/plan400-components-store'
-/** 方坤联网分析（用户 t460 明确要求“一直保持联网”）：默认开启并记录一次同意；用户可在方坤里关闭。
- * 只发送去标识化事实（活动数值/分段/恢复指标/计划目标），不发送账号、位置或凭证。失败/离线回退本地分析。 */
+/** 本机联网偏好只控制是否请求解释，不授予服务端身份、快照或费用权限。
+ * 模型上下文由既有受信任宿主读取；浏览器只传快照引用。失败/离线保留本地分析。 */
 import { currentStore } from '../core/storage'
 import { garminViewKey } from '../health/garmin-view-scope'
 import { analysisDay } from '../health/coach-data'
@@ -178,44 +178,23 @@ function boundedSection(title: string, lines: readonly string[], budget: number)
   }
   return out
 }
-/** 客户端问题上限与线上 /api/coach-chat 一致（v84 线上服务端截断到 1000 字）：超限直接拒绝、不 fetch，避免静默截断。
- * C03/R14 包里的 200 字上限属于未启用的 server/coach-deepseek 受控入口，线上未路由，故此处不采用 200。 */
+/** Match the trusted server request boundary; no silently shortened question or evidence. */
+export type OnlineCoachSnapshotRef = { snapshotId: string; consentId: string; asOf: string }
 export const ONLINE_QUESTION_MAX = 1000
-export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[] }, ms = 30000): Promise<{ text: string } | { error: string }> {
+export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[]; snapshotRef?: OnlineCoachSnapshotRef }, ms = 30000): Promise<{ text: string } | { error: string }> {
   // v86（R1.1 G04）：开关在这里再查一次——用户关掉联网后，任何调用方都不能再发出请求（不只靠界面判断）。
   if (!onlineSetting().on) return { error: '联网分析已关闭，已保留本地分析；没有上传数据' }
   const q = input.question.trim()
   // eslint-disable-next-line no-control-regex -- 有意拒绝控制字符
   if (!q || q.length > ONLINE_QUESTION_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) return { error: `问题为空、含无效字符或超过${ONLINE_QUESTION_MAX}字，已保留本地分析；没有上传数据` }
-  if (input.facts.length > 8000) return { error: '本轮事实摘要超过发送上限，已保留本地分析；没有上传数据' }
-  // The live proxy caps Content-Length in bytes. Chinese text must not be budgeted as one byte per character.
-  // Keep the full current facts and question; only older conversation and the optional local explanation shrink.
-  const cycle = cycleCoachSummary();
-  const cycleFacts = cycle && input.facts.length + cycle.length + 2 <= 8000 ? input.facts + '\n\n' + cycle : input.facts;
-  const payload = { question: q, facts: cycleFacts, local: '', history: [] as typeof input.history }
-  const bytes = () => new TextEncoder().encode(JSON.stringify(payload)).length
-  const limit = 23_500
-  const baseSize = bytes()
-  if (baseSize > limit) return { error: '本轮事实摘要超过发送上限，已保留本地分析；没有上传数据' }
-  const historyLimit = Math.min(limit, baseSize + 3000)
-  for (const message of input.history.slice(-6).reverse()) {
-    const entry = { role: message.role, text: message.text.slice(0, 400) }
-    payload.history.unshift(entry)
-    if (bytes() > historyLimit) { payload.history.shift(); break }
-  }
-  payload.local = input.local.slice(0, 3000)
-  if (bytes() > limit) {
-    const source = payload.local, marker = '（参考说明部分省略，以本轮事实为准）'
-    let low = 0, high = source.length
-    while (low < high) {
-      const mid = Math.ceil((low + high) / 2)
-      payload.local = source.slice(0, mid).replace(/[\uD800-\uDBFF]$/, '') + marker
-      if (bytes() <= limit) low = mid
-      else high = mid - 1
-    }
-    payload.local = low ? source.slice(0, low).replace(/[\uD800-\uDBFF]$/, '') + marker : ''
-  }
-  const ownerAtRequest=currentAthleteId(), cutoff=new Date().toISOString(), analysisDayAtRequest=analysisDay(q,null,localDayOf(cutoff))
+  const ref = input.snapshotRef
+  // These are opaque lookup references, never credentials. Only the existing
+  // server resolver can verify their subject, consent, scope and expiry.
+  const id = /^[A-Za-z0-9_.:/-]{1,120}$/
+  if (!ref || !id.test(ref.snapshotId) || !id.test(ref.consentId) || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(ref.asOf) || !Number.isFinite(Date.parse(ref.asOf)) || Date.parse(ref.asOf) > Date.now()) return { error: '当前没有可核验的联网分析授权，已保留本地回答；没有上传记录' }
+  const payload = { question: q, requestId: crypto.randomUUID(), snapshotId: ref.snapshotId, consentId: ref.consentId, asOf: ref.asOf }
+  if (new TextEncoder().encode(JSON.stringify(payload)).length > 4096) return { error: '问题超过发送上限，已保留本地回答；没有上传记录' }
+  const ownerAtRequest=currentAthleteId(), cutoff=ref.asOf, analysisDayAtRequest=analysisDay(q,null,localDayOf(cutoff))
   let verified:ReturnType<typeof readAnalysis>
   try{verified=readAnalysis(analysisDayAtRequest,cutoff,q)}catch{return {error:'当前事实或安全依据不可核对，已保留本地回答'}}
   const contextVersion=()=>analysisDigest([readEffectiveProfile().version,readEffectiveTrainingProfile().version,readScheduleDocument(),readNutritionSourceForFreshness(),readCycleGoal(),currentStore()?.getItem('fk-plan-doc-v1')??null]);
@@ -224,12 +203,12 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
   try {
     const r = await fetch('/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), signal: ac.signal })
     const j = await r.json().catch(() => ({}))
-    if(!r.ok||typeof j.text!=='string'||!j.text.trim())return {error:j.error||`HTTP ${r.status}`}
+    if(!r.ok||j.ok!==true||j.planChanged!==false||typeof j.text!=='string'||!j.text.trim()||j.text.length>1000)return {error:'联网回答未通过服务端核验，已保留本地回答'}
     if(currentAthleteId()!==ownerAtRequest)return {error:'身份已变化，未显示其他账号的模型回答'}
     const latest=readAnalysis(analysisDayAtRequest,new Date().toISOString(),q)
     if(latest.revision!==verified.revision||contextAtRequest!==contextVersion())return {error:'模型等待期间训练或安全依据已变化，已保留本地回答'}
     const check=guardR5Reply(j.text,verified.packet)
     const why: Record<string, string> = { UNBOUND_NUMERIC_SOURCE: '含无来源数字', UNAUTHORIZED_WRITE_OR_CLEARANCE: '含未授权修改或解除限制', ACTIVE_HOLD_RELEASE: '安全限制未解除时给了放行', DIAGNOSIS_CLAIM: '含诊断结论' }
-    return check.ok?{text:j.text.slice(0,1000)}:{error:`模型内容未通过核验（${check.errors.map(e => why[e] ?? e).join('、')}），已保留本地回答`}
-  } catch { return { error: ac.signal.aborted ? '联网超时' : '网络不可用' } } finally { clearTimeout(t) }
+    return check.ok?{text:j.text}:{error:`模型内容未通过核验（${check.errors.map(e => why[e] ?? e).join('、')}），已保留本地回答`}
+  } catch { return { error: ac.signal.aborted ? '联网超时，已保留本地回答' : '网络不可用，已保留本地回答' } } finally { clearTimeout(t) }
 }

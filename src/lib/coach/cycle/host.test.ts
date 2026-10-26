@@ -245,7 +245,7 @@ test("unchanged evidence remains confirmable as the clock advances within the sa
   assert.equal(cycleRevisionState(d, "2026-10-25T10:00:01Z"), "CURRENT");
   assert.equal((await decideCycle(d.id, "ACCEPT", "2026-10-25T10:00:01Z")).ok, true);
 });
-test("current prompt reaches production request and stale candidate structure is withheld", async (t) => {
+test("current cycle facts stay local until server authorization; stale candidate structure is withheld", async (t) => {
   setup(t);
   t.mock.timers.enable({ apis: ["Date"], now: new Date(now) });
   await goal();
@@ -269,9 +269,11 @@ test("current prompt reaches production request and stale candidate structure is
     local: "",
     history: [],
   });
-  assert.match(sent, /FK_CYCLE_PROMPT_1/);
-  assert.match(sent, /最近一周候选/);
-  assert.match(sent, /连续跑/);
+  assert.equal(sent, "");
+  const summary = cycleCoachSummary(now);
+  assert.match(summary, /FK_CYCLE_PROMPT_1/);
+  assert.match(summary, /最近一周候选/);
+  assert.match(summary, /连续跑/);
   await saveCycleGoal({ ...values(), eventMeters: 1500 }, 1, now);
   assert.doesNotMatch(cycleCoachSummary(now), /FK_CYCLE_PROMPT_1/);
 });

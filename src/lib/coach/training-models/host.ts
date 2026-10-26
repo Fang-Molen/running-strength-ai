@@ -28,7 +28,7 @@ export function readTrainingModelReview(snapshot:EvidenceSnapshot,recovery:Recov
  const input=adaptTrainingModelInput(snapshot,recovery,options)
  return buildTrainingCandidates(input)
 }
-const words={PYRAMIDAL:'金字塔',POLARIZED:'极化',DOUBLE_THRESHOLD:'双阈值',EVENT_SPECIFIC:'专项'} as const
+const words={PYRAMIDAL:'金字塔',POLARIZED:'极化',DOUBLE_THRESHOLD:'双阈值',THRESHOLD_ORIENTED:'阈值导向',SINGLE_THRESHOLD:'单次阈值',BLOCK:'分块训练',EVENT_SPECIFIC:'专项'} as const
 const statuses={CONSIDER:'可讨论',CONDITIONAL:'有条件',NOT_APPLICABLE:'不适用',INSUFFICIENT:'缺资料',HOLD:'暂停复核'} as const
 export function trainingModelSummary(r:ReturnType<typeof selectTrainingModels>):string{
  const threshold=r.physiology.thresholds.speed??r.physiology.thresholds.heartRate

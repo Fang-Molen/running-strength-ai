@@ -3,7 +3,8 @@
  * This catalog does not approve a training prescription or validate this software.
  * App authorization, athlete facts and runtime safety gates remain independent.
  */
-export interface TrainingModelEvidence {
+export type DecisionPermission='PRINCIPLE'|'VERIFIED_CALCULATION'|'ATHLETE_HYPOTHESIS'|'RESEARCH_ONLY'
+export interface TrainingModelEvidenceSource {
   readonly id: string
   readonly status: 'EVIDENCE_INFORMED'
   readonly title: string
@@ -25,7 +26,7 @@ export interface TrainingModelEvidence {
   readonly codingConstraints: readonly string[]
 }
 
-export const TRAINING_MODEL_EVIDENCE = [
+const TRAINING_MODEL_SOURCE_EVIDENCE = [
   {
     id: 'TID-SEILER-2006',
     status: 'EVIDENCE_INFORMED',
@@ -188,9 +189,29 @@ export const TRAINING_MODEL_EVIDENCE = [
     limitations: ['3小时是研究分组条件，不是保证恢复或零干扰的安全线。', '未建立所有跑步专项的统一先后顺序或固定24/48小时禁配规则。', '证据质量与协议有异质性，不能保证个人反应。'],
     codingConstraints: ['同日力量与关键速度/专项/VO2课给目的、先后和间隔复核提示。', '采用软冲突提示，不以固定小时数承诺恢复。', '力量记录独立保留，不强行折算成耐力HR分区或跑量。'],
   },
-] as const satisfies readonly TrainingModelEvidence[]
+] as const satisfies readonly TrainingModelEvidenceSource[]
 
-export type TrainingModelEvidenceId = (typeof TRAINING_MODEL_EVIDENCE)[number]['id']
+export const TRAINING_MODEL_KNOWLEDGE_VERSION='FK_TRAINING_DECISIONS_R6_1' as const
+export interface TrainingModelEvidence extends TrainingModelEvidenceSource {
+ readonly version:typeof TRAINING_MODEL_KNOWLEDGE_VERSION
+ readonly source:{readonly doi:string|null;readonly urls:readonly string[];readonly verifiedScope:string;readonly checkedOn:string}
+ readonly method:string
+ readonly applicableConditions:readonly string[]
+ readonly supportedConclusions:readonly string[]
+ readonly prescriptionPermission:{readonly level:DecisionPermission;readonly allowsAutomaticPrescription:false;readonly allowedUse:readonly string[];readonly prohibitedUse:readonly string[]}
+}
+export type TrainingModelEvidenceId = (typeof TRAINING_MODEL_SOURCE_EVIDENCE)[number]['id']
+/** A traceable source permits bounded explanation, never a training-dose authorization. */
+export const TRAINING_MODEL_EVIDENCE:readonly TrainingModelEvidence[]=TRAINING_MODEL_SOURCE_EVIDENCE.map(source=>({
+ ...source,version:TRAINING_MODEL_KNOWLEDGE_VERSION,
+ source:{doi:source.doi,urls:source.urls,verifiedScope:source.verification.scope,checkedOn:source.verification.checkedOn},
+ method:source.studyType,
+ applicableConditions:[source.population,'使用前核对人群、项目、训练目的、测量协议及个人实际资料；人群外推须单独说明。'],
+ supportedConclusions:source.supports,
+ prescriptionPermission:{level:source.id==='VDOT-DANIELS-1979'?'VERIFIED_CALCULATION':'PRINCIPLE',allowsAutomaticPrescription:false,
+  allowedUse:source.id==='VDOT-DANIELS-1979'?['仅复用已核对系数的表现指数计算；输入门控由既有生理模块决定。']:['保留来源所支持的原理与适用边界；作为条件比较及复核依据。'],
+  prohibitedUse:['不能因文献被收录而生成个人训练剂量、医学许可或长期收益保证。','不能超出所列研究限制外推结论。']},
+}))
 
 export function getTrainingModelEvidence(id: string): TrainingModelEvidence | undefined {
   return TRAINING_MODEL_EVIDENCE.find(item => item.id === id)

@@ -27,8 +27,9 @@ export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPo
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('PROVIDER_JSON');
   const value=parsed as Record<string,unknown>;
   if(analysisMode){
-    const allowed=['answer','factualClaims','selectedCandidateId','hypotheses','unknowns','followup','memoryClaim'];
+    const allowed=['answer','factualClaims','selectedCandidateId','hypotheses','unknowns','followup','memoryClaim','derivedFactIds'];
     if(Object.keys(value).some(k=>!allowed.includes(k))||typeof value.answer!=='string'||!Array.isArray(value.factualClaims)||!Array.isArray(value.hypotheses)||!Array.isArray(value.unknowns)||value.memoryClaim!=='NOT_SAVED')throw Error('PROVIDER_ANALYSIS_SCHEMA');
+    if(value.derivedFactIds!==undefined&&(!Array.isArray(value.derivedFactIds)||value.derivedFactIds.length>200||value.derivedFactIds.some(id=>typeof id!=='string'||!/^D[1-9]\d*$/.test(id))||new Set(value.derivedFactIds).size!==value.derivedFactIds.length))throw Error('PROVIDER_ANALYSIS_SCHEMA');
     return message.content;
   }
   const allowed=['mode','text','nextStep','citations','medicalReferral','compareIds','seriesIds','planChanged','evidenceQuotes'];

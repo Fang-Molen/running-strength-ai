@@ -13,9 +13,14 @@ export interface ZoneSegment extends EvidenceMeta {
  sessionId:string; startAt:string; endAt:string; zone:1|2|3|null
  basis:'TIME_IN_ZONE'|'SESSION_GOAL'; thresholdTestId:string|null; thresholdRefs:EvidenceRef[]
 }
-export type MethodId='PYRAMIDAL'|'POLARIZED'|'DOUBLE_THRESHOLD'|'EVENT_SPECIFIC'
+export type DistributionMethod='PYRAMIDAL'|'POLARIZED'|'THRESHOLD_ORIENTED'
+export type OrganizationMethod='SINGLE_THRESHOLD'|'DOUBLE_THRESHOLD'|'BLOCK'
+export type MethodId=DistributionMethod|OrganizationMethod|'EVENT_SPECIFIC'
+export type MethodDimension='DISTRIBUTION'|'ORGANIZATION'|'EVENT'
+export type EventFocus='400'|'800'|'1500'|'LONG_DISTANCE'|'OTHER'|'UNKNOWN'
 export type ModelProfile={
  eventMeters:number|null; phase:'BASE'|'BUILD'|'SPECIFIC'|'TAPER'|'UNKNOWN'
+ targetSeconds?:number|null
  raceDate:string|null; experience:'NOVICE'|'TRAINED'|'ADVANCED'|'UNKNOWN'
  doubleThresholdExperience:boolean|null; lactateMonitoring:boolean|null
  coachSupervision:boolean|null; twoSessionsAvailable:boolean|null
@@ -26,16 +31,32 @@ export interface PlannedModelSession {
  plan:RunningPlan; familiar:boolean; executionState:'NOT_STARTED'|'STARTED'|'COMPLETED'|'UNKNOWN'; sourceRefs:EvidenceRef[]
 }
 export interface ModelInput {
+ scientificInput?:import('./scientific-input').ScientificInput
  context:Context; snapshot:EvidenceSnapshot
  thresholds:readonly ThresholdRecord[]; performances:readonly PerformanceRecord[]
  zoneSegments:readonly ZoneSegment[]
  window:{startAt:string;endAt:string;complete:boolean;totalRunSeconds:number|null;totalSessions?:number|null;basis:'TIME_IN_ZONE'|'SESSION_GOAL'}
  profile:ModelProfile; recovery:RecoveryAssessment|null; sessions:readonly PlannedModelSession[]
 }
-export type Applicability={method:MethodId;status:'CONSIDER'|'CONDITIONAL'|'NOT_APPLICABLE'|'INSUFFICIENT'|'HOLD';reasons:string[];missing:string[];evidenceIds:string[]}
+export type Applicability={
+ method:MethodId;status:'CONSIDER'|'CONDITIONAL'|'NOT_APPLICABLE'|'INSUFFICIENT'|'HOLD'
+ reasons:string[];missing:string[];evidenceIds:string[]
+ dimension:MethodDimension;applicability:string[];support:string[];limits:string[]
+ dataAdequacy:'SUFFICIENT_FOR_COMPARISON'|'PARTIAL'|'INSUFFICIENT'|'CONFLICT'
+ candidateAllowed:boolean;keyMissing:string[]
+ conditionalRank:{priority:'CONSIDER_FIRST'|'COMPARE'|'DEFER';withinDimension:MethodDimension;reason:string;universalBest:false}
+ eventFocus?:EventFocus
+}
+export type PurposeReadiness={
+ sessionId:string;purpose:PlannedModelSession['purpose'];state:'MAINTAIN'|'CONSERVATIVE_ONLY'|'HOLD'|'INSUFFICIENT'
+ allowKeep:boolean;allowReduce:boolean;reasons:string[];missing:string[];basisRefs:EvidenceRef[]
+ risk:string;observation:string;medicalClearance:false
+}
 export type TrainingCandidate={
  id:string;action:'KEEP'|'REDUCE'|'RECOVERY'|'SKIP';sessionId:string;date:string
  changedVariable:'NONE'|'REPEAT_COUNT'|'DURATION'|'SESSION_EXECUTION'
  before:RunningPlan;after:RunningPlan|null;reason:string;basisRefs:EvidenceRef[]
  requiresConfirmation:true;automaticExecution:false
+ purpose?:PlannedModelSession['purpose'];risk?:string;observation?:string
+ supportsWhen?:string;weakensWhen?:string;knowledgeVersion?:string
 }

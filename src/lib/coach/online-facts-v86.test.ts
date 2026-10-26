@@ -4,6 +4,8 @@ import assert from 'node:assert/strict'
 import test, { beforeEach } from 'node:test'
 import { setStoreBackend } from '../core/storage.ts'
 import { buildFacts, askOnlineCoach, setOnline } from './online-coach.ts'
+// This suite explicitly covers an unconfigured user before its own imported-plan fixture.
+Reflect.deleteProperty(globalThis, '__FK_TEST_PLAN_DOC__')
 import { intervalRestAnswer } from './plain-coach.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore js function
@@ -30,21 +32,21 @@ test('plan lines require an actual imported plan, not just an old log, and are l
 })
 test('G04: askOnlineCoach honours setOnline(false) itself — no fetch', async () => {
   const orig = globalThis.fetch; let calls = 0
-  globalThis.fetch = (async () => { calls++; return new Response(JSON.stringify({ text: 'ok' })) }) as never
+  globalThis.fetch = (async () => { calls++; return new Response(JSON.stringify({ text: 'ok', ok: true, planChanged: false })) }) as never
   try {
     setOnline(false); const r = await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [] })
     assert.ok('error' in r); assert.equal(calls, 0)
-    setOnline(true); assert.deepEqual(await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [] }), { text: 'ok' }); assert.equal(calls, 1)
+    setOnline(true); assert.ok('error' in await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [] })); assert.equal(calls, 0)
+    assert.deepEqual(await askOnlineCoach({ question: '复盘', facts: '', local: '', history: [], snapshotRef: {snapshotId: 'synthetic', consentId: 'synthetic', asOf: '2026-10-20T00:00:00.000Z'} }), { text: 'ok' }); assert.equal(calls, 1)
   } finally { globalThis.fetch = orig }
 })
-test('server prompt: no built-in goal; rules forbid invented numbers, fake memory claims, multi-change "只改一项"', async () => {
-  const orig = globalThis.fetch; let sent: any = null
-  globalThis.fetch = (async (_u: string, init: any) => { sent = JSON.parse(init.body); return new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] })) }) as never
+test('server does not treat a client fact snapshot or API key as authority', async () => {
+  const orig = globalThis.fetch; let calls = 0
+  globalThis.fetch = (async () => { calls++; throw Error('must not dispatch') }) as never
   try {
-    const req = new Request('https://x/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json', 'cf-connecting-ip': '9.9.9.9' }, body: JSON.stringify({ question: 'q', facts: 'f', local: 'l' }) })
-    assert.equal((await onRequestPost({ request: req, env: { DEEPSEEK_API_KEY: 'k' } })).status, 200)
-    const sys = sent.messages[0].content as string
-    assert.doesNotMatch(sys, HARDCODED); assert.match(sys, /目标：未知/); assert.match(sys, /已记住/); assert.match(sys, /只改一项/); assert.match(sys, /不要编/)
+    const req = new Request('https://x/api/coach-chat', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ question: 'q', facts: 'f', local: 'l' }) })
+    assert.equal((await onRequestPost({ request: req, env: { FANGKUN_DEEPSEEK_ENABLED: 'true', DEEPSEEK_API_KEY: 'SYNTHETIC' } })).status, 503)
+    assert.equal(calls, 0)
   } finally { globalThis.fetch = orig }
 })
 test('local interval-rest explainer no longer assumes the 400m/53s goal', () => {

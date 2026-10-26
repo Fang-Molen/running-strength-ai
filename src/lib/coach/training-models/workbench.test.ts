@@ -4,6 +4,8 @@ import { setStoreBackend } from '../../core/storage'
 import { currentAthleteId, setEventContext, dispatchEvent } from '../../core/events'
 import type { ScheduleEntry } from '../../ui/day-schedule-rules'
 import { readTrainingModelWorkbench } from './workbench'
+import { saveCycleGoal } from '../cycle/host'
+import { emptyProfile, saveProfile } from '../../strength/profile'
 const at='2026-10-23T12:00:00.000Z'
 function setup(t:test.TestContext,entries:ScheduleEntry[]=[]){
  t.mock.timers.enable({apis:['Date'],now:Date.parse(at)})
@@ -49,4 +51,33 @@ test('switching athlete drops an in-flight read and a fresh scope has unknown in
  const next=await readTrainingModelWorkbench({},'2026-10-23',at)
  assert.equal(next.input.context.athleteId,'other-workbench-athlete');assert.equal(next.input.profile.eventMeters,null)
  assert.equal(next.input.profile.experience,'UNKNOWN');assert.equal(next.input.sessions.length,0)
+})
+test('saved cycle/profile intent fills the production workbench without a repeated form',async t=>{
+ const data=setup(t,[entry()])
+ assert.ok(saveProfile({...emptyProfile(),weightKg:'66',aim:'lose',targetKg:'64',trainingDays:[1,3,5],days:3,minutes:45,marks:[{meters:1500,recent:'4:30',goal:'4:20',deadline:'2026-11-07'}]}))
+ await saveCycleGoal({eventMeters:1500,raceDate:'2026-11-07',targetSeconds:260,experience:'TRAINED',priority:'SPEED',horizonWeeks:4,taperDays:7,proposeExtraMinutes:null},0,at)
+ const before=JSON.stringify([...data])
+ const r=await readTrainingModelWorkbench({},'2026-10-23',at)
+ assert.equal(r.input.profile.eventMeters,1500);assert.equal(r.input.profile.raceDate,'2026-11-07');assert.equal(r.input.profile.targetSeconds,260);assert.equal(r.input.profile.experience,'TRAINED')
+ assert.deepEqual(r.scientificInput.availability.days.value,[1,3,5]);assert.equal(r.scientificInput.availability.minutes.value,45)
+ assert.equal(r.scientificInput.nutrition.weightKg.value,66);assert.equal(r.scientificInput.nutrition.targetKg.value,64)
+ assert.equal(r.scientificInput.goals.primaryGoal.value,'FAT_LOSS')
+ assert.equal(r.scientificInput.running.selfReportedPBs[0].seconds.value,270);assert.equal(r.input.performances.length,0)
+ assert.ok(r.followups.length<=2);assert.ok(!r.followups.some(x=>x.includes('主要训练项目')))
+ assert.equal(JSON.stringify([...data]),before,'read must preserve every stored record')
+})
+test('same-owner saved profile edits during the asynchronous read invalidate its sources',async t=>{
+ setup(t,[entry()])
+ const pending=readTrainingModelWorkbench({},'2026-10-23',at)
+ assert.ok(saveProfile({...emptyProfile(),weightKg:'70',trainingDays:[2,4]}))
+ await assert.rejects(pending,/SUBJECT_OR_SOURCE_CHANGED/)
+})
+test('completed saved execution carries familiarity without inventing a maximal performance',async t=>{
+ setup(t,[entry(),entry({id:'history',date:'2026-10-22',status:'done',actual:{outcome:'as_planned',minutes:20,intensity:'EASY',note:'',reasons:[],at,executionState:'COMPLETED'}})])
+ const r=await readTrainingModelWorkbench({},'2026-10-23',at)
+ assert.equal(r.input.sessions.find(s=>s.id==='owned')!.familiar,true)
+ assert.ok(r.input.sessions.find(s=>s.id==='owned')!.sourceRefs.some(s=>s.id.startsWith('saved-execution:')))
+ assert.equal(r.input.performances.length,0)
+ assert.equal(r.scientificInput.running.observedWeeks[0].minutes,20)
+ assert.equal(r.scientificInput.running.observedWeeks[0].coverage,'RECORDED_ONLY')
 })

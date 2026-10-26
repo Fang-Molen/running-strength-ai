@@ -1,0 +1,152 @@
+{
+  "scope": "R6 online trusted fact boundary; focused checks only",
+  "paidGenerationCalls": 0,
+  "originalEvaluationLedgerOpened": false,
+  "frozenArtifacts": [
+    {
+      "path": "evaluation/deepseek-development/cases-60.json",
+      "sha256": "09e58ed82559f288e6229e2539bb4a75a96858263c1876da9d92732fb698d393",
+      "unchangedFromHead": true
+    },
+    {
+      "path": "evaluation/deepseek-development/scoring-frozen.json",
+      "sha256": "fb74cb7e1c8ce72bef7c182db2b518cf33cb1c01bdc28763c291d5e0c1b8a9fb",
+      "unchangedFromHead": true
+    },
+    {
+      "path": "evaluation/deepseek-development/chain-ab-fixtures.json",
+      "sha256": "5f415cc836718df1817e25e2c96617751a4f24f8222bf518d624e21c29ac9f37",
+      "unchangedFromHead": true
+    },
+    {
+      "path": "evaluation/deepseek-development/replay-fixtures/20261023/frozen-preparation-v2.json",
+      "sha256": "d50b974d764a539f1f9bca46062ab4a5077117b315de61969122fd8f518b1b79",
+      "unchangedFromHead": true
+    },
+    {
+      "path": "evaluation/deepseek-development/replay-fixtures/20261023/manifest.json",
+      "sha256": "b22ab4396ae165d751f2036c66d0392e78de6404bf94724df2bac104183c222f",
+      "unchangedFromHead": true
+    },
+    {
+      "path": "evaluation/deepseek-development/replay-fixtures/20261023/actual-requests-26.json",
+      "sha256": "dfcee93f0ff5f03e7d0f1c5daa1fabba9707009eeb43adb385daa49fb527377f",
+      "unchangedFromHead": true
+    },
+    {
+      "path": "evaluation/deepseek-development/replay-fixtures/20261023/provider-receipts-26.json",
+      "sha256": "b761fc592a6dc758b3e6c2248a5aac8c8f279a347ba12f0e42e76678fe002206",
+      "unchangedFromHead": true
+    }
+  ],
+  "focusedTests": [
+    {
+      "file": "src/lib/coach/r6-online-integrity.test.ts",
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "file": "src/lib/coach/deepseek-server-boundary.test.ts",
+      "passed": 52,
+      "failed": 0
+    },
+    {
+      "file": "src/lib/health/analysis-packet-integrity.test.ts",
+      "passed": 25,
+      "failed": 0
+    },
+    {
+      "file": "src/lib/coach/online-coach.test.ts",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "file": "src/lib/coach/online-facts-v86.test.ts",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "file": "src/lib/coach/online-chat-transport.test.ts",
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "file": "src/lib/coach/deepseek-grounding.test.ts",
+      "passed": 7,
+      "failed": 0
+    },
+    {
+      "file": "evaluation/deepseek-development/replay-real-responses.test.ts",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "file": "evaluation/deepseek-development/protocol-preservation.test.ts",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "file": "evaluation/deepseek-development/fact-packet-v3.test.ts",
+      "passed": 8,
+      "failed": 0
+    }
+  ],
+  "focusedNamedTests": [
+    {
+      "file": "src/lib/coach/r5/review-findings.test.ts",
+      "pattern": "an in-flight online answer",
+      "passed": 1
+    },
+    {
+      "file": "src/lib/coach/cycle/host.test.ts",
+      "pattern": "current cycle facts",
+      "passed": 1
+    }
+  ],
+  "testCommandPrefix": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs",
+  "backendIntegration": {
+    "productionTrustedServicesInstalled": false,
+    "uiServerSnapshotReferencesInstalled": false,
+    "currentBehavior": "Local answers retained; no chat upload without server-issued snapshot references.",
+    "requiredExistingContract": "context.data.fangkunCoachServices: authenticate/loadAuthorizedSnapshot/getVerifiedPolicy/ledger",
+    "clientReferenceContract": [
+      "snapshotId",
+      "consentId",
+      "asOf"
+    ],
+    "requestFields": [
+      "question",
+      "requestId",
+      "snapshotId",
+      "consentId",
+      "asOf"
+    ],
+    "r6Adapter": "server/coach-deepseek/lib/coach-r6-handoff.ts: attachR6ScientificDecision(AuthorizedCoachSnapshot, serverRecomputedDecision)",
+    "r6Validation": [
+      "owner and asOf",
+      "analysis facts and revisions",
+      "plan version",
+      "SHA-256 source and knowledge version",
+      "recomputed selectTrainingModels comparison",
+      "candidate original owned plan",
+      "single date/status delta, preserving all dose and rest fields",
+      "safety restriction and read-only authority"
+    ],
+    "requiredBindings": [
+      "authenticate(request): configured session API + server-owned subject-to-athlete membership; never shared dev-user or request owner",
+      "loadAuthorizedSnapshot: owner-scoped versioned snapshot repository and consent receipt/expiry/revocation; server reconstructs current facts and R6 decision",
+      "getVerifiedPolicy: existing approved model/pricing/token and spending contract",
+      "ledger: existing persistent SQL reservation/dispatched/settled adapter",
+      "server must return snapshotId/consentId/asOf references to the client; no such production endpoint exists in this checkout"
+    ],
+    "existingAuthAssessment": "Better Auth/session and SQL utilities exist, but do not map local-store athlete records and plans to server-owned snapshots/consent. Reusing requireUserId alone would not establish record ownership. No new credential or consent was invented."
+  },
+  "limitations": [
+    "Saved replay is not a new DeepSeek evaluation.",
+    "13/14 frozen error detection is not model correctness or professional competence.",
+    "D05A nutrition sufficiency semantic error remains missed.",
+    "Opaque protocol aliases preserve distinct test/source identity; protocol method interpretation is not inferred.",
+    "Full 1000-character answer is rejected rather than truncating source/safety content."
+  ],
+  "operationalNote": "One early diagnostic command omitted the no-network preload while exercising the old proxy with a synthetic non-secret key; it returned network failure. No real key or paid generation was used. All final verification and saved-response replay commands used the network guard."
+}

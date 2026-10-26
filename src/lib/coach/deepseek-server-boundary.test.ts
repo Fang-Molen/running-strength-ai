@@ -67,7 +67,8 @@ test('production controller and actual SQL ledger compose: settle, duplicate and
 });
 for(const [seconds,status] of [[77,502],[80,200]] as const)test(`controller actual 80s cannot be replaced by ${seconds}s with the same citation`,async()=>{
  const s=snapshot();s.rawInput.brief.runningStructure='AVAILABLE';s.rawInput.brief.durationSec=80;s.rawInput.brief.running=[{kind:'REPETITION',position:'component/block/step 第1轮第1次',status:'COMPLETED',planned:'400米/80秒',actual:'400米/80秒',sourceEventIds:['source_actual']}];s.rawInput.brief.sources!.push({id:'source_actual',kind:'FACT',detail:'REPETITION 实际400米/80秒'});s.rawInput.brief.sourceIds.push('source_actual');
- const t=setup({loadAuthorizedSnapshot:async()=>s,fetch:async()=>Response.json(provider(JSON.stringify({mode:'answer',text:`REPETITION 实际400米/${seconds}秒；这些记录不能确定长期能力变化。`,evidenceQuotes:[{sourceId:'ref2',quote:`400米/${seconds}秒`}],citations:['ref2'],nextStep:null,medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})))});
+ const quote=minimalCoachInput(s.rawInput,refs.question).brief.sources!.find(x=>x.id==='source_actual')!.detail.replace('80秒',`${seconds}秒`);
+ const t=setup({loadAuthorizedSnapshot:async()=>s,fetch:async()=>Response.json(provider(JSON.stringify({mode:'answer',text:quote+'；这些记录不能确定长期能力变化。',evidenceQuotes:[{sourceId:'ref2',quote}],citations:['ref2'],nextStep:null,medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})))});
  const r=await t.invoke();assert.equal(r.status,status,JSON.stringify(await r.clone().json()));assert.equal(t.state.settled[0].outcome,'SUCCESS');if(status===502)assert.equal((await r.json()).error,'OUTPUT_REJECTED');
 });
 test('unverified sampling never becomes an implicit fair A/B claim',async()=>{const p=policy();p.samplingVerified=false as true;const t=setup({getVerifiedPolicy:async()=>p});assert.equal((await t.invoke()).status,503);assert.equal(t.state.calls,0);});

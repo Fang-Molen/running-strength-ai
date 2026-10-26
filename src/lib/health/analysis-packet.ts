@@ -87,6 +87,17 @@ export function validateCoachAnalysisReply(reply:CoachAnalysisReply,p:CoachAnaly
  return validateAnalysisReply(reply,p)
 }
 
+/** Recheck persisted host handoffs before dispatch. This validates facts and
+ * calculations; it never authenticates a browser or grants training permission. */
+export function assertCoachAnalysisPacketIntegrity(p:CoachAnalysisPacket):void {
+ const snapshot=projectAnalysisEvidence({context:p.context,facts:p.permittedFacts,safetyConstraints:p.safetyConstraints??[]})
+ const ordered=(rows:readonly {id:string}[])=>[...rows].sort((a,b)=>a.id.localeCompare(b.id))
+ if(p.writeAuthority!=='NONE'||p.assessment.medicalClearance!==false||p.assessment.automaticPrescription!==false||stableJson(ordered(snapshot.facts))!==stableJson(ordered(p.permittedFacts)))throw Error('ANALYSIS_FACT_INTEGRITY')
+ const expected=deriveAnalysisFacts(snapshot,{competitionDate:p.calendarContext?.competitionDate??null})
+ if(stableJson(ordered(expected))!==stableJson(ordered(p.derivedFacts??[])))throw Error('ANALYSIS_DERIVED_INTEGRITY')
+ if(snapshot.safetyConstraints.length&&p.assessment.safetyState==='NO_KNOWN_HOLD')throw Error('ANALYSIS_SAFETY_DOWNGRADE')
+}
+
 /** Bind a legacy/read-only packet to the actual request before model dispatch. */
 export function bindAnalysisPacketQuestion(p:CoachAnalysisPacket,question:string):CoachAnalysisPacket {
  const snapshot:EvidenceSnapshot={context:p.context,snapshotId:p.snapshotId,inputDigest:p.inputDigest,facts:p.permittedFacts,excluded:[],gaps:[],conflicts:(p.requirements?.conflicts??[]).map(reason=>({refs:[],reason})),safetyConstraints:p.safetyConstraints??[]}
@@ -108,15 +119,15 @@ export function analysisModelView(p:CoachAnalysisPacket,referenceOrder:readonly 
  const refs=new Map(referenceOrder.map((id,i)=>[id,`F${i+1}`]))
  for(const f of ordered)if(!refs.has(f.id))refs.set(f.id,`F${refs.size+1}`)
  const candidates=new Map(p.allowedCandidateIds.map((id,i)=>[id,`C${i+1}`])),derivedIds=new Map((p.derivedFacts??[]).map((d,i)=>[d.id,`D${i+1}`]))
- const accounts=new Map<string,string>(),devices=new Map<string,string>(),protocols=new Map<string,string>(),scopes=new Map<string,string>(),occurrences=new Map<string,string>()
+ const accounts=new Map<string,string>(),devices=new Map<string,string>(),protocols=new Map<string,string>(),scopes=new Map<string,string>(),occurrences=new Map<string,string>(),records=new Map<string,string>()
  const alias=(value:string|null,map:Map<string,string>,prefix:string)=>{if(value===null)return null;if(!map.has(value))map.set(value,`${prefix}${map.size+1}`);return map.get(value)!}
- const sourceByFact=new Map<string,{provider:string;scope:string;protocol:string|null}>()
+ const sourceByFact=new Map<string,{provider:string;scope:string;protocol:string|null;record:string|null;account:string|null;device:string|null}>()
  for(const f of ordered){
   const account=alias(f.accountRef,accounts,'A'),device=alias(f.deviceId,devices,'D'),protocol=f.protocolKey===null?null:sourceAliases[f.protocolKey]??alias(f.protocolKey,protocols,'P')
   if(f.protocolKey!==null)protocols.set(f.protocolKey,protocol!)
   const tuple=stableJson([f.provider,f.accountRef,f.deviceId,f.protocolKey]),scopeKey=stableJson([f.provider,account,device,protocol])
   if(!scopes.has(scopeKey))scopes.set(scopeKey,sourceAliases[sourceScope(f)]??sourceAliases[tuple]??`S${scopes.size+1}`)
-  sourceByFact.set(f.id,{provider:f.provider,scope:scopes.get(scopeKey)!,protocol})
+  sourceByFact.set(f.id,{provider:f.provider,scope:scopes.get(scopeKey)!,protocol,record:alias(stableJson([f.provider,f.accountRef,f.sourceRecordId]),records,'R'),account,device})
   if(f.kind==='TRAINING')alias(f.occurrenceId,occurrences,'O')
  }
  const aliases=new Map<string,string>([...refs,...candidates,...derivedIds,...accounts,...devices,...protocols,...occurrences])
@@ -131,7 +142,7 @@ export function analysisModelView(p:CoachAnalysisPacket,referenceOrder:readonly 
  const semanticValues=new Set(ordered.flatMap(f=>f.kind==='METRIC'?[f.metric]:f.kind==='RESPONSE'?[f.measure]:[f.modality,f.componentId]))
  const embedded=[...aliases.keys()].filter(k=>k.length>=4&&!semanticValues.has(k)).sort((a,b)=>b.length-a.length)
  const pattern=embedded.length?new RegExp(embedded.map(escapeRegExp).join('|'),'g'):null,originalStrings=new Map<string,string>()
- const identityKeys=new Set(['id','derivedFactIds','requiredDerivedFactIds','selectedCandidateId','athleteId','accountRef','deviceId','sourceRecordId','protocol','protocolKey','canonicalActivityId','providerScopes'])
+ const identityKeys=new Set(['id','derivedFactIds','requiredDerivedFactIds','selectedCandidateId','athleteId','accountRef','deviceId','sourceRecordId','protocol','protocolKey','canonicalActivityId','providerScopes','planVersion'])
  const textKeys=new Set(['text','claim','discriminator','question','reason','notes','missing','genuinelyMissing','plannedPurpose','observedType','conditions','supportsWhen','weakensWhen','doNotExecute'])
  const minimize=(value:unknown,key=''):any=>{
   if(key==='source')return value
@@ -153,14 +164,14 @@ export function analysisModelView(p:CoachAnalysisPacket,referenceOrder:readonly 
   return {text:minimized,evidenceRefs:minimize(o.evidenceRefs)}
  }
  const facts=ordered.map(f=>{
-  const common={ref:refOf(f),kind:f.kind,at:f.occurredAt,sourceAsOf:f.knownAt,receivedAt:f.receivedAt,quality:f.quality,source:sourceByFact.get(f.id)!}
-  if(f.kind==='METRIC')return {...common,metric:f.metric,value:f.value,unit:f.unit,statistic:f.statistic,day:f.providerDate,temporalResolution:f.temporalResolution??'INSTANT',window:f.windowStart||f.windowEnd?[f.windowStart,f.windowEnd]:null,energyKind:f.energyKind}
+  const common={ref:refOf(f),kind:f.kind,at:f.occurredAt,sourceAsOf:f.knownAt,receivedAt:f.receivedAt,status:f.status,quality:f.quality,sourceTimeZone:f.sourceTimeZone,source:sourceByFact.get(f.id)!}
+  if(f.kind==='METRIC')return {...common,metric:f.metric,value:f.value,unit:f.unit,statistic:f.statistic,day:f.providerDate,isFinal:f.isFinal,observedAt:f.observedAt??null,temporalResolution:f.temporalResolution??'INSTANT',window:f.windowStart||f.windowEnd?[f.windowStart,f.windowEnd]:null,energyKind:f.energyKind}
   if(f.kind==='RESPONSE')return {...common,measure:f.measure,value:f.value,scale:f.scale,region:f.region,side:f.side,elapsedHours:f.elapsedHours,relatedTrainingRefs:f.relatedTrainingRefs,protocol:f.observationProtocol,functionTaskId:f.functionTaskId,notes:f.notes}
-  return {...common,occurrenceId:occurrences.get(f.occurrenceId),componentId:f.componentId,modality:f.modality,plannedPurpose:f.plannedPurpose,observedType:f.observedType,sessionRpe:f.sessionRpe,sessionRpeScale:f.sessionRpeScale,actualDurationSeconds:f.actualDurationSeconds,runSegments:f.runSegments.map(({id,...r})=>r),strengthSets:f.strengthSets.map(({id,...r})=>r),jumpContacts:f.jumpContacts}
+  return {...common,occurrenceId:occurrences.get(f.occurrenceId),componentId:f.componentId,modality:f.modality,startedAt:f.startedAt,endedAt:f.endedAt,plannedPurpose:f.plannedPurpose,observedType:f.observedType,sessionRpe:f.sessionRpe,sessionRpeScale:f.sessionRpeScale,actualDurationSeconds:f.actualDurationSeconds,runSegments:f.runSegments.map(({id,...r})=>r),strengthSets:f.strengthSets.map(({id,...r})=>r),jumpContacts:f.jumpContacts}
  })
  const derivedText=new Set((p.derivedFacts??[]).map(d=>d.text))
  const contextVersion=(kind:'ANALYSIS_AS_OF'|'COMPETITION_DATE',version:string|null)=>version===null?null:kind==='COMPETITION_DATE'&&version===p.context.planVersion?'PLAN':kind==='ANALYSIS_AS_OF'&&version===p.context.analysisVersion?'ANALYSIS':'CONTEXT'
- const view={asOf:p.context.asOf,calendarContext:p.calendarContext?{...p.calendarContext,version:contextVersion('COMPETITION_DATE',p.calendarContext.version)}:undefined,facts:minimize(facts),derivedFacts:minimize((p.derivedFacts??[]).map(d=>({id:d.id,metric:d.metric,value:d.value,unit:d.unit,refs:d.evidenceRefs,...(d.contextSources?.length?{contextSources:d.contextSources.map(c=>({kind:c.kind,value:c.value,version:contextVersion(c.kind,c.version)}))}:{})}))),requirements:minimize(p.requirements??{question:'',requiredFactRefs:[],requiredDerivedFactIds:[],availableFields:[],genuinelyMissing:[],conflicts:[]}),observations:p.assessment.observations.filter(o=>!derivedText.has(o.text)&&!/^原计划目的：/.test(o.text)).map(observation),hypotheses:minimize(p.assessment.hypotheses),candidates:minimize(p.assessment.candidates.map(c=>({id:c.id,kind:c.kind,action:c.action??null,basisRefs:c.basisRefs,reason:c.reason??null}))),safetyState:p.assessment.safetyState,safetyConstraints:minimize(p.safetyConstraints??[]),missing:minimize(p.assessment.missingDecisionInputs)}
+ const view={asOf:p.context.asOf,context:{athleteId:'ATHLETE',planVersion:p.context.planVersion?'PLAN':null,timeZone:p.context.timeZone},writeAuthority:p.writeAuthority,calendarContext:p.calendarContext?{...p.calendarContext,version:contextVersion('COMPETITION_DATE',p.calendarContext.version)}:undefined,facts:minimize(facts),derivedFacts:minimize((p.derivedFacts??[]).map(d=>({id:d.id,metric:d.metric,value:d.value,unit:d.unit,refs:d.evidenceRefs,...(d.contextSources?.length?{contextSources:d.contextSources.map(c=>({kind:c.kind,value:c.value,version:contextVersion(c.kind,c.version)}))}:{})}))),requirements:minimize(p.requirements??{question:'',requiredFactRefs:[],requiredDerivedFactIds:[],availableFields:[],genuinelyMissing:[],conflicts:[]}),observations:p.assessment.observations.filter(o=>!derivedText.has(o.text)&&!/^原计划目的：/.test(o.text)).map(observation),hypotheses:minimize(p.assessment.hypotheses),candidates:minimize(p.assessment.candidates.map(c=>({...c}))),safetyState:p.assessment.safetyState,safetyConstraints:minimize(p.safetyConstraints??[]),missing:minimize(p.assessment.missingDecisionInputs)}
  const refReverse=new Map([...refs].map(([a,b])=>[b,a])),derivedReverse=new Map([...derivedIds].map(([a,b])=>[b,a])),candidateReverse=new Map([...candidates].map(([a,b])=>[b,a]))
  const reverse=new Map([...aliases].map(([a,b])=>[b,a]))
  const quotedKeys=[...originalStrings.keys()].filter(k=>k.length>8&&originalStrings.get(k)!==k).sort((a,b)=>b.length-a.length)

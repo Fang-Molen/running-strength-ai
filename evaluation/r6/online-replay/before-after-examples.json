@@ -1,0 +1,1369 @@
+[
+  {
+    "caseId": "E01",
+    "arm": "B",
+    "label": "历史纯跑总用时",
+    "before": "F1…纯跑用时 154 s",
+    "metrics": [
+      "RUN_WORK_SECONDS",
+      "RUN_SEGMENT_RANGE_SECONDS",
+      "RUN_SEGMENT_MEAN_SECONDS"
+    ],
+    "sourceId": "s3",
+    "explanation": "30+34+38+42=144 s；极差12 s，均值36 s。旧154 s原样保留，诊断给出144 s。",
+    "sampleId": "8d6c8bca-2e64-4d8b-81e6-0608ef0fc48c",
+    "oldRawAnswerSha256": "3ff5ef789d8cd4a26fd62f20f35541539c2b9faab7a1f77d2aee08b1cdd8ebc8",
+    "oldRawAnswer": "{\"facts\":[\"F1@1（S1，2026-10-15T10:00:00Z）：200 m 分段用时 30 s/34 s/38 s/42 s，组休 120 s，4/4 COMPLETED；纯跑用时 154 s；分段极差 12 s。\",\"F2@1（S1，2026-10-16T10:00:00Z）：200 m 分段用时 30 s/33 s/36 s/39 s，组休 120 s，4/4 COMPLETED；纯跑用时 138 s；分段极差 9 s。\",\"F3@1（S1，2026-10-17T10:00:00Z）：200 m 分段用时 30 s/32 s/34 s/36 s，组休 120 s，4/4 COMPLETED；纯跑用时 132 s；分段极差 6 s。\",\"F4@1（S1，2026-10-18T10:00:00Z）：200 m 分段用时 30 s/30 s/31 s/30 s，组休 120 s，4/4 COMPLETED；纯跑用时 121 s；分段极差 1 s。\",\"F1–F4 原目的均为“重复跑原批准协议”；实际类型、RPE、时长、跳跃均为未记录（null），不推断为 0。\",\"各段共同：rawResolutionSeconds=1；gradePercent=null；surface=null。\",\"账号/设备均为临时别名；未记录=null，不推断相同设备。\",\"背景标注：第三次较旧课程为合成补充，无真实运动员观察。\",\"资料截止 2026-10-19T12:00:00Z；时区 UTC。\"],\"explanations\":[{\"text\":\"“新一次更稳定”可解释为分段用时离散度下降：F1→F4 分段极差 12 s→9 s→6 s→1 s，纯跑用时 154 s→138 s→132 s→121 s；在相同 200 m/组休 120 s 结构下，F4 的分段更集中。\",\"counterevidence\":\"F1–F4 的 RPE、类型、时长、睡眠、HRV、坡度、地面均未记录；无重复测量或设备一致性证据；不能排除配速策略、疲劳状态、环境或记录差异；不证明训练因果或能力提升。\"},{\"text\":\"“三次同目标同休息同计时”可解释为原目的、组休 120 s 与 200 m 分段结构在 F1–F4 记录中一致，且均为 4/4 COMPLETED。\",\"counterevidence\":\"“同目标”仅为原计划目的，实际类型 UNKNOWN；设备未记录且临时别名不证明同一设备；第三次较旧课程为合成补充；计时分辨率 1 s 但无独立计时设备核验；不能据此宣称协议完全等同或已达成目标。\"}],\"counterevidence\":[\"缺少 RPE、睡眠、HRV、疼痛/功能状态、坡度、地面、设备一致性；null 不补零。\",\"F3 背景为合成补充，无真实运动员观察，不能作为真实趋势锚点。\",\"计划目的不等于实际类型或目标已实现。\",\"不诊断、不编造能力分、不宣称因果或医学许可。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"HRV 未记录，不补零\",\"RPE 未记录\",\"实际训练类型未记录\",\"设备/账号一致性未记录\",\"坡度、地面未记录\",\"24/48/72h 反馈未记录\"],\"observation\":\"在已确认的 F1–F4 中，相同 200 m×4、组休 120 s 结构下，分段用时极差由 12 s 降至 1 s，纯跑用时由 154 s 降至 121 s；但 RPE、类型、睡眠、HRV、疼痛/功能、设备与坡度/地面均缺失，不能据此判断稳定性提升的因果或能力变化。\",\"candidate\":\"KEEP\",\"planChanged\":false}",
+    "newDeterministicFacts": [
+      {
+        "id": "derived:RUN_WORK_SECONDS:s3@1:11ctaq5",
+        "metric": "RUN_WORK_SECONDS",
+        "value": 144,
+        "unit": "s",
+        "formula": "sum(COMPLETED runSegments.durationSeconds); excludes rest",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-15 s3@1（occurrence s3；RUN/running）：纯跑总用时（不含间歇） 144 s。",
+        "evidenceRefs": [
+          {
+            "id": "s3",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "s3",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[0].durationSeconds",
+            "value": 30,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[1].durationSeconds",
+            "value": 34,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[2].durationSeconds",
+            "value": 38,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[3].durationSeconds",
+            "value": 42,
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "id": "derived:RUN_SEGMENT_RANGE_SECONDS:s3@1:16r9l2r",
+        "metric": "RUN_SEGMENT_RANGE_SECONDS",
+        "value": 12,
+        "unit": "s",
+        "formula": "max(COMPLETED runSegments.durationSeconds) - min(COMPLETED runSegments.durationSeconds)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-15 s3@1（occurrence s3；RUN/running）：完成段用时极差 12 s。",
+        "evidenceRefs": [
+          {
+            "id": "s3",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "s3",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[0].durationSeconds",
+            "value": 30,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[1].durationSeconds",
+            "value": 34,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[2].durationSeconds",
+            "value": 38,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[3].durationSeconds",
+            "value": 42,
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "id": "derived:RUN_SEGMENT_MEAN_SECONDS:s3@1:1fyikhm",
+        "metric": "RUN_SEGMENT_MEAN_SECONDS",
+        "value": 36,
+        "unit": "s",
+        "formula": "sum(COMPLETED runSegments.durationSeconds) / count(COMPLETED runSegments)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-15 s3@1（occurrence s3；RUN/running）：完成段平均用时 36 s。",
+        "evidenceRefs": [
+          {
+            "id": "s3",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "s3",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[0].durationSeconds",
+            "value": 30,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[1].durationSeconds",
+            "value": 34,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[2].durationSeconds",
+            "value": 38,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "s3",
+              "revision": 1
+            },
+            "field": "runSegments[3].durationSeconds",
+            "value": 42,
+            "unit": "s"
+          }
+        ]
+      }
+    ],
+    "provenance": "OLD_RAW_MODEL_REPLY_VS_NEW_HOST_ARITHMETIC_NO_NEW_MODEL_ANSWER"
+  },
+  {
+    "caseId": "D04",
+    "arm": "B",
+    "label": "RMSSD基线变化",
+    "before": "基线与当前原始数值存在，百分比、对数变化与明确样本数摘要缺失。",
+    "metrics": [
+      "RMSSD_CURRENT_MS",
+      "RMSSD_BASELINE_MEDIAN_MS",
+      "RMSSD_CHANGE_PERCENT",
+      "RMSSD_LOG_RATIO",
+      "RMSSD_BASELINE_SAMPLES"
+    ],
+    "explanation": "同账号、设备、协议五个有效日：中位数60 ms，当前48 ms，变化-20%，ln(48/60)=-0.2231435513，n=5。",
+    "sampleId": "4474c80e-8184-415e-9304-5e933b94d153",
+    "oldRawAnswerSha256": "e28645153d403cf1d14b41532e690f1e538c6c7909ca23e94c502f9236b6a2e0",
+    "oldRawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-10\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-10\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-11\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F4\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-11\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F5\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-12\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F6\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-12\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F7\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-13\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F8\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-13\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F9\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-14\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F10\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-14\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F11\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-18\",\"metric\":\"rmssd\",\"value\":48,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F12\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-18\",\"metric\":\"rhr\",\"value\":60,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F13\",\"revision\":1,\"source\":\"S3\",\"date\":\"2026-10-18\",\"session\":\"O1/running\",\"plannedPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"segments\":[{\"round\":1,\"step\":1,\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":2,\"distance\":\"200 m\",\"duration\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":3,\"distance\":\"200 m\",\"duration\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":4,\"distance\":\"200 m\",\"duration\":\"33 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"800 m\",\"pureRunTime\":\"126 s\",\"rpe\":null,\"duration\":null,\"jumps\":null}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[\"F11\",\"F12\"],\"counterevidence\":[\"F13：同协议分段30/31/32/33秒均COMPLETED，若训练表现稳定则削弱“当前训练能力下降”的解释\",\"F11/F12与基线F1-F10来源组不同（S1/S2同账号A1设备D1，但null不推断相同设备；S3账号设备未记录），测量条件可比性未确认\"],\"certainty\":\"UNRESOLVED\"}],\"counterevidence\":[\"F13显示同协议4段200 m均COMPLETED，纯跑126 s；若该表现与既往可比，则削弱“恢复能力下降”解释\",\"基线窗口2026-10-10至2026-10-14 complete=true且protocolConfirmed=true，但当前日2026-10-18的测量条件（睡眠、压力、设备一致性）未记录，无法排除测量背景解释\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"RPE未记录（F13）\",\"课次类型未记录（F13 actualType=UNKNOWN）\",\"时长未记录（F13）\",\"跳跃次数未记录（F13）\",\"坡度、地面未记录（F13 gradePercent=null, surface=null）\",\"2026-10-18测量条件与设备一致性未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"reason\":\"现有证据不支持自动改变训练量\",\"planVersion\":\"synthetic-approved-plan\"},\"planChanged\":false}",
+    "newDeterministicFacts": [
+      {
+        "id": "derived:RMSSD_CURRENT_MS:hrv-current@1:txmiq8",
+        "metric": "RMSSD_CURRENT_MS",
+        "value": 48,
+        "unit": "ms",
+        "formula": "current.value",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 hrv-current@1 RMSSD（GARMIN；同账号/设备/协议）：当前值 48 ms。",
+        "evidenceRefs": [
+          {
+            "id": "hrv-current",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rmssd\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "hrv-current",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 48,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "id": "derived:RMSSD_BASELINE_SAMPLES:hrv-current@1+rmssd-10@1+rmssd-11@1+rmssd-12@1+rmssd-13@1+rmssd-14@1:f4agwx",
+        "metric": "RMSSD_BASELINE_SAMPLES",
+        "value": 5,
+        "unit": "days",
+        "formula": "count(distinct valid same-scope baseline providerDate in preceding 30 calendar days)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 hrv-current@1 RMSSD（GARMIN；同账号/设备/协议）：此前同来源基线样本数（5 日） 5 days。",
+        "evidenceRefs": [
+          {
+            "id": "hrv-current",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-10",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-11",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-12",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-13",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-14",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rmssd\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "rmssd-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "id": "derived:RMSSD_BASELINE_MEDIAN_MS:hrv-current@1+rmssd-10@1+rmssd-11@1+rmssd-12@1+rmssd-13@1+rmssd-14@1:ze0hn7",
+        "metric": "RMSSD_BASELINE_MEDIAN_MS",
+        "value": 60,
+        "unit": "ms",
+        "formula": "median(one unambiguous final same-scope value per baseline providerDate)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 hrv-current@1 RMSSD（GARMIN；同账号/设备/协议）：此前同来源 5 日基线中位数 60 ms。",
+        "evidenceRefs": [
+          {
+            "id": "hrv-current",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-10",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-11",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-12",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-13",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-14",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rmssd\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "rmssd-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "id": "derived:RMSSD_CHANGE_PERCENT:hrv-current@1+rmssd-10@1+rmssd-11@1+rmssd-12@1+rmssd-13@1+rmssd-14@1:mmoeqv",
+        "metric": "RMSSD_CHANGE_PERCENT",
+        "value": -20,
+        "unit": "%",
+        "formula": "(current.value - baseline.median) / baseline.median * 100",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 hrv-current@1 RMSSD（GARMIN；同账号/设备/协议）：相对基线变化率 -20 %。",
+        "evidenceRefs": [
+          {
+            "id": "hrv-current",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-10",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-11",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-12",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-13",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-14",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rmssd\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "hrv-current",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 48,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "id": "derived:RMSSD_LOG_RATIO:hrv-current@1+rmssd-10@1+rmssd-11@1+rmssd-12@1+rmssd-13@1+rmssd-14@1:1y5ns0o",
+        "metric": "RMSSD_LOG_RATIO",
+        "value": -0.2231435513142097,
+        "unit": "ln-ratio",
+        "formula": "ln(current.RMSSD / baseline.median.RMSSD)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 hrv-current@1 RMSSD（GARMIN；同账号/设备/协议）：自然对数比值变化 -0.2231435513142097 ln-ratio。",
+        "evidenceRefs": [
+          {
+            "id": "hrv-current",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-10",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-11",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-12",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-13",
+            "revision": 1
+          },
+          {
+            "id": "rmssd-14",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rmssd\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "hrv-current",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 48,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          },
+          {
+            "ref": {
+              "id": "rmssd-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "ms"
+          }
+        ]
+      }
+    ],
+    "provenance": "OLD_RAW_MODEL_REPLY_VS_NEW_HOST_ARITHMETIC_NO_NEW_MODEL_ANSWER"
+  },
+  {
+    "caseId": "D04",
+    "arm": "B",
+    "label": "RHR绝对变化",
+    "before": "旧B有50/60 bpm原始行，未给出+10 bpm摘要；旧A已经给出+10 bpm。",
+    "metrics": [
+      "RHR_BASELINE_BPM",
+      "RHR_CURRENT_BPM",
+      "RHR_CHANGE_BPM",
+      "RHR_BASELINE_SAMPLES"
+    ],
+    "explanation": "基线50 bpm、当前60 bpm，绝对变化+10 bpm；各来源分别报告，避免套用HRV百分比阈值。",
+    "sampleId": "4474c80e-8184-415e-9304-5e933b94d153",
+    "oldRawAnswerSha256": "e28645153d403cf1d14b41532e690f1e538c6c7909ca23e94c502f9236b6a2e0",
+    "oldRawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-10\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F2\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-10\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F3\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-11\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F4\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-11\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F5\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-12\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F6\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-12\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F7\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-13\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F8\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-13\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F9\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-14\",\"metric\":\"rhr\",\"value\":50,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F10\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-14\",\"metric\":\"rmssd\",\"value\":60,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F11\",\"revision\":1,\"source\":\"S2\",\"date\":\"2026-10-18\",\"metric\":\"rmssd\",\"value\":48,\"unit\":\"ms\",\"stat\":\"SAMPLE\"},{\"id\":\"F12\",\"revision\":1,\"source\":\"S1\",\"date\":\"2026-10-18\",\"metric\":\"rhr\",\"value\":60,\"unit\":\"bpm\",\"stat\":\"SAMPLE\"},{\"id\":\"F13\",\"revision\":1,\"source\":\"S3\",\"date\":\"2026-10-18\",\"session\":\"O1/running\",\"plannedPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"segments\":[{\"round\":1,\"step\":1,\"distance\":\"200 m\",\"duration\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":2,\"distance\":\"200 m\",\"duration\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":3,\"distance\":\"200 m\",\"duration\":\"32 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"round\":1,\"step\":4,\"distance\":\"200 m\",\"duration\":\"33 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"800 m\",\"pureRunTime\":\"126 s\",\"rpe\":null,\"duration\":null,\"jumps\":null}],\"explanations\":[{\"id\":\"measurement-context\",\"claim\":\"测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化\",\"supportingRefs\":[\"F11\",\"F12\"],\"counterevidence\":[\"F13：同协议分段30/31/32/33秒均COMPLETED，若训练表现稳定则削弱“当前训练能力下降”的解释\",\"F11/F12与基线F1-F10来源组不同（S1/S2同账号A1设备D1，但null不推断相同设备；S3账号设备未记录），测量条件可比性未确认\"],\"certainty\":\"UNRESOLVED\"}],\"counterevidence\":[\"F13显示同协议4段200 m均COMPLETED，纯跑126 s；若该表现与既往可比，则削弱“恢复能力下降”解释\",\"基线窗口2026-10-10至2026-10-14 complete=true且protocolConfirmed=true，但当前日2026-10-18的测量条件（睡眠、压力、设备一致性）未记录，无法排除测量背景解释\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"RPE未记录（F13）\",\"课次类型未记录（F13 actualType=UNKNOWN）\",\"时长未记录（F13）\",\"跳跃次数未记录（F13）\",\"坡度、地面未记录（F13 gradePercent=null, surface=null）\",\"2026-10-18测量条件与设备一致性未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"reason\":\"现有证据不支持自动改变训练量\",\"planVersion\":\"synthetic-approved-plan\"},\"planChanged\":false}",
+    "newDeterministicFacts": [
+      {
+        "id": "derived:RHR_CURRENT_BPM:rhr-current@1:xs17nz",
+        "metric": "RHR_CURRENT_BPM",
+        "value": 60,
+        "unit": "bpm",
+        "formula": "current.value",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 rhr-current@1 RHR（GARMIN；同账号/设备/协议）：当前值 60 bpm。",
+        "evidenceRefs": [
+          {
+            "id": "rhr-current",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rhr\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "rhr-current",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "bpm"
+          }
+        ]
+      },
+      {
+        "id": "derived:RHR_BASELINE_SAMPLES:rhr-10@1+rhr-11@1+rhr-12@1+rhr-13@1+rhr-14@1+rhr-current@1:1r0m3bl",
+        "metric": "RHR_BASELINE_SAMPLES",
+        "value": 5,
+        "unit": "days",
+        "formula": "count(distinct valid same-scope baseline providerDate in preceding 30 calendar days)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 rhr-current@1 RHR（GARMIN；同账号/设备/协议）：此前同来源基线样本数（5 日） 5 days。",
+        "evidenceRefs": [
+          {
+            "id": "rhr-10",
+            "revision": 1
+          },
+          {
+            "id": "rhr-11",
+            "revision": 1
+          },
+          {
+            "id": "rhr-12",
+            "revision": 1
+          },
+          {
+            "id": "rhr-13",
+            "revision": 1
+          },
+          {
+            "id": "rhr-14",
+            "revision": 1
+          },
+          {
+            "id": "rhr-current",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rhr\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "rhr-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          }
+        ]
+      },
+      {
+        "id": "derived:RHR_BASELINE_BPM:rhr-10@1+rhr-11@1+rhr-12@1+rhr-13@1+rhr-14@1+rhr-current@1:tx1okb",
+        "metric": "RHR_BASELINE_BPM",
+        "value": 50,
+        "unit": "bpm",
+        "formula": "median(one unambiguous final same-scope value per baseline providerDate)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 rhr-current@1 RHR（GARMIN；同账号/设备/协议）：此前同来源 5 日基线中位数 50 bpm。",
+        "evidenceRefs": [
+          {
+            "id": "rhr-10",
+            "revision": 1
+          },
+          {
+            "id": "rhr-11",
+            "revision": 1
+          },
+          {
+            "id": "rhr-12",
+            "revision": 1
+          },
+          {
+            "id": "rhr-13",
+            "revision": 1
+          },
+          {
+            "id": "rhr-14",
+            "revision": 1
+          },
+          {
+            "id": "rhr-current",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rhr\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "rhr-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          }
+        ]
+      },
+      {
+        "id": "derived:RHR_CHANGE_BPM:rhr-10@1+rhr-11@1+rhr-12@1+rhr-13@1+rhr-14@1+rhr-current@1:wxv641",
+        "metric": "RHR_CHANGE_BPM",
+        "value": 10,
+        "unit": "bpm",
+        "formula": "current.RHR - baseline.median.RHR",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 rhr-current@1 RHR（GARMIN；同账号/设备/协议）：较基线绝对变化 10 bpm。",
+        "evidenceRefs": [
+          {
+            "id": "rhr-10",
+            "revision": 1
+          },
+          {
+            "id": "rhr-11",
+            "revision": 1
+          },
+          {
+            "id": "rhr-12",
+            "revision": 1
+          },
+          {
+            "id": "rhr-13",
+            "revision": 1
+          },
+          {
+            "id": "rhr-14",
+            "revision": 1
+          },
+          {
+            "id": "rhr-current",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"GARMIN\",\"synthetic-watch-account\",\"synthetic-watch-device\",\"matched-device-A-rhr\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "rhr-current",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 60,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-10",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-11",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-12",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-13",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          },
+          {
+            "ref": {
+              "id": "rhr-14",
+              "revision": 1
+            },
+            "field": "value",
+            "value": 50,
+            "unit": "bpm"
+          }
+        ]
+      }
+    ],
+    "provenance": "OLD_RAW_MODEL_REPLY_VS_NEW_HOST_ARITHMETIC_NO_NEW_MODEL_ANSWER"
+  },
+  {
+    "caseId": "A03",
+    "arm": "B",
+    "label": "混合训练实际总量",
+    "before": "旧900与8192样本均无320 kg·reps外部负重次数积。",
+    "metrics": [
+      "RUN_DISTANCE_M",
+      "RUN_WORK_SECONDS",
+      "STRENGTH_SETS",
+      "STRENGTH_REPS",
+      "STRENGTH_EXTERNAL_VOLUME_KG_REPS",
+      "OCCURRENCE_COUNT"
+    ],
+    "explanation": "跑步400 m、纯跑61 s；深蹲2组16次、20×8×2=320 kg·reps；两个组件共享1个occurrence。",
+    "sampleId": "4a1e0d18-17a3-4772-a383-44001f7fe70f",
+    "oldRawAnswerSha256": "5d53bd066cf5e5d57f535ca6451213baf249bb08bd69c042e63fbfb251ef0cf0",
+    "oldRawAnswer": "{\"type\":\"json_object\",\"facts\":{\"run\":{\"source\":\"F1@1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"session\":\"O1/running\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"blocks\":[{\"block\":\"main\",\"round\":1,\"step\":1,\"distance\":\"200 m\",\"time\":\"30 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"},{\"block\":\"main\",\"round\":1,\"step\":2,\"distance\":\"200 m\",\"time\":\"31 s\",\"rest\":\"120 s\",\"status\":\"COMPLETED\"}],\"totalDistance\":\"400 m\",\"pureRunTime\":\"61 s\",\"rpe\":\"未记录\",\"duration\":\"未记录 s\",\"jumps\":\"未记录 次\",\"rawResolutionSeconds\":1,\"gradePercent\":null,\"surface\":null},\"strength\":{\"source\":\"F2@1\",\"status\":\"CONFIRMED/AVAILABLE\",\"occurredAt\":\"2026-10-18T10:00:00Z\",\"knownAt\":\"2026-10-18T11:00:00Z\",\"session\":\"O1/strength\",\"originalPurpose\":\"重复跑原批准协议\",\"actualType\":\"UNKNOWN\",\"exercise\":\"back-squat\",\"version\":\"U11_1\",\"sets\":[{\"set\":1,\"reps\":8,\"load\":\"20 kg\",\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":\"未记录\",\"rir\":\"未记录\",\"scale\":\"未记录\",\"hold\":\"未记录 s\",\"eccentric\":\"未记录 s\",\"range\":\"未记录\",\"status\":\"COMPLETED\"},{\"set\":2,\"reps\":8,\"load\":\"20 kg\",\"loadType\":\"TOTAL_EXTERNAL\",\"laterality\":\"BILATERAL\",\"rpe\":\"未记录\",\"rir\":\"未记录\",\"scale\":\"未记录\",\"hold\":\"未记录 s\",\"eccentric\":\"未记录 s\",\"range\":\"未记录\",\"status\":\"COMPLETED\"}],\"totalSets\":2,\"totalReps\":16,\"duration\":\"未记录 s\",\"jumps\":\"未记录 次\"},\"account\":\"未记录\",\"device\":\"未记录\",\"planIsActual\":false,\"completedComponents\":[\"RUN\",\"STRENGTH\"]},\"explanations\":[{\"id\":\"E1\",\"text\":\"跑步与深蹲均按记录完成：跑步 2×200 m（30 s、31 s，组休 120 s），深蹲 2×8 次×20 kg；仅描述实际剂量，不推断整课用时或组织受力。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若原始记录更正为未完成、剂量或轮次不同，或来源/身份冲突，则此解释减弱。\"},{\"id\":\"E2\",\"text\":\"原计划目的为“重复跑原批准协议”，但实际类型记录为 UNKNOWN；计划意图不证明目标已实现，也不证明跑步与力量属于同一设备或同一课次结构。\",\"evidenceRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"counterevidence\":\"若找到已批准计划版本且明确包含 RUN 与 STRENGTH 的同节结构，并确认实际类型，则此解释减弱。\"}],\"counterevidence\":[\"F1/F2 均为 CONFIRMED/AVAILABLE，但账号、设备未记录；同组未知设备不证明同一设备。\",\"RPE、RIR、时长、跳跃、坡度、表面、离心、幅度等均为 null（未记录），不是 0，不能补零或推断。\",\"计划目的不等于实际完成；planIsActual=false。\"],\"missing\":[\"当前是否疼痛、在哪里、是否影响动作？\",\"缺少原热身或日常功能表现\",\"睡眠未记录，不妨碍已确认训练的分析\",\"HRV未记录，不补零\",\"跑步与力量是否同一设备/同一课次结构未记录\",\"RPE、RIR、时长、跳跃、坡度、表面、离心、幅度未记录\"],\"observation\":\"记录原热身功能、原组休下完成量与RPE，再记录24/48/72h反馈；不新增测试剂量。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true,\"basisRefs\":[{\"id\":\"F1\",\"revision\":1},{\"id\":\"F2\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\"},\"planChanged\":false}",
+    "newDeterministicFacts": [
+      {
+        "id": "derived:RUN_DISTANCE_M:mixed-run@1:1lns75p",
+        "metric": "RUN_DISTANCE_M",
+        "value": 400,
+        "unit": "m",
+        "formula": "sum(COMPLETED runSegments.distanceM)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 mixed-run@1（occurrence mixed-occurrence；RUN/running）：完成段总距离 400 m。",
+        "evidenceRefs": [
+          {
+            "id": "mixed-run",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "mixed-occurrence",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "mixed-run",
+              "revision": 1
+            },
+            "field": "runSegments[0].distanceM",
+            "value": 200,
+            "unit": "m"
+          },
+          {
+            "ref": {
+              "id": "mixed-run",
+              "revision": 1
+            },
+            "field": "runSegments[1].distanceM",
+            "value": 200,
+            "unit": "m"
+          }
+        ]
+      },
+      {
+        "id": "derived:RUN_WORK_SECONDS:mixed-run@1:1vuy8um",
+        "metric": "RUN_WORK_SECONDS",
+        "value": 61,
+        "unit": "s",
+        "formula": "sum(COMPLETED runSegments.durationSeconds); excludes rest",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 mixed-run@1（occurrence mixed-occurrence；RUN/running）：纯跑总用时（不含间歇） 61 s。",
+        "evidenceRefs": [
+          {
+            "id": "mixed-run",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "mixed-occurrence",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "mixed-run",
+              "revision": 1
+            },
+            "field": "runSegments[0].durationSeconds",
+            "value": 30,
+            "unit": "s"
+          },
+          {
+            "ref": {
+              "id": "mixed-run",
+              "revision": 1
+            },
+            "field": "runSegments[1].durationSeconds",
+            "value": 31,
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "id": "derived:STRENGTH_SETS:mixed-strength@1:107simk",
+        "metric": "STRENGTH_SETS",
+        "value": 2,
+        "unit": "sets",
+        "formula": "count(COMPLETED strengthSets)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 mixed-strength@1（occurrence mixed-occurrence；STRENGTH/strength）：完成组数 2 sets。",
+        "evidenceRefs": [
+          {
+            "id": "mixed-strength",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "mixed-occurrence",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[0].completion.COMPLETED",
+            "value": 1,
+            "unit": "sets"
+          },
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[1].completion.COMPLETED",
+            "value": 1,
+            "unit": "sets"
+          }
+        ]
+      },
+      {
+        "id": "derived:STRENGTH_REPS:mixed-strength@1:6vvb7",
+        "metric": "STRENGTH_REPS",
+        "value": 16,
+        "unit": "reps",
+        "formula": "sum(COMPLETED strengthSets.reps)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 mixed-strength@1（occurrence mixed-occurrence；STRENGTH/strength）：完成总次数 16 reps。",
+        "evidenceRefs": [
+          {
+            "id": "mixed-strength",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "mixed-occurrence",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[0].reps",
+            "value": 8,
+            "unit": "reps"
+          },
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[1].reps",
+            "value": 8,
+            "unit": "reps"
+          }
+        ]
+      },
+      {
+        "id": "derived:STRENGTH_EXTERNAL_VOLUME_KG_REPS:mixed-strength@1:1f69323",
+        "metric": "STRENGTH_EXTERNAL_VOLUME_KG_REPS",
+        "value": 320,
+        "unit": "kg·reps",
+        "formula": "sum(loadKg * reps); basis=TOTAL_EXTERNAL; grouped by catalog/version/side/range; no inferred hand multiplier",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 mixed-strength@1（occurrence mixed-occurrence；STRENGTH/strength）：back-squat TOTAL_EXTERNAL BILATERAL 外部负重次数积 320 kg·reps。",
+        "evidenceRefs": [
+          {
+            "id": "mixed-strength",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "mixed-occurrence",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[0].loadKg",
+            "value": 20,
+            "unit": "kg"
+          },
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[0].reps",
+            "value": 8,
+            "unit": "reps"
+          },
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[1].loadKg",
+            "value": 20,
+            "unit": "kg"
+          },
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "strengthSets[1].reps",
+            "value": 8,
+            "unit": "reps"
+          }
+        ]
+      },
+      {
+        "id": "derived:OCCURRENCE_COUNT:mixed-run@1+mixed-strength@1:19dkimb",
+        "metric": "OCCURRENCE_COUNT",
+        "value": 1,
+        "unit": "occurrences",
+        "formula": "countDistinct(confirmed training.occurrenceId); mixed components share one occurrence",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "截至 2026-10-19T12:00:00Z，已确认训练记录包含 1 个独立 occurrence；同课跑步和力量按同一 occurrence 计数。",
+        "evidenceRefs": [
+          {
+            "id": "mixed-run",
+            "revision": 1
+          },
+          {
+            "id": "mixed-strength",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "mixed-run",
+              "revision": 1
+            },
+            "field": "occurrenceId:mixed-occurrence",
+            "value": 1,
+            "unit": "occurrence-marker"
+          },
+          {
+            "ref": {
+              "id": "mixed-strength",
+              "revision": 1
+            },
+            "field": "occurrenceId:mixed-occurrence",
+            "value": 1,
+            "unit": "occurrence-marker"
+          }
+        ]
+      }
+    ],
+    "provenance": "OLD_RAW_MODEL_REPLY_VS_NEW_HOST_ARITHMETIC_NO_NEW_MODEL_ANSWER"
+  },
+  {
+    "caseId": "C04",
+    "arm": "B",
+    "label": "比赛日期锚点",
+    "before": "旧题写赛前7天，训练日与分析日相差一天。",
+    "metrics": [
+      "DAYS_TO_COMPETITION_FROM_ASOF",
+      "DAYS_TO_COMPETITION_FROM_TRAINING"
+    ],
+    "explanation": "10月26日距10月19日分析日7天，距10月18日训练日8天；这是输入版本缺陷，不记模型胜负。",
+    "sampleId": "47da0dd6-acfb-4af1-80f2-b59a8af7893c",
+    "oldRawAnswerSha256": "d09df1f3b75112b15d2f5626e067e2293a61d754ee58b401f822736e8a0987f2",
+    "oldRawAnswer": "{\"type\":\"json_object\",\"facts\":[{\"id\":\"F1\",\"revision\":1,\"text\":\"2026-10-18T10:00:00Z 完成4×1000米重复跑，各段用时238/240/241/240秒，组休120秒，共4000米，纯跑用时959秒。\",\"source\":\"S1\",\"status\":\"CONFIRMED/AVAILABLE\"},{\"text\":\"计划：4×1000米，目标240秒，休息120秒；教练意图保持节奏。\",\"source\":\"背景\",\"note\":\"计划不等于实际达成\"},{\"text\":\"实际类型未记录（UNKNOWN），RPE未记录，时长未记录，坡度/路面未记录。\",\"source\":\"F1\"},{\"text\":\"资料截止2026-10-19T12:00:00Z；比赛日2026-10-26，A级优先。\",\"source\":\"背景\"}],\"explanations\":[{\"text\":\"实际四段为238/240/241/240秒，围绕目标240秒波动（-2/0/+1/0秒），与“保持节奏”意图在数值上一致。\",\"evidenceRefs\":[\"F1\"],\"counterevidence\":[\"RPE未记录，无法确认主观强度是否稳定\",\"类型未记录，无法确认执行方式与原批准协议一致\"]},{\"text\":\"赛前7天完成4×1000米且组休120秒，总纯跑959秒，属于已确认的赛前重复跑负荷记录。\",\"evidenceRefs\":[\"F1\"],\"counterevidence\":[\"缺少热身、睡眠、HRV及24/48/72小时反馈，不能判断恢复状态\",\"无疼痛与功能信息，不能推断耐受良好\"]}],\"counterevidence\":[\"RPE未记录，不能以配速稳定替代主观负荷稳定\",\"类型未记录，不能断言完全按原批准协议执行\",\"缺少疼痛、睡眠、HRV及赛后反馈，不能推断恢复或医学许可\"],\"missing\":[\"当前是否疼痛、位置及是否影响动作\",\"原热身或日常功能表现\",\"睡眠记录\",\"HRV记录（不补零）\",\"RPE\",\"训练类型\",\"24/48/72小时反馈\"],\"observation\":\"已确认跑步4000米，纯跑959秒；四段238/240/241/240秒，组休120秒；轮次与间歇按原记录保留，不冒充整课用时。\",\"candidate\":{\"id\":\"C1\",\"action\":\"KEEP\",\"changedVariable\":\"NONE\",\"basisRefs\":[{\"id\":\"F1\",\"revision\":1}],\"reason\":\"现有证据不支持自动改变训练量\",\"executionState\":\"OBSERVATION_ONLY\",\"requiresConfirmation\":true},\"planChanged\":false}",
+    "newDeterministicFacts": [
+      {
+        "id": "derived:DAYS_TO_COMPETITION_FROM_ASOF:context:1m6qe96",
+        "metric": "DAYS_TO_COMPETITION_FROM_ASOF",
+        "value": 7,
+        "unit": "days",
+        "formula": "calendarDate(2026-10-26) - calendarDate(context.asOf=2026-10-19, timezone=UTC)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "比赛 2026-10-26 距分析日 2026-10-19（UTC） 7 个日历日。",
+        "evidenceRefs": [],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": null,
+          "providerScopes": []
+        },
+        "inputs": [],
+        "contextSources": [
+          {
+            "kind": "ANALYSIS_AS_OF",
+            "value": "2026-10-19T12:00:00Z",
+            "athleteId": "synthetic-A",
+            "asOf": "2026-10-19T12:00:00Z",
+            "version": "LOGIC_LOAD_1"
+          },
+          {
+            "kind": "COMPETITION_DATE",
+            "value": "2026-10-26",
+            "athleteId": "synthetic-A",
+            "asOf": "2026-10-19T12:00:00Z",
+            "version": "synthetic-approved-plan"
+          }
+        ]
+      },
+      {
+        "id": "derived:DAYS_TO_COMPETITION_FROM_TRAINING:s1@1:jiw39h",
+        "metric": "DAYS_TO_COMPETITION_FROM_TRAINING",
+        "value": 8,
+        "unit": "days",
+        "formula": "calendarDate(2026-10-26) - calendarDate(training.startedAt=2026-10-18, timezone=UTC)",
+        "formulaVersion": "FK_DERIVED_1",
+        "text": "2026-10-18 s1@1（occurrence s1；RUN/running）：比赛 2026-10-26 距训练日 8 个日历日。",
+        "evidenceRefs": [
+          {
+            "id": "s1",
+            "revision": 1
+          }
+        ],
+        "scope": {
+          "athleteId": "synthetic-A",
+          "asOf": "2026-10-19T12:00:00Z",
+          "occurrenceId": "s1",
+          "providerScopes": [
+            "[\"synthetic-A\",\"MANUAL\",null,null,\"same-hand-timing-200m-rest120\"]"
+          ]
+        },
+        "inputs": [
+          {
+            "ref": {
+              "id": "s1",
+              "revision": 1
+            },
+            "field": "startedAt.calendarDayIndex",
+            "value": 20744,
+            "unit": "calendar-day-index"
+          }
+        ],
+        "contextSources": [
+          {
+            "kind": "ANALYSIS_AS_OF",
+            "value": "2026-10-19T12:00:00Z",
+            "athleteId": "synthetic-A",
+            "asOf": "2026-10-19T12:00:00Z",
+            "version": "LOGIC_LOAD_1"
+          },
+          {
+            "kind": "COMPETITION_DATE",
+            "value": "2026-10-26",
+            "athleteId": "synthetic-A",
+            "asOf": "2026-10-19T12:00:00Z",
+            "version": "synthetic-approved-plan"
+          }
+        ]
+      }
+    ],
+    "provenance": "OLD_RAW_MODEL_REPLY_VS_NEW_HOST_ARITHMETIC_NO_NEW_MODEL_ANSWER"
+  }
+]

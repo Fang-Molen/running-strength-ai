@@ -273,6 +273,7 @@ test("an in-flight online answer is rejected after a new profile restriction is 
   });
   const pending = askOnlineCoach({
     question: "只解释已有事实",
+    snapshotRef: { snapshotId: "synthetic-r5", consentId: "synthetic-r5", asOf: new Date().toISOString() },
     facts: "当前资料未完整确认",
     local: "",
     history: [],
@@ -280,7 +281,7 @@ test("an in-flight online answer is rejected after a new profile restriction is 
   const c = proposal("身体限制：医生要求暂停跑步");
   await decideR5Command(c.id, "ACCEPT", at);
   release(
-    new Response(JSON.stringify({ text: "这段说明依据此前的记录。" }), {
+    new Response(JSON.stringify({ text: "这段说明依据此前的记录。", ok: true, planChanged: false }), {
       status: 200,
       headers: { "content-type": "application/json" },
     }),

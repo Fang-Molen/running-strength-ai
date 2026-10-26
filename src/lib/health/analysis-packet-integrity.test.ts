@@ -96,15 +96,16 @@ test('embedded private aliases roundtrip without replacing ordinary prose or ali
  assert.equal(restored.answer,host.text)
 })
 
-test('model DTO removes repeated candidate boilerplate while retaining facts and safety/missing provenance',()=>{
+test('model DTO retains candidate conditions alongside facts and safety/missing provenance',()=>{
  const p=fromFixture('E01',{question:'三次历史课与最新课稳定性对照'}),view=analysisModelView(p).view
  assert.equal(view.facts.length,4)
  assert.equal(view.asOf,p.context.asOf)
  assert.ok(view.facts.every((x:any)=>x.sourceAsOf))
  assert.deepEqual(view.safetyConstraints,[])
  assert.ok(view.missing.length)
- assert.equal('conditions' in view.candidates[0],false)
- assert.ok(JSON.stringify(view).length<JSON.stringify(p).length*.5)
+ assert.deepEqual(view.candidates[0].conditions,p.assessment.candidates[0].conditions)
+ assert.equal(view.candidates[0].requiresConfirmation,true)
+ assert.ok(JSON.stringify(view).length<JSON.stringify(p).length)
 })
 
 test('binding an actual question adds existing raw evidence requirements to a legacy packet',()=>{

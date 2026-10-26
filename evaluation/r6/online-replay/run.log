@@ -1,0 +1,32 @@
+{
+  "command": "offline saved-response replay",
+  "mode": "OFFLINE_SAVED_ARTIFACTS_ONLY",
+  "networkGuard": "no-network.mjs loaded; fetch/http/https/net/tls outbound disabled",
+  "newModelCalls": 0,
+  "budgetLedgerOpened": false,
+  "budgetLedgerReset": false,
+  "operatorInstantiated": false,
+  "providerClientInstantiated": false,
+  "summary": {
+    "savedReplies": 26,
+    "distinctCases": 12,
+    "schemaRejected": 26,
+    "parseFailures": 1,
+    "transportTruncations": 1,
+    "contentRejected": 26,
+    "criticalEventDenominator": 14,
+    "criticalEventsDetected": 13,
+    "criticalEventsMissed": 1,
+    "eventDetectionFraction": "13/14",
+    "negativeControlDenominator": 6,
+    "negativeControlFailures": 0,
+    "knownDiagnosticFalsePositiveFindings": 6,
+    "adjudicatedNumericFalsePositives": 0,
+    "adjudicatedFalseMissingFalsePositives": 0,
+    "confirmedNumericClaimOccurrences": 2,
+    "unresolvedNumericFindings": 0,
+    "professionalCorrectness": "NOT_PROVEN",
+    "schemaRejectionIsDetectionMetric": false
+  },
+  "groundTruthSha256": "4089f8e13ef6e025668c0362d8e8bc0a1811ceff0a6ecc548282b2c4b1991e6f"
+}

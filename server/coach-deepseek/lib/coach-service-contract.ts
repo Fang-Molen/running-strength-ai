@@ -18,6 +18,8 @@ export type AuthorizedCoachSnapshot = {
   rawInput: AskCoachRawInput;
   /** Constructed and minimized by the trusted host after consent; never accepted from request JSON. */
   analysisPacket?: CoachAnalysisPacket;
+  /** Optional scientific decision reconstructed by the same trusted snapshot loader. */
+  r6Decision?: import('./coach-r6-handoff').R6ScientificDecision;
 };
 export type LedgerBinding = { requestId: string; ownerId: string; contextHash: string; modelHash: string; configHash: string };
 export type CoachLedgerCaps = {

@@ -49,13 +49,18 @@ export function assertDeepSeekNumericGrounding(data: AskCoachData, raw: string):
   if (typeof completion.text !== 'string' || !Array.isArray(completion.citations)) throw new Error('INVALID_COMPLETION')
   const cited = new Set(completion.citations.filter((id): id is string => typeof id === 'string'))
   const briefs: CoachBrief[] = data.series ? data.series.points.map(p => p.brief) : data.compare ? [data.compare.left, data.compare.right] : [data.brief]
-  const valid = briefs.flatMap(brief => (brief.sources ?? []).filter(source => cited.has(source.id) && source.kind !== 'CONTEXT').flatMap(source => quantities(source.detail)))
-  const text = [completion.text, typeof completion.nextStep === 'string' ? completion.nextStep : ''].join('\n')
+  const sources = briefs.flatMap(brief => (brief.sources ?? []).filter(source => cited.has(source.id) && source.kind !== 'CONTEXT'))
+  const valid = sources.flatMap(source => quantities(source.detail))
+  let text = [completion.text, typeof completion.nextStep === 'string' ? completion.nextStep : ''].join('\n')
+  // Complete source statements include structural labels (e.g. 结构1) as well
+  // as quantities. Their exact source binding is stronger than lexical parsing.
+  for (const source of sources) if (source.detail.trim()) text = text.split(source.detail.trim()).join(' ')
   for (const claim of quantities(text, true)) if (!valid.some(value => same(value, claim))) throw new Error(`UNVERIFIED_MODEL_QUANTITY:${claim.kind}`)
 }
 
-/** Stronger server boundary: numeric statements must be verbatim excerpts of a
+/** Stronger server boundary: numeric statements must quote a complete statement from a
  * cited actual/derived source. A correct number from another source is insufficient.
+ * Partial numeric excerpts would allow moving a work duration into a rest or dose claim.
  * This does not certify the scientific interpretation of nonnumeric prose. */
 export function assertDeepSeekEvidenceQuotes(data:AskCoachData,raw:string):void{
  const c=JSON.parse(raw) as {text:string;nextStep?:string|null;citations:string[];evidenceQuotes?:{sourceId:string;quote:string}[]}
@@ -66,7 +71,7 @@ export function assertDeepSeekEvidenceQuotes(data:AskCoachData,raw:string):void{
  for(const claim of claims){
   if(!claim||Object.keys(claim).some(k=>!['sourceId','quote'].includes(k))||typeof claim.quote!=='string'||!claim.quote.trim()||claim.quote.length>1000||!c.citations.includes(claim.sourceId))throw Error('INVALID_EVIDENCE_QUOTE')
   const sources=briefs.flatMap(b=>b.sources??[]).filter(s=>s.id===claim.sourceId&&s.kind!=='CONTEXT')
-  if(!sources.length||!sources.every(s=>s.detail.includes(claim.quote))||!remaining.includes(claim.quote))throw Error('SOURCE_QUOTE_MISMATCH')
+  if(!sources.length||!sources.every(s=>s.detail.trim()===claim.quote)||!remaining.includes(claim.quote))throw Error('SOURCE_QUOTE_MISMATCH')
   remaining=remaining.split(claim.quote).join(' ')
  }
  if(quantities(remaining,true).length)throw Error('UNBOUND_NUMERIC_CLAIM')
