@@ -1,0 +1,43 @@
+✔ A08 live U11 host retains mixed run plus strength and detailed actuals (35.266441ms)
+✔ A23 source correction updates health and coach while frozen earlier view stays unchanged (45.182076ms)
+✔ A14 medical hold retains numeric recovery facts instead of stale warning only (17.830716ms)
+✔ A27 partial food entry is logged energy, never full-day deficit; analysis read does not write (4.438019ms)
+✔ A31 late COROS response is dropped after athlete switch, no cache contamination (28.389645ms)
+✔ A31 revocation during request rejects response even if server response arrives (1.251307ms)
+✔ analysis material revision stays stable across rereads to prevent history refresh loops (3.870919ms)
+✔ legacy event without commit time stays outside frozen analysis and records a gap (2.551018ms)
+✔ C27 V4 mixed host keeps actual occurrence, not plan date alias (6.886512ms)
+✔ C28 VOID immediately invalidates host projections without deleting stored events (7.700526ms)
+✔ C29 pain with unknown muscle location is still a safety hold (1.725676ms)
+✖ C03 retained last-year activity can be selected without becoming current fatigue or mixing owners (12.641688ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 177.014015
+
+✖ failing tests:
+
+test at src/lib/health/analysis-integration.test.ts:87:1
+✖ C03 retained last-year activity can be selected without becoming current fatigue or mixing owners (12.641688ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(answer.selectedFacts.some(f => f.kind === 'TRAINING' && f.occurrenceId === 'older'))
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-integration.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

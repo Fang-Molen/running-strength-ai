@@ -1,0 +1,20 @@
+
+> test:r188
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-r188.test.ts src/lib/core/coach-claim-revision.test.ts src/lib/core/coach-decision-calibration.test.ts src/lib/core/coach-p7-evaluation.test.ts src/lib/core/coach-p7-knowledge.test.ts src/lib/core/coach-p7-r187.test.ts src/lib/core/coach-p7-r7.test.ts src/lib/core/coach-r185-p0.test.ts
+
+✔ src/lib/core/coach-claim-revision.test.ts (515.831745ms)
+✔ src/lib/core/coach-decision-calibration.test.ts (508.99523ms)
+✔ src/lib/core/coach-p7-evaluation.test.ts (517.664835ms)
+✔ src/lib/core/coach-p7-knowledge.test.ts (547.217142ms)
+✔ src/lib/core/coach-p7-r187.test.ts (610.061848ms)
+✔ src/lib/core/coach-p7-r7.test.ts (605.910733ms)
+✔ src/lib/core/coach-r185-p0.test.ts (3624.195657ms)
+✔ src/lib/core/coach-r188.test.ts (3662.258345ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4802.142498

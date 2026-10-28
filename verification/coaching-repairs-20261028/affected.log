@@ -1,0 +1,40 @@
+✔ server/coach-deepseek/online-v2.test.ts (13867.801705ms)
+✔ src/lib/coach/cycle/adaptive-import.test.ts (3186.970235ms)
+✖ src/lib/coach/cycle/adaptive.test.ts (4275.7609ms)
+✖ src/lib/coach/cycle/cycle.test.ts (1848.103565ms)
+✖ src/lib/coach/cycle/event-selection.test.ts (1545.571502ms)
+✔ src/lib/coach/cycle/host.test.ts (4179.555975ms)
+✔ src/lib/coach/cycle/lock.test.ts (947.949407ms)
+✔ src/lib/coach/cycle/portrait-evidence.test.ts (1578.123387ms)
+✔ src/lib/coach/cycle/request.test.ts (1490.172866ms)
+✖ src/lib/coach/cycle/review-findings.test.ts (3360.987694ms)
+✔ src/lib/coach/cycle/stage-evidence.test.ts (1840.554688ms)
+✔ src/lib/coach/loop/loop.test.ts (937.284161ms)
+✔ src/lib/ui/coach-evidence-display.test.ts (504.383799ms)
+✔ src/lib/ui/training-activity-dose.test.ts (1310.037421ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 10
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13944.057809
+
+✖ failing tests:
+
+test at src/lib/coach/cycle/adaptive.test.ts:1:1
+✖ src/lib/coach/cycle/adaptive.test.ts (4275.7609ms)
+  'test failed'
+
+test at src/lib/coach/cycle/cycle.test.ts:1:1
+✖ src/lib/coach/cycle/cycle.test.ts (1848.103565ms)
+  'test failed'
+
+test at src/lib/coach/cycle/event-selection.test.ts:1:1
+✖ src/lib/coach/cycle/event-selection.test.ts (1545.571502ms)
+  'test failed'
+
+test at src/lib/coach/cycle/review-findings.test.ts:1:1
+✖ src/lib/coach/cycle/review-findings.test.ts (3360.987694ms)
+  'test failed'

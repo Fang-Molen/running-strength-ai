@@ -1,4 +1,5 @@
-import {coachImports} from '@/lib/core/coach-import-evidence'
+import { activityDose, type ActivityMember } from './activity-dose'
+import {coachImports,effectiveImportedTraining} from '@/lib/core/coach-import-evidence'
 import { activityLocalDay } from './activity-format'
 import { planDays, planTag, planPrefix } from '../plan/active-plan'
 import {garminViewKey} from '@/lib/health/garmin-view-scope'
@@ -21,21 +22,26 @@ import { legacyQuickAudit, type LegacyQuickAudit } from './quick-log-save'
 import { v4ExecFrom, type V4Exec } from './v4-exec';
 import { mdCN } from './makeup';
 export type RowSource = 'execution' | 'phone' | 'import' | 'garmin'
-export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents; /** v83：V4 当天课的分项事实投影（唯一口径：首页/计划/日志/方坤共用） */ v4?: V4DayFact & { date: string }; /** v83：合并进这一条的原始记录（各自来源/项目/时长），用于分项时长与追溯 */ members?: { id: string; source: RowSource; sport: LoggedSession['sport']; durationSec: number | null; status?: 'completed' | 'incomplete' }[]; /** v83：有分项缺时长，durationSec 只是已知部分之和 */ durationPartial?: boolean; /** v83：记一笔（计划外）生成 */ quickLog?: boolean; /** v87.2：补练/提前练——这条是 V4 计划 makeupOf 那天的分项，实际在本条日期做 */ makeupOf?: string; /** v83：数据口径说明（如“用时未知（旧版本可能填了默认 30 分钟）”） */ note?: string };
+export type ActivityRow = LoggedSession & { startedAt: string; source: RowSource; originIds: string[]; /** v77：completed=已完成；incomplete=已记录未完成（改了组数/开始了但没点完成） */ status?: 'completed' | 'incomplete'; timeUnknown?: boolean; appMade?: boolean; /** 来自 V4 计划记录 */ plan?: 'v4'; /** v76 显示用（只读） */ title?: string; avgHr?: number | null; garminId?: number | string; importId?: string; occurrenceId?: string; sources?: RowSource[]; /** v79：关联的计划跑步课（日程或 V4 跑步部分），同一条记录 */ runLink?: { entryId: string; title: string; by: 'auto' | 'user' }; /** v79：V4 分项反馈（fk-plan400-v4-components-v1） */ v4parts?: DayComponents; /** v83：V4 当天课的分项事实投影（唯一口径：首页/计划/日志/方坤共用） */ v4?: V4DayFact & { date: string }; /** v83：合并进这一条的原始记录（各自来源/项目/时长），用于分项时长与追溯 */ members?: ActivityMember[]; runningDurationSec?: number | null; runningDistanceM?: number | null; measurementNote?: string; endedAt?: string; /** v83：有分项缺时长，durationSec 只是已知部分之和 */ durationPartial?: boolean; /** v83：记一笔（计划外）生成 */ quickLog?: boolean; /** v87.2：补练/提前练——这条是 V4 计划 makeupOf 那天的分项，实际在本条日期做 */ makeupOf?: string; /** v83：数据口径说明（如“用时未知（旧版本可能填了默认 30 分钟）”） */ note?: string };
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
 const day = (iso: string) => activityLocalDay(iso);
 function sameActivity(a: ActivityRow, b: ActivityRow) {
   if (a.originIds.some(id => b.originIds.includes(id))) return true;
   return false; // Coincident time/distance do not establish shared identity or protocol.
 }
-const memberOf = (r: ActivityRow) => ({ id: r.id, source: r.source, sport: r.sport, durationSec: r.durationSec, status: r.status })
+const memberOf = (r: ActivityRow): ActivityMember => ({ id: r.id, source: r.source, sport: r.sport, durationSec: r.durationSec, distanceM: r.distanceM, originIds: [...r.originIds], startedAt: r.timeUnknown ? undefined : r.startedAt, endedAt: r.endedAt, status: r.status })
+function applyActivityDose(row: ActivityRow) {
+  if (!row.members?.length) return
+  Object.assign(row, activityDose(row.members))
+  if (row.members.some(m => m.sport === 'RUNNING')) row.distanceM = row.runningDistanceM ?? null
+}
 /** Conservative read-only deduplication. A shared date or title never identifies an activity. */
 export function mergeActivities(rows: ActivityRow[]): ActivityRow[] {
   const result: ActivityRow[] = [], rank: Record<RowSource, number> = { execution: 0, phone: 1, import: 2, garmin: 3 };
   for (const row of [...rows].sort((a, b) => rank[a.source] - rank[b.source])) {
     const found = result.find(r => sameActivity(r, row));
     if (found) {
-      found.members = [...(found.members ?? []), memberOf(row)];
+      found.members = [...(found.members ?? []), ...(row.members ?? [memberOf(row)])];
       found.originIds = [...new Set([...found.originIds, ...row.originIds])]; found.sources = [...new Set([...(found.sources ?? [found.source]), row.source])];
       if (!found.title || /佳明账号同步|^力量训练$/.test(found.title)) found.title = row.title || found.title
       found.avgHr ??= row.avgHr; found.garminId ??= row.garminId; found.importId ??= row.importId; found.occurrenceId ??= row.occurrenceId
@@ -43,14 +49,13 @@ export function mergeActivities(rows: ActivityRow[]): ActivityRow[] {
       else if (found.sport !== row.sport && found.sport !== 'MIXED') found.sport = 'MIXED' // v81：同一节的跑步分段＋逐组力量 = 一条；v83：任何来源合并出两种项目都如实标“跑+力量”，不让一项盖掉另一项
       if (row.status === 'completed') found.status = 'completed'; if (row.appMade) found.appMade = true; if (found.timeUnknown && !row.timeUnknown && row.date === found.date) { found.startedAt = row.startedAt; found.timeUnknown = false }
       found.distanceM ??= row.distanceM; found.rpe ??= row.rpe; found.sets ??= row.sets
-      // v83：不同项目的分项各有时长 → 已知部分相加（缺的标“部分”）；同一项目的多来源 = 同一次活动，取第一条有值的
-      if (row.sport !== found.members![0].sport && row.durationSec != null && found.durationSec != null && !found.v4) { found.durationSec += row.durationSec } else found.durationSec ??= row.durationSec
+      // Quantities are resolved from all original members below, using identity and timing.
       continue;
     }
-    result.push({ ...row, originIds: [...row.originIds], sources: [row.source], members: [memberOf(row)] });
+    result.push({ ...row, originIds: [...row.originIds], sources: row.sources ?? [row.source], members: row.members ?? [memberOf(row)] });
   }
   // v83：并入 V4 投影的那一条，项目/状态/时长按分项事实重算（“合并里有一条完成”不等于整课完成）
-  for (const r of result) if (r.v4) applyV4Fact(r, r.v4)
+  for (const r of result) { applyActivityDose(r); if (r.v4) applyV4Fact(r, r.v4) }
   return result.sort((a, b) => a.startedAt.localeCompare(b.startedAt));
 }
 export function activityWeeks(rows: LoggedSession[], today: string, weeks = 4) {
@@ -89,7 +94,7 @@ export function loadTrainingActivities(): ActivityRow[] {
     const incomplete = o.lifecycle === 'IN_PROGRESS' || !isRun && doneCount < 1;
     const elapsed = o.endedAt ? (Date.parse(o.endedAt) - Date.parse(o.startedAt)) / 1000 : null;
     const totals = runningActualTotals(run);
-    rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
+    rows.push({ id: o.trainingOccurrenceId, startedAt: o.startedAt, endedAt: o.endedAt ?? undefined, date: day(o.startedAt)!, sport: isRun ? 'RUNNING' : 'STRENGTH', distanceM: isRun ? totals.distanceM : null, durationSec: isRun ? totals.durationSec : elapsed != null && Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null,
       strengthVolumeKg: isRun ? null : own.volumeKg,
       sets: isRun ? null : fact?.completedSetCount ?? null, rpe: null, source: 'execution', originIds: [o.trainingOccurrenceId, ...(o.planSlotId ? [`sched:${o.planSlotId}`] : []), ...(/^plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(0, 18)] : []), ...(/^scheduled:plan400:\d{4}-\d\d-\d\d/.test(o.planSlotId ?? '') ? [o.planSlotId!.slice(10, 28), `sched:${o.planSlotId!.slice(10).replace(/:run$/, '')}`] : [])], occurrenceId: o.trainingOccurrenceId, status: incomplete ? 'incomplete' : 'completed', title: o.sessionId ? sessionTitle(o.sessionId) : undefined });
     detachMakeup(rows[rows.length - 1], o.planSlotId);
@@ -97,7 +102,8 @@ export function loadTrainingActivities(): ActivityRow[] {
   // v83（P0-03）：旧版本记一笔的默认用时，读时如实改成“未知”（不改存储）
   let qa = new Map<string, LegacyQuickAudit>()
   try { qa = legacyQuickAudit(JSON.parse(localStorage.getItem('fk-schedule-v1') ?? '{}')?.entries ?? [], JSON.parse(localStorage.getItem('fk-notes-v1') ?? '[]')) } catch { /* 无日程/笔记 */ }
-  for (const x of coachImports().filter(x=>!occurrenceVoided(x.confirmedImportId))) {
+  for (const raw of coachImports().filter(x=>!occurrenceVoided(x.confirmedImportId))) {
+    const x=effectiveImportedTraining(raw).record;
     if (!x.occurredAt.value || !day(x.occurredAt.value)) continue;
     const sets = x.strengthSets.filter(s => s.completion === 'COMPLETED');
     const identity = typeof x.sourceRecordIdentity === 'string' ? [x.sourceRecordIdentity] : [];
@@ -196,9 +202,7 @@ export function applyV4Fact(row: ActivityRow, f: V4DayFact & { date: string }) {
   // 手表实测的跑步（已关联）是真实发生的训练：这一条计入次数/距离（V4 分项状态仍是“有记录·未标完成”，不等于跑步完成）
   const measured = (row.members ?? []).some(m => m.source === 'garmin' && m.status !== 'incomplete') || row.source === 'garmin'
   row.status = (f.overall === 'done' || f.overall === 'reduced') && (!f.madeUp || !f.madeUp.running && !f.madeUp.strength) || partDone || measured ? 'completed' : 'incomplete'
-  const ms = (row.members ?? []).filter(m => m.source !== 'phone' || m.durationSec != null)
-  const known = ms.filter(m => m.durationSec != null)
-  if (ms.length > 1) { row.durationSec = known.length ? known.reduce((s, m) => s + m.durationSec!, 0) : null; row.durationPartial = known.length > 0 && known.length < ms.length }
+  applyActivityDose(row)
   const tag = f.legacyOverall ? '（历史整课）' : f.combo && f.overall !== 'done' && f.overall !== 'skipped' && (f.actualRun || f.actualLift) ? `（${f.actualRun && f.running?.state !== 'partial' ? '跑步完成' : f.actualRun ? '跑步有记录' : '跑步' + (f.running?.state === 'skipped' ? '跳过' : '待补')}／${f.actualLift && f.strength?.state !== 'partial' ? '力量完成' : f.actualLift ? '力量有记录' : '力量' + (f.strength?.state === 'skipped' ? '跳过' : '待补')}）` : ''
   const pd = planDays().find(x => x.date === f.date)
   const mk = [f.madeUp?.running ? `跑步${f.madeUp.running > f.date ? '补练于' : '提前于'} ${mdCN(f.madeUp.running)}` : '', f.madeUp?.strength ? `力量${f.madeUp.strength > f.date ? '补练于' : '提前于'} ${mdCN(f.madeUp.strength)}` : ''].filter(Boolean).join('，')

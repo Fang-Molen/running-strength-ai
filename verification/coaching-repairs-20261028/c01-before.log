@@ -1,0 +1,37 @@
+✔ one reference day is descriptive rather than an established personal baseline (41.783679ms)
+✔ a device change creates a separate reference instead of borrowing the former watch baseline (15.358809ms)
+✔ a trained cycle background is not silently assigned to every sport (16.979226ms)
+✖ C01 separately confirmed running and strength experience stay separate from measured capability (13.853516ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 96.859782
+
+✖ failing tests:
+
+test at src/lib/coach/cycle/portrait-evidence.test.ts:40:1
+✖ C01 separately confirmed running and strength experience stay separate from measured capability (13.853516ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'NOT_SEPARATELY_CONFIRMED'
+  - 'TRAINED'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/portrait-evidence.test.ts:45:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'NOT_SEPARATELY_CONFIRMED',
+    expected: 'TRAINED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

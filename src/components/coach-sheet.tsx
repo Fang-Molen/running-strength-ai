@@ -1,3 +1,5 @@
+import { contextRecordQuote } from '@/lib/coach/online-contract'
+import type { OnlineConversationTurn } from '@/lib/coach/online-handoff';
 import { cycleRequestFromText } from '@/lib/coach/cycle/request';
 import { CoachCyclePanel } from '@/components/coach-cycle-panel';
 import { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';
@@ -87,6 +89,7 @@ import type { CoachFuel } from "@/lib/core/coach-fuel";
 import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";
 import type { Plan } from "@/lib/strength/model";
 import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";
+import { readOnlineContext, onlineContextNeeds } from '@/lib/coach/online-context';
 import { CoachOnlineRequest } from "./coach-online-request";
 import { CoachOnlineAnswerStatus } from "./coach-online-answer-status";
 import { syncOnlineAuthorization } from "@/lib/coach/online-session";
@@ -195,10 +198,10 @@ export function CoachSheet({
     return ()=>{unsubscribe();window.removeEventListener('storage', onStorage)};
   },[]);
   const [sending, setSending] = useState(false);
-  const [onlineRequests, setOnlineRequests] = useState<{id:string;question:string;owner:string;selectedTrainingIds?:readonly string[]}[]>([]);
+  const [onlineRequests, setOnlineRequests] = useState<{id:string;question:string;owner:string;selectedTrainingIds?:readonly string[];conversation:OnlineConversationTurn[]}[]>([]);
   const queueOnline = (question:string,owner:string,selectedTrainingIds:readonly string[]=[]) => {
     if (!onlineSetting().on) return;
-    setOnlineRequests(items => [...items, {id:crypto.randomUUID(),question,owner,selectedTrainingIds:[...selectedTrainingIds]}]);
+    setOnlineRequests(items => [...items, {id:crypto.randomUUID(),question,owner,selectedTrainingIds:[...selectedTrainingIds],conversation:memory?.athleteId===owner?memory.messages.filter(m=>!m.purpose).slice(-4).map(m=>({role:m.role,text:m.text})):[]}]);
   };
   const [activityNotices, setActivityNotices] = useState<CoachActivityNotice[]>([]);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
@@ -364,7 +367,19 @@ export function CoachSheet({
     const athleteId = memory.athleteId;
     if (currentAthleteId() !== athleteId) return;
 
-    const selectedIds = /比较|对比/.test(value) && compareA && compareB ? [compareA,compareB] : /纵向|趋势|这几节/.test(value) && seriesIds.length>=3 ? seriesIds : (isReviewAsk(value)||/这节|这次训练/.test(value)) && link!=='unbound' && selectedOccurrenceId ? [selectedOccurrenceId] : [];
+    let selectedIds = /比较|对比/.test(value) && compareA && compareB ? [compareA,compareB] : /纵向|趋势|这几节/.test(value) && seriesIds.length>=3 ? seriesIds : link!=='unbound' && selectedOccurrenceId ? [selectedOccurrenceId] : [];
+    if(selectedIds.length>1) {
+      const at=new Date().toISOString(),day=localDayOf(at);
+      try {
+        const selected=readOnlineContext(value,day,at,undefined,selectedIds);
+        const records=selected.context.records.filter(r=>r.category==='TRAINING'||r.category==='STRENGTH');
+        const reply=['【本地对比】','按你选择的训练分别核对；单次差异不能证明能力进步或因果，未修改计划。',...records.map(contextRecordQuote),...selected.context.coverage.unknowns].join('\n');
+        const id=crypto.randomUUID();
+        setMemory(current=>current?.athleteId===athleteId?{...current,messages:[...current.messages,{id:id+'-user',role:'user' as const,text:value},{id:id+'-comparison',role:'coach' as const,text:reply,onlineBasis:{owner:athleteId,question:value,day,sourceVersion:selected.sourceVersion,selectedTrainingIds:[...selectedIds]}}].slice(-40)}:current);
+        setDraft('');setNotice('');queueOnline(value,athleteId,selectedIds);
+      } catch {setNotice('所选训练暂不可核对，请保留选择后重试；原记录和计划未改变。')}
+      return;
+    }
     const r5 = prepareR5Command(value);
     const cycleRequest=cycleRequestFromText(value);
     if(r5.kind==='NONE' && cycleRequest) {
@@ -418,7 +433,8 @@ export function CoachSheet({
       }
       if (linkedAct) { linkedLaps = cachedLaps(linkedAct.id); if (!linkedLaps && /run|track|treadmill/.test(linkedAct.type) && navigator.onLine) { const l = await fetchLaps(Number(linkedAct.id)).catch(() => null); if (l) { linkedLaps = l; saveLaps(linkedAct.id, l); } } }
     }
-    const reviewOccurrence = (explicitlyReviewsRecord(value) || reviewAsk) ? effectiveSelected : null;
+    if(selectedIds.length<=1&&link!=='unbound'&&effectiveSelected)selectedIds=[effectiveSelected];
+    const reviewOccurrence = link!=='unbound' && onlineContextNeeds(value,selectedIds).personal ? effectiveSelected : null;
     const recordOccurrence = isNativeRecordInspection(value) ? effectiveSelected : reviewOccurrence;
     if (currentAthleteId() !== athleteId) return;
     const asOf = new Date().toISOString();
@@ -521,7 +537,7 @@ export function CoachSheet({
   const statusLine = !memory || (memory.notes.length === 0 && memory.fatigue === 20 && memory.messages.every((item) => item.role !== "user" || item.purpose === "KNOWLEDGE_READING")) ? "方坤本地常驻 · 公开知识参考可选 · 大模型需服务端授权" : "训练反馈已保留 · 恢复状态待评估";
 
   return (
-    <div className={embedded ? "fk-coach-sheet flex min-h-0 flex-1 flex-col px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "fixed inset-0 z-30 flex flex-col bg-bg"}>
+    <div className={embedded ? "fk-coach-sheet flex min-h-0 min-w-0 flex-1 flex-col px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "fixed inset-0 z-30 flex flex-col bg-bg"}>
       {/* R6：头像、状态和三段切换合成一行紧凑顶栏，把高度让给对话区 */}
       <div className={"fk-coach-bar flex items-center gap-2 pb-1 pt-0.5" + (embedded ? "" : " px-4")}>
         <CoachAvatar theme={section === 'learn' ? 'classic' : characterTheme} mood={petMoodFromChat({ sending, messages: memory?.messages })} title={`方坤 · ${statusLine} · ${connectivity}`}
@@ -598,7 +614,7 @@ export function CoachSheet({
               <button key={chip} type="button" onClick={() => void send(chip)} disabled={sending} className="min-h-9 max-w-full whitespace-normal rounded-full border border-line px-3 py-2 text-left text-xs">{chip}</button>
             ))}
           </div>
-          <p className="mt-2">普通问答默认本地运行，最近8轮用户对话可用于补充上下文；不会自动修改训练计划。线上大模型仅在主动申请时使用。</p>
+          <p className="mt-2">本地分析保留；联网分析开启时，提问会自动尝试发送相关资料和近期对话。是否成功以本轮状态为准；正式计划仍需预览确认。</p>
         </details>
         {athlete && screen ? (
           <details data-testid="coach-analysis" className="rounded-card border border-line bg-surface p-3">
@@ -641,7 +657,7 @@ export function CoachSheet({
             {screen.decision?.readiness === "READY" && athlete.recovery.sleep == null ? (
               <p className="text-sm">规则分析给出 READY。没有睡眠记录，不能把它看成恢复正常。决策结果没有在这页被改掉。核心待修复项：证据不足时引擎仍可能返回 READY。</p>
             ) : null}
-            <p className="text-xs text-muted">下面分开显示：已确认训练事实、可追溯的规则分析、证据不足、尚未接入的能力。模型回答仍未开放，不会用固定话术冒充。</p>
+            <p className="text-xs text-muted">下面分开显示：已确认训练事实、可追溯的规则分析、证据不足、尚未接入的能力。联网解释是否可用以服务状态为准；这里保留本机可核对的分析。</p>
             {screen.decision && screen.planned ? (
               <DecisionCard
                 decision={screen.decision}
@@ -759,7 +775,7 @@ export function CoachSheet({
               }
             >
               {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
-              {message.r4Basis&&message.id.endsWith("-r4-refresh")?<p data-testid="r4-coach-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'&&(message.id.endsWith('-learning')||message.id.endsWith('-online'))?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
+              {message.r4Basis&&message.id.endsWith("-r4-refresh")?<p data-testid="r4-coach-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'&&message.id.endsWith('-learning')?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
               {message.onlineBasis&&<CoachOnlineAnswerStatus basis={message.onlineBasis}/>}
               {message.r4Basis?<R4AnswerStatus basis={message.r4Basis} onRefresh={a=>setMemory(current=>current?.athleteId===a.athleteId?{...current,messages:[...current.messages,{id:`${Date.now()}-r4-refresh`,role:'coach' as const,text:a.text,r4Basis:{question:a.question,day:a.day,athleteId:a.athleteId,version:a.basisVersion}}].slice(-40)}:current)}/>:null}
               {message.supplement?<div data-testid="coach-supplement" className="mt-2 whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-2 text-sm leading-relaxed">{message.supplement}</div>:null}
@@ -778,9 +794,10 @@ export function CoachSheet({
         </div>
       </div>
       {behind && section === "chat" ? <button type="button" className="relative z-10 -mt-11 mb-1 min-h-11 shrink-0 self-center rounded-full border border-line bg-surface px-4 text-sm font-bold shadow" onClick={jumpLatest}>↓ 回到最新</button> : null}
-      <div hidden={section !== "chat"} className={"min-h-0 max-h-[50dvh] shrink-0 overflow-y-auto " + (embedded ? "pt-1" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
+      <div hidden={section !== "chat"} className={"min-h-0 min-w-0 max-h-[50dvh] shrink-0 flex flex-col " + (embedded ? "pt-1" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
+        <div data-testid="coach-options-scroll" className="min-h-0 min-w-0 overflow-y-auto overflow-x-hidden">
         {activityNotices.length ? <div className="mb-2 rounded-card border border-line p-2 text-xs" aria-live="polite"><div className="flex justify-between gap-2"><strong>方坤 · 本次打开期间的活动</strong><button type="button" onClick={() => setActivityNotices([])}>清除提示</button></div>{activityNotices.map(item => <p key={item.id} className="mt-1">{item.message}</p>)}</div> : null}
-        {onlineRequests.map(request => <CoachOnlineRequest key={request.id} question={request.question} owner={request.owner} selectedTrainingIds={request.selectedTrainingIds} disabled={isOnline === false || !onlineOn} onNotice={setNotice} onDismiss={() => setOnlineRequests(items=>items.filter(item=>item.id!==request.id))} onAnswer={(text,owner,source,unverified,basis)=>setMemory(current=>current?.athleteId===owner?{...current,messages:[...current.messages,{id:`${request.id}-online`,role:'coach' as const,text:`【${source==='MODEL'?'联网模型解释 · 未进行网页检索':'规则分析 · 未调用模型'}】\n${text}`,onlineBasis:basis}].slice(-40)}:current)} />)}
+        {onlineRequests.map(request => <CoachOnlineRequest key={request.id} question={request.question} owner={request.owner} selectedTrainingIds={request.selectedTrainingIds} conversation={request.conversation} disabled={isOnline === false || !onlineOn} onNotice={setNotice} onDismiss={() => setOnlineRequests(items=>items.filter(item=>item.id!==request.id))} onAnswer={(text,owner,source,unverified,basis)=>setMemory(current=>current?.athleteId===owner?{...current,messages:[...current.messages,{id:`${request.id}-online`,role:'coach' as const,text:`【${source==='MODEL'?'联网模型解释 · 未进行网页检索':'规则分析 · 未调用模型'}】\n${text}`,onlineBasis:basis}].slice(-40)}:current)} />)}
         {notice ? <p data-testid="coach-request-notice" role="status" className="mb-2 text-xs leading-relaxed">{notice}</p> : null}
         {retryQuestion ? (
           <button type="button" className="mb-2 h-11 rounded-card border border-line px-3 text-sm" disabled={sending} onClick={() => void send(retryQuestion, true)}>
@@ -796,7 +813,7 @@ export function CoachSheet({
           </div>
         ) : null}
         <div className="fk-coach-dock flex flex-wrap items-center gap-1.5">
-        <details data-testid="coach-status-row" className="fk-coach-status shrink-0 rounded-full border border-line text-xs"><summary className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 px-2.5 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="max-h-[45dvh] overflow-y-auto px-2 pb-2">
+        <details data-testid="coach-status-row" className="fk-coach-status min-w-0 max-w-full shrink-0 rounded-full border border-line text-xs"><summary className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 px-2.5 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="min-w-0 px-2 pb-2">
         <p className="mb-2 px-1 text-muted">{statusLine} · {connectivity}</p>
         <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} disabled={onlinePreferenceBusy} onChange={async(e) => {
           const enabled=e.target.checked;persistOnline(enabled);setOnlineOn(enabled);setOnlinePreferenceBusy(true);
@@ -808,7 +825,7 @@ export function CoachSheet({
           <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
           <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); setOnlineFeature('coachRefs', e.target.checked); }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
           {networkMode === "public-knowledge" && <div className="mt-2 flex flex-wrap gap-2">{COACH_PUBLIC_REFERENCES.map((item) => <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="underline" onClick={(event) => { if (!authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed) event.preventDefault() }}>{item.label}</a>)}</div>}
-          <div className="mt-1 text-muted">公开链接仅供人工查阅；自动检索、内容核验和付费模型额度服务尚未接入。</div>
+          <div className="mt-1 text-muted">公开链接供人工查阅，当前未自动检索网页。模型调用另受登录、服务就绪及服务端预算控制。</div>
         </details>
         <details data-testid="coach-record-binding" className="mb-2 rounded-card border border-line px-3 py-2 text-xs">
           <summary className="min-h-9 cursor-pointer break-words font-bold text-fg">{link === "unbound" ? "未绑定上传，没有自动关联" : selectedOccurrenceId ? `当前关联：${coachImports().find(item=>item.confirmedImportId===selectedOccurrenceId)?.title.value ?? listBoundTrainings().find(item=>item.trainingOccurrenceId===selectedOccurrenceId)?.sessionId ?? '已选训练'}` : "尚未关联具体训练 · 按需展开"}</summary>
@@ -907,10 +924,11 @@ export function CoachSheet({
           <button type="button" className="min-h-8 shrink-0 rounded-full border border-line bg-surface px-2.5 text-xs" onClick={() => { setSection("chat"); setDraft("为什么深蹲力量提升，不一定提高400米跑步成绩？"); }}>力量如何迁移</button>
         </div>
         </div>
+        </div>
         {fromLibrary ? <button type="button" className="min-h-11 text-sm text-accent" onClick={()=>setSection("learn")}>返回刚才的知识阅读 ›</button> : null}
         {contextChip && draft.trim() ? <div className="flex items-center gap-2 pt-1" data-testid="coach-context-chip"><span className="fk-chip">{contextChip.label}</span><button type="button" className="min-h-11 px-2 text-sm text-muted underline" aria-label={`移除上下文：${contextChip.label}`} onClick={() => { if (draft === contextChip.seed) setDraft(""); setContextChip(null); }}>移除</button></div> : null}
         <form
-          className="flex gap-2 pt-1.5"
+          className="flex shrink-0 gap-2 pt-1.5"
           onSubmit={(event) => {
             event.preventDefault();
             send(draft);

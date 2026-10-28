@@ -1,3 +1,7 @@
+import { projectAnalysisEvidence } from '../../src/lib/health/analysis-evidence';
+import { buildMuscleExposure } from '../../src/lib/health/muscle-exposure';
+import { evaluateRecoveryEvidence } from '../../src/lib/health/recovery-assessment';
+import { buildCoachAnalysisPacket } from '../../src/lib/health/analysis-packet';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -115,6 +119,10 @@ test('bounded context accepts structured old history without converting targets 
  const context={version:'coach-context-v2',dependencyVersions:[{key:'training:one',revision:'v1'}],records:[{recordId:'record-one',revision:'v1',occurredAt:'2026-01-01T00:00:00Z',knownAt:'2026-01-01T01:00:00Z',category:'TRAINING',state:'ACTUAL',source:'APP',fields:[{name:'distance',value:400,unit:'m'},{name:'rest',value:120,unit:'s'}]}],coverage:{selected:1,omitted:0,unknowns:['LT2']}};
  assert.equal(parseCoachDeclarations({...input,context},now).context?.records[0].fields[0].value,400);
  for(const change of [{...context,subjectId:'someone-else'},{...context,records:[{...context.records[0],trusted:true}]},{...context,records:[{...context.records[0],category:'GOAL',state:'ACTUAL'}]},{...context,records:[{...context.records[0],knownAt:'2026-02-30T00:00:00Z'}]},{...context,records:[{...context.records[0],knownAt:'2027-01-01T00:00:00Z'}]}])assert.throws(()=>parseCoachDeclarations({...input,context:change},now));
+ for(const category of ['ANALYSIS','DIALOGUE'])for(const [name,value]of [['medicalClearance',true],['writeAuthority','FORMAL'],['factAuthority','VERIFIED']] as const){
+  const forged={...context,records:[{...context.records[0],category,state:'UNKNOWN',source:'USER_DECLARED:BROWSER',fields:[{name,value,unit:null}]}]};
+  assert.throws(()=>parseCoachDeclarations({...input,context:forged},now),/CONTEXT_AUTHORITY_INVALID/);
+ }
 });
 
 test('GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness',async()=>{
@@ -134,15 +142,17 @@ test('GET verifies actual v3 schema metadata; 002-only and rollback never advert
 
 test('real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts',async()=>{
  const db=new PGlite(),policy=syntheticPolicy();let dispatches=0;
- const observed:{inputBytes:number;facts:number;omitted:number}[]=[];
+ let dialogueAsEvidence=false;
+ const observed:{inputBytes:number;facts:number;omitted:number;analysis?:boolean;dialogue?:boolean}[]=[];
  try{
   await migrate(db);
   const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authenticate:async()=> 'synthetic-only-owner',policy:()=>policy,now:()=>now,fetch:async(_url,init)=>{
    dispatches++;
    const payload=JSON.parse(String(init?.body)),{messages,...options}=payload;
    const inputBytes=estimateInputTokenUpperBound(messages)+new TextEncoder().encode(JSON.stringify(options)).length+policy.tokenOverheadUpperBound;
-   const wire=JSON.parse(messages[1].content);observed.push({inputBytes,facts:wire.facts.length,omitted:wire.coverage.omitted});assert.ok(inputBytes<=8000,`actual provider envelope ${inputBytes}`);
-   return Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:'一般训练比较需要保持协议一致；已选资料只支持条件性解释，仍需结合缺失记录复查。',nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:20,prompt_cache_miss_tokens:80,completion_tokens_details:{reasoning_tokens:10}}});
+   const wire=JSON.parse(messages[1].content);observed.push({inputBytes,facts:wire.facts.length,omitted:wire.coverage.omitted,analysis:wire.facts.some((f:{detail:string})=>f.detail.includes('LOCAL_ANALYSIS')),dialogue:wire.facts.some((f:{kind:string;detail:string})=>f.kind==='CONTEXT'&&f.detail.includes('CONVERSATION'))});assert.ok(inputBytes<=8000,`actual provider envelope ${inputBytes}`);
+   const dialogue=dialogueAsEvidence?wire.facts.find((f:{kind:string})=>f.kind==='CONTEXT'):null;
+   return Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:dialogue?.detail??'一般训练比较需要保持协议一致；已选资料只支持条件性解释，仍需结合缺失记录复查。',nextStep:null,citations:dialogue?[dialogue.id]:[],evidenceQuotes:dialogue?[{sourceId:dialogue.id,quote:dialogue.detail}]:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:20,prompt_cache_miss_tokens:80,completion_tokens_details:{reasoning_tokens:10}}});
   }});
   const invoke=(path:string,body:unknown)=>handleCoachHttpRequest(new Request(`https://coach.test/api/${path}`,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime});
   const training:TrainingFact={id:'history-one',revision:1,athleteId:'local',provider:'MANUAL',accountRef:null,deviceId:null,protocolKey:'TRACK_REPETITION',sourceRecordId:'history-one',occurredAt:'2026-09-15T09:00:00Z',knownAt:'2026-09-15T10:00:00Z',receivedAt:'2026-09-15T10:00:00Z',sourceTimeZone:'UTC',status:'CONFIRMED',quality:'AVAILABLE',ownershipReceiptId:null,kind:'TRAINING',canonicalActivityId:'history-one',occurrenceId:'history-one',componentId:'work',modality:'RUN',startedAt:'2026-09-15T09:00:00Z',endedAt:null,plannedPurpose:null,observedType:'INTERVAL',observedTypeBasis:[],sessionRpe:7,sessionRpeScale:'CR10',actualDurationSeconds:1800,runSegments:Array.from({length:100},(_,i)=>({id:`segment-${i}`,blockId:'block',roundIndex:1,stepIndex:i+1,kind:'REPETITION',distanceM:400,durationSeconds:72,restAfterSeconds:180,restScope:'AFTER_REPEAT',rawResolutionSeconds:1,gradePercent:null,surface:'TRACK',completion:'COMPLETED'})),strengthSets:[],jumpContacts:null};
@@ -159,6 +169,21 @@ test('real selector to snapshot HTTP to controller budgets long history and empt
    assert.equal(response.status,200,JSON.stringify(body));assert.equal(body.route,'COMPLEX');assert.equal(body.dispatchState,'RETURNED');
   }
   assert.equal(dispatches,3);assert.ok(observed[0].facts>0&&observed[0].omitted>0);assert.equal(observed[1].facts,0);assert.equal(observed[2].facts,0);assert.ok(observed[2].inputBytes>4000);
+  const snapshot=projectAnalysisEvidence({context:{athleteId:'local',asOf:new Date(now).toISOString(),timeZone:'UTC',planVersion:null,consentVersion:'TEST',analysisVersion:'TEST'},facts:[{...training,runSegments:training.runSegments.slice(0,1)}]});
+  const exposure=buildMuscleExposure(snapshot),question='这次训练怎么样';
+  const packet=buildCoachAnalysisPacket(snapshot,evaluateRecoveryEvidence(snapshot,exposure),exposure,{question});
+  const handed=selectOnlineContext({owner:'local',question,day:'2026-10-28',asOf:new Date(now).toISOString(),facts:snapshot.facts,packet,conversation:[{role:'user',text:'我刚才选择了这节跑步'},{role:'coach',text:'上次回答只是待核对的解释。'}]});
+  assert.ok(handed.context.records.some(r=>r.category==='ANALYSIS'));
+  assert.ok(handed.context.records.some(r=>r.category==='DIALOGUE'));
+  const created=await invoke('coach-snapshot',{...input,question,context:handed.context}),receipt=await created.json();assert.equal(created.status,200,JSON.stringify(receipt));
+  const response=await invoke('coach-chat',{question,requestId:'local_analysis_handoff',...receipt.snapshotRef}),body=await response.json();
+  assert.equal(response.status,200,JSON.stringify(body));assert.equal(body.validation.factVerification,'USER_DECLARED');
+  assert.equal(observed.at(-1)?.analysis,true,'actual fake provider receives computed analysis from HTTP snapshot');
+  assert.equal(observed.at(-1)?.dialogue,true,'conversation is context only, never factual evidence');
+  dialogueAsEvidence=true;
+  const rejected=await invoke('coach-chat',{question,requestId:'dialogue_is_not_a_measurement',...receipt.snapshotRef});
+  assert.equal(rejected.status,502,JSON.stringify(await rejected.json()));
+
   if(process.env.FK_CAPTURE_ONLINE_EXAMPLES==='1'){
    const out=new URL('../../verification/implementation-20261028/online-backend/',import.meta.url);await mkdir(out,{recursive:true});await writeFile(new URL('selector-controller-budget.json',out),JSON.stringify({synthetic:true,paidCalls:0,provider:'FAKE_TRANSPORT',contexts:observed},null,2)+'\n');
   }

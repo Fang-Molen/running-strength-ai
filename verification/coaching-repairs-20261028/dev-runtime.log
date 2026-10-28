@@ -1,0 +1,16 @@
+
+> dev
+> node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080
+
+error when starting dev server:
+Error: Port 8080 is already in use
+    at httpServerStart (file:///workspace/fangkun-integration/node_modules/vite/dist/node/chunks/node.js:14540:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async startServer (file:///workspace/fangkun-integration/node_modules/vite/dist/node/chunks/node.js:24946:30)
+    at async Object.listen (file:///workspace/fangkun-integration/node_modules/vite/dist/node/chunks/node.js:24760:4)
+    at async CAC.<anonymous> (file:///workspace/fangkun-integration/node_modules/vite/dist/node/cli.js:725:3)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

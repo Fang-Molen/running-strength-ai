@@ -1,0 +1,116 @@
+[
+  {
+    "command": "node --test --test-concurrency=3 'scripts/**/*.test.mjs'",
+    "exit": 1,
+    "seconds": 5.21,
+    "log": "regression-01.log"
+  },
+  {
+    "command": "node --experimental-strip-types --test --test-concurrency=3 src/lib/body/scale-parse.test.ts src/lib/ui/decimal.test.ts src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts",
+    "exit": 0,
+    "seconds": 0.6,
+    "log": "regression-02.log"
+  },
+  {
+    "command": "node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/core.test.ts src/lib/coach/stated/stated.test.ts src/lib/coach/stated/r11-behavior.test.ts src/lib/coach/online-facts-v86.test.ts src/lib/coach/online-facts-linkage.test.ts src/lib/coach/online-chat-transport.test.ts src/lib/coach/online-nutrition-facts.test.ts src/lib/coach/online-training-facts.test.ts src/lib/coach/online-recovery-facts.test.ts src/lib/coach/stated/direct-v87.test.ts src/lib/coach/knowledge/complete.test.ts src/lib/coach/knowledge/entry.test.ts src/lib/coach/knowledge/approval.test.ts src/lib/coach/knowledge/approval-integrity.test.ts src/lib/coach/knowledge/scope.test.ts src/lib/coach/plan-execution/loop-v87.test.ts src/lib/ui/schedule-writer.test.ts src/lib/ui/schedule-save-diagnosis.test.ts src/lib/coach/review-view/review-view.test.ts src/components/coach-review-plain.test.tsx src/lib/core/canonical.test.ts src/lib/core/occurrence.test.ts src/lib/core/training-fact.test.ts src/lib/core/fact-read.test.ts src/lib/core/training-summary.test.ts src/lib/core/evidence.test.ts src/lib/core/performance-evidence.test.ts src/lib/core/recovery-evidence.test.ts src/lib/core/evidence-profile.test.ts src/lib/core/evidence-interpretation.test.ts src/lib/core/evidence-inference.test.ts src/lib/core/evidence-fatigue.test.ts src/lib/core/evidence-recovery.test.ts src/lib/core/evidence-musculoskeletal.test.ts src/lib/core/evidence-bundle.test.ts src/lib/core/evidence-provenance.test.ts src/lib/core/evidence-availability.test.ts src/lib/core/evidence-consistency.test.ts src/lib/core/historical-occurrences.test.ts src/lib/core/historical-facts.test.ts src/lib/core/historical-availability.test.ts src/lib/core/historical-evidence.test.ts src/lib/core/import-history.test.ts src/lib/core/running-plan.test.ts src/lib/core/running-execution.test.ts src/lib/core/running-execution-rest.test.ts src/lib/core/coach-brief.test.ts src/lib/core/coach-model-packet.test.ts src/lib/core/coach-output-budget.test.ts src/lib/core/coach-stream.test.ts src/lib/core/coach-open.test.ts src/lib/core/coach-fuel.test.ts src/lib/core/coach-compare.test.ts src/lib/core/coach-series.test.ts src/lib/core/coach-return.test.ts src/lib/core/coach-next-session.test.ts src/lib/core/hydration.test.tsx src/lib/core/training-decision.test.ts src/lib/core/fk-r4-p0.test.ts src/lib/core/training-correction.test.ts src/lib/core/training-correction-projection.test.ts src/lib/core/coach-view.test.tsx src/lib/core/brain-loop.test.ts src/lib/core/training-import.test.ts src/lib/core/import-retention.test.ts src/lib/core/training-coach.test.ts src/lib/core/training-model.test.ts src/lib/core/coach-plan.test.ts src/lib/core/coach-competency.test.ts src/lib/core/coach-plan-display.test.tsx src/lib/core/training-followup.test.ts src/lib/core/training-followup-display.test.tsx src/lib/core/coach-knowledge.test.ts src/lib/core/coach-knowledge-display.test.tsx src/lib/core/import-completeness.test.ts src/lib/core/running-observation.test.ts src/lib/core/running-round-analysis.test.ts src/lib/core/trial.test.ts src/lib/ui/training-log-view.test.ts src/lib/ui/pending-feedback.test.ts src/lib/ui/v79-1.test.ts src/lib/ui/makeup.test.ts src/lib/health/personal-stats-host.test.ts src/lib/ui/combo-parts-v88.test.ts src/lib/ui/v4-effective-move.test.mjs src/lib/ui/v4-effective-move-ui.test.mjs src/lib/ui/v4-effective-pending.test.ts verification/u09/personal-uncertainty.test.mjs src/lib/ui/sport-goal.test.ts src/lib/ui/running-workouts.test.ts src/lib/ui/sw-reload.test.ts src/lib/strength/model-access.test.ts src/lib/strength/persist.test.ts src/lib/strength/session-builder.test.tsx src/lib/nutrition/vitals.test.ts",
+    "exit": 0,
+    "seconds": 81.01,
+    "log": "regression-03.log"
+  },
+  {
+    "command": "npm run test:cognition",
+    "exit": 0,
+    "seconds": 38.08,
+    "log": "regression-04.log"
+  },
+  {
+    "command": "npm run test:v4",
+    "exit": 0,
+    "seconds": 0.85,
+    "log": "regression-05.log"
+  },
+  {
+    "command": "npm run test:r188",
+    "exit": 0,
+    "seconds": 5.07,
+    "log": "regression-06.log"
+  },
+  {
+    "command": "npm run test:r189",
+    "exit": 1,
+    "seconds": 6.68,
+    "log": "regression-07.log"
+  },
+  {
+    "command": "npm run test:health-v74",
+    "exit": 1,
+    "seconds": 32.34,
+    "log": "regression-08.log"
+  },
+  {
+    "command": "npm run test:live-kept",
+    "exit": 0,
+    "seconds": 9.55,
+    "log": "regression-09.log"
+  },
+  {
+    "command": "npm run test:k20",
+    "exit": 0,
+    "seconds": 1.99,
+    "log": "regression-10.log"
+  },
+  {
+    "command": "npm run test:ui-v69",
+    "exit": 0,
+    "seconds": 1.03,
+    "log": "regression-11.log"
+  },
+  {
+    "command": "npm run test:v84",
+    "exit": 0,
+    "seconds": 11.4,
+    "log": "regression-12.log"
+  },
+  {
+    "command": "npm run test:ui-r5",
+    "exit": 0,
+    "seconds": 0.85,
+    "log": "regression-13.log"
+  },
+  {
+    "command": "npm run test:v88-2",
+    "exit": 0,
+    "seconds": 1.41,
+    "log": "regression-14.log"
+  },
+  {
+    "command": "npm run test:coach-loop",
+    "exit": 0,
+    "seconds": 22.72,
+    "log": "regression-15.log"
+  },
+  {
+    "command": "npm run test:r5",
+    "exit": 0,
+    "seconds": 6.33,
+    "log": "regression-16.log"
+  },
+  {
+    "command": "npm run test:cycle",
+    "exit": 0,
+    "seconds": 12.14,
+    "log": "regression-17.log"
+  },
+  {
+    "command": "npm run test:coach-qa",
+    "exit": 0,
+    "seconds": 12.33,
+    "log": "regression-18.log"
+  },
+  {
+    "command": "node --import ./scripts/test-register.mjs --test --test-concurrency=3 server/coach-deepseek/online-v2.test.ts src/components/coach-chat-ui.test.tsx src/components/coach-cycle-panel.test.tsx src/components/coach-plan-change-panel.test.tsx src/components/device-sync-preview.test.tsx src/components/garmin-sync-persistence.test.ts src/components/health-reference-upgrade.test.tsx src/components/health-ui.test.tsx src/components/library-ui.test.tsx src/components/pet/floating-pet.test.tsx src/components/pet/pet.test.tsx src/components/pet/theme-avatar.test.tsx src/components/track-session-timing.test.tsx src/components/training-download.test.tsx src/components/training-redesign.test.tsx src/components/trend-chart.test.tsx src/components/warmup-workflow.test.tsx src/lib/body/avatar-appearance.test.ts src/lib/body/muscle-actions.test.ts src/lib/body/muscle-display.test.ts src/lib/character/identity.test.ts src/lib/character/integration.test.tsx src/lib/chunk-recover.test.ts src/lib/coach/assertion-policy.test.ts src/lib/coach/c03/argument.test.ts src/lib/coach/c03/evidence.test.ts src/lib/coach/c03/followup.test.ts src/lib/coach/c03/runtime.test.ts src/lib/coach/coach-facts-v83.test.ts src/lib/coach/global-coach-host-v89.test.ts src/lib/coach/global-coach-v89.test.ts src/lib/coach/online-context.test.ts src/lib/coach/plan-execution/core.test.ts src/lib/coach/plan-execution/host.test.ts src/lib/coach/r6-online-integrity.test.ts src/lib/coach/r6/runtime.test.ts src/lib/core/adaptive-plan-audit.test.ts src/lib/core/adaptive-plan-permissions.test.ts src/lib/core/ai-access-contract.test.mjs src/lib/core/ai-feature-policy.test.mjs src/lib/core/ai-task-router.test.mjs src/lib/core/athlete-baseline.test.mjs src/lib/core/athlete-evidence-readiness.test.ts src/lib/core/athlete-longitudinal-evidence.test.ts src/lib/core/athlete-seven-dimensions.test.mjs src/lib/core/backup-archive.test.ts src/lib/core/backup-inspection.test.ts src/lib/core/boot-identity.test.ts src/lib/core/browser-capabilities.test.ts src/lib/core/bulk-store.test.ts src/lib/core/coach-activity-watch.test.ts src/lib/core/coach-adversarial.test.ts src/lib/core/coach-conversation-context.test.ts src/lib/core/coach-dialogue-understanding.test.ts src/lib/core/coach-fieldwork-context.test.ts src/lib/core/coach-four-directions.test.ts src/lib/core/coach-learning-readiness.test.ts src/lib/core/coach-network-policy.test.ts src/lib/core/coach-p0-p1.test.ts src/lib/core/coach-periodic-observations.test.ts src/lib/core/coach-persona.test.ts src/lib/core/coach-plan-governance.test.ts src/lib/core/coach-preview-transaction.test.ts src/lib/core/coach-proposal-ownership.test.ts src/lib/core/coach-question-reasoning.test.ts src/lib/core/coach-r14-chat.test.ts src/lib/core/coach-r184-preparation.test.ts src/lib/core/coach-r185-integration.test.ts src/lib/core/coach-record-context.test.ts src/lib/core/coach-recovery-integration.test.ts src/lib/core/coach-strength-plan-control.test.ts src/lib/core/coach-strength-plan-storage.test.ts src/lib/core/coach-training-mechanisms.test.ts src/lib/core/coach-unified-r13.test.ts src/lib/core/correction-recovery.test.ts src/lib/core/device-evidence-backup.test.ts src/lib/core/device-image-evidence.test.ts src/lib/core/dialogue-e1/dialogue.test.ts src/lib/core/dialogue-e1/host.test.ts src/lib/core/dialogue-e1/multiturn-fixtures.test.ts src/lib/core/dialogue-e1/public-fixtures.test.ts src/lib/core/execution.test.ts src/lib/core/import-log-correction.test.ts src/lib/core/local-ocr-policy.test.ts src/lib/core/offline-training-evidence.test.mjs src/lib/core/research-cognition-bridge.test.ts src/lib/core/research-conflict-index.test.ts src/lib/core/research-conflict-source-audit.test.ts src/lib/core/research-context.test.ts src/lib/core/research-coverage-audit.test.ts src/lib/core/research-evidence-r4-r7.test.ts src/lib/core/research-history-reconciliation.test.ts src/lib/core/research-k11-blind.test.ts src/lib/core/research-knowledge-registry.test.ts src/lib/core/research-methodology.test.ts src/lib/core/research-reasoning-audit-k10.test.ts src/lib/core/research-reasoning-audit-k12-regression.test.ts src/lib/core/research-reasoning-audit-k9.test.ts src/lib/core/research-reasoning-audit.test.ts src/lib/core/rest-clock.test.ts src/lib/core/restore-candidate.test.ts src/lib/core/restore-transaction.test.ts src/lib/core/running-context-exam.test.mjs src/lib/core/running-log-correction.test.ts src/lib/core/running-occurrence-context.test.mjs src/lib/core/running-reasoning-audit.test.mjs src/lib/core/running-sequence-observation.test.mjs src/lib/core/running-session-context.test.mjs src/lib/core/running-structured-context.test.mjs src/lib/core/running-timeline-reasoning.test.mjs src/lib/core/training-fact-ownership.test.ts src/lib/core/training-import-delete.test.ts src/lib/core/training-start-alias.test.ts src/lib/education/knowledge-catalog.test.ts src/lib/education/knowledge-chat-boundary.test.ts src/lib/education/knowledge-reader.test.ts src/lib/education/knowledge-reading.test.ts src/lib/education/learning-integration.test.ts src/lib/health/coros-crossbrand-trend.test.mjs src/lib/health/coros-mcp-daily-v1.test.mjs src/lib/health/muscle-stimulus-simulation-v90.test.mjs src/lib/health/muscle-timeline-u12.test.mjs src/lib/health/recovery-freshness-u12.test.mjs src/lib/nutrition/catalog.test.ts src/lib/nutrition/energy-source.test.ts src/lib/nutrition/entry-workflow.test.ts src/lib/nutrition/food-db-r3.test.ts src/lib/nutrition/food-estimate-fn.test.ts src/lib/nutrition/v74-compat.test.ts src/lib/plan/plan-main.test.ts src/lib/plan/plan-migration-v896.test.ts src/lib/preview-path-prefix.test.ts src/lib/running-technique/catalogue.test.ts src/lib/strength/action-picker.test.ts src/lib/strength/approved-motion.test.ts src/lib/strength/coach-output-retry.test.ts src/lib/strength/demo-fieldwork.test.ts src/lib/strength/library-view.test.ts src/lib/strength/media-v2/registry.test.ts src/lib/strength/pose-frames.test.ts src/lib/ui/activity-time-precision.test.ts src/lib/ui/app-version-check.test.ts src/lib/ui/athlete-growth.test.ts src/lib/ui/backup-candidate.test.ts src/lib/ui/backup-center.test.ts src/lib/ui/character-themes.test.ts src/lib/ui/coach-coordination-v83.test.ts src/lib/ui/coach-evidence-display.test.ts src/lib/ui/coros-sync-live.test.ts src/lib/ui/day-schedule-ownership.test.ts src/lib/ui/decimal-draft.test.ts src/lib/ui/device-csv-preview.test.ts src/lib/ui/device-guides.test.ts src/lib/ui/device-import-contract.test.ts src/lib/ui/device-import-review.test.ts src/lib/ui/device-store-health-result.test.ts src/lib/ui/device-store-sync.test.ts src/lib/ui/device-sync-navigation.test.ts src/lib/ui/fangkun-ui-20261016.test.ts src/lib/ui/fieldwork.test.ts src/lib/ui/font-scale-v89.test.ts src/lib/ui/garmin-sync-live.test.ts src/lib/ui/goal-portfolio.test.ts src/lib/ui/lap-structure.test.ts src/lib/ui/onboarding-sync-draft.test.ts src/lib/ui/onboarding.test.ts src/lib/ui/online-preferences.test.ts src/lib/ui/plan-training-filter.test.ts src/lib/ui/plan400-component-owner.test.ts src/lib/ui/plan400-components-store.test.ts src/lib/ui/plan400-components.test.ts src/lib/ui/plan400-dates.test.ts src/lib/ui/plan400-view.test.ts src/lib/ui/platform-sync-runtime.test.ts src/lib/ui/profile-labels.test.ts src/lib/ui/quick-log-v83.test.ts src/lib/ui/run-link.test.ts src/lib/ui/scheduled-training.test.ts src/lib/ui/sheet-scroll-lock.test.ts src/lib/ui/training-activity-dose.test.ts src/lib/ui/training-draft-initialization.test.ts src/lib/ui/training-draft-store.test.ts src/lib/ui/training-record-sync.test.ts src/lib/ui/unfeedback-t489.test.ts src/lib/ui/unified-health-view.test.tsx src/lib/ui/unmarked.test.ts src/lib/ui/v82.test.ts src/lib/ui/v83-acceptance.test.ts src/lib/ui/v84-host-p0.test.ts src/lib/ui/v84-merge.test.ts src/lib/ui/warmup.test.ts src/lib/vault-backup.test.ts src/lib/vision/vision-v73.test.ts",
+    "exit": 1,
+    "seconds": 102.44,
+    "log": "regression-19.log"
+  }
+]

@@ -14,6 +14,9 @@ export type CycleGoal = {
   raceDate: string | null;
   targetSeconds: number | null;
   experience: "UNKNOWN" | "NOVICE" | "TRAINED";
+  /** Independently confirmed; legacy overall experience never fills either field. */
+  runningExperience?: "UNKNOWN" | "NOVICE" | "TRAINED";
+  strengthExperience?: "UNKNOWN" | "NOVICE" | "TRAINED";
   priority: "BALANCED" | "SPEED" | "ENDURANCE" | "STRENGTH";
   horizonWeeks: number;
   taperDays: number;
@@ -100,6 +103,8 @@ export function validCycleDay(s: string) {
   );
 }
 export function validateCycleGoal(g: CycleGoal) {
+  for(const experience of [g.runningExperience,g.strengthExperience])
+    if(experience!==undefined&&!["UNKNOWN","NOVICE","TRAINED"].includes(experience))throw Error("请分别核对跑步与力量经历");
   if (
     g.schema !== 1 ||
     !g.athleteId ||

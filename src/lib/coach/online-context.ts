@@ -1,6 +1,7 @@
+import { localAnalysisRecords, dialogueRecords, contextualQuestion, type OnlineConversationTurn } from './online-handoff';
 /** Read-only, question-scoped self reports. This is selection, not provider verification. */
 import { contextRecordQuote, type CoachContextRecord, type CoachRequestContext } from './online-contract';
-import type { AnalysisFact, TrainingFact } from '../health/analysis-contract';
+import type { AnalysisFact, TrainingFact, CoachAnalysisPacket } from '../health/analysis-contract';
 import type { CycleGoal } from './cycle/types';
 import type { ScheduleEntry } from '../ui/day-schedule-rules';
 import type { FoodEntry } from '../nutrition/log';
@@ -22,6 +23,7 @@ import { parseCoachUtterance } from './utterance-semantics';
 type Field = CoachContextRecord['fields'][number];
 type TrainingProfile = ReturnType<typeof readEffectiveTrainingProfile>;
 export type OnlineContextInput = {
+  packet?:CoachAnalysisPacket; conversation?:readonly OnlineConversationTurn[];
   owner: string; question: string; day: string; asOf: string; facts: AnalysisFact[];
   goal?: CycleGoal | null; schedule?: ScheduleEntry[]; foods?: FoodEntry[];
   profile?: EffectiveProfile; trainingProfile?: TrainingProfile;
@@ -54,12 +56,18 @@ export function quotedOnlineContextBytes(question:string,context:CoachRequestCon
 /** General explanations have no private-data dependency, including negated symptoms. */
 export function onlineContextNeeds(question: string, selectedTrainingIds:readonly string[] = []) {
   const q = question.normalize('NFKC'), semantic = parseCoachUtterance(q);
+  const selfText=q.replace(/(?:我(?:的)?|你(?:的)?)?(?:朋友|同学|同事|队友|家人)/g,'他人');
+  const selfClaim=/我(?:自己|跑|练|吃|昨天|今天|明天|最近|的(?:训练|记录|课表|身体|目标|情况)|想(?:知道|了解)(?:我的)?训练能力)/.test(selfText);
   // Third-person examples do not authorize attaching this account's private records.
   const otherOnly = /朋友|同学|同事|队友|家人|别人|他(?:的|昨天|今天)|她(?:的|昨天|今天)/.test(q)
-    && !/而我|但我|我的(?:训练|记录|课表|身体|目标|情况)|我自己/.test(q);
+    && !selfClaim;
+  const contextualReview=/(?:这次(?:训练)?|这节(?:训练)?|刚才那节|刚才那次).*(?:怎么样|如何|呢|复盘|分析)/.test(q);
+  const implicitReport=/^(?:跑的|跑了|练的|练了|完成了).*(?:公里|长距离|均速|配速|心率|组|次)/.test(q);
+  const capabilityReview=/我想(?:知道|了解)(?:我的)?训练能力/.test(q)&&!/定义|是什么|什么意思/.test(q);
+  const generalExplanation=/(?:是什么|什么意思|定义|原理|科普|解释一下|解释什么|介绍一下)/.test(q)&&!selfClaim&&!/我的|根据.*记录/.test(q)&&!contextualReview&&!semantic.personalSymptoms.length;
   const personalMarker = /我的|我(?:昨天|今天|上周|上个月|最近|目前|这次|明天|吃|跑|练)|我[^，。?!！？]{0,12}(?:能跑|能练|适合|成绩)|帮我(?:看|分析|安排|复盘)|根据.*(?:记录|数据|资料|课表)|(?:复盘|查看|调整|安排).*(?:训练|记录|课表|计划|状态)|(?:今天|明天|昨日|昨天|近期|最近|上周|上个月).*(?:训练|跑|练|状态|恢复|吃|饮食|睡|安排|HRV|RHR|心率)|(?:训练|跑|练).*(?:最近|这次|昨天|今天|上周)/i.test(q);
   const personalAdvice=/[给为帮]我(?:安排|制定|设计|推荐|分析|比较|复盘)|我(?:想|要|准备).*(?:比赛|参赛|双阈值|训练计划)|(?:适合我|我能|我可以).*(?:训练|练|跑|计划)/.test(q);
-  const personal = !otherOnly && (selectedTrainingIds.length>0 || personalMarker || personalAdvice || /(?:未来|本周|下周).*(?:计划|总结|复盘)/.test(q) || semantic.personalSymptoms.length > 0 || semantic.writeRequested);
+  const personal = !otherOnly && !generalExplanation && (selectedTrainingIds.length>0 || personalMarker || personalAdvice || contextualReview || implicitReport || capabilityReview || /(?:未来|本周|下周).*(?:计划|总结|复盘)/.test(q) || semantic.personalSymptoms.length > 0 || semantic.writeRequested);
   const nutrition = personal && /饮食|营养|热量|吃|餐|补给|碳水|蛋白|减脂|体重|控重/.test(q);
   const plan = personal && /计划|课表|安排|课程|调换|交换|改|明天|下周|周期/.test(q);
   const historical = /上个月|去年|以前|历史|过去|上周|\d{4}-\d{2}-\d{2}/.test(q) && !/今天|明天|现在|当前/.test(q);
@@ -82,7 +90,7 @@ function factRecords(f: AnalysisFact): CoachContextRecord[] {
   // Many legacy protocol keys are device/account stream IDs. Keep those opaque;
   // transmit only short scientific protocol labels, never the stream identifier.
   const protocol=f.protocolKey&&/^(?:LT[12]|VT[12]?|VDOT|CS_TEST|CRITICAL_SPEED|D_MAX|LACTATE|TRACK_REPETITION|CR10|HRV_RMSSD|HRV_SDNN|RMSSD|SDNN)(?:[_. -][A-Z0-9]+)*$/.test(f.protocolKey)?f.protocolKey:null;
-  const common = [field('quality', f.quality), field('sourceGroup', digest([f.provider,f.accountRef,f.deviceId,f.protocolKey])),
+  const common = [field('quality', f.quality), field('evidenceVersion',digest([f.id,f.revision]).slice(0,16)), field('sourceGroup', digest([f.provider,f.accountRef,f.deviceId,f.protocolKey])),
     field('protocolGroup', f.protocolKey ? digest(f.protocolKey) : null), field('protocol',protocol),field('provenanceVerified',false)];
   if (f.kind === 'METRIC') return [{...base, fields:[...common,field('metric',f.metric),field('value',f.value,clean(f.unit,32)),field('statistic',f.statistic),field('temporalResolution',f.temporalResolution ?? 'UNKNOWN'),field('energyKind',f.energyKind)]}];
   if (f.kind === 'RESPONSE') return [{...base,fields:[...common,field('measure',f.measure),field('value',f.value,clean(f.scale,32)),field('region',f.region),field('side',f.side),field('elapsed',f.elapsedHours,'h'),field('functionTask',f.functionTaskId),field('observationProtocol',f.observationProtocol)]}];
@@ -95,7 +103,7 @@ function factRecords(f: AnalysisFact): CoachContextRecord[] {
 /** Pure selector. Inputs may be synthetic, but ownership and state checks are identical. */
 export function selectOnlineContext(input: OnlineContextInput) {
   const selection=[...new Set(input.selectedTrainingIds??[])].slice(0,6);
-  const needs=onlineContextNeeds(input.question,selection), unknowns:string[]=[], candidates:CoachContextRecord[]=[], selectedFacts:AnalysisFact[]=[];
+  const needs=onlineContextNeeds(contextualQuestion(input.question,input.conversation),selection), unknowns:string[]=[], candidates:CoachContextRecord[]=[], selectedFacts:AnalysisFact[]=[];
   if(!input.owner || !date(input.asOf))throw Error('联网资料身份或读取时间无效');
   const now=Date.parse(input.asOf), anchor=Date.parse(input.day+'T12:00:00Z');
   const note=(text:string)=>{const value=clean(text,160);if(!unknowns.includes(value)&&unknowns.length<24)unknowns.push(value)};
@@ -123,11 +131,13 @@ export function selectOnlineContext(input: OnlineContextInput) {
     eligible.sort((a,b)=>score(b)-score(a)||b.occurredAt.localeCompare(a.occurredAt)||a.id.localeCompare(b.id));
     if(selection.length){note('按用户选择的顺序读取实际训练；未选择的其他训练不代替所选记录。');if(selection.some((_,i)=>!eligible.some(f=>selectionIndex(f)===i)))note('部分所选训练无法在本人可核对的资料中找到；比较依据不完整，不借用其他训练补齐。')}
     for(const f of eligible){candidates.push(...factRecords(f));selectedFacts.push(f)}
+    candidates.push(...localAnalysisRecords(input.packet,input.owner,input.question,eligible));
+    if(input.packet)note("本机计算与解释按问题筛选传递，属于客户端申报；未独立核验，候选未确认，不构成医疗许可。");
     if(needs.training&&!eligible.some(f=>f.kind==='TRAINING'))note('本次读取范围内没有可用的本人实际训练结构；不从计划推断完成量。');
     if(needs.recovery)note('恢复背景仅选本问题日期附近的近期记录；旧训练用于历史比较，不代表当前疲劳。');
     if(needs.goal){
       const g=input.goal;
-      if(g&&g.athleteId===input.owner&&date(g.savedAt)&&Date.parse(g.savedAt)<=now)candidates.unshift({recordId:id([input.owner,'goal']),revision:String(g.revision),occurredAt:g.raceDate?date(g.raceDate):null,knownAt:date(g.savedAt),category:'GOAL',state:'TARGET',source:'USER_DECLARED:CONFIRMED_GOAL',fields:[field('eventDistance',g.eventMeters,'m'),field('targetDuration',g.targetSeconds,'s'),field('raceDate',g.raceDate),field('experience',g.experience),field('priority',g.priority),field('horizon',g.horizonWeeks,'week'),field('measuredPerformance',false)]});
+      if(g&&g.athleteId===input.owner&&date(g.savedAt)&&Date.parse(g.savedAt)<=now)candidates.unshift({recordId:id([input.owner,'goal']),revision:String(g.revision),occurredAt:g.raceDate?date(g.raceDate):null,knownAt:date(g.savedAt),category:'GOAL',state:'TARGET',source:'USER_DECLARED:CONFIRMED_GOAL',fields:[field('eventDistance',g.eventMeters,'m'),field('targetDuration',g.targetSeconds,'s'),field('raceDate',g.raceDate),field('experience',g.experience),field('runningExperience',g.runningExperience??null),field('strengthExperience',g.strengthExperience??null),field('priority',g.priority),field('horizon',g.horizonWeeks,'week'),field('measuredPerformance',false)]});
       else note('比赛目标或目标保存时间未知；目标不作为实测能力。');
     }
     if(needs.plan){
@@ -158,12 +168,22 @@ export function selectOnlineContext(input: OnlineContextInput) {
       if(foods.some(f=>!f.eatenAt))note('部分食物没有实际进食时刻；记录时刻不当作进食时刻。');
     }
   }
+  if(needs.personal){
+    candidates.push(...dialogueRecords(input.owner,input.question,input.conversation??[]));
+    if(input.conversation?.length)note('近期对话仅用于理解指代，不是新的实测事实；只传递有限片段，未传部分不能视为不存在。');
+  }
   const records:CoachContextRecord[]=[], unique=new Set<string>();
   // Reserve room for dependency hashes and coverage so the entire envelope stays below 48 KiB.
   let bytes=0;
   // Restrictions are retained ahead of optional context. Child structures only
   // enter when their workout header is present, so a clipped envelope is explicit.
-  candidates.sort((a,b)=>Number(b.category==='RESTRICTION')-Number(a.category==='RESTRICTION'));
+  const primaryTraining=candidates.find(r=>['TRAINING','STRENGTH'].includes(r.category)&&!r.fields.some(f=>f.name==='parent'));
+  const primarySegment=candidates.find(r=>r.fields.some(f=>f.name==='parent'&&f.value===primaryTraining?.recordId));
+  const primaryCalculation=candidates.find(r=>r.category==='ANALYSIS'&&r.fields.some(f=>f.name==='kind'&&f.value==='COMPUTED'));
+  const latestDialogue=candidates.filter(r=>r.category==='DIALOGUE'&&r.fields.some(f=>f.name==='speaker'&&f.value==='user')).at(-1);
+  const comparisonRecords=selection.length>1?candidates.filter(r=>['TRAINING','STRENGTH'].includes(r.category)&&!r.fields.some(f=>f.name==='parent')).flatMap(header=>[header,...candidates.filter(r=>r.fields.some(f=>f.name==='parent'&&f.value===header.recordId)).slice(0,1)]):[];
+  const priority=(r:CoachContextRecord)=>r.category==='RESTRICTION'?0:comparisonRecords.includes(r)?1+comparisonRecords.indexOf(r)/20:r===primaryTraining?1:r===primarySegment?2:r===primaryCalculation?3:r===latestDialogue?4:r.category==='DIALOGUE'?6:r.category==='ANALYSIS'?7:r.fields.some(f=>f.name==='parent')?8:5;
+  candidates.sort((a,b)=>priority(a)-priority(b));
   for(const r of candidates){if(unique.has(r.recordId))continue;unique.add(r.recordId);const size=new TextEncoder().encode(JSON.stringify(r)).length;const parent=r.fields.find(f=>f.name==='parent')?.value;if(records.length>=32||bytes+size>36*1024||parent&&!records.some(p=>p.recordId===parent))continue;records.push(r);bytes+=size}
   let omitted=unique.size-records.length;
   let omittedUnknowns=0,coverageOmittedSummary:string|undefined;
@@ -202,15 +222,15 @@ export function selectOnlineContext(input: OnlineContextInput) {
   while((records.length>32||new TextEncoder().encode(JSON.stringify(context)).length>48*1024||quotedOnlineContextBytes(input.question,context)>ONLINE_QUOTED_CONTEXT_BYTES)&&records.length>1){records.pop();omitted++;budgetNote();compactCoverage();updateRestrictionSummary();context=makeContext()}
   const includedParents=new Set(records.map(r=>r.recordId));
   const transmittedFacts=selectedFacts.filter(f=>includedParents.has(id([f.athleteId,f.provider,f.accountRef,f.deviceId,f.id])));
-  return {context,sourceVersion:digest(context),selectedFacts:transmittedFacts,owner:input.owner,personal:needs.personal};
+  return {context,sourceVersion:digest(context),selectedFacts:transmittedFacts,owner:input.owner,personal:needs.personal,analysisPacket:input.packet};
 }
 
 /** Existing projections are reused; a read failure is disclosed, never treated as complete empty data. */
-export function readOnlineContext(question:string,day:string,asOf:string,analysis?:ReturnType<typeof readAnalysis>,selectedTrainingIds:readonly string[]=[]){
-  const owner=currentAthleteId(),needs=onlineContextNeeds(question,selectedTrainingIds),input:OnlineContextInput={owner,question,day,asOf,facts:[],unknowns:[],selectedTrainingIds};
+export function readOnlineContext(question:string,day:string,asOf:string,analysis?:ReturnType<typeof readAnalysis>,selectedTrainingIds:readonly string[]=[],conversation:readonly OnlineConversationTurn[]=[]){
+  const owner=currentAthleteId(),needs=onlineContextNeeds(contextualQuestion(question,conversation),selectedTrainingIds),input:OnlineContextInput={owner,question,day,asOf,facts:[],unknowns:[],selectedTrainingIds,conversation};
   if(!needs.personal)return selectOnlineContext(input);
   const failed=(domain:string)=>input.unknowns!.push(`${domain}读取不可用，本次没有假定该类资料为空或为零。`);
-  try{const a=analysis??readAnalysis(day,asOf,question);if(a.snapshot.context.athleteId!==owner)throw Error('OWNER_CHANGED');input.facts=a.snapshot.facts;input.conflictCount=needs.recovery?a.snapshot.conflicts.length:0;
+  try{const a=analysis??readAnalysis(day,asOf,question,{history:needs.historical||needs.goal||selectedTrainingIds.length?'RETAINED':'RECENT'});if(a.snapshot.context.athleteId!==owner)throw Error('OWNER_CHANGED');input.facts=a.snapshot.facts;input.packet=a.packet;input.conflictCount=needs.recovery?a.snapshot.conflicts.length:0;
     if(needs.recovery&&a.snapshot.gaps.some(g=>/恢复|疲劳|睡眠|HRV|RHR|心率|疼痛|时刻|协议/.test(g)))input.unknowns!.push('恢复来源含缺项或不确定状态；本次只发送可读取且明确归属的记录。');
     if(needs.training)input.unknowns!.push('训练历史来自当前分析投影的可读取范围，并非全量历史；日期较早的专项记录可入选。');
   }catch{failed('训练与健康来源')}

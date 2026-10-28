@@ -25,8 +25,8 @@ import { loadCorosHealth } from './coros-mcp-client'
 import { readTrainingModelReview, trainingModelSummary } from '../coach/training-models/host'
 
 /** One read-only projection supplies the existing health/coach/muscle consumers. */
-export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),question='',options:{r4ReferencePreview?:boolean}={}){
- const muscle=readRecoveryProjection(day,asOf,90*24),context={...muscle.analysis.context},athleteId=currentAthleteId(),facts:AnalysisFact[]=[...muscle.analysis.facts],gaps=[...muscle.review.gaps]
+export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),question='',options:{r4ReferencePreview?:boolean;history?:'RECENT'|'RETAINED'}={}){
+ const muscle=readRecoveryProjection(day,asOf,options.history==='RETAINED'?'RETAINED_HISTORY':90*24),context={...muscle.analysis.context},athleteId=currentAthleteId(),facts:AnalysisFact[]=[...muscle.analysis.facts],gaps=[...muscle.review.gaps]
  const meta=(id:string,occurredAt:string,knownAt:string)=>({id,revision:0,athleteId,provider:'MANUAL' as const,accountRef:null,deviceId:null,protocolKey:null,sourceRecordId:id,occurredAt,knownAt,receivedAt:knownAt,sourceTimeZone:null,status:'CONFIRMED' as const,quality:'PARTIAL' as const,ownershipReceiptId:null})
  const raw=readUnifiedFacts(context.asOf)
  for(const f of raw.facts){const measured=f.end??f.start

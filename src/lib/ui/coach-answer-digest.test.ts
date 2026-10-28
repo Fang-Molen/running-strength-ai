@@ -2,6 +2,14 @@ import test from "node:test"
 import assert from "node:assert/strict"
 import { digestCoachAnswer } from "./coach-answer-digest.ts"
 const parts = (d: ReturnType<typeof digestCoachAnswer>) => [d.conclusion, d.next, ...d.reasoning].filter(Boolean).sort()
+test('X07 paired Markdown is normalized before sentence splitting, preserving words and sources', () => {
+  const d=digestCoachAnswer('**结论：这次表现稳定。仍需结合睡眠。**\n**下一课：明天先核对状态。**\n来源：[训练记录](https://example.com/training)。')
+  assert.equal(d.conclusion,'这次表现稳定。')
+  assert.equal(d.next,'下一课：明天先核对状态。')
+  assert.ok(d.reasoning.includes('仍需结合睡眠。'))
+  assert.doesNotMatch([d.conclusion,d.next,...d.reasoning].join(''),/\*\*/)
+  assert.match(d.reasoning.join(''),/https:\/\/example.com\/training/)
+})
 test("explicit 结论 leads, next session pulled out, reasoning keeps the rest in order", () => {
   const t = "先看事实：上次 400米×8 平均 82 秒。\n结论：这次是有氧耐力课，不是速度课。\n原因是休息 1 分钟，乳酸没有清除。\n下一课：400米×6，休 2 分钟，RPE 7。\n记下每组用时。"
   const d = digestCoachAnswer(t)

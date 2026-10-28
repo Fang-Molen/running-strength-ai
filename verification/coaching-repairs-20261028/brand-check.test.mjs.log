@@ -1,0 +1,123 @@
+✔ non-canvas app with no custom card gets a soft BRAND NOTE (utility exception) (3.25808ms)
+✔ non-canvas app with a compliant card is silent (1.605124ms)
+✔ card file without site.json card=custom warns (0.875408ms)
+✔ card file with missing site.json warns for card=custom (0.487049ms)
+✔ card file with invalid site.json warns for card=custom (2.154076ms)
+✔ oversized card warns for non-canvas apps too (1.143504ms)
+✔ canvas app with no card warns 'missing' and missing og:type (0.686551ms)
+✔ canvas card without type still warns for og:type (1.918389ms)
+✔ oversized card warns on the scraper budget (jpg and legacy png) (2.118291ms)
+✔ compliant game (custom card + site.json type + x-banner) is silent (1.667899ms)
+✔ __root.tsx og:type no longer satisfies the canvas gate (2.356633ms)
+✔ oversized x-banner warns on the same scraper budget as og.jpg (25.879549ms)
+✔ legacy png + site.json type still needs the X feed card (1.002089ms)
+✔ siteDeclaresOgTypeGame reads the site contract (0.162326ms)
+✔ a fresh og-pending marker silences the whole gate view (1.826459ms)
+✔ a stale og-pending marker is ignored and the warnings return (0.301297ms)
+✔ the marker goes stale on the clock, not on the file (0.452155ms)
+✔ no marker means nothing is in flight (0.194726ms)
+✔ parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest (0.379986ms)
+✖ cli: a game missing its card reports JSON and exits 1 (113.237884ms)
+✖ cli: a compliant game passes (108.140004ms)
+✖ cli: the task's own marker is reported, not honoured (117.580228ms)
+✖ cli: a bad argument fails with JSON on stderr (115.27341ms)
+✖ cli: a non-game with no card fails too — the pass exists to produce one (113.142799ms)
+✖ cli: --placeholder-ok is how a plain-utility pass reports no card as expected (136.32523ms)
+✖ cli: a non-game with a compliant card passes (117.27206ms)
+✔ project contract and AGENTS.md name the marker path and bound this script uses (0.70576ms)
+✔ the sections that own the brand-task prohibition never affirm a wait (3.623083ms)
+✔ project contract tells the pass to self-check with the flag this CLI accepts (2.571289ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 22
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 899.713254
+
+✖ failing tests:
+
+test at scripts/brand-check.test.mjs:235:1
+✖ cli: a game missing its card reports JSON and exits 1 (113.237884ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:239:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/brand-check.test.mjs:246:1
+✖ cli: a compliant game passes (108.140004ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:254:25)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/brand-check.test.mjs:257:1
+✖ cli: the task's own marker is reported, not honoured (117.580228ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:261:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/brand-check.test.mjs:266:1
+✖ cli: a bad argument fails with JSON on stderr (115.27341ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:269:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/brand-check.test.mjs:272:1
+✖ cli: a non-game with no card fails too — the pass exists to produce one (113.142799ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:276:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/brand-check.test.mjs:284:1
+✖ cli: --placeholder-ok is how a plain-utility pass reports no card as expected (136.32523ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:288:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+
+test at scripts/brand-check.test.mjs:297:1
+✖ cli: a non-game with a compliant card passes (117.27206ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:301:25)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

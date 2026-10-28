@@ -1,0 +1,19 @@
+
+> test:v84
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/coach/coach-fact-boundary-p0.test.ts src/lib/coach/deepseek-grounding.test.ts src/lib/coach/deepseek-policy.test.ts src/lib/coach/deepseek-minimal-transport.test.ts src/lib/coach/deepseek-ledger.server.test.ts src/lib/coach/deepseek-server-boundary.test.ts src/lib/strength/coach-scope.test.ts
+
+✔ src/lib/coach/coach-fact-boundary-p0.test.ts (780.513733ms)
+✔ src/lib/coach/deepseek-grounding.test.ts (5093.541939ms)
+✔ src/lib/coach/deepseek-ledger.server.test.ts (6023.926333ms)
+✔ src/lib/coach/deepseek-minimal-transport.test.ts (4672.149196ms)
+✔ src/lib/coach/deepseek-policy.test.ts (1952.553379ms)
+✔ src/lib/coach/deepseek-server-boundary.test.ts (5659.789128ms)
+✔ src/lib/strength/coach-scope.test.ts (3716.844942ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11124.55828

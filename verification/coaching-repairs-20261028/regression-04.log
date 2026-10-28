@@ -1,0 +1,45 @@
+
+> test:cognition
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-cognition.test.ts src/lib/core/coach-local-first.test.ts src/lib/core/coach-local-safety.test.ts src/lib/core/coach-first-week.test.ts src/lib/core/storage-journal.test.ts src/lib/core/running-real-use.test.ts src/lib/core/coach-device-conflict.test.ts src/lib/core/coach-curriculum.test.ts src/lib/core/coach-guard-k13.test.ts src/lib/strength/coach-v4-wiring.test.ts src/lib/core/coach-reasoning-foundation.test.ts src/lib/core/coach-reasoning.test.ts src/lib/core/coach-reasoning-r7.test.ts src/lib/core/coach-reasoning-r8.test.ts src/lib/core/coach-module-linkage.test.ts src/lib/core/coach-r10-regression.test.ts src/lib/core/coach-red-flags.test.ts src/lib/core/coach-diagnosis-wording.test.ts src/lib/core/coach-session-load.test.ts src/lib/core/coach-playbook-retrieval.test.ts src/lib/core/coach-topic-fallback.test.ts src/lib/core/coach-r11-mixed-session.test.ts src/lib/core/coach-r11-integrity.test.ts src/lib/core/coach-structured-candidate.test.ts src/lib/core/coach-load-metrics.test.ts src/lib/core/coach-load-metrics-store.test.ts src/lib/strength/coach-explanation.test.ts src/lib/core/coach-r12-integration.test.ts src/lib/strength/coach-r12-pipeline.test.ts src/lib/core/coach-r13-safety.test.ts src/lib/core/coach-r13-features.test.ts src/lib/core/coach-offline-loop.test.ts src/lib/core/coach-quantitative.test.ts
+
+✔ src/lib/core/coach-cognition.test.ts (5196.130989ms)
+✔ src/lib/core/coach-curriculum.test.ts (4472.485086ms)
+✔ src/lib/core/coach-device-conflict.test.ts (3889.275061ms)
+✔ src/lib/core/coach-diagnosis-wording.test.ts (3680.480035ms)
+✔ src/lib/core/coach-first-week.test.ts (1403.52306ms)
+✔ src/lib/core/coach-guard-k13.test.ts (3866.196281ms)
+✔ src/lib/core/coach-load-metrics-store.test.ts (1561.005671ms)
+✔ src/lib/core/coach-load-metrics.test.ts (546.71398ms)
+✔ src/lib/core/coach-local-first.test.ts (4668.56663ms)
+✔ src/lib/core/coach-local-safety.test.ts (598.23943ms)
+✔ src/lib/core/coach-module-linkage.test.ts (4517.95745ms)
+✔ src/lib/core/coach-offline-loop.test.ts (4068.033519ms)
+✔ src/lib/core/coach-playbook-retrieval.test.ts (1231.410715ms)
+✔ src/lib/core/coach-quantitative.test.ts (789.893741ms)
+✔ src/lib/core/coach-r10-regression.test.ts (4005.857371ms)
+✔ src/lib/core/coach-r11-integrity.test.ts (4300.688279ms)
+✔ src/lib/core/coach-r11-mixed-session.test.ts (4059.372427ms)
+✔ src/lib/core/coach-r12-integration.test.ts (1259.920505ms)
+✔ src/lib/core/coach-r13-features.test.ts (4217.036715ms)
+✔ src/lib/core/coach-r13-safety.test.ts (4607.141026ms)
+✔ src/lib/core/coach-reasoning-foundation.test.ts (906.067813ms)
+✔ src/lib/core/coach-reasoning-r7.test.ts (4784.682228ms)
+✔ src/lib/core/coach-reasoning-r8.test.ts (4520.302859ms)
+✔ src/lib/core/coach-reasoning.test.ts (4208.116668ms)
+✔ src/lib/core/coach-red-flags.test.ts (4040.299274ms)
+✔ src/lib/core/coach-session-load.test.ts (556.728257ms)
+✔ src/lib/core/coach-structured-candidate.test.ts (4478.655095ms)
+✔ src/lib/core/coach-topic-fallback.test.ts (3843.161204ms)
+✔ src/lib/core/running-real-use.test.ts (5478.500914ms)
+✔ src/lib/core/storage-journal.test.ts (1233.241503ms)
+✔ src/lib/strength/coach-explanation.test.ts (4396.412554ms)
+✔ src/lib/strength/coach-r12-pipeline.test.ts (4853.852629ms)
+✔ src/lib/strength/coach-v4-wiring.test.ts (4190.47065ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37819.420542

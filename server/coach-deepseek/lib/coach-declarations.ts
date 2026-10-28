@@ -17,7 +17,12 @@ export function parseCoachContext(raw:unknown,now:number):CoachRequestContext {
  const dependencyVersions=raw.dependencyVersions.map(d=>{if(!object(d)||!exact(d,['key','revision'])||!id(d.key)||!id(d.revision)||keys.has(d.key))throw Error('CONTEXT_DEPENDENCY_INVALID');keys.add(d.key);return {key:d.key,revision:d.revision}});
  const ids=new Set<string>();
  const records=raw.records.map((r):CoachContextRecord=>{
-  if(!object(r)||!exact(r,['recordId','revision','occurredAt','knownAt','category','state','source','fields'])||!id(r.recordId)||!id(r.revision)||ids.has(r.recordId)||!['TRAINING','STRENGTH','GOAL','PLAN','NUTRITION','RECOVERY','CAPABILITY','RESTRICTION'].includes(String(r.category))||!['ACTUAL','PLANNED','TARGET','UNKNOWN'].includes(String(r.state))||!plain(r.source,64)||!r.source||!Array.isArray(r.fields)||r.fields.length>24)throw Error('CONTEXT_RECORD_INVALID');
+  if(!object(r)||!exact(r,['recordId','revision','occurredAt','knownAt','category','state','source','fields'])||!id(r.recordId)||!id(r.revision)||ids.has(r.recordId)||!['TRAINING','STRENGTH','GOAL','PLAN','NUTRITION','RECOVERY','CAPABILITY','RESTRICTION','ANALYSIS','DIALOGUE'].includes(String(r.category))||!['ACTUAL','PLANNED','TARGET','UNKNOWN'].includes(String(r.state))||!plain(r.source,64)||!r.source||!Array.isArray(r.fields)||r.fields.length>24)throw Error('CONTEXT_RECORD_INVALID');
+  if(['ANALYSIS','DIALOGUE'].includes(String(r.category))&&(r.state!=='UNKNOWN'||!String(r.source).startsWith('USER_DECLARED:')))throw Error('CONTEXT_STATE_INVALID');
+  if(['ANALYSIS','DIALOGUE'].includes(String(r.category))&&r.fields.some(f=>object(f)&&(
+    f.name==='medicalClearance'&&f.value!==false||
+    ['writeAuthority','factAuthority'].includes(String(f.name))&&f.value!=='NONE'
+  )))throw Error('CONTEXT_AUTHORITY_INVALID');
   ids.add(r.recordId);
   if((r.category==='PLAN'&&!['PLANNED','UNKNOWN'].includes(String(r.state)))||(r.category==='GOAL'&&!['TARGET','UNKNOWN'].includes(String(r.state))))throw Error('CONTEXT_STATE_INVALID');
   if(r.knownAt!==null&&(!exactTime(r.knownAt)||Date.parse(r.knownAt)>now))throw Error('CONTEXT_TIME_INVALID');
@@ -58,7 +63,7 @@ export function declarationCoachInput(input: CoachSnapshotCreate): AskCoachRawIn
     id: `decl:${createHash('sha256').update(JSON.stringify([d.recordId, d.revision, d.metric])).digest('hex').slice(0, 32)}`,
     kind: 'FACT', detail: declarationQuote(d),
   }));
-  for(const r of input.context?.records??[])sources.push({id:`ctx:${createHash('sha256').update(JSON.stringify([r.recordId,r.revision])).digest('hex').slice(0,32)}`,kind:'FACT',detail:contextRecordQuote(r)});
+  for(const r of input.context?.records??[])sources.push({id:`ctx:${createHash('sha256').update(JSON.stringify([r.recordId,r.revision])).digest('hex').slice(0,32)}`,kind:r.category==='DIALOGUE'?'CONTEXT':'FACT',detail:contextRecordQuote(r)});
   const brief = deriveCoachBrief({
     question: input.question, occurrenceId: null, runningStructure: 'UNAVAILABLE',
     sessionRpe: null, sleepHours: null, subjectiveRecovery: null, recoveryState: null, fatigueState: null,

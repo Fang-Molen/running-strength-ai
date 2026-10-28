@@ -1,0 +1,666 @@
+{
+  "synthetic": true,
+  "paidModel": false,
+  "browser": false,
+  "liveDevice": false,
+  "trace": [
+    {
+      "step": "select-A",
+      "sourceVersion": "a34a8aebe02b3cf088d025bf9984a487e644f8d07a0aba1b9192ba8834450383",
+      "context": {
+        "version": "coach-context-v2",
+        "dependencyVersions": [
+          {
+            "key": "record:analysis:2f2a02674127d9060e46753057949fac7ce220fb2c5129f547ce986a068386d6",
+            "revision": "c8e8f2dda41347170ffa958c17b0ebb37690aa76315becd0f6cbd54bbdd1dfe6"
+          },
+          {
+            "key": "record:analysis:6226a6b35fd1af14c67f1cbcfce4d3b4dec8f47d9c198bbc929ce4f5419e9e9c",
+            "revision": "220d208330010b62893091dee17a0ceea4fab152f4e5d27d894a9b884db8940c"
+          },
+          {
+            "key": "record:analysis:b37eff4be784b5568567171532c2493c03b382d71bcbdfa690e12f7f9524277e",
+            "revision": "c981b90125bf04b6bd6b6cd9be704d3c70b9787a812b2858e0123f0a79d87a00"
+          },
+          {
+            "key": "record:ctx:ec81dcbdf1cd58642f8522cf5300dad761c47162af09ae87120d64affb651555",
+            "revision": "0422a6f1409c683bb6b6bb59cb5c34097e5b113a49abafb67c41b765c9ae994b"
+          },
+          {
+            "key": "record:ctx:f43af376dedb402304e1433a9ef51ddf1da097d503a63e7338a70d819b528f3a",
+            "revision": "c7fe1f896f6e060268c06724c0dc6f5fa578ee5a1dd62a44391a437aeae2e1cc"
+          },
+          {
+            "key": "selection:33383ae879dd93a8aba52daf849835ac73a872684c2449af378035b521286cbb",
+            "revision": "4fe41e8254b062b5cb0aa4ba29a518835855933c249a0a4241af7746839e28f0"
+          }
+        ],
+        "records": [
+          {
+            "recordId": "ctx:f43af376dedb402304e1433a9ef51ddf1da097d503a63e7338a70d819b528f3a",
+            "revision": "0",
+            "occurredAt": "2026-10-27T08:00:00.000Z",
+            "knownAt": "2026-10-28T10:00:00.000Z",
+            "category": "TRAINING",
+            "state": "ACTUAL",
+            "source": "USER_DECLARED:MANUAL",
+            "fields": [
+              {
+                "name": "quality",
+                "value": "PARTIAL",
+                "unit": null
+              },
+              {
+                "name": "evidenceVersion",
+                "value": "c3b063350e352924",
+                "unit": null
+              },
+              {
+                "name": "sourceGroup",
+                "value": "57f011d73ceeef8543e205c8968817f7d146c41e09e72c1e271f6b050a16d5b2",
+                "unit": null
+              },
+              {
+                "name": "protocolGroup",
+                "value": null,
+                "unit": null
+              },
+              {
+                "name": "protocol",
+                "value": null,
+                "unit": null
+              },
+              {
+                "name": "provenanceVerified",
+                "value": false,
+                "unit": null
+              },
+              {
+                "name": "modality",
+                "value": "RUN",
+                "unit": null
+              },
+              {
+                "name": "observedType",
+                "value": "UNKNOWN",
+                "unit": null
+              },
+              {
+                "name": "actualDuration",
+                "value": 2400,
+                "unit": "s"
+              },
+              {
+                "name": "sessionRpe",
+                "value": 6,
+                "unit": "0-10_SESSION_RPE"
+              },
+              {
+                "name": "segmentCount",
+                "value": 2,
+                "unit": null
+              },
+              {
+                "name": "setCount",
+                "value": 0,
+                "unit": null
+              },
+              {
+                "name": "jumpContacts",
+                "value": null,
+                "unit": null
+              }
+            ]
+          },
+          {
+            "recordId": "ctx:ec81dcbdf1cd58642f8522cf5300dad761c47162af09ae87120d64affb651555",
+            "revision": "0",
+            "occurredAt": "2026-10-27T08:00:00.000Z",
+            "knownAt": "2026-10-28T10:00:00.000Z",
+            "category": "TRAINING",
+            "state": "ACTUAL",
+            "source": "USER_DECLARED:MANUAL",
+            "fields": [
+              {
+                "name": "parent",
+                "value": "ctx:f43af376dedb402304e1433a9ef51ddf1da097d503a63e7338a70d819b528f3a",
+                "unit": null
+              },
+              {
+                "name": "structure",
+                "value": "RUN_SEGMENT",
+                "unit": null
+              },
+              {
+                "name": "block",
+                "value": "ctx:c8b61c646c9faccbda7ec97729a24a08a57d35ecf7326148b9574a89ef017273",
+                "unit": null
+              },
+              {
+                "name": "round",
+                "value": 1,
+                "unit": null
+              },
+              {
+                "name": "step",
+                "value": 1,
+                "unit": null
+              },
+              {
+                "name": "kind",
+                "value": "REPETITION",
+                "unit": null
+              },
+              {
+                "name": "distance",
+                "value": 200,
+                "unit": "m"
+              },
+              {
+                "name": "duration",
+                "value": 39,
+                "unit": "s"
+              },
+              {
+                "name": "restAfter",
+                "value": 180,
+                "unit": "s"
+              },
+              {
+                "name": "restScope",
+                "value": "AFTER_REPEAT",
+                "unit": null
+              },
+              {
+                "name": "completion",
+                "value": "COMPLETED",
+                "unit": null
+              },
+              {
+                "name": "surface",
+                "value": null,
+                "unit": null
+              },
+              {
+                "name": "grade",
+                "value": null,
+                "unit": "%"
+              },
+              {
+                "name": "heartRate",
+                "value": null,
+                "unit": "bpm"
+              },
+              {
+                "name": "heartRateMethod",
+                "value": "UNKNOWN",
+                "unit": null
+              }
+            ]
+          },
+          {
+            "recordId": "analysis:b37eff4be784b5568567171532c2493c03b382d71bcbdfa690e12f7f9524277e",
+            "revision": "a2cdf644ffd167868707ae87efa23800c1cc2cbc255c9a323576a69b548c6ea4",
+            "occurredAt": null,
+            "knownAt": null,
+            "category": "ANALYSIS",
+            "state": "UNKNOWN",
+            "source": "USER_DECLARED:LOCAL_ANALYSIS",
+            "fields": [
+              {
+                "name": "kind",
+                "value": "COMPUTED",
+                "unit": null
+              },
+              {
+                "name": "metric",
+                "value": "RUN_DISTANCE_M",
+                "unit": null
+              },
+              {
+                "name": "value",
+                "value": 400,
+                "unit": "m"
+              },
+              {
+                "name": "evidenceVersions",
+                "value": "c3b063350e352924",
+                "unit": null
+              },
+              {
+                "name": "formula",
+                "value": "sum(COMPLETED runSegments.distanceM)",
+                "unit": null
+              },
+              {
+                "name": "formulaVersion",
+                "value": "FK_DERIVED_1",
+                "unit": null
+              },
+              {
+                "name": "meaning",
+                "value": "2026-10-27 confirmed:chat-78guvr-1cqod03:running@0(occurrence confirmed:chat-78guvr-1cqod03;RUN/running):完成段总距离 400 m。",
+                "unit": null
+              },
+              {
+                "name": "inputsOmitted",
+                "value": 0,
+                "unit": null
+              },
+              {
+                "name": "input0",
+                "value": 200,
+                "unit": "m"
+              },
+              {
+                "name": "inputSource0",
+                "value": "c3b063350e352924:runSegments[0].distanceM",
+                "unit": null
+              },
+              {
+                "name": "input1",
+                "value": 200,
+                "unit": "m"
+              },
+              {
+                "name": "inputSource1",
+                "value": "c3b063350e352924:runSegments[1].distanceM",
+                "unit": null
+              },
+              {
+                "name": "boundedSummary",
+                "value": true,
+                "unit": null
+              }
+            ]
+          },
+          {
+            "recordId": "analysis:6226a6b35fd1af14c67f1cbcfce4d3b4dec8f47d9c198bbc929ce4f5419e9e9c",
+            "revision": "21533f260d3c46c7d8fb6e371860d07a22bb1684320b3ba8b31a85975a664ee4",
+            "occurredAt": null,
+            "knownAt": null,
+            "category": "ANALYSIS",
+            "state": "UNKNOWN",
+            "source": "USER_DECLARED:LOCAL_ANALYSIS",
+            "fields": [
+              {
+                "name": "kind",
+                "value": "COMPUTED",
+                "unit": null
+              },
+              {
+                "name": "metric",
+                "value": "RUN_WORK_SECONDS",
+                "unit": null
+              },
+              {
+                "name": "value",
+                "value": 77,
+                "unit": "s"
+              },
+              {
+                "name": "evidenceVersions",
+                "value": "c3b063350e352924",
+                "unit": null
+              },
+              {
+                "name": "formula",
+                "value": "sum(COMPLETED runSegments.durationSeconds); excludes rest",
+                "unit": null
+              },
+              {
+                "name": "formulaVersion",
+                "value": "FK_DERIVED_1",
+                "unit": null
+              },
+              {
+                "name": "meaning",
+                "value": "2026-10-27 confirmed:chat-78guvr-1cqod03:running@0(occurrence confirmed:chat-78guvr-1cqod03;RUN/running):纯跑总用时(不含间歇) 77 s。",
+                "unit": null
+              },
+              {
+                "name": "inputsOmitted",
+                "value": 0,
+                "unit": null
+              },
+              {
+                "name": "input0",
+                "value": 39,
+                "unit": "s"
+              },
+              {
+                "name": "inputSource0",
+                "value": "c3b063350e352924:runSegments[0].durationSeconds",
+                "unit": null
+              },
+              {
+                "name": "input1",
+                "value": 38,
+                "unit": "s"
+              },
+              {
+                "name": "inputSource1",
+                "value": "c3b063350e352924:runSegments[1].durationSeconds",
+                "unit": null
+              },
+              {
+                "name": "boundedSummary",
+                "value": true,
+                "unit": null
+              }
+            ]
+          },
+          {
+            "recordId": "analysis:2f2a02674127d9060e46753057949fac7ce220fb2c5129f547ce986a068386d6",
+            "revision": "082e10330b1179144a16d3a1be63a3ca940b5812f4835922018762df409a18d6",
+            "occurredAt": null,
+            "knownAt": null,
+            "category": "ANALYSIS",
+            "state": "UNKNOWN",
+            "source": "USER_DECLARED:LOCAL_ANALYSIS",
+            "fields": [
+              {
+                "name": "kind",
+                "value": "COMPUTED",
+                "unit": null
+              },
+              {
+                "name": "metric",
+                "value": "RUN_SEGMENT_RANGE_SECONDS",
+                "unit": null
+              },
+              {
+                "name": "value",
+                "value": 1,
+                "unit": "s"
+              },
+              {
+                "name": "evidenceVersions",
+                "value": "c3b063350e352924",
+                "unit": null
+              },
+              {
+                "name": "formula",
+                "value": "max(COMPLETED runSegments.durationSeconds) - min(COMPLETED runSegments.durationSeconds)",
+                "unit": null
+              },
+              {
+                "name": "formulaVersion",
+                "value": "FK_DERIVED_1",
+                "unit": null
+              },
+              {
+                "name": "meaning",
+                "value": "2026-10-27 confirmed:chat-78guvr-1cqod03:running@0(occurrence confirmed:chat-78guvr-1cqod03;RUN/running):完成段用时极差 1 s。",
+                "unit": null
+              },
+              {
+                "name": "inputsOmitted",
+                "value": 0,
+                "unit": null
+              },
+              {
+                "name": "input0",
+                "value": 39,
+                "unit": "s"
+              },
+              {
+                "name": "inputSource0",
+                "value": "c3b063350e352924:runSegments[0].durationSeconds",
+                "unit": null
+              },
+              {
+                "name": "input1",
+                "value": 38,
+                "unit": "s"
+              },
+              {
+                "name": "inputSource1",
+                "value": "c3b063350e352924:runSegments[1].durationSeconds",
+                "unit": null
+              },
+              {
+                "name": "boundedSummary",
+                "value": true,
+                "unit": null
+              }
+            ]
+          }
+        ],
+        "coverage": {
+          "selected": 5,
+          "omitted": 10,
+          "unknowns": [
+            "上下文预算有限，部分历史或训练结构未发送；不能把已选分段/组次当作整课总量。",
+            "恢复来源含缺项或不确定状态;本次只发送可读取且明确归属的记录。",
+            "训练历史来自当前分析投影的可读取范围,并非全量历史;日期较早的专项记录可入选。",
+            "按用户选择的顺序读取实际训练;未选择的其他训练不代替所选记录。",
+            "本机计算与解释按问题筛选传递,属于客户端申报;未独立核验,候选未确认,不构成医疗许可。",
+            "恢复背景仅选本问题日期附近的近期记录;旧训练用于历史比较,不代表当前疲劳。"
+          ]
+        }
+      },
+      "points": [
+        {
+          "occurrenceId": "confirmed:chat-78guvr-1cqod03",
+          "sourceId": "import:chat-78guvr-1cqod03:run-1",
+          "seconds": 39,
+          "distanceMeters": 200,
+          "paceSecondsPerKm": 195,
+          "pace": "3:15",
+          "protocol": "running:import:rep:b:step:1:1:200m",
+          "eventAt": "2026-10-27T08:00:00Z",
+          "source": "USER_REPORT",
+          "confirmation": "USER_REPORTED"
+        },
+        {
+          "occurrenceId": "confirmed:chat-78guvr-1cqod03",
+          "sourceId": "import:chat-78guvr-1cqod03:run-2",
+          "seconds": 38,
+          "distanceMeters": 200,
+          "paceSecondsPerKm": 190,
+          "pace": "3:10",
+          "protocol": "running:import:rep:b:step:1:2:200m",
+          "eventAt": "2026-10-27T08:00:00Z",
+          "source": "USER_REPORT",
+          "confirmation": "USER_REPORTED"
+        }
+      ]
+    },
+    {
+      "step": "candidate",
+      "diff": [
+        "2026-10-29：间歇跑，40分钟，HARD → 轻松跑，1.3分钟，EASY"
+      ],
+      "basisVersion": "analysis:1lxcl0f"
+    },
+    {
+      "step": "confirmed-and-feedback",
+      "receipt": {
+        "schema": 1,
+        "id": "20f925d0-b2a6-48cc-be49-7956daad1839",
+        "athleteId": "local",
+        "question": "把明天的强度课改成轻松跑",
+        "createdAt": "2026-10-28T10:00:00.000Z",
+        "expiresAt": "2026-10-28T10:15:00.000Z",
+        "basisVersion": "analysis:1lxcl0f",
+        "status": "ACCEPTED",
+        "kind": "SCHEDULE",
+        "diff": [
+          "2026-10-29：间歇跑，40分钟，HARD → 轻松跑，1.3分钟，EASY"
+        ],
+        "warnings": [
+          "关键课目的会改变，确认后才生效；原计划、实际训练和审计记录保留。"
+        ],
+        "history": [
+          {
+            "at": "2026-10-28T10:00:00.000Z",
+            "action": "PREVIEWED"
+          },
+          {
+            "at": "2026-10-28T10:00:00.000Z",
+            "action": "ACCEPTED"
+          }
+        ],
+        "pairs": [
+          {
+            "before": {
+              "id": "future-run",
+              "athleteId": "local",
+              "date": "2026-10-29",
+              "kind": "run",
+              "modality": "run",
+              "title": "间歇跑",
+              "focus": [
+                "速度"
+              ],
+              "minutes": 40,
+              "intensity": "HARD",
+              "lowerHeavy": false,
+              "source": "custom",
+              "refId": null,
+              "status": "planned",
+              "runComponents": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "INTERVAL",
+                  "structure": {
+                    "kind": "REPEATED",
+                    "blocks": [
+                      {
+                        "blockId": "b",
+                        "roundCount": 1,
+                        "recoveryAfterRoundSeconds": null,
+                        "steps": [
+                          {
+                            "stepId": "s",
+                            "plannedDistanceMeters": 200,
+                            "plannedDurationSeconds": 39,
+                            "repeatCount": 2,
+                            "recoveryAfterRepeatSeconds": 180,
+                            "recoveryBeforeNextStepSeconds": null
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "after": {
+              "id": "future-run",
+              "athleteId": "local",
+              "date": "2026-10-29",
+              "kind": "run",
+              "modality": "run",
+              "title": "轻松跑",
+              "focus": [
+                "轻松"
+              ],
+              "minutes": 1.3,
+              "intensity": "EASY",
+              "lowerHeavy": false,
+              "source": "custom",
+              "refId": null,
+              "status": "planned",
+              "runComponents": [
+                {
+                  "componentId": "run",
+                  "modality": "RUNNING",
+                  "purpose": "EASY_AEROBIC",
+                  "structure": {
+                    "kind": "CONTINUOUS",
+                    "plannedDistanceMeters": null,
+                    "plannedDistanceMaxMeters": null,
+                    "plannedDurationSeconds": 78
+                  }
+                }
+              ],
+              "reduced": true,
+              "edited": true,
+              "swapReason": "用户确认替换跑步部分；未变更平行力量课"
+            }
+          }
+        ],
+        "acceptedBasis": "analysis:1fngxmp",
+        "receipt": {
+          "at": "2026-10-28T10:00:00.000Z"
+        }
+      },
+      "feedback": {
+        "ok": true,
+        "followup": {
+          "requestId": "journey-feedback",
+          "confirmedImportId": "confirmed:chat-78guvr-1cqod03",
+          "observedAt": "2026-10-28T10:00:00.000Z",
+          "recoveryScore": 7,
+          "sleepHours": 7.5,
+          "pain": {
+            "state": "ABSENT",
+            "location": null,
+            "intensity": null
+          },
+          "soreness": {
+            "state": "PRESENT",
+            "location": "腿后侧",
+            "intensity": 2
+          },
+          "schemaVersion": 1,
+          "followupId": "followup:journey-feedback",
+          "savedAt": "2026-10-28T10:00:00.000Z",
+          "elapsedSeconds": 93600,
+          "window": "24H",
+          "canonicalOccurrenceId": null
+        },
+        "duplicate": false
+      }
+    },
+    {
+      "step": "corrected",
+      "correction": {
+        "ok": true,
+        "correctionId": "corr-48a02dda-b315-451c-ba54-ba8ea24564ad"
+      },
+      "analysisBefore": "analysis:iq6leh",
+      "analysisAfter": "analysis:11jde4o",
+      "contextBefore": "345d229f8a591fc594f78241391ac3895c219a711ac1b1a0d6fe6cb6f3069830",
+      "contextAfter": "259f640c89cc236512abda1d73ac12800f32ce798e1d7222e055358ddf7ce4d2",
+      "points": [
+        {
+          "occurrenceId": "confirmed:chat-78guvr-1cqod03",
+          "sourceId": "correction:corr-48a02dda-b315-451c-ba54-ba8ea24564ad:SPLIT_SECONDS:chat-78guvr-1cqod03:run-1",
+          "seconds": 38.5,
+          "distanceMeters": 200,
+          "paceSecondsPerKm": 192.5,
+          "pace": "3:13",
+          "protocol": "running:import:rep:b:step:1:1:200m",
+          "eventAt": "2026-10-27T08:00:00Z",
+          "source": "USER_REPORT",
+          "confirmation": "USER_REPORTED"
+        },
+        {
+          "occurrenceId": "confirmed:chat-78guvr-1cqod03",
+          "sourceId": "import:chat-78guvr-1cqod03:run-2",
+          "seconds": 38,
+          "distanceMeters": 200,
+          "paceSecondsPerKm": 190,
+          "pace": "3:10",
+          "protocol": "running:import:rep:b:step:1:2:200m",
+          "eventAt": "2026-10-27T08:00:00Z",
+          "source": "USER_REPORT",
+          "confirmation": "USER_REPORTED"
+        }
+      ],
+      "nutrition": {
+        "recordCount": 0,
+        "loggedKcal": null,
+        "unknownEnergyCount": 0,
+        "dayComplete": false,
+        "energyDeficitKcal": null,
+        "sources": [],
+        "note": "只合计已记录食物；全天完整度与估计误差未知。先补餐食/分量，不诊断摄入不足，不重复加活动与训练热量。"
+      }
+    }
+  ]
+}

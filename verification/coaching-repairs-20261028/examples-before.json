@@ -1,0 +1,81 @@
+{
+  "synthetic": true,
+  "actualModel": false,
+  "professionalReview": false,
+  "cases": [
+    {
+      "id": "X01",
+      "input": "同一活动的导入和手表来源，各6.01km/1611.94s，关联V4",
+      "output": {
+        "durationSeconds": 3223.88,
+        "pace": "8'56\"/km",
+        "weeklyMinutes": 54
+      }
+    },
+    {
+      "id": "X02",
+      "input": "这次训练怎么样",
+      "output": {
+        "personal": false,
+        "training": false,
+        "recovery": false,
+        "nutrition": false,
+        "plan": false,
+        "goal": false,
+        "profile": false,
+        "restrictions": false,
+        "historical": false
+      }
+    },
+    {
+      "id": "X03",
+      "input": "所选训练+代码分析+近期对话",
+      "output": {
+        "categories": [
+          "TRAINING",
+          "TRAINING"
+        ],
+        "computedMetrics": [],
+        "coverage": {
+          "selected": 2,
+          "omitted": 0,
+          "unknowns": [
+            "按用户选择的顺序读取实际训练;未选择的其他训练不代替所选记录。",
+            "恢复背景仅选本问题日期附近的近期记录;旧训练用于历史比较,不代表当前疲劳。"
+          ]
+        }
+      }
+    },
+    {
+      "id": "X07",
+      "input": "**结论：这次训练节奏稳定。仍需观察次日反馈。**\n下一课：确认恢复后再安排。",
+      "output": {
+        "tag": "",
+        "conclusion": "**结论：这次训练节奏稳定。",
+        "next": "下一课：确认恢复后再安排。",
+        "reasoning": [
+          "仍需观察次日反馈。",
+          "**"
+        ],
+        "risk": false
+      }
+    },
+    {
+      "id": "C01",
+      "input": "分别确认跑步有经验、力量新手",
+      "output": {
+        "cycleGoal": "TRAINED",
+        "running": "NOT_SEPARATELY_CONFIRMED",
+        "strength": "NOT_SEPARATELY_CONFIRMED"
+      }
+    },
+    {
+      "id": "J01",
+      "input": "把明天的强度课改成轻松跑",
+      "output": {
+        "kind": "CLARIFY",
+        "message": "要修改哪个日期的跑步课？请给出今天或未来的具体日期。"
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+✔ src/lib/ui/run-link.test.ts (1679.416338ms)
+✔ src/lib/ui/scheduled-training.test.ts (4956.027926ms)
+✔ src/lib/ui/strength-sources-v77.test.ts (1568.349029ms)
+✔ src/lib/ui/training-activity-dose.test.ts (1725.000596ms)
+✔ src/lib/ui/training-record-sync.test.ts (4678.553379ms)
+✔ src/lib/ui/v83-acceptance.test.ts (1673.506238ms)
+✔ src/lib/ui/v84-merge.test.ts (1354.033406ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6368.219047

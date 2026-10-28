@@ -1,0 +1,26 @@
+✔ X03 question handoff carries computed analysis and a bounded conversation, without claiming verified facts (43.983379ms)
+✔ X02 colloquial personal reviews and mixed subjects retrieve owned facts without treating friends as the athlete (22.161422ms)
+✔ explicit comparison selects the requested owned sessions rather than unrelated latest activity (11.692353ms)
+✔ general education and third-person cases do not select personal records (10.937859ms)
+✔ relevant older history preserves actual run split and rest structure without claiming a recent window (5.351264ms)
+✔ strength dose preserves actual load basis, repetitions, completion and RIR (0.953826ms)
+✔ foreign, future, planned and conflicting training facts cannot become actual context (7.169301ms)
+✔ target and saved schedule remain distinct from measured performance (5.40187ms)
+✔ dependency fingerprint follows selected evidence, not clock, unrelated nutrition or foreign rows (7.132165ms)
+✔ context is bounded and truncated workout structure is explicitly unknown (40.064523ms)
+✔ nutrition entries retain completeness unknown, actual eating time unknown and no account/device identifiers (2.491317ms)
+✔ personal data requests and broad generic exercise questions are separated (0.889188ms)
+✔ different questions sharing unchanged records do not share a conflicting selection version key (1.432712ms)
+✔ date-only body measurement does not fabricate a measurement instant (1.593376ms)
+✔ real frontend contexts pass the shared server boundary, including response protocols and maximum coverage (22.052827ms)
+✔ unrelated profile edit does not change a selected goal field revision (1.603982ms)
+✔ large structured context fits real quoted provider-input budget, not only snapshot-body budget (49.710743ms)
+✔ budget cannot erase omitted safety restrictions as implicit training permission (52.422396ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 319.757349

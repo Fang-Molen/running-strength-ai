@@ -1,0 +1,57 @@
+✔ browser writes are locked; two stale writers cannot overwrite profile (2.323072ms)
+✖ X05 old profile still gives conditional useful guidance without treating elapsed days as a training ban (2.815509ms)
+✖ X05 pain feedback does not swallow an unrelated nutrition question or clear the restriction (50.734058ms)
+✔ chat uses adopted version and athlete scope, does not invent diet history or ignore pain (8.335198ms)
+✔ no lock support means zero unlocked mutations (1.378821ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 3
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75.392637
+
+✖ failing tests:
+
+test at src/lib/coach/personal/host.test.ts:67:1
+✖ X05 old profile still gives conditional useful guidance without treating elapsed days as a training ban (2.815509ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /蛋白|蔬菜|餐次|饮食/. Input:
+
+  '个人条件已超过30天未复核，请在私人教练面板核对并保存当前身体和健康条件，再生成具体方案。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/host.test.ts:73:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '个人条件已超过30天未复核，请在私人教练面板核对并保存当前身体和健康条件，再生成具体方案。',
+    expected: /蛋白|蔬菜|餐次|饮食/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/personal/host.test.ts:81:1
+✖ X05 pain feedback does not swallow an unrelated nutrition question or clear the restriction (50.734058ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /蛋白|蔬菜|餐次/. Input:
+
+  '此前反馈仍有疼痛：暂停力量和跑步建议，先评估疼痛；饮食保持规律，不以减餐补偿停训。请在私人教练面板更新实际反馈。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/host.test.ts:90:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '此前反馈仍有疼痛：暂停力量和跑步建议，先评估疼痛；饮食保持规律，不以减餐补偿停训。请在私人教练面板更新实际反馈。',
+    expected: /蛋白|蔬菜|餐次/,
+    operator: 'match',
+    diff: 'simple'
+  }

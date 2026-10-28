@@ -1,0 +1,5 @@
+
+> preview:stop
+> node scripts/preview.mjs stop
+
+[preview] stopped pid(s) 46742, 46721 — port 8081 is free

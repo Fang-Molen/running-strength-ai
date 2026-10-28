@@ -1,0 +1,15 @@
+
+> test:ui-r5
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/ui/ui-r5.test.tsx src/lib/ui/coach-answer-digest.test.ts src/lib/ui/split-fill.test.ts
+
+✔ src/lib/ui/coach-answer-digest.test.ts (529.999876ms)
+✔ src/lib/ui/split-fill.test.ts (505.32294ms)
+✔ src/lib/ui/ui-r5.test.tsx (579.944957ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 597.549159

@@ -14,6 +14,7 @@ import {deriveCoachBrief} from '../core/coach-brief'
 import {emptyDialogue} from '../core/coach-dialogue'
 import {buildParts} from '../../../evaluation/k12/fixtures'
 import {context} from './analysis-fixtures'
+import {readOnlineContext} from '../coach/online-context'
 const day='2026-10-22',asOf='2026-10-22T23:59:59Z'
 function fixture(t:test.TestContext){t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-22T12:00:00Z')});const previous=currentAthleteId(),ls=Object.getOwnPropertyDescriptor(globalThis,'localStorage'),fetch=globalThis.fetch,map=new Map<string,string>(),box={getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v)},removeItem:(k:string)=>map.delete(k),keys:()=>[...map.keys()]};setEventContext({athleteId:'SYN-A'});setStoreBackend(box);Object.defineProperty(globalThis,'localStorage',{value:box,configurable:true});t.after(()=>{setEventContext({athleteId:previous});setStoreBackend(null);globalThis.fetch=fetch;if(ls)Object.defineProperty(globalThis,'localStorage',ls);else Reflect.deleteProperty(globalThis,'localStorage')});return {map,box}}
 function mixed(f:ReturnType<typeof fixture>,id='mixed'){
@@ -56,3 +57,15 @@ test('legacy event without commit time stays outside frozen analysis and records
 test('C27 V4 mixed host keeps actual occurrence, not plan date alias',t=>{const f=fixture(t),id='plan400:2026-10-22:strength';mixed(f,id);const a=readAnalysis(day,asOf);const rows=a.snapshot.facts.filter(f=>f.kind==='TRAINING');assert.equal(rows.length,2);assert.deepEqual(rows.map(f=>f.kind==='TRAINING'?f.occurrenceId:null),[id,id]);assert.equal(rows.filter(f=>f.kind==='TRAINING'&&f.modality==='RUN').length,1)})
 test('C28 VOID immediately invalidates host projections without deleting stored events',t=>{const f=fixture(t);mixed(f);const count=f.map.size;assert.ok(appendCorrection({trainingOccurrenceId:'mixed',kind:'VOID',reason:'合成作废'}));assert.equal(readAnalysis(day,asOf).snapshot.facts.filter(f=>f.kind==='TRAINING').length,0);assert.ok(f.map.size>=count);assert.equal(readAnalysis(day,'2026-10-22T01:03:00Z').snapshot.facts.filter(f=>f.kind==='TRAINING').length,2)})
 test('C29 pain with unknown muscle location is still a safety hold',t=>{const f=fixture(t);f.map.set('fk-pain-log-v1',JSON.stringify([{id:'p',athleteId:'SYN-A',date:day,part:'膝盖',score:3,occurredAt:'2026-10-22T08:00:00Z',recordedAt:'2026-10-22T09:00:00Z'}]));const a=readAnalysis(day,asOf);assert.equal(a.assessment.safetyState,'HOLD_ACTIVE');assert.equal(a.assessment.candidates[0].action,'SKIP')})
+test('C03 retained last-year activity can be selected without becoming current fatigue or mixing owners',t=>{
+ const f=fixture(t);mixed(f,'older');
+ for(const [key,value]of f.map)f.map.set(key,value.replaceAll('2026-10-22','2025-10-20'));
+ const sourceBefore=[...f.map];
+ const answer=readOnlineContext('复盘去年这节跑步',day,asOf,undefined,['older']);
+ assert.ok(answer.selectedFacts.some(f=>f.kind==='TRAINING'&&f.occurrenceId==='older'));
+ assert.ok(answer.context.records.some(r=>r.occurredAt?.startsWith('2025-10-20')));
+ assert.ok(!readRecoveryProjection(day,asOf).parts.some(p=>p.occurrenceId==='older'));
+ assert.deepEqual([...f.map],sourceBefore);
+ setEventContext({athleteId:'SYN-B'});
+ assert.equal(readOnlineContext('复盘去年这节跑步',day,asOf,undefined,['older']).selectedFacts.length,0);
+});

@@ -27,16 +27,19 @@ export function currentMessageSafety(question: string): string | null {
   return null;
 }
 function requestedDay(q: string, today: string): string | null {
-  const explicit = q.match(/\d{4}-\d{2}-\d{2}/)?.[0];
-  if (explicit) return validDay(explicit) ? explicit : null;
-  const dow = q.match(/(?:周|星期)([一二三四五六日天])/);
-  if (dow) {
+  const days = new Set<string>();
+  for(const [explicit] of q.matchAll(/\d{4}-\d{2}-\d{2}/g)){
+    if(!validDay(explicit))return null;
+    days.add(explicit);
+  }
+  for(const dow of q.matchAll(/(?:周|星期)([一二三四五六日天])/g)) {
     const i = "一二三四五六日".indexOf(dow[1] === "天" ? "日" : dow[1]);
     let day = weekOf(addDays(today, /下周/.test(q) ? 7 : 0))[i];
     if (!/本周|这周|下周/.test(q) && day < today) day = addDays(day, 7);
-    return day;
+    days.add(day);
   }
-  return /今天/.test(q) ? today : null;
+  for(const [word,offset] of [['今天',0],['明天',1],['后天',2]] as const)if(q.includes(word))days.add(addDays(today,offset));
+  return days.size===1?[...days][0]:null;
 }
 export function parseR5Intent(question: string, now = new Date().toISOString()): R5Intent {
   const q = question.trim().normalize("NFKC"),
@@ -125,6 +128,8 @@ export function parseR5Intent(question: string, now = new Date().toISOString()):
     };
   if (/力量/.test(q) && /减少一组|少一组|减少1组|少1组/.test(q)) {
     const day = requestedDay(q, today);
+    if(!day&&/今天|明天|后天|\d{4}-\d{2}-\d{2}|(?:周|星期)[一二三四五六日天]/.test(q))
+      return {kind:'CLARIFY',message:'日期有歧义或无效，请明确这次要调整哪一天；未修改任何课程。'};
     return {
       kind: "REDUCE_SETS",
       days: day ? [day] : weekOf(addDays(today, /下周/.test(q) ? 7 : 0)),

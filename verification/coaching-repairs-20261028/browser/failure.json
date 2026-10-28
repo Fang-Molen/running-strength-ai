@@ -1,0 +1,280 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok((await page.locator('body').innerText()).includes('常用CR10'))\n",
+  "body": "方坤\n\n离线功能暂不可用\n\n对话\n学习\n复盘\n\n说说你的目标，或选择一节训练一起看。方坤会先核对事实，再解释与建议。\n\n使用说明与免责声明\n首次使用 · 目标与首周计划\n我没有腿疼，解释一下RPE\n\n【本地分析】\n\n目前尚不能给出整课AU，请先确认评分范围。\n\n看理由（2 句）\n查看记录依据\n反馈这条回答\n一般力量训练为什么会引起肌肉适应？\n\n【本地知识】\n\n力量复盘先看实际组和动作质量，时长不代表组量。\n\n看理由（4 句）\n\n依据当前已保存条件与记录；知识参考不代表课程审批。\n\n反馈这条回答\n\n【联网模型解释 · 未进行网页检索】\n\nRPE是主观用力程度量表。\n\n看理由（2 句）\n反馈这条回答\n\n【联网模型解释 · 未进行网页检索】\n\n一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n\n看理由（2 句）\n反馈这条回答\n\n联网解释已返回；未进行网页检索，未修改正式记录。\n\n联网分析 开 · 未关联训练\n▾\n分析最近训练\n解释恢复数据\n查看专项目标\n理解间歇原理\n力量如何迁移\n坤\nFANGKUN\n方坤 · 训练教练\n今天\n训练\n方坤\n饮食\n健康\n设置",
+  "checks": [],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "我没有腿疼，解释一下RPE",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [],
+          "records": [],
+          "coverage": {
+            "selected": 0,
+            "omitted": 0,
+            "unknowns": []
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "我没有腿疼，解释一下RPE",
+        "requestId": "df0b7bcc-4a59-430d-8a0e-bd89afa0f7c8",
+        "snapshotId": "be144e31-afb2-44c2-b5b4-1ccc0e8e9ef4",
+        "consentId": "88293e18-f7eb-48bb-970d-d9359f949c73",
+        "asOf": "2026-10-28T14:56:38.315Z"
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [],
+          "records": [],
+          "coverage": {
+            "selected": 0,
+            "omitted": 0,
+            "unknowns": []
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "requestId": "aa4a99c7-44c7-41c5-85ca-f3477ad033bf",
+        "snapshotId": "c2560021-7584-4959-a71b-e3509a183b06",
+        "consentId": "88293e18-f7eb-48bb-970d-d9359f949c73",
+        "asOf": "2026-10-28T14:56:38.653Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "be144e31-afb2-44c2-b5b4-1ccc0e8e9ef4",
+        "consentId": "88293e18-f7eb-48bb-970d-d9359f949c73",
+        "asOf": "2026-10-28T14:56:38.315Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "c2560021-7584-4959-a71b-e3509a183b06",
+        "consentId": "88293e18-f7eb-48bb-970d-d9359f949c73",
+        "asOf": "2026-10-28T14:56:38.653Z"
+      }
+    }
+  ],
+  "responses": [
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "be144e31-afb2-44c2-b5b4-1ccc0e8e9ef4",
+          "consentId": "88293e18-f7eb-48bb-970d-d9359f949c73",
+          "asOf": "2026-10-28T14:56:38.315Z"
+        },
+        "expiresAt": "2026-10-28T15:06:38.315Z",
+        "sourceVersion": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": []
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "c2560021-7584-4959-a71b-e3509a183b06",
+          "consentId": "88293e18-f7eb-48bb-970d-d9359f949c73",
+          "asOf": "2026-10-28T14:56:38.653Z"
+        },
+        "expiresAt": "2026-10-28T15:06:38.653Z",
+        "sourceVersion": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": []
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "RPE是主观用力程度量表。常用CR10量表范围为0–10，数值越大通常表示主观努力越高。它描述用力感，不能单独确定恢复或医学安全。",
+        "source": "MODEL",
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "f9a98313-fc4c-4196-8586-2b2e861207cf",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。个体变化需要持续观察，单次酸痛不能证明训练效果。",
+        "source": "MODEL",
+        "route": "LOW",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "38eb4267-4fae-417a-9bb3-dbccabeaa34b",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+✖ src/components/training-redesign.test.tsx (5174.030092ms)
+✖ src/components/warmup-workflow.test.tsx (1642.679809ms)
+✖ src/lib/character/integration.test.tsx (1178.449537ms)
+✖ src/lib/core/coach-training-mechanisms.test.ts (3854.864617ms)
+✖ src/lib/ui/plan400-components-store.test.ts (1661.261059ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5184.723468
+
+✖ failing tests:
+
+test at src/components/training-redesign.test.tsx:1:1
+✖ src/components/training-redesign.test.tsx (5174.030092ms)
+  'test failed'
+
+test at src/components/warmup-workflow.test.tsx:1:1
+✖ src/components/warmup-workflow.test.tsx (1642.679809ms)
+  'test failed'
+
+test at src/lib/character/integration.test.tsx:1:1
+✖ src/lib/character/integration.test.tsx (1178.449537ms)
+  'test failed'
+
+test at src/lib/core/coach-training-mechanisms.test.ts:1:1
+✖ src/lib/core/coach-training-mechanisms.test.ts (3854.864617ms)
+  'test failed'
+
+test at src/lib/ui/plan400-components-store.test.ts:1:1
+✖ src/lib/ui/plan400-components-store.test.ts (1661.261059ms)
+  'test failed'

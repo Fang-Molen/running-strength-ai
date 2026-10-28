@@ -1,0 +1,18 @@
+
+> test:r5
+> node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/coach/r5/*.test.ts
+
+✔ src/lib/coach/r5/guard-conversation.test.ts (996.091816ms)
+✔ src/lib/coach/r5/legacy-limit-accept.test.ts (3493.891399ms)
+✔ src/lib/coach/r5/online-guard-relax.test.ts (1067.447869ms)
+✔ src/lib/coach/r5/r5.test.ts (3487.098519ms)
+✔ src/lib/coach/r5/review-findings.test.ts (3764.806766ms)
+✔ src/lib/coach/r5/semantics-20261028.test.ts (2569.377222ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6079.504077

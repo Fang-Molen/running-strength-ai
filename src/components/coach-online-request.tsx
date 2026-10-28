@@ -1,9 +1,10 @@
+import type { OnlineConversationTurn } from '@/lib/coach/online-handoff'
 import { useEffect, useRef, useState } from 'react'
 import { prepareOnlineExplanation, runOnlineExplanation, onlinePreviewIsCurrent, type OnlinePreview, type OnlineAnswerBasis } from '@/lib/coach/online-session'
 import { currentAthleteId } from '@/lib/core/events'
 
 /** Every question has its own lifecycle. A later question never cancels an earlier one. */
-export function CoachOnlineRequest({question,owner,disabled,selectedTrainingIds,onAnswer,onNotice,onDismiss}:{question:string;owner:string;disabled:boolean;selectedTrainingIds?:readonly string[];onAnswer:(text:string,owner:string,source:'LOCAL'|'MODEL',unverified?:boolean,basis?:OnlineAnswerBasis)=>void;onNotice:(text:string)=>void;onDismiss:()=>void}){
+export function CoachOnlineRequest({question,owner,disabled,selectedTrainingIds,conversation,onAnswer,onNotice,onDismiss}:{question:string;owner:string;disabled:boolean;selectedTrainingIds?:readonly string[];conversation?:readonly OnlineConversationTurn[];onAnswer:(text:string,owner:string,source:'LOCAL'|'MODEL',unverified?:boolean,basis?:OnlineAnswerBasis)=>void;onNotice:(text:string)=>void;onDismiss:()=>void}){
  const [status,setStatus]=useState('准备联网分析…'),[busy,setBusy]=useState(false),[attempt,setAttempt]=useState(0)
  const active=useRef<AbortController|null>(null),started=useRef(-1)
  const callbacks=useRef({onNotice,onAnswer,onDismiss});callbacks.current={onNotice,onAnswer,onDismiss}
@@ -13,7 +14,7 @@ export function CoachOnlineRequest({question,owner,disabled,selectedTrainingIds,
   let live=true,preview:OnlinePreview
   const controller=new AbortController();active.current=controller
   const show=(text:string)=>{if(live){setStatus(text);callbacks.current.onNotice(text)}}
-  try{preview=prepareOnlineExplanation(question,selectedTrainingIds);if(preview.owner!==owner)throw Error('运动员已切换，本问未发送。')}
+  try{preview=prepareOnlineExplanation(question,selectedTrainingIds,conversation);if(preview.owner!==owner)throw Error('运动员已切换，本问未发送。')}
   catch(error){started.current=attempt;setBusy(false);show(error instanceof Error?error.message:'本问资料暂不可读取，本地回答保留。');return}
   const invalidate=()=>{if(!onlinePreviewIsCurrent(preview))controller.abort()}
   const events=['fk-athlete-scope-changed','fk-online-features-changed','offline','storage','fk-health-changed','fk-training-corrected','fk-schedule-changed','fk-personal-profile-changed','fk-profile-changed','fk-cycle-changed','fk-food-changed']
@@ -29,7 +30,7 @@ export function CoachOnlineRequest({question,owner,disabled,selectedTrainingIds,
    setBusy(false)
    if(currentAthleteId()!==owner){callbacks.current.onDismiss();return}
    if('text'in result&&!controller.signal.aborted){
-    const basis={owner,question,day:preview.day,sourceVersion:preview.sourceVersion,selectedTrainingIds:preview.selectedTrainingIds}
+    const basis={conversation:preview.conversation,owner,question,day:preview.day,sourceVersion:preview.sourceVersion,selectedTrainingIds:preview.selectedTrainingIds}
     callbacks.current.onAnswer(result.text,owner,result.source,'unverified'in result&&result.unverified===true,basis)
     show(result.source==='LOCAL'?'本次由规则处理，未调用模型。':'联网解释已返回；未进行网页检索，未修改正式记录。')
     callbacks.current.onDismiss()
@@ -37,7 +38,7 @@ export function CoachOnlineRequest({question,owner,disabled,selectedTrainingIds,
   })
   })
   return()=>{live=false;controller.abort();events.forEach(e=>window.removeEventListener(e,invalidate))}
- },[question,owner,disabled,attempt,selectedTrainingIds])
+ },[question,owner,disabled,attempt,selectedTrainingIds,conversation])
  return <section data-testid="coach-online-request" className="mb-2 rounded-card border border-line p-3 text-xs">
   <p className="break-words"><b>{question}</b></p>
   <p role="status" className="mt-1">{status}</p>

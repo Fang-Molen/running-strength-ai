@@ -161,11 +161,16 @@ export function personalAnswer(question: string, asOf: string): string | null {
   const domain = routePersonalIntent(question, s.profile);
   if (!domain) return null;
   const age = Date.parse(asOf) - Date.parse(s.profileSavedAt ?? "");
-  if (!Number.isFinite(age) || age < 0 || age > 30 * 86400000)
-    return "个人条件已超过30天未复核，请在私人教练面板核对并保存当前身体和健康条件，再生成具体方案。";
   const last = s.feedback.at(-1);
+  if (!Number.isFinite(age) || age < 0 || age > 30 * 86400000)
+    return "个人条件距上次确认较久，本轮先给条件性参考；时间经过本身不表示不能训练。请核对发生变化的健康限制、可训练时间和目标，原方案保留。\n" +
+      formatPersonalPlan(buildPersonalPlan({...s.profile, screen:last?.value.pain ? 'PAIN' : s.profile.screen === 'CLEAR' ? 'UNKNOWN' : s.profile.screen},asOf,(s.active?.version??0)+1),domain);
+  if (last?.value.pain && domain === 'NUTRITION')
+    return "此前疼痛反馈仍待复核，饮食回答不解除相关训练限制；不以减餐补偿停训。\n" +
+      formatPersonalPlan(buildPersonalPlan({...s.profile,screen:'PAIN'},asOf,(s.active?.version??0)+1),domain) +
+      "\n" + onlineNutritionFacts(localDay(new Date(asOf)),asOf).summary.join("\n");
   if (last?.value.pain)
-    return "此前反馈仍有疼痛：暂停力量和跑步建议，先评估疼痛；饮食保持规律，不以减餐补偿停训。请在私人教练面板更新实际反馈。";
+    return "此前反馈记录了疼痛，但这一条未记录部位和功能情况。先暂停会诱发疼痛的动作，不据此宣布所有活动永久禁练；请补充疼痛部位、当前动作影响及已有医疗限制，再核对相关训练候选。普通训练原理和饮食问题仍可继续讨论，原方案未修改。";
   const review = store.reviewActive(domain);
   if (review.active && review.clarification)
     return `已采用的版本${review.active.version}保留为历史记录，待复核。${review.clarification}`;

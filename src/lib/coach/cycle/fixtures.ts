@@ -141,6 +141,8 @@ export function cycleFixture(): CycleInput {
       raceDate: "2026-12-20",
       targetSeconds: 120,
       experience: "TRAINED",
+      runningExperience: "TRAINED",
+      strengthExperience: "TRAINED",
       priority: "BALANCED",
       horizonWeeks: 8,
       taperDays: 7,
@@ -180,6 +182,8 @@ export const cycleCases: Case[] = [
     name: "same performance with novice background restricts hard-course copying",
     change: vary((x) => {
       x.goal.experience = "NOVICE";
+      x.goal.runningExperience = "NOVICE";
+      x.goal.strengthExperience = "NOVICE";
     }),
     verify: (a, b) =>
       assert.ok(b.weeks[0].sessions.every((s) => !s.candidate || s.candidate.intensity !== "HARD")),

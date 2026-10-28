@@ -1,0 +1,12 @@
+✔ one reference day is descriptive rather than an established personal baseline (39.128276ms)
+✔ a device change creates a separate reference instead of borrowing the former watch baseline (10.173726ms)
+✔ a trained cycle background is not silently assigned to every sport (8.267875ms)
+✔ C01 separately confirmed running and strength experience stay separate from measured capability (6.161321ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 73.430729

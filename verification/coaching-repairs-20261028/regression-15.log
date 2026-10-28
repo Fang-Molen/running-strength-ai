@@ -1,0 +1,45 @@
+
+> test:coach-loop
+> node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/coach/loop/*.test.ts src/lib/coach/personal/*.test.ts src/components/personal-coach-panel.test.tsx src/lib/coach/r4/*.test.ts src/lib/coach/training-models/*.test.ts src/components/training-model-panel.test.tsx src/lib/plan/plan-isolation.test.ts src/lib/health/analysis-*.test.ts src/lib/vision/status.test.ts
+
+✔ src/components/personal-coach-panel.test.tsx (2402.927543ms)
+✔ src/components/training-model-panel.test.tsx (3335.845239ms)
+✔ src/lib/coach/loop/loop.test.ts (865.334439ms)
+✔ src/lib/coach/personal/dependencies.test.ts (2529.325217ms)
+✔ src/lib/coach/personal/host.test.ts (2573.350828ms)
+✔ src/lib/coach/personal/legacy-nutrition.test.ts (914.337715ms)
+✔ src/lib/coach/personal/personal.test.ts (831.301772ms)
+✔ src/lib/coach/r4/answer.test.ts (3820.529128ms)
+✔ src/lib/coach/r4/assessment.test.ts (2806.720222ms)
+✔ src/lib/coach/r4/conditions.test.ts (2459.601827ms)
+✔ src/lib/coach/r4/course-flow.test.ts (4027.718064ms)
+✔ src/lib/coach/r4/integrity.test.ts (1797.49942ms)
+✔ src/lib/coach/r4/reference.test.ts (1477.775355ms)
+✔ src/lib/coach/training-models/candidates.test.ts (1886.485758ms)
+✔ src/lib/coach/training-models/host.test.ts (1820.506729ms)
+✔ src/lib/coach/training-models/physiology.test.ts (1143.795856ms)
+✔ src/lib/coach/training-models/r6-decisions.test.ts (1613.909908ms)
+✔ src/lib/coach/training-models/scientific-input.test.ts (1880.378643ms)
+✔ src/lib/coach/training-models/selection.test.ts (1227.865094ms)
+✔ src/lib/coach/training-models/workbench.test.ts (3726.303845ms)
+✔ src/lib/health/analysis-acceptance.test.ts (4471.182519ms)
+✔ src/lib/health/analysis-derived.test.ts (1039.01146ms)
+✔ src/lib/health/analysis-dose-completeness.test.ts (1205.115462ms)
+✔ src/lib/health/analysis-evidence.test.ts (1005.298296ms)
+✔ src/lib/health/analysis-followup.test.ts (2289.779165ms)
+✔ src/lib/health/analysis-hardening.test.ts (1366.052578ms)
+✔ src/lib/health/analysis-integration.test.ts (4762.516642ms)
+✔ src/lib/health/analysis-nutrition-boundary.test.ts (2815.645598ms)
+✔ src/lib/health/analysis-packet-integrity.test.ts (1276.501666ms)
+✔ src/lib/health/analysis-reply-validation.test.ts (1230.123777ms)
+✔ src/lib/health/analysis-wire-budget.test.ts (957.765637ms)
+✔ src/lib/plan/plan-isolation.test.ts (652.362743ms)
+✔ src/lib/vision/status.test.ts (489.663381ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22483.673337

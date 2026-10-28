@@ -1,0 +1,14 @@
+✔ src/lib/app-data/app-data.test.ts (385.23632ms)
+✔ src/lib/app-data/readiness-schedule.test.ts (162.600365ms)
+✔ src/lib/auth/gate-identity.test.ts (331.274654ms)
+✔ src/lib/auth/sign-in-gate.test.ts (212.474678ms)
+✔ src/lib/body/scale-parse.test.ts (187.165154ms)
+✔ src/lib/ui/decimal.test.ts (160.904779ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 552.445468

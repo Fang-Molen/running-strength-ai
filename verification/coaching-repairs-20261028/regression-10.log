@@ -1,0 +1,18 @@
+
+> test:k20
+> node --import ./scripts/test-register.mjs --test src/lib/core/longitudinal-*.test.ts src/lib/core/prospective-evidence.test.ts src/lib/core/asof-event-ledger.test.ts src/lib/core/asof-k20.test.ts
+
+✔ src/lib/core/asof-event-ledger.test.ts (688.03169ms)
+✔ src/lib/core/asof-k20.test.ts (1286.598659ms)
+✔ src/lib/core/longitudinal-comparability.test.ts (517.103034ms)
+✔ src/lib/core/longitudinal-review-safety.test.ts (680.8248ms)
+✔ src/lib/core/longitudinal-review.test.ts (615.483822ms)
+✔ src/lib/core/prospective-evidence.test.ts (507.692126ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1722.20311

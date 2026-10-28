@@ -1,0 +1,55 @@
+✔ event contrast: 400m and 800m retain different event context (58.942498ms)
+✔ event contrast: 800m and 10km do not share a universal event label (24.614394ms)
+✔ same performance with novice background restricts hard-course copying (25.312477ms)
+✔ work schedule change never schedules outside confirmed days (20.021023ms)
+✔ near race moves first week to taper without invented build-up (15.372209ms)
+✔ past race produces recovery/review, never compressed catch-up (15.884749ms)
+✔ pain hold outranks high device readiness (16.780528ms)
+✔ unknown recovery blocks key-course execution and progression (16.448124ms)
+✔ no actual history still answers with conditional course purposes (12.400305ms)
+✔ missing available days does not assume weekdays (17.331775ms)
+✔ new time limit never silently overflows a session (15.908135ms)
+✔ V4 calendar conflict is preserved rather than overwritten (19.799908ms)
+✔ changing goal changes basis while leaving measured ability untouched (19.110691ms)
+✔ priority changes the proposed focus with existing evidence (18.689658ms)
+✔ foreign actual sessions cannot contribute to the portrait (11.804937ms)
+✔ retracted actual facts cannot contribute ability (9.407487ms)
+✔ later weeks cannot be confirmed in advance (17.403412ms)
+✔ default plans do not grow from week to week without confirmation (21.97739ms)
+✔ targets remain goals, future/retracted/foreign evidence cannot become ability (6.390151ms)
+✔ prompt is bounded, versioned, evidence-only and grants no writing authority (9.473457ms)
+✖ progression is a single proposed duration change with repeated same-protocol actual evidence (10.046856ms)
+✔ changing device protocol prevents pooled progression evidence (7.72823ms)
+✔ an event focus cannot increase the weekly count of key sessions (9.19179ms)
+✔ future-dated calendar actuals cannot establish familiarity (2.326463ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 23
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 412.706238
+
+✖ failing tests:
+
+test at src/lib/coach/cycle/cycle.test.ts:27:1
+✖ progression is a single proposed duration change with repeated same-protocol actual evidence (10.046856ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/cycle.test.ts:33:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

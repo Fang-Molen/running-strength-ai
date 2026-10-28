@@ -531,7 +531,7 @@ export function buildCycleDraft(input: CycleInput) {
         index === 0 &&
         changedVariable === "NONE" &&
         g.proposeExtraMinutes !== null &&
-        g.experience === "TRAINED" &&
+        portrait.experience.running === "TRAINED" &&
         canConsiderProgression &&
         proposedExtra === 0 &&
         comparable.length >= 2 &&
@@ -562,7 +562,8 @@ export function buildCycleDraft(input: CycleInput) {
         spent + doseMinutes > maxWeeklyMinutes + extra
       )
         missing.push("本周累计剂量超过近期已记实际上限或上限未知");
-      if (g.experience !== "TRAINED" && keyCourse(after))
+      const relevantExperience=after.modality==='run'?portrait.experience.running:after.modality==='strength'?portrait.experience.strength:'UNKNOWN';
+      if (relevantExperience !== "TRAINED" && keyCourse(after))
         missing.push("训练经验不足，先核对熟悉的低强度课程");
       if (input.training.conflicts.length) missing.push("个人条件来源有冲突，需先核对");
       if (concerns && keyCourse(after)) missing.push("当前恢复信息不足或存在担忧，暂不复制关键课");

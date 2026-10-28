@@ -1,0 +1,20 @@
+
+> test:v4
+> node --experimental-strip-types --test --test-concurrency=3 src/lib/core/coach-evolution-v4.test.ts src/lib/core/coach-evolution-v4.scenario.test.ts src/lib/core/coach-evolution-v4-c10.test.ts src/lib/core/coach-evolution-v4-c10.scenario.test.ts src/lib/core/coach-v4-c15.test.ts src/lib/core/coach-v4-c15.scenario.test.ts src/lib/core/coach-v4-work-regression.test.ts src/lib/core/coach-v4-formal-rows.test.ts
+
+✔ src/lib/core/coach-evolution-v4-c10.scenario.test.ts (194.085499ms)
+✔ src/lib/core/coach-evolution-v4-c10.test.ts (251.138928ms)
+✔ src/lib/core/coach-evolution-v4.scenario.test.ts (175.820819ms)
+✔ src/lib/core/coach-evolution-v4.test.ts (182.171037ms)
+✔ src/lib/core/coach-v4-c15.scenario.test.ts (184.213412ms)
+✔ src/lib/core/coach-v4-c15.test.ts (257.360403ms)
+✔ src/lib/core/coach-v4-formal-rows.test.ts (209.335796ms)
+✔ src/lib/core/coach-v4-work-regression.test.ts (201.501102ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 594.632006

@@ -10,6 +10,35 @@ export function coachImports(athleteId=currentAthleteId(), asOf=new Date().toISO
  return loadConfirmedTrainingImports().map(normalizeConfirmedTrainingImport).filter((r):r is ConfirmedTrainingImport => !!r &&
   (r.athleteId ?? 'local')===athleteId && strictIso(r.confirmedAt) && strictIso(r.occurredAt.value!) && Date.parse(r.confirmedAt)<=Date.parse(asOf) && Date.parse(r.occurredAt.value!)<=Date.parse(r.confirmedAt))
 }
+
+/** Reuse the audited replacement chain for non-coach consumers. Never edit the
+ * retained import or guess a segment from a date/distance match. */
+export function effectiveImportedTraining(raw:ConfirmedTrainingImport,asOf=new Date().toISOString(),corrections:readonly TrainingCorrection[]=listCorrections(raw.confirmedImportId,asOf)) {
+ const unknownCommit=corrections.some(c=>!c.recordedAt||!strictIso(c.recordedAt));
+ const visible=corrections.filter(c=>c.trainingOccurrenceId===raw.confirmedImportId&&c.recordedAt&&strictIso(c.recordedAt)&&Date.parse(c.recordedAt)<=Date.parse(asOf));
+ const rows=importedFormalRows([raw],raw.athleteId??'local',asOf,corrections);
+ const latest=(suffix:string)=>{
+  let row=rows.find(r=>r.recordId===`import:${raw.draftId}:${suffix}`);
+  const seen=new Set<string>();
+  while(row&&!seen.has(row.recordId)){
+   seen.add(row.recordId);const next=rows.filter(r=>r.supersedesRecordId===row!.recordId);
+   if(!next.length)return row;if(next.length!==1)return null;row=next[0];
+  }
+  return null;
+ };
+ const field=(original:ImportField<number>,row:FormalEvidenceRow|null|undefined,distance=false):ImportField<number>=>{
+  if(unknownCommit)return {value:null,status:'AMBIGUOUS',sourceIds:original.sourceIds};
+  if(!row?.supersedesRecordId)return original;
+  const measured=distance?Number(row.protocol.match(/:(\d+(?:\.\d+)?)m$/)?.[1]):row.value;
+  const usable=row.status==='OBSERVED'&&row.value!==null&&measured!==null&&Number.isFinite(measured);
+  return {value:usable?measured:null,status:usable?'RECORDED':'AMBIGUOUS',sourceIds:[row.sourceEventId]};
+ };
+ const record:ConfirmedTrainingImport={...raw,
+  runningSegments:raw.runningSegments.map((s,i)=>{const row=latest(`run-${i+1}`);return {...s,durationSeconds:field(s.durationSeconds,row),distanceMeters:field(s.distanceMeters,row,true)}}),
+  strengthSets:raw.strengthSets.map((s,i)=>({...s,weightKg:field(s.weightKg,latest(`set-${i+1}:STRENGTH_KG`)),repetitions:field(s.repetitions,latest(`set-${i+1}:STRENGTH_REPS`)),durationSeconds:field(s.durationSeconds,latest(`set-${i+1}:STRENGTH_SECONDS`))})),
+ };
+ return {record,revision:visible.length,knownAt:[raw.confirmedAt,...visible.map(c=>c.recordedAt!)].sort((a,b)=>Date.parse(a)-Date.parse(b)).at(-1)!};
+}
 /** Read-only standalone occurrence; deleting the import removes its evidence without orphan events. */
 export function importedFormalRows(records:readonly ConfirmedTrainingImport[], athleteId:string, asOf:string, corrections:readonly TrainingCorrection[]=[],ratings:readonly ImportRating[]=loadImportRatings()):FormalEvidenceRow[] {
  const rows:FormalEvidenceRow[]=[]

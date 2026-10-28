@@ -1,0 +1,40 @@
+✔ chat training and recovery agree on the earlier cutoff after a later reps correction (62.172751ms)
+✔ future native void and restore affect only snapshots that know those corrections (8.331371ms)
+✖ a future import field correction cannot withdraw the earlier confirmed muscle detail (10.974708ms)
+✔ import void and restore use their actual commit cutoffs (7.168979ms)
+✔ native correction with unknown commit time remains an explicit evidence gap (2.754966ms)
+✔ import correction with unknown commit time remains an explicit evidence gap (1.828393ms)
+✔ a later running close event cannot hide segments already known at the historical cutoff (9.669641ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 124.667771
+
+✖ failing tests:
+
+test at src/lib/health/recovery-host-u11-cutoff.test.ts:81:1
+✖ a future import field correction cannot withdraw the earlier confirmed muscle detail (10.974708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TRAINING_EXPOSURE'
+  - 'UNKNOWN'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/recovery-host-u11-cutoff.test.ts:90:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TRAINING_EXPOSURE',
+    expected: 'UNKNOWN',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

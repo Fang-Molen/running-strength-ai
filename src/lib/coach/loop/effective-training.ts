@@ -77,12 +77,16 @@ export function readEffectiveTrainingProfile() {
       : []),
   ];
   const notes = profile.note.trim() ? main("note", profile.note) : null,
-    daysPerWeek = main("days", profile.days);
+    daysPerWeek = main("days", profile.days),
+    strengthExperience = pp?.services.includes('STRENGTH')
+      ? other(pp.experience === 'TRAINED' ? 'TRAINED' as const : 'NOVICE' as const)
+      : null;
   return {
     days,
     daysPerWeek,
     minutes,
     equipment,
+    ...(strengthExperience ? { strengthExperience } : {}),
     restrictions,
     notes,
     conflicts,
@@ -91,6 +95,7 @@ export function readEffectiveTrainingProfile() {
       daysPerWeek,
       minutes,
       equipment,
+      strengthExperience,
       restrictions,
       notes,
       conflicts,

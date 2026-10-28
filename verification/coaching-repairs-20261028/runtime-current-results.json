@@ -1,0 +1,10 @@
+[
+  {
+    "name": "browser-current",
+    "exit": 1
+  },
+  {
+    "name": "node-runtime",
+    "exit": 0
+  }
+]

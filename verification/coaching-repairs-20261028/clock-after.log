@@ -1,0 +1,28 @@
+✔ X03 question handoff carries computed analysis and a bounded conversation, without claiming verified facts (48.55486ms)
+✔ X02 colloquial personal reviews and mixed subjects retrieve owned facts without treating friends as the athlete (8.560253ms)
+✔ explicit comparison selects the requested owned sessions rather than unrelated latest activity (3.493258ms)
+✔ general education and third-person cases do not select personal records (4.459263ms)
+✔ an old UI selection does not attach private facts to a fresh general definition (0.436572ms)
+✔ relevant older history preserves actual run split and rest structure without claiming a recent window (0.928649ms)
+✔ strength dose preserves actual load basis, repetitions, completion and RIR (0.979605ms)
+✔ foreign, future, planned and conflicting training facts cannot become actual context (1.208814ms)
+✔ target and saved schedule remain distinct from measured performance (1.614148ms)
+✔ dependency fingerprint follows selected evidence, not clock, unrelated nutrition or foreign rows (3.919594ms)
+✔ context is bounded and truncated workout structure is explicitly unknown (33.906144ms)
+✔ nutrition entries retain completeness unknown, actual eating time unknown and no account/device identifiers (1.766369ms)
+✔ personal data requests and broad generic exercise questions are separated (1.011144ms)
+✔ different questions sharing unchanged records do not share a conflicting selection version key (1.692617ms)
+✔ date-only body measurement does not fabricate a measurement instant (0.854726ms)
+✔ real frontend contexts pass the shared server boundary, including response protocols and maximum coverage (24.025098ms)
+✔ unrelated profile edit does not change a selected goal field revision (2.779265ms)
+✔ large structured context fits real quoted provider-input budget, not only snapshot-body budget (29.909223ms)
+✔ budget cannot erase omitted safety restrictions as implicit training permission (31.24654ms)
+✔ clock-only packet regeneration keeps online context stable; corrected dose still invalidates (17.654686ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 240.573007

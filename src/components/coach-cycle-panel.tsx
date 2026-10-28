@@ -25,6 +25,8 @@ const initial = {
   raceDate: "",
   targetSeconds: "",
   experience: "UNKNOWN",
+  runningExperience: "UNKNOWN",
+  strengthExperience: "UNKNOWN",
   priority: "BALANCED",
   horizonWeeks: "4",
   taperDays: "7",
@@ -66,6 +68,8 @@ export function CoachCyclePanel() {
   const loadGoal = () => {
     try {
       const g = readCycleGoal();
+      const inherited = buildAthletePortrait(readCycleContext()).experience;
+      const strengthExperience = inherited.strength === 'NOT_SEPARATELY_CONFIRMED' ? 'UNKNOWN' : inherited.strength;
       setGoal(g);
       setForm(
         g
@@ -74,12 +78,14 @@ export function CoachCyclePanel() {
               raceDate: g.raceDate ?? "",
               targetSeconds: String(g.targetSeconds ?? ""),
               experience: g.experience,
+              runningExperience: g.runningExperience ?? 'UNKNOWN',
+              strengthExperience: g.strengthExperience ?? strengthExperience,
               priority: g.priority,
               horizonWeeks: String(g.horizonWeeks),
               taperDays: String(g.taperDays),
               proposeExtraMinutes: String(g.proposeExtraMinutes ?? ""),
             }
-          : initial,
+          : {...initial, strengthExperience},
       );
       refresh();
     } catch (e) {
@@ -126,6 +132,8 @@ export function CoachCyclePanel() {
           raceDate: form.raceDate || null,
           targetSeconds: form.targetSeconds.trim() ? Number(form.targetSeconds) : null,
           experience: form.experience as CycleGoal["experience"],
+          runningExperience: form.runningExperience as CycleGoal['runningExperience'],
+          strengthExperience: form.strengthExperience as CycleGoal['strengthExperience'],
           priority: form.priority as CycleGoal["priority"],
           horizonWeeks: Number(form.horizonWeeks),
           taperDays: Number(form.taperDays),
@@ -210,7 +218,7 @@ export function CoachCyclePanel() {
             />
           </label>
           <label>
-            训练经历
+            总体训练经历（不代替分项）
             <select
               aria-label="周期训练经历"
               value={form.experience}
@@ -222,6 +230,12 @@ export function CoachCyclePanel() {
               <option value="TRAINED">已有持续训练经历</option>
             </select>
           </label>
+          {(['runningExperience','strengthExperience'] as const).map(key => <label key={key}>
+            {key==='runningExperience'?'跑步经历':'力量经历'}（本人确认，非实测等级）
+            <select aria-label={key==='runningExperience'?'跑步经历':'力量经历'} value={form[key]} onChange={e=>patch({[key]:e.target.value})} className="mt-1 min-h-11 w-full rounded-lg border border-line bg-surface px-2">
+              <option value="UNKNOWN">尚未确认</option><option value="NOVICE">新手或近期重新开始</option><option value="TRAINED">已有持续训练经历</option>
+            </select>
+          </label>)}
           <label>
             本周期优先重点
             <select

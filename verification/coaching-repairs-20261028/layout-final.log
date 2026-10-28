@@ -1,0 +1,10 @@
+✔ chat input restores an unsent draft after leaving and returning; nothing is sent by rendering (68.740004ms)
+✔ context chip is driven by an explicit seed and removal only clears an untouched seed (source contract) (1.036271ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.258105

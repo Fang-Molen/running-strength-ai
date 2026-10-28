@@ -56,6 +56,10 @@ export function buildAthletePortrait(input: CycleInput) {
     owner = snapshot.context.athleteId,
     now = Date.parse(snapshot.context.asOf),
     today = localDay(new Date(now));
+  const recordedStrength = input.training.strengthExperience;
+  const usableStrength = recordedStrength?.at && Date.parse(recordedStrength.at) <= now ? recordedStrength : null;
+  const runningExperience = input.goal.runningExperience ?? 'NOT_SEPARATELY_CONFIRMED';
+  const strengthExperience = input.goal.strengthExperience ?? usableStrength?.value ?? 'NOT_SEPARATELY_CONFIRMED';
   const facts = snapshot.facts.filter((f) => Date.parse(f.occurredAt) >= now - (input.request?.historyDays ?? 90) * 86400000),
     training = facts.filter((f): f is TrainingFact => f.kind === "TRAINING");
   const model = adaptTrainingModelInput({ ...snapshot, facts }, input.recovery);
@@ -143,7 +147,7 @@ export function buildAthletePortrait(input: CycleInput) {
   const unknowns = [
     ...(!performances.length ? ["近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据"] : []),
     ...(input.goal.experience === "UNKNOWN" ? ["训练经历尚未确认"] : []),
-    "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+    ...([runningExperience,strengthExperience].some(value=>value==='UNKNOWN'||value==='NOT_SEPARATELY_CONFIRMED') ? ["跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验"] : []),
     ...(metricReferences.some(reference => reference.sampleCount < 2) ? ["部分指标只有单日描述或缺少同设备协议参照；稳定个人基线尚未建立"] : []),
     ...(metricReferences.some(reference => reference.segmented) ? ["设备或协议不同的指标分段展示，不拼接为同一基线"] : []),
     ...(!input.training.days ? ["可训练星期未知"] : []),
@@ -156,7 +160,9 @@ export function buildAthletePortrait(input: CycleInput) {
     athleteId: owner,
     asOf: snapshot.context.asOf,
     performances,
-    experience: { cycleGoal: input.goal.experience, running: "NOT_SEPARATELY_CONFIRMED" as const, strength: "NOT_SEPARATELY_CONFIRMED" as const },
+    experience: { cycleGoal: input.goal.experience, running: runningExperience, strength: strengthExperience },
+    experienceSources: { running: input.goal.runningExperience ? {source:'CYCLE_GOAL',at:input.goal.savedAt,version:String(input.goal.revision)} : null,
+      strength: input.goal.strengthExperience ? {source:'CYCLE_GOAL',at:input.goal.savedAt,version:String(input.goal.revision)} : usableStrength },
     metricReferences,
     adaptive: buildAdaptiveReview({...snapshot, facts, safetyConstraints:input.snapshot.safetyConstraints}),
     history: assessAthleteHistory({ ...snapshot, facts, safetyConstraints: input.snapshot.safetyConstraints }, input.request?.historyDays ?? 90),

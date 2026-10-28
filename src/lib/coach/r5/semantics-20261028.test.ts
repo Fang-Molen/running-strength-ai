@@ -13,6 +13,11 @@ import { readAnalysis } from "../../health/analysis-host";
 import { parseCoachUtterance, interpretProfileLimit } from "../utterance-semantics";
 
 const now = "2026-10-28T10:00:00.000Z";
+test('relative course dates resolve once; conflicting dates never expand into a whole-week change',()=>{
+ assert.deepEqual(parseR5Intent('把明天的强度课改成轻松跑',now),{kind:'EASY_RUN',day:'2026-10-29'});
+ assert.deepEqual(parseR5Intent('后天力量训练减少一组',now),{kind:'REDUCE_SETS',days:['2026-10-30']});
+ for(const q of ['明天后天力量训练减少一组','把2026-10-30明天改成轻松跑','把明天和周五改成轻松跑'])assert.equal(parseR5Intent(q,now).kind,'CLARIFY');
+});
 const oldPain: SymptomInput = {
   kind: "PAIN",
   region: "小腿",

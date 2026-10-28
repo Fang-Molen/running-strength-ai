@@ -1,0 +1,13 @@
+✔ browser writes are locked; two stale writers cannot overwrite profile (2.550998ms)
+✔ X05 old profile still gives conditional useful guidance without treating elapsed days as a training ban (2.656998ms)
+✔ X05 pain feedback does not swallow an unrelated nutrition question or clear the restriction (41.686324ms)
+✔ chat uses adopted version and athlete scope, does not invent diet history or ignore pain (6.436318ms)
+✔ no lock support means zero unlocked mutations (0.382189ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 61.545022

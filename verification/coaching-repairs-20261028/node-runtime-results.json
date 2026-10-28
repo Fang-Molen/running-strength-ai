@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "actualBuiltNodeServer": true,
+  "paidCalls": 0,
+  "status": {
+    "http": 200,
+    "body": {
+      "service": "fangkun-coach",
+      "configured": false,
+      "reason": "SERVICE_DISABLED",
+      "schemaVerified": false,
+      "requiredSchemaVersion": 3,
+      "capabilities": {
+        "persistentConsent": false,
+        "contextVersion": null,
+        "assertionPolicy": "coach-assertions-v2",
+        "retrieval": "NOT_CONFIGURED"
+      },
+      "connectionVerified": false,
+      "authorizationVerified": false,
+      "billingVerified": false
+    }
+  },
+  "disabledPost": {
+    "http": 503,
+    "body": {
+      "ok": false,
+      "error": "SERVICE_DISABLED",
+      "text": "联网解释当前不可用；保留本地训练分析与原计划。"
+    }
+  },
+  "startup": "➜ Listening on: http://127.0.0.1:8093/\n"
+}

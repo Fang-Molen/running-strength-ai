@@ -61,7 +61,8 @@ test('a future import field correction cannot withdraw the earlier confirmed mus
   t.mock.timers.enable({apis:['Date'],now:new Date(cutoff)});fixture(t);const id=cutoffImport();assert.equal(quads(cutoff),'TRAINING_EXPOSURE')
   t.mock.timers.tick(3600000);assert.ok(appendCorrection({trainingOccurrenceId:id,kind:'FIELD',field:'weight',setKey:'set-1',originalValue:'40',newValue:'55',reason:'合成未来导入更正'}))
   assert.equal(quads(cutoff),'TRAINING_EXPOSURE');const current=readRecoveryProjection(day,new Date().toISOString())
-  assert.equal(current.review.regions.find(r=>r.region==='quads')?.state,'UNKNOWN');assert.match(current.review.gaps.join(' '),/导入训练已有更正/)
+  assert.equal(current.parts.find(p=>p.modality==='STRENGTH')?.strengthSets?.[0].loadKg,55);
+  assert.equal(readRecoveryProjection(day,cutoff).parts.find(p=>p.modality==='STRENGTH')?.strengthSets?.[0].loadKg,40);
 })
 test('import void and restore use their actual commit cutoffs',t=>{
   t.mock.timers.enable({apis:['Date'],now:new Date(cutoff)});fixture(t);const id=cutoffImport()

@@ -1,0 +1,76 @@
+✔ keeps VITE_-prefixed string entries (2.200486ms)
+✔ drops non-VITE keys, non-string values and malformed documents (0.352504ms)
+✔ a missing app-env.json is a clean no-op (0.54733ms)
+✔ reads the app env from a workspace (0.402701ms)
+✔ an explicit process-env override wins over the file (0.289539ms)
+✔ the template ships auth off (0.324823ms)
+✔ vite loadEnv resolves the wrapped value (0.332054ms)
+✖ the wrapped command runs with the app env applied (160.370728ms)
+✖ the wrapped command sees an explicit override, not the file value (198.938585ms)
+✔ the wrapper propagates the command's exit code (237.948893ms)
+✔ a signal-killed command is never reported as success (183.183641ms)
+✖ the CLI still runs when invoked through a symlinked path (123.018448ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 9
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 918.096848
+
+✖ failing tests:
+
+test at scripts/with-app-env.test.mjs:76:1
+✖ the wrapped command runs with the app env applied (160.370728ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  '' !== 'false'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/with-app-env.test.mjs:83:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'false',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/with-app-env.test.mjs:86:1
+✖ the wrapped command sees an explicit override, not the file value (198.938585ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  '' !== 'true'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/with-app-env.test.mjs:92:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'true',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/with-app-env.test.mjs:116:1
+✖ the CLI still runs when invoked through a symlinked path (123.018448ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  '' !== 'false'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/with-app-env.test.mjs:127:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'false',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

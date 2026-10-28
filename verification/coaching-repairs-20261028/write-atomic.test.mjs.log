@@ -1,0 +1,84 @@
+✔ parseWriteAtomicArgs needs exactly a staged file and a target (4.592864ms)
+✔ stagingError refuses a temp inside public/ and a no-op move (0.463573ms)
+✔ handOver replaces the target and clears the staged file (0.689295ms)
+✔ handOver creates a missing target directory (0.347777ms)
+✔ an interrupted pass leaves the target on its old bytes, temp-free (0.748585ms)
+✔ a failed hand-over creates no directory for the target it never wrote (0.260605ms)
+✔ a staged file on another filesystem is refused, not copied (0.406296ms)
+✖ cli: hands the file over, and refuses a temp staged in public/ (286.635377ms)
+✖ cli: relative paths follow the script's root, not the caller's cwd (138.010865ms)
+✔ every hand-over the project contract prints is one this script accepts (0.813263ms)
+✖ cli: a missing staged file fails without touching the target (88.053749ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 8
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 544.777177
+
+✖ failing tests:
+
+test at scripts/write-atomic.test.mjs:127:1
+✖ cli: hands the file over, and refuses a temp staged in public/ (286.635377ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /stage outside/. Input:
+
+  ''
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/write-atomic.test.mjs:147:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /stage outside/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/write-atomic.test.mjs:151:1
+✖ cli: relative paths follow the script's root, not the caller's cwd (138.010865ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /stage outside/. Input:
+
+  ''
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/write-atomic.test.mjs:162:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /stage outside/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/write-atomic.test.mjs:186:1
+✖ cli: a missing staged file fails without touching the target (88.053749ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /\[write-atomic\]/. Input:
+
+  ''
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/write-atomic.test.mjs:195:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /\[write-atomic\]/,
+    operator: 'match',
+    diff: 'simple'
+  }

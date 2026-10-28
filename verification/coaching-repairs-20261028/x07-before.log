@@ -1,0 +1,38 @@
+✖ X07 paired Markdown is normalized before sentence splitting, preserving words and sources (2.095247ms)
+✔ explicit 结论 leads, next session pulled out, reasoning keeps the rest in order (0.878402ms)
+✔ no label: first sentence is the conclusion; nothing is lost or rewritten (0.189758ms)
+✔ red flag keeps the safety sentence first (0.195306ms)
+✔ single short answer has no reasoning (0.11875ms)
+✔ source tag is not the conclusion; incidental safety wording does not force reasoning open (0.377633ms)
+✔ very long first sentence is cut at the first ： — the tail is kept verbatim at the top of the reasoning (0.154385ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11.125388
+
+✖ failing tests:
+
+test at src/lib/ui/coach-answer-digest.test.ts:5:1
+✖ X07 paired Markdown is normalized before sentence splitting, preserving words and sources (2.095247ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '**结论：这次表现稳定。'
+  - '这次表现稳定。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/coach-answer-digest.test.ts:7:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '**结论：这次表现稳定。',
+    expected: '这次表现稳定。',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

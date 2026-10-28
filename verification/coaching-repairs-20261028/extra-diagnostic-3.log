@@ -1,0 +1,149 @@
+✔ cross-training mechanism INTERVAL_RECOVERY (1.375397ms)
+✖ local question answers INTERVAL_RECOVERY without automatic decisions (11.711864ms)
+✔ cross-training mechanism STRENGTH_TRANSFER (0.426507ms)
+✖ local question answers STRENGTH_TRANSFER without automatic decisions (3.391203ms)
+✔ cross-training mechanism CONCURRENT_STRESS (0.138911ms)
+✔ local question answers CONCURRENT_STRESS without automatic decisions (10.356509ms)
+✔ cross-training mechanism STIMULUS_SPECIFICITY (0.206052ms)
+✖ local question answers STIMULUS_SPECIFICITY without automatic decisions (1.05504ms)
+✔ cross-training mechanism GENERAL_ADAPTATION (0.219032ms)
+✖ local question answers GENERAL_ADAPTATION without automatic decisions (0.682905ms)
+✔ unrelated and underspecified requests are not guessed (0.247064ms)
+✔ urgent symptoms keep local safety priority over mechanism explanation (3.906105ms)
+✔ health constraints are retained with mechanism explanation (5.504189ms)
+✖ 400m×8 1min vs 8min reads like a coach: short rest = 乳酸耐受/速度耐力, long rest = 速度质量/比赛配速 (0.595293ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 9
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 61.82714
+
+✖ failing tests:
+
+test at src/lib/core/coach-training-mechanisms.test.ts:23:5
+✖ local question answers INTERVAL_RECOVERY without automatic decisions (11.711864ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^结论：/. Input:
+
+  '相同跑段距离和组数，不代表相同训练刺激；恢复时间会改变下一组开始时的状态。\n' +
+    '\n' +
+    '较短恢复通常使后续重复段在更不充分的恢复下进行；充分恢复更有利于维持较高跑速与动作质量。具体适应还受实际速度、总量和个体水平影响。\n' +
+    '\n' +
+    '这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-training-mechanisms.test.ts:25:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '相同跑段距离和组数，不代表相同训练刺激；恢复时间会改变下一组开始时的状态。\n\n较短恢复通常使后续重复段在更不充分的恢复下进行；充分恢复更有利于维持较高跑速与动作质量。具体适应还受实际速度、总量和个体水平影响。\n\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。',
+    expected: /^结论：/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/core/coach-training-mechanisms.test.ts:23:5
+✖ local question answers STRENGTH_TRANSFER without automatic decisions (3.391203ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^结论：/. Input:
+
+  '最大力量的变化与专项跑步成绩是不同的测量结果，不能直接相互替代。\n' +
+    '\n' +
+    '力量训练可能改善潜在施力能力，但跑步成绩还取决于高速触地条件下的力学应用、技术、速度训练、体重、恢复及测试条件。\n' +
+    '\n' +
+    '这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-training-mechanisms.test.ts:25:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '最大力量的变化与专项跑步成绩是不同的测量结果，不能直接相互替代。\n\n力量训练可能改善潜在施力能力，但跑步成绩还取决于高速触地条件下的力学应用、技术、速度训练、体重、恢复及测试条件。\n\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。',
+    expected: /^结论：/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/core/coach-training-mechanisms.test.ts:23:5
+✖ local question answers STIMULUS_SPECIFICITY without automatic decisions (1.05504ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^结论：/. Input:
+
+  '持续低强度跑与高速度短跑在持续时间、动作速度、机械应力和代谢需求上不同。\n' +
+    '\n' +
+    '持续跑更偏向支持氧化代谢及其长期适应；高速短跑更加要求高速下的神经肌肉协调和施力能力，两者都依赖多个身体系统。\n' +
+    '\n' +
+    '这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-training-mechanisms.test.ts:25:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '持续低强度跑与高速度短跑在持续时间、动作速度、机械应力和代谢需求上不同。\n\n持续跑更偏向支持氧化代谢及其长期适应；高速短跑更加要求高速下的神经肌肉协调和施力能力，两者都依赖多个身体系统。\n\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。',
+    expected: /^结论：/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/core/coach-training-mechanisms.test.ts:23:5
+✖ local question answers GENERAL_ADAPTATION without automatic decisions (0.682905ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^结论：/. Input:
+
+  '训练处方由目标、刺激形式、实际剂量、个体状态及恢复条件共同决定。\n' +
+    '\n' +
+    '神经控制、肌肉与肌腱、心血管和呼吸供氧、ATP再合成等系统共同参与运动；训练后的适应既有专项性也有个体差异。\n' +
+    '\n' +
+    '这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-training-mechanisms.test.ts:25:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '训练处方由目标、刺激形式、实际剂量、个体状态及恢复条件共同决定。\n\n神经控制、肌肉与肌腱、心血管和呼吸供氧、ATP再合成等系统共同参与运动；训练后的适应既有专项性也有个体差异。\n\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。',
+    expected: /^结论：/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/core/coach-training-mechanisms.test.ts:44:1
+✖ 400m×8 1min vs 8min reads like a coach: short rest = 乳酸耐受/速度耐力, long rest = 速度质量/比赛配速 (0.595293ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^结论：/. Input:
+
+  '相同跑段距离和组数，不代表相同训练刺激；恢复时间会改变下一组开始时的状态。\n' +
+    '\n' +
+    '较短恢复通常使后续重复段在更不充分的恢复下进行；充分恢复更有利于维持较高跑速与动作质量。具体适应还受实际速度、总量和个体水平影响。\n' +
+    '\n' +
+    '这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。'
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-training-mechanisms.test.ts:47:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '相同跑段距离和组数，不代表相同训练刺激；恢复时间会改变下一组开始时的状态。\n\n较短恢复通常使后续重复段在更不充分的恢复下进行；充分恢复更有利于维持较高跑速与动作质量。具体适应还受实际速度、总量和个体水平影响。\n\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。',
+    expected: /^结论：/,
+    operator: 'match',
+    diff: 'simple'
+  }

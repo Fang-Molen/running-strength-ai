@@ -1,0 +1,14 @@
+
+> test:ui-v69
+> node --import ./scripts/test-register.mjs --test src/lib/body/goal-editor.test.ts src/lib/body/viewer-policy.test.ts
+
+✔ src/lib/body/goal-editor.test.ts (731.864705ms)
+✔ src/lib/body/viewer-policy.test.ts (528.687148ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 740.874085

@@ -31,4 +31,10 @@ test('R189 free follow-up does not reuse stale chat course',()=>{const first=ask
 test('R189 unknown purpose stays unknown even in a stage',()=>{const r=ask('减量期，今天1000米×4，实际210、211、212、213秒，组间2分钟，复盘');assert.equal(r.offlineReview?.purpose.purpose,'UNKNOWN');assert.match(r.text,/目的/);assert.match(r.text,/原计划|教练/)})
 test('R189 supplied course purpose changes interpretation but not actual facts',()=>{const base='今天400米×4，目标60秒，实际59、61、62、63秒，组间3分钟，';const a=ask(base+'本课目的是速度耐力，复盘'),b=ask(base+'本课目的是赛前节奏熟悉，复盘');assert.match(a.text,/速度耐力/);assert.match(b.text,/赛前节奏熟悉/);assert.match(a.text,/\+3秒/);assert.match(b.text,/\+3秒/)})
 test('R189 medical hold still dominates next-step observation',()=>{let r=ask('我15岁，已经3个月没来月经');r=ask('明天练什么',JSON.parse(JSON.stringify(r.dialogue)));assert.ok(r.dialogue?.medicalHold);assert.equal(r.candidate,null);assert.doesNotMatch(r.text,/具体观察任务|原课程执行/)})
-test('R189 chat UI scopes selected record only for explicit review',()=>{const s=readFileSync(new URL('../../components/coach-sheet.tsx',import.meta.url),'utf8');assert.match(s,/\(explicitlyReviewsRecord\(value\) \|\| reviewAsk\) \? effectiveSelected : null/);assert.match(s,/const reviewAsk = isReviewAsk\(value\) && link !== \"unbound\"/)})
+test('selected record scope follows personal intent and does not attach to a general explanation',async()=>{
+ const {onlineContextNeeds}=await import('../coach/online-context');
+ assert.equal(onlineContextNeeds('这次训练怎么样',['chosen-A']).personal,true);
+ assert.equal(onlineContextNeeds('那明天呢',['chosen-A']).personal,true);
+ assert.equal(onlineContextNeeds('解释一下RPE',['chosen-A']).personal,false);
+ assert.equal(onlineContextNeeds('朋友跑了5公里，怎么样',['chosen-A']).personal,false);
+})

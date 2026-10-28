@@ -1,0 +1,39 @@
+{
+  "url": "http://127.0.0.1:8080",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "方坤 测试版",
+      "hasCanvas": false,
+      "bodyTextLen": 422,
+      "bodyTextHash": "3f4293f75ca8c09092620ff2eef289afb5e23660aab32e8bb146c72a8efc0caa",
+      "bodyTextPrefix": "今天 记一笔 离线功能暂不可用 28 10月 · 周三 今日训练 周一 26 周二 27 今天 28 周四 29 周五 30 周",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/fangkun-repairs-dev.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "方坤 测试版",
+      "hasCanvas": false,
+      "bodyTextLen": 294,
+      "bodyTextHash": "ab4bde65969f6365cc6498ac4f5fae889d7de88fb979085d5f13f5bf8fc564b2",
+      "bodyTextPrefix": "FANGKUN 方坤 记一笔 离线功能暂不可用 28 10月 · 周三 今日训练 周一 26 周二 27 今天 28 周四 29",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/fangkun-repairs-dev-mobile.png"
+    }
+  },
+  "brandWarnings": [
+    "BRAND NOTE: no custom public/og.jpg — the platform will serve the og.grok.me placeholder. Custom cards are the default for games of every kind (DOM board/word games included), whimsical apps, creative tools, and brand-forward pages — only plain utilities (converters, CRUD trackers, admin dashboards) keep the placeholder. If this app is not a plain utility, finish the brand-asset pass per /workspace/.grok/skills/og/SKILL.md."
+  ],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/fangkun-repairs-dev.json"
+}
+BRAND NOTE: no custom public/og.jpg — the platform will serve the og.grok.me placeholder. Custom cards are the default for games of every kind (DOM board/word games included), whimsical apps, creative tools, and brand-forward pages — only plain utilities (converters, CRUD trackers, admin dashboards) keep the placeholder. If this app is not a plain utility, finish the brand-asset pass per /workspace/.grok/skills/og/SKILL.md.

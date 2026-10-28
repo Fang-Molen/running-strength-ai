@@ -1,0 +1,395 @@
+{
+  "note": "Only trailing whitespace removed from generated logs for Git review; no outcome edits. Original bytes retained in separate raw-logs ZIP.",
+  "files": [
+    {
+      "path": "verification/coaching-repairs-20261028/affected.log",
+      "rawSha256": "a6d8877b981a9822e15b86cd93ae1c210e7787ec12443ed22c1b330df887d39f",
+      "normalizedSha256": "a6d8877b981a9822e15b86cd93ae1c210e7787ec12443ed22c1b330df887d39f"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/brand-check.test.mjs.log",
+      "rawSha256": "f09883622c5bb99fd8c15cc81b2108f61dcec1fb87398457bcea6c74f3f9cd4f",
+      "normalizedSha256": "f09883622c5bb99fd8c15cc81b2108f61dcec1fb87398457bcea6c74f3f9cd4f"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/browser-current.log",
+      "rawSha256": "a4f21b0e4b3f5fda8d90e0e5f098b406b78330128089c85315b42f68f453818c",
+      "normalizedSha256": "a4f21b0e4b3f5fda8d90e0e5f098b406b78330128089c85315b42f68f453818c"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/browser-flows.log",
+      "rawSha256": "a4f21b0e4b3f5fda8d90e0e5f098b406b78330128089c85315b42f68f453818c",
+      "normalizedSha256": "a4f21b0e4b3f5fda8d90e0e5f098b406b78330128089c85315b42f68f453818c"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/build-authorized.log",
+      "rawSha256": "00be0c93a6a5993034f92a584586aa533dfb9ea9fc5f25e505a0197e20785a72",
+      "normalizedSha256": "28f4286d0e30db6bf14155491ca2a6f1f5803e85f3820c3273e89cd4c1ee4bd4"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/build-server-authorized.log",
+      "rawSha256": "96a387fdc36e33979285bd265bfc4a800d14a95fffb118788858d8ffdd93824b",
+      "normalizedSha256": "f9ed2b94de473f876c35f061a068467545fab63382f6e18ef176cf0a66403197"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/build-server.log",
+      "rawSha256": "ca73eeb1a7c66447da12853b3c7279e1f35fed939f39d9573d706602d31d324b",
+      "normalizedSha256": "2603ae950a370c902c67bfaa7254c379c2fc85480d3472ca4e93667cb8ccff22"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/build.log",
+      "rawSha256": "be6948792a363c81e0f757e771bae75f8ac1ab650a65a2185ab9b8e0b6efbe0f",
+      "normalizedSha256": "f6aad1a726526b9b4cc8c2fe461452b9e7e7da0d00674e62f17c96cece73f2fd"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/c01-after.log",
+      "rawSha256": "c67fa9b7e4446e5c5b5236def9797c5ac598a2ec994956d1e31800fc6d68a933",
+      "normalizedSha256": "c67fa9b7e4446e5c5b5236def9797c5ac598a2ec994956d1e31800fc6d68a933"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/c01-before.log",
+      "rawSha256": "8a238de5fab3f2ed83e71d45db35444bcda1f913581eda891b9c9e83058a9181",
+      "normalizedSha256": "46e91be8f9c2c621ee414a9971e90b7e8cdd112a9ce05335f7309d010580d914"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/c03-after.log",
+      "rawSha256": "06272cd04f059430e551e2fa58d04880bc143526dfd7ac0a3b9bf30c7ec2efef",
+      "normalizedSha256": "06272cd04f059430e551e2fa58d04880bc143526dfd7ac0a3b9bf30c7ec2efef"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/c03-before.log",
+      "rawSha256": "8c98d8328b485c193868f86b75fd981a8d5c4ef497d64a00141593f68c88096e",
+      "normalizedSha256": "7ab20ddf48fb2ccd048175b4d0142344ca2848ab957818ebcaa89bb9fcca14d3"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/check-auth-invariant.test.mjs.log",
+      "rawSha256": "a7b4006f95f5892320ff3230cc9a5a4a15736fbf62eb032c6c16b480bd641b29",
+      "normalizedSha256": "72c4508736e6d8a0a3cf3b62bb01364136b567effc54c4956e19e43ec744cde1"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/check-blocks.test.mjs.log",
+      "rawSha256": "425785d41488a225ef66a250d2c9ad111b9aa29a290da4901f71b007508d54d2",
+      "normalizedSha256": "425785d41488a225ef66a250d2c9ad111b9aa29a290da4901f71b007508d54d2"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/clock-after.log",
+      "rawSha256": "a47b7bb1c49dad530be672ebcb7d943e1152c6ad5d532542b3c179d571df76b6",
+      "normalizedSha256": "a47b7bb1c49dad530be672ebcb7d943e1152c6ad5d532542b3c179d571df76b6"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/clock-before.log",
+      "rawSha256": "8970f4d6b008e10835dafce713e5fb90b8f0041eaef83f6e07ca1ff324d00a20",
+      "normalizedSha256": "8970f4d6b008e10835dafce713e5fb90b8f0041eaef83f6e07ca1ff324d00a20"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/corrected-import.log",
+      "rawSha256": "244c2ed354c60334e210bff0c32ce971ae0337644cedebec787cc438a29e5245",
+      "normalizedSha256": "244c2ed354c60334e210bff0c32ce971ae0337644cedebec787cc438a29e5245"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/cutoff-diagnostic.log",
+      "rawSha256": "2c82b7e004fe9dc4d2b0ab16fd72f0347f18a5f123bb932c8cf5947d5ccf1c32",
+      "normalizedSha256": "e111b6cff2e731ac97cf7439844b76cb3147f69423a737d3273bf092c4798bf8"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/cycle-diagnostic.log",
+      "rawSha256": "a1984b18651bb42468b54a4e94cf463514b0d0777aee48ce66fc8cc66b3b2d44",
+      "normalizedSha256": "44de416f7f7f97aba1ca2406617278b86f9c85a504dcb4f7919d5daeda4ff052"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/dev-runtime.log",
+      "rawSha256": "26f59b3a4b7c623679645ba57fde5a11494edd1bfc7be09eeb13654940e7b047",
+      "normalizedSha256": "26f59b3a4b7c623679645ba57fde5a11494edd1bfc7be09eeb13654940e7b047"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/environment-script-tests.log",
+      "rawSha256": "fa12cbb9da23cfbe13b35c372fc3985277150a8a9199e726f5a7f85377616eb3",
+      "normalizedSha256": "fa12cbb9da23cfbe13b35c372fc3985277150a8a9199e726f5a7f85377616eb3"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/extra-baseline.log",
+      "rawSha256": "d383ffeddc7d4c292caa0ede0ffbd38025489b202393d8bfa546e6abdbe9b813",
+      "normalizedSha256": "d383ffeddc7d4c292caa0ede0ffbd38025489b202393d8bfa546e6abdbe9b813"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/extra-diagnostic-0.log",
+      "rawSha256": "bf2acbc33e51d7b11a5520989b65a750f7b34bbbf669b7a4f7f570ae6c9ee253",
+      "normalizedSha256": "9be382b4b62204fa78f5cbb7082a7a289284577c627524c624baac93dd449b2f"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/extra-diagnostic-1.log",
+      "rawSha256": "48a0b249f93f441fc9a1554646c667e7d9efa98ce0eb3242cb2a563a9ce9d062",
+      "normalizedSha256": "729a787fdb7ff2db00be59b5621f2a09ae0dabf5dffa5984f90b6284b1e94dc1"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/extra-diagnostic-2.log",
+      "rawSha256": "0c4c291ceb85adfff2867eaf096f1b60502db842a6a3ee6999c945ad05475eae",
+      "normalizedSha256": "d49fe91096da3a83be112d12fddef3c9db853038cc686c37228467a3a1b02a5c"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/extra-diagnostic-3.log",
+      "rawSha256": "0823865d6da6117d73bf07be0d3ca34fe9a0e1394bf4da58de4d7c6e749eeaad",
+      "normalizedSha256": "f2e1d239d57de795fa67c1b269ad365e8a8ce247901d1db25cb6db328777bb1e"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/extra-diagnostic-4.log",
+      "rawSha256": "e8ec6c24ab115407d11aac8e704ff5c9436573b9cc02b120176d07ccaed57b67",
+      "normalizedSha256": "e8ec6c24ab115407d11aac8e704ff5c9436573b9cc02b120176d07ccaed57b67"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/final-affected.log",
+      "rawSha256": "55fc89eaeebed4921eaff5642850c60ab9629ac8604c8aace98de7c0abd90e56",
+      "normalizedSha256": "55fc89eaeebed4921eaff5642850c60ab9629ac8604c8aace98de7c0abd90e56"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/handoff-final-local.log",
+      "rawSha256": "b2026ab9fb9e422d4c9caf45630067ffadd47de96f67eec238f82d97f186fc7d",
+      "normalizedSha256": "b2026ab9fb9e422d4c9caf45630067ffadd47de96f67eec238f82d97f186fc7d"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/handoff-http.log",
+      "rawSha256": "707a40a43b464f9ed5b03c63779f41a1d4ebd7f22db3e1cd56c7635ba1deb4da",
+      "normalizedSha256": "707a40a43b464f9ed5b03c63779f41a1d4ebd7f22db3e1cd56c7635ba1deb4da"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/harness-current.log",
+      "rawSha256": "4161a0cbe61a2d237351eb52173b14048570d00e4c8bc0a95bf4f66cbd145a09",
+      "normalizedSha256": "4161a0cbe61a2d237351eb52173b14048570d00e4c8bc0a95bf4f66cbd145a09"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/harness-runtime.log",
+      "rawSha256": "4161a0cbe61a2d237351eb52173b14048570d00e4c8bc0a95bf4f66cbd145a09",
+      "normalizedSha256": "4161a0cbe61a2d237351eb52173b14048570d00e4c8bc0a95bf4f66cbd145a09"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/journey.log",
+      "rawSha256": "5a92be5262f9cd0f4c9a3a7c83649dae6927b2a2e836aaff9ed7f13911f1a7c2",
+      "normalizedSha256": "5a92be5262f9cd0f4c9a3a7c83649dae6927b2a2e836aaff9ed7f13911f1a7c2"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/layout-final.log",
+      "rawSha256": "f7bb5e9443d6ad8365efd0461fd91416303eb0a33716fff7f86c5864394e0267",
+      "normalizedSha256": "f7bb5e9443d6ad8365efd0461fd91416303eb0a33716fff7f86c5864394e0267"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/node-runtime.log",
+      "rawSha256": "47498ab49b156ca513f2bb4a57c8c766c3a87e4b853f9a2ec7e6b35ac4b8b4d1",
+      "normalizedSha256": "47498ab49b156ca513f2bb4a57c8c766c3a87e4b853f9a2ec7e6b35ac4b8b4d1"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/preview-start.log",
+      "rawSha256": "6b1adf64356fbd2f72f63e2ba1111eb880cf7b83a8afec1093a2a8be5c649326",
+      "normalizedSha256": "6b1adf64356fbd2f72f63e2ba1111eb880cf7b83a8afec1093a2a8be5c649326"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/preview-stop.log",
+      "rawSha256": "88b59fd5004bf81f23844fa09eef0727196c9e7db4ede685ad88c44c28673aed",
+      "normalizedSha256": "88b59fd5004bf81f23844fa09eef0727196c9e7db4ede685ad88c44c28673aed"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/r189-diagnostic.log",
+      "rawSha256": "20ed3410e3246b2ab140e8665dd36412b962e6665914186c4a733efc0cc26de2",
+      "normalizedSha256": "522e538ba1861f934ee257f8499c83251b17e8ed22ddbd246694f28bc9f9ce3e"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-01.log",
+      "rawSha256": "e710577a3b1b956b5393ab48b807d84e8f9191b8d4e08442ee3a928f1dfbd944",
+      "normalizedSha256": "e710577a3b1b956b5393ab48b807d84e8f9191b8d4e08442ee3a928f1dfbd944"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-02.log",
+      "rawSha256": "273e441374dcb23a9398cb30a48b8536b377cf1fe12b7654b81721f432b38be1",
+      "normalizedSha256": "273e441374dcb23a9398cb30a48b8536b377cf1fe12b7654b81721f432b38be1"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-03.log",
+      "rawSha256": "d5540de59604bccd6a0b709b42d35fbe8919320ca714b69e1f3451bf6ed0a375",
+      "normalizedSha256": "d5540de59604bccd6a0b709b42d35fbe8919320ca714b69e1f3451bf6ed0a375"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-04.log",
+      "rawSha256": "18516f88400aabbdec5891f0fcdbf8fbbe5118ff7e180ac43b1344f691ffa245",
+      "normalizedSha256": "18516f88400aabbdec5891f0fcdbf8fbbe5118ff7e180ac43b1344f691ffa245"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-05.log",
+      "rawSha256": "c329f3955696e90361a93c16b96572857e96afe8e87c94185b90c8b20f3a4532",
+      "normalizedSha256": "c329f3955696e90361a93c16b96572857e96afe8e87c94185b90c8b20f3a4532"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-06.log",
+      "rawSha256": "4d0f7a651e201a347c296282ab62869e29b32aff7baf5d87265644beed1235f0",
+      "normalizedSha256": "4d0f7a651e201a347c296282ab62869e29b32aff7baf5d87265644beed1235f0"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-07.log",
+      "rawSha256": "b497408afadd014701d9d1903b3de033c0b5bc41e6410618503442ad75c044e3",
+      "normalizedSha256": "b497408afadd014701d9d1903b3de033c0b5bc41e6410618503442ad75c044e3"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-08.log",
+      "rawSha256": "571bdbe06772058da56d517d023d1d621ee0cc055e7a4ec2cb4a57c1e3335d61",
+      "normalizedSha256": "571bdbe06772058da56d517d023d1d621ee0cc055e7a4ec2cb4a57c1e3335d61"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-09.log",
+      "rawSha256": "4833fcc1b4b08db78614e9ade8c2c119577223a04aa4e03faec6e2b329fbbd20",
+      "normalizedSha256": "4833fcc1b4b08db78614e9ade8c2c119577223a04aa4e03faec6e2b329fbbd20"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-10.log",
+      "rawSha256": "282f866cc390479173c528968205f1a052d3a567cad450f406fda43d1c001ea7",
+      "normalizedSha256": "282f866cc390479173c528968205f1a052d3a567cad450f406fda43d1c001ea7"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-11.log",
+      "rawSha256": "fed0a19ced367699baf978408e20f8286e8ba2eaa09b8159ed22b22872418b8a",
+      "normalizedSha256": "fed0a19ced367699baf978408e20f8286e8ba2eaa09b8159ed22b22872418b8a"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-12.log",
+      "rawSha256": "0df68e7558cffa0de241c7704d3b92f58b3d624ce1844f95980498c769d699f1",
+      "normalizedSha256": "0df68e7558cffa0de241c7704d3b92f58b3d624ce1844f95980498c769d699f1"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-13.log",
+      "rawSha256": "ccd792619282fe9a7af9b48562faee1ad3d008ec2a4cebf83728688ef10e9840",
+      "normalizedSha256": "ccd792619282fe9a7af9b48562faee1ad3d008ec2a4cebf83728688ef10e9840"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-14.log",
+      "rawSha256": "2a7e108c1f3126854628190b2a0c631e447c97fa8b719e09b00528acfc5d6a04",
+      "normalizedSha256": "2a7e108c1f3126854628190b2a0c631e447c97fa8b719e09b00528acfc5d6a04"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-15.log",
+      "rawSha256": "b936ab3187b4e217bf59a36b3de1e801175c703a8f9ae3de0fe3b988f5d2781a",
+      "normalizedSha256": "b936ab3187b4e217bf59a36b3de1e801175c703a8f9ae3de0fe3b988f5d2781a"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-16.log",
+      "rawSha256": "91bed14c362b946840baa4cca5ebd8172200d4da81747958a9c68c7e2a24ac96",
+      "normalizedSha256": "91bed14c362b946840baa4cca5ebd8172200d4da81747958a9c68c7e2a24ac96"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-17.log",
+      "rawSha256": "8378c856905303b2a3e766c0102e191a96c3fac06e104b924af38363aecddaff",
+      "normalizedSha256": "8378c856905303b2a3e766c0102e191a96c3fac06e104b924af38363aecddaff"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-18.log",
+      "rawSha256": "54d364deb953d36633a7d479030ec4995e10065454b922316ad63f18a8e5ec5c",
+      "normalizedSha256": "54d364deb953d36633a7d479030ec4995e10065454b922316ad63f18a8e5ec5c"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-19.log",
+      "rawSha256": "337bd01887d77fc9c7cc19a11225afba9d38e9bd36a311fcfb4f7c5e1db7fe31",
+      "normalizedSha256": "337bd01887d77fc9c7cc19a11225afba9d38e9bd36a311fcfb4f7c5e1db7fe31"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-fixed-cases.log",
+      "rawSha256": "5df9b8d9a493e43a610f6f05311a0fad8d61fb8347d8ff0c949dff785f943435",
+      "normalizedSha256": "5df9b8d9a493e43a610f6f05311a0fad8d61fb8347d8ff0c949dff785f943435"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/regression-progress.log",
+      "rawSha256": "a13c8dad7faa9bcd089684249cd34ec586169be121945d2662c93170e6da3a6a",
+      "normalizedSha256": "a13c8dad7faa9bcd089684249cd34ec586169be121945d2662c93170e6da3a6a"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/runtime-progress.log",
+      "rawSha256": "61d4e77cdb40f1ac85b979865e9d6a198c1c9f573f93634730f831792154405d",
+      "normalizedSha256": "61d4e77cdb40f1ac85b979865e9d6a198c1c9f573f93634730f831792154405d"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/smoke-built.log",
+      "rawSha256": "0cb5eae2f5152220dcbe147638e1fb35cb08a609a4bf82af8a76cce6622b0295",
+      "normalizedSha256": "0cb5eae2f5152220dcbe147638e1fb35cb08a609a4bf82af8a76cce6622b0295"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/smoke-dev.log",
+      "rawSha256": "7c08f49a5a8addc54504bff6d8db54f242e7a2b872b85d2eea38b6f94a3b765d",
+      "normalizedSha256": "7c08f49a5a8addc54504bff6d8db54f242e7a2b872b85d2eea38b6f94a3b765d"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/typecheck-delivery.log",
+      "rawSha256": "8fa1cf5506304e8abac55868e7f1a136c9b1dde57a3981a382da4c21ea129a6f",
+      "normalizedSha256": "dac125c794db702133345f3a0d33f3193f975fddc564ca4f1498b0d4132ed500"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/typecheck-final.log",
+      "rawSha256": "8fa1cf5506304e8abac55868e7f1a136c9b1dde57a3981a382da4c21ea129a6f",
+      "normalizedSha256": "dac125c794db702133345f3a0d33f3193f975fddc564ca4f1498b0d4132ed500"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/typecheck.log",
+      "rawSha256": "8fa1cf5506304e8abac55868e7f1a136c9b1dde57a3981a382da4c21ea129a6f",
+      "normalizedSha256": "dac125c794db702133345f3a0d33f3193f975fddc564ca4f1498b0d4132ed500"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/with-app-env.test.mjs.log",
+      "rawSha256": "072c2d66aa5e773fa7be26d96456457f169ee10be13714f63fdeb875280d3d0e",
+      "normalizedSha256": "bbead8d2b37b762372d6c7faa089f8926c30bdf77b1783e9f66f607c7d879e47"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/write-atomic.test.mjs.log",
+      "rawSha256": "251cb93fa91e44342b98ece3f95010c4827b010647b4dfce63cf6204a47f57f1",
+      "normalizedSha256": "8a9e732dd2777b0553f9d2a4d374716bbf63f498f0541f452d2e16e59eee603e"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x01-after.log",
+      "rawSha256": "8d493ed3494c1327e3a06b38f18536447d0dbee560fd772ea2d0ad1fbe804e4c",
+      "normalizedSha256": "8d493ed3494c1327e3a06b38f18536447d0dbee560fd772ea2d0ad1fbe804e4c"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x01-before.log",
+      "rawSha256": "c5a3e67f68292ab7844634fef1afe793044994f37e7750d72c7ee662d2502f38",
+      "normalizedSha256": "c5a3e67f68292ab7844634fef1afe793044994f37e7750d72c7ee662d2502f38"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x01-regression.log",
+      "rawSha256": "280bd9a331f582125b991ff246c101edd013bff4caf137f90a6fb0bb195cc1b7",
+      "normalizedSha256": "280bd9a331f582125b991ff246c101edd013bff4caf137f90a6fb0bb195cc1b7"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x02-after.log",
+      "rawSha256": "0f01492e7d89bf808e9afaf11c790a3d39eb8ea8804a49367e043567d9e35a11",
+      "normalizedSha256": "0f01492e7d89bf808e9afaf11c790a3d39eb8ea8804a49367e043567d9e35a11"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x02-before.log",
+      "rawSha256": "b5954530a7ec43d15ee40a53c22d3ffff79eb6583bdb8a20b0d749d01ca3d379",
+      "normalizedSha256": "19d4265c50c48a842b7f79ec95457b97e36dd1f1aa6fdf0b51fac64096e1e97c"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x03-after.log",
+      "rawSha256": "2e54d3c7fe21e7c5c52a74447376b674d961111e203ef71c735af4edb28cf806",
+      "normalizedSha256": "2e54d3c7fe21e7c5c52a74447376b674d961111e203ef71c735af4edb28cf806"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x03-before.log",
+      "rawSha256": "e17b2d186d5a2e302ebd8c9b8c6ca99ff1bd589e5c89eacb21e999d1e44f4f01",
+      "normalizedSha256": "8ef0319c0451991a955e2a6147f3a5fab92f4a6e68d2258f5f2e4bae612d7801"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x05-after.log",
+      "rawSha256": "73978618af5529a14a0b66f3bd35021b061738515ab7c0a2c20d05c48d657711",
+      "normalizedSha256": "73978618af5529a14a0b66f3bd35021b061738515ab7c0a2c20d05c48d657711"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x05-before.log",
+      "rawSha256": "ec0fe70c8ea340ca9c0fdd7329d2725188d864f9d4df9d5e289a4c21948289ab",
+      "normalizedSha256": "7a92e0c28d00b5fe0b075bb3f981ebd4c0ccfa8f2bc66f11a3cfa9e465acabc5"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x07-after.log",
+      "rawSha256": "fa06be5058e33c8dfb533be80e29f8540e7efe074effa7423ab0eabbfd25ea17",
+      "normalizedSha256": "fa06be5058e33c8dfb533be80e29f8540e7efe074effa7423ab0eabbfd25ea17"
+    },
+    {
+      "path": "verification/coaching-repairs-20261028/x07-before.log",
+      "rawSha256": "6c601ed7f30907a851bcb30630b765fc4b147711cd154d6e615b1ff8fdfafe7a",
+      "normalizedSha256": "7860fc9fa8bace42cf9b8a81ce3a4f5b1238b318456ae70a7d900b7f4feaa400"
+    }
+  ]
+}

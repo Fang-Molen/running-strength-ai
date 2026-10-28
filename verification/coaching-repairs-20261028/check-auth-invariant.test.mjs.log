@@ -1,0 +1,39 @@
+✔ the flag predicate matches src/lib/auth (3.467097ms)
+✔ reads the value a live dev server resolved (1.872229ms)
+✔ a server started without the flag reads as sign-in on (0.465746ms)
+✔ agreement passes (0.213313ms)
+✔ divergence fails in either direction (0.208837ms)
+✔ an unobservable dev server is indeterminate, not agreement (0.126762ms)
+✔ a dev server that cannot be reached probes as null (1.524582ms)
+✔ a server without the endpoint probes as null, not as agreement (5.524476ms)
+✔ only a divergence warns the smoke verdict (1.515638ms)
+✔ the build side resolves the template's shipped app-env (0.717698ms)
+✖ the CLI reports rather than silently passing when run via a symlink (191.914435ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 260.145749
+
+✖ failing tests:
+
+test at scripts/check-auth-invariant.test.mjs:98:1
+✖ the CLI reports rather than silently passing when run via a symlink (191.914435ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /could not read the dev server's resolved VITE_AUTH_ENABLED/. Input:
+
+  ''
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/check-auth-invariant.test.mjs:109:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /could not read the dev server's resolved VITE_AUTH_ENABLED/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -1,0 +1,40 @@
+
+> test:live-kept
+> node --import ./scripts/test-register.mjs --test src/lib/ui/strength-sources-v77.test.ts src/lib/strength/guided-flow.test.ts src/lib/ui/plan400-start.test.ts src/lib/nutrition/label-parse.test.ts src/lib/body/shape-sim.test.ts src/lib/exercise-dose.test.ts src/lib/nutrition/food-agg.test.ts src/lib/nutrition/food-db.test.ts src/lib/nutrition/fuel-guide.test.ts src/lib/strength/rest.test.ts src/lib/ui/ability-radar.test.ts src/lib/ui/coach-assessment.test.ts src/lib/ui/coach-bubble.test.ts src/lib/ui/day-schedule-rules.test.ts src/lib/ui/device-parse.test.ts src/lib/ui/r8.test.ts src/lib/ui/r9.test.ts src/lib/ui/recovery-verdict.test.ts src/lib/ui/today-checklist.test.ts src/lib/ui/watch-mode.test.ts src/lib/vault-migration.test.ts src/lib/core/coach-guard-k15.test.ts src/lib/coach/plain-coach.test.ts src/lib/coach/online-coach.test.ts src/lib/ui/ability-score-v76.test.ts src/lib/ui/review-v76.test.ts src/lib/ui/log-range.test.ts src/lib/health/garmin-sync-status.test.ts
+
+✔ src/lib/body/shape-sim.test.ts (631.097818ms)
+✔ src/lib/coach/online-coach.test.ts (4834.224589ms)
+✔ src/lib/coach/plain-coach.test.ts (786.703215ms)
+✔ src/lib/core/coach-guard-k15.test.ts (4299.762026ms)
+✔ src/lib/exercise-dose.test.ts (1486.287623ms)
+✔ src/lib/health/garmin-sync-status.test.ts (768.461737ms)
+✔ src/lib/nutrition/food-agg.test.ts (754.986235ms)
+✔ src/lib/nutrition/food-db.test.ts (575.480945ms)
+✔ src/lib/nutrition/fuel-guide.test.ts (601.29559ms)
+✔ src/lib/nutrition/label-parse.test.ts (525.180599ms)
+✔ src/lib/strength/guided-flow.test.ts (506.255889ms)
+✔ src/lib/strength/rest.test.ts (494.134686ms)
+✔ src/lib/ui/ability-radar.test.ts (462.712978ms)
+✔ src/lib/ui/ability-score-v76.test.ts (523.709852ms)
+✔ src/lib/ui/coach-assessment.test.ts (612.862567ms)
+✔ src/lib/ui/coach-bubble.test.ts (470.351875ms)
+✔ src/lib/ui/day-schedule-rules.test.ts (572.019866ms)
+✔ src/lib/ui/device-parse.test.ts (831.179698ms)
+✔ src/lib/ui/log-range.test.ts (612.21285ms)
+✔ src/lib/ui/plan400-start.test.ts (515.330449ms)
+✔ src/lib/ui/r8.test.ts (769.642582ms)
+✔ src/lib/ui/r9.test.ts (765.88507ms)
+✔ src/lib/ui/recovery-verdict.test.ts (650.475687ms)
+✔ src/lib/ui/review-v76.test.ts (682.252086ms)
+✔ src/lib/ui/strength-sources-v77.test.ts (1559.583312ms)
+✔ src/lib/ui/today-checklist.test.ts (509.862351ms)
+✔ src/lib/ui/watch-mode.test.ts (946.971997ms)
+✔ src/lib/vault-migration.test.ts (848.279555ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9256.523919

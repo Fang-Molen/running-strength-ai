@@ -1,0 +1,15 @@
+✔ server/coach-deepseek/online-v2.test.ts (15606.394374ms)
+✔ src/components/coach-chat-ui.test.tsx (7906.101251ms)
+✔ src/lib/coach/online-context.test.ts (5512.63163ms)
+✔ src/lib/core/coach-r189.test.ts (5913.383177ms)
+✔ src/lib/health/coaching-journey.test.ts (6527.620233ms)
+✔ src/lib/ui/coach-answer-digest.test.ts (940.615513ms)
+✔ src/lib/ui/coach-evidence-display.test.ts (607.410221ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15629.289479

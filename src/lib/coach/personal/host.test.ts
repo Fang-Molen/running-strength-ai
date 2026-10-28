@@ -62,6 +62,27 @@ test("browser writes are locked; two stale writers cannot overwrite profile", as
     cleanup();
   }
 });
+test('X05 old profile still gives conditional useful guidance without treating elapsed days as a training ban',()=>{
+ const cleanup=environment();try{
+  personalStore('2026-09-01T08:00:00Z').saveProfile({...defaultPersonalProfile('personal-test-a'),age:30,screen:'CLEAR',services:['NUTRITION'],days:[1,4]});
+  const text=personalAnswer('我的饮食方案','2026-10-28T08:00:00Z')!;
+  assert.match(text,/资料|条件/);
+  assert.match(text,/蛋白|蔬菜|餐次|饮食/);
+  assert.notEqual(text,'个人条件已超过30天未复核，请在私人教练面板核对并保存当前身体和健康条件，再生成具体方案。');
+  assert.equal(personalStore().read().active,null);
+ }finally{cleanup()}
+});
+test('X05 pain feedback does not swallow an unrelated nutrition question or clear the restriction',()=>{
+ const cleanup=environment();try{
+  const store=personalStore();store.saveProfile({...defaultPersonalProfile('personal-test-a'),age:30,screen:'CLEAR',services:['STRENGTH','NUTRITION'],days:[1,4]});
+  const candidate=store.prepare()!;store.confirm(candidate.token,'CONFIRM_PERSONAL_PLAN');
+  store.feedback({planVersion:1,pain:true,completedSessions:1,effort:'HARD',adherenceDays:1,weightTrend:'UNKNOWN',completeWeightWindows:false});
+  const text=personalAnswer('我的饮食方案',new Date().toISOString())!;
+  assert.match(text,/蛋白|蔬菜|餐次/);
+  assert.doesNotMatch(text,/暂停力量和跑步建议/);
+  assert.equal(store.read().feedback.at(-1)?.value.pain,true);
+ }finally{cleanup()}
+});
 test("chat uses adopted version and athlete scope, does not invent diet history or ignore pain", async () => {
   const cleanup = environment();
   try {

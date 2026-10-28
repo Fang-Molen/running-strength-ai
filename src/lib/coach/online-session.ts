@@ -1,3 +1,4 @@
+import { type OnlineConversationTurn } from './online-handoff'
 import { COACH_DISCLOSURE_VERSION, declarationQuote, contextRecordQuote, type CoachRequestContext, type CoachDeclaration, type CoachSnapshotReference } from './online-contract'
 import { readCoachResponse, coachServiceStatusText, type DecodedCoachAnswer } from './online-service'
 import { onlineSetting } from './online-coach'
@@ -15,6 +16,7 @@ import { readOnlineContext } from './online-context'
 import { readR5Context } from './r5/host'
 
 export type OnlinePreview = {
+ conversation?:readonly OnlineConversationTurn[];
  owner:string; question:string; day:string; preparedAt:string; sourceVersion:string;
  declarations:CoachDeclaration[]; packet:CoachAnalysisPacket; omittedRecords:number; context?:CoachRequestContext; trainingRestricted?:boolean; restrictions?:ScopedRestriction[]; selectedTrainingIds?:readonly string[];
 }
@@ -43,27 +45,27 @@ export function selectCoachDeclarations(facts:AnalysisFact[],owner:string,asOf:s
  }
  return result
 }
-export type OnlineAnswerBasis={owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
-function context(question:string,day:string,selectedTrainingIds:readonly string[]=[]){
- const now=new Date().toISOString(),selected=readOnlineContext(question,day,now,undefined,selectedTrainingIds)
+export type OnlineAnswerBasis={conversation?:readonly OnlineConversationTurn[];owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
+function context(question:string,day:string,selectedTrainingIds:readonly string[]=[],conversation:readonly OnlineConversationTurn[]=[]){
+ const now=new Date().toISOString(),selected=readOnlineContext(question,day,now,undefined,selectedTrainingIds,conversation)
  return {...selected,now,enabled:onlineSetting().on}
 }
 export function onlinePreviewIsCurrent(basis:OnlineAnswerBasis,requireEnabled=true):boolean{
- try{const latest=context(basis.question,basis.day,basis.selectedTrainingIds);return (!requireEnabled||latest.enabled)&&latest.owner===basis.owner&&latest.sourceVersion===basis.sourceVersion}catch{return false}
+ try{const latest=context(basis.question,basis.day,basis.selectedTrainingIds,basis.conversation);return (!requireEnabled||latest.enabled)&&latest.owner===basis.owner&&latest.sourceVersion===basis.sourceVersion}catch{return false}
 }
-export function prepareOnlineExplanation(question:string,selectedTrainingIds:readonly string[]=[]):OnlinePreview{
+export function prepareOnlineExplanation(question:string,selectedTrainingIds:readonly string[]=[],conversation:readonly OnlineConversationTurn[]=[]):OnlinePreview{
  const q=question.trim()
  if(!q||q.length>1000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q))throw Error('问题需在1000字以内，且不含控制字符。')
- const day=analysisDay(q,null,localDay()),c=context(q,day,selectedTrainingIds)
+ const day=analysisDay(q,null,localDay()),c=context(q,day,selectedTrainingIds,conversation)
  const empty=()=>{
   const snapshot=projectAnalysisEvidence({context:{athleteId:c.owner,asOf:c.now,timeZone:'UTC',planVersion:null,consentVersion:'PERSISTENT_SETTING',analysisVersion:'ONLINE_KNOWLEDGE_2'},facts:[]})
   const exposure=buildMuscleExposure(snapshot)
   return {packet:buildCoachAnalysisPacket(snapshot,evaluateRecoveryEvidence(snapshot,exposure),exposure,{question:q})}
  }
- const analysis=c.personal?readAnalysis(day,c.now,q):empty()
+ const analysis=c.analysisPacket?{packet:c.analysisPacket}:c.personal?readAnalysis(day,c.now,q):empty()
  let restrictions:ScopedRestriction[]=[],trainingRestricted=true
  try{const scope=readR5Context(c.now,q);restrictions=scope.restrictions;trainingRestricted=scope.permission.trainingRestricted}catch{/* Knowledge remains available; unknown safety cannot authorize activity. */}
- return {owner:c.owner,question:q,day,selectedTrainingIds:[...selectedTrainingIds],preparedAt:c.now,sourceVersion:c.sourceVersion,declarations:[],context:c.context,packet:analysis.packet,
+ return {conversation:[...conversation],owner:c.owner,question:q,day,selectedTrainingIds:[...selectedTrainingIds],preparedAt:c.now,sourceVersion:c.sourceVersion,declarations:[],context:c.context,packet:analysis.packet,
   trainingRestricted,restrictions,omittedRecords:c.context.coverage.omitted}
 }
 async function requestHeaders():Promise<Record<string,string>>{
@@ -87,7 +89,7 @@ type SessionPorts={current:()=>{owner:string;sourceVersion:string;enabled:boolea
 const used=new WeakSet<OnlinePreview>()
 /** Persistent online preference authorizes explanation; the server independently checks
  * identity, ownership, grant, snapshot and persistent budget before dispatch. */
-export async function runOnlineExplanation(preview:OnlinePreview,options:{consent?:boolean;signal?:AbortSignal}={},ports:SessionPorts={current:()=>context(preview.question,preview.day,preview.selectedTrainingIds),headers:requestHeaders,fetch:(u,i)=>fetch(u,i)}):Promise<(DecodedCoachAnswer&{source:'LOCAL'|'MODEL'})|{error:string}>{
+export async function runOnlineExplanation(preview:OnlinePreview,options:{consent?:boolean;signal?:AbortSignal}={},ports:SessionPorts={current:()=>context(preview.question,preview.day,preview.selectedTrainingIds,preview.conversation),headers:requestHeaders,fetch:(u,i)=>fetch(u,i)}):Promise<(DecodedCoachAnswer&{source:'LOCAL'|'MODEL'})|{error:string}>{
  let ref:CoachSnapshotReference|undefined,headers:Record<string,string>|undefined
  const controller=new AbortController(),cancel=()=>controller.abort(),timer=setTimeout(cancel,30000)
  options.signal?.addEventListener('abort',cancel,{once:true});if(options.signal?.aborted)cancel()
@@ -115,7 +117,7 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   if(!answer.source)return {error:'回答来源未能确认，已保留本地回答；不将其标为模型解释。'}
   let restrictions=preview.restrictions
   try{restrictions=readR5Context(new Date().toISOString(),preview.question).restrictions}catch{/* Retain the captured restrictions on read failure. */}
-  const checked=validateCoachAssertions(answer.text,{question:preview.question,restrictions,factQuotes:[...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).map(contextRecordQuote)],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
+  const checked=validateCoachAssertions(answer.text,{question:preview.question,restrictions,factQuotes:[...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextRecordQuote)],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
   if(!checked.ok)return {error:'模型内容未通过事实或安全核验，已保留本地回答。'}
   return {...answer,source:answer.source}
  }catch(error){return {error:controller.signal.aborted?'本轮联网已取消或超时，本地回答保留；不会自动重试。':error instanceof TypeError?'网络连接失败，本地回答保留；未确认模型是否收到请求，不自动重试。':error instanceof Error?error.message:'联网不可用，本地回答保留。'}}

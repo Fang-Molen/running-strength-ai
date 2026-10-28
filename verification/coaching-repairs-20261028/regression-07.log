@@ -1,0 +1,24 @@
+
+> test:r189
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-r189.test.ts src/lib/core/segment-rpe.test.ts src/lib/strength/demo.test.ts src/lib/nutrition/timing.test.ts src/lib/core/coach-r189-dialogue-integrity.test.ts src/lib/core/coach-r189-provenance.test.ts
+
+✔ src/lib/core/coach-r189-dialogue-integrity.test.ts (5596.327905ms)
+✔ src/lib/core/coach-r189-provenance.test.ts (1986.319151ms)
+✖ src/lib/core/coach-r189.test.ts (5252.489919ms)
+✔ src/lib/core/segment-rpe.test.ts (3859.615134ms)
+✔ src/lib/nutrition/timing.test.ts (1104.121537ms)
+✔ src/lib/strength/demo.test.ts (749.848037ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6377.694098
+
+✖ failing tests:
+
+test at src/lib/core/coach-r189.test.ts:1:1
+✖ src/lib/core/coach-r189.test.ts (5252.489919ms)
+  'test failed'

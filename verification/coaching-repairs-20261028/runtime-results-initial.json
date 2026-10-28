@@ -1,0 +1,81 @@
+[
+  {
+    "name": "environment-script-tests",
+    "command": [
+      "node",
+      "--test",
+      "scripts/brand-check.test.mjs",
+      "scripts/check-auth-invariant.test.mjs",
+      "scripts/check-blocks.test.mjs",
+      "scripts/with-app-env.test.mjs",
+      "scripts/write-atomic.test.mjs"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "build-authorized",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "browser-flows",
+    "command": [
+      "node",
+      "/workspace/fangkun-20261028/verification/coaching-repairs-20261028/browser/flows.mjs"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "smoke-dev",
+    "command": [
+      "node",
+      "scripts/browser-smoke.mjs",
+      "http://127.0.0.1:8080",
+      "/workspace/screenshots/fangkun-repairs-dev.png"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "preview-start",
+    "command": [
+      "npm",
+      "run",
+      "preview:restart"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "smoke-built",
+    "command": [
+      "node",
+      "scripts/browser-smoke.mjs",
+      "http://127.0.0.1:8081",
+      "/workspace/screenshots/fangkun-repairs-built.png",
+      "--baseline",
+      "/workspace/screenshots/fangkun-repairs-dev.json"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "preview-stop",
+    "command": [
+      "npm",
+      "run",
+      "preview:stop"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "build-server-authorized",
+    "command": [
+      "npm",
+      "run",
+      "build:server"
+    ],
+    "exit": 0
+  }
+]

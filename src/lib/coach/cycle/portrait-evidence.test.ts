@@ -31,9 +31,30 @@ test("a device change creates a separate reference instead of borrowing the form
 
 test("a trained cycle background is not silently assigned to every sport", () => {
   const input = cycleFixture(); input.goal.experience = "TRAINED"; input.goal.targetSeconds = 90;
+  delete input.goal.runningExperience; delete input.goal.strengthExperience;
   const portrait = buildAthletePortrait(input) as any;
   assert.deepEqual(portrait.experience, { cycleGoal: "TRAINED", running: "NOT_SEPARATELY_CONFIRMED", strength: "NOT_SEPARATELY_CONFIRMED" });
   assert.equal(portrait.performances.length, 0);
   assert.equal(portrait.goalIsMeasurement, false);
   assert.ok(portrait.unknowns.some((text: string) => /跑步.*力量.*经验/.test(text)));
+});
+test('C01 separately confirmed running and strength experience stay separate from measured capability',()=>{
+ const input=cycleFixture();input.goal.runningExperience='TRAINED';input.goal.strengthExperience='NOVICE';
+ const portrait=buildAthletePortrait(input);
+ assert.equal(portrait.experience.running,'TRAINED');
+ assert.equal(portrait.experience.strength,'NOVICE');
+ assert.equal(portrait.performances.length,0);
+ assert.ok(!portrait.unknowns.some(text=>/跑步与力量经验尚未分别确认/.test(text)));
+});
+
+test('C01 existing strength profile is reused with provenance, never assigned to running',()=>{
+ const input=cycleFixture();
+ delete input.goal.runningExperience; delete input.goal.strengthExperience;
+ input.training.strengthExperience={value:'NOVICE',source:'PERSONAL_COACH',at:'2026-10-24T10:00:00Z',version:'personal:r2'};
+ const portrait=buildAthletePortrait(input);
+ assert.equal(portrait.experience.strength,'NOVICE');
+ assert.equal(portrait.experience.running,'NOT_SEPARATELY_CONFIRMED');
+ assert.equal(portrait.experienceSources.strength?.version,'personal:r2');
+ input.training.strengthExperience.at='2026-10-26T10:00:00Z';
+ assert.equal(buildAthletePortrait(input).experience.strength,'NOT_SEPARATELY_CONFIRMED');
 });

@@ -1,0 +1,8 @@
+environment-script-tests 0
+build-authorized 0
+browser-flows 1
+smoke-dev 0
+preview-start 0
+smoke-built 0
+preview-stop 0
+build-server-authorized 0

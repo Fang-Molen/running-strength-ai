@@ -1,0 +1,10 @@
+✔ src/lib/core/coach-r189.test.ts (7925.918976ms)
+✔ src/lib/health/recovery-host-u11-cutoff.test.ts (6783.684945ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7960.000041

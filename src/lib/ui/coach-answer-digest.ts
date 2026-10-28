@@ -8,6 +8,9 @@ function sentences(text: string): string[] {
   return text.split(/\n+/).flatMap((line) => line.trim().split(/(?<=[。！？!?])/)).map((s) => s.trim()).filter(Boolean)
 }
 export function digestCoachAnswer(text: string): AnswerDigest {
+  // Strip paired presentation markers before splitting. The persisted raw answer
+  // remains untouched, including its sources; sentence boundaries cannot orphan **.
+  text = text.replace(/\*\*([\s\S]+?)\*\*/g, '$1').replace(/__([\s\S]+?)__/g, '$1')
   // 【本地分析 · …】之类的来源标签单独显示，不当作结论。
   const tm = /^\s*(【[^】\n]{1,40}】)\s*/.exec(text)
   const tag = tm ? tm[1] : ""

@@ -1,0 +1,41 @@
+✔ every block passes its import boundary and lists existing tests (29.480949ms)
+✔ plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断) (0.335299ms)
+✖ online coach stays default ON and client cap equals trusted server rejection limit (4964.067666ms)
+✔ knowledge complete package stays PENDING with zero production approvals (no self-approval) (1.155872ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5007.828627
+
+✖ failing tests:
+
+test at scripts/check-blocks.test.mjs:19:1
+✖ online coach stays default ON and client cap equals trusted server rejection limit (4964.067666ms)
+  <ref *1> Error: spawnSync /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node EPERM
+      at Object.spawnSync (node:internal/child_process:1160:20)
+      at spawnSync (node:child_process:928:24)
+      at execFileSync (node:child_process:971:15)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/check-blocks.test.mjs:21:29)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    errno: -1,
+    code: 'EPERM',
+    syscall: 'spawnSync /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node',
+    path: '/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node',
+    spawnargs: [ '--import', './scripts/test-register.mjs', '--input-type=module', '-e', "\n    import { setStoreBackend } from './src/lib/core/storage.ts';\n    import { onlineSetting, setOnline } from './src/lib/coach/online-coach.ts';\n    const m=new Map();setStoreBackend({getItem:k=>m.get(k)??null,setItem:(k,v)=>m.set(k,v)});\n    const defaultOn=onlineSetting().on;setOnline(false);console.log(JSON.stringify({defaultOn,afterOff:onlineSetting().on}));\n  " ],
+    error: [Circular *1],
+    status: 0,
+    signal: null,
+    output: [ null, '', '' ],
+    pid: 37057,
+    stdout: '',
+    stderr: ''
+  }

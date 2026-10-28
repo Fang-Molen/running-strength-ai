@@ -1,0 +1,217 @@
+✔ R189 arrest 队友倒地没有反应，只有叹息样呼吸 (10.880207ms)
+✔ R189 arrest 他跑完叫不醒，抽泣样呼吸 (1.148382ms)
+✔ R189 arrest 队友倒地抽搐后没有反应 (0.442411ms)
+✔ R189 scoped nonactual 我现在没有胸痛，没有呼吸困难，没有晕倒 (0.334778ms)
+✔ R189 scoped nonactual 假设队友没有反应也没有正常呼吸怎么办 (0.478716ms)
+✔ R189 heat mild has cooling and explicit escalation (0.714163ms)
+✔ R189 cardiac warning is not cardiac arrest AED script (0.728525ms)
+✔ R189 seconds 1:54.32 (0.320906ms)
+✔ R189 seconds 2'03.125 (0.341799ms)
+✔ R189 seconds 59.875 (0.170138ms)
+✔ R189 seconds 1:60.1 (0.093942ms)
+✔ R189 seconds 缺 (0.097568ms)
+✔ R189 count is not event and hundredths retained (57.660293ms)
+✔ R189 paired distance/time arrays do not turn meters into seconds (1.16066ms)
+✔ R189 mismatched arrays stay unresolved (1.023692ms)
+✔ R189 target values do not become actual times (1.023112ms)
+✔ R189 exact two rounds retained (0.445215ms)
+✔ R189 minute PB parses without inventing a completed session (4.59694ms)
+✔ R189 cumulative splits derive exact unreported tail and never interpolate 600 (0.356601ms)
+✔ R189 conflicting total is not silently preferred (0.091899ms)
+✔ R189 cumulative report actually enters review text (45.183902ms)
+✔ R189 nominal proposals preserve raw, never auto apply (0.420718ms)
+✔ R189 free question does not bind prior training 明天怎么安排 (0.102716ms)
+✔ R189 free question does not bind prior training 运动后为什么酸痛 (0.06623ms)
+✔ R189 free question does not bind prior training 我800米PB两分钟，怎么提高 (0.0594ms)
+✔ R189 free question does not bind prior training 下周训练计划怎么安排 (0.06539ms)
+✔ R189 free follow-up does not reuse stale chat course (22.072478ms)
+✔ R189 unknown purpose stays unknown even in a stage (11.151009ms)
+✔ R189 supplied course purpose changes interpretation but not actual facts (39.949023ms)
+✔ R189 medical hold still dominates next-step observation (3.142134ms)
+✖ R189 chat UI scopes selected record only for explicit review (3.683285ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 30
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 235.596623
+
+✖ failing tests:
+
+test at src/lib/core/coach-r189.test.ts:44:1
+✖ R189 chat UI scopes selected record only for explicit review (3.683285ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /\(explicitlyReviewsRecord\(value\) \|\| reviewAsk\) \? effectiveSelected : null/. Input:
+
+  "import type { OnlineConversationTurn } from '@/lib/coach/online-handoff';\n" +
+    "import { cycleRequestFromText } from '@/lib/coach/cycle/request';\n" +
+    "import { CoachCyclePanel } from '@/components/coach-cycle-panel';\n" +
+    "import { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';\n" +
+    "import { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';\n" +
+    "import { CoachR5Panel } from '@/components/coach-r5-panel';\n" +
+    "import { CoachWeeklyPanel } from '@/components/coach-weekly-panel';\n" +
+    "import { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';\n" +
+    "import { explicitlyReviewsRecord } from '@/lib/core/coach-specialty-analysis'\n" +
+    'import { CoachAnswerView } from "@/components/coach-answer-view";\n' +
+    "import { CoachAvatar, petMoodFromChat } from '@/components/pet';\n" +
+    "import type { CharacterThemeId } from '@/lib/ui/character-themes';\n" +
+    "import { CoachIntegrationPanel } from '@/components/coach-integration-panel';\n" +
+    "import { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';\n" +
+    "import { readR6Decision } from '@/lib/coach/r6/runtime';\n" +
+    "import { r6Question, r6DecisionText } from '@/lib/coach/r6/presentation';\n" +
+    "import { R6DecisionPanel } from '@/components/r6-decision-panel';\n" +
+    "import { TrainingModelPanel } from '@/components/training-model-panel';\n" +
+    "import { PersonalCoachPanel } from '@/components/personal-coach-panel';\n" +
+    "import { personalAnswer } from '@/lib/coach/personal/host';\n" +
+    "import { readR4CoachAnswer } from '@/lib/coach/r4/answer';\n" +
+    "import { R4AnswerStatus } from '@/components/r4-answer-status';\n" +
+    "import { CoachC03FollowupPanel } from '@/components/coach-c03-followup-panel';\n" +
+    "import { registerDisplayedC03Review } from '@/lib/coach/c03/runtime';\n" +
+    "import type { LocalCoachAnswer } from '@/lib/core/coach-local-first';\n" +
+    "import { readCoachMemory } from '@/lib/core/coach-context-memory';\n" +
+    "import { detectRedFlags } from '@/lib/core/coach-red-flags';\n" +
+    "import { CoachChatLoadPanel } from '@/components/coach-chat-load-panel';\n" +
+    "import { CoachChatTrainingPanel } from '@/components/coach-chat-training-panel';\n" +
+    "import { emptyDialogue } from '@/lib/core/coach-dialogue';\n" +
+    "import { commitDisplayedCoachAdvice } from '@/lib/core/coach-p7-runtime';\n" +
+    "import type { ChatTraining } from '@/lib/core/coach-chat-evidence';\n" +
+    "import { chatLoadPreview } from '@/lib/core/coach-chat-load';\n" +
+    "import { readCoachReviewWorkspace } from '@/lib/core/coach-review-workspace';\n" +
+    "import { calendarDay } from '@/lib/core/coach-calendar';\n" +
+    "import { occurrenceVoided } from '@/lib/core/training-correction';\n" +
+    "import { confirmImportedSessionRpe } from '@/lib/core/coach-import-rating';\n" +
+    "import { reportedSessionRpes } from '@/lib/core/coach-claim-scope';\n" +
+    "import { formatComputedFacts } from '@/lib/core/coach-reasoning';\n" +
+    'import { listConfirmedDeviceEvidence } from "@/lib/core/device-evidence-idb";\n' +
+    'import { CoachAnswerFeedbackForm } from "@/components/coach-answer-feedback";\n' +
+    'import { attachLinkedSources, deviceCoachSources } from "@/lib/core/coach-linked-context";\n' +
+    'import { coachImports } from "@/lib/core/coach-import-evidence";\n' +
+    'import { LearningLibrary } from "@/components/learning-library";\n' +
+    'import { answerLearningQuestion } from "@/lib/education/knowledge-presentation";\n' +
+    'import { setOnlineFeature } from "@/lib/ui/online-features";\n' +
+    'import { CoachCognitionPanel } from "@/components/coach-cognition-panel";\n' +
+    "import { CoachFirstWeekPanel } from '@/components/coach-first-week-panel';\n" +
+    "import { CoachLoadMetricsPanel } from '@/components/coach-load-metrics-panel';\n" +
+    "import { firstWeekGoalFromText } from '@/lib/core/coach-first-week';\n" +
+    'import type { CoachCognition } from "@/lib/core/coach-cognition";\n' +
+    'import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";\n' +
+    'import { BookOpen, Send, X } from "lucide-react";\n' +
+    'import { FangShen, type FangFace } from "@/components/fang-shen";\n' +
+    'import { executeDecision, loadDecisions, recordOverride, rejectDecision } from "@/lib/core";\n' +
+    'import { RunningRoundReadout } from "@/components/running-round-readout";\n' +
+    'import { DeviceEvidenceImport } from "@/components/device-evidence-import";\n' +
+    'import { CoachStrengthEditPanel, type CoachStrengthAction } from "@/components/coach-strength-edit-panel";\n' +
+    'import { CoachStatusCard, DecisionCard, DecisionInbox, SessionReview, TodayState } from "@/components/coach-panels";\n' +
+    'import { acceptIssued, issueTrainingDecision, overrideIssued, rejectIssued } from "@/lib/core/brain-loop";\n' +
+    'import { abilityRows, competitionView, latestReviewableCompletion, limiterFrom, sessionFromCompleted, toneFor, trendText } from "@/lib/core/coach-view";\n' +
+    'import { readCoachOpenView } from "@/lib/core/coach-open";\n' +
+    'import { loadEvents, onAppEvent } from "@/lib/core/events";\n' +
+    'import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89";\n' +
+    'import { appendCoachNotice, noticeForCoachEvent, type CoachActivityNotice } from "@/lib/core/coach-activity-watch";\n' +
+    'import { chooseAction, createTrainingDecision, firstPlannedSet, readTrainingContext } from "@/lib/core/training-decision";\n' +
+    'import { refreshAthleteState } from "@/lib/core/state";\n' +
+    'import type { AthleteState, DecisionRecord } from "@/lib/core/types";\n' +
+    'import { currentAthleteId } from "@/lib/core/events";\n' +
+    'import { readFormalEvidenceRows } from "@/lib/core/coach-v4-formal-rows-store";\n' +
+    "import { buildCoachModelRequest, normalizeAskCoachInput, normalizeV4 } from '@/lib/strength/coach-pipeline';\n" +
+    "import { latestReasoningBasis, reasoningReadFailure } from '@/lib/core/coach-reasoning';\n" +
+    'import { answerLocally, answerStaysLocal } from "@/lib/core/coach-local-first";\n' +
+    'import { loadInstalledKnowledgeLedger, KNOWLEDGE_APPROVALS_KEY } from "@/lib/coach/knowledge/approval-store";\n' +
+    'import { subscribeKnowledgeLedger } from "@/lib/coach/knowledge/approval";\n' +
+    'import { reviewKnowledgeJudgments } from "@/lib/coach/knowledge/history";\n' +
+    "import { isNativeRecordInspection } from '@/lib/core/dialogue-e1';\n" +
+    'import { saveOfflineReview } from "@/lib/core/coach-offline-loop";\n' +
+    'import { CoachOfflineLoopPanel } from "@/components/coach-offline-loop-panel";\n' +
+    'import { COACH_NETWORK_MODE_KEY, COACH_PUBLIC_REFERENCES, authorizeNetworkAction, parseCoachNetworkMode, type CoachNetworkMode } from "@/lib/core/coach-network-policy";\n' +
+    'import { PERSONAS, PERSONA_KEY, parsePersona, presentCoachAnswer, type CoachPersona } from "@/lib/core/coach-persona";\n' +
+    'import { extractConversationContext, contextualFollowup } from "@/lib/core/coach-conversation-context";\n' +
+    'import { assembleCoachBrief, recordCoachBodyEvidence, recordCoachChoice, recordCoachEvidence, type CoachBrief } from "@/lib/core/coach-brief";\n' +
+    'import { formatTrainingWhen, listBoundTrainings } from "@/lib/core/coach-compare";\n' +
+    'import { toggleSeriesId } from "@/lib/core/coach-series";\n' +
+    'import { listTrainingOccurrences } from "@/lib/core/occurrence";\n' +
+    'import type { CoachFuel } from "@/lib/core/coach-fuel";\n' +
+    'import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";\n' +
+    'import type { Plan } from "@/lib/strength/model";\n' +
+    'import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";\n' +
+    "import { onlineContextNeeds } from '@/lib/coach/online-context';\n" +
+    'import { CoachOnlineRequest } from "./coach-online-request";\n' +
+    'import { CoachOnlineAnswerStatus } from "./coach-online-answer-status";\n' +
+    'import { syncOnlineAuthorization } from "@/lib/coach/online-session";\n' +
+    'import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps } from "@/lib/coach/online-coach";\n' +
+    'import { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";\n' +
+    'import { readEffectiveProfile } from "@/lib/coach/loop/effective-host";\n' +
+    'import { readSuggestionDocument } from "@/lib/coach/loop/suggestion-host";\n' +
+    'import { suggestionFacts } from "@/lib/coach/loop/suggestions";\n' +
+    'import { CoachSuggestionsPanel } from "@/components/coach-suggestions-panel";\n' +
+    'import { fetchLaps } from "@/components/garmin-log";\n' +
+    'import { activityLocalDay, fmtDistance } from "@/lib/ui/activity-format";\n' +
+    '\n' +
+    'function latestSessionRpe(events: { event_type: string; payload: Record<string, unknown> }[]): number | null {\n' +
+    '  for (const event of [...events].reverse()) {\n' +
+    '    if (event.event_type !== "RPE_RECORDED") continue\n' +
+    '    const payload = event.payload\n' +
+    '    if (payload.evidenceType === "SUBJECTIVE_RECOVERY") continue\n' +
+    '    const session = payload.evidenceType === "SESSION_RPE" ? payload.value : typeof payload.rpe === "number" ? payload.rpe : null\n' +
+    '    if (payload.evidenceType !== "SESSION_RPE" && typeof payload.rpe !== "number") continue\n' +
+    '    if (typeof session === "number" && Number.isInteger(session) && session >= 1 && session <= 10) return session\n' +
+    '  }\n' +
+    '  return null\n' +
+    '}\n' +
+    '\n' +
+    'const DRAFT_KEY = "fk-coach-draft-v1";\n' +
+    'export function CoachSheet({\n' +
+    '  plan,\n' +
+    '  activeId,\n' +
+    '  onClose,\n' +
+    '  onJump,\n' +
+    '  embedded = false,\n' +
+    '  characterTheme = "classic",\n' +
+    '  focusOccurrenceId = null,\n' +
+    '  link = "ask",\n' +
+    '  onControlledStrengthEdit,\n' +
+    '  coordinationPanel,\n' +
+    '  onNavigate,\n' +
+    '  questionDraft,\n' +
+    '  questionContext,\n' +
+    '  onQuestionDraftConsumed,\n' +
+    '}: {\n' +
+    '  plan: Plan;\n' +
+    '  activeId?: string;\n' +
+    '  onClose: () => void;\n' +
+    '  onJump?: (tab: "body") => void;\n' +
+    '  embedded?: boolean;\n' +
+    '  characterTheme?: CharacterThemeId;\n' +
+    '  focusOccurrenceId?: string | null;\n' +
+    '  link?: "ask" | "bound" | "unbound";\n' +
+    '  onControlledStrengthEdit?: CoachStrengthAction;\n' +
+    '  coordinationPanel?: ReactNode;\n' +
+    '  onNavigate?: (tab: "plan" | "body" | "log" | "diet") => void;\n' +
+    '  questionDraft?: string | null;\n' +
+    '  /** 与 questionDraft 配套的可移除标签（如“健康 · 10月27日”）：只对应输入框里预填的那句话，移除即清掉未改动的预填文字。 */\n' +
+    '  questionContext?: string | null;\n' +
+    '  onQuestionDraftConsumed?: () => void;\n' +
+    '}) {\n' +
+    '  const [section, setSectionState] = useState<"chat" | "learn" | "review">("chat");\n' +
+    '  const messagePane = useRef<HTMLDivElement>(null);\n' +
+    '  const currentSection = useRef(section);\n' +
+    '  const sectionScroll = useRef({ chat: 0, learn: 0, review: 0 });\n' +
+    '  const [fromLibrary, setFromLibrary] = useState(false);\n' +
+    '  const setSection = useCallback((next: "chat" | "learn" | "review") => {\n' +
+    '    if (next === currentSection.current) return;\n' +
+    '    sectionScroll.current[currentSection.current] = messagePane.c'... 62793 more characters
+
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-r189.test.ts:44:179)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `import type { OnlineConversationTurn } from '@/lib/coach/online-handoff';\nimport { cycleRequestFromText } from '@/lib/coach/cycle/request';\nimport { CoachCyclePanel } from '@/components/coach-cycle-panel';\nimport { prepareCycle, cycleCoachSummary } from '@/lib/coach/cycle/host';\nimport { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/host';\nimport { CoachR5Panel } from '@/components/coach-r5-panel';\nimport { CoachWeeklyPanel } from '@/components/coach-weekly-panel';\nimport { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';\nimport { explicitlyReviewsRecord } from '@/lib/core/coach-specialty-analysis'\nimport { CoachAnswerView } from "@/components/coach-answer-view";\n...`,
+    expected: /\(explicitlyReviewsRecord\(value\) \|\| reviewAsk\) \? effectiveSelected : null/,
+    operator: 'match',
+    diff: 'simple'
+  }

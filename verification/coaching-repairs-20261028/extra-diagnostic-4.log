@@ -1,0 +1,33 @@
+✔ 跑步 RPE 8、力量 RPE 6 分开保存，互不覆盖；改值留修改记录 (2.427761ms)
+✔ 跳过一项：跑步跳过、力量完成 → 日志一条力量记录 (6.902671ms)
+✖ v83（P1-05）：V4 跑步部分 ↔ 同日唯一佳明跑步：先是候选（两条各自显示，跑步不算完成）；你确认后合并成一条，只算一次；力量不会因此完成 (12.87379ms)
+✔ 解除关联后不再自动关联；用户可重新确认 (5.160465ms)
+✔ 备份恢复带上分项与关联 key (2.085573ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.626243
+
+✖ failing tests:
+
+test at src/lib/ui/plan400-components-store.test.ts:34:1
+✖ v83（P1-05）：V4 跑步部分 ↔ 同日唯一佳明跑步：先是候选（两条各自显示，跑步不算完成）；你确认后合并成一条，只算一次；力量不会因此完成 (12.87379ms)
+  AssertionError [ERR_ASSERTION]: A07：分段课（150m×3）只凭同日+总距离不说“很可能”
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/plan400-components-store.test.ts:40:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

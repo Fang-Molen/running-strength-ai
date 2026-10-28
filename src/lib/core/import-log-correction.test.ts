@@ -8,6 +8,7 @@ import { loadConfirmedTrainingImports, createTrainingImportDraft, confirmTrainin
 import { readOfflineWorkspace } from './coach-offline-workspace.ts'
 import { saveOfflineReview, readOfflineHistory } from './coach-offline-loop.ts'
 import { blankPlan } from '../strength/model.ts'
+import { effectiveImportedTraining } from './coach-import-evidence.ts'
 
 let data: Map<string, string>
 let box: MemoryStore
@@ -111,7 +112,26 @@ test('strength edits accept fractional weight but reject fractional repetitions'
   assert.equal(importCorrectionTargets(record).find(row => row.field === 'weight')?.value, 42.5)
   assert.equal(importCorrectionTargets(record).find(row => row.field === 'reps')?.value, 7)
   assert.equal(loadConfirmedTrainingImports()[0].strengthSets[0].weightKg.value, 40)
+  const effective=effectiveImportedTraining(record).record;
+  assert.equal(effective.strengthSets[0].weightKg.value,42.5);
+  assert.equal(effective.strengthSets[0].repetitions.value,7);
 })
+
+test('corrected import projection preserves cutoff, other segments and raw source, and quarantines unbound edits',t=>{
+ t.mock.timers.enable({apis:['Date'],now:new Date('2026-10-28T10:00:00Z')});
+ const {record,input}=correction(),before=new Date().toISOString(),raw=JSON.stringify(record);
+ t.mock.timers.tick(1000);assert.ok(confirmImportLogCorrection(input).ok);
+ const old=effectiveImportedTraining(record,before),latest=effectiveImportedTraining(record);
+ assert.equal(old.record.runningSegments[0].durationSeconds.value,39);
+ assert.equal(latest.record.runningSegments[0].durationSeconds.value,38.5);
+ assert.equal(latest.record.runningSegments[1].durationSeconds.value,38);
+ assert.equal(latest.record.runningSegments[0].recoverySeconds.value,180);
+ assert.equal(latest.revision,1);assert.ok(Date.parse(latest.knownAt)>Date.parse(before));
+ assert.equal(JSON.stringify(record),raw);
+ assert.ok(appendCorrection({trainingOccurrenceId:record.confirmedImportId,kind:'FIELD',field:'duration',setKey:'unbound',originalValue:'',newValue:'38',reason:'合成歧义'}));
+ const uncertain=effectiveImportedTraining(record).record;
+ assert.ok(uncertain.runningSegments.every(s=>s.durationSeconds.value===null));
+});
 
 test('colliding segment aliases do not offer a guessed correction target', () => {
   const record = training()

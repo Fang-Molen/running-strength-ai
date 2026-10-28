@@ -11,7 +11,7 @@ export type CoachDeclaration = {
 };
 export type CoachContextRecord = {
   recordId:string; revision:string; occurredAt:string|null; knownAt:string|null;
-  category:'TRAINING'|'STRENGTH'|'GOAL'|'PLAN'|'NUTRITION'|'RECOVERY'|'CAPABILITY'|'RESTRICTION';
+  category:'TRAINING'|'STRENGTH'|'GOAL'|'PLAN'|'NUTRITION'|'RECOVERY'|'CAPABILITY'|'RESTRICTION'|'ANALYSIS'|'DIALOGUE';
   state:'ACTUAL'|'PLANNED'|'TARGET'|'UNKNOWN'; source:string;
   fields:{name:string;value:string|number|boolean|null;unit:string|null}[];
 };

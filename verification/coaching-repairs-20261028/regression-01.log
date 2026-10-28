@@ -1,0 +1,49 @@
+✔ scripts/anatomy-model.test.mjs (1211.000849ms)
+✔ scripts/anatomy-r9.test.mjs (501.430624ms)
+✖ scripts/brand-check.test.mjs (1044.473873ms)
+✔ scripts/browser-smoke-verdict.test.mjs (229.853472ms)
+✖ scripts/check-auth-invariant.test.mjs (253.997559ms)
+✖ scripts/check-blocks.test.mjs (4149.741547ms)
+✔ scripts/clean-build-output.test.mjs (133.454352ms)
+✔ scripts/grok-pwa-plugin.test.mjs (157.343047ms)
+✔ scripts/migration-plan.test.mjs (138.792586ms)
+✔ scripts/muscle3d-friendly.test.mjs (1687.904161ms)
+✔ scripts/nitro-pwa-bundle.test.mjs (124.197912ms)
+✔ scripts/preview-zombie.test.mjs (178.611184ms)
+✔ scripts/preview.test.mjs (200.789084ms)
+✔ scripts/sign-out-plan.test.mjs (246.872106ms)
+✔ scripts/sw-archive-safety.test.mjs (241.475253ms)
+✔ scripts/sw-cache-integrity.test.mjs (143.9003ms)
+✔ scripts/sw-migration.test.mjs (155.214759ms)
+✖ scripts/with-app-env.test.mjs (1233.730884ms)
+✖ scripts/write-atomic.test.mjs (546.025849ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 14
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5152.807557
+
+✖ failing tests:
+
+test at scripts/brand-check.test.mjs:1:1
+✖ scripts/brand-check.test.mjs (1044.473873ms)
+  'test failed'
+
+test at scripts/check-auth-invariant.test.mjs:1:1
+✖ scripts/check-auth-invariant.test.mjs (253.997559ms)
+  'test failed'
+
+test at scripts/check-blocks.test.mjs:1:1
+✖ scripts/check-blocks.test.mjs (4149.741547ms)
+  'test failed'
+
+test at scripts/with-app-env.test.mjs:1:1
+✖ scripts/with-app-env.test.mjs (1233.730884ms)
+  'test failed'
+
+test at scripts/write-atomic.test.mjs:1:1
+✖ scripts/write-atomic.test.mjs (546.025849ms)
+  'test failed'

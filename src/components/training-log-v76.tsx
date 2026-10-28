@@ -70,7 +70,9 @@ function RecordRow({ r, plan, onAsk, open, onOpen, link }: { r: ActivityRow; pla
       <span className="min-w-0 flex-1">
         <span className="block truncate font-bold">{name}{link ? <span className="ml-1 text-xs font-normal text-muted">· 计划「{link.entry.title}」</span> : null}</span>
         <span className="keep block truncate text-xs text-muted">{r.date.slice(5)}{r.timeUnknown ? "" : ` ${hm(r.startedAt)}`} · {sourcesOf(r).join(" + ")}{r.status === "incomplete" ? <b className="ml-1 rounded bg-amber-100 px-1 text-amber-800">{r.rpe != null ? "未完成" : "未完成·未反馈"}（不计入）</b> : null}</span>
-        <span className="keep block truncate text-xs">{k === "lift" ? [dur(r.durationSec) + (r.durationPartial ? "（部分）" : ""), r.sets ? `${r.sets} 组` : null].filter(Boolean).join(" · ") : `${km(r.distanceM) ?? "距离—"} · ${dur(r.durationSec)}${r.durationPartial ? "（部分）" : ""}`}<span className="text-muted">{k !== "lift" ? ` · 配速 ${pace(r.distanceM, r.durationSec) ?? "—"}` : ""}{r.avgHr ? ` · 心率 ${fmtHr(r.avgHr)} 次/分` : ""}</span></span>
+        <span className="keep block text-xs">{k === "lift" ? [dur(r.durationSec), r.sets ? `${r.sets} 组` : null].filter(Boolean).join(" · ") : `${k === 'mixed' ? '跑步 ' : ''}${km(r.runningDistanceM === undefined ? r.distanceM : r.runningDistanceM) ?? "距离—"} · ${dur(r.runningDurationSec === undefined ? (k === 'mixed' ? null : r.durationSec) : r.runningDurationSec)}`}<span className="text-muted">{k !== "lift" ? ` · 配速 ${pace(r.runningDistanceM === undefined ? r.distanceM : r.runningDistanceM, r.runningDurationSec === undefined ? (k === 'mixed' ? null : r.durationSec) : r.runningDurationSec) ?? "—"}` : ""}{r.avgHr ? ` · 心率 ${fmtHr(r.avgHr)} 次/分` : ""}</span></span>
+        {r.measurementNote ? <span className="block text-xs text-warn">{r.measurementNote}</span> : null}
+        {k === 'mixed' ? <span className="block text-xs text-muted">整课时长：{dur(r.durationSec)}</span> : null}
       </span>
       <span className="text-muted" aria-hidden="true">{open ? "▾" : "›"}</span>
     </button>

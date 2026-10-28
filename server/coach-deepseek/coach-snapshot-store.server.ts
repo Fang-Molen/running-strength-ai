@@ -6,7 +6,7 @@ import { declarationCoachInput } from './lib/coach-declarations.ts';
 
 const TTL=10*60*1000, GRANT_TTL=365*86400000;
 const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
-const categories=['TRAINING','STRENGTH','GOAL','PLAN','NUTRITION','RECOVERY','CAPABILITY','RESTRICTION'];
+const categories=['TRAINING','STRENGTH','GOAL','PLAN','NUTRITION','RECOVERY','CAPABILITY','RESTRICTION','ANALYSIS','DIALOGUE'];
 type ConsentRow={consent_id:string;granted_at:string|Date;expires_at:string|Date;revoked_at:string|Date|null};
 const iso=(value:string|Date)=>new Date(value).toISOString();
 export function createCoachSnapshotStore(db: LedgerDatabase, now = Date.now) {
