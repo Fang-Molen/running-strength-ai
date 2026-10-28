@@ -10,6 +10,7 @@ import { loadExtras } from "@/lib/health/device-store";
 import { subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { STATUS_TEXT, fmtTime, latestGarminReceipt, readDeviceImportDisplay, readGarminSyncDisplay, syncSummary, type ObservationLike, type SyncDisplay } from "@/lib/health/sync-status";
 import { applyEntries, inspectAnyBackup, inspectEntries, isCredentialKey, restoreAnyBackup, type BackupPreview } from "@/lib/ui/backup-center";
+import { appStorage } from "@/lib/core/bulk-store";
 import { exportVault, listSnapshots, migrateKv, type Snapshot } from "@/lib/vault";
 import { loadInjury, saveInjury, type InjuryStore } from "@/lib/ui/injury";
 import { loadSettings } from "@/lib/ui/app-settings";
@@ -140,16 +141,16 @@ export function BackupCenter({ onNotice, legacySlot }: { onNotice: (m: string) =
   const pick = async (f: File) => {
     setPending(null);
     if (f.size > 30_000_000) return say("备份文件超过 30MB，未做任何修改。");
-    const raw = await f.text(); const p = inspectAnyBackup(raw, localStorage);
+    const raw = await f.text(); const p = inspectAnyBackup(raw, appStorage());
     if (!p.ok) return say(p.reason);
-    setPending({ preview: p, apply: () => restoreAnyBackup(raw, localStorage) }); setMsg("");
+    setPending({ preview: p, apply: () => restoreAnyBackup(raw, appStorage()) }); setMsg("");
   };
   const pickSnap = (s: Snapshot) => {
     const kv = migrateKv(new Map(Object.entries(s.data)), s.schema);
     const entries = [...kv].filter(([k, v]) => typeof v === "string" && !isCredentialKey(k) && !k.startsWith("__")).map(([key, value]) => ({ key, value }));
-    const p = inspectEntries(entries, localStorage, "vault", s.at, `自动快照 schema ${s.schema}`);
+    const p = inspectEntries(entries, appStorage(), "vault", s.at, `自动快照 schema ${s.schema}`);
     if (!p.ok) return say(p.reason);
-    setPending({ preview: { ...p, label: "自动快照（本机 IndexedDB）" }, apply: () => applyEntries(entries, localStorage) });
+    setPending({ preview: { ...p, label: "自动快照（本机 IndexedDB）" }, apply: () => applyEntries(entries, appStorage()) });
   };
   const confirm = () => {
     if (!pending) return;

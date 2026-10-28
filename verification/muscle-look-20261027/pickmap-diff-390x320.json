@@ -1,0 +1,147 @@
+{
+ "W": 390,
+ "H": 320,
+ "step": 5,
+ "tot": 39936,
+ "diff": 234,
+ "nonEdge": 0,
+ "report": [
+  {
+   "view": "body/front",
+   "samples": 4992,
+   "differing": 40,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [
+    "omohyoid",
+    "trap_upper",
+    "omohyoid",
+    "lats",
+    "brachialis",
+    "iliotibial_tract",
+    "flexor_retinaculum_of_wrist",
+    "flexor_pollicis_brevis",
+    "set_of_dorsal_interossei_of_hand"
+   ],
+   "meshesOnlyInNew": [
+    "levator_scapulae",
+    "pec_lower",
+    "forearm_flex",
+    "glutes",
+    "abductor_pollicis_brevis",
+    "flexor_digitorum_brevis"
+   ]
+  },
+  {
+   "view": "body/back",
+   "samples": 4992,
+   "differing": 41,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [
+    "triceps_medial",
+    "forearm_ext",
+    "forearm_ext",
+    "forearm_flex",
+    "vastus_lat",
+    "foot_intrinsic"
+   ],
+   "meshesOnlyInNew": [
+    "delt_side",
+    "triceps_medial",
+    "forearm_ext",
+    "abductor_pollicis_longus",
+    "forearm_ext",
+    "forearm_ext",
+    "adductors"
+   ]
+  },
+  {
+   "view": "body/left",
+   "samples": 4992,
+   "differing": 34,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [
+    "delt_front",
+    "forearm_flex",
+    "foot_intrinsic",
+    "extensor_hallucis_longus"
+   ],
+   "meshesOnlyInNew": [
+    "sternohyoid",
+    "trap_mid",
+    "triceps_long",
+    "forearm_flex",
+    "soleus"
+   ]
+  },
+  {
+   "view": "body/right",
+   "samples": 4992,
+   "differing": 28,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [
+    "triceps_medial",
+    "forearm_ext",
+    "soleus",
+    "peroneals"
+   ],
+   "meshesOnlyInNew": [
+    "sternohyoid",
+    "brachialis",
+    "abductor_pollicis_longus",
+    "peroneals",
+    "extensor_hallucis_longus"
+   ]
+  },
+  {
+   "view": "calf/front",
+   "samples": 4992,
+   "differing": 18,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [],
+   "meshesOnlyInNew": []
+  },
+  {
+   "view": "calf/back",
+   "samples": 4992,
+   "differing": 19,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [
+    "sartorius"
+   ],
+   "meshesOnlyInNew": [
+    "sartorius",
+    "peroneals"
+   ]
+  },
+  {
+   "view": "foot/front",
+   "samples": 4992,
+   "differing": 29,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [],
+   "meshesOnlyInNew": [
+    "adductors",
+    "foot_intrinsic",
+    "foot_intrinsic"
+   ]
+  },
+  {
+   "view": "foot/back",
+   "samples": 4992,
+   "differing": 25,
+   "interiorDiffs": 0,
+   "interior": [],
+   "meshesOnlyInOriginal": [
+    "foot_intrinsic"
+   ],
+   "meshesOnlyInNew": []
+  }
+ ]
+}

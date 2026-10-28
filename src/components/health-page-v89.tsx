@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { classifyFreshness } from "@/lib/health/recovery-freshness-u12"
 import { ChevronLeft, ChevronRight, CalendarDays, Moon, Footprints, Dumbbell, BedDouble, Activity, HeartPulse, BatteryMedium, Gauge } from "lucide-react"
 import { Sheet } from "./sheet"
+import { ThemeAvatar } from "./pet/theme-avatar"
 import { useIntraday } from "./intraday-panel"
 import { HealthSourceDetails } from "./health-source-details"
 import { CheckinCard, PainLog } from "./health-extras"
@@ -68,12 +69,14 @@ function useHealthRev() {
   return rev
 }
 
-export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }: { body: ReactNode; slot?: ReactNode; grid: ReactNode; stats: ReactNode; rest: (day: string) => ReactNode; trend: (only?: string, endDay?: string, days?: number) => ReactNode; onCoach?: () => void }) {
+export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }: { body: ReactNode; slot?: ReactNode; grid: ReactNode; stats: ReactNode; rest: (day: string) => ReactNode; trend: (only?: string, endDay?: string, days?: number) => ReactNode; onCoach?: (day: string) => void }) {
   const today = todayDate()
   const [tab, setTab] = useState<HealthTab>("recovery")
   // v89.10.6：今天还没同步到手表逐时样本（如刚过零点）时，默认打开最近 3 天内有样本的那天；可随时点“今天”回来。
   const [day, setSelectedDay] = useState(() => { try { const all = loadIntraday(), has = (x: string) => !!(all[x]?.bb.length || all[x]?.hr.length); if (has(today)) return today; for (let i = 1; i <= 3; i++) { const x = shiftDay(today, -i); if (has(x)) return x } } catch { /* ignore */ } return today })
   const [muscle, setMuscle] = useState(false)
+  /** 问方坤：把当前查看的日期明确带过去（聊天里显示可移除的“健康 · M月D日”标签）；点击事件本身不当作参数。 */
+  const askCoach = onCoach ? () => onCoach(day) : undefined
   const rev = useHealthRev()
   const historyPinned = useRef(false), previousToday = useRef(today)
   const setDay = (next: string) => { historyPinned.current = next !== today; setSelectedDay(next) }
@@ -94,14 +97,15 @@ export function HealthPageV89({ body, slot, grid, stats, rest, trend, onCoach }:
   }, [])
   return <div className="fk-health-v89 space-y-3" data-testid="health-v89">
     <nav className="fk-h89-tabs" aria-label="健康分区">{TABS.map(([id, l]) => <button key={id} type="button" aria-pressed={tab === id} aria-controls={`health-${id}`} onClick={() => setTab(id)}>{l}</button>)}</nav>
-    <SymptomPanel />
     <div id="health-recovery" hidden={tab !== "recovery"} className="space-y-3">
       <DaySwitch day={day} today={today} onDay={setDay} />
       <CorosHealthPanel day={day} />
-      <RecoveryTab day={day} today={today} rev={rev} onDay={setDay} rest={rest} trend={trend} onCoach={onCoach} onMuscle={() => setMuscle(true)} />
+      <RecoveryTab day={day} today={today} rev={rev} onDay={setDay} rest={rest} trend={trend} onCoach={askCoach} onMuscle={() => setMuscle(true)} />
     </div>
     <div id="health-body" hidden={tab !== "body"} className="space-y-3">{body}{slot}{grid}{stats}</div>
-    {muscle ? <Sheet title="肌肉恢复" label="肌肉恢复" footer={null} full onClose={() => setMuscle(false)}><MuscleRecoveryV89 day={day} trend={trend(undefined, day)} onCoach={onCoach} /></Sheet> : null}
+    {/* 疼痛与酸痛追踪功能不变，两个分区共用；位置移到主要内容之后，首屏先看今日恢复/身体数据。 */}
+    <SymptomPanel />
+    {muscle ? <Sheet title="肌肉恢复" label="肌肉恢复" footer={null} full onClose={() => setMuscle(false)}><MuscleRecoveryV89 day={day} trend={trend(undefined, day)} onCoach={askCoach} /></Sheet> : null}
   </div>
 }
 
@@ -173,7 +177,6 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
   const [metric, setMetric] = useState<ExplorerMetric>("bb"), [span, setSpan] = useState<Span>(1)
   const [checkin, setCheckin] = useState(false), [pain, setPain] = useState(false)
   const [subjective, setSubjective] = useState<"fatigue" | "pain">("fatigue")
-  const [portraitError, setPortraitError] = useState(false)
   const select = (next: ExplorerMetric, jump = false) => { setMetric(next); setSpan(next === "sleep" || next === "hrv" ? 7 : 1); if (jump) jumpTo("fk-intraday") }
   useEffect(() => { const h = (e: Event) => { const k = (e as CustomEvent).detail; if (k === "bb" || k === "hr" || k === "st") { setMetric(k); setSpan(1) } }; window.addEventListener("fk-h89-detail", h); window.addEventListener("fk-open-intraday-detail", h); return () => { window.removeEventListener("fk-h89-detail", h); window.removeEventListener("fk-open-intraday-detail", h) } }, [])
   const all = useIntraday()
@@ -198,7 +201,7 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
   return <div className="space-y-3">
     <section className="fk-h89-card fk-h89-today" aria-label="今日恢复状态">
       <div className="flex items-start gap-3">
-        <span className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-surface-2">{portraitError ? <HeartPulse aria-hidden="true" className="size-6 text-accent" /> : <img src="/fangshen/care-bust.png" alt="" onError={() => setPortraitError(true)} className="size-full object-cover" />}</span>
+        <span className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-surface-2"><ThemeAvatar fallback={<HeartPulse aria-hidden="true" className="size-6 text-accent" />} /></span>
         <div className="min-w-0 flex-1">
           <p className="keep text-xs text-muted">方坤 · {day === today ? "今日" : mdCN(day)}恢复状态</p>
           <h2 className="mt-0.5 text-xl font-black leading-tight">{review?.title ?? "暂无恢复判断"}</h2>
@@ -213,9 +216,9 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
     {checkin ? <div id="health-checkin"><CheckinCard key={day} today={day} watch={loadWatch() ?? "none"} onSaved={() => undefined} onPain={() => setPain(true)} />{pain ? <PainLog key={day} today={day} /> : null}<details className="fk-h89-disclosure"><summary>疲劳与疼痛历史</summary><div className="fk-h89-metrics" role="group" aria-label="主观记录指标">{([["fatigue","疲劳"],["pain","疼痛"]] as const).map(([id,label]) => <button key={id} type="button" aria-pressed={subjective === id} onClick={() => setSubjective(id)}>{label}</button>)}</div>{trend(subjective, day)}</details></div> : null}
     {!emptyMetrics ? <div className="fk-h89-tiles" data-testid="h89-tiles">{tiles.map(t => <button type="button" key={t.key} className="fk-h89-tile text-left" data-testid={`h89-tile-${t.key}`} onClick={() => select(t.key === "SLEEP" ? "sleep" : t.key === "HRV" ? "hrv" : t.key === "BB" ? "bb" : "hr", true)}>
       <p className="keep text-xs text-muted">{t.label}</p>
-      <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? (t.sub === "来源待核对" ? "待核对" : "暂无")}</b>{t.value && t.unit ? <span className="ml-0.5 text-[10px] text-muted">{t.unit}</span> : null}</p>
-      {t.value && t.key === "BB" && !t.stale ? <p className="keep text-[11px] text-muted">{t.sub}</p> : null}
-      {t.delta ? <p className="keep text-[10px] text-muted">{t.delta}</p> : null}{t.stale ? <p className="keep text-[10px] text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
+      <p className="mt-0.5 whitespace-nowrap"><b className={(t.value && t.value.length > 4 ? "text-[15px]" : "text-lg") + " font-black " + (t.key === "BB" ? "text-[#4cc3e0]" : t.key === "RHR" ? "text-[#ff7a6a]" : "")}>{t.value ?? (t.sub === "来源待核对" ? "待核对" : "暂无")}</b>{t.value && t.unit ? <span className="ml-0.5 text-xs text-muted">{t.unit}</span> : null}</p>
+      {t.value && t.key === "BB" && !t.stale ? <p className="keep text-xs text-muted">{t.sub}</p> : null}
+      {t.delta ? <p className="keep text-xs text-muted">{t.delta}</p> : null}{t.stale ? <p className="keep text-xs text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
     </button>)}</div> : null}
     {emptyMetrics ? <details className="fk-h89-disclosure" data-testid="h89-empty-trend"><summary>查看健康趋势</summary>{explorer}</details> : explorer}
     <details className="fk-h89-disclosure"><summary>睡眠与训练时段</summary><EventCards day={day} d={all[day] ?? null} view={view} rev={rev} /></details>
@@ -325,7 +328,7 @@ function DayChart({ d, view, k, height, bandLabels = false, typ }: { d: Intraday
 }
 
 function Legend({ k, typ }: { k: K; typ: TypicalDay }) {
-  return <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted" data-testid="h89-legend">
+  return <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted" data-testid="h89-legend">
     <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3" style={{ background: META[k].color }} />手表{META[k].label}</span>
     {typ.hours.length ? <span className="flex items-center gap-1"><i className="inline-block h-0.5 w-3 border-t border-dashed" style={{ borderColor: "var(--fk-reference-color, #c4b2ff)" }} />{typicalDayExplanation(typ).label}</span>
       : <span data-testid="h89-reference-missing">{typicalDayExplanation(typ).label}{typ.unverifiedSourceDays ? ` · ${typ.unverifiedSourceDays}天旧来源待核对` : ""}</span>}

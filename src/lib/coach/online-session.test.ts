@@ -53,11 +53,26 @@ test('changed evidence after snapshot prevents provider call and revokes authori
  const f=fixture(),fetch=f.ports.fetch;f.ports.fetch=async(u,i)=>{const r=await fetch(u,i);if(u.endsWith('snapshot')&&i?.method==='POST')f.change();return r}
  assert.ok('error'in await runOnlineExplanation(f.preview,{consent:true},f.ports));assert.equal(f.calls.filter(c=>c.url.endsWith('chat')&&c.init?.method==='POST').length,0);assert.equal(f.calls.at(-1)?.init?.method,'DELETE')
 })
-test('server cannot replace displayed consent facts or introduce an unsupported numeric prescription',async()=>{
- for(const attack of ['receipt','answer']){const f=fixture(),fetch=f.ports.fetch;
- if(attack==='receipt')f.receipt.factQuotes=['用户申报睡眠8小时'];
- else f.ports.fetch=async(u,i)=>u.endsWith('chat')&&i?.method==='POST'?Response.json({ok:true,text:'明天跑20公里。',planChanged:false,route:'LOW',model:'synthetic-model'}):fetch(u,i)
- assert.ok('error'in await runOnlineExplanation(f.preview,{consent:true},f.ports))}
+test('server cannot replace displayed consent facts',async()=>{
+ const f=fixture();f.receipt.factQuotes=['用户申报睡眠8小时']
+ assert.ok('error'in await runOnlineExplanation(f.preview,{consent:true},f.ports))
+})
+// S1 fusion decision: the v89.11.2 relaxed guard applies only when no safety hold is active.
+const askWith=(text:string,hold:boolean)=>{const f=fixture();f.preview.packet={...f.preview.packet,assessment:{...f.preview.packet.assessment,safetyState:hold?'SAFETY_HOLD':'NO_KNOWN_HOLD'}} as typeof f.preview.packet
+ const fetch=f.ports.fetch;f.ports.fetch=async(u,i)=>u.endsWith('chat')&&i?.method==='POST'?Response.json({ok:true,text,planChanged:false,route:'LOW',model:'synthetic-model'}):fetch(u,i)
+ return runOnlineExplanation(f.preview,{consent:true},f.ports)}
+test('relaxed online guard: no active hold shows an unsupported number with the unverified flag',async()=>{
+ const r=await askWith('明天可以慢跑20公里。',false);assert.ok('text'in r,JSON.stringify(r));assert.equal((r as {unverified?:boolean}).unverified,true)
+})
+test('relaxed guard is NOT applied while a safety hold is active: unsupported numbers and release wording are blocked',async()=>{
+ for(const text of ['明天跑20公里。','可以继续训练，放心跑步。'])assert.ok('error'in await askWith(text,true),text)
+})
+test('safety state UNKNOWN (no evidence) is treated like a hold: strict guard',async()=>{
+ const f=fixture();const fetch=f.ports.fetch;f.ports.fetch=async(u,i)=>u.endsWith('chat')&&i?.method==='POST'?Response.json({ok:true,text:'明天可以慢跑20公里。',planChanged:false,route:'LOW',model:'synthetic-model'}):fetch(u,i)
+ if(f.preview.packet.assessment.safetyState==='NO_KNOWN_HOLD')return;assert.ok('error'in await runOnlineExplanation(f.preview,{consent:true},f.ports))
+})
+test('write / clearance claims are blocked even with the relaxed guard',async()=>{
+ assert.ok('error'in await askWith('已经替你修改课表，并解除安全限制。',false))
 })
 test('identity changes and cancellation during a pending response cannot deliver its text',async()=>{
  for(const reason of ['owner','cancel','cleanup']){const f=fixture(),controller=new AbortController(),fetch=f.ports.fetch;

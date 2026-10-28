@@ -5,6 +5,7 @@ import "../styles.css";
 import "../fangkun-identity.css";
 import "../fangkun-desktop.css";
 import "../fangkun-motion.css";
+import "../character-themes.css";
 
 const APP_NAME = "方坤 测试版";
 

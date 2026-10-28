@@ -57,6 +57,7 @@ test('failed COROS persistence reports failure, not a successful new value in a 
  const old={accountRef:'a',fetchedAt:OLD,days:[{date:DAY,hrvMs:51}],stress:[],recovery:null,issues:[],raw:{}}
  data.set('fk-coros-mcp-health-v1:local',JSON.stringify(old));let events=0;win.addEventListener(HEALTH_CHANGED,()=>events++)
  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{...store,setItem:()=>{throw Error('quota')}}})
+ setStoreBackend({...store,setItem:()=>{throw Error('quota')}}) // v89.11.13：COROS 健康缓存改经 currentStore() 读写，故障注入也要落在同一入口
  globalThis.fetch=async()=>new Response(JSON.stringify({ok:true,connected:true,sessionScope:'synthetic-session',accountRef:'a',fetchedAt:NOW,days:[{date:DAY,hrvMs:65}],stress:[],recovery:null,issues:[],raw:{}}))
  await assert.rejects(refreshCorosHealth('local'),/保存失败/);assert.equal(metric('HRV').current?.value,51);assert.equal(events,0)
 })

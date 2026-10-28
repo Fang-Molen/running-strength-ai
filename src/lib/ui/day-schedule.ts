@@ -17,7 +17,8 @@ import { loadSettings } from "@/lib/ui/app-settings"
 import { acceptedAdaptation } from "@/lib/ui/review"
 import { loadFeedback } from "@/lib/ui/assessment-store"
 import { adaptProposal, adaptation, addDays, weekOf, type Recovery, type ScheduleEntry } from "@/lib/ui/day-schedule-rules"
-import { commitScheduleRaw, withScheduleLock, type ScheduleWriter } from "@/lib/ui/schedule-writer"
+import { activateBulkStore, bulkStatus } from "@/lib/core/bulk-store"
+import { commitScheduleRaw, withScheduleLock, clearScheduleFailure, recordScheduleFailure, lastScheduleFailure, describeScheduleFailure, isQuotaError, type ScheduleWriter } from "@/lib/ui/schedule-writer"
 
 export type R5ScheduleAudit={id:string;athleteId:string;kind:'R5_CHANGE'|'R5_UNDO';at:string;before:ScheduleEntry;after:ScheduleEntry;proposalId:string;pairs:import('../coach/r5/commands').SchedulePair[];reason:string}
 export const SCHEDULE_KEY = "fk-schedule-v1"
@@ -44,30 +45,32 @@ export function loadSchedule(): ScheduleStore {
 /** v87：所有写入方都走这里 → schedule-writer 闸口（修订号 + 写入方标记）。 */
 export function saveSchedule(s: ScheduleStore, writer: ScheduleWriter = 'unknown', audit?:R5ScheduleAudit|{id:string;athleteId:string;kind:'R4_MOVE'|'R4_SWAP'|'R4_UNDO';at:string;before:ScheduleEntry;after:ScheduleEntry;proposalId:string;reason?:string;second?:{before:ScheduleEntry;after:ScheduleEntry}}): boolean {
   try {
+    clearScheduleFailure()
     const box = currentStore(), read = readScheduleDocument(), athlete = currentAthleteId()
-    if (!box || !read.ok || !Array.isArray(s.entries) || !Array.isArray(s.acks) || new Set(s.entries.map(e=>e.id)).size!==s.entries.length) return false
+    if (!box) { recordScheduleFailure('E-NOSTORE'); return false }
+    if (!read.ok) { recordScheduleFailure('E-DOC'); return false }
+    if (!Array.isArray(s.entries) || !Array.isArray(s.acks) || new Set(s.entries.map(e=>e.id)).size!==s.entries.length) { recordScheduleFailure('E-DUP'); return false }
     const original = read.value
-    if(audit&&(writer!=='plan-execution'||audit.athleteId!==athlete||!audit.id||!Number.isFinite(Date.parse(audit.at))))return false
+    if(audit&&(writer!=='plan-execution'||audit.athleteId!==athlete||!audit.id||!Number.isFinite(Date.parse(audit.at)))){ recordScheduleFailure('E-AUDIT'); return false }
     // 其他运动员的行原样保留、不可被当前档案改写；当前档案（含旧的无归属本机历史，仅 local）可正常编辑。
     const protectedRows = original.entries.filter(e => !ownsEntry(e, athlete))
     const protectedIds = new Set(protectedRows.map(e => e.id))
     const prevById = new Map(original.entries.map(e => [e.id, e] as const))
     const next: ScheduleEntry[] = []
     for (const entry of s.entries) {
-      if (entry.athleteId != null && entry.athleteId !== athlete) return false
-      if (protectedIds.has(entry.id)) return false
+      if ((entry.athleteId != null && entry.athleteId !== athlete) || protectedIds.has(entry.id)) { recordScheduleFailure('E-OWNER'); return false }
       const old = prevById.get(entry.id)
       // 旧无归属行改动时不补 athleteId（不隐式迁移）；新行显式写当前 athleteId。
       next.push(old && old.athleteId == null && entry.athleteId == null ? entry : { ...entry, athleteId: athlete })
     }
     const oldAudit=(original as typeof original&{r4Receipts?:unknown}).r4Receipts
-    if(audit&&oldAudit!==undefined&&!Array.isArray(oldAudit))return false
+    if(audit&&oldAudit!==undefined&&!Array.isArray(oldAudit)){ recordScheduleFailure('E-AUDIT'); return false }
     const raw = JSON.stringify({ ...original, entries: [...protectedRows, ...next], acksByAthlete: { ...original.acksByAthlete, [athlete]: s.acks.slice(-200) },...(audit?{r4Receipts:[...(Array.isArray(oldAudit)?oldAudit:[]),audit]}:{}) })
     const changed = box.getItem(SCHEDULE_KEY) !== raw
     if (!commitScheduleRaw(box, raw, writer).ok) return false
     if (changed && typeof window !== 'undefined') window.dispatchEvent(new Event('fk-schedule-changed'));
     return true;
-  } catch { return false }
+  } catch (error) { recordScheduleFailure(isQuotaError(error) ? 'E-QUOTA' : 'E-EXC', error instanceof Error ? error.name : undefined); return false }
 }
 /** UI writers reread under the same lock as R4 confirmation. A stale displayed
  * calendar is rejected instead of overwriting another tab's confirmed change. */
@@ -83,15 +86,23 @@ export async function updateSchedule(update:(current:ScheduleStore)=>ScheduleSto
 /** Merge only the edited slot into a fresh calendar. No template or past result is replaced. */
 export async function saveScheduledEntry(entry: ScheduleEntry, previous?: ScheduleEntry): Promise<{ ok: boolean; reason?: string }> {
   const ownerAtRequest = currentAthleteId()
-  const work = () => {
+  const attempt = () => {
     if (currentAthleteId() !== ownerAtRequest) return { ok: false, reason: '当前运动员已切换，草稿未写入新的档案。请返回原档案核对。' }
     const current = loadSchedule(), old = current.entries.find(e => e.id === entry.id);
     const own = (e: ScheduleEntry) => ({ ...e, athleteId: e.athleteId ?? currentAthleteId() })
     if (old && !previous) return JSON.stringify(own(old)) === JSON.stringify(own(entry)) ? { ok: true } : { ok: false, reason: '同一节训练已保存，未重复添加。请关闭后核对。' };
     if (previous && (!old || JSON.stringify(own(old)) !== JSON.stringify(own(previous)))) return { ok: false, reason: '这节训练刚刚发生变化，请重新打开后修改；草稿保留。' };
     const next = { ...current, entries: old ? current.entries.map(e => e.id === entry.id ? entry : e) : [...current.entries, entry] };
-    return saveSchedule(next, 'scheduled-entry') ? { ok: true } : { ok: false, reason: '本机保存失败，草稿保留。' };
+    return saveSchedule(next, 'scheduled-entry') ? { ok: true } : { ok: false, reason: `本机保存失败，草稿保留。${describeScheduleFailure(lastScheduleFailure(), currentStore())}` };
   };
+  // v89.11.13：存储满（E-QUOTA）时，先尝试把大块数据（佳明日内样本、训练导入）迁到 IndexedDB 腾出空间，迁走了才用最新数据重试一次；没有可迁的就照原样报原因。
+  const work = async (): Promise<{ ok: boolean; reason?: string }> => {
+    const first = attempt()
+    if (first.ok || lastScheduleFailure()?.code !== 'E-QUOTA') return first
+    const moved = bulkStatus().migrated.length
+    try { await activateBulkStore() } catch { return first }
+    return bulkStatus().migrated.length > moved ? attempt() : first
+  }
   // v87：与改课执行器共用同一把锁（原来用的是 fk-schedule-v1 自己的锁名，两边互不排斥）。
   const result = (await withScheduleLock(work)).value;
   return currentAthleteId() === ownerAtRequest ? result : { ok: false, reason: '当前运动员已切换，请返回原档案核对保存结果；不要重复提交。' }

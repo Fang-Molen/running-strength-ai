@@ -1,0 +1,48 @@
+PASS [ipad] sheet opens and 3D ready (look=natural)
+PASS [ipad] no horizontal overflow — 0
+PASS [ipad] view button 正面 — az=0.0
+PASS [ipad] view button 左侧 — az=90.0
+PASS [ipad] view button 右侧 — az=-90.0
+PASS [ipad] view button 背面 — az=180.0
+PASS [ipad] tap shoulder → name "右侧三角肌锁骨部（前束）" (hit delt_front) — 右侧三角肌锁骨部（前束）
+PASS [ipad] tap shoulder → visible theme-accent highlight — accent px 0→398
+PASS [ipad] tap shoulder → 名称下拉同步 — delt_front
+PASS [ipad] tap chest → name "右侧胸大肌胸肋部" (hit pec_lower) — 右侧胸大肌胸肋部
+PASS [ipad] tap chest → visible theme-accent highlight — accent px 0→1357
+PASS [ipad] tap chest → 名称下拉同步 — pec_lower
+PASS [ipad] tap quads-in-shorts-edge → name "右侧股直肌" (hit rectus_fem) — 右侧股直肌
+PASS [ipad] tap quads-in-shorts-edge → visible theme-accent highlight — accent px 0→1199
+PASS [ipad] tap quads-in-shorts-edge → 名称下拉同步 — rectus_fem
+PASS [ipad] tap hip-under-shorts → name "左侧臀中肌" (hit glute_med) — 左侧臀中肌
+PASS [ipad] tap hip-under-shorts → visible theme-accent highlight — accent px 0→210
+PASS [ipad] tap hip-under-shorts → 名称下拉同步 — glute_med
+PASS [ipad] tap glutes-under-shorts → name "左侧臀大肌" (hit glutes) — 左侧臀大肌
+PASS [ipad] tap glutes-under-shorts → visible theme-accent highlight — accent px 0→1531
+PASS [ipad] tap glutes-under-shorts → 名称下拉同步 — glutes
+PASS [ipad] tap glutes → 关联动作 list present — region=0
+PASS [ipad] tap hamstring → name "左侧股二头肌长头" (hit biceps_fem) — 左侧股二头肌长头
+PASS [ipad] tap hamstring → visible theme-accent highlight — accent px 0→1195
+PASS [ipad] tap hamstring → 名称下拉同步 — biceps_fem
+PASS [ipad] tap gastrocnemius → name "左侧腓肠肌外侧头" (hit gastroc_lat) — 左侧腓肠肌外侧头
+PASS [ipad] tap gastrocnemius → visible theme-accent highlight — accent px 0→7432
+PASS [ipad] tap gastrocnemius → 名称下拉同步 — gastroc_lat
+PASS [ipad] tap foot-intrinsic → name "右侧拇展肌" (hit foot_intrinsic) — 右侧拇展肌
+PASS [ipad] tap foot-intrinsic → visible theme-accent highlight — accent px 0→682
+PASS [ipad] tap foot-intrinsic → 名称下拉同步 — foot_intrinsic
+PASS [ipad] focus calf state
+PASS [ipad] focus foot state
+PASS [ipad] drag left rotates within limit — az=30.0
+PASS [ipad] drag right rotates within limit — az=-30.0
+PASS [ipad] wheel zoom in changes distance — 4.21→2.28
+PASS [ipad] reset → front/body/az≈0 — {"v":"front","f":"body","az":0}
+PASS [ipad] 名称选择 臀大肌 → info + 3D highlight
+PASS [ipad] 添加动作后底部出现“返回训练 · 已选 N 个动作” — addable=1
+PASS [ipad] 返回训练 closes sheet and editor lists the added action
+PASS [ipad] no page errors
+PASS [ipad] re-entry: sheet opens and 3D ready again
+PASS [ipad] dark theme: 3D stage background follows theme (#23262b) — 35 38 43
+PASS [ipad] light theme: 3D stage background follows theme (#e4e6ec) — 228 230 236
+PASS [ipad] model load failure → message + 重试 + name fallback — 按部位选动作  人体模型暂时无法加载  重试  可按名称选择部位。  正面 左侧 右侧 背面 全身 小腿 足部 重置 按
+PASS [ipad] name fallback still selects & shows info while 3D failed
+PASS [ipad] 点击重试 recovers the 3D model
+PASS [ipad] WebGL unavailable → message + 重试 + name fallback (no crash) — 按部位选动作  人体模型暂时无法加载  重试  可按名称选择部位。  正面 左侧 右侧 背面 全身 小腿 足部 重置 按

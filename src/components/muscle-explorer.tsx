@@ -21,16 +21,16 @@ function Viewer3D({ onPick, apiRef }: { onPick: (p: Pick) => void; apiRef: React
     const t = setTimeout(() => { if (!api && !dead) setErr("加载超时（网络慢或离线）"); }, 45000);
     import(/* @vite-ignore */ url).then(async M => { if (dead || !cv.current) return; // Selection uses the app's existing accent token (方坤橙), not a separate palette.
       const selectedTint = getComputedStyle(cv.current).getPropertyValue("--color-accent").trim() || "#ee7046";
-      api = await M.createMuscleExplorer(cv.current, { onPick, selectedTint }); if (dead) { api?.destroy(); return; } apiRef.current = api; Object.assign(cv.current, { __fk: api }); setReady(true); setErr(""); })
+      api = await M.createMuscleExplorer(cv.current, { onPick, selectedTint, look: "natural" }); if (dead) { api?.destroy(); return; } apiRef.current = api; Object.assign(cv.current, { __fk: api }); setReady(true); setErr(""); })
       .catch(() => { if (!dead) setErr("人体模型暂时无法加载"); });
     return () => { dead = true; clearTimeout(t); api?.destroy(); apiRef.current = null; };
   }, [tries]);
   const btn = (on: boolean) => `min-h-11 min-w-11 rounded-full border px-3 text-sm ${on ? "border-accent bg-accent/15 font-bold" : "border-line"}`;
   return <div>
-    <div className="relative overflow-hidden rounded-card border border-line bg-[#171a1e]" style={{ height: "min(38dvh, 320px)", minHeight: 240 }}>
+    <div className="relative overflow-hidden rounded-card border border-line bg-[#23262b] in-data-[theme=light]:bg-[#e4e6ec]" style={{ height: "min(38dvh, 320px)", minHeight: 240 }}>
       <canvas ref={cv} aria-label="人体肌群3D" className="block h-full w-full" />
       {!ready && !err ? <p className="keep absolute inset-x-0 top-1/2 text-center text-sm text-muted">3D 模型加载中…</p> : null}
-      {err ? <div className="absolute inset-0 grid place-items-center bg-[#171a1e] p-3 text-center">
+      {err ? <div className="absolute inset-0 grid place-items-center bg-[#23262b] in-data-[theme=light]:bg-[#e4e6ec] p-3 text-center">
         <div><p className="keep text-sm">{err}</p><button type="button" className={btn(false) + " mt-2"} onClick={() => setTries(x => x + 1)}>重试</button>
           <p className="mt-2 text-sm text-muted">可按名称选择部位。</p></div></div> : null}
     </div>

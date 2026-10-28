@@ -40,7 +40,7 @@ const ERRORS: Record<string, string> = {
 }
 const knownError = (code: unknown): string | undefined => typeof code === 'string' && Object.hasOwn(ERRORS, code) ? ERRORS[code] : undefined
 const missingRoute = '当前部署未提供有效的 /api/coach-chat 接口，请管理员检查服务端部署'
-export type DecodedCoachAnswer={text:string;source?:'LOCAL'|'MODEL';model?:string}
+export type DecodedCoachAnswer={text:string;source?:'LOCAL'|'MODEL';model?:string;unverified?:true}
 export async function readCoachResponse(response: Response): Promise<DecodedCoachAnswer | { error: string }> {
   if ([404,405].includes(response.status) || response.headers.get('content-type')?.includes('text/html')) return { error: missingRoute }
   const data = await response.json().catch(() => null)

@@ -12,7 +12,7 @@ import { demoData } from "@/lib/strength/demo/provider";
 const ExerciseDemo = lazy(() => import("@/components/exercise-demo").catch((e) => { if (isChunkError(e)) void recoverFromChunkError(); throw e; }));
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { CATALOG } from "@/lib/strength/catalog";
-import { PARTS, type ActionEntry } from '@/lib/strength/action-picker';
+import { PARTS, ACTIONS, type ActionEntry } from '@/lib/strength/action-picker';
 import { ActionPicker } from '@/components/action-picker';
 import { FOOT_LIBRARY } from '@/lib/body/foot-library';
 import { muscleName } from '@/lib/body/muscle-display';
@@ -52,14 +52,16 @@ export function ExerciseDetailBody({ id }: { id: string }) {
   const cue = e?.cues;
   return <>
     {e ? <div className="flex flex-wrap gap-2 text-xs">{[e.category, ...e.equipment].map(t => <span key={t} className="rounded-md border border-line px-2 py-1">{t}</span>)}</div> : null}
-    <DemoBlock key={id} id={id} />
-    {e ? <MuscleTargetCard key={id} exercise={e} /> : null}
+    <DemoBlock key={`demo-${id}`} id={id} />
+    {e ? <MuscleTargetCard key={`target-${id}`} exercise={e} /> : null}
     {cue ? <div className="fk-dash-card mt-3 text-sm"><h3 className="fk-dash-title">动作步骤</h3><ol className="mt-2 list-decimal space-y-2 pl-5">{[...cue.setup, ...cue.execution].map((line, i) => <li key={i}>{line}</li>)}</ol>{cue.safety.length ? <section className="mt-3"><h4 className="font-bold">注意事项</h4><ul className="mt-1 list-disc space-y-1 pl-5">{cue.safety.map((line, i) => <li key={i}>{line}</li>)}</ul></section> : null}{([["呼吸与易错点", [...cue.breathing, ...cue.mistakes]], ["简化与进阶", [...cue.regression.map(x => "简化：" + x), ...cue.progression.map(x => "进阶：" + x)]]] as [string, string[]][]).filter(([, lines]) => lines.length).map(([title, lines]) => <details key={title} className="mt-2"><summary className="min-h-11 cursor-pointer py-2 font-bold">{title}</summary><ul className="list-disc space-y-1 pl-5">{lines.map((line, n) => <li key={n}>{line}</li>)}</ul></details>)}</div> : null}
   </>;
 }
-export function DemoSheet({ id, onClose }: { id: string; onClose: () => void }) {
+/** action：从动作库/动作选择器进入时的明确操作（“加入训练”“选择此动作”）。只浏览（不传 action）时详情页不写入任何数据。 */
+export type DemoAction = { label: string; onClick: () => void; disabled?: boolean; hint?: string };
+export function DemoSheet({ id, onClose, action }: { id: string; onClose: () => void; action?: DemoAction }) {
   const e = demoData.exercises.find(x => x.id === id);
-  return <Sheet full label="动作详情" title={e?.name_zh ?? '动作详情'} onClose={onClose} footer={null}><ExerciseDetailBody id={id} /></Sheet>;
+  return <Sheet full label="动作详情" title={e?.name_zh ?? '动作详情'} onClose={onClose} footer={action ? <div>{action.hint ? <p className="mb-1 text-center text-xs text-muted">{action.hint}</p> : null}<button type="button" disabled={action.disabled} className="min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg disabled:opacity-50" onClick={action.onClick}>{action.label}</button></div> : null}><ExerciseDetailBody id={id} /></Sheet>;
 }
 
 /** 76 条原始动作数据以外的补充动作：可靠图文优先，绝不拿相似动作冒充本动作3D。 */
@@ -113,6 +115,13 @@ export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenR
     const match = entry.catalogId ?? demoIdFor(entry.name);
     if (match) setDemo(match); else setBasic(entry.name);
   };
+  /** 详情页“选择此动作”：加入当前编辑器后一并关闭详情/选择器，回到原编辑器；已在训练中则只显示状态。其他未保存内容不受影响。 */
+  const demoAction = (id: string): DemoAction | undefined => {
+    const entry = ACTIONS.find(x => x.catalogId === id);
+    if (!entry) return undefined;
+    if (isSelected(entry)) return { label: '已在本次训练', disabled: true, onClick: () => {} };
+    return { label: '选择此动作', hint: '加入后回到训练编辑器，其他内容不变', onClick: () => { addEntry(entry); setDemo(null); setPicker(false); setMx(false); } };
+  };
   const inp = "mt-1 min-h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3 text-base";
   return <div className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-2"><h4 className="font-bold">已选动作 · {value.length}</h4><div className="flex gap-2"><button type="button" className="min-h-11 rounded-xl border border-accent px-3 text-sm font-bold text-accent" onClick={() => setPicker(true)}>＋ 添加动作</button><button type="button" className="fk-chip min-h-11" onClick={() => setMx(true)}>肌肉图</button></div></div>
@@ -126,7 +135,7 @@ export function ExerciseEditor({ value, onChange, parts, betweenRest, onBetweenR
         perSide: action.source === 'external' ? undefined : d.perSide, restSec: action.restSec ?? 75 }]);
       setAdded(`已加入：${action.name}`);
     }} /> : null}
-    {demo ? <DemoSheet id={demo} onClose={() => setDemo(null)} /> : null}
+    {demo ? <DemoSheet id={demo} onClose={() => setDemo(null)} action={demoAction(demo)} /> : null}
     {basic ? <BasicExerciseSheet name={basic} onClose={() => setBasic(null)} /> : null}
     {added ? <p role="status" className="text-sm text-accent">{added}</p> : null}
     {!value.length ? <p className="rounded-xl border border-dashed border-line p-4 text-sm text-muted">尚未添加动作。</p> : null}

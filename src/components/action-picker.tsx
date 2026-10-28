@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useApprovedVideos } from './use-approved-videos';
+import { DEMO_STATUS_LABEL, demoStatusOf } from '@/lib/strength/library-view';
+import { defaultPoseGender, poseCardUrl } from '@/lib/strength/pose-cards-r8';
 import { ACTIONS, SECTIONS, categoryPatterns, queryActions, sectionCounts, type ActionEntry, type ActionSection } from '@/lib/strength/action-picker';
 
 type Mode = 'search' | 'category' | 'muscle';
@@ -13,6 +16,7 @@ export function ActionPicker({ selectedKeys, onAdd, onPreview, onMuscle }: Props
   const [section, setSection] = useState<ActionSection | null>(null);
   const [pattern, setPattern] = useState<string | null>(null);
   const [limit, setLimit] = useState(16);
+  const approved = useApprovedVideos(), [gender] = useState(defaultPoseGender);
   const selected = useMemo(() => new Set(selectedKeys), [selectedKeys]);
   const rows = useMemo(() => queryActions(ACTIONS, mode === 'search' ? query : '', mode === 'category' ? section : null, mode === 'category' ? pattern : null), [mode, query, section, pattern]);
   useEffect(() => { setLimit(16); }, [mode, query, section, pattern]);
@@ -50,9 +54,12 @@ export function ActionPicker({ selectedKeys, onAdd, onPreview, onMuscle }: Props
       <div className="space-y-2" aria-label="可添加动作">
         {rows.slice(0, limit).map(item => {
           const already = selected.has(item.key) || selected.has(item.sourceId ?? '');
+          const status = demoStatusOf({ id: item.catalogId ?? item.key, catalogId: item.catalogId, source: item.sourceId?.startsWith('external:') ? 'external' : 'local' }, gender, approved);
+          const thumb = status === 'none' ? null : poseCardUrl(item.catalogId ?? item.key, gender);
           return <div key={item.key} className="flex min-w-0 items-center gap-2 rounded-xl border border-line px-3 py-2">
-            <div className="min-w-0 flex-1"><b className="block break-words text-sm">{item.name}</b><small className="block text-muted">{item.parts.length ? item.parts.join('、') : item.section}</small></div>
-            <button type="button" className="min-h-11 shrink-0 px-2 text-xs text-muted underline" aria-label={`查看${item.name}说明`} onClick={() => onPreview(item)}>查看</button>
+            <span className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-lg border border-line bg-surface-2" aria-hidden="true">{thumb ? <img src={thumb} loading="lazy" decoding="async" alt="" className="h-full w-full object-cover object-top" /> : <small className="text-[11px] text-muted">无图</small>}</span>
+            <div className="min-w-0 flex-1"><b className="block break-words text-sm">{item.name}</b><small className="block text-muted">{item.parts.length ? item.parts.join('、') : item.section}</small><small className="block text-muted">{DEMO_STATUS_LABEL[status]}</small></div>
+            <button type="button" className="min-h-11 shrink-0 px-2 text-sm font-bold text-accent" aria-label={`查看${item.name}说明`} onClick={() => onPreview(item)}>查看动作</button>
             <button type="button" className="min-h-11 shrink-0 rounded-xl border border-accent px-3 text-sm font-bold text-accent disabled:border-line disabled:text-muted" disabled={already} onClick={() => onAdd(item)}>{already ? '已添加' : '＋加入'}</button>
           </div>;
         })}

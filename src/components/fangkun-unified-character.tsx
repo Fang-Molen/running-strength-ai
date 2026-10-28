@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { fetchModel, preview, verifiedMediaBytes, type Gender } from '@/lib/character/identity'
+import { ChiyanStill } from '@/components/pet'
 type View = 'front' | 'side' | 'back' | 'three'
 type Controller = { setView(v: View): void; setAppearance(x: Record<string, number>): void; destroy(): void }
 export function FangkunHealthCharacter({ gender, view = 'front', appearance = {} }: { gender: Gender; view?: View; appearance?: Record<string, number> }) {
@@ -31,7 +32,7 @@ export function FangkunHealthCharacter({ gender, view = 'front', appearance = {}
   }, [appearance, ready])
   return <div className="relative h-full w-full overflow-hidden rounded-xl bg-[#15181d]" aria-label="方坤人物形象">
     <canvas ref={canvas} className="absolute inset-0 h-full w-full" style={{ visibility: ready ? 'visible' : 'hidden' }} aria-hidden={!ready} aria-label="可旋转3D人物" />
-    {!ready && <img src={preview(gender, view)} alt="角色外观参考图（非3D）" className="h-full w-full object-contain" />}
+    {!ready && <ChiyanStill gender={gender} fallbackSrc={preview(gender, view)} fallbackAlt="角色外观参考图（非3D）" className="h-full w-full object-contain" />}
     {!ready && <p role="status" className="absolute inset-x-2 bottom-2 rounded-lg bg-black/75 p-2 text-xs text-white">{message}</p>}
   </div>
 }

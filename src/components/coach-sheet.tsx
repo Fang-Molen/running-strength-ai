@@ -7,6 +7,8 @@ import { CoachWeeklyPanel } from '@/components/coach-weekly-panel';
 import { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';
 import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'
 import { CoachAnswerView } from "@/components/coach-answer-view";
+import { CoachAvatar, petMoodFromChat } from '@/components/pet';
+import type { CharacterThemeId } from '@/lib/ui/character-themes';
 import { CoachIntegrationPanel } from '@/components/coach-integration-panel';
 import { CoachPlanChangePanel } from '@/components/coach-plan-change-panel';
 import { readR6Decision } from '@/lib/coach/r6/runtime';
@@ -88,6 +90,7 @@ import type { CoachFuel } from "@/lib/core/coach-fuel";
 import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";
 import type { Plan } from "@/lib/strength/model";
 import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";
+import { UNVERIFIED_ONLINE_LABEL } from "@/lib/coach/r5/guard";
 import { CoachOnlineRequest } from "./coach-online-request";
 import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps } from "@/lib/coach/online-coach";
 import { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";
@@ -110,18 +113,21 @@ function latestSessionRpe(events: { event_type: string; payload: Record<string, 
   return null
 }
 
+const DRAFT_KEY = "fk-coach-draft-v1";
 export function CoachSheet({
   plan,
   activeId,
   onClose,
   onJump,
   embedded = false,
+  characterTheme = "classic",
   focusOccurrenceId = null,
   link = "ask",
   onControlledStrengthEdit,
   coordinationPanel,
   onNavigate,
   questionDraft,
+  questionContext,
   onQuestionDraftConsumed,
 }: {
   plan: Plan;
@@ -129,12 +135,15 @@ export function CoachSheet({
   onClose: () => void;
   onJump?: (tab: "body") => void;
   embedded?: boolean;
+  characterTheme?: CharacterThemeId;
   focusOccurrenceId?: string | null;
   link?: "ask" | "bound" | "unbound";
   onControlledStrengthEdit?: CoachStrengthAction;
   coordinationPanel?: ReactNode;
   onNavigate?: (tab: "plan" | "body" | "log" | "diet") => void;
   questionDraft?: string | null;
+  /** 与 questionDraft 配套的可移除标签（如“健康 · 10月27日”）：只对应输入框里预填的那句话，移除即清掉未改动的预填文字。 */
+  questionContext?: string | null;
   onQuestionDraftConsumed?: () => void;
 }) {
   const [section, setSectionState] = useState<"chat" | "learn" | "review">("chat");
@@ -170,8 +179,13 @@ export function CoachSheet({
   const [change, setChange] = useState("");
   const [coachSaveFailed, setCoachSaveFailed] = useState(false)
   const [notice, setNotice] = useState("");
-  const [draft, setDraft] = useState("");
-  useEffect(()=>{if(questionDraft){setSection('chat');setDraft(questionDraft);onQuestionDraftConsumed?.()}},[questionDraft]);
+  // 草稿：离开聊天页再回来不丢（本机 sessionStorage），发送或清空后才移除。
+  const [draft, setDraft] = useState(() => { try { return sessionStorage.getItem(DRAFT_KEY) ?? ""; } catch { return ""; } });
+  useEffect(() => { try { if (draft) sessionStorage.setItem(DRAFT_KEY, draft); else sessionStorage.removeItem(DRAFT_KEY); } catch { /* storage unavailable: draft just stays in memory */ } }, [draft]);
+  const [contextChip, setContextChip] = useState<{ label: string; seed: string } | null>(null);
+  useEffect(()=>{if(questionDraft){setSection('chat');setDraft(questionDraft);setContextChip(questionContext ? { label: questionContext, seed: questionDraft } : null);onQuestionDraftConsumed?.()}},[questionDraft]);
+  const prevDraft = useRef(draft);
+  useEffect(() => { if (!draft.trim() && prevDraft.current.trim()) setContextChip(null); prevDraft.current = draft; }, [draft]);
   // v87：载入本机受信知识回执并重新验证（生产没有受信审核人 → 0 批准）。
   const [knowledgeLedgerAt, setKnowledgeLedgerAt] = useState(0);
   useEffect(()=>{
@@ -326,8 +340,19 @@ export function CoachSheet({
     return { session, planned, decision, review, rows: abilityRows(athlete.ability, evidence, null) };
   }, [athlete, plan, activeId]);
 
+  // 自动滚动不打断翻看历史：用户在上方时不拉回，改显示“回到最新”；自己发送时总是回到最新。
+  const nearBottom = useRef(true);
+  const [behind, setBehind] = useState(false);
+  const onMessagesScroll = () => {
+    const node = messagePane.current; if (!node || currentSection.current !== "chat") return;
+    nearBottom.current = node.scrollHeight - node.scrollTop - node.clientHeight < 120;
+    if (nearBottom.current) setBehind(false);
+  };
+  const jumpLatest = () => { bottom.current?.scrollIntoView({ block: "end" }); nearBottom.current = true; setBehind(false); };
   useEffect(() => {
-    if (currentSection.current === "chat") bottom.current?.scrollIntoView({ block: "end" });
+    if (currentSection.current !== "chat") return;
+    const lastRole = memory?.messages.at(-1)?.role;
+    if (nearBottom.current || lastRole === "user") jumpLatest(); else setBehind(true);
   }, [memory?.messages.length]);
 
   async function send(text: string, retry = false, useCloud = false) {
@@ -562,9 +587,8 @@ export function CoachSheet({
     <div className={embedded ? "fk-coach-sheet flex min-h-0 flex-1 flex-col px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "fixed inset-0 z-30 flex flex-col bg-bg"}>
       {/* R6：头像、状态和三段切换合成一行紧凑顶栏，把高度让给对话区 */}
       <div className={"fk-coach-bar flex items-center gap-2 pb-1 pt-0.5" + (embedded ? "" : " px-4")}>
-        <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-surface" title={`方坤 · ${statusLine} · ${connectivity}`}>
-          {section === 'learn' ? <BookOpen size={20} aria-hidden="true" /> : <span className="origin-center scale-[0.62]"><FangShen face={sending ? "thinking" : face} motion={motion} /></span>}
-        </span>
+        <CoachAvatar theme={section === 'learn' ? 'classic' : characterTheme} mood={petMoodFromChat({ sending, messages: memory?.messages })} title={`方坤 · ${statusLine} · ${connectivity}`}
+          classic={section === 'learn' ? <BookOpen size={20} aria-hidden="true" /> : <span className="origin-center scale-[0.62]"><FangShen face={sending ? "thinking" : face} motion={motion} /></span>} />
         <nav className="product-segments fk-coach-tabs min-w-0 flex-1" aria-label="方坤工作区">
           {([["chat", "对话"], ["learn", "学习"], ["review", "复盘"]] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={section === id} onClick={() => setSection(id)}>{label}</button>)}
         </nav>
@@ -574,7 +598,7 @@ export function CoachSheet({
         <p>教练记录没有写入本机，原来的记录还在。</p>
         <button type="button" className="min-h-11 rounded-card border border-line px-3 font-bold" onClick={() => { if (memory && saveCoach(memory)) setCoachSaveFailed(false); }}>再存一次</button>
       </div> : null}
-      <div ref={messagePane} data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
+      <div ref={messagePane} onScroll={onMessagesScroll} data-testid="coach-messages" className={"min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-2 " + (embedded ? "px-0.5" : "px-4")}>
         <div hidden={section !== "learn"}>
           <LearningLibrary active={section === "learn"} onNavigate={onNavigate} onAsk={(question)=>{setDraft(question);setFromLibrary(true);setSection("chat")}}
             publicReferencesAllowed={authorizeNetworkAction({ mode: networkMode, action: "open-public-reference", online: isOnline ?? undefined }).allowed}
@@ -614,7 +638,7 @@ export function CoachSheet({
           <summary className="min-h-11 cursor-pointer font-bold">高级复盘、规则与设备工具 · 按需展开</summary>
           <div className="mt-2 space-y-3">
         <div className="flex justify-start gap-2" hidden={section === 'review'}>
-          <span className="mt-1 grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-surface"><span className="origin-center scale-[0.45]"><FangShen face="happy" motion={false} /></span></span>
+          <CoachAvatar size="bubble" pet={false} theme={characterTheme} mood="hello" classic={<span className="origin-center scale-[0.45]"><FangShen face="happy" motion={false} /></span>} />
           <p className="max-w-[85%] rounded-2xl rounded-tl-md stat-run px-3 py-2 text-sm">你好。建议只依据已保存的训练记录。数据不足时会说明，不会编造疲劳、恢复或伤病结论。</p>
         </div>
         <details className="rounded-2xl bg-surface px-3 py-3 text-sm">
@@ -815,9 +839,10 @@ export function CoachSheet({
         <div ref={bottom} />
         </div>
       </div>
+      {behind && section === "chat" ? <button type="button" className="relative z-10 -mt-11 mb-1 min-h-11 shrink-0 self-center rounded-full border border-line bg-surface px-4 text-sm font-bold shadow" onClick={jumpLatest}>↓ 回到最新</button> : null}
       <div hidden={section !== "chat"} className={"min-h-0 max-h-[50dvh] shrink-0 overflow-y-auto " + (embedded ? "pt-1" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
         {activityNotices.length ? <div className="mb-2 rounded-card border border-line p-2 text-xs" aria-live="polite"><div className="flex justify-between gap-2"><strong>方坤 · 本次打开期间的活动</strong><button type="button" onClick={() => setActivityNotices([])}>清除提示</button></div>{activityNotices.map(item => <p key={item.id} className="mt-1">{item.message}</p>)}</div> : null}
-        {onlineRequest ? <CoachOnlineRequest key={onlineRequest} question={onlineRequest} disabled={sending || isOnline === false || !onlineOn} onNotice={setNotice} onDismiss={() => setOnlineRequest(null)} onAnswer={(text,owner,source)=>setMemory(current=>current?.athleteId===owner?{...current,messages:[...current.messages,{id:`${Date.now()}-online`,role:'coach' as const,text:`【${source==='MODEL'?'联网模型解释':'规则分析 · 未调用模型'}】\n${text}`}].slice(-40)}:current)} /> : null}
+        {onlineRequest ? <CoachOnlineRequest key={onlineRequest} question={onlineRequest} disabled={sending || isOnline === false || !onlineOn} onNotice={setNotice} onDismiss={() => setOnlineRequest(null)} onAnswer={(text,owner,source,unverified)=>setMemory(current=>current?.athleteId===owner?{...current,messages:[...current.messages,{id:`${Date.now()}-online`,role:'coach' as const,text:`【${source==='MODEL'?(unverified?`联网模型解释 · ${UNVERIFIED_ONLINE_LABEL}`:'联网模型解释'):'规则分析 · 未调用模型'}】\n${text}`}].slice(-40)}:current)} /> : null}
         {notice ? <p data-testid="coach-request-notice" role="status" className="mb-2 text-xs leading-relaxed">{notice}</p> : null}
         {retryQuestion ? (
           <button type="button" className="mb-2 h-11 rounded-card border border-line px-3 text-sm" disabled={sending} onClick={() => void send(retryQuestion, true, true)}>
@@ -940,6 +965,7 @@ export function CoachSheet({
         </div>
         </div>
         {fromLibrary ? <button type="button" className="min-h-11 text-sm text-accent" onClick={()=>setSection("learn")}>返回刚才的知识阅读 ›</button> : null}
+        {contextChip && draft.trim() ? <div className="flex items-center gap-2 pt-1" data-testid="coach-context-chip"><span className="fk-chip">{contextChip.label}</span><button type="button" className="min-h-11 px-2 text-sm text-muted underline" aria-label={`移除上下文：${contextChip.label}`} onClick={() => { if (draft === contextChip.seed) setDraft(""); setContextChip(null); }}>移除</button></div> : null}
         <form
           className="flex gap-2 pt-1.5"
           onSubmit={(event) => {

@@ -46,7 +46,7 @@
 .fk-health-v89 .fk-h89-tile{min-height:102px;padding:12px;overflow-wrap:anywhere;background:var(--color-surface);border-color:var(--color-line)}
 .fk-health-v89 .fk-h89-tile>p:nth-child(2){margin:5px 0}
 .fk-health-v89 .fk-h89-tile>p:nth-child(2) b{font-size:20px}
-.fk-health-v89 .fk-h89-tile>p:nth-child(3){font-size:11px}
+.fk-health-v89 .fk-h89-tile>p:nth-child(3){font-size:12px}
 .fk-h89-section-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
 .fk-h89-section-title h2{font-size:16px;font-weight:750}
 .fk-h89-section-title>span{font-size:11px;color:var(--color-muted)}

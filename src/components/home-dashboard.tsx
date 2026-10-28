@@ -35,12 +35,12 @@ const MEAL_ICON = { 早餐: Sun, 午餐: Sun, 晚餐: Moon, 加餐: Coffee } as 
 const TITLE = { macro: "今日营养摄入", trend: "体重变化", SLEEP: "睡眠", RHR: "静息心率", HRV: "HRV", water: "饮水", protein: "蛋白质", carb: "碳水化合物", fat: "脂肪", fiber: "膳食纤维" } as const;
 function Empty({ text }: { text: string }) { return <p className="mt-2 text-sm text-muted">{text}</p>; }
 
-export function HomeDashboard(props: { onFood: () => void; onBody: () => void; onAdvice?: () => void; onCoach?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
+export function HomeDashboard(props: { onFood: () => void; onBody: () => void; onAdvice?: () => void; onCoach?: (day?: string) => void; onProfile?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   return ready ? <HomeDashboardInner {...props} /> : null;
 }
-function HomeDashboardInner({ onFood, onBody, onAdvice, onCoach, only, slot }: { onFood: () => void; onBody: () => void; onAdvice?: () => void; onCoach?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
+function HomeDashboardInner({ onFood, onBody, onAdvice, onCoach, onProfile, only, slot }: { onFood: () => void; onBody: () => void; onAdvice?: () => void; onCoach?: (day?: string) => void; onProfile?: () => void; only?: "diet" | "body"; slot?: React.ReactNode }) {
   const [profile, setProfile] = useState(() => loadProfile());
   const [goalBf, setGoalBf] = useState<number | null>(readGoalBodyFat);
   const [foodDate,setFoodDate]=useState(todayDate());
@@ -120,20 +120,25 @@ function HomeDashboardInner({ onFood, onBody, onAdvice, onCoach, only, slot }: {
     {/* R2：恢复与趋势统一查看，身体与记录集中管理。 */}
     <HealthPageV89 onCoach={onCoach}
       body={<>
+      {/* 身体与记录：个人资料 → 身体数据 → 目标 → 当前与目标形象（DOM 顺序即阅读顺序，视觉用网格定位）。 */}
+      {onProfile ? <button type="button" className="fk-dash-card fk-health-profile mb-3 flex min-h-12 w-full items-center justify-between gap-3 p-3 text-left" onClick={onProfile} aria-label="个人资料">
+        <span className="min-w-0"><span className="fk-dash-title text-sm"><UserRound className="size-4" />个人资料</span><span className="keep mt-1 block text-sm text-muted">{[profile.sex === "female" ? "女" : profile.sex === "male" ? "男" : "性别未填", profile.age ? `${profile.age}岁` : "年龄未填", height ? `${f1(height)} cm` : "身高未填"].join(" · ")}</span></span><span aria-hidden="true">›</span>
+      </button> : null}
       <div className="fk-health-figure-grid grid grid-cols-2 gap-3">
-      <button type="button" onClick={() => setBodyOpen("figure")} className="fk-dash-card fk-health-portrait flex flex-col p-2 text-left">
-        <span className="fk-dash-title text-sm"><UserRound className="size-4" />我的形象 ›</span>
-        <span className="fk-character-image mt-1 block w-full"><span className="pointer-events-none block h-full"><Figure sex={sex} /></span></span>
-        <span className="keep mt-auto pt-1 text-center text-[10px] text-muted">查看可调3D与目标</span>
-      </button>
-      <button type="button" className="fk-dash-card p-2 text-left" onClick={() => setBodyOpen("data")}>
+      <button type="button" className="fk-dash-card fk-health-data p-3 text-left" onClick={() => setBodyOpen("data")}>
         <div className="fk-dash-title text-sm"><Activity className="size-4" />身体数据 ›</div>
-        {weight ? <div className="mt-1 grid grid-cols-2 gap-1 text-xs"><div><span className="text-muted">体重</span><br /><b>{f1(weight)} kg</b></div><div><span className="text-muted">体脂率</span><br /><b>{fat ? `${f1(fat)}%` : "—"}</b></div><div><span className="text-muted">BMI</span><br /><b>{height ? f1(weight / (height / 100) ** 2) : "—"}</b></div><div><span className="text-muted">肌肉量</span><br /><b>{last?.muscle ? `${f1(last.muscle)}` : "—"}</b></div></div> : <Empty text="还没有体重记录" />}
+        {weight ? <div className="mt-1 grid grid-cols-2 gap-1 text-sm"><div><span className="text-muted text-xs">体重</span><br /><b>{f1(weight)} kg</b></div><div><span className="text-muted text-xs">体脂率</span><br /><b>{fat ? `${f1(fat)}%` : "未记录"}</b></div><div><span className="text-muted text-xs">BMI</span><br /><b>{height ? f1(weight / (height / 100) ** 2) : "缺身高"}</b></div><div><span className="text-muted text-xs">肌肉量</span><br /><b>{last?.muscle ? `${f1(last.muscle)} kg` : "未记录"}</b></div></div> : <Empty text="还没有体重记录" />}
+        {weight ? <p className="keep mt-1 text-xs text-muted" data-testid="body-data-source">{n(last?.weight) ? `记录于 ${(last?.date ?? "").slice(5).replace("-", "月")}日` : "来自个人资料，无记录日期"}</p> : null}
       </button>
-      <section className="fk-dash-card p-2">
+      <section className="fk-dash-card fk-health-goal p-3">
         <div className="fk-dash-title text-sm"><Target className="size-4" />目标进度</div>
         {weight && target ? <><p className="keep text-xs text-muted">目标 {f1(target)} kg</p>{progress != null ? <><p className="text-sm">已完成 <b>{Math.round(progress * 100)}%</b></p><div className="fk-bar mt-1"><i style={{ width: `${progress * 100}%`, background: "linear-gradient(90deg,#ff5a0a,#ff9a4a)" }} /></div></> : null}<p className="mt-1 text-xs">还差 <b className="text-emerald-400">{f1(Math.abs(target - weight))} kg</b></p></> : <Empty text="在个人资料里设目标体重" />}
       </section>
+      <button type="button" onClick={() => setBodyOpen("figure")} className="fk-dash-card fk-health-portrait flex flex-col p-2 text-left" aria-label="当前与目标形象">
+        <span className="fk-dash-title text-sm"><UserRound className="size-4" />当前与目标形象 ›</span>
+        <span className="fk-character-image mt-1 block w-full"><span className="pointer-events-none block h-full"><Figure sex={sex} /></span></span>
+        <span className="keep mt-auto pt-1 text-center text-xs text-muted">示意形象 · 查看可调3D与目标</span>
+      </button>
       </div>
       </>}
       slot={slot}

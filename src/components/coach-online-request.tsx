@@ -4,7 +4,7 @@ import { declarationQuote } from '@/lib/coach/online-contract'
 import { currentAthleteId } from '@/lib/core/events'
 
 /** Keeps the local answer visible while a separately confirmed explanation runs. */
-export function CoachOnlineRequest({question,disabled,onAnswer,onNotice,onDismiss}:{question:string;disabled:boolean;onAnswer:(text:string,owner:string,source:'LOCAL'|'MODEL')=>void;onNotice:(text:string)=>void;onDismiss:()=>void}){
+export function CoachOnlineRequest({question,disabled,onAnswer,onNotice,onDismiss}:{question:string;disabled:boolean;onAnswer:(text:string,owner:string,source:'LOCAL'|'MODEL',unverified?:boolean)=>void;onNotice:(text:string)=>void;onDismiss:()=>void}){
  const [preview,setPreview]=useState<OnlinePreview|null>(null),[busy,setBusy]=useState(false)
  const active=useRef<AbortController|null>(null),mounted=useRef(true)
  const callbacks=useRef({onNotice,onAnswer,onDismiss});callbacks.current={onNotice,onAnswer,onDismiss}
@@ -24,7 +24,7 @@ export function CoachOnlineRequest({question,disabled,onAnswer,onNotice,onDismis
   if(!mounted.current)return
   setBusy(false);setPreview(null);active.current=null
   if(currentAthleteId()!==preview.owner){callbacks.current.onDismiss();return}
-  if('text'in result&&!controller.signal.aborted){callbacks.current.onAnswer(result.text,preview.owner,result.source);callbacks.current.onNotice(result.source==='LOCAL'?'本次由规则处理，未调用模型；未修改课表或身体记录。':'模型输出通过事实与安全格式核验；未修改课表或身体记录。');callbacks.current.onDismiss()}
+  if('text'in result&&!controller.signal.aborted){callbacks.current.onAnswer(result.text,preview.owner,result.source,'unverified'in result&&result.unverified===true);callbacks.current.onNotice(result.source==='LOCAL'?'本次由规则处理，未调用模型；未修改课表或身体记录。':'模型输出通过事实与安全格式核验；未修改课表或身体记录。');callbacks.current.onDismiss()}
   else callbacks.current.onNotice('error'in result?result.error:'本轮已取消，本地回答保留。')
  }
  return <section data-testid="coach-online-request" className="mb-2 rounded-card border border-line p-3 text-xs">

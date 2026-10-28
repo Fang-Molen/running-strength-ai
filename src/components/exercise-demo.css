@@ -10,3 +10,15 @@
 /* v89.11 关键帧与动作模式分组 */
 .fk-pose-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.fk-pose-grid figure{margin:0;text-align:center}.fk-pose-grid img{width:100%;aspect-ratio:2/3;object-fit:cover;object-position:top;border-radius:10px;background:#17191c;display:block}.fk-pose-grid .empty div{width:100%;aspect-ratio:2/3;border-radius:10px;border:1px dashed var(--line,#262b33);display:grid;place-items:center;color:var(--mut,#8a93a0);font-size:12px}.fk-pose-grid figcaption{font-size:12px;color:var(--mut,#8a93a0);margin-top:3px}.fk-pose-missing{font-size:12px;color:#fbbf24;margin:6px 0 0}
 .fk-demo .pgroup{background:var(--card);border-radius:14px;margin-top:8px;padding:0 10px}.fk-demo .pgroup>summary{display:flex;justify-content:space-between;align-items:center;min-height:48px;font-weight:600;list-style:none;cursor:pointer}.fk-demo .pgroup>summary::-webkit-details-marker{display:none}.fk-demo .pgroup>summary span{color:var(--mut);font-size:13px;font-weight:400}.fk-demo .pgroup .list{margin:0 0 10px}.fk-demo .pgroup .item{background:#14181d}
+
+/* 详情页：沿用主题变量（原 .fk-demo 写死的深色只留给旧库页面）。 */
+.fk-demo-unified{--tx:var(--color-fg);--mut:var(--color-muted);--line:var(--color-line);--card:var(--color-surface);color:var(--color-fg)}
+.fk-demo-unified .fk-pose-grid img{background:var(--color-surface-2)}
+.fk-demo-unified .fk-pose-missing{color:color-mix(in srgb,#d97706 72%,var(--color-fg))}
+.fk-demo-unified .fk-pose-grid figcaption,.fk-demo-unified .fk-pose-grid .empty div{color:var(--color-muted)}
+.fk-demo-state{display:flex;align-items:center;gap:6px;margin:10px 0 0;font-size:14px;font-weight:700}
+.fk-demo-state::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--color-muted);flex:none}
+.fk-demo-state[data-s="video"]::before{background:#2e9e5b}.fk-demo-state[data-s="pose"]::before{background:#d9962b}
+.fk-demo-state small{font-weight:400;font-size:12px;color:var(--color-muted)}
+.fk-demo-unified .ctrl button[aria-pressed="true"]{background:color-mix(in srgb,var(--color-accent) 16%,var(--color-surface));border-color:var(--color-accent);font-weight:800}
+.fk-demo-unified .ctrl button{min-height:44px;font-size:14px}

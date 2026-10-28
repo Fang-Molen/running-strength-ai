@@ -5,15 +5,19 @@ import { FangkunExerciseVideo } from './fangkun-unified-video'
 import { defaultPoseGender } from '@/lib/strength/pose-cards-r8'
 import PoseFrames from './pose-frames'
 import type { Gender } from '@/lib/character/identity'
+import { useApprovedVideos } from './use-approved-videos'
+import { DEMO_STATUS_LABEL, demoStatusOf } from '@/lib/strength/library-view'
 import './exercise-demo.css'
 /** Shared by library, training execution and plan editor; exact catalogue ID is retained. */
 export default function ExerciseDemo({catalogId,onAdd}:{catalogId:string;onAdd?:()=>void;compact?:boolean}){
  const [gender,setGender]=useState<Gender>(defaultPoseGender)
  const [showTrace,setShowTrace]=useState(false)
+ const approved=useApprovedVideos()
  const exercise=demoData.exercises.find(e=>e.id===catalogId)
  if(!exercise)return <p className="text-sm text-muted">暂无动作演示。</p>
  return <section className="fk-demo fk-demo-unified" aria-label={`${exercise.name_zh}演示`}>
   <div className="ctrl" role="group" aria-label="新版人物">{(['male','female'] as const).map(g=><button type="button" key={g} aria-pressed={gender===g} onClick={()=>setGender(g)}>{g==='male'?'男性':'女性'}</button>)}</div>
+  <DemoState catalogId={catalogId} gender={gender} approved={approved}/>
   <FangkunExerciseVideo exerciseId={catalogId} title={exercise.name_zh} gender={gender}/>
   <h3 className="mt-3 text-sm font-bold">关键帧示意</h3>
   <PoseFrames exerciseId={catalogId} gender={gender}/>
@@ -22,6 +26,10 @@ export default function ExerciseDemo({catalogId,onAdd}:{catalogId:string;onAdd?:
  </section>
 }
 
+function DemoState({catalogId,gender,approved}:{catalogId:string;gender:Gender;approved:ReadonlySet<string>}){
+ const s=demoStatusOf({id:catalogId,catalogId,source:'local'},gender,approved)
+ return <p className="fk-demo-state" data-s={s} role="status">{DEMO_STATUS_LABEL[s]}<small>{s==='video'?'同角色审核通过':s==='pose'?'图片为示意，尚未通过教练组审核':'本动作暂无示意图，可参考下方步骤'}</small></p>
+}
 const PHASE: Record<string,string> = { con:'发力', ecc:'控制还原', hold:'' }
 /** v61–v72 通用示意动画（human.glb / 2D 备用），在同角色视频审核通过前保留播放、慢放与受限视角。 */
 function GenericDemo({ catalogId }: { catalogId:string }) {

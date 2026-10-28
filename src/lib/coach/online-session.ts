@@ -13,7 +13,7 @@ import { readEffectiveTrainingProfile } from './loop/effective-training'
 import { readScheduleDocument } from '../ui/day-schedule'
 import { loadEntries } from '../nutrition/log'
 import { readCycleGoal } from './cycle/host'
-import { guardR5Reply } from './r5/guard'
+import { guardOnlineReply } from './r5/guard'
 
 export type OnlinePreview = {
  owner:string; question:string; day:string; preparedAt:string; sourceVersion:string;
@@ -96,9 +96,14 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   // numbers. All remaining prose still passes the existing numeric/safety guard.
   let prose=answer.text
   for(const d of preview.declarations)prose=prose.split(declarationQuote(d)).join('')
-  const checked=guardR5Reply(prose,preview.packet)
+  // S1 fusion decision: v89.11.2's relaxed online guard (unbound numbers / diagnosis wording are shown with the
+  // label “模型回答，未经核验” instead of being blocked) applies ONLY while no safety hold is active.
+  // If the analysis packet has any pain/safety hold, the strict R5 guard is used unchanged (PR #5 behaviour),
+  // and write/clearance claims are never waived.
+  const holdActive=preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'
+  const checked=guardOnlineReply(prose,preview.packet,!holdActive)
   if(!checked.ok)return {error:'模型内容未通过事实或安全核验，已保留本地回答。'}
-  return {...answer,source:answer.source}
+  return {...answer,source:answer.source,...(checked.unverified?{unverified:true as const}:{})}
  }catch(error){return {error:controller.signal.aborted?'本轮联网已取消或超时，本地回答保留；不会自动重试。':error instanceof Error?error.message:'联网不可用，本地回答保留。'}}
  finally{
   clearTimeout(timer);options.signal?.removeEventListener('abort',cancel)

@@ -47,6 +47,22 @@ Runtime-only changes; the GLB and structures.json above are still byte-identical
   abdominis beneath it, and selecting the rectus hides the overlying external oblique.
 These adaptations are distributed under CC BY-SA 4.0 like the rest of this derivative.
 
+### Natural look for 按部位选动作 (2026-10-27, branch feat/muscle-look-20261027)
+
+Runtime-only again: `ecorche.meshopt.glb` and `structures.json` are still byte-identical (same SHA-256).
+Used only by the 按部位选动作 sheet (`createMuscleExplorer(..., { look: 'natural' })`); every other
+caller keeps the R1 look above. Changes, all in `../anatomy3d.js`:
+- the generated neutral head gets a gently modelled nose/brow/chin, two small ears and a short-hair
+  volume; eyes, brows, nostrils, mouth and hair colour are painted in the fragment shader (no image
+  assets). It is still one opaque, non-selectable head shell of the same footprint, so no new picking
+  surface is added; muscle meshes, ids, names, side, highlight and mapping are unchanged;
+- warm-neutral, low-contrast muscle/tendon/bone palette; dark shorts with a smooth tube normal inside the
+  shorts area (colour/shading only, geometry unchanged, glute/hip/thigh meshes stay individually pickable);
+  the crotch panel is slightly smaller in this look;
+- while a muscle is selected, the other muscles step back ~12 % so the theme-coloured highlight stays legible;
+- soft studio lighting and a stage colour that follow the app's light/dark `data-theme`.
+These adaptations are distributed under CC BY-SA 4.0 like the rest of this derivative.
+
 There are 634 source structure meshes, including 362 named muscle meshes.
 This is a static adult male anatomy study asset: it has no animation rig,
 female counterpart, body-weight morph targets, skin or genitalia. It does not

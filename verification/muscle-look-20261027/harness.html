@@ -1,0 +1,9 @@
+<!doctype html><html data-theme="dark"><body style="margin:0;background:#fff"><div id="wrap" data-theme="dark" style="width:var(--w,390px);height:var(--h,320px);position:relative"><canvas id="cv" style="width:100%;height:100%;display:block"></canvas></div>
+<script type="module">
+const q=new URLSearchParams(location.search);if(q.get('w')){document.getElementById('wrap').style.setProperty('--w',q.get('w')+'px');document.getElementById('wrap').style.setProperty('--h',q.get('h')+'px')}
+const M=await import('/demo3d/anatomy3d.js');
+document.getElementById('wrap').dataset.theme=q.get('theme')||'dark';
+const picks=[];window.__picks=picks;
+window.__api=await M.createMuscleExplorer(document.getElementById('cv'),{onPick:p=>picks.push(p),selectedTint:q.get('tint')||'#ff8b45',look:q.get('look')||undefined});
+document.getElementById('cv').__fk=window.__api; window.__ready=1;
+</script></body></html>

@@ -3,6 +3,7 @@
  *  颜色只表示训练参与、负荷叠加或自报症状，不是实测疲劳百分比，不自动改课。 */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { HeartPulse } from "lucide-react"
+import { ThemeAvatar } from "./pet/theme-avatar"
 import { MESH_KEYS, REGION_LABEL, REGIONS, type Region, type RegionState } from "@/lib/health/muscle-recovery-u11"
 import { readRecoveryProjection, recoveryLines, type RecoveryProjection } from "@/lib/health/recovery-host-u11"
 import { subscribeGlobalCoach } from "@/lib/coach/global-coach-host-v89"
@@ -151,7 +152,6 @@ function conciseRunDetail(detail: string) {
 }
 
 function Advice({ value, onCoach }: { value: RecoveryProjection; onCoach?: () => void }) {
-  const [portraitError, setPortraitError] = useState(false)
   const l = recoveryLines(value)
   // Only shorten the initial reading; the original projection text remains available in full below.
   const summary = l.summary.split(/[（，。]/)[0] || l.summary
@@ -163,7 +163,7 @@ function Advice({ value, onCoach }: { value: RecoveryProjection; onCoach?: () =>
     ...painRegions.flatMap(r => r.notes.filter(note => /复核/.test(note)).map(note => `${REGION_LABEL[r.region]}：${note}`)),
   ])]
   return <section className="fk-h89-card fk-recovery-advice" aria-label="方坤分析与建议">
-    <div className="fk-recovery-advice-heading"><span className="fk-recovery-advice-portrait" aria-hidden="true">{portraitError ? <HeartPulse data-testid="m89-advice-portrait-fallback" /> : <img src="/fangshen/care-bust.png" alt="" onError={() => setPortraitError(true)} />}</span><b>方坤分析与建议</b>{onCoach ? <button type="button" className="fk-recovery-advice-coach" onClick={onCoach}>问方坤 ›</button> : null}</div>
+    <div className="fk-recovery-advice-heading"><span className="fk-recovery-advice-portrait" aria-hidden="true"><ThemeAvatar className="size-full object-cover" fallback={<HeartPulse data-testid="m89-advice-portrait-fallback" />} /></span><b>方坤分析与建议</b>{onCoach ? <button type="button" className="fk-recovery-advice-coach" onClick={onCoach}>问方坤 ›</button> : null}</div>
     <p className="keep fk-recovery-advice-summary">{summary}。</p>
     <p className="keep fk-recovery-advice-next">{next}。</p>
     {reminders.length ? <div className="fk-recovery-advice-reminders" data-testid="m89-pain-reminders">

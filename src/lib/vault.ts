@@ -2,6 +2,7 @@
  * 方坤数据保险箱：把本站全部 localStorage 记录（训练、计划、日志、佳明导入、方坤对话、反馈）
  * 实时镜像到 IndexedDB，并申请持久化存储。schema 带版本号，升级只追加迁移，从不清空。
  */
+import { isBulkKey, bulkEntries, appStorage } from "@/lib/core/bulk-store";
 export const VAULT_DB = "fangkun-vault";
 export const VAULT_SCHEMA = 1;
 /** 迁移只能追加：可以新增键、给旧值补字段；绝不删除或清空用户键。测试 vault-migration.test.ts 会校验。 */
@@ -37,6 +38,12 @@ export async function vaultAll(): Promise<Map<string, string>> {
   return new Promise((res, rej) => { const out = new Map<string, string>(); const t = d.transaction("kv", "readonly"); const c = t.objectStore("kv").openCursor(); c.onsuccess = () => { const cur = c.result; if (cur) { out.set(String(cur.key), String(cur.value)); cur.continue(); } }; t.oncomplete = () => res(out); t.onerror = () => rej(t.error); });
 }
 const skip = (k: string) => k.startsWith("__") ;
+/** v89.11.13：大块键（佳明日内样本、训练导入）改放 IndexedDB 大块层，不再进 localStorage 镜像，也不从旧镜像“找回”（否则会把过期旧值写回 localStorage）。备份/快照另行并入。 */
+const mirrorSkip = (k: string) => skip(k) || isBulkKey(k);
+function withBulk(kv: Map<string, string> | Record<string, string>): void {
+  for (const [k, v] of Object.entries(bulkEntries())) { if (kv instanceof Map) kv.set(k, v); else kv[k] = v; }
+}
+const writeKey = (k: string, v: string) => appStorage().setItem(k, v);
 let installed = false;
 export async function initVault(): Promise<{ restored: number; persisted: boolean }> {
   if (typeof window === "undefined" || installed) return { restored: 0, persisted: false };
@@ -50,14 +57,14 @@ export async function initVault(): Promise<{ restored: number; persisted: boolea
   if (ver < VAULT_SCHEMA) migrateKv(kv, ver);
   // 恢复：localStorage 被系统清掉的键从 IndexedDB 找回（不覆盖已有值）
   let restored = 0;
-  for (const [k, v] of kv) if (localStorage.getItem(k) === null) { try { localStorage.setItem(k, v); restored++; } catch { /* full */ } }
+  for (const [k, v] of kv) if (!mirrorSkip(k) && localStorage.getItem(k) === null) { try { localStorage.setItem(k, v); restored++; } catch { /* full */ } }
   // 反向：把 localStorage 现有全部写入
   const d = await db(); const t = d.transaction(["kv", "meta"], "readwrite");
-  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) t.objectStore("kv").put(localStorage.getItem(k), k); }
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!mirrorSkip(k)) t.objectStore("kv").put(localStorage.getItem(k), k); }
   t.objectStore("meta").put(VAULT_SCHEMA, "schema"); t.objectStore("meta").put(new Date().toISOString(), "lastSync");
   // 之后每次写入都镜像
   const set = Storage.prototype.setItem, rem = Storage.prototype.removeItem;
-  Storage.prototype.setItem = function (k: string, v: string) { set.call(this, k, v); if (this === localStorage && !skip(k)) void tx("kv", "readwrite", (s) => { s.put(String(v), k); }).catch(() => {}); };
+  Storage.prototype.setItem = function (k: string, v: string) { set.call(this, k, v); if (this === localStorage && !mirrorSkip(k)) void tx("kv", "readwrite", (s) => { s.put(String(v), k); }).catch(() => {}); };
   Storage.prototype.removeItem = function (k: string) { rem.call(this, k); if (this === localStorage) void tx("kv", "readwrite", (s) => { s.delete(k); }).catch(() => {}); };
   void snapshotNow().catch(() => {});
   return { restored, persisted };
@@ -66,13 +73,14 @@ export async function listSnapshots(): Promise<Snapshot[]> { return ((await tx<S
 export async function snapshotNow(): Promise<void> {
   const data: Record<string, string> = {};
   for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) data[k] = localStorage.getItem(k)!; }
+  withBulk(data);
   const list = await listSnapshots(); const next = rotateSnapshots(list, data);
   if (next !== list) await tx("snapshots", "readwrite", (s) => { s.put(next, "list"); });
 }
 export async function restoreSnapshot(at: string): Promise<number> {
   const snap = (await listSnapshots()).find((x) => x.at === at); if (!snap) return 0;
   const kv = migrateKv(new Map(Object.entries(snap.data)), snap.schema);
-  for (const [k, v] of kv) localStorage.setItem(k, v); return kv.size;
+  for (const [k, v] of kv) writeKey(k, v); return kv.size;
 }
 /** 大版本更新前提醒导出：APP_MAJOR 变化时返回 true（直到用户导出一次） */
 export const APP_MAJOR = "beta-1";
@@ -86,7 +94,9 @@ const credential = (k: string) => /^grok-auth\./.test(k) || /(bearer|access)[-_.
 /** 返回实际发生的动作：分享面板已完成 / 浏览器已触发下载 / 用户取消。网页无法确认文件是否已存到手机。 */
 export async function exportVault(): Promise<"shared" | "download" | "cancelled"> {
   const kv = await vaultAll();
+  for (const k of [...kv.keys()]) if (isBulkKey(k)) kv.delete(k); // 旧镜像里的过期副本不进备份，以大块层/仍钉在 localStorage 的为准
   for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) kv.set(k, localStorage.getItem(k)!); }
+  withBulk(kv);
   for (const k of [...kv.keys()]) if (credential(k)) kv.delete(k);
   const blob = new Blob([JSON.stringify({ format: "fangkun-vault-backup", schema: VAULT_SCHEMA, exportedAt: new Date().toISOString(), data: Object.fromEntries(kv) })], { type: "application/json" });
   const name = `fangkun-backup-${new Date().toISOString().slice(0, 10)}.json`;
@@ -102,6 +112,6 @@ export async function importVault(file: File): Promise<number> {
   if (b?.format !== "fangkun-vault-backup" || typeof b.data !== "object") throw new Error("不是方坤备份文件");
   const kv = new Map<string, string>(Object.entries(b.data).map(([k, v]) => [k, String(v)]));
   migrateKv(kv, Number(b.schema) || 1);
-  let n = 0; for (const [k, v] of kv) { if (credential(k)) continue; localStorage.setItem(k, v); n++; }
+  let n = 0; for (const [k, v] of kv) { if (credential(k)) continue; writeKey(k, v); n++; }
   return n;
 }

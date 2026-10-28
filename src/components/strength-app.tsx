@@ -27,6 +27,7 @@ import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
 import { checkForNewVersion } from "@/lib/ui/app-version-check";
 import { initVault } from "@/lib/vault";
+import { activateBulkStore, enterBulkDegradedIfMigrated } from "@/lib/core/bulk-store";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
 import { bootCore, captureOriginalPlan, dispatchEvent } from "@/lib/core";
@@ -39,6 +40,8 @@ import {commitControlledStrengthPlan} from "@/lib/core/coach-strength-plan-stora
 import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
 import { AppearanceSettings } from "@/components/appearance-settings";
+import { FloatingPet } from "@/components/pet/floating-pet";
+import { readCharacterTheme, writeCharacterTheme, getCharacterTheme, CHARACTER_THEME_BACKGROUND, CHARACTER_THEME_KEY, type CharacterThemeId } from "@/lib/ui/character-themes";
 import { readWallpaper, writeWallpaper, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
 import { readFontScale, writeFontScale, type FontScale } from "@/lib/ui/font-scale-v89";
 import { TrainingLogPage } from "@/components/training-log-v76";
@@ -68,7 +71,7 @@ import { ExerciseContent } from "@/components/exercise-content";
 import { SessionBuilder } from "@/components/session-builder";
 import { MuscleExplorerSheet } from "@/components/muscle-explorer";
 import { ActionPicker } from "@/components/action-picker";
-import { DemoSheet } from "@/components/exercise-editor";
+import { DemoSheet, type DemoAction } from "@/components/exercise-editor";
 import { TrainingEditorSheet } from "@/components/training-editor-sheet";
 import { SchedulePicker, ScheduledTraining } from "@/components/scheduled-training";
 import { MuscleActionList } from "@/components/muscle-action-list";
@@ -78,7 +81,7 @@ import { scheduleExecutionId, scheduledChoices } from "@/lib/ui/scheduled-execut
 import type { ScheduleEntry } from "@/lib/ui/day-schedule-rules";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import { Sheet as AppSheet } from "@/components/sheet";
-import type { MuscleAction } from "@/lib/body/muscle-actions";
+import { LOCAL_MUSCLE_ACTIONS, type MuscleAction } from "@/lib/body/muscle-actions";
 import { PLAN_KEY, appendSessionCompared, savePlanCompared } from "@/lib/strength/session-builder";
 import { executionOf } from "@/lib/core/execution";
 import { ProfileSheet } from "@/components/profile-sheet";
@@ -125,7 +128,28 @@ const FEELS: { id: Feel; label: string; hint: string }[] = [
   { id: "skip", label: "这周没练", hint: "这节先保持，不加减" },
 ];
 
+/** v89.11.13：大块数据（各手表来源的日内样本、训练导入等）在 IndexedDB，渲染前先加载进内存（通常几十毫秒）。
+ *  超过 4 秒还没好：已迁移过的用户进入降级（这些数据暂读为空、拒绝写入，绝不覆盖），其余数据照常可用。 */
+function BulkGate({ children }: { children: ReactNode }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let done = false;
+    const timer = setTimeout(() => { if (!done) { enterBulkDegradedIfMigrated(); setReady(true); } }, 4000);
+    void activateBulkStore().catch(() => {}).finally(() => { done = true; clearTimeout(timer); setReady(true); });
+    return () => clearTimeout(timer);
+  }, []);
+  return ready ? <>{children}</> : (
+    <main className="grid min-h-dvh place-items-center bg-bg px-6 text-fg" role="status" aria-live="polite" data-testid="training-app" data-ready="false">
+      <p className="text-sm text-muted">正在读取本地训练记录…</p>
+    </main>
+  );
+}
+
 export function StrengthApp() {
+  return <BulkGate><StrengthAppInner /></BulkGate>;
+}
+
+function StrengthAppInner() {
   const suggestionCount = useSuggestionCount();
   useEffect(() => startC03FollowupRuntime(), []);
   const [bodyPane, setBodyPane] = useState<BodyPane>("recovery");
@@ -140,11 +164,13 @@ export function StrengthApp() {
   }, []);
   const [plan, setPlan] = useState<Plan>(starter);
   const [wallpaper, setWallpaper] = useState<WallpaperId>("plain");
+  const [characterTheme, setCharacterTheme] = useState<CharacterThemeId>("classic");
   const [displayMode, setDisplayMode] = useState<DisplayMode>("light");
   const [fontScale, setFontScale] = useState<FontScale>("standard");
   const [systemDark, setSystemDark] = useState(false);
   useEffect(() => {
     setWallpaper(readWallpaper(window.localStorage));
+    setCharacterTheme(readCharacterTheme(window.localStorage));
     setDisplayMode(readDisplayMode(window.localStorage));
     setFontScale(readFontScale(window.localStorage));
     const media = window.matchMedia?.("(prefers-color-scheme: dark)");
@@ -154,6 +180,19 @@ export function StrengthApp() {
     media.addEventListener?.("change", update);
     return () => media.removeEventListener?.("change", update);
   }, []);
+  useEffect(() => {
+    const refreshTheme = (event: StorageEvent) => {
+      if (event.key === CHARACTER_THEME_KEY || event.key === null) setCharacterTheme(readCharacterTheme(window.localStorage));
+    };
+    window.addEventListener("storage", refreshTheme);
+    return () => window.removeEventListener("storage", refreshTheme);
+  }, []);
+  useEffect(() => {
+    const currentTheme = getCharacterTheme(characterTheme);
+    const resolvedMode = displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode;
+    const themeColor = currentTheme ? CHARACTER_THEME_BACKGROUND[currentTheme.id][resolvedMode] : (resolvedMode === "dark" ? "#121314" : "#F7F6F2");
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor);
+  }, [characterTheme, displayMode, systemDark]);
   useEffect(() => {
     document.documentElement.dataset.fkFontScale = fontScale;
     return () => { delete document.documentElement.dataset.fkFontScale; };
@@ -171,7 +210,7 @@ export function StrengthApp() {
   const [builderOpen, setBuilderOpen] = useState(false);
   const [muscleOpen, setMuscleOpen] = useState(false), [muscleDemo, setMuscleDemo] = useState<string | null>(null);
   const [hubPane, setHubPane] = useState<"run" | "lift">("run");
-  const [pickerMuscle, setPickerMuscle] = useState(false);
+  const [pickerMuscle, setPickerMuscle] = useState(false), [pickerDemo, setPickerDemo] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(localDayIso());
   const [courseDatesOpen,setCourseDatesOpen]=useState(false);
   const [calendar, setCalendar] = useState<ScheduleEntry[]>([]);
@@ -196,6 +235,7 @@ export function StrengthApp() {
   const [feelNote, setFeelNote] = useState("");
   const [coachFocus, setCoachFocus] = useState<string | null>(null);
   const [coachLink, setCoachLink] = useState<"ask" | "bound" | "unbound">("ask");
+  const [coachSeed, setCoachSeed] = useState<{ text: string; chip: string } | null>(null);
   const [formMove, setFormMove] = useState<Move | null>(null);
   const [profile, setProfile] = useState<Profile>(emptyProfile());
   const [profileOpen, setProfileOpen] = useState(false);
@@ -504,6 +544,20 @@ export function StrengthApp() {
     }));
   }
 
+  const demoDataHas = (id: string) => CATALOG.some(c => c.id === id);
+  /** 动作库里的详情页：只有点“加入训练”才会打开训练编辑器（新建所选日期的训练，保存前可改）；浏览本身不写入。 */
+  const libraryDemoAction = (id: string): DemoAction | undefined => {
+    const action = LOCAL_MUSCLE_ACTIONS.find(a => a.catalogId === id);
+    if (!action || !actionLibrary && !muscleOpen) return undefined;
+    return { label: "加入训练", hint: `将新建 ${selectedDate} 的训练草稿，保存前可修改`, onClick: () => { setMuscleDemo(null); setTrainingEditor({ date: selectedDate, seedAction: action }); if (muscleOpen) setMuscleOpen(false); } };
+  };
+  const pickerDemoAction = (id: string): DemoAction | undefined => {
+    if (!session) return undefined;
+    if (session.moves.some(m => m.catalogId === id)) return { label: "已在本次训练", disabled: true, onClick: () => {} };
+    const item = CATALOG.find(c => c.id === id);
+    return { label: "选择此动作", hint: "加入后回到当前训练", onClick: () => { updateSession({ moves: [...session.moves, item ? moveFromCatalog(item) : customMove(id)] }); setPickerDemo(null); setPicker(false); setPickerMuscle(false); } };
+  };
+
   function commitPlan(produce: (current: Plan) => Plan) {
     for (const item of plan.sessions) captureOriginalPlan(item);
     setPlan(produce(plan));
@@ -607,12 +661,12 @@ export function StrengthApp() {
 
 
   return (
-    <div className={"app-wallpaper product-ui fk-identity bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-dvh")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-UI-R1-20261021" data-wallpaper={wallpaper} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
+    <div className={"app-wallpaper product-ui fk-identity bg-bg text-fg " + (tab === "coach" ? "fk-coach-shell flex h-dvh flex-col overflow-hidden" : "min-h-dvh")} data-testid="training-app" data-ready={ready} data-offline-ready={offlineShellState === "ready"} data-candidate-version="FK-UI-R1-20261021" data-wallpaper={wallpaper} data-fk-theme={characterTheme} data-theme={displayMode === "system" ? (systemDark ? "dark" : "light") : displayMode}>
       <header className={"ui03-header fk-page-header px-4 pt-1 pb-1" + (tab === "coach" ? " fk-coach-head" : "")}>
         <div className="ui03-header-inner fk-page mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
             {tab === "today" ? <><div className="fk-brand-lockup fk-mobile-only"><h1>FANGKUN</h1><span>方坤</span></div><h1 className="ui03-title fk-desk-only">今天</h1></> : <>
-            <h1 className="ui03-title text-[1.55rem] font-bold leading-tight tracking-tight">{pageTitle}</h1>
+            <h1 className="ui03-title flex items-center gap-2 text-[1.55rem] font-bold leading-tight tracking-tight">{characterTheme !== "classic" && tab !== "coach" ? <img className="fk-coach-theme-avatar" src={getCharacterTheme(characterTheme)?.avatar} alt="" aria-hidden="true" /> : null}{pageTitle}</h1>
             {tab === "coach" || !headerHint ? null : <p className="ui03-subtitle truncate text-xs text-muted">{headerHint}</p>}</>}
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -943,11 +997,11 @@ export function StrengthApp() {
       </main>
       {tab === "log" ? <TrainingLogPage today={todayIso} plan={plan} onNavigate={(next) => setTab(next as typeof tab)} onAsk={(occurrenceId) => { setCoachLink(occurrenceId ? "bound" : "unbound"); setCoachFocus(occurrenceId); setTab("coach"); }} /> : null}
       <CoachWeeklyBootstrap ready={ready} />
-      {tab === "coach" ? <CoachSheet embedded plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next); }}
+      {tab === "coach" ? <CoachSheet embedded characterTheme={characterTheme} questionDraft={coachSeed?.text ?? null} questionContext={coachSeed?.chip ?? null} onQuestionDraftConsumed={() => setCoachSeed(null)} plan={plan} activeId={session?.id} focusOccurrenceId={coachFocus} link={coachLink} onControlledStrengthEdit={onControlledStrengthEdit} onClose={() => setTab("today")} onJump={() => { setBodyPane("recovery"); setTab("body"); }} onNavigate={(next) => { setTab(next); }}
         coordinationPanel={<CoachCoordinationHub input={{ loaded: ready && !!todayCoord, todayParts: todayCoord?.parts, todayUnplanned: todayCoord?.unplanned, strengthSessions: plan.sessions.length }} onNavigate={(next) => setTab(next)} />}
       /> : null}
       <div className={tab === "diet" ? "" : "hidden"}><div className="ui03-main fk-page fk-desk-diet mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="diet" onFood={() => { setDietSheet(true); setTimeout(() => document.getElementById("quick-food")?.scrollIntoView(), 50); }} onAdvice={() => setDietSheet(true)} onBody={() => { setBodyPane("trend"); setTab("body"); }} /></div>{dietSheet ? <div className="fixed inset-0 z-50 overflow-y-auto bg-bg pb-10" role="dialog" aria-label="饮食详情"><div className="sticky top-0 z-10 flex min-h-12 items-center justify-between border-b border-line bg-bg px-4 pb-1" style={{ paddingTop: "max(4px, env(safe-area-inset-top))" }}><b>饮食详情</b><button type="button" className="min-h-11 px-3" onClick={() => setDietSheet(false)}>关闭</button></div><div className="fk-detail"><DietPage active={tab === "diet"} profile={profile} onEditProfile={() => setProfileOpen(true)} /></div></div> : null}</div>
-      <div className={tab === "body" ? "" : "hidden"}><div className="ui03-main fk-page fk-desk-body mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="body" onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} onCoach={() => setTab("coach")} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
+      <div className={tab === "body" ? "" : "hidden"}><div className="ui03-main fk-page fk-desk-body mx-auto max-w-3xl px-4 pt-3 pb-nav"><HomeDashboard only="body" onProfile={() => setProfileOpen(true)} onFood={() => setTab("diet")} onBody={() => setBodyPane("trend")} onCoach={(day) => { if (tab !== "coach") prevTab.current = tab; setCoachLink("ask"); setCoachFocus(null); setCoachSeed(day ? { text: `请结合我${Number(day.slice(5, 7))}月${Number(day.slice(8, 10))}日的恢复与健康记录，看看今天该怎么安排。`, chip: `健康 · ${Number(day.slice(5, 7))}月${Number(day.slice(8, 10))}日` } : null); setTab("coach"); }} slot={<BodyCenter compact active={tab === "body"} initialPane={bodyPane} profile={profile} onEdit={() => setProfileOpen(true)} onProfile={(next) => { saveProfile(next); setProfile(next); }} />} /></div>
       </div>
       <StandaloneWelcome suspended={settingsOpen || firstRun} />
       {settingsOpen ? (
@@ -961,7 +1015,7 @@ export function StrengthApp() {
             </div>
             <button type="button" onClick={() => setSettingsOpen(false)} className="grid size-11 place-items-center rounded-full bg-surface shadow-sm" aria-label="关闭设置"><X className="size-5" /></button>
           </div>
-          {settingsPane === "menu" ? <SettingsMenu profile={profile} sportGoal={`${SPORTS.find((item) => item.id === preference.sport)?.label ?? "项目未选"} · ${GOALS.find((item) => item.id === preference.primaryGoal)?.label ?? "目标未选"}`} displayText={`${displayMode === "light" ? "浅色" : displayMode === "dark" ? "深色" : "跟随系统"} · 字体${fontScale === "standard" ? "标准" : fontScale === "large" ? "大" : "特大"}`} onPane={setSettingsPane} onProfile={() => setProfileOpen(true)} /> : null}
+          {settingsPane === "menu" ? <SettingsMenu profile={profile} sportGoal={`${SPORTS.find((item) => item.id === preference.sport)?.label ?? "项目未选"} · ${GOALS.find((item) => item.id === preference.primaryGoal)?.label ?? "目标未选"}`} displayText={`${displayMode === "light" ? "浅色" : displayMode === "dark" ? "深色" : "跟随系统"} · 字体${fontScale === "standard" ? "标准" : fontScale === "large" ? "大" : "特大"} · ${getCharacterTheme(characterTheme)?.name ?? "经典"}`} onPane={setSettingsPane} onProfile={() => setProfileOpen(true)} /> : null}
           {settingsPane === "menu" ? <StorageHint /> : null}
           {settingsPane === "athlete" ? <><AthletePanel profile={profile} onEdit={() => setProfileOpen(true)} /><SettingsHub only={["p", "n"]} initialOpen="p" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "health" ? <><HealthPanel /><SettingsHub only={["h"]} initialOpen="h" onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
@@ -970,7 +1024,7 @@ export function StrengthApp() {
           {settingsPane === "ai" ? <OnlineFeaturesSettings /> : null}
           {settingsPane === "privacy" ? <><PrivacyPanel /><SettingsHub only={["x"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /></> : null}
           {settingsPane === "theme" ? <AppearanceSettings
-            displayMode={displayMode} fontScale={fontScale} wallpaper={wallpaper}
+            displayMode={displayMode} fontScale={fontScale} wallpaper={wallpaper} characterTheme={characterTheme}
             onDisplayMode={(id) => {
               if (writeDisplayMode(window.localStorage, id)) setDisplayMode(id);
               else setNotice("显示模式保存失败，其他记录未修改。");
@@ -982,6 +1036,10 @@ export function StrengthApp() {
             onWallpaper={(id) => {
               if (writeWallpaper(localStorage, id)) setWallpaper(id);
               else setNotice("壁纸设置未能保存，当前记录不会被修改。");
+            }}
+            onCharacterTheme={(id) => {
+              if (writeCharacterTheme(localStorage, id)) { setCharacterTheme(id); window.dispatchEvent(new Event("fk-character-theme-change")); }
+              else setNotice("角色主题保存失败，训练和历史数据未修改。");
             }}
           /> : null}
           {settingsPane === "theme" ? <SettingsHub only={["v"]} onProfile={() => setProfileOpen(true)} onDiet={() => { setSettingsOpen(false); setTab("diet"); }} onBackup={() => setSettingsPane("backup")} /> : null}
@@ -1071,6 +1129,7 @@ export function StrengthApp() {
       {planImportOpen ? <AppSheet title="导入训练计划" label="导入训练计划" footer={null} onClose={() => setPlanImportOpen(false)}><PlanImportPanel onImported={() => { setPlanImportOpen(false); setPlanSrcSaved('400m-v4'); setTab('plan'); }} /></AppSheet> : null}
       {firstRun ? <Onboarding suspended={settingsOpen} today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <ChromeMetrics />
+      <FloatingPet theme={characterTheme} page={tab} onCoachTab={tab === "coach"} />
       <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " fk-dock-coach" : "")} aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
           <div className="fk-side-brand fk-desk-only" aria-hidden="true"><span className="fk-side-mark">坤</span><span><b>FANGKUN</b><small>方坤 · 训练教练</small></span></div>
@@ -1108,7 +1167,7 @@ export function StrengthApp() {
           {/* v83（P2-01）：与“添加训练/组合一课”共用同一个 ActionPicker（搜索/分类/肌肉图三条路径，同一个“加入”） */}
           <ActionPicker selectedKeys={(session?.moves ?? []).map(m => m.catalogId ? `local:${m.catalogId}` : `extra:${displayName(m)}`)}
             onAdd={(entry) => { if (!session) return; const item = entry.catalogId ? CATALOG.find(c => c.id === entry.catalogId) : undefined; updateSession({ moves: [...session.moves, item ? moveFromCatalog(item) : customMove(entry.name)] }); setPicker(false); }}
-            onPreview={(entry) => setNotice(`${entry.name} · ${entry.section} · ${entry.pattern}（加入后可在动作卡里看说明/动画）`)}
+            onPreview={(entry) => { if (entry.catalogId && demoDataHas(entry.catalogId)) setPickerDemo(entry.catalogId); else setNotice(`${entry.name} · ${entry.section} · ${entry.pattern}（加入后可在动作卡里看说明/动画）`); }}
             onMuscle={() => setPickerMuscle(true)} />
           {pickerMuscle ? <MuscleExplorerSheet onClose={() => setPickerMuscle(false)} onAdd={(action) => { if (!session) return; const item = action.catalogId ? CATALOG.find(c => c.id === action.catalogId) : undefined; updateSession({ moves: [...session.moves, item ? moveFromCatalog(item) : customMove(action.name)] }); setPickerMuscle(false); setPicker(false); }} /> : null}
         </Sheet>
@@ -1203,13 +1262,15 @@ export function StrengthApp() {
         }); } finally {builderSaving.current=false;}
       }} /></Sheet> : null}
       {muscleOpen ? <MuscleExplorerSheet onClose={() => setMuscleOpen(false)} onShow={setMuscleDemo} onAdd={action => { setMuscleOpen(false); setTrainingEditor({ date: selectedDate, seedAction: action }); }} /> : null}
+      {/* 动作库保持挂载在训练编辑器下层：加入训练 / 查看动作后返回，筛选、搜索和滚动位置都还在。 */}
+      {actionLibrary ? <AppSheet full title="力量动作库" label="力量动作库" onClose={() => setActionLibrary(false)} footer={null}><MuscleActionList pick={null} onShow={setMuscleDemo} onAdd={action => setTrainingEditor({ date: selectedDate, seedAction: action })} /></AppSheet> : null}
       {courseDatesOpen ? <PlanCourseDateSheet onClose={()=>setCourseDatesOpen(false)} /> : null}
       {trainingEditor ? <TrainingEditorSheet templates={plan} key={`${trainingEditor.date}:${trainingEditor.initial?.id ?? trainingEditor.template?.id ?? 'new-training'}`} {...trainingEditor} onClose={() => setTrainingEditor(null)} onSave={async entry => { const result = await saveScheduledEntry(entry, trainingEditor.initial); if (result.ok) { setCalendar(loadSchedule().entries); setSelectedDate(entry.date); setHomeRev(n => n + 1); } return result; }} /> : null}
       {timerPicker ? <SchedulePicker date={selectedDate} onClose={() => setTimerPicker(false)} onChoose={openScheduled} onAdd={() => { setTimerPicker(false); setTrainingEditor({ date: selectedDate }); }} /> : null}
       {executionEntryId && calendar.find(e => e.id === executionEntryId) ? <ScheduledTraining key={executionEntryId} entry={calendar.find(e => e.id === executionEntryId)!} plan={plan} onClose={() => setExecutionEntryId(null)} onEdit={() => { const entry = calendar.find(e => e.id === executionEntryId)!; setExecutionEntryId(null); editScheduled(entry); }} onChanged={() => { setCalendar(loadSchedule().entries); setHomeRev(n => n + 1); }} onResumeOther={id => { setExecutionEntryId(null); resumeSession(id); }} /> : null}
-      {actionLibrary ? <AppSheet full title="力量动作库" label="力量动作库" onClose={() => setActionLibrary(false)} footer={null}><MuscleActionList pick={null} onShow={setMuscleDemo} onAdd={action => { setActionLibrary(false); setTrainingEditor({ date: selectedDate, seedAction: action }); }} /></AppSheet> : null}
       {techniqueLibrary ? <AppSheet full title="跑步技术动作库" label="跑步技术动作库" onClose={() => setTechniqueLibrary(false)} footer={null}><Suspense fallback={<p>正在加载跑步技术…</p>}><RunningTechniqueLibrary/></Suspense></AppSheet> : null}
-      {muscleDemo ? <DemoSheet id={muscleDemo} onClose={() => setMuscleDemo(null)} /> : null}
+      {muscleDemo ? <DemoSheet id={muscleDemo} onClose={() => setMuscleDemo(null)} action={libraryDemoAction(muscleDemo)} /> : null}
+      {pickerDemo ? <DemoSheet id={pickerDemo} onClose={() => setPickerDemo(null)} action={pickerDemoAction(pickerDemo)} /> : null}
       {formMove ? <Sheet title={displayName(formMove)} onClose={()=>setFormMove(null)}><ExerciseContent catalogId={formMove.catalogId} /></Sheet> : null}
 
       {profileOpen ? (

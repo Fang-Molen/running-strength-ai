@@ -29,7 +29,7 @@ test('R6 inventory retains exactly the original 100 strength plus 53 running IDs
 })
 test('no approved model renders only same-character reference and a hidden canvas',()=>{
  for(const gender of ['male','female'] as const){const html=renderToStaticMarkup(<FangkunHealthCharacter gender={gender} view="back"/>);
- assert.match(html,new RegExp(`/fangkun-character/${gender}-back.webp`));assert.match(html,/非3D/);assert.match(html,/visibility:hidden/);assert.match(html,/aria-hidden="true"/)
+ assert.match(html,new RegExp(gender==='male'?'/fangkun-pet/chiyan/chiyan-fullbody.webp':`/fangkun-character/${gender}-back.webp`));assert.match(html,/非3D/);assert.match(html,/visibility:hidden/);assert.match(html,/aria-hidden="true"/)
  assert.doesNotMatch(html,/demo3d\/models|fangkun-new-visual|athlete\.glb|human\.glb/)}
 })
 test('missing video has no false play controls or wrong exercise frame',()=>{

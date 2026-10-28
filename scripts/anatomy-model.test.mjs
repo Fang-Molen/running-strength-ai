@@ -91,3 +91,26 @@ test('v89.10.2: every muscle-layer mesh has a Chinese name with side prefix, nev
   const cb = prepared.muscles.find(o => o.userData.fk.name === 'Left coracobrachialis').userData.fk;
   assert.equal(cb.k, 'coracobrachialis'); assert.equal(cb.zh, '左侧喙肱肌');
 });
+
+test("v89.11.10 natural look keeps every muscle mesh, id, name and pick order; only the head/shorts/colour layer differs", () => {
+  const natural = prepareAnatomyModel(gltf, 'natural');
+  assert.equal(natural.look, 'natural'); assert.equal(prepared.look, 'default');
+  assert.equal(natural.muscles.length, prepared.muscles.length);
+  const sig = o => `${o.userData.fk.name}|${o.userData.fk.side}|${o.userData.fk.k}|${o.userData.fk.g}|${o.geometry.getAttribute('position').count}`;
+  assert.deepEqual(natural.muscles.map(sig), prepared.muscles.map(sig));
+  // The painted face is the existing opaque, non-selectable head blocker: same footprint (no new picking surface),
+  // ears/nose/hair add at most a few centimetres, and the face data is per-vertex attributes (no image assets).
+  for (const attr of ['fkDir', 'fkHair', 'position', 'normal']) assert.ok(natural.head.geometry.getAttribute(attr), attr);
+  assert.equal(natural.head.userData.fkHead, true);
+  natural.head.geometry.computeBoundingBox(); prepared.head.geometry.computeBoundingBox();
+  const a = natural.head.geometry.boundingBox, b = prepared.head.geometry.boundingBox, sa = a.getSize(new THREE.Vector3()), sb = b.getSize(new THREE.Vector3());
+  assert.ok(sa.y > sb.y * .95 && sa.y < sb.y * 1.12, `${sa.y} vs ${sb.y}`);
+  assert.ok(sa.x > sb.x * .95 && sa.x < sb.x * 1.2 && sa.z > sb.z * .95 && sa.z < sb.z * 1.2, `${sa.x},${sa.z} vs ${sb.x},${sb.z}`);
+  assert.ok(Math.abs(natural.bounds.max.y - prepared.bounds.max.y) < .06);
+  // shorts: same paint region, glute/hip/thigh meshes remain the picked surfaces; the crotch panel stays opaque.
+  // (the paint bands are fractions of body height; the hair volume adds <1 % to that height)
+  natural.shorts.fkShorts.value.toArray().forEach((v, i) => assert.ok(Math.abs(v - prepared.shorts.fkShorts.value.toArray()[i]) <= .01 * Math.max(1, Math.abs(v)), `shorts band ${i}`));
+  assert.equal(natural.cover.material.transparent, false); assert.equal(natural.cover.userData.fkCover, true);
+  assert.ok(natural.cover.scale.y <= prepared.cover.scale.y);
+  assert.equal(natural.muscles.filter(o => ['glutes', 'glute_med', 'iliopsoas'].includes(o.userData.fk.k)).length, prepared.muscles.filter(o => ['glutes', 'glute_med', 'iliopsoas'].includes(o.userData.fk.k)).length);
+});

@@ -5,6 +5,7 @@ import { CorosError, corosSport } from './coros-account-sync'
 import { corosProvenance } from './brand-isolation'
 import { ATHLETE_SCOPE_CHANGED, currentAthleteId } from '../core/events'
 import { healthChanged } from './observation'
+import { currentStore } from '../core/storage'
 // @ts-ignore 研究模块（纯 JS）：日级标准化 + 同品牌基准
 import { normalizeCorosDailyBatch } from './coros-mcp-daily-v1.mjs'
 // @ts-ignore
@@ -171,7 +172,7 @@ export type CorosHealthCache = { athleteId?: string; sessionScope?: string; owne
 const hKey = (athlete: string) => `fk-coros-mcp-health-v1:${athlete}`, linkKey = (athlete: string) => `fk-coros-mcp-linked-v1:${athlete}`
 export const corosMcpLinked = (athlete: string) => { try { return localStorage.getItem(linkKey(athlete)) === '1' } catch { return false } }
 export function setCorosMcpLinked(athlete: string, on: boolean, invalidate = true) { if (!on && invalidate && healthPending.size) invalidateCorosContext(); try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }
-export function loadCorosHealth(athlete: string): CorosHealthCache | null { try { const v = JSON.parse(localStorage.getItem(hKey(athlete)) ?? 'null'); return v && Array.isArray(v.days) && (!v.athleteId || v.athleteId===athlete) ? v : null } catch { return null } }
+export function loadCorosHealth(athlete: string): CorosHealthCache | null { try { const v = JSON.parse(currentStore()?.getItem(hKey(athlete)) ?? 'null'); return v && Array.isArray(v.days) && (!v.athleteId || v.athleteId===athlete) ? v : null } catch { return null } }
 export function mergeCorosHealth(old: CorosHealthCache | null, b: { accountRef?: string | null; fetchedAt: string; days: McpDay[]; stress: StressPoint[]; recovery: Recovery | null; issues: string[]; raw: Record<string, string> }): CorosHealthCache {
   // Never merge a different authenticated account into the previous account's cache.
   const accountRef = b.accountRef ?? null
@@ -214,11 +215,11 @@ export function refreshCorosHealth(athlete: string): Promise<CorosHealthCache> {
     const scopedOld = old?.sessionScope === b.sessionScope ? old : null
     const next = {...mergeCorosHealth(scopedOld, b), athleteId:athlete, sessionScope:b.sessionScope!, ownership:'OAUTH_SESSION_ONLY' as const}
     if(old && old.sessionScope!==next.sessionScope) {
-      try {localStorage.setItem(hKey(athlete)+':archive:'+encodeURIComponent(old.sessionScope??'legacy'), JSON.stringify(old))}
+      try {const box=currentStore(); if(!box) throw Error('NOSTORE'); box.setItem(hKey(athlete)+':archive:'+encodeURIComponent(old.sessionScope??'legacy'), JSON.stringify(old))}
       catch {throw new CorosError('旧账号缓存保存失败，未替换当前缓存','STORAGE_WRITE_FAILED',507)}
     }
     let saved = false
-    try { const raw = JSON.stringify(next); localStorage.setItem(hKey(athlete), raw); saved = localStorage.getItem(hKey(athlete)) === raw } catch { /* storage full */ }
+    try { const box = currentStore(); if (!box) throw Error('NOSTORE'); const raw = JSON.stringify(next); box.setItem(hKey(athlete), raw); saved = box.getItem(hKey(athlete)) === raw } catch { /* storage full */ }
     if (!saved) throw new CorosError('高驰数据已取得，但本机保存失败；保留上次数据，请检查存储空间后重试。', 'STORAGE_WRITE_FAILED', 507)
     healthChanged(); try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ }
     return next

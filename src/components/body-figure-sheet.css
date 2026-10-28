@@ -11,3 +11,7 @@
 .fk-character-image img{width:100%;height:100%;max-width:100%;object-fit:contain;object-position:center bottom}
 .fk-health-goal-link{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}.fk-health-goal-link>span{min-width:0}
 @media(max-width:360px){.fk-figure-overview{gap:8px;padding:8px}.fk-figure-overview img{height:160px}.fk-health-portrait .fk-character-image{height:205px}}
+/* 身体与记录：卡片按 个人资料→身体数据→目标→形象 的 DOM 顺序阅读，视觉上形象在左、数据与目标在右。 */
+.fk-health-figure-grid .fk-health-portrait{grid-column:1;grid-row:1 / span 2}
+.fk-health-figure-grid .fk-health-data{grid-column:2;grid-row:1;min-height:44px}
+.fk-health-figure-grid .fk-health-goal{grid-column:2;grid-row:2}

@@ -7,7 +7,7 @@ import { readEffectiveTrainingProfile } from './loop/effective-training'
 import { readScheduleDocument } from '../ui/day-schedule'
 import { analysisDigest } from '../health/analysis-evidence'
 import { readAnalysis } from '../health/analysis-host'
-import { guardR5Reply } from './r5/guard'
+import { guardOnlineReply, UNVERIFIED_ONLINE_LABEL } from './r5/guard'
 import { planPrefix } from '../plan/active-plan'
 import { partLine, loadOwnedComponents } from '../ui/plan400-components-store'
 /** 本机联网偏好只控制是否请求解释，不授予服务端身份、快照或费用权限。
@@ -182,7 +182,7 @@ function boundedSection(title: string, lines: readonly string[], budget: number)
 /** Match the trusted server request boundary; no silently shortened question or evidence. */
 export type OnlineCoachSnapshotRef = { snapshotId: string; consentId: string; asOf: string }
 export const ONLINE_QUESTION_MAX = 1000
-export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[]; snapshotRef?: OnlineCoachSnapshotRef }, ms = 30000): Promise<{ text: string } | { error: string }> {
+export async function askOnlineCoach(input: { question: string; facts: string; local: string; history: { role: string; text: string }[]; snapshotRef?: OnlineCoachSnapshotRef }, ms = 30000): Promise<{ text: string; unverified?: true } | { error: string }> {
   // v86（R1.1 G04）：开关在这里再查一次——用户关掉联网后，任何调用方都不能再发出请求（不只靠界面判断）。
   if (!onlineSetting().on) return { error: '联网分析已关闭，已保留本地分析；没有上传数据' }
   const q = input.question.trim()
@@ -208,8 +208,10 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
     if(currentAthleteId()!==ownerAtRequest)return {error:'身份已变化，未显示其他账号的模型回答'}
     const latest=readAnalysis(analysisDayAtRequest,new Date().toISOString(),q)
     if(latest.revision!==verified.revision||contextAtRequest!==contextVersion())return {error:'模型等待期间训练或安全依据已变化，已保留本地回答'}
-    const check=guardR5Reply(j.text,verified.packet)
+    // NOTE (S1 fusion): this helper is not called by the UI any more (CoachOnlineRequest → online-session is).
+    // It keeps the v89.11.2 relaxed guard unchanged; online-session narrows the relaxation to "no active safety hold".
+    const check=guardOnlineReply(j.text,verified.packet)
     const why: Record<string, string> = { UNBOUND_NUMERIC_SOURCE: '含无来源数字', UNAUTHORIZED_WRITE_OR_CLEARANCE: '含未授权修改或解除限制', ACTIVE_HOLD_RELEASE: '安全限制未解除时给了放行', DIAGNOSIS_CLAIM: '含诊断结论' }
-    return check.ok?{text:j.text}:{error:`模型内容未通过核验（${check.errors.map(e => why[e] ?? e).join('、')}），已保留本地回答`}
+    return check.ok?(check.unverified?{text:j.text.slice(0,1000),unverified:true as const}:{text:j.text.slice(0,1000)}):{error:`模型内容未通过核验（${check.errors.map(e => why[e] ?? e).join('、')}），已保留本地回答`}
   } catch { return { error: ac.signal.aborted ? '联网超时，已保留本地回答' : '网络不可用，已保留本地回答' } } finally { clearTimeout(t) }
 }
