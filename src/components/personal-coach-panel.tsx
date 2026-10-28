@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { currentAthleteId } from "@/lib/core/events";
+import { useEffect, useState } from "react";
+import { currentAthleteId, onAppEvent, ATHLETE_SCOPE_CHANGED } from "@/lib/core/events";
 import { changePersonal, defaultPersonalProfile, personalStore } from "@/lib/coach/personal/host";
+import { personalDependencyLabels } from "@/lib/coach/personal/store";
 import {
   formatPersonalPlan,
   goalNames,
@@ -12,13 +13,23 @@ import {
 const control = "min-h-11 w-full rounded-card border border-line bg-bg px-2";
 const button =
   "min-h-11 rounded-card border border-line px-3 py-2 text-sm font-bold disabled:opacity-50";
+type ActiveReview = ReturnType<ReturnType<typeof personalStore>["reviewActive"]>;
+export function PersonalPlanReview({ review }: { review: ActiveReview }) {
+  if (review.status === "EMPTY" || review.status === "FRESH") return null;
+  return <section aria-label="方案依据复核" className="mt-3 rounded-card border border-line p-3">
+    <p role="status">原方案保留，待复核：{review.status === "UNKNOWN" ? "原依据缺失或来源暂不可读取" : review.changed.map(key => personalDependencyLabels[key]).join("、") + "已变化"}。尚未采用以下候选。</p>
+    {review.clarification && <p>{review.clarification}</p>}
+    {review.candidate && <details><summary className="min-h-11 cursor-pointer py-2">条件性刷新候选（未采用）</summary><pre className="whitespace-pre-wrap break-words font-sans text-sm">{formatPersonalPlan(review.candidate)}</pre></details>}
+  </section>;
+}
 export function PersonalCoachPanel() {
   const [profile, setProfile] = useState<PersonalProfile | null>(null),
     [plan, setPlan] = useState<PersonalPlan | null>(null),
     [token, setToken] = useState<string | null>(null),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
-    [reduction, setReduction] = useState(false);
+    [reduction, setReduction] = useState(false),
+    [review, setReview] = useState<ActiveReview | null>(null);
   const [feedback, setFeedback] = useState<Omit<Feedback, "planVersion">>({
     completedSessions: 0,
     effort: "OK",
@@ -28,6 +39,30 @@ export function PersonalCoachPanel() {
     completeWeightWindows: false,
   });
   const [loadedOwner, setLoadedOwner] = useState<string | null>(null);
+  useEffect(() => {
+    if (!loadedOwner) return;
+    const refresh = () => {
+      if (loadedOwner !== currentAthleteId()) {
+        setProfile(null); setPlan(null); setToken(null); setReview(null); setReduction(false);
+        setMessage("用户已切换，请重新读取当前目标。"); return;
+      }
+      try {
+        const store = personalStore(), next = store.reviewActive();
+        setReview(next);
+        if (token && store.reviewProposal(token).status !== "FRESH") {
+          setToken(null); setPlan(store.read().active); setReduction(false);
+          setMessage("草案依据已变化或无法读取，请重新预览；原方案保留。");
+        } else if (!token) setPlan(store.read().active);
+      } catch {
+        setToken(null); setReduction(false); setPlan(null);
+        setMessage("方案依据无法读取，请核对存储后重新读取；未改动原方案。");
+      }
+    };
+    const events = ["fk-food-changed", "fk-health-changed", "fk-training-corrected", "fk-schedule-changed", "fk-profile-changed", "fk-personal-profile-changed", ATHLETE_SCOPE_CHANGED, "storage"];
+    events.forEach(event => window.addEventListener(event, refresh));
+    const off = onAppEvent(refresh);
+    return () => { events.forEach(event => window.removeEventListener(event, refresh)); off(); };
+  }, [loadedOwner, token]);
   const edit = (next: PersonalProfile) => {
     setProfile(next);
     setPlan(null);
@@ -57,6 +92,7 @@ export function PersonalCoachPanel() {
       setLoadedOwner(owner);
       setProfile(s.profile ?? defaultPersonalProfile(owner));
       setPlan(s.active);
+      setReview(personalStore().reviewActive());
       setToken(null);
       setReduction(false);
       setMessage(
@@ -89,7 +125,25 @@ export function PersonalCoachPanel() {
       setPlan(active);
       setToken(null);
       setReduction(false);
+      setReview(personalStore().reviewActive());
       setMessage("已保存为本机私人教练方案。未写入原训练日程；未知器械重量仍需试练。");
+    });
+  }
+  async function refreshCandidate() {
+    await act(async () => {
+      const proposal = await changePersonal(store => store.prepare());
+      if (!proposal) throw Error("请先核对个人条件");
+      setPlan(proposal.plan); setToken(proposal.token); setReduction(false);
+      setMessage("按当前可读资料生成刷新候选；核对后可确认采用，也可拒绝并保留原方案。");
+    });
+  }
+  async function reject() {
+    if (!token) return;
+    await act(async () => {
+      await changePersonal(store => store.reject(token));
+      const store = personalStore();
+      setPlan(store.read().active); setToken(null); setReduction(false); setReview(store.reviewActive());
+      setMessage("已拒绝候选，原已采用方案保留；尚未核实的新依据仍需复核。");
     });
   }
   async function recordFeedback() {
@@ -258,8 +312,10 @@ export function PersonalCoachPanel() {
       )}
       {plan && (
         <div className="mt-3">
+          {!token && review && <PersonalPlanReview review={review} />}
+          {!token && review && ["STALE", "UNKNOWN"].includes(review.status) && <button className={button} disabled={busy} onClick={() => void refreshCandidate()}>查看刷新候选</button>}
           <p className="mb-2 text-sm font-bold">
-            {token ? "待核对草案" : "已采用方案记录（使用前复核当天状态）"}
+            {token ? "待核对草案" : review?.status === "STALE" || review?.status === "UNKNOWN" ? "已采用的历史方案（待复核，不代表当前建议）" : "已采用方案记录（使用前复核当天状态）"}
           </p>
           <pre className="whitespace-pre-wrap break-words font-sans text-sm">
             {token
@@ -270,13 +326,16 @@ export function PersonalCoachPanel() {
                 )}
           </pre>
           {token && (
+            <>
             <button className={button} disabled={busy} onClick={() => void confirm()}>
               已核对，确认采用此版本
             </button>
+            <button className={button} disabled={busy} onClick={() => void reject()}>拒绝此候选，保留原方案</button>
+            </>
           )}
           {!token && (
             <fieldset disabled={busy} className="mt-4 space-y-2">
-              <legend className="font-bold">当前版本执行反馈</legend>
+              <legend className="font-bold">已采用版本的执行反馈</legend>
               <label className="block text-sm">
                 实际完成力量次数
                 <input

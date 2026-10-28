@@ -13,12 +13,42 @@ import {
   type CycleInput,
   type CyclePhase,
   type CycleSession,
+  type CycleEventFocus,
+  type CyclePhaseReview,
+  type CycleConditionCheck,
+  type CycleConditionState,
+  type CycleCourseFit,
 } from "./types";
 const distanceFamily = (meters: number | null) =>
   meters === null ? "GENERAL" : meters <= 400 ? "SPRINT" : meters <= 1500 ? "MIDDLE" : "DISTANCE";
 const daysBetween = (a: string, b: string) =>
   Math.round((Date.parse(b + "T12:00:00Z") - Date.parse(a + "T12:00:00Z")) / 86400000);
 const keyCourse = (e: ScheduleEntry) => e.intensity === "HARD" || e.lowerHeavy;
+/** Event-specific output structure from the approved specification; no dose or race prediction. */
+function describeEventFocus(eventMeters: number | null): CycleEventFocus {
+  const specific: Record<number, Omit<CycleEventFocus, "eventMeters">> = {
+    400: { objective: "400米专项速度、技术与恢复条件", evidenceNeeds: ["同结构分段、轮次与实际恢复方式", "完整测试的完成质量与技术观察来源"], limitation: "末段冲刺不能推断完整比赛能力；普通慢跑不等于最大速度证据" },
+    800: { objective: "800米速度与专项耐力两类目标及比赛时间线", evidenceNeeds: ["速度课与专项耐力课各自的目的、分段和恢复", "同协议可比测试及跑力冲突"], limitation: "不能直接套400米或长跑课表；缺可比测试时相关能力未知" },
+    1500: { objective: "1500米专项节奏、速度与耐力分别核对", evidenceNeeds: ["同结构节奏课的分段、恢复和完成质量", "比赛或最大努力测试的独立记录"], limitation: "训练均速不能直接作为比赛配速或最大能力" },
+    3000: { objective: "3000米比赛准备、速度与耐力任务", evidenceNeeds: ["近期同结构可比训练及比赛日期", "各段目的、实际质量与恢复条件"], limitation: "单次间歇或另一项目成绩不能直接给出确定赛速" },
+    5000: { objective: "5000米可比耐力表现、节奏任务与可用时间", evidenceNeeds: ["近期同条件耐力表现与目标比赛", "当前可用时间、课型和实际完成"], limitation: "历史PB不直接代表当前状态，不由目标倒推处方配速" },
+    10000: { objective: "10000米专项耐力、节奏、已承受暴露与补给条件", evidenceNeeds: ["赛事时间与近期可比耐力暴露", "已完成课程、后续反应和补给可用条件"], limitation: "不机械设定周跑量；5公里成绩不等于真实10公里能力" },
+  };
+  return { eventMeters, ...(eventMeters !== null && specific[eventMeters] ? specific[eventMeters] : eventMeters !== null && eventMeters > 1500
+    ? { objective: "其他长跑的目标赛事、可用时间与近期可比耐力暴露", evidenceNeeds: ["该目标赛事的独立要求", "关键课、实际耐力暴露与恢复"], limitation: "不用中短跑指标替代耐力基础，不套用其他项目的实测能力" }
+    : { objective: "已确认目标下的一般体能与熟悉动作", evidenceNeeds: ["明确项目与任务目的", "本人实际课程与完成质量"], limitation: "项目未确认或未有专用输出结构，专项能力与处方仍需核对" }) };
+}
+/** A transparent retrieval order over familiar labels/structures, not a dose model or
+ * evidence that the selected course is optimal for the event. Transfer stays conditional. */
+const eventRetrieval: Record<number, { order: string[]; why: string; gap: string }> = {
+  400: { order: ["REPETITION_SPEED:REPEATED", "HILL:REPEATED", "INTERVAL:REPEATED"], why: "先核对速度重复中的每段质量和实际恢复", gap: "尚需完整专项表现及技术观察；短段质量不证明全程能力" },
+  800: { order: ["INTERVAL:REPEATED", "REPETITION_SPEED:REPEATED", "TEMPO_THRESHOLD:REPEATED"], why: "从分段及间歇核对专项耐力任务，并另看速度储备", gap: "单节间歇不能同时证明速度与耐力；仍需独立速度任务和比赛条件对照" },
+  1500: { order: ["TEMPO_THRESHOLD:REPEATED", "INTERVAL:REPEATED", "REPETITION_SPEED:REPEATED"], why: "先查看可分段复核的节奏任务，再分别核对速度和耐力", gap: "分段节奏向连续比赛的迁移未验证；独立速度和耐力证据仍需核对" },
+  3000: { order: ["INTERVAL:REPEATED", "TEMPO_THRESHOLD:CONTINUOUS", "TEMPO_THRESHOLD:REPEATED"], why: "用同结构间歇观察比赛准备中的执行一致性，再核对连续耐力", gap: "间歇完成不能给出确定赛速；还需连续耐力表现与赛事时间线" },
+  5000: { order: ["TEMPO_THRESHOLD:CONTINUOUS", "INTERVAL:REPEATED", "LONG:CONTINUOUS"], why: "先查看连续节奏的已完成表现与可用训练时间", gap: "连续节奏不等于当前比赛能力；需近期同条件耐力表现，历史PB不能替代" },
+  10000: { order: ["LONG:CONTINUOUS", "TEMPO_THRESHOLD:CONTINUOUS", "INTERVAL:REPEATED"], why: "先核对已标为耐力暴露的连续课及后续恢复，再讨论节奏与补给", gap: "LONG标签不证明距离足够或补给可行；需该赛事暴露与进食条件，不能由5公里成绩推定" },
+};
+const conditionLabels: Record<CycleConditionState, string> = { SATISFIED: "已满足记录条件", UNKNOWN: "待核对", CONTRADICTED: "现有证据不支持" };
 export function cycleBasis(input: CycleInput) {
   return analysisDigest([
     input.snapshot.context.athleteId,
@@ -50,6 +80,7 @@ export function buildCycleDraft(input: CycleInput) {
   if (g.athleteId !== owner) throw Error("周期目标不属于当前用户");
   const now = Date.parse(input.snapshot.context.asOf),
     family = distanceFamily(g.eventMeters),
+    eventFocus = describeEventFocus(g.eventMeters),
     start = addDays(weekOf(today)[0], 7),
     weeksLeft = g.raceDate ? Math.ceil((daysBetween(start, g.raceDate) + 1) / 7) : g.horizonWeeks;
   const weekCount = Math.min(g.horizonWeeks, Math.max(1, weeksLeft)),
@@ -109,14 +140,33 @@ export function buildCycleDraft(input: CycleInput) {
     familiar = actual.filter((e) =>
       e.modality === "run" ? !!e.runComponents?.length : !!e.exercises?.length,
     );
-  const familyPurpose =
-    family === "SPRINT"
-      ? "加速、速度技术与力量"
-      : family === "MIDDLE"
-        ? "速度储备、专项耐力与跑力协调"
-        : family === "DISTANCE"
-          ? "有氧耐力、节奏与补给练习"
-          : "一般体能与动作适应";
+  const familyPurpose = eventFocus.objective;
+  const courseFits = new Map<string, CycleCourseFit>();
+  for (const course of familiar.filter(course => course.modality === "run")) {
+    const components = course.runComponents?.filter(component => component.modality === "RUNNING") ?? [];
+    const component = components[0], facts = portrait.training.filter(fact => fact.modality === "RUN" && course.actual?.occurrenceIds?.includes(fact.occurrenceId));
+    const completed = facts.length > 0 && facts.every(fact => fact.runSegments.length > 0 && fact.runSegments.every(segment => segment.completion === "COMPLETED"));
+    const exactStructure = components.length === 1 && facts.length === 1 && components.every(component => {
+      if (component.structure.kind === "REPEATED") return supportsRepeatedCourse(component, facts);
+      const segment = facts[0].runSegments[0], structure = component.structure;
+      return facts[0].runSegments.length === 1 && segment?.kind === "CONTINUOUS" &&
+        structure.plannedDurationSeconds !== null && segment.durationSeconds === structure.plannedDurationSeconds &&
+        (structure.plannedDistanceMeters === null || segment.distanceM === structure.plannedDistanceMeters);
+    });
+    const evidenceState: CycleCourseFit["evidenceState"] = !facts.length ? "UNKNOWN" : completed && exactStructure ? "SUPPORTED_ACTUAL" : "INCOMPLETE";
+    const purpose = component?.purpose ?? "UNSPECIFIED", structure = component?.structure.kind ?? "UNKNOWN";
+    const policy = g.eventMeters === null ? undefined : eventRetrieval[g.eventMeters];
+    const index = policy?.order.indexOf(`${purpose}:${structure}`) ?? -1;
+    const gaps = [policy?.gap ?? eventFocus.limitation,
+      ...(index < 0 ? ["当前标签/结构未列入该项目的优先检索；保留为一般熟悉活动，专项迁移未知"] : []),
+      ...(evidenceState !== "SUPPORTED_ACTUAL" ? ["实际结构、完成或恢复记录尚不完整；不能仅凭原计划标签复制"] : []),
+    ];
+    courseFits.set(course.id, {
+      policy: "EVENT_RETRIEVAL_1", status: "CONDITIONAL_TRANSFER", evidenceState, sourceEntryId: course.id,
+      sourceRefs: facts.map(refOf), purpose, structure, rank: index < 0 ? 99 : index,
+      reason: `已存课目的${purpose}与实际结构${structure}：${policy?.why ?? "按熟悉任务核对"}。这是已有课程的检索顺序，不证明专项最佳或允许加量`, gaps,
+    });
+  }
   const phaseFor = (from: string, to: string, i: number): CyclePhase => {
     if (hold || (g.raceDate && g.raceDate < from)) return "REVIEW";
     if (g.raceDate && daysBetween(to, g.raceDate) < g.taperDays) return "TAPER";
@@ -135,12 +185,33 @@ export function buildCycleDraft(input: CycleInput) {
     TAPER: "减少执行量，保留熟悉节奏；不临时补课或引入新刺激",
     REVIEW: "暂停诱发症状的训练，先复核功能、限制与实际反馈",
   };
+  const phaseConditions: Record<CyclePhase, { entry: string; exit: string }> = {
+    BASE: { entry: "核对熟悉课程的实际剂量、可用时间与限制", exit: "有可核实的完成记录及后续反馈，再复核下一阶段" },
+    BUILD: { entry: "先核对既有课程可执行性及当前反馈，不由阶段名自动加量", exit: "核对目标时间线、同条件执行及反证，再决定维持或调整" },
+    SPECIFIC: { entry: "有目标专项的熟悉课程和同结构实际依据", exit: "按赛事安排及最新反应复核，不以训练均速证明目标已达成" },
+    TAPER: { entry: "已确认赛事日期与所选减量窗口，逐课核对熟悉剂量", exit: "比赛或日期变化后按实际结果重审，不把减量等同恢复完成" },
+    REVIEW: { entry: "明确当前限制或已过期赛事的来源及影响范围", exit: "相应限制经既有流程复核、目标日期核对后再生成候选" },
+  };
   const proposedKeyDates:string[]=[];
   const weeks = Array.from({ length: weekCount }, (_, index) => {
     const from = addDays(start, index * 7),
       to = addDays(from, 6),
       phase = phaseFor(from, to, index),
       sessions: CycleSession[] = [];
+    const phaseReview: CyclePhaseReview = {
+      status: "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+      selectionReason: hold ? "现有有效限制触发复核"
+        : g.raceDate && g.raceDate < from ? "赛事已过期或已在本周，后续只复核，不补造备赛期"
+        : !g.raceDate ? "赛期未知：滚动窗口的暂定阶段，不能证明身体已进入该阶段"
+        : phase === "TAPER" ? `按已确认赛期与${g.taperDays}天窗口暂列赛前阶段`
+        : "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+      entryConditions: [phaseConditions[phase].entry, "本人、目标及来源版本仍一致；课程变更仍需确认"],
+      exitConditions: [phaseConditions[phase].exit, "新疼痛、功能变化、目标或来源更正时重新评估"],
+      reviewAt: to,
+      entryState: "UNKNOWN",
+      entryChecks: [],
+      exitChecks: [],
+    };
     const existing = entries.filter(
       (e) =>
         e.date >= from &&
@@ -178,7 +249,16 @@ export function buildCycleDraft(input: CycleInput) {
         if (keyCourse(e)) return 2;
         return 3;
       };
-      return rank(a) - rank(b) || b.date.localeCompare(a.date) || a.id.localeCompare(b.id);
+      const phaseRank = rank(a) - rank(b);
+      if ((phase === "BASE" || phase === "REVIEW") && phaseRank) return phaseRank;
+      if (a.modality === "run" && b.modality === "run") {
+        const af = courseFits.get(a.id), bf = courseFits.get(b.id);
+        const evidenceOrder = Number(af?.evidenceState !== "SUPPORTED_ACTUAL") - Number(bf?.evidenceState !== "SUPPORTED_ACTUAL");
+        if (evidenceOrder) return evidenceOrder;
+        const eventOrder = (af?.rank ?? 99) - (bf?.rank ?? 99);
+        if (eventOrder) return eventOrder;
+      }
+      return phaseRank || b.date.localeCompare(a.date) || a.id.localeCompare(b.id);
     });
     const used = new Set<string>();
     const counts={run:existing.filter(e=>e.modality==='run').length,strength:existing.filter(e=>e.modality==='strength').length};
@@ -279,6 +359,9 @@ export function buildCycleDraft(input: CycleInput) {
       if (after.modality === "run") {
         const dose = plannedRunDose(after);
         const runFacts=portrait.training.filter(t=>t.modality==='RUN'&&refs.some(r=>r.id===t.id));
+        if (after.runComponents?.some(component => component.modality === "RUNNING" && component.structure.kind === "CONTINUOUS") &&
+          runFacts.some(fact => fact.runSegments.some(segment => segment.kind === "REPETITION")))
+          missing.push("实际为重复分段，不能由相同总量复制为原计划的连续跑");
         if(after.runComponents?.some(c=>c.modality==='RUNNING'&&!supportsRepeatedCourse(c,runFacts)))
           missing.push('间歇原计划缺少逐段、轮次和实际间歇的一致证据，不能从总跑量复制');
         const pure = refs.length
@@ -372,7 +455,7 @@ export function buildCycleDraft(input: CycleInput) {
       const responseGroup=portrait.adaptive.groups.find(group=>group.trainingRefs.some(r=>refs.some(ref=>ref.id===r.id&&ref.revision===r.revision)));
       const feedbackReduction=after.modality==='strength'&&responseGroup?.state==='REVIEW_DOSE';
       const strengthReviewWeek=after.modality==='strength'&&index===3&&phase!=='TAPER';
-      if ((feedbackReduction||strengthReviewWeek)&&changedVariable==='NONE') {
+      if (feedbackReduction&&changedVariable==='NONE') {
         if(after.exercises?.some(e=>Number(e.sets)>1)) {
           after.exercises=after.exercises.map(e=>({...e,sets:String(Math.max(1,Number(e.sets)-1))}));
           changedVariable='SETS';
@@ -502,13 +585,14 @@ export function buildCycleDraft(input: CycleInput) {
       sessions.push({
         date: day,
         purpose: `${phaseLabels[phase]}：${priorityLabels[g.priority]}`,
-        reason: phasePurposes[phase] + (feedbackReduction?'；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况':strengthReviewWeek?'；第四周力量复核：候选每动作减一组，非固定生理恢复周期':'') + (isProgression ? "；候选增时仍需逐周确认，不自动累加" : ""),
+        reason: phasePurposes[phase] + (courseFits.has(seed.id) ? `；${courseFits.get(seed.id)!.reason}；迁移待核对：${courseFits.get(seed.id)!.gaps.join("；")}` : "") + (feedbackReduction?'；同协议重复症状反馈：只减一组候选，负重次数保持，复核症状及完成情况':strengthReviewWeek?'；第四周仅提醒复核：暂维持已记录组数；若同协议重复反馈提示执行困难，再预览减组或替代候选，正式变更仍需确认':'') + (isProgression ? "；候选增时仍需逐周确认，不自动累加" : ""),
         observation: "记录实际剂量、RPE与次日疼痛/功能；一次成功不等于长期耐受",
         withdrawWhen: "疼痛/功能变化、执行困难、目标或来源更正时撤回并重算",
         candidate,
         before: null,
         sourceRefs: refs,
         sourceEntryIds: [seed.id],
+        ...(courseFits.has(seed.id) ? { eventFit: courseFits.get(seed.id) } : {}),
         sourceCourses: [
           { date: seed.date, title: seed.title, minutes: seed.actual?.minutes ?? null },
         ],
@@ -516,13 +600,37 @@ export function buildCycleDraft(input: CycleInput) {
         changedVariable,
       });
     }
+    const familiarRefs = [...new Map(familiar.flatMap(course => portrait.training.filter(fact => course.actual?.occurrenceIds?.includes(fact.occurrenceId)).map(refOf)).map(ref => [ref.id + "@" + ref.revision, ref])).values()];
+    const selectedRefs = sessions.flatMap(session => session.sourceRefs);
+    const relevantRefs = selectedRefs.length ? selectedRefs : familiarRefs;
+    const responseGroups = portrait.adaptive.groups.filter(group => group.trainingRefs.some(ref => relevantRefs.some(current => current.id === ref.id && current.revision === ref.revision)));
+    const responseState: CycleConditionState = responseGroups.some(group => group.state === "REVIEW_DOSE") ? "CONTRADICTED"
+      : responseGroups.length > 0 && responseGroups.every(group => group.state === "OBSERVED_TOLERANCE") && relevantRefs.every(ref => responseGroups.some(group => group.trainingRefs.some(current => current.id === ref.id && current.revision === ref.revision))) ? "SATISFIED" : "UNKNOWN";
+    const hasActual = familiar.some(course => course.modality === "run" ? courseFits.get(course.id)?.evidenceState === "SUPPORTED_ACTUAL" : portrait.training.some(fact => course.actual?.occurrenceIds?.includes(fact.occurrenceId) && fact.modality === "STRENGTH" && fact.strengthSets.some(set => set.completion === "COMPLETED")));
+    const openDates = weekOf(from).filter(day => allowed.has(new Date(day + "T12:00:00Z").getUTCDay()) && !existing.some(entry => entry.date === day) && (!g.raceDate || day < g.raceDate));
+    const calendarState: CycleConditionState = !days.length || limit === null || existingUnknown ? "UNKNOWN" : openDates.length ? "SATISFIED" : "CONTRADICTED";
+    const check = (id: string, label: string, state: CycleConditionState, reason: string, evidenceRefs: CycleConditionCheck["evidenceRefs"], sourceEntryIds: string[], sourceVersions: CycleConditionCheck["sourceVersions"]): CycleConditionCheck => ({ id, label, state, reason, evidenceRefs, sourceEntryIds, sourceVersions });
+    phaseReview.entryChecks = [
+      check("GOAL_DATE", "赛事日期", !g.raceDate ? "UNKNOWN" : g.raceDate < from ? "CONTRADICTED" : "SATISFIED", !g.raceDate ? "无已确认赛期，滚动安排不证明准备完成" : g.raceDate < from ? "赛期已过，需复核目标" : "有用户确认的未来赛期，仅满足日期资料条件", [], [], [{ source: "cycle-goal", version: String(g.revision) }]),
+      check("RESTRICTIONS", "现行限制", hold ? "CONTRADICTED" : input.recovery.safetyState === "UNKNOWN" ? "UNKNOWN" : "SATISFIED", hold ? "存在独立有效限制；阶段日历不能覆盖" : "仅表示当前限制资料状态，不是医学放行", input.snapshot.safetyConstraints.flatMap(constraint => constraint.evidenceRefs), [], [{ source: "effective-training", version: input.training.version }, ...input.snapshot.safetyConstraints.map(constraint => ({ source: constraint.id, version: constraint.version }))]),
+      check("ACTUAL_COURSES", "熟悉课程实际完成", hasActual ? "SATISFIED" : "UNKNOWN", hasActual ? "存在可核实的已完成结构；只支持复用既有剂量，不代表阶段能力达标" : "缺少可核实完整结构，不用原计划代替实际完成", familiarRefs, familiar.map(course => course.id), []),
+      check("CALENDAR", "可用时间与日历", calendarState, calendarState === "SATISFIED" ? "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算" : calendarState === "CONTRADICTED" ? "当前窗口无可新增日期，原课表保留" : "时间、原课剂量或导入课表尚未完整核对", [], existing.map(entry => entry.id), [{ source: "calendar", version: input.calendarVersion }, { source: "training-conditions", version: input.training.version }]),
+      check("RESPONSE", "可比后续反馈", responseState, responseState === "CONTRADICTED" ? "既有同协议复核策略发现反复不利反馈，不能声称阶段条件已满足" : responseState === "SATISFIED" ? "既有策略仅支持已观察同剂量反应，不推广强度或自动加量" : "关联反馈、独立重复或无干扰对照不足，未知不作改善", [...new Map(responseGroups.flatMap(group => group.evidenceRefs).map(ref => [ref.id + "@" + ref.revision, ref])).values()], [], [{ source: "adaptive-review", version: portrait.adaptive.evidenceVersion }]),
+    ];
+    phaseReview.entryState = phaseReview.entryChecks.some(item => item.state === "CONTRADICTED") ? "CONTRADICTED" : phaseReview.entryChecks.some(item => item.state === "UNKNOWN") ? "UNKNOWN" : "SATISFIED";
+    phaseReview.exitChecks = [
+      check("WEEK_EXECUTION", "当周实际执行与复盘", "UNKNOWN", "未来周尚未发生，不能用计划或历史完成替代当周实际及反证", [], [], [{ source: "calendar", version: input.calendarVersion }]),
+      check("REASSESSMENT", "到期目标与限制复核", hold ? "CONTRADICTED" : "UNKNOWN", hold ? "现行限制仍有效，必须经对应流程复核" : "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段", input.snapshot.safetyConstraints.flatMap(constraint => constraint.evidenceRefs), [], [{ source: "cycle-goal", version: String(g.revision) }]),
+    ];
+    const conditionSummary = phaseReview.entryChecks.map(item => `${item.label}：${conditionLabels[item.state]}`).join("；");
     return {
       index,
       start: from,
       end: to,
       phase,
-      purpose: phasePurposes[phase],
-      strengthFocus: index===3?'复核周：熟悉动作减组候选，负重和次数不增加':index===0?'建立已完成剂量起点，记录逐组RIR及次日反馈':index===1?'重复同剂量观察可执行性，不自动加重量':'根据已发生反馈复核；无证据不增加组数或负重',
+      purpose: `${eventFocus.objective}。专项依据核对：${eventFocus.evidenceNeeds.join("；")}。${eventFocus.limitation}。${phasePurposes[phase]}。进入条件：${phaseReview.entryConditions[0]}；当前核对：${conditionSummary}；退出条件：${phaseReview.exitConditions[0]}，未来周执行待核对；${to}复核。${index > 0 ? "未来阶段为条件草案，不能直接确认。" : "本周仍需预览确认，不等于生理放行。"}`,
+      phaseReview,
+      strengthFocus: sessions.some(s=>s.candidate?.modality==='strength'&&s.changedVariable==='SETS')?'复核减组候选，逐课查看阶段或反馈依据；负重和次数保持，确认后才可变更':index===3?'复核周：没有支持调整的新反馈时维持已记录组数，补充逐组RIR及后续反应；不因周序号减组':index===0?'建立已完成剂量起点，记录逐组RIR及次日反馈':index===1?'重复同剂量观察可执行性，不自动加重量':'根据已发生反馈复核；无证据不增加组数或负重',
       doseBudget:{runSessions:modalityLimit.run,strengthSessions:modalityLimit.strength,runDistanceM:runDistanceLimit||null,strengthSets:strengthSetLimit||null},
       sessions,
       existingSessions: existing.map((e) => ({
@@ -542,6 +650,7 @@ export function buildCycleDraft(input: CycleInput) {
   });
   const unknowns = [
     ...portrait.unknowns,
+    ...(!portrait.performances.some(performance => performance.meters === g.eventMeters) ? [`${g.eventMeters ?? "目标"}米缺近期可核实专项成绩；${eventFocus.limitation}`] : []),
     ...(!days.length ? ["没有已确认的具体训练星期"] : []),
     ...(limit === null ? ["单次可用时间未知"] : []),
   ];
@@ -571,6 +680,8 @@ export function buildCycleDraft(input: CycleInput) {
     generatedAt: input.snapshot.context.asOf,
     start,
     family,
+    eventFocus,
+    eventSelectionReview: [...courseFits.values()],
     goal: g,
     portrait,
     weeks,

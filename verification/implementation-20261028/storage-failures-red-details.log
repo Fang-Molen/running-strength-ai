@@ -1,0 +1,55 @@
+✔ isBulkKey 只认日内样本家族和已确认训练导入 (2.243121ms)
+✖ B05: both persistent stores failing must reject flush instead of reporting success (8.152481ms)
+✖ B07: a persisted deletion broadcast evicts the old bulk cache (311.192258ms)
+✔ 迁移成功：先备份原值，读回一致才删旧键，之后读写走大块层，localStorage 不再占空间 (14.487844ms)
+✔ 迁移失败（IndexedDB 写不进）：旧键原样保留并继续在 localStorage 里工作 (6.033697ms)
+✔ 迁移读回不一致：不删旧键 (12.075448ms)
+✔ IndexedDB 不可用且没迁移过：保持原样（OFF），读写 localStorage (1.636662ms)
+✔ 已迁移过但这次 IndexedDB 打不开：降级——读为空、写入被拒绝，绝不覆盖 (1.921864ms)
+✔ 超时保护：已迁移用户进入降级，未迁移用户不变 (0.236849ms)
+✔ 第二次启动：从 IndexedDB 加载；日内样本读写正常并落盘 (15.736313ms)
+✔ localStorage 里又出现了同名键（降级期间写的）比 IndexedDB 新：以它为准，IndexedDB 旧值也先备份 (16.80608ms)
+✔ 配额模拟：localStorage 已塞满时迁移腾出空间，日程保存成功（原版失败） (1049.358954ms)
+✔ 通用于所有手表来源：Garmin / COROS / 其他型号的键同样迁移，且互相隔离、不混 (30.121968ms)
+✔ S1 融合：v89.11.13 写入的 IndexedDB 数据在合入 S1 在线教练/R6 后仍能读，原始训练记录逐字不变 (1235.070504ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 12
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2711.824047
+
+✖ failing tests:
+
+test at src/lib/core/bulk-store.test.ts:103:1
+✖ B05: both persistent stores failing must reject flush instead of reporting success (8.152481ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/bulk-store.test.ts:110:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /PERSIST_FAILED/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/lib/core/bulk-store.test.ts:114:1
+✖ B07: a persisted deletion broadcast evicts the old bulk cache (311.192258ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'old' !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/bulk-store.test.ts:134:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'old',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

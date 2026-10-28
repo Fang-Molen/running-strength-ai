@@ -1,0 +1,24 @@
+✔ strict closed schema validates every nested shape and never throws on unknown input (33.705118ms)
+✔ revision zero is a valid current host reference and novel hypothesis refs are checked (2.080945ms)
+✔ exact hostquotes survive, novel harmless prose remains explicitly unproven (1.168922ms)
+✔ derived facts require individual coverage and selected host values render canonically (2.280377ms)
+✔ all supplemental fields enforce numeric memory medical pain and causal boundaries (1.51005ms)
+✔ present HRV RHR history and occurrence cannot be falsely labeled missing (33.091358ms)
+✔ available training history is distinct from present measurements without old training (18.202451ms)
+✔ saved original E01 wrong154 is a numeric contradiction independently of old JSON schema (14.17866ms)
+✔ saved D04 omissions retain semantic audit despite old schema (11.050867ms)
+✔ legacy source-bound metric unit mismatch is separate from numeric matching (1.522508ms)
+✔ source alias mismatch has its own diagnostic and does not invent a contradiction (0.860404ms)
+✔ legacy labelled quantities keep dimensions and raw segment/rest roles separate (2.21604ms)
+✔ legacy nearest explicit metric prevents one paragraph binding RMSSD to RHR (1.838618ms)
+✔ legacy historical range sequence and raw segment times do not assert ambiguous contradictions (5.209138ms)
+✔ legacy missing claims distinguish absent dates and training fields from available metrics and training (6.506956ms)
+✔ legacy RHR-owned signed baseline difference is covered without crossing units metrics or sources (9.467296ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 157.299008

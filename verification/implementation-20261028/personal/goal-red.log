@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: a new weight-gain goal cannot silently reuse the previous fat-loss candidate
+not ok 1 - a new weight-gain goal cannot silently reuse the previous fat-loss candidate
+  ---
+  duration_ms: 40.525226
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:139:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /增重.*目标.*核对/. Input:
+    
+    '已采用的版本1保留为历史记录，待复核：目标已变化。以下为按当前可读资料重新评估的条件性候选，尚未采用；拒绝候选会保留原方案。\n' +
+      '私人教练草案 · 减脂 · 版本2\n' +
+      '饮食：起始估计 1530–1620 kcal/天。\n' +
+      '先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。\n' +
+      '蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。\n' +
+      '食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。\n' +
+      '热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。\n' +
+      '草案需核对后确认采用；采用仅保存私人教练方案，不等于写入原训练日程。\n' +
+      '饮食（2026-10-27）：截至分析时点未找到当日餐食记录；不等于未进食，全天记录完整性未知。\n' +
+      '近7天饮食（2026-10-21—2026-10-27）：未找到该范围餐食记录，不等于没有进食。\n' +
+      '截至 2026-10-27 未找到可用实测体重记录。'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    已采用的版本1保留为历史记录，待复核：目标已变化。以下为按当前可读资料重新评估的条件性候选，尚未采用；拒绝候选会保留原方案。
+    私人教练草案 · 减脂 · 版本2
+    饮食：起始估计 1530–1620 kcal/天。
+    先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。
+    蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。
+    食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。
+    热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。
+    草案需核对后确认采用；采用仅保存私人教练方案，不等于写入原训练日程。
+    饮食（2026-10-27）：截至分析时点未找到当日餐食记录；不等于未进食，全天记录完整性未知。
+    近7天饮食（2026-10-21—2026-10-27）：未找到该范围餐食记录，不等于没有进食。
+    截至 2026-10-27 未找到可用实测体重记录。
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:144:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1562.911686

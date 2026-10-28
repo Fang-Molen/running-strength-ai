@@ -38,12 +38,11 @@ test("first render does not depend on browser training and day records", () => {
     assert.equal(renderToString(<StrengthApp />), serverApp)
     assert.match(serverHtml, /今天还没有跑步记录/)
     assert.match(serverApp, /data-ready="false"/)
-    assert.match(serverApp, /aria-label="本周训练"/) // 首屏保留训练框架；有无测试计划都不读取浏览器个人记录。
+    assert.match(serverApp, /正在读取本地训练记录/) // 启动闸口完成前不读取或展示个人记录。
     assert.doesNotMatch(serverApp, /70\.5/)
     assert.doesNotMatch(serverApp, /米饭/)
     assert.doesNotMatch(serverApp, /已保存的推进课/)
     assert.doesNotMatch(serverApp, /7\.5 小时/)
-    assert.match(serverApp, /role="tablist" aria-label="本周"/)
   } finally {
     if (previous === undefined) delete (globalThis as { localStorage?: Storage }).localStorage
     else Object.defineProperty(globalThis, "localStorage", { configurable: true, value: previous })

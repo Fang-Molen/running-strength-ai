@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "task": "Read-only audit of implementation Tasks 3–5",
+  "date": "2026-10-28",
+  "scope": {
+    "repository": "/workspace/fangkun-20261028",
+    "instructionsRead": ["AGENTS.md", "docs/implementation-20261028/implementation-plan.md", "docs/implementation-20261028/full-specification.txt (especially D01–D09, H04–H05, online-concurrency and acceptance sections)"],
+    "productionCodeModified": false,
+    "networkUsed": false,
+    "databaseOpened": false,
+    "paidModelCalled": false,
+    "realUserDataRead": false,
+    "uiExecuted": false,
+    "evidenceLimits": "Source inspection plus deterministic module calls using a synthetic Map store and blocked outbound I/O. UI routing is established from coach-sheet.send source; browser interaction and SQL migration execution remain for implementation verification."
+  },
+  "findings": [
+    {
+      "id": "ONLINE-AUDIT-01",
+      "tasks": [3],
+      "source": ["src/lib/coach/r5/intents.ts:18 currentMessageSafety", "src/lib/coach/r5/intents.ts:51 parseR5Intent", "src/components/coach-sheet.tsx:358 send"],
+      "problem": "The R5 command parser runs before general conversation and returns early for symptom/clarification. Its separate keyword negation and region extraction disagree with detectRedFlags.",
+      "reproduced": [
+        {"input": "我没有腿疼，解释一下RPE", "r5": "CLARIFY: 哪个部位、哪一侧不舒服", "redFlags": "NONE"},
+        {"input": "我没有小腿疼，解释一下RPE", "r5": "SYMPTOM / PAIN / 小腿", "redFlags": "NONE"},
+        {"input": "不是没有腿疼", "r5": "CLARIFY: no region recognized", "redFlags": "MEDICAL_REVIEW / PAIN"},
+        {"input": "没有胸痛但腿正在疼", "r5": "SYMPTOM / PAIN / 胸", "redFlags": "NONE"}
+      ],
+      "minimumChange": "Extract clause-scoped symptom mentions once through the existing redflag/context and coach-red-flags modules, including subject, temporal scope, assertion polarity, symptom region and matched evidence. Reuse that result in R5 parsing and conversation routing. Preserve command preview/confirmation; mixed knowledge questions must retain their answerable portion instead of returning only a symptom card. Bare 腿 and 正在疼 must be recognized without capturing a denied 胸痛."
+    },
+    {
+      "id": "ONLINE-AUDIT-02",
+      "tasks": [3],
+      "source": ["src/safety/redflag/context.ts:contextClauses", "src/lib/core/coach-red-flags.ts:SYMPTOM_DIMENSIONS", "src/lib/core/coach-red-flags.ts:detectRedFlags", "src/lib/health/analysis-host.ts:readAnalysis"],
+      "problem": "The clause splitter only splits 但 before a narrow set of words, the pain expression misses 正在, subject is global for the whole question, and every non-NONE question flag becomes a self analysis safety constraint. ENERGY includes 控体重/控制体重 as standalone risk evidence.",
+      "reproduced": [
+        {"input": "朋友小腿疼，我没有不舒服，解释一下RPE", "result": "OTHER / MEDICAL_REVIEW / PAIN; selectDeepSeekRoute returns LOCAL"},
+        {"input": "如何合理控制体重", "result": "MEDICAL_REVIEW / ENERGY; currentMessageSafety even emits pain-specific warning; selectDeepSeekRoute returns LOCAL"}
+      ],
+      "minimumChange": "Keep severe and dangerous-energy evidence rules, but classify ordinary weight goals separately and only attach current self-asserted symptoms to personal restriction state. Third-party emergency help can remain available without treating the report as this athlete's health fact. Add per-clause subject changes and contrast boundaries; do not remove ENERGY wholesale."
+    },
+    {
+      "id": "ONLINE-AUDIT-03",
+      "tasks": [3, 4],
+      "source": ["src/lib/coach/r5/host.ts:74 readR5Context", "src/lib/coach/loop/effective-training.ts:69 restrictions", "src/lib/health/symptom-review.ts:reviewSymptoms", "src/lib/health/analysis-host.ts:readAnalysis", "src/lib/coach/online-session.ts:prepareOnlineExplanation"],
+      "problem": "Any nonempty profile.limit creates a hold at both R5 and effective-training layers. The online preparer throws for HOLD_ACTIVE/ESCALATION_REQUIRED regardless of task. reviewSymptoms retains old active evidence correctly but groups only the selected window, leaving old restrictions without visible source/date/region metadata.",
+      "reproduced": [
+        {"limit": "", "hold": false, "analysisState": "UNKNOWN", "online": "prepared"},
+        {"limit": "无", "hold": true, "analysisState": "HOLD_ACTIVE", "online": "throws global safety error"},
+        {"limit": "没有不舒服", "hold": true, "analysisState": "HOLD_ACTIVE", "online": "throws global safety error"},
+        {"symptomDate": "2026-09-01", "queryDate": "2026-10-28", "spanDays": 14, "result": "groups=[] and HOLD_ACTIVE; constraint only exposes id/version/scope/evidenceRefs"}
+      ],
+      "minimumChange": "Use one interpretation for legacy limit text in effective-training and R5: empty UNKNOWN, pure absence NONE_EXPLICIT, affirmative ACTIVE, ambiguity REVIEW_PENDING. Preserve original field/history; absence never resolves an independent symptom. Extend existing safetyConstraints with source date, region/actions, status and review reference. Let task permission decide whether a candidate conflicts; general knowledge remains allowed with active restrictions. UNKNOWN must not be conflated with an active hold."
+    },
+    {
+      "id": "ONLINE-AUDIT-04",
+      "tasks": [4],
+      "source": ["src/components/coach-sheet.tsx:358 send", "src/components/coach-sheet.tsx:487 redFlag", "src/components/coach-sheet.tsx:509 setOnlineRequest", "src/components/coach-online-request.tsx:CoachOnlineRequest", "src/lib/coach/deepseek-policy.ts:selectDeepSeekRoute", "server/coach-deepseek/coach-chat.controller.js:urgentSafety and pain routing"],
+      "problem": "The UI still requires prepare plus per-turn consent buttons. send clears the singleton onlineRequest, so a new question unmounts and cancels the prior online request. Global redFlag and keepLocal suppress online; server selectDeepSeekRoute also treats any red flag/local capability as LOCAL. Controller independently short-circuits any pain or medicalReferral to LOCAL. Fixing only the visible buttons cannot establish the required online main path.",
+      "minimumChange": "Make the existing online-session path the automatic request runner after accepted send. Use immutable request IDs and a keyed collection of active requests/results, not question text as component key or a singleton question. Keep explicit formal-write proposals distinct. Reuse task-scoped safety on both sides and allow normal knowledge/explanation requests despite available local fallback. Retain immediate safety text, but do not let it erase safe requested content."
+    },
+    {
+      "id": "ONLINE-AUDIT-05",
+      "tasks": [4],
+      "source": ["src/lib/ui/online-preferences.ts:savedOnlineChoices", "src/lib/coach/online-coach.ts:34 onlineSetting", "src/lib/ui/online-features.ts:onlineFeatures and setOnlineFeature"],
+      "problem": "Default-on and legacy OFF preservation are already implemented. These local keys are not a server authorization and cannot prove consent for an arbitrary authenticated user. setOnline currently ignores storage errors.",
+      "minimumChange": "Reuse savedOnlineChoices precedence and explicit-OFF behavior; do not reset keys. Add versioned disclosure/persistent consent after the real server subject is bound, recording the existing authorized product purpose. Keep a persistent revocation/off marker and surface failed persistence rather than claiming durable OFF. Never promote every legacy consent row or local consentAt to permission for another subject."
+    },
+    {
+      "id": "ONLINE-AUDIT-06",
+      "tasks": [4],
+      "source": ["server/coach-deepseek/coach-snapshot-store.server.ts:createCoachSnapshotStore", "migrations/coach/002_coach_snapshots.sql", "server/coach-deepseek/coach-http.server.ts:handleCoachHttpRequest", "server/coach-deepseek/lib/coach-request-boundary.ts:assertSnapshotBinding"],
+      "problem": "Every snapshot allocates a new consent and random sourceVersion, then updates the owner's sole source_version. load requires equality, so the second snapshot invalidates the first even with identical data. consent_id is UNIQUE. revoke(snapshot) revokes consent. Current consent and snapshot both expire after ten minutes.",
+      "minimumChange": "Version the existing store: persistent consent can own many short-lived immutable snapshots; snapshot-specific revocation is separate. Snapshot ID/content hash do not mutate fact revision watermarks. Keep subject/purpose/question/expiry/source ownership checks. Preserve the server pre-dispatch and post-response authorization rechecks."
+    },
+    {
+      "id": "ONLINE-AUDIT-07",
+      "tasks": [4, 5],
+      "source": ["src/lib/coach/online-session.ts:context and fresh", "src/components/coach-online-request.tsx:invalidate", "src/components/coach-sheet.tsx:845 onAnswer", "src/lib/coach/online-coach.ts:askOnlineCoach"],
+      "problem": "The client sourceVersion hashes entire health/profile/schedule/food/cycle state, and the component cancels on every storage and domain event. Unrelated changes invalidate independent questions. Delivered online answers are stored as text without snapshot dependency metadata, so later corrections do not mark them stale.",
+      "minimumChange": "Store the actual selected EvidenceRef revisions plus only the used goal/plan/restriction versions and consent version on OnlinePreview and the existing coach message record. Stable-sort dependencies before hashing. Event listeners should recompute those dependencies and only cancel/stale affected requests. Identity/off/revocation always invalidate that subject's work. Revalidate before dispatch, before display and on later relevant updates. Preserve deletion tombstones and unavailable-source status; missing cannot silently compare equal to fresh."
+    },
+    {
+      "id": "ONLINE-AUDIT-08",
+      "tasks": [5],
+      "source": ["src/lib/coach/online-session.ts:selectCoachDeclarations", "src/lib/coach/online-contract.ts", "server/coach-deepseek/lib/coach-declarations.ts:parseCoachDeclarations and declarationCoachInput", "src/lib/health/analysis-host.ts:readAnalysis", "src/lib/health/analysis-packet.ts:buildCoachAnalysisPacket and analysisModelView", "src/lib/coach/online-coach.ts:buildFacts"],
+      "problem": "The real automatic candidate path still sends at most six MANUAL/APP scalar records from fourteen days. Server revalidates those same six records and builds rawInput with empty history/candidates/memory. Old buildFacts richness is not used. Existing health AnalysisFact already has owned revisions, run segments, strength sets and source protocol, and the existing model view already aliases those structures.",
+      "minimumChange": "Extend the current shared declaration contract with a schema-versioned, strictly whitelisted USER_DECLARED evidence selection reconstructed from existing health/coach projections; do not accept a client authority flag or executable analysisPacket. Select question-related facts/history/goal/confirmed-plan/food/recovery using existing readAnalysis, effective-profile/effective-training, history, online domain bridges and coach memory. Recompute derived values server-side through existing projection/packet helpers. Add coverage/omission/unknown metadata and per-domain budgets; do not merely increase six to another fixed number."
+    },
+    {
+      "id": "ONLINE-AUDIT-09",
+      "tasks": [5],
+      "source": ["src/lib/health/analysis-reply-validation.ts:medicalOrWrite and auditAnalysisContent", "src/lib/coach/r5/guard.ts:guardR5Reply and guardOnlineReply", "src/lib/coach/deepseek-grounding.ts:assertDeepSeekEvidenceQuotes and assertDeepSeekNumericGrounding", "server/coach-deepseek/coach-chat.controller.js:model prompt and response validation"],
+      "problem": "The general-causal regex rejects 引起/导致/造成 without claim classification. Strict guards reject all nonquoted numbers, while relaxed frontend rules waive both education and unsupported personal facts. Server numeric guards remain strict. The analysisPacket controller rejects NEEDS_SEMANTIC_REVIEW, so simply enabling that richer branch still rejects new explanatory prose.",
+      "reproduced": [
+        {"text": "力量训练会引起肌肉适应。", "strict": "WRITE_CLEARANCE_SAFETY_OR_CAUSAL_CLAIM", "relaxed": "same rejection"},
+        {"text": "RPE常见的CR10量表采用0到10。", "strict": "numeric rejection", "relaxed": "accepted, unverified"},
+        {"text": "你今天跑了5公里。", "strict": "numeric rejection", "relaxed": "accepted, unverified"},
+        {"text": "已经替你修改计划。", "strict": "UNAUTHORIZED_WRITE_OR_CLEARANCE", "relaxed": "same rejection"},
+        {"text": "没有修改计划。", "strict": "accepted", "relaxed": "accepted"}
+      ],
+      "minimumChange": "Introduce one pure versioned assertion classifier/validator shared by grounding, R5 online guard and analysis reply validation. Classify each relevant span as GENERAL_EDUCATION, PERSONAL_FACT, DERIVED_FACT, CONDITIONAL_CANDIDATE, PERSONAL_HYPOTHESIS, DIAGNOSIS, CLEARANCE, WRITE_CLAIM or SOURCE_CLAIM. Educational quantities/causal principles need no personal-history quote. Personal assertions retain exact source/revision/dimension/unit checks; computed values use host formulas; candidates stay conditional and respect scoped restrictions. Model labels are hints, not authority. Remove broad relaxed waivers only after this policy passes both-side tests. Keep professional correctness separate from format/fact checks; retain usable nonproblematic content when a bad span can be safely isolated."
+    },
+    {
+      "id": "ONLINE-AUDIT-10",
+      "tasks": [4, 5],
+      "source": ["src/lib/coach/online-service.ts:DecodedCoachAnswer and readCoachResponse", "src/lib/coach/online-session.ts:runOnlineExplanation", "src/components/coach-online-request.tsx:confirm", "server/coach-deepseek/coach-chat.controller.js:failure and settlement", "server/coach-deepseek/lib/coach-request-boundary.ts:assertVerifiedPolicy"],
+      "problem": "Responses collapse stage and dispatch/billing state into a string. Controller output rejection occurs after settlement, but error UI cannot distinguish not-sent from returned-and-billed. Snapshot DELETE failures are swallowed. Model success notices always claim fact/safety-format verification even when unverified=true. Policy validation hardcodes concurrency===1 and pilot/evaluation limits.",
+      "minimumChange": "Extend the existing response envelope with requestId/traceId, stage, code, dispatchState, ledgerState, assertionPolicyVersion, factValidation and professionalValidation; preserve them through readCoachResponse and message display. Set state at the real controller transitions. Track cleanup-pending rather than pretending revocation succeeded. Keep model and retrieval status distinct; no search implementation means retrieval NOT_REQUESTED and no invented links. Concurrent snapshot support must be tested separately from the real budget cap; do not silently remove or increase approved spend limits."
+    }
+  ],
+  "suggestedInterfaceChanges": {
+    "semanticResult": "Extend current redflag/R5 result with clause mentions {subject, temporal, polarity, symptom, region, evidence}, requested tasks and related restriction refs; keep legacy level/classes fields as a compatibility projection.",
+    "restriction": "Extend existing safetyConstraints with status, source/occurredAt/reviewAt, region/action scope and evidenceRefs; derive legacy profile.limit state through one shared normalizer and preserve original text/version.",
+    "consent": "Existing consent store becomes versioned {id, subjectId, athleteId, purpose, disclosureVersion, allowedCategories, serviceCategories, authorizationBasis, grantedAt, revokedAt, version}; lifetime independent from snapshot TTL.",
+    "preview": "Extend OnlinePreview with requestId, immutable selected-context snapshot, dependency manifest, coverage and assertion policy version. Content hash is distinct from data revision and authorization version.",
+    "freshness": "Compare only referenced source revisions/domain versions for the request, with UNKNOWN/UNREADABLE distinct from unchanged. General RPE explanations should not depend on food, goal, plan or unrelated health revisions; training candidates additionally depend on relevant restrictions.",
+    "wire": "Keep one same-origin online-session -> coach-snapshot -> coach-chat chain and existing authentication/ledger ports. Evolve online-contract.ts; server/lib/coach-declaration-contract.ts already re-exports it.",
+    "output": "One host-derived assertion classification and policyVersion used server/client; emit structured review results and call state, while exact factual values remain bound to existing evidence IDs/revisions. Store online answer dependency metadata on existing messages for subsequent invalidation."
+  },
+  "migrationConstraints": [
+    "Use a new numbered migration after 002; do not rewrite an already applied migration or run npm run build, which invokes db:migrate.",
+    "Drop only the snapshot consent_id unique constraint, preserve consent FK and subject/athlete bindings; add a nonunique lookup index and snapshot-specific revoked_at/content/version metadata.",
+    "Legacy snapshots/consents retain original expiry and revocation. Do not retroactively relabel expired per-turn consent as ongoing authorization; new persistent grants require the actual bound subject and existing authorized product basis.",
+    "Keep legacy payload reads schema-aware; load must combine current consent/snapshot revocation columns with immutable payload, not trust cached consent.revokedAt inside JSON.",
+    "Rollback to UNIQUE is unsafe once multiple snapshots share a consent. Supply a preflight that refuses lossy rollback, or a reviewed reversible conversion preserving all refs/audit history. Do not delete records to make rollback pass.",
+    "A client dependency hash is not server proof of latest facts. There is no general server fact-sync path in this chain. If dependency watermarks are added to the existing snapshot store, only actual authenticated revision/tombstone updates advance them; merely creating a snapshot must never advance a global generation. Unsynced edits must remain explicitly unknown to the server.",
+    "Client privacy preferences already preserve explicit OFF and corrupted-neighbor behavior. Migrate them additively and idempotently without toggling unrelated features or granting consent to another identity.",
+    "Store migration and rollback must later be exercised in isolated SQL with synthetic records. This audit was explicitly restricted from opening any database, so no migration execution is claimed."
+  ],
+  "verificationPerformed": [
+    {
+      "command": "FK_NO_TEST_PLAN=1 node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --input-type=module (inline synthetic Map-store reproductions)",
+      "exitCode": 0,
+      "result": "Confirmed parser/risk/limit/history and assertion mismatches listed above; no database or external service."
+    },
+    {
+      "command": "FK_NO_TEST_PLAN=1 node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test src/lib/coach/online-session.test.ts src/lib/coach/r5/guard-conversation.test.ts src/lib/ui/online-preferences.test.ts",
+      "exitCode": 0,
+      "result": "All 3 reported test files passed. Existing tests encode old per-turn consent/global guard behavior and therefore do not demonstrate the new requirements."
+    }
+  ],
+  "implementationTestStrategy": [
+    "UI send integration: two normal prompts auto-dispatch once each with no confirm buttons; identical prompt text still has distinct request IDs; submitting another question does not cancel the first. Test actual coach-sheet handler and controller, replacing only external identity/storage/ledger/provider/time dependencies.",
+    "Pairwise semantics: denied pain, double negation, denied chest plus asserted leg pain, friend versus self clauses, historical pain plus current absence, ordinary weight goal versus dangerous restriction, mixed emergency plus educational content. Assert created symptom records as well as answer/dispatch route.",
+    "Restrictions: pure absence limit does not create a hold; unknown stays unknown; unrelated RPE and reliably nonconflicting upper-body explanation survive old lower-leg restriction; affected running advice never clears it; source/date/review link remains visible even outside 14-day groups.",
+    "Persistent preferences/consent: preserve OFF after upgrade/restart, corrupted sibling settings, identity switches, one consent reused across several snapshots, single snapshot cleanup leaves consent and sibling snapshot usable, consent withdrawal blocks all related in-flight/new results.",
+    "Concurrency/dependencies: A and B snapshots with identical unchanged facts both readable; creating B changes no revision; actual revision/tombstone invalidates only dependent A; unrelated food change leaves knowledge answer current; unreadable source yields unknown/stale. Cover change before dispatch, between response and display, during cleanup, and after display.",
+    "Shared assertion table executed through both guards and full controller/frontend: general 一组/每周2次/CR10 and muscle-adaptation causality allowed; unsupported personal result, correct value attached to wrong source/dimension, 30分钟 -> 30秒, stale revisions, same-number dose masquerading as general example, confident personal diagnosis, clearance and affirmative write claims rejected/isolated; negated writes remain usable.",
+    "Context: older than fourteen days relevant owned history, run laps, strength sets, goal versus actual, confirmed plan versus execution, partial meals, related follow-up; exclude friend/foreign owner records and arbitrary identity/GPS text. Assert selected dependencies and coverage, not just final prompt length.",
+    "Call-state failure matrix: missing config, 401, expired/revoked snapshot, budget rejection, model dispatched then timeout, returned then output rejected, settlement failure, client rejection, cancellation and failed cleanup. Verify provider dispatch count and no automatic duplicate retries; model/retrieval/validation labels agree with actual outcomes.",
+    "Use existing server/coach-deepseek/coach-runtime.test.ts as the future isolated SQL/controller scaffold after authorized test scope permits it, but change old tests that intentionally expect all snapshots to invalidate or any historical pain to block the model. Keep its auth, owner, exact quote, source provenance and persistent-budget protection tests.",
+    "Run relevant test:r5, test:coach-qa, test:v84 and frontend no-migration build once implemented. Keep real identity, provider cost, deployed service, devices and professional rule review explicitly unverified."
+  ]
+}

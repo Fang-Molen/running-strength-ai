@@ -1,0 +1,23 @@
+✔ general education and third-person cases do not select personal records (23.172374ms)
+✔ relevant older history preserves actual run split and rest structure without claiming a recent window (3.938812ms)
+✔ strength dose preserves actual load basis, repetitions, completion and RIR (1.471031ms)
+✔ foreign, future, planned and conflicting training facts cannot become actual context (1.30637ms)
+✔ target and saved schedule remain distinct from measured performance (1.465803ms)
+✔ dependency fingerprint follows selected evidence, not clock, unrelated nutrition or foreign rows (2.890603ms)
+✔ context is bounded and truncated workout structure is explicitly unknown (43.104145ms)
+✔ nutrition entries retain completeness unknown, actual eating time unknown and no account/device identifiers (2.254879ms)
+✔ personal data requests and broad generic exercise questions are separated (1.076291ms)
+✔ different questions sharing unchanged records do not share a conflicting selection version key (1.682471ms)
+✔ date-only body measurement does not fabricate a measurement instant (0.637567ms)
+✔ real frontend contexts pass the shared server boundary, including response protocols and maximum coverage (20.37964ms)
+✔ unrelated profile edit does not change a selected goal field revision (2.04417ms)
+✔ large structured context fits real quoted provider-input budget, not only snapshot-body budget (25.779883ms)
+✔ budget cannot erase omitted safety restrictions as implicit training permission (29.790948ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 175.7514

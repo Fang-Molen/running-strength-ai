@@ -1,0 +1,11 @@
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (2.328049ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (1972.799633ms)
+✔ bounded context accepts structured old history without converting targets into actuals (2.412117ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1982.891859

@@ -1,0 +1,36 @@
+✔ numbered explanation is formatting, not a fabricated measured value (4.332119ms)
+✔ metric paraphrases still require full source binding (2.335892ms)
+✔ negated clearance must pass but a later affirmative release must still fail (3.538255ms)
+✔ scoped negative with subject or evidence stays usable: 你目前不能解除疼痛限制。 (0.284401ms)
+✔ scoped negative with subject or evidence stays usable: HRV正常不代表可以继续跑步。 (0.194906ms)
+✔ scoped negative with subject or evidence stays usable: 目前还不能解除疼痛限制。 (0.141865ms)
+✔ scoped negative with subject or evidence stays usable: 我没有已经替你修改计划。 (0.289409ms)
+✔ scoped negative with subject or evidence stays usable: 不能确诊为肌腱炎。 (0.120002ms)
+✔ turns and double negation do not authorize release: 不能解除疼痛限制，但可以继续跑步。 (0.223079ms)
+✔ turns and double negation do not authorize release: 不能解除疼痛限制,可以继续跑步。 (0.243489ms)
+✔ turns and double negation do not authorize release: 不能解除疼痛限制
+可以继续跑步。 (0.221796ms)
+✔ turns and double negation do not authorize release: 并不是不能解除疼痛限制。 (0.287105ms)
+✔ turns and double negation do not authorize release: 不是不可以继续跑步。 (0.141154ms)
+✔ turns and double negation do not authorize release: 不代表不能解除疼痛限制。 (0.113952ms)
+✔ turns and double negation do not authorize release: 你不必担心，继续跑步。 (0.172903ms)
+✔ list markers do not become factual numbers: 1、先核对当前症状。
+2）再核对实际记录。 (0.201285ms)
+✔ list markers do not become factual numbers: （1）先看睡眠。
+（2）再看日常活动。 (0.097698ms)
+✔ list markers do not become factual numbers: - 1. 先核对当前症状。
+- 2. 再核对实际记录。 (0.133342ms)
+✔ list normalization retains unbound quantities: 1.5公里慢跑。 (0.344703ms)
+✔ list normalization retains unbound quantities: 1、跑5公里。 (0.201436ms)
+✔ list normalization retains unbound quantities: 1、HRV为40 bpm。 (0.150548ms)
+✔ list normalization retains unbound quantities: １、跑５公里。 (0.148535ms)
+✔ list normalization retains unbound quantities: 两组冲刺。 (0.102826ms)
+✔ host-owned factual sentences retain exact full-width punctuation and binding (0.515792ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22.195422

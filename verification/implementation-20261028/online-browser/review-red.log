@@ -1,0 +1,9 @@
+file:///workspace/fangkun-20261028/verification/implementation-20261028/online-browser/flows.mjs:32
+ const until=async(check,label)=>{for(let n=0;n<100;n++){if(await check())return;await new Promise(r=>setTimeout(r,150));}throw Error('Timed out: '+label)};
+                                                                                                                                ^
+
+Error: Timed out: cycle explanation automatically online
+    at until (file:///workspace/fangkun-20261028/verification/implementation-20261028/online-browser/flows.mjs:32:129)
+    at async file:///workspace/fangkun-20261028/verification/implementation-20261028/online-browser/flows.mjs:68:2
+
+Node.js v24.19.0

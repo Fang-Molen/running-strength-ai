@@ -1,0 +1,72 @@
+
+> test:v88-2
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/core/coach-recovery-rest-v88.test.ts src/lib/core/coach-u08-audit.test.ts src/lib/core/u07-pilot.test.ts src/lib/ui/recovery-verdict.test.ts
+
+✔ V88 local coach sees nap after knownAt, not before, never as precise sleep (24.111757ms)
+✔ baseline proof uses actual numbers in decision; does not claim semantic correctness or writing (2.094596ms)
+✔ numbers only in background do not satisfy decision requirements (0.727273ms)
+✔ arithmetic FACT task accepts factual citation without forced two causes at U08 layer (0.258391ms)
+✔ foreign value, unit and handle are rejected (0.594712ms)
+✔ stale revision and other host option are blocked (0.30324ms)
+✔ model cannot add unapproved research citation in production (0.569713ms)
+✔ research preview card is never promoted to production (1.003322ms)
+✔ even an approved general knowledge citation cannot be a personal prescription (0.225061ms)
+✔ missing known limitations must be acknowledged (0.55428ms)
+✔ invented missing items cannot replace real missing fields (1.700738ms)
+✔ schema rejects extra fields (model dose, fake approval) and excessive arrays (0.637096ms)
+✔ C03 not ready cannot be bypassed by a U08 draft (0.143027ms)
+✔ host required handles must be present in trusted brief (0.110338ms)
+✔ same action HOLD is acceptable after changed time if cited value updates (0.579809ms)
+✔ unchanged generic answer with stale numeric fact fails counterfactual (0.301678ms)
+✔ changed relevant fact omitted in counterfactual fails, not counted as model success (0.277421ms)
+✔ unchanged irrelevant handle does not require answer change (0.108134ms)
+✔ cross-athlete or cross-occurrence pair cannot be treated as same-case contrast (0.211371ms)
+✔ no fake professional accuracy grade from this test harness (0.75819ms)
+✔ malformed host obligations and pair handle lists fail closed without throwing (0.326665ms)
+✔ daily max body battery is not current (1.806619ms)
+✔ old body battery observation not current (3.506927ms)
+✔ recent body battery observation can be shown with measurement time (0.373467ms)
+✔ daily summary with unknown measurement time not current (0.241396ms)
+✔ stale body battery is not current (0.17755ms)
+✔ unreadable source is error not missing or zero (0.163288ms)
+✔ conflicting source remains conflict (0.145681ms)
+✔ future measurement cannot be shown as valid (0.137168ms)
+✔ no input yields invalid and never clearance (0.108084ms)
+✔ daily summary is never converted into a curve (0.419937ms)
+✔ one actual sample is insufficient for curve (0.168205ms)
+✔ two actual samples give exact non-interpolated points (0.715895ms)
+✔ two sources do not get merged into a fake single curve (0.148175ms)
+✔ other athlete points are excluded (0.128685ms)
+✔ future knownAt samples are excluded (0.141214ms)
+✔ bad date samples are excluded (0.191841ms)
+✔ same event latest revision replaces earlier event without double counting (0.115054ms)
+✔ same revision contradictory values block curve (0.10555ms)
+✔ body battery out-of-range samples excluded (0.091919ms)
+✔ no new fatigue score or plan write (0.095965ms)
+✔ pain overrides otherwise favorable summary (0.054553ms)
+✔ V87 local incomplete calendar blocks mutation even if confirmed (0.141074ms)
+✔ even host with coordinated local boundary cannot get pilot write permission (0.065239ms)
+✔ safety review is not hidden by declined, seen, or quiet (0.210629ms)
+✔ duplicate informational prompt collapses (0.211912ms)
+✔ safety replaces duplicate lower-priority event (0.099191ms)
+✔ quiet ordinary prompts are queued (0.075845ms)
+✔ cross-athlete task cannot enter inbox (0.206042ms)
+✔ legacy battery-only GO is downgraded to insufficient observation (0.165451ms)
+✔ legacy battery-only REDUCE is not treated as prescription (0.068925ms)
+✔ legacy sharp pain remains safety review even with high battery (0.061734ms)
+✔ later sync cannot silently change a value under same revision (0.136588ms)
+✔ verdicts with state-not-ability wording (1.142613ms)
+✔ 单一正常静息心率、身体电量或训练准备度不能单独宣称适合训练 (0.285303ms)
+ℹ tests 55
+ℹ suites 0
+ℹ pass 55
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1064.424214
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

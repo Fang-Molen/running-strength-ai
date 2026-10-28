@@ -1,0 +1,17 @@
+✔ server/coach-deepseek/coach-runtime.test.ts (10208.623802ms)
+✔ server/coach-deepseek/online-v2.test.ts (13739.285222ms)
+✔ src/lib/coach/assertion-policy.test.ts (750.937675ms)
+✔ src/lib/coach/knowledge/entry.test.ts (5683.410102ms)
+✔ src/lib/coach/online-coach.test.ts (4750.733472ms)
+✔ src/lib/coach/online-context.test.ts (3996.544979ms)
+✔ src/lib/coach/online-service.test.ts (704.640646ms)
+✔ src/lib/coach/online-session.test.ts (3320.33236ms)
+✔ src/lib/coach/r5/online-guard-relax.test.ts (983.587719ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15232.67982

@@ -70,12 +70,12 @@ export function actualCourseSeeds(
       base.intensity = easy ? "EASY" : "HARD";
       base.actual!.intensity = base.intensity;
       base.actual!.km = s.distanceM / 1000;
-      base.title = easy ? "实际支持的轻松跑" : "实际支持的节奏跑";
+      base.title = t.observedType === "LONG" ? "实际支持的耐力连续课" : easy ? "实际支持的轻松跑" : "实际支持的节奏跑";
       base.runComponents = [
         {
           componentId: t.componentId,
           modality: "RUNNING",
-          purpose: easy ? "EASY_AEROBIC" : "TEMPO_THRESHOLD",
+          purpose: t.observedType === "LONG" ? "LONG" : easy ? "EASY_AEROBIC" : "TEMPO_THRESHOLD",
           structure: {
             kind: "CONTINUOUS",
             plannedDistanceMeters: s.distanceM,

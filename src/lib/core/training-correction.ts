@@ -1,7 +1,9 @@
 import { getTrainingOccurrence, listTrainingOccurrences } from "./occurrence.ts"
-import { readEnvelope, writeEnvelope } from "./storage.ts"
+import { currentStore, readEnvelope, writeEnvelope } from "./storage.ts"
 import {captureCorrectionSources,auditSavedClaimsForCorrection} from './coach-p7-runtime.ts'
 import {strictIso} from './coach-v4-c11-adapter.ts'
+import type { FormalEvidenceRow } from './coach-v4-c11-adapter.ts'
+import { currentAthleteId } from './events.ts'
 
 export const TRAINING_CORRECTION_KEY = "fr255-training-correction-v1"
 
@@ -21,6 +23,9 @@ export type TrainingCorrection = {
   at: string
   /** Commit time (ported additively from K20). Never inferred from `at`; absent on legacy rows = unknown. */
   recordedAt?: string
+  athleteId?: string
+  /** Persisted atomically with the fact; completion receipts never rewrite the historical fact. */
+  reviewIntent?: { state: 'PENDING'; sources: [string, FormalEvidenceRow[]][] | null }
 }
 
 type CorrectionEvent = { event_id?: string; event_type: string; payload?: Record<string, unknown> }
@@ -89,10 +94,38 @@ export function appendCorrection(input: {
   }
   let before:ReturnType<typeof captureCorrectionSources>|null=null
   try{before=captureCorrectionSources(input.trainingOccurrenceId)}catch{/* Fact saving remains available; unverified links cannot withdraw claims. */}
+  row.athleteId = currentAthleteId()
+  row.reviewIntent = { state: 'PENDING', sources: before ? [...before] : null }
   const saved = writeEnvelope(TRAINING_CORRECTION_KEY, [...loadAll(), row])
-  if(saved&&before)try{auditSavedClaimsForCorrection(row,before)}catch{/* No source or plan is rewritten if a review cannot be projected. */}
+  if (!saved || currentStore()?.getItem(TRAINING_CORRECTION_KEY) !== JSON.stringify(saved)) return null
+  if(before)try{if(auditSavedClaimsForCorrection(row,before)) acknowledgeCorrectionReview(row.correctionId)}catch{/* Durable intent remains pending; read-side source validation still prevents stale claims. */}
   if(saved&&typeof window!=='undefined')try{window.dispatchEvent(new Event('fk-training-corrected'))}catch{/* Post-save review cannot block the saved correction. */}
   return saved ? row : null
+}
+
+const REVIEW_RECEIPTS_KEY = 'fr255-correction-review-receipts-v1'
+function reviewReceipts(): Record<string, string> {
+  const data = readEnvelope<unknown>(REVIEW_RECEIPTS_KEY, {}).data
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return {}
+  return Object.fromEntries(Object.entries(data).filter(([,v])=>typeof v==='string'&&Number.isFinite(Date.parse(v))))
+}
+function acknowledgeCorrectionReview(id: string): boolean {
+  const saved = writeEnvelope(REVIEW_RECEIPTS_KEY, { ...reviewReceipts(), [id]: new Date().toISOString() })
+  return !!saved && currentStore()?.getItem(REVIEW_RECEIPTS_KEY) === JSON.stringify(saved)
+}
+/** Startup retry is idempotent; failed audit/receipt writes leave the original intent available. */
+export function retryPendingCorrectionReviews(): { pending: number; applied: number } {
+  let pending = 0, applied = 0
+  const acknowledged = reviewReceipts(), owner = currentAthleteId()
+  for (const row of loadAll()) {
+    if (!row.reviewIntent || row.athleteId !== owner || acknowledged[row.correctionId]) continue
+    if (!row.reviewIntent.sources) { pending++; continue }
+    try {
+      if (auditSavedClaimsForCorrection(row, new Map(row.reviewIntent.sources)) && acknowledgeCorrectionReview(row.correctionId)) applied++
+      else pending++
+    } catch { pending++ }
+  }
+  return { pending, applied }
 }
 
 export function occurrenceVoided(trainingOccurrenceId: string, asOf?: string): boolean {

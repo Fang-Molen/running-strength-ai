@@ -1,0 +1,508 @@
+TAP version 13
+# Subtest: stage evidence visibly separates observed history and unknown future feedback with source versions
+ok 1 - stage evidence visibly separates observed history and unknown future feedback with source versions
+  ---
+  duration_ms: 49.849273
+  type: 'test'
+  ...
+# Subtest: old saved drafts without condition evidence ask for review rather than invent satisfied checks
+ok 2 - old saved drafts without condition evidence ask for review rather than invent satisfied checks
+  ---
+  duration_ms: 0.339075
+  type: 'test'
+  ...
+# Subtest: portrait provides two independent recorded seven-day windows, not previous calendar weeks only
+ok 3 - portrait provides two independent recorded seven-day windows, not previous calendar weeks only
+  ---
+  duration_ms: 7.222911
+  type: 'test'
+  ...
+# Subtest: recent explicit pain and function feedback can report no observed adverse signal without granting clearance
+ok 4 - recent explicit pain and function feedback can report no observed adverse signal without granting clearance
+  ---
+  duration_ms: 1.747509
+  type: 'test'
+  ...
+# Subtest: month request keeps four weeks and recent history window without changing saved goal
+ok 5 - month request keeps four weeks and recent history window without changing saved goal
+  ---
+  duration_ms: 8.640631
+  type: 'test'
+  ...
+# Subtest: four-week balanced plan preserves both running and strength with separate dose budgets
+ok 6 - four-week balanced plan preserves both running and strength with separate dose budgets
+  ---
+  duration_ms: 15.889843
+  type: 'test'
+  ...
+# Subtest: repeated linked soreness changes strength set proposal and revision withdraws that evidence
+ok 7 - repeated linked soreness changes strength set proposal and revision withdraws that evidence
+  ---
+  duration_ms: 19.902036
+  type: 'test'
+  ...
+# Subtest: mixed actual occurrence retains both modalities and never counts one event as two independent sessions
+ok 8 - mixed actual occurrence retains both modalities and never counts one event as two independent sessions
+  ---
+  duration_ms: 3.863167
+  type: 'test'
+  ...
+# Subtest: two-week context yields candidate courses from confirmed actual facts even without calendar links
+ok 9 - two-week context yields candidate courses from confirmed actual facts even without calendar links
+  ---
+  duration_ms: 11.609944
+  type: 'test'
+  ...
+# Subtest: stale zero check-in and a device readiness number cannot authorize familiar hard training
+ok 10 - stale zero check-in and a device readiness number cannot authorize familiar hard training
+  ---
+  duration_ms: 1.711265
+  type: 'test'
+  ...
+# Subtest: legacy heuristic score is preserved in storage but cannot become measured readiness
+ok 11 - legacy heuristic score is preserved in storage but cannot become measured readiness
+  ---
+  duration_ms: 2.844894
+  type: 'test'
+  ...
+# Subtest: explicit four-week request selects two-week facts without writing goal or accepting a plan
+ok 12 - explicit four-week request selects two-week facts without writing goal or accepting a plan
+  ---
+  duration_ms: 0.958414
+  type: 'test'
+  ...
+# Subtest: foreign, future and retracted feedback cannot establish a personal response
+ok 13 - foreign, future and retracted feedback cannot establish a personal response
+  ---
+  duration_ms: 3.739601
+  type: 'test'
+  ...
+# Subtest: contradictory same-version feedback is not a reason to increase or reduce a specific dose
+ok 14 - contradictory same-version feedback is not a reason to increase or reduce a specific dose
+  ---
+  duration_ms: 3.237339
+  type: 'test'
+  ...
+# Subtest: missing distance and strength weights remain unknown in the portrait
+ok 15 - missing distance and strength weights remain unknown in the portrait
+  ---
+  duration_ms: 2.419018
+  type: 'test'
+  ...
+# Subtest: overlapping later exercise is exposed rather than counted as an independent response success
+ok 16 - overlapping later exercise is exposed rather than counted as an independent response success
+  ---
+  duration_ms: 3.894986
+  type: 'test'
+  ...
+# Subtest: proposed key-course spacing survives every week boundary
+ok 17 - proposed key-course spacing survives every week boundary
+  ---
+  duration_ms: 6.783014
+  type: 'test'
+  ...
+# Subtest: repeated fatigue cannot be labeled observed tolerance when pain and function are normal
+ok 18 - repeated fatigue cannot be labeled observed tolerance when pain and function are normal
+  ---
+  duration_ms: 4.97297
+  type: 'test'
+  ...
+# Subtest: explicit poor recovery keeps mixed signals despite current pain and function zeros
+ok 19 - explicit poor recovery keeps mixed signals despite current pain and function zeros
+  ---
+  duration_ms: 0.397583
+  type: 'test'
+  ...
+# Subtest: experienced high-volume athlete keeps supported large sessions, not a beginner volume cap
+ok 20 - experienced high-volume athlete keeps supported large sessions, not a beginner volume cap
+  ---
+  duration_ms: 14.606537
+  type: 'test'
+  ...
+# Subtest: 400 800 and 1500 goals retain familiar nested speed work with exact work/rest, not long-distance substitution
+ok 21 - 400 800 and 1500 goals retain familiar nested speed work with exact work/rest, not long-distance substitution
+  ---
+  duration_ms: 27.471072
+  type: 'test'
+  ...
+# Subtest: planned interval structure cannot be borrowed from a continuous actual record
+ok 22 - planned interval structure cannot be borrowed from a continuous actual record
+  ---
+  duration_ms: 7.741758
+  type: 'test'
+  ...
+# Subtest: event contrast: 400m and 800m retain different event context
+ok 23 - event contrast: 400m and 800m retain different event context
+  ---
+  duration_ms: 18.680298
+  type: 'test'
+  ...
+# Subtest: event contrast: 800m and 10km do not share a universal event label
+ok 24 - event contrast: 800m and 10km do not share a universal event label
+  ---
+  duration_ms: 18.325972
+  type: 'test'
+  ...
+# Subtest: same performance with novice background restricts hard-course copying
+ok 25 - same performance with novice background restricts hard-course copying
+  ---
+  duration_ms: 22.308965
+  type: 'test'
+  ...
+# Subtest: work schedule change never schedules outside confirmed days
+ok 26 - work schedule change never schedules outside confirmed days
+  ---
+  duration_ms: 17.360282
+  type: 'test'
+  ...
+# Subtest: near race moves first week to taper without invented build-up
+ok 27 - near race moves first week to taper without invented build-up
+  ---
+  duration_ms: 14.809505
+  type: 'test'
+  ...
+# Subtest: past race produces recovery/review, never compressed catch-up
+ok 28 - past race produces recovery/review, never compressed catch-up
+  ---
+  duration_ms: 13.700693
+  type: 'test'
+  ...
+# Subtest: pain hold outranks high device readiness
+ok 29 - pain hold outranks high device readiness
+  ---
+  duration_ms: 19.13988
+  type: 'test'
+  ...
+# Subtest: unknown recovery blocks key-course execution and progression
+ok 30 - unknown recovery blocks key-course execution and progression
+  ---
+  duration_ms: 15.404366
+  type: 'test'
+  ...
+# Subtest: no actual history still answers with conditional course purposes
+ok 31 - no actual history still answers with conditional course purposes
+  ---
+  duration_ms: 8.260565
+  type: 'test'
+  ...
+# Subtest: missing available days does not assume weekdays
+ok 32 - missing available days does not assume weekdays
+  ---
+  duration_ms: 12.535176
+  type: 'test'
+  ...
+# Subtest: new time limit never silently overflows a session
+ok 33 - new time limit never silently overflows a session
+  ---
+  duration_ms: 14.425272
+  type: 'test'
+  ...
+# Subtest: V4 calendar conflict is preserved rather than overwritten
+ok 34 - V4 calendar conflict is preserved rather than overwritten
+  ---
+  duration_ms: 13.042005
+  type: 'test'
+  ...
+# Subtest: changing goal changes basis while leaving measured ability untouched
+ok 35 - changing goal changes basis while leaving measured ability untouched
+  ---
+  duration_ms: 13.411074
+  type: 'test'
+  ...
+# Subtest: priority changes the proposed focus with existing evidence
+ok 36 - priority changes the proposed focus with existing evidence
+  ---
+  duration_ms: 14.907864
+  type: 'test'
+  ...
+# Subtest: foreign actual sessions cannot contribute to the portrait
+ok 37 - foreign actual sessions cannot contribute to the portrait
+  ---
+  duration_ms: 7.354351
+  type: 'test'
+  ...
+# Subtest: retracted actual facts cannot contribute ability
+ok 38 - retracted actual facts cannot contribute ability
+  ---
+  duration_ms: 8.868286
+  type: 'test'
+  ...
+# Subtest: later weeks cannot be confirmed in advance
+ok 39 - later weeks cannot be confirmed in advance
+  ---
+  duration_ms: 13.664799
+  type: 'test'
+  ...
+# Subtest: default plans do not grow from week to week without confirmation
+ok 40 - default plans do not grow from week to week without confirmation
+  ---
+  duration_ms: 20.716501
+  type: 'test'
+  ...
+# Subtest: targets remain goals, future/retracted/foreign evidence cannot become ability
+ok 41 - targets remain goals, future/retracted/foreign evidence cannot become ability
+  ---
+  duration_ms: 6.304359
+  type: 'test'
+  ...
+# Subtest: prompt is bounded, versioned, evidence-only and grants no writing authority
+ok 42 - prompt is bounded, versioned, evidence-only and grants no writing authority
+  ---
+  duration_ms: 7.85527
+  type: 'test'
+  ...
+# Subtest: progression is a single proposed duration change with repeated same-protocol actual evidence
+ok 43 - progression is a single proposed duration change with repeated same-protocol actual evidence
+  ---
+  duration_ms: 6.66786
+  type: 'test'
+  ...
+# Subtest: changing device protocol prevents pooled progression evidence
+ok 44 - changing device protocol prevents pooled progression evidence
+  ---
+  duration_ms: 7.814879
+  type: 'test'
+  ...
+# Subtest: an event focus cannot increase the weekly count of key sessions
+ok 45 - an event focus cannot increase the weekly count of key sessions
+  ---
+  duration_ms: 6.794041
+  type: 'test'
+  ...
+# Subtest: future-dated calendar actuals cannot establish familiarity
+ok 46 - future-dated calendar actuals cannot establish familiarity
+  ---
+  duration_ms: 1.773219
+  type: 'test'
+  ...
+# Subtest: 400m changes actual familiar-course selection using the same recorded history
+ok 47 - 400m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 8.289268
+  type: 'test'
+  ...
+# Subtest: 800m changes actual familiar-course selection using the same recorded history
+ok 48 - 800m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 7.604399
+  type: 'test'
+  ...
+# Subtest: 1500m changes actual familiar-course selection using the same recorded history
+ok 49 - 1500m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 7.127077
+  type: 'test'
+  ...
+# Subtest: 3000m changes actual familiar-course selection using the same recorded history
+ok 50 - 3000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 6.221213
+  type: 'test'
+  ...
+# Subtest: 5000m changes actual familiar-course selection using the same recorded history
+ok 51 - 5000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 6.728762
+  type: 'test'
+  ...
+# Subtest: 10000m changes actual familiar-course selection using the same recorded history
+ok 52 - 10000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 7.717191
+  type: 'test'
+  ...
+# Subtest: incomplete preferred structure loses priority to a supported familiar alternative
+ok 53 - incomplete preferred structure loses priority to a supported familiar alternative
+  ---
+  duration_ms: 6.305571
+  type: 'test'
+  ...
+# Subtest: a continuous plan cannot claim complete structure evidence from several actual repetitions
+ok 54 - a continuous plan cannot claim complete structure evidence from several actual repetitions
+  ---
+  duration_ms: 8.330982
+  type: 'test'
+  ...
+# Subtest: fact-only familiar endurance seeds preserve the explicitly recorded LONG purpose
+ok 55 - fact-only familiar endurance seeds preserve the explicitly recorded LONG purpose
+  ---
+  duration_ms: 0.227185
+  type: 'test'
+  ...
+# Subtest: phase conditions distinguish observed actuals, unknown followup and a confirmed calendar
+ok 56 - phase conditions distinguish observed actuals, unknown followup and a confirmed calendar
+  ---
+  duration_ms: 7.185064
+  type: 'test'
+  ...
+# Subtest: a calendar date cannot override contradictory restrictions or missing execution
+ok 57 - a calendar date cannot override contradictory restrictions or missing execution
+  ---
+  duration_ms: 0.800164
+  type: 'test'
+  ...
+# Subtest: repeated linked contrary feedback is cited as a contradicted phase condition
+ok 58 - repeated linked contrary feedback is cited as a contradicted phase condition
+  ---
+  duration_ms: 10.314439
+  type: 'test'
+  ...
+# Subtest: repeated positive same-dose feedback satisfies only that observed response condition
+ok 59 - repeated positive same-dose feedback satisfies only that observed response condition
+  ---
+  duration_ms: 6.843807
+  type: 'test'
+  ...
+# Subtest: a fully occupied calendar is contradicted while missing time remains unknown
+ok 60 - a fully occupied calendar is contradicted while missing time remains unknown
+  ---
+  duration_ms: 13.363232
+  type: 'test'
+  ...
+# Subtest: withdrawn linked facts cannot re-enter through saved calendar actuals
+ok 61 - withdrawn linked facts cannot re-enter through saved calendar actuals
+  ---
+  duration_ms: 1.261713
+  type: 'test'
+  ...
+# Subtest: one occurrence linked twice is not two progression successes
+ok 62 - one occurrence linked twice is not two progression successes
+  ---
+  duration_ms: 2.830562
+  type: 'test'
+  ...
+# Subtest: pain and function zero do not override an insufficient recovery assessment
+ok 63 - pain and function zero do not override an insufficient recovery assessment
+  ---
+  duration_ms: 6.120731
+  type: 'test'
+  ...
+# Subtest: existing weekly work consumes budget and protects adjacent key days
+ok 64 - existing weekly work consumes budget and protects adjacent key days
+  ---
+  duration_ms: 8.149707
+  type: 'test'
+  ...
+# Subtest: one minute of a planned twenty-minute course weakens rather than supports the plan
+ok 65 - one minute of a planned twenty-minute course weakens rather than supports the plan
+  ---
+  duration_ms: 8.489171
+  type: 'test'
+  ...
+# Subtest: barbell exercises cannot execute with equipment NONE
+ok 66 - barbell exercises cannot execute with equipment NONE
+  ---
+  duration_ms: 2.842089
+  type: 'test'
+  ...
+# Subtest: future candidates never carry a past actual rest log
+ok 67 - future candidates never carry a past actual rest log
+  ---
+  duration_ms: 7.449596
+  type: 'test'
+  ...
+# Subtest: goal revision ten wins across new adapters at the same timestamp
+ok 68 - goal revision ten wins across new adapters at the same timestamp
+  ---
+  duration_ms: 4.314672
+  type: 'test'
+  ...
+# Subtest: development and specific phases select supported key structures beyond base maintenance
+ok 69 - development and specific phases select supported key structures beyond base maintenance
+  ---
+  duration_ms: 8.545087
+  type: 'test'
+  ...
+# Subtest: informational race markers do not disable a valid taper training week
+ok 70 - informational race markers do not disable a valid taper training week
+  ---
+  duration_ms: 7.241129
+  type: 'test'
+  ...
+# Subtest: confirmation structure retains nested rounds and unknown rest
+ok 71 - confirmation structure retains nested rounds and unknown rest
+  ---
+  duration_ms: 1.475247
+  type: 'test'
+  ...
+# Subtest: 400m exposes its own purpose and evidence boundary without inventing race ability
+ok 72 - 400m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.533336
+  type: 'test'
+  ...
+# Subtest: 800m exposes its own purpose and evidence boundary without inventing race ability
+ok 73 - 800m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 7.475855
+  type: 'test'
+  ...
+# Subtest: 1500m exposes its own purpose and evidence boundary without inventing race ability
+ok 74 - 1500m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.978982
+  type: 'test'
+  ...
+# Subtest: 3000m exposes its own purpose and evidence boundary without inventing race ability
+ok 75 - 3000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.472323
+  type: 'test'
+  ...
+# Subtest: 5000m exposes its own purpose and evidence boundary without inventing race ability
+ok 76 - 5000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.756274
+  type: 'test'
+  ...
+# Subtest: 10000m exposes its own purpose and evidence boundary without inventing race ability
+ok 77 - 10000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 7.477177
+  type: 'test'
+  ...
+# Subtest: other endurance events do not borrow a 10K performance and missing distance stays unknown
+ok 78 - other endurance events do not borrow a 10K performance and missing distance stays unknown
+  ---
+  duration_ms: 14.611735
+  type: 'test'
+  ...
+# Subtest: 8-week stages expose review conditions and future weeks remain unconfirmed
+ok 79 - 8-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 7.065844
+  type: 'test'
+  ...
+# Subtest: 12-week stages expose review conditions and future weeks remain unconfirmed
+ok 80 - 12-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 7.239627
+  type: 'test'
+  ...
+# Subtest: 24-week stages expose review conditions and future weeks remain unconfirmed
+ok 81 - 24-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 9.902299
+  type: 'test'
+  ...
+# Subtest: 52-week stages expose review conditions and future weeks remain unconfirmed
+ok 82 - 52-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 15.196451
+  type: 'test'
+  ...
+# Subtest: advanced or expired competition explains phase reassessment without changing completed records
+ok 83 - advanced or expired competition explains phase reassessment without changing completed records
+  ---
+  duration_ms: 5.516875
+  type: 'test'
+  ...
+1..83
+# tests 83
+# suites 0
+# pass 83
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3719.688676

@@ -1,19 +1,21 @@
 /** R188 adapters for existing review/correction/coach entry points. Local journals only. */
 import {appendJournal,readJournal} from './storage-journal.ts'
 import {readFormalEvidenceRows} from './coach-v4-formal-rows-store.ts'
-import {adaptFormalEvidenceRows,type FormalEvidenceRow} from './coach-v4-c11-adapter.ts'
+import {adaptFormalEvidenceRows,strictIso,type FormalEvidenceRow} from './coach-v4-c11-adapter.ts'
 import {auditClaimCorrection,type AuditedClaim,type ClaimCorrectionResult,type VersionedFact,type FactOrigin} from './coach-claim-revision.ts'
 import {p7CommitLiveDecision} from './coach-p7-lifecycle.ts'
 import {P7_EVIDENCE_VERSION} from './coach-p7-knowledge.ts'
 import type {OfflineReview} from './coach-offline-loop.ts'
-import type {TrainingCorrection} from './training-correction.ts'
+import {listCorrections,type TrainingCorrection} from './training-correction.ts'
 import type {LocalCoachAnswer} from './coach-local-first.ts'
+import {currentAthleteId} from './events.ts'
+import {auditPersonalEvidence} from './coach-evolution-v4-c10.ts'
 
 export const CLAIM_PREFIX='fr255-p7-claim:'
 export const CLAIM_REVISION_PREFIX='fr255-p7-claim-revision:'
 const INPUT_PREFIX='fr255-p7-input:'
 type SavedClaim={athleteId:string;reviewId:string;occurrenceId:string|null;claim:AuditedClaim}
-type RevisionRecord={athleteId:string;reviewId:string;correctionId:string;result:ClaimCorrectionResult;recordedAt:string}
+type RevisionRecord={athleteId:string;reviewId:string;correctionId:string;result:ClaimCorrectionResult;recordedAt:string;derived?:true}
 const origin=(source:string):FactOrigin=>source==='DEVICE'?'DEVICE':source==='PLAN'?'PLAN':'USER_REPORT'
 
 export function registerReviewClaims(reviewId:string,review:OfflineReview):boolean{
@@ -29,13 +31,51 @@ export function registerReviewClaims(reviewId:string,review:OfflineReview):boole
  return ok
 }
 
+/** Conflicting or excluded evidence cannot keep a prior claim current. */
+export function selectCurrentClaimEvidence(rows:readonly FormalEvidenceRow[],athleteId:string,asOf:string){
+ const evidence=adaptFormalEvidenceRows(rows,athleteId,asOf).evidence
+ const audit=auditPersonalEvidence({athleteId,asOf,question:'核对既有判断的来源版本',evidence})
+ const rejected=new Set([...audit.issues.map(issue=>issue.id),...audit.snapshot.quarantined.map(issue=>issue.id),...audit.snapshot.excluded.map(issue=>issue.id)])
+ return evidence.filter(row=>!rejected.has(row.id))
+}
+
 export function readClaimRevisions(athleteId:string,asOf=new Date().toISOString()):RevisionRecord[]{
- return readJournal<RevisionRecord>(CLAIM_REVISION_PREFIX).filter(r=>r.recordedAt&&Date.parse(r.recordedAt)<=Date.parse(asOf)&&r.data.athleteId===athleteId).map(r=>r.data)
+ const records=readJournal<RevisionRecord>(CLAIM_REVISION_PREFIX).filter(r=>r.recordedAt&&Date.parse(r.recordedAt)<=Date.parse(asOf)&&r.data.athleteId===athleteId).map(r=>r.data)
+ const claims=readJournal<SavedClaim>(CLAIM_PREFIX).filter(r=>r.recordedAt&&Date.parse(r.recordedAt)<=Date.parse(asOf)&&r.data.athleteId===athleteId)
+ let rows:FormalEvidenceRow[]=[], evidence:ReturnType<typeof adaptFormalEvidenceRows>['evidence']=[], readable=true
+ try{rows=readFormalEvidenceRows(athleteId,asOf).rows;evidence=selectCurrentClaimEvidence(rows,athleteId,asOf)}catch{readable=false}
+ const superseded=new Set(rows.map(r=>r.supersedesRecordId).filter(Boolean))
+ const voids=listCorrections().filter(c=>c.kind==='VOID'&&(!c.athleteId||c.athleteId===athleteId)&&c.recordedAt&&strictIso(c.recordedAt)&&Date.parse(c.recordedAt)<=Date.parse(asOf))
+ for(const entry of claims){
+  const saved=entry.data
+  if(!saved.claim.dependencies.length)continue
+  const prior=records.filter(r=>r.result.claimId===saved.claim.claimId).at(-1)
+  if(prior&&['RETRACTED','SUPERSEDED','STALE_NEEDS_REVIEW'].includes(prior.result.status))continue
+  let changed=false,unknown=false
+  for(const dep of saved.claim.dependencies){
+   // Restoring a fact cannot restore explanations closed by a durable VOID,
+   // even when its audit journal failed and VOID/RESTORE share a timestamp.
+   const voided=voids.some(c=>Date.parse(c.recordedAt!)>=Date.parse(entry.recordedAt!)&&
+    (c.reviewIntent?.sources?.find(([id])=>id===athleteId)?.[1]??rows).some(r=>
+     r.trainingOccurrenceId===c.trainingOccurrenceId&&r.sourceEventId===dep.sourceId&&
+     adaptFormalEvidenceRows([{...r,status:'OBSERVED'}],athleteId,asOf).evidence.some(e=>JSON.stringify(e)===dep.revision)))
+   if(voided){changed=true;continue}
+   const current=evidence.find(e=>e.sourceId===dep.sourceId&&!superseded.has(e.id))
+   if(current){if(JSON.stringify(current)!==dep.revision)changed=true}
+   else if(readable&&rows.some(r=>r.sourceEventId===dep.sourceId&&(r.status==='VOIDED'||superseded.has(r.recordId))))changed=true
+   else unknown=true
+  }
+  if(!changed&&!unknown)continue
+  records.push({athleteId,reviewId:saved.reviewId,correctionId:'read-time-validation',recordedAt:asOf,derived:true,
+   result:{claimId:saved.claim.claimId,status:changed?'STALE_NEEDS_REVIEW':'UNRESOLVED',updateAction:changed?'MARK_STALE':'REVIEW_REQUIRED',reason:changed?'PERSISTENT_SOURCE_REVISION_CHANGED':'DEPENDENCY_UNREADABLE_OR_MISSING',affectedPaths:[],invalidatedCandidateIds:[...saved.claim.candidateIds??[]],planWriteAuthorized:false}})
+ }
+ return records
 }
 
 /** Capture authoritative source versions BEFORE the fact writer commits its event. */
 export function captureCorrectionSources(occurrenceId:string):Map<string,FormalEvidenceRow[]>{
- const athletes=new Set(readJournal<SavedClaim>(CLAIM_PREFIX).filter(r=>r.data.occurrenceId===occurrenceId||r.data.claim.dependencies.length).map(r=>r.data.athleteId))
+ const owner=currentAthleteId()
+ const athletes=new Set(readJournal<SavedClaim>(CLAIM_PREFIX).filter(r=>r.data.athleteId===owner&&(r.data.occurrenceId===occurrenceId||r.data.claim.dependencies.length)).map(r=>r.data.athleteId))
  const result=new Map<string,FormalEvidenceRow[]>()
  for(const id of athletes)result.set(id,readFormalEvidenceRows(id).rows)
  return result
@@ -44,11 +84,14 @@ export function captureCorrectionSources(occurrenceId:string):Map<string,FormalE
 /** Projection confirms the same-source link; a caller's originalValue is never source authority. */
 export function auditSavedClaimsForCorrection(c:TrainingCorrection,before:Map<string,FormalEvidenceRow[]>):boolean{
  const now=new Date().toISOString();let ok=true
+ if(!c.recordedAt||!strictIso(c.recordedAt)||Date.parse(c.recordedAt)>Date.parse(now))return false
  for(const [athleteId,oldRows] of before){
-  const after=readFormalEvidenceRows(athleteId,now).rows
+  // Replay at the correction boundary. A later RESTORE can share that exact
+  // millisecond, so apply this VOID's lifecycle operation explicitly as well.
+  const after=readFormalEvidenceRows(athleteId,c.recordedAt).rows.map(r=>c.kind==='VOID'&&r.trainingOccurrenceId===c.trainingOccurrenceId?{...r,status:'VOIDED' as const}:r)
   const oldEvidence=adaptFormalEvidenceRows(oldRows,athleteId,now).evidence
   const changes=after.filter(r=>r.trainingOccurrenceId===c.trainingOccurrenceId&&r.supersedesRecordId&&r.sourceEventId.includes(c.correctionId))
-  const claims=readJournal<SavedClaim>(CLAIM_PREFIX).map(r=>r.data).filter(r=>r.athleteId===athleteId)
+  const claims=readJournal<SavedClaim>(CLAIM_PREFIX).filter(r=>r.recordedAt&&Date.parse(r.recordedAt)<=Date.parse(c.recordedAt!)).map(r=>r.data).filter(r=>r.athleteId===athleteId)
   for(const saved of claims){
    const previous=readClaimRevisions(athleteId).filter(r=>r.result.claimId===saved.claim.claimId).at(-1)
    const claim={...saved.claim,status:previous?.result.status??saved.claim.status}

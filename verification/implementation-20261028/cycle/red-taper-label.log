@@ -1,0 +1,144 @@
+TAP version 13
+# Subtest: explicit future window is preserved: 未来八周的训练计划
+ok 1 - explicit future window is preserved: 未来八周的训练计划
+  ---
+  duration_ms: 2.264533
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 12周周期
+ok 2 - explicit future window is preserved: 12周周期
+  ---
+  duration_ms: 0.344142
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 12周计划
+ok 3 - explicit future window is preserved: 12周计划
+  ---
+  duration_ms: 0.110197
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 24周
+ok 4 - explicit future window is preserved: 24周
+  ---
+  duration_ms: 0.114234
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 接下来二十四周怎么安排
+ok 5 - explicit future window is preserved: 接下来二十四周怎么安排
+  ---
+  duration_ms: 0.359064
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 规划未来五十二周
+ok 6 - explicit future window is preserved: 规划未来五十二周
+  ---
+  duration_ms: 0.139071
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 未来1周
+ok 7 - explicit future window is preserved: 未来1周
+  ---
+  duration_ms: 0.098029
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 未来两周的计划
+ok 8 - explicit future window is preserved: 未来两周的计划
+  ---
+  duration_ms: 0.068584
+  type: 'test'
+  ...
+# Subtest: review window and future horizon are independent
+ok 9 - review window and future horizon are independent
+  ---
+  duration_ms: 0.466007
+  type: 'test'
+  ...
+# Subtest: calendar months require clarification instead of silently becoming four weeks
+ok 10 - calendar months require clarification instead of silently becoming four weeks
+  ---
+  duration_ms: 0.284682
+  type: 'test'
+  ...
+# Subtest: conflicting or invalid explicit windows cannot reuse a saved horizon
+ok 11 - conflicting or invalid explicit windows cannot reuse a saved horizon
+  ---
+  duration_ms: 0.189577
+  type: 'test'
+  ...
+# Subtest: read-only, third-person and negated requests cannot implicitly create cycle drafts
+ok 12 - read-only, third-person and negated requests cannot implicitly create cycle drafts
+  ---
+  duration_ms: 0.120022
+  type: 'test'
+  ...
+# Subtest: 8-week request preserves the saved goal and first-week confirmation boundary
+ok 13 - 8-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 40.678006
+  type: 'test'
+  ...
+# Subtest: 12-week request preserves the saved goal and first-week confirmation boundary
+ok 14 - 12-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 14.451091
+  type: 'test'
+  ...
+# Subtest: 24-week request preserves the saved goal and first-week confirmation boundary
+ok 15 - 24-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 16.111078
+  type: 'test'
+  ...
+# Subtest: 52-week request preserves the saved goal and first-week confirmation boundary
+ok 16 - 52-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 25.261801
+  type: 'test'
+  ...
+# Subtest: fourth-week review alone maintains the familiar strength dose
+ok 17 - fourth-week review alone maintains the familiar strength dose
+  ---
+  duration_ms: 11.473116
+  type: 'test'
+  ...
+# Subtest: comparable repeated feedback can still propose a fourth-week reduction
+ok 18 - comparable repeated feedback can still propose a fourth-week reduction
+  ---
+  duration_ms: 11.259011
+  type: 'test'
+  ...
+# Subtest: a taper reduction cannot claim repeated feedback that was never recorded
+not ok 19 - a taper reduction cannot claim repeated feedback that was never recorded
+  ---
+  duration_ms: 10.15075
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:80:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /依据同协议重复反馈/. Input:
+    
+    '依据同协议重复反馈复核减组候选；负重和次数保持，确认后才可变更'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '依据同协议重复反馈复核减组候选；负重和次数保持，确认后才可变更'
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:87:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 18
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1007.31741

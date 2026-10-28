@@ -1,0 +1,10 @@
+✔ B02 correction and pending review intent persist together; read-time invalidation survives failed audit and restart (63.632087ms)
+✔ B02 dropped fact write cannot report a committed correction (0.212172ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 69.268653

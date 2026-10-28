@@ -163,9 +163,9 @@ test("legacy heuristic score is preserved in storage but cannot become measured 
   }
 });
 import { cycleRequestFromText } from "./request";
-test("natural month request selects two-week facts without writing goal or accepting a plan", () => {
+test("explicit four-week request selects two-week facts without writing goal or accepting a plan", () => {
   assert.deepEqual(
-    cycleRequestFromText("根据我这两周的训练出后面一个月的训练计划，包括力量周期和跑步安排"),
+    cycleRequestFromText("根据我这两周的训练出后面四周的训练计划，包括力量周期和跑步安排"),
     { request: { historyDays: 14, horizonWeeks: 4 } },
   );
   assert.equal(cycleRequestFromText("举例给朋友安排一个月训练计划"), null);

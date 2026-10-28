@@ -1,0 +1,155 @@
+TAP version 13
+# Subtest: strict declaration boundary rejects plans, derived fields, bad units, duplicate revisions and forged authority
+ok 1 - strict declaration boundary rejects plans, derived fields, bad units, duplicate revisions and forged authority
+  ---
+  duration_ms: 3.380325
+  type: 'test'
+  ...
+# Subtest: sleep, pain and duration scalars never manufacture a workout or running structure
+ok 2 - sleep, pain and duration scalars never manufacture a workout or running structure
+  ---
+  duration_ms: 0.380216
+  type: 'test'
+  ...
+# Subtest: runtime config never guesses credentials, policy, persistence or prior spend
+ok 3 - runtime config never guesses credentials, policy, persistence or prior spend
+  ---
+  duration_ms: 0.484384
+  type: 'test'
+  ...
+# Subtest: signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only
+    # Subtest: no identity, unsigned identity and sibling origins cannot create authorization
+    ok 1 - no identity, unsigned identity and sibling origins cannot create authorization
+      ---
+      duration_ms: 5.404814
+      type: 'test'
+      ...
+    # Subtest: server ownership and explicit consent; owner switch cannot read or revoke
+    ok 2 - server ownership and explicit consent; owner switch cannot read or revoke
+      ---
+      duration_ms: 103.394839
+      type: 'test'
+      ...
+    # Subtest: close/reopen persists refs, ownership and exact duplicate charge prevention
+    ok 3 - close/reopen persists refs, ownership and exact duplicate charge prevention
+      ---
+      duration_ms: 141.617914
+      type: 'test'
+      ...
+    # Subtest: new declaration revision invalidates old ref and binds question
+    ok 4 - new declaration revision invalidates old ref and binds question
+      ---
+      duration_ms: 15.442603
+      type: 'test'
+      ...
+    # Subtest: two simultaneous requests honor real persistent concurrency cap
+    ok 5 - two simultaneous requests honor real persistent concurrency cap
+      ---
+      duration_ms: 50.299931
+      type: 'test'
+      ...
+    # Subtest: revoked while provider runs: billed once, result never released
+    ok 6 - revoked while provider runs: billed once, result never released
+      ---
+      duration_ms: 51.326197
+      type: 'test'
+      ...
+    # Subtest: corrected while provider runs: stale result never released
+    ok 7 - corrected while provider runs: stale result never released
+      ---
+      duration_ms: 40.430126
+      type: 'test'
+      ...
+    # Subtest: revoked after reserve but before dispatch releases the unsent reservation
+    ok 8 - revoked after reserve but before dispatch releases the unsent reservation
+      ---
+      duration_ms: 41.049196
+      type: 'test'
+      ...
+    # Subtest: disclosed pain on an older record still blocks model dispatch
+    ok 9 - disclosed pain on an older record still blocks model dispatch
+      ---
+      duration_ms: 11.592345
+      type: 'test'
+      ...
+    # Subtest: empty declarations remain unknown and do not fabricate completed history
+    ok 10 - empty declarations remain unknown and do not fabricate completed history
+      ---
+      duration_ms: 38.484918
+      type: 'test'
+      ...
+    # Subtest: model cannot promote self reports to verified device evidence
+    ok 11 - model cannot promote self reports to verified device evidence
+      ---
+      duration_ms: 36.35604
+      type: 'test'
+      ...
+    # Subtest: exact scalar quotes survive server validation without invented workout binding; modified units fail
+    ok 12 - exact scalar quotes survive server validation without invented workout binding; modified units fail
+      ---
+      duration_ms: 62.348427
+      type: 'test'
+      ...
+    # Subtest: automatic persistent questions share grant; general education and causality survive actual controller checks
+    ok 13 - automatic persistent questions share grant; general education and causality survive actual controller checks
+      ---
+      duration_ms: 129.17519
+      type: 'test'
+      ...
+    # Subtest: structured history survives as declared facts; false personal units and writes are rejected after settlement
+    ok 14 - structured history survives as declared facts; false personal units and writes are rejected after settlement
+      ---
+      duration_ms: 176.114951
+      type: 'test'
+      ...
+    # Subtest: two independent modern requests complete concurrently within an isolated verified synthetic cap
+    ok 15 - two independent modern requests complete concurrently within an isolated verified synthetic cap
+      ---
+      duration_ms: 1245.910124
+      type: 'test'
+      ...
+    # Subtest: settings revocation persists and ordinary requests cannot silently reenable; explicit enable resumes
+    ok 16 - settings revocation persists and ordinary requests cannot silently reenable; explicit enable resumes
+      ---
+      duration_ms: 29.937389
+      type: 'test'
+      ...
+    # Subtest: expired refs fail before dispatch and status does not authenticate or charge
+    ok 17 - expired refs fail before dispatch and status does not authenticate or charge
+      ---
+      duration_ms: 8.975148
+      type: 'test'
+      ...
+    1..17
+ok 4 - signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only
+  ---
+  duration_ms: 3889.994244
+  type: 'test'
+  ...
+# Subtest: general education and causal explanations survive; personal numbers, clearance and phantom writes do not
+ok 5 - general education and causal explanations survive; personal numbers, clearance and phantom writes do not
+  ---
+  duration_ms: 0.699741
+  type: 'test'
+  ...
+# Subtest: persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration
+ok 6 - persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration
+  ---
+  duration_ms: 1240.704559
+  type: 'test'
+  ...
+# Subtest: bounded context accepts structured old history without converting targets into actuals
+ok 7 - bounded context accepts structured old history without converting targets into actuals
+  ---
+  duration_ms: 0.650897
+  type: 'test'
+  ...
+1..7
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7743.195466

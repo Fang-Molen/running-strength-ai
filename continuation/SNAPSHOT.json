@@ -1,0 +1,19 @@
+{
+  "savedAt": "2026-10-28T09:40:57.990089+00:00",
+  "reason": "Resumed implementation and local evidence delivered; see DELIVERY.md",
+  "worktree": "/workspace/fangkun-20261028",
+  "branch": "codex/always-online-20261028",
+  "head": "149c11f17ed2696ab29bf098911e3f54640f1e4d",
+  "implementation": "LOCAL_DELIVERY_COMMIT_AND_ARCHIVE_RECEIPT",
+  "completedTask": false,
+  "newPaidCalls": 0,
+  "historicalOtherEnvironmentFees": "UNRECONCILED_NOT_ZERO",
+  "deployed": false,
+  "remotePublished": false,
+  "userDataChanged": false,
+  "finalTypecheck": "PASS_EXIT_0",
+  "finalBuild": "OUTPUTS_GENERATED_RUNTIME_UNVERIFIED_EXIT_RECEIPT_INTERRUPTED",
+  "finalRegression": "PROJECT_STAGES_SEGMENTED_PASS_PLUS_FINAL_AFFECTED_PASS",
+  "browserAcceptance": "DEV_SYNTHETIC_PASS_BUILT_RUNTIME_NOT_RUN",
+  "resume": "Read DELIVERY.md and remaining-work.md; preserve source and all records."
+}

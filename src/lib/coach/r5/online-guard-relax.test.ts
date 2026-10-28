@@ -15,8 +15,8 @@ const exposure = buildMuscleExposure(s);
 const packet = buildCoachAnalysisPacket(s, evaluateRecoveryEvidence(s, exposure), exposure);
 const hold = { ...packet, assessment: { ...packet.assessment, safetyState: "HOLD_ACTIVE" as const } };
 
-test("relax switch is on and the label text is fixed", () => {
-  assert.equal(ONLINE_GUARD_RELAXED, true);
+test("approved v2 retires the old blanket relaxation; historical label remains readable", () => {
+  assert.equal(ONLINE_GUARD_RELAXED, false);
   assert.equal(UNVERIFIED_ONLINE_LABEL, "模型回答，未经核验");
 });
 test("strict guardR5Reply is unchanged: still rejects all four relaxed rules", () => {
@@ -24,23 +24,23 @@ test("strict guardR5Reply is unchanged: still rejects all four relaxed rules", (
   assert.equal(guardR5Reply("设备恢复正常，可以继续跑步。", hold).ok, false);
   assert.equal(guardR5Reply("这就是跟腱炎。", packet).ok, false);
 });
-test("unbound numbers are released but flagged unverified", () => {
+test("historical fabricated personal quantity now fails shared v2 policy", () => {
   const r = guardOnlineReply("你今天跑了99999米。", packet);
-  assert.equal(r.ok, true);
-  assert.equal(r.unverified, true);
-  assert.ok(r.waived.includes("UNBOUND_NUMERIC_SOURCE"));
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.includes("UNBOUND_PERSONAL_QUANTITY"));
+  assert.deepEqual(r.waived, []);
 });
-test("pain/hold release is released but flagged unverified", () => {
+test("historical pain clearance now fails shared v2 policy", () => {
   const r = guardOnlineReply("设备恢复正常，可以继续跑步。", hold);
-  assert.equal(r.ok, true);
-  assert.equal(r.unverified, true);
-  assert.ok(r.waived.includes("ACTIVE_HOLD_RELEASE"));
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.includes("ACTIVE_HOLD_RELEASE"));
+  assert.deepEqual(r.waived, []);
 });
-test("diagnosis claim is released but flagged unverified", () => {
+test("historical diagnosis now fails shared v2 policy", () => {
   const r = guardOnlineReply("这就是跟腱炎。", packet);
-  assert.equal(r.ok, true);
-  assert.equal(r.unverified, true);
-  assert.ok(r.waived.includes("DIAGNOSIS_CLAIM"));
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.includes("DIAGNOSIS_CLAIM"));
+  assert.deepEqual(r.waived, []);
 });
 test("a clean answer passes without the unverified flag", () => {
   const r = guardOnlineReply("可以先说明目前资料，缺少的数据仍保持未知。", packet);
@@ -60,3 +60,7 @@ test("setting relaxed=false restores the strict behaviour (one-line restore)", (
   assert.equal(r.unverified, false);
   assert.deepEqual(r.waived, []);
 });
+
+test('general education no longer inherits personal-number and blanket causal restrictions',()=>{
+ for(const text of ['一般RPE量表从0到10表示主观用力程度。','力量训练会引起肌肉适应。'])assert.equal(guardOnlineReply(text,packet).ok,true)
+})

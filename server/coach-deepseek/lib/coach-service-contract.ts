@@ -8,6 +8,9 @@ export type AuthorizedCoachSnapshot = {
   provenance?: 'USER_DECLARED';
   /** Canonical persisted scalar declarations; never executable/client-derived packets. */
   declarations?: import('../../../src/lib/coach/online-contract.ts').CoachDeclaration[];
+  context?: import('../../../src/lib/coach/online-contract.ts').CoachRequestContext;
+  dependencyVersions?:Record<string,string>;
+  authorizationMode?:'PER_REQUEST'|'PERSISTENT';
   subjectId: string;
   athleteId: string;
   snapshotId: string;

@@ -3,6 +3,9 @@ import {currentAthleteId} from '../core/events'
 import type { Mark, Profile } from '../strength/profile'
 import { inspectAnyBackup, restoreAnyBackup, backupUndoSnapshot, undoBackupSnapshot, type BackupPreview } from '../ui/backup-center'
 import { PLAN_DOC_SCHEMA, validatePlanDoc, type ProfileMarkDefault } from './active-plan'
+import { isPhysicalBackupStore, UNSAFE_BROWSER_RESTORE } from '../core/backup-policy'
+import { prepareAnyBackup, bindBackupPreparation, type BackupPreparation } from '../ui/backup-center'
+import { profileStorageKey } from '../strength/profile'
 
 type Store = { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void }
 export type ImportPreview = { ok: true; kind: 'plan' | 'backup'; preview: BackupPreview & { ok: true }; plan?: { name: string; days: number; first: string; last: string; sample: string[] }; profileChanges: string[] } | { ok: false; reason: string }
@@ -38,6 +41,7 @@ export function previewImport(raw: string, storage: Store, profile: Profile): Im
 export type ImportUndo = { athleteId?:string; keys: { key: string; previous: string | null }[]; profileBefore: string | null }
 /** 确认后调用。返回撤销所需快照；失败时原有数据不变（restoreAnyBackup 会逐项回退）。 */
 export function confirmImport(raw: string, storage: Store, profile: Profile, saveProfile: (p: Profile) => void): { ok: true; undo: ImportUndo | null; restored: number } | { ok: false; reason: string } {
+  if (isPhysicalBackupStore(storage)) return { ok: false, reason: UNSAFE_BROWSER_RESTORE }
   const snap = backupUndoSnapshot(raw, storage), profileBefore = storage.getItem('fr255-profile-v1')
   const r = restoreAnyBackup(raw, storage)
   if (!r.ok) return r
@@ -49,8 +53,31 @@ export function confirmImport(raw: string, storage: Store, profile: Profile, sav
   return { ok: true, restored: r.restored, undo: snap ? { athleteId:currentAthleteId(), keys: snap, profileBefore } : null }
 }
 export function undoImport(u: ImportUndo, storage: Store): boolean {
+  if (isPhysicalBackupStore(storage)) return false
   if((u.athleteId??'local')!==currentAthleteId())return false
   const ok = undoBackupSnapshot(u.keys, storage)
   try { if (u.profileBefore == null) storage.removeItem('fr255-profile-v1'); else storage.setItem('fr255-profile-v1', u.profileBefore) } catch { return false }
   return ok
+}
+
+/** Browser plan import prepares both plan and optional profile defaults in the
+ * isolated candidate. No profile callback or active-plan event is emitted. */
+export function prepareImportCandidate(raw: string, storage: Store, profile: Profile): BackupPreparation {
+  const prepared = prepareAnyBackup(raw, storage)
+  if (!prepared.ok) return prepared
+  try {
+    const input = JSON.parse(raw)
+    if (input.schema === PLAN_DOC_SCHEMA) {
+      const validated = validatePlanDoc(input)
+      if (!validated.ok) return validated
+      const merged = mergeProfileDefaults(profile, validated.doc.profileDefaults?.marks)
+      if (merged.changes.length) {
+        const key = profileStorageKey(), before = storage.getItem(key), previous = before === null ? {} : JSON.parse(before)
+        if (!previous || typeof previous !== 'object' || Array.isArray(previous)) return { ok: false, reason: '当前资料无法核对，尚未保存候选。' }
+        prepared.entries.push({ key, value: JSON.stringify({ ...previous, ...merged.profile }) })
+        prepared.before.push({ key, value: before })
+      }
+    }
+    return bindBackupPreparation(prepared)
+  } catch { return { ok: false, reason: '计划附带资料无法核对，尚未保存候选。' } }
 }

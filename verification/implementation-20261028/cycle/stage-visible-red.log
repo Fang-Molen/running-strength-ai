@@ -1,0 +1,200 @@
+TAP version 13
+# Subtest: 400m exposes its own purpose and evidence boundary without inventing race ability
+not ok 1 - 400m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 39.022342
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(draft.weeks.every(week => week.purpose.includes(draft.eventFocus.limitation) && week.purpose.includes(draft.eventFocus.evidenceNeeds[0])))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:24:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: 800m exposes its own purpose and evidence boundary without inventing race ability
+not ok 2 - 800m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 9.226754
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(draft.weeks.every(week => week.purpose.includes(draft.eventFocus.limitation) && week.purpose.includes(draft.eventFocus.evidenceNeeds[0])))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:24:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: 1500m exposes its own purpose and evidence boundary without inventing race ability
+not ok 3 - 1500m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 7.659308
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(draft.weeks.every(week => week.purpose.includes(draft.eventFocus.limitation) && week.purpose.includes(draft.eventFocus.evidenceNeeds[0])))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:24:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 3000m exposes its own purpose and evidence boundary without inventing race ability
+not ok 4 - 3000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 7.919032
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(draft.weeks.every(week => week.purpose.includes(draft.eventFocus.limitation) && week.purpose.includes(draft.eventFocus.evidenceNeeds[0])))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:24:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 5000m exposes its own purpose and evidence boundary without inventing race ability
+not ok 5 - 5000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 8.142349
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(draft.weeks.every(week => week.purpose.includes(draft.eventFocus.limitation) && week.purpose.includes(draft.eventFocus.evidenceNeeds[0])))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:24:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 10000m exposes its own purpose and evidence boundary without inventing race ability
+not ok 6 - 10000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.489335
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(draft.weeks.every(week => week.purpose.includes(draft.eventFocus.limitation) && week.purpose.includes(draft.eventFocus.evidenceNeeds[0])))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:24:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: other endurance events do not borrow a 10K performance and missing distance stays unknown
+ok 7 - other endurance events do not borrow a 10K performance and missing distance stays unknown
+  ---
+  duration_ms: 14.916367
+  type: 'test'
+  ...
+# Subtest: 8-week stages expose review conditions and future weeks remain unconfirmed
+ok 8 - 8-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 7.493838
+  type: 'test'
+  ...
+# Subtest: 12-week stages expose review conditions and future weeks remain unconfirmed
+ok 9 - 12-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 7.841184
+  type: 'test'
+  ...
+# Subtest: 24-week stages expose review conditions and future weeks remain unconfirmed
+ok 10 - 24-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 9.154915
+  type: 'test'
+  ...
+# Subtest: 52-week stages expose review conditions and future weeks remain unconfirmed
+ok 11 - 52-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 12.097655
+  type: 'test'
+  ...
+# Subtest: advanced or expired competition explains phase reassessment without changing completed records
+ok 12 - advanced or expired competition explains phase reassessment without changing completed records
+  ---
+  duration_ms: 6.671571
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 6
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1016.089174

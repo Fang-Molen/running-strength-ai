@@ -1,0 +1,119 @@
+✔ read-only question is not consumed by a symptom proposal: 我没有腿疼，解释一下RPE (8.665758ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有小腿疼，解释一下RPE (0.588903ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有疼痛，解释一下RPE (0.477364ms)
+✔ read-only question is not consumed by a symptom proposal: 昨天腿疼，现在完全不疼了，解释一下RPE (0.81776ms)
+✔ read-only question is not consumed by a symptom proposal: 朋友腿疼，我想了解RPE (0.643686ms)
+✔ read-only question is not consumed by a symptom proposal: 不用保存，只解释一下RPE (0.456402ms)
+✔ mixed denied chest and asserted leg pain select only the asserted region (2.430134ms)
+✔ double negation cannot erase a current leg symptom (0.860495ms)
+✔ mixed current pain and education keeps the educational route without authorizing activity (1.038274ms)
+✔ ordinary weight control is not a medical-energy signal (1.256074ms)
+✔ dangerous intake behavior and current severe symptoms retain their safety response (2.023769ms)
+✔ third-party symptoms do not become personal snapshot restrictions (30.171995ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 无 (3.367305ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有不舒服 (1.9261ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 目前没有身体限制 (1.777766ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有疼痛 (1.816774ms)
+✔ explicit absence cannot erase independent historical pain (7.492359ms)
+✔ absence cannot replace an active profile restriction through a chat command (2.75709ms)
+✔ an old active restriction remains visible beyond the requested chart window (0.447489ms)
+✔ task permission keeps knowledge and unrelated upper-body advice available under a leg restriction (13.01336ms)
+✔ unscoped restrictions cannot be treated as permission for an unrelated-looking exercise (1.443238ms)
+✖ mixed subjects and denied symptoms cannot supply another region, side or severity (1.989306ms)
+✖ uncertain and rhetorical pain reports request clarification instead of saving a current symptom (0.66559ms)
+✖ a recent historical report is not stamped as a new symptom today (0.890961ms)
+✖ a friends low-intake report does not become the athletes personal energy restriction (1.644985ms)
+✔ partial or conflicting absence stays reviewable and does not erase a restriction (0.192472ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 22
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.029586
+
+✖ failing tests:
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:115:1
+✖ mixed subjects and denied symptoms cannot supply another region, side or severity (1.989306ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'LEFT' !== 'RIGHT'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:120:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'LEFT',
+    expected: 'RIGHT',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:125:1
+✖ uncertain and rhetorical pain reports request clarification instead of saving a current symptom (0.66559ms)
+  AssertionError [ERR_ASSERTION]: 我不确定是不是小腿疼
+  
+  'NONE' !== 'CLARIFY'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:127:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'NONE',
+    expected: 'CLARIFY',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:129:1
+✖ a recent historical report is not stamped as a new symptom today (0.890961ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
+  
+  'SYMPTOM'
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:133:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SYMPTOM',
+    expected: 'SYMPTOM',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:135:1
+✖ a friends low-intake report does not become the athletes personal energy restriction (1.644985ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:138:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

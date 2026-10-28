@@ -1,0 +1,58 @@
+{
+  "tasks": [8, 6],
+  "status": "partial-local-behavior-verified-browser-pending",
+  "source_import_commit": "149c11f17ed2696ab29bf098911e3f54640f1e4d",
+  "task8_changes": [
+    "Adopted plans retain their original payload; reviewActive compares per-domain dependency versions and returns FRESH, STALE, UNKNOWN or EMPTY with source names and changed/unknown domains.",
+    "Live dependencies reuse effective body/profile/goal, corrected meal entries, canonical actual training and calendar, effective restrictions, symptom journal and pain feedback. SHA-256 tokens are local change detectors, not authorization receipts.",
+    "Old plans without dependencies and unreadable sources are UNKNOWN. Malformed current-athlete symptom journal cannot masquerade as empty and clear restrictions.",
+    "Preparation stamps dependencies. Confirmation rechecks them inside the existing Web Lock. Rejecting a proposal clears its token while preserving the adopted plan.",
+    "Nutrition-only edits do not invalidate an independent strength request; another athlete's meals do not affect the current athlete's proposal.",
+    "Goal conflicts from the existing effective profile require clarification. A new weight-gain goal cannot continue the prior fat-loss candidate; no new goal formula or silent goal mapping was introduced.",
+    "Personal panel subscribes to relevant store/events and athlete switches, renders stale/history plus conditional candidate, invalidates pending confirmation after dependent edits, and offers explicit rejection.",
+    "Existing nutrition facts retain corrected portions, known subtotal and unknown daily completeness. Activity calories versus total calories remain distinct in the existing tested energy-source chain; no new energy formula or automatic increase was added."
+  ],
+  "task6_changes": [
+    "Cycle portrait retains measured performances separately from goal targets and adds explicit NOT_SEPARATELY_CONFIRMED running and strength experience.",
+    "Metric reference metadata reuses analysisReference: source/protocol/device, sample count, 30-day window and current/source refs. Single-day and no-reference evidence are descriptive, not an established personal baseline; different sources are segmented.",
+    "No new physiological threshold, medical conclusion, AI ability assessment, or learned personal adaptation formula."
+  ],
+  "public_contract": {
+    "panel": "src/components/personal-coach-panel.tsx",
+    "collector": "readPersonalContext(profile, asOf): PersonalContext",
+    "store": "personalStore(asOf?)",
+    "reviewActive": "reviewActive(domain?: NUTRITION | STRENGTH | RUNNING | ALL) -> {status, changed, unknown, active, candidate, clarification?}; read-only, adopted active unchanged",
+    "reviewProposal": "reviewProposal(token) -> {status, changed, unknown}; a non-FRESH result invalidates the displayed confirmation",
+    "reject": "reject(token) -> void; clears only the matching proposal",
+    "clarification": "Goal conflicts return candidate=null and clarification; prepare/confirm reject until conditions are reconciled.",
+    "dependency_scope": "LIVE for browser collector; PROFILE_ONLY remains for standalone store consumers and is incompatible with LIVE freshness."
+  },
+  "evidence": [
+    { "log": "red.log", "result": "7 initial expected failures before personal production changes; includes stale 70-to-80 kg answer and missing confirm invalidation." },
+    { "log": "portrait-red.log", "result": "3 initial expected failures before portrait metadata changes." },
+    { "log": "goal-red.log", "result": "Reproduces gain-goal edit still emitting the old fat-loss numbers before conflict handling." },
+    { "log": "symptom-red.log", "result": "Reproduces malformed current-athlete symptom source incorrectly returning FRESH." },
+    { "log": "green-final.log", "result": "19 individual assertions passed: 13 dependency tests, 3 panel SSR tests, 3 portrait tests; no network." },
+    { "log": "symptom-green.log", "result": "Final strict symptom-envelope check: focused test passed after guard refinement." },
+    { "log": "legacy-final.log", "result": "24 existing personal host/store/legacy nutrition assertions passed after goal-conflict integration." },
+    { "log": "suite.log", "result": "Earlier integration stage: 9 related files passed, including portion correction, online nutrition facts and activity-vs-total energy source tests. Reporter counts files, not assertions." },
+    { "log": "typecheck-final.log", "result": "Exit 2 only for concurrent root-owned knowledge/entry.test.ts:94 missing OnlineCoachButton owner; no errors in this group's files at that snapshot. Root should use consolidated final typecheck." },
+    { "log": "panel-red.log", "result": "Environment block, not a behavior-red result: default Playwright binary absent; /usr/bin/chromium launch SIGTRAP/crashpad Operation not permitted. Browser flow has not passed." },
+    { "file": "panel-browser.mjs", "result": "Reproducible synthetic file fixture for read adopted -> meal edit -> stale -> candidate -> second edit invalidates confirmation -> refresh -> reject preserving original. Blocks HTTP(S), starts no server. Root owns consolidated browser validation." },
+    { "file": "examples.json", "result": "Captured baseline output from red.log plus current program output; generated by examples.ts with synthetic data only." }
+  ],
+  "concrete_examples": {
+    "weight70To80": "Before fix still showed adopted version1 1530–1620 kcal/day. After fix status STALE/BODY, preserved version1; unadopted version2 candidate 1640–1730 using the existing formula, pending explicit confirmation.",
+    "portion600To300": "Corrected record appears once: known subtotal300 kcal, one meal, daily completeness UNKNOWN, daily deficit null.",
+    "refusal": "active deeply unchanged; pending proposal null.",
+    "goalConflict": "当前目标在资料中不一致（减脂 / 增重），请先核对目标后再生成候选；原方案保留为历史。",
+    "singleDay": "sampleCount1, coverage SINGLE_DAY_DESCRIPTION, stability NOT_ESTABLISHED."
+  },
+  "remaining_gaps": [
+    "Full Task8 acceptance remains open: rendered browser interaction, broader ingredient/substitution planning, ongoing individualized nutrition feedback, and full cross-tab/device acceptance are not established by these local tests.",
+    "Per-domain tokens reuse available projections; this is not a new complete storage-validation layer or server freshness proof. Existing source readers still own semantic payload validation.",
+    "Task6 is an evidence-labeling correction, not complete capability/baseline assessment. Running and strength experience intake is not added; absent confirmation remains explicit. Stable personal baselines and meaningful physiological trends require their own validated design.",
+    "Existing adult nutrition formula, thresholds and training policies are preserved, not scientifically validated by these tests.",
+    "No accounts, real records, database, network, model calls, deployment, commit or shared progress edits. No entire Task6/Task8 completion claim."
+  ]
+}

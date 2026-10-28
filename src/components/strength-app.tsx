@@ -27,6 +27,7 @@ import { importVault } from "@/lib/vault";
 import { maybeAutoGarminSync } from "@/components/garmin-sync";
 import { checkForNewVersion } from "@/lib/ui/app-version-check";
 import { initVault } from "@/lib/vault";
+import { retryPendingCorrectionReviews } from "@/lib/core/training-correction";
 import { activateBulkStore, enterBulkDegradedIfMigrated } from "@/lib/core/bulk-store";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CATALOG, GROUPS, type ExerciseGroup } from "@/lib/strength/catalog";
@@ -90,7 +91,7 @@ import { trackHomeView } from "@/lib/ui/running-workouts";
 import { absorbFeel, loadCoach, saveCoach } from "@/lib/strength/coach";
 import { emptyProfile, goalsFromProfile, loadProfile, profileFilled, profileSummary, saveProfile, withCoachGoals, type Profile } from "@/lib/strength/profile";
 import { loadSupportingGoals, saveSupportingGoals } from "@/lib/ui/goal-portfolio";
-import { collectLocalBackup, inspectLocalBackup, restoreLocalBackup, TRIAL_VERSION } from "@/lib/core/trial";
+import { collectLocalBackup, TRIAL_VERSION } from "@/lib/core/trial";
 import { bodyTrend } from "@/lib/nutrition/body";
 import { loadDay } from "@/lib/nutrition/day";
 import { todayEaten } from "@/lib/nutrition/log";
@@ -256,7 +257,7 @@ function StrengthAppInner() {
   const [runKm, setRunKm] = useState<number | null>(null);
   const [kcal, setKcal] = useState<number | null>(null);
   const [goalSaveFailed, setGoalSaveFailed] = useState(false);
-  useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem("fk-vault-restored")) { sessionStorage.setItem("fk-vault-restored", "1"); location.reload(); } }).catch(() => {}); }, []);
+  useEffect(() => { void initVault().then(() => { const review = retryPendingCorrectionReviews(); if (review.pending > 0) setNotice("部分更正后的判断仍待重审，旧判断不会当作最新结果。"); }).catch(() => { setNotice("保险箱初始化或复核未完成；当前记录保留，请在备份与恢复中核对存储状态。"); }); }, []);
   const [dietSheet, setDietSheet] = useState(false);
   useEffect(() => { const go = () => { if (document.visibilityState === "visible") window.setTimeout(() => void checkForNewVersion(() => trainingExecutionOpen(loadEvents())).then((reloading) => { if (!reloading) return maybeAutoGarminSync(); }).catch(() => {}), 1500); }; go(); document.addEventListener("visibilitychange", go); window.addEventListener("pageshow", go); window.addEventListener("online", go); const iv = window.setInterval(() => { if (document.visibilityState === "visible") void maybeAutoGarminSync().catch(() => {}); }, 15 * 60e3 + 5000); return () => { document.removeEventListener("visibilitychange", go); window.removeEventListener("pageshow", go); window.removeEventListener("online", go); window.clearInterval(iv); }; }, []);
   const [planSrc, setPlanSrc] = useState<string>("400m-v4");
@@ -1081,7 +1082,7 @@ function StrengthAppInner() {
             </div>
             {goalSaveFailed ? <p className="mt-2 text-warn">偏好没有写入本机，原来的记录还在。</p> : <p className="mt-2 text-xs text-muted">当前首页：{variant === "track" ? "田径" : variant === "fat-loss" ? "减脂" : variant === "muscle" ? "增肌 / 力量" : "综合体能"}。刷新后会记住这个选择。</p>}
           </section> : null}
-          {settingsPane === "backup" ? <BackupCenter onNotice={setNotice} legacySlot={<div id="settings-backup" className="text-sm"><p className="mt-1 text-xs text-muted">版本 {TRIAL_VERSION}。「全部数据备份」已覆盖这些内容，这里保留给旧流程和大陆静态版。</p>
+          {settingsPane === "backup" ? <BackupCenter onNotice={setNotice} legacySlot={<div id="settings-backup" className="text-sm"><p className="mt-1 text-xs text-muted">版本 {TRIAL_VERSION}。新分块备份提供更完整的文本记录范围；这里保留旧格式兼容入口。</p>
             <button type="button" className="mt-3 h-12 w-full rounded-card border border-line font-bold" onClick={() => {
               const blob = new Blob([collectLocalBackup(localStorage)], { type: "application/json" })
               const url = URL.createObjectURL(blob)
@@ -1100,18 +1101,10 @@ function StrengthAppInner() {
                 event.target.value = ""
                 if (!file) return
                 try {
-                  if (file.size > 30_000_000) return setNotice("备份文件超过 30MB，请先核对文件。")
-                  const raw = await file.text()
-                  const preview = inspectLocalBackup(raw, localStorage)
-                  if (!preview.ok) return setNotice(preview.reason)
-                  const accepted = window.confirm(`备份日期：${preview.exportedAt ?? "未知"}\n共 ${preview.total} 项：新增 ${preview.added} 项、将覆盖 ${preview.overwritten} 项、相同 ${preview.unchanged} 项。\n\n覆盖可能替换当前记录。请先下载当前备份。确定继续恢复？`)
-                  if (!accepted) return setNotice("已取消恢复，当前记录未修改。")
-                  const result = restoreLocalBackup(raw, localStorage)
-                  if (!result.ok) return setNotice(result.reason)
-                  setNotice(`已恢复 ${result.restored} 项。正在重新载入，不会删除备份里没有的项目。`)
-                  window.setTimeout(() => window.location.reload(), 400)
+                  const result = await importVault(file)
+                  setNotice(result.reason + (result.candidateId ? ` 待核副本编号：${result.candidateId}（可在备份中心下载）` : ''))
                 } catch {
-                  setNotice("备份没有恢复，原有记录还在。")
+                  setNotice("待核副本未完成，当前记录未修改。请保留原始备份文件。")
                 }
               }} />
             </label>
@@ -1431,7 +1424,7 @@ function StandaloneWelcome({ suspended = false }: { suspended?: boolean }) {
     <section className="fk-dash-card mt-3 p-3">
       <b>从 Safari 版迁移数据</b>
       <ol className="keep mt-1 list-decimal pl-5 text-xs text-muted"><li>在 Safari 打开方坤 → ⚙️ → 全部数据备份 → 一键导出 → 存储到「文件」</li><li>回到这里，点下面按钮选那个备份文件</li></ol>
-      <label className="fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold">选择备份文件导入<input type="file" accept="application/json,.json" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const n = await importVault(f); localStorage.setItem("fk-welcome-standalone-v1", "1"); setMsg(`已恢复 ${n} 项，正在刷新`); setTimeout(() => location.reload(), 800); } catch (err) { setMsg((err as Error).message); } }} /></label>
+      <label className="fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold">选择备份文件导入<input type="file" accept="application/json,.json" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const result = await importVault(f); setMsg(result.reason + (result.candidateId ? ` 待核副本编号：${result.candidateId}（可在备份中心下载）` : "")); } catch (err) { setMsg((err as Error).message); } }} /></label>
       {msg ? <p className="keep mt-1 text-xs" aria-live="polite">{msg}</p> : null}
     </section>
     <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent px-3 font-bold text-accent-fg" onClick={() => openDeviceSync()}>连接手表或运动软件</button>

@@ -208,8 +208,7 @@ export async function askOnlineCoach(input: { question: string; facts: string; l
     if(currentAthleteId()!==ownerAtRequest)return {error:'身份已变化，未显示其他账号的模型回答'}
     const latest=readAnalysis(analysisDayAtRequest,new Date().toISOString(),q)
     if(latest.revision!==verified.revision||contextAtRequest!==contextVersion())return {error:'模型等待期间训练或安全依据已变化，已保留本地回答'}
-    // NOTE (S1 fusion): this helper is not called by the UI any more (CoachOnlineRequest → online-session is).
-    // It keeps the v89.11.2 relaxed guard unchanged; online-session narrows the relaxation to "no active safety hold".
+    // Compatibility callers use the same v2 assertion classifier as the automatic UI and server.
     const check=guardOnlineReply(j.text,verified.packet)
     const why: Record<string, string> = { UNBOUND_NUMERIC_SOURCE: '含无来源数字', UNAUTHORIZED_WRITE_OR_CLEARANCE: '含未授权修改或解除限制', ACTIVE_HOLD_RELEASE: '安全限制未解除时给了放行', DIAGNOSIS_CLAIM: '含诊断结论' }
     return check.ok?(check.unverified?{text:j.text.slice(0,1000),unverified:true as const}:{text:j.text.slice(0,1000)}):{error:`模型内容未通过核验（${check.errors.map(e => why[e] ?? e).join('、')}），已保留本地回答`}

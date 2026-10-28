@@ -1,0 +1,16 @@
+✔ suggestions: pain/safety hold proposes cancelling the next key session, never auto-applied (2.753774ms)
+✔ suggestions: low recovery reduces today only, and never increases dose (6.974444ms)
+✔ suggestions: back-to-back key sessions keep both run and strength, moving the strength one (0.394518ms)
+✔ suggestions: started, finished, past and other athletes' sessions are never targeted (0.16456ms)
+✔ suggestions: decisions, expiry, de-duplication and recheck before writing (0.572258ms)
+✔ feedback loop: outcomes support, weaken or withdraw; notes follow and keep history (0.653871ms)
+✔ effective profile: most recent dated value wins, conflicts are reported, missing stays unknown (0.98256ms)
+✔ unified answer: at most two follow-up questions, assumptions labelled, facts stay under the online limit (0.604787ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.168732

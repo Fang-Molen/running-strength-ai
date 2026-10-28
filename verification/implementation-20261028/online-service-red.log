@@ -1,0 +1,55 @@
+✔ HTML fallback and 404 identify missing API instead of reporting HTTP 200 success (21.218581ms)
+✔ untrusted error payload never reaches rendering as an object (1.040808ms)
+✔ known provider errors yield actionable safe messages; arbitrary provider text is hidden (0.332755ms)
+✔ configuration probe sends no personal data and does not claim connectivity (0.893024ms)
+✔ a static app response is not mistaken for configured DeepSeek (0.473658ms)
+✔ success requires the trusted response contract and bounded text (1.613106ms)
+✔ trusted binding failure is configuration failure rather than network failure (0.370051ms)
+✔ prototype property names cannot become rendered error objects (1.572374ms)
+✔ successful rule processing is distinct from a provider-generated answer (0.412886ms)
+✖ rejection after provider response preserves actual dispatch and settlement, never claims no call (1.047348ms)
+✖ revoked grant, exhausted concurrency and unresolved ledger have distinct explanations (0.415661ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 9
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35.45073
+
+✖ failing tests:
+
+test at src/lib/coach/online-service.test.ts:59:1
+✖ rejection after provider response preserves actual dispatch and settlement, never claims no call (1.047348ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /模型已返回/. Input:
+  
+  '模型回答未通过事实或安全核验，已保留本地回答'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-service.test.ts:62:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '模型回答未通过事实或安全核验，已保留本地回答',
+    expected: /模型已返回/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-service.test.ts:66:1
+✖ revoked grant, exhausted concurrency and unresolved ledger have distinct explanations (0.415661ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /重新开启/. Input:
+  
+  '当前登录或访问权限不可用，请重新登录后重试'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-service.test.ts:70:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '当前登录或访问权限不可用，请重新登录后重试',
+    expected: /重新开启/,
+    operator: 'match',
+    diff: 'simple'
+  }

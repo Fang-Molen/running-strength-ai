@@ -1,0 +1,35 @@
+{
+  "scope": "Task5 frontend question-scoped self-report context",
+  "files": [
+    "src/lib/coach/online-context.ts",
+    "src/lib/coach/online-context.test.ts"
+  ],
+  "focusedAssertions": 15,
+  "focusedStatus": "PASS",
+  "fixtureType": "SYNTHETIC_OFFLINE",
+  "paidModelCalls": 0,
+  "serverBoundary": "parseCoachContext actual validator included",
+  "constraints": [
+    "General knowledge sends no personal context",
+    "Same-owner only; browser reports never elevated to server verification",
+    "32 records, 24 fields per record, entire context <= 48KiB",
+    "Run split/rest and strength sets retain actual/planned/target distinction",
+    "Relevant older history available from existing analysis projection; recent recovery selected separately",
+    "Dates and unknowns preserved, raw account/device identifiers withheld",
+    "Source versions track selected data; selection keys scoped to question for concurrency"
+  ],
+  "limitations": [
+    "History coverage is limited by existing analysis projection; no exhaustive archive retrieval added",
+    "No real device/account/model/network claim",
+    "Host adapters still inherit existing source projection availability limitations",
+    "Typecheck initial pass found own union issue fixed plus parent UI prop test in progress; consolidated root typecheck remains required"
+  ],
+  "providerBudget": {
+    "quoteEnvelopeBytes": 4800,
+    "coverageDetailBytes": 900,
+    "wholeRecordTrimming": true,
+    "omittedSafetySummary": true,
+    "actualControllerIntegrationTest": "Backend agent owns and is adding to coach-runtime.test.ts",
+    "routeCaveat": "Exact provider framing/policy is checked by controller; ordinary LOW and long modern questions require backend route adjustment"
+  }
+}

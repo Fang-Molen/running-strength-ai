@@ -1,0 +1,13 @@
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (2.901688ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (1784.452963ms)
+✔ bounded context accepts structured old history without converting targets into actuals (1.960362ms)
+✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (1190.433254ms)
+✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (1360.66354ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4347.389374

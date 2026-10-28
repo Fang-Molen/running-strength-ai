@@ -1,0 +1,15 @@
+✖ src/lib/coach/cycle/request.test.ts (992.555517ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1000.427124
+
+✖ failing tests:
+
+test at src/lib/coach/cycle/request.test.ts:1:1
+✖ src/lib/coach/cycle/request.test.ts (992.555517ms)
+  'test failed'

@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: stage evidence visibly separates observed history and unknown future feedback with source versions
+ok 1 - stage evidence visibly separates observed history and unknown future feedback with source versions
+  ---
+  duration_ms: 46.927745
+  type: 'test'
+  ...
+# Subtest: old saved drafts without condition evidence ask for review rather than invent satisfied checks
+ok 2 - old saved drafts without condition evidence ask for review rather than invent satisfied checks
+  ---
+  duration_ms: 0.424384
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2656.359641

@@ -1,0 +1,17 @@
+{
+  "source": "current working tree after review fixes",
+  "frontend": {
+    "log": "build-dev.log",
+    "outputExists": true,
+    "assets": 20
+  },
+  "node": {
+    "log": "build-server.log",
+    "outputExists": true,
+    "syntaxCheckExit": 0
+  },
+  "buildCommandExitReceipt": "lost during interrupted tool return; successful final bundling/prerender output preserved",
+  "builtRuntimeProbe": "NOT_RUN_LOCAL_PERMISSION_REQUEST_INTERRUPTED",
+  "productionDatabaseTouched": false,
+  "paidModelCalls": 0
+}

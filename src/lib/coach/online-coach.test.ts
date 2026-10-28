@@ -36,14 +36,14 @@ test('C03 merge: client question cap matches trusted server boundary (1000); ove
     assert.deepEqual(await askOnlineCoach({ ...base, question: '问'.repeat(1000) }), { text: 'ok' }); assert.equal(calls, 1)
   } finally { globalThis.fetch = orig }
 })
-test('relaxed online guard: unbound numbers are shown and marked unverified; write claims are still blocked', async () => {
+test('all online adapters share v2 assertions: fabricated personal numbers and writes fail', async () => {
   const { askOnlineCoach } = await import('./online-coach.ts')
   const orig = globalThis.fetch; let text = ''
   globalThis.fetch = (async () => new Response(JSON.stringify({ ok: true, text, planChanged: false }))) as any
   try {
     const base = { facts: '', local: '', history: [], question: '今天我跑的咋样', snapshotRef: {snapshotId: 'synthetic', consentId: 'synthetic', asOf: '2026-10-20T00:00:00.000Z'} } // S1 fusion: requests are snapshot-reference only
     text = '你今天跑了99999米。'
-    assert.deepEqual(await askOnlineCoach(base), { text, unverified: true })
+    assert.ok('error' in await askOnlineCoach(base))
     text = '可以先说明目前资料，缺少的数据仍保持未知。'
     assert.deepEqual(await askOnlineCoach(base), { text })
     text = '我已经替你修改了计划。'

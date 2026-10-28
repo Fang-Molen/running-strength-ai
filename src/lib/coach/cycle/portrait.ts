@@ -1,13 +1,13 @@
 import { buildAdaptiveReview } from '../../health/adaptive-review';
 import { assessAthleteHistory } from '../assessment/history';
 /** Read-only, source-separated athlete portrait over the established fact projection. */
-import { projectAnalysisEvidence, refOf, analysisDigest } from "../../health/analysis-evidence";
+import { projectAnalysisEvidence, refOf, analysisDigest, analysisReference, sourceScope } from "../../health/analysis-evidence";
 import { deriveAnalysisFacts } from "../../health/analysis-derived";
 import { adaptTrainingModelInput } from "../training-models/host";
 import { localDay } from "../../health/observation";
 import { weekOf, addDays } from "../../ui/day-schedule-rules";
 import type { ScheduleEntry } from "../../ui/day-schedule-rules";
-import type { TrainingFact } from "../../health/analysis-contract";
+import type { TrainingFact, MetricFact } from "../../health/analysis-contract";
 import type { CycleInput } from "./types";
 /** Linked rows must still exist in the canonical projection. Deduplicate occurrence identity,
  * including overlapping mixed-session links; conflicting duplicate doses are withheld. */
@@ -127,9 +127,25 @@ export function buildAthletePortrait(input: CycleInput) {
       responseGroups.set(key, g);
     }
   const derived = deriveAnalysisFacts({ ...snapshot, facts });
+  const metricSources = new Map<string, MetricFact>();
+  for (const fact of snapshot.facts) if (fact.kind === "METRIC") {
+    const key = JSON.stringify([fact.metric, fact.unit, fact.statistic, sourceScope(fact)]), previous = metricSources.get(key);
+    if (!previous || (fact.providerDate ?? fact.occurredAt) > (previous.providerDate ?? previous.occurredAt)) metricSources.set(key, fact);
+  }
+  const metricReferences = [...metricSources.values()].map(current => {
+    const reference = analysisReference(snapshot, current);
+    return { ...reference, current: refOf(current), metric: current.metric, deviceId: current.deviceId, protocol: current.protocolKey,
+      windowDays: 30, coverage: reference.sampleCount === 0 ? "NO_COMPARABLE_REFERENCE" as const : reference.sampleCount === 1 ? "SINGLE_DAY_DESCRIPTION" as const : "MULTIDAY_DESCRIPTION" as const,
+      stability: "NOT_ESTABLISHED" as const,
+      segmented: [...metricSources.values()].some(other => other.metric === current.metric && sourceScope(other) !== sourceScope(current)),
+    };
+  });
   const unknowns = [
     ...(!performances.length ? ["近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据"] : []),
     ...(input.goal.experience === "UNKNOWN" ? ["训练经历尚未确认"] : []),
+    "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+    ...(metricReferences.some(reference => reference.sampleCount < 2) ? ["部分指标只有单日描述或缺少同设备协议参照；稳定个人基线尚未建立"] : []),
+    ...(metricReferences.some(reference => reference.segmented) ? ["设备或协议不同的指标分段展示，不拼接为同一基线"] : []),
     ...(!input.training.days ? ["可训练星期未知"] : []),
     ...(!input.training.minutes ? ["单次可用时长未知"] : []),
     ...(!training.length ? ["近期实际训练明细未知"] : []),
@@ -140,6 +156,8 @@ export function buildAthletePortrait(input: CycleInput) {
     athleteId: owner,
     asOf: snapshot.context.asOf,
     performances,
+    experience: { cycleGoal: input.goal.experience, running: "NOT_SEPARATELY_CONFIRMED" as const, strength: "NOT_SEPARATELY_CONFIRMED" as const },
+    metricReferences,
     adaptive: buildAdaptiveReview({...snapshot, facts, safetyConstraints:input.snapshot.safetyConstraints}),
     history: assessAthleteHistory({ ...snapshot, facts, safetyConstraints: input.snapshot.safetyConstraints }, input.request?.historyDays ?? 90),
     training,

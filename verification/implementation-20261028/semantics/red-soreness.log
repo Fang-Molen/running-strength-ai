@@ -1,0 +1,58 @@
+✔ read-only question is not consumed by a symptom proposal: 我没有腿疼，解释一下RPE (11.002081ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有小腿疼，解释一下RPE (0.741074ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有疼痛，解释一下RPE (0.679911ms)
+✔ read-only question is not consumed by a symptom proposal: 昨天腿疼，现在完全不疼了，解释一下RPE (1.059226ms)
+✔ read-only question is not consumed by a symptom proposal: 朋友腿疼，我想了解RPE (0.95023ms)
+✔ read-only question is not consumed by a symptom proposal: 不用保存，只解释一下RPE (0.53433ms)
+✔ mixed denied chest and asserted leg pain select only the asserted region (2.8491ms)
+✔ double negation cannot erase a current leg symptom (0.849107ms)
+✔ mixed current pain and education keeps the educational route without authorizing activity (1.2403ms)
+✔ ordinary weight control is not a medical-energy signal (3.117347ms)
+✔ dangerous intake behavior and current severe symptoms retain their safety response (1.474526ms)
+✔ third-party symptoms do not become personal snapshot restrictions (37.271711ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 无 (5.791061ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有不舒服 (3.053079ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 目前没有身体限制 (2.334961ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有疼痛 (2.194818ms)
+✔ explicit absence cannot erase independent historical pain (10.154766ms)
+✔ absence cannot replace an active profile restriction through a chat command (7.213728ms)
+✔ an old active restriction remains visible beyond the requested chart window (0.518045ms)
+✔ task permission keeps knowledge and unrelated upper-body advice available under a leg restriction (25.601127ms)
+✔ unscoped restrictions cannot be treated as permission for an unrelated-looking exercise (4.543804ms)
+✔ mixed subjects and denied symptoms cannot supply another region, side or severity (2.547347ms)
+✔ uncertain and rhetorical pain reports request clarification instead of saving a current symptom (0.821956ms)
+✔ a recent historical report is not stamped as a new symptom today (0.919214ms)
+✔ a friends low-intake report does not become the athletes personal energy restriction (3.339424ms)
+✔ partial or conflicting absence stays reviewable and does not erase a restriction (0.293986ms)
+✖ ordinary calf soreness remains soreness instead of a new pain hold (1.220891ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 26
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 150.193097
+
+✖ failing tests:
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:145:1
+✖ ordinary calf soreness remains soreness instead of a new pain hold (1.220891ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'PAIN' !== 'SORENESS'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:150:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PAIN',
+    expected: 'SORENESS',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

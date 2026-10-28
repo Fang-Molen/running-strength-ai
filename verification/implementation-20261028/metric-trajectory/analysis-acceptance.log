@@ -1,0 +1,36 @@
+✔ A01 missing stays null; zero unknown-definition energy does not imply readiness (12.605814ms)
+✔ A02 arrival cutoff excludes future knowledge (0.25778ms)
+✔ A03 latest revision and withdrawal never accumulate (1.096833ms)
+✔ A04 and A05 history never mixes athlete, account, device or HRV method (1.247722ms)
+✔ A06 cumulative daily energy revisions stay separate from workout energy (1.08875ms)
+✔ A07 daily facts do not create hourly measurements; sleep retains interval (0.352134ms)
+✔ A08 mixed occurrence has two independent actual components (1.678906ms)
+✔ A09 planned/skipped sets are not completed doses (1.03557ms)
+✔ A10 same sets different kg-rep vectors; no physiological ratio (1.138466ms)
+✔ A11 2x4 segments preserve decimal seconds, rounds and rest (4.136152ms)
+✔ A12 known run and RDL share regions without common fatigue score (0.621743ms)
+✔ A13 unmapped exercise does not fabricate regions or RIR (1.159629ms)
+✔ A15 wrong direction and numeric delta rejected even with valid refs (6.942456ms)
+✔ A16 high session RPE and typical sleep are not same-fact conflict (1.383388ms)
+✔ A17 HRV relative change is descriptive and never prescribes dose (0.495642ms)
+✔ A18 provider recovery cannot override pain safety (0.680372ms)
+✔ A19 no data gives one decisive first question, no default healthy score (0.330291ms)
+✔ A20 equal set count is not a comparable dose protocol (0.419816ms)
+✔ A21 no soreness and decreased function remain distinct; never tissue clearance (0.968639ms)
+✔ A22 interval and right censoring keep non-resolved observations (1.133789ms)
+✔ A23 revision changes all shared packet identity, preserving earlier asOf (1.871338ms)
+✔ A24 three followups are one session, intervening training confounds (0.568342ms)
+✔ A25 fake saved-memory claims rejected without host receipt (0.691719ms)
+✔ A26 receivedAt never overwrites measuredAt (0.516994ms)
+✔ A28 actual route blocks paid call without trusted authorization (25.941856ms)
+✔ A29 changed plan version and executed sessions cannot execute candidate (1.10106ms)
+✔ A30 explicit canonical choice counts one device; no implicit source choice (3.405544ms)
+✔ A32 training counterfactual changes exposure; display name is outside evidence contract (12.16077ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 102.823974

@@ -1,0 +1,12 @@
+✔ src/lib/core/backup-archive.test.ts (6683.456943ms)
+✔ src/lib/ui/backup-candidate.test.ts (2364.824509ms)
+✔ src/lib/ui/backup-center.test.ts (1078.462465ms)
+✔ src/lib/vault-backup.test.ts (1090.920084ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6693.119784

@@ -1,0 +1,55 @@
+✔ B02 correction and pending review intent persist together; read-time invalidation survives failed audit and restart (76.660571ms)
+✔ B02 dropped fact write cannot report a committed correction (0.387598ms)
+✖ B02 unreadable source removes a previously supported label until its evidence can be reviewed (15.78541ms)
+✖ B02 failed VOID audit remains withdrawn through same-millisecond RESTORE, restart and retry (12.994046ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 124.962312
+
+✖ failing tests:
+
+test at src/lib/core/correction-recovery.test.ts:54:1
+✖ B02 unreadable source removes a previously supported label until its evidence can be reviewed (15.78541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'SUPPORTED'
+  - 'REVIEW_REQUIRED'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/correction-recovery.test.ts:80:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SUPPORTED',
+    expected: 'REVIEW_REQUIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/core/correction-recovery.test.ts:84:1
+✖ B02 failed VOID audit remains withdrawn through same-millisecond RESTORE, restart and retry (12.994046ms)
+  AssertionError [ERR_ASSERTION]: durable VOID invalidates the old explanation before any retry
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/correction-recovery.test.ts:107:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

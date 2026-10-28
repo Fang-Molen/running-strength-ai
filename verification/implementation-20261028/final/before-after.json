@@ -1,0 +1,115 @@
+{
+  "realModelEvaluated": false,
+  "professionalEvaluated": false,
+  "cases": [
+    {
+      "case": "prepare failure retry",
+      "synthetic": true,
+      "before": {
+        "visibleRetryButtons": 0
+      },
+      "after": {
+        "visibleRetryButtons": 1
+      },
+      "evidence": [
+        "online-browser/retry-red.log",
+        "online-browser/retry-green.log"
+      ]
+    },
+    {
+      "case": "educational range",
+      "synthetic": true,
+      "input": "RPE 的取值范围为 1 到 10。",
+      "before": {
+        "ok": false
+      },
+      "after": {
+        "ok": true
+      },
+      "evidence": [
+        "final/review-red.log",
+        "final/review-green.log"
+      ]
+    },
+    {
+      "case": "explicit training comparison",
+      "synthetic": true,
+      "before": {
+        "personal": false
+      },
+      "after": {
+        "selectedLoadKg": [
+          40,
+          50
+        ],
+        "unselectedLoadKg": 90,
+        "unselectedIncluded": false
+      },
+      "evidence": [
+        "final/review-red.log",
+        "final/review-green.log",
+        "online-browser/result.json"
+      ]
+    },
+    {
+      "case": "eight-week online explanation",
+      "synthetic": true,
+      "before": {
+        "onlineDispatch": "timed out because branch returned"
+      },
+      "after": {
+        "onlineExplanation": true,
+        "formalPlanAutoWrite": false
+      },
+      "evidence": [
+        "online-browser/review-red.log",
+        "online-browser/result.json"
+      ]
+    },
+    {
+      "case": "corrected training quantity",
+      "synthetic": true,
+      "before": {
+        "loadKg": 40,
+        "answerCurrent": true
+      },
+      "after": {
+        "loadKg": 45,
+        "oldAnswerStale": true
+      },
+      "evidence": [
+        "online-browser/result.json",
+        "online-browser/flows.mjs"
+      ]
+    },
+    {
+      "case": "persistent offline choice",
+      "synthetic": true,
+      "before": {
+        "autoOnline": true
+      },
+      "after": {
+        "autoOnline": false,
+        "retainedAfterReload": true,
+        "additionalProviderCalls": 0
+      },
+      "evidence": [
+        "online-browser/result.json"
+      ]
+    },
+    {
+      "case": "reject refreshed nutrition candidate",
+      "synthetic": true,
+      "before": {
+        "adoptedVersion": 1
+      },
+      "after": {
+        "adoptedVersion": 1,
+        "pendingProposal": null
+      },
+      "evidence": [
+        "personal/browser-final.log"
+      ]
+    }
+  ]
+}

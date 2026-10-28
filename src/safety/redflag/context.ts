@@ -45,7 +45,7 @@ export function textTemporal(text:string):Temporal {
  // CURRENT means the text contains an actual/current part, not that every part is current.
  return clauses.some(clause=>clause.temporal==='CURRENT')?'CURRENT':clauses[0]?.temporal??'CURRENT'
 }
-export function contextClauses(text:string):string[]{return text.split(/[，,。；;！!？?\n]|但是|(?<!喘|透)不过|可是|然而|但(?=我|他|她|有|现在|刚|又)/).filter(Boolean)}
+export function contextClauses(text:string):string[]{return text.split(/[，,。；;！!？?\n]|但是|(?<!喘|透)不过|可是|然而|(?<!不)但(?!是)/).filter(Boolean)}
 /** Questions, unconfirmed fields and prospective stop rules do not report an existing symptom. */
 export function unassertedAt(clause:string,index:number,length:number):Temporal|null {
  const before=clause.slice(0,index),after=clause.slice(index+length)

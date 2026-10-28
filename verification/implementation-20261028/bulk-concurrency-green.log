@@ -1,0 +1,24 @@
+✔ isBulkKey 只认日内样本家族和已确认训练导入 (3.092949ms)
+✔ B05: both persistent stores failing must reject flush instead of reporting success (8.584425ms)
+✔ B07: a persisted deletion broadcast evicts the old bulk cache (14.141399ms)
+✔ B07: queued local write cannot be replaced by a broadcast of the older disk value (82.062785ms)
+✔ B07: flush includes writes appended while the prior persistent transaction is pending (13.15257ms)
+✔ 迁移成功：先备份原值，读回一致才删旧键，之后读写走大块层，localStorage 不再占空间 (13.734768ms)
+✔ 迁移失败（IndexedDB 写不进）：旧键原样保留并继续在 localStorage 里工作 (5.932083ms)
+✔ 迁移读回不一致：不删旧键 (8.566617ms)
+✔ IndexedDB 不可用且没迁移过：保持原样（OFF），读写 localStorage (1.829113ms)
+✔ 已迁移过但这次 IndexedDB 打不开：降级——读为空、写入被拒绝，绝不覆盖 (2.072953ms)
+✔ 超时保护：已迁移用户进入降级，未迁移用户不变 (0.176598ms)
+✔ 第二次启动：从 IndexedDB 加载；日内样本读写正常并落盘 (18.071127ms)
+✔ localStorage 里又出现了同名键（降级期间写的）比 IndexedDB 新：以它为准，IndexedDB 旧值也先备份 (17.796197ms)
+✔ 配额模拟：localStorage 已塞满时迁移腾出空间，日程保存成功（原版失败） (848.571964ms)
+✔ 通用于所有手表来源：Garmin / COROS / 其他型号的键同样迁移，且互相隔离、不混 (31.224754ms)
+✔ S1 融合：v89.11.13 写入的 IndexedDB 数据在合入 S1 在线教练/R6 后仍能读，原始训练记录逐字不变 (1219.094279ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2295.686198

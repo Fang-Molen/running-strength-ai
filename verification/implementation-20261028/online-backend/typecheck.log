@@ -1,0 +1,17 @@
+
+> typecheck
+> tsc --noEmit
+
+server/coach-deepseek/coach-chat.controller.js(86,56): error TS2353: Object literal may only specify known properties, and 'kind' does not exist in type '{ inputTokenLimit: number; outputTokenLimit: number; }'.
+server/coach-deepseek/coach-chat.controller.js(185,74): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/components/personal-coach-panel.test.tsx(17,125): error TS2322: Type '{ version: number; schema: 1; athleteId: string; profileRevision: number; createdAt: string; goal: Goal; services: Service[]; nutrition: null | { basis: "INITIAL_ESTIMATE"; maintenanceKcal: [number, number] | null; energyKcal: [number, number] | null; proteinG: [number, number] | null; guidance: string[]; }; ... 4 m...' is not assignable to type '{ dependencies: PersonalDependencies; schema: 1; athleteId: string; profileRevision: number; version: number; createdAt: string; goal: Goal; services: Service[]; ... 4 more ...; sources: string[]; }'.
+  Types of property 'dependencies' are incompatible.
+    Type 'PersonalDependencies | undefined' is not assignable to type 'PersonalDependencies'.
+      Type 'undefined' is not assignable to type 'PersonalDependencies'.
+src/components/personal-coach-panel.test.tsx(24,57): error TS2322: Type '{ status: "UNKNOWN"; changed: never[]; unknown: "BODY"[]; active: null; candidate: null; }' is not assignable to type '{ status: "EMPTY"; changed: PersonalDependencyDomain[]; unknown: PersonalDependencyDomain[]; active: PersonalPlan | null; candidate: null; } | { ...; }'.
+  Types of property 'active' are incompatible.
+    Type 'null' is not assignable to type 'PersonalPlan'.
+src/lib/coach/knowledge/entry.test.ts(94,70): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '{ question: string; disabled: false; onAnswer: () => void; onNotice: () => void; onDismiss: () => void; }' is not assignable to parameter of type 'Attributes & { question: string; owner: string; disabled: boolean; onAnswer: (text: string, owner: string, source: "LOCAL" | "MODEL", unverified?: boolean | undefined, basis?: OnlineAnswerBasis | undefined) => void; onNotice: (text: string) => void; onDismiss: () => void; }'.
+      Property 'owner' is missing in type '{ question: string; disabled: false; onAnswer: () => void; onNotice: () => void; onDismiss: () => void; }' but required in type '{ question: string; owner: string; disabled: boolean; onAnswer: (text: string, owner: string, source: "LOCAL" | "MODEL", unverified?: boolean | undefined, basis?: OnlineAnswerBasis | undefined) => void; onNotice: (text: string) => void; onDismiss: () => void; }'.

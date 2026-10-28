@@ -1,0 +1,525 @@
+✖ archive preserves values and explicit scope; hashes match independent SHA-256 (1.335555ms)
+✖ single value exceeding 5,000,001 characters and archive exceeding 30MB round-trip completely (0.213484ms)
+✖ Unicode chunks preserve complete surrogate pairs at every boundary (0.150228ms)
+✖ UTF-8 payload capacity rejects 64MiB plus one byte before producing an archive (0.515511ms)
+✖ export rejects malformed Unicode rather than hashing replacement characters (0.232663ms)
+✖ JSON escape expansion has an explicit container capacity (0.200684ms)
+✖ credentials and coordination keys are refused without silently dropping data (0.154855ms)
+✖ metadata must carry valid athlete, timestamp and nonoverlapping explicit scope (0.205251ms)
+✖ future format versions are rejected (0.192933ms)
+✖ different container formats are rejected (0.225862ms)
+✖ tampered data is rejected (0.168846ms)
+✖ tampered chunk hash is rejected (0.118099ms)
+✖ tampered per-key bytes are rejected (0.127834ms)
+✖ tampered metadata is covered by manifest hash (0.096186ms)
+✖ tampered manifest hash is rejected (0.083947ms)
+✖ omitted chunk is rejected (0.105851ms)
+✖ extra or duplicate chunk is rejected (0.096086ms)
+✖ reordered chunks are rejected (0.083968ms)
+✖ incorrect chunk count and index are rejected (0.084518ms)
+✖ duplicate manifest keys and omitted manifest entries are rejected (0.083076ms)
+✖ duplicate JSON members are rejected even when their parsed values would match (0.093431ms)
+✖ invalid JSON, arrays and missing manifests are rejected (0.309439ms)
+✖ unknown fields cannot hide undeclared backup payloads (0.169287ms)
+✖ empty values and empty record collection round-trip without omitted chunks (0.17826ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 0
+ℹ fail 24
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.578171
+
+✖ failing tests:
+
+test at src/lib/core/backup-archive.test.ts:20:1
+✖ archive preserves values and explicit scope; hashes match independent SHA-256 (1.335555ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:21:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:35:1
+✖ single value exceeding 5,000,001 characters and archive exceeding 30MB round-trip completely (0.213484ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:37:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:46:1
+✖ Unicode chunks preserve complete surrogate pairs at every boundary (0.150228ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:48:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:58:1
+✖ UTF-8 payload capacity rejects 64MiB plus one byte before producing an archive (0.515511ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ARCHIVE_CAPACITY/. Input:
+  
+  'AssertionError [ERR_ASSERTION]: the chunked archive library must exist'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:59:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [AssertionError],
+    expected: /ARCHIVE_CAPACITY/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:62:1
+✖ export rejects malformed Unicode rather than hashing replacement characters (0.232663ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ARCHIVE_UNICODE/. Input:
+  
+  'AssertionError [ERR_ASSERTION]: the chunked archive library must exist'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:63:64)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [AssertionError],
+    expected: /ARCHIVE_UNICODE/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:66:1
+✖ JSON escape expansion has an explicit container capacity (0.200684ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ARCHIVE_CAPACITY/. Input:
+  
+  'AssertionError [ERR_ASSERTION]: the chunked archive library must exist'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:67:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [AssertionError],
+    expected: /ARCHIVE_CAPACITY/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:70:1
+✖ credentials and coordination keys are refused without silently dropping data (0.154855ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:72:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:79:1
+✖ metadata must carry valid athlete, timestamp and nonoverlapping explicit scope (0.205251ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ARCHIVE_METADATA/. Input:
+  
+  'AssertionError [ERR_ASSERTION]: the chunked archive library must exist'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:84:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [AssertionError],
+    expected: /ARCHIVE_METADATA/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:87:1
+✖ future format versions are rejected (0.192933ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:87:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:88:1
+✖ different container formats are rejected (0.225862ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:88:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:89:1
+✖ tampered data is rejected (0.168846ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:89:41)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:90:1
+✖ tampered chunk hash is rejected (0.118099ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:90:47)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:91:1
+✖ tampered per-key bytes are rejected (0.127834ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:91:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:92:1
+✖ tampered metadata is covered by manifest hash (0.096186ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:92:61)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:93:1
+✖ tampered manifest hash is rejected (0.083947ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:93:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:94:1
+✖ omitted chunk is rejected (0.105851ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:94:41)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:95:1
+✖ extra or duplicate chunk is rejected (0.096086ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:95:52)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:96:1
+✖ reordered chunks are rejected (0.083968ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:96:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:97:1
+✖ incorrect chunk count and index are rejected (0.084518ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:98:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:101:1
+✖ duplicate manifest keys and omitted manifest entries are rejected (0.083076ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at rejectMutation (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:102:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:105:1
+✖ duplicate JSON members are rejected even when their parsed values would match (0.093431ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:106:30)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:109:1
+✖ invalid JSON, arrays and missing manifests are rejected (0.309439ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ARCHIVE_/. Input:
+  
+  'AssertionError [ERR_ASSERTION]: the chunked archive library must exist'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:110:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [AssertionError],
+    expected: /ARCHIVE_/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:112:1
+✖ unknown fields cannot hide undeclared backup payloads (0.169287ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at fixture (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:14:29)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:113:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/core/backup-archive.test.ts:116:1
+✖ empty values and empty record collection round-trip without omitted chunks (0.17826ms)
+  AssertionError [ERR_ASSERTION]: the chunked archive library must exist
+      at library (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:8:10)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/backup-archive.test.ts:117:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

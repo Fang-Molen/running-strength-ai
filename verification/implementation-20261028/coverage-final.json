@@ -1,0 +1,1379 @@
+{
+  "schema_version": 2,
+  "kind": "implementation-evidence-snapshot-not-release-acceptance",
+  "recorded_at": "2026-10-28T09:40:57.990089+00:00",
+  "source_import_commit": "149c11f17ed2696ab29bf098911e3f54640f1e4d",
+  "claimed_upstream_commit": "0d4293b",
+  "claimed_upstream_verified": false,
+  "total_ids": 54,
+  "status_counts": {
+    "external-unverified": 5,
+    "partially-implemented": 40,
+    "verified-local": 8,
+    "not-implemented": 1
+  },
+  "status_definitions": {
+    "verified-local": "该编号明确验收行为有本地合成证据；不等于整个Task、专业效力或真实环境通过。",
+    "partially-implemented": "已定位源码/局部变更或验证，列出的remaining尚未满足。",
+    "external-unverified": "本地机制或证据存在，但该编号要求的真实环境/专业证据不存在。",
+    "not-implemented": "核心能力尚未实现；相邻机制不能代替。",
+    "blocked": "必要条件阻塞且当前无可用实现；本快照未单独使用。"
+  },
+  "scope": "本地集成证据更新；已纳入集中分段回归、最后审查修复定向回归、开发页实际浏览器与构建产物。构建启动/生产页检查仍未完成；没有真实账号、付费模型或部署证据。",
+  "evidence_caveats": [
+    "Initial static coverage-baseline.json remains unchanged.",
+    "Agent result documents and passing logs are scoped evidence, not whole-product acceptance.",
+    "No independent webpage retrieval, production migration/deployment, device/account or professional effectiveness claim.",
+    "Source-based support matrix, external runbook and rule ledger now exist; external execution and professional validation remain NOT_RUN.",
+    "Latest cycle selection typecheck passed at its snapshot; root consolidated regression/build/browser is not yet incorporated.",
+    "Final resume evidence is in final/, online-browser/result.json and DELIVERY.md; build process exit receipts were interrupted and built runtime was not launched."
+  ],
+  "items": [
+    {
+      "id": "A01",
+      "title": "真实品牌接入",
+      "task": 9,
+      "status": "external-unverified",
+      "entrypoints": [
+        "src/lib/ui/platform-sync-runtime.ts",
+        "src/lib/health/garmin-sync-runner.ts",
+        "src/lib/health/coros-account-sync.ts",
+        "functions/api/strava-mcp/[[path]].js",
+        "src/lib/health/strava-mcp-server.ts"
+      ],
+      "current_evidence": "品牌适配器和 Strava 探测入口仍存在；本轮未访问真实账号。",
+      "verification": [
+        "docs/implementation-20261028/external-validation.md",
+        "docs/implementation-20261028/rule-ledger.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/ui/platform-sync-runtime.test.ts",
+        "src/lib/health/garmin-sync-runner.test.ts",
+        "src/lib/health/coros-account-sync.test.ts"
+      ],
+      "remaining": "已交付源码支持矩阵和验收操作单；逐品牌真实授权→读取→确认→重启证据未执行。"
+    },
+    {
+      "id": "A02",
+      "title": "时间单位与算法口径",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/unified-import.ts",
+        "src/lib/health/observation.ts",
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/coach/online-context.ts"
+      ],
+      "current_evidence": "继续使用带来源、时间、单位、协议和修订的现有投影；新增上下文保留这些区别。",
+      "verification": [
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/health/unified-fact-store.test.ts"
+      ],
+      "remaining": "完整导入入口的时区/算法/单位对照尚未覆盖。"
+    },
+    {
+      "id": "A03",
+      "title": "人物归属与重复活动",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/activity-identity.ts",
+        "src/lib/ui/device-store.ts",
+        "src/lib/health/garmin-pending-imports.ts",
+        "src/lib/coach/personal/host.ts"
+      ],
+      "current_evidence": "上下文及私教依赖只纳入同一运动员；另一运动员餐食不使本用户候选失效。",
+      "verification": [
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log",
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/brand-isolation.test.ts",
+        "src/lib/ui/device-store-sync.test.ts",
+        "src/lib/health/garmin-pending-imports.test.ts"
+      ],
+      "remaining": "品牌账号、重复真实活动和完整异步导入链未新增验收。"
+    },
+    {
+      "id": "A04",
+      "title": "识别与导入确认",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/components/device-import.tsx",
+        "src/components/training-import-sheet.tsx",
+        "src/lib/ui/device-import-review.ts",
+        "src/lib/ui/device-import-contract.ts"
+      ],
+      "current_evidence": "已有导入预检与审核入口保留。",
+      "verification": [],
+      "source_tests_not_execution_proof": [
+        "src/lib/ui/device-import-contract.test.ts",
+        "src/lib/ui/device-import-review.test.ts",
+        "src/lib/core/training-import.test.ts"
+      ],
+      "remaining": "切人、切账号和草稿变更后的真实导入确认仍未验证。"
+    },
+    {
+      "id": "B01",
+      "title": "新增纠错与目标更新",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/core/training-correction.ts",
+        "src/lib/core/import-history.ts",
+        "src/lib/coach/loop/effective-profile.ts"
+      ],
+      "current_evidence": "更正失败不再等同审计完成，源事实和依赖回执分开处理；有效画像和目标保留类型。",
+      "verification": [
+        "verification/implementation-20261028/correction-green.log",
+        "verification/implementation-20261028/semantics/green-correction-review.log",
+        "verification/implementation-20261028/semantics/result.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/training-correction.test.ts",
+        "src/lib/core/training-correction-projection.test.ts",
+        "src/lib/core/import-history.test.ts"
+      ],
+      "remaining": "并非所有纠错字段或写入入口都已接通；首次捕获失败仍有恢复缺口。"
+    },
+    {
+      "id": "B02",
+      "title": "更正后的依赖刷新",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/core/training-correction.ts",
+        "src/lib/core/coach-p7-runtime.ts",
+        "src/lib/core/coach-v4-formal-rows-store.ts",
+        "src/lib/core/coach-offline-loop.ts",
+        "src/components/coach-offline-loop-panel.tsx"
+      ],
+      "current_evidence": "持久待审计记录、重启重试、读取时失效和待重审展示；VOID 后 RESTORE 不复活旧解释。",
+      "verification": [
+        "verification/implementation-20261028/correction-green.log",
+        "verification/implementation-20261028/semantics/green-correction-review.log",
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/coach-claim-revision.test.ts",
+        "src/lib/core/training-correction-projection.test.ts"
+      ],
+      "remaining": "冲突重复证据的 audited active/quarantined 投影未接入读时校验；初次 capture 失败仍不能重建。"
+    },
+    {
+      "id": "B03",
+      "title": "过期回答与快照",
+      "task": 2,
+      "status": "verified-local",
+      "entrypoints": [
+        "src/lib/coach/online-session.ts",
+        "src/lib/coach/cycle/host.ts",
+        "server/coach-deepseek/coach-snapshot-store.server.ts",
+        "src/lib/coach/online-context.ts",
+        "src/lib/coach/personal/store.ts"
+      ],
+      "current_evidence": "选课更正后旧回答标记过期；不同问题的独立快照、取消及来源核验有浏览器和服务端证据。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log",
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/final/remaining-results.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "docs/implementation-20261028/DELIVERY.md"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/online-session.test.ts",
+        "src/lib/coach/cycle/host.test.ts"
+      ],
+      "remaining": "限本地合成及文档证据；外部模型、专业/长期效果见独立未验证项。"
+    },
+    {
+      "id": "B04",
+      "title": "撤销删除与持久一致",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/r4/course-flow.ts",
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/lib/coach/personal/store.ts"
+      ],
+      "current_evidence": "既有确认/撤销事务保留；拒绝私教候选不改 active。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/r4/course-flow.test.ts",
+        "src/lib/coach/cycle/host.test.ts"
+      ],
+      "remaining": "全部修改入口、撤销冲突和跨存储持久一致仍未整体证明。"
+    },
+    {
+      "id": "B05",
+      "title": "恢复成功早于持久保存",
+      "task": 1,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/core/bulk-store.ts",
+        "src/lib/ui/backup-center.ts",
+        "src/lib/vault.ts",
+        "src/components/settings-center.tsx",
+        "src/lib/core/restore-transaction.ts",
+        "src/lib/core/restore-candidate.ts"
+      ],
+      "current_evidence": "事务纯引擎有崩溃/未知提交结果等故障测试；浏览器恢复入口只保存隔离候选且不报告已恢复。",
+      "verification": [
+        "verification/implementation-20261028/storage-failures-green.log",
+        "verification/implementation-20261028/restore-transaction-green.log",
+        "verification/implementation-20261028/backup-integration/result.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/bulk-store.test.ts",
+        "src/lib/core/storage-journal.test.ts",
+        "src/lib/ui/backup-center.test.ts"
+      ],
+      "remaining": "冻结旧标签的物理写入无法强制隔离，事务引擎未连接正式恢复；B05 不能标完成。"
+    },
+    {
+      "id": "B06",
+      "title": "备份可导出却不能完整导回",
+      "task": 1,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/vault.ts",
+        "src/lib/ui/backup-center.ts",
+        "src/lib/core/trial.ts",
+        "src/lib/core/backup-archive.ts"
+      ],
+      "current_evidence": "分块归档校验及大于30MB合成往返通过；导出和预检已集成，并明确排除项。",
+      "verification": [
+        "verification/implementation-20261028/archive/result.json",
+        "verification/implementation-20261028/backup-integration/result.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/backup-inspection.test.ts",
+        "src/lib/ui/backup-center.test.ts"
+      ],
+      "remaining": "浏览器只暂存候选；非全设备备份、非流式，不证明用户文件落盘或真实浏览器完整恢复。"
+    },
+    {
+      "id": "B07",
+      "title": "跨标签删除未清内存",
+      "task": 1,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/core/bulk-store.ts",
+        "src/lib/core/storage.ts",
+        "src/lib/vault.ts"
+      ],
+      "current_evidence": "bulk 缓存/失败状态和浏览器恢复保护有局部改进；不再从孤立镜像静默复活数据。",
+      "verification": [
+        "verification/implementation-20261028/storage-failures-green.log",
+        "verification/implementation-20261028/restore-transaction-green.log",
+        "verification/implementation-20261028/backup-integration/result.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/bulk-store.test.ts",
+        "src/lib/core/storage-journal.test.ts"
+      ],
+      "remaining": "所有常规写者未纳入持久 generation/墓碑协议，旧标签隔离及 pending 写广播竞态尚需修复。"
+    },
+    {
+      "id": "C01",
+      "title": "画像层次与能力含义",
+      "task": 6,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/cycle/portrait.ts",
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/core/evidence-profile.ts"
+      ],
+      "current_evidence": "画像新增跑步/力量经验分别未确认；实测成绩与目标不混同。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/assessment/history.test.ts",
+        "src/lib/core/evidence-profile.test.ts"
+      ],
+      "remaining": "尚无分别采集并呈现跑步熟练/力量新手的完整入口，也未完成专项能力、近期状态和任务适用性的全面展示。"
+    },
+    {
+      "id": "C02",
+      "title": "证据强弱与有效期",
+      "task": 6,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/core/coach-claim-revision.ts"
+      ],
+      "current_evidence": "来源版本可使旧支持判断转待重审；画像保留 ref 和设备/协议。",
+      "verification": [
+        "verification/implementation-20261028/correction-green.log",
+        "verification/implementation-20261028/semantics/green-correction-review.log",
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/assessment/history.test.ts",
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/core/coach-claim-revision.test.ts"
+      ],
+      "remaining": "完整 Claim 适用范围、reviewAt、有效期及反证轨迹尚未覆盖所有判断。"
+    },
+    {
+      "id": "C03",
+      "title": "个人基线与阶段变化",
+      "task": 6,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/coach/cycle/portrait.ts",
+        "src/lib/health/metric-trajectory.ts",
+        "src/lib/health/recovery-rule-ledger.ts"
+      ],
+      "current_evidence": "画像显示样本数/30天描述/设备分段；新增可读取较早/较后历史段、方向复核、当前反证与覆盖，当前日不进参照；8新+84邻近断言通过。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/metric-trajectory/result.json",
+        "verification/implementation-20261028/metric-trajectory/actual-outputs.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/health/recovery-quantitative.test.ts"
+      ],
+      "remaining": "非稳定正常或临床阈值；无持久寿命参照，旧数据超出保留范围后可能失去早期对照；跨入口与真实个人有效性未验证。"
+    },
+    {
+      "id": "C04",
+      "title": "个人响应与判断撤回",
+      "task": 6,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/adaptive-review.ts",
+        "src/lib/health/personal-response.ts",
+        "src/lib/coach/cycle/host.ts"
+      ],
+      "current_evidence": "现有同协议/干扰响应链保留，第四周不再无证据减组；依赖更正可重审部分解释。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/correction-green.log",
+        "verification/implementation-20261028/semantics/green-correction-review.log",
+        "verification/implementation-20261028/semantics/result.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/cycle/adaptive-import.test.ts",
+        "src/lib/health/analysis-followup.test.ts"
+      ],
+      "remaining": "跨强度不推广、反证削弱及反馈删除全路径还需端到端证明。"
+    },
+    {
+      "id": "D01",
+      "title": "真实联网服务就绪",
+      "task": 4,
+      "status": "external-unverified",
+      "entrypoints": [
+        "src/components/coach-sheet.tsx",
+        "src/lib/coach/online-session.ts",
+        "server/coach-deepseek/coach-runtime.server.ts",
+        "migrations/coach/003_persistent_online.sql"
+      ],
+      "current_evidence": "持续授权、并发快照、原子预算与迁移回滚在隔离SQL/假服务验证。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/online-session.test.ts",
+        "server/coach-deepseek/coach-runtime.test.ts"
+      ],
+      "remaining": "真实身份、模型、部署、收费与运行配置未经验证。"
+    },
+    {
+      "id": "D02",
+      "title": "前后端数字核验不一致",
+      "task": 5,
+      "status": "verified-local",
+      "entrypoints": [
+        "src/lib/coach/r5/guard.ts",
+        "src/lib/coach/deepseek-grounding.ts",
+        "server/coach-deepseek/coach-chat.controller.js",
+        "src/lib/coach/assertion-policy.ts"
+      ],
+      "current_evidence": "前后端共用 coach-assertions-v2；一般数字与个人事实/单位/写入断言按同一策略校验，真实controller合成回归通过。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/deepseek-grounding.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts",
+        "server/coach-deepseek/coach-backend-adapter.test.mjs"
+      ],
+      "remaining": "词法分类不证明专业正确或任意语义完备；真实模型未调用。"
+    },
+    {
+      "id": "D03",
+      "title": "解释取舍与模型职责",
+      "task": 5,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/online-session.ts",
+        "src/lib/coach/online-coach.ts",
+        "server/coach-deepseek/coach-chat.controller.js"
+      ],
+      "current_evidence": "controller 接收结构化上下文并允许条件建议、竞争解释；保存10组实际假上游响应。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/online-session.test.ts",
+        "src/lib/coach/online-coach.test.ts"
+      ],
+      "remaining": "真实模型综合质量、稳定性和个人训练效果未验证；不是已具备全面执教能力。"
+    },
+    {
+      "id": "D04",
+      "title": "对话上下文与检索",
+      "task": 5,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/online-session.ts",
+        "src/lib/coach/online-training-facts.ts",
+        "src/lib/coach/online-nutrition-facts.ts",
+        "src/lib/coach/online-context.ts"
+      ],
+      "current_evidence": "现主链新增按问题选择的 coach-context-v2：旧相关训练、分段组次、饮食、目标和未知；不再只限6个标量。",
+      "verification": [
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log",
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/online-session.test.ts",
+        "src/lib/coach/online-training-facts.test.ts",
+        "src/lib/coach/online-nutrition-facts.test.ts"
+      ],
+      "remaining": "受既有投影覆盖、32记录/24字段/48KiB预算约束；没有完整档案检索或独立网页检索。"
+    },
+    {
+      "id": "D05",
+      "title": "否定腿疼被抢先识别症状",
+      "task": 3,
+      "status": "verified-local",
+      "entrypoints": [
+        "src/components/coach-sheet.tsx",
+        "src/lib/coach/r5/intents.ts",
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/utterance-semantics.ts"
+      ],
+      "current_evidence": "否定腿疼的实际发送路径自动在线并返回RPE教学；混合症状保留独立科普。",
+      "verification": [
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log",
+        "verification/implementation-20261028/final/remaining-results.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "docs/implementation-20261028/DELIVERY.md"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/r5/guard-conversation.test.ts",
+        "src/lib/core/coach-colloquial-pain.test.ts"
+      ],
+      "remaining": "限本地合成及文档证据；外部模型、专业/长期效果见独立未验证项。"
+    },
+    {
+      "id": "D06",
+      "title": "限制填无仍触发全局限制",
+      "task": 3,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/analysis-from-parts.ts",
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/loop/effective-training.ts"
+      ],
+      "current_evidence": "无/未知/有效限制分开；显式无只作用于该来源，不能清除独立历史限制。",
+      "verification": [
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-hardening.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ],
+      "remaining": "实际表单与发送入口浏览器验证待完成；历史数据不破坏迁移需持续覆盖。"
+    },
+    {
+      "id": "D07",
+      "title": "普通控重目标被升级风险",
+      "task": 3,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/core/coach-red-flags.ts",
+        "src/components/coach-sheet.tsx"
+      ],
+      "current_evidence": "普通控重不升级医疗复核；危险低摄入及恶化/额外训练正对照保留。",
+      "verification": [
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/coach-guard-k15.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ],
+      "remaining": "当前入口浏览器验证和专业风险分类审查尚未完成。"
+    },
+    {
+      "id": "D08",
+      "title": "普通因果科普被整段拒绝",
+      "task": 5,
+      "status": "verified-local",
+      "entrypoints": [
+        "src/lib/health/analysis-reply-validation.ts",
+        "src/lib/coach/r5/guard.ts",
+        "server/coach-deepseek/coach-chat.controller.js",
+        "src/lib/coach/assertion-policy.ts"
+      ],
+      "current_evidence": "共享断言策略允许一般科普因果；确诊、放行和虚假写入仍拒绝，局部可分离内容可保留。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-reply-validation.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ],
+      "remaining": "专业适用性、复杂语义和真实模型输出仍需另评。"
+    },
+    {
+      "id": "D09",
+      "title": "失败阶段与核验标签冲突",
+      "task": 4,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/components/coach-online-request.tsx",
+        "src/components/coach-sheet.tsx",
+        "src/lib/coach/online-service.ts"
+      ],
+      "current_evidence": "后端输出派发/返回/结算状态、traceId与策略版本；合成上游失败和核验拒绝保留实际阶段。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/online-service.test.ts",
+        "server/coach-deepseek/coach-status.test.mjs"
+      ],
+      "remaining": "最终前端标签、失效订阅和真实费用观测待集中验证，不能写成零费用实测。"
+    },
+    {
+      "id": "E01",
+      "title": "单课结构与执行口径",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/core/running-execution.ts",
+        "src/lib/core/running-round-analysis.ts",
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/coach/cycle/actual-structure.ts",
+        "src/lib/coach/cycle/display.ts"
+      ],
+      "current_evidence": "既有实际结构与休息保留；周期核心/显示相关旧测试在局部suite通过。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/running-execution-rest.test.ts",
+        "src/lib/core/running-round-analysis.test.ts"
+      ],
+      "remaining": "导入分圈映射置信度、部分完成、改圈后只聚合一次的全入口尚未完成。"
+    },
+    {
+      "id": "E02",
+      "title": "专项与课目的匹配",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/training-models/physiology.ts",
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/coach/cycle/types.ts",
+        "src/lib/coach/cycle/actual-seeds.ts",
+        "src/lib/coach/cycle/actual-structure.ts"
+      ],
+      "current_evidence": "六项目目的/边界进入实际熟悉课排序：按已知课目的、实际结构/完成与可比来源择候选；不完整首选降级；同事实800/1500及3K/5K/10K实际选择/理由/缺项不同，全部为条件迁移。",
+      "verification": [
+        "verification/implementation-20261028/cycle/stage-red.log",
+        "verification/implementation-20261028/cycle/stage-green.log",
+        "verification/implementation-20261028/cycle/stage-output.json",
+        "verification/implementation-20261028/cycle/stage-visible-green.log",
+        "verification/implementation-20261028/cycle/selection-focused.log",
+        "verification/implementation-20261028/cycle/selection-output.json",
+        "verification/implementation-20261028/cycle/selection-typecheck.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/training-models/physiology.test.ts",
+        "src/lib/coach/cycle/cycle.test.ts"
+      ],
+      "remaining": "检索顺序为产品偏好，尚非专业验证的最优专项处方；其他长跑、同分段递增/匀速迁移及真实使用质量仍待评估。"
+    },
+    {
+      "id": "E03",
+      "title": "个体波动与短板判断",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/core/running-observation.ts"
+      ],
+      "current_evidence": "现有同条件比较、复核而不永久定性保留；没有新增效果推断。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/assessment/history.test.ts",
+        "src/lib/core/running-observation.test.ts"
+      ],
+      "remaining": "连续证据、竞争解释和更正撤回需实际问答入口对照。"
+    },
+    {
+      "id": "E04",
+      "title": "技术观察与训练迁移",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/running-technique/catalogue.ts",
+        "src/components/running-technique-library.tsx",
+        "src/lib/core/running-observation.ts"
+      ],
+      "current_evidence": "技术教学与训练观察源码存在；未声称个人动作诊断。",
+      "verification": [],
+      "source_tests_not_execution_proof": [
+        "src/lib/running-technique/catalogue.test.ts",
+        "src/lib/core/running-observation.test.ts"
+      ],
+      "remaining": "个人观察授权/来源、迁移假设及动作资源语义审核尚未实施。"
+    },
+    {
+      "id": "F01",
+      "title": "按力量目标选课",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/personal/planner.ts",
+        "src/lib/coach/cycle/planner.ts"
+      ],
+      "current_evidence": "私教刷新使用当前有效限制和训练依赖；周期仍复用熟悉动作并校验器材。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/personal/personal.test.ts",
+        "src/lib/coach/cycle/cycle.test.ts"
+      ],
+      "remaining": "未形成跑步辅助/增肌/最大力量/爆发/学习五类实际日历联合选课。"
+    },
+    {
+      "id": "F02",
+      "title": "进阶停滞与动作替代",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/personal/planner.ts",
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "current_evidence": "缺依据不自动加重；拒绝候选保留方案；固定第四周减组已去除。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/personal/personal.test.ts",
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ],
+      "remaining": "完整停滞诊断、目的相同但不等价的替代候选与已开始课程冲突还需实现。"
+    },
+    {
+      "id": "F03",
+      "title": "容量与主观强度口径",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/analysis-contract.ts",
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/core/training-correction.ts"
+      ],
+      "current_evidence": "逐组/负重口径和缺失保护原有链保留。",
+      "verification": [],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-dose-completeness.test.ts",
+        "src/lib/core/training-correction-projection.test.ts"
+      ],
+      "remaining": "单侧、辅助重量、自重、跳跃和失败组的全入口计量回归未新增。"
+    },
+    {
+      "id": "F04",
+      "title": "动作资源与教学质量",
+      "task": 7,
+      "status": "external-unverified",
+      "entrypoints": [
+        "src/components/exercise-demo.tsx",
+        "src/lib/strength/approved-motion.ts",
+        "src/lib/strength/exercise-content.ts"
+      ],
+      "current_evidence": "关键帧被交付包排除，不能据此判断线上资源失败。",
+      "verification": [],
+      "source_tests_not_execution_proof": [
+        "src/lib/strength/approved-motion.test.ts",
+        "src/lib/strength/pose-frames.test.ts",
+        "src/lib/strength/media-v2/registry.test.ts"
+      ],
+      "remaining": "完整产物资源加载、帧序/动作对应及专业教学质量均未验证。"
+    },
+    {
+      "id": "G01",
+      "title": "目标可行性与冲突",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/cycle/portrait.ts",
+        "src/lib/coach/cycle/types.ts"
+      ],
+      "current_evidence": "专项候选按实际熟悉课结构/目的检索并显式说明迁移缺口；未知成绩不由目标推断；日期、限制、历史完成与后续反馈分别有条件状态。",
+      "verification": [
+        "verification/implementation-20261028/cycle/stage-red.log",
+        "verification/implementation-20261028/cycle/stage-green.log",
+        "verification/implementation-20261028/cycle/stage-output.json",
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/cycle/stage-visible-green.log",
+        "verification/implementation-20261028/cycle/selection-focused.log",
+        "verification/implementation-20261028/cycle/selection-output.json",
+        "verification/implementation-20261028/cycle/selection-typecheck.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/cycle/review-findings.test.ts"
+      ],
+      "remaining": "未完成相同目标不同基础的全面可行性/取舍、关键赛事冲突与专业解释。"
+    },
+    {
+      "id": "G02",
+      "title": "多尺度周期与阶段转换",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/components/coach-cycle-panel.tsx",
+        "src/lib/coach/cycle/types.ts"
+      ],
+      "current_evidence": "1–52周与首周边界保留；阶段目的/条件可见；goal/date、限制、actual、calendar、同协议反馈逐项SATISFIED/UNKNOWN/CONTRADICTED且绑定来源版本。未来执行UNKNOWN，日历不证明生理ready。",
+      "verification": [
+        "verification/implementation-20261028/cycle/stage-red.log",
+        "verification/implementation-20261028/cycle/stage-green.log",
+        "verification/implementation-20261028/cycle/stage-output.json",
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/cycle/stage-visible-green.log",
+        "verification/implementation-20261028/cycle/selection-focused.log",
+        "verification/implementation-20261028/cycle/selection-output.json",
+        "verification/implementation-20261028/cycle/selection-typecheck.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/cycle/host.test.ts"
+      ],
+      "remaining": "独立跑力经验入口、执行反馈→阶段退出→更正重审的完整真实入口旅程、多峰比赛和专业个体转换规则未完整验证。"
+    },
+    {
+      "id": "G03",
+      "title": "周期内跑力安排",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "current_evidence": "既有周分钟/组数/距离预算和已排课程保护保留。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/cycle/selection-focused.log",
+        "verification/implementation-20261028/cycle/selection-output.json",
+        "verification/implementation-20261028/cycle/selection-typecheck.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ],
+      "remaining": "同日顺序/间隔与资源冲突备选、缺日历和多赛事全局安排仍不足。"
+    },
+    {
+      "id": "G04",
+      "title": "进阶减量与动态重排",
+      "task": 7,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "current_evidence": "固定第四周实际减组删除，仅保留复核；已有重复反馈和TAPER策略分别说明。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/cycle/stage-red.log",
+        "verification/implementation-20261028/cycle/stage-green.log",
+        "verification/implementation-20261028/cycle/stage-output.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/cycle/review-findings.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ],
+      "remaining": "漏练原因→MOVE/SWAP闭环、同实际日期不同窗口剂量稳定与全部撤销入口尚未验收；既有TAPER剂量未专业验证。"
+    },
+    {
+      "id": "G05",
+      "title": "聊天周期长度解析",
+      "task": 7,
+      "status": "verified-local",
+      "entrypoints": [
+        "src/lib/coach/cycle/request.ts",
+        "src/components/coach-sheet.tsx",
+        "src/components/coach-cycle-panel.tsx"
+      ],
+      "current_evidence": "1–52周及历史/计划窗口分离的定向测试通过，实际8周入口及在线解释通过。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/final/remaining-results.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "docs/implementation-20261028/DELIVERY.md"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/cycle/review-findings.test.ts"
+      ],
+      "remaining": "限本地合成及文档证据；外部模型、专业/长期效果见独立未验证项。"
+    },
+    {
+      "id": "H01",
+      "title": "恢复指标规则一致性",
+      "task": 6,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/health/recovery-quantitative.ts"
+      ],
+      "current_evidence": "画像同来源设备协议分段；知识/建议保留独立局部限制。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log",
+        "verification/implementation-20261028/metric-trajectory/result.json",
+        "verification/implementation-20261028/metric-trajectory/actual-outputs.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/health/recovery-quantitative.test.ts"
+      ],
+      "remaining": "健康页/聊天/周期每入口的统一来源和算法边界仍需完整对照。"
+    },
+    {
+      "id": "H02",
+      "title": "固定规则与个人反应",
+      "task": 6,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/health/adaptive-review.ts",
+        "src/lib/health/muscle-exposure.ts"
+      ],
+      "current_evidence": "既有暴露/干扰/反证链和新历史分段方向复核共同保留；连续下降不再只被滚动差值掩盖，不新增医学HOLD或剂量。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/metric-trajectory/result.json",
+        "verification/implementation-20261028/metric-trajectory/actual-outputs.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-followup.test.ts",
+        "src/lib/coach/cycle/adaptive.test.ts"
+      ],
+      "remaining": "固定主观阈值与两次反馈政策尚未专业校准，终身参照/长期效果/各入口证据一致性仍待验证。"
+    },
+    {
+      "id": "H03",
+      "title": "信息不足与训练许可",
+      "task": 3,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/online-session.ts"
+      ],
+      "current_evidence": "知识与受限训练分离，轻微反馈不必阻断无关问题；确认限制仍保留。",
+      "verification": [
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-hardening.test.ts",
+        "src/lib/coach/online-session.test.ts"
+      ],
+      "remaining": "recovery-assessment固定正疲劳/酸痛及恢复非10规则未作专业校准；功能许可的范围验收仍部分。"
+    },
+    {
+      "id": "H04",
+      "title": "症状语义与专业适用性",
+      "task": 3,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/r5/intents.ts",
+        "src/lib/core/coach-red-flags.ts",
+        "src/lib/health/symptom-review.ts"
+      ],
+      "current_evidence": "实际共用语义合同及本人/朋友、历史/当前、否定/不确定工程测试。",
+      "verification": [
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/coach-colloquial-pain.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ],
+      "remaining": "无真实语言长期误报评估或专业分诊验证。"
+    },
+    {
+      "id": "H05",
+      "title": "历史限制来源与复核",
+      "task": 3,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/symptom-review.ts",
+        "src/lib/health/symptom-store.ts",
+        "src/lib/health/recovery-assessment.ts"
+      ],
+      "current_evidence": "窗口外限制保留来源、日期、部位/侧别/动作范围与复核路径；旧ACCEPT不能清空限制。",
+      "verification": [
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/health/analysis-hardening.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ],
+      "remaining": "真实UI的复核与更正路径、所有历史格式和专业解除规则未全面验证。"
+    },
+    {
+      "id": "I01",
+      "title": "食物来源份量与识别",
+      "task": 8,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/nutrition/entry-workflow.ts",
+        "src/lib/nutrition/log.ts",
+        "src/lib/nutrition/food-photo.ts"
+      ],
+      "current_evidence": "合成半份修改只更新当前餐食一次；实际输出600→300不双计。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/personal/suite.log",
+        "verification/implementation-20261028/personal/legacy-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/nutrition/entry-workflow.test.ts",
+        "src/lib/nutrition/food-agg.test.ts"
+      ],
+      "remaining": "生熟、品牌、未知油量、范围置信及图片识别全部入口尚未完善。"
+    },
+    {
+      "id": "I02",
+      "title": "摄入完整性与消耗口径",
+      "task": 8,
+      "status": "verified-local",
+      "entrypoints": [
+        "src/lib/coach/online-nutrition-facts.ts",
+        "src/lib/nutrition/energy-source.ts",
+        "src/lib/nutrition/log.ts"
+      ],
+      "current_evidence": "一餐仅显示已知小计及全天完整性UNKNOWN；原活动/总消耗区分测试与营养汇总链通过。",
+      "verification": [
+        "verification/implementation-20261028/personal/suite.log",
+        "verification/implementation-20261028/personal/legacy-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/online-nutrition-facts.test.ts",
+        "src/lib/nutrition/energy-source.test.ts",
+        "src/lib/nutrition/food-agg.test.ts"
+      ],
+      "remaining": "本地合成行为已验证；真实设备热量质量、完整饮食记录和临床适用性不在该结论内。"
+    },
+    {
+      "id": "I03",
+      "title": "减脂增肌持续调整",
+      "task": 8,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/personal/planner.ts",
+        "src/lib/coach/personal/store.ts"
+      ],
+      "current_evidence": "既有起始估算公式保留；目标冲突或资料未知不给假精确候选，正式变更仍需确认。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/personal/personal.test.ts",
+        "src/lib/coach/personal/host.test.ts"
+      ],
+      "remaining": "完整趋势/预算/就餐时间/训练补给的持续个体反馈与定性餐食选项仍未实现。"
+    },
+    {
+      "id": "I04",
+      "title": "身体训练营养联动",
+      "task": 8,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/personal/host.ts",
+        "src/lib/coach/personal/store.ts",
+        "src/lib/coach/loop/effective-profile.ts",
+        "src/lib/coach/online-nutrition-facts.ts",
+        "src/components/personal-coach-panel.tsx"
+      ],
+      "current_evidence": "身体、目标、餐食、实际训练/课表和限制分域依赖；过期/未知、确认前重验、拒绝保持原active有证据。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/personal/host.test.ts",
+        "src/lib/health/health-nutrition-sync.test.ts",
+        "src/lib/coach/online-nutrition-facts.test.ts"
+      ],
+      "remaining": "实际取消训练后特定补给解释及面板浏览器/跨标签验证尚待集中完成。"
+    },
+    {
+      "id": "J01",
+      "title": "修改入口与确认撤销",
+      "task": 2,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "current_evidence": "既有预览确认路径保留，私教新增拒绝和过期确认保护；恢复入口改为明确候选暂存。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/storage-failures-green.log",
+        "verification/implementation-20261028/restore-transaction-green.log",
+        "verification/implementation-20261028/backup-integration/result.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/host.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ],
+      "remaining": "全部导入/修改/撤销和持久回执入口的连续旅程未验收。"
+    },
+    {
+      "id": "J02",
+      "title": "训练饮食恢复协同",
+      "task": 8,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/personal/host.ts",
+        "src/lib/coach/loop/effective-profile.ts"
+      ],
+      "current_evidence": "实际训练与营养方案通过共享依赖关联，不自动改变正式计划。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/personal/host.test.ts",
+        "src/lib/health/health-nutrition-sync.test.ts"
+      ],
+      "remaining": "目标→单课→恢复→就餐限制→替代的完整跨域解释/优化未完成。"
+    },
+    {
+      "id": "J03",
+      "title": "观察复查与改判",
+      "task": 8,
+      "status": "partially-implemented",
+      "entrypoints": [
+        "src/lib/health/adaptive-review.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/lib/core/coach-p7-runtime.ts"
+      ],
+      "current_evidence": "更正后旧解释可待重审；私教候选说明新旧依据并保留历史。",
+      "verification": [
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/correction-green.log",
+        "verification/implementation-20261028/semantics/green-correction-review.log",
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/cycle/stage-red.log",
+        "verification/implementation-20261028/cycle/stage-green.log",
+        "verification/implementation-20261028/cycle/stage-output.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "verification/implementation-20261028/final/review-integration.log",
+        "verification/implementation-20261028/personal/browser-final.log"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/health/analysis-followup.test.ts",
+        "src/lib/core/coach-claim-revision.test.ts"
+      ],
+      "remaining": "跨域reviewAt/观察任务/反证及连续追问为什么改判的完整入口旅程未验证。"
+    },
+    {
+      "id": "J04",
+      "title": "后台与跨端服务",
+      "task": 9,
+      "status": "not-implemented",
+      "entrypoints": [
+        "src/lib/vault.ts",
+        "src/lib/ui/backup-center.ts",
+        "src/lib/ui/platform-sync-runtime.ts"
+      ],
+      "current_evidence": "已有服务端授权/快照与本地备份候选；没有完整跨设备业务同步。",
+      "verification": [],
+      "source_tests_not_execution_proof": [],
+      "remaining": "加密备份、账号设备冲突、删除墓碑和后台同步尚未实现；不要将本地归档称跨端服务。"
+    },
+    {
+      "id": "K01",
+      "title": "基线与部署状态",
+      "task": [
+        0,
+        10
+      ],
+      "status": "verified-local",
+      "entrypoints": [
+        "AGENTS.md",
+        "package.json",
+        "docs/implementation-20261028/implementation-plan.md"
+      ],
+      "current_evidence": "基线、未提交更改、最新GitHub主线及未部署状态已落盘。",
+      "verification": [
+        "docs/implementation-20261028/external-validation.md",
+        "docs/implementation-20261028/rule-ledger.json",
+        "verification/implementation-20261028/final/remaining-results.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "docs/implementation-20261028/DELIVERY.md"
+      ],
+      "source_tests_not_execution_proof": [],
+      "remaining": "限本地合成及文档证据；外部模型、专业/长期效果见独立未验证项。"
+    },
+    {
+      "id": "K02",
+      "title": "测试数量与实际质量",
+      "task": [
+        0,
+        10
+      ],
+      "status": "verified-local",
+      "entrypoints": [
+        "package.json",
+        "scripts/test-register.mjs",
+        "src/lib/core/hydration.test.tsx"
+      ],
+      "current_evidence": "交付报告分开工程、事实、训练判断、专业与真实模型验证，保留初始失败及分段回归记录。",
+      "verification": [
+        "verification/implementation-20261028/cycle/result.json",
+        "verification/implementation-20261028/cycle/green-final.log",
+        "verification/implementation-20261028/cycle/suite-final.log",
+        "verification/implementation-20261028/cycle/stage-red.log",
+        "verification/implementation-20261028/cycle/stage-green.log",
+        "verification/implementation-20261028/cycle/stage-output.json",
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/online-context/result.json",
+        "verification/implementation-20261028/online-context/green.log",
+        "verification/implementation-20261028/semantics/result.json",
+        "verification/implementation-20261028/semantics/focused-results.json",
+        "verification/implementation-20261028/semantics/green-legacy-accept.log",
+        "verification/implementation-20261028/storage-failures-green.log",
+        "verification/implementation-20261028/restore-transaction-green.log",
+        "verification/implementation-20261028/backup-integration/result.json",
+        "verification/implementation-20261028/archive/result.json",
+        "verification/implementation-20261028/cycle/stage-visible-green.log",
+        "verification/implementation-20261028/cycle/selection-focused.log",
+        "verification/implementation-20261028/cycle/selection-output.json",
+        "verification/implementation-20261028/cycle/selection-typecheck.log",
+        "verification/implementation-20261028/metric-trajectory/result.json",
+        "verification/implementation-20261028/metric-trajectory/actual-outputs.json",
+        "verification/implementation-20261028/final/remaining-results.json",
+        "verification/implementation-20261028/online-browser/result.json",
+        "docs/implementation-20261028/DELIVERY.md"
+      ],
+      "source_tests_not_execution_proof": [
+        "src/lib/core/hydration.test.tsx"
+      ],
+      "remaining": "限本地合成及文档证据；外部模型、专业/长期效果见独立未验证项。"
+    },
+    {
+      "id": "K03",
+      "title": "真实环境与后端打包",
+      "task": [
+        9,
+        10
+      ],
+      "status": "external-unverified",
+      "entrypoints": [
+        "functions/api/coach-chat.js",
+        "functions/api/coach-snapshot.js",
+        "server/coach-deepseek/coach-runtime.server.ts",
+        "native/fangkun-health/package.json"
+      ],
+      "current_evidence": "仅本地synthetic/PGlite/假服务证据；个人面板Chromium受环境阻断记录保留。",
+      "verification": [
+        "verification/implementation-20261028/online-backend/result.json",
+        "verification/implementation-20261028/online-backend/final-focused.log",
+        "verification/implementation-20261028/online-backend/controller-output-examples.json",
+        "verification/implementation-20261028/personal/result.json",
+        "verification/implementation-20261028/personal/green-final.log",
+        "verification/implementation-20261028/personal/examples.json",
+        "verification/implementation-20261028/storage-failures-green.log",
+        "verification/implementation-20261028/restore-transaction-green.log",
+        "verification/implementation-20261028/backup-integration/result.json",
+        "docs/implementation-20261028/external-validation.md",
+        "docs/implementation-20261028/rule-ledger.json"
+      ],
+      "source_tests_not_execution_proof": [
+        "server/coach-deepseek/coach-backend-adapter.test.mjs",
+        "src/lib/health/native-health.test.ts"
+      ],
+      "remaining": "真实目标平台、Cloudflare、数据库/模型/品牌、iPhone/iPad Safari和实浏览器恢复均未验证。"
+    },
+    {
+      "id": "K04",
+      "title": "专业与长期效果验证",
+      "task": [
+        9,
+        10
+      ],
+      "status": "external-unverified",
+      "entrypoints": [
+        "docs/implementation-20261028/full-specification.txt",
+        "src/lib/coach/training-models/physiology.ts",
+        "src/lib/coach/personal/planner.ts"
+      ],
+      "current_evidence": "所有结果明确产品行为和专业效力分离。",
+      "verification": [
+        "docs/implementation-20261028/external-validation.md",
+        "docs/implementation-20261028/rule-ledger.json"
+      ],
+      "source_tests_not_execution_proof": [],
+      "remaining": "专业运动/营养/特殊人群/动作教学审查及长期真实效果未执行。"
+    }
+  ]
+}

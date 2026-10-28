@@ -67,7 +67,8 @@ export function CoachOfflineLoopPanel({plan,revision}:{plan:Plan;revision:number
   <details data-testid="offline-history"><summary className="min-h-11 cursor-pointer py-2 font-bold">以前的复盘（{portrait.judgments.length}）</summary>
    {portrait.judgments.map(j=><div key={j.id} className="mb-2 break-words"><p>{j.occurrenceId?sessions.find(o=>o.id===j.occurrenceId)?.label??'一次训练':'整体情况'}</p>{j.hypotheses.map(h=>{
     const state=j.hypothesisStates.find(s=>s.id===h.id)
-    return <p key={h.id} className="text-xs">{state?.status==='WITHDRAWN'?'旧依据已撤回':state?.status==='WEAKENED'?'证据削弱':state?.status==='SUPPORTED'?'获得支持（待继续验证）':'待验证'} · {h.explanation}{state?.changes.at(-1)?.reason?`；${state.changes.at(-1)!.reason}`:''}</p>
+    const reason=state?.reviewReason??state?.changes.at(-1)?.reason
+    return <p key={h.id} className="text-xs">{state?.status==='WITHDRAWN'?'旧依据已撤回':state?.status==='REVIEW_REQUIRED'?'待重审':state?.status==='WEAKENED'?'证据削弱':state?.status==='SUPPORTED'?'获得支持（待继续验证）':'待验证'} · {h.explanation}{reason?`；${reason}`:''}</p>
    })}{!j.hypotheses.length&&<p className="text-xs">仅记录事实与观察目标</p>}</div>)}
    <p className="text-xs text-muted">旧判断、新证据和反馈各自保留；不因单次表现改变长期能力评分。</p>
   </details>

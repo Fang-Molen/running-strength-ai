@@ -34,6 +34,35 @@ export type CycleInput = {
   importedDates: string[];
 };
 export type CyclePhase = "BASE" | "BUILD" | "SPECIFIC" | "TAPER" | "REVIEW";
+export type CycleEventFocus = {
+  eventMeters: number | null;
+  objective: string;
+  evidenceNeeds: string[];
+  limitation: string;
+};
+/** Reviewable product conditions, never an achieved physiological state. */
+export type CyclePhaseReview = {
+  status: "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE";
+  selectionReason: string;
+  entryConditions: string[];
+  exitConditions: string[];
+  reviewAt: string;
+  entryState: CycleConditionState;
+  entryChecks: CycleConditionCheck[];
+  exitChecks: CycleConditionCheck[];
+};
+export type CycleConditionState = "SATISFIED" | "UNKNOWN" | "CONTRADICTED";
+export type CycleConditionCheck = {
+  id: string; label: string; state: CycleConditionState; reason: string;
+  evidenceRefs: EvidenceRef[]; sourceEntryIds: string[]; sourceVersions: { source: string; version: string }[];
+};
+export type CycleCourseFit = {
+  policy: "EVENT_RETRIEVAL_1";
+  status: "CONDITIONAL_TRANSFER";
+  evidenceState: "SUPPORTED_ACTUAL" | "INCOMPLETE" | "UNKNOWN";
+  sourceEntryId: string; sourceRefs: EvidenceRef[];
+  purpose: string; structure: string; rank: number; reason: string; gaps: string[];
+};
 export type CycleSession = {
   date: string;
   purpose: string;
@@ -46,6 +75,7 @@ export type CycleSession = {
   sourceRefs: EvidenceRef[];
   sourceEntryIds: string[];
   sourceCourses?: { date: string; title: string; minutes: number | null }[];
+  eventFit?: CycleCourseFit;
   missing: string[];
   changedVariable: "NONE" | "DURATION" | "REPEAT_COUNT" | "SETS" | "EXECUTION";
 };

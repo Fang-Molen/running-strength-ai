@@ -32,7 +32,7 @@ export function assertVerifiedPolicy(p: VerifiedDeepSeekPolicy | null, now: numb
   if (![p.inputMicrosPerMillion,p.cachedInputMicrosPerMillion,p.outputMicrosPerMillion,p.tokenOverheadUpperBound,p.timeoutMs].every(n => Number.isSafeInteger(n) && n >= 0) || p.inputMicrosPerMillion <= 0 || p.outputMicrosPerMillion <= 0 || p.cachedInputMicrosPerMillion > p.inputMicrosPerMillion || p.timeoutMs < 1 || p.timeoutMs > 30000 || p.tokenOverheadUpperBound < 1) throw new Error('POLICY_INVALID');
   const counts = ['campaignCalls','pilotCalls','ownerCalls','concurrency','globalDailyCalls','ownerDailyCalls'] as const;
   const costs = ['campaignCostMicros','ownerCostMicros','globalDailyCostMicros','ownerDailyCostMicros','perCallCostMicros'] as const;
-  if (!p.caps || counts.some(k => !Number.isSafeInteger(p.caps[k]) || Number(p.caps[k]) <= 0) || costs.some(k => !/^[1-9]\d{0,29}$/.test(p.caps[k] ?? '')) || p.caps.pilotCalls! > 8 || p.caps.campaignCalls! > 120 || p.caps.concurrency !== 1) throw new Error('POLICY_CAPS');
+  if (!p.caps || counts.some(k => !Number.isSafeInteger(p.caps[k]) || Number(p.caps[k]) <= 0) || costs.some(k => !/^[1-9]\d{0,29}$/.test(p.caps[k] ?? '')) || p.caps.pilotCalls! > 8 || p.caps.campaignCalls! > 120 || p.caps.concurrency! > 32) throw new Error('POLICY_CAPS');
 }
 
 function finite(v: unknown, min = 0, max = Number.MAX_SAFE_INTEGER): number | null { return typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : null; }

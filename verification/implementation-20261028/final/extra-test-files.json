@@ -1,0 +1,19 @@
+[
+  "server/coach-deepseek/online-v2.test.ts",
+  "src/components/coach-cycle-panel.test.tsx",
+  "src/lib/coach/online-context.test.ts",
+  "src/lib/coach/personal/dependencies.test.ts",
+  "src/lib/coach/personal/host.test.ts",
+  "src/lib/coach/r5/legacy-limit-accept.test.ts",
+  "src/lib/coach/r5/online-guard-relax.test.ts",
+  "src/lib/coach/r5/semantics-20261028.test.ts",
+  "src/lib/core/backup-archive.test.ts",
+  "src/lib/core/boot-identity.test.ts",
+  "src/lib/core/bulk-store.test.ts",
+  "src/lib/core/correction-recovery.test.ts",
+  "src/lib/core/restore-candidate.test.ts",
+  "src/lib/core/restore-transaction.test.ts",
+  "src/lib/health/metric-trajectory.test.ts",
+  "src/lib/ui/backup-candidate.test.ts",
+  "src/lib/vault-backup.test.ts"
+]

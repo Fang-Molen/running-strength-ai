@@ -1,0 +1,36 @@
+✔ read-only question is not consumed by a symptom proposal: 我没有腿疼，解释一下RPE (10.195177ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有小腿疼，解释一下RPE (0.549173ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有疼痛，解释一下RPE (4.315353ms)
+✔ read-only question is not consumed by a symptom proposal: 昨天腿疼，现在完全不疼了，解释一下RPE (0.962038ms)
+✔ read-only question is not consumed by a symptom proposal: 朋友腿疼，我想了解RPE (1.251863ms)
+✔ read-only question is not consumed by a symptom proposal: 不用保存，只解释一下RPE (0.297541ms)
+✔ mixed denied chest and asserted leg pain select only the asserted region (2.355791ms)
+✔ double negation cannot erase a current leg symptom (1.083553ms)
+✔ mixed current pain and education keeps the educational route without authorizing activity (1.961194ms)
+✔ ordinary weight control is not a medical-energy signal (2.889941ms)
+✔ dangerous intake behavior and current severe symptoms retain their safety response (0.874516ms)
+✔ third-party symptoms do not become personal snapshot restrictions (36.770371ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 无 (6.721144ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有不舒服 (1.93246ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 目前没有身体限制 (1.73454ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有疼痛 (1.586726ms)
+✔ explicit absence cannot erase independent historical pain (6.378452ms)
+✔ absence cannot replace an active profile restriction through a chat command (2.773415ms)
+✔ an old active restriction remains visible beyond the requested chart window (0.458625ms)
+✔ task permission keeps knowledge and unrelated upper-body advice available under a leg restriction (12.995734ms)
+✔ unscoped restrictions cannot be treated as permission for an unrelated-looking exercise (1.960763ms)
+✔ mixed subjects and denied symptoms cannot supply another region, side or severity (0.676045ms)
+✔ uncertain and rhetorical pain reports request clarification instead of saving a current symptom (1.077744ms)
+✔ a recent historical report is not stamped as a new symptom today (0.88323ms)
+✔ a friends low-intake report does not become the athletes personal energy restriction (1.430689ms)
+✔ partial or conflicting absence stays reviewable and does not erase a restriction (0.199503ms)
+✔ ordinary calf soreness remains soreness instead of a new pain hold (0.5937ms)
+✔ a local symptom mention does not turn an explicitly unrelated requested action into the same scope (3.920874ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.976645

@@ -1,0 +1,25 @@
+{
+  "scope": "Task6 descriptive prior-history segments and conditional recovery interpretation",
+  "newAssertions": 8,
+  "adjacentAssertions": 84,
+  "status": "PASS",
+  "commands": [
+    "node --import ./scripts/test-register.mjs src/lib/health/metric-trajectory.test.ts",
+    "node --import ./scripts/test-register.mjs src/lib/health/analysis-acceptance.test.ts",
+    "node --import ./scripts/test-register.mjs src/lib/health/analysis-derived.test.ts",
+    "node --import ./scripts/test-register.mjs src/lib/health/analysis-packet-integrity.test.ts",
+    "node --import ./scripts/test-register.mjs src/lib/health/analysis-reply-validation.test.ts"
+  ],
+  "evaluation": "SYNTHETIC_DETERMINISTIC_ONLY",
+  "ruleId": "FK_RECOVERY_HISTORY_SEGMENTS_1",
+  "clinicalThresholdsAdded": false,
+  "professionalCalibration": "NOT_VALIDATED",
+  "paidCalls": 0,
+  "planChanged": false,
+  "limits": [
+    "Available-history segment comparison, not lifetime reference retention",
+    "No causal or medical conclusion",
+    "Exact contemporary performance/function can remain unknown",
+    "No new storage anchor, actual-model or professional assessment"
+  ]
+}

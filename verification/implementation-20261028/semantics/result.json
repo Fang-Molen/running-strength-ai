@@ -1,0 +1,170 @@
+{
+  "task": "Task 3 / D05–D07, H03–H05",
+  "date": "2026-10-28",
+  "status": "Implemented in shared workspace; root integrates UI and remaining tasks",
+  "productionFiles": [
+    "src/lib/coach/utterance-semantics.ts",
+    "src/lib/core/coach-red-flags.ts",
+    "src/safety/redflag/context.ts",
+    "src/lib/coach/r5/intents.ts",
+    "src/lib/coach/r5/host.ts",
+    "src/lib/coach/loop/effective-training.ts",
+    "src/lib/health/analysis-host.ts",
+    "src/lib/health/symptom-review.ts"
+  ],
+  "testFiles": [
+    "src/lib/coach/r5/semantics-20261028.test.ts",
+    "src/lib/coach/r5/legacy-limit-accept.test.ts"
+  ],
+  "behavior": [
+    "Shared utterance projection keeps asserted, denied, uncertain, other-subject, historical and current symptom mentions separate.",
+    "Knowledge/mixed questions reach conversation routing; localized lower-body restrictions do not globally suppress unrelated upper-body advice. Severe current personal safety remains restrictive.",
+    "Ordinary weight-control goals alone do not become MEDICAL_REVIEW; dangerous low energy intake and weight-control plus worsening recovery/daily extra training retain review boundaries.",
+    "Profile limit normalization is read-only and preserves raw source text; explicit none applies only to that source and cannot erase independent active historical symptoms.",
+    "Out-of-window active symptoms retain region, side, action scope, source text, dates and review path outside chart groups.",
+    "Profile preview and legacy pending ACCEPT both block clearing active restrictions with absent/empty limit values."
+  ],
+  "interfaces": {
+    "shared": [
+      "interpretProfileLimit(raw)",
+      "parseCoachUtterance(question)",
+      "questionTaskPermission(question, restrictions)"
+    ],
+    "host": "readR5Context(asOf, question) preserves hold and adds restrictions and permission.",
+    "uiRequired": "Use permission.answerAllowed / permission.trainingRestricted / permission.safetyMessage for question-specific routing. Preserve hold for affected formal writes. Show safety context alongside answerable knowledge. Root owns coach-sheet integration."
+  },
+  "verification": {
+    "fixtureScope": "Synthetic memory stores only. No network, real users, paid model calls, deployment or production database.",
+    "command": "FK_NO_TEST_PLAN=1 node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs <test-file>",
+    "priorFocusedRun": {
+      "files": 9,
+      "tests": 609,
+      "pass": 609,
+      "fail": 0,
+      "manifest": "focused-results.json"
+    },
+    "finalTargetedChange": {
+      "tests": 1,
+      "red": "red-legacy-accept.log",
+      "green": "green-legacy-accept.log",
+      "note": "Latest change was only the shared active-limit preview/ACCEPT guard. Earlier 609-case suite was not rerun after this final targeted fix, per root instruction."
+    },
+    "redGreenEvidence": [
+      "red.log",
+      "red-additional.log",
+      "red-soreness.log",
+      "red-current-scope.log",
+      "green.log",
+      "redflag-regression.log",
+      "redflag-regression-green.log"
+    ],
+    "diffCheck": "Owned modified production files: git diff --check passed after final legacy fix.",
+    "lastTypecheck": {
+      "log": "typecheck-final.log",
+      "exitCode": 2,
+      "errors": [
+        "src/lib/coach/personal/dependencies.test.ts:37 TS2353 unexpected id",
+        "src/lib/coach/personal/dependencies.test.ts:65 TS2353 unexpected id"
+      ],
+      "note": "These were concurrent files outside Task 3 ownership. This records the last run, not a claim about their present state."
+    },
+    "uiAndBuild": "No UI source changes, browser verification or build performed by this subagent. Root owns integration and final verification."
+  },
+  "migration": {
+    "newSymptomDatabase": false,
+    "destructiveRewrite": false,
+    "explicitNoneDoesNotClearIndependentRestrictions": true,
+    "existingProfileShapePreserved": true,
+    "legacyPendingCommandsRevalidatedAtAccept": true,
+    "confirmedSafetyRulesPreserved": true
+  },
+  "delegatedCorrectionFollowup": {
+    "authorization": "Root delegated the two high-priority findings after the initial read-only review.",
+    "files": [
+      "src/lib/core/coach-p7-runtime.ts",
+      "src/lib/core/coach-offline-loop.ts",
+      "src/components/coach-offline-loop-panel.tsx",
+      "src/lib/core/correction-recovery.test.ts"
+    ],
+    "contract": [
+      "Portrait hypothesis and judgment may now have REVIEW_REQUIRED with reviewReason; the panel renders 待重审 instead of retaining a previous SUPPORTED label.",
+      "Read-time source validation also checks persisted visible VOID lifecycle plus matching preserved source signatures, so RESTORE cannot revive old dependent explanations before the audit retry.",
+      "Audit retry projects at correction.recordedAt and explicitly applies that VOID operation, preserving closure when a later RESTORE has the same millisecond timestamp.",
+      "Claims committed after the correction timestamp are excluded from that correction audit. Training-correction.ts was not edited by this subagent."
+    ],
+    "verification": {
+      "command": "FK_NO_TEST_PLAN=1 node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs src/lib/core/correction-recovery.test.ts",
+      "red": "red-correction-review.log: 2 existing pass, 2 new expected failures",
+      "green": "green-correction-review.log: 4 pass, 0 fail",
+      "diffCheck": "Delegated files git diff --check passed.",
+      "scope": "Only the targeted file was run. No repeated broad suite; root owns final typecheck/build/browser integration."
+    },
+    "resolvedFindings": ["CR-1", "CR-2"],
+    "remainingReviewObservations": ["CR-3", "CR-4"]
+  },
+  "readOnlyCorrectionReview": {
+    "inspected": [
+      "src/lib/core/training-correction.ts",
+      "src/lib/core/coach-p7-runtime.ts",
+      "src/lib/core/correction-recovery.test.ts",
+      "src/lib/core/coach-offline-loop.ts",
+      "src/components/coach-offline-loop-panel.tsx",
+      "src/lib/core/coach-v4-formal-rows.ts",
+      "src/lib/core/coach-import-evidence.ts"
+    ],
+    "productionChanges": false,
+    "executions": "Static source review only. No correction test suite rerun.",
+    "findings": [
+      {
+        "id": "CR-1",
+        "priority": "high",
+        "sources": [
+          "src/lib/core/coach-p7-runtime.ts:48",
+          "src/lib/core/coach-offline-loop.ts:231",
+          "src/components/coach-offline-loop-panel.tsx:70"
+        ],
+        "issue": "Missing or unreadable dependency produces UNRESOLVED / REVIEW_REQUIRED but portrait only treats MARK_STALE as stale; an earlier SUPPORTED hypothesis remains SUPPORTED and renders 获得支持.",
+        "fix": "Propagate unknown dependency state to explicit 待重审 presentation and candidate exclusion, without falsely calling an unverified missing source a confirmed withdrawal.",
+        "test": "Persist a supported linked hypothesis, make its dependency missing/unreadable, reload and require review-required status with no current-support label."
+      },
+      {
+        "id": "CR-2",
+        "priority": "high",
+        "sources": [
+          "src/lib/core/coach-p7-runtime.ts:45",
+          "src/lib/core/coach-p7-runtime.ts:70",
+          "src/lib/core/coach-p7-runtime.ts:82",
+          "src/lib/core/training-correction.ts:124"
+        ],
+        "issue": "Failed VOID audit followed by RESTORE before successful retry can resurrect the old explanation. Current restored evidence again equals its dependency; retry evaluates old VOID against latest restored rows, sees no VOIDED record, skips it and acknowledges completion.",
+        "fix": "Derive read-time closure from persisted visible VOID history and replay the individual correction at its committed state. Ensure later RESTORE restores facts without reactivating old withdrawn explanations.",
+        "test": "Fail claim revision writes for VOID, then RESTORE, restart and retry; require old claim to remain withdrawn and retry not to acknowledge a skipped necessary audit."
+      },
+      {
+        "id": "CR-3",
+        "priority": "medium",
+        "sources": [
+          "src/lib/core/coach-p7-runtime.ts:37",
+          "src/lib/core/coach-p7-runtime.ts:45",
+          "src/lib/core/coach-v4-formal-rows.ts:108",
+          "src/lib/core/coach-evolution-v4.ts:134"
+        ],
+        "issue": "Read-time dependency comparison uses raw adapter evidence instead of the audited active/quarantined projection. A second conflicting running completion can share the original recordId while the original evidence still exactly matches; evidence.find keeps that original even though the V4 projection quarantines the duplicate identity.",
+        "fix": "Validate dependency availability against the existing audited active/quarantined projection; conflicting evidence must become review-required rather than appear fresh.",
+        "test": "Save a claim on a running slot, add a conflicting duplicate completion for that same slot, then verify the unchanged original bytes do not keep the claim current."
+      },
+      {
+        "id": "CR-4",
+        "priority": "medium",
+        "sources": [
+          "src/lib/core/training-correction.ts:96",
+          "src/lib/core/training-correction.ts:122"
+        ],
+        "issue": "If initial capture throws, sources:null is durable but retry only increments pending forever, even after storage recovers; there is no reconstruction branch.",
+        "fix": "Reconstruct the prior source view from persisted history at the correction boundary where possible, otherwise expose an explicit unrecoverable review state instead of implying a retryable queue.",
+        "test": "Inject transient capture failure, restore source readability, restart and verify deterministic reconstruction or explicit unresolved recovery state."
+      }
+    ],
+    "initialTestCoverage": "At the initial review, correction-recovery.test.ts covered FIELD change plus failed audit/restart and silent dropped fact write. The delegated followup above subsequently added unreadable-support and same-millisecond VOID/RESTORE recovery cases. Conflicting active projection and initial capture failure remain review observations."
+  }
+}

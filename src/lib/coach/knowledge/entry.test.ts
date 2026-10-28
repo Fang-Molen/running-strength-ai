@@ -83,25 +83,25 @@ test('new knowledge does not authorize a dose when the host has no approved rema
   assert.doesNotMatch(a.text,/\d+\s*(?:组|次|kg|公斤|%)/,'no invented sets, reps, load or percentage')
   assert.equal(a.localOnly,'REMAINING_WORK_NO_CANDIDATE')
 })
-test('online explanation begins with review and cannot upload without per-turn consent',async()=>{
+test('automatic online rendering does not upload during SSR and explicit OFF prevents sending',async()=>{
   const local=ask('什么是轻松跑？')
   assert.equal(answerStaysLocal(local),true)
   const box=firstWeekMemory();setStoreBackend(box)
   try {
-    setOnline(true) // Existing preference is not consent for this question.
+    setOnline(true) // Persistent preference; effects begin only after browser mount.
     const before=new Map(box.data),question='今天训练后状态怎么观察？'
     let callbacks=0,requests=0,headerReads=0
-    const html=renderToStaticMarkup(createElement(CoachOnlineRequest,{question,disabled:false,
+    const html=renderToStaticMarkup(createElement(CoachOnlineRequest,{question,owner:'local',disabled:false,
       onAnswer:()=>{callbacks++},onNotice:()=>{callbacks++},onDismiss:()=>{callbacks++}}))
-    assert.match(html,/核对资料并联网解释/)
-    assert.doesNotMatch(html,/同意发送这些资料/,'initial rendering must not skip the disclosure review')
+    assert.match(html,/准备联网分析/)
+    assert.doesNotMatch(html,/同意发送这些资料/,'no per-question consent buttons')
     const preview=prepareOnlineExplanation(question)
     const result=await runOnlineExplanation(preview,{consent:false},{
       current:()=>({owner:preview.owner,sourceVersion:preview.sourceVersion,enabled:true}),
       headers:async()=>{headerReads++;return {}},
       fetch:async()=>{requests++;throw Error('unconfirmed request reached transport')},
     })
-    assert.ok('error'in result);assert.match(result.error,/需要确认/)
+    assert.ok('error'in result);assert.match(result.error,/授权已关闭/)
     assert.equal(requests,0);assert.equal(headerReads,0);assert.equal(callbacks,0)
     assert.deepEqual(box.data,before,'review and a refused upload cannot write personal records')
   } finally {setStoreBackend(null)}

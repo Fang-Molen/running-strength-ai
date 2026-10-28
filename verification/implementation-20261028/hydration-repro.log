@@ -1,0 +1,30 @@
+✖ first render does not depend on browser training and day records (9.277587ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.076767
+
+✖ failing tests:
+
+test at src/lib/core/hydration.test.tsx:9:1
+✖ first render does not depend on browser training and day records (9.277587ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /aria-label="本周训练"/. Input:
+  
+  '<main class="grid min-h-dvh place-items-center bg-bg px-6 text-fg" role="status" aria-live="polite" data-testid="training-app" data-ready="false"><p class="text-sm text-muted">正在读取本地训练记录…</p></main>'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/hydration.test.tsx:44:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<main class="grid min-h-dvh place-items-center bg-bg px-6 text-fg" role="status" aria-live="polite" data-testid="training-app" data-ready="false"><p class="text-sm text-muted">正在读取本地训练记录…</p></main>',
+    expected: /aria-label="本周训练"/,
+    operator: 'match',
+    diff: 'simple'
+  }

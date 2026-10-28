@@ -1,0 +1,97 @@
+ M docs/implementation-20261028/progress.md
+ M server/coach-deepseek/coach-chat.controller.js
+ M server/coach-deepseek/coach-http.server.ts
+ M server/coach-deepseek/coach-runtime.test.ts
+ M server/coach-deepseek/coach-snapshot-store.server.ts
+ M server/coach-deepseek/lib/coach-declarations.ts
+ M server/coach-deepseek/lib/coach-request-boundary.ts
+ M server/coach-deepseek/lib/coach-service-contract.ts
+ M src/components/coach-cycle-panel.tsx
+ M src/components/coach-offline-loop-panel.tsx
+ M src/components/coach-online-request.tsx
+ M src/components/coach-sheet.tsx
+ M src/components/garmin-sync.tsx
+ M src/components/personal-coach-panel.test.tsx
+ M src/components/personal-coach-panel.tsx
+ M src/components/plan-import.tsx
+ M src/components/settings-center.tsx
+ M src/components/strength-app.tsx
+ M src/lib/coach/cycle/actual-seeds.ts
+ M src/lib/coach/cycle/adaptive.test.ts
+ M src/lib/coach/cycle/planner.ts
+ M src/lib/coach/cycle/portrait.ts
+ M src/lib/coach/cycle/request.ts
+ M src/lib/coach/cycle/types.ts
+ M src/lib/coach/knowledge/entry.test.ts
+ M src/lib/coach/loop/effective-training.ts
+ M src/lib/coach/online-coach.test.ts
+ M src/lib/coach/online-coach.ts
+ M src/lib/coach/online-contract.ts
+ M src/lib/coach/online-service.test.ts
+ M src/lib/coach/online-service.ts
+ M src/lib/coach/online-session.test.ts
+ M src/lib/coach/online-session.ts
+ M src/lib/coach/personal/host.test.ts
+ M src/lib/coach/personal/host.ts
+ M src/lib/coach/personal/planner.ts
+ M src/lib/coach/personal/store.ts
+ M src/lib/coach/r5/guard.ts
+ M src/lib/coach/r5/host.ts
+ M src/lib/coach/r5/intents.ts
+ M src/lib/coach/r5/online-guard-relax.test.ts
+ M src/lib/core/boot.ts
+ M src/lib/core/bulk-store.test.ts
+ M src/lib/core/bulk-store.ts
+ M src/lib/core/coach-offline-loop.ts
+ M src/lib/core/coach-p7-runtime.ts
+ M src/lib/core/coach-red-flags.ts
+ M src/lib/core/hydration.test.tsx
+ M src/lib/core/training-correction.ts
+ M src/lib/core/trial.ts
+ M src/lib/health/analysis-evidence.ts
+ M src/lib/health/analysis-host.ts
+ M src/lib/health/recovery-assessment.ts
+ M src/lib/health/symptom-review.ts
+ M src/lib/plan/plan-import.ts
+ M src/lib/strength/coach.ts
+ M src/lib/ui/backup-center.ts
+ M src/lib/vault.ts
+ M src/safety/redflag/context.ts
+?? continuation/
+?? docs/implementation-20261028/external-validation.md
+?? docs/implementation-20261028/remaining-work.md
+?? docs/implementation-20261028/rule-ledger.json
+?? docs/implementation-20261028/rule-ledger.md
+?? migrations/coach/003_persistent_online.down.sql
+?? migrations/coach/003_persistent_online.sql
+?? server/coach-deepseek/ONLINE-V2.md
+?? server/coach-deepseek/online-v2.test.ts
+?? src/components/coach-cycle-panel.test.tsx
+?? src/components/coach-online-answer-status.tsx
+?? src/lib/coach/assertion-policy.ts
+?? src/lib/coach/cycle/event-selection.test.ts
+?? src/lib/coach/cycle/portrait-evidence.test.ts
+?? src/lib/coach/cycle/request.test.ts
+?? src/lib/coach/cycle/selection-fixture.ts
+?? src/lib/coach/cycle/stage-evidence.test.ts
+?? src/lib/coach/online-context.test.ts
+?? src/lib/coach/online-context.ts
+?? src/lib/coach/personal/dependencies.test.ts
+?? src/lib/coach/r5/legacy-limit-accept.test.ts
+?? src/lib/coach/r5/semantics-20261028.test.ts
+?? src/lib/coach/utterance-semantics.ts
+?? src/lib/core/backup-archive.test.ts
+?? src/lib/core/backup-archive.ts
+?? src/lib/core/backup-policy.ts
+?? src/lib/core/boot-identity.test.ts
+?? src/lib/core/correction-recovery.test.ts
+?? src/lib/core/restore-candidate.test.ts
+?? src/lib/core/restore-candidate.ts
+?? src/lib/core/restore-transaction.test.ts
+?? src/lib/core/restore-transaction.ts
+?? src/lib/health/metric-trajectory.test.ts
+?? src/lib/health/metric-trajectory.ts
+?? src/lib/health/recovery-rule-ledger.ts
+?? src/lib/ui/backup-candidate.test.ts
+?? src/lib/vault-backup.test.ts
+?? verification/implementation-20261028/

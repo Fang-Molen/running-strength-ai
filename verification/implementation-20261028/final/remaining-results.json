@@ -1,0 +1,98 @@
+[
+  {
+    "command": "npm run test:cognition",
+    "exit": 0,
+    "seconds": 39.98,
+    "log": "remaining-01.log"
+  },
+  {
+    "command": "npm run test:v4",
+    "exit": 0,
+    "seconds": 0.78,
+    "log": "remaining-02.log"
+  },
+  {
+    "command": "npm run test:r188",
+    "exit": 0,
+    "seconds": 4.68,
+    "log": "remaining-03.log"
+  },
+  {
+    "command": "npm run test:r189",
+    "exit": 0,
+    "seconds": 5.67,
+    "log": "remaining-04.log"
+  },
+  {
+    "command": "npm run test:health-v74",
+    "exit": 0,
+    "seconds": 27.9,
+    "log": "remaining-05.log"
+  },
+  {
+    "command": "npm run test:live-kept",
+    "exit": 0,
+    "seconds": 10.23,
+    "log": "remaining-06.log"
+  },
+  {
+    "command": "npm run test:k20",
+    "exit": 0,
+    "seconds": 1.8,
+    "log": "remaining-07.log"
+  },
+  {
+    "command": "npm run test:ui-v69",
+    "exit": 0,
+    "seconds": 0.88,
+    "log": "remaining-08.log"
+  },
+  {
+    "command": "npm run test:v84",
+    "exit": 0,
+    "seconds": 10.77,
+    "log": "remaining-09.log"
+  },
+  {
+    "command": "npm run test:ui-r5",
+    "exit": 0,
+    "seconds": 0.77,
+    "log": "remaining-10.log"
+  },
+  {
+    "command": "npm run test:v88-2",
+    "exit": 0,
+    "seconds": 1.32,
+    "log": "remaining-11.log"
+  },
+  {
+    "command": "npm run test:coach-loop",
+    "exit": 0,
+    "seconds": 19.73,
+    "log": "remaining-12.log"
+  },
+  {
+    "command": "npm run test:r5",
+    "exit": 0,
+    "seconds": 6.32,
+    "log": "remaining-13.log"
+  },
+  {
+    "command": "npm run test:cycle",
+    "exit": 0,
+    "seconds": 10.28,
+    "log": "remaining-14.log"
+  },
+  {
+    "command": "npm run test:coach-qa",
+    "exit": 0,
+    "seconds": 12.47,
+    "log": "remaining-15.log"
+  },
+  {
+    "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test --test-concurrency=3 server/coach-deepseek/online-v2.test.ts src/components/coach-cycle-panel.test.tsx src/lib/coach/online-context.test.ts src/lib/coach/personal/dependencies.test.ts src/lib/coach/personal/host.test.ts src/lib/coach/r5/legacy-limit-accept.test.ts src/lib/coach/r5/online-guard-relax.test.ts src/lib/coach/r5/semantics-20261028.test.ts src/lib/core/backup-archive.test.ts src/lib/core/boot-identity.test.ts src/lib/core/bulk-store.test.ts src/lib/core/correction-recovery.test.ts src/lib/core/restore-candidate.test.ts src/lib/core/restore-transaction.test.ts src/lib/health/metric-trajectory.test.ts src/lib/ui/backup-candidate.test.ts src/lib/vault-backup.test.ts",
+    "exit": 0,
+    "seconds": 18.48,
+    "log": "remaining-16.log"
+  }
+]

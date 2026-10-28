@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "paidCalls": 0,
+  "provider": "FAKE_TRANSPORT",
+  "contexts": [
+    {
+      "inputBytes": 5393,
+      "facts": 4,
+      "omitted": 97
+    },
+    {
+      "inputBytes": 2876,
+      "facts": 0,
+      "omitted": 0
+    },
+    {
+      "inputBytes": 4434,
+      "facts": 0,
+      "omitted": 0
+    }
+  ]
+}

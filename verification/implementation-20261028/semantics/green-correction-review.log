@@ -1,0 +1,12 @@
+✔ B02 correction and pending review intent persist together; read-time invalidation survives failed audit and restart (58.185009ms)
+✔ B02 dropped fact write cannot report a committed correction (0.209778ms)
+✔ B02 unreadable source removes a previously supported label until its evidence can be reviewed (10.624178ms)
+✔ B02 failed VOID audit remains withdrawn through same-millisecond RESTORE, restart and retry (13.918613ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 99.131212

@@ -1,0 +1,38 @@
+✔ native browser backup/apply/legacy/undo entrypoints refuse synchronous active mutations (1.70235ms)
+✔ appStorage physical adapter is identified even when its underlying store is injected (0.23078ms)
+✔ pure memory adapter compatibility remains usable (0.93005ms)
+✔ confirmed preview saves a verified candidate without active writes or success receipt (4.132174ms)
+✔ target or athlete changed after preview requires a fresh preview before candidate write (0.404273ms)
+✖ prepared targets cannot change between preview and confirmation (1.418671ms)
+✔ new chunked archive enters common preflight with large Unicode and subject binding (865.123274ms)
+✔ unsupported future backups and incomplete full backups cannot become candidates (0.812591ms)
+✔ plan and profile defaults stay together in the isolated candidate; native undo cannot alter either (1.685936ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 887.5347
+
+✖ failing tests:
+
+test at src/lib/ui/backup-candidate.test.ts:66:1
+✖ prepared targets cannot change between preview and confirmation (1.418671ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'CANDIDATE_READY'
+  - 'REVIEW_REQUIRED'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/backup-candidate.test.ts:73:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'CANDIDATE_READY',
+    expected: 'REVIEW_REQUIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

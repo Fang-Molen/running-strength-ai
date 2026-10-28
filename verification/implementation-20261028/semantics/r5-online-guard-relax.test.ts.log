@@ -1,0 +1,16 @@
+✔ relax switch is on and the label text is fixed (1.091635ms)
+✔ strict guardR5Reply is unchanged: still rejects all four relaxed rules (5.703788ms)
+✔ unbound numbers are released but flagged unverified (0.724558ms)
+✔ pain/hold release is released but flagged unverified (0.344302ms)
+✔ diagnosis claim is released but flagged unverified (0.236639ms)
+✔ a clean answer passes without the unverified flag (0.487519ms)
+✔ write / clearance claims stay blocked, even together with a relaxed rule (0.713181ms)
+✔ setting relaxed=false restores the strict behaviour (one-line restore) (0.732591ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.956022

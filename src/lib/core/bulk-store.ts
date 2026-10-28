@@ -35,6 +35,10 @@ let database: IDBDatabase | null = null
 let queue: Promise<void> = Promise.resolve()
 let activating: Promise<BulkStatus> | null = null
 let channel: BroadcastChannel | null = null
+const failedWrites = new Set<string>()
+const cacheEpoch = new Map<string, number>()
+const pendingWrites = new Map<string, number>()
+const deferredRefresh = new Set<string>()
 
 export const bulkStatus = (): BulkStatus => ({ state, reason, migrated: [...migrated], pinned: [...pinned], backedUp: [...backedUp] })
 
@@ -72,12 +76,16 @@ function localBulkKeys(ls: Storage): string[] { const out: string[] = []; for (l
 async function migrateKey(db: IDBDatabase, ls: Storage, key: string, existing: Map<string, string>): Promise<boolean> {
   const original = ls.getItem(key)
   if (original === null) return true
-  const at = new Date().toISOString(), prior = existing.get(key)
+  const at = new Date().toISOString()
   try {
     await run(db, ['kv', 'backup'], 'readwrite', tx => {
       tx.objectStore('backup').put({ schemaVersion: 1, key, value: original, chars: original.length, at, source: 'localStorage' }, `${key}@${at}`)
-      if (prior !== undefined && prior !== original) tx.objectStore('backup').put({ schemaVersion: 1, key, value: prior, chars: prior.length, at, source: 'indexedDB-replaced' }, `${key}@${at}@replaced`)
-      tx.objectStore('kv').put(original, key)
+      const priorRequest=tx.objectStore('kv').get(key)
+      priorRequest.onsuccess=()=>{
+        const prior=priorRequest.result
+        if(typeof prior==='string'&&prior!==original)tx.objectStore('backup').put({schemaVersion:1,key,value:prior,chars:prior.length,at,source:'indexedDB-replaced'},`${key}@${at}@replaced`)
+        tx.objectStore('kv').put(original,key)
+      }
     })
     backedUp.push(key)
     const back = await run<string>(db, ['kv'], 'readonly', tx => tx.objectStore('kv').get(key))
@@ -109,12 +117,24 @@ async function activate(): Promise<BulkStatus> {
     setBulkLayer(layer)
     if (typeof BroadcastChannel !== 'undefined' && !channel) {
       channel = new BroadcastChannel('fangkun-bulk-store')
-      channel.onmessage = ev => { const key = ev.data?.key; if (typeof key === 'string' && isBulkKey(key) && database) void run<string>(database, ['kv'], 'readonly', tx => tx.objectStore('kv').get(key)).then(v => { if (typeof v === 'string') mem.set(key, v) }).catch(() => {}) }
+      channel.onmessage = ev => {
+        const key=ev.data?.key
+        if(typeof key==='string'&&isBulkKey(key))refreshPersistentKey(key)
+      }
     }
   } catch (e) {
     if (everMigrated) { setBulkLayer(layer); state = 'DEGRADED'; reason = 'LOAD_FAILED' } else { state = 'OFF'; reason = 'LOAD_FAILED' }
   }
   return bulkStatus()
+}
+function refreshPersistentKey(key:string){
+ if(!database)return
+ if((pendingWrites.get(key)??0)>0){deferredRefresh.add(key);return}
+ const epoch=(cacheEpoch.get(key)??0)+1;cacheEpoch.set(key,epoch)
+ void run<string>(database,['kv'],'readonly',tx=>tx.objectStore('kv').get(key)).then(value=>{
+  if(cacheEpoch.get(key)!==epoch||(pendingWrites.get(key)??0)>0||fallbackDirty.has(key)||failedWrites.has(key))return
+  if(typeof value==='string')mem.set(key,value);else mem.delete(key)
+ }).catch(()=>{reason='REFRESH_FAILED'})
 }
 /** 启动（渲染前）调用；重复调用共用同一次执行。失败时已迁移用户进入降级（不覆盖），未迁移用户保持原样。 */
 export function activateBulkStore(): Promise<BulkStatus> {
@@ -125,17 +145,38 @@ export function activateBulkStore(): Promise<BulkStatus> {
   return activating
 }
 /** 等待所有已排队的 IndexedDB 写入落盘（测试、退出前使用）。 */
-export async function flushBulkStore(): Promise<void> { await queue }
+export async function flushBulkStore(): Promise<void> {
+  let tail:Promise<void>
+  do { tail=queue;await tail } while(tail!==queue)
+  if (failedWrites.size) throw new Error('PERSIST_FAILED')
+}
 
 function persist(key: string, value: string | null) {
+  pendingWrites.set(key,(pendingWrites.get(key)??0)+1)
+  cacheEpoch.set(key, (cacheEpoch.get(key) ?? 0) + 1)
   queue = queue.then(async () => {
     const db = await openDb()
     await run(db, ['kv'], 'readwrite', tx => { if (value === null) tx.objectStore('kv').delete(key); else tx.objectStore('kv').put(value, key) })
+    const persisted = await run<string>(db, ['kv'], 'readonly', tx => tx.objectStore('kv').get(key))
+    if ((persisted ?? null) !== value) throw new Error('PERSIST_VERIFY_FAILED')
+    failedWrites.delete(key)
     if (fallbackDirty.delete(key)) { try { local()?.removeItem(key) } catch { /* ignore */ } }
     try { channel?.postMessage({ key }) } catch { /* ignore */ }
   }).catch(() => {
     // 落盘失败：把值暂存回 localStorage（下次启动它比 IndexedDB 新，会被迁移回去）。仍写不进就只留内存，并报告。
-    try { if (value === null) local()?.removeItem(key); else { local()?.setItem(key, value); fallbackDirty.add(key) } } catch { reason = 'PERSIST_FAILED' }
+    try {
+      // Removing a local fallback cannot delete an older IndexedDB value.
+      // Report an uncommitted deletion instead of resurrecting it on restart.
+      const ls = local()
+      if (!ls || value === null) throw new Error('PERSIST_FAILED')
+      ls.setItem(key, value)
+      if (ls.getItem(key) !== value) throw new Error('PERSIST_VERIFY_FAILED')
+      fallbackDirty.add(key); failedWrites.delete(key)
+    } catch { failedWrites.add(key); reason = 'PERSIST_FAILED' }
+  }).finally(()=>{
+    const count=(pendingWrites.get(key)??1)-1
+    if(count>0)pendingWrites.set(key,count)
+    else {pendingWrites.delete(key);if(deferredRefresh.delete(key))refreshPersistentKey(key)}
   })
 }
 
@@ -154,8 +195,9 @@ const layer: BulkLayer = {
   keys: () => [...mem.keys()],
 }
 /** 备份恢复用的存储入口：大块键走大块层，其余照旧（没挂大块层时就是 localStorage 本身）。 */
-export function appStorage(): { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void } {
+export function appStorage(): { readonly persistence: 'browser'; getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void } {
   return {
+    persistence: 'browser',
     getItem: k => currentStore()?.getItem(k) ?? null,
     setItem: (k, v) => { const s = currentStore(); if (!s) throw new Error('E-NOSTORE'); s.setItem(k, v) },
     removeItem: k => { const s = currentStore() as MemoryStore | null; if (s?.removeItem) s.removeItem(k); else local()?.removeItem(k) },
@@ -170,10 +212,18 @@ export function enterBulkDegradedIfMigrated(): void {
 
 /** 测试用：回到未启动状态。 */
 export function resetBulkStoreForTest() {
-  setBulkLayer(null); state = 'OFF'; reason = ''; mem.clear(); pinned.clear(); fallbackDirty.clear(); migrated = []; backedUp = []; queue = Promise.resolve(); activating = null
+  setBulkLayer(null); state = 'OFF'; reason = ''; mem.clear(); pinned.clear(); fallbackDirty.clear(); failedWrites.clear(); cacheEpoch.clear(); pendingWrites.clear(); deferredRefresh.clear(); migrated = []; backedUp = []; queue = Promise.resolve(); activating = null
   try { database?.close() } catch { /* ignore */ } database = null
   try { channel?.close() } catch { /* ignore */ } channel = null
 }
 /** 备份/导出用：大块层里的全部键值（在内存里，不含 localStorage 里仍钉着的键）。 */
 export function bulkEntries(): Record<string, string> { return Object.fromEntries(mem) }
+/** Backup reads bypass the cache; the collector overlays authoritative local
+ * pinned/fallback copies after reading this snapshot. */
+export async function readBulkPersistentEntries(): Promise<Record<string, string>> {
+  if (state === 'DEGRADED') throw new Error('BULK_STORE_UNAVAILABLE')
+  await flushBulkStore()
+  const rows = await loadAll(await openDb())
+  return Object.fromEntries([...rows].filter(([key]) => isBulkKey(key)))
+}
 export { rawCurrentStore }

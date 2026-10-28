@@ -1,0 +1,26 @@
+✔ strict declaration boundary rejects plans, derived fields, bad units, duplicate revisions and forged authority (3.282716ms)
+✔ sleep, pain and duration scalars never manufacture a workout or running structure (0.355649ms)
+✔ runtime config never guesses credentials, policy, persistence or prior spend (0.4885ms)
+▶ signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only
+  ✔ no identity, unsigned identity and sibling origins cannot create authorization (19.141823ms)
+  ✔ server ownership and explicit consent; owner switch cannot read or revoke (96.98634ms)
+  ✔ close/reopen persists refs, ownership and exact duplicate charge prevention (136.458989ms)
+  ✔ new declaration revision invalidates old ref and binds question (13.903153ms)
+  ✔ two simultaneous requests honor real persistent concurrency cap (50.177183ms)
+  ✔ revoked while provider runs: billed once, result never released (47.807932ms)
+  ✔ corrected while provider runs: stale result never released (36.025092ms)
+  ✔ revoked after reserve but before dispatch releases the unsent reservation (34.454635ms)
+  ✔ disclosed pain on an older record still blocks model dispatch (10.022278ms)
+  ✔ empty declarations remain unknown and do not fabricate completed history (33.113074ms)
+  ✔ model cannot promote self reports to verified device evidence (37.442188ms)
+  ✔ exact scalar quotes survive server validation without invented workout binding; modified units fail (58.474542ms)
+  ✔ expired refs fail before dispatch and status does not authenticate or charge (8.301489ms)
+✔ signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only (2281.9403ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2295.307925

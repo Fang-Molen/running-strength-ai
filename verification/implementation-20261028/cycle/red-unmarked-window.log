@@ -1,0 +1,193 @@
+TAP version 13
+# Subtest: explicit future window is preserved: 未来八周的训练计划
+ok 1 - explicit future window is preserved: 未来八周的训练计划
+  ---
+  duration_ms: 2.278815
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 12周周期
+ok 2 - explicit future window is preserved: 12周周期
+  ---
+  duration_ms: 0.269839
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 12周计划
+not ok 3 - explicit future window is preserved: 12周计划
+  ---
+  duration_ms: 1.142412
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 12
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 12
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:17:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: explicit future window is preserved: 24周
+not ok 4 - explicit future window is preserved: 24周
+  ---
+  duration_ms: 0.263079
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 24
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 24
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:17:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: explicit future window is preserved: 接下来二十四周怎么安排
+ok 5 - explicit future window is preserved: 接下来二十四周怎么安排
+  ---
+  duration_ms: 0.24345
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 规划未来五十二周
+ok 6 - explicit future window is preserved: 规划未来五十二周
+  ---
+  duration_ms: 0.186944
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 未来1周
+ok 7 - explicit future window is preserved: 未来1周
+  ---
+  duration_ms: 0.115495
+  type: 'test'
+  ...
+# Subtest: explicit future window is preserved: 未来两周的计划
+ok 8 - explicit future window is preserved: 未来两周的计划
+  ---
+  duration_ms: 0.078338
+  type: 'test'
+  ...
+# Subtest: review window and future horizon are independent
+ok 9 - review window and future horizon are independent
+  ---
+  duration_ms: 0.431675
+  type: 'test'
+  ...
+# Subtest: calendar months require clarification instead of silently becoming four weeks
+not ok 10 - calendar months require clarification instead of silently becoming four weeks
+  ---
+  duration_ms: 0.36293
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:26:1'
+  failureType: 'testCodeFailure'
+  error: '一个月训练计划'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:29:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: conflicting or invalid explicit windows cannot reuse a saved horizon
+ok 11 - conflicting or invalid explicit windows cannot reuse a saved horizon
+  ---
+  duration_ms: 0.205972
+  type: 'test'
+  ...
+# Subtest: read-only, third-person and negated requests cannot implicitly create cycle drafts
+ok 12 - read-only, third-person and negated requests cannot implicitly create cycle drafts
+  ---
+  duration_ms: 0.12498
+  type: 'test'
+  ...
+# Subtest: 8-week request preserves the saved goal and first-week confirmation boundary
+ok 13 - 8-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 38.548749
+  type: 'test'
+  ...
+# Subtest: 12-week request preserves the saved goal and first-week confirmation boundary
+ok 14 - 12-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 14.720339
+  type: 'test'
+  ...
+# Subtest: 24-week request preserves the saved goal and first-week confirmation boundary
+ok 15 - 24-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 15.131743
+  type: 'test'
+  ...
+# Subtest: 52-week request preserves the saved goal and first-week confirmation boundary
+ok 16 - 52-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 21.712211
+  type: 'test'
+  ...
+# Subtest: fourth-week review alone maintains the familiar strength dose
+ok 17 - fourth-week review alone maintains the familiar strength dose
+  ---
+  duration_ms: 10.880578
+  type: 'test'
+  ...
+# Subtest: comparable repeated feedback can still propose a fourth-week reduction
+ok 18 - comparable repeated feedback can still propose a fourth-week reduction
+  ---
+  duration_ms: 10.942511
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 15
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 969.73396

@@ -43,3 +43,13 @@ test('successful rule processing is distinct from a provider-generated answer',a
  assert.deepEqual(await readCoachResponse(Response.json({ok:true,text:'规则分析',planChanged:false,route:'LOCAL',model:null})),{text:'规则分析',source:'LOCAL'})
  assert.deepEqual(await readCoachResponse(Response.json({ok:true,text:'模型解释',planChanged:false,route:'LOW',model:'synthetic-model'})),{text:'模型解释',source:'MODEL',model:'synthetic-model'})
 })
+
+test('rejection after provider response preserves actual dispatch and settlement, never claims no call',async()=>{
+ const result=await readCoachResponse(Response.json({ok:false,error:'OUTPUT_REJECTED',stage:'OUTPUT_VALIDATION',dispatchState:'RETURNED',ledgerState:'SETTLED',traceId:'trace-synthetic'},{status:422}))
+ assert.ok('error'in result);assert.match(result.error,/模型已返回/);assert.match(result.error,/已结算/);assert.doesNotMatch(result.error,/未调用|未发起/)
+})
+test('revoked grant, exhausted concurrency and unresolved ledger have distinct explanations',async()=>{
+ for(const [error,pattern] of [['CONSENT_REVOKED',/重新开启/],['MODEL_CONCURRENCY_LIMIT',/并发/],['BUDGET_RECONCILIATION_REQUIRED',/核对/]] as const){
+  const result=await readCoachResponse(Response.json({ok:false,error,dispatchState:'NOT_SENT'},{status:403}));assert.ok('error'in result);assert.match(result.error,pattern)
+ }
+})

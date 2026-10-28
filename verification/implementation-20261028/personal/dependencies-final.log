@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: personal panel starts with explicit load and makes no persistence or paid call on render
+ok 1 - personal panel starts with explicit load and makes no persistence or paid call on render
+  ---
+  duration_ms: 7.796331
+  type: 'test'
+  ...
+# Subtest: a stale adopted plan is rendered as retained history with an unadopted conditional candidate
+ok 2 - a stale adopted plan is rendered as retained history with an unadopted conditional candidate
+  ---
+  duration_ms: 1.124545
+  type: 'test'
+  ...
+# Subtest: unreadable dependencies are not rendered as a fresh plan or confirmed facts
+ok 3 - unreadable dependencies are not rendered as a fresh plan or confirmed facts
+  ---
+  duration_ms: 0.318623
+  type: 'test'
+  ...
+# Subtest: new measured weight makes the adopted nutrition plan stale without rewriting it
+ok 4 - new measured weight makes the adopted nutrition plan stale without rewriting it
+  ---
+  duration_ms: 28.402483
+  type: 'test'
+  ...
+# Subtest: meal correction invalidates nutrition and never becomes a full-day deficit
+ok 5 - meal correction invalidates nutrition and never becomes a full-day deficit
+  ---
+  duration_ms: 4.821741
+  type: 'test'
+  ...
+# Subtest: dependent changes between preview and confirmation preserve the adopted version
+ok 6 - dependent changes between preview and confirmation preserve the adopted version
+  ---
+  duration_ms: 4.021918
+  type: 'test'
+  ...
+# Subtest: legacy adopted plans without dependencies cannot be described as current
+ok 7 - legacy adopted plans without dependencies cannot be described as current
+  ---
+  duration_ms: 2.476705
+  type: 'test'
+  ...
+# Subtest: nutrition edits do not invalidate an independent strength answer
+ok 8 - nutrition edits do not invalidate an independent strength answer
+  ---
+  duration_ms: 3.131258
+  type: 'test'
+  ...
+# Subtest: unreadable source makes freshness unknown and cannot be confirmed
+ok 9 - unreadable source makes freshness unknown and cannot be confirmed
+  ---
+  duration_ms: 4.290154
+  type: 'test'
+  ...
+# Subtest: refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+ok 10 - refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+  ---
+  duration_ms: 1.933121
+  type: 'test'
+  ...
+# Subtest: a changed shared goal invalidates the adopted plan and its pending confirmation
+ok 11 - a changed shared goal invalidates the adopted plan and its pending confirmation
+  ---
+  duration_ms: 3.708103
+  type: 'test'
+  ...
+# Subtest: new actual training is a dependency even when the saved personal profile is unchanged
+ok 12 - new actual training is a dependency even when the saved personal profile is unchanged
+  ---
+  duration_ms: 6.95101
+  type: 'test'
+  ...
+# Subtest: a new active restriction withholds specific nutrition numbers in the conditional candidate
+ok 13 - a new active restriction withholds specific nutrition numbers in the conditional candidate
+  ---
+  duration_ms: 7.995282
+  type: 'test'
+  ...
+# Subtest: another athlete's meals do not invalidate the current athlete's confirmation
+ok 14 - another athlete's meals do not invalidate the current athlete's confirmation
+  ---
+  duration_ms: 4.368263
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1630.014179

@@ -1,0 +1,226 @@
+TAP version 13
+# Subtest: event contrast: 400m and 800m retain different event context
+ok 1 - event contrast: 400m and 800m retain different event context
+  ---
+  duration_ms: 58.118988
+  type: 'test'
+  ...
+# Subtest: event contrast: 800m and 10km do not share a universal event label
+ok 2 - event contrast: 800m and 10km do not share a universal event label
+  ---
+  duration_ms: 29.140682
+  type: 'test'
+  ...
+# Subtest: same performance with novice background restricts hard-course copying
+ok 3 - same performance with novice background restricts hard-course copying
+  ---
+  duration_ms: 17.433272
+  type: 'test'
+  ...
+# Subtest: work schedule change never schedules outside confirmed days
+ok 4 - work schedule change never schedules outside confirmed days
+  ---
+  duration_ms: 15.689057
+  type: 'test'
+  ...
+# Subtest: near race moves first week to taper without invented build-up
+ok 5 - near race moves first week to taper without invented build-up
+  ---
+  duration_ms: 15.411817
+  type: 'test'
+  ...
+# Subtest: past race produces recovery/review, never compressed catch-up
+ok 6 - past race produces recovery/review, never compressed catch-up
+  ---
+  duration_ms: 15.962441
+  type: 'test'
+  ...
+# Subtest: pain hold outranks high device readiness
+ok 7 - pain hold outranks high device readiness
+  ---
+  duration_ms: 17.184624
+  type: 'test'
+  ...
+# Subtest: unknown recovery blocks key-course execution and progression
+ok 8 - unknown recovery blocks key-course execution and progression
+  ---
+  duration_ms: 14.659226
+  type: 'test'
+  ...
+# Subtest: no actual history still answers with conditional course purposes
+ok 9 - no actual history still answers with conditional course purposes
+  ---
+  duration_ms: 7.559181
+  type: 'test'
+  ...
+# Subtest: missing available days does not assume weekdays
+ok 10 - missing available days does not assume weekdays
+  ---
+  duration_ms: 12.224875
+  type: 'test'
+  ...
+# Subtest: new time limit never silently overflows a session
+ok 11 - new time limit never silently overflows a session
+  ---
+  duration_ms: 13.832872
+  type: 'test'
+  ...
+# Subtest: V4 calendar conflict is preserved rather than overwritten
+ok 12 - V4 calendar conflict is preserved rather than overwritten
+  ---
+  duration_ms: 14.444761
+  type: 'test'
+  ...
+# Subtest: changing goal changes basis while leaving measured ability untouched
+ok 13 - changing goal changes basis while leaving measured ability untouched
+  ---
+  duration_ms: 12.969863
+  type: 'test'
+  ...
+# Subtest: priority changes the proposed focus with existing evidence
+ok 14 - priority changes the proposed focus with existing evidence
+  ---
+  duration_ms: 12.485791
+  type: 'test'
+  ...
+# Subtest: foreign actual sessions cannot contribute to the portrait
+ok 15 - foreign actual sessions cannot contribute to the portrait
+  ---
+  duration_ms: 8.489151
+  type: 'test'
+  ...
+# Subtest: retracted actual facts cannot contribute ability
+ok 16 - retracted actual facts cannot contribute ability
+  ---
+  duration_ms: 9.21414
+  type: 'test'
+  ...
+# Subtest: later weeks cannot be confirmed in advance
+ok 17 - later weeks cannot be confirmed in advance
+  ---
+  duration_ms: 13.51447
+  type: 'test'
+  ...
+# Subtest: default plans do not grow from week to week without confirmation
+ok 18 - default plans do not grow from week to week without confirmation
+  ---
+  duration_ms: 13.502512
+  type: 'test'
+  ...
+# Subtest: targets remain goals, future/retracted/foreign evidence cannot become ability
+ok 19 - targets remain goals, future/retracted/foreign evidence cannot become ability
+  ---
+  duration_ms: 5.305194
+  type: 'test'
+  ...
+# Subtest: prompt is bounded, versioned, evidence-only and grants no writing authority
+ok 20 - prompt is bounded, versioned, evidence-only and grants no writing authority
+  ---
+  duration_ms: 7.36143
+  type: 'test'
+  ...
+# Subtest: progression is a single proposed duration change with repeated same-protocol actual evidence
+ok 21 - progression is a single proposed duration change with repeated same-protocol actual evidence
+  ---
+  duration_ms: 7.161479
+  type: 'test'
+  ...
+# Subtest: changing device protocol prevents pooled progression evidence
+ok 22 - changing device protocol prevents pooled progression evidence
+  ---
+  duration_ms: 5.519608
+  type: 'test'
+  ...
+# Subtest: an event focus cannot increase the weekly count of key sessions
+ok 23 - an event focus cannot increase the weekly count of key sessions
+  ---
+  duration_ms: 6.937818
+  type: 'test'
+  ...
+# Subtest: future-dated calendar actuals cannot establish familiarity
+ok 24 - future-dated calendar actuals cannot establish familiarity
+  ---
+  duration_ms: 1.139408
+  type: 'test'
+  ...
+# Subtest: 400m exposes its own purpose and evidence boundary without inventing race ability
+ok 25 - 400m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 7.603839
+  type: 'test'
+  ...
+# Subtest: 800m exposes its own purpose and evidence boundary without inventing race ability
+ok 26 - 800m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 7.165243
+  type: 'test'
+  ...
+# Subtest: 1500m exposes its own purpose and evidence boundary without inventing race ability
+ok 27 - 1500m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 5.938643
+  type: 'test'
+  ...
+# Subtest: 3000m exposes its own purpose and evidence boundary without inventing race ability
+ok 28 - 3000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.020328
+  type: 'test'
+  ...
+# Subtest: 5000m exposes its own purpose and evidence boundary without inventing race ability
+ok 29 - 5000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 6.706369
+  type: 'test'
+  ...
+# Subtest: 10000m exposes its own purpose and evidence boundary without inventing race ability
+ok 30 - 10000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 5.826353
+  type: 'test'
+  ...
+# Subtest: other endurance events do not borrow a 10K performance and missing distance stays unknown
+ok 31 - other endurance events do not borrow a 10K performance and missing distance stays unknown
+  ---
+  duration_ms: 12.018051
+  type: 'test'
+  ...
+# Subtest: 8-week stages expose review conditions and future weeks remain unconfirmed
+ok 32 - 8-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 6.258359
+  type: 'test'
+  ...
+# Subtest: 12-week stages expose review conditions and future weeks remain unconfirmed
+ok 33 - 12-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 6.654359
+  type: 'test'
+  ...
+# Subtest: 24-week stages expose review conditions and future weeks remain unconfirmed
+ok 34 - 24-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 8.276299
+  type: 'test'
+  ...
+# Subtest: 52-week stages expose review conditions and future weeks remain unconfirmed
+ok 35 - 52-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 10.757349
+  type: 'test'
+  ...
+# Subtest: advanced or expired competition explains phase reassessment without changing completed records
+ok 36 - advanced or expired competition explains phase reassessment without changing completed records
+  ---
+  duration_ms: 5.468971
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1510.986317

@@ -21,6 +21,7 @@ export type ChatMessage = {
   /** Library explanations are chat history, never personal training evidence. */
   purpose?: "KNOWLEDGE_READING";
   analysisBasis?: ReasoningBasis;
+  onlineBasis?: import("@/lib/coach/online-session").OnlineAnswerBasis;
   factDetails?: string;
   /** Host-generated R4 reference answer; never a knowledge approval receipt. */
   r4Basis?: {question:string;day:string;athleteId:string;version:string};

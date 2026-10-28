@@ -1,0 +1,23 @@
+✔ E01 derives every historical course with exact sums and distinct source labels (80.860862ms)
+✔ C07 distinguishes a longer elapsed time from a speed decline (2.487622ms)
+✔ segment range and mean describe all completed times, including nonmonotonic courses (9.743675ms)
+✔ A03 counts one mixed occurrence and preserves independent running and strength doses (7.308301ms)
+✔ complete PARTIAL training calculates each known dose without promoting its quality or inventing RPE (2.909101ms)
+✔ analysisFromParts real adapter retains complete running and strength arithmetic for PARTIAL facts (4.024052ms)
+✔ D04 derives five same-source RMSSD baselines, log ratio, and absolute RHR change (15.680367ms)
+✔ RMSSD baselines exclude foreign account, device, protocol, provider, athlete and SDNN (13.685572ms)
+✔ missing RMSSD is never manufactured from generic HRV or a missing metric (2.256792ms)
+✔ C04 retains both calendar offsets to competition and applies the context timezone (15.57051ms)
+✔ missing and partial run doses do not become full totals or zeros (5.610928ms)
+✔ strength totals exclude unrecorded sets and do not add assistance or bodyweight to external volume (2.47329ms)
+✔ only same-distance segments support time and speed change and skipped segments contribute no dose (1.754601ms)
+✔ derived facts recheck revisions, retractions, athlete and knowledge cutoff even for an untrusted snapshot (4.761339ms)
+✔ derived IDs, scope and arithmetic are deterministic without mutating evidence (15.80842ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 201.200116

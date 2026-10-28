@@ -1,0 +1,32 @@
+✖ core boot preserves already authenticated athlete instead of switching to legacy local records (5.770609ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.062936
+
+✖ failing tests:
+
+test at src/lib/core/boot-identity.test.ts:7:1
+✖ core boot preserves already authenticated athlete instead of switching to legacy local records (5.770609ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'local'
+  - 'account:synthetic-user'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/boot-identity.test.ts:12:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'local',
+    expected: 'account:synthetic-user',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,23 @@
+✔ colloquial active pain retains safety boundary: 我昨天跑完腿疼，间歇跑怎么安排？ (35.738214ms)
+✔ colloquial active pain retains safety boundary: 今天膝盖疼，能跑吗？ (5.273686ms)
+✔ colloquial active pain retains safety boundary: 脚踝有点疼，怎么练？ (1.78081ms)
+✔ colloquial active pain retains safety boundary: 膝盖越来越疼，但HRV正常，为什么不能照常间歇跑？ (21.058348ms)
+✔ denial, hypothetical and ordinary soreness do not assert current local pain: 我没有腿疼，想问轻松跑是什么。 (0.257701ms)
+✔ denial, hypothetical and ordinary soreness do not assert current local pain: 现在膝盖不疼。 (0.142116ms)
+✔ denial, hypothetical and ordinary soreness do not assert current local pain: 如果明天腿疼怎么办？ (0.207825ms)
+✔ denial, hypothetical and ordinary soreness do not assert current local pain: 请解释跑步后腿疼的常见原因。 (0.261957ms)
+✔ denial, hypothetical and ordinary soreness do not assert current local pain: 我昨天练完肌肉酸痛。 (0.212282ms)
+✔ historical pain remains history and current pain after a turn remains current (0.483133ms)
+✔ body-part pain negation is scoped through body and lists: 现在跟腱不疼。 (0.210459ms)
+✔ body-part pain negation is scoped through body and lists: 现在膝盖没有痛。 (0.115806ms)
+✔ body-part pain negation is scoped through body and lists: 没有腿疼、膝盖疼。 (0.266944ms)
+✔ double-negative pain report cannot clear the pain boundary (0.165311ms)
+✔ a resolved recent report is historical, while a later pain assertion stays current (2.059302ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81.805981

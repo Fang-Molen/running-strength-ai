@@ -1,0 +1,8 @@
+
+> typecheck
+> tsc --noEmit
+
+src/lib/coach/knowledge/entry.test.ts(94,70): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '{ question: string; disabled: false; onAnswer: () => void; onNotice: () => void; onDismiss: () => void; }' is not assignable to parameter of type 'Attributes & { question: string; owner: string; disabled: boolean; onAnswer: (text: string, owner: string, source: "LOCAL" | "MODEL", unverified?: boolean | undefined, basis?: OnlineAnswerBasis | undefined) => void; onNotice: (text: string) => void; onDismiss: () => void; }'.
+      Property 'owner' is missing in type '{ question: string; disabled: false; onAnswer: () => void; onNotice: () => void; onDismiss: () => void; }' but required in type '{ question: string; owner: string; disabled: boolean; onAnswer: (text: string, owner: string, source: "LOCAL" | "MODEL", unverified?: boolean | undefined, basis?: OnlineAnswerBasis | undefined) => void; onNotice: (text: string) => void; onDismiss: () => void; }'.

@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: personal panel starts with explicit load and makes no persistence or paid call on render
+ok 1 - personal panel starts with explicit load and makes no persistence or paid call on render
+  ---
+  duration_ms: 8.30471
+  type: 'test'
+  ...
+# Subtest: a stale adopted plan is rendered as retained history with an unadopted conditional candidate
+ok 2 - a stale adopted plan is rendered as retained history with an unadopted conditional candidate
+  ---
+  duration_ms: 1.695891
+  type: 'test'
+  ...
+# Subtest: unreadable dependencies are not rendered as a fresh plan or confirmed facts
+ok 3 - unreadable dependencies are not rendered as a fresh plan or confirmed facts
+  ---
+  duration_ms: 1.70144
+  type: 'test'
+  ...
+# Subtest: one reference day is descriptive rather than an established personal baseline
+ok 4 - one reference day is descriptive rather than an established personal baseline
+  ---
+  duration_ms: 34.932231
+  type: 'test'
+  ...
+# Subtest: a device change creates a separate reference instead of borrowing the former watch baseline
+ok 5 - a device change creates a separate reference instead of borrowing the former watch baseline
+  ---
+  duration_ms: 9.123393
+  type: 'test'
+  ...
+# Subtest: a trained cycle background is not silently assigned to every sport
+ok 6 - a trained cycle background is not silently assigned to every sport
+  ---
+  duration_ms: 6.680428
+  type: 'test'
+  ...
+# Subtest: new measured weight makes the adopted nutrition plan stale without rewriting it
+ok 7 - new measured weight makes the adopted nutrition plan stale without rewriting it
+  ---
+  duration_ms: 16.399293
+  type: 'test'
+  ...
+# Subtest: meal correction invalidates nutrition and never becomes a full-day deficit
+ok 8 - meal correction invalidates nutrition and never becomes a full-day deficit
+  ---
+  duration_ms: 6.177656
+  type: 'test'
+  ...
+# Subtest: dependent changes between preview and confirmation preserve the adopted version
+ok 9 - dependent changes between preview and confirmation preserve the adopted version
+  ---
+  duration_ms: 4.613875
+  type: 'test'
+  ...
+# Subtest: legacy adopted plans without dependencies cannot be described as current
+ok 10 - legacy adopted plans without dependencies cannot be described as current
+  ---
+  duration_ms: 3.108092
+  type: 'test'
+  ...
+# Subtest: nutrition edits do not invalidate an independent strength answer
+ok 11 - nutrition edits do not invalidate an independent strength answer
+  ---
+  duration_ms: 3.444292
+  type: 'test'
+  ...
+# Subtest: unreadable source makes freshness unknown and cannot be confirmed
+ok 12 - unreadable source makes freshness unknown and cannot be confirmed
+  ---
+  duration_ms: 5.716968
+  type: 'test'
+  ...
+# Subtest: an unreadable current-athlete symptom journal cannot clear restrictions as if it were empty
+ok 13 - an unreadable current-athlete symptom journal cannot clear restrictions as if it were empty
+  ---
+  duration_ms: 3.503341
+  type: 'test'
+  ...
+# Subtest: refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+ok 14 - refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+  ---
+  duration_ms: 1.805918
+  type: 'test'
+  ...
+# Subtest: a changed shared goal invalidates the adopted plan and its pending confirmation
+ok 15 - a changed shared goal invalidates the adopted plan and its pending confirmation
+  ---
+  duration_ms: 4.531981
+  type: 'test'
+  ...
+# Subtest: new actual training is a dependency even when the saved personal profile is unchanged
+ok 16 - new actual training is a dependency even when the saved personal profile is unchanged
+  ---
+  duration_ms: 7.46691
+  type: 'test'
+  ...
+# Subtest: a new active restriction withholds specific nutrition numbers in the conditional candidate
+ok 17 - a new active restriction withholds specific nutrition numbers in the conditional candidate
+  ---
+  duration_ms: 9.343306
+  type: 'test'
+  ...
+# Subtest: another athlete's meals do not invalidate the current athlete's confirmation
+ok 18 - another athlete's meals do not invalidate the current athlete's confirmation
+  ---
+  duration_ms: 4.275192
+  type: 'test'
+  ...
+# Subtest: a new weight-gain goal cannot silently reuse the previous fat-loss candidate
+ok 19 - a new weight-gain goal cannot silently reuse the previous fat-loss candidate
+  ---
+  duration_ms: 3.466646
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1964.347966

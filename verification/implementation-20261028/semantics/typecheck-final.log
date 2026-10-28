@@ -1,0 +1,6 @@
+
+> typecheck
+> tsc --noEmit
+
+src/lib/coach/personal/dependencies.test.ts(37,35): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Omit<FoodEntry, "id" | "source" | "athleteId">'.
+src/lib/coach/personal/dependencies.test.ts(65,32): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'Omit<FoodEntry, "id" | "source" | "athleteId">'.

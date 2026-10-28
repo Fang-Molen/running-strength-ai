@@ -6,7 +6,7 @@ import { saveIntraday, loadIntraday } from '../health/intraday-store'
 import { setEventContext } from './events'
 
 /** 最小的 IndexedDB 替身：只实现大块层用到的部分（open / 对象存储 / 事务 / put get delete openCursor）。 */
-function fakeIdb(opts: { failPut?: () => boolean; failOpen?: boolean; corruptReadback?: boolean } = {}) {
+function fakeIdb(opts: { failPut?: () => boolean; failOpen?: boolean; corruptReadback?: boolean; beforeMigration?: (kv:Map<string,unknown>)=>void } = {}) {
   const dbs = new Map<string, Map<string, Map<string, unknown>>>()
   const later = (fn: () => void) => queueMicrotask(() => setTimeout(fn, 0))
   const make = (name: string) => {
@@ -14,7 +14,7 @@ function fakeIdb(opts: { failPut?: () => boolean; failOpen?: boolean; corruptRea
     const db: any = {
       objectStoreNames: { contains: (n: string) => stores.has(n) }, createObjectStore: (n: string) => { stores.set(n, new Map()) }, close() {},
       transaction(names: string | string[], mode: string) {
-        const list = Array.isArray(names) ? names : [names]; const tx: any = { error: null }
+        const list = Array.isArray(names) ? names : [names]; if(list.includes('backup')&&mode==='readwrite')opts.beforeMigration?.(stores.get('kv')!); const tx: any = { error: null }
         let pending = 0; let aborted = false
         const done = () => { if (--pending === 0) later(() => { if (!aborted) tx.oncomplete?.() }) }
         const req = (fn: () => unknown) => { pending++; const r: any = {}; later(() => { try { r.result = fn(); r.onsuccess?.() } catch (e) { tx.error = e; aborted = true; tx.onabort?.() } ; done() }); return r }
@@ -66,6 +66,59 @@ test('isBulkKey 只认日内样本家族和已确认训练导入', () => {
   for (const k of ['fk-garmin-intraday-v1:local', 'fk-garmin-intraday-v1:local:source-archive', 'fr255-confirmed-training-imports-v1']) assert.ok(isBulkKey(k), k)
   for (const k of ['fk-coros-intraday-v1:local', 'fk-polar-intraday-v1:u1:source-archive', 'fk-coros-mcp-health-v1:synthetic-a', 'fk-coros-mcp-health-v1:synthetic-a:archive:s1', 'fk-suunto-confirmed-imports-v1']) assert.ok(isBulkKey(k), k)
   for (const k of ['fk-schedule-v1', 'fk-garmin-intraday-v10', 'fk-coros-mcp-linked-v1:a', 'fk-garmin-acts-v1:local', 'fr255-events-v1', 'fk-garmin-sync-report:local']) assert.equal(isBulkKey(k), false, k)
+})
+
+test('B05: both persistent stores failing must reject flush instead of reporting success', async () => {
+  let fail = false
+  install({ failPut: () => fail })
+  await activateBulkStore()
+  fail = true
+  lsBox.ls.setItem = () => { throw new Error('LOCAL_QUOTA') }
+  currentStore()!.setItem('fr255-confirmed-training-imports-v1', 'new data')
+  await assert.rejects(flushBulkStore(), /PERSIST_FAILED/)
+  assert.equal(bulkStatus().reason, 'PERSIST_FAILED')
+  assert.equal(kvOf().has('fr255-confirmed-training-imports-v1'), false)
+})
+
+test('B07: a persisted deletion broadcast evicts the old bulk cache', async () => {
+  const NativeChannel = globalThis.BroadcastChannel
+  let receive: ((event: { data: { key: string } }) => void) | undefined
+  g.BroadcastChannel = class { set onmessage(fn: typeof receive) { receive = fn }; postMessage() {}; close() {} }
+  try {
+    install()
+    const key = 'fr255-confirmed-training-imports-v1'
+    lsBox.d.set(key, 'old')
+    await activateBulkStore()
+    kvOf().delete(key)
+    receive?.({ data: { key } })
+    const deadline = Date.now() + 300
+    while (currentStore()!.getItem(key) !== null && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 5))
+    assert.equal(currentStore()!.getItem(key), null)
+    assert.equal(Object.hasOwn(bulkEntries(), key), false)
+  } finally { resetBulkStoreForTest(); g.BroadcastChannel = NativeChannel }
+})
+
+test('B07: queued local write cannot be replaced by a broadcast of the older disk value', async () => {
+ const NativeChannel=globalThis.BroadcastChannel
+ let receive:((event:{data:{key:string}})=>void)|undefined
+ g.BroadcastChannel=class {set onmessage(fn:typeof receive){receive=fn};postMessage(){};close(){}}
+ try{
+  install();const key='fr255-confirmed-training-imports-v1';lsBox.d.set(key,'old');await activateBulkStore()
+  for(let i=0;i<15;i++)currentStore()!.setItem('fk-garmin-intraday-v1:local','blocking-'+i)
+  currentStore()!.setItem(key,'new')
+  receive?.({data:{key}})
+  await new Promise(resolve=>setTimeout(resolve,20))
+  assert.equal(currentStore()!.getItem(key),'new')
+  await flushBulkStore();assert.equal(kvOf().get(key),'new')
+ }finally{await flushBulkStore();resetBulkStoreForTest();g.BroadcastChannel=NativeChannel}
+})
+test('B07: flush includes writes appended while the prior persistent transaction is pending',async()=>{
+ install();await activateBulkStore()
+ const key='fr255-confirmed-training-imports-v1'
+ currentStore()!.setItem(key,'first');const flushed=flushBulkStore()
+ queueMicrotask(()=>currentStore()!.setItem(key,'second'))
+ await flushed
+ assert.equal(kvOf().get(key),'second')
 })
 
 test('迁移成功：先备份原值，读回一致才删旧键，之后读写走大块层，localStorage 不再占空间', async () => {
@@ -197,4 +250,13 @@ test('S1 融合：v89.11.13 写入的 IndexedDB 数据在合入 S1 在线教练/
   currentStore()!.setItem('fk-r6-ledger:local', '[]'); await flushBulkStore()
   assert.equal(lsBox.d.get('fk-r6-ledger:local'), '[]'); assert.equal(kvOf().has('fk-r6-ledger:local'), false)
   assert.equal(JSON.stringify([...kvOf()]), kvBefore, '只读不改：IndexedDB 值逐字不变'); assert.equal(JSON.stringify([...backupOf()]), backupBefore, '备份不变')
+})
+
+test('migration backs up the actual value replaced inside its write transaction',async()=>{
+ let concurrent=false;const key='fr255-confirmed-training-imports-v1'
+ install({beforeMigration:kv=>{if(concurrent){kv.set(key,'concurrent-latest');concurrent=false}}})
+ lsBox.d.set(key,'first');await activateBulkStore();resetBulkStoreForTest()
+ lsBox.d.set(key,'new-local');concurrent=true;await activateBulkStore()
+ assert.ok([...backupOf().values()].some((entry:any)=>entry.source==='indexedDB-replaced'&&entry.value==='concurrent-latest'))
+ assert.equal(kvOf().get(key),'new-local')
 })

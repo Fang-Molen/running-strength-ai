@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "Settings file preflight + confirmed durable isolated candidate preserves active value",
+    "Reload preserves original; candidate ID retrieves byte-equivalent durable candidate download",
+    "Another browser tab changing source invalidates preview without active overwrite",
+    "Export reads physical bulk persistence; local pinned value wins; orphan mirror excluded",
+    "Real export download uses chunked v2 with explicit partial scope",
+    "Real snapshot and shared legacy/welcome/Garmin file function create isolated candidates",
+    "Real IndexedDB mirror transaction abort rejects flush; source persists; explicit retry clears error",
+    "Initial mirror transaction abort rejects initialization; explicit reinitialization recovers without altering active source"
+  ],
+  "errors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+  ],
+  "blockedOrigins": [],
+  "screenshot": "/workspace/screenshots/implementation-20261028-backup.png",
+  "scope": "Synthetic context only; API fulfilled locally; no external requests, production data, or model calls."
+}

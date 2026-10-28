@@ -1,0 +1,17 @@
+✔ approved v2 retires the old blanket relaxation; historical label remains readable (0.762646ms)
+✔ strict guardR5Reply is unchanged: still rejects all four relaxed rules (4.011011ms)
+✔ historical fabricated personal quantity now fails shared v2 policy (1.875383ms)
+✔ historical pain clearance now fails shared v2 policy (0.482452ms)
+✔ historical diagnosis now fails shared v2 policy (0.194165ms)
+✔ a clean answer passes without the unverified flag (0.250199ms)
+✔ write / clearance claims stay blocked, even together with a relaxed rule (0.327787ms)
+✔ setting relaxed=false restores the strict behaviour (one-line restore) (0.29732ms)
+✔ general education no longer inherits personal-number and blanket causal restrictions (0.258472ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14.822952

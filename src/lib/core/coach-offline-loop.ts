@@ -228,8 +228,15 @@ export function offlineAthletePortrait(profile:ProfileRecord|null,history:Review
  return {background:profile?.profile??null,judgments:analyses.map(r=>{
   const revisions=analyses.flatMap(n=>n.revisions).filter(n=>n.priorId===r.id)
   const linked=history.flatMap(n=>n.kind==='ANALYSIS'?n.hypothesisRevisions??[]:n.kind==='HYPOTHESIS_OBSERVATION'?[n.revision]:[]).filter(n=>n.priorReviewId===r.id)
-  const hypothesisStates=r.review.hypotheses.map(h=>{const changes=linked.filter(n=>n.hypothesisId===h.id);const sourceRevisions=readClaimRevisions(r.athleteId).filter(n=>n.result.claimId===`${r.id}:${h.id}`);const stale=sourceRevisions.some(n=>n.result.updateAction==='MARK_STALE');const latest=changes.filter(n=>n.status!=='PENDING').at(-1);return {id:h.id,status:stale||changes.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':latest?.status??'PENDING',changes,sourceRevisions}})
-  const status=hypothesisStates.length&&hypothesisStates.every(h=>h.status==='WITHDRAWN')||revisions.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':hypothesisStates.some(h=>h.status==='WEAKENED')||revisions.some(n=>n.status==='WEAKENED')?'WEAKENED':hypothesisStates.some(h=>h.status==='SUPPORTED')?'SUPPORTED':'RETAINED_UNCONFIRMED'
+  const sourceRevisionRecords=readClaimRevisions(r.athleteId)
+  const hypothesisStates=r.review.hypotheses.map(h=>{
+   const changes=linked.filter(n=>n.hypothesisId===h.id),sourceRevisions=sourceRevisionRecords.filter(n=>n.result.claimId===`${r.id}:${h.id}`)
+   const stale=sourceRevisions.some(n=>n.result.updateAction==='MARK_STALE'),reviewRequired=sourceRevisions.some(n=>n.result.updateAction==='REVIEW_REQUIRED')
+   const latest=changes.filter(n=>n.status!=='PENDING').at(-1)
+   return {id:h.id,status:stale||changes.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':reviewRequired?'REVIEW_REQUIRED':latest?.status??'PENDING',
+    reviewReason:reviewRequired?'原判断的依据缺失或暂时无法核对，需重新审阅。':null,changes,sourceRevisions}
+  })
+  const status=hypothesisStates.length&&hypothesisStates.every(h=>h.status==='WITHDRAWN')||revisions.some(n=>n.status==='WITHDRAWN')?'WITHDRAWN':hypothesisStates.some(h=>h.status==='REVIEW_REQUIRED')?'REVIEW_REQUIRED':hypothesisStates.some(h=>h.status==='WEAKENED')||revisions.some(n=>n.status==='WEAKENED')?'WEAKENED':hypothesisStates.some(h=>h.status==='SUPPORTED')?'SUPPORTED':'RETAINED_UNCONFIRMED'
   return {id:r.id,occurrenceId:r.review.occurrenceId,hypotheses:r.review.hypotheses,hypothesisStates,status}
  }),abilityScore:null,automaticPlanChanges:0}
 }

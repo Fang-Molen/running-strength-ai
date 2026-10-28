@@ -1,0 +1,33 @@
+
+> test:ui-r5
+> node --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/ui/ui-r5.test.tsx src/lib/ui/coach-answer-digest.test.ts src/lib/ui/split-fill.test.ts
+
+✔ explicit 结论 leads, next session pulled out, reasoning keeps the rest in order (3.651817ms)
+✔ no label: first sentence is the conclusion; nothing is lost or rewritten (0.328288ms)
+✔ red flag keeps the safety sentence first (0.21752ms)
+✔ single short answer has no reasoning (0.774945ms)
+✔ source tag is not the conclusion; incidental safety wording does not force reasoning open (0.264981ms)
+✔ very long first sentence is cut at the first ： — the tail is kept verbatim at the top of the reasoning (0.942409ms)
+✔ target seconds from plan text; rest seconds are not a target (1.871768ms)
+✔ one tap fills every empty rep, edit only the deviating one, same text format as lap match (0.597295ms)
+✔ round trip and rounds keep their structure (0.246574ms)
+✔ fallback target = latest same-distance record before this day (0.479687ms)
+✔ runner: double-tap guard is released after every committed set change (last set → 结束并保存训练 works) (1.231557ms)
+✔ hydration (#418): index route renders StrengthApp client-only behind a static fallback (0.20462ms)
+✔ 3D detail: no one-off reds, overlays read the brand-orange token (4.171294ms)
+✔ settings sheet: sticky, opaque header carries the safe-area padding and the close button (0.537735ms)
+✔ 方坤 answer: conclusion first, next session, reasoning collapsed; every sentence still in the DOM (6.136053ms)
+✔ manual splits: 按目标填充 is wired into both running-record forms and writes the existing reps field (0.352394ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 539.708685
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

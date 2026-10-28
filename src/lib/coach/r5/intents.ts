@@ -2,7 +2,7 @@ import type { Profile } from "../../strength/profile";
 import type { SymptomInput } from "../../health/symptom-store";
 import { validDay, localDay } from "../../health/observation";
 import { addDays, weekOf } from "../../ui/day-schedule-rules";
-import { detectRedFlags } from "../../core/coach-red-flags";
+import { parseCoachUtterance } from "../utterance-semantics";
 export type R5Intent =
   | { kind: "MEASUREMENT"; weight: number; day: string; historical: boolean }
   | { kind: "PROFILE"; patch: Partial<Profile> }
@@ -15,17 +15,14 @@ export type R5Intent =
 const num = "([0-9]+(?:\\.[0-9]+)?)";
 /** Whole-message safety runs before routing or a confirmation write. */
 export function currentMessageSafety(question: string): string | null {
-  const flags = detectRedFlags(question),
-    q = question.normalize("NFKC");
+  const semantic = parseCoachUtterance(question), flags = semantic.flags,
+    q = semantic.text;
   if (flags.level === "EMERGENCY" || flags.level === "URGENT_MEDICAL")
     return "停止训练；当前症状需要立即医疗评估，出现紧急症状请联系当地急救。资料或改课请求尚未执行。";
   const request =
     /改成|改为|修改|更正|减少|少一组|体重|年龄|身高|备注|周复盘|下周计划|下周草案|每周复盘/.test(q);
-  const raw = q.replace(/没有疼痛|没有酸痛|不痛|不疼|无痛|不受限/g, "");
-  const currentPain =
-    !/朋友|队友|假设|举例|如果|曾经|去年|以前/.test(q) &&
-    /(?:膝|腿|踝|脚|足|腰|背|肩|髋|跟腱).{0,8}(?:痛|疼)|疼痛|跛行|走路受限|无法负重/.test(raw);
-  if (request && (flags.level !== "NONE" || currentPain))
+  const currentPain = semantic.personalSymptoms.some(m=>m.dimension!=='soreness');
+  if (request && (semantic.currentPersonalFlags.level !== "NONE" || currentPain))
     return "先暂停诱发疼痛或功能受限的训练，必要时寻求医疗评估。当前信息不能通过改成轻松跑或设备分数放行；这次修改尚未执行。请先单独记录疼痛部位、程度及功能影响。";
   return null;
 }
@@ -46,6 +43,8 @@ export function parseR5Intent(question: string, now = new Date().toISOString()):
     today = localDay(new Date(now));
   if (!q || q.length > 1000 || !Number.isFinite(Date.parse(now)))
     return { kind: "CLARIFY", message: "请输入1000字以内的问题，并核对时间。" };
+  const semantic = parseCoachUtterance(q);
+  if (semantic.conversationOnly) return { kind: "NONE" };
   if (
     /朋友|队友|假设|比如|例如|举例|如果|不要(?:修改|记录|保存)|不(?:是|想|要).*?(?:改|记)|能不能|是否|怎么|如何|为什么|能否/.test(
       q,
@@ -137,43 +136,45 @@ export function parseR5Intent(question: string, now = new Date().toISOString()):
       return { kind: "CLARIFY", message: "要修改哪个日期的跑步课？请给出今天或未来的具体日期。" };
     return { kind: "EASY_RUN", day };
   }
-  if (/疼|痛|酸/.test(q) && !/不痛|不疼|无痛|没有疼痛|没有酸痛/.test(q)) {
-    const region = q.match(
-      /膝盖|膝|小腿|大腿后侧|大腿|跟腱|脚踝|踝|足底|脚|腰|背|肩|肘|手腕|髋|臀|胸/,
-    )?.[0];
+  const symptom = semantic.personalSymptoms.find(m=>m.dimension!=='soreness')??semantic.personalSymptoms[0];
+  if (semantic.uncertainSymptoms.length) return {kind:"CLARIFY",message:"这段症状描述还不确定。请确认是本人目前的不适，还是在否认或询问；这次没有记录或解除限制。"};
+  if (!symptom && semantic.historicalSymptoms.length) return {kind:"CLARIFY",message:"这是过去的症状，请核对发生日期及目前情况；不会把历史不适记录为今天，也不会自动解除已有的限制。"};
+  if (symptom) {
+    const region = symptom.region;
     if (!region)
       return { kind: "CLARIFY", message: "哪个部位、哪一侧不舒服？是否影响走路或正常动作？" };
-    const severity = q.match(/(\d+(?:\.\d+)?)\s*(?:分|\/10)/),
-      duration = q.match(/持续\s*(\d+(?:\.\d+)?)\s*(天|小时)/);
+    const details = semantic.bodyMentions.every(m=>m.region===region&&m.subject===symptom.subject&&!m.negated)?q:symptom.clause;
+    const severity = details.match(/(\d+(?:\.\d+)?)\s*(?:分|\/10)/),
+      duration = details.match(/持续\s*(\d+(?:\.\d+)?)\s*(天|小时)/);
     return {
       kind: "SYMPTOM",
       input: {
-        kind: /酸痛|酸胀/.test(q) && !/刺痛|锐痛|疼痛|疼/.test(q) ? "SORENESS" : "PAIN",
+        kind: symptom.dimension==='soreness' ? "SORENESS" : "PAIN",
         region,
-        side: /左/.test(q)
+        side: /左/.test(details)
           ? "LEFT"
-          : /右/.test(q)
+          : /右/.test(details)
             ? "RIGHT"
-            : /双|两侧/.test(q)
+            : /双|两侧/.test(details)
               ? "BILATERAL"
               : "UNSPECIFIED",
         severity: severity && Number(severity[1]) <= 10 ? Number(severity[1]) : null,
         durationHours: duration ? Number(duration[1]) * (duration[2] === "天" ? 24 : 1) : null,
         trigger:
-          q.match(/(跑步|深蹲|硬拉|走路|上下楼|跳跃|力量训练)(?:时|会|后|诱发)?/)?.[1] ?? null,
-        functionImpact: /不能走|无法负重|无法行走/.test(q)
+          details.match(/(跑步|深蹲|硬拉|走路|上下楼|跳跃|力量训练)(?:时|会|后|诱发)?/)?.[1] ?? null,
+        functionImpact: /不能走|无法负重|无法行走/.test(details)
           ? "UNABLE"
-          : /受限|跛行|走路痛|走路疼/.test(q)
+          : /受限|跛行|走路痛|走路疼/.test(details)
             ? "LIMITED"
-            : /不影响|正常走路/.test(q)
+            : /不影响|正常走路/.test(details)
               ? "NORMAL"
               : "UNKNOWN",
-        trend: /越来越|加重|更疼|更痛/.test(q)
+        trend: /越来越|加重|更疼|更痛/.test(details)
           ? "WORSENING"
-          : /减轻|好转/.test(q)
+          : /减轻|好转/.test(details)
             ? "IMPROVING"
             : "UNKNOWN",
-        notes: q,
+        notes: details,
         occurredAt: now,
         trainingRefs: [],
       },

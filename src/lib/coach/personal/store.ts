@@ -5,7 +5,26 @@ import {
   type PersonalProfile,
   type PersonalPlan,
   type Feedback,
+  type PersonalContext,
+  type PersonalDependencyDomain,
+  type Service,
 } from "./planner";
+import { sha256Hex } from "../../core/sha256-sync";
+import { stableJson } from "../../health/analysis-evidence";
+
+export const personalDependencyLabels: Record<PersonalDependencyDomain, string> = {
+  PROFILE: "个人条件", BODY: "实测身体资料", GOAL: "目标", MEALS: "餐食", TRAINING: "实际训练与课表", RESTRICTIONS: "有效限制",
+};
+function dependencyState(plan: PersonalPlan, context: PersonalContext, domain: Service | "ALL") {
+  const previous = plan.dependencies, current = context.dependencies;
+  const nutrition = domain === "NUTRITION" || domain === "ALL" && plan.services.includes("NUTRITION");
+  const keys = [...new Set([...Object.keys(previous?.domains ?? {}), ...Object.keys(current.domains)])]
+    .filter(key => nutrition || !["BODY", "MEALS"].includes(key)) as PersonalDependencyDomain[];
+  const unknown = keys.filter(key => !previous?.domains[key]?.version || !current.domains[key]?.version);
+  const changed = keys.filter(key => previous?.domains[key]?.version && current.domains[key]?.version && previous.domains[key]!.version !== current.domains[key]!.version);
+  const incompatible = !previous || previous.schema !== 1 || previous.athleteId !== current.athleteId || previous.scope !== current.scope;
+  return { status: incompatible || unknown.length ? "UNKNOWN" as const : changed.length ? "STALE" as const : "FRESH" as const, changed, unknown };
+}
 interface Storage {
   getItem(k: string): string | null;
   setItem(k: string, v: string): void;
@@ -29,6 +48,7 @@ export function createPersonalStore(
   storage: Storage,
   actor: () => string,
   now: () => string = () => new Date().toISOString(),
+  readContext?: (profile: PersonalProfile, asOf: string) => PersonalContext,
 ) {
   const key = () => `fk:personal-coach:v1:${encodeURIComponent(actor())}`;
   function read(): State {
@@ -54,6 +74,24 @@ export function createPersonalStore(
   function write(s: State) {
     storage.setItem(key(), JSON.stringify(s));
   }
+  function context(profile: PersonalProfile): PersonalContext {
+    if (readContext) return readContext(profile, now());
+    return { profile, dependencies: { schema: 1, athleteId: profile.athleteId, scope: "PROFILE_ONLY", domains: { PROFILE: { version: sha256Hex(stableJson(profile)), sources: [key()] } } } };
+  }
+  function candidate(s: State, c: PersonalContext) {
+    return { ...buildPersonalPlan(c.profile, now(), (s.active?.version ?? 0) + 1), dependencies: c.dependencies };
+  }
+  function reviewActive(domain: Service | "ALL" = "ALL"): { status: "EMPTY" | "FRESH" | "STALE" | "UNKNOWN"; changed: PersonalDependencyDomain[]; unknown: PersonalDependencyDomain[]; active: PersonalPlan | null; candidate: PersonalPlan | null; clarification?: string } {
+    const s = read();
+    if (!s.active || !s.profile) return { status: "EMPTY" as const, changed: [] as PersonalDependencyDomain[], unknown: [] as PersonalDependencyDomain[], active: s.active, candidate: null };
+    const c = context(s.profile), state = dependencyState(s.active, c, domain);
+    return { ...state, active: s.active, candidate: state.status === "FRESH" || c.clarification ? null : candidate(s, c), clarification: c.clarification };
+  }
+  function reviewProposal(token: string) {
+    const s = read();
+    if (!s.proposal || !s.profile || s.proposal.token !== token) return { status: "UNKNOWN" as const, changed: [] as PersonalDependencyDomain[], unknown: [] as PersonalDependencyDomain[] };
+    return dependencyState(s.proposal.plan, context(s.profile), "ALL");
+  }
   function saveProfile(p: PersonalProfile) {
     if (p.athleteId !== actor()) throw Error("身份已改变");
     const s = read();
@@ -73,7 +111,9 @@ export function createPersonalStore(
     const s = read();
     if (!s.profile) return null;
     fresh(s);
-    const plan = buildPersonalPlan(s.profile, now(), (s.active?.version ?? 0) + 1);
+    const c = context(s.profile);
+    if (c.clarification) throw Error(c.clarification);
+    const plan = candidate(s, c);
     const proposal: Proposal = {
       token: crypto.randomUUID(),
       expiresAt: new Date(Date.parse(now()) + 15 * 60000).toISOString(),
@@ -99,6 +139,10 @@ export function createPersonalStore(
       (s.active?.version ?? 0) !== p.expectedVersion
     )
       throw Error("确认已过期或资料已变化，请重新生成");
+    const c = context(s.profile!);
+    if (c.clarification) throw Error(c.clarification);
+    const state = dependencyState(p.plan, c, "ALL");
+    if (state.status !== "FRESH") throw Error(state.status === "UNKNOWN" ? "依据读取失败或来源未知，请核对后重新生成" : "关联身体、目标、餐食、训练或限制已变化，请重新生成");
     write({ ...s, active: p.plan, proposal: null });
     return p.plan;
   }
@@ -117,6 +161,8 @@ export function createPersonalStore(
     const s = read();
     fresh(s);
     const last = s.feedback.at(-1);
+    if (s.active && s.profile && dependencyState(s.active, context(s.profile), "ALL").status !== "FRESH")
+      throw Error("方案依据已变化或未知，请重新核对后生成候选");
     if (
       !s.active ||
       !s.profile ||
@@ -145,5 +191,10 @@ export function createPersonalStore(
     write({ ...s, proposal });
     return proposal;
   }
-  return { read, saveProfile, prepare, confirm, feedback, prepareReduction };
+  function reject(token: string) {
+    const s = read();
+    if (!s.proposal || s.proposal.token !== token) throw Error("草案已变化，请重新读取");
+    write({ ...s, proposal: null });
+  }
+  return { read, saveProfile, prepare, confirm, feedback, prepareReduction, reviewActive, reviewProposal, reject };
 }

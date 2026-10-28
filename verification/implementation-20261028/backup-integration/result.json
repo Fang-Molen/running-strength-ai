@@ -1,0 +1,85 @@
+{
+  "scope": "Task 1 browser backup/restore integration; synthetic inputs only",
+  "production_result": "All known browser restore entrypoints stage an isolated durable candidate; none claims active restoration. Normal training writes remain usable.",
+  "entrypoints": [
+    {
+      "file": "src/components/settings-center.tsx",
+      "entry": "BackupCenter file and snapshot preview, candidate stage, retrieval/download"
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "entry": "Welcome import and legacy backup import use importVault; startup invokes retryPendingCorrectionReviews once after successful initVault"
+    },
+    {
+      "file": "src/components/garmin-sync.tsx",
+      "entry": "Legacy file import and snapshot restore use guarded shared async functions"
+    },
+    {
+      "file": "src/components/plan-import.tsx",
+      "entry": "PlanImportPanel stages plan + blank profile defaults without applying or reporting imported"
+    },
+    {
+      "file": "src/lib/core/trial.ts",
+      "entry": "restoreLocalBackup refuses physical browser storage"
+    },
+    {
+      "file": "src/lib/ui/backup-center.ts",
+      "entry": "restoreAnyBackup, applyEntries and undoBackupSnapshot refuse physical storage; prepare/stage bind subject, exact targets and observed source"
+    },
+    {
+      "file": "src/lib/plan/plan-import.ts",
+      "entry": "confirmImport and undoImport refuse physical stores before profile callback or writes"
+    }
+  ],
+  "physical_guard": "Native Storage identity, native local/sessionStorage equality, physical currentStore wrapper or explicit persistence:browser marker; unmarked memory adapters remain compatible.",
+  "candidate": "Separate fangkun-restore-candidates-v1 IndexedDB; original active stores untouched. No localStorage active pointer or startup marker. Candidate contains observed source + target and explicit UNVERIFIED_CROSS_STORE_SNAPSHOT.",
+  "vault": "IDB complete/error/abort are awaited. Initial mirror is awaited. Per-key mirror queue failures persist in status and flush rejects until a successful retry. Orphan mirrors are retained but neither restored on startup nor exported as active data. Export reads physical bulk rows, overlays local pinned/fallback rows, and checks a second source read.",
+  "archive": "Chunked v2 format integrated into record export and common preflight; 64MiB UTF8 payload,128MiB JSON,256KiB chunks. Memory bounded by capacity rather than streaming. Explicit excluded families and download-trigger-only language.",
+  "tests": {
+    "red": [
+      "red.log",
+      "vault-red.log",
+      "prepared-red.log"
+    ],
+    "green": [
+      "focused.log",
+      "final-focused.log",
+      "candidate-final-detail.log",
+      "../archive/green.log"
+    ],
+    "new_candidate_tests": 9,
+    "new_vault_policy_tests": 3,
+    "new_archive_tests": 28,
+    "existing_backup_center_tests": 6,
+    "large_archive_bytes": 31800012,
+    "large_single_key_characters": 5300002,
+    "typecheck": "Initial integration typecheck passed. Final shared-worktree run exits2 in concurrent coach files only; see final-typecheck.log. Do not represent this run as passing."
+  },
+  "limitations": [
+    "B05 remains partial: browser has no enforceable physical-write isolation from frozen legacy writers, so durable transaction engine is not connected to active restore. No full-state browser before-image/commit/startup recovery guarantee is claimed.",
+    "B07 remains partial: normal training writers are not all part of a persistent generation/tombstone protocol; staging a candidate is not global write isolation.",
+    "No real browser transaction journal is currently created. Startup must not invent a blocking marker based solely on an isolated candidate.",
+    "Export excludes original photos/attachments, device evidence DB, plan-execution overlays/receipts, training-model export receipts, orphan mirrors/history, core mirror and isolated candidates. It is not a full-device backup.",
+    "Two source reads can detect some changes but cannot prove an atomic snapshot against uncooperative old tabs.",
+    "Old formats/snapshots do not provide trustworthy source-person or complete scope metadata. They are labelled and staged for review only.",
+    "Legacy fr255-only export remains a limited compatibility format; new record export is the more complete supported path.",
+    "Candidate IDs must be retained to retrieve a candidate; cleaning browser storage loses local candidates. Download initiation cannot prove user file durability."
+  ],
+  "read_only_bulk_review": [
+    {
+      "file": "src/lib/core/bulk-store.ts",
+      "lines": "120-129,145-168",
+      "finding": "A broadcast arriving after an own queued persist increments cacheEpoch and may install an older physical value before that queued write commits. failedWrites/fallbackDirty do not represent pending writes. Add a per-key pending count before enqueue and avoid overwriting optimistic memory while pending; parent owns any implementation."
+    },
+    {
+      "file": "src/lib/core/bulk-store.ts",
+      "lines": "76-95",
+      "finding": "backup and kv replacement share an IDB transaction, but prior is read from an earlier loadAll snapshot. Another writer can change physical kv between loadAll and this transaction, so the actual overwritten value is not necessarily captured. Read old kv within the replacement transaction before backup+put. localStorage compare/remove also cannot be made atomic across noncooperating tabs."
+    },
+    {
+      "file": "src/lib/core/bulk-store.ts",
+      "lines": "140-143",
+      "finding": "flushBulkStore awaits one queue tail, unlike flushVault evolving-tail loop. Writes enqueued while awaiting may remain pending when it resolves. Export second physical/source read only detects some observable change; no atomic guarantee."
+    }
+  ]
+}

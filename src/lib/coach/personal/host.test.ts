@@ -2,15 +2,20 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { setEventContext } from "@/lib/core/events";
 import { changePersonal, personalAnswer, defaultPersonalProfile, personalStore } from "./host";
+import { setStoreBackend } from "../../core/storage";
 const memory = new Map<string, string>();
 const storage = {
   getItem: (k: string) => memory.get(k) ?? null,
   setItem: (k: string, v: string) => {
     memory.set(k, v);
   },
+  keys: () => [...memory.keys()],
 };
 function environment() {
   memory.clear();
+  setStoreBackend(storage);
+  const priorStorage = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+  Object.defineProperty(globalThis, "localStorage", { value: storage, configurable: true });
   setEventContext({ athleteId: "personal-test-a" });
   Object.defineProperty(globalThis, "window", {
     value: { localStorage: storage, dispatchEvent: () => {} },
@@ -38,6 +43,9 @@ function environment() {
     if (original) Object.defineProperty(globalThis, "navigator", original);
     else delete (globalThis as { navigator?: unknown }).navigator;
     setEventContext({ athleteId: "local" });
+    setStoreBackend(null);
+    if (priorStorage) Object.defineProperty(globalThis, "localStorage", priorStorage);
+    else Reflect.deleteProperty(globalThis, "localStorage");
   };
 }
 test("browser writes are locked; two stale writers cannot overwrite profile", async () => {

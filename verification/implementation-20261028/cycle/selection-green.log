@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: 400m changes actual familiar-course selection using the same recorded history
+ok 1 - 400m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 35.660449
+  type: 'test'
+  ...
+# Subtest: 800m changes actual familiar-course selection using the same recorded history
+ok 2 - 800m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 8.265633
+  type: 'test'
+  ...
+# Subtest: 1500m changes actual familiar-course selection using the same recorded history
+ok 3 - 1500m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 7.569356
+  type: 'test'
+  ...
+# Subtest: 3000m changes actual familiar-course selection using the same recorded history
+ok 4 - 3000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 8.485696
+  type: 'test'
+  ...
+# Subtest: 5000m changes actual familiar-course selection using the same recorded history
+ok 5 - 5000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 8.007432
+  type: 'test'
+  ...
+# Subtest: 10000m changes actual familiar-course selection using the same recorded history
+ok 6 - 10000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 6.689954
+  type: 'test'
+  ...
+# Subtest: incomplete preferred structure loses priority to a supported familiar alternative
+ok 7 - incomplete preferred structure loses priority to a supported familiar alternative
+  ---
+  duration_ms: 7.442445
+  type: 'test'
+  ...
+# Subtest: a continuous plan cannot claim complete structure evidence from several actual repetitions
+ok 8 - a continuous plan cannot claim complete structure evidence from several actual repetitions
+  ---
+  duration_ms: 6.663163
+  type: 'test'
+  ...
+# Subtest: fact-only familiar endurance seeds preserve the explicitly recorded LONG purpose
+ok 9 - fact-only familiar endurance seeds preserve the explicitly recorded LONG purpose
+  ---
+  duration_ms: 0.323771
+  type: 'test'
+  ...
+# Subtest: phase conditions distinguish observed actuals, unknown followup and a confirmed calendar
+ok 10 - phase conditions distinguish observed actuals, unknown followup and a confirmed calendar
+  ---
+  duration_ms: 8.005849
+  type: 'test'
+  ...
+# Subtest: a calendar date cannot override contradictory restrictions or missing execution
+ok 11 - a calendar date cannot override contradictory restrictions or missing execution
+  ---
+  duration_ms: 0.956971
+  type: 'test'
+  ...
+# Subtest: repeated linked contrary feedback is cited as a contradicted phase condition
+ok 12 - repeated linked contrary feedback is cited as a contradicted phase condition
+  ---
+  duration_ms: 13.188578
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1085.88935

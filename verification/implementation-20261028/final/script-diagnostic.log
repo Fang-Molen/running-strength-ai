@@ -1,0 +1,656 @@
+TAP version 13
+# Subtest: non-canvas app with no custom card gets a soft BRAND NOTE (utility exception)
+ok 1 - non-canvas app with no custom card gets a soft BRAND NOTE (utility exception)
+  ---
+  duration_ms: 2.688106
+  type: 'test'
+  ...
+# Subtest: non-canvas app with a compliant card is silent
+ok 2 - non-canvas app with a compliant card is silent
+  ---
+  duration_ms: 1.065015
+  type: 'test'
+  ...
+# Subtest: card file without site.json card=custom warns
+ok 3 - card file without site.json card=custom warns
+  ---
+  duration_ms: 1.348715
+  type: 'test'
+  ...
+# Subtest: card file with missing site.json warns for card=custom
+ok 4 - card file with missing site.json warns for card=custom
+  ---
+  duration_ms: 0.436502
+  type: 'test'
+  ...
+# Subtest: card file with invalid site.json warns for card=custom
+ok 5 - card file with invalid site.json warns for card=custom
+  ---
+  duration_ms: 0.437373
+  type: 'test'
+  ...
+# Subtest: oversized card warns for non-canvas apps too
+ok 6 - oversized card warns for non-canvas apps too
+  ---
+  duration_ms: 0.614722
+  type: 'test'
+  ...
+# Subtest: canvas app with no card warns 'missing' and missing og:type
+ok 7 - canvas app with no card warns 'missing' and missing og:type
+  ---
+  duration_ms: 0.513769
+  type: 'test'
+  ...
+# Subtest: canvas card without type still warns for og:type
+ok 8 - canvas card without type still warns for og:type
+  ---
+  duration_ms: 0.385784
+  type: 'test'
+  ...
+# Subtest: oversized card warns on the scraper budget (jpg and legacy png)
+ok 9 - oversized card warns on the scraper budget (jpg and legacy png)
+  ---
+  duration_ms: 1.751005
+  type: 'test'
+  ...
+# Subtest: compliant game (custom card + site.json type + x-banner) is silent
+ok 10 - compliant game (custom card + site.json type + x-banner) is silent
+  ---
+  duration_ms: 0.640111
+  type: 'test'
+  ...
+# Subtest: __root.tsx og:type no longer satisfies the canvas gate
+ok 11 - __root.tsx og:type no longer satisfies the canvas gate
+  ---
+  duration_ms: 0.573109
+  type: 'test'
+  ...
+# Subtest: oversized x-banner warns on the same scraper budget as og.jpg
+ok 12 - oversized x-banner warns on the same scraper budget as og.jpg
+  ---
+  duration_ms: 1.120739
+  type: 'test'
+  ...
+# Subtest: legacy png + site.json type still needs the X feed card
+ok 13 - legacy png + site.json type still needs the X feed card
+  ---
+  duration_ms: 0.581872
+  type: 'test'
+  ...
+# Subtest: siteDeclaresOgTypeGame reads the site contract
+ok 14 - siteDeclaresOgTypeGame reads the site contract
+  ---
+  duration_ms: 0.119711
+  type: 'test'
+  ...
+# Subtest: a fresh og-pending marker silences the whole gate view
+ok 15 - a fresh og-pending marker silences the whole gate view
+  ---
+  duration_ms: 0.210159
+  type: 'test'
+  ...
+# Subtest: a stale og-pending marker is ignored and the warnings return
+ok 16 - a stale og-pending marker is ignored and the warnings return
+  ---
+  duration_ms: 0.210319
+  type: 'test'
+  ...
+# Subtest: the marker goes stale on the clock, not on the file
+ok 17 - the marker goes stale on the clock, not on the file
+  ---
+  duration_ms: 0.389561
+  type: 'test'
+  ...
+# Subtest: no marker means nothing is in flight
+ok 18 - no marker means nothing is in flight
+  ---
+  duration_ms: 0.35595
+  type: 'test'
+  ...
+# Subtest: parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest
+ok 19 - parseBrandCheckArgs takes --game, --placeholder-ok and --root, and rejects the rest
+  ---
+  duration_ms: 0.642624
+  type: 'test'
+  ...
+# Subtest: cli: a game missing its card reports JSON and exits 1
+not ok 20 - cli: a game missing its card reports JSON and exits 1
+  ---
+  duration_ms: 35.938412
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:235:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:239:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a compliant game passes
+not ok 21 - cli: a compliant game passes
+  ---
+  duration_ms: 29.980658
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:246:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:254:25)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: the task's own marker is reported, not honoured
+not ok 22 - cli: the task's own marker is reported, not honoured
+  ---
+  duration_ms: 34.772495
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:257:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:261:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a bad argument fails with JSON on stderr
+not ok 23 - cli: a bad argument fails with JSON on stderr
+  ---
+  duration_ms: 47.839192
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:266:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:269:21)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a non-game with no card fails too — the pass exists to produce one
+not ok 24 - cli: a non-game with no card fails too — the pass exists to produce one
+  ---
+  duration_ms: 33.887118
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:272:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:276:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: --placeholder-ok is how a plain-utility pass reports no card as expected
+not ok 25 - cli: --placeholder-ok is how a plain-utility pass reports no card as expected
+  ---
+  duration_ms: 52.904387
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:284:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:288:23)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: a non-game with a compliant card passes
+not ok 26 - cli: a non-game with a compliant card passes
+  ---
+  duration_ms: 39.561174
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/brand-check.test.mjs:297:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected end of JSON input'
+  code: 'ERR_TEST_FAILURE'
+  name: 'SyntaxError'
+  stack: |-
+    JSON.parse (<anonymous>)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/brand-check.test.mjs:301:25)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: project contract and AGENTS.md name the marker path and bound this script uses
+ok 27 - project contract and AGENTS.md name the marker path and bound this script uses
+  ---
+  duration_ms: 0.719921
+  type: 'test'
+  ...
+# Subtest: the sections that own the brand-task prohibition never affirm a wait
+ok 28 - the sections that own the brand-task prohibition never affirm a wait
+  ---
+  duration_ms: 1.091174
+  type: 'test'
+  ...
+# Subtest: project contract tells the pass to self-check with the flag this CLI accepts
+ok 29 - project contract tells the pass to self-check with the flag this CLI accepts
+  ---
+  duration_ms: 0.27747
+  type: 'test'
+  ...
+# Subtest: the flag predicate matches src/lib/auth
+ok 30 - the flag predicate matches src/lib/auth
+  ---
+  duration_ms: 0.095154
+  type: 'test'
+  ...
+# Subtest: reads the value a live dev server resolved
+ok 31 - reads the value a live dev server resolved
+  ---
+  duration_ms: 0.228466
+  type: 'test'
+  ...
+# Subtest: a server started without the flag reads as sign-in on
+ok 32 - a server started without the flag reads as sign-in on
+  ---
+  duration_ms: 0.146843
+  type: 'test'
+  ...
+# Subtest: agreement passes
+ok 33 - agreement passes
+  ---
+  duration_ms: 0.126362
+  type: 'test'
+  ...
+# Subtest: divergence fails in either direction
+ok 34 - divergence fails in either direction
+  ---
+  duration_ms: 0.085289
+  type: 'test'
+  ...
+# Subtest: an unobservable dev server is indeterminate, not agreement
+ok 35 - an unobservable dev server is indeterminate, not agreement
+  ---
+  duration_ms: 0.057387
+  type: 'test'
+  ...
+# Subtest: a dev server that cannot be reached probes as null
+ok 36 - a dev server that cannot be reached probes as null
+  ---
+  duration_ms: 0.198411
+  type: 'test'
+  ...
+# Subtest: a server without the endpoint probes as null, not as agreement
+ok 37 - a server without the endpoint probes as null, not as agreement
+  ---
+  duration_ms: 0.147493
+  type: 'test'
+  ...
+# Subtest: only a divergence warns the smoke verdict
+ok 38 - only a divergence warns the smoke verdict
+  ---
+  duration_ms: 0.159442
+  type: 'test'
+  ...
+# Subtest: the build side resolves the template's shipped app-env
+ok 39 - the build side resolves the template's shipped app-env
+  ---
+  duration_ms: 0.293585
+  type: 'test'
+  ...
+# Subtest: the CLI reports rather than silently passing when run via a symlink
+not ok 40 - the CLI reports rather than silently passing when run via a symlink
+  ---
+  duration_ms: 70.576858
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/check-auth-invariant.test.mjs:98:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /could not read the dev server's resolved VITE_AUTH_ENABLED/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/check-auth-invariant.test.mjs:109:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: every block passes its import boundary and lists existing tests
+ok 41 - every block passes its import boundary and lists existing tests
+  ---
+  duration_ms: 6.736474
+  type: 'test'
+  ...
+# Subtest: plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断)
+ok 42 - plan-execution host stays UNCOORDINATED / calendar UNKNOWN (改课确认与撤销保持阻断)
+  ---
+  duration_ms: 0.214535
+  type: 'test'
+  ...
+# Subtest: online coach stays default ON and client cap equals trusted server rejection limit
+not ok 43 - online coach stays default ON and client cap equals trusted server rejection limit
+  ---
+  duration_ms: 2594.940304
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/check-blocks.test.mjs:19:1'
+  failureType: 'testCodeFailure'
+  error: 'spawnSync /opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node EPERM'
+  code: 'EPERM'
+  stack: |-
+    Object.spawnSync (node:internal/child_process:1160:20)
+    spawnSync (node:child_process:928:24)
+    execFileSync (node:child_process:971:15)
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/check-blocks.test.mjs:21:29)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+  ...
+# Subtest: knowledge complete package stays PENDING with zero production approvals (no self-approval)
+ok 44 - knowledge complete package stays PENDING with zero production approvals (no self-approval)
+  ---
+  duration_ms: 0.852472
+  type: 'test'
+  ...
+# Subtest: keeps VITE_-prefixed string entries
+ok 45 - keeps VITE_-prefixed string entries
+  ---
+  duration_ms: 0.168585
+  type: 'test'
+  ...
+# Subtest: drops non-VITE keys, non-string values and malformed documents
+ok 46 - drops non-VITE keys, non-string values and malformed documents
+  ---
+  duration_ms: 0.161615
+  type: 'test'
+  ...
+# Subtest: a missing app-env.json is a clean no-op
+ok 47 - a missing app-env.json is a clean no-op
+  ---
+  duration_ms: 0.27672
+  type: 'test'
+  ...
+# Subtest: reads the app env from a workspace
+ok 48 - reads the app env from a workspace
+  ---
+  duration_ms: 0.294326
+  type: 'test'
+  ...
+# Subtest: an explicit process-env override wins over the file
+ok 49 - an explicit process-env override wins over the file
+  ---
+  duration_ms: 0.095875
+  type: 'test'
+  ...
+# Subtest: the template ships auth off
+ok 50 - the template ships auth off
+  ---
+  duration_ms: 0.16544
+  type: 'test'
+  ...
+# Subtest: vite loadEnv resolves the wrapped value
+ok 51 - vite loadEnv resolves the wrapped value
+  ---
+  duration_ms: 0.189027
+  type: 'test'
+  ...
+# Subtest: the wrapped command runs with the app env applied
+not ok 52 - the wrapped command runs with the app env applied
+  ---
+  duration_ms: 110.08054
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/with-app-env.test.mjs:76:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '' !== 'false'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'false'
+  actual: ''
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/with-app-env.test.mjs:83:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: the wrapped command sees an explicit override, not the file value
+not ok 53 - the wrapped command sees an explicit override, not the file value
+  ---
+  duration_ms: 98.3804
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/with-app-env.test.mjs:86:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '' !== 'true'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'true'
+  actual: ''
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/with-app-env.test.mjs:92:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: the wrapper propagates the command's exit code
+ok 54 - the wrapper propagates the command's exit code
+  ---
+  duration_ms: 111.511911
+  type: 'test'
+  ...
+# Subtest: a signal-killed command is never reported as success
+ok 55 - a signal-killed command is never reported as success
+  ---
+  duration_ms: 79.621417
+  type: 'test'
+  ...
+# Subtest: the CLI still runs when invoked through a symlinked path
+not ok 56 - the CLI still runs when invoked through a symlinked path
+  ---
+  duration_ms: 103.370935
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/with-app-env.test.mjs:116:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    '' !== 'false'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'false'
+  actual: ''
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/with-app-env.test.mjs:127:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1389:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: parseWriteAtomicArgs needs exactly a staged file and a target
+ok 57 - parseWriteAtomicArgs needs exactly a staged file and a target
+  ---
+  duration_ms: 0.270531
+  type: 'test'
+  ...
+# Subtest: stagingError refuses a temp inside public/ and a no-op move
+ok 58 - stagingError refuses a temp inside public/ and a no-op move
+  ---
+  duration_ms: 0.19794
+  type: 'test'
+  ...
+# Subtest: handOver replaces the target and clears the staged file
+ok 59 - handOver replaces the target and clears the staged file
+  ---
+  duration_ms: 0.30953
+  type: 'test'
+  ...
+# Subtest: handOver creates a missing target directory
+ok 60 - handOver creates a missing target directory
+  ---
+  duration_ms: 0.157489
+  type: 'test'
+  ...
+# Subtest: an interrupted pass leaves the target on its old bytes, temp-free
+ok 61 - an interrupted pass leaves the target on its old bytes, temp-free
+  ---
+  duration_ms: 2.624915
+  type: 'test'
+  ...
+# Subtest: a failed hand-over creates no directory for the target it never wrote
+ok 62 - a failed hand-over creates no directory for the target it never wrote
+  ---
+  duration_ms: 0.248447
+  type: 'test'
+  ...
+# Subtest: a staged file on another filesystem is refused, not copied
+ok 63 - a staged file on another filesystem is refused, not copied
+  ---
+  duration_ms: 0.536884
+  type: 'test'
+  ...
+# Subtest: cli: hands the file over, and refuses a temp staged in public/
+not ok 64 - cli: hands the file over, and refuses a temp staged in public/
+  ---
+  duration_ms: 90.420041
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/write-atomic.test.mjs:127:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /stage outside/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/write-atomic.test.mjs:147:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: cli: relative paths follow the script's root, not the caller's cwd
+not ok 65 - cli: relative paths follow the script's root, not the caller's cwd
+  ---
+  duration_ms: 55.260887
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/write-atomic.test.mjs:151:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /stage outside/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/write-atomic.test.mjs:162:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: every hand-over the project contract prints is one this script accepts
+ok 66 - every hand-over the project contract prints is one this script accepts
+  ---
+  duration_ms: 1.479042
+  type: 'test'
+  ...
+# Subtest: cli: a missing staged file fails without touching the target
+not ok 67 - cli: a missing staged file fails without touching the target
+  ---
+  duration_ms: 44.388306
+  type: 'test'
+  location: '/workspace/fangkun-20261028/scripts/write-atomic.test.mjs:186:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /\[write-atomic\]/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/scripts/write-atomic.test.mjs:195:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..67
+# tests 67
+# suites 0
+# pass 52
+# fail 15
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3698.176246

@@ -1,0 +1,1357 @@
+{
+  "synthetic": true,
+  "doseRulesChanged": false,
+  "outputs": [
+    {
+      "eventMeters": 400,
+      "eventFocus": {
+        "eventMeters": 400,
+        "objective": "400米专项速度、技术与恢复条件",
+        "evidenceNeeds": [
+          "同结构分段、轮次与实际恢复方式",
+          "完整测试的完成质量与技术观察来源"
+        ],
+        "limitation": "末段冲刺不能推断完整比赛能力；普通慢跑不等于最大速度证据"
+      },
+      "displayedWeekSummary": "400米专项速度、技术与恢复条件。专项依据核对：同结构分段、轮次与实际恢复方式；完整测试的完成质量与技术观察来源。末段冲刺不能推断完整比赛能力；普通慢跑不等于最大速度证据。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "400米专项速度、技术与恢复条件。专项依据核对：同结构分段、轮次与实际恢复方式；完整测试的完成质量与技术观察来源。末段冲刺不能推断完整比赛能力；普通慢跑不等于最大速度证据。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "400米缺近期可核实专项成绩；末段冲刺不能推断完整比赛能力；普通慢跑不等于最大速度证据"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 800,
+      "eventFocus": {
+        "eventMeters": 800,
+        "objective": "800米速度与专项耐力两类目标及比赛时间线",
+        "evidenceNeeds": [
+          "速度课与专项耐力课各自的目的、分段和恢复",
+          "同协议可比测试及跑力冲突"
+        ],
+        "limitation": "不能直接套400米或长跑课表；缺可比测试时相关能力未知"
+      },
+      "displayedWeekSummary": "800米速度与专项耐力两类目标及比赛时间线。专项依据核对：速度课与专项耐力课各自的目的、分段和恢复；同协议可比测试及跑力冲突。不能直接套400米或长跑课表；缺可比测试时相关能力未知。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "800米速度与专项耐力两类目标及比赛时间线。专项依据核对：速度课与专项耐力课各自的目的、分段和恢复；同协议可比测试及跑力冲突。不能直接套400米或长跑课表；缺可比测试时相关能力未知。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "800米缺近期可核实专项成绩；不能直接套400米或长跑课表；缺可比测试时相关能力未知"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 1500,
+      "eventFocus": {
+        "eventMeters": 1500,
+        "objective": "1500米专项节奏、速度与耐力分别核对",
+        "evidenceNeeds": [
+          "同结构节奏课的分段、恢复和完成质量",
+          "比赛或最大努力测试的独立记录"
+        ],
+        "limitation": "训练均速不能直接作为比赛配速或最大能力"
+      },
+      "displayedWeekSummary": "1500米专项节奏、速度与耐力分别核对。专项依据核对：同结构节奏课的分段、恢复和完成质量；比赛或最大努力测试的独立记录。训练均速不能直接作为比赛配速或最大能力。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "1500米专项节奏、速度与耐力分别核对。专项依据核对：同结构节奏课的分段、恢复和完成质量；比赛或最大努力测试的独立记录。训练均速不能直接作为比赛配速或最大能力。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "1500米缺近期可核实专项成绩；训练均速不能直接作为比赛配速或最大能力"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 3000,
+      "eventFocus": {
+        "eventMeters": 3000,
+        "objective": "3000米比赛准备、速度与耐力任务",
+        "evidenceNeeds": [
+          "近期同结构可比训练及比赛日期",
+          "各段目的、实际质量与恢复条件"
+        ],
+        "limitation": "单次间歇或另一项目成绩不能直接给出确定赛速"
+      },
+      "displayedWeekSummary": "3000米比赛准备、速度与耐力任务。专项依据核对：近期同结构可比训练及比赛日期；各段目的、实际质量与恢复条件。单次间歇或另一项目成绩不能直接给出确定赛速。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "3000米比赛准备、速度与耐力任务。专项依据核对：近期同结构可比训练及比赛日期；各段目的、实际质量与恢复条件。单次间歇或另一项目成绩不能直接给出确定赛速。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "3000米缺近期可核实专项成绩；单次间歇或另一项目成绩不能直接给出确定赛速"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 5000,
+      "eventFocus": {
+        "eventMeters": 5000,
+        "objective": "5000米可比耐力表现、节奏任务与可用时间",
+        "evidenceNeeds": [
+          "近期同条件耐力表现与目标比赛",
+          "当前可用时间、课型和实际完成"
+        ],
+        "limitation": "历史PB不直接代表当前状态，不由目标倒推处方配速"
+      },
+      "displayedWeekSummary": "5000米可比耐力表现、节奏任务与可用时间。专项依据核对：近期同条件耐力表现与目标比赛；当前可用时间、课型和实际完成。历史PB不直接代表当前状态，不由目标倒推处方配速。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "5000米可比耐力表现、节奏任务与可用时间。专项依据核对：近期同条件耐力表现与目标比赛；当前可用时间、课型和实际完成。历史PB不直接代表当前状态，不由目标倒推处方配速。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "5000米缺近期可核实专项成绩；历史PB不直接代表当前状态，不由目标倒推处方配速"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 10000,
+      "eventFocus": {
+        "eventMeters": 10000,
+        "objective": "10000米专项耐力、节奏、已承受暴露与补给条件",
+        "evidenceNeeds": [
+          "赛事时间与近期可比耐力暴露",
+          "已完成课程、后续反应和补给可用条件"
+        ],
+        "limitation": "不机械设定周跑量；5公里成绩不等于真实10公里能力"
+      },
+      "displayedWeekSummary": "10000米专项耐力、节奏、已承受暴露与补给条件。专项依据核对：赛事时间与近期可比耐力暴露；已完成课程、后续反应和补给可用条件。不机械设定周跑量；5公里成绩不等于真实10公里能力。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "10000米专项耐力、节奏、已承受暴露与补给条件。专项依据核对：赛事时间与近期可比耐力暴露；已完成课程、后续反应和补给可用条件。不机械设定周跑量；5公里成绩不等于真实10公里能力。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "10000米缺近期可核实专项成绩；不机械设定周跑量；5公里成绩不等于真实10公里能力"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 21097,
+      "eventFocus": {
+        "eventMeters": 21097,
+        "objective": "其他长跑的目标赛事、可用时间与近期可比耐力暴露",
+        "evidenceNeeds": [
+          "该目标赛事的独立要求",
+          "关键课、实际耐力暴露与恢复"
+        ],
+        "limitation": "不用中短跑指标替代耐力基础，不套用其他项目的实测能力"
+      },
+      "displayedWeekSummary": "其他长跑的目标赛事、可用时间与近期可比耐力暴露。专项依据核对：该目标赛事的独立要求；关键课、实际耐力暴露与恢复。不用中短跑指标替代耐力基础，不套用其他项目的实测能力。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+      "futureWeekSummary": "其他长跑的目标赛事、可用时间与近期可比耐力暴露。专项依据核对：该目标赛事的独立要求；关键课、实际耐力暴露与恢复。不用中短跑指标替代耐力基础，不套用其他项目的实测能力。保留熟悉活动，围绕综合发展建立可持续安排并核对动作。进入条件：核对熟悉课程的实际剂量、可用时间与限制；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：待核对；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：有可核实的完成记录及后续反馈，再复核下一阶段，未来周执行待核对；2026-11-08复核。未来阶段为条件草案，不能直接确认。",
+      "phaseReview": {
+        "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+        "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+        "entryConditions": [
+          "核对熟悉课程的实际剂量、可用时间与限制",
+          "本人、目标及来源版本仍一致；课程变更仍需确认"
+        ],
+        "exitConditions": [
+          "有可核实的完成记录及后续反馈，再复核下一阶段",
+          "新疼痛、功能变化、目标或来源更正时重新评估"
+        ],
+        "reviewAt": "2026-11-01",
+        "entryState": "UNKNOWN",
+        "entryChecks": [
+          {
+            "id": "GOAL_DATE",
+            "label": "赛事日期",
+            "state": "SATISFIED",
+            "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          },
+          {
+            "id": "RESTRICTIONS",
+            "label": "现行限制",
+            "state": "SATISFIED",
+            "reason": "仅表示当前限制资料状态，不是医学放行",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "effective-training",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "ACTUAL_COURSES",
+            "label": "熟悉课程实际完成",
+            "state": "UNKNOWN",
+            "reason": "缺少可核实完整结构，不用原计划代替实际完成",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ],
+            "sourceVersions": []
+          },
+          {
+            "id": "CALENDAR",
+            "label": "可用时间与日历",
+            "state": "SATISFIED",
+            "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              },
+              {
+                "source": "training-conditions",
+                "version": "v1"
+              }
+            ]
+          },
+          {
+            "id": "RESPONSE",
+            "label": "可比后续反馈",
+            "state": "UNKNOWN",
+            "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+            "evidenceRefs": [
+              {
+                "id": "a",
+                "revision": 1
+              },
+              {
+                "id": "b",
+                "revision": 1
+              },
+              {
+                "id": "c",
+                "revision": 1
+              },
+              {
+                "id": "d",
+                "revision": 1
+              },
+              {
+                "id": "e",
+                "revision": 1
+              },
+              {
+                "id": "f",
+                "revision": 1
+              }
+            ],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "adaptive-review",
+                "version": "analysis:xbg36w"
+              }
+            ]
+          }
+        ],
+        "exitChecks": [
+          {
+            "id": "WEEK_EXECUTION",
+            "label": "当周实际执行与复盘",
+            "state": "UNKNOWN",
+            "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "calendar",
+                "version": "c1"
+              }
+            ]
+          },
+          {
+            "id": "REASSESSMENT",
+            "label": "到期目标与限制复核",
+            "state": "UNKNOWN",
+            "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+            "evidenceRefs": [],
+            "sourceEntryIds": [],
+            "sourceVersions": [
+              {
+                "source": "cycle-goal",
+                "version": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "近期没有可核实的最大努力比赛/测试成绩；目标不作能力依据",
+        "跑步与力量经验尚未分别确认；周期背景不自动代表所有专项经验",
+        "21097米缺近期可核实专项成绩；不用中短跑指标替代耐力基础，不套用其他项目的实测能力"
+      ],
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    }
+  ]
+}

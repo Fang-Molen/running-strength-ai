@@ -3,10 +3,12 @@ import { refOf, analysisReference } from './analysis-evidence'
 import { trainingDose, buildMuscleExposure } from './muscle-exposure'
 import { describeAnalysisHistory } from './analysis-history'
 import { REGION_LABEL } from './muscle-recovery-u11'
+import { assessAthleteHistory } from '../coach/assessment/history'
 
 /** Evidence changes explanations; no physiological threshold authorizes a prescription. */
 export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExposureReview=buildMuscleExposure(s)):RecoveryAssessment {
  const observations:RecoveryAssessment['observations']=[],hypotheses:RecoveryAssessment['hypotheses']=[],missing=[...s.gaps]
+ const historyReviews:ReturnType<typeof analysisReference>['trajectory'][]=[]
  const training=s.facts.filter((f):f is TrainingFact=>f.kind==='TRAINING'&&Date.parse(f.startedAt)>=Date.parse(s.context.asOf)-72*36e5),metrics=s.facts.filter((f):f is MetricFact=>f.kind==='METRIC'&&f.value!==null)
  const responseRows=s.facts.filter((f):f is ResponseFact=>f.kind==='RESPONSE')
  const latest=new Map<string,ResponseFact[]>()
@@ -34,6 +36,10 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
    if(f.value===null){missing.push(`${f.metric}未知（${f.quality}）`);continue}
    const b=analysisReference(s,f)
    observations.push({text:`${f.providerDate??f.occurredAt} ${f.metric} ${f.value} ${f.unit}（${f.provider} / ${f.protocolKey??'协议未知'}）${f.temporalResolution==='DAY'?'；日级记录，测量时刻未知':''}${b.deltaPercent!==null?`；较此前同协议 ${b.sampleCount} 日中位数 ${b.median} ${f.unit} 变化 ${Number(b.deltaPercent.toFixed(2))}%${b.absoluteDelta!==null?`，绝对变化 ${b.absoluteDelta} ${f.unit}`:''}${b.logRatio!==null?`；lnRMSSD 比值变化 ${Number(b.logRatio.toFixed(6))}`:''}`:''}；不是医学许可。`,evidenceRefs:[refOf(f),...b.sourceRefs]})
+   if(/HRV|RMSSD|SDNN|RHR|RESTING.*HEART|SLEEP|静息|睡眠/i.test(f.metric)){
+    if(b.trajectory.priorDays||b.trajectory.sourceSegmentCount>1)observations.push({text:b.trajectory.text,evidenceRefs:b.trajectory.refs})
+    if(b.trajectory.status==='DIRECTIONAL_SHIFT_REVIEW')historyReviews.push(b.trajectory)
+   }
   }else if(f.kind==='RESPONSE')observations.push({text:`${f.region?REGION_LABEL[f.region]+' ':''}${f.measure} ${f.value??'未知'}（${f.scale}），${f.occurredAt} 自报；不能等同组织恢复。`,evidenceRefs:[refOf(f)]})
  }
  observations.push(...describeAnalysisHistory(s))
@@ -49,6 +55,14 @@ export function evaluateRecoveryEvidence(s:EvidenceSnapshot,exposure:MuscleExpos
  if(training.length&&reaction.length)hypotheses.push({id:'training-response',claim:overlap.length?`${overlap.map(r=>REGION_LABEL[r.region]).join('、')}的跑步与力量刺激重叠可能参与当前反应；尚不能确认因果或损伤`:'近期实际训练可能参与当前反应；尚不能确认因果或损伤',supportingRefs:[...training,...reaction].map(refOf),weakeningRefs:[...noPain,...normalFunction].map(refOf),discriminator:'下一次已有批准且不诱发症状的同协议课程，先记录原热身的功能、分段/逐组完成情况与休息；再记录24/48/72小时酸痛、疼痛和主观恢复。若相近实际剂量下表现稳定、反应不再出现，会削弱此解释；不新增试探剂量。',certainty:'POSSIBLE'})
  const sleep=currentMetrics.filter(f=>/SLEEP|sleep/.test(f.metric)),contextMetrics=currentMetrics.filter(f=>!f.metric.includes('饮食'))
  if(contextMetrics.length)hypotheses.push({id:'measurement-context',claim:sleep.length?'睡眠与测量背景可能参与当前状态；单一睡眠或HRV读数不足以判断恢复不良':'测量条件或生活背景可能影响当前指标；尚不能确认恢复能力变化',supportingRefs:contextMetrics.map(refOf),weakeningRefs:normalFunction.map(refOf),discriminator:'核对睡眠完整性、生活压力和同设备同协议个人基线。若热身功能正常、可比训练表现稳定，会削弱“当前训练能力下降”的判断；若生活条件未变但表现持续下降，应重新检查训练解释。',certainty:'UNRESOLVED'})
+ if(historyReviews.length){
+  // Reuse the existing comparison of actual running structure and conditions;
+  // missing/limited performance is unresolved, never assumed to have deteriorated.
+  const execution=assessAthleteHistory(s).comparisons[0]
+  const stableExecution=execution?.status==='DIRECT'&&execution.paceDeltaSecondsPerKm!==null&&execution.paceDeltaSecondsPerKm<=0&&execution.rpeDelta!==null&&execution.rpeDelta<=0
+  const counter=[...normalFunction.map(refOf),...(stableExecution?[execution.current,...execution.baselineRefs]:[]),...historyReviews.filter(r=>r.currentOpposesShift).flatMap(r=>r.refs.filter(x=>currentMetrics.some(m=>m.id===x.id&&m.revision===x.revision)))]
+  hypotheses.unshift({id:'metric-history-review',claim:'指标在较早与较后历史参照之间存在描述性方向变化；可能与训练阶段、生活或测量条件有关，是否涉及近期执行能力仍未确定，不能自动称为健康新常态或持续恶化',supportingRefs:[...new Map(historyReviews.flatMap(r=>r.refs).map(r=>[r.id+'@'+r.revision,r])).values()],weakeningRefs:[...new Map(counter.map(r=>[r.id+'@'+r.revision,r])).values()],discriminator:`${stableExecution?'已记录同条件训练的配速及主观吃力未变差，作为反证保留；':execution?.status==='DIRECT'?'已记录同条件表现差异，仍不能证明指标变化造成了该差异；':'可比训练表现缺少或条件不一致，当前解释仍未解决；'}核对历史阶段、同协议测量与当前功能；同条件表现稳定会削弱疲劳解释，测量口径或原始记录更正后应重算。保留原计划中不诱发症状的既有轻任务与一般知识解释；不新增剂量，疼痛及医疗限制独立处理。`,certainty:'UNRESOLVED'})
+ }
  if(hypotheses.length===1&&training.length&&reaction.length)hypotheses.push({id:'execution-context',claim:'实际执行节奏或休息安排差异也可能参与反应，不能直接诊断能力短板',supportingRefs:training.map(refOf),weakeningRefs:normalFunction.map(refOf),discriminator:'对照原批准课的组间及轮间休息、分段速度和逐组RPE；若这些条件相同但反应仍改变，则削弱执行差异解释。',certainty:'UNRESOLVED'})
  if(!responses.some(f=>f.measure==='PAIN'))missing.push('当前是否疼痛、在哪里、是否影响动作？')
  if(!responses.some(f=>f.measure==='FUNCTION'))missing.push('缺少原热身或日常功能表现')

@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: new measured weight makes the adopted nutrition plan stale without rewriting it
+ok 1 - new measured weight makes the adopted nutrition plan stale without rewriting it
+  ---
+  duration_ms: 77.878291
+  type: 'test'
+  ...
+# Subtest: meal correction invalidates nutrition and never becomes a full-day deficit
+ok 2 - meal correction invalidates nutrition and never becomes a full-day deficit
+  ---
+  duration_ms: 7.328962
+  type: 'test'
+  ...
+# Subtest: dependent changes between preview and confirmation preserve the adopted version
+ok 3 - dependent changes between preview and confirmation preserve the adopted version
+  ---
+  duration_ms: 4.407452
+  type: 'test'
+  ...
+# Subtest: legacy adopted plans without dependencies cannot be described as current
+ok 4 - legacy adopted plans without dependencies cannot be described as current
+  ---
+  duration_ms: 3.029603
+  type: 'test'
+  ...
+# Subtest: nutrition edits do not invalidate an independent strength answer
+ok 5 - nutrition edits do not invalidate an independent strength answer
+  ---
+  duration_ms: 4.92003
+  type: 'test'
+  ...
+# Subtest: unreadable source makes freshness unknown and cannot be confirmed
+ok 6 - unreadable source makes freshness unknown and cannot be confirmed
+  ---
+  duration_ms: 5.751581
+  type: 'test'
+  ...
+# Subtest: refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+ok 7 - refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+  ---
+  duration_ms: 3.393896
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2218.276292

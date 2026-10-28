@@ -1,0 +1,1 @@
+{"schema":1,"id":"ba1b07c9-a49b-4759-a2bd-dd675369db87","subject":"local","createdAt":"2026-10-28T08:02:44.923Z","active":false,"sourceConsistency":"UNVERIFIED_CROSS_STORE_SNAPSHOT","entries":[{"key":"fk-synthetic-source","sourceValue":"original-synthetic-value","target":"candidate-synthetic-value"}]}

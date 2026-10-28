@@ -1,6 +1,7 @@
 import type { SymptomRow } from "./symptom-store";
 import { shiftDay, validDay } from "./observation";
 import { detectRedFlags } from "../core/coach-red-flags";
+import { restrictionActionScope } from "../coach/utterance-semantics";
 export function reviewSymptoms(rows: SymptomRow[], day: string, span: 3 | 7 | 14) {
   if (!validDay(day) || ![3, 7, 14].includes(span)) throw Error("症状窗口无效");
   const through = rows.filter((r) => !r.retracted && r.occurredAt.slice(0, 10) <= day),
@@ -55,8 +56,18 @@ export function reviewSymptoms(rows: SymptomRow[], day: string, span: 3 | 7 | 14
       .map((r) => ({
         id: `symptom-hold:${r.id}`,
         version: String(r.revision),
-        scope: emergency ? "URGENT_MEDICAL" : "PAIN_REVIEW",
+        scope: ["EMERGENCY", "URGENT_MEDICAL"].includes(detectRedFlags(r.notes + "，" + (r.trigger ?? "")).level) ? "URGENT_MEDICAL" : "PAIN_REVIEW",
         evidenceRefs: [{ id: `symptom:${r.id}`, revision: r.revision }],
+        status: "REVIEW_PENDING" as const,
+        region: r.region,
+        side: r.side,
+        actions: restrictionActionScope(r.region + "，" + (r.trigger ?? "")),
+        source: r.source,
+        sourceText: r.notes,
+        occurredAt: r.occurredAt,
+        recordedAt: r.recordedAt,
+        outsideWindow: r.occurredAt.slice(0, 10) < start,
+        reviewPath: "健康 → 症状记录 → 核对原记录并更正或撤回",
       })),
     message: emergency
       ? "存在危险症状：停止训练并尽快寻求医疗评估；紧急症状立即联系当地急救。"

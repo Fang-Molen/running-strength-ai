@@ -1,3 +1,4 @@
+import { validateCoachAssertions } from "../assertion-policy";
 import type { CoachAnalysisPacket } from "../../health/analysis-contract";
 import { auditAnalysisContent } from "../../health/analysis-reply-validation";
 /** Negation is scoped to the same clause; a later affirmative clause still fails. */
@@ -43,23 +44,12 @@ export function guardR5Reply(text: string, packet: CoachAnalysisPacket) {
   };
 }
 
-/**
- * 联网回答拦截放宽开关（用户决定，2026-10-26）。
- * 原因：线上联网回答被“无来源数字/疼痛放行/诊断”三类规则大量误拦，用户暂时关闭这三条，
- * 等 S1 的问答准确性完善后再评估重新开启。恢复方法：把下面的值改成 false（一行），规则代码都还在。
- * 不放宽：UNAUTHORIZED_WRITE_OR_CLEARANCE（模型声称已改计划/已解除限制）以及其余审计错误
- *（含 WRITE_CLEARANCE_SAFETY_OR_CAUSAL_CLAIM、NUMBER_CONTRADICTION、UNIT_CONTRADICTION 等）。
- * 红线症状（胸痛、晕厥等）在发送前由 coach-sheet 本地拦截，不经过这里，也不受此开关影响。
- */
-export const ONLINE_GUARD_RELAXED = true;
-/** 被放宽的规则：命中时放行，但回答必须标注“模型回答，未经核验”。 */
-export const RELAXED_ONLINE_RULES: readonly string[] = ["UNBOUND_NUMERIC_SOURCE", "UNSUPPORTED_NUMERIC_CLAIM", "ACTIVE_HOLD_RELEASE", "DIAGNOSIS_CLAIM"];
-/** 界面上给放行回答加的标注文案。 */
+/** Deprecated compatibility symbols. The approved v2 policy replaces the old blanket waiver. */
+export const ONLINE_GUARD_RELAXED = false;
+export const RELAXED_ONLINE_RULES: readonly string[] = [];
 export const UNVERIFIED_ONLINE_LABEL = "模型回答，未经核验";
-/** 联网回答用的入口：严格的 guardR5Reply 不变，这里只按开关把被放宽的规则移到 waived。 */
-export function guardOnlineReply(text: string, packet: CoachAnalysisPacket, relaxed = ONLINE_GUARD_RELAXED) {
-  const strict = guardR5Reply(text, packet);
-  const waived = relaxed ? strict.errors.filter((e) => RELAXED_ONLINE_RULES.includes(e)) : [];
-  const errors = strict.errors.filter((e) => !waived.includes(e));
-  return { ...strict, ok: errors.length === 0, errors, waived, unverified: waived.length > 0 };
+/** Shared with the actual server controller; optional legacy argument cannot waive safety checks. */
+export function guardOnlineReply(text:string,packet:CoachAnalysisPacket,_legacyRelaxed=false){
+ const checked=validateCoachAssertions(text,{factQuotes:[...(packet.derivedFacts??[]).map(d=>d.text),...packet.assessment.observations.map(o=>o.text)],safetyRestricted:['HOLD_ACTIVE','ESCALATION_REQUIRED'].includes(packet.assessment.safetyState)})
+ return {...checked,waived:[] as string[],unverified:false,semanticReviewRequired:true as const}
 }

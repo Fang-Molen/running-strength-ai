@@ -1,0 +1,33 @@
+✔ D04 packet retains every eligible HRV/RHR baseline day and current metric (32.459859ms)
+✔ A03 packet counts independent occurrences while preserving both actual components (4.7413ms)
+✔ E01 packet keeps all four courses and their original adverse history (7.938728ms)
+✔ packet independently enforces athlete/asOf/revision scope and preserves safety constraints (1.868714ms)
+✔ question requirements retain hypothesis counterevidence without inventing missing RMSSD (2.728938ms)
+✔ D01 aliases match neutral source scopes and strict quotations restore exactly (4.399451ms)
+✔ embedded private aliases roundtrip without replacing ordinary prose or alias substrings (1.920642ms)
+✔ model DTO retains candidate conditions alongside facts and safety/missing provenance (5.490049ms)
+✔ binding an actual question adds existing raw evidence requirements to a legacy packet (0.77149ms)
+✔ generated neutral source aliases are not interpreted again as raw private IDs (2.512951ms)
+✔ A03 actual catalog question requires the numerical facts needed for its wording (2.601204ms)
+✔ C07 actual catalog question requires the numerical facts needed for its wording (1.521027ms)
+✔ E01 actual catalog question requires the numerical facts needed for its wording (5.022351ms)
+✔ a multi-quotation answer restores every embedded source alias with its exact original text (3.003985ms)
+✔ approved hypothesis identifiers remain exact when they resemble derived aliases (3.076986ms)
+✔ a raw fact ID matching unit does not replace that semantic value (2.830978ms)
+✔ a raw fact ID matching statistic does not replace that semantic value (0.992335ms)
+✔ a raw fact ID matching quality does not replace that semantic value (0.954357ms)
+✔ a raw fact ID matching temporalResolution does not replace that semantic value (1.036401ms)
+✔ a raw fact ID matching energyKind does not replace that semantic value (0.886875ms)
+✔ an average pace question requires 150 s/km alongside distance and work time (2.614384ms)
+✔ a reply omitting the required average pace is rejected even when its other numerical facts are supplied (1.56261ms)
+✔ a valid host competition date is retained as planned calendar context with neutral wire versions (4.634577ms)
+✔ a requested complete run total stays explicitly unknown when a completed segment lacks distanceM (2.245515ms)
+✔ a requested complete run total stays explicitly unknown when a completed segment lacks durationSeconds (2.061816ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.643524

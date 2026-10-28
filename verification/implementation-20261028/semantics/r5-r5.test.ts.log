@@ -1,0 +1,26 @@
+✔ current weight needs confirmation, syncs effective body, rejects duplicate and compensates undo (57.793104ms)
+✔ target weight and historical correction never become a new current measurement (19.969873ms)
+✔ Thursday change is previewed, preserves the strength component, and undo restores full intervals (15.713363ms)
+✔ stale confirmation and account switch never write another scope (4.647307ms)
+✔ reduce one set changes actual executable exercises and does not modify completed rows (6.498803ms)
+✔ symptom worsening and limited function remain holds despite normal readiness or a later zero (19.501322ms)
+✔ symptom revisions preserve history but retract invalid evidence (0.899253ms)
+✔ weekly totals use actual run and strength components, retain unknowns and split device protocols (7.875071ms)
+✔ next-week draft caps every dose dimension and never creates evidence or unsolicited volume (1.130163ms)
+✔ R4 mixed queries retain both modalities and single-service queries stay scoped (0.285783ms)
+✔ goal edit must not re-date an old profile weight above a newer measurement (7.364776ms)
+✔ ambiguous current and target weights cannot be conflated (0.879804ms)
+✔ weekly draft is idempotent on open, applies only on confirmation and undo preserves unrelated rows (145.779842ms)
+✔ weekly stale drafts are rejected after a symptom correction or plan edit (8.364673ms)
+✔ the online safety audit rejects fabricated numbers, unauthorized writes and pain clearance (15.014375ms)
+✔ mixed run/strength remains executable in both components after the chat edit (2.616697ms)
+✔ easy-run replacement cannot silently triple the duration of a short interval component (1.062862ms)
+✔ existing functional limitation is a safety hold even when pain was not recorded (1.694579ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 337.981854

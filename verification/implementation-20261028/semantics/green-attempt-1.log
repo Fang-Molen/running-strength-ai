@@ -1,0 +1,29 @@
+✔ read-only question is not consumed by a symptom proposal: 我没有腿疼，解释一下RPE (9.24123ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有小腿疼，解释一下RPE (0.492156ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有疼痛，解释一下RPE (0.399195ms)
+✔ read-only question is not consumed by a symptom proposal: 昨天腿疼，现在完全不疼了，解释一下RPE (0.726752ms)
+✔ read-only question is not consumed by a symptom proposal: 朋友腿疼，我想了解RPE (0.793984ms)
+✔ read-only question is not consumed by a symptom proposal: 不用保存，只解释一下RPE (0.603525ms)
+✔ mixed denied chest and asserted leg pain select only the asserted region (2.377515ms)
+✔ double negation cannot erase a current leg symptom (0.97636ms)
+✔ mixed current pain and education keeps the educational route without authorizing activity (0.867726ms)
+✔ ordinary weight control is not a medical-energy signal (0.832312ms)
+✔ dangerous intake behavior and current severe symptoms retain their safety response (0.960496ms)
+✔ third-party symptoms do not become personal snapshot restrictions (32.776952ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 无 (4.022699ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有不舒服 (1.758376ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 目前没有身体限制 (1.771997ms)
+✔ explicit absence stays scoped and does not manufacture a restriction: 没有疼痛 (2.029717ms)
+✔ explicit absence cannot erase independent historical pain (6.260281ms)
+✔ absence cannot replace an active profile restriction through a chat command (3.969719ms)
+✔ an old active restriction remains visible beyond the requested chart window (0.56739ms)
+✔ task permission keeps knowledge and unrelated upper-body advice available under a leg restriction (14.686947ms)
+✔ unscoped restrictions cannot be treated as permission for an unrelated-looking exercise (1.691404ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.945268

@@ -10,6 +10,7 @@ import {
 import { createPersonalStore } from "../personal/store";
 import type { Known } from "./effective-profile";
 import { analysisDigest } from "../../health/analysis-evidence";
+import { interpretProfileLimit } from "../utterance-semantics";
 export function readEffectiveTrainingProfile() {
   const profile = loadProfile(),
     at = profileSavedAt(),
@@ -66,8 +67,9 @@ export function readEffectiveTrainingProfile() {
     profile.equipment ? main("equipment", profile.equipment) : null,
     pp ? other(pp.equipment as string) : null,
   );
+  const limitState = interpretProfileLimit(profile.limit);
   const restrictions = [
-    ...(profile.limit.trim()
+    ...(limitState.active
       ? [main("limit", profile.limit)].filter((x): x is Known<string> => !!x)
       : []),
     ...(pp && pp.screen !== "CLEAR"

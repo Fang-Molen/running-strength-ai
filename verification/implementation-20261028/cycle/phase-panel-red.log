@@ -1,0 +1,26 @@
+TAP version 13
+# Subtest: src/components/coach-cycle-panel.test.tsx
+not ok 1 - src/components/coach-cycle-panel.test.tsx
+  ---
+  duration_ms: 0.715455
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/components/coach-cycle-panel.test.tsx:1:1'
+  error: "The requested module './coach-cycle-panel' does not provide an export named 'CyclePhaseEvidence'"
+  name: 'SyntaxError'
+  stack: |-
+    #asyncInstantiate (node:internal/modules/esm/module_job:327:21)
+    async ModuleJob.run (node:internal/modules/esm/module_job:431:5)
+    async node:internal/modules/esm/loader:643:26
+    async node:internal/test_runner/runner:1071:15
+    async runFiles (node:internal/test_runner/runner:1037:9)
+    async runChain (node:internal/test_runner/runner:1115:5)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2336.292992

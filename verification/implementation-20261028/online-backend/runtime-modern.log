@@ -1,0 +1,29 @@
+✔ strict declaration boundary rejects plans, derived fields, bad units, duplicate revisions and forged authority (3.032779ms)
+✔ sleep, pain and duration scalars never manufacture a workout or running structure (0.394348ms)
+✔ runtime config never guesses credentials, policy, persistence or prior spend (0.438445ms)
+▶ signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only
+  ✔ no identity, unsigned identity and sibling origins cannot create authorization (20.959768ms)
+  ✔ server ownership and explicit consent; owner switch cannot read or revoke (108.385105ms)
+  ✔ close/reopen persists refs, ownership and exact duplicate charge prevention (150.605342ms)
+  ✔ new declaration revision invalidates old ref and binds question (18.844111ms)
+  ✔ two simultaneous requests honor real persistent concurrency cap (56.450803ms)
+  ✔ revoked while provider runs: billed once, result never released (49.650689ms)
+  ✔ corrected while provider runs: stale result never released (37.851348ms)
+  ✔ revoked after reserve but before dispatch releases the unsent reservation (38.622228ms)
+  ✔ disclosed pain on an older record still blocks model dispatch (9.997738ms)
+  ✔ empty declarations remain unknown and do not fabricate completed history (37.929308ms)
+  ✔ model cannot promote self reports to verified device evidence (37.319704ms)
+  ✔ exact scalar quotes survive server validation without invented workout binding; modified units fail (59.526641ms)
+  ✔ automatic persistent questions share grant; general education and causality survive actual controller checks (108.045229ms)
+  ✔ structured history survives as declared facts; false personal units and writes are rejected after settlement (144.454266ms)
+  ✔ settings revocation persists and ordinary requests cannot silently reenable; explicit enable resumes (28.521274ms)
+  ✔ expired refs fail before dispatch and status does not authenticate or charge (7.311195ms)
+✔ signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only (2726.868185ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2734.572946

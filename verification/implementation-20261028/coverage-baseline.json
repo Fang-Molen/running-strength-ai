@@ -1,0 +1,901 @@
+{
+  "schema_version": 1,
+  "kind": "initial-static-coverage-baseline",
+  "audit_date": "2026-10-28",
+  "source_import_commit": "149c11f17ed2696ab29bf098911e3f54640f1e4d",
+  "claimed_upstream_commit": "0d4293b",
+  "claimed_upstream_verified": false,
+  "capabilities_newly_verified": 0,
+  "tests_run_by_this_audit": 0,
+  "scope": "Read-only source inspection; only this verification artifact was written. No accounts, network, paid calls, deployment, tests or commits.",
+  "status_definitions": {
+    "source-present": "Existing source mechanism located; not a completion or runtime verification claim.",
+    "needs-test": "Existing or partial source requires reproduction, implementation or acceptance evidence.",
+    "not-implemented": "Required capability not delivered by the located source; adjacent entrypoints are listed for reuse.",
+    "external-unverified": "Needs actual environment, account, device or professional evidence outside this audit."
+  },
+  "items": [
+    {
+      "id": "A01",
+      "title": "真实品牌接入",
+      "task": 9,
+      "status": "external-unverified",
+      "entrypoints": [
+        "src/lib/ui/platform-sync-runtime.ts",
+        "src/lib/health/garmin-sync-runner.ts",
+        "src/lib/health/coros-account-sync.ts",
+        "functions/api/strava-mcp/[[path]].js",
+        "src/lib/health/strava-mcp-server.ts"
+      ],
+      "evidence": "有品牌适配器、身份/账号范围及预览状态；Strava仅OAuth/工具列表探测，源码明确未调用活动工具或导入训练；其他品牌真实授权与同步未验证。",
+      "existing_tests": [
+        "src/lib/ui/platform-sync-runtime.test.ts",
+        "src/lib/health/garmin-sync-runner.test.ts",
+        "src/lib/health/coros-account-sync.test.ts"
+      ]
+    },
+    {
+      "id": "A02",
+      "title": "时间单位与算法口径",
+      "task": 2,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/health/unified-import.ts",
+        "src/lib/health/observation.ts",
+        "src/lib/health/analysis-evidence.ts"
+      ],
+      "evidence": "可见发生/接收时间、设备/协议、单位与修订投影；analysisReference 分来源设备协议统计，仍需入口对照。",
+      "existing_tests": [
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/health/unified-fact-store.test.ts"
+      ]
+    },
+    {
+      "id": "A03",
+      "title": "人物归属与重复活动",
+      "task": 2,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/health/activity-identity.ts",
+        "src/lib/ui/device-store.ts",
+        "src/lib/health/garmin-pending-imports.ts"
+      ],
+      "evidence": "activityContributions 按品牌+账号+原ID去重，仅显式共同活动引用抑制重复贡献；异步确认全链尚未验证。",
+      "existing_tests": [
+        "src/lib/health/brand-isolation.test.ts",
+        "src/lib/ui/device-store-sync.test.ts",
+        "src/lib/health/garmin-pending-imports.test.ts"
+      ]
+    },
+    {
+      "id": "A04",
+      "title": "识别与导入确认",
+      "task": 2,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/components/device-import.tsx",
+        "src/components/training-import-sheet.tsx",
+        "src/lib/ui/device-import-review.ts",
+        "src/lib/ui/device-import-contract.ts"
+      ],
+      "evidence": "已有文件预检与按行审核选择；需确认切人/切账号/草稿变动后不能写入旧异步结果。",
+      "existing_tests": [
+        "src/lib/ui/device-import-contract.test.ts",
+        "src/lib/ui/device-import-review.test.ts",
+        "src/lib/core/training-import.test.ts"
+      ]
+    },
+    {
+      "id": "B01",
+      "title": "新增纠错与目标更新",
+      "task": 2,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/core/training-correction.ts",
+        "src/lib/core/import-history.ts",
+        "src/lib/coach/loop/effective-profile.ts"
+      ],
+      "evidence": "更正保留 at/recordedAt；有效画像区分来源与目标；部分字段明确标 UNWIRED_CORRECTION_FIELDS，须按实际投影验证。",
+      "existing_tests": [
+        "src/lib/core/training-correction.test.ts",
+        "src/lib/core/training-correction-projection.test.ts",
+        "src/lib/core/import-history.test.ts"
+      ]
+    },
+    {
+      "id": "B02",
+      "title": "更正后的依赖刷新",
+      "task": 2,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/core/training-correction.ts",
+        "src/lib/core/coach-p7-runtime.ts",
+        "src/lib/core/coach-v4-formal-rows-store.ts"
+      ],
+      "evidence": "appendCorrection 吞 capture/audit 异常并忽略 audit false；readClaimRevisions 只读日志，未见该链持久重试或读时版本兜底。",
+      "existing_tests": [
+        "src/lib/core/coach-claim-revision.test.ts",
+        "src/lib/core/training-correction-projection.test.ts"
+      ]
+    },
+    {
+      "id": "B03",
+      "title": "过期回答与快照",
+      "task": 2,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/online-session.ts",
+        "src/lib/coach/cycle/host.ts",
+        "server/coach-deepseek/coach-snapshot-store.server.ts"
+      ],
+      "evidence": "已有请求前后版本/主体检查；依赖粒度、展示后变化和跨端未同步边界待验证。",
+      "existing_tests": [
+        "src/lib/coach/online-session.test.ts",
+        "src/lib/coach/cycle/host.test.ts"
+      ]
+    },
+    {
+      "id": "B04",
+      "title": "撤销删除与持久一致",
+      "task": 2,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/r4/course-flow.ts",
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/cycle/host.ts"
+      ],
+      "evidence": "可复用预览、锁、回执、开始状态及撤销冲突检查；各入口持久层和重复确认一致性未重跑。",
+      "existing_tests": [
+        "src/lib/coach/r4/course-flow.test.ts",
+        "src/lib/coach/cycle/host.test.ts"
+      ]
+    },
+    {
+      "id": "B05",
+      "title": "恢复成功早于持久保存",
+      "task": 1,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/core/bulk-store.ts",
+        "src/lib/ui/backup-center.ts",
+        "src/lib/vault.ts",
+        "src/components/settings-center.tsx"
+      ],
+      "evidence": "初始源码恢复入口同步返回；规格记录双存储失败误报，须本轮故障注入及可重启事务验证。",
+      "existing_tests": [
+        "src/lib/core/bulk-store.test.ts",
+        "src/lib/core/storage-journal.test.ts",
+        "src/lib/ui/backup-center.test.ts"
+      ]
+    },
+    {
+      "id": "B06",
+      "title": "备份可导出却不能完整导回",
+      "task": 1,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/vault.ts",
+        "src/lib/ui/backup-center.ts",
+        "src/lib/core/trial.ts"
+      ],
+      "evidence": "初始源码旧JSON导出/导入边界不同；规格要求分块manifest、大键和>30MB完整往返或写前拒绝。",
+      "existing_tests": [
+        "src/lib/core/backup-inspection.test.ts",
+        "src/lib/ui/backup-center.test.ts"
+      ]
+    },
+    {
+      "id": "B07",
+      "title": "跨标签删除未清内存",
+      "task": 1,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/core/bulk-store.ts",
+        "src/lib/core/storage.ts",
+        "src/lib/vault.ts"
+      ],
+      "evidence": "规格记录删除后旧缓存残留；全写者协调、持久修订/墓碑和旧标签隔离仍需本轮证明。",
+      "existing_tests": [
+        "src/lib/core/bulk-store.test.ts",
+        "src/lib/core/storage-journal.test.ts"
+      ]
+    },
+    {
+      "id": "C01",
+      "title": "画像层次与能力含义",
+      "task": 6,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/coach/cycle/portrait.ts",
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/core/evidence-profile.ts"
+      ],
+      "evidence": "已有 verified performances、跑步观察、力量实际组与未知能力；无万能总分，领域经验仍需独立表达。",
+      "existing_tests": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/assessment/history.test.ts",
+        "src/lib/core/evidence-profile.test.ts"
+      ]
+    },
+    {
+      "id": "C02",
+      "title": "证据强弱与有效期",
+      "task": 6,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/core/coach-claim-revision.ts"
+      ],
+      "evidence": "已有来源协议、EvidenceRef、版本和反证结构；统一任务适用范围、复核时间与持久撤回链尚未证明。",
+      "existing_tests": [
+        "src/lib/coach/assessment/history.test.ts",
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/core/coach-claim-revision.test.ts"
+      ]
+    },
+    {
+      "id": "C03",
+      "title": "个人基线与阶段变化",
+      "task": 6,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/health/recovery-assessment.ts"
+      ],
+      "evidence": "analysisReference 30天同设备协议日中位数且1日可返回；尚无充分性等级/恶化不自动正常化的完整合同。",
+      "existing_tests": [
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/health/recovery-quantitative.test.ts"
+      ]
+    },
+    {
+      "id": "C04",
+      "title": "个人响应与判断撤回",
+      "task": 6,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/adaptive-review.ts",
+        "src/lib/health/personal-response.ts",
+        "src/lib/coach/cycle/host.ts"
+      ],
+      "evidence": "已有72小时、同剂量协议、干扰和重复反馈；需验证更正/删除/反证撤回且不外推强度。",
+      "existing_tests": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/cycle/adaptive-import.test.ts",
+        "src/lib/health/analysis-followup.test.ts"
+      ]
+    },
+    {
+      "id": "D01",
+      "title": "真实联网服务就绪",
+      "task": 4,
+      "status": "external-unverified",
+      "entrypoints": [
+        "src/components/coach-sheet.tsx",
+        "src/lib/coach/online-session.ts",
+        "server/coach-deepseek/coach-runtime.server.ts"
+      ],
+      "evidence": "初始主链仍要求本轮consent且HOLD会阻断prepare；真实身份、模型、预算和部署未访问。",
+      "existing_tests": [
+        "src/lib/coach/online-session.test.ts",
+        "server/coach-deepseek/coach-runtime.test.ts"
+      ]
+    },
+    {
+      "id": "D02",
+      "title": "前后端数字核验不一致",
+      "task": 5,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/r5/guard.ts",
+        "src/lib/coach/deepseek-grounding.ts",
+        "server/coach-deepseek/coach-chat.controller.js"
+      ],
+      "evidence": "双端核验入口存在；须同一版本断言分类fixture证明教育数字、个人事实、单位与引用一致。",
+      "existing_tests": [
+        "src/lib/coach/deepseek-grounding.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts",
+        "server/coach-deepseek/coach-backend-adapter.test.mjs"
+      ]
+    },
+    {
+      "id": "D03",
+      "title": "解释取舍与模型职责",
+      "task": 5,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/online-session.ts",
+        "src/lib/coach/online-coach.ts",
+        "server/coach-deepseek/coach-chat.controller.js"
+      ],
+      "evidence": "新链仍为explanation用途；丰富旧helper不能证明现链支持竞争解释与条件候选。",
+      "existing_tests": [
+        "src/lib/coach/online-session.test.ts",
+        "src/lib/coach/online-coach.test.ts"
+      ]
+    },
+    {
+      "id": "D04",
+      "title": "对话上下文与检索",
+      "task": 5,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/online-session.ts",
+        "src/lib/coach/online-training-facts.ts",
+        "src/lib/coach/online-nutrition-facts.ts"
+      ],
+      "evidence": "selectCoachDeclarations 限14天本人MANUAL/APP；需接任务相关长历史/组次/计划/饮食和上下文预算，未见检索实证。",
+      "existing_tests": [
+        "src/lib/coach/online-session.test.ts",
+        "src/lib/coach/online-training-facts.test.ts",
+        "src/lib/coach/online-nutrition-facts.test.ts"
+      ]
+    },
+    {
+      "id": "D05",
+      "title": "否定腿疼被抢先识别症状",
+      "task": 3,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/components/coach-sheet.tsx",
+        "src/lib/coach/r5/intents.ts",
+        "src/lib/coach/r5/host.ts"
+      ],
+      "evidence": "存在R5前置分流与下层解析分离；规格反例需要从实际发送入口复现。",
+      "existing_tests": [
+        "src/lib/coach/r5/guard-conversation.test.ts",
+        "src/lib/core/coach-colloquial-pain.test.ts"
+      ]
+    },
+    {
+      "id": "D06",
+      "title": "限制填无仍触发全局限制",
+      "task": 3,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/analysis-from-parts.ts",
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/coach/r5/host.ts"
+      ],
+      "evidence": "需将无/未知/有效历史限制分开，且知识问答不被全局安全状态吞掉。",
+      "existing_tests": [
+        "src/lib/health/analysis-hardening.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ]
+    },
+    {
+      "id": "D07",
+      "title": "普通控重目标被升级风险",
+      "task": 3,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/core/coach-red-flags.ts",
+        "src/components/coach-sheet.tsx"
+      ],
+      "evidence": "ENERGY检测入口存在；需普通控重与明确危险行为成对验证及专业复核。",
+      "existing_tests": [
+        "src/lib/core/coach-guard-k15.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ]
+    },
+    {
+      "id": "D08",
+      "title": "普通因果科普被整段拒绝",
+      "task": 5,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/analysis-reply-validation.ts",
+        "src/lib/coach/r5/guard.ts",
+        "server/coach-deepseek/coach-chat.controller.js"
+      ],
+      "evidence": "存在因果/诊断/放行/写入核验；需拆断言类别并保留危险与越权正对照。",
+      "existing_tests": [
+        "src/lib/health/analysis-reply-validation.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ]
+    },
+    {
+      "id": "D09",
+      "title": "失败阶段与核验标签冲突",
+      "task": 4,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/components/coach-online-request.tsx",
+        "src/components/coach-sheet.tsx",
+        "src/lib/coach/online-service.ts"
+      ],
+      "evidence": "响应有unverified但需核对UI核验文案与派发/返回/费用状态；未执行真实收费。",
+      "existing_tests": [
+        "src/lib/coach/online-service.test.ts",
+        "server/coach-deepseek/coach-status.test.mjs"
+      ]
+    },
+    {
+      "id": "E01",
+      "title": "单课结构与执行口径",
+      "task": 7,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/core/running-execution.ts",
+        "src/lib/core/running-round-analysis.ts",
+        "src/lib/coach/assessment/history.ts"
+      ],
+      "evidence": "已有分段/轮次执行与历史比较；两轮不同休息、部分完成、修订只聚合一次待入口验证。",
+      "existing_tests": [
+        "src/lib/core/running-execution-rest.test.ts",
+        "src/lib/core/running-round-analysis.test.ts"
+      ]
+    },
+    {
+      "id": "E02",
+      "title": "专项与课目的匹配",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/training-models/physiology.ts",
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/assessment/history.ts"
+      ],
+      "evidence": "周期目标目前按SPRINT/MIDDLE/DISTANCE三类分桶；六项独立课目的与证据输出需扩展。",
+      "existing_tests": [
+        "src/lib/coach/training-models/physiology.test.ts",
+        "src/lib/coach/cycle/cycle.test.ts"
+      ]
+    },
+    {
+      "id": "E03",
+      "title": "个体波动与短板判断",
+      "task": 7,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/coach/assessment/history.ts",
+        "src/lib/core/running-observation.ts"
+      ],
+      "evidence": "compareRunConditions 设备/协议等可比性；连续慢速高RPE触发复核且不自动增量，需入口反证链验证。",
+      "existing_tests": [
+        "src/lib/coach/assessment/history.test.ts",
+        "src/lib/core/running-observation.test.ts"
+      ]
+    },
+    {
+      "id": "E04",
+      "title": "技术观察与训练迁移",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/running-technique/catalogue.ts",
+        "src/components/running-technique-library.tsx",
+        "src/lib/core/running-observation.ts"
+      ],
+      "evidence": "有通用技术库与训练观察；个人动作诊断、跨课型迁移尚无独立有效性证据。",
+      "existing_tests": [
+        "src/lib/running-technique/catalogue.test.ts",
+        "src/lib/core/running-observation.test.ts"
+      ]
+    },
+    {
+      "id": "F01",
+      "title": "按力量目标选课",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/personal/planner.ts",
+        "src/lib/coach/cycle/planner.ts"
+      ],
+      "evidence": "personal 初始模板按经验/器械/时间且最多两非相邻日；该入口无真实跑课联合输入，cycle可复用熟悉动作。",
+      "existing_tests": [
+        "src/lib/coach/personal/personal.test.ts",
+        "src/lib/coach/cycle/cycle.test.ts"
+      ]
+    },
+    {
+      "id": "F02",
+      "title": "进阶停滞与动作替代",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/personal/planner.ts",
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "evidence": "已有减组反馈、候选和确认撤销；无RIR维持/观察、替代非等价说明及停滞闭环需补。",
+      "existing_tests": [
+        "src/lib/coach/personal/personal.test.ts",
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ]
+    },
+    {
+      "id": "F03",
+      "title": "容量与主观强度口径",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/analysis-contract.ts",
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/core/training-correction.ts"
+      ],
+      "evidence": "存在负重、次数、setRpe、rir与修订；单侧/辅助/自重单位及不重复聚合仍需系统对照。",
+      "existing_tests": [
+        "src/lib/health/analysis-dose-completeness.test.ts",
+        "src/lib/core/training-correction-projection.test.ts"
+      ]
+    },
+    {
+      "id": "F04",
+      "title": "动作资源与教学质量",
+      "task": 7,
+      "status": "external-unverified",
+      "entrypoints": [
+        "src/components/exercise-demo.tsx",
+        "src/lib/strength/approved-motion.ts",
+        "src/lib/strength/exercise-content.ts"
+      ],
+      "evidence": "存在动作资源注册与教学组件；交付包缺帧不能断言线上故障，完整资源和专业教学尚未审核。",
+      "existing_tests": [
+        "src/lib/strength/approved-motion.test.ts",
+        "src/lib/strength/pose-frames.test.ts",
+        "src/lib/strength/media-v2/registry.test.ts"
+      ]
+    },
+    {
+      "id": "G01",
+      "title": "目标可行性与冲突",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/cycle/portrait.ts",
+        "src/lib/coach/cycle/types.ts"
+      ],
+      "evidence": "目标日期、优先级、时间与已确认表现参与草案；比赛提前/过期及分项经验可行性需验收。",
+      "existing_tests": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/cycle/review-findings.test.ts"
+      ]
+    },
+    {
+      "id": "G02",
+      "title": "多尺度周期与阶段转换",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/components/coach-cycle-panel.tsx"
+      ],
+      "evidence": "已有1–52周、阶段purpose和首周确认；阶段进入/退出条件与远期条件性显示尚需细化验证。",
+      "existing_tests": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/cycle/host.test.ts"
+      ]
+    },
+    {
+      "id": "G03",
+      "title": "周期内跑力安排",
+      "task": 7,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "evidence": "已有真实日历、关键课预算、相邻负担冲突和未开始MOVE/SWAP；联合取舍质量需专项验收。",
+      "existing_tests": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ]
+    },
+    {
+      "id": "G04",
+      "title": "进阶减量与动态重排",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "evidence": "planner strengthReviewWeek=index===3 仍直接触发减组；应仅提醒复核，实际减组由证据/选择触发。",
+      "existing_tests": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/cycle/review-findings.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ]
+    },
+    {
+      "id": "G05",
+      "title": "聊天周期长度解析",
+      "task": 7,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/cycle/request.ts",
+        "src/components/coach-sheet.tsx",
+        "src/components/coach-cycle-panel.tsx"
+      ],
+      "evidence": "cycleRequestFromText 只显式解析四周/一个月，其他周期通常返回空请求；8/12/24/52需共享结构化解析。",
+      "existing_tests": [
+        "src/lib/coach/cycle/cycle.test.ts",
+        "src/lib/coach/cycle/review-findings.test.ts"
+      ]
+    },
+    {
+      "id": "H01",
+      "title": "恢复指标规则一致性",
+      "task": 6,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/analysis-evidence.ts",
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/health/recovery-quantitative.ts"
+      ],
+      "evidence": "存在同设备协议单位过滤和独立安全约束；健康页/问答/计划相同事实一致性未本轮验证。",
+      "existing_tests": [
+        "src/lib/health/analysis-evidence.test.ts",
+        "src/lib/health/recovery-quantitative.test.ts"
+      ]
+    },
+    {
+      "id": "H02",
+      "title": "固定规则与个人反应",
+      "task": 6,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/health/adaptive-review.ts",
+        "src/lib/health/muscle-exposure.ts"
+      ],
+      "evidence": "已有暴露、局部反应、支持/削弱证据及观察候选；需冲突与干扰展示，专业阈值另审。",
+      "existing_tests": [
+        "src/lib/health/analysis-followup.test.ts",
+        "src/lib/coach/cycle/adaptive.test.ts"
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "信息不足与训练许可",
+      "task": 3,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/recovery-assessment.ts",
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/online-session.ts"
+      ],
+      "evidence": "存在dataQuality/signalState/safetyState，在线prepare仍按全局HOLD阻断；资料未知与局部权限需贯通。",
+      "existing_tests": [
+        "src/lib/health/analysis-hardening.test.ts",
+        "src/lib/coach/online-session.test.ts"
+      ]
+    },
+    {
+      "id": "H04",
+      "title": "症状语义与专业适用性",
+      "task": 3,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/r5/intents.ts",
+        "src/lib/core/coach-red-flags.ts",
+        "src/lib/health/symptom-review.ts"
+      ],
+      "evidence": "各层症状解析并存；否定、主体、历史/当前及严重风险需共享入口语义与专业审核。",
+      "existing_tests": [
+        "src/lib/core/coach-colloquial-pain.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ]
+    },
+    {
+      "id": "H05",
+      "title": "历史限制来源与复核",
+      "task": 3,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/symptom-review.ts",
+        "src/lib/health/symptom-store.ts",
+        "src/lib/health/recovery-assessment.ts"
+      ],
+      "evidence": "历史限制可独立于近期窗口持续；需来源、日期、动作范围及可追溯纠错/复核展示。",
+      "existing_tests": [
+        "src/lib/health/analysis-hardening.test.ts",
+        "src/lib/coach/r5/guard-conversation.test.ts"
+      ]
+    },
+    {
+      "id": "I01",
+      "title": "食物来源份量与识别",
+      "task": 8,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/nutrition/entry-workflow.ts",
+        "src/lib/nutrition/log.ts",
+        "src/lib/nutrition/food-photo.ts"
+      ],
+      "evidence": "有来源快照、份量缩放、明确确认及expectedRevision；生熟/油量/范围尚无完整结构化合同。",
+      "existing_tests": [
+        "src/lib/nutrition/entry-workflow.test.ts",
+        "src/lib/nutrition/food-agg.test.ts"
+      ]
+    },
+    {
+      "id": "I02",
+      "title": "摄入完整性与消耗口径",
+      "task": 8,
+      "status": "source-present",
+      "entrypoints": [
+        "src/lib/coach/online-nutrition-facts.ts",
+        "src/lib/nutrition/energy-source.ts",
+        "src/lib/nutrition/log.ts"
+      ],
+      "evidence": "已区分损坏/空白、未知餐食和已知小计；energyBasis 明示总消耗已含训练，全天完整性目前恒未知。",
+      "existing_tests": [
+        "src/lib/coach/online-nutrition-facts.test.ts",
+        "src/lib/nutrition/energy-source.test.ts",
+        "src/lib/nutrition/food-agg.test.ts"
+      ]
+    },
+    {
+      "id": "I03",
+      "title": "减脂增肌持续调整",
+      "task": 8,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/personal/planner.ts",
+        "src/lib/coach/personal/store.ts"
+      ],
+      "evidence": "buildPersonalPlan 提供初始估算；reviewFeedback 无基于实测连续趋势的营养复查，明确不自动调量。",
+      "existing_tests": [
+        "src/lib/coach/personal/personal.test.ts",
+        "src/lib/coach/personal/host.test.ts"
+      ]
+    },
+    {
+      "id": "I04",
+      "title": "身体训练营养联动",
+      "task": 8,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/personal/host.ts",
+        "src/lib/coach/personal/store.ts",
+        "src/lib/coach/loop/effective-profile.ts",
+        "src/lib/coach/online-nutrition-facts.ts"
+      ],
+      "evidence": "个人方案仅校profileRevision；有效体重覆盖不增该revision，训练取消/餐食修订未成为方案依赖快照。",
+      "existing_tests": [
+        "src/lib/coach/personal/host.test.ts",
+        "src/lib/health/health-nutrition-sync.test.ts",
+        "src/lib/coach/online-nutrition-facts.test.ts"
+      ]
+    },
+    {
+      "id": "J01",
+      "title": "修改入口与确认撤销",
+      "task": 2,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/r5/host.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/lib/coach/r4/course-flow.ts"
+      ],
+      "evidence": "多套既有确认/回执入口可复用；双击幂等、重启持久与后续修改撤销冲突需组合验证。",
+      "existing_tests": [
+        "src/lib/coach/cycle/host.test.ts",
+        "src/lib/coach/r4/course-flow.test.ts"
+      ]
+    },
+    {
+      "id": "J02",
+      "title": "训练饮食恢复协同",
+      "task": 8,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/coach/cycle/planner.ts",
+        "src/lib/coach/personal/host.ts",
+        "src/lib/coach/loop/effective-profile.ts"
+      ],
+      "evidence": "部分共享目标/有效身体与跑力预算已有；全域依赖版本、取消和取舍失效链尚未贯通证明。",
+      "existing_tests": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/coach/personal/host.test.ts",
+        "src/lib/health/health-nutrition-sync.test.ts"
+      ]
+    },
+    {
+      "id": "J03",
+      "title": "观察复查与改判",
+      "task": 8,
+      "status": "needs-test",
+      "entrypoints": [
+        "src/lib/health/adaptive-review.ts",
+        "src/lib/coach/cycle/host.ts",
+        "src/lib/core/coach-p7-runtime.ts"
+      ],
+      "evidence": "已有观察、反馈、候选复查与判断修订日志；缺反馈不改善及持久失败/新反证撤回需连续入口验收。",
+      "existing_tests": [
+        "src/lib/coach/cycle/adaptive.test.ts",
+        "src/lib/health/analysis-followup.test.ts",
+        "src/lib/core/coach-claim-revision.test.ts"
+      ]
+    },
+    {
+      "id": "J04",
+      "title": "后台与跨端服务",
+      "task": 9,
+      "status": "not-implemented",
+      "entrypoints": [
+        "src/lib/vault.ts",
+        "src/lib/ui/backup-center.ts",
+        "src/lib/ui/platform-sync-runtime.ts"
+      ],
+      "evidence": "现存本机备份和品牌读取不能等同账号加密备份、双向跨端冲突同步或后台复查；规格明确未落地。",
+      "existing_tests": []
+    },
+    {
+      "id": "K01",
+      "title": "基线与部署状态",
+      "task": [
+        0,
+        10
+      ],
+      "status": "source-present",
+      "entrypoints": [
+        "AGENTS.md",
+        "package.json",
+        "docs/implementation-20261028/implementation-plan.md"
+      ],
+      "evidence": "本地导入commit可核149c11f17ed2696ab29bf098911e3f54640f1e4d；交接0d4293b及线上版本均未独立核验。",
+      "existing_tests": []
+    },
+    {
+      "id": "K02",
+      "title": "测试数量与实际质量",
+      "task": [
+        0,
+        10
+      ],
+      "status": "needs-test",
+      "entrypoints": [
+        "package.json",
+        "scripts/test-register.mjs",
+        "src/lib/core/hydration.test.tsx"
+      ],
+      "evidence": "脚本及测试文件存在；历史18段/一次hydration失败仅交接证据，本审计未跑测试，不计本轮通过。",
+      "existing_tests": [
+        "src/lib/core/hydration.test.tsx"
+      ]
+    },
+    {
+      "id": "K03",
+      "title": "真实环境与后端打包",
+      "task": [
+        9,
+        10
+      ],
+      "status": "external-unverified",
+      "entrypoints": [
+        "functions/api/coach-chat.js",
+        "functions/api/coach-snapshot.js",
+        "server/coach-deepseek/coach-runtime.server.ts",
+        "native/fangkun-health/package.json"
+      ],
+      "evidence": "目标平台包装、真机Safari、品牌账号、模型、迁移与真实恢复均需单列环境证据。",
+      "existing_tests": [
+        "server/coach-deepseek/coach-backend-adapter.test.mjs",
+        "src/lib/health/native-health.test.ts"
+      ]
+    },
+    {
+      "id": "K04",
+      "title": "专业与长期效果验证",
+      "task": [
+        9,
+        10
+      ],
+      "status": "external-unverified",
+      "entrypoints": [
+        "docs/implementation-20261028/full-specification.txt",
+        "src/lib/coach/training-models/physiology.ts",
+        "src/lib/coach/personal/planner.ts"
+      ],
+      "evidence": "处方、能量剂量、动作教学和长期效果无本轮专业/真实纵向证据；工程测试不能代替。",
+      "existing_tests": []
+    }
+  ]
+}

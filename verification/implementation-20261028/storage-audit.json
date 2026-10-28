@@ -1,0 +1,3010 @@
+{
+  "audit": "Task 1 storage read-only source audit",
+  "workspace": "/workspace/fangkun-20261028",
+  "scope": "Source and specification only; no production data, accounts, network requests, database inspection, test execution or production code changes.",
+  "source_line_note": "Line references describe the observed initial implementation. Root implementation may concurrently move lines; SHA-256 snapshots identify key observed files.",
+  "spec_refs": [
+    "docs/implementation-20261028/implementation-plan.md:Task 1",
+    "docs/implementation-20261028/full-specification.txt:77-107"
+  ],
+  "entrypoints": [
+    {
+      "file": "src/components/settings-center.tsx",
+      "line": 141,
+      "detail": "BackupCenter.pick -> inspectAnyBackup/appStorage; Pending.apply -> restoreAnyBackup. 30,000,000 byte pre-limit."
+    },
+    {
+      "file": "src/components/settings-center.tsx",
+      "line": 148,
+      "detail": "BackupCenter.pickSnap -> migrateKv + inspectEntries -> applyEntries(appStorage). Snapshot path bypasses file parser."
+    },
+    {
+      "file": "src/components/settings-center.tsx",
+      "line": 155,
+      "detail": "Synchronous confirm treats result as complete then reloads after 600ms. Pending stores mutable closure, no target hashes/athlete captured."
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 1098,
+      "detail": "Legacy backup input -> inspectLocalBackup/restoreLocalBackup(raw,localStorage), direct backend bypass. 30MB pre-limit; reload 400ms; broad catch falsely says originals remain."
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 1434,
+      "detail": "Standalone welcome import -> importVault(file), no preview/explicit second-stage confirm, reload 800ms; welcome flag also writes."
+    },
+    {
+      "file": "src/components/garmin-sync.tsx",
+      "line": 246,
+      "detail": "BackupVault snapshot button -> confirm -> restoreSnapshot(at), reload 800ms."
+    },
+    {
+      "file": "src/components/garmin-sync.tsx",
+      "line": 247,
+      "detail": "BackupVault file input -> importVault(file), reload 800ms, no shared preview."
+    },
+    {
+      "file": "src/components/plan-import.tsx",
+      "line": 22,
+      "detail": "PlanImportPanel accepts full backups and plan files, 20MiB pre-limit; preview passes localStorage."
+    },
+    {
+      "file": "src/components/plan-import.tsx",
+      "line": 30,
+      "detail": "confirmImport(raw,localStorage,loadProfile(),saveProfile) -> restoreAnyBackup, then separate profile defaults write."
+    },
+    {
+      "file": "src/components/plan-import.tsx",
+      "line": 35,
+      "detail": "undoImport(undo,localStorage) -> undoBackupSnapshot plus separate profile restore; no expected-current value check."
+    },
+    {
+      "file": "src/components/device-evidence-import.tsx",
+      "line": 116,
+      "detail": "Separate confirmed restore -> importDeviceEvidenceBackup; append-only independent evidence database, partial batch results possible. Outside existing kv backup scope but must be declared."
+    },
+    {
+      "file": "src/lib/vault.ts",
+      "line": 80,
+      "detail": "Public restoreSnapshot adapter -> migrateKv -> synchronous writeKey/appStorage for each key; no awaited persistence; snapshots include credentials because snapshotNow only excludes __ keys."
+    },
+    {
+      "file": "src/lib/vault.ts",
+      "line": 110,
+      "detail": "Public importVault adapter string-coerces values, skips credentials, lacks strict future schema/type/size validation, loops writeKey without persistence."
+    },
+    {
+      "file": "src/lib/ui/backup-center.ts",
+      "line": 75,
+      "detail": "Public restoreAnyBackup delegates local format to trial or applies parsed entries."
+    },
+    {
+      "file": "src/lib/ui/backup-center.ts",
+      "line": 81,
+      "detail": "Public applyEntries synchronous in-memory verification; rollback uses only logical before values. Applied list appended after write so a throw after mutation misses that key."
+    },
+    {
+      "file": "src/lib/ui/backup-center.ts",
+      "line": 103,
+      "detail": "undoBackupSnapshot directly writes/removes old values, no verification/version contract."
+    },
+    {
+      "file": "src/lib/core/trial.ts",
+      "line": 113,
+      "detail": "Public restoreLocalBackup silently skips unsupported or >2,000,000 char entries; no durable readback; only rollback in current process."
+    },
+    {
+      "file": "src/lib/plan/active-plan.ts",
+      "line": 65,
+      "detail": "savePlanDoc is a two-key backup-and-replace helper; no non-test caller found in this audit."
+    },
+    {
+      "file": "src/lib/plan/active-plan.ts",
+      "line": 76,
+      "detail": "undoPlanDoc restores previous key and removes saved previous value; no non-test caller found in this audit."
+    }
+  ],
+  "startup_and_background_writers": [
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 133,
+      "detail": "BulkGate calls activateBulkStore before children; 4000ms timeout and promise finally both release normal UI even on failure."
+    },
+    {
+      "file": "src/lib/core/bulk-store.ts",
+      "line": 92,
+      "detail": "activate loads IDB, migrates local bulk keys, deletes originals after readback, writes marker and installs layer/channel. Must be after recovery barrier, including direct calls."
+    },
+    {
+      "file": "src/lib/ui/day-schedule.ts",
+      "line": 103,
+      "detail": "Quota retry invokes activateBulkStore after normal startup, while schedule lock is held. Recovery gate must guard this reentry; define lock order to avoid deadlock."
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 154,
+      "detail": "startC03FollowupRuntime runs in mounted child; recovery gate must prevent mounting it while restricted."
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 259,
+      "detail": "initVault child effect starts auto-resurrection and mirror backfill after UI render. Must move behind barrier and before editable UI."
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 261,
+      "detail": "Visibility/pageshow/online/interval scheduling triggers maybeAutoGarminSync; all in-flight async jobs need generation validation before writes."
+    },
+    {
+      "file": "src/components/strength-app.tsx",
+      "line": 362,
+      "detail": "bootCore -> runMigrations, event context and state refresh; migration adds default local keys. Must be after barrier."
+    },
+    {
+      "file": "src/lib/core/storage-indexeddb.ts",
+      "line": 108,
+      "detail": "initializeCoreStorage exists with no non-test callers; do not assume it already coordinates startup."
+    },
+    {
+      "file": "src/components/storage-durability.tsx",
+      "line": 24,
+      "detail": "Live migration/flush button reachable via coach-saved-offline-review.tsx:15. Third core mirror can be installed during current session."
+    },
+    {
+      "file": "src/components/storage-durability.tsx",
+      "line": 25,
+      "detail": "Live rollback button awaits swallowed mirror queue then changes backend and mode marker."
+    }
+  ],
+  "physical_backends": [
+    {
+      "backend": "localStorage",
+      "authority": "Non-bulk keys and pinned/fallback bulk values",
+      "targets": [
+        "logical keys",
+        "fk-bulk-store-v1",
+        "fangkun-core-storage-mode-v1",
+        "restore generation/sentinel"
+      ],
+      "issues": "Native writes and aliases are pervasive; synchronous setItem cannot await Web Lock. A storage marker check then setItem has a race with another tab entering restore. Prototype patch is a cooperative compatibility fence, not global atomic isolation."
+    },
+    {
+      "backend": "IndexedDB fangkun-bulk-store-v1",
+      "stores": [
+        "kv",
+        "backup",
+        "meta"
+      ],
+      "authority": "Owned bulk keys except localStorage pinned/fallback",
+      "targets": [
+        "kv logical keys",
+        "meta revision/tombstone if introduced",
+        "local copies and migration marker"
+      ],
+      "issues": "queue catches all errors. fallback deletion failure can leave stale local copy that later wins migration. delete failure has no persistent tombstone. mem map currently used as verification/backup source."
+    },
+    {
+      "backend": "IndexedDB fangkun-vault",
+      "stores": [
+        "kv",
+        "meta",
+        "snapshots"
+      ],
+      "authority": "Mirror for small keys; auto-restore source",
+      "targets": [
+        "kv each affected key",
+        "schema and lastSync if changed"
+      ],
+      "issues": "tx/vaultAll lack onabort; init backfill transaction not awaited; prototype mirrors have no tracked drain queue; snapshotNow excludes only __ keys; old mirror can resurrect a legitimate deletion."
+    },
+    {
+      "backend": "IndexedDB fangkun-core-storage-v1",
+      "stores": [
+        "kv",
+        "meta"
+      ],
+      "authority": "Optional additional fr255 mirror",
+      "targets": [
+        "kv affected keys",
+        "meta migration/rollback",
+        "mode key"
+      ],
+      "issues": "flush/copy clears and rewrites entire kv store. Migration locks unrelated to bulk or restore. delete not supported by installed MemoryStore, leading to direct remove fallback and stale mirror until flush. Must drain or explicitly refuse restore while this uncoordinated family is active."
+    },
+    {
+      "backend": "IndexedDB fr255-device-evidence-v1",
+      "stores": [
+        "confirmed"
+      ],
+      "authority": "Confirmed evidence row plus original image",
+      "backup": "Separate fr255-device-evidence-backup",
+      "issues": "Multirow import commits each row separately; per-row duplicate check/add transaction is safe for ID duplicate but not whole-batch restore or global lock."
+    },
+    {
+      "backend": "IndexedDB fangkun-food-photos",
+      "stores": [
+        "photos"
+      ],
+      "authority": "Local food image blobs",
+      "backup": "Omitted from vault full backup",
+      "issues": "savePhoto/deletePhoto direct transaction must join write barrier or exclusion restriction."
+    },
+    {
+      "backend": "IndexedDB fangkun-coach-plan-execution-v1",
+      "stores": [
+        "athlete-execution"
+      ],
+      "authority": "Plan overlay document and immutable receipts",
+      "backup": "Omitted from vault full backup",
+      "issues": "Independent transact; do not overwrite immutable receipt history from an arbitrary kv backup; include family or clearly exclude."
+    },
+    {
+      "backend": "IndexedDB fangkun-training-model-exports-v1",
+      "stores": [
+        "exports"
+      ],
+      "authority": "Training-model proposals/export receipts",
+      "backup": "Omitted from vault full backup",
+      "issues": "Independent readwrite transact even for training-model-panel.tsx:57 receipt read."
+    }
+  ],
+  "critical_findings": [
+    {
+      "severity": "critical",
+      "id": "OLD_WRITERS_UNPROVABLE",
+      "refs": [
+        "public/sw.js:82",
+        "public/sw.js:86",
+        "src/lib/core/bulk-store.ts:123"
+      ],
+      "finding": "Current SW skipWaiting/claim/cache cleanup does not terminate already-running or frozen old document code. No protocol attestation can enumerate/prove all noncooperating writers. Lock availability, zero replies, client count, timeout, recent timestamp and user checkbox do not prove isolation."
+    },
+    {
+      "severity": "critical",
+      "id": "STARTUP_RELEASES_WRITES",
+      "refs": [
+        "src/components/strength-app.tsx:137",
+        "src/components/strength-app.tsx:138",
+        "src/lib/vault.ts:60"
+      ],
+      "finding": "Existing timeout/finally opens application even when durable state unreadable. Vault resurrects absent keys before pending recovery and tombstones can be inspected."
+    },
+    {
+      "severity": "critical",
+      "id": "SYNC_SUCCESS_IS_NOT_DURABLE",
+      "refs": [
+        "src/lib/core/bulk-store.ts:127",
+        "src/lib/core/bulk-store.ts:130",
+        "src/lib/core/bulk-store.ts:147",
+        "src/lib/ui/backup-center.ts:88"
+      ],
+      "finding": "Bulk memory changes immediately, persistence/fallback failures swallowed; flush resolves. Logical getItem is not a physical durable read."
+    },
+    {
+      "severity": "critical",
+      "id": "COMMIT_UNCERTAINTY",
+      "refs": [
+        "docs/implementation-20261028/full-specification.txt:87",
+        "docs/implementation-20261028/full-specification.txt:90"
+      ],
+      "finding": "If COMMITTED put may have completed but readback fails, do not rollback. Persist/log unknown, keep write blockade, recheck on restart. After proven commit cache/broadcast errors cannot undo data."
+    },
+    {
+      "severity": "high",
+      "id": "MIRROR_NOT_AWAITED",
+      "refs": [
+        "src/lib/vault.ts:34",
+        "src/lib/vault.ts:38",
+        "src/lib/vault.ts:62",
+        "src/lib/vault.ts:67"
+      ],
+      "finding": "Vault initial/mutation writes not drained, onabort may hang Promise. Captured Storage.prototype method composition can schedule mirrors during restore unless raw durable adapters bypass/coordinate patches."
+    },
+    {
+      "severity": "high",
+      "id": "BULK_DELETE_CACHE",
+      "refs": [
+        "src/lib/core/bulk-store.ts:112",
+        "src/lib/core/bulk-store.ts:135"
+      ],
+      "finding": "Channel consumer only mem.set on string; absence never mem.delete. No persisted revisions means slow reads and reordered messages can overwrite newer cache. Broadcast loss has no activation refresh."
+    },
+    {
+      "severity": "high",
+      "id": "BACKUP_COVERAGE_AND_PINNED",
+      "refs": [
+        "src/lib/vault.ts:43",
+        "src/lib/vault.ts:95",
+        "src/lib/core/bulk-store.ts:178"
+      ],
+      "finding": "withBulk overwrites local pinned entries with stale mem values when both exist. Vault export merges stale mirror keys absent from localStorage, potentially resurrecting deletions. Also misses four independent DB families and lacks consistency snapshot across reads."
+    },
+    {
+      "severity": "high",
+      "id": "RESTORE_BYPASSES",
+      "refs": [
+        "src/components/strength-app.tsx:1109",
+        "src/components/strength-app.tsx:1434",
+        "src/components/garmin-sync.tsx:246",
+        "src/components/plan-import.tsx:30",
+        "src/components/device-evidence-import.tsx:119"
+      ],
+      "finding": "Fixing only Settings or applyEntries leaves independent entry points; async conversion must update every caller and its success/reload path."
+    },
+    {
+      "severity": "high",
+      "id": "SILENT_SKIP_FUTURE_SCHEMA",
+      "refs": [
+        "src/lib/ui/backup-center.ts:39",
+        "src/lib/core/trial.ts:134",
+        "src/lib/vault.ts:112"
+      ],
+      "finding": "Vault parser skips >5M chars; trial restore skips >2M though inspection rejects; importVault coercion bypasses checks. Future schema not rejected. Export has no restoreability bound."
+    },
+    {
+      "severity": "high",
+      "id": "PREVIEW_BINDING",
+      "refs": [
+        "src/components/settings-center.tsx:146",
+        "src/components/settings-center.tsx:153",
+        "src/lib/plan/plan-import.ts:46"
+      ],
+      "finding": "Current preview stores no immutable target revision hashes/athlete/generation. Profile defaults after plan restore are a separate write; undo can erase later independent modifications."
+    }
+  ],
+  "recommended_minimal_contract": {
+    "result": {
+      "operationId": "string",
+      "overall": [
+        "COMPLETED",
+        "NOT_STARTED",
+        "ROLLED_BACK_VERIFIED",
+        "RECOVERY_REQUIRED"
+      ],
+      "perPhysicalPosition": [
+        "backend",
+        "key",
+        "beforePresent",
+        "beforeHash",
+        "targetPresent",
+        "targetHash",
+        "writeIntent",
+        "writeReceipt",
+        "rollbackReceipt",
+        "error"
+      ]
+    },
+    "preflight": "Strict parse/version/type/key/credential/athlete/dedup/manifest/hash/UTF-8-length/chunk-order checks; immutable plan includes current athlete/generation and every target physical before hash. Fail any unlisted unsupported item before target writes; explicit limited backup may list exclusions.",
+    "isolation": "Acquire a global cooperative write lock before draining. Default production canProveAllWritersControlled=false for legacy origin. Never treat acknowledgements, timers, SW updates, navigator.locks.query or clients.matchAll as proof. Reject in-place overwrite when proof absent.",
+    "writer_adaptation": "Make normal mutation boundaries async and acquire shared global writer lock around validation + all underlying write transactions; restore holds exclusive lock. Maintain consistent global-then-family lock order. Guard currentStore wrappers, raw localStorage compatibility paths, vault monkey-patch, bulk queue/fallback/migration, core mirror, direct IDB families. Each async continuation checks persisted generation and pending recovery state immediately before writes.",
+    "prepare": "New restore-journal database with operation, physical entries and chunk stores; save complete before and target bytes including absence and every mirror/marker; await tx.complete, reread in fresh transaction, verify manifests/hashes. Write paired generation/initialization sentinels before future operation attempts. Any uncertainty before target writes returns NOT_STARTED or RECOVERY_REQUIRED based on provable phase.",
+    "apply": "Durably mark PREPARED then APPLYING; for every backend/key persist intent first, await physical set/delete or IDB tx.complete, reread native backend, hash-check, then persist receipt. During restore prohibit fallback backend changes and ordinary mirror side effects unless listed in manifest.",
+    "commit": "After all physical target values and receipts verify, persist COMMITTED and positively read it back. A failed readback after write leaves outcome unknown/restricted. COMMITTED is irreversible; cache rebuild/broadcast failure requests cache repair only.",
+    "rollback": "Only after confirming no COMMITTED. Durably ROLLING_BACK; reverse every intent position, including entries missing receipts. Compare current to target/before independently per mirror; third value becomes conflict without overwrite. Verify every rollback and durable receipt; only then ROLLED_BACK. Failed log/read/write keeps RECOVERY_REQUIRED or last nonterminal phase.",
+    "startup": "Before BulkGate activation, vault init, bootCore/defaults and background effects, read both sentinel state and journal. Missing/contradictory marker with existing legacy data is not automatically new install. PREPARED with proven no intent may terminate; APPLYING/ROLLING_BACK roll back; unknown intent/commit/log damage remains restricted. COMMITTED verifies target + receipts before loading caches. Gate never falls through on timeout/error.",
+    "bulk_consistency": "Store each bulk value plus monotonic revision and tombstone together in kv/meta same IDB transaction. Publish key/revision/op after complete; receiver reads persistent row/tombstone, rejects older revision, deletes absent cache. Re-sync on visibility/pageshow and restart. Any family still using localStorage without atomic revision remains explicitly outside global consistency guarantee.",
+    "safe_old_tab_fallback": "Candidate-only import into a fresh generation/operation namespace/database, storing file data without switching active pointer or modifying originals. Persist/verify staged copy. Label as pending verification, not restored or consistent current snapshot; final switch needs enforceable writer isolation plus fresh source diff. If not implementing candidate UI, return NOT_STARTED with retained input and clear reason.",
+    "backup": "Chunked manifest with explicit included/excluded backend families, byte lengths, hashes and chunk order. Export from verified durable reads under supported isolation; do not merge stale mirror/mem over authoritative local pinned data. For unrepresentable blobs/families, refuse complete label or list exclusions. File-save proof requires user reselect/verification, not download/share action."
+  },
+  "writer_inventory": {
+    "direct_local_storage_mutators": [
+      {
+        "file": "src/lib/ui/assessment-store.ts",
+        "line": 6,
+        "source": "export function saveFeedback(list: Feedback[]): boolean { try { localStorage.setItem(FEEDBACK_KEY, JSON.stringify(list.slice(-200))); return true } catch { return false } }"
+      },
+      {
+        "file": "src/lib/ui/guided-discard.ts",
+        "line": 44,
+        "source": "try { const enc = encodeURIComponent(sessionId); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i) ?? ''; if ((k.startsWith('rs-rest-v1:') && k.includes(':' + enc)) || ((k.startsWith('fk-runner-draft-v71:') || k.startsWith('fr255-runner-draft-v1:')) && k.includes(':' + sessionId + ':'))) localStorage.removeItem(k) } } catch { /* node / storage unavailable */ }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 84,
+        "source": "function saveWarmups(rows: WarmupRecord[]) { const raw = JSON.stringify(rows); localStorage.setItem(WARMUP_RECORDS_KEY, raw); if (localStorage.getItem(WARMUP_RECORDS_KEY) !== raw) throw Error('热身记录未核实保存，输入保留。'); if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-warmup-changed')); }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 125,
+        "source": "export function saveWarmupClock(c: WarmupClock) { const key = warmupClockKey(c.recordId, c.stepId), raw = JSON.stringify(c); localStorage.setItem(key, raw); if (localStorage.getItem(key) !== raw) throw Error('计时状态未保存，请保持此页面。'); return c; }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 142,
+        "source": "export function saveWarmupInput(recordId: string, stepId: string, p: WarmupInput) { const key = warmupInputKey(recordId, stepId), raw = JSON.stringify(p); localStorage.setItem(key, raw); if (localStorage.getItem(key) !== raw) throw Error('实际输入尚未保存，请保持页面并重试。'); return p; }"
+      },
+      {
+        "file": "src/lib/ui/run-link.ts",
+        "line": 50,
+        "source": "try { const s = loadRunLinks(); if (value) s[entryId] = value; else delete s[entryId]; localStorage.setItem(RUN_LINKS_KEY, JSON.stringify(s)); window.dispatchEvent(new Event('fk-run-links')); window.dispatchEvent(new Event('fk-training-activities-changed')) } catch { /* 存不了就不关联 */ }"
+      },
+      {
+        "file": "src/lib/health/coros-mcp-client.ts",
+        "line": 174,
+        "source": "export function setCorosMcpLinked(athlete: string, on: boolean, invalidate = true) { if (!on && invalidate && healthPending.size) invalidateCorosContext(); try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }"
+      },
+      {
+        "file": "src/lib/health/coros-account-sync.ts",
+        "line": 50,
+        "source": "try { localStorage.setItem(metaKey(athlete), JSON.stringify(m)) } catch { /* storage unavailable */ }"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 75,
+        "source": "localStorage.setItem(MODE_KEY,'INDEXED_DB_MIRROR')"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 106,
+        "source": "try{localStorage.setItem(MODE_KEY,'LOCAL');return report('LOCAL')}catch{return report('FALLBACK','LOCAL_STORE_UNAVAILABLE')}"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 60,
+        "source": "for (const [k, v] of kv) if (!mirrorSkip(k) && localStorage.getItem(k) === null) { try { localStorage.setItem(k, v); restored++; } catch { /* full */ } }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 88,
+        "source": "const seen = localStorage.getItem(\"fk-app-major\"); if (seen === null) { localStorage.setItem(\"fk-app-major\", APP_MAJOR); return false; }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 91,
+        "source": "export function markBackedUp(): void { localStorage.setItem(\"fk-app-major\", APP_MAJOR); localStorage.setItem(\"fk-last-export\", new Date().toISOString()); }"
+      },
+      {
+        "file": "src/lib/strength/model.ts",
+        "line": 355,
+        "source": "localStorage.setItem(STORAGE_KEY, raw)"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 30,
+        "source": "if (goal.bf === null) localStorage.removeItem(GOAL_BF_KEY);"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 31,
+        "source": "else localStorage.setItem(GOAL_BF_KEY, String(goal.bf));"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 32,
+        "source": "localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 37,
+        "source": "try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); }"
+      },
+      {
+        "file": "src/lib/body/shape-sim.ts",
+        "line": 26,
+        "source": "export function saveSim(p: SimParams) { localStorage.setItem(SIM_KEY, JSON.stringify(p)); }"
+      },
+      {
+        "file": "src/lib/body/foot-library.ts",
+        "line": 52,
+        "source": "export function saveDose(id: string, d: Dose) { let s: Record<string, Dose> = {}; try { s = JSON.parse(localStorage.getItem(DOSE_KEY) || \"{}\"); } catch { /* reset only broken store */ } s[id] = d; localStorage.setItem(DOSE_KEY, JSON.stringify(s)); }"
+      },
+      {
+        "file": "src/lib/body/avatar-appearance.ts",
+        "line": 19,
+        "source": "const raw = JSON.stringify(safe); localStorage.setItem(sex==='female'?AVATAR_KEY+'-female':AVATAR_KEY, raw);"
+      },
+      {
+        "file": "src/lib/strength/coach.ts",
+        "line": 131,
+        "source": "localStorage.setItem(key, raw)"
+      },
+      {
+        "file": "src/lib/nutrition/day.ts",
+        "line": 45,
+        "source": "localStorage.setItem(KEY, JSON.stringify(day));"
+      },
+      {
+        "file": "src/lib/nutrition/body.ts",
+        "line": 69,
+        "source": "localStorage.setItem(KEY, JSON.stringify(sorted));"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 63,
+        "source": "fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId)) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId), at) } },"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 65,
+        "source": "backfill: { get: scope => { try { return Number(localStorage.getItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId)) ?? localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 14 } }, set: (scope, n) => { localStorage.setItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId), String(n)); } },"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 80,
+        "source": "localStorage.setItem(key(\"fk-garmin-sync-report\"), raw);"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 84,
+        "source": "const cacheTime = (name: string) => { try { localStorage.setItem(key(name), report.at); } catch { /* The durable report supplies this time. */ } };"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 131,
+        "source": "if (r === \"ok\" || r === \"partial\") { localStorage.removeItem(key(\"fk-garmin-auto-fail\")); if (limited) shortBackoffUntil = Date.now() + AUTO_MS; }"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 132,
+        "source": "else if (r === \"auth\" || (r === \"fail\" && limited)) localStorage.setItem(key(\"fk-garmin-auto-fail\"), new Date().toISOString());"
+      },
+      {
+        "file": "src/components/coach-feedback.tsx",
+        "line": 14,
+        "source": "<button type=\"button\" className=\"rounded border border-line px-2 text-sm\" onClick={() => { const list = loadFeedback(); list.push({ at: new Date().toISOString(), answer, question, note }); localStorage.setItem(KEY, JSON.stringify(list)); setDone(true); }}>保存</button></div>;"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 60,
+        "source": "localStorage.setItem(ONBOARD_SKIPPED_KEY, \"1\")"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 75,
+        "source": "localStorage.setItem(ONBOARD_KEY, answers)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 77,
+        "source": "localStorage.removeItem(ONBOARD_SKIPPED_KEY)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 142,
+        "source": "const setOv = (p: Partial<Override>) => { const n = { ...(st.ov ?? { date: today }), ...p, date: today }; const val = n.short || n.home ? n : null; localStorage.setItem(OVERRIDE_KEY, JSON.stringify(val)); setSt({ ...st, ov: val }); onOverride(val) }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 209,
+        "source": "useEffect(() => { if (!loaded.current) return; try { if (text || atts.length) localStorage.setItem(QL_DRAFT, JSON.stringify({ text, atts })); else localStorage.removeItem(QL_DRAFT) } catch { /* draft best-effort */ } }, [text, atts])"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 228,
+        "source": "try { localStorage.setItem(QL_PENDING, JSON.stringify({ id, at, text: body })) } catch { /* 最多重试时重复检查失效 */ }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 234,
+        "source": "try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { throw new Error(ref ? \"训练已记入日志，但笔记原文没存上（本机存储已满？），再点一次保存只补存笔记，不会重复记训练\" : \"本机存储已满或被禁用（截图较大时可先移除截图）\") }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 235,
+        "source": "localStorage.removeItem(QL_PENDING)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 236,
+        "source": "setNotes(next); setText(\"\"); setAtts([]); setRpe(null); localStorage.removeItem(QL_DRAFT); onSaved()"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 246,
+        "source": "try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { setErr(\"删除失败，请重试\"); return }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 257,
+        "source": "try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { setErr(\"撤销失败，请重试\"); return }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 335,
+        "source": "localStorage.removeItem(ONBOARD_SKIPPED_KEY)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 336,
+        "source": "localStorage.removeItem(ONBOARD_KEY)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 380,
+        "source": "{!confirmDel ? <button type=\"button\" className=\"fk-chip text-[var(--color-risk)]\" onClick={() => setConfirmDel(true)}>删除上表 8 类数据</button> : <button type=\"button\" className=\"fk-chip border-[var(--color-risk)] text-[var(--color-risk)]\" onClick={() => { for (const c of COLLECTED) localStorage.removeItem(c.key); location.reload() }}>确认删除这 8 类（不可恢复，建议先备份）</button>}</div></Row> : null}"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 410,
+        "source": "localStorage.setItem(SENT_KEY, JSON.stringify({ date: today, count: n + 1 }))"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 647,
+        "source": "<select id=\"coach-persona\" value={persona} onChange={(e) => { const next = parsePersona(e.target.value); setPersona(next); try { window.localStorage.setItem(PERSONA_KEY, next); } catch { /* current session only */ } }} className=\"ml-2 rounded-lg border border-line bg-surface px-2 py-2\">"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 657,
+        "source": "<button type=\"button\" className=\"mt-2 min-h-10 rounded-full border border-line px-3\" onClick={() => { const next = !motion; setMotion(next); window.localStorage.setItem(\"fr255-fangshen-motion\", next ? \"on\" : \"off\"); }}>动效{motion ? \"开\" : \"关\"}</button>"
+      },
+      {
+        "file": "src/components/health-extras.tsx",
+        "line": 53,
+        "source": "const raw=JSON.stringify([...all.filter(p=>(p.athleteId??'local')!==currentAthleteId()),...next]);localStorage.setItem(PAIN_KEY,raw)"
+      },
+      {
+        "file": "src/components/onboarding-about.tsx",
+        "line": 19,
+        "source": "localStorage.setItem(ATHLETE_CARD_KEY, JSON.stringify({ nickname: me.nickname.trim().slice(0, 20), sex: me.sex, birthYear: yearOk(me.birthYear) ? me.birthYear : \"\", event: me.event, pb: me.pb.trim().slice(0, 20), at: new Date().toISOString() }))"
+      },
+      {
+        "file": "src/components/health-tiles.tsx",
+        "line": 57,
+        "source": "const save = (next: TileId[]) => { setShown(next); try { localStorage.setItem(HEALTH_TILE_PREF_KEY, JSON.stringify(next)); setStamp(Date.now()) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 27,
+        "source": "localStorage.setItem(key, raw);"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 70,
+        "source": "useEffect(() => { if (!open || laps || k === \"strength\") return; setState(\"加载分段…\"); void fetchLaps(g.id).then((l) => { if (l) { const all = load<Record<string, Lap[]>>(garminViewKey(GLAPS_KEY), {}); all[g.id] = l; localStorage.setItem(garminViewKey(GLAPS_KEY), JSON.stringify(all)); setLaps(l); setState(\"\"); } else setState(\"分段获取失败，请检查佳明连接后重试。\"); }); }, [open]);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 264,
+        "source": "const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem(\"fk-plan-source-v1\") || \"{}\"); localStorage.setItem(\"fk-plan-source-v1\", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1427,
+        "source": "const done = () => { localStorage.setItem(\"fk-welcome-standalone-v1\", \"1\"); setShow(false); };"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1434,
+        "source": "<label className=\"fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold\">选择备份文件导入<input type=\"file\" accept=\"application/json,.json\" className=\"hidden\" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const n = await importVault(f); localStorage.setItem(\"fk-welcome-standalone-v1\", \"1\"); setMsg(`已恢复 ${n} 项，正在刷新`); setTimeout(() => location.reload(), 800); } catch (err) { setMsg((err as Error).message); } }} /></label>"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1446,
+        "source": "return <section className=\"home-card mt-3 p-3 text-sm\" aria-label=\"存储提示\"><b>Safari 和主屏幕 App 的数据是分开的</b><p className=\"keep mt-1 text-xs text-muted\">在 Safari 里记的数据，添加到主屏幕后不会自动出现。先在原来那边「全部数据备份 → 导出」，再到另一边「导入恢复」。</p><button type=\"button\" className=\"fk-link mt-1 text-xs\" onClick={() => { localStorage.setItem(\"fk-storage-hint-v1\", \"1\"); setShow(false); }}>知道了</button></section>;"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 79,
+        "source": "function saveGuided(nextSide: Side) { try { localStorage.setItem(guidedKey, JSON.stringify({ version: 1, setKey: sets[cursor] ? setKey(sets[cursor]) : null, side: nextSide, restKind, restSide: restSide.current, restStartedAt: restStartedAt.current, pendingRestSec: pendingRestSec.current })) } catch { /* storage unavailable */ } }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 89,
+        "source": "function clearRest() { try { window.localStorage.removeItem(timerKey) } catch { /* storage unavailable */ } }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 90,
+        "source": "function clearGuided() { try { window.localStorage.removeItem(`${timerKey}:guided`) } catch { /* storage unavailable */ } }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 93,
+        "source": "try { window.localStorage.setItem(timerKey, JSON.stringify(snapshot)) } catch { /* storage unavailable */ }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 140,
+        "source": "try {localStorage.setItem(key,JSON.stringify({weight:draftWeight,amount:draftAmount}))} catch {setSaveError('输入草稿暂不能恢复，尚未记录为完成。请保持此页并检查存储。')}"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 195,
+        "source": "try {localStorage.removeItem(runnerDraftKey(decisionId,session.id,setKey(next)))}catch{/* optional draft cleanup */}"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 286,
+        "source": "const toggleAlert = () => { const v = !alertOn; setAlertOn(v); try { localStorage.setItem(ALERT_KEY, v ? 'on' : 'off') } catch { /* optional */ } }"
+      },
+      {
+        "file": "src/components/plan-source.tsx",
+        "line": 23,
+        "source": "const raw = JSON.stringify(next); localStorage.setItem(KEY, raw); if (localStorage.getItem(KEY) !== raw) throw Error('保存校验失败。'); committed = true;"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 34,
+        "source": "return { ...state, kg: kg >= 30 ? kg : null, plan, targets, flags, setSigns: (s: Signs) => { try { localStorage.setItem(SIGNS_KEY, JSON.stringify(s)) } catch { /* ignore */ } setState({ ...state, signs: s }) } }"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 124,
+        "source": "const save = (p: GoalPref) => { setPref(p); try { localStorage.setItem(GOAL_KEY, JSON.stringify(p)); setStamp(Date.now()) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/components/training-log-v76.tsx",
+        "line": 98,
+        "source": "const setFilter = (next: Partial<typeof f>) => { const v = { ...f, ...next }; setF(v); setFocusDay(null); try { localStorage.setItem(FILTER_KEY, JSON.stringify(v)) } catch { /* session only */ } }"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 24,
+        "source": "useEffect(()=>{if(entry||currentAthleteId()!==actor.current)return;try{localStorage.setItem(draftKey,JSON.stringify(draft))}catch{/* input remains in component */}},[draft,draftKey,entry]);"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 38,
+        "source": "async function save(){if(saving.current)return;saving.current=true;setBusy(true);try{const result=commitFoodDraft({draft,date,meal:mealValue,acknowledged:true,athleteId:actor.current,entryId:entry?.id,expectedRevision:revision.current});if(!result.ok){setError(result.reason);return}if(!entry)try{localStorage.removeItem(draftKey)}catch{/* committed record is durable */}onSaved();onClose()}finally{saving.current=false;setBusy(false)}}"
+      },
+      {
+        "file": "src/components/home-dashboard.tsx",
+        "line": 312,
+        "source": "{edit ? <div className=\"mt-1 grid grid-cols-2 gap-1 text-sm\">{avail.map((m) => <label key={m.id} className=\"flex min-h-9 items-center gap-2 rounded-lg border border-line px-2\"><input type=\"checkbox\" checked={chosen.includes(m.id)} onChange={(e) => { const n = e.target.checked ? [...chosen, m.id] : chosen.filter((x) => x !== m.id); setChosen(n); localStorage.setItem(TILE_KEY, JSON.stringify(n)); }} />{m.label}</label>)}</div>"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 60,
+        "source": "const raw = JSON.stringify(next); localStorage.setItem(KEY, raw);"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 134,
+        "source": "const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 352,
+        "source": "const toggleCycle = () => setCycleExpanded(v => { try { localStorage.setItem(\"fk-v91-cycle-expanded\", v ? \"0\" : \"1\") } catch { /* UI remains usable */ } return !v; });"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 373,
+        "source": "<div className=\"flex flex-wrap gap-x-4\"><button type=\"button\" className=\"min-h-11 font-bold text-accent\" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + \":revoked\") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), \"用户确认\")); }}>按当前日期执行</button><button type=\"button\" className=\"min-h-11 text-accent\" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? \"收起差异\" : \"查看差异\"}</button></div>"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 396,
+        "source": "<button type=\"button\" className=\"min-h-11 text-accent\" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + \":revoked\", \"1\") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>"
+      }
+    ],
+    "all_storage_method_call_candidates": [
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 69,
+        "source": "s.setItem(previousPlanKey(), JSON.stringify({ raw: prev, at: new Date().toISOString() }))"
+      },
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 70,
+        "source": "s.setItem(planDocumentKey(), raw)"
+      },
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 71,
+        "source": "if (s.getItem(planDocumentKey()) !== raw) { if (prev == null) s.removeItem(planDocumentKey()); else s.setItem(planDocumentKey(), prev); return { ok: false, reason: '保存校验失败（可能存储空间不足），未做修改。' } }"
+      },
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 80,
+        "source": "if (p.raw == null) s.removeItem(planDocumentKey()); else s.setItem(planDocumentKey(), p.raw)"
+      },
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 81,
+        "source": "s.removeItem(previousPlanKey()); notify(); return true"
+      },
+      {
+        "file": "src/lib/plan/plan-import.ts",
+        "line": 54,
+        "source": "try { if (u.profileBefore == null) storage.removeItem('fr255-profile-v1'); else storage.setItem('fr255-profile-v1', u.profileBefore) } catch { return false }"
+      },
+      {
+        "file": "src/lib/ui/plan400-components-store.ts",
+        "line": 29,
+        "source": "try { if (!store) return false; const raw = JSON.stringify(doc); store.setItem(COMPONENTS_KEY, raw); if (store.getItem(COMPONENTS_KEY) !== raw) return false"
+      },
+      {
+        "file": "src/lib/ui/character-themes.ts",
+        "line": 31,
+        "source": "try { store.setItem(CHARACTER_THEME_KEY, normalizeCharacterTheme(id)); return true; } catch { return false; }"
+      },
+      {
+        "file": "src/lib/ui/assessment-store.ts",
+        "line": 6,
+        "source": "export function saveFeedback(list: Feedback[]): boolean { try { localStorage.setItem(FEEDBACK_KEY, JSON.stringify(list.slice(-200))); return true } catch { return false } }"
+      },
+      {
+        "file": "src/lib/ui/onboarding-sync-draft.ts",
+        "line": 20,
+        "source": "} catch { try { store.removeItem(key(owner)) } catch { /* unavailable session storage */ }; return null }"
+      },
+      {
+        "file": "src/lib/ui/onboarding-sync-draft.ts",
+        "line": 23,
+        "source": "try { store.setItem(key(owner), JSON.stringify({ ...draft, at: now })) } catch { /* setup can continue without a resume draft */ }"
+      },
+      {
+        "file": "src/lib/ui/onboarding-sync-draft.ts",
+        "line": 25,
+        "source": "export function clearOnboardingSyncDraft(store: Store, owner: string): void { try { store.removeItem(key(owner)) } catch { /* unavailable session storage */ } }"
+      },
+      {
+        "file": "src/lib/ui/online-features.ts",
+        "line": 19,
+        "source": "s.setItem(ONLINE_FEATURES_KEY, JSON.stringify(r))"
+      },
+      {
+        "file": "src/lib/ui/online-features.ts",
+        "line": 21,
+        "source": "s.setItem(COACH_ONLINE_KEY, JSON.stringify({ on: r.features.coach, consentAt: r.changedAt ?? r.consentAt, by: r.by }))"
+      },
+      {
+        "file": "src/lib/ui/online-features.ts",
+        "line": 22,
+        "source": "s.setItem(COACH_NETWORK_MODE_KEY, r.features.coachRefs ? 'public-knowledge' : 'local')"
+      },
+      {
+        "file": "src/lib/ui/guided-discard.ts",
+        "line": 44,
+        "source": "try { const enc = encodeURIComponent(sessionId); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i) ?? ''; if ((k.startsWith('rs-rest-v1:') && k.includes(':' + enc)) || ((k.startsWith('fk-runner-draft-v71:') || k.startsWith('fr255-runner-draft-v1:')) && k.includes(':' + sessionId + ':'))) localStorage.removeItem(k) } } catch { /* node / storage unavailable */ }"
+      },
+      {
+        "file": "src/lib/ui/watch-mode.ts",
+        "line": 17,
+        "source": "export function saveWatch(w: WatchId, s: KV | null = store(), brand: string | null = null) { s?.setItem(WATCH_KEY, JSON.stringify({ watch: w, tier: TIER_OF_GROUP[w], brand: BRANDS[w].some((x) => x[0] === brand) ? brand : null, at: new Date().toISOString() })); healthChanged() }"
+      },
+      {
+        "file": "src/lib/ui/watch-mode.ts",
+        "line": 44,
+        "source": "s?.setItem(CHECKIN_KEY, JSON.stringify([...all, next].slice(-120))); healthChanged(); return next"
+      },
+      {
+        "file": "src/lib/ui/watch-mode.ts",
+        "line": 62,
+        "source": "export function saveTier(t: Tier, s: KV | null = store()) { let v: Record<string, unknown> = {}; try { v = JSON.parse(s?.getItem(WATCH_KEY) ?? \"{}\") ?? {} } catch { /* reset */ } s?.setItem(WATCH_KEY, JSON.stringify({ ...v, tier: t })) }"
+      },
+      {
+        "file": "src/lib/ui/app-settings.ts",
+        "line": 11,
+        "source": "export function saveSettings(next: AppSettings, s: KV | null = store()) { s?.setItem(SETTINGS_KEY, JSON.stringify(next)) }"
+      },
+      {
+        "file": "src/lib/ui/injury.ts",
+        "line": 27,
+        "source": "export function saveInjury(v: InjuryStore, s: KV | null = st()) { s?.setItem(INJURY_KEY, JSON.stringify(v)) }"
+      },
+      {
+        "file": "src/lib/ui/today-checklist.ts",
+        "line": 59,
+        "source": "storage.setItem(CHECKLIST_KEY, JSON.stringify(Object.fromEntries(keep.map((k) => [k, all[k]]))))"
+      },
+      {
+        "file": "src/lib/ui/font-scale-v89.ts",
+        "line": 6,
+        "source": "export function writeFontScale(storage:Pick<Storage,'setItem'|'getItem'>,value:FontScale):boolean{try{if(normalizeFontScale(value)!==value)return false;storage.setItem(FONT_SCALE_KEY,value);return storage.getItem(FONT_SCALE_KEY)===value}catch{return false}}"
+      },
+      {
+        "file": "src/lib/ui/training-draft-store.ts",
+        "line": 16,
+        "source": "try{store.setItem(trainingDraftKey(date,templateId),JSON.stringify(draft));return true;}catch{return false;}"
+      },
+      {
+        "file": "src/lib/ui/training-draft-store.ts",
+        "line": 20,
+        "source": "try{const key=trainingDraftKey(date,templateId);if(parse(store.getItem(key))?.id===id)store.removeItem(key);"
+      },
+      {
+        "file": "src/lib/ui/training-draft-store.ts",
+        "line": 21,
+        "source": "if(parse(store.getItem(TRAINING_DRAFT_KEY))?.id===id)store.removeItem(TRAINING_DRAFT_KEY);"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 84,
+        "source": "function saveWarmups(rows: WarmupRecord[]) { const raw = JSON.stringify(rows); localStorage.setItem(WARMUP_RECORDS_KEY, raw); if (localStorage.getItem(WARMUP_RECORDS_KEY) !== raw) throw Error('热身记录未核实保存，输入保留。'); if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-warmup-changed')); }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 125,
+        "source": "export function saveWarmupClock(c: WarmupClock) { const key = warmupClockKey(c.recordId, c.stepId), raw = JSON.stringify(c); localStorage.setItem(key, raw); if (localStorage.getItem(key) !== raw) throw Error('计时状态未保存，请保持此页面。'); return c; }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 142,
+        "source": "export function saveWarmupInput(recordId: string, stepId: string, p: WarmupInput) { const key = warmupInputKey(recordId, stepId), raw = JSON.stringify(p); localStorage.setItem(key, raw); if (localStorage.getItem(key) !== raw) throw Error('实际输入尚未保存，请保持页面并重试。'); return p; }"
+      },
+      {
+        "file": "src/lib/ui/fangkun-preferences.ts",
+        "line": 19,
+        "source": "const next=JSON.stringify({...saved,data:{...saved.data,...value,homeOrder:normalizeOrder(value.homeOrder)}});box.setItem(key(),next);return box.getItem(key())===next}catch{return false}"
+      },
+      {
+        "file": "src/lib/ui/sport-goal.ts",
+        "line": 84,
+        "source": "storage.setItem(SPORT_GOAL_KEY, JSON.stringify(next))"
+      },
+      {
+        "file": "src/lib/ui/app-version-check.ts",
+        "line": 26,
+        "source": "try { sessionStorage.setItem(\"fk-version-reloaded\", latest) } catch { /* private mode */ }"
+      },
+      {
+        "file": "src/lib/ui/device-store.ts",
+        "line": 82,
+        "source": "if (res.ok) { have.sigs.push({ startIso: a.startIso, distanceM: a.distanceM }); try { currentStore()?.setItem(SIG_KEY, JSON.stringify(have.sigs.slice(-500))) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/lib/ui/backup-center.ts",
+        "line": 87,
+        "source": "storage.setItem(key, value); applied.push({ key, previous })"
+      },
+      {
+        "file": "src/lib/ui/backup-center.ts",
+        "line": 91,
+        "source": "for (const a of applied.reverse()) { try { if (a.previous == null) storage.removeItem(a.key); else storage.setItem(a.key, a.previous) } catch { return { ok: false, reason: '恢复中断，而且没能完全退回。请先下载一份当前备份再检查。' } } }"
+      },
+      {
+        "file": "src/lib/ui/backup-center.ts",
+        "line": 104,
+        "source": "try { for (const s of snap) { if (s.previous == null) storage.removeItem(s.key); else storage.setItem(s.key, s.previous) } return true } catch { return false }"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 91,
+        "source": "box.setItem(SCHEDULE_REVISION_KEY, pending.revision)"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 94,
+        "source": "box.setItem(SCHEDULE_PENDING_WRITE_KEY, 'null')"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 111,
+        "source": "box.setItem(SCHEDULE_PENDING_WRITE_KEY, intent)"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 113,
+        "source": "box.setItem(SCHEDULE_DOC_KEY, raw)"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 115,
+        "source": "box.setItem(SCHEDULE_REVISION_KEY, revision)"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 117,
+        "source": "box.setItem(SCHEDULE_PENDING_WRITE_KEY, 'null')"
+      },
+      {
+        "file": "src/lib/ui/goal-portfolio.ts",
+        "line": 14,
+        "source": "try {storage.setItem(GOAL_PORTFOLIO_KEY,next);return storage.getItem(GOAL_PORTFOLIO_KEY)===next}catch{return false}"
+      },
+      {
+        "file": "src/lib/ui/fieldwork-host.ts",
+        "line": 26,
+        "source": "try{const box=currentStore();if(!box)return false;const raw=JSON.stringify({schema:1,data:{...readUIPreferences(),...p}});box.setItem(preferencesKey(),raw);return box.getItem(preferencesKey())===raw}catch{return false}"
+      },
+      {
+        "file": "src/lib/ui/review.ts",
+        "line": 67,
+        "source": "export function upsertReview(r: Review, s: KV | null = st()): Review[] { const list = [r, ...loadReviews(s).filter((x) => x.id !== r.id)].slice(0, 60); s?.setItem(REVIEWS_KEY, JSON.stringify(list)); return list }"
+      },
+      {
+        "file": "src/lib/ui/home-layout.ts",
+        "line": 26,
+        "source": "export function saveLayout(l: Layout, s: KV | null = st()) { s?.setItem(LAYOUT_KEY, JSON.stringify(l)) }"
+      },
+      {
+        "file": "src/lib/ui/appearance.ts",
+        "line": 16,
+        "source": "try { storage.setItem(APPEARANCE_KEY, id); return true; } catch { return false; }"
+      },
+      {
+        "file": "src/lib/ui/appearance.ts",
+        "line": 29,
+        "source": "try { storage.setItem(DISPLAY_MODE_KEY, mode); return true; } catch { return false; }"
+      },
+      {
+        "file": "src/lib/ui/run-link.ts",
+        "line": 50,
+        "source": "try { const s = loadRunLinks(); if (value) s[entryId] = value; else delete s[entryId]; localStorage.setItem(RUN_LINKS_KEY, JSON.stringify(s)); window.dispatchEvent(new Event('fk-run-links')); window.dispatchEvent(new Event('fk-training-activities-changed')) } catch { /* 存不了就不关联 */ }"
+      },
+      {
+        "file": "src/lib/ui/plan400-view.ts",
+        "line": 226,
+        "source": "const v = { shiftDays: p.shiftDays, at, by }; try { s?.setItem(DATE_CONFIRM_KEY, JSON.stringify(v)); return v } catch { return null }"
+      },
+      {
+        "file": "src/lib/ui/plan400-view.ts",
+        "line": 228,
+        "source": "export function clearDateConfirm(s: Pick<Storage, 'removeItem'> | null = kv() as never) { try { s?.removeItem(DATE_CONFIRM_KEY) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/lib/health/intraday-store.ts",
+        "line": 23,
+        "source": "const raw = JSON.stringify(archive); s.setItem(archiveKey, raw)"
+      },
+      {
+        "file": "src/lib/health/intraday-store.ts",
+        "line": 62,
+        "source": "try { const changed = s.getItem(key(athlete)) !== raw; if (changed) s.setItem(key(athlete), raw); if (s.getItem(key(athlete)) === raw) { if (changed && athlete === currentAthleteId()) healthChanged(); return [...accepted].filter(day => use.includes(day) && wanted.has(day)).length } } catch { /* 空间不足：舍弃最旧的一天再试 */ }"
+      },
+      {
+        "file": "src/lib/health/coros-mcp-client.ts",
+        "line": 174,
+        "source": "export function setCorosMcpLinked(athlete: string, on: boolean, invalidate = true) { if (!on && invalidate && healthPending.size) invalidateCorosContext(); try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }"
+      },
+      {
+        "file": "src/lib/health/coros-mcp-client.ts",
+        "line": 218,
+        "source": "try {const box=currentStore(); if(!box) throw Error('NOSTORE'); box.setItem(hKey(athlete)+':archive:'+encodeURIComponent(old.sessionScope??'legacy'), JSON.stringify(old))}"
+      },
+      {
+        "file": "src/lib/health/coros-mcp-client.ts",
+        "line": 222,
+        "source": "try { const box = currentStore(); if (!box) throw Error('NOSTORE'); const raw = JSON.stringify(next); box.setItem(hKey(athlete), raw); saved = box.getItem(hKey(athlete)) === raw } catch { /* storage full */ }"
+      },
+      {
+        "file": "src/lib/health/snapshot.ts",
+        "line": 17,
+        "source": "export function saveHealthSource(metric:string,source:string|null):boolean{if(!(metric in HEALTH_LABELS))return false;try{const p=loadHealthSources();if(source)p[metric]=source;else delete p[metric];const s=currentStore();if(!s)return false;const raw=JSON.stringify(p);s.setItem(healthSourcesKey(),raw);if(s.getItem(healthSourcesKey())!==raw)return false;healthChanged();return true}catch{return false}}"
+      },
+      {
+        "file": "src/lib/health/garmin-account-owner.ts",
+        "line": 11,
+        "source": "store.setItem(key, value); return store.getItem(key) === value"
+      },
+      {
+        "file": "src/lib/health/device-store.ts",
+        "line": 40,
+        "source": "try{const s=currentStore(),raw=JSON.stringify(old?extras.map(x=>x===old?next:x):[...extras,next]);if(!s)throw Error();s.setItem(DEVICE_EXTRA_KEY,raw);if(s.getItem(DEVICE_EXTRA_KEY)!==raw)throw Error();if(old?.value===row.value)skipped++;else saved++}catch{errors.push(`${row.metric} 保存失败`)}"
+      },
+      {
+        "file": "src/lib/health/coros-account-sync.ts",
+        "line": 50,
+        "source": "try { localStorage.setItem(metaKey(athlete), JSON.stringify(m)) } catch { /* storage unavailable */ }"
+      },
+      {
+        "file": "src/lib/health/legacy-inputs.ts",
+        "line": 33,
+        "source": "try{const old=JSON.parse(s.getItem('fk-watch-v1')??'{}');const raw=JSON.stringify({...old,watch:w});s.setItem('fk-watch-v1',raw);return s.getItem('fk-watch-v1')===raw}catch{return false}"
+      },
+      {
+        "file": "src/lib/health/garmin-pending-imports.ts",
+        "line": 48,
+        "source": "store.setItem(key, raw)"
+      },
+      {
+        "file": "src/lib/health/garmin-progress-store.ts",
+        "line": 37,
+        "source": "store.setItem(key, raw)"
+      },
+      {
+        "file": "src/lib/core/coach-strength-plan-storage.ts",
+        "line": 14,
+        "source": "store.setItem(COACH_STRENGTH_PLAN_KEY,raw)"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 63,
+        "source": "const backend:MemoryStore={getItem:key=>box.getItem(key),setItem:(key,value)=>{box.setItem(key,value);enqueue(key,value)},keys:()=>Object.keys(box)}"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 75,
+        "source": "localStorage.setItem(MODE_KEY,'INDEXED_DB_MIRROR')"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 106,
+        "source": "try{localStorage.setItem(MODE_KEY,'LOCAL');return report('LOCAL')}catch{return report('FALLBACK','LOCAL_STORE_UNAVAILABLE')}"
+      },
+      {
+        "file": "src/lib/core/storage-journal.ts",
+        "line": 57,
+        "source": "box.setItem(key, serialized);"
+      },
+      {
+        "file": "src/lib/core/trial.ts",
+        "line": 141,
+        "source": "storage.setItem(item.key, item.value);"
+      },
+      {
+        "file": "src/lib/core/trial.ts",
+        "line": 147,
+        "source": "if (item.previous == null) storage.removeItem?.(item.key);"
+      },
+      {
+        "file": "src/lib/core/trial.ts",
+        "line": 148,
+        "source": "else storage.setItem(item.key, item.previous);"
+      },
+      {
+        "file": "src/lib/core/adaptive-plan-audit.ts",
+        "line": 41,
+        "source": "storage.setItem(PLAN_AUDIT_KEY, JSON.stringify([...existing, event]))"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 87,
+        "source": "ls.removeItem(key)"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 109,
+        "source": "if (migrated.length || everMigrated || mem.size) { try { ls.setItem(BULK_MARKER_KEY, JSON.stringify({ v: 1, at: new Date().toISOString() })) } catch { /* 空间满也无妨：下次启动仍会走同样流程 */ } }"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 153,
+        "source": "if (fallbackDirty.delete(key)) { try { local()?.removeItem(key) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 162,
+        "source": "ls.setItem(key, value)"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 187,
+        "source": "setItem: (k, v) => { const s = currentStore(); if (!s) throw new Error('E-NOSTORE'); s.setItem(k, v) },"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 188,
+        "source": "removeItem: k => { const s = currentStore() as MemoryStore | null; if (s?.removeItem) s.removeItem(k); else local()?.removeItem(k) },"
+      },
+      {
+        "file": "src/lib/auth/client.ts",
+        "line": 63,
+        "source": "if (token) window.sessionStorage.setItem(BEARER_KEY, token);"
+      },
+      {
+        "file": "src/lib/auth/client.ts",
+        "line": 64,
+        "source": "else window.sessionStorage.removeItem(BEARER_KEY);"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 46,
+        "source": "const writeKey = (k: string, v: string) => appStorage().setItem(k, v);"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 60,
+        "source": "for (const [k, v] of kv) if (!mirrorSkip(k) && localStorage.getItem(k) === null) { try { localStorage.setItem(k, v); restored++; } catch { /* full */ } }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 88,
+        "source": "const seen = localStorage.getItem(\"fk-app-major\"); if (seen === null) { localStorage.setItem(\"fk-app-major\", APP_MAJOR); return false; }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 91,
+        "source": "export function markBackedUp(): void { localStorage.setItem(\"fk-app-major\", APP_MAJOR); localStorage.setItem(\"fk-last-export\", new Date().toISOString()); }"
+      },
+      {
+        "file": "src/lib/chunk-recover.ts",
+        "line": 9,
+        "source": "sessionStorage.setItem(\"fk-chunk-reload\", String(Date.now()));"
+      },
+      {
+        "file": "src/lib/core/storage.ts",
+        "line": 59,
+        "source": "setItem: (key, value) => { if (layer.owns(key)) layer.set(key, value); else base.setItem(key, value) },"
+      },
+      {
+        "file": "src/lib/core/storage.ts",
+        "line": 60,
+        "source": "removeItem: key => { if (layer.owns(key)) layer.remove(key); else base.removeItem?.(key) },"
+      },
+      {
+        "file": "src/lib/core/storage.ts",
+        "line": 104,
+        "source": "box.setItem(key, JSON.stringify(next))"
+      },
+      {
+        "file": "src/lib/strength/model.ts",
+        "line": 355,
+        "source": "localStorage.setItem(STORAGE_KEY, raw)"
+      },
+      {
+        "file": "src/lib/strength/profile.ts",
+        "line": 123,
+        "source": "box.setItem(profileStorageKey(), JSON.stringify({ ...profile, _savedAt:at, _r5Receipts:old?._r5Receipts??[], _fieldSavedAt:nextProfileFieldTimes(old,profile as unknown as Record<string,unknown>,at) }));"
+      },
+      {
+        "file": "src/lib/strength/profile.ts",
+        "line": 124,
+        "source": "box.setItem(profileTimeKey(), at);"
+      },
+      {
+        "file": "src/lib/strength/session-builder.ts",
+        "line": 42,
+        "source": "store.setItem(PLAN_KEY, raw);"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 30,
+        "source": "if (goal.bf === null) localStorage.removeItem(GOAL_BF_KEY);"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 31,
+        "source": "else localStorage.setItem(GOAL_BF_KEY, String(goal.bf));"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 32,
+        "source": "localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 37,
+        "source": "try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); }"
+      },
+      {
+        "file": "src/lib/body/shape-sim.ts",
+        "line": 26,
+        "source": "export function saveSim(p: SimParams) { localStorage.setItem(SIM_KEY, JSON.stringify(p)); }"
+      },
+      {
+        "file": "src/lib/body/foot-library.ts",
+        "line": 52,
+        "source": "export function saveDose(id: string, d: Dose) { let s: Record<string, Dose> = {}; try { s = JSON.parse(localStorage.getItem(DOSE_KEY) || \"{}\"); } catch { /* reset only broken store */ } s[id] = d; localStorage.setItem(DOSE_KEY, JSON.stringify(s)); }"
+      },
+      {
+        "file": "src/lib/body/avatar-appearance.ts",
+        "line": 19,
+        "source": "const raw = JSON.stringify(safe); localStorage.setItem(sex==='female'?AVATAR_KEY+'-female':AVATAR_KEY, raw);"
+      },
+      {
+        "file": "src/lib/strength/media-v2/cache.ts",
+        "line": 16,
+        "source": "env.storage.setItem(MEDIA_ACTIVE_KEY,staging);"
+      },
+      {
+        "file": "src/lib/strength/media-v2/cache.ts",
+        "line": 18,
+        "source": "}catch(error){try{if(env.storage.getItem(MEDIA_ACTIVE_KEY)===staging){if(old===null)env.storage.removeItem(MEDIA_ACTIVE_KEY);else env.storage.setItem(MEDIA_ACTIVE_KEY,old)}}catch{/* no training-data store access */}await env.caches.delete(staging);throw error}"
+      },
+      {
+        "file": "src/lib/strength/coach.ts",
+        "line": 131,
+        "source": "localStorage.setItem(key, raw)"
+      },
+      {
+        "file": "src/lib/nutrition/vitals.ts",
+        "line": 173,
+        "source": "const raw=JSON.stringify({schemaVersion:1,records});storage.setItem(VITALS_KEY,raw);if(storage.getItem(VITALS_KEY)!==raw)throw Error(\"not persisted\")"
+      },
+      {
+        "file": "src/lib/nutrition/vitals.ts",
+        "line": 189,
+        "source": "const raw=JSON.stringify({schemaVersion:1,records});storage.setItem(VITALS_KEY,raw);if(storage.getItem(VITALS_KEY)!==raw)throw Error(\"not persisted\")"
+      },
+      {
+        "file": "src/lib/nutrition/day.ts",
+        "line": 45,
+        "source": "localStorage.setItem(KEY, JSON.stringify(day));"
+      },
+      {
+        "file": "src/lib/nutrition/body.ts",
+        "line": 69,
+        "source": "localStorage.setItem(KEY, JSON.stringify(sorted));"
+      },
+      {
+        "file": "src/lib/coach/personal/store.ts",
+        "line": 55,
+        "source": "storage.setItem(key(), JSON.stringify(s));"
+      },
+      {
+        "file": "src/lib/coach/knowledge/approval-store.ts",
+        "line": 38,
+        "source": "if(accepted.length){const raw=JSON.stringify([...prior,...accepted]);store.setItem(KNOWLEDGE_APPROVALS_KEY,raw);if(store.getItem(KNOWLEDGE_APPROVALS_KEY)!==raw)return {ok:false as const,reason:'WRITE_NOT_CONFIRMED'}}"
+      },
+      {
+        "file": "src/lib/coach/loop/suggestion-host.ts",
+        "line": 42,
+        "source": "store.setItem(key(doc.athleteId), JSON.stringify({ ...doc, revision: expectedRevision + 1 }))"
+      },
+      {
+        "file": "src/lib/coach/loop/suggestion-host.ts",
+        "line": 213,
+        "source": "try { currentStore()?.setItem(NOTIFY_PREF_KEY, permission === 'granted' ? 'on' : 'off') } catch { /* preference stays off */ }"
+      },
+      {
+        "file": "src/lib/coach/loop/suggestion-host.ts",
+        "line": 218,
+        "source": "try { currentStore()?.setItem(NOTIFY_PREF_KEY, 'off') } catch { /* nothing to undo */ }"
+      },
+      {
+        "file": "src/lib/coach/online-coach.ts",
+        "line": 39,
+        "source": "try { s?.setItem(COACH_ONLINE_KEY, JSON.stringify(v)) } catch { /* session only */ }"
+      },
+      {
+        "file": "src/lib/coach/online-coach.ts",
+        "line": 42,
+        "source": "export function setOnline(on: boolean) { const v = { ...onlineSetting(), on, consentAt: new Date().toISOString(), by: on ? '用户在方坤中开启联网' : '用户在方坤中关闭联网' }; try { currentStore()?.setItem(COACH_ONLINE_KEY, JSON.stringify(v)) } catch { /* ignore */ } try { window.dispatchEvent(new Event('fk-online-features-changed')) } catch { /* no browser */ } return v }"
+      },
+      {
+        "file": "src/lib/coach/online-coach.ts",
+        "line": 46,
+        "source": "export function saveLaps(id: number | string, laps: GLap[]) { const k = garminViewKey('fk-garmin-laps-v1'), all = read<Record<string, GLap[]>>(k, {}); all[String(id)] = laps; try { currentStore()?.setItem(k, JSON.stringify(all)) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/lib/coach/r5/host.ts",
+        "line": 357,
+        "source": "box.setItem(profileStorageKey(), out);"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 63,
+        "source": "fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId)) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId), at) } },"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 65,
+        "source": "backfill: { get: scope => { try { return Number(localStorage.getItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId)) ?? localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 14 } }, set: (scope, n) => { localStorage.setItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId), String(n)); } },"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 80,
+        "source": "localStorage.setItem(key(\"fk-garmin-sync-report\"), raw);"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 84,
+        "source": "const cacheTime = (name: string) => { try { localStorage.setItem(key(name), report.at); } catch { /* The durable report supplies this time. */ } };"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 131,
+        "source": "if (r === \"ok\" || r === \"partial\") { localStorage.removeItem(key(\"fk-garmin-auto-fail\")); if (limited) shortBackoffUntil = Date.now() + AUTO_MS; }"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 132,
+        "source": "else if (r === \"auth\" || (r === \"fail\" && limited)) localStorage.setItem(key(\"fk-garmin-auto-fail\"), new Date().toISOString());"
+      },
+      {
+        "file": "src/components/coach-feedback.tsx",
+        "line": 14,
+        "source": "<button type=\"button\" className=\"rounded border border-line px-2 text-sm\" onClick={() => { const list = loadFeedback(); list.push({ at: new Date().toISOString(), answer, question, note }); localStorage.setItem(KEY, JSON.stringify(list)); setDone(true); }}>保存</button></div>;"
+      },
+      {
+        "file": "src/components/device-sync-center.tsx",
+        "line": 33,
+        "source": "const select = (value: SyncPlatform) => { setProvider(value); try { sessionStorage.setItem(`fk-sync-platform:${owner}`, value) } catch { /* visual preference only */ } }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 60,
+        "source": "localStorage.setItem(ONBOARD_SKIPPED_KEY, \"1\")"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 75,
+        "source": "localStorage.setItem(ONBOARD_KEY, answers)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 77,
+        "source": "localStorage.removeItem(ONBOARD_SKIPPED_KEY)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 142,
+        "source": "const setOv = (p: Partial<Override>) => { const n = { ...(st.ov ?? { date: today }), ...p, date: today }; const val = n.short || n.home ? n : null; localStorage.setItem(OVERRIDE_KEY, JSON.stringify(val)); setSt({ ...st, ov: val }); onOverride(val) }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 209,
+        "source": "useEffect(() => { if (!loaded.current) return; try { if (text || atts.length) localStorage.setItem(QL_DRAFT, JSON.stringify({ text, atts })); else localStorage.removeItem(QL_DRAFT) } catch { /* draft best-effort */ } }, [text, atts])"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 228,
+        "source": "try { localStorage.setItem(QL_PENDING, JSON.stringify({ id, at, text: body })) } catch { /* 最多重试时重复检查失效 */ }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 234,
+        "source": "try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { throw new Error(ref ? \"训练已记入日志，但笔记原文没存上（本机存储已满？），再点一次保存只补存笔记，不会重复记训练\" : \"本机存储已满或被禁用（截图较大时可先移除截图）\") }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 235,
+        "source": "localStorage.removeItem(QL_PENDING)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 236,
+        "source": "setNotes(next); setText(\"\"); setAtts([]); setRpe(null); localStorage.removeItem(QL_DRAFT); onSaved()"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 246,
+        "source": "try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { setErr(\"删除失败，请重试\"); return }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 257,
+        "source": "try { localStorage.setItem(NOTES, JSON.stringify(next)) } catch { setErr(\"撤销失败，请重试\"); return }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 335,
+        "source": "localStorage.removeItem(ONBOARD_SKIPPED_KEY)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 336,
+        "source": "localStorage.removeItem(ONBOARD_KEY)"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 380,
+        "source": "{!confirmDel ? <button type=\"button\" className=\"fk-chip text-[var(--color-risk)]\" onClick={() => setConfirmDel(true)}>删除上表 8 类数据</button> : <button type=\"button\" className=\"fk-chip border-[var(--color-risk)] text-[var(--color-risk)]\" onClick={() => { for (const c of COLLECTED) localStorage.removeItem(c.key); location.reload() }}>确认删除这 8 类（不可恢复，建议先备份）</button>}</div></Row> : null}"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 410,
+        "source": "localStorage.setItem(SENT_KEY, JSON.stringify({ date: today, count: n + 1 }))"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 184,
+        "source": "useEffect(() => { try { if (draft) sessionStorage.setItem(DRAFT_KEY, draft); else sessionStorage.removeItem(DRAFT_KEY); } catch { /* storage unavailable: draft just stays in memory */ } }, [draft]);"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 647,
+        "source": "<select id=\"coach-persona\" value={persona} onChange={(e) => { const next = parsePersona(e.target.value); setPersona(next); try { window.localStorage.setItem(PERSONA_KEY, next); } catch { /* current session only */ } }} className=\"ml-2 rounded-lg border border-line bg-surface px-2 py-2\">"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 657,
+        "source": "<button type=\"button\" className=\"mt-2 min-h-10 rounded-full border border-line px-3\" onClick={() => { const next = !motion; setMotion(next); window.localStorage.setItem(\"fr255-fangshen-motion\", next ? \"on\" : \"off\"); }}>动效{motion ? \"开\" : \"关\"}</button>"
+      },
+      {
+        "file": "src/components/health-extras.tsx",
+        "line": 53,
+        "source": "const raw=JSON.stringify([...all.filter(p=>(p.athleteId??'local')!==currentAthleteId()),...next]);localStorage.setItem(PAIN_KEY,raw)"
+      },
+      {
+        "file": "src/components/onboarding-about.tsx",
+        "line": 19,
+        "source": "localStorage.setItem(ATHLETE_CARD_KEY, JSON.stringify({ nickname: me.nickname.trim().slice(0, 20), sex: me.sex, birthYear: yearOk(me.birthYear) ? me.birthYear : \"\", event: me.event, pb: me.pb.trim().slice(0, 20), at: new Date().toISOString() }))"
+      },
+      {
+        "file": "src/components/health-tiles.tsx",
+        "line": 57,
+        "source": "const save = (next: TileId[]) => { setShown(next); try { localStorage.setItem(HEALTH_TILE_PREF_KEY, JSON.stringify(next)); setStamp(Date.now()) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 27,
+        "source": "localStorage.setItem(key, raw);"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 29,
+        "source": "if(accountScope) currentStore()?.setItem(garminScopeKey(), accountScope);"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 70,
+        "source": "useEffect(() => { if (!open || laps || k === \"strength\") return; setState(\"加载分段…\"); void fetchLaps(g.id).then((l) => { if (l) { const all = load<Record<string, Lap[]>>(garminViewKey(GLAPS_KEY), {}); all[g.id] = l; localStorage.setItem(garminViewKey(GLAPS_KEY), JSON.stringify(all)); setLaps(l); setState(\"\"); } else setState(\"分段获取失败，请检查佳明连接后重试。\"); }); }, [open]);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 259,
+        "source": "useEffect(() => { void initVault().then((r) => { if (r.restored > 0 && !sessionStorage.getItem(\"fk-vault-restored\")) { sessionStorage.setItem(\"fk-vault-restored\", \"1\"); location.reload(); } }).catch(() => {}); }, []);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 264,
+        "source": "const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem(\"fk-plan-source-v1\") || \"{}\"); localStorage.setItem(\"fk-plan-source-v1\", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 435,
+        "source": "sessionStorage.setItem(\"fr255-sw-reloaded\", \"1\");"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1427,
+        "source": "const done = () => { localStorage.setItem(\"fk-welcome-standalone-v1\", \"1\"); setShow(false); };"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1434,
+        "source": "<label className=\"fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold\">选择备份文件导入<input type=\"file\" accept=\"application/json,.json\" className=\"hidden\" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const n = await importVault(f); localStorage.setItem(\"fk-welcome-standalone-v1\", \"1\"); setMsg(`已恢复 ${n} 项，正在刷新`); setTimeout(() => location.reload(), 800); } catch (err) { setMsg((err as Error).message); } }} /></label>"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1446,
+        "source": "return <section className=\"home-card mt-3 p-3 text-sm\" aria-label=\"存储提示\"><b>Safari 和主屏幕 App 的数据是分开的</b><p className=\"keep mt-1 text-xs text-muted\">在 Safari 里记的数据，添加到主屏幕后不会自动出现。先在原来那边「全部数据备份 → 导出」，再到另一边「导入恢复」。</p><button type=\"button\" className=\"fk-link mt-1 text-xs\" onClick={() => { localStorage.setItem(\"fk-storage-hint-v1\", \"1\"); setShow(false); }}>知道了</button></section>;"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 79,
+        "source": "function saveGuided(nextSide: Side) { try { localStorage.setItem(guidedKey, JSON.stringify({ version: 1, setKey: sets[cursor] ? setKey(sets[cursor]) : null, side: nextSide, restKind, restSide: restSide.current, restStartedAt: restStartedAt.current, pendingRestSec: pendingRestSec.current })) } catch { /* storage unavailable */ } }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 89,
+        "source": "function clearRest() { try { window.localStorage.removeItem(timerKey) } catch { /* storage unavailable */ } }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 90,
+        "source": "function clearGuided() { try { window.localStorage.removeItem(`${timerKey}:guided`) } catch { /* storage unavailable */ } }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 93,
+        "source": "try { window.localStorage.setItem(timerKey, JSON.stringify(snapshot)) } catch { /* storage unavailable */ }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 140,
+        "source": "try {localStorage.setItem(key,JSON.stringify({weight:draftWeight,amount:draftAmount}))} catch {setSaveError('输入草稿暂不能恢复，尚未记录为完成。请保持此页并检查存储。')}"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 195,
+        "source": "try {localStorage.removeItem(runnerDraftKey(decisionId,session.id,setKey(next)))}catch{/* optional draft cleanup */}"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 286,
+        "source": "const toggleAlert = () => { const v = !alertOn; setAlertOn(v); try { localStorage.setItem(ALERT_KEY, v ? 'on' : 'off') } catch { /* optional */ } }"
+      },
+      {
+        "file": "src/components/plan-source.tsx",
+        "line": 23,
+        "source": "const raw = JSON.stringify(next); localStorage.setItem(KEY, raw); if (localStorage.getItem(KEY) !== raw) throw Error('保存校验失败。'); committed = true;"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 34,
+        "source": "return { ...state, kg: kg >= 30 ? kg : null, plan, targets, flags, setSigns: (s: Signs) => { try { localStorage.setItem(SIGNS_KEY, JSON.stringify(s)) } catch { /* ignore */ } setState({ ...state, signs: s }) } }"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 124,
+        "source": "const save = (p: GoalPref) => { setPref(p); try { localStorage.setItem(GOAL_KEY, JSON.stringify(p)); setStamp(Date.now()) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/components/training-log-v76.tsx",
+        "line": 98,
+        "source": "const setFilter = (next: Partial<typeof f>) => { const v = { ...f, ...next }; setF(v); setFocusDay(null); try { localStorage.setItem(FILTER_KEY, JSON.stringify(v)) } catch { /* session only */ } }"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 24,
+        "source": "useEffect(()=>{if(entry||currentAthleteId()!==actor.current)return;try{localStorage.setItem(draftKey,JSON.stringify(draft))}catch{/* input remains in component */}},[draft,draftKey,entry]);"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 38,
+        "source": "async function save(){if(saving.current)return;saving.current=true;setBusy(true);try{const result=commitFoodDraft({draft,date,meal:mealValue,acknowledged:true,athleteId:actor.current,entryId:entry?.id,expectedRevision:revision.current});if(!result.ok){setError(result.reason);return}if(!entry)try{localStorage.removeItem(draftKey)}catch{/* committed record is durable */}onSaved();onClose()}finally{saving.current=false;setBusy(false)}}"
+      },
+      {
+        "file": "src/components/home-dashboard.tsx",
+        "line": 312,
+        "source": "{edit ? <div className=\"mt-1 grid grid-cols-2 gap-1 text-sm\">{avail.map((m) => <label key={m.id} className=\"flex min-h-9 items-center gap-2 rounded-lg border border-line px-2\"><input type=\"checkbox\" checked={chosen.includes(m.id)} onChange={(e) => { const n = e.target.checked ? [...chosen, m.id] : chosen.filter((x) => x !== m.id); setChosen(n); localStorage.setItem(TILE_KEY, JSON.stringify(n)); }} />{m.label}</label>)}</div>"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 60,
+        "source": "const raw = JSON.stringify(next); localStorage.setItem(KEY, raw);"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 134,
+        "source": "const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 352,
+        "source": "const toggleCycle = () => setCycleExpanded(v => { try { localStorage.setItem(\"fk-v91-cycle-expanded\", v ? \"0\" : \"1\") } catch { /* UI remains usable */ } return !v; });"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 373,
+        "source": "<div className=\"flex flex-wrap gap-x-4\"><button type=\"button\" className=\"min-h-11 font-bold text-accent\" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + \":revoked\") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), \"用户确认\")); }}>按当前日期执行</button><button type=\"button\" className=\"min-h-11 text-accent\" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? \"收起差异\" : \"查看差异\"}</button></div>"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 396,
+        "source": "<button type=\"button\" className=\"min-h-11 text-accent\" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + \":revoked\", \"1\") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>"
+      },
+      {
+        "file": "src/components/pet/floating-pet-logic.ts",
+        "line": 45,
+        "source": "try { store?.setItem(key, JSON.stringify({ x: Math.round(pos.x), y: Math.round(pos.y) })); return true } catch { return false }"
+      },
+      {
+        "file": "src/components/pet/floating-pet-logic.ts",
+        "line": 52,
+        "source": "try { store?.setItem(key, visible ? '1' : '0'); return true } catch { return false }"
+      }
+    ],
+    "local_storage_alias_or_default_candidates": [
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 21,
+        "source": "const store = (): Store | null => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }"
+      },
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 65,
+        "source": "export function savePlanDoc(doc: PlanDoc, s: WStore = localStorage): { ok: true } | { ok: false; reason: string } {"
+      },
+      {
+        "file": "src/lib/plan/active-plan.ts",
+        "line": 76,
+        "source": "export function undoPlanDoc(s: WStore = localStorage): boolean {"
+      },
+      {
+        "file": "src/lib/ui/plan400-components-store.ts",
+        "line": 18,
+        "source": "const ls = (): KV | null => typeof localStorage === 'undefined' ? null : localStorage"
+      },
+      {
+        "file": "src/lib/ui/assessment-store.ts",
+        "line": 5,
+        "source": "export function loadFeedback(): Feedback[] { try { const v = JSON.parse(localStorage.getItem(FEEDBACK_KEY) ?? \"[]\"); return Array.isArray(v) ? v : [] } catch { return [] } }"
+      },
+      {
+        "file": "src/lib/ui/guided-discard.ts",
+        "line": 44,
+        "source": "try { const enc = encodeURIComponent(sessionId); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i) ?? ''; if ((k.startsWith('rs-rest-v1:') && k.includes(':' + enc)) || ((k.startsWith('fk-runner-draft-v71:') || k.startsWith('fr255-runner-draft-v1:')) && k.includes(':' + sessionId + ':'))) localStorage.removeItem(k) } } catch { /* node / storage unavailable */ }"
+      },
+      {
+        "file": "src/lib/ui/watch-mode.ts",
+        "line": 12,
+        "source": "const store = (): KV | null => (typeof localStorage === \"undefined\" ? null : localStorage)"
+      },
+      {
+        "file": "src/lib/ui/app-settings.ts",
+        "line": 7,
+        "source": "const store = (): KV | null => (typeof localStorage === \"undefined\" ? null : localStorage)"
+      },
+      {
+        "file": "src/lib/ui/injury.ts",
+        "line": 25,
+        "source": "const st = (): KV | null => (typeof localStorage === \"undefined\" ? null : localStorage)"
+      },
+      {
+        "file": "src/lib/ui/pending-feedback-host.ts",
+        "line": 17,
+        "source": "const raw = typeof localStorage === 'undefined' ? '{}' : localStorage.getItem('fk-plan400-v4-log') ?? '{}'"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 72,
+        "source": "const rows = JSON.parse(localStorage.getItem(WARMUP_RECORDS_KEY) ?? '[]');"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 84,
+        "source": "function saveWarmups(rows: WarmupRecord[]) { const raw = JSON.stringify(rows); localStorage.setItem(WARMUP_RECORDS_KEY, raw); if (localStorage.getItem(WARMUP_RECORDS_KEY) !== raw) throw Error('热身记录未核实保存，输入保留。'); if (typeof window !== 'undefined') window.dispatchEvent(new Event('fk-warmup-changed')); }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 122,
+        "source": "try { const c = JSON.parse(localStorage.getItem(warmupClockKey(recordId, stepId)) ?? 'null'); if (c?.version === 1 && c.recordId === recordId && c.stepId === stepId && typeof c.started === 'boolean' && Number.isFinite(c.elapsedMs) && c.elapsedMs >= 0 && (c.runningSince === null || Number.isFinite(c.runningSince) && c.runningSince >= 0)) return c; } catch { /* fresh */ }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 125,
+        "source": "export function saveWarmupClock(c: WarmupClock) { const key = warmupClockKey(c.recordId, c.stepId), raw = JSON.stringify(c); localStorage.setItem(key, raw); if (localStorage.getItem(key) !== raw) throw Error('计时状态未保存，请保持此页面。'); return c; }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 139,
+        "source": "try { const p = JSON.parse(localStorage.getItem(warmupInputKey(recordId, s.id)) ?? 'null'); if (p && typeof p.different === 'boolean' && ['sets', 'amount', 'weight', 'rest'].every(k => typeof p[k] === 'string')) return p; } catch { /* fresh */ }"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 142,
+        "source": "export function saveWarmupInput(recordId: string, stepId: string, p: WarmupInput) { const key = warmupInputKey(recordId, stepId), raw = JSON.stringify(p); localStorage.setItem(key, raw); if (localStorage.getItem(key) !== raw) throw Error('实际输入尚未保存，请保持页面并重试。'); return p; }"
+      },
+      {
+        "file": "src/lib/ui/sport-goal.ts",
+        "line": 69,
+        "source": "export function loadSportGoal(storage: Readable | null = typeof localStorage === \"undefined\" ? null : localStorage): SportGoalPreference {"
+      },
+      {
+        "file": "src/lib/ui/training-read-model.ts",
+        "line": 73,
+        "source": "const calendar = JSON.parse(localStorage.getItem('fk-schedule-v1') ?? '{}') as { entries?: ScheduleEntry[] };"
+      },
+      {
+        "file": "src/lib/ui/training-read-model.ts",
+        "line": 99,
+        "source": "try { qa = legacyQuickAudit(JSON.parse(localStorage.getItem('fk-schedule-v1') ?? '{}')?.entries ?? [], JSON.parse(localStorage.getItem('fk-notes-v1') ?? '[]')) } catch { /* 无日程/笔记 */ }"
+      },
+      {
+        "file": "src/lib/ui/training-read-model.ts",
+        "line": 114,
+        "source": "return linkRuns(rows, typeof localStorage === 'undefined' ? null : localStorage, Date.now(), exec);"
+      },
+      {
+        "file": "src/lib/ui/training-read-model.ts",
+        "line": 130,
+        "source": "export function linkRuns(rows: ActivityRow[], store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now(), exec: Record<string, V4Exec> = {}): ActivityRow[] {"
+      },
+      {
+        "file": "src/lib/ui/training-read-model.ts",
+        "line": 214,
+        "source": "try { const plan = JSON.parse(localStorage.getItem('fr255-strength-plan-v3') ?? 'null'); const s = (plan?.data ?? plan)?.sessions?.find((x: { id?: string }) => x?.id === sessionId); return typeof s?.name === 'string' && s.name ? s.name : undefined } catch { return undefined }"
+      },
+      {
+        "file": "src/lib/ui/training-read-model.ts",
+        "line": 255,
+        "source": "export function phoneRows(store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now()): ActivityRow[] {"
+      },
+      {
+        "file": "src/lib/ui/review.ts",
+        "line": 65,
+        "source": "const st = (): KV | null => (typeof localStorage === \"undefined\" ? null : localStorage)"
+      },
+      {
+        "file": "src/lib/ui/home-layout.ts",
+        "line": 24,
+        "source": "const st = (): KV | null => (typeof localStorage === \"undefined\" ? null : localStorage)"
+      },
+      {
+        "file": "src/lib/ui/run-link.ts",
+        "line": 29,
+        "source": "export function loadRunLinks(store: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage): RunLinkStore {"
+      },
+      {
+        "file": "src/lib/ui/run-link.ts",
+        "line": 50,
+        "source": "try { const s = loadRunLinks(); if (value) s[entryId] = value; else delete s[entryId]; localStorage.setItem(RUN_LINKS_KEY, JSON.stringify(s)); window.dispatchEvent(new Event('fk-run-links')); window.dispatchEvent(new Event('fk-training-activities-changed')) } catch { /* 存不了就不关联 */ }"
+      },
+      {
+        "file": "src/lib/ui/plan400-view.ts",
+        "line": 221,
+        "source": "const kv = (): KV => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }"
+      },
+      {
+        "file": "src/lib/health/coros-mcp-client.ts",
+        "line": 173,
+        "source": "export const corosMcpLinked = (athlete: string) => { try { return localStorage.getItem(linkKey(athlete)) === '1' } catch { return false } }"
+      },
+      {
+        "file": "src/lib/health/coros-mcp-client.ts",
+        "line": 174,
+        "source": "export function setCorosMcpLinked(athlete: string, on: boolean, invalidate = true) { if (!on && invalidate && healthPending.size) invalidateCorosContext(); try { if ((localStorage.getItem(linkKey(athlete)) === '1') === on) return; on ? localStorage.setItem(linkKey(athlete), '1') : localStorage.removeItem(linkKey(athlete)) } catch { return } try { window.dispatchEvent(new Event('fk-coros-changed')) } catch { /* node */ } }"
+      },
+      {
+        "file": "src/lib/health/garmin-sync-status.ts",
+        "line": 29,
+        "source": "export function readGarminSyncStatus(subject: string, store: KV | null = typeof localStorage === 'undefined' ? null : localStorage, now = Date.now(), accountScope: string | null = null): GarminSyncStatus {"
+      },
+      {
+        "file": "src/lib/health/coros-account-sync.ts",
+        "line": 47,
+        "source": "try { const v = JSON.parse(localStorage.getItem(metaKey(athlete)) ?? 'null'); return v && typeof v.at === 'string' ? v : null } catch { return null }"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 62,
+        "source": "const box=localStorage"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 67,
+        "source": "const db=await open(),rows=snapshot(localStorage)"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 81,
+        "source": "if(typeof indexedDB==='undefined'||typeof localStorage==='undefined')return report('BLOCKED','INDEXED_DB_UNAVAILABLE')"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 95,
+        "source": "const rows=snapshot(localStorage)"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 31,
+        "source": "const pinned = new Set<string>()      // 迁移失败、仍留在 localStorage 的键"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 32,
+        "source": "const fallbackDirty = new Set<string>() // 异步写 IndexedDB 失败后暂存在 localStorage 的键"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 70,
+        "source": "const local = (): Storage | null => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }"
+      },
+      {
+        "file": "src/lib/core/migrate.ts",
+        "line": 37,
+        "source": "const raw = localStorage.getItem(key)"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 60,
+        "source": "for (const [k, v] of kv) if (!mirrorSkip(k) && localStorage.getItem(k) === null) { try { localStorage.setItem(k, v); restored++; } catch { /* full */ } }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 63,
+        "source": "for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!mirrorSkip(k)) t.objectStore(\"kv\").put(localStorage.getItem(k), k); }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 67,
+        "source": "Storage.prototype.setItem = function (k: string, v: string) { set.call(this, k, v); if (this === localStorage && !mirrorSkip(k)) void tx(\"kv\", \"readwrite\", (s) => { s.put(String(v), k); }).catch(() => {}); };"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 68,
+        "source": "Storage.prototype.removeItem = function (k: string) { rem.call(this, k); if (this === localStorage) void tx(\"kv\", \"readwrite\", (s) => { s.delete(k); }).catch(() => {}); };"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 75,
+        "source": "for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) data[k] = localStorage.getItem(k)!; }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 88,
+        "source": "const seen = localStorage.getItem(\"fk-app-major\"); if (seen === null) { localStorage.setItem(\"fk-app-major\", APP_MAJOR); return false; }"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 97,
+        "source": "for (const k of [...kv.keys()]) if (isBulkKey(k)) kv.delete(k); // 旧镜像里的过期副本不进备份，以大块层/仍钉在 localStorage 的为准"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 98,
+        "source": "for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (!skip(k)) kv.set(k, localStorage.getItem(k)!); }"
+      },
+      {
+        "file": "src/lib/core/storage.ts",
+        "line": 44,
+        "source": "return localStorage"
+      },
+      {
+        "file": "src/lib/strength/model.ts",
+        "line": 331,
+        "source": "const raw = localStorage.getItem(key);"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 18,
+        "source": "try { const v = Number(localStorage.getItem(GOAL_BF_KEY)); return Number.isFinite(v) && v > 0 && v < 60 ? v : null; }"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 28,
+        "source": "before = [localStorage.getItem(PROFILE_KEY), localStorage.getItem(GOAL_BF_KEY)];"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 30,
+        "source": "if (goal.bf === null) localStorage.removeItem(GOAL_BF_KEY);"
+      },
+      {
+        "file": "src/lib/body/goal-editor.ts",
+        "line": 37,
+        "source": "try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); }"
+      },
+      {
+        "file": "src/lib/body/shape-sim.ts",
+        "line": 25,
+        "source": "export function loadSim(): SimParams { try { return { ...DEFAULT_SIM, ...JSON.parse(localStorage.getItem(SIM_KEY) || \"{}\") }; } catch { return { ...DEFAULT_SIM }; } }"
+      },
+      {
+        "file": "src/lib/body/foot-library.ts",
+        "line": 51,
+        "source": "export function loadDose(id: string): Dose { const e = FOOT_LIBRARY.find(x => x.id === id)!; let s: Record<string, Dose> = {}; try { s = JSON.parse(localStorage.getItem(DOSE_KEY) || \"{}\"); } catch { /* keep default */ } return s[id] ?? { sets: e.dose.sets, amount: e.dose.amount, restSec: e.restSec }; }"
+      },
+      {
+        "file": "src/lib/body/foot-library.ts",
+        "line": 52,
+        "source": "export function saveDose(id: string, d: Dose) { let s: Record<string, Dose> = {}; try { s = JSON.parse(localStorage.getItem(DOSE_KEY) || \"{}\"); } catch { /* reset only broken store */ } s[id] = d; localStorage.setItem(DOSE_KEY, JSON.stringify(s)); }"
+      },
+      {
+        "file": "src/lib/body/avatar-appearance.ts",
+        "line": 14,
+        "source": "try { const p = JSON.parse(localStorage.getItem(sex==='female'?AVATAR_KEY+'-female':AVATAR_KEY) ?? 'null'); if (p?.version === 1 && p.base && p.target) return { version: 1, base: normalizeAppearance(p.base), target: normalizeAppearance(p.target) }; } catch { /* reference defaults */ }"
+      },
+      {
+        "file": "src/lib/body/avatar-appearance.ts",
+        "line": 19,
+        "source": "const raw = JSON.stringify(safe); localStorage.setItem(sex==='female'?AVATAR_KEY+'-female':AVATAR_KEY, raw);"
+      },
+      {
+        "file": "src/lib/strength/coach.ts",
+        "line": 80,
+        "source": "const raw = localStorage.getItem(coachStorageKey(athleteId)) ?? (athleteId === \"local\" ? localStorage.getItem(OLD_KEY) : null);"
+      },
+      {
+        "file": "src/lib/strength/coach.ts",
+        "line": 132,
+        "source": "return localStorage.getItem(key) === raw"
+      },
+      {
+        "file": "src/lib/nutrition/day.ts",
+        "line": 31,
+        "source": "const parsed = JSON.parse(localStorage.getItem(KEY) || \"null\") as DayRecord | null;"
+      },
+      {
+        "file": "src/lib/nutrition/body.ts",
+        "line": 53,
+        "source": "const parsed = JSON.parse(typeof localStorage === \"undefined\" ? \"[]\" : localStorage.getItem(KEY) || \"[]\") as BodyCheck[];"
+      },
+      {
+        "file": "src/lib/nutrition/log.ts",
+        "line": 48,
+        "source": "const parsed = JSON.parse(typeof localStorage === \"undefined\" ? \"[]\" : localStorage.getItem(KEY) || \"[]\") as FoodEntry[];"
+      },
+      {
+        "file": "src/lib/nutrition/log.ts",
+        "line": 69,
+        "source": "const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(KEY);"
+      },
+      {
+        "file": "src/lib/coach/personal/host.ts",
+        "line": 13,
+        "source": "return createPersonalStore(window.localStorage, currentAthleteId);"
+      },
+      {
+        "file": "src/lib/coach/loop/effective-host.ts",
+        "line": 14,
+        "source": "const state = createPersonalStore(window.localStorage, currentAthleteId).read()"
+      },
+      {
+        "file": "src/lib/coach/loop/suggestion-host.ts",
+        "line": 81,
+        "source": "if (typeof window !== 'undefined') availableMinutes = createPersonalStore(window.localStorage, currentAthleteId).read().profile?.minutes ?? null"
+      },
+      {
+        "file": "src/lib/coach/online-nutrition-facts.ts",
+        "line": 27,
+        "source": "const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(key)"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 29,
+        "source": "const v = JSON.parse(localStorage.getItem(garminStorageKey(`fk-garmin-health-days:${shortHash(scope)}`, subjectId)) ?? \"null\");"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 63,
+        "source": "fullReview: { get: scope => { try { return localStorage.getItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId)) } catch { return null } }, set: (scope, at) => { localStorage.setItem(garminStorageKey(`fk-garmin-full-review:${shortHash(scope)}`, subjectId), at) } },"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 65,
+        "source": "backfill: { get: scope => { try { return Number(localStorage.getItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId)) ?? localStorage.getItem(`fk-garmin-health-backfill:${scope}`)) || 14 } catch { return 14 } }, set: (scope, n) => { localStorage.setItem(garminStorageKey(`fk-garmin-health-backfill:${shortHash(scope)}`, subjectId), String(n)); } },"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 84,
+        "source": "const cacheTime = (name: string) => { try { localStorage.setItem(key(name), report.at); } catch { /* The durable report supplies this time. */ } };"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 120,
+        "source": "const failAt = Date.parse(localStorage.getItem(key(\"fk-garmin-auto-fail\")) || \"\") || 0;"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 130,
+        "source": "try { limited = (JSON.parse(localStorage.getItem(key(\"fk-garmin-sync-report\")) || \"null\")?.errors ?? []).some((e: unknown) => /429|限流/.test(String(e))); } catch { limited = false; }"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 131,
+        "source": "if (r === \"ok\" || r === \"partial\") { localStorage.removeItem(key(\"fk-garmin-auto-fail\")); if (limited) shortBackoffUntil = Date.now() + AUTO_MS; }"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 132,
+        "source": "else if (r === \"auth\" || (r === \"fail\" && limited)) localStorage.setItem(key(\"fk-garmin-auto-fail\"), new Date().toISOString());"
+      },
+      {
+        "file": "src/components/garmin-sync.tsx",
+        "line": 177,
+        "source": "useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); const last = localStorage.getItem(\"fk-last-export\"); setRemind(needsBackupReminder() || !last || Date.now() - Date.parse(last) > 14 * 86400e3); }, []);"
+      },
+      {
+        "file": "src/components/coach-feedback.tsx",
+        "line": 4,
+        "source": "export function loadFeedback(): Item[] { try { return JSON.parse(localStorage.getItem(KEY) || \"[]\"); } catch { return []; } }"
+      },
+      {
+        "file": "src/components/coach-feedback.tsx",
+        "line": 14,
+        "source": "<button type=\"button\" className=\"rounded border border-line px-2 text-sm\" onClick={() => { const list = loadFeedback(); list.push({ at: new Date().toISOString(), answer, question, note }); localStorage.setItem(KEY, JSON.stringify(list)); setDone(true); }}>保存</button></div>;"
+      },
+      {
+        "file": "src/components/coach-feedback.tsx",
+        "line": 17,
+        "source": "const [n, setN] = useState(() => typeof localStorage === \"undefined\" ? 0 : loadFeedback().length);"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 39,
+        "source": "const read = <T,>(k: string, d: T): T => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d } }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 142,
+        "source": "const setOv = (p: Partial<Override>) => { const n = { ...(st.ov ?? { date: today }), ...p, date: today }; const val = n.short || n.home ? n : null; localStorage.setItem(OVERRIDE_KEY, JSON.stringify(val)); setSt({ ...st, ov: val }); onOverride(val) }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 197,
+        "source": "const loadNotes = (): Note[] => { try { const v = JSON.parse(localStorage.getItem(NOTES) || \"[]\"); return Array.isArray(v) ? v : [] } catch { return [] } }"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 208,
+        "source": "useEffect(() => { try { const d = JSON.parse(localStorage.getItem(QL_DRAFT) || \"null\"); if (d) { setText(d.text || \"\"); setAtts(d.atts || []) } } catch { /* none */ } loaded.current = true }, [])"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 209,
+        "source": "useEffect(() => { if (!loaded.current) return; try { if (text || atts.length) localStorage.setItem(QL_DRAFT, JSON.stringify({ text, atts })); else localStorage.removeItem(QL_DRAFT) } catch { /* draft best-effort */ } }, [text, atts])"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 224,
+        "source": "const body = text.trim(), pend = (() => { try { return JSON.parse(localStorage.getItem(QL_PENDING) || \"null\") as { id: string; at: string; text: string } | null } catch { return null } })()"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 337,
+        "source": "if (localStorage.getItem(ONBOARD_SKIPPED_KEY) !== null || localStorage.getItem(ONBOARD_KEY) !== null) throw new Error(\"onboarding-not-reset\")"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 380,
+        "source": "{!confirmDel ? <button type=\"button\" className=\"fk-chip text-[var(--color-risk)]\" onClick={() => setConfirmDel(true)}>删除上表 8 类数据</button> : <button type=\"button\" className=\"fk-chip border-[var(--color-risk)] text-[var(--color-risk)]\" onClick={() => { for (const c of COLLECTED) localStorage.removeItem(c.key); location.reload() }}>确认删除这 8 类（不可恢复，建议先备份）</button>}</div></Row> : null}"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 404,
+        "source": "const timers = pendingLocal(last, new Date(), logged, { ...st.reminders, training: st.reminders.training, evening: st.reminders.evening }, sentToday(localStorage.getItem(SENT_KEY), today)).map((r) => window.setTimeout(() => void showLocal(r.text, today), Math.min(r.delayMs, 2 ** 31 - 1)))"
+      },
+      {
+        "file": "src/components/r8.tsx",
+        "line": 409,
+        "source": "const n = sentToday(localStorage.getItem(SENT_KEY), today); if (n >= 2) return false"
+      },
+      {
+        "file": "src/components/plan400-parts.tsx",
+        "line": 129,
+        "source": "let logs: Record<string, V4Log> = {}; try { logs = JSON.parse(localStorage.getItem(\"fk-plan400-v4-log\") || \"{}\") ?? {} } catch { logs = {} }"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 647,
+        "source": "<select id=\"coach-persona\" value={persona} onChange={(e) => { const next = parsePersona(e.target.value); setPersona(next); try { window.localStorage.setItem(PERSONA_KEY, next); } catch { /* current session only */ } }} className=\"ml-2 rounded-lg border border-line bg-surface px-2 py-2\">"
+      },
+      {
+        "file": "src/components/coach-sheet.tsx",
+        "line": 657,
+        "source": "<button type=\"button\" className=\"mt-2 min-h-10 rounded-full border border-line px-3\" onClick={() => { const next = !motion; setMotion(next); window.localStorage.setItem(\"fr255-fangshen-motion\", next ? \"on\" : \"off\"); }}>动效{motion ? \"开\" : \"关\"}</button>"
+      },
+      {
+        "file": "src/components/settings-center.tsx",
+        "line": 33,
+        "source": "const read = () => readGarminSyncDisplay(localStorage, currentAthleteId(), conn ? (conn.unreachable ? null : conn.loggedIn) : null);"
+      },
+      {
+        "file": "src/components/settings-center.tsx",
+        "line": 34,
+        "source": "const [g, setG] = useState<SyncDisplay>(() => typeof localStorage === \"undefined\" ? readGarminSyncDisplay({ getItem: () => null }, \"local\", null) : read());"
+      },
+      {
+        "file": "src/components/settings-center.tsx",
+        "line": 65,
+        "source": "const le = localStorage.getItem(\"fk-last-export\");"
+      },
+      {
+        "file": "src/components/settings-center.tsx",
+        "line": 138,
+        "source": "useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); setLastExport(localStorage.getItem(\"fk-last-export\")); }, []);"
+      },
+      {
+        "file": "src/components/settings-center.tsx",
+        "line": 140,
+        "source": "const download = async () => { const r = await exportVault().catch(() => \"failed\" as const); setLastExport(localStorage.getItem(\"fk-last-export\")); if (r !== \"cancelled\" && r !== \"failed\") setSavedCurrent(true); say(r === \"shared\" ? \"已打开系统分享面板。请确认文件已存到“文件”或其他位置。\" : r === \"download\" ? \"浏览器已开始下载备份文件。网页无法确认是否已存到手机，请在“文件/下载”里确认。\" : r === \"cancelled\" ? \"已取消导出。\" : \"导出没有完成，原记录未改变。\"); };"
+      },
+      {
+        "file": "src/components/health-extras.tsx",
+        "line": 51,
+        "source": "useEffect(() => { try { setList(JSON.parse(localStorage.getItem(PAIN_KEY) ?? \"[]\").filter((p:Pain)=>(p.athleteId??'local')===currentAthleteId())) } catch { setList([]) } }, [])"
+      },
+      {
+        "file": "src/components/health-extras.tsx",
+        "line": 52,
+        "source": "const save = (next: Pain[]) => { try { const all=JSON.parse(localStorage.getItem(PAIN_KEY)??'[]') as Pain[]; if(!Array.isArray(all))throw Error('INVALID')"
+      },
+      {
+        "file": "src/components/health-extras.tsx",
+        "line": 53,
+        "source": "const raw=JSON.stringify([...all.filter(p=>(p.athleteId??'local')!==currentAthleteId()),...next]);localStorage.setItem(PAIN_KEY,raw)"
+      },
+      {
+        "file": "src/components/training-editor-sheet.tsx",
+        "line": 13,
+        "source": "const draftStore=()=>{try{return typeof window==='undefined'?null:window.localStorage;}catch{return null;}};"
+      },
+      {
+        "file": "src/components/health-tiles.tsx",
+        "line": 29,
+        "source": "try { const v = JSON.parse(localStorage.getItem(HEALTH_TILE_PREF_KEY) ?? \"null\"); return Array.isArray(v) ? v : DEFAULT_SHOWN } catch { return DEFAULT_SHOWN }"
+      },
+      {
+        "file": "src/components/health-tiles.tsx",
+        "line": 57,
+        "source": "const save = (next: TileId[]) => { setShown(next); try { localStorage.setItem(HEALTH_TILE_PREF_KEY, JSON.stringify(next)); setStamp(Date.now()) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/components/phone-record-detail.tsx",
+        "line": 6,
+        "source": "const read = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) ?? \"null\") ?? d } catch { return d } }"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 16,
+        "source": "const load = <T,>(k: string, d: T): T => { try { return JSON.parse(localStorage.getItem(k) || \"\") as T; } catch { return d; } };"
+      },
+      {
+        "file": "src/components/garmin-log.tsx",
+        "line": 70,
+        "source": "useEffect(() => { if (!open || laps || k === \"strength\") return; setState(\"加载分段…\"); void fetchLaps(g.id).then((l) => { if (l) { const all = load<Record<string, Lap[]>>(garminViewKey(GLAPS_KEY), {}); all[g.id] = l; localStorage.setItem(garminViewKey(GLAPS_KEY), JSON.stringify(all)); setLaps(l); setState(\"\"); } else setState(\"分段获取失败，请检查佳明连接后重试。\"); }); }, [open]);"
+      },
+      {
+        "file": "src/components/today-checklist.tsx",
+        "line": 31,
+        "source": "useEffect(() => { if (!s) return; if (first.current) { first.current = false; return } if (!saveChecklist(window.localStorage, s)) { setStamp(0);setSaveError(\"保存失败，当前输入仍保留\");return } setSaveError(\"\");setStamp(Date.now())"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 185,
+        "source": "if (event.key === CHARACTER_THEME_KEY || event.key === null) setCharacterTheme(readCharacterTheme(window.localStorage));"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 201,
+        "source": "const refresh = () => setFontScale(readFontScale(window.localStorage));"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 263,
+        "source": "useEffect(() => { try { const v = JSON.parse(localStorage.getItem(\"fk-plan-source-v1\") || \"{}\").active; if (v) setPlanSrc(v); } catch { /* keep default */ } }, []);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 264,
+        "source": "const setPlanSrcSaved = (v: string) => { setPlanSrc(v); try { const o = JSON.parse(localStorage.getItem(\"fk-plan-source-v1\") || \"{}\"); localStorage.setItem(\"fk-plan-source-v1\", JSON.stringify({ ...o, active: v, history: [...(o.history ?? []), { active: v, at: new Date().toISOString() }] })); } catch { /* storage full */ } };"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 289,
+        "source": "useEffect(() => { setFirstRun(!localStorage.getItem(ONBOARD_KEY) && !localStorage.getItem(ONBOARD_SKIPPED_KEY)); setBandOn(loadSettings().band); try { const o = JSON.parse(localStorage.getItem(OVERRIDE_KEY) ?? \"null\"); if (o?.date === localDayIso()) setDayOverride(o) } catch { /* ignore */ } }, [tab]);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 363,
+        "source": "planRaw.current = window.localStorage.getItem(PLAN_KEY);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 390,
+        "source": "const result = savePlanCompared(window.localStorage, planRaw.current, plan);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 519,
+        "source": "if (typeof localStorage === \"undefined\" || !saveSportGoal(next, localStorage)) {"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 631,
+        "source": "const raw = localStorage.getItem(\"fr255-strength-plan-v3\");"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 645,
+        "source": "const saved = commitControlledStrengthPlan(localStorage, raw, result.plan);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 683,
+        "source": "<button type=\"button\" className=\"min-h-11 rounded-card border border-line px-3 font-bold\" onClick={() => { if (navigator.locks?.request) void navigator.locks.request(PLAN_KEY, () => { const result = savePlanCompared(localStorage, planRaw.current, plan); if(result.ok){planRaw.current=result.raw;setPlanSaveFailed(false);setPlanConflict(\"\");}else setPlanConflict(result.reason); }); }}>再存一次</button>"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1086,
+        "source": "const blob = new Blob([collectLocalBackup(localStorage)], { type: \"application/json\" })"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1105,
+        "source": "const preview = inspectLocalBackup(raw, localStorage)"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1109,
+        "source": "const result = restoreLocalBackup(raw, localStorage)"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1259,
+        "source": "const result=appendSessionCompared(localStorage,planRaw.current,plan,draft);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1423,
+        "source": "let n = 0; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i) ?? \"\"; if (/^(fr255-(food|body|plan|schedule)|fk-(plan400|garmin-acts|bodylab))/.test(k)) n++; }"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1424,
+        "source": "if (standalone && n === 0 && !localStorage.getItem(\"fk-welcome-standalone-v1\")) setShow(true);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1427,
+        "source": "const done = () => { localStorage.setItem(\"fk-welcome-standalone-v1\", \"1\"); setShow(false); };"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1434,
+        "source": "<label className=\"fk-orange-btn mt-2 flex min-h-11 cursor-pointer items-center justify-center rounded-xl font-bold\">选择备份文件导入<input type=\"file\" accept=\"application/json,.json\" className=\"hidden\" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; try { const n = await importVault(f); localStorage.setItem(\"fk-welcome-standalone-v1\", \"1\"); setMsg(`已恢复 ${n} 项，正在刷新`); setTimeout(() => location.reload(), 800); } catch (err) { setMsg((err as Error).message); } }} /></label>"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1444,
+        "source": "useEffect(() => { setShow(!localStorage.getItem(\"fk-storage-hint-v1\")); }, []);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1446,
+        "source": "return <section className=\"home-card mt-3 p-3 text-sm\" aria-label=\"存储提示\"><b>Safari 和主屏幕 App 的数据是分开的</b><p className=\"keep mt-1 text-xs text-muted\">在 Safari 里记的数据，添加到主屏幕后不会自动出现。先在原来那边「全部数据备份 → 导出」，再到另一边「导入恢复」。</p><button type=\"button\" className=\"fk-link mt-1 text-xs\" onClick={() => { localStorage.setItem(\"fk-storage-hint-v1\", \"1\"); setShow(false); }}>知道了</button></section>;"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 74,
+        "source": "const [alertOn, setAlertOn] = useState(() => { try { return localStorage.getItem(ALERT_KEY) !== 'off' } catch { return true } })"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 104,
+        "source": "try { snapshot = decodeRest(window.localStorage.getItem(timerKey), decisionId, session.id) } catch { /* storage unavailable */ }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 106,
+        "source": "const guided = (() => { try { return decodeGuided(window.localStorage.getItem(guidedKey)) } catch { return null } })() as (ReturnType<typeof decodeGuided> & { pendingRestSec?: number | null; setKey?: string | null }) | null"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 129,
+        "source": "try { const raw=localStorage.getItem(key); if(raw){const parsed=JSON.parse(raw);if(typeof parsed.weight==='string' && typeof parsed.amount==='string')draft=parsed} } catch { /* invalid drafts cannot become facts */ }"
+      },
+      {
+        "file": "src/components/training-runner.tsx",
+        "line": 286,
+        "source": "const toggleAlert = () => { const v = !alertOn; setAlertOn(v); try { localStorage.setItem(ALERT_KEY, v ? 'on' : 'off') } catch { /* optional */ } }"
+      },
+      {
+        "file": "src/components/plan-source.tsx",
+        "line": 9,
+        "source": "function load(): Imp[] { const rows = JSON.parse(localStorage.getItem(KEY) || '[]'); if (!Array.isArray(rows)) throw Error('已有课表来源无法读取，请先备份核对。'); return rows; }"
+      },
+      {
+        "file": "src/components/plan-source.tsx",
+        "line": 23,
+        "source": "const raw = JSON.stringify(next); localStorage.setItem(KEY, raw); if (localStorage.getItem(KEY) !== raw) throw Error('保存校验失败。'); committed = true;"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 21,
+        "source": "function loadSigns(): Signs { try { return JSON.parse(localStorage.getItem(SIGNS_KEY) ?? \"{}\") } catch { return {} } }"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 34,
+        "source": "return { ...state, kg: kg >= 30 ? kg : null, plan, targets, flags, setSigns: (s: Signs) => { try { localStorage.setItem(SIGNS_KEY, JSON.stringify(s)) } catch { /* ignore */ } setState({ ...state, signs: s }) } }"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 108,
+        "source": "function loadGoal(profile: Profile): GoalPref { try { const v = JSON.parse(localStorage.getItem(GOAL_KEY) ?? \"null\"); if (v?.goal) return v } catch { /* default */ } return { goal: profile.aim === \"lose\" ? \"cut\" : profile.aim === \"gain\" ? \"gain\" : \"run\", servingAdjust: 0 } }"
+      },
+      {
+        "file": "src/components/fuel-guide.tsx",
+        "line": 124,
+        "source": "const save = (p: GoalPref) => { setPref(p); try { localStorage.setItem(GOAL_KEY, JSON.stringify(p)); setStamp(Date.now()) } catch { /* ignore */ } }"
+      },
+      {
+        "file": "src/components/health-page-v89.tsx",
+        "line": 45,
+        "source": "const r = JSON.parse(localStorage.getItem(garminStorageKey(\"fk-garmin-sync-report\", currentAthleteId())) ?? \"null\") as { at?: string; status?: string; intraday?: { failed?: string[] } } | null"
+      },
+      {
+        "file": "src/components/health-page-v89.tsx",
+        "line": 286,
+        "source": "const r = useMemo(() => { try { return JSON.parse(localStorage.getItem(garminStorageKey(\"fk-garmin-sync-report\", currentAthleteId())) ?? \"null\")?.intraday as { requested: number; saved: number; failed: string[]; throttled: boolean } | undefined } catch { return undefined } }, [rev])"
+      },
+      {
+        "file": "src/components/training-log-v76.tsx",
+        "line": 32,
+        "source": "const loadFilter = (): { range: LogRange; kind: LogKind } => { try { const cur = localStorage.getItem(FILTER_KEY), v = JSON.parse(cur ?? localStorage.getItem(OLD_FILTER_KEY) ?? \"{}\"); if (!cur) v.kind = \"all\"; return { range: v.range === \"week\" ? \"week\" : \"4w\", kind: [\"run\", \"lift\"].includes(v.kind) ? v.kind : \"all\" } } catch { return { range: \"4w\", kind: \"all\" } } }"
+      },
+      {
+        "file": "src/components/training-log-v76.tsx",
+        "line": 98,
+        "source": "const setFilter = (next: Partial<typeof f>) => { const v = { ...f, ...next }; setF(v); setFocusDay(null); try { localStorage.setItem(FILTER_KEY, JSON.stringify(v)) } catch { /* session only */ } }"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 20,
+        "source": "const [draft,setDraft]=useState<NutritionDraft>(()=>{if(entry)return draftFromEntry(entry);try{const d=JSON.parse(localStorage.getItem(draftKey)||'null');if(d?.values&&NUTRIENT_KEYS.every(k=>typeof d.values[k]==='string')&&typeof d.name==='string')return d}catch{/* untouched invalid draft */}return emptyFoodDraft()});"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 24,
+        "source": "useEffect(()=>{if(entry||currentAthleteId()!==actor.current)return;try{localStorage.setItem(draftKey,JSON.stringify(draft))}catch{/* input remains in component */}},[draft,draftKey,entry]);"
+      },
+      {
+        "file": "src/components/food-entry-sheet.tsx",
+        "line": 38,
+        "source": "async function save(){if(saving.current)return;saving.current=true;setBusy(true);try{const result=commitFoodDraft({draft,date,meal:mealValue,acknowledged:true,athleteId:actor.current,entryId:entry?.id,expectedRevision:revision.current});if(!result.ok){setError(result.reason);return}if(!entry)try{localStorage.removeItem(draftKey)}catch{/* committed record is durable */}onSaved();onClose()}finally{saving.current=false;setBusy(false)}}"
+      },
+      {
+        "file": "src/components/home-dashboard.tsx",
+        "line": 285,
+        "source": "const [chosen, setChosen] = useState<string[]>(() => { try { const v = JSON.parse(localStorage.getItem(TILE_KEY) || \"null\"); return Array.isArray(v) ? (v.length && v.every(id => IN_RECOVERY.has(id)) ? DEFAULT_TILES : v) : DEFAULT_TILES; } catch { return DEFAULT_TILES; } });"
+      },
+      {
+        "file": "src/components/home-dashboard.tsx",
+        "line": 312,
+        "source": "{edit ? <div className=\"mt-1 grid grid-cols-2 gap-1 text-sm\">{avail.map((m) => <label key={m.id} className=\"flex min-h-9 items-center gap-2 rounded-lg border border-line px-2\"><input type=\"checkbox\" checked={chosen.includes(m.id)} onChange={(e) => { const n = e.target.checked ? [...chosen, m.id] : chosen.filter((x) => x !== m.id); setChosen(n); localStorage.setItem(TILE_KEY, JSON.stringify(n)); }} />{m.label}</label>)}</div>"
+      },
+      {
+        "file": "src/components/plan-import.tsx",
+        "line": 26,
+        "source": "const actor=currentAthleteId(); const text = await f.text(); if(actor!==currentAthleteId())return; setOwner(actor); setRaw(text); setPv(previewImport(text, localStorage, loadProfile()))"
+      },
+      {
+        "file": "src/components/plan-import.tsx",
+        "line": 30,
+        "source": "const r = confirmImport(raw, localStorage, loadProfile(), saveProfile)"
+      },
+      {
+        "file": "src/components/plan-import.tsx",
+        "line": 35,
+        "source": "const revert = () => { if (undo && undoImport(undo, localStorage)) { setUndo(null); setMsg(\"已撤销这次导入。\"); notify() } else setMsg(\"撤销失败，请到设置的备份与恢复里核对。\") }"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 41,
+        "source": "const loadO = (): Record<string, Override> => { try { return JSON.parse(localStorage.getItem(OKEY) || \"{}\"); } catch { return {}; } };"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 55,
+        "source": "const load = (): Record<string, Log> => { try { return JSON.parse(localStorage.getItem(KEY) || \"{}\"); } catch { return {}; } };"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 60,
+        "source": "const raw = JSON.stringify(next); localStorage.setItem(KEY, raw);"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 134,
+        "source": "const save = (n: Override | null) => { const all = loadO(); if (n) all[d.date] = n; else delete all[d.date]; localStorage.setItem(OKEY, JSON.stringify(all)); setO(n); setEdit(false); };"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 351,
+        "source": "const [cycleExpanded, setCycleExpanded] = useState(() => { try { return localStorage.getItem(\"fk-v91-cycle-expanded\") === \"1\" } catch { return false } });"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 352,
+        "source": "const toggleCycle = () => setCycleExpanded(v => { try { localStorage.setItem(\"fk-v91-cycle-expanded\", v ? \"0\" : \"1\") } catch { /* UI remains usable */ } return !v; });"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 373,
+        "source": "<div className=\"flex flex-wrap gap-x-4\"><button type=\"button\" className=\"min-h-11 font-bold text-accent\" onClick={() => { try { localStorage.removeItem(DATE_CONFIRM_KEY + \":revoked\") } catch { /* ignore */ } setConfirm(saveDateConfirm(P(), \"用户确认\")); }}>按当前日期执行</button><button type=\"button\" className=\"min-h-11 text-accent\" aria-expanded={showDiff} onClick={() => setShowDiff(!showDiff)}>{showDiff ? \"收起差异\" : \"查看差异\"}</button></div>"
+      },
+      {
+        "file": "src/components/plan400.tsx",
+        "line": 396,
+        "source": "<button type=\"button\" className=\"min-h-11 text-accent\" onClick={() => { clearDateConfirm(); try { localStorage.setItem(DATE_CONFIRM_KEY + \":revoked\", \"1\") } catch { /* ignore */ } setConfirm(null); }}>撤销确认</button>"
+      },
+      {
+        "file": "src/components/coach-plan-sheet.tsx",
+        "line": 107,
+        "source": "const event = recordPlanAudit(window.localStorage, { candidateId: stored?.candidateId ?? \"\", request, choice })"
+      },
+      {
+        "file": "src/components/pet/theme-avatar.tsx",
+        "line": 11,
+        "source": "const read = () => setTheme(readCharacterTheme(window.localStorage))"
+      },
+      {
+        "file": "src/components/pet/floating-pet.tsx",
+        "line": 39,
+        "source": "function localStore(): Storage | undefined { try { return typeof window === 'undefined' ? undefined : window.localStorage } catch { return undefined } }"
+      }
+    ],
+    "indexed_db_open_or_transaction_candidates": [
+      {
+        "file": "src/lib/db.ts",
+        "line": 152,
+        "source": "await pg.transaction(async (tx) => {"
+      },
+      {
+        "file": "src/lib/core/device-evidence-idb.ts",
+        "line": 11,
+        "source": "const request = indexedDB.open(DB_NAME,1)"
+      },
+      {
+        "file": "src/lib/core/device-evidence-idb.ts",
+        "line": 20,
+        "source": "const tx=db.transaction(STORE,'readwrite')"
+      },
+      {
+        "file": "src/lib/core/device-evidence-idb.ts",
+        "line": 33,
+        "source": "try {const rows=await requestResult(db.transaction(STORE,'readonly').objectStore(STORE).getAll()) as StoredDeviceEvidence[];return rows.map(r=>r.record).sort((a,b)=>b.confirmedAt.localeCompare(a.confirmedAt))} finally {db.close()}"
+      },
+      {
+        "file": "src/lib/core/device-evidence-idb.ts",
+        "line": 37,
+        "source": "try {return (await requestResult(db.transaction(STORE,'readonly').objectStore(STORE).get(id)) as StoredDeviceEvidence|undefined)??null}finally{db.close()}"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 24,
+        "source": "const request=indexedDB.open(CORE_DB,1)"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 33,
+        "source": "const tx=db.transaction(['kv','meta'],'readwrite')"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 40,
+        "source": "const tx=db.transaction('kv','readonly'),rows:Snapshot={},cursor=tx.objectStore('kv').openCursor()"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 46,
+        "source": "const request = indexedDB.open(BULK_DB, 1)"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 55,
+        "source": "const tx = db.transaction(stores, mode)"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 65,
+        "source": "const out = new Map<string, string>(), tx = db.transaction('kv', 'readonly'), cursor = tx.objectStore('kv').openCursor()"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 27,
+        "source": "const r = indexedDB.open(VAULT_DB, 2);"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 34,
+        "source": "return new Promise((res, rej) => { const t = d.transaction(store, mode); const q = fn(t.objectStore(store)); t.oncomplete = () => res(q ? (q as IDBRequest<T>).result : undefined); t.onerror = () => rej(t.error); });"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 38,
+        "source": "return new Promise((res, rej) => { const out = new Map<string, string>(); const t = d.transaction(\"kv\", \"readonly\"); const c = t.objectStore(\"kv\").openCursor(); c.onsuccess = () => { const cur = c.result; if (cur) { out.set(String(cur.key), String(cur.value)); cur.continue(); } }; t.oncomplete = () => res(out); t.onerror = () => rej(t.error); });"
+      },
+      {
+        "file": "src/lib/vault.ts",
+        "line": 62,
+        "source": "const d = await db(); const t = d.transaction([\"kv\", \"meta\"], \"readwrite\");"
+      },
+      {
+        "file": "src/lib/nutrition/food-photo.ts",
+        "line": 5,
+        "source": "return new Promise((res, rej) => { const r = indexedDB.open(DB, 1); r.onupgradeneeded = () => r.result.createObjectStore(\"photos\"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(Error(\"照片存储被其他页面占用，请关闭后重试\")); });"
+      },
+      {
+        "file": "src/lib/nutrition/food-photo.ts",
+        "line": 10,
+        "source": "try { await new Promise<void>((res, rej) => { const t = db.transaction(\"photos\", \"readwrite\"); const store = t.objectStore(\"photos\"); if (blob) store.put(blob, id); else store.delete(id); t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || Error(\"照片保存中断\")); }); } finally { db.close(); }"
+      },
+      {
+        "file": "src/lib/nutrition/food-photo.ts",
+        "line": 15,
+        "source": "const db = await open(); try { return await new Promise((resolve, reject) => { const r = db.transaction('photos', 'readonly').objectStore('photos').get(id); r.onsuccess = () => resolve(r.result instanceof Blob ? r.result : null); r.onerror = () => reject(r.error); }); } finally { db.close(); }"
+      },
+      {
+        "file": "src/lib/coach/plan-execution/store.ts",
+        "line": 47,
+        "source": "const request = factory.open(PLAN_EXECUTION_DB, 1)"
+      },
+      {
+        "file": "src/lib/coach/plan-execution/store.ts",
+        "line": 63,
+        "source": "const tx = db.transaction(STORE, 'readonly'), request = tx.objectStore(STORE).get(athleteId)"
+      },
+      {
+        "file": "src/lib/coach/plan-execution/store.ts",
+        "line": 74,
+        "source": "const tx = db.transaction(STORE, 'readwrite'), store = tx.objectStore(STORE), request = store.get(athleteId)"
+      },
+      {
+        "file": "src/lib/coach/training-models/confirmation.ts",
+        "line": 63,
+        "source": "const r=indexedDB.open('fangkun-training-model-exports-v1',1)"
+      },
+      {
+        "file": "src/lib/coach/training-models/confirmation.ts",
+        "line": 70,
+        "source": "const tx=db.transaction('exports','readwrite'),store=tx.objectStore('exports'),req=store.get(athleteId);let value:T"
+      },
+      {
+        "file": "src/lib/coach/deepseek-ledger.server.ts",
+        "line": 134,
+        "source": "return db.transaction(async tx => {"
+      },
+      {
+        "file": "src/lib/coach/deepseek-ledger.server.ts",
+        "line": 175,
+        "source": "return db.transaction(async tx => {"
+      },
+      {
+        "file": "src/lib/coach/deepseek-ledger.server.ts",
+        "line": 194,
+        "source": "return db.transaction(async tx => {"
+      },
+      {
+        "file": "src/lib/coach/deepseek-ledger.server.ts",
+        "line": 222,
+        "source": "return db.transaction(async tx => {"
+      },
+      {
+        "file": "src/lib/coach/deepseek-ledger.server.ts",
+        "line": 270,
+        "source": "return {transaction: work => pg.transaction(tx => work({query: async <R>(text: string, params: unknown[] = []) => (await tx.query<R>(text,params)).rows}))}"
+      }
+    ],
+    "lock_call_candidates": [
+      {
+        "file": "src/lib/ui/guided-discard.ts",
+        "line": 1,
+        "source": "import {withScheduleLock} from './schedule-writer'"
+      },
+      {
+        "file": "src/lib/ui/guided-discard.ts",
+        "line": 52,
+        "source": "return (await withScheduleLock(()=>currentAthleteId()===owner?discardGuided(sessionId):false)).value"
+      },
+      {
+        "file": "src/lib/ui/warmup.ts",
+        "line": 79,
+        "source": "async function locked<T>(fn: () => T): Promise<T> { return typeof navigator !== 'undefined' && navigator.locks ? navigator.locks.request('fr255-running-write-r3', fn) : fn(); }"
+      },
+      {
+        "file": "src/lib/ui/schedule-progress.ts",
+        "line": 1,
+        "source": "import {withScheduleLock} from './schedule-writer'"
+      },
+      {
+        "file": "src/lib/ui/schedule-progress.ts",
+        "line": 59,
+        "source": "return (await withScheduleLock(()=>currentAthleteId()===owner?syncScheduleProgress():false)).value"
+      },
+      {
+        "file": "src/lib/ui/scheduled-start.ts",
+        "line": 3,
+        "source": "import { startTrackSession, withRunningWriteLock } from './running-workouts';"
+      },
+      {
+        "file": "src/lib/ui/scheduled-start.ts",
+        "line": 11,
+        "source": "return withRunningWriteLock(() => {"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 124,
+        "source": "export async function withScheduleLock<T>(work: () => T | Promise<T>): Promise<{ value: T; coordinated: boolean }> {"
+      },
+      {
+        "file": "src/lib/ui/schedule-writer.ts",
+        "line": 125,
+        "source": "if (typeof navigator !== 'undefined' && navigator.locks?.request) return { value: await navigator.locks.request(SCHEDULE_WRITE_LOCK, async () => work()) as T, coordinated: true }"
+      },
+      {
+        "file": "src/lib/ui/day-schedule.ts",
+        "line": 21,
+        "source": "import { commitScheduleRaw, withScheduleLock, clearScheduleFailure, recordScheduleFailure, lastScheduleFailure, describeScheduleFailure, isQuotaError, type ScheduleWriter } from \"@/lib/ui/schedule-writer\""
+      },
+      {
+        "file": "src/lib/ui/day-schedule.ts",
+        "line": 79,
+        "source": "return (await withScheduleLock(()=>{"
+      },
+      {
+        "file": "src/lib/ui/day-schedule.ts",
+        "line": 107,
+        "source": "const result = (await withScheduleLock(work)).value;"
+      },
+      {
+        "file": "src/lib/ui/fieldwork-host.ts",
+        "line": 51,
+        "source": "if(typeof navigator==='undefined'||!navigator.locks?.request)return {ok:false,reason:'浏览器不支持保存互斥锁，输入仍保留。'}"
+      },
+      {
+        "file": "src/lib/ui/fieldwork-host.ts",
+        "line": 52,
+        "source": "return navigator.locks.request('fr255-fieldwork-v4-write',()=>{"
+      },
+      {
+        "file": "src/lib/ui/running-workouts.ts",
+        "line": 483,
+        "source": "export async function withRunningWriteLock<T>("
+      },
+      {
+        "file": "src/lib/ui/running-workouts.ts",
+        "line": 487,
+        "source": "if (!navigator.locks?.request)"
+      },
+      {
+        "file": "src/lib/ui/running-workouts.ts",
+        "line": 497,
+        "source": "return await navigator.locks.request(\"fr255-running-write-r3\", () => scopeChanged || currentAthleteId() !== athleteAtRequest"
+      },
+      {
+        "file": "src/lib/ui/running-workouts.ts",
+        "line": 507,
+        "source": "withRunningWriteLock(() => startTrackSession(planId));"
+      },
+      {
+        "file": "src/lib/health/rest-store.ts",
+        "line": 81,
+        "source": "if(typeof navigator==='undefined'||!navigator.locks?.request)throw Error('CORRECTION_COORDINATION_UNAVAILABLE')"
+      },
+      {
+        "file": "src/lib/health/rest-store.ts",
+        "line": 82,
+        "source": "return await navigator.locks.request('fk-rest-correction:'+owner,work)"
+      },
+      {
+        "file": "src/lib/core/storage-indexeddb.ts",
+        "line": 84,
+        "source": "if(typeof navigator!=='undefined'&&navigator.locks)return await navigator.locks.request('fangkun-core-migration',()=>migrate())"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 37,
+        "source": "let channel: BroadcastChannel | null = null"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 112,
+        "source": "if (typeof BroadcastChannel !== 'undefined' && !channel) {"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 113,
+        "source": "channel = new BroadcastChannel('fangkun-bulk-store')"
+      },
+      {
+        "file": "src/lib/core/bulk-store.ts",
+        "line": 135,
+        "source": "const job = async () => (typeof navigator !== 'undefined' && navigator.locks?.request ? await navigator.locks.request('fangkun-bulk-migration', () => activate()) as BulkStatus : await activate())"
+      },
+      {
+        "file": "src/lib/core/coach-first-week.ts",
+        "line": 14,
+        "source": "import { startTrackSession, withRunningWriteLock } from \"../ui/running-workouts.ts\";"
+      },
+      {
+        "file": "src/lib/core/coach-first-week.ts",
+        "line": 726,
+        "source": ") => withRunningWriteLock(() => startFirstWeekSession(sessionId, draftId, dayId, today));"
+      },
+      {
+        "file": "src/lib/nutrition/ui-records.ts",
+        "line": 32,
+        "source": "export async function withMealLock<T>(fn:()=>T):Promise<T|{ok:false;reason:string}>{const athlete=currentAthleteId();if(typeof navigator==='undefined'||!navigator.locks?.request)return {ok:false,reason:'此浏览器暂不支持安全保存，请保留输入。'};return navigator.locks.request('fr255-fieldwork-v4-write',()=>currentAthleteId()===athlete?fn():{ok:false as const,reason:'当前运动员已变化，请重新打开。'})}"
+      },
+      {
+        "file": "src/lib/coach/personal/host.ts",
+        "line": 20,
+        "source": "if (typeof navigator === \"undefined\" || !navigator.locks)"
+      },
+      {
+        "file": "src/lib/coach/personal/host.ts",
+        "line": 22,
+        "source": "return navigator.locks.request(`fk-personal-coach:${owner}`, () => {"
+      },
+      {
+        "file": "src/lib/coach/plan-execution/core.ts",
+        "line": 92,
+        "source": "if (typeof navigator === 'undefined' || !navigator.locks?.request) throw new Error('COORDINATION_UNAVAILABLE')"
+      },
+      {
+        "file": "src/lib/coach/plan-execution/core.ts",
+        "line": 93,
+        "source": "return navigator.locks.request(PLAN_EXECUTION_LOCK, work)"
+      },
+      {
+        "file": "src/lib/coach/r4/course-flow.ts",
+        "line": 4,
+        "source": "import {withScheduleLock} from '../../ui/schedule-writer'"
+      },
+      {
+        "file": "src/lib/coach/r4/course-flow.ts",
+        "line": 61,
+        "source": "if(typeof navigator==='undefined'||!navigator.locks?.request)return fail('当前浏览器无法协调确认写入，日历未修改')"
+      },
+      {
+        "file": "src/lib/coach/r4/course-flow.ts",
+        "line": 62,
+        "source": "return (await withScheduleLock(()=>{"
+      },
+      {
+        "file": "src/lib/coach/r4/course-flow.ts",
+        "line": 79,
+        "source": "if(typeof navigator==='undefined'||!navigator.locks?.request)return fail('当前浏览器无法协调撤销写入')"
+      },
+      {
+        "file": "src/lib/coach/r4/course-flow.ts",
+        "line": 80,
+        "source": "return (await withScheduleLock(()=>{"
+      },
+      {
+        "file": "src/lib/coach/knowledge/approval-store.ts",
+        "line": 16,
+        "source": "if(typeof navigator!=='undefined'&&navigator.locks?.request)return navigator.locks.request('fangkun-knowledge-approvals-v1',fn)"
+      },
+      {
+        "file": "src/lib/coach/loop/suggestion-host.ts",
+        "line": 51,
+        "source": "if (typeof navigator !== 'undefined' && navigator.locks?.request)"
+      },
+      {
+        "file": "src/lib/coach/loop/suggestion-host.ts",
+        "line": 52,
+        "source": "return navigator.locks.request(`fk-coach-suggestions:${currentAthleteId()}`, work) as Promise<T>"
+      },
+      {
+        "file": "src/lib/coach/cycle/host.ts",
+        "line": 15,
+        "source": "import { withScheduleLock } from \"../../ui/schedule-writer\";"
+      },
+      {
+        "file": "src/lib/coach/cycle/host.ts",
+        "line": 65,
+        "source": "await withScheduleLock(() => {"
+      },
+      {
+        "file": "src/lib/coach/cycle/host.ts",
+        "line": 285,
+        "source": "await withScheduleLock(() => {"
+      },
+      {
+        "file": "src/lib/coach/cycle/host.ts",
+        "line": 335,
+        "source": "if (typeof window !== \"undefined\" && !navigator.locks?.request)"
+      },
+      {
+        "file": "src/lib/coach/cycle/host.ts",
+        "line": 338,
+        "source": "await withScheduleLock(() => {"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 12,
+        "source": "import { withScheduleLock } from '../../ui/schedule-writer'"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 158,
+        "source": "return (await withScheduleLock(async()=>{"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 179,
+        "source": "if(typeof window!=='undefined'&&!navigator.locks?.request)return fail('此浏览器无法协调跨页面确认，保留预览。')"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 180,
+        "source": "try{return (await withScheduleLock(async()=>{"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 206,
+        "source": "return (await withScheduleLock(()=>{"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 224,
+        "source": "return (await withScheduleLock(async()=>{"
+      },
+      {
+        "file": "src/lib/coach/r6/runtime.ts",
+        "line": 286,
+        "source": "return (await withScheduleLock(()=>{"
+      },
+      {
+        "file": "src/lib/coach/r5/weekly-host.ts",
+        "line": 18,
+        "source": "import { withScheduleLock } from \"../../ui/schedule-writer\";"
+      },
+      {
+        "file": "src/lib/coach/r5/weekly-host.ts",
+        "line": 136,
+        "source": "await withScheduleLock(() => {"
+      },
+      {
+        "file": "src/lib/coach/r5/weekly-host.ts",
+        "line": 202,
+        "source": "if (typeof window !== \"undefined\" && !navigator.locks?.request)"
+      },
+      {
+        "file": "src/lib/coach/r5/weekly-host.ts",
+        "line": 205,
+        "source": "await withScheduleLock(() => {"
+      },
+      {
+        "file": "src/lib/coach/r5/host.ts",
+        "line": 34,
+        "source": "import { withScheduleLock } from \"../../ui/schedule-writer\";"
+      },
+      {
+        "file": "src/lib/coach/r5/host.ts",
+        "line": 593,
+        "source": "if (typeof window !== \"undefined\" && !navigator.locks?.request)"
+      },
+      {
+        "file": "src/lib/coach/r5/host.ts",
+        "line": 597,
+        "source": "await withScheduleLock(() =>"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 395,
+        "source": "if (navigator.locks?.request) void navigator.locks.request(\"fr255-strength-plan-v3\", commit);"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 628,
+        "source": "if (typeof navigator === \"undefined\" || !navigator.locks?.request) return {ok:false,reason:\"此浏览器不支持安全互斥锁，仅可查看提案，不能写入。\"};"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 629,
+        "source": "return navigator.locks.request(PLAN_KEY, async () => {"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 683,
+        "source": "<button type=\"button\" className=\"min-h-11 rounded-card border border-line px-3 font-bold\" onClick={() => { if (navigator.locks?.request) void navigator.locks.request(PLAN_KEY, () => { const result = savePlanCompared(localStorage, planRaw.current, plan); if(result.ok){planRaw.current=result.raw;setPlanSaveFailed(false);setPlanConflict(\"\");}else setPlanConflict(result.reason); }); }}>再存一次</button>"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1256,
+        "source": "if(!navigator.locks?.request)return {ok:false,reason:\"浏览器不支持写入锁，草稿保留。\"};"
+      },
+      {
+        "file": "src/components/strength-app.tsx",
+        "line": 1258,
+        "source": "try { return await navigator.locks.request(PLAN_KEY,()=>{"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 18,
+        "source": "withRunningWriteLock,"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 243,
+        "source": "const result = await withRunningWriteLock(() =>"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 337,
+        "source": "const r = await withRunningWriteLock(() =>"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 449,
+        "source": "const result = await withRunningWriteLock(() =>"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 516,
+        "source": "const r = await withRunningWriteLock(() =>"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 561,
+        "source": "const r = await withRunningWriteLock(() =>"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 671,
+        "source": "const saved = await withRunningWriteLock(() => confirmTrackPlan(id, draft));"
+      },
+      {
+        "file": "src/components/track-session.tsx",
+        "line": 733,
+        "source": "const saved = await withRunningWriteLock(() =>"
+      }
+    ]
+  },
+  "inventory_limits": "Static source matches, not runtime reachability proof; method candidates include injected MemoryStore and test-support adapters. Alias/default candidates intentionally include reads to preserve routes passing native storage. Vendored OCR cache excluded from user-data source inventory. Absence of a scan match is never proof old code cannot write.",
+  "counts": {
+    "direct_local_storage_mutators": 76,
+    "all_storage_method_call_candidates": 174,
+    "local_storage_alias_or_default_candidates": 164,
+    "indexed_db_open_or_transaction_candidates": 28,
+    "lock_call_candidates": 73
+  },
+  "recommended_verification": [
+    "Each public/UI restore entry awaits async durable result and reloads only COMPLETED, never a promise object or local memory equality.",
+    "Crash before/after PREPARED, APPLYING, each intent/write/readback/receipt, COMMITTED write/readback, each rollback step; fresh module/process reads same journal.",
+    "Slow IDB transaction, abort-only event, quota in localStorage and IDB, journal unreadable/unwritable, mirror errors and third-value conflict preserve restricted state.",
+    "Confirmed COMMITTED + cache/broadcast failure never rolls back; ambiguous commit readback does not rollback.",
+    "Frozen old tab/no acknowledgements/old SW/cache and Web Locks unavailable reject in-place recovery before target writes.",
+    "Startup timeout cannot mount editable app or run bulk/vault/default/autosync writes while log state unresolved.",
+    "Bulk update/delete, reordered/delayed reads, missed notifications + activation, pinned local copy versus stale mem, fallback deletion and restart cannot revive stale values.",
+    "Chunk missing/repeated/tampered/order/UTF-8 Unicode checks; 5,000,001 characters and >30MB complete roundtrip or explicit refusal before any target write.",
+    "Third mirror installed, plan profile secondary writes, generic backup import through plan panel, device evidence batch, missing independent DB coverage are handled or explicitly restricted."
+  ],
+  "test_execution": "None, per assigned scope.",
+  "source_hashes": {
+    "src/lib/core/bulk-store.ts": "ced3863ae3aa0960c4dfd2f2f3a3b58cb133b35ef65dc44b4adb4cd48a978324",
+    "src/lib/core/storage.ts": "07089435fba84417d77121f1164457cc105150d39a9ee6a8466a264ec79691d9",
+    "src/lib/core/storage-indexeddb.ts": "84ee84030d55de666e069036b81bd17edd32f3e17679f0f2a5e5070de9ef568f",
+    "src/lib/core/trial.ts": "0903c49378089dfbac7fa2926a8a177f5de39d38235b2a36db05ad40c2b326d8",
+    "src/lib/ui/backup-center.ts": "74089f59dcc454de345b1437d00878f01075c03403ed9d03159e5819fa2f4a27",
+    "src/lib/vault.ts": "7c35cf238e0e387118bd662bb21d2c5464399eea259f3d29ca2344b7240a6f5b",
+    "src/components/settings-center.tsx": "0db87449e35f183b08b8218e7f126705cf9dd6ddb6b7beb23c4a939e82fa482f",
+    "src/components/strength-app.tsx": "455e13d1cda2bf13e5afee90050687ad8fca48bde09cd796cd4e51fc7c291067",
+    "src/components/garmin-sync.tsx": "e4dc0de16eb39fd33b0cd0abb13693ec3809af57e41f266a0b07c9b003e67bd0",
+    "src/components/plan-import.tsx": "7f79931dd7005a4f2e75621c74710658393a2258f8d797c81e47a0278c255a2c",
+    "src/lib/plan/plan-import.ts": "24e1fe0ccd7f2526c091914f6b5de52b6fdce223e2797f30ac4aa933daf0a209",
+    "public/sw.js": "13d0c54e18cc37a709c942363ea1d8f6effc6495acf5d3af9bc1f637f07e484f"
+  }
+}

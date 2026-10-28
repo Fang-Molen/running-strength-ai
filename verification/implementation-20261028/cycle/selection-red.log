@@ -1,0 +1,274 @@
+TAP version 13
+# Subtest: 400m changes actual familiar-course selection using the same recorded history
+not ok 1 - 400m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 34.719598
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:8:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'CONDITIONAL_TRANSFER'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'CONDITIONAL_TRANSFER'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: 800m changes actual familiar-course selection using the same recorded history
+not ok 2 - 800m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 8.44894
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:8:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'CONDITIONAL_TRANSFER'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'CONDITIONAL_TRANSFER'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: 1500m changes actual familiar-course selection using the same recorded history
+not ok 3 - 1500m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 7.791262
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:8:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'interval-repeats'
+    - 'rhythm-repeats'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'rhythm-repeats'
+  actual: 'interval-repeats'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:13:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 3000m changes actual familiar-course selection using the same recorded history
+not ok 4 - 3000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 7.056669
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:8:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'continuous-long'
+    - 'interval-repeats'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'interval-repeats'
+  actual: 'continuous-long'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:13:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 5000m changes actual familiar-course selection using the same recorded history
+not ok 5 - 5000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 6.887472
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:8:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'continuous-long'
+    - 'continuous-tempo'
+                  ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'continuous-tempo'
+  actual: 'continuous-long'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:13:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 10000m changes actual familiar-course selection using the same recorded history
+not ok 6 - 10000m changes actual familiar-course selection using the same recorded history
+  ---
+  duration_ms: 6.706497
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:8:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'CONDITIONAL_TRANSFER'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'CONDITIONAL_TRANSFER'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: incomplete preferred structure loses priority to a supported familiar alternative
+not ok 7 - incomplete preferred structure loses priority to a supported familiar alternative
+  ---
+  duration_ms: 7.09664
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:24:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'some')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:32:42)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: phase conditions distinguish observed actuals, unknown followup and a confirmed calendar
+not ok 8 - phase conditions distinguish observed actuals, unknown followup and a confirmed calendar
+  ---
+  duration_ms: 6.584553
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'SATISFIED'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'SATISFIED'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:36:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: a calendar date cannot override contradictory restrictions or missing execution
+not ok 9 - a calendar date cannot override contradictory restrictions or missing execution
+  ---
+  duration_ms: 1.046887
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:44:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'CONTRADICTED'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'CONTRADICTED'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:50:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: repeated linked contrary feedback is cited as a contradicted phase condition
+not ok 10 - repeated linked contrary feedback is cited as a contradicted phase condition
+  ---
+  duration_ms: 14.065506
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:55:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'CONTRADICTED'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'CONTRADICTED'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/event-selection.test.ts:61:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 0
+# fail 10
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 980.541416

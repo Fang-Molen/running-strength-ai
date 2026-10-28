@@ -1,6 +1,7 @@
 import type { AnalysisFact, EvidenceInput, EvidenceSnapshot, EvidenceRef, MetricFact } from './analysis-contract'
 import { exactInstant } from './unified-facts'
 import { shortHash } from './observation'
+import { descriptiveMetricTrajectory } from './metric-trajectory'
 
 export const refOf = (f:EvidenceRef):EvidenceRef => ({id:f?.id??'INVALID',revision:f?.revision??0})
 export const stableJson = (v:unknown):string => JSON.stringify(v,(_,x)=>x && typeof x==='object' && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).sort(([a],[b])=>a.localeCompare(b))) : x)
@@ -62,11 +63,12 @@ export function projectAnalysisEvidence(input:ProjectionInput):EvidenceSnapshot 
 }
 /** Separate same-protocol daily reference; never sum revisions or average devices. */
 export function analysisReference(snapshot:EvidenceSnapshot,current:MetricFact){
- if(!current.accountRef||!current.deviceId||!current.protocolKey||/UNKNOWN|UNSPECIFIED/i.test(current.protocolKey))return {sampleCount:0,median:null,deltaPercent:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current),sourceRefs:[] as EvidenceRef[],absoluteDelta:null as number|null,logRatio:null as number|null}
+ const trajectory=descriptiveMetricTrajectory(snapshot,current)
+ if(!current.accountRef||!current.deviceId||!current.protocolKey||/UNKNOWN|UNSPECIFIED/i.test(current.protocolKey))return {sampleCount:0,median:null,deltaPercent:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current),sourceRefs:[] as EvidenceRef[],absoluteDelta:null as number|null,logRatio:null as number|null,trajectory}
  const rows=snapshot.facts.filter((f):f is MetricFact=>f.kind==='METRIC'&&f.metric===current.metric&&sourceScope(f)===sourceScope(current)&&f.unit===current.unit&&f.statistic===current.statistic&&!!f.providerDate&&!!current.providerDate&&f.providerDate<current.providerDate&&Date.parse(current.providerDate)-Date.parse(f.providerDate)<=30*86400000&&f.isFinal===true&&f.value!==null)
  const days=new Map<string,MetricFact[]>();for(const f of rows)days.set(f.providerDate!,[...(days.get(f.providerDate!)??[]),f])
  const baseline=[...days.values()].filter(xs=>new Set(xs.map(x=>x.value)).size===1).map(xs=>xs[0])
  const values=baseline.map(x=>x.value!).sort((a,b)=>a-b)
  const median=values.length?values.length%2?values[(values.length-1)/2]:(values[values.length/2-1]+values[values.length/2])/2:null
- return {sampleCount:values.length,median,deltaPercent:median&&current.value!==null?(current.value-median)/median*100:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current),sourceRefs:baseline.map(refOf),absoluteDelta:median!==null&&current.value!==null?current.value-median:null,logRatio:/rmssd/i.test(current.metric)&&!/^ln_/i.test(current.metric)&&median!==null&&median>0&&current.value!==null&&current.value>0?Math.log(current.value/median):null}
+ return {sampleCount:values.length,median,deltaPercent:median&&current.value!==null?(current.value-median)/median*100:null,asOf:snapshot.context.asOf,unit:current.unit,sourceScope:sourceScope(current),sourceRefs:baseline.map(refOf),absoluteDelta:median!==null&&current.value!==null?current.value-median:null,logRatio:/rmssd/i.test(current.metric)&&!/^ln_/i.test(current.metric)&&median!==null&&median>0&&current.value!==null&&current.value>0?Math.log(current.value/median):null,trajectory}
 }

@@ -1,0 +1,22 @@
+✔ current-message pain and dangerous symptoms gate every command before interception (35.273731ms)
+✔ historical measurement correction cannot outrank a newer current profile measurement (52.126182ms)
+✔ undo of a symptom refuses subsequent health revisions (20.078993ms)
+✔ array profile patches and newly introduced optional fields restore absence on undo (14.546836ms)
+✔ legacy unowned body measurement is restored by a valid compensating projection (6.928885ms)
+✔ a note-only save never confirms UI defaults as minutes or weekly frequency (5.22416ms)
+✔ local clause binding preserves current weight and exact requested weekday (6.232109ms)
+✔ multiple supported profile fields are retained in one explicit diff (3.942207ms)
+✔ week draft uses actual ceilings and becomes non-executable when the ceiling is unknown (1.584843ms)
+✔ calendar receipts recover weekly accept and undo after journal failures (26.337302ms)
+✔ ordinary undo receipts remain authoritative when the card journal cannot save (7.809331ms)
+✔ an in-flight online answer is rejected after a new profile restriction is confirmed (390.090201ms)
+✔ online numbers matching another known metric do not establish factual source binding (11.453966ms)
+✔ same-timestamp weekly regeneration surfaces the newest revised document (22.931779ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 633.331393

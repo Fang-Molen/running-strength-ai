@@ -1,0 +1,467 @@
+TAP version 13
+# Subtest: explicit future window is preserved: 未来八周的训练计划
+not ok 1 - explicit future window is preserved: 未来八周的训练计划
+  ---
+  duration_ms: 2.414752
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 8
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 8
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: explicit future window is preserved: 12周周期
+not ok 2 - explicit future window is preserved: 12周周期
+  ---
+  duration_ms: 0.713051
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + {}
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 12
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 12
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: explicit future window is preserved: 接下来二十四周怎么安排
+not ok 3 - explicit future window is preserved: 接下来二十四周怎么安排
+  ---
+  duration_ms: 0.447618
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        request: {
+          historyDays: 28,
+    +     horizonWeeks: 4
+    -     horizonWeeks: 24
+        }
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 24
+  actual:
+    request:
+      historyDays: 28
+      horizonWeeks: 4
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: explicit future window is preserved: 规划未来五十二周
+not ok 4 - explicit future window is preserved: 规划未来五十二周
+  ---
+  duration_ms: 0.147193
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 52
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 52
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: explicit future window is preserved: 未来1周
+not ok 5 - explicit future window is preserved: 未来1周
+  ---
+  duration_ms: 0.204119
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 1
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 1
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: explicit future window is preserved: 未来两周的计划
+not ok 6 - explicit future window is preserved: 未来两周的计划
+  ---
+  duration_ms: 0.155636
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 28,
+    -     horizonWeeks: 2
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 28
+      horizonWeeks: 2
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:15:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: review window and future horizon are independent
+not ok 7 - review window and future horizon are independent
+  ---
+  duration_ms: 0.182457
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:18:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   request: {
+    -     historyDays: 14,
+    -     horizonWeeks: 4
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    request:
+      historyDays: 14
+      horizonWeeks: 4
+  actual: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:19:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: calendar months require clarification instead of silently becoming four weeks
+not ok 8 - calendar months require clarification instead of silently becoming four weeks
+  ---
+  duration_ms: 0.203979
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:24:1'
+  failureType: 'testCodeFailure'
+  error: '后面一个月的训练计划'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: conflicting or invalid explicit windows cannot reuse a saved horizon
+not ok 9 - conflicting or invalid explicit windows cannot reuse a saved horizon
+  ---
+  duration_ms: 0.187654
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:31:1'
+  failureType: 'testCodeFailure'
+  error: '未来8周或12周的计划'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:34:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: read-only, third-person and negated requests cannot implicitly create cycle drafts
+not ok 10 - read-only, third-person and negated requests cannot implicitly create cycle drafts
+  ---
+  duration_ms: 0.659701
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:38:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    解释八周周期是什么意思
+    
+    {} !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:40:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 8-week request preserves the saved goal and first-week confirmation boundary
+not ok 11 - 8-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 40.01333
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:45:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    4 !== 8
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 8
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:49:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 12-week request preserves the saved goal and first-week confirmation boundary
+not ok 12 - 12-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 11.954305
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:45:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    4 !== 12
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 12
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:49:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 24-week request preserves the saved goal and first-week confirmation boundary
+not ok 13 - 24-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 11.65413
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:45:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    4 !== 24
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 24
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:49:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 52-week request preserves the saved goal and first-week confirmation boundary
+not ok 14 - 52-week request preserves the saved goal and first-week confirmation boundary
+  ---
+  duration_ms: 11.29827
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:45:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    4 !== 52
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 52
+  actual: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:49:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: fourth-week review alone maintains the familiar strength dose
+not ok 15 - fourth-week review alone maintains the familiar strength dose
+  ---
+  duration_ms: 14.36485
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:55:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(sessions.every(session => session.changedVariable === "NONE"))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/request.test.ts:60:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: comparable repeated feedback can still propose a fourth-week reduction
+ok 16 - comparable repeated feedback can still propose a fourth-week reduction
+  ---
+  duration_ms: 11.732129
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 1
+# fail 15
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 946.767507

@@ -1,0 +1,375 @@
+✖ read-only question is not consumed by a symptom proposal: 我没有腿疼，解释一下RPE (7.802771ms)
+✖ read-only question is not consumed by a symptom proposal: 我没有小腿疼，解释一下RPE (1.810395ms)
+✔ read-only question is not consumed by a symptom proposal: 我没有疼痛，解释一下RPE (0.346205ms)
+✔ read-only question is not consumed by a symptom proposal: 昨天腿疼，现在完全不疼了，解释一下RPE (0.450674ms)
+✔ read-only question is not consumed by a symptom proposal: 朋友腿疼，我想了解RPE (0.113862ms)
+✖ read-only question is not consumed by a symptom proposal: 不用保存，只解释一下RPE (0.289859ms)
+✖ mixed denied chest and asserted leg pain select only the asserted region (0.540429ms)
+✖ double negation cannot erase a current leg symptom (0.399345ms)
+✖ mixed current pain and education keeps the educational route without authorizing activity (0.385544ms)
+✖ ordinary weight control is not a medical-energy signal (0.365303ms)
+✔ dangerous intake behavior and current severe symptoms retain their safety response (0.711619ms)
+✖ third-party symptoms do not become personal snapshot restrictions (27.570111ms)
+✖ explicit absence stays scoped and does not manufacture a restriction: 无 (2.999278ms)
+✖ explicit absence stays scoped and does not manufacture a restriction: 没有不舒服 (3.331692ms)
+✖ explicit absence stays scoped and does not manufacture a restriction: 目前没有身体限制 (1.831216ms)
+✖ explicit absence stays scoped and does not manufacture a restriction: 没有疼痛 (1.771756ms)
+✔ explicit absence cannot erase independent historical pain (5.656106ms)
+✖ absence cannot replace an active profile restriction through a chat command (2.358155ms)
+✖ an old active restriction remains visible beyond the requested chart window (1.072376ms)
+✖ task permission keeps knowledge and unrelated upper-body advice available under a leg restriction (7.286618ms)
+✖ unscoped restrictions cannot be treated as permission for an unrelated-looking exercise (1.863956ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 5
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.267494
+
+✖ failing tests:
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:24:5
+✖ read-only question is not consumed by a symptom proposal: 我没有腿疼，解释一下RPE (7.802771ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'CLARIFY' !== 'NONE'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:24:89)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'CLARIFY',
+    expected: 'NONE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:24:5
+✖ read-only question is not consumed by a symptom proposal: 我没有小腿疼，解释一下RPE (1.810395ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'SYMPTOM' !== 'NONE'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:24:89)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SYMPTOM',
+    expected: 'NONE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:24:5
+✖ read-only question is not consumed by a symptom proposal: 不用保存，只解释一下RPE (0.289859ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'CLARIFY' !== 'NONE'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:24:89)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'CLARIFY',
+    expected: 'NONE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:25:1
+✖ mixed denied chest and asserted leg pain select only the asserted region (0.540429ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '胸' !== '腿'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:29:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '胸',
+    expected: '腿',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:33:1
+✖ double negation cannot erase a current leg symptom (0.399345ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'CLARIFY'
+  - 'SYMPTOM'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:35:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'CLARIFY',
+    expected: 'SYMPTOM',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:39:1
+✖ mixed current pain and education keeps the educational route without authorizing activity (0.385544ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'SYMPTOM' !== 'NONE'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:40:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'SYMPTOM',
+    expected: 'NONE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:44:1
+✖ ordinary weight control is not a medical-energy signal (0.365303ms)
+  AssertionError [ERR_ASSERTION]: 如何合理控制体重
+  + actual - expected
+  
+  + 'MEDICAL_REVIEW'
+  - 'NONE'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:46:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'MEDICAL_REVIEW',
+    expected: 'NONE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:56:1
+✖ third-party symptoms do not become personal snapshot restrictions (27.570111ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:59:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:64:5
+✖ explicit absence stays scoped and does not manufacture a restriction: 无 (2.999278ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:67:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:64:5
+✖ explicit absence stays scoped and does not manufacture a restriction: 没有不舒服 (3.331692ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:67:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:64:5
+✖ explicit absence stays scoped and does not manufacture a restriction: 目前没有身体限制 (1.831216ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:67:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:64:5
+✖ explicit absence stays scoped and does not manufacture a restriction: 没有疼痛 (1.771756ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:67:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:78:1
+✖ absence cannot replace an active profile restriction through a chat command (2.358155ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'PROPOSAL'
+  - 'ANSWER'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:82:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PROPOSAL',
+    expected: 'ANSWER',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:85:1
+✖ an old active restriction remains visible beyond the requested chart window (1.072376ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  undefined !== '小腿'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:92:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: '小腿',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:97:1
+✖ task permission keeps knowledge and unrelated upper-body advice available under a leg restriction (7.286618ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:102:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/semantics-20261028.test.ts:107:1
+✖ unscoped restrictions cannot be treated as permission for an unrelated-looking exercise (1.863956ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/semantics-20261028.test.ts:111:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

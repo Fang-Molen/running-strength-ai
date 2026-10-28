@@ -1,0 +1,53 @@
+✖ educational ranges and unit conversions do not require personal evidence (3.315427ms)
+✔ educational wording cannot hide unsupported personal measurements or prescriptions (0.812442ms)
+✖ explicit comparison selects the requested owned sessions rather than unrelated latest activity (13.636966ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3194.334426
+
+✖ failing tests:
+
+test at src/lib/coach/assertion-policy.test.ts:4:1
+✖ educational ranges and unit conversions do not require personal evidence (3.315427ms)
+  AssertionError [ERR_ASSERTION]: RPE 的取值范围为 1 到 10。
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/assertion-policy.test.ts:6:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-context.test.ts:11:1
+✖ explicit comparison selects the requested owned sessions rather than unrelated latest activity (13.636966ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:14:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

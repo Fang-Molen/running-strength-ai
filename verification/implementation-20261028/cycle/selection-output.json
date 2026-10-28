@@ -1,0 +1,540 @@
+{
+  "syntheticOnly": true,
+  "sameFactsAcrossEvents": true,
+  "policy": "EVENT_RETRIEVAL_1",
+  "professionallyValidated": false,
+  "newDoseOrPhysiologyFormula": false,
+  "outputs": [
+    {
+      "eventMeters": 400,
+      "phase": "SPECIFIC",
+      "selected": "speed-repeats",
+      "purpose": "REPETITION_SPEED",
+      "structure": "REPEATED",
+      "evidenceState": "SUPPORTED_ACTUAL",
+      "transfer": "CONDITIONAL_TRANSFER",
+      "sourceRefs": [
+        {
+          "id": "speed-repeats",
+          "revision": 1
+        }
+      ],
+      "actualVisibleReason": "围绕400米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的REPETITION_SPEED与实际结构REPEATED：先核对速度重复中的每段质量和实际恢复。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：尚需完整专项表现及技术观察；短段质量不证明全程能力",
+      "gaps": [
+        "尚需完整专项表现及技术观察；短段质量不证明全程能力"
+      ],
+      "proposedMinutes": 20,
+      "changedVariable": "NONE",
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 800,
+      "phase": "SPECIFIC",
+      "selected": "interval-repeats",
+      "purpose": "INTERVAL",
+      "structure": "REPEATED",
+      "evidenceState": "SUPPORTED_ACTUAL",
+      "transfer": "CONDITIONAL_TRANSFER",
+      "sourceRefs": [
+        {
+          "id": "interval-repeats",
+          "revision": 1
+        }
+      ],
+      "actualVisibleReason": "围绕800米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的INTERVAL与实际结构REPEATED：从分段及间歇核对专项耐力任务，并另看速度储备。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：单节间歇不能同时证明速度与耐力；仍需独立速度任务和比赛条件对照",
+      "gaps": [
+        "单节间歇不能同时证明速度与耐力；仍需独立速度任务和比赛条件对照"
+      ],
+      "proposedMinutes": 20,
+      "changedVariable": "NONE",
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 1500,
+      "phase": "SPECIFIC",
+      "selected": "rhythm-repeats",
+      "purpose": "TEMPO_THRESHOLD",
+      "structure": "REPEATED",
+      "evidenceState": "SUPPORTED_ACTUAL",
+      "transfer": "CONDITIONAL_TRANSFER",
+      "sourceRefs": [
+        {
+          "id": "rhythm-repeats",
+          "revision": 1
+        }
+      ],
+      "actualVisibleReason": "围绕1500米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的TEMPO_THRESHOLD与实际结构REPEATED：先查看可分段复核的节奏任务，再分别核对速度和耐力。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：分段节奏向连续比赛的迁移未验证；独立速度和耐力证据仍需核对",
+      "gaps": [
+        "分段节奏向连续比赛的迁移未验证；独立速度和耐力证据仍需核对"
+      ],
+      "proposedMinutes": 20,
+      "changedVariable": "NONE",
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 3000,
+      "phase": "SPECIFIC",
+      "selected": "interval-repeats",
+      "purpose": "INTERVAL",
+      "structure": "REPEATED",
+      "evidenceState": "SUPPORTED_ACTUAL",
+      "transfer": "CONDITIONAL_TRANSFER",
+      "sourceRefs": [
+        {
+          "id": "interval-repeats",
+          "revision": 1
+        }
+      ],
+      "actualVisibleReason": "围绕3000米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的INTERVAL与实际结构REPEATED：用同结构间歇观察比赛准备中的执行一致性，再核对连续耐力。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：间歇完成不能给出确定赛速；还需连续耐力表现与赛事时间线",
+      "gaps": [
+        "间歇完成不能给出确定赛速；还需连续耐力表现与赛事时间线"
+      ],
+      "proposedMinutes": 20,
+      "changedVariable": "NONE",
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 5000,
+      "phase": "SPECIFIC",
+      "selected": "continuous-tempo",
+      "purpose": "TEMPO_THRESHOLD",
+      "structure": "CONTINUOUS",
+      "evidenceState": "SUPPORTED_ACTUAL",
+      "transfer": "CONDITIONAL_TRANSFER",
+      "sourceRefs": [
+        {
+          "id": "continuous-tempo",
+          "revision": 1
+        }
+      ],
+      "actualVisibleReason": "围绕5000米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的TEMPO_THRESHOLD与实际结构CONTINUOUS：先查看连续节奏的已完成表现与可用训练时间。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：连续节奏不等于当前比赛能力；需近期同条件耐力表现，历史PB不能替代",
+      "gaps": [
+        "连续节奏不等于当前比赛能力；需近期同条件耐力表现，历史PB不能替代"
+      ],
+      "proposedMinutes": 20,
+      "changedVariable": "NONE",
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    },
+    {
+      "eventMeters": 10000,
+      "phase": "SPECIFIC",
+      "selected": "continuous-long",
+      "purpose": "LONG",
+      "structure": "CONTINUOUS",
+      "evidenceState": "SUPPORTED_ACTUAL",
+      "transfer": "CONDITIONAL_TRANSFER",
+      "sourceRefs": [
+        {
+          "id": "continuous-long",
+          "revision": 1
+        }
+      ],
+      "actualVisibleReason": "围绕10000米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的LONG与实际结构CONTINUOUS：先核对已标为耐力暴露的连续课及后续恢复，再讨论节奏与补给。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：LONG标签不证明距离足够或补给可行；需该赛事暴露与进食条件，不能由5公里成绩推定",
+      "gaps": [
+        "LONG标签不证明距离足够或补给可行；需该赛事暴露与进食条件，不能由5公里成绩推定"
+      ],
+      "proposedMinutes": 20,
+      "changedVariable": "NONE",
+      "futureCanConfirm": false,
+      "sourceFactsUnchanged": true
+    }
+  ],
+  "incompletePreferredAlternative": {
+    "sourceEntryId": "speed-repeats",
+    "reason": "围绕800米目标衔接熟悉专项课，不用目标成绩反推实测配速；已存课目的REPETITION_SPEED与实际结构REPEATED：从分段及间歇核对专项耐力任务，并另看速度储备。这是已有课程的检索顺序，不证明专项最佳或允许加量；迁移待核对：单节间歇不能同时证明速度与耐力；仍需独立速度任务和比赛条件对照",
+    "minutes": 20
+  },
+  "conditions": {
+    "actualsWithUnknownFeedback": {
+      "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+      "selectionReason": "按已确认赛期与当前规划窗口暂列方向，实际进入仍需复核证据",
+      "entryConditions": [
+        "有目标专项的熟悉课程和同结构实际依据",
+        "本人、目标及来源版本仍一致；课程变更仍需确认"
+      ],
+      "exitConditions": [
+        "按赛事安排及最新反应复核，不以训练均速证明目标已达成",
+        "新疼痛、功能变化、目标或来源更正时重新评估"
+      ],
+      "reviewAt": "2026-11-01",
+      "entryState": "UNKNOWN",
+      "entryChecks": [
+        {
+          "id": "GOAL_DATE",
+          "label": "赛事日期",
+          "state": "SATISFIED",
+          "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "cycle-goal",
+              "version": "1"
+            }
+          ]
+        },
+        {
+          "id": "RESTRICTIONS",
+          "label": "现行限制",
+          "state": "SATISFIED",
+          "reason": "仅表示当前限制资料状态，不是医学放行",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "effective-training",
+              "version": "v1"
+            }
+          ]
+        },
+        {
+          "id": "ACTUAL_COURSES",
+          "label": "熟悉课程实际完成",
+          "state": "SATISFIED",
+          "reason": "存在可核实的已完成结构；只支持复用既有剂量，不代表阶段能力达标",
+          "evidenceRefs": [
+            {
+              "id": "speed-repeats",
+              "revision": 1
+            },
+            {
+              "id": "interval-repeats",
+              "revision": 1
+            },
+            {
+              "id": "rhythm-repeats",
+              "revision": 1
+            },
+            {
+              "id": "continuous-tempo",
+              "revision": 1
+            },
+            {
+              "id": "continuous-long",
+              "revision": 1
+            }
+          ],
+          "sourceEntryIds": [
+            "speed-repeats",
+            "interval-repeats",
+            "rhythm-repeats",
+            "continuous-tempo",
+            "continuous-long"
+          ],
+          "sourceVersions": []
+        },
+        {
+          "id": "CALENDAR",
+          "label": "可用时间与日历",
+          "state": "SATISFIED",
+          "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "calendar",
+              "version": "c1"
+            },
+            {
+              "source": "training-conditions",
+              "version": "v1"
+            }
+          ]
+        },
+        {
+          "id": "RESPONSE",
+          "label": "可比后续反馈",
+          "state": "UNKNOWN",
+          "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+          "evidenceRefs": [
+            {
+              "id": "interval-repeats",
+              "revision": 1
+            },
+            {
+              "id": "rhythm-repeats",
+              "revision": 1
+            },
+            {
+              "id": "speed-repeats",
+              "revision": 1
+            }
+          ],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "adaptive-review",
+              "version": "analysis:i1y7fa"
+            }
+          ]
+        }
+      ],
+      "exitChecks": [
+        {
+          "id": "WEEK_EXECUTION",
+          "label": "当周实际执行与复盘",
+          "state": "UNKNOWN",
+          "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "calendar",
+              "version": "c1"
+            }
+          ]
+        },
+        {
+          "id": "REASSESSMENT",
+          "label": "到期目标与限制复核",
+          "state": "UNKNOWN",
+          "reason": "到期用最新目标、来源版本和后续反馈重评；不按日历自动升级阶段",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "cycle-goal",
+              "version": "1"
+            }
+          ]
+        }
+      ]
+    },
+    "visibleSummary": "800米速度与专项耐力两类目标及比赛时间线。专项依据核对：速度课与专项耐力课各自的目的、分段和恢复；同协议可比测试及跑力冲突。不能直接套400米或长跑课表；缺可比测试时相关能力未知。围绕800米目标衔接熟悉专项课，不用目标成绩反推实测配速。进入条件：有目标专项的熟悉课程和同结构实际依据；当前核对：赛事日期：已满足记录条件；现行限制：已满足记录条件；熟悉课程实际完成：已满足记录条件；可用时间与日历：已满足记录条件；可比后续反馈：待核对；退出条件：按赛事安排及最新反应复核，不以训练均速证明目标已达成，未来周执行待核对；2026-11-01复核。本周仍需预览确认，不等于生理放行。",
+    "independentRestriction": {
+      "status": "PROVISIONAL_NOT_PHYSIOLOGICAL_CLEARANCE",
+      "selectionReason": "现有有效限制触发复核",
+      "entryConditions": [
+        "明确当前限制或已过期赛事的来源及影响范围",
+        "本人、目标及来源版本仍一致；课程变更仍需确认"
+      ],
+      "exitConditions": [
+        "相应限制经既有流程复核、目标日期核对后再生成候选",
+        "新疼痛、功能变化、目标或来源更正时重新评估"
+      ],
+      "reviewAt": "2026-11-01",
+      "entryState": "CONTRADICTED",
+      "entryChecks": [
+        {
+          "id": "GOAL_DATE",
+          "label": "赛事日期",
+          "state": "SATISFIED",
+          "reason": "有用户确认的未来赛期，仅满足日期资料条件",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "cycle-goal",
+              "version": "1"
+            }
+          ]
+        },
+        {
+          "id": "RESTRICTIONS",
+          "label": "现行限制",
+          "state": "CONTRADICTED",
+          "reason": "存在独立有效限制；阶段日历不能覆盖",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "effective-training",
+              "version": "v1"
+            },
+            {
+              "source": "synthetic-restriction",
+              "version": "1"
+            }
+          ]
+        },
+        {
+          "id": "ACTUAL_COURSES",
+          "label": "熟悉课程实际完成",
+          "state": "SATISFIED",
+          "reason": "存在可核实的已完成结构；只支持复用既有剂量，不代表阶段能力达标",
+          "evidenceRefs": [
+            {
+              "id": "speed-repeats",
+              "revision": 1
+            },
+            {
+              "id": "interval-repeats",
+              "revision": 1
+            },
+            {
+              "id": "rhythm-repeats",
+              "revision": 1
+            },
+            {
+              "id": "continuous-tempo",
+              "revision": 1
+            },
+            {
+              "id": "continuous-long",
+              "revision": 1
+            }
+          ],
+          "sourceEntryIds": [
+            "speed-repeats",
+            "interval-repeats",
+            "rhythm-repeats",
+            "continuous-tempo",
+            "continuous-long"
+          ],
+          "sourceVersions": []
+        },
+        {
+          "id": "CALENDAR",
+          "label": "可用时间与日历",
+          "state": "SATISFIED",
+          "reason": "至少有一个已确认可用且未被原课占用的日期；逐课仍检查预算",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "calendar",
+              "version": "c1"
+            },
+            {
+              "source": "training-conditions",
+              "version": "v1"
+            }
+          ]
+        },
+        {
+          "id": "RESPONSE",
+          "label": "可比后续反馈",
+          "state": "UNKNOWN",
+          "reason": "关联反馈、独立重复或无干扰对照不足，未知不作改善",
+          "evidenceRefs": [
+            {
+              "id": "continuous-long",
+              "revision": 1
+            },
+            {
+              "id": "continuous-tempo",
+              "revision": 1
+            },
+            {
+              "id": "interval-repeats",
+              "revision": 1
+            },
+            {
+              "id": "rhythm-repeats",
+              "revision": 1
+            },
+            {
+              "id": "speed-repeats",
+              "revision": 1
+            }
+          ],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "adaptive-review",
+              "version": "analysis:1kb0k55"
+            }
+          ]
+        }
+      ],
+      "exitChecks": [
+        {
+          "id": "WEEK_EXECUTION",
+          "label": "当周实际执行与复盘",
+          "state": "UNKNOWN",
+          "reason": "未来周尚未发生，不能用计划或历史完成替代当周实际及反证",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "calendar",
+              "version": "c1"
+            }
+          ]
+        },
+        {
+          "id": "REASSESSMENT",
+          "label": "到期目标与限制复核",
+          "state": "CONTRADICTED",
+          "reason": "现行限制仍有效，必须经对应流程复核",
+          "evidenceRefs": [],
+          "sourceEntryIds": [],
+          "sourceVersions": [
+            {
+              "source": "cycle-goal",
+              "version": "1"
+            }
+          ]
+        }
+      ]
+    },
+    "repeatedContraryFeedback": {
+      "id": "RESPONSE",
+      "label": "可比后续反馈",
+      "state": "CONTRADICTED",
+      "reason": "既有同协议复核策略发现反复不利反馈，不能声称阶段条件已满足",
+      "evidenceRefs": [
+        {
+          "id": "a",
+          "revision": 1
+        },
+        {
+          "id": "b",
+          "revision": 1
+        },
+        {
+          "id": "c",
+          "revision": 1
+        },
+        {
+          "id": "d",
+          "revision": 1
+        },
+        {
+          "id": "e",
+          "revision": 1
+        },
+        {
+          "id": "f",
+          "revision": 1
+        },
+        {
+          "id": "strength-0",
+          "revision": 1
+        },
+        {
+          "id": "strength-1",
+          "revision": 1
+        },
+        {
+          "id": "strength-2",
+          "revision": 1
+        },
+        {
+          "id": "strength-3",
+          "revision": 1
+        },
+        {
+          "id": "strength-1:SORENESS:24",
+          "revision": 1
+        },
+        {
+          "id": "strength-3:SORENESS:24",
+          "revision": 1
+        }
+      ],
+      "sourceEntryIds": [],
+      "sourceVersions": [
+        {
+          "source": "adaptive-review",
+          "version": "analysis:109cmqq"
+        }
+      ]
+    }
+  }
+}

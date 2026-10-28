@@ -1,0 +1,92 @@
+[
+  {
+    "file": "src/lib/coach/r5/guard-conversation.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 24",
+      "ℹ pass 24",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/r5-guard-conversation.test.ts.log"
+  },
+  {
+    "file": "src/lib/coach/r5/online-guard-relax.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 8",
+      "ℹ pass 8",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/r5-online-guard-relax.test.ts.log"
+  },
+  {
+    "file": "src/lib/coach/r5/r5.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 18",
+      "ℹ pass 18",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/r5-r5.test.ts.log"
+  },
+  {
+    "file": "src/lib/coach/r5/review-findings.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 14",
+      "ℹ pass 14",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/r5-review-findings.test.ts.log"
+  },
+  {
+    "file": "src/lib/coach/r5/semantics-20261028.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 28",
+      "ℹ pass 28",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/r5-semantics-20261028.test.ts.log"
+  },
+  {
+    "file": "src/lib/core/coach-red-flags.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 482",
+      "ℹ pass 482",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/core-coach-red-flags.test.ts.log"
+  },
+  {
+    "file": "src/lib/core/coach-colloquial-pain.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 15",
+      "ℹ pass 15",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/core-coach-colloquial-pain.test.ts.log"
+  },
+  {
+    "file": "src/lib/core/coach-general-question.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 12",
+      "ℹ pass 12",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/core-coach-general-question.test.ts.log"
+  },
+  {
+    "file": "src/lib/coach/loop/loop.test.ts",
+    "exitCode": 0,
+    "summary": [
+      "ℹ tests 8",
+      "ℹ pass 8",
+      "ℹ fail 0"
+    ],
+    "log": "verification/implementation-20261028/semantics/loop-loop.test.ts.log"
+  }
+]

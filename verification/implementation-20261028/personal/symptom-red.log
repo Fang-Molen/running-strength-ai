@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: an unreadable current-athlete symptom journal cannot clear restrictions as if it were empty
+not ok 1 - an unreadable current-athlete symptom journal cannot clear restrictions as if it were empty
+  ---
+  duration_ms: 35.924282
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:85:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'FRESH' !== 'UNKNOWN'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'UNKNOWN'
+  actual: 'FRESH'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:89:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1714.864827

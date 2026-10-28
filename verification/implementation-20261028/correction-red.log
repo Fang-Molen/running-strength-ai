@@ -1,0 +1,68 @@
+✖ B02 correction and pending review intent persist together; read-time invalidation survives failed audit and restart (59.979078ms)
+✖ B02 dropped fact write cannot report a committed correction (0.911602ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.775723
+
+✖ failing tests:
+
+test at src/lib/core/correction-recovery.test.ts:11:1
+✖ B02 correction and pending review intent persist together; read-time invalidation survives failed audit and restart (59.979078ms)
+  AssertionError [ERR_ASSERTION]: fact and retry intent share one persistent envelope
+  + actual - expected
+  
+  + undefined
+  - 'PENDING'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/correction-recovery.test.ts:28:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'PENDING',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/core/correction-recovery.test.ts:41:1
+✖ B02 dropped fact write cannot report a committed correction (0.911602ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   at: '2026-10-28T03:56:49.949Z',
+  +   correctionId: 'corr-8bc9faa8-55d5-445d-8f64-f5a1c9177352',
+  +   field: null,
+  +   kind: 'VOID',
+  +   newValue: '',
+  +   originalValue: '',
+  +   reason: 'synthetic correction',
+  +   recordedAt: '2026-10-28T03:56:49.949Z',
+  +   schemaVersion: 1,
+  +   setKey: null,
+  +   trainingOccurrenceId: 'synthetic-only'
+  + }
+  - null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/correction-recovery.test.ts:47:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Object],
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

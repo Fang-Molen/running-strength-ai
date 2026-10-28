@@ -58,7 +58,7 @@ export function readAnalysis(day=localDay(),asOf=new Date().toISOString(),questi
  for(const f of responseRows){if(f.relatedTrainingRefs.length&&!f.relatedTrainingRefs.every(r=>training.some(t=>t.id===r.id&&t.revision===r.revision))){gaps.push('历史反馈依赖的训练已更正/撤销或超出读取窗口，未绑定到新版本');continue}facts.push(f)}
  const symptoms=readSymptoms(context.asOf),symptomReview=reviewSymptoms(symptoms,day,14)
  facts.push(...symptomResponses(symptoms))
- const flags=detectRedFlags(question),pain=muscle.painReviewRequired||muscle.review.regions.some(r=>r.state==='PAIN_REVIEW')||ci?.pain==='mild'||ci?.pain==='sharp'
+ const flags=detectRedFlags(question,{excludeOtherSubjects:true}),pain=muscle.painReviewRequired||muscle.review.regions.some(r=>r.state==='PAIN_REVIEW')||ci?.pain==='mild'||ci?.pain==='sharp'
  const restrictions=readEffectiveTrainingProfile().restrictions.filter(r=>!/^健康筛查：UNKNOWN$/.test(r.value))
  const safetyConstraints=[...restrictions.map((r,i)=>({id:'profile-restriction:'+i,version:r.version,scope:'PAIN_REVIEW',evidenceRefs:[]})),...symptomReview.constraints,...(pain?[{id:'existing-pain',version:muscle.revision,scope:'PAIN_REVIEW',evidenceRefs:[]}]:[]),...(flags.level!=='NONE'?[{id:'existing-red-flags',version:'CURRENT',scope:flags.level,evidenceRefs:[]}]:[])]
  const foods=loadEntries().filter(f=>(f.athleteId??'local')===athleteId&&f.date===day&&exactInstant(f.recordedAt)&&Date.parse(f.recordedAt)<=Date.parse(context.asOf))

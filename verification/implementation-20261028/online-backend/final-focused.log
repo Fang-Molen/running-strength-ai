@@ -1,0 +1,467 @@
+TAP version 13
+# Subtest: strict declaration boundary rejects plans, derived fields, bad units, duplicate revisions and forged authority
+ok 1 - strict declaration boundary rejects plans, derived fields, bad units, duplicate revisions and forged authority
+  ---
+  duration_ms: 4.652805
+  type: 'test'
+  ...
+# Subtest: sleep, pain and duration scalars never manufacture a workout or running structure
+ok 2 - sleep, pain and duration scalars never manufacture a workout or running structure
+  ---
+  duration_ms: 0.375539
+  type: 'test'
+  ...
+# Subtest: runtime config never guesses credentials, policy, persistence or prior spend
+ok 3 - runtime config never guesses credentials, policy, persistence or prior spend
+  ---
+  duration_ms: 0.417694
+  type: 'test'
+  ...
+# Subtest: signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only
+    # Subtest: no identity, unsigned identity and sibling origins cannot create authorization
+    ok 1 - no identity, unsigned identity and sibling origins cannot create authorization
+      ---
+      duration_ms: 5.61944
+      type: 'test'
+      ...
+    # Subtest: server ownership and explicit consent; owner switch cannot read or revoke
+    ok 2 - server ownership and explicit consent; owner switch cannot read or revoke
+      ---
+      duration_ms: 98.778888
+      type: 'test'
+      ...
+    # Subtest: close/reopen persists refs, ownership and exact duplicate charge prevention
+    ok 3 - close/reopen persists refs, ownership and exact duplicate charge prevention
+      ---
+      duration_ms: 142.22808
+      type: 'test'
+      ...
+    # Subtest: new declaration revision invalidates old ref and binds question
+    ok 4 - new declaration revision invalidates old ref and binds question
+      ---
+      duration_ms: 19.567917
+      type: 'test'
+      ...
+    # Subtest: two simultaneous requests honor real persistent concurrency cap
+    ok 5 - two simultaneous requests honor real persistent concurrency cap
+      ---
+      duration_ms: 49.991401
+      type: 'test'
+      ...
+    # Subtest: revoked while provider runs: billed once, result never released
+    ok 6 - revoked while provider runs: billed once, result never released
+      ---
+      duration_ms: 47.743023
+      type: 'test'
+      ...
+    # Subtest: corrected while provider runs: stale result never released
+    ok 7 - corrected while provider runs: stale result never released
+      ---
+      duration_ms: 38.629405
+      type: 'test'
+      ...
+    # Subtest: revoked after reserve but before dispatch releases the unsent reservation
+    ok 8 - revoked after reserve but before dispatch releases the unsent reservation
+      ---
+      duration_ms: 37.098245
+      type: 'test'
+      ...
+    # Subtest: disclosed pain on an older record still blocks model dispatch
+    ok 9 - disclosed pain on an older record still blocks model dispatch
+      ---
+      duration_ms: 10.13824
+      type: 'test'
+      ...
+    # Subtest: empty declarations remain unknown and do not fabricate completed history
+    ok 10 - empty declarations remain unknown and do not fabricate completed history
+      ---
+      duration_ms: 36.799381
+      type: 'test'
+      ...
+    # Subtest: model cannot promote self reports to verified device evidence
+    ok 11 - model cannot promote self reports to verified device evidence
+      ---
+      duration_ms: 36.457673
+      type: 'test'
+      ...
+    # Subtest: exact scalar quotes survive server validation without invented workout binding; modified units fail
+    ok 12 - exact scalar quotes survive server validation without invented workout binding; modified units fail
+      ---
+      duration_ms: 59.276268
+      type: 'test'
+      ...
+    # Subtest: automatic persistent questions share grant; general education and causality survive actual controller checks
+    ok 13 - automatic persistent questions share grant; general education and causality survive actual controller checks
+      ---
+      duration_ms: 157.577491
+      type: 'test'
+      ...
+    # Subtest: structured history survives as declared facts; false personal units and writes are rejected after settlement
+    ok 14 - structured history survives as declared facts; false personal units and writes are rejected after settlement
+      ---
+      duration_ms: 173.744121
+      type: 'test'
+      ...
+    # Subtest: two independent modern requests complete concurrently within an isolated verified synthetic cap
+    ok 15 - two independent modern requests complete concurrently within an isolated verified synthetic cap
+      ---
+      duration_ms: 1213.795428
+      type: 'test'
+      ...
+    # Subtest: settings revocation persists and ordinary requests cannot silently reenable; explicit enable resumes
+    ok 16 - settings revocation persists and ordinary requests cannot silently reenable; explicit enable resumes
+      ---
+      duration_ms: 28.336961
+      type: 'test'
+      ...
+    # Subtest: expired refs fail before dispatch and status does not authenticate or charge
+    ok 17 - expired refs fail before dispatch and status does not authenticate or charge
+      ---
+      duration_ms: 7.739994
+      type: 'test'
+      ...
+    1..17
+ok 4 - signed identity + actual disk SQL + snapshot HTTP + controller + persistent budget; provider mocked only
+  ---
+  duration_ms: 3986.216131
+  type: 'test'
+  ...
+# Subtest: general education and causal explanations survive; personal numbers, clearance and phantom writes do not
+ok 5 - general education and causal explanations survive; personal numbers, clearance and phantom writes do not
+  ---
+  duration_ms: 0.733082
+  type: 'test'
+  ...
+# Subtest: persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration
+ok 6 - persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration
+  ---
+  duration_ms: 1247.392527
+  type: 'test'
+  ...
+# Subtest: bounded context accepts structured old history without converting targets into actuals
+ok 7 - bounded context accepts structured old history without converting targets into actuals
+  ---
+  duration_ms: 0.565127
+  type: 'test'
+  ...
+# Subtest: request rejects client authority facts
+ok 8 - request rejects client authority facts
+  ---
+  duration_ms: 0.102385
+  type: 'test'
+  ...
+# Subtest: request rejects client authority local
+ok 9 - request rejects client authority local
+  ---
+  duration_ms: 0.049244
+  type: 'test'
+  ...
+# Subtest: request rejects client authority history
+ok 10 - request rejects client authority history
+  ---
+  duration_ms: 0.040852
+  type: 'test'
+  ...
+# Subtest: request rejects client authority userId
+ok 11 - request rejects client authority userId
+  ---
+  duration_ms: 0.036986
+  type: 'test'
+  ...
+# Subtest: request rejects client authority model
+ok 12 - request rejects client authority model
+  ---
+  duration_ms: 0.103167
+  type: 'test'
+  ...
+# Subtest: request rejects client authority budget
+ok 13 - request rejects client authority budget
+  ---
+  duration_ms: 0.041173
+  type: 'test'
+  ...
+# Subtest: request rejects client authority tools
+ok 14 - request rejects client authority tools
+  ---
+  duration_ms: 0.035244
+  type: 'test'
+  ...
+# Subtest: request accepts exactly five bounded fields
+ok 15 - request accepts exactly five bounded fields
+  ---
+  duration_ms: 0.087693
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects wrong subject
+ok 16 - trusted snapshot rejects wrong subject
+  ---
+  duration_ms: 0.31686
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects wrong athlete
+ok 17 - trusted snapshot rejects wrong athlete
+  ---
+  duration_ms: 0.138269
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects revoked snapshot
+ok 18 - trusted snapshot rejects revoked snapshot
+  ---
+  duration_ms: 0.086551
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects expired snapshot
+ok 19 - trusted snapshot rejects expired snapshot
+  ---
+  duration_ms: 0.127964
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects future evidence
+ok 20 - trusted snapshot rejects future evidence
+  ---
+  duration_ms: 0.084208
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects wrong consent
+ok 21 - trusted snapshot rejects wrong consent
+  ---
+  duration_ms: 0.076857
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects revoked consent
+ok 22 - trusted snapshot rejects revoked consent
+  ---
+  duration_ms: 0.07231
+  type: 'test'
+  ...
+# Subtest: trusted snapshot rejects cross lesson
+ok 23 - trusted snapshot rejects cross lesson
+  ---
+  duration_ms: 0.101804
+  type: 'test'
+  ...
+# Subtest: snapshot exact owner, consent, cutoff and scope accepted
+ok 24 - snapshot exact owner, consent, cutoff and scope accepted
+  ---
+  duration_ms: 0.13859
+  type: 'test'
+  ...
+# Subtest: minimal packet removes notes, memory, identity and arbitrary details then aliases ids
+ok 25 - minimal packet removes notes, memory, identity and arbitrary details then aliases ids
+  ---
+  duration_ms: 0.819402
+  type: 'test'
+  ...
+# Subtest: unknown count is rejected rather than invented zero
+ok 26 - unknown count is rejected rather than invented zero
+  ---
+  duration_ms: 0.135455
+  type: 'test'
+  ...
+# Subtest: unverified policy rejected and approved caps cannot silently grow
+ok 27 - unverified policy rejected and approved caps cannot silently grow
+  ---
+  duration_ms: 0.245332
+  type: 'test'
+  ...
+# Subtest: billing cache and reasoning are not double counted
+ok 28 - billing cache and reasoning are not double counted
+  ---
+  duration_ms: 0.150479
+  type: 'test'
+  ...
+# Subtest: unknown usage and missing cache details stay unknown
+ok 29 - unknown usage and missing cache details stay unknown
+  ---
+  duration_ms: 0.081002
+  type: 'test'
+  ...
+# Subtest: tool, truncation, model mismatch and cap overruns rejected
+ok 30 - tool, truncation, model mismatch and cap overruns rejected
+  ---
+  duration_ms: 0.22409
+  type: 'test'
+  ...
+# Subtest: default off and missing trusted host are zero-call failures
+ok 31 - default off and missing trusted host are zero-call failures
+  ---
+  duration_ms: 0.721254
+  type: 'test'
+  ...
+# Subtest: forged or absent verified subject cannot load snapshots or dispatch
+ok 32 - forged or absent verified subject cannot load snapshots or dispatch
+  ---
+  duration_ms: 0.252262
+  type: 'test'
+  ...
+# Subtest: foreign or revoked snapshot denied before budget/fetch
+ok 33 - foreign or revoked snapshot denied before budget/fetch
+  ---
+  duration_ms: 0.465987
+  type: 'test'
+  ...
+# Subtest: current emergency stays local and bypasses policy/billing/provider
+ok 34 - current emergency stays local and bypasses policy/billing/provider
+  ---
+  duration_ms: 5.304192
+  type: 'test'
+  ...
+# Subtest: controller uses one trusted snapshot and one provider call with full minimization
+ok 35 - controller uses one trusted snapshot and one provider call with full minimization
+  ---
+  duration_ms: 11.611114
+  type: 'test'
+  ...
+# Subtest: duplicate reserve blocks a repeated provider call
+ok 36 - duplicate reserve blocks a repeated provider call
+  ---
+  duration_ms: 2.679101
+  type: 'test'
+  ...
+# Subtest: unknown provider usage retains worst reservation and rejects output
+ok 37 - unknown provider usage retains worst reservation and rejects output
+  ---
+  duration_ms: 2.01856
+  type: 'test'
+  ...
+# Subtest: known billed but invalid output is settled and never shown
+ok 38 - known billed but invalid output is settled and never shown
+  ---
+  duration_ms: 5.631328
+  type: 'test'
+  ...
+# Subtest: settlement failure never returns a paid result as verified success
+ok 39 - settlement failure never returns a paid result as verified success
+  ---
+  duration_ms: 2.276632
+  type: 'test'
+  ...
+# Subtest: timeout aborts once and keeps unknown spend reserved
+ok 40 - timeout aborts once and keeps unknown spend reserved
+  ---
+  duration_ms: 12.62135
+  type: 'test'
+  ...
+# Subtest: bound pain stays local even when current question omits pain wording
+ok 41 - bound pain stays local even when current question omits pain wording
+  ---
+  duration_ms: 0.683796
+  type: 'test'
+  ...
+# Subtest: future comparable training rejected even when snapshot timestamp claims past
+ok 42 - future comparable training rejected even when snapshot timestamp claims past
+  ---
+  duration_ms: 0.179121
+  type: 'test'
+  ...
+# Subtest: reservation id mismatch never dispatches
+ok 43 - reservation id mismatch never dispatches
+  ---
+  duration_ms: 1.676722
+  type: 'test'
+  ...
+# Subtest: truncated/tool provider output is billed but never accepted
+ok 44 - truncated/tool provider output is billed but never accepted
+  ---
+  duration_ms: 2.135608
+  type: 'test'
+  ...
+# Subtest: provider body without valid billing is never released as free
+ok 45 - provider body without valid billing is never released as free
+  ---
+  duration_ms: 1.982015
+  type: 'test'
+  ...
+# Subtest: oversized complete request refuses instead of trimming structure or safety
+ok 46 - oversized complete request refuses instead of trimming structure or safety
+  ---
+  duration_ms: 2.610608
+  type: 'test'
+  ...
+# Subtest: model cannot smuggle a planChanged flag or extra executable fields
+ok 47 - model cannot smuggle a planChanged flag or extra executable fields
+  ---
+  duration_ms: 0.231691
+  type: 'test'
+  ...
+# Subtest: production controller and actual SQL ledger compose: settle, duplicate and unknown freeze
+ok 48 - production controller and actual SQL ledger compose: settle, duplicate and unknown freeze
+  ---
+  duration_ms: 1165.769727
+  type: 'test'
+  ...
+# Subtest: controller actual 80s cannot be replaced by 77s with the same citation
+ok 49 - controller actual 80s cannot be replaced by 77s with the same citation
+  ---
+  duration_ms: 3.404322
+  type: 'test'
+  ...
+# Subtest: controller actual 80s cannot be replaced by 80s with the same citation
+ok 50 - controller actual 80s cannot be replaced by 80s with the same citation
+  ---
+  duration_ms: 3.348397
+  type: 'test'
+  ...
+# Subtest: unverified sampling never becomes an implicit fair A/B claim
+ok 51 - unverified sampling never becomes an implicit fair A/B claim
+  ---
+  duration_ms: 0.843849
+  type: 'test'
+  ...
+# Subtest: oversized structured data and duplicate evidence are refused rather than silently trimmed
+ok 52 - oversized structured data and duplicate evidence are refused rather than silently trimmed
+  ---
+  duration_ms: 0.271602
+  type: 'test'
+  ...
+# Subtest: original cross-domain medical referral cannot be cleared by pain=false projection
+ok 53 - original cross-domain medical referral cannot be cleared by pain=false projection
+  ---
+  duration_ms: 0.451044
+  type: 'test'
+  ...
+# Subtest: original stronger increase block cannot be cleared by minimal re-derivation
+ok 54 - original stronger increase block cannot be cleared by minimal re-derivation
+  ---
+  duration_ms: 0.46178
+  type: 'test'
+  ...
+# Subtest: shared dev-user fallback is rejected even if a faulty host marks it verified
+ok 55 - shared dev-user fallback is rejected even if a faulty host marks it verified
+  ---
+  duration_ms: 0.219723
+  type: 'test'
+  ...
+# Subtest: current emergency keeps higher priority than an existing medical-review veto
+ok 56 - current emergency keeps higher priority than an existing medical-review veto
+  ---
+  duration_ms: 1.014087
+  type: 'test'
+  ...
+# Subtest: revocation before-dispatch blocks delivery
+ok 57 - revocation before-dispatch blocks delivery
+  ---
+  duration_ms: 2.007924
+  type: 'test'
+  ...
+# Subtest: revocation before-release blocks delivery
+ok 58 - revocation before-release blocks delivery
+  ---
+  duration_ms: 2.016698
+  type: 'test'
+  ...
+# Subtest: analysis packet reaches the actual route with alias IDs; invented improvement is rejected
+ok 59 - analysis packet reaches the actual route with alias IDs; invented improvement is rejected
+  ---
+  duration_ms: 9.805496
+  type: 'test'
+  ...
+1..59
+# tests 76
+# suites 0
+# pass 76
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9714.30946

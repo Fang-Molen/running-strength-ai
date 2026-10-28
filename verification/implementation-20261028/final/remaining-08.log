@@ -1,0 +1,25 @@
+
+> test:ui-v69
+> node --import ./scripts/test-register.mjs --test src/lib/body/goal-editor.test.ts src/lib/body/viewer-policy.test.ts
+
+✔ missing optional body fat remains unknown; invalid or empty targets are rejected (1.821482ms)
+✔ saving a goal preserves measured values, other profile fields and training records (5.300296ms)
+✔ existing target body fat can be cleared without modifying measured body fat (0.229318ms)
+✔ partial storage failure rolls back both goal values and reports failure (0.36248ms)
+✔ a specific soleus key highlights the correct region without incorrectly highlighting every calf muscle (1.060028ms)
+✔ selecting and clearing a group preserves unrelated primary and auxiliary roles (0.935919ms)
+✔ all camera presets bound yaw and zoom, prohibit a below-target camera, and clear old limits first (0.482592ms)
+✔ v89.10.2: anatomy explorer zooms to 0.35× the fitted distance and glides the target to the selection only when close (8.270439ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 626.060862
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

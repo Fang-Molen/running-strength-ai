@@ -1,0 +1,6 @@
+
+> typecheck
+> tsc --noEmit
+
+src/lib/coach/cycle/fixtures.ts(124,5): error TS2741: Property 'limitState' is missing in type '{ days: { value: number[]; source: "ATHLETE_PROFILE"; at: string; version: string; }; daysPerWeek: { value: number; source: "ATHLETE_PROFILE"; at: string; version: string; }; minutes: { value: number; source: "ATHLETE_PROFILE"; at: string; version: string; }; ... 5 more ...; sourceRule: string; }' but required in type '{ days: Known<number[]> | null; daysPerWeek: Known<number> | null; minutes: Known<number> | null; equipment: Known<string> | null; restrictions: Known<string>[]; ... 4 more ...; sourceRule: string; }'.
+src/lib/coach/training-models/scientific-input.test.ts(16,191): error TS2741: Property 'limitState' is missing in type '{ days: null; daysPerWeek: null; minutes: null; equipment: null; restrictions: never[]; notes: null; conflicts: never[]; version: string; sourceRule: string; }' but required in type '{ days: Known<number[]> | null; daysPerWeek: Known<number> | null; minutes: Known<number> | null; equipment: Known<string> | null; restrictions: Known<string>[]; ... 4 more ...; sourceRule: string; }'.

@@ -1,0 +1,122 @@
+✖ approved v2 retires the old blanket relaxation; historical label remains readable (1.492884ms)
+✔ strict guardR5Reply is unchanged: still rejects all four relaxed rules (3.932712ms)
+✖ historical fabricated personal quantity now fails shared v2 policy (0.704318ms)
+✖ historical pain clearance now fails shared v2 policy (0.33607ms)
+✖ historical diagnosis now fails shared v2 policy (0.296039ms)
+✔ a clean answer passes without the unverified flag (0.48801ms)
+✔ write / clearance claims stay blocked, even together with a relaxed rule (0.645549ms)
+✔ setting relaxed=false restores the strict behaviour (one-line restore) (0.856318ms)
+✖ general education no longer inherits personal-number and blanket causal restrictions (0.471044ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 4
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16.477198
+
+✖ failing tests:
+
+test at src/lib/coach/r5/online-guard-relax.test.ts:17:1
+✖ approved v2 retires the old blanket relaxation; historical label remains readable (1.492884ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/online-guard-relax.test.ts:18:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/online-guard-relax.test.ts:26:1
+✖ historical fabricated personal quantity now fails shared v2 policy (0.704318ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/online-guard-relax.test.ts:28:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/online-guard-relax.test.ts:32:1
+✖ historical pain clearance now fails shared v2 policy (0.33607ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/online-guard-relax.test.ts:34:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/online-guard-relax.test.ts:38:1
+✖ historical diagnosis now fails shared v2 policy (0.296039ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/online-guard-relax.test.ts:40:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/r5/online-guard-relax.test.ts:62:1
+✖ general education no longer inherits personal-number and blanket causal restrictions (0.471044ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/r5/online-guard-relax.test.ts:64:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,3 +1,4 @@
+import { isPhysicalBackupStore, UNSAFE_BROWSER_RESTORE } from './backup-policy.ts';
 export const TRIAL_LABEL = "跑步力量 · 试用版";
 export const TRIAL_VERSION = "试用-2026-10-09";
 export const LOCAL_BACKUP_KIND = "fr255-local-backup";
@@ -114,6 +115,9 @@ export function restoreLocalBackup(
   raw: string,
   storage: Pick<BackupStore, "getItem" | "setItem" | "removeItem">,
 ): { ok: true; restored: number } | { ok: false; reason: string } {
+  if (isPhysicalBackupStore(storage)) return { ok: false, reason: UNSAFE_BROWSER_RESTORE };
+  const inspected = inspectLocalBackup(raw, storage);
+  if (!inspected.ok) return inspected;
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);

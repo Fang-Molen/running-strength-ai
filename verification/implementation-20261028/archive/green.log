@@ -1,0 +1,36 @@
+✔ archive preserves values and explicit scope; hashes match independent SHA-256 (5.999226ms)
+✔ single value exceeding 5,000,001 characters and archive exceeding 30MiB round-trip completely (4013.60613ms)
+✔ Unicode chunks preserve complete surrogate pairs at every boundary (88.291964ms)
+✔ UTF-8 payload capacity rejects 64MiB plus one byte before producing an archive (0.71875ms)
+✔ export rejects malformed Unicode rather than hashing replacement characters (0.363812ms)
+✔ JSON escape expansion has an explicit container capacity (520.803525ms)
+✔ credentials and coordination keys are refused without silently dropping data (0.611648ms)
+✔ metadata must carry valid athlete, timestamp and nonoverlapping explicit scope (0.255037ms)
+✔ future format versions are rejected (0.703757ms)
+✔ different container formats are rejected (0.529924ms)
+✔ tampered data is rejected (0.470474ms)
+✔ tampered chunk hash is rejected (0.34932ms)
+✔ tampered per-key bytes are rejected (0.353826ms)
+✔ tampered metadata is covered by manifest hash (0.338593ms)
+✔ tampered manifest hash is rejected (0.433197ms)
+✔ omitted chunk is rejected (0.410413ms)
+✔ extra or duplicate chunk is rejected (0.304021ms)
+✔ reordered chunks are rejected (0.304572ms)
+✔ incorrect chunk count and index are rejected (0.466578ms)
+✔ duplicate manifest keys and omitted manifest entries are rejected (0.394248ms)
+✔ duplicate JSON members are rejected even when their parsed values would match (0.539918ms)
+✔ escaped duplicate JSON member names are rejected (0.326686ms)
+✔ valid manifest hash cannot admit duplicate keys or duplicate chunk indices (0.767674ms)
+✔ valid manifest hash cannot admit omitted, extra or inconsistent chunks (0.935208ms)
+✔ valid manifest hash cannot admit forbidden keys (0.379685ms)
+✔ invalid JSON, arrays and missing manifests are rejected (0.179502ms)
+✔ unknown fields cannot hide undeclared backup payloads (0.29043ms)
+✔ empty values and empty record collection round-trip without omitted chunks (0.282889ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4647.28867

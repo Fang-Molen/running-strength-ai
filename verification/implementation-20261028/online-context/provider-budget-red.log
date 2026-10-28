@@ -1,0 +1,10 @@
+file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:3
+import { selectOnlineContext, onlineContextNeeds, quotedOnlineContextBytes, ONLINE_QUOTED_CONTEXT_BYTES } from './online-context';
+                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module './online-context' does not provide an export named 'ONLINE_QUOTED_CONTEXT_BYTES'
+    at #asyncInstantiate (node:internal/modules/esm/module_job:327:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:431:5)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.19.0

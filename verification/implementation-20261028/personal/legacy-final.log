@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: browser writes are locked; two stale writers cannot overwrite profile
+ok 1 - browser writes are locked; two stale writers cannot overwrite profile
+  ---
+  duration_ms: 2.34743
+  type: 'test'
+  ...
+# Subtest: chat uses adopted version and athlete scope, does not invent diet history or ignore pain
+ok 2 - chat uses adopted version and athlete scope, does not invent diet history or ignore pain
+  ---
+  duration_ms: 30.228832
+  type: 'test'
+  ...
+# Subtest: no lock support means zero unlocked mutations
+ok 3 - no lock support means zero unlocked mutations
+  ---
+  duration_ms: 0.327006
+  type: 'test'
+  ...
+# Subtest: legacy nutrition pauses only the precise estimate for minors and out-of-range profiles, with a reason
+ok 4 - legacy nutrition pauses only the precise estimate for minors and out-of-range profiles, with a reason
+  ---
+  duration_ms: 0.388028
+  type: 'test'
+  ...
+# Subtest: legacy nutrition never gives a weight-loss deficit to a low BMI and floors very low targets
+ok 5 - legacy nutrition never gives a weight-loss deficit to a low BMI and floors very low targets
+  ---
+  duration_ms: 0.180283
+  type: 'test'
+  ...
+# Subtest: legacy nutrition does not turn an aggressive deadline into a deficit above 20% of maintenance
+ok 6 - legacy nutrition does not turn an aggressive deadline into a deficit above 20% of maintenance
+  ---
+  duration_ms: 0.131109
+  type: 'test'
+  ...
+# Subtest: nutrition-only has no exercise prescription and explicit estimate
+ok 7 - nutrition-only has no exercise prescription and explicit estimate
+  ---
+  duration_ms: 0.153042
+  type: 'test'
+  ...
+# Subtest: missing activity never assumes running; minor and underweight never get fat-loss calories
+ok 8 - missing activity never assumes running; minor and underweight never get fat-loss calories
+  ---
+  duration_ms: 0.119912
+  type: 'test'
+  ...
+# Subtest: screen unknown and pain hold strength and numeric energy prescriptions
+ok 9 - screen unknown and pain hold strength and numeric energy prescriptions
+  ---
+  duration_ms: 0.208266
+  type: 'test'
+  ...
+# Subtest: hypertrophy follows selected equipment and schedule; unknown loads stay unknown
+ok 10 - hypertrophy follows selected equipment and schedule; unknown loads stay unknown
+  ---
+  duration_ms: 0.854916
+  type: 'test'
+  ...
+# Subtest: bodyweight plan discloses missing pulling equipment and short/adjacent availability is not inflated
+ok 11 - bodyweight plan discloses missing pulling equipment and short/adjacent availability is not inflated
+  ---
+  duration_ms: 0.140674
+  type: 'test'
+  ...
+# Subtest: running mode links existing workbench without invented speed; mixed goal protects running fuel
+ok 12 - running mode links existing workbench without invented speed; mixed goal protects running fuel
+  ---
+  duration_ms: 0.222117
+  type: 'test'
+  ...
+# Subtest: intent routing handles negation and selected domains
+ok 13 - intent routing handles negation and selected domains
+  ---
+  duration_ms: 0.078169
+  type: 'test'
+  ...
+# Subtest: feedback cannot silently increase or use incomplete one-day scale changes
+ok 14 - feedback cannot silently increase or use incomplete one-day scale changes
+  ---
+  duration_ms: 0.084609
+  type: 'test'
+  ...
+# Subtest: pain feedback holds training; persistent hard work suggests one-variable reduction
+ok 15 - pain feedback holds training; persistent hard work suggests one-variable reduction
+  ---
+  duration_ms: 0.255477
+  type: 'test'
+  ...
+# Subtest: confirmation binds actor/profile/revision, persists active plan, rejects stale and replay
+ok 16 - confirmation binds actor/profile/revision, persists active plan, rejects stale and replay
+  ---
+  duration_ms: 1.024524
+  type: 'test'
+  ...
+# Subtest: out-of-range values and duplicate weekdays rejected
+ok 17 - out-of-range values and duplicate weekdays rejected
+  ---
+  duration_ms: 0.13885
+  type: 'test'
+  ...
+# Subtest: pain feedback blocks replacement and confirmation until newer explicit no-pain feedback
+ok 18 - pain feedback blocks replacement and confirmation until newer explicit no-pain feedback
+  ---
+  duration_ms: 0.648864
+  type: 'test'
+  ...
+# Subtest: stale profile cannot be confirmed or regenerated without explicit profile update
+ok 19 - stale profile cannot be confirmed or regenerated without explicit profile update
+  ---
+  duration_ms: 0.46849
+  type: 'test'
+  ...
+# Subtest: record review and knowledge questions are not replaced by generic personal plan
+ok 20 - record review and knowledge questions are not replaced by generic personal plan
+  ---
+  duration_ms: 0.147234
+  type: 'test'
+  ...
+# Subtest: conservative energy targets withheld outside formula support; trained template differs within time
+ok 21 - conservative energy targets withheld outside formula support; trained template differs within time
+  ---
+  duration_ms: 0.117468
+  type: 'test'
+  ...
+# Subtest: reduction adoption changes only sets, version and time, preserving loads and nutrition
+ok 22 - reduction adoption changes only sets, version and time, preserving loads and nutrition
+  ---
+  duration_ms: 0.968889
+  type: 'test'
+  ...
+# Subtest: feedback remains writable after profile update and earlier feedback survives adoption
+ok 23 - feedback remains writable after profile update and earlier feedback survives adoption
+  ---
+  duration_ms: 0.772602
+  type: 'test'
+  ...
+# Subtest: only-strength request excludes nutrition even when exclusion mentions diet
+ok 24 - only-strength request excludes nutrition even when exclusion mentions diet
+  ---
+  duration_ms: 0.107553
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1622.896921

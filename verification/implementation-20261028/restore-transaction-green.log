@@ -1,0 +1,17 @@
+✔ B05 persists verified before-images for each physical backend before touching targets (15.044051ms)
+✔ B05 backup/log failure before PREPARED never modifies either target (0.889558ms)
+✔ B05 write failure restores each backend to its own old value and verifies rollback (7.322182ms)
+✔ B05 committed transaction survives a lost commit acknowledgement without rollback (4.548827ms)
+✔ B05 unknown commit outcome stays restricted, restart resolves authoritative COMMITTED (7.054076ms)
+✔ B05 target written before receipt failure is rolled back after a journal restart (4.855894ms)
+✔ B05 external modification blocks rollback instead of overwriting the independent change (5.774647ms)
+✔ B05 cache notification failure after COMMITTED never reverts persisted values (3.451543ms)
+✔ B05 unknown legacy-writer isolation and changed preview both reject before writes (0.728845ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55.663661

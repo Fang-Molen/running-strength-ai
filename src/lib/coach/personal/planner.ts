@@ -1,5 +1,13 @@
 export type Goal = "FAT_LOSS" | "WEIGHT_MAINTENANCE" | "HYPERTROPHY" | "RUN_PERFORMANCE";
 export type Service = "NUTRITION" | "STRENGTH" | "RUNNING";
+export type PersonalDependencyDomain = "PROFILE" | "BODY" | "GOAL" | "MEALS" | "TRAINING" | "RESTRICTIONS";
+export type PersonalDependencies = {
+  schema: 1;
+  athleteId: string;
+  scope: "LIVE" | "PROFILE_ONLY";
+  domains: Partial<Record<PersonalDependencyDomain, { version: string | null; sources: string[] }>>;
+};
+export type PersonalContext = { profile: PersonalProfile; dependencies: PersonalDependencies; clarification?: string };
 export interface PersonalProfile {
   schema: 1;
   athleteId: string;
@@ -46,6 +54,8 @@ export interface PersonalPlan {
   running: string | null;
   cautions: string[];
   sources: string[];
+  /** Local source fingerprints; never a server synchronization or medical receipt. */
+  dependencies?: PersonalDependencies;
 }
 export interface Feedback {
   planVersion: number;

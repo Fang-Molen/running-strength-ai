@@ -34,6 +34,7 @@ import {
 import { withScheduleLock } from "../../ui/schedule-writer";
 import { r4CourseStarted } from "../r4/courses";
 import { parseR5Intent, currentMessageSafety } from "./intents";
+import { interpretProfileLimit, questionTaskPermission, restrictionActionScope, type ScopedRestriction } from "../utterance-semantics";
 import {
   describePair,
   easyRun,
@@ -71,7 +72,7 @@ function saveCommand(c: R5Command) {
   if (ok && typeof window !== "undefined") window.dispatchEvent(new Event(R5_CHANGED));
   return ok;
 }
-export function readR5Context(now = new Date().toISOString()) {
+export function readR5Context(now = new Date().toISOString(), question = "") {
   requireR5Scope();
   const day = localDay(new Date(now)),
     owner = currentAthleteId(),
@@ -86,9 +87,16 @@ export function readR5Context(now = new Date().toISOString()) {
     hold =
       ["HOLD_ACTIVE", "ESCALATION_REQUIRED"].includes(a.assessment.safetyState) ||
       safety.safety !== "NO_KNOWN_HOLD" ||
-      !!profile.limit.trim();
+      interpretProfileLimit(profile.limit).active;
   const entries = loadSchedule().entries,
     trainingProfile = readEffectiveTrainingProfile();
+  const restrictions = new Map<string,ScopedRestriction>(a.snapshot.safetyConstraints.map(r=>[r.id,{...r,status:"REVIEW_PENDING" as const}]));
+  for (const r of safety.constraints) restrictions.set(r.id,r);
+  for (const [i,r] of trainingProfile.restrictions.filter(r=>r.value!=="健康筛查：UNKNOWN").entries()) {
+    const id=`profile-restriction:${i}`;
+    restrictions.set(id,{id,version:r.version,status:interpretProfileLimit(r.value).active?interpretProfileLimit(r.value).status:"REVIEW_PENDING",scope:"PAIN_REVIEW",source:r.source,sourceText:r.value,occurredAt:r.at,actions:restrictionActionScope(r.value),evidenceRefs:[]});
+  }
+  const scopedRestrictions=[...restrictions.values()];
   return {
     day,
     owner,
@@ -100,6 +108,8 @@ export function readR5Context(now = new Date().toISOString()) {
     rawProfile,
     analysis: a,
     hold,
+    restrictions: scopedRestrictions,
+    permission: questionTaskPermission(question,scopedRestrictions),
     safety:
       hold && safety.safety === "NO_KNOWN_HOLD"
         ? {
@@ -123,6 +133,11 @@ export type R5Prepared =
   | { kind: "ANSWER"; text: string }
   | { kind: "WEEKLY" }
   | { kind: "NONE" };
+function profileRestrictionChangeBlocked(previous:string,patch:Partial<Profile>) {
+  if (!Object.hasOwn(patch,"limit")) return false;
+  const next=patch.limit;
+  return typeof next!=="string" || !next.trim() || interpretProfileLimit(previous).active && !interpretProfileLimit(next).active;
+}
 export function prepareR5Command(question: string, now = new Date().toISOString()): R5Prepared {
   const intent = parseR5Intent(question, now);
   if (intent.kind === "NONE") return { kind: "NONE" };
@@ -187,7 +202,7 @@ export function prepareR5Command(question: string, now = new Date().toISOString(
             )[k] ?? k
           }：${String(c.profile[k]) || "未知"} → ${String(intent.patch[k])}`,
       );
-      if ("limit" in intent.patch && !intent.patch.limit?.trim())
+      if (profileRestrictionChangeBlocked(c.profile.limit,intent.patch))
         throw Error("对话不能解除身体限制；请到健康限制中人工核对");
     } else if (intent.kind === "SYMPTOM") {
       cmd.kind = "SYMPTOM";
@@ -560,6 +575,9 @@ async function act(id: string, action: "ACCEPT" | "REJECT" | "UNDO", now: string
       return fail("测量事件保存失败");
     receipt.afterBody = row;
   } else if (cmd.kind === "PROFILE") {
+    // Recheck at the write boundary: pre-upgrade pending cards did not enforce this rule.
+    if (profileRestrictionChangeBlocked(c.profile.limit,cmd.profile!.patch))
+      return fail("对话不能解除身体限制；请到健康限制中人工核对");
     if (!commitProfile(cmd.profile!.patch, id, false, now)) return fail("资料保存失败");
   } else if (cmd.kind === "SYMPTOM") {
     const saved = appendSymptom(cmd.symptom!, now, id);

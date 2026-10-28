@@ -1,0 +1,67 @@
+{
+  "status": "IMPLEMENTED_LOCAL_INTEGRATION",
+  "synthetic": true,
+  "paidModelCalls": 0,
+  "realAccountsAccessed": false,
+  "realDatabaseMigrated": false,
+  "deployed": false,
+  "sourcePreserved": true,
+  "historicalCosts": "UNKNOWN_NOT_ZERO",
+  "focusedRegression": {
+    "command": "node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test --test-isolation=none --test-reporter=tap server/coach-deepseek/online-v2.test.ts server/coach-deepseek/coach-runtime.test.ts src/lib/coach/deepseek-server-boundary.test.ts",
+    "tests": 76,
+    "passed": 76,
+    "failed": 0,
+    "log": "final-focused.log"
+  },
+  "deliveryExamples": {
+    "count": 10,
+    "artifact": "controller-output-examples.json",
+    "realModel": false,
+    "professionalReview": false
+  },
+  "migration": "003_persistent_online.sql",
+  "rollback": "003_persistent_online.down.sql",
+  "migrationEvidence": "PGlite in-memory fresh database up/down/up with preserved snapshot counts; existing runtime test also uses temporary disk PGlite restart",
+  "contract": "coach-context-v2",
+  "assertionPolicy": "coach-assertions-v2",
+  "limitations": [
+    "No real backend/identity/provider deployment verified",
+    "No independent web retrieval implemented; explicit NOT_REQUESTED",
+    "Source generations represent submitted user declarations, not independently verified unsynchronized device facts",
+    "Lexical assertion classification is not semantic/professional certification",
+    "Parent final browser/build/concentrated regression remains separate; no production account or provider validation performed"
+  ],
+  "followupIntegration": {
+    "tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "log": "selector-schema-integration.log",
+    "providerEnvelopeBytes": [
+      5393,
+      2876,
+      4434
+    ],
+    "sourceSelection": {
+      "syntheticWorkoutSegments": 100,
+      "selectedFacts": 4,
+      "omittedRecords": 97
+    },
+    "schemaReadiness": "Read-only metadata checks required v3 tables/16 columns and removed consent uniqueness; 002-only and rollback report configured false",
+    "typecheck": "typecheck-integration.log no errors",
+    "exactSchemaHardeningCheck": "schema-final.log"
+  },
+  "outputActivityScope": {
+    "tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "log": "output-scope-final.log",
+    "red": "output-scope-red.log",
+    "actualControllerCases": 7,
+    "options": [
+      "question",
+      "restrictions"
+    ],
+    "typecheck": "no backend errors; concurrent cycle/event-selection.test.ts line48 EvidenceRef type error reported to parent"
+  }
+}

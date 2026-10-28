@@ -1,0 +1,524 @@
+{
+  "evaluation": "SYNTHETIC_DETERMINISTIC_PROGRAM_OUTPUT_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW",
+  "outputs": [
+    {
+      "scenario": "DECLINING",
+      "athleteId": "SYN-A",
+      "before": {
+        "rolling30Days": 2,
+        "median": 50,
+        "current": 50,
+        "deltaPercent": 0
+      },
+      "after": {
+        "trajectory": {
+          "version": "efe33131c0a4271e1a819b9c427668fd89318b71ed111734da2e9a2aa81c2d50",
+          "asOf": "2026-10-28T20:00:00Z",
+          "athleteId": "SYN-A",
+          "metric": "RMSSD",
+          "unit": "ms",
+          "status": "DIRECTIONAL_SHIFT_REVIEW",
+          "direction": "LOWER",
+          "priorDays": 4,
+          "calendarDays": 63,
+          "coverageDenominator": "FIRST_TO_LAST_AVAILABLE_PRIOR_DAY",
+          "conflictingDays": 0,
+          "sourceSegmentCount": 1,
+          "sourceScope": "[\"SYN-A\",\"GARMIN\",\"synthetic-account\",\"watch-A\",\"NIGHT_RMSSD_V1\",\"RMSSD\",\"ms\",\"DAILY_MEAN\",\"UTC\"]",
+          "algorithmVersion": "NOT_SEPARATELY_RECORDED",
+          "earlier": {
+            "start": "2026-08-01",
+            "end": "2026-08-02",
+            "days": 2,
+            "median": 60,
+            "minimum": 60,
+            "maximum": 60,
+            "refs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 1
+              }
+            ]
+          },
+          "later": {
+            "start": "2026-10-01",
+            "end": "2026-10-02",
+            "days": 2,
+            "median": 50,
+            "minimum": 50,
+            "maximum": 50,
+            "refs": [
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              }
+            ]
+          },
+          "currentOpposesShift": false,
+          "refs": [
+            {
+              "id": "m-2026-08-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-08-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-28",
+              "revision": 1
+            }
+          ],
+          "text": "RMSSD 历史描述：较早历史段 2026-08-01—2026-08-02（2日）中位数 60 ms；较后历史段 2026-10-01—2026-10-02（2日）中位数 50 ms。存在描述性方向变化（较低），需要复核；不能因滚动参照已接近当前值而视为健康新常态。覆盖 4/63 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+          "rule": {
+            "id": "FK_RECOVERY_HISTORY_SEGMENTS_1",
+            "version": "2026-10-28.1",
+            "source": "PRODUCT_DESCRIPTIVE_POLICY",
+            "calibration": "NOT_VALIDATED",
+            "evidenceStatus": "ENGINEERING_SYNTHETIC_ONLY",
+            "prescriptionAllowed": false,
+            "method": "按已保存且截至分析时可知的独立历史日排序；排除当前日；等分较早/较后两段并比较中位数。至少每段两个独立日仅为分段描述最低结构要求，不是医学充分性阈值。",
+            "reviewTrigger": "较后段所有值同处较早段中位数的一侧时提示描述性方向变化；无生理幅度阈值，不诊断持续恶化。",
+            "scope": "同运动员、来源、账号、设备、协议、单位、统计口径与时区；算法未单独记录时明确未知。",
+            "limitations": "较早段来自本次可读取历史，不是冻结或经验证的健康基线；缺失、阶段变化、生活与环境因素仍需解释。",
+            "ledgerRef": "docs/implementation-20261028/rule-ledger.md#FK_RECOVERY_HISTORY_SEGMENTS_1"
+          },
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "actualAssessmentObservation": [
+          {
+            "text": "RMSSD 历史描述：较早历史段 2026-08-01—2026-08-02（2日）中位数 60 ms；较后历史段 2026-10-01—2026-10-02（2日）中位数 50 ms。存在描述性方向变化（较低），需要复核；不能因滚动参照已接近当前值而视为健康新常态。覆盖 4/63 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+            "evidenceRefs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-28",
+                "revision": 1
+              }
+            ]
+          }
+        ],
+        "hypothesis": {
+          "id": "metric-history-review",
+          "claim": "指标在较早与较后历史参照之间存在描述性方向变化；可能与训练阶段、生活或测量条件有关，是否涉及近期执行能力仍未确定，不能自动称为健康新常态或持续恶化",
+          "supportingRefs": [
+            {
+              "id": "m-2026-08-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-08-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-28",
+              "revision": 1
+            }
+          ],
+          "weakeningRefs": [],
+          "discriminator": "可比训练表现缺少或条件不一致，当前解释仍未解决；核对历史阶段、同协议测量与当前功能；同条件表现稳定会削弱疲劳解释，测量口径或原始记录更正后应重算。保留原计划中不诱发症状的既有轻任务与一般知识解释；不新增剂量，疼痛及医疗限制独立处理。",
+          "certainty": "UNRESOLVED"
+        },
+        "safetyState": "UNKNOWN",
+        "action": "KEEP",
+        "medicalClearance": false
+      }
+    },
+    {
+      "scenario": "STABLE",
+      "athleteId": "SYN-A",
+      "before": {
+        "rolling30Days": 2,
+        "median": 50,
+        "current": 50,
+        "deltaPercent": 0
+      },
+      "after": {
+        "trajectory": {
+          "version": "ab585c6ca5b9fdf21f07d31fb329a861869953b06ce50d90f1d1f888c6f3bc05",
+          "asOf": "2026-10-28T20:00:00Z",
+          "athleteId": "SYN-A",
+          "metric": "RMSSD",
+          "unit": "ms",
+          "status": "MULTI_DAY_DESCRIPTIVE",
+          "direction": "UNCHANGED",
+          "priorDays": 4,
+          "calendarDays": 63,
+          "coverageDenominator": "FIRST_TO_LAST_AVAILABLE_PRIOR_DAY",
+          "conflictingDays": 0,
+          "sourceSegmentCount": 1,
+          "sourceScope": "[\"SYN-A\",\"GARMIN\",\"synthetic-account\",\"watch-A\",\"NIGHT_RMSSD_V1\",\"RMSSD\",\"ms\",\"DAILY_MEAN\",\"UTC\"]",
+          "algorithmVersion": "NOT_SEPARATELY_RECORDED",
+          "earlier": {
+            "start": "2026-08-01",
+            "end": "2026-08-02",
+            "days": 2,
+            "median": 50,
+            "minimum": 50,
+            "maximum": 50,
+            "refs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 1
+              }
+            ]
+          },
+          "later": {
+            "start": "2026-10-01",
+            "end": "2026-10-02",
+            "days": 2,
+            "median": 50,
+            "minimum": 50,
+            "maximum": 50,
+            "refs": [
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              }
+            ]
+          },
+          "currentOpposesShift": false,
+          "refs": [
+            {
+              "id": "m-2026-08-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-08-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-28",
+              "revision": 1
+            }
+          ],
+          "text": "RMSSD 历史描述：较早历史段 2026-08-01—2026-08-02（2日）中位数 50 ms；较后历史段 2026-10-01—2026-10-02（2日）中位数 50 ms。本次段间未出现一致方向变化，不等于恢复正常。覆盖 4/63 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+          "rule": {
+            "id": "FK_RECOVERY_HISTORY_SEGMENTS_1",
+            "version": "2026-10-28.1",
+            "source": "PRODUCT_DESCRIPTIVE_POLICY",
+            "calibration": "NOT_VALIDATED",
+            "evidenceStatus": "ENGINEERING_SYNTHETIC_ONLY",
+            "prescriptionAllowed": false,
+            "method": "按已保存且截至分析时可知的独立历史日排序；排除当前日；等分较早/较后两段并比较中位数。至少每段两个独立日仅为分段描述最低结构要求，不是医学充分性阈值。",
+            "reviewTrigger": "较后段所有值同处较早段中位数的一侧时提示描述性方向变化；无生理幅度阈值，不诊断持续恶化。",
+            "scope": "同运动员、来源、账号、设备、协议、单位、统计口径与时区；算法未单独记录时明确未知。",
+            "limitations": "较早段来自本次可读取历史，不是冻结或经验证的健康基线；缺失、阶段变化、生活与环境因素仍需解释。",
+            "ledgerRef": "docs/implementation-20261028/rule-ledger.md#FK_RECOVERY_HISTORY_SEGMENTS_1"
+          },
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "actualAssessmentObservation": [
+          {
+            "text": "RMSSD 历史描述：较早历史段 2026-08-01—2026-08-02（2日）中位数 50 ms；较后历史段 2026-10-01—2026-10-02（2日）中位数 50 ms。本次段间未出现一致方向变化，不等于恢复正常。覆盖 4/63 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+            "evidenceRefs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-28",
+                "revision": 1
+              }
+            ]
+          }
+        ],
+        "hypothesis": null,
+        "safetyState": "UNKNOWN",
+        "action": "KEEP",
+        "medicalClearance": false
+      }
+    },
+    {
+      "scenario": "DEVICE_CHANGED",
+      "athleteId": "SYN-A",
+      "before": {
+        "rolling30Days": 0,
+        "median": null,
+        "current": 50,
+        "deltaPercent": null
+      },
+      "after": {
+        "trajectory": {
+          "version": "a46f18d6859c77357c916d00eaa9b670d8416dece9e63e18a9e6b826d9f46c9b",
+          "asOf": "2026-10-28T20:00:00Z",
+          "athleteId": "SYN-A",
+          "metric": "RMSSD",
+          "unit": "ms",
+          "status": "SEGMENTED_INSUFFICIENT",
+          "direction": "UNKNOWN",
+          "priorDays": 0,
+          "calendarDays": 0,
+          "coverageDenominator": "FIRST_TO_LAST_AVAILABLE_PRIOR_DAY",
+          "conflictingDays": 0,
+          "sourceSegmentCount": 2,
+          "sourceScope": "[\"SYN-A\",\"GARMIN\",\"synthetic-account\",\"watch-B\",\"NIGHT_RMSSD_V2\",\"RMSSD\",\"ms\",\"DAILY_MEAN\",\"UTC\"]",
+          "algorithmVersion": "NOT_SEPARATELY_RECORDED",
+          "earlier": null,
+          "later": null,
+          "currentOpposesShift": false,
+          "refs": [
+            {
+              "id": "m-2026-10-28",
+              "revision": 1
+            }
+          ],
+          "text": "RMSSD 历史描述：设备或协议等来源发生分段，当前来源缺少可比历史；不拼接换表差值作为生理恶化。覆盖 0/0 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+          "rule": {
+            "id": "FK_RECOVERY_HISTORY_SEGMENTS_1",
+            "version": "2026-10-28.1",
+            "source": "PRODUCT_DESCRIPTIVE_POLICY",
+            "calibration": "NOT_VALIDATED",
+            "evidenceStatus": "ENGINEERING_SYNTHETIC_ONLY",
+            "prescriptionAllowed": false,
+            "method": "按已保存且截至分析时可知的独立历史日排序；排除当前日；等分较早/较后两段并比较中位数。至少每段两个独立日仅为分段描述最低结构要求，不是医学充分性阈值。",
+            "reviewTrigger": "较后段所有值同处较早段中位数的一侧时提示描述性方向变化；无生理幅度阈值，不诊断持续恶化。",
+            "scope": "同运动员、来源、账号、设备、协议、单位、统计口径与时区；算法未单独记录时明确未知。",
+            "limitations": "较早段来自本次可读取历史，不是冻结或经验证的健康基线；缺失、阶段变化、生活与环境因素仍需解释。",
+            "ledgerRef": "docs/implementation-20261028/rule-ledger.md#FK_RECOVERY_HISTORY_SEGMENTS_1"
+          },
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "actualAssessmentObservation": [
+          {
+            "text": "RMSSD 历史描述：独立历史日尚不足以分成两个多日段；已有记录保留，不编造稳定常态。覆盖 3/62 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+            "evidenceRefs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              }
+            ]
+          },
+          {
+            "text": "RMSSD 历史描述：设备或协议等来源发生分段，当前来源缺少可比历史；不拼接换表差值作为生理恶化。覆盖 0/0 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+            "evidenceRefs": [
+              {
+                "id": "m-2026-10-28",
+                "revision": 1
+              }
+            ]
+          }
+        ],
+        "hypothesis": null,
+        "safetyState": "UNKNOWN",
+        "action": "KEEP",
+        "medicalClearance": false
+      }
+    },
+    {
+      "scenario": "CORRECTED",
+      "athleteId": "SYN-A",
+      "before": {
+        "rolling30Days": 2,
+        "median": 50,
+        "current": 50,
+        "deltaPercent": 0
+      },
+      "after": {
+        "trajectory": {
+          "version": "32d5cee5864ab0e3e3ef08d612477056ff236608b2347359e9021322df84a005",
+          "asOf": "2026-10-28T20:00:00Z",
+          "athleteId": "SYN-A",
+          "metric": "RMSSD",
+          "unit": "ms",
+          "status": "MULTI_DAY_DESCRIPTIVE",
+          "direction": "UNCHANGED",
+          "priorDays": 4,
+          "calendarDays": 63,
+          "coverageDenominator": "FIRST_TO_LAST_AVAILABLE_PRIOR_DAY",
+          "conflictingDays": 0,
+          "sourceSegmentCount": 1,
+          "sourceScope": "[\"SYN-A\",\"GARMIN\",\"synthetic-account\",\"watch-A\",\"NIGHT_RMSSD_V1\",\"RMSSD\",\"ms\",\"DAILY_MEAN\",\"UTC\"]",
+          "algorithmVersion": "NOT_SEPARATELY_RECORDED",
+          "earlier": {
+            "start": "2026-08-01",
+            "end": "2026-08-02",
+            "days": 2,
+            "median": 50,
+            "minimum": 50,
+            "maximum": 50,
+            "refs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 2
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 2
+              }
+            ]
+          },
+          "later": {
+            "start": "2026-10-01",
+            "end": "2026-10-02",
+            "days": 2,
+            "median": 50,
+            "minimum": 50,
+            "maximum": 50,
+            "refs": [
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              }
+            ]
+          },
+          "currentOpposesShift": false,
+          "refs": [
+            {
+              "id": "m-2026-08-01",
+              "revision": 2
+            },
+            {
+              "id": "m-2026-08-02",
+              "revision": 2
+            },
+            {
+              "id": "m-2026-10-01",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-02",
+              "revision": 1
+            },
+            {
+              "id": "m-2026-10-28",
+              "revision": 1
+            }
+          ],
+          "text": "RMSSD 历史描述：较早历史段 2026-08-01—2026-08-02（2日）中位数 50 ms；较后历史段 2026-10-01—2026-10-02（2日）中位数 50 ms。本次段间未出现一致方向变化，不等于恢复正常。覆盖 4/63 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+          "rule": {
+            "id": "FK_RECOVERY_HISTORY_SEGMENTS_1",
+            "version": "2026-10-28.1",
+            "source": "PRODUCT_DESCRIPTIVE_POLICY",
+            "calibration": "NOT_VALIDATED",
+            "evidenceStatus": "ENGINEERING_SYNTHETIC_ONLY",
+            "prescriptionAllowed": false,
+            "method": "按已保存且截至分析时可知的独立历史日排序；排除当前日；等分较早/较后两段并比较中位数。至少每段两个独立日仅为分段描述最低结构要求，不是医学充分性阈值。",
+            "reviewTrigger": "较后段所有值同处较早段中位数的一侧时提示描述性方向变化；无生理幅度阈值，不诊断持续恶化。",
+            "scope": "同运动员、来源、账号、设备、协议、单位、统计口径与时区；算法未单独记录时明确未知。",
+            "limitations": "较早段来自本次可读取历史，不是冻结或经验证的健康基线；缺失、阶段变化、生活与环境因素仍需解释。",
+            "ledgerRef": "docs/implementation-20261028/rule-ledger.md#FK_RECOVERY_HISTORY_SEGMENTS_1"
+          },
+          "medicalClearance": false,
+          "automaticPrescription": false
+        },
+        "actualAssessmentObservation": [
+          {
+            "text": "RMSSD 历史描述：较早历史段 2026-08-01—2026-08-02（2日）中位数 50 ms；较后历史段 2026-10-01—2026-10-02（2日）中位数 50 ms。本次段间未出现一致方向变化，不等于恢复正常。覆盖 4/63 个历史自然日；缺日不补零，当前日未进入参照。规则 FK_RECOVERY_HISTORY_SEGMENTS_1（2026-10-28.1，产品描述方法，尚未专业校准）；不诊断、不改变剂量、不解除疼痛或医疗限制。",
+            "evidenceRefs": [
+              {
+                "id": "m-2026-08-01",
+                "revision": 2
+              },
+              {
+                "id": "m-2026-08-02",
+                "revision": 2
+              },
+              {
+                "id": "m-2026-10-01",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-02",
+                "revision": 1
+              },
+              {
+                "id": "m-2026-10-28",
+                "revision": 1
+              }
+            ]
+          }
+        ],
+        "hypothesis": null,
+        "safetyState": "UNKNOWN",
+        "action": "KEEP",
+        "medicalClearance": false
+      }
+    }
+  ]
+}

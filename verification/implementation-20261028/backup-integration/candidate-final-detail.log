@@ -1,0 +1,17 @@
+✔ native browser backup/apply/legacy/undo entrypoints refuse synchronous active mutations (1.74724ms)
+✔ appStorage physical adapter is identified even when its underlying store is injected (0.271271ms)
+✔ pure memory adapter compatibility remains usable (0.938623ms)
+✔ confirmed preview saves a verified candidate without active writes or success receipt (5.01912ms)
+✔ target or athlete changed after preview requires a fresh preview before candidate write (0.66641ms)
+✔ prepared targets cannot change between preview and confirmation (0.430412ms)
+✔ new chunked archive enters common preflight with large Unicode and subject binding (867.081698ms)
+✔ unsupported future backups and incomplete full backups cannot become candidates (0.912154ms)
+✔ plan and profile defaults stay together in the isolated candidate; native undo cannot alter either (3.51548ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 891.875129

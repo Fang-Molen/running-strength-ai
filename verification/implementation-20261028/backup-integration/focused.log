@@ -1,0 +1,13 @@
+✔ src/lib/core/backup-inspection.test.ts (490.535175ms)
+✔ src/lib/core/trial.test.ts (518.477607ms)
+✔ src/lib/ui/backup-candidate.test.ts (1524.620265ms)
+✔ src/lib/ui/backup-center.test.ts (724.195196ms)
+✔ src/lib/vault-backup.test.ts (644.458351ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1540.822546

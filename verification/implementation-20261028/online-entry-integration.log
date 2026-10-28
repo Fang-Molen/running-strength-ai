@@ -1,0 +1,18 @@
+✔ real offline message entry renders a bounded research preview with no formal candidate (24.144308ms)
+✔ HRV research preview lists pending cards with sources and stays local (27.38481ms)
+✔ ordinary explanation carries no pending application text; production retrieval yields zero approved uses (12.224776ms)
+✔ JSON labels claiming APPROVED cannot self-approve: every card stays PENDING and not production eligible (1.381484ms)
+✔ sufficient arithmetic stays short and works without personal health data (2.61171ms)
+✔ research preview and plain conversion use a zero-budget local route even when complexity is requested (0.782908ms)
+✔ current emergency retains priority over a research preview request (7.109139ms)
+✔ negated emergency words do not block a preview (v86 negation handling kept) (1.140479ms)
+✔ new knowledge does not authorize a dose when the host has no approved remaining-work candidates (1.478231ms)
+✔ automatic online rendering does not upload during SSR and explicit OFF prevents sending (28.023334ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 116.891346

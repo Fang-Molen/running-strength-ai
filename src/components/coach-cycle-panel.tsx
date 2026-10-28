@@ -15,7 +15,7 @@ import {
   type CycleDocument,
 } from "@/lib/coach/cycle/host";
 import { buildAthletePortrait } from "@/lib/coach/cycle/portrait";
-import { phaseLabels, priorityLabels, type CycleGoal } from "@/lib/coach/cycle/types";
+import { phaseLabels, priorityLabels, type CycleGoal, type CyclePhaseReview } from "@/lib/coach/cycle/types";
 import { CYCLE_SOURCES } from "@/lib/coach/cycle/prompt";
 import { subscribeHealthUpdates } from "@/lib/health/health-subscription";
 const intensityLabel = {EASY:'轻松',MODERATE:'中等',HARD:'高强度'};
@@ -30,6 +30,22 @@ const initial = {
   taperDays: "7",
   proposeExtraMinutes: "",
 };
+export function CyclePhaseEvidence({ review }: { review: CyclePhaseReview | undefined }) {
+  if (!review?.entryChecks || !review.exitChecks) return <p className="mt-2 text-xs">旧草案没有逐项条件依据，请重新生成后复核。</p>;
+  const labels = { SATISFIED: "已满足记录条件", UNKNOWN: "待核对", CONTRADICTED: "现有证据不支持" };
+  return <details className="mt-2 text-xs">
+    <summary className="min-h-10 cursor-pointer">阶段条件依据（不等于生理放行）</summary>
+    <p>{review.selectionReason}</p>
+    {[...review.entryChecks, ...review.exitChecks].map(check => <div key={check.id} className="mt-2">
+      <p>{check.label}：{labels[check.state]}。{check.reason}</p>
+      <p className="break-words text-muted">依据：{[
+        ...check.evidenceRefs.map(ref => `${ref.id}@${ref.revision}`),
+        ...check.sourceEntryIds.map(id => `课程 ${id}`),
+        ...check.sourceVersions.map(source => `${source.source} ${source.version}`),
+      ].join("；") || "尚无对应事实，保持未知"}</p>
+    </div>)}
+  </details>;
+}
 export function CoachCyclePanel() {
   const [form, setForm] = useState(initial),
     [goal, setGoal] = useState<CycleGoal | null>(null),
@@ -332,6 +348,7 @@ export function CoachCyclePanel() {
                 {i ? "（到期重算）" : ""}
               </summary>
               <p className="mt-1 text-sm">{w.purpose}</p>
+              <CyclePhaseEvidence review={w.phaseReview} />
               {w.strengthFocus&&<p className="mt-2 text-xs">力量周期：{w.strengthFocus}</p>}
               {w.existingSessions?.map((e, j) => (
                 <p key={j} className="mt-2 text-xs">

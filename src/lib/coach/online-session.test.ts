@@ -61,8 +61,8 @@ test('server cannot replace displayed consent facts',async()=>{
 const askWith=(text:string,hold:boolean)=>{const f=fixture();f.preview.packet={...f.preview.packet,assessment:{...f.preview.packet.assessment,safetyState:hold?'SAFETY_HOLD':'NO_KNOWN_HOLD'}} as typeof f.preview.packet
  const fetch=f.ports.fetch;f.ports.fetch=async(u,i)=>u.endsWith('chat')&&i?.method==='POST'?Response.json({ok:true,text,planChanged:false,route:'LOW',model:'synthetic-model'}):fetch(u,i)
  return runOnlineExplanation(f.preview,{consent:true},f.ports)}
-test('relaxed online guard: no active hold shows an unsupported number with the unverified flag',async()=>{
- const r=await askWith('明天可以慢跑20公里。',false);assert.ok('text'in r,JSON.stringify(r));assert.equal((r as {unverified?:boolean}).unverified,true)
+test('v2 shared assertions reject unsupported personal dose even without a hold',async()=>{
+ const r=await askWith('明天可以慢跑20公里。',false);assert.ok('error'in r,JSON.stringify(r))
 })
 test('relaxed guard is NOT applied while a safety hold is active: unsupported numbers and release wording are blocked',async()=>{
  for(const text of ['明天跑20公里。','可以继续训练，放心跑步。'])assert.ok('error'in await askWith(text,true),text)
@@ -80,5 +80,26 @@ test('identity changes and cancellation during a pending response cannot deliver
    if(reason==='cancel')controller.abort();else f.ports.current=()=>({owner:'another-athlete',sourceVersion:'v1',enabled:true})
   }return r}
   assert.ok('error'in await runOnlineExplanation(f.preview,{consent:true,signal:controller.signal},f.ports),reason)
+ }
+})
+
+test('persistent online preference automatically sends each independent question without per-turn confirmation',async()=>{
+ const a=fixture(),b=fixture()
+ b.preview.question='RPE是什么？'
+ const answers=await Promise.all([runOnlineExplanation(a.preview,{},a.ports),runOnlineExplanation(b.preview,{},b.ports)])
+ assert.ok(answers.every(answer=>'text'in answer),JSON.stringify(answers))
+ for(const f of [a,b]){
+  const request=f.calls.find(c=>c.url.endsWith('snapshot')&&c.init?.method==='POST')!
+  assert.equal(JSON.parse(String(request.init?.body)).consent.mode,'PERSISTENT')
+  assert.equal(f.calls.at(-1)?.init?.method,'DELETE')
+  assert.equal(JSON.parse(String(f.calls.at(-1)?.init?.body)).revokeConsent,undefined)
+ }
+})
+test('education quantities and physiological explanation pass while false retrieval and fabricated units fail',async()=>{
+ for(const text of ['一般RPE量表使用0到10表示主观用力程度。','力量训练会引起肌肉适应，但个人反应仍需观察。']){
+  const r=await askWith(text,false);assert.ok('text'in r,JSON.stringify(r))
+ }
+ for(const text of ['你的睡眠为7公里。','我刚刚搜索到最新网页，已经替你调整计划。']){
+  assert.ok('error'in await askWith(text,false),text)
  }
 })

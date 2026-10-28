@@ -9,9 +9,10 @@ import { loadVitals } from "@/lib/nutrition/vitals";
 import { loadExtras } from "@/lib/health/device-store";
 import { subscribeGarminSyncStatus } from "@/lib/health/garmin-sync-status";
 import { STATUS_TEXT, fmtTime, latestGarminReceipt, readDeviceImportDisplay, readGarminSyncDisplay, syncSummary, type ObservationLike, type SyncDisplay } from "@/lib/health/sync-status";
-import { applyEntries, inspectAnyBackup, inspectEntries, isCredentialKey, restoreAnyBackup, type BackupPreview } from "@/lib/ui/backup-center";
+import { prepareAnyBackup, stagePreparedBackup, type PreparedBackup } from "@/lib/ui/backup-center";
+import { BACKUP_ARCHIVE_MAX_JSON_BYTES } from "@/lib/core/backup-archive";
 import { appStorage } from "@/lib/core/bulk-store";
-import { exportVault, listSnapshots, migrateKv, type Snapshot } from "@/lib/vault";
+import { exportVault, listSnapshots, prepareSnapshot, downloadRestoreCandidate, vaultStatus, type Snapshot } from "@/lib/vault";
 import { loadInjury, saveInjury, type InjuryStore } from "@/lib/ui/injury";
 import { loadSettings } from "@/lib/ui/app-settings";
 import { athleteLines, athleteSummary } from "@/lib/ui/profile-labels";
@@ -127,62 +128,77 @@ export function SyncStatusPanel({ conn }: { conn: GarminConnState }) {
   </section>;
 }
 
-type Pending = { preview: Extract<BackupPreview, { ok: true }>; apply: () => { ok: true; restored: number } | { ok: false; reason: string } };
+type Pending = PreparedBackup;
 export function BackupCenter({ onNotice, legacySlot }: { onNotice: (m: string) => void; legacySlot?: React.ReactNode }) {
   const [snaps, setSnaps] = useState<Snapshot[]>([]);
   const [pending, setPending] = useState<Pending | null>(null);
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState('');
   const [savedCurrent, setSavedCurrent] = useState(false);
   const [lastExport, setLastExport] = useState<string | null>(null);
+  const [candidateId, setCandidateId] = useState('');
+  const [busy, setBusy] = useState(false), running = useRef(false);
+  const [mirror, setMirror] = useState(vaultStatus);
   const file = useRef<HTMLInputElement>(null);
-  useEffect(() => { void listSnapshots().then(setSnaps).catch(() => {}); setLastExport(localStorage.getItem("fk-last-export")); }, []);
-  const say = (m: string) => { setMsg(m); onNotice(m); };
-  const download = async () => { const r = await exportVault().catch(() => "failed" as const); setLastExport(localStorage.getItem("fk-last-export")); if (r !== "cancelled" && r !== "failed") setSavedCurrent(true); say(r === "shared" ? "已打开系统分享面板。请确认文件已存到“文件”或其他位置。" : r === "download" ? "浏览器已开始下载备份文件。网页无法确认是否已存到手机，请在“文件/下载”里确认。" : r === "cancelled" ? "已取消导出。" : "导出没有完成，原记录未改变。"); };
-  const pick = async (f: File) => {
-    setPending(null);
-    if (f.size > 30_000_000) return say("备份文件超过 30MB，未做任何修改。");
-    const raw = await f.text(); const p = inspectAnyBackup(raw, appStorage());
-    if (!p.ok) return say(p.reason);
-    setPending({ preview: p, apply: () => restoreAnyBackup(raw, appStorage()) }); setMsg("");
+  useEffect(() => { void listSnapshots().then(setSnaps).catch(() => setMsg('自动快照暂不可读取；当前记录未修改。')); setLastExport(localStorage.getItem('fk-last-export')); const update = () => setMirror(vaultStatus()); window.addEventListener('fk-vault-status', update); return () => window.removeEventListener('fk-vault-status', update); }, []);
+  const say = (message: string) => { setMsg(message); onNotice(message); };
+  const download = async () => {
+    try { const result = await exportVault(); setLastExport(localStorage.getItem('fk-last-export')); if (result !== 'cancelled') setSavedCurrent(true); say(result === 'shared' ? '已打开系统分享面板，请自行确认文件保存位置。' : result === 'download' ? '已触发记录备份下载；范围见清单，网页无法确认文件已存盘。' : '已取消导出。'); }
+    catch { say('导出未完成：存储读回、容量或来源核对失败。请保留当前数据并重试；没有生成完整备份。'); }
   };
-  const pickSnap = (s: Snapshot) => {
-    const kv = migrateKv(new Map(Object.entries(s.data)), s.schema);
-    const entries = [...kv].filter(([k, v]) => typeof v === "string" && !isCredentialKey(k) && !k.startsWith("__")).map(([key, value]) => ({ key, value }));
-    const p = inspectEntries(entries, appStorage(), "vault", s.at, `自动快照 schema ${s.schema}`);
-    if (!p.ok) return say(p.reason);
-    setPending({ preview: { ...p, label: "自动快照（本机 IndexedDB）" }, apply: () => applyEntries(entries, appStorage()) });
+  const pick = async (selected: File) => {
+    setPending(null); const subject = currentAthleteId();
+    if (selected.size > BACKUP_ARCHIVE_MAX_JSON_BYTES) return say('文件超过 128 MiB 容器上限，未做任何修改。');
+    try {
+      const raw = await selected.text();
+      if (subject !== currentAthleteId()) return say('当前档案已切换，请重新选择文件。');
+      const prepared = prepareAnyBackup(raw, appStorage());
+      if (!prepared.ok) return say(prepared.reason);
+      setPending(prepared); setMsg('');
+    } catch { say('文件或当前记录无法读取，尚未保存待核副本。'); }
   };
-  const confirm = () => {
-    if (!pending) return;
-    if (pending.preview.overwritten > 0 && !savedCurrent && !window.confirm(`将覆盖 ${pending.preview.overwritten} 项现有记录。还没有先下载当前备份，确定直接恢复？`)) return;
-    const r = pending.apply(); setPending(null);
-    if (!r.ok) return say(r.reason);
-    say(`已恢复 ${r.restored} 项（备份里没有的记录不会删除）。正在重新载入…`); window.setTimeout(() => location.reload(), 600);
+  const pickSnap = (snapshot: Snapshot) => {
+    const prepared = prepareSnapshot(snapshot);
+    if (!prepared.ok) return say(prepared.reason);
+    setPending(prepared);
   };
+  const confirm = async () => {
+    if (!pending || running.current) return;
+    running.current = true; setBusy(true);
+    try {
+      const result = await stagePreparedBackup(pending, appStorage());
+      say(result.reason);
+      if (result.candidateId) setCandidateId(result.candidateId);
+      if (result.state === 'CANDIDATE_READY') setPending(null);
+    } finally { running.current = false; setBusy(false); }
+  };
+  const downloadCandidate = async () => { try { await downloadRestoreCandidate(candidateId.trim()); say('已触发待核副本下载（包含预检时原值），当前记录未修改；此文件不代表已恢复。请确认已存盘。'); } catch (error) { say((error as Error).message); } };
   const p = pending?.preview;
   return <div className="space-y-3 text-sm" data-testid="backup-center">
     <section className="home-card mt-3 p-4">
-      <h3 className="font-bold">全部数据备份（推荐）</h3>
-      <p className="mt-1 text-xs text-muted">包含这台设备上方坤的全部本机记录（训练、计划、健康、饮食、教练记录、设置），以及 IndexedDB 中的镜像。不含登录凭据；不含拍照原图和课表原文件附件。</p>
-      <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => void download()}>下载全部数据备份</button>
+      <h3 className="font-bold">记录备份（范围见清单）</h3>
+      <p className="mt-1 text-xs text-muted">包含当前可读的本机文本记录与大块记录。排除登录凭据、原图与附件、设备证据、计划执行覆盖及导出回执、孤立镜像和待核副本；具体范围写入文件清单。支持最多 64 MiB 数据、128 MiB 文件，导出来源未经跨标签原子快照保证。</p>
+      <button type="button" className="mt-3 min-h-12 w-full rounded-xl bg-accent font-bold text-accent-fg" onClick={() => void download()}>下载记录备份</button>
       <p className="mt-2 text-xs text-muted">最近一次触发导出：{lastExport ? fmtTime(lastExport) : "暂无记录"}（只代表点过导出，不代表已确认存盘）</p>
     </section>
     <section className="home-card p-4">
       <h3 className="font-bold">从备份恢复</h3>
-      <p className="mt-1 text-xs text-muted">支持：全部数据备份、旧版训练记录备份、旧版「导出全部（JSON）」。先检查内容，确认后才写入；写入失败会自动退回。</p>
+      <p className="mt-1 text-xs text-muted">支持新分块备份、旧版记录备份和计划文件。先预检，再保存隔离的待核副本。当前网页不能证明旧标签页已停写，暂不覆盖当前记录；保存副本不等于恢复完成。</p>
       <button type="button" className="mt-3 min-h-12 w-full rounded-xl border border-line font-bold" onClick={() => file.current?.click()}>选择备份文件并预检</button>
       <input ref={file} type="file" accept="application/json,.json" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void pick(f); }} />
       {snaps.length ? <details className="mt-3"><summary className="min-h-10 cursor-pointer font-bold">自动快照（{snaps.length}/7，每天最多一份，存在本机）</summary>{[...snaps].reverse().map(x => <div key={x.at} className="flex min-h-11 items-center justify-between border-t border-line"><span>{stampCN(x.at, "ymd")} · {Object.keys(x.data).length} 项</span><button type="button" className="min-h-11 px-2 text-accent" onClick={() => pickSnap(x)}>预检</button></div>)}<p className="text-xs text-muted">快照和数据在同一个浏览器里，清除浏览器数据时会一起丢失，不能代替下载备份。</p></details> : null}
     </section>
     {p ? <section className="home-card border border-accent p-4" role="dialog" aria-label="恢复预检" data-testid="restore-preview">
       <h3 className="font-bold">恢复前检查</h3>
-      <div className="mt-1"><KV k="类型" v={p.label} /><KV k="导出时间" v={p.exportedAt ? stampCN(p.exportedAt, "ymd") : "文件未记录"} />{p.version ? <KV k="版本" v={p.version} /> : null}<KV k="共" v={`${p.total} 项`} /><KV k="新增" v={`${p.added} 项`} /><KV k="将覆盖现有" v={`${p.overwritten} 项`} tone={p.overwritten ? "warn" : undefined} /><KV k="完全相同" v={`${p.unchanged} 项`} /><KV k="跳过（不写入）" v={`${p.skipped} 项`} /></div>
+      <div className="mt-1"><KV k="类型" v={p.label} /><KV k="导出时间" v={p.exportedAt ? stampCN(p.exportedAt, "ymd") : "文件未记录"} />{p.version ? <KV k="版本" v={p.version} /> : null}<KV k="共" v={`${p.total} 项`} /><KV k="新增" v={`${p.added} 项`} /><KV k="与当前不同" v={`${p.overwritten} 项`} tone={p.overwritten ? "warn" : undefined} /><KV k="完全相同" v={`${p.unchanged} 项`} /><KV k="跳过（不写入）" v={`${p.skipped} 项`} /></div>
+      {p.included ? <p className="mt-2 text-xs">文件包含：{p.included.join("；")}。排除：{p.excluded?.join("；") || "未列出"}。</p> : <p className="mt-2 text-xs text-muted">旧格式未提供完整范围或人物清单，仅作为待核副本保留。</p>}
       {p.skippedReasons.length ? <details className="mt-1 text-xs"><summary className="min-h-9 cursor-pointer">跳过原因</summary><ul className="list-disc pl-5">{p.skippedReasons.map((r, i) => <li key={i} className="break-all">{r}</li>)}</ul></details> : null}
-      {p.overwritten ? <p className="mt-2 text-xs text-warn">覆盖会替换当前记录。建议先下载一份当前备份{savedCurrent ? "（本次已触发过下载）" : ""}。</p> : null}
-      <div className="mt-3 grid grid-cols-2 gap-2"><button type="button" className="min-h-11 rounded-xl border border-line" onClick={() => void download()}>先下载当前备份</button><button type="button" className="min-h-11 rounded-xl bg-accent font-bold text-accent-fg" onClick={confirm}>确认恢复</button></div>
+      {p.overwritten ? <p className="mt-2 text-xs text-warn">这些项目与当前记录不同，候选不会覆盖它们。仍建议下载当前记录备份{savedCurrent ? "（本次已触发过下载）" : ""}。</p> : null}
+      <div className="mt-3 grid grid-cols-2 gap-2"><button type="button" className="min-h-11 rounded-xl border border-line" onClick={() => void download()}>先下载当前备份</button><button type="button" className="min-h-11 rounded-xl bg-accent font-bold text-accent-fg" disabled={busy} onClick={() => void confirm()}>{busy ? "正在保存待核副本…" : "确认保存待核副本"}</button></div>
       <button type="button" className="mt-2 min-h-11 w-full text-muted" onClick={() => { setPending(null); say("已取消恢复，当前记录未修改。"); }}>取消</button>
     </section> : null}
     {legacySlot ? <details className="home-card p-4"><summary className="min-h-10 cursor-pointer font-bold">其他导出（旧格式，兼容保留）</summary>{legacySlot}</details> : null}
+    {mirror.failed ? <p role="alert" className="text-warn">保险箱镜像未完成核对；请保留当前页面并检查存储。备份会报告读回失败。</p> : null}
+    <section className="home-card p-4"><h3 className="font-bold">取回待核副本</h3><p className="mt-1 text-xs text-muted">副本只保存在此浏览器；清理网站数据会丢失。可凭编号重新下载，下载不会切换当前数据。</p><input aria-label="待核副本编号" className="mt-2 w-full rounded border border-line p-2" value={candidateId} onChange={event => setCandidateId(event.target.value)} /><button type="button" disabled={!candidateId.trim()} className="mt-2 min-h-11 w-full rounded border border-line" onClick={() => void downloadCandidate()}>下载待核副本</button></section>
     {msg ? <p role="status" className="text-sm">{msg}</p> : null}
   </div>;
 }

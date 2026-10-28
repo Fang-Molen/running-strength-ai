@@ -1,0 +1,19 @@
+✔ src/lib/core/backup-inspection.test.ts (542.156809ms)
+✔ src/lib/core/bulk-store.test.ts (4674.043709ms)
+✖ src/lib/core/hydration.test.tsx (9405.802332ms)
+✔ src/lib/core/storage-journal.test.ts (1312.337856ms)
+✔ src/lib/ui/backup-center.test.ts (1029.276515ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9420.829154
+
+✖ failing tests:
+
+test at src/lib/core/hydration.test.tsx:1:1
+✖ src/lib/core/hydration.test.tsx (9405.802332ms)
+  'test failed'

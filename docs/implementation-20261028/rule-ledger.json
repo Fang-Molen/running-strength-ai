@@ -1,0 +1,142 @@
+{
+  "version": "20261028.1",
+  "scope": "工程边界与现有科学规则的分类登记；不是专业认证或完整研究综述",
+  "rules": [
+    {
+      "id": "IDENTITY_SCOPE",
+      "source": "src/lib/core/ownership.ts",
+      "kind": "DATA_INVARIANT",
+      "rule": "无归属旧记录仅属于local；按运动员、来源、协议隔离",
+      "validation": "LOCAL_SYNTHETIC_ONLY",
+      "prescription": false
+    },
+    {
+      "id": "SOURCE_REVISION",
+      "source": "src/lib/core/coach-p7-runtime.ts",
+      "kind": "DATA_INVARIANT",
+      "rule": "更正、撤销、来源不可读或冲突使依赖判断失效/待重审；恢复事实不恢复旧解释",
+      "validation": "LOCAL_SYNTHETIC_ONLY",
+      "prescription": false
+    },
+    {
+      "id": "ARCHIVE_BOUNDS",
+      "source": "src/lib/core/backup-archive.ts",
+      "kind": "RESOURCE_BOUND",
+      "rule": "64MiB有效负载、128MiB归档JSON、256KiB分块；不是无限容量或流式保证",
+      "validation": "LOCAL_SYNTHETIC_ONLY",
+      "prescription": false
+    },
+    {
+      "id": "CONTEXT_BUDGET",
+      "source": "src/lib/coach/online-context.ts",
+      "kind": "RESOURCE_BOUND",
+      "rule": "完整记录裁减并披露遗漏；个人上下文与一般问题按依赖分离",
+      "validation": "LOCAL_SELECTOR_AND_SYNTHETIC_CONTROLLER",
+      "prescription": false
+    },
+    {
+      "id": "ASSERTION_V2",
+      "source": "src/lib/coach/assertion-policy.ts",
+      "kind": "LEXICAL_SCREENING",
+      "rule": "一般知识数字与个人事实分开，个人数量需绑定引文；越权写入、诊断、放行和虚构检索受限",
+      "validation": "STRUCTURAL_ONLY_NOT_PROFESSIONAL",
+      "prescription": false
+    },
+    {
+      "id": "PHYSIOLOGY_WINDOW",
+      "source": "src/lib/coach/training-models/physiology.ts",
+      "kind": "ENGINEERING_ELIGIBILITY",
+      "rule": "既有90日、CS持续时间和VDOT比赛时长窗口是保守工程筛选，不是经个体生理验证的阈值",
+      "validation": "PROFESSIONAL_CALIBRATION_NOT_PROVEN",
+      "prescription": false
+    },
+    {
+      "id": "THRESHOLD_SOURCE",
+      "source": "src/lib/coach/training-models/physiology.ts",
+      "kind": "MEASUREMENT_BOUNDARY",
+      "rule": "LT、VT、CS、VDOT各自保留来源协议；缺LT2不推造LT2配速；VDOT不冒充实测VO2max",
+      "validation": "CALCULATION_AND_SOURCE_BOUNDARY_ONLY",
+      "prescription": false
+    },
+    {
+      "id": "ROLLING_REFERENCE",
+      "source": "src/lib/health/analysis-evidence.ts",
+      "kind": "DESCRIPTIVE_REFERENCE",
+      "rule": "同设备、协议、单位的历史参照；滚动区间不等于稳定正常或医学界限",
+      "validation": "PROFESSIONAL_CALIBRATION_NOT_PROVEN",
+      "prescription": false
+    },
+    {
+      "id": "RECOVERY_WINDOW",
+      "source": "src/lib/health/recovery-assessment.ts",
+      "kind": "PRODUCT_OBSERVATION_WINDOW",
+      "rule": "既有72小时观察和24/48/72小时回访不等于生理恢复完成时间；疼痛和功能限制独立保留",
+      "validation": "PROFESSIONAL_CALIBRATION_NOT_PROVEN",
+      "prescription": false
+    },
+    {
+      "id": "ADAPTIVE_REVIEW",
+      "source": "src/lib/health/adaptive-review.ts",
+      "kind": "PRODUCT_REVIEW_POLICY",
+      "rule": "既有两次独立观察政策用于候选复核，不证明因果或永久个人类型",
+      "validation": "PROFESSIONAL_CALIBRATION_NOT_PROVEN",
+      "prescription": false
+    },
+    {
+      "id": "CYCLE_WINDOW",
+      "source": "src/lib/coach/cycle/request.ts",
+      "kind": "USER_REQUEST_BOUND",
+      "rule": "明确1至52周，历史观察窗口与计划窗口分开；自然月歧义需澄清",
+      "validation": "LOCAL_SYNTHETIC_ONLY",
+      "prescription": false
+    },
+    {
+      "id": "PERIODIZATION",
+      "source": "src/lib/coach/cycle/planner.ts",
+      "kind": "CONDITIONAL_PLANNING",
+      "rule": "专项、周期和可比实际课程用于有条件候选；日历阶段不是能力证明，不按每第四周固定减量",
+      "validation": "PROFESSIONAL_DOSE_REVIEW_NOT_PROVEN",
+      "prescription": "PREVIEW_AND_USER_CONFIRMATION_ONLY"
+    },
+    {
+      "id": "NUTRITION_COMPLETENESS",
+      "source": "src/lib/coach/online-nutrition-facts.ts",
+      "kind": "DATA_INVARIANT",
+      "rule": "已记录摄入不是全天完整摄入；活动消耗不能冒充全天总消耗",
+      "validation": "LOCAL_SYNTHETIC_ONLY",
+      "prescription": false
+    },
+    {
+      "id": "PERSONAL_PLAN_DEPENDENCY",
+      "source": "src/lib/coach/personal/host.ts",
+      "kind": "VERSION_AND_CONFIRMATION_POLICY",
+      "rule": "身体、目标、餐食、训练和限制变更后复核；冲突不提供假精确候选；拒绝保留原方案",
+      "validation": "LOCAL_SYNTHETIC_ONLY",
+      "prescription": "PREVIEW_AND_USER_CONFIRMATION_ONLY"
+    },
+    {
+      "id": "FK_RECOVERY_HISTORY_SEGMENTS_1",
+      "version": "2026-10-28.1",
+      "source": "src/lib/health/metric-trajectory.ts",
+      "kind": "PRODUCT_DESCRIPTIVE_POLICY",
+      "rule": "当前日不进入参照；可读取且同源同设备协议的独立历史日分成较早/较后两段，中位数与覆盖并列显示；一致方向变化仅触发条件性复核。每段至少两个独立日是描述结构最低要求，不是生理充分性阈值；不新增幅度或医学持续时间阈值。",
+      "validation": "8_NEW_AND_84_ADJACENT_SYNTHETIC_ASSERTIONS_PASS_PROFESSIONAL_CALIBRATION_NOT_PROVEN",
+      "calibration": "NOT_VALIDATED",
+      "prescription": false,
+      "details": "rule-ledger.md#FK_RECOVERY_HISTORY_SEGMENTS_1"
+    },
+    {
+      "id": "EVENT_RETRIEVAL_1",
+      "version": "2026-10-28.1",
+      "source": "src/lib/coach/cycle/planner.ts",
+      "kind": "PRODUCT_RETRIEVAL_POLICY",
+      "rule": "按已熟悉课的目的、实际结构和证据完整性为六个专项作有条件排序；不由课型标签证明专项收益，不创造剂量或比赛配速。",
+      "validation": "LOCAL_SYNTHETIC_SELECTION_ONLY",
+      "calibration": "NOT_VALIDATED",
+      "prescription": "PREVIEW_AND_USER_CONFIRMATION_ONLY"
+    }
+  ],
+  "clinicalThresholdsAdded": false,
+  "realModelValidation": "NOT_RUN",
+  "professionalReview": "NOT_RUN"
+}

@@ -1,0 +1,16 @@
+✔ earlier segment prevents an unchanged rolling median from silently becoming a healthy new normal (11.321285ms)
+✔ a stable series remains descriptive, while one prior day never becomes a stable baseline (1.430609ms)
+✔ changed device/protocol has separate source segments, not a synthetic physiological drop (1.359131ms)
+✔ duplicate daily samples do not inflate days, conflicting days are excluded and future/foreign facts cannot enter (2.92816ms)
+✔ source correction changes descriptive version and can withdraw the directional review (0.997251ms)
+✔ directional observations enter actual assessment and packet but never add a safety hold or change dose (5.384053ms)
+✔ known pain remains active independently of a stable metric series (0.654643ms)
+✔ stable comparable execution is retained as counterevidence, not ignored to force a fatigue explanation (10.581253ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.513972

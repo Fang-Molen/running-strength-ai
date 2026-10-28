@@ -1,0 +1,17 @@
+✔ src/components/personal-coach-panel.test.tsx (2174.314685ms)
+✔ src/lib/coach/cycle/portrait-evidence.test.ts (1365.232313ms)
+✔ src/lib/coach/online-nutrition-facts.test.ts (991.074828ms)
+✔ src/lib/coach/personal/dependencies.test.ts (2369.567023ms)
+✔ src/lib/coach/personal/host.test.ts (2224.63155ms)
+✔ src/lib/coach/personal/legacy-nutrition.test.ts (875.319359ms)
+✔ src/lib/coach/personal/personal.test.ts (691.570742ms)
+✔ src/lib/nutrition/energy-source.test.ts (456.749594ms)
+✔ src/lib/nutrition/entry-workflow.test.ts (632.549412ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4242.504864

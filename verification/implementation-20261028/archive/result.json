@@ -1,0 +1,95 @@
+{
+  "task": "B06 bounded chunked JSON archive pure library",
+  "implementation": [
+    "src/lib/core/backup-archive.ts",
+    "src/lib/core/backup-archive.test.ts"
+  ],
+  "api": {
+    "createBackupArchive": "(entries: Record<string,string>, metadata: BackupArchiveMetadata) => BackupArchive",
+    "parseBackupArchive": "(raw: string) => {entries: Record<string,string>; metadata: BackupArchiveMetadata}",
+    "isBackupArchiveKeyAllowed": "(key: string) => boolean",
+    "BackupArchiveMetadata": {
+      "athleteId": "string",
+      "exportedAt": "string",
+      "included": "string[]",
+      "excluded": "string[]"
+    },
+    "format": "fangkun-chunked-backup",
+    "schema": 2
+  },
+  "limits": {
+    "payload_utf8_bytes": 67108864,
+    "json_utf8_bytes": 134217728,
+    "chunk_utf8_bytes": 262144,
+    "keys": 10000
+  },
+  "integrity": [
+    "SHA-256 per chunk and complete key",
+    "Canonical manifest hash binds metadata, per-key bytes/hash, chunk index/length/hash/count",
+    "Ordered key manifest and chunk sequence",
+    "Reject duplicate JSON object members, including escaped member names",
+    "Reject missing/extra/duplicate/tampered chunks, unsupported format/schema, undeclared fields",
+    "Reject credentials, unsafe keys, internal recovery and migration state without silent dropping",
+    "Reject invalid lone UTF16 surrogates; preserve valid Unicode pairs and all string values"
+  ],
+  "verification": [
+    {
+      "phase": "RED",
+      "command": "node --experimental-strip-types src/lib/core/backup-archive.test.ts",
+      "exit_code": 1,
+      "tests": 24,
+      "failed": 24,
+      "reason": "library absent before implementation",
+      "log": "red.log"
+    },
+    {
+      "phase": "GREEN",
+      "command": "node --experimental-strip-types src/lib/core/backup-archive.test.ts",
+      "exit_code": 0,
+      "tests": 28,
+      "passed": 28,
+      "log": "green.log"
+    },
+    {
+      "phase": "project runner",
+      "command": "FK_NO_TEST_PLAN=1 node --import ./scripts/test-register.mjs --test src/lib/core/backup-archive.test.ts",
+      "exit_code": 0,
+      "file_suites": 1,
+      "passed": 1,
+      "log": "registered-runner.log"
+    },
+    {
+      "phase": "focused TypeScript",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --types node --skipLibCheck src/lib/core/backup-archive.ts src/lib/core/backup-archive.test.ts",
+      "exit_code": 0,
+      "log": "typecheck.log"
+    }
+  ],
+  "generated_large_case": {
+    "records": 6,
+    "characters_each": 5300002,
+    "payload_utf8_bytes": 31800012,
+    "serialized_bytes_above": 31457280,
+    "result": "exact values and keys round-tripped"
+  },
+  "limitations": [
+    "Full JSON string and parsed container held in memory; not streaming or unlimited. Browser allocation limits may fail below declared maximum.",
+    "Hashes detect corruption, not malicious authorship/authentication.",
+    "Caller must obtain consistent durable records and accurate scope/exclusions; this library neither accesses storage nor proves isolation.",
+    "Caller should check File.size against BACKUP_ARCHIVE_MAX_JSON_BYTES before file.text().",
+    "UI/export/import integration and full project suite remain root task responsibility."
+  ],
+  "scope_preserved": {
+    "network": false,
+    "paid_models": false,
+    "real_data": false,
+    "production_db": false,
+    "deploy": false,
+    "existing_source_edited": false,
+    "committed": false
+  },
+  "source_sha256": {
+    "src/lib/core/backup-archive.ts": "4d2cc76fa506640acc59b48118750899905771626cc3e51d4c8f8c151d391a6a",
+    "src/lib/core/backup-archive.test.ts": "3e805d4725d2b41867721b614d530649a36ba69144864be3014d3f102f8de89b"
+  }
+}

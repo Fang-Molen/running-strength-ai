@@ -1,0 +1,60 @@
+
+> test:k20
+> node --import ./scripts/test-register.mjs --test src/lib/core/longitudinal-*.test.ts src/lib/core/prospective-evidence.test.ts src/lib/core/asof-event-ledger.test.ts src/lib/core/asof-k20.test.ts
+
+✔ backdated records not available at historical cutoff are excluded (16.076515ms)
+✔ late correction cannot rewrite earlier known facts (1.188391ms)
+✔ retraction applies only after recorded (0.710798ms)
+✔ orphan correction quarantined, no silent overwrite (1.17446ms)
+✔ conflicting corrections quarantined (0.340296ms)
+✔ no future symptom, record ID or future event count in model context (0.32995ms)
+✔ invalid cutoff and invalid date are quarantined (0.313004ms)
+✔ input not mutated and never authorizes clinical or training action (0.532857ms)
+✔ future malformed fact cannot change any earlier model context (16.752881ms)
+✔ quarantined revision branches cannot leave accepted descendants (0.476913ms)
+✔ identical retransmission is deduplicated but differing same-id facts are quarantined (2.134276ms)
+✔ the same instant gives the same Shanghai training day, malformed calendar timestamps fail (1.481847ms)
+✔ actual event timestamp never substitutes for missing or later submission time (0.865562ms)
+✔ only committed corrections bound to a visible start can enter the historical snapshot (0.531996ms)
+✔ new immutable journal commits record physical time and legacy journal rows stay unknown (4.658052ms)
+✔ historical snapshots do not mutate originals or allow cross-athlete same-id conflicts (0.302989ms)
+✔ comparable measurements never establish causal adaptation (8.050014ms)
+✔ different workout protocols cannot be compared (0.418074ms)
+✔ units and device provenance must match (0.294657ms)
+✔ missing protocol blocks comparisons (0.247796ms)
+✔ conflicting duplicate ids are quarantined (0.318613ms)
+✔ one-day comparison is not longitudinal evidence (0.18461ms)
+✔ input remains unchanged and no training authority granted (0.365644ms)
+✔ symptom overrides a superficially comparable improvement (24.698082ms)
+✔ missing symptom report is unknown, not a clean bill of health (0.340586ms)
+✔ small context budget preserves all safety issues (0.746743ms)
+✔ invalid record and conflict are not silently omitted by compression (0.614803ms)
+✔ model context contains no athlete raw IDs, dates, or times (0.307055ms)
+✔ two matching sessions are only comparable observations, never a training prescription (9.493744ms)
+✔ mixed training protocols block direct trend (0.321688ms)
+✔ conflicting corrected records cannot be silently selected (0.226243ms)
+✔ symptoms remain safety review even if performance improves (0.21784ms)
+✔ missing recovery is not converted to recovered (0.183388ms)
+✔ invalid dates are rejected rather than included (0.192242ms)
+✔ input is not modified and context is bounded (2.146144ms)
+✔ no session data is insufficient, not a negative outcome (0.173763ms)
+✔ future results cannot change earlier comparison (11.514949ms)
+✔ model context does not leak future existence or outcome (0.391253ms)
+✔ calendar-invalid dates and invalid cutoff are rejected (0.373016ms)
+✔ future symptom does not become a past diagnosis (0.233694ms)
+✔ past symptoms require reconciliation regardless of performance (0.182146ms)
+✔ invalid source record never interpreted as zero or normal (1.17422ms)
+✔ input remains untouched (0.231441ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 43
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1544.100535
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

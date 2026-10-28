@@ -1,0 +1,299 @@
+{
+  "synthetic": true,
+  "paidCalls": 0,
+  "examples": [
+    {
+      "caseId": "modern_general_1",
+      "question": "我没有腿疼，解释一下RPE",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "text": "一般科普：RPE通常用0到10表示主观用力程度。力量训练会引起肌肉适应，但速度因人而异。",
+        "source": "MODEL",
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "4f6af34e-b2fa-499b-9246-36b97ab50a80",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_general_2",
+      "question": "力量训练为何引起肌肉适应",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "text": "一般科普：RPE通常用0到10表示主观用力程度。力量训练会引起肌肉适应，但速度因人而异。",
+        "source": "MODEL",
+        "route": "LOW",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "a0c30233-4ec0-46d8-87cc-e01ccd6d31ce",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_after_cleanup",
+      "question": "力量训练为何引起肌肉适应",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "text": "一般科普：RPE通常用0到10表示主观用力程度。力量训练会引起肌肉适应，但速度因人而异。",
+        "source": "MODEL",
+        "route": "LOW",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "8850e193-ffed-4581-a7ee-75e1c13fd1e1",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_context_good",
+      "question": "解释历史训练分段",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "text": "用户申报[TRAINING；实绩申报]：distance=400 m；rest=120 s；发生时间 2026-01-01T00:00:00Z；记录时间 2026-01-01T01:00:00Z；来源 USER_DECLARED:APP；修订 1；未经独立核验。这条历史分段可作为比较起点，仍需核对协议是否一致。",
+        "source": "MODEL",
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "c6ba218b-cbe9-4d14-bdb8-cc9ea3ddc3f4",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_context_bad_0",
+      "question": "解释历史训练分段",
+      "status": 502,
+      "response": {
+        "ok": false,
+        "error": "OUTPUT_REJECTED",
+        "stage": "OUTPUT_VALIDATION",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "traceId": "b39b1caa-4ef7-4c61-af6e-29f9b6d4ed4e",
+        "policyVersion": "coach-assertions-v2",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        },
+        "text": "联网解释当前不可用；保留本地训练分析与原计划。"
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_context_bad_1",
+      "question": "解释历史训练分段",
+      "status": 502,
+      "response": {
+        "ok": false,
+        "error": "OUTPUT_REJECTED",
+        "stage": "OUTPUT_VALIDATION",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "traceId": "2d568a32-f995-44aa-9d3c-f83f342f7c31",
+        "policyVersion": "coach-assertions-v2",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        },
+        "text": "联网解释当前不可用；保留本地训练分析与原计划。"
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_context_bad_2",
+      "question": "解释历史训练分段",
+      "status": 502,
+      "response": {
+        "ok": false,
+        "error": "OUTPUT_REJECTED",
+        "stage": "OUTPUT_VALIDATION",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "traceId": "fd674323-9ed8-4e36-b8e6-e32cb185f1f0",
+        "policyVersion": "coach-assertions-v2",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        },
+        "text": "联网解释当前不可用；保留本地训练分析与原计划。"
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_context_bad_3",
+      "question": "解释历史训练分段",
+      "status": 502,
+      "response": {
+        "ok": false,
+        "error": "OUTPUT_REJECTED",
+        "stage": "OUTPUT_VALIDATION",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "traceId": "16e909c9-4278-49c8-af5e-26209608f067",
+        "policyVersion": "coach-assertions-v2",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        },
+        "text": "联网解释当前不可用；保留本地训练分析与原计划。"
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_partial",
+      "question": "解释历史训练分段",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "text": "一般力量训练会引起肌肉适应，个体差异仍需观察。\n部分个人事实或权限声明缺乏依据，相关片段已省略；其余解释仍需结合记录核对。",
+        "source": "MODEL",
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "unverified": true,
+        "validation": {
+          "status": "PARTIALLY_ACCEPTED",
+          "rejectedAssertionTypes": [
+            "UNBOUND_PERSONAL_QUANTITY"
+          ],
+          "policyVersion": "coach-assertions-v2",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "e82f6741-7fbb-4efa-834d-fa6abf622217",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        }
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    },
+    {
+      "caseId": "modern_after_off",
+      "question": "解释训练反应的可能原因",
+      "status": 503,
+      "response": {
+        "ok": false,
+        "error": "AUTHORIZED_CONTEXT_UNAVAILABLE",
+        "stage": "SNAPSHOT_VALIDATION",
+        "dispatchState": "NOT_SENT",
+        "ledgerState": "NOT_RESERVED",
+        "traceId": "05518333-e6b0-4443-8434-aeb1e072bea6",
+        "policyVersion": "coach-assertions-v2",
+        "retrieval": {
+          "state": "NOT_REQUESTED"
+        },
+        "text": "联网解释当前不可用；保留本地训练分析与原计划。"
+      },
+      "evaluation": "SYNTHETIC_PROVIDER_AND_SIGNED_TEST_IDENTITY_NOT_REAL_MODEL_OR_PROFESSIONAL_REVIEW"
+    }
+  ]
+}

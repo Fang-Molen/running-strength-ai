@@ -5,7 +5,7 @@ import { prepareR5Command, r5CurrentFacts, readR5Context } from '@/lib/coach/r5/
 import { CoachR5Panel } from '@/components/coach-r5-panel';
 import { CoachWeeklyPanel } from '@/components/coach-weekly-panel';
 import { generateWeeklyDraft } from '@/lib/coach/r5/weekly-host';
-import {explicitlyReviewsRecord} from '@/lib/core/coach-specialty-analysis'
+import { explicitlyReviewsRecord } from '@/lib/core/coach-specialty-analysis'
 import { CoachAnswerView } from "@/components/coach-answer-view";
 import { CoachAvatar, petMoodFromChat } from '@/components/pet';
 import type { CharacterThemeId } from '@/lib/ui/character-themes';
@@ -27,7 +27,7 @@ import { detectRedFlags } from '@/lib/core/coach-red-flags';
 import { CoachChatLoadPanel } from '@/components/coach-chat-load-panel';
 import { CoachChatTrainingPanel } from '@/components/coach-chat-training-panel';
 import { emptyDialogue } from '@/lib/core/coach-dialogue';
-import {commitDisplayedCoachAdvice} from '@/lib/core/coach-p7-runtime';
+import { commitDisplayedCoachAdvice } from '@/lib/core/coach-p7-runtime';
 import type { ChatTraining } from '@/lib/core/coach-chat-evidence';
 import { chatLoadPreview } from '@/lib/core/coach-chat-load';
 import { readCoachReviewWorkspace } from '@/lib/core/coach-review-workspace';
@@ -65,8 +65,6 @@ import { appendCoachNotice, noticeForCoachEvent, type CoachActivityNotice } from
 import { chooseAction, createTrainingDecision, firstPlannedSet, readTrainingContext } from "@/lib/core/training-decision";
 import { refreshAthleteState } from "@/lib/core/state";
 import type { AthleteState, DecisionRecord } from "@/lib/core/types";
-import { fatigueLabel } from "@/lib/strength/agent";
-import { askCoach } from "@/lib/strength/coach-ai";
 import { currentAthleteId } from "@/lib/core/events";
 import { readFormalEvidenceRows } from "@/lib/core/coach-v4-formal-rows-store";
 import { buildCoachModelRequest, normalizeAskCoachInput, normalizeV4 } from '@/lib/strength/coach-pipeline';
@@ -76,22 +74,22 @@ import { loadInstalledKnowledgeLedger, KNOWLEDGE_APPROVALS_KEY } from "@/lib/coa
 import { subscribeKnowledgeLedger } from "@/lib/coach/knowledge/approval";
 import { reviewKnowledgeJudgments } from "@/lib/coach/knowledge/history";
 import { isNativeRecordInspection } from '@/lib/core/dialogue-e1';
-import { offlineCapability, localModelFallback, type CoachFailure } from "@/lib/core/coach-offline";
 import { saveOfflineReview } from "@/lib/core/coach-offline-loop";
 import { CoachOfflineLoopPanel } from "@/components/coach-offline-loop-panel";
 import { COACH_NETWORK_MODE_KEY, COACH_PUBLIC_REFERENCES, authorizeNetworkAction, parseCoachNetworkMode, type CoachNetworkMode } from "@/lib/core/coach-network-policy";
 import { PERSONAS, PERSONA_KEY, parsePersona, presentCoachAnswer, type CoachPersona } from "@/lib/core/coach-persona";
 import { extractConversationContext, contextualFollowup } from "@/lib/core/coach-conversation-context";
 import { assembleCoachBrief, recordCoachBodyEvidence, recordCoachChoice, recordCoachEvidence, type CoachBrief } from "@/lib/core/coach-brief";
-import { formatTrainingWhen, listBoundTrainings, orderOccurrenceIds, sameCalendarDay, separateBriefs } from "@/lib/core/coach-compare";
-import { assembleCoachSeries, toggleSeriesId } from "@/lib/core/coach-series";
+import { formatTrainingWhen, listBoundTrainings } from "@/lib/core/coach-compare";
+import { toggleSeriesId } from "@/lib/core/coach-series";
 import { listTrainingOccurrences } from "@/lib/core/occurrence";
 import type { CoachFuel } from "@/lib/core/coach-fuel";
 import { COACH_CHIPS, loadCoach, saveCoach, type CoachMemory } from "@/lib/strength/coach";
 import type { Plan } from "@/lib/strength/model";
 import { isReviewAsk, pickDefaultActivity, reviewActivity, intervalRestAnswer, localDayOf, type GActivity, type GLap } from "@/lib/coach/plain-coach";
-import { UNVERIFIED_ONLINE_LABEL } from "@/lib/coach/r5/guard";
 import { CoachOnlineRequest } from "./coach-online-request";
+import { CoachOnlineAnswerStatus } from "./coach-online-answer-status";
+import { syncOnlineAuthorization } from "@/lib/coach/online-session";
 import { onlineSetting, setOnline as persistOnline, garminActivities, cachedLaps, saveLaps } from "@/lib/coach/online-coach";
 import { composeUnifiedSupplement } from "@/lib/coach/loop/unified-answer";
 import { readEffectiveProfile } from "@/lib/coach/loop/effective-host";
@@ -197,11 +195,16 @@ export function CoachSheet({
     return ()=>{unsubscribe();window.removeEventListener('storage', onStorage)};
   },[]);
   const [sending, setSending] = useState(false);
-  const [onlineRequest, setOnlineRequest] = useState<string | null>(null);
+  const [onlineRequests, setOnlineRequests] = useState<{id:string;question:string;owner:string;selectedTrainingIds?:readonly string[]}[]>([]);
+  const queueOnline = (question:string,owner:string,selectedTrainingIds:readonly string[]=[]) => {
+    if (!onlineSetting().on) return;
+    setOnlineRequests(items => [...items, {id:crypto.randomUUID(),question,owner,selectedTrainingIds:[...selectedTrainingIds]}]);
+  };
   const [activityNotices, setActivityNotices] = useState<CoachActivityNotice[]>([]);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const [networkMode, setNetworkMode] = useState<CoachNetworkMode>("local");
   const [onlineOn, setOnlineOn] = useState(() => onlineSetting().on);
+  const [onlinePreferenceBusy,setOnlinePreferenceBusy]=useState(false);
   const autoLinkedRef = useRef<string | null>(null);
   const [recordRevision, setRecordRevision] = useState(0);
   const [chatLoad, setChatLoad] = useState<{question:string;id:string;occurrenceId:string|null}|null>(null);
@@ -237,7 +240,7 @@ export function CoachSheet({
     setCompareA(''); setCompareB(''); setSeriesIds([]);
     setRpeDraft(''); setRecoveryDraft(''); setBodyLocation(''); setBodyIntensity('');
     setSending(false);
-    setOnlineRequest(null);
+    setOnlineRequests([]);
     setMemory(loadCoach());
     try { setNetworkMode(parseCoachNetworkMode(window.localStorage.getItem(COACH_NETWORK_MODE_KEY))); } catch { /* storage unavailable */ }
     try { setPersona(parsePersona(window.localStorage.getItem(PERSONA_KEY))); } catch { /* storage unavailable */ }
@@ -355,18 +358,19 @@ export function CoachSheet({
     if (nearBottom.current || lastRole === "user") jumpLatest(); else setBehind(true);
   }, [memory?.messages.length]);
 
-  async function send(text: string, retry = false, useCloud = false) {
+  async function send(text: string, retry = false) {
     const value = text.trim();
     if (!value || !memory || sending) return;
     const athleteId = memory.athleteId;
     if (currentAthleteId() !== athleteId) return;
-    setOnlineRequest(null);
+
+    const selectedIds = /比较|对比/.test(value) && compareA && compareB ? [compareA,compareB] : /纵向|趋势|这几节/.test(value) && seriesIds.length>=3 ? seriesIds : (isReviewAsk(value)||/这节|这次训练/.test(value)) && link!=='unbound' && selectedOccurrenceId ? [selectedOccurrenceId] : [];
     const r5 = prepareR5Command(value);
     const cycleRequest=cycleRequestFromText(value);
     if(r5.kind==='NONE' && cycleRequest) {
-      let reply='';try{const d=await prepareCycle(new Date().toISOString(),cycleRequest.request);reply=`已依据当前保存资料生成${d.draft.weeks.length}周周期草案。${cycleCoachSummary()}\n请在「复盘→个体周期计划」核对比赛目标、训练背景和差异；尚未确认的目标先保存，正式课表不会自动改变。`;}catch(e){reply=e instanceof Error?e.message:'周期依据暂不可核对，原计划保留';}
+      let reply=cycleRequest.clarification??'';if(!reply)try{const d=await prepareCycle(new Date().toISOString(),cycleRequest.request);reply=`已依据当前保存资料生成${d.draft.weeks.length}周周期草案。${cycleCoachSummary()}\n请在「复盘→个体周期计划」核对比赛目标、训练背景和差异；尚未确认的目标先保存，正式课表不会自动改变。`;}catch(e){reply=e instanceof Error?e.message:'周期依据暂不可核对，原计划保留';}
       if(currentAthleteId()!==athleteId)return;
-      const id=crypto.randomUUID();setMemory(current=>current?.athleteId===athleteId?{...current,messages:[...current.messages,{id:id+'-user',role:'user' as const,text:value},{id:id+'-cycle',role:'coach' as const,text:reply.slice(0,1000)}].slice(-40)}:current);setDraft('');return;
+      const id=crypto.randomUUID();setMemory(current=>current?.athleteId===athleteId?{...current,messages:[...current.messages,{id:id+'-user',role:'user' as const,text:value},{id:id+'-cycle',role:'coach' as const,text:reply.slice(0,1000)}].slice(-40)}:current);setDraft('');if(!cycleRequest.clarification)queueOnline(value,athleteId,selectedIds);return;
     }
     if (r5.kind !== 'NONE') {
       let reply = r5.kind === 'PROPOSAL' ? '已生成修改差异，请在下方确认卡核对；接受前不会写入正式资料或计划。' : r5.kind === 'ANSWER' ? r5.text : '正在汇总本周实际记录与下周草案。';
@@ -374,7 +378,8 @@ export function CoachSheet({
       if (currentAthleteId() !== athleteId) return;
       const id = crypto.randomUUID();
       setMemory(current => current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: id+'-user', role: 'user' as const, text: value }, { id: id+'-r5', role: 'coach' as const, text: reply.slice(0,1000) }].slice(-40) } : current);
-      setDraft(''); setNotice(''); setRetryQuestion(null); setOnlineRequest(null); setFace(r5.kind === 'PROPOSAL' && r5.command.kind === 'SYMPTOM' ? 'guard' : 'focus');
+      setDraft(''); setNotice(''); setRetryQuestion(null);  setFace(r5.kind === 'PROPOSAL' && r5.command.kind === 'SYMPTOM' ? 'guard' : 'focus');
+      if(r5.kind==='ANSWER'||r5.kind==='WEEKLY')queueOnline(value,athleteId,selectedIds);
       return;
     }
     // An exact knowledge-library request is a read-only educational response.
@@ -389,17 +394,14 @@ export function CoachSheet({
           { id: `${id}-learning`, role: "coach" as const, text: learningAnswer, purpose: "KNOWLEDGE_READING" as const },
         ].slice(-40),
       } : current);
-      setDraft(""); setNotice(""); setRetryQuestion(null); setOnlineRequest(null);
+      setDraft(""); setNotice(""); setRetryQuestion(null);
       setChatLoad(null); setChatTraining(null); setCognitionTurn(null); setTurnId(null);
+      queueOnline(value,athleteId,selectedIds);
       setFace("focus");
       return;
     }
-    // Local capability is evaluated before the optional, explicitly requested model route.
-    const capable=offlineCapability(value);
-    const authorized=authorizeNetworkAction({ mode: networkMode, action: "invoke-paid-model", online: isOnline ?? undefined, explicitDataConsent: useCloud, serverAuthorized: false }).allowed;
-    const cloudRequested=useCloud;
-    useCloud=useCloud&&!capable.independent&&authorized&&isOnline!==false;
-    if(cloudRequested&&!useCloud)setNotice(capable.independent?"本题可直接使用本地分析。":isOnline===false?"当前离线，已使用本地分析。":"模型尚未授权，已使用本地分析；没有上传训练或健康数据。");
+    // The deterministic answer stays available while the same question automatically
+    // enters the authenticated online route, subject to the persistent preference.
     // 复盘类问题：用户没手动选训练、也没选“不绑定”时，默认关联最近一次（或问到的那天）佳明活动。
     const today = localDayOf(new Date().toISOString());
     const reviewAsk = isReviewAsk(value) && link !== "unbound";
@@ -425,7 +427,7 @@ export function CoachSheet({
     setFuelPreview(brief.fuel ?? null);
     if (!retry) {
       const userMessage = { id: `${Date.now()}`, role: "user" as const, text: value };
-      setMemory({ ...memory, messages: [...memory.messages, userMessage].slice(-40) });
+      setMemory(current=>current?.athleteId===athleteId?{ ...current, messages: [...current.messages, userMessage].slice(-40) }:current);
     }
     setDraft("");
     const statedRpes=reportedSessionRpes(value);
@@ -473,111 +475,46 @@ export function CoachSheet({
       const unified = composeUnifiedSupplement({ question: value, r4, personalText, effective: effectiveProfile, suggestionLines });
       const local = answerLocally(brief,reviewed?{frame:reviewed.reasoning,snapshot:reviewed.review.audit.snapshot}:undefined,coachContextMemory,periodReview,memory.dialogue??emptyDialogue(athleteId));
       if (currentAthleteId() !== athleteId) { setSending(false); return; }
-      if(!useCloud&&local.candidate){const savedAdvice=commitDisplayedCoachAdvice(local,value);if(!savedAdvice.ok)local.text+='\n本次建议历史保存失败，请先保留此回答；没有修改正式计划。'}
+      if(local.candidate){const savedAdvice=commitDisplayedCoachAdvice(local,value);if(!savedAdvice.ok)local.text+='\n本次建议历史保存失败，请先保留此回答；没有修改正式计划。'}
       setChatTraining(local.chatTraining??null);
       if(local.chatTraining)setChatLoad(null);
-    if (!useCloud) {
+    {
       if(local.offlineReview&&!local.chatTraining&&!local.c03){const saved=saveOfflineReview(local.offlineReview);if(!saved.ok)setNotice('本地分析已生成，但判断历史未能保存；原训练记录仍保留。');}
       const intakeGoal=firstWeekGoalFromText(value);
       if(intakeGoal && local.cognition?.safety==='NONE' && !brief.pain)setFirstWeekGoalState({ athleteId, value: intakeGoal });
       setCognitionTurn(local.cognition ? {cognition: local.cognition, brief} : null);
       const conversation = extractConversationContext(memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING"), value);
       const contextual = detectRedFlags(value).level!=='NONE'||local.offlineRuleIds?.length||local.reasoning?.scopeOccurrenceIds.length?null:contextualFollowup(value, conversation);
-      // 安全门：急症/疼痛/必须保留的安全约束 → 只用本地安全回答，不联网、不替换。
-      const chainHold = brief.appData?.decision?.safety==='URGENT'||brief.appData?.decision?.safety==='REVIEW';
-      const r5Hold = readR5Context(asOf).hold;
-      const redFlag = r5Hold || chainHold || detectRedFlags(value).level !== "NONE" || brief.pain || brief.constraints.medicalReferral || !!reviewed?.reasoning.safety.mustRetain;
+      // Keep safety constraints alongside the answer; restrict the affected activity only.
+      const permission = readR5Context(asOf,value).permission;
+      const redFlag = permission.trainingRestricted;
       // v87：待审知识预览、单纯换算、无候选的剩余任务只在本地展示，不联网、不被跑步复盘替换。
       let r6Answer: string | null = null;
       if (!redFlag && !recordOccurrence && r6Question(value)) {
         try { const d=await readR6Decision(today,asOf); if(currentAthleteId()!==athleteId){setSending(false);return;} r6Answer=r6DecisionText(d); } catch { /* Keep trustworthy local answer if the decision sources are unavailable. */ }
       }
       const keepLocal = answerStaysLocal(local) || !!r6Answer;
-      let shown = r6Answer ?? (r5Hold ? readR5Context(asOf).safety.message : chainHold && brief.appData?.decision ? brief.appData.decision.text : local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona));
+      let shown = r6Answer ?? (local.dialogue || keepLocal ? local.text : presentCoachAnswer(local.text + (contextual ?? ""), persona));
+      if(permission.safetyMessage&&!shown.includes(permission.safetyMessage)) shown += '\n'+permission.safetyMessage;
       if (!redFlag && !keepLocal && linkedAct) shown = reviewActivity(linkedAct, linkedLaps, today) + (brief.appData?.decision ? "\n当前已确认记录的背景复核（与所选手表活动分开列示，不相加）：\n" + brief.appData.decision.text : "");
       else if (!redFlag && !keepLocal) { const iv = intervalRestAnswer(value); if (iv) shown = iv; }
       // Shown as its own visible block under the answer; DeepSeek receives the same content as facts.
       let supplement = !r6Answer && !redFlag && local.localOnly !== 'HISTORY_ASSESSMENT' && local.localOnly !== 'GENERAL_EDUCATION' ? [unified.localSection, unified.followUps].filter(Boolean).join("\n\n") : "";
       let label = local.localOnly === 'GENERAL_EDUCATION' ? "本地知识" : "本地分析";
       // The local answer is always available. Network explanation is a separate,
-      // explicitly confirmed request using a server-created snapshot reference.
+      // automatic request using an authenticated, server-created snapshot reference.
       shown = `【${label}】\n${linkNotice ? linkNotice + "\n" : ""}${shown}`;
       if(!r6Answer&&shown.length+supplement.length>1000){const keep=Math.min(shown.length,700);supplement=supplement.slice(0,1000-keep);shown=shown.slice(0,1000-supplement.length);}
       const messageId = `${Date.now()}-local`;
       if (local.c03) pendingC03.current = { answer: local, athleteId, messageId };
       setMemory(current => current?.athleteId === athleteId ? { ...current, ...(local.dialogue?{dialogue:local.dialogue}:{}), messages: [...current.messages, { id: messageId, role: "coach" as const, text: shown,...(r4?{r4Basis:{question:value,day:r4.day,athleteId,version:r4.basisVersion}}:{}),...(supplement?{supplement}:{}),...(local.offlineReview?{factDetails:local.offlineReview.details}:{}),...(local.knowledgeUses?.length?{knowledgeUses:local.knowledgeUses}:{}),...(local.reasoning?.scopeOccurrenceIds.length?{analysisBasis:local.reasoning.basis,...(!local.reasoning.safety.mustRetain?{factDetails:formatComputedFacts(local.reasoning,true)}:{})}:{}) }].slice(-40) } : current);
-      setOnlineRequest(!redFlag && !keepLocal && onlineSetting().on ? value : null);
+      queueOnline(value,athleteId,selectedIds);
       setTurnId(null);
       setFace(brief.pain ? "guard" : "focus");
       setSending(false);
       return;
     }
-    setOnlineRequest(null);
-    const failure = (reason: CoachFailure) => {
-      if (reason !== "NO_KEY" && reason !== "LOCKED") setRetryQuestion(value);
-      const fallback=localModelFallback(local,reason);setNotice(fallback.notice);return fallback.text;
-    };
-    try {
-      const history = memory.messages.filter(m=>m.purpose!=="KNOWLEDGE_READING").slice(-8).map(({ role, text: prior }) => ({ role, text: prior.slice(0, 300) }));
-      // Read-only formal rows for the V4 server review; this athlete only, unknown commit times stay out.
-      const bound = listBoundTrainings();
-      const candidates = bound.map((item) => ({ id: item.trainingOccurrenceId, startedAt: item.startedAt, running: item.running }));
-      let citeBriefs: CoachBrief[] = [brief];
-      const picked = compareA && compareB ? orderOccurrenceIds(compareA, compareB, bound) : null;
-      let result: Awaited<ReturnType<typeof askCoach>>;
-      if (seriesIds.length >= 3) {
-        const series = assembleCoachSeries(plan, value, seriesIds);
-        result = series
-          ? await askCoach({ data: { brief, history, v4, coachContextMemory, series: { points: series.points } } })
-          : { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "所选训练没有至少三次分属不同日期、同一槽位且各自可引用的完成记录，不能形成纵向观察。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-        if (series) citeBriefs = series.points.map((point) => point.brief);
-      } else if (compareA && compareB && !picked) {
-        result = { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "请选择两节不同的训练再比较。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-      } else if (picked) {
-        const packets = separateBriefs(plan, value, picked.newerId, picked.olderId);
-        result = packets
-          ? await askCoach({ data: { brief, history, v4, coachContextMemory, compare: { left: packets.newer, right: packets.older, userSelected: true, leftStartedAt: picked.newerStartedAt, rightStartedAt: picked.olderStartedAt } } })
-          : { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "这两节没有各自独立、可引用的训练记录，我不能把它们放在一起比较。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-        if (packets) citeBriefs = [packets.newer, packets.older];
-      } else {
-        result = await askCoach({ data: { brief, history, v4, coachContextMemory, candidates } });
-        if (result.ok && result.seriesIds) {
-          const series = assembleCoachSeries(plan, value, result.seriesIds);
-          result = series
-            ? await askCoach({ data: { brief, history, v4, coachContextMemory, series: { points: series.points } } })
-            : { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "这些训练没有至少三次分属不同日期、同一槽位且各自可引用的完成记录，暂时不能形成纵向观察。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-          if (series) citeBriefs = series.points.map((point) => point.brief);
-        } else if (result.ok && result.compareIds) {
-          const ordered = orderOccurrenceIds(result.compareIds[0], result.compareIds[1], bound);
-          if (!ordered) {
-            result = { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "这两节没有各自独立、可引用的训练记录，我不能把它们放在一起比较。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-          } else if (sameCalendarDay(ordered.newerStartedAt, ordered.olderStartedAt)) {
-            result = { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "这两次训练在同一天，请用下面两栏选择要比较的两节。我不会把它们混成一节。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-          } else {
-            const packets = separateBriefs(plan, value, ordered.newerId, ordered.olderId);
-            result = packets
-              ? await askCoach({ data: { brief, history, v4, coachContextMemory, compare: { left: packets.newer, right: packets.older, userSelected: false, leftStartedAt: ordered.newerStartedAt, rightStartedAt: ordered.olderStartedAt } } })
-              : { ok: true, compareIds: null, seriesIds: null, turn: { mode: "ask", text: "这两节没有各自独立、可引用的训练记录，我不能把它们放在一起比较。", nextStep: null, citations: [], medicalReferral: false, planChanged: false } };
-            if (packets) citeBriefs = [packets.newer, packets.older];
-          }
-        }
-      }
-      const sources = citeBriefs.flatMap((item) => item.sources ?? []);
-      const reply = result.ok
-        ? [result.turn.text, result.turn.nextStep ? `\n下一步：${result.turn.nextStep}` : "", result.turn.citations.length ? `\n依据：${result.turn.citations.map((id) => { const source = sources.find((item) => item.id === id); return `${source?.detail ?? "来源"} [${id}]`; }).join("；")}` : ""].filter(Boolean).join("")
-        : failure(result.reason);
-      const coachId = `${Date.now()}-${result.ok?"coach":"fallback"}`;
-      const guarded = result.ok && (result.turn.medicalReferral || citeBriefs.some((item) => item.pain || item.constraints.increaseBlocked));
-      setTurnId(result.ok && result.turn.mode === "answer" ? coachId : null);
-      setTurnQuestion(value);
-      setFace(!result.ok ? "care" : guarded ? "guard" : result.turn.mode === "answer" ? "focus" : "encourage");
-      setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: coachId, role: "coach" as const, text: presentCoachAnswer(reply, persona).slice(0,1000),...(result.ok&&result.analysisBasis?{analysisBasis:result.analysisBasis}:{}) }].slice(-40) } : current));
-    } catch {
-      setFace("care");
-      setMemory((current) => (current?.athleteId === athleteId ? { ...current, messages: [...current.messages, { id: `${Date.now()}-fallback`, role: "coach" as const, text: failure("INTERRUPTED") }].slice(-40) } : current));
-    } finally {
-      setSending(false);
-    }
+
   }
 
   const connectivity = isOnline === null ? "网络状态待确认" : isOnline ? "设备联网" : "设备离线";
@@ -823,6 +760,7 @@ export function CoachSheet({
             >
               {message.role==='coach'&&(message.id.endsWith('-local')||message.id.endsWith('-fallback'))&&!message.text.startsWith('【')?<span className="mb-1 block text-xs text-muted">本地分析</span>:null}
               {message.r4Basis&&message.id.endsWith("-r4-refresh")?<p data-testid="r4-coach-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'&&(message.id.endsWith('-learning')||message.id.endsWith('-online'))?<p data-testid="learning-answer" className="whitespace-pre-wrap break-words leading-relaxed">{message.text}</p>:message.role==='coach'?<CoachAnswerView text={message.text.split('\n依据：')[0]}/>:<span className="whitespace-pre-wrap">{message.text}</span>}
+              {message.onlineBasis&&<CoachOnlineAnswerStatus basis={message.onlineBasis}/>}
               {message.r4Basis?<R4AnswerStatus basis={message.r4Basis} onRefresh={a=>setMemory(current=>current?.athleteId===a.athleteId?{...current,messages:[...current.messages,{id:`${Date.now()}-r4-refresh`,role:'coach' as const,text:a.text,r4Basis:{question:a.question,day:a.day,athleteId:a.athleteId,version:a.basisVersion}}].slice(-40)}:current)}/>:null}
               {message.supplement?<div data-testid="coach-supplement" className="mt-2 whitespace-pre-wrap break-words rounded-lg bg-surface-2 p-2 text-sm leading-relaxed">{message.supplement}</div>:null}
               {!(message.r4Basis&&message.id.endsWith("-r4-refresh"))&&message.role==='coach'&&message.text.includes('\n依据：')?<details data-testid="coach-sources" className="mt-2 text-xs text-muted"><summary className="min-h-8 cursor-pointer">查看记录依据</summary><p className="whitespace-pre-wrap break-words">{message.text.slice(message.text.indexOf('\n依据：')+4)}</p></details>:null}
@@ -842,10 +780,10 @@ export function CoachSheet({
       {behind && section === "chat" ? <button type="button" className="relative z-10 -mt-11 mb-1 min-h-11 shrink-0 self-center rounded-full border border-line bg-surface px-4 text-sm font-bold shadow" onClick={jumpLatest}>↓ 回到最新</button> : null}
       <div hidden={section !== "chat"} className={"min-h-0 max-h-[50dvh] shrink-0 overflow-y-auto " + (embedded ? "pt-1" : "border-t border-line px-4 py-2 pb-[max(0.5rem,var(--fk-safe-bottom))]")}>
         {activityNotices.length ? <div className="mb-2 rounded-card border border-line p-2 text-xs" aria-live="polite"><div className="flex justify-between gap-2"><strong>方坤 · 本次打开期间的活动</strong><button type="button" onClick={() => setActivityNotices([])}>清除提示</button></div>{activityNotices.map(item => <p key={item.id} className="mt-1">{item.message}</p>)}</div> : null}
-        {onlineRequest ? <CoachOnlineRequest key={onlineRequest} question={onlineRequest} disabled={sending || isOnline === false || !onlineOn} onNotice={setNotice} onDismiss={() => setOnlineRequest(null)} onAnswer={(text,owner,source,unverified)=>setMemory(current=>current?.athleteId===owner?{...current,messages:[...current.messages,{id:`${Date.now()}-online`,role:'coach' as const,text:`【${source==='MODEL'?(unverified?`联网模型解释 · ${UNVERIFIED_ONLINE_LABEL}`:'联网模型解释'):'规则分析 · 未调用模型'}】\n${text}`}].slice(-40)}:current)} /> : null}
+        {onlineRequests.map(request => <CoachOnlineRequest key={request.id} question={request.question} owner={request.owner} selectedTrainingIds={request.selectedTrainingIds} disabled={isOnline === false || !onlineOn} onNotice={setNotice} onDismiss={() => setOnlineRequests(items=>items.filter(item=>item.id!==request.id))} onAnswer={(text,owner,source,unverified,basis)=>setMemory(current=>current?.athleteId===owner?{...current,messages:[...current.messages,{id:`${request.id}-online`,role:'coach' as const,text:`【${source==='MODEL'?'联网模型解释 · 未进行网页检索':'规则分析 · 未调用模型'}】\n${text}`,onlineBasis:basis}].slice(-40)}:current)} />)}
         {notice ? <p data-testid="coach-request-notice" role="status" className="mb-2 text-xs leading-relaxed">{notice}</p> : null}
         {retryQuestion ? (
-          <button type="button" className="mb-2 h-11 rounded-card border border-line px-3 text-sm" disabled={sending} onClick={() => void send(retryQuestion, true, true)}>
+          <button type="button" className="mb-2 h-11 rounded-card border border-line px-3 text-sm" disabled={sending} onClick={() => void send(retryQuestion, true)}>
             重试这一问
           </button>
         ) : null}
@@ -860,7 +798,12 @@ export function CoachSheet({
         <div className="fk-coach-dock flex flex-wrap items-center gap-1.5">
         <details data-testid="coach-status-row" className="fk-coach-status shrink-0 rounded-full border border-line text-xs"><summary className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 px-2.5 text-muted"><span className={"size-2 shrink-0 rounded-full " + (onlineOn ? "bg-emerald-400" : "bg-line")} /><span className="min-w-0 flex-1 truncate">{onlineOn ? "联网分析 开" : "本地分析"} · {link === "unbound" ? "未绑定上传" : selectedOccurrenceId ? "已关联训练" : "未关联训练"}</span><span aria-hidden="true">▾</span></summary><div className="max-h-[45dvh] overflow-y-auto px-2 pb-2">
         <p className="mb-2 px-1 text-muted">{statusLine} · {connectivity}</p>
-        <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} onChange={(e) => { persistOnline(e.target.checked); setOnlineOn(e.target.checked); }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：开关不代表 DeepSeek 已连接。核对资料并同意本次发送后，服务端仍需核验登录、快照与额度。急症/疼痛问题始终本地处理。</span></label>
+        <label className="mb-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 text-xs"><input type="checkbox" aria-label="联网分析" checked={onlineOn} disabled={onlinePreferenceBusy} onChange={async(e) => {
+          const enabled=e.target.checked;persistOnline(enabled);setOnlineOn(enabled);setOnlinePreferenceBusy(true);
+          const result=await syncOnlineAuthorization(enabled);setNotice(result.reason);
+          if(enabled&&!result.ok){persistOnline(false);setOnlineOn(false)}
+          setOnlinePreferenceBusy(false);
+        }} /><span><b>联网分析{onlineOn ? "已开启" : "已关闭"}</b>：开启后，提问自动发送给在线教练，并按问题选取本档案相关资料；不逐问确认。服务端仍核验登录和额度。关闭后仅本地回答；模型不会直接改计划或解除医疗限制。</span></label>
         <details className="coach-network-card mb-2 rounded-card border border-line p-3 text-xs" aria-label="方坤联网权限"><summary className="min-h-11 cursor-pointer font-bold">联网与隐私权限（按需展开）</summary>
           <div className="mb-2 font-semibold">联网知识权限 · {networkMode === "local" ? "本地优先" : "公开知识已允许"}</div>
           <label className="flex items-center gap-2"><input type="checkbox" checked={networkMode === "public-knowledge"} onChange={(e) => { const next = e.target.checked ? "public-knowledge" : "local"; setNetworkMode(next); setOnlineFeature('coachRefs', e.target.checked); }} />允许打开公开运动科学参考资料（不上传训练和身体记录）</label>
@@ -916,7 +859,7 @@ export function CoachSheet({
             })}
           </div>
           {seriesIds.length ? <button type="button" className="mt-2 h-10 rounded-card border border-line px-3" onClick={() => setSeriesIds([])}>清空纵向选择</button> : null}
-          <p className="mt-1 text-muted">选满后，下一问直接走正式纵向分析，省去候选路由。</p>
+          <p className="mt-1 text-muted">选满后，提问“纵向比较这几节”时使用所选训练；资料缺失会明确说明。</p>
         </details>
         {selectedOccurrenceId ? <div className="mb-2 text-xs">
           <div className="flex flex-wrap items-center gap-2">

@@ -1,0 +1,260 @@
+TAP version 13
+# Subtest: 400m exposes its own purpose and evidence boundary without inventing race ability
+not ok 1 - 400m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 46.248692
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: 'missing event-specific planning evidence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:19:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: 800m exposes its own purpose and evidence boundary without inventing race ability
+not ok 2 - 800m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 9.503149
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: 'missing event-specific planning evidence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:19:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: 1500m exposes its own purpose and evidence boundary without inventing race ability
+not ok 3 - 1500m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 10.258655
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: 'missing event-specific planning evidence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:19:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 3000m exposes its own purpose and evidence boundary without inventing race ability
+not ok 4 - 3000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 11.76634
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: 'missing event-specific planning evidence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:19:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 5000m exposes its own purpose and evidence boundary without inventing race ability
+not ok 5 - 5000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 8.922478
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: 'missing event-specific planning evidence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:19:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 10000m exposes its own purpose and evidence boundary without inventing race ability
+not ok 6 - 10000m exposes its own purpose and evidence boundary without inventing race ability
+  ---
+  duration_ms: 8.981167
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:14:5'
+  failureType: 'testCodeFailure'
+  error: 'missing event-specific planning evidence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:19:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: other endurance events do not borrow a 10K performance and missing distance stays unknown
+not ok 7 - other endurance events do not borrow a 10K performance and missing distance stays unknown
+  ---
+  duration_ms: 7.909182
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:27:1'
+  failureType: 'testCodeFailure'
+  error: 'The "string" argument must be of type string. Received type undefined (undefined)'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:31:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 8-week stages expose review conditions and future weeks remain unconfirmed
+not ok 8 - 8-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 7.063189
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:37:5'
+  failureType: 'testCodeFailure'
+  error: 'phase label alone does not explain the entry/exit conditions'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:44:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 12-week stages expose review conditions and future weeks remain unconfirmed
+not ok 9 - 12-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 7.602537
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:37:5'
+  failureType: 'testCodeFailure'
+  error: 'phase label alone does not explain the entry/exit conditions'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:44:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 24-week stages expose review conditions and future weeks remain unconfirmed
+not ok 10 - 24-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 9.179197
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:37:5'
+  failureType: 'testCodeFailure'
+  error: 'phase label alone does not explain the entry/exit conditions'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:44:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: 52-week stages expose review conditions and future weeks remain unconfirmed
+not ok 11 - 52-week stages expose review conditions and future weeks remain unconfirmed
+  ---
+  duration_ms: 13.823028
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:37:5'
+  failureType: 'testCodeFailure'
+  error: 'phase label alone does not explain the entry/exit conditions'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:44:20)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: advanced or expired competition explains phase reassessment without changing completed records
+not ok 12 - advanced or expired competition explains phase reassessment without changing completed records
+  ---
+  duration_ms: 5.763879
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:55:1'
+  failureType: 'testCodeFailure'
+  error: 'The "string" argument must be of type string. Received type undefined (undefined)'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/cycle/stage-evidence.test.ts:60:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 0
+# fail 12
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1146.007612

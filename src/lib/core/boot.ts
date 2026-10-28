@@ -13,7 +13,6 @@ export function bootCore() {
     runMigrations()
     wireStateEngine()
     setEventContext({
-      athleteId: "local",
       context: () => {
         const plan = loadPlan()
         const coach = loadCoach()

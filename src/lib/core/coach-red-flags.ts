@@ -6,7 +6,7 @@ export type RedFlagSubject='SELF'|'OTHER'|'UNKNOWN'
 export type RedFlagTemporal='CURRENT'|'HISTORY'|'HYPOTHETICAL'|'KNOWLEDGE'
 export type RedFlagScene='TRAINING'|'HOME_AFTER'|'UNKNOWN'
 export type RedFlagResult={scene?:RedFlagScene;level:RedFlagLevel;classes:RedFlagClass[];subject:RedFlagSubject;negated:boolean;temporal:RedFlagTemporal;evidence:string[]}
-export type RedFlagContext={ageYears?:number;subject?:RedFlagSubject;exerciseRelated?:boolean;prior?:RedFlagResult}
+export type RedFlagContext={ageYears?:number;subject?:RedFlagSubject;exerciseRelated?:boolean;prior?:RedFlagResult;excludeOtherSubjects?:boolean}
 export const RED_FLAG_PRIORITY:Record<RedFlagLevel,number>={NONE:0,MEDICAL_REVIEW:1,URGENT_MEDICAL:2,EMERGENCY:3}
 export function chineseNumber(text:string):number|null{
  const raw=text.replace(/两/g,'二');if(/^\d+(?:\.\d+)?$/.test(raw))return Number(raw)
@@ -55,10 +55,13 @@ export const SYMPTOM_DIMENSIONS={
  bladder:/(?:控制不住|憋不住|管不住)(?:排尿|排便|大小便|尿|便)|(?:排尿|排便|大小便|小便|大便|尿便).{0,6}(?:失控|失禁|控制不住|憋不住)|大小便.{0,5}(?:异常|失控|失禁|困难)|小便.{0,5}(?:尿不出|失禁|失控)|尿不出来|尿不出|尿潴留|尿失禁|便失禁|大便失控|会阴.{0,5}(?:麻|没感觉|异常)|裆部.{0,5}(?:麻|没感觉)|鞍区.{0,5}麻/g,
  unilateral:/(?:左|右)(?:手|胳膊|手臂|腿|脚).{0,5}(?:无力|抬不起来|使不上劲|使不上力|没力气|没劲|拿不住|握不住)|(?:一只|一边的?)(?:手|腿).{0,5}(?:无力|拿不住|使不上劲)|(?:半边|一侧)(?:脸|面部).{0,5}(?:麻|没感觉|下垂)|(?:单侧|一侧|半边|左半边|右半边).{0,7}(?:无力|瘫|动不了|没力)|一边胳膊.{0,4}(?:抬不|无力)|突发剧烈头痛/g,
  illness:/发烧|发热|退烧|退热|感冒|流感|感染|新冠|转阴|阳过|病后|病刚好|生病|咽痛|咳嗽|鼻塞/g,
- energy:/闭经|停经|月经(?:紊乱|不调|推迟|停了|不来|没来|变少)|经期紊乱|没来月经|不来月经|姨妈(?:不来|没来|停了|不来了)|大姨妈.{0,4}(?:没来|不来)|例假.{0,4}(?:没来|不来|停了)|反复骨折|骨应力|应力性骨折|低能量|red-s|reds|极端少吃|节食|控体重|控制体重|刻意减重|不吃晚饭|不吃主食|长期少吃|每天只吃|一天只吃|只吃[一二两三\d]顿|压低摄入|食量压低|卡热量|催吐|厌食|晨勃(?:减少|没了|消失)|没有晨勃|性欲(?:下降|低下)|激素偏低/g,
+ energy:/闭经|停经|月经(?:紊乱|不调|推迟|停了|不来|没来|变少)|经期紊乱|没来月经|不来月经|姨妈(?:不来|没来|停了|不来了)|大姨妈.{0,4}(?:没来|不来)|例假.{0,4}(?:没来|不来|停了)|反复骨折|骨应力|应力性骨折|低能量|red-s|reds|极端少吃|节食|极端(?:控体重|控制体重|减重)|不吃晚饭|不吃主食|长期少吃|每天只吃|一天只吃|只吃[一二两三\d]顿|压低摄入|食量压低|卡热量|催吐|厌食|晨勃(?:减少|没了|消失)|没有晨勃|性欲(?:下降|低下)|激素偏低/g,
  // Keep the body part in each match so existing negation/temporal scoping
  // applies to “没有腿疼”; do not absorb 不/没 or convert ordinary 酸痛.
- pain:/疼痛|刺痛|锐痛|(?:大腿|小腿|腿|膝盖|膝关节|脚踝|脚跟|脚底|足底|跟腱|肩膀|手腕|胳膊|髋部)(?:内侧|外侧|前侧|后侧)?(?:有点|有些|一直|还是|仍然|越来越|特别|很|一阵阵?|隐隐)?(?:疼|痛)|骨头.{0,8}痛|膝盖.{0,7}痛|跟腱.{0,5}疼|小腿.{0,5}痛|腘绳肌.{0,5}伤|跛行|夜间痛|静息痛|关节卡住|局部肿胀|带伤|大腿后侧.{0,5}(?:酸痛|紧绷)/g,
+ pain:/疼痛|刺痛|锐痛|(?:大腿|小腿|腿|膝盖|膝关节|膝|脚踝|脚跟|脚底|足底|跟腱|肩膀|肩|手腕|胳膊|髋部)(?:内侧|外侧|前侧|后侧)?(?:有点|有些|一直|还是|仍然|正在|现在|越来越|特别|很|一阵阵?|隐隐)?(?:疼|痛)|骨头.{0,8}痛|膝盖.{0,7}痛|跟腱.{0,5}疼|小腿.{0,5}痛|腘绳肌.{0,5}伤|跛行|夜间痛|静息痛|关节卡住|局部肿胀|带伤|大腿后侧.{0,5}(?:酸痛|紧绷)/g,
+ soreness:/(?:膝盖|小腿|大腿后侧|大腿|腿|跟腱|脚踝|踝|足底|脚|腰|背|肩|肘|手腕|髋|臀|胸|肌肉)?(?:有点|有些|正在|一直)?(?:酸痛|酸胀)/g,
+ weightGoal:/控体重|控制体重|刻意减重/g,
+ energyConcern:/恢复(?:一直|越来越|持续)(?:差|变差)|(?:天天|每天)(?:额外)?加练/g,
  arrest:/心(?:跳|脏)(?:突然|骤然|已经)?(?:骤停|停止|停了|不跳了)|(?:没|没有|无)(?:心跳|脉搏)|(?:叫不醒|喊不醒|没有反应|毫无反应).{0,8}(?:没呼吸|没有正常呼吸|不呼吸)/g,
  collapse:/倒(?:在)?地(?:上)?|倒下|躺在地上/g,
  unresponsive:/无反应|没反应|没有反应|毫无反应|叫不醒|喊不醒|叫不应|喊不应|(?:叫|喊|呼唤).{0,5}(?:不回应|不应|不醒)/g,
@@ -82,7 +85,10 @@ export const SYMPTOM_DIMENSIONS={
  psychological:/伤害自己|自杀|自残|不想活|想死|结束生命/g,
 } as const
 export type SymptomDimension=keyof typeof SYMPTOM_DIMENSIONS
-type Hit={dimension:SymptomDimension;text:string;negated:boolean;temporal:RedFlagTemporal}
+export type RedFlagMention={dimension:SymptomDimension;text:string;clause:string;negated:boolean;polarity:'ASSERTED'|'DENIED'|'UNCERTAIN';temporal:RedFlagTemporal;subject:RedFlagSubject;region:string|null}
+const otherPerson=/队友|学员|孩子|女儿|儿子|同伴|同学|朋友|妹妹|姐姐|弟弟|哥哥|母亲|父亲|妈妈|爸爸|家人|妻子|丈夫|他|她|有人/;
+const subjectTokens=/我(?:的)?(?:队友|学员|孩子|女儿|儿子|同伴|同学|朋友|妹妹|姐姐|弟弟|哥哥|母亲|父亲|妈妈|爸爸|家人|妻子|丈夫)|队友|学员|孩子|女儿|儿子|同伴|同学|朋友|妹妹|姐姐|弟弟|哥哥|母亲|父亲|妈妈|爸爸|家人|妻子|丈夫|他|她|有人|我|本人|咱/g;
+const bodyRegion=/膝盖|膝关节|小腿|大腿后侧|大腿|跟腱|脚踝|足底|手腕|胳膊|肩膀|髋部|膝|腿|踝|脚|足|腰|背|肩|肘|髋|臀|胸/;
 /** Pain matches may include the body part before a negator, or occur in a denied list. */
 function painMentionNegated(clause:string,index:number,mention:string):boolean{
  const before=clause.slice(0,index).replace(SYMPTOM_DIMENSIONS.pain,'疼痛')
@@ -103,24 +109,44 @@ function resolvedRecentPain(clause:string,nextClause:string,mention:string):bool
  const resolution=clause.slice(clause.indexOf(mention)+mention.length)+'，'+nextClause
  return /(?:现在|目前)(?:已经|已)?(?:完全好了|完全缓解|完全不疼了|完全不痛了|不疼了|不痛了)/.test(resolution)
 }
+/** One mention projection supplies red-flag triage and R5 input semantics. */
+export function readRedFlagMentions(text:string,context:RedFlagContext={}):RedFlagMention[]{
+ const clauses=temporalContextClauses(normalizeCoachText(text).slice(0,16000)),hits:RedFlagMention[]=[]
+ let carried:RedFlagSubject=context.subject??'UNKNOWN'
+ for(const [clauseIndex,{text:clause,temporal}] of clauses.entries()){
+  const subjects=[...clause.matchAll(subjectTokens)]
+  for(const [dimension,re] of Object.entries(SYMPTOM_DIMENSIONS) as [SymptomDimension,RegExp][]){
+   for(const m of clause.matchAll(re)){
+    // Broad anatomical pain patterns must not convert ordinary soreness into pain.
+    // The existing posterior-thigh/functional-warning rules remain separate.
+    if(dimension==='pain'&&/酸痛|酸胀/.test(m[0])&&!/大腿后侧|刺痛|锐痛|疼|跛行|负重|走路/.test(m[0]))continue;
+    const negated=dimension==='pain'?painMentionNegated(clause,m.index??0,m[0]):negatedAt(clause,m.index??0,m[0].length)
+    const resolved=dimension==='pain'&&resolvedRecentPain(clause,clauses[clauseIndex+1]?.text??'',m[0])
+    const token=subjects.filter(s=>s.index!<=(m.index??0)).at(-1)?.[0]
+    const subject=context.subject??(token?(otherPerson.test(token)?'OTHER':'SELF'):carried)
+    const local=clause.slice(Math.max(0,(m.index??0)-6),(m.index??0)+m[0].length)
+    const uncertain=/不确定|不清楚|说不清|好像|可能|难道|难不成/.test(clause);
+    hits.push({dimension,text:m[0],clause,subject,region:m[0].match(bodyRegion)?.[0]??local.match(bodyRegion)?.[0]??null,negated,polarity:uncertain?'UNCERTAIN':negated?'DENIED':'ASSERTED',temporal:temporal==='CURRENT'?unassertedAt(clause,m.index??0,m[0].length)??(resolved?'HISTORY':temporal):temporal})
+   }
+  }
+  const token=subjects.at(-1)?.[0];if(token)carried=otherPerson.test(token)?'OTHER':'SELF'
+ }
+ return hits
+}
 export function detectRedFlags(text:string,context:RedFlagContext={}):RedFlagResult{
  const q=normalizeCoachText(text).slice(0,16000)
  const subject:RedFlagSubject=context.subject??(/队友|学员|孩子|女儿|儿子|同伴|同学|朋友|妹妹|姐姐|弟弟|哥哥|母亲|父亲|妈妈|爸爸|家人|妻子|丈夫|他(?:现在|刚|跑|练|说|的|已经)|她(?:现在|刚|跑|练|说|的|已经)|有人/.test(q)?'OTHER':/我|本人|咱/.test(q)?'SELF':'UNKNOWN')
  const globalTemporal:RedFlagTemporal=textTemporal(q)
  const clauses=temporalContextClauses(q)
- const currentText=clauses.filter(clause=>clause.temporal==='CURRENT').map(clause=>clause.text).join('，')
- const hits:Hit[]=[]
- for(const [clauseIndex,{text:clause,temporal}] of clauses.entries()){
-  for(const [dimension,re] of Object.entries(SYMPTOM_DIMENSIONS) as [SymptomDimension,RegExp][]){
-   for(const m of clause.matchAll(re)){
-    const negated=dimension==='pain'?painMentionNegated(clause,m.index??0,m[0]):negatedAt(clause,m.index??0,m[0].length)
-    const resolved=dimension==='pain'&&resolvedRecentPain(clause,clauses[clauseIndex+1]?.text??'',m[0])
-    hits.push({dimension,text:m[0],negated,temporal:temporal==='CURRENT'?unassertedAt(clause,m.index??0,m[0].length)??(resolved?'HISTORY':temporal):temporal})
-   }
-  }
- }
+ let carried:RedFlagSubject=context.subject??'UNKNOWN';
+ const currentText=clauses.filter(clause=>{
+  const token=[...clause.text.matchAll(subjectTokens)].at(-1)?.[0];
+  if(token)carried=otherPerson.test(token)?'OTHER':'SELF';
+  return clause.temporal==='CURRENT'&&(!context.excludeOtherSubjects||carried!=='OTHER');
+ }).map(clause=>clause.text).join('，')
+ const hits=readRedFlagMentions(q,context).filter(h=>!context.excludeOtherSubjects||h.subject!=='OTHER')
  const active=hits.filter(h=>!h.negated&&h.temporal==='CURRENT'),has=(d:SymptomDimension)=>active.some(h=>h.dimension===d)
- const historical=hits.filter(h=>!h.negated&&h.temporal==='HISTORY')
+ const historical=hits.filter(h=>!['soreness','weightGoal','energyConcern'].includes(h.dimension)&&!h.negated&&h.temporal==='HISTORY')
  const resolvedMildDizziness=/(?:轻微|轻度|有点|有一点|稍微).{0,3}(?:头晕|晕)|(?:头晕|晕).{0,3}(?:轻微|轻度|一点点)/.test(q)&&/(?:已经|已|现在|目前|休息后).{0,5}(?:完全)?(?:缓解|好了|恢复正常|不晕了|没事了)/.test(q)&&!/(?:仍|还|又).{0,3}(?:头晕|晕)/.test(q)
  const classes:RedFlagClass[]=[];let level:RedFlagLevel='NONE'
  const raise=(next:RedFlagLevel,kind:RedFlagClass)=>{if(!classes.includes(kind))classes.push(kind);if(RED_FLAG_PRIORITY[next]>RED_FLAG_PRIORITY[level])level=next}
@@ -146,11 +172,14 @@ export function detectRedFlags(text:string,context:RedFlagContext={}):RedFlagRes
  if(has('illness'))raise(has('palpitation')||has('breath')?'URGENT_MEDICAL':'MEDICAL_REVIEW','POST_ILLNESS')
  const intake=energyIntakeFromText(currentText)
  if(has('energy')||(exercise&&intake!==null&&intake<1800))raise('MEDICAL_REVIEW','ENERGY')
+ // A weight goal alone is ordinary coaching. Preserve the existing review
+ // boundary when that person's goal co-occurs with deterioration or daily extra training.
+ if(active.some(h=>h.dimension==='weightGoal'&&active.some(c=>c.dimension==='energyConcern'&&c.subject===h.subject)))raise('MEDICAL_REVIEW','ENERGY')
  if(has('pain')||has('functionalPain')||has('boneTender'))raise('MEDICAL_REVIEW','PAIN')
  if(active.some(h=>h.dimension==='review'&&!(resolvedMildDizziness&&h.text==='头晕')))raise('MEDICAL_REVIEW','OTHER')
  if(has('danger'))raise('EMERGENCY','OTHER')
  if(has('psychological'))raise('EMERGENCY','PSYCHOLOGICAL')
- const age=context.ageYears??ageFromText(q)
+ const age=context.ageYears??ageFromText(context.excludeOtherSubjects?currentText:q)
  if(age!==null&&age!==undefined&&age>0&&age<18){
   raise(/1rm|极限|最大重量|冲重量|每天.{0,8}练/.test(currentText)?'MEDICAL_REVIEW':'NONE','YOUTH')
  }

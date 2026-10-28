@@ -1,0 +1,203 @@
+TAP version 13
+# Subtest: new measured weight makes the adopted nutrition plan stale without rewriting it
+not ok 1 - new measured weight makes the adopted nutrition plan stale without rewriting it
+  ---
+  duration_ms: 5.630107
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /待复核|待刷新/. Input:
+    
+    '私人教练草案 · 减脂 · 版本1\n' +
+      '饮食：起始估计 1530–1620 kcal/天。\n' +
+      '先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。\n' +
+      '蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。\n' +
+      '食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。\n' +
+      '热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。\n' +
+      '这是已采用的本机私人教练方案；仍需按当天健康与恢复情况复核，不自动写入原训练日程。'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    私人教练草案 · 减脂 · 版本1
+    饮食：起始估计 1530–1620 kcal/天。
+    先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。
+    蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。
+    食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。
+    热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。
+    这是已采用的本机私人教练方案；仍需按当天健康与恢复情况复核，不自动写入原训练日程。
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:33:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.start (node:internal/test_runner/test:1242:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: meal correction invalidates nutrition and never becomes a full-day deficit
+not ok 2 - meal correction invalidates nutrition and never becomes a full-day deficit
+  ---
+  duration_ms: 1.448296
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /待复核|待刷新/. Input:
+    
+    '私人教练草案 · 减脂 · 版本1\n' +
+      '饮食：起始估计 1530–1620 kcal/天。\n' +
+      '先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。\n' +
+      '蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。\n' +
+      '食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。\n' +
+      '热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。\n' +
+      '这是已采用的本机私人教练方案；仍需按当天健康与恢复情况复核，不自动写入原训练日程。'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    私人教练草案 · 减脂 · 版本1
+    饮食：起始估计 1530–1620 kcal/天。
+    先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。
+    蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。
+    食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。
+    热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。
+    这是已采用的本机私人教练方案；仍需按当天健康与恢复情况复核，不自动写入原训练日程。
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:44:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: dependent changes between preview and confirmation preserve the adopted version
+not ok 3 - dependent changes between preview and confirmation preserve the adopted version
+  ---
+  duration_ms: 0.904982
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:48:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:52:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: legacy adopted plans without dependencies cannot be described as current
+not ok 4 - legacy adopted plans without dependencies cannot be described as current
+  ---
+  duration_ms: 0.810499
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:55:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /依据.*未知|待复核/. Input:
+    
+    '私人教练草案 · 减脂 · 版本1\n' +
+      '饮食：起始估计 1530–1620 kcal/天。\n' +
+      '先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。\n' +
+      '蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。\n' +
+      '食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。\n' +
+      '热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。\n' +
+      '这是已采用的本机私人教练方案；仍需按当天健康与恢复情况复核，不自动写入原训练日程。'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    私人教练草案 · 减脂 · 版本1
+    饮食：起始估计 1530–1620 kcal/天。
+    先规律吃饭：每餐安排蔬菜、主食和蛋白来源，按饥饿感与实际记录复核份量。
+    蛋白来源可选豆类、蛋、奶、鱼或瘦肉，按个人耐受替换。
+    食物过敏、禁忌和用药未逐项核验，不生成保证适用的具体食谱。
+    热量是起始估计，不是测得的消耗；不按手表热量自动加餐，不用缺失餐次计算缺口，不承诺减重期限。
+    这是已采用的本机私人教练方案；仍需按当天健康与恢复情况复核，不自动写入原训练日程。
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:61:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: nutrition edits do not invalidate an independent strength answer
+not ok 5 - nutrition edits do not invalidate an independent strength answer
+  ---
+  duration_ms: 0.749556
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:63:1'
+  failureType: 'testCodeFailure'
+  error: 'store.reviewActive is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:69:26)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: unreadable source makes freshness unknown and cannot be confirmed
+not ok 6 - unreadable source makes freshness unknown and cannot be confirmed
+  ---
+  duration_ms: 0.451295
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:73:1'
+  failureType: 'testCodeFailure'
+  error: 'store.reviewActive is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:76:51)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+# Subtest: refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+not ok 7 - refusing a refreshed proposal keeps the adopted plan and clears the confirmation token
+  ---
+  duration_ms: 0.681363
+  type: 'test'
+  location: '/workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:82:1'
+  failureType: 'testCodeFailure'
+  error: 'store.reject is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/personal/dependencies.test.ts:84:11)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1382:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+    Test.postRun (node:internal/test_runner/test:1522:19)
+    Test.run (node:internal/test_runner/test:1447:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:960:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 0
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 635.620399

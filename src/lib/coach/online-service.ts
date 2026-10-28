@@ -1,6 +1,16 @@
 /** Same-origin diagnostics. A configured key is not proof of a successful paid call. */
 export type CoachServiceStatus = { state: 'configured' | 'not-configured' | 'missing-route' | 'unavailable'; model?: string; reason?: string }
 const ERRORS: Record<string, string> = {
+  SCHEMA_MIGRATION_REQUIRED: '教练数据库结构尚未完成升级，需要管理员应用并核验最新迁移',
+  CONSENT_REVOKED: '联网许可已关闭，请在设置中重新开启',
+  CONSENT_PERSISTENCE_UNAVAILABLE: '联网许可暂时无法保存到服务端，本地选择已保留',
+  CONTEXT_BUDGET_EXCEEDED: '相关资料超过本次处理范围，请缩小问题范围',
+  PROVIDER_USAGE_UNKNOWN: '模型用量未能确认，费用待核对；不自动重试',
+  BILLING_SETTLEMENT_UNAVAILABLE: '本次费用结算暂不可确认，保留待核对状态',
+  BILLING_REQUIRES_REVIEW: '本次费用需要核对，暂不继续调用模型',
+  BUDGET_POLICY_CONFLICT: '服务端费用策略与账本额度不一致，需要管理员核对',
+  BUDGET_RECONCILIATION_REQUIRED: '存在尚未核对的历史费用，暂不继续调用模型',
+  MODEL_CONCURRENCY_LIMIT: '当前模型并发名额已满，请等待已有回答完成',
   SERVICE_DISABLED: '服务端尚未启用联网教练，本地回答仍可使用',
   TRUSTED_BINDINGS_MISSING: '服务端授权、快照或费用控制服务尚未接入，请管理员完成配置',
   SERVICE_KEY_MISSING: '服务端未配置 DeepSeek 密钥',
@@ -46,11 +56,12 @@ export async function readCoachResponse(response: Response): Promise<DecodedCoac
   const data = await response.json().catch(() => null)
   if (response.ok && data?.ok === true && data.planChanged === false && typeof data.text === 'string' && data.text.trim() && data.text.length <= 1000) {
     if(data.route==='LOCAL'&&data.model===null)return {text:data.text,source:'LOCAL'}
-    if(['LOW','COMPLEX'].includes(data.route)&&typeof data.model==='string'&&/^[A-Za-z0-9_.:/-]{1,80}$/.test(data.model))return {text:data.text,source:'MODEL',model:data.model}
+    if(['LOW','COMPLEX'].includes(data.route)&&typeof data.model==='string'&&/^[A-Za-z0-9_.:/-]{1,80}$/.test(data.model))return {text:data.text,source:'MODEL',model:data.model,...(data.unverified===true?{unverified:true as const}:{})}
     return {text:data.text} // Legacy readers remain compatible; new consent flow requires explicit provenance.
   }
   const known = knownError(data?.error) ?? knownError(data?.code)
-  return { error: known ?? (response.status === 401 || response.status === 403 ? '当前登录或访问权限不可用，请重新登录后重试' : response.status === 429 ? ERRORS.RATE_LIMIT : response.status === 503 ? '联网服务尚未就绪，请管理员检查配置' : '联网服务未返回有效回答，请稍后手动重试') }
+  const lifecycle = data?.dispatchState==='RETURNED' ? `；模型已返回，${data.ledgerState==='SETTLED'?'费用已结算':'费用状态待核对'}` : ['DISPATCHED','UNKNOWN'].includes(data?.dispatchState) ? '；请求可能已发送，费用状态待核对，不自动重试' : ''
+  return { error: (known ?? (response.status === 401 || response.status === 403 ? '当前登录或访问权限不可用，请重新登录后重试' : response.status === 429 ? ERRORS.RATE_LIMIT : response.status === 503 ? '联网服务尚未就绪，请管理员检查配置' : '联网服务未返回有效回答，请稍后手动重试')) + lifecycle }
 }
 export async function coachServiceInfo(signal?: AbortSignal): Promise<CoachServiceStatus> {
   const controller = new AbortController(), cancel = () => controller.abort()
