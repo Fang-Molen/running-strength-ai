@@ -1,0 +1,24 @@
+✔ symptoms and caution never become declared medical restriction or denied clearance (5.161251ms)
+✔ coverage unknown and explicitly missing remain distinct; legacy false is not denied permission (1.092105ms)
+✔ compact user-facing evidence never renders false coverage as confirmed absence or machine enums (0.299481ms)
+✔ explicit absence of a profile restriction is not recorded as an active medical order (0.386142ms)
+✔ numbered information is preserved rather than deleting entire lines (4.76879ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (2.415857ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (3.405498ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (4.418614ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.680255ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.874677ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (0.800665ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.851422ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.541145ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (0.989931ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.758142ms)
+✔ coverage clarification does not add unrelated medical warnings (0.392871ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 419.533725

@@ -1,0 +1,80 @@
+✔ 执行日期 = 开始时间的本地日期（strengthOn） (1.08074ms)
+✔ 唯一出处：执行日期 ＞ 用户填的实际日期 ＞ 计划当天 (0.164417ms)
+✖ 10-19 计划：跑步当天做（手表已关联）＋力量 10-20 逐组补练 → 10-19 整课完成、标“力量补练于 10月20日”；记录分两天、各算一次 (7.388498ms)
+✖ 手动补练（力量评价里填实际日期 10-20，没有逐组记录）→ 10-20 一条力量、10-19 不再按力量计；没跑步时 10-19 那条不计数 (0.346472ms)
+✖ 计划当天做的执行不受影响：仍并成同一条 (0.438461ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 2
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.895479
+
+✖ failing tests:
+
+test at src/lib/ui/makeup.test.ts:33:1
+✖ 10-19 计划：跑步当天做（手表已关联）＋力量 10-20 逐组补练 → 10-19 整课完成、标“力量补练于 10月20日”；记录分两天、各算一次 (7.388498ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'completed'
+  
+      at TestContext.<anonymous> (file:///tmp/fangkun-v1-baseline-0fd/src/lib/ui/makeup.test.ts:45:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'completed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/ui/makeup.test.ts:58:1
+✖ 手动补练（力量评价里填实际日期 10-20，没有逐组记录）→ 10-20 一条力量、10-19 不再按力量计；没跑步时 10-19 那条不计数 (0.346472ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///tmp/fangkun-v1-baseline-0fd/src/lib/ui/makeup.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/ui/makeup.test.ts:72:1
+✖ 计划当天做的执行不受影响：仍并成同一条 (0.438461ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///tmp/fangkun-v1-baseline-0fd/src/lib/ui/makeup.test.ts:76:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

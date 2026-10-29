@@ -1,0 +1,66 @@
+✔ numbered information is preserved rather than deleting entire lines (9.497116ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.145946ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (4.114093ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (5.884257ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.61789ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.791201ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.034677ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.868508ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.603749ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.813169ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.974897ms)
+✔ coverage clarification does not add unrelated medical warnings (0.363016ms)
+✖ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.867375ms)
+✖ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (0.45872ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 12
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 422.623937
+
+✖ failing tests:
+
+test at src/lib/coach/answer-gate.test.ts:76:1
+✖ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.867375ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /可以按计划继续/. Input:
+  
+  '原计划有冲刺，所以可以按计划继续。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:78:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '原计划有冲刺，所以可以按计划继续。',
+    expected: /可以按计划继续/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-gate.test.ts:81:1
+✖ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (0.45872ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /证明.*恢复/. Input:
+  
+  '比旧表低就证明你恢复恶化。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:84:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '比旧表低就证明你恢复恶化。',
+    expected: /证明.*恢复/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

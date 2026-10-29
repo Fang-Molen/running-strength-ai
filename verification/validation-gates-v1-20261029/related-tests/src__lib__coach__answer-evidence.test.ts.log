@@ -1,0 +1,12 @@
+✔ symptoms and caution never become declared medical restriction or denied clearance (6.459198ms)
+✔ coverage unknown and explicitly missing remain distinct; legacy false is not denied permission (2.356431ms)
+✔ compact user-facing evidence never renders false coverage as confirmed absence or machine enums (0.303768ms)
+✔ explicit absence of a profile restriction is not recorded as an active medical order (0.536599ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.376393

@@ -1,0 +1,35 @@
+✔ symptoms and caution never become declared medical restriction or denied clearance (5.194862ms)
+✔ coverage unknown and explicitly missing remain distinct; legacy false is not denied permission (0.875608ms)
+✔ compact user-facing evidence never renders false coverage as confirmed absence or machine enums (0.309826ms)
+✖ explicit absence of a profile restriction is not recorded as an active medical order (0.900055ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 284.341291
+
+✖ failing tests:
+
+test at src/lib/coach/answer-evidence.test.ts:27:1
+✖ explicit absence of a profile restriction is not recorded as an active medical order (0.900055ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-evidence.test.ts:29:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

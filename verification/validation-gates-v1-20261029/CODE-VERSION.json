@@ -1,0 +1,7 @@
+{
+  "baseline": "0fd2e5fd21854cd6453a33db5312f47b52cdf5d4",
+  "frozen_candidate": "64a1496e6a514eaab6b2a846514a474363bb36a4",
+  "branch": "test/load-memory-20261029",
+  "later_artifact_only_commits_may_follow": true,
+  "production_status": "NOT_MERGED_NOT_PUBLISHED_NOT_DEPLOYED"
+}

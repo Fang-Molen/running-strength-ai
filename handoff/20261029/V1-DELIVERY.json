@@ -1,0 +1,14 @@
+{
+  "zip": "handoff/20261029/Fangkun_回答校验V1_修复与验收结果_20261029.zip",
+  "bytes": 2082315,
+  "sha256": "f77b503f05af6282c847f9c409f885924ce9d6f835260d76be259044af5fffc1",
+  "files": 352,
+  "archive_integrity": "PASS",
+  "manifest_check": "PASS",
+  "actual_credential_occurrences": 0,
+  "patch_apply_check": "PASS",
+  "baseline": "0fd2e5fd21854cd6453a33db5312f47b52cdf5d4",
+  "frozen_candidate": "64a1496e6a514eaab6b2a846514a474363bb36a4",
+  "changed_files": 40,
+  "source_patch_sha256": "74e51ac8461d1c6bc5ea56e6a9635a4de6eb7717f3d31c6e6ca92f2dd0969d1e"
+}

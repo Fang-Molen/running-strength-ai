@@ -1,0 +1,12 @@
+✔ weight before or after sets stays the same reported kg, without contaminating exercise (3.180992ms)
+✔ minutes and seconds stay exact; average pace is not session duration (0.837622ms)
+✔ historical dates survive into saved fact; impossible and vague dates stay unknown (0.443878ms)
+✔ negation, third person, plans, multiple workouts and multiple meals cannot create a personal training (0.142335ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13.383033

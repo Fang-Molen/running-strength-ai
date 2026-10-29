@@ -1,0 +1,3 @@
+COMMAND: node evidence/repro/reproduce.mjs
+EXIT_CODE: 0
+{"probes":4,"bugs_reproduced":4,"not_model_tests":true}

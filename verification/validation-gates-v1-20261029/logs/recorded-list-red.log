@@ -1,0 +1,37 @@
+✔ ties do not choose the first runner as a winner (1.84105ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.211528ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.337838ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.303076ms)
+✔ equivalent natural-language correction and missing timing forms preserve the same state (0.224377ms)
+✖ explicit recorded-distance lists sum stated units without assuming complete annual coverage (0.514383ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 235.050402
+
+✖ failing tests:
+
+test at src/lib/coach/question-calculation-v1.test.ts:35:1
+✖ explicit recorded-distance lists sum stated units without assuming complete annual coverage (0.514383ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /合计10公里.*完整性.*未知|合计10公里.*不能证明/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/question-calculation-v1.test.ts:36:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /合计10公里.*完整性.*未知|合计10公里.*不能证明/,
+    operator: 'match',
+    diff: 'simple'
+  }

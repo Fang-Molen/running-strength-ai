@@ -1,0 +1,117 @@
+[
+  {
+    "path": "01_校验设计与决策规则.md",
+    "bytes": 11692,
+    "sha256": "283609b8eb4ab17f9a89ac675eb503c10365870dbb4aae4b65f0b584a3a22ac6"
+  },
+  {
+    "path": "02_Codex执行任务.md",
+    "bytes": 5153,
+    "sha256": "c21957bda45b5bc3a03901677769bc29f46628c638ae0e17f4aa6ed0cd856d6b"
+  },
+  {
+    "path": "03_验收与评分.md",
+    "bytes": 6683,
+    "sha256": "e2077d4d52d6a1680151747f9129dc2474f3ae968d43c5cb3d0d149bfb3b9a31"
+  },
+  {
+    "path": "04_复盘与剩余风险.md",
+    "bytes": 3263,
+    "sha256": "78f1430693299755e871b9a6a174def5390369c250166508a733a7361d6f522c"
+  },
+  {
+    "path": "README_先读这里.md",
+    "bytes": 1968,
+    "sha256": "177c0006dee9a1a63ee9c9e445d505512b008c02b26432aa1395d3dc8bebf1ed"
+  },
+  {
+    "path": "candidate/cases.jsonl",
+    "bytes": 22113,
+    "sha256": "fad152cf4c471efeaa429175ad8be1a4e93f0dd998b9df47dbb7d8391625e01f"
+  },
+  {
+    "path": "evidence/repro/observed.json",
+    "bytes": 2814,
+    "sha256": "745a8d93625ca77f58ec0362e8d88d04655b64c9149eb132d9a715dec7158fae"
+  },
+  {
+    "path": "evidence/repro/question-calculation.ts",
+    "bytes": 5397,
+    "sha256": "4c332341d659a1dcb0ba8024f7b47911c4f93718bde9ecb83005c4f91fd441b8"
+  },
+  {
+    "path": "evidence/repro/reproduce.mjs",
+    "bytes": 1902,
+    "sha256": "cddf9f442ae9d783373102db859ce5cb999e40b25a765f19ffbd457017e53cd0"
+  },
+  {
+    "path": "evidence/旧测试原答与过滤后回答.json",
+    "bytes": 28566,
+    "sha256": "30e667eeda05da0283915e78207cc9d8ef1f1235dd5ffcca39a850bc885fd32e"
+  },
+  {
+    "path": "evidence/源码证据SHA256.json",
+    "bytes": 582,
+    "sha256": "43b2418ac59938a25d55543fcc69d43abc70eddbe64a2a6db634cfe8b4571a45"
+  },
+  {
+    "path": "evidence/证据说明.md",
+    "bytes": 963,
+    "sha256": "67964b6deefb5235c9aa19430ee0c3f13ea2a8b38021b6906ba9ab838cf90b2c"
+  },
+  {
+    "path": "reviewer/rubrics.jsonl",
+    "bytes": 18445,
+    "sha256": "98179b6eb75ca17784b380f6467db2b9dbd61e7eba63331bf5c55d0b41b39cc8"
+  },
+  {
+    "path": "tools/gate_eval.py",
+    "bytes": 9899,
+    "sha256": "71d4240cc4898ecc2591adb19707e894e913095fec418ce7dc1cf974a302947f"
+  },
+  {
+    "path": "tools/test_gate_eval.py",
+    "bytes": 5899,
+    "sha256": "347e4d8d5852f27e2133752f92e2f9ac21d813bb08bc39f92c83a52153ef2b39"
+  },
+  {
+    "path": "verification/harness-tests.txt",
+    "bytes": 2495,
+    "sha256": "375cd85fe26f81aafc167851fb751b0cbf7c4c20908de028b08911b879c3a52e"
+  },
+  {
+    "path": "verification/legacy-reproduction.txt",
+    "bytes": 112,
+    "sha256": "84c01d4b00ca6326dfc18d2e9483d7407349bc90a9f6e6226e3bcfbe4383cbdd"
+  },
+  {
+    "path": "verification/suite-lint.txt",
+    "bytes": 113,
+    "sha256": "fae94d7c037483871a15250dbeb52f6f5fc52042355759ed9b2dc8695153c037"
+  },
+  {
+    "path": "verification/template-creation.txt",
+    "bytes": 146,
+    "sha256": "8a8888b45431f29214da00d6252226cef02224d588a8bfeb299ef5143afb93a3"
+  },
+  {
+    "path": "verification/unrun-evaluation.txt",
+    "bytes": 352,
+    "sha256": "7769ab1077c7df968e54c3ae42ebeeb999125b8e26c58cee3a4ffd9d9e8ca9a6"
+  },
+  {
+    "path": "verification/待测结果模板.jsonl",
+    "bytes": 27665,
+    "sha256": "213b19de5c638ccb519eae6851cc12af85b80bab4abaad837a0b7d347cac44cd"
+  },
+  {
+    "path": "verification/待测门槛报告.json",
+    "bytes": 8590,
+    "sha256": "9d94c8cf35725a9321f5aec91c4582efd6e69da2cd7c3e9469b9fab1eb49034b"
+  },
+  {
+    "path": "verification/本次检查结果.md",
+    "bytes": 1581,
+    "sha256": "99054c637841f7f75576331a01bc16f843100fe26f58bfb6345a21016a84175a"
+  }
+]

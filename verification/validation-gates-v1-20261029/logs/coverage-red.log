@@ -1,0 +1,44 @@
+✔ numbered information is preserved rather than deleting entire lines (12.754064ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.333945ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (3.246113ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (4.235661ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (1.001226ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.739853ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (0.871131ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (1.061326ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.915948ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.09689ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.722868ms)
+✖ coverage clarification does not add unrelated medical warnings (1.240476ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 416.269812
+
+✖ failing tests:
+
+test at src/lib/coach/answer-gate.test.ts:72:1
+✖ coverage clarification does not add unrelated medical warnings (1.240476ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /医疗|医嘱/. Input:
+  
+  '记录覆盖尚未确认，不能由现有记录证明全年训练完整，也不能断言已经漏记。\n' +
+    '症状是当前自述；没有可用的医嘱限制或医疗许可资料，许可状态未知。谨慎处理是系统建议。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:74:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '记录覆盖尚未确认，不能由现有记录证明全年训练完整，也不能断言已经漏记。\n症状是当前自述；没有可用的医嘱限制或医疗许可资料，许可状态未知。谨慎处理是系统建议。',
+    expected: /医疗|医嘱/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

@@ -1,0 +1,12 @@
+✔ educational ranges and unit conversions do not require personal evidence (3.096496ms)
+✔ educational wording cannot hide unsupported personal measurements or prescriptions (0.262846ms)
+✔ overlapping verified source quotes are removed longest first without losing calculation evidence (1.257165ms)
+✔ negated modification of an already saved record is not a new save claim (0.214172ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9.744094

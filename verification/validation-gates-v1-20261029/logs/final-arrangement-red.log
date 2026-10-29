@@ -1,0 +1,36 @@
+✔ missing medical records do not prevent accurate authority clarification (11.436473ms)
+✔ tool failure and uncertain submission are explicit technical states, with no retry or completion (3.678857ms)
+✔ missing nutrition quantity and sleep data get specific useful clarification (3.518655ms)
+✔ watch timer and elapsed remain separate; lineage dedup is explicit and no unrelated activity lost (0.622768ms)
+✖ analyze arrangement is a planning task; source quotes cannot substitute for the requested arrangement (3.664465ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28.61236
+
+✖ failing tests:
+
+test at src/lib/coach/answer-final-regressions.test.ts:35:1
+✖ analyze arrangement is a planning task; source quotes cannot substitute for the requested arrangement (3.664465ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.taskCoverage.some(t => t.kind === 'ARRANGEMENT'))
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-final-regressions.test.ts:38:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,32 @@
+✔ symptoms and caution never become declared medical restriction or denied clearance (5.418162ms)
+✔ coverage unknown and explicitly missing remain distinct; legacy false is not denied permission (0.791974ms)
+✔ compact user-facing evidence never renders false coverage as confirmed absence or machine enums (0.314755ms)
+✔ sourced planned and available counts can be referenced in conditional advice (4.223941ms)
+✔ counts are dimensioned and role bound, not a whitelist of digits (5.788441ms)
+✔ valid plan references do not waive injury clearance or unauthorized writes (4.271983ms)
+✔ recorded-distance questions use the same canonical aggregate path as explicit load summaries (0.206341ms)
+✔ quotes may select complete exact source fields, never altered values or cut negations (0.20571ms)
+✔ stored pace comparisons compute the winner from two complete runs, independent of model prose (5.59641ms)
+✔ self-reported heart-rate comparisons use the supplied range rather than a population cutoff (0.41799ms)
+✔ ties do not choose the first runner as a winner (1.27311ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.182184ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.314935ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.246151ms)
+✔ computes mixed-distance work without inventing rest or using fixed benchmark answers (0.231329ms)
+✔ session RPE requires explicit whole-session scope and scale (0.116546ms)
+✔ pace, yearly range and corrections are computed only from user inputs (0.164227ms)
+✔ ambiguous or unrequested new dose is not calculated into a personal prescription (0.069255ms)
+✔ source matching allows exact excerpts, rejects invented numbers and fuzzy quotations (0.062865ms)
+✔ citing a user wish cannot turn it into injury clearance or a phantom write (0.392612ms)
+✔ acute inability to walk is retained as a restriction; normal walking is not invented into an emergency (0.839476ms)
+✔ warning about harm is not permission, while actual permission remains blocked (1.556538ms)
+✔ explicit advice against sprinting is not a hold release (0.316648ms)
+✔ host computed quotation remains atomic despite sentence punctuation; empty headings do not survive filtering (1.202654ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1212.438205

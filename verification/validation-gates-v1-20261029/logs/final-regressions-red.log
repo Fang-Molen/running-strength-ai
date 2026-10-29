@@ -1,0 +1,98 @@
+✖ missing medical records do not prevent accurate authority clarification (10.895752ms)
+✖ tool failure and uncertain submission are explicit technical states, with no retry or completion (2.673224ms)
+✖ missing nutrition quantity and sleep data get specific useful clarification (2.113417ms)
+✖ watch timer and elapsed remain separate; lineage dedup is explicit and no unrelated activity lost (0.226302ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.562085
+
+✖ failing tests:
+
+test at src/lib/coach/answer-final-regressions.test.ts:6:1
+✖ missing medical records do not prevent accurate authority clarification (10.895752ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /医疗许可状态未知/. Input:
+  
+  '本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-final-regressions.test.ts:8:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。',
+    expected: /医疗许可状态未知/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-final-regressions.test.ts:12:1
+✖ tool failure and uncertain submission are explicit technical states, with no retry or completion (2.673224ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'NEEDS_CLARIFICATION'
+  - 'FAILED_TECHNICAL'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-final-regressions.test.ts:14:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'NEEDS_CLARIFICATION',
+    expected: 'FAILED_TECHNICAL',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-final-regressions.test.ts:21:1
+✖ missing nutrition quantity and sleep data get specific useful clarification (2.113417ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /份量|重量/. Input:
+  
+  '本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-final-regressions.test.ts:22:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。',
+    expected: /份量|重量/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-final-regressions.test.ts:25:1
+✖ watch timer and elapsed remain separate; lineage dedup is explicit and no unrelated activity lost (0.226302ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /6.01公里/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-final-regressions.test.ts:29:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /6.01公里/,
+    operator: 'match',
+    diff: 'simple'
+  }

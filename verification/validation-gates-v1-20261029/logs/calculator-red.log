@@ -1,0 +1,96 @@
+✖ ties do not choose the first runner as a winner (2.050539ms)
+✖ pace display rounds total seconds before decomposing minutes and retains original ordering (0.386574ms)
+✖ corrections apply all preceding user events in sequence, without reading a future event (0.290379ms)
+✖ explicit completion without a timing preserves distance and marks only total time unknown (0.213372ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 243.578469
+
+✖ failing tests:
+
+test at src/lib/coach/question-calculation-v1.test.ts:5:1
+✖ ties do not choose the first runner as a winner (2.050539ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /甲.*较少、更快/. Input:
+  
+  '甲平均配速5:00/km；乙平均配速5:00/km；甲用时每公里较少、更快；条件未必相同，不证明疲劳因果（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/question-calculation-v1.test.ts:8:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '甲平均配速5:00/km；乙平均配速5:00/km；甲用时每公里较少、更快；条件未必相同，不证明疲劳因果（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）',
+    expected: /甲.*较少、更快/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/question-calculation-v1.test.ts:11:1
+✖ pace display rounds total seconds before decomposing minutes and retains original ordering (0.386574ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /4:60/. Input:
+  
+  '甲平均配速4:60/km；乙平均配速5:00/km；甲用时每公里较少、更快；条件未必相同，不证明疲劳因果（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/question-calculation-v1.test.ts:13:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '甲平均配速4:60/km；乙平均配速5:00/km；甲用时每公里较少、更快；条件未必相同，不证明疲劳因果（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）',
+    expected: /4:60/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/question-calculation-v1.test.ts:18:1
+✖ corrections apply all preceding user events in sequence, without reading a future event (0.290379ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /旧总时间124秒.*新总时间119秒/. Input:
+  
+  '旧总时间126秒；更正第4组由33秒为28秒，新总时间121秒；其余组不变，旧自述保留，未改写已保存记录（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/question-calculation-v1.test.ts:21:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '旧总时间126秒；更正第4组由33秒为28秒，新总时间121秒；其余组不变，旧自述保留，未改写已保存记录（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）',
+    expected: /旧总时间124秒.*新总时间119秒/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/question-calculation-v1.test.ts:25:1
+✖ explicit completion without a timing preserves distance and marks only total time unknown (0.213372ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /完成1200米.*179秒.*总.*未知/. Input:
+  
+  '已知完成900米；已知工作时间179秒（2分59秒）；其余组完成状态未知，不按零或完成处理（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/question-calculation-v1.test.ts:27:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '已知完成900米；已知工作时间179秒（2分59秒）；其余组完成状态未知，不按零或完成处理（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）',
+    expected: /完成1200米.*179秒.*总.*未知/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -1,0 +1,25 @@
+✔ numbered information is preserved rather than deleting entire lines (13.992715ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.589298ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (3.409098ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (5.517064ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.718533ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.857282ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.088801ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (1.170544ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (1.259718ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (2.09723ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.779905ms)
+✔ coverage clarification does not add unrelated medical warnings (0.461205ms)
+✔ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.780075ms)
+✔ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (1.3141ms)
+✔ a later uncertainty disclaimer cannot authorize an earlier false coverage assertion (1.040007ms)
+✔ a warning later in the paragraph does not authorize affirmative stacking of planned sessions (0.982171ms)
+✔ asking which session to retain is clarification, not a completed arrangement (1.865572ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 47.45869

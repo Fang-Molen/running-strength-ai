@@ -1,0 +1,10 @@
+✔ 没有记录明确提示未知，不展示疲劳评分 (4.183444ms)
+✔ 显示分项、缺失和版本，不把未知跑量写成零 (11.473499ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.445823

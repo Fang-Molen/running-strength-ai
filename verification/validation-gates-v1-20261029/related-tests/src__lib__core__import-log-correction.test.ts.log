@@ -1,0 +1,18 @@
+✔ a bound decimal correction changes the coach facts without mutating or duplicating the import (92.311376ms)
+✔ a stale editor cannot replace a later correction or create a second correction on repeated submit (4.81274ms)
+✔ invalid, blank, zero duration, unchanged and unconfirmed values never commit (3.893385ms)
+✔ voided, deleted and different-athlete imports cannot be edited from a stale screen (4.514862ms)
+✔ distance correction retains seconds and rest while using the effective distance (1.144074ms)
+✔ a failed storage write is reported and the existing effective record is preserved (0.875278ms)
+✔ a changed source withdraws the old dependent judgment while retaining its original metrics (59.415148ms)
+✔ strength edits accept fractional weight but reject fractional repetitions (1.475813ms)
+✔ corrected import projection preserves cutoff, other segments and raw source, and quarantines unbound edits (1.622594ms)
+✔ colliding segment aliases do not offer a guessed correction target (0.5244ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 199.944435

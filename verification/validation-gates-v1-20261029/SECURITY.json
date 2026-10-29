@@ -1,0 +1,12 @@
+{
+  "api_key_exists": true,
+  "api_key_length": 35,
+  "actual_key_value_occurrences": 0,
+  "key_scan_pass": true,
+  "original_manifest_mismatches": [],
+  "original_budget_stop_unchanged": true,
+  "new_real_api_requests": 0,
+  "new_real_api_tokens": 0,
+  "data_scope": "SYNTHETIC_ONLY",
+  "merge_pr_publish_production_deploy": "NOT_PERFORMED"
+}

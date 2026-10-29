@@ -1,0 +1,12 @@
+✔ T1 future correction excluded; retraction never resurrects older revision (7.204964ms)
+✔ T1 source and athlete isolated, same revision conflict withheld (0.292009ms)
+✔ T2 mixed occurrence retains two components; precise segments and independent dimensions (1.691348ms)
+✔ T3 unknown is insufficient; unrelated directions do not create data conflict (1.95863ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19.665701

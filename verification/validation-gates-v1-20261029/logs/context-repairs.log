@@ -1,0 +1,32 @@
+✔ numbered information is preserved rather than deleting entire lines (10.41092ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (2.478077ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (4.193708ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (3.739265ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.807685ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.848156ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.038242ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (1.03056ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.649357ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.045753ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (1.443111ms)
+✔ coverage clarification does not add unrelated medical warnings (0.401013ms)
+✔ sourced planned and available counts can be referenced in conditional advice (1.308498ms)
+✔ counts are dimensioned and role bound, not a whitelist of digits (2.780883ms)
+✔ valid plan references do not waive injury clearance or unauthorized writes (1.843784ms)
+✔ recorded-distance questions use the same canonical aggregate path as explicit load summaries (0.220212ms)
+✔ quotes may select complete exact source fields, never altered values or cut negations (0.119831ms)
+✔ stored pace comparisons compute the winner from two complete runs, independent of model prose (5.222957ms)
+✔ self-reported heart-rate comparisons use the supplied range rather than a population cutoff (0.165288ms)
+✔ ties do not choose the first runner as a winner (0.300412ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.157857ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.265249ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.246481ms)
+✔ equivalent natural-language correction and missing timing forms preserve the same state (0.181733ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1399.833268

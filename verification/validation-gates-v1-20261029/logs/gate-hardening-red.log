@@ -1,0 +1,65 @@
+✔ numbered information is preserved rather than deleting entire lines (8.87602ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (2.827973ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (2.783086ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (3.930523ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.863279ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.681065ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (0.843519ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.96363ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.567083ms)
+✖ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.153545ms)
+✖ length repair removes a whole dependency closure rather than leaving an orphaned action (3.121765ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 9
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 407.406036
+
+✖ failing tests:
+
+test at src/lib/coach/answer-gate.test.ts:59:1
+✖ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.153545ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'NEEDS_CLARIFICATION'
+  - 'FAILED_TECHNICAL'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:60:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'NEEDS_CLARIFICATION',
+    expected: 'FAILED_TECHNICAL',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-gate.test.ts:66:1
+✖ length repair removes a whole dependency closure rather than leaving an orphaned action (3.121765ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.blocks.every(b => b.dependsOn.every(d => r.blocks.some(x => x.id === d))))
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:70:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

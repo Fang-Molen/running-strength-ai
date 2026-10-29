@@ -1,0 +1,57 @@
+✔ review 1: existing plan dose cannot be transferred to a different activity or intensity (16.075203ms)
+✔ review 2: nonnumeric accomplishments and comparison conclusions require evidence for every kind (2.141943ms)
+✔ review 3: a request to formulate a future plan cannot be completed by clarification alone (0.92092ms)
+✔ review 4: multiple corrections within each current or prior message apply in textual order (0.417871ms)
+✔ review 5: completion punctuation does not convert completion into unknown timing (0.201504ms)
+✖ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (1.149014ms)
+✖ review 7: retrieved evidence is delivered and checked consistently by server and client (2.998336ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 5
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 403.739212
+
+✖ failing tests:
+
+test at src/lib/coach/answer-review-regressions.test.ts:43:1
+✖ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (1.149014ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'FAILED'
+  - 'SUCCEEDED'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:47:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAILED',
+    expected: 'SUCCEEDED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:49:1
+✖ review 7: retrieved evidence is delivered and checked consistently by server and client (2.998336ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(['VALIDATED', 'REPAIRED'].includes(gate.decision))
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:54:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

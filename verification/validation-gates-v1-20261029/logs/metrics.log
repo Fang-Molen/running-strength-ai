@@ -1,0 +1,60 @@
+{
+  "candidate_commit": "64a1496e6a514eaab6b2a846514a474363bb36a4",
+  "cases_executed": 50,
+  "controller_http": {
+    "200": 46,
+    "502": 3,
+    "503": 1
+  },
+  "controller_decisions": {
+    "REPAIRED": 22,
+    "NEEDS_CLARIFICATION": 5,
+    "PARTIAL": 6,
+    "VALIDATED": 8,
+    "SAFE_REFUSAL": 3,
+    "FAILED_TECHNICAL": 6
+  },
+  "decisions_within_frozen_rubric": 50,
+  "criteria_engineering_review": {
+    "PASS": 140,
+    "PENDING": 10
+  },
+  "professional_cases_pending": 7,
+  "empty_success_bodies": 0,
+  "truncated_or_duplicate_json_successes": 0,
+  "latency_ms": {
+    "environment": "in-process controller, isolated PGlite, mocked provider/retrieval; NOT real API latency",
+    "n": 50,
+    "p50": 19.652,
+    "p95": 27.385
+  },
+  "new_real_requests": 0,
+  "new_real_tokens": 0,
+  "semantic_metrics": {
+    "qualified_candidate_damage_rate": {
+      "value": null,
+      "reason": "No independent blinded raw/final claim adjudication; initial engineering review cannot establish this population metric."
+    },
+    "invalid_claim_leak_rate": {
+      "value": null,
+      "reason": "No independent blinded raw/final claim adjudication; initial engineering review cannot establish this population metric."
+    },
+    "necessary_task_retention": {
+      "value": null,
+      "reason": "No independent blinded raw/final claim adjudication; initial engineering review cannot establish this population metric."
+    },
+    "repair_effectiveness": {
+      "value": null,
+      "reason": "No independent blinded raw/final claim adjudication; initial engineering review cannot establish this population metric."
+    },
+    "claim_source_accuracy": {
+      "value": null,
+      "reason": "No independent blinded raw/final claim adjudication; initial engineering review cannot establish this population metric."
+    }
+  },
+  "cost_per_usable_real_answer": {
+    "value": null,
+    "reason": "No real generation on final version; cannot use mock tokens or old paid usage as current-generation denominator."
+  },
+  "release": "BLOCKED: pending real generation, independent professional review, actual tool/device integration and pending criteria."
+}

@@ -1,0 +1,19 @@
+✔ two separate clients interleave durable event commits without lost writes (6.842388ms)
+✔ legacy conflicting and duplicate events remain byte-for-byte untouched on new append (1.418437ms)
+✔ two writers save feedback without stale-array overwrite (0.593785ms)
+✔ overlapping same-id differing feedback remains auditable and is excluded from inference (0.339141ms)
+✔ journal+legacy+intake choices round trip actual backup and reload (3.582567ms)
+✔ unknown oversized backup key remains rejected (0.109434ms)
+✔ quota and adapters without durable enumeration fail visibly (0.142915ms)
+✔ malformed physical records are retained and never silently deleted (0.109655ms)
+✔ listener failure cannot cause successful durable event to be reported as failed (0.196225ms)
+✔ feedback observations are connected to first-week explanation without dose authorization (1.592779ms)
+✔ prediction written after an early valid-window observation cannot count as prior evidence (0.115664ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20.453002

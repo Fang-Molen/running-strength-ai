@@ -1,0 +1,78 @@
+{
+  "candidate_commit": "64a1496e6a514eaab6b2a846514a474363bb36a4",
+  "new_paid_requests": 0,
+  "new_provider_tokens": 0,
+  "synthetic_provider_dispatches": 49,
+  "synthetic_usage_unknown": 1,
+  "synthetic_tokens_not_real_usage": true,
+  "model_generation_on_final_version": "NOT_PERFORMED_NO_NEW_BUDGET",
+  "real_incremental_api_fee": 0,
+  "real_currency": "NA_NO_NEW_CALLS",
+  "historical_real_generation_requests": 105,
+  "historical_real_total_tokens": 312883,
+  "historical_real_bill_amount": null,
+  "historical_bill_note": "Supplier invoice unavailable; retain historical TOKEN.csv; no fabricated price-based bill.",
+  "codex_session_cost": null,
+  "codex_cost_note": "This runtime has no access to the user-facing Codex token/billing ledger.",
+  "all_recorded_injection_runs": [
+    {
+      "file": "injection-adapter-attempt1.jsonl",
+      "cases": 50,
+      "mock_dispatches": 0,
+      "mock_usage_unknown": 0,
+      "real_requests": 0,
+      "real_tokens": 0
+    },
+    {
+      "file": "injection-adapter-attempt2.jsonl",
+      "cases": 50,
+      "mock_dispatches": 50,
+      "mock_usage_unknown": 0,
+      "real_requests": 0,
+      "real_tokens": 0
+    },
+    {
+      "file": "injection-adapter-attempt3.jsonl",
+      "cases": 50,
+      "mock_dispatches": 49,
+      "mock_usage_unknown": 1,
+      "real_requests": 0,
+      "real_tokens": 0
+    },
+    {
+      "file": "injection-adapter-attempt4.jsonl",
+      "cases": 50,
+      "mock_dispatches": 49,
+      "mock_usage_unknown": 1,
+      "real_requests": 0,
+      "real_tokens": 0
+    },
+    {
+      "file": "injection-adapter-attempt5.jsonl",
+      "cases": 50,
+      "mock_dispatches": 49,
+      "mock_usage_unknown": 1,
+      "real_requests": 0,
+      "real_tokens": 0
+    },
+    {
+      "file": "injection-adapter-attempt6.jsonl",
+      "cases": 50,
+      "mock_dispatches": 49,
+      "mock_usage_unknown": 1,
+      "real_requests": 0,
+      "real_tokens": 0
+    },
+    {
+      "file": "injection-results.jsonl",
+      "cases": 50,
+      "mock_dispatches": 49,
+      "mock_usage_unknown": 1,
+      "real_requests": 0,
+      "real_tokens": 0
+    }
+  ],
+  "recorded_mock_dispatches_total": 295,
+  "actual_supplier_reasoning_tokens_on_final_version": "NOT_APPLICABLE_NO_REAL_GENERATION",
+  "old_paid_budget_stop_unchanged": "verification/new-questions-20261029/completion-run/STOPPED.json"
+}

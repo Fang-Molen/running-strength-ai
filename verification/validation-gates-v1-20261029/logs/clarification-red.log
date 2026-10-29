@@ -1,0 +1,48 @@
+✔ numbered information is preserved rather than deleting entire lines (10.378924ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.172533ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (3.482589ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (4.919531ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.683829ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (1.009939ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.251283ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.987726ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.654214ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (2.578238ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.982528ms)
+✔ coverage clarification does not add unrelated medical warnings (0.388184ms)
+✔ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.61166ms)
+✔ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (1.554558ms)
+✔ a later uncertainty disclaimer cannot authorize an earlier false coverage assertion (0.81756ms)
+✔ a warning later in the paragraph does not authorize affirmative stacking of planned sessions (1.297762ms)
+✖ asking which session to retain is clarification, not a completed arrangement (3.295047ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 16
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 460.583847
+
+✖ failing tests:
+
+test at src/lib/coach/answer-gate.test.ts:103:1
+✖ asking which session to retain is clarification, not a completed arrangement (3.295047ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(['PARTIAL', 'NEEDS_CLARIFICATION'].includes(r.decision))
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:105:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

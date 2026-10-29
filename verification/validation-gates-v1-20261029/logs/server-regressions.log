@@ -1,0 +1,89 @@
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (4.333838ms)
+✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (9.580683ms)
+✖ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (1124.395178ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (873.608992ms)
+✔ bounded context accepts structured old history without converting targets into actuals (1.197484ms)
+✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (754.837545ms)
+✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (962.700184ms)
+✔ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (802.421538ms)
+✔ host displays exact verified quotations without requiring duplicate model prose; forged quote still fails (815.687676ms)
+✔ answer V1 gates preserve plan advice and repair unknown-as-fact through the actual controller (814.173381ms)
+✔ request rejects client authority facts (0.248353ms)
+✔ request rejects client authority local (0.047822ms)
+✔ request rejects client authority history (0.032068ms)
+✔ request rejects client authority userId (0.031317ms)
+✔ request rejects client authority model (0.038418ms)
+✔ request rejects client authority budget (0.047842ms)
+✔ request rejects client authority tools (0.039319ms)
+✔ request accepts exactly five bounded fields (0.393102ms)
+✔ trusted snapshot rejects wrong subject (0.190947ms)
+✔ trusted snapshot rejects wrong athlete (0.078348ms)
+✔ trusted snapshot rejects revoked snapshot (0.058357ms)
+✔ trusted snapshot rejects expired snapshot (0.042043ms)
+✔ trusted snapshot rejects future evidence (0.036886ms)
+✔ trusted snapshot rejects wrong consent (0.042594ms)
+✔ trusted snapshot rejects revoked consent (0.080531ms)
+✔ trusted snapshot rejects cross lesson (0.067982ms)
+✔ snapshot exact owner, consent, cutoff and scope accepted (0.094923ms)
+✔ minimal packet removes notes, memory, identity and arbitrary details then aliases ids (0.762177ms)
+✔ unknown count is rejected rather than invented zero (0.124858ms)
+✔ unverified policy rejected and approved caps cannot silently grow (0.190587ms)
+✔ billing cache and reasoning are not double counted (0.087281ms)
+✔ unknown usage and missing cache details stay unknown (0.046009ms)
+✔ tool, truncation, model mismatch and cap overruns rejected (0.135254ms)
+✔ default off and missing trusted host are zero-call failures (0.479001ms)
+✔ forged or absent verified subject cannot load snapshots or dispatch (0.177487ms)
+✔ foreign or revoked snapshot denied before budget/fetch (0.493412ms)
+✔ current emergency stays local and bypasses policy/billing/provider (0.977161ms)
+✔ controller uses one trusted snapshot and one provider call with full minimization (9.634463ms)
+✔ duplicate reserve blocks a repeated provider call (1.200217ms)
+✔ unknown provider usage retains worst reservation and rejects output (1.297823ms)
+✔ known billed but invalid output is settled and never shown (4.834187ms)
+✔ settlement failure never returns a paid result as verified success (1.742643ms)
+✔ timeout aborts once and keeps unknown spend reserved (11.691569ms)
+✔ bound pain stays local even when current question omits pain wording (0.465922ms)
+✔ future comparable training rejected even when snapshot timestamp claims past (0.135324ms)
+✔ reservation id mismatch never dispatches (1.108709ms)
+✔ truncated/tool provider output is billed but never accepted (1.34818ms)
+✔ provider body without valid billing is never released as free (1.58086ms)
+✔ oversized complete request refuses instead of trimming structure or safety (1.750545ms)
+✔ model cannot smuggle a planChanged flag or extra executable fields (0.314954ms)
+✔ production controller and actual SQL ledger compose: settle, duplicate and unknown freeze (774.843144ms)
+✔ controller actual 80s cannot be replaced by 77s with the same citation (2.244789ms)
+✔ controller actual 80s cannot be replaced by 80s with the same citation (4.285201ms)
+✔ unverified sampling never becomes an implicit fair A/B claim (0.598491ms)
+✔ oversized structured data and duplicate evidence are refused rather than silently trimmed (0.155544ms)
+✔ original cross-domain medical referral cannot be cleared by pain=false projection (0.400804ms)
+✔ original stronger increase block cannot be cleared by minimal re-derivation (0.397538ms)
+✔ shared dev-user fallback is rejected even if a faulty host marks it verified (0.34552ms)
+✔ current emergency keeps higher priority than an existing medical-review veto (0.470618ms)
+✔ revocation before-dispatch blocks delivery (1.043541ms)
+✔ revocation before-release blocks delivery (1.343192ms)
+✔ analysis packet reaches the actual route with alias IDs; invented improvement is rejected (7.275502ms)
+ℹ tests 62
+ℹ suites 0
+ℹ pass 61
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9035.723195
+
+✖ failing tests:
+
+test at server/coach-deepseek/online-v2.test.ts:54:1
+✖ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (1124.395178ms)
+  AssertionError [ERR_ASSERTION]: {"ok":true,"text":"本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。","answerGate":{"policyVersion":"coach-answer-gate-v1","decision":"NEEDS_CLARIFICATION","text":"本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。","blocks":[{"id":"host:failure","kind":"UNCERTAINTY","text":"本轮回答未能完成可靠核验。请补充本题所需的记录或目标；未执行任何修改。","evidenceRefs":[],"dependsOn":[],"groupId":"host:failure"}],"reasonCodes":["RISK_SCOPE_CONFLICT","TASK_DROPPED"],"taskCoverage":[{"id":"task:answer","kind":"ANSWER","satisfied":true,"blockIds":["host:failure"]}],"professionalReview":"PENDING","finalHash":"e4c6b975c2da6cc47919325363345716f09fc909143ea9dff22e62b7463e0115","evidenceQuotes":[],"computedQuotes":[],"gates":[{"gate":"G0","status":"PASS","reasons":[]},{"gate":"G1","status":"PASS","reasons":[]},{"gate":"G2","status":"PASS","reasons":[]},{"gate":"G3","status":"PASS","reasons":[]},{"gate":"G4","status":"REPAIRED","reasons":["RISK_SCOPE_CONFLICT"]},{"gate":"G5","status":"PASS","reasons":[]},{"gate":"G6","status":"PASS","reasons":[]},{"gate":"G7","status":"PARTIAL","reasons":["TASK_DROPPED"]},{"gate":"G8","status":"PASS","reasons":[]}]},"source":"MODEL","computedQuotes":[],"evidenceQuotes":[],"route":"LOW","model":"synthetic-model","requestedModel":"synthetic-model","usage":{"promptTokens":100,"completionTokens":50,"cacheHitTokens":20,"cacheMissTokens":80,"reasoningTokens":10,"totalTokens":150},"costMicros":"182","currency":"CNY","planChanged":false,"unverified":true,"validation":{"status":"PARTIALLY_ACCEPTED","rejectedAssertionTypes":["RISK_SCOPE_CONFLICT","TASK_DROPPED"],"policyVersion":"coach-answer-gate-v1","professionalValidation":"NOT_PROVEN","factVerification":"USER_DECLARED"},"stage":"COMPLETED","traceId":"9c5c9bff-ee47-4378-aa16-396b7721910c","dispatchState":"RETURNED","ledgerState":"SETTLED","retrieval":{"state":"NOT_NEEDED","enabled":true,"sources":[]}}
+  
+  200 !== 502
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/server/coach-deepseek/online-v2.test.ts:81:20)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

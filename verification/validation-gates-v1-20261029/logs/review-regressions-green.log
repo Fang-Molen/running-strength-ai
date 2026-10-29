@@ -1,0 +1,15 @@
+✔ review 1: existing plan dose cannot be transferred to a different activity or intensity (15.916162ms)
+✔ review 2: nonnumeric accomplishments and comparison conclusions require evidence for every kind (1.717701ms)
+✔ review 3: a request to formulate a future plan cannot be completed by clarification alone (1.057344ms)
+✔ review 4: multiple corrections within each current or prior message apply in textual order (0.375016ms)
+✔ review 5: completion punctuation does not convert completion into unknown timing (0.228675ms)
+✔ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (0.646044ms)
+✔ review 7: retrieved evidence is delivered and checked consistently by server and client (1.891693ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 417.231939

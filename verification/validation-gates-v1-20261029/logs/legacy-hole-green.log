@@ -1,0 +1,31 @@
+✔ numbered information is preserved rather than deleting entire lines (19.753275ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (2.725859ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (4.487691ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (7.582989ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (8.787319ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (1.135766ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.079251ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.88717ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.95906ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.602942ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (1.421458ms)
+✔ coverage clarification does not add unrelated medical warnings (1.873431ms)
+✔ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (1.242988ms)
+✔ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (2.080393ms)
+✔ a later uncertainty disclaimer cannot authorize an earlier false coverage assertion (1.638215ms)
+✔ a warning later in the paragraph does not authorize affirmative stacking of planned sessions (0.716082ms)
+✔ sourced planned and available counts can be referenced in conditional advice (1.466606ms)
+✔ counts are dimensioned and role bound, not a whitelist of digits (2.829465ms)
+✔ valid plan references do not waive injury clearance or unauthorized writes (1.987824ms)
+✔ recorded-distance questions use the same canonical aggregate path as explicit load summaries (0.307875ms)
+✔ quotes may select complete exact source fields, never altered values or cut negations (0.138389ms)
+✔ stored pace comparisons compute the winner from two complete runs, independent of model prose (5.401382ms)
+✔ self-reported heart-rate comparisons use the supplied range rather than a population cutoff (0.17264ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1451.168515

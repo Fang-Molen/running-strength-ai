@@ -1,0 +1,6 @@
+
+> typecheck
+> tsc --noEmit
+
+src/lib/coach/question-calculation.ts(23,60): error TS2550: Property 'findLastIndex' does not exist on type 'string[]'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2023' or later.
+src/lib/coach/question-calculation.ts(23,74): error TS7006: Parameter 's' implicitly has an 'any' type.

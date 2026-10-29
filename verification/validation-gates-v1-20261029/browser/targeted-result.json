@@ -1,0 +1,271 @@
+{
+  "candidate_commit": "64a1496e6a514eaab6b2a846514a474363bb36a4",
+  "scope": "actual App + synthetic HTTP/SQL/provider; no real model or remote search",
+  "checks": [
+    "Two normal questions automatically run concurrently and both answers remain; no per-question consent",
+    "A and B dispatch independently; cancel A, release late replies, deliver B only; reconnect makes no retry or additional write"
+  ],
+  "errors": [],
+  "hmrSuppressed": [
+    {
+      "type": "full-reload"
+    }
+  ],
+  "viewportChecks": [
+    {
+      "width": 320,
+      "font": "100%",
+      "horizontalOverflow": false,
+      "validatedMessages": 2,
+      "mainAnswerVisible": true
+    },
+    {
+      "width": 320,
+      "font": "200%",
+      "horizontalOverflow": false,
+      "validatedMessages": 2,
+      "mainAnswerVisible": true
+    },
+    {
+      "width": 390,
+      "font": "100%",
+      "horizontalOverflow": false,
+      "validatedMessages": 2,
+      "mainAnswerVisible": true
+    },
+    {
+      "width": 390,
+      "font": "200%",
+      "horizontalOverflow": false,
+      "validatedMessages": 2,
+      "mainAnswerVisible": true
+    },
+    {
+      "width": 430,
+      "font": "100%",
+      "horizontalOverflow": false,
+      "validatedMessages": 2,
+      "mainAnswerVisible": true
+    },
+    {
+      "width": 430,
+      "font": "200%",
+      "horizontalOverflow": false,
+      "validatedMessages": 2,
+      "mainAnswerVisible": true
+    }
+  ],
+  "api": {
+    "ready": true,
+    "synthetic": true,
+    "publicOrigin": "http://127.0.0.1:8080",
+    "mode": "delayed",
+    "providerCalls": 10,
+    "activeProvider": 0,
+    "maxActiveProvider": 2,
+    "dispatches": [
+      {
+        "question": "我没有腿疼，解释一下RPE",
+        "mode": "delayed",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "FACT",
+            "detail": "我没有腿疼"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:35.088Z",
+        "returnedAt": "2026-10-29T14:01:35.476Z"
+      },
+      {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "mode": "delayed",
+        "facts": [],
+        "startedAt": "2026-10-29T14:01:35.351Z",
+        "returnedAt": "2026-10-29T14:01:35.476Z"
+      },
+      {
+        "question": "我的腘绳肌现在疼，解释一下RPE",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=请解释RIR和RPE的区别；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 4bb1e022175879cd02ed8cd82d5203348549460884958c29322e21f83403e953；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 我没有腿疼 RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 4abf26fa18771da4fd11f4a1148f1400872d6efb1844edeb25ac8224fe0b752c；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 76e030186eced79f2df56860463c8af0f25cf2f23cf3929e2fcc07ec4c22b65f；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833；未经独立核验。"
+          },
+          {
+            "id": "ref5",
+            "kind": "FACT",
+            "detail": "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。"
+          },
+          {
+            "id": "ref6",
+            "kind": "FACT",
+            "detail": "我的腘绳肌现在疼"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:38.639Z",
+        "returnedAt": "2026-10-29T14:01:38.639Z"
+      },
+      {
+        "question": "请生成未来八周训练计划",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=我的腘绳肌现在疼,解释一下RPE；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 d521556f06e0b7253e3104d0d47de203333d34b0e6b26182fb459fba0ddd0ed7；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地分析】 目前尚不能给出整课AU,请先确认评分范围。这个数只描述所报负荷,不是疲劳分、伤病概率或停训阈值;下一步确认整课口径并记录恢复。 依据:本地知识与教学候选仅帮助解释,没有修改计划或记录。 R168:LOAD_SRPE|研究候选,未独立核验。整课实际分钟 × 整课实际sRPE;仅两者均已记录时计算;计划RPE不得代入;适用限制:允许计算,不以计算结果直接调课；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 c9ca7f09d4358bdd588da0eebeaed3319b631c3c175517d6243e13c4ba34bcf8；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、；textPart2=在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb；textPart3=71b9b;未经独立核验。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f；未经独立核验。"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:39.143Z",
+        "returnedAt": "2026-10-29T14:01:39.143Z"
+      },
+      {
+        "question": "本周总结",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=请生成未来八周训练计划；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 83ba7f13a1c4c754bcdc4fd8b2d0de54c4000a902026477e3570faf30c878955；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、；textPart2=在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb；textPart3=71b9b;未经独立核验。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=已依据当前保存资料生成8周周期草案。【个体周期(计划,不是实际)】 目标未确认 草案PENDING;依据NEEDS_REVIEW;2026-11-02:BASE;2026-11-09:BUILD;2026-11-16:BUILD;2026-11-23:BUILD;2026-11-30:BUILD;2026-12-07:BUILD 执行结果尚待复核 后续周有条件;只在用户确认且宿主复核后写入。 请在「复盘→个体周期计划」核对比赛目标、训练背景和差异;尚未确认的目标先保存,正式课表不会自动改变。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 a4442956e3c14162a254e9830165d65ec13e3d6e18047a61375c7ce5258c9879；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。 安排思路:先核对原课表、目标与可用时间,讨论关键课的优先级和恢复间隔,不补课追进度。具体取舍需确认,本轮未修改日历。 请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况,才能核对安排。当前仅能讨论框架,未修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 07d03623dd677405610a425e43e6cadbc73406c714c0ebb53e48ca6b5217192e；未经独立核验。"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:39.495Z",
+        "returnedAt": "2026-10-29T14:01:39.495Z"
+      },
+      {
+        "question": "比较这两节力量训练，有什么变化？",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：quality=PARTIAL；evidenceVersion=a0020f4c778480d9；sourceGroup=a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278；protocolGroup=未知；protocol=未知；provenanceVerified=false；modality=STRENGTH；observedType=未知；actualDuration=0.011 s；sessionRpe=未知 UNKNOWN；segmentCount=0；setCount=1；jumpContacts=未知；发生时间 2026-10-29T14:01:39.553Z；记录时间 2026-10-29T14:01:39.556Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：parent=ctx:0bd3262f992bf6fa8414c02f9e1b9f74cdd91718c5031f3e4a4424b447854041；structure=STRENGTH_SET；setIndex=1；exercise=local:back-squat；catalogueVersion=U11_CATALOG_1；side=UNSPECIFIED；load=40 kg；loadBasis=UNKNOWN；reps=5 reps；hold=未知 s；setRpe=未知 UNKNOWN；rir=未知 reps；eccentric=未知 s；rangeProtocol=未知；completion=COMPLETED；发生时间 2026-10-29T14:01:39.553Z；记录时间 2026-10-29T14:01:39.556Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：quality=PARTIAL；evidenceVersion=8c647d3af2012659；sourceGroup=a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278；protocolGroup=未知；protocol=未知；provenanceVerified=false；modality=STRENGTH；observedType=未知；actualDuration=0.008 s；sessionRpe=未知 UNKNOWN；segmentCount=0；setCount=1；jumpContacts=未知；发生时间 2026-10-29T14:01:39.567Z；记录时间 2026-10-29T14:01:39.571Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：parent=ctx:0cdba3e84fd8cbd5cb010488f9354e6010829b4c8bc86361222a587c17c4601f；structure=STRENGTH_SET；setIndex=1；exercise=local:back-squat；catalogueVersion=U11_CATALOG_1；side=UNSPECIFIED；load=50 kg；loadBasis=UNKNOWN；reps=5 reps；hold=未知 s；setRpe=未知 UNKNOWN；rir=未知 reps；eccentric=未知 s；rangeProtocol=未知；completion=COMPLETED；发生时间 2026-10-29T14:01:39.567Z；记录时间 2026-10-29T14:01:39.571Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref5",
+            "kind": "FACT",
+            "detail": "用户申报[ANALYSIS；状态未知]：kind=COMPUTED；metric=STRENGTH_SETS；value=1 sets；evidenceVersions=8c647d3af2012659；formula=count(COMPLETED strengthSets)；formulaVersion=FK_DERIVED_1；meaning=2026-10-29 21097445-dc19-4199-be36-26b0f0d003a5:strength@0(occurrence 21097445-dc19-4199-be36-26b0f0d003a5;STRENGTH/strength):完成组数 1 sets。；inputsOmitted=0；input0=1 sets；inputSource0=8c647d3af2012659:strengthSets[0].completion.COMPLETED；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 b4217a3dd19d49ebec7ca4eb44493936b538d87632e9de61d3ec83b41dcf1da5；未经独立核验。"
+          },
+          {
+            "id": "ref6",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=本周总结；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 d279de05ef7b179866b2f65785ccd096a97b7fe158afe1bd7cc446bf5de2d569；未经独立核验。"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:40.363Z",
+        "returnedAt": "2026-10-29T14:01:40.363Z"
+      },
+      {
+        "question": "我没有腿疼，解释一下RPE",
+        "mode": "delayed",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "FACT",
+            "detail": "我没有腿疼"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:44.100Z",
+        "returnedAt": "2026-10-29T14:01:44.528Z"
+      },
+      {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "mode": "delayed",
+        "facts": [],
+        "startedAt": "2026-10-29T14:01:44.397Z",
+        "returnedAt": "2026-10-29T14:01:44.528Z"
+      },
+      {
+        "question": "解释一下RPE概念，取消这轮测试。",
+        "mode": "delayed",
+        "facts": [],
+        "startedAt": "2026-10-29T14:01:45.256Z",
+        "returnedAt": "2026-10-29T14:01:45.744Z"
+      },
+      {
+        "question": "一般力量适应需要什么条件？",
+        "mode": "delayed",
+        "facts": [],
+        "startedAt": "2026-10-29T14:01:45.551Z",
+        "returnedAt": "2026-10-29T14:01:45.744Z"
+      }
+    ],
+    "pending": 0,
+    "reservations": [
+      {
+        "state": "SETTLED",
+        "count": 10
+      }
+    ],
+    "grantRows": [
+      {
+        "subject_id": "gate:alice",
+        "enabled": true
+      }
+    ]
+  },
+  "limitations": [
+    "Virtual font/viewport checks; physical mobile keyboard, IME and real wearable acceptance not performed."
+  ]
+}

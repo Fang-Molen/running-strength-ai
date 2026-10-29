@@ -1,0 +1,15 @@
+✔ sourced planned and available counts can be referenced in conditional advice (7.829245ms)
+✔ counts are dimensioned and role bound, not a whitelist of digits (6.390067ms)
+✔ valid plan references do not waive injury clearance or unauthorized writes (4.042941ms)
+✔ recorded-distance questions use the same canonical aggregate path as explicit load summaries (0.217067ms)
+✔ quotes may select complete exact source fields, never altered values or cut negations (0.230597ms)
+✔ stored pace comparisons compute the winner from two complete runs, independent of model prose (5.279594ms)
+✔ self-reported heart-rate comparisons use the supplied range rather than a population cutoff (0.299481ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36.497444

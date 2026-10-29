@@ -1,0 +1,16 @@
+✔ verified complete groups remain visible; a preceding evidence line cannot hide the answer (4.147908ms)
+✔ review 1: existing plan dose cannot be transferred to a different activity or intensity (15.666351ms)
+✔ review 2: nonnumeric accomplishments and comparison conclusions require evidence for every kind (1.971244ms)
+✔ review 3: a request to formulate a future plan cannot be completed by clarification alone (1.64877ms)
+✔ review 4: multiple corrections within each current or prior message apply in textual order (1.613327ms)
+✔ review 5: completion punctuation does not convert completion into unknown timing (0.320362ms)
+✔ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (0.565961ms)
+✔ review 7: retrieved evidence is delivered and checked consistently by server and client (1.460467ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 571.812826

@@ -1,0 +1,21 @@
+✔ only owned actual scalar evidence is sent; no plans, foreign devices or unknown scales (5.964847ms)
+✔ explicit zero stays zero; out of range, future and expired records are omitted (0.164858ms)
+✔ explicit consent creates snapshot, sends only reference, validates exact numeric quote and revokes (32.544409ms)
+✔ no consent, changed evidence or disabled preference cannot upload (6.558883ms)
+✔ changed evidence after snapshot prevents provider call and revokes authorization (1.901686ms)
+✔ server cannot replace displayed consent facts (1.764859ms)
+✔ v2 shared assertions reject unsupported personal dose even without a hold (2.722092ms)
+✔ relaxed guard is NOT applied while a safety hold is active: unsupported numbers and release wording are blocked (5.378214ms)
+✔ safety state UNKNOWN (no evidence) is treated like a hold: strict guard (1.974915ms)
+✔ write / clearance claims are blocked even with the relaxed guard (1.608804ms)
+✔ identity changes and cancellation during a pending response cannot deliver its text (3.931815ms)
+✔ persistent online preference automatically sends each independent question without per-turn confirmation (2.661912ms)
+✔ education quantities and physiological explanation pass while false retrieval and fabricated units fail (11.634841ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 94.889793

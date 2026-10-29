@@ -1,0 +1,2661 @@
+{
+  "candidate_commit": "64a1496e6a514eaab6b2a846514a474363bb36a4",
+  "status": "PASS",
+  "scope": "Synthetic identity/database/provider; actual app, HTTP and browser; no real model; frozen-source dev HMR full-reload events suppressed and logged",
+  "hmrSuppressed": [
+    {
+      "type": "full-reload"
+    },
+    {
+      "type": "full-reload"
+    },
+    {
+      "type": "full-reload"
+    },
+    {
+      "type": "full-reload"
+    }
+  ],
+  "checks": [
+    "Two normal questions automatically run concurrently and both answers remain; no per-question consent",
+    "OFF persists across reload and account grant is revoked; offline question makes no provider call",
+    "Current personal pain does not swallow independent RPE education",
+    "Cycle and weekly draft explanations also automatically run online without executing formal plans",
+    "Actual selected training IDs reach the online facts (40/50 kg; unrelated 90 kg excluded); correction to 45 kg marks dependent answer stale and refreshes context",
+    "Desktop/mobile actual app renders without uncaught page errors or horizontal overflow"
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "我没有腿疼，解释一下RPE",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [],
+          "records": [],
+          "coverage": {
+            "selected": 0,
+            "omitted": 0,
+            "unknowns": []
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "我没有腿疼，解释一下RPE",
+        "requestId": "9d3f0051-34dd-4add-b212-2a9fbeb18df1",
+        "snapshotId": "0f66b352-b606-4ba4-a0c3-2369ca888459",
+        "consentId": "3cafe77c-0b7e-40c5-87cd-2fcbb8799523",
+        "asOf": "2026-10-29T14:01:35.038Z"
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [],
+          "records": [],
+          "coverage": {
+            "selected": 0,
+            "omitted": 0,
+            "unknowns": []
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "requestId": "74c03be2-fc17-4e5e-aec9-36bb456320d5",
+        "snapshotId": "65148d55-48d7-4f87-ac5d-9f4ce7742989",
+        "consentId": "3cafe77c-0b7e-40c5-87cd-2fcbb8799523",
+        "asOf": "2026-10-29T14:01:35.322Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "0f66b352-b606-4ba4-a0c3-2369ca888459",
+        "consentId": "3cafe77c-0b7e-40c5-87cd-2fcbb8799523",
+        "asOf": "2026-10-29T14:01:35.038Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "65148d55-48d7-4f87-ac5d-9f4ce7742989",
+        "consentId": "3cafe77c-0b7e-40c5-87cd-2fcbb8799523",
+        "asOf": "2026-10-29T14:01:35.322Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "onlineConsent": {
+          "enabled": false,
+          "disclosureVersion": "coach-self-report-v1"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "onlineConsent": {
+          "enabled": true,
+          "disclosureVersion": "coach-self-report-v1"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "我的腘绳肌现在疼，解释一下RPE",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [
+            {
+              "key": "record:analysis:f0e693f3bc5182bc6c91dcfea1ab11d97ed2401f43df245d39da086274d942f2",
+              "revision": "db1b13229f2ae3b75e050053a139e6e2b4e60201659d97d089b90f68d06e8f1e"
+            },
+            {
+              "key": "record:dialogue:0cd48ab7036d712cf35752a4158b7712048e2320f744f5564645c10971845384",
+              "revision": "31f505a66e32674b851eb7537658d26c0e83c74bb507135e28b097931ba3ffac"
+            },
+            {
+              "key": "record:dialogue:1b301e861024d20a751cb60de454a5393fccc2d096818cc61b0cddf7a0ef94dc",
+              "revision": "a5c4ee0ca8522f78f979d4cbce4cfd301c726ed93138284190d0aca606bc8e45"
+            },
+            {
+              "key": "record:dialogue:67c4c8f084abd7c3cb71cb3e194c4fc2eb3afcec546a8c771fb2a33f11aae6a8",
+              "revision": "e1fc5b94e69ac67915e05f2fcf8910a1d001faa3f904973e2b8cd72e6716c081"
+            },
+            {
+              "key": "record:dialogue:c0a11e7a75ef129b435cc0767c4f224262ca410eb11f554e91a53e8b42ec7f79",
+              "revision": "70c42c1ca775ba1edc711e48c743e669f77db1079bd59dea74897df4bbbab9df"
+            },
+            {
+              "key": "selection:1958f3c5b165db1b5ff0914f8c1bf73b2e6beb9e68148f89dd6e93526a1af08c",
+              "revision": "33458d9620f2d61948f553146a0e5a10dfdc3bce1cc23df00f18d8cab2166de7"
+            }
+          ],
+          "records": [
+            {
+              "recordId": "dialogue:c0a11e7a75ef129b435cc0767c4f224262ca410eb11f554e91a53e8b42ec7f79",
+              "revision": "4bb1e022175879cd02ed8cd82d5203348549460884958c29322e21f83403e953",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "user",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "请解释RIR和RPE的区别",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:1b301e861024d20a751cb60de454a5393fccc2d096818cc61b0cddf7a0ef94dc",
+              "revision": "4abf26fa18771da4fd11f4a1148f1400872d6efb1844edeb25ac8224fe0b752c",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【联网模型解释 · 未取得本轮新网页】 我没有腿疼 RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:67c4c8f084abd7c3cb71cb3e194c4fc2eb3afcec546a8c771fb2a33f11aae6a8",
+              "revision": "76e030186eced79f2df56860463c8af0f25cf2f23cf3929e2fcc07ec4c22b65f",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:0cd48ab7036d712cf35752a4158b7712048e2320f744f5564645c10971845384",
+              "revision": "379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "analysis:f0e693f3bc5182bc6c91dcfea1ab11d97ed2401f43df245d39da086274d942f2",
+              "revision": "e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "ANALYSIS",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:LOCAL_ANALYSIS",
+              "fields": [
+                {
+                  "name": "kind",
+                  "value": "ANALYSIS_COVERAGE",
+                  "unit": null
+                },
+                {
+                  "name": "dataQuality",
+                  "value": "MISSING",
+                  "unit": null
+                },
+                {
+                  "name": "missing",
+                  "value": "当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对",
+                  "unit": null
+                },
+                {
+                  "name": "writeAuthority",
+                  "value": "NONE",
+                  "unit": null
+                },
+                {
+                  "name": "medicalClearance",
+                  "value": false,
+                  "unit": null
+                },
+                {
+                  "name": "boundedSummary",
+                  "value": true,
+                  "unit": null
+                }
+              ]
+            }
+          ],
+          "coverage": {
+            "selected": 5,
+            "omitted": 0,
+            "unknowns": [
+              "训练历史来自当前分析投影的可读取范围,并非全量历史;日期较早的专项记录可入选。",
+              "本机计算与解释按问题筛选传递,属于客户端申报;未独立核验,候选未确认,不构成医疗许可。",
+              "本次读取范围内没有可用的本人实际训练结构;不从计划推断完成量。",
+              "恢复背景含近期记录及分析引用的较早对照;旧数据是比较依据,不代表当前疲劳。",
+              "近期对话仅用于理解指代,不是新的实测事实;只传递有限片段,未传部分不能视为不存在。"
+            ]
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "我的腘绳肌现在疼，解释一下RPE",
+        "requestId": "c433c598-e01b-4eb7-bd4f-7b31c3191e15",
+        "snapshotId": "8c39f9f5-658d-400b-b4d8-59c219b4c301",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:38.604Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "8c39f9f5-658d-400b-b4d8-59c219b4c301",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:38.604Z"
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "请生成未来八周训练计划",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [
+            {
+              "key": "record:dialogue:309754bdfd6a723e675e5d01d6377c2a4280d90dc62217a1909c2a758b1d5846",
+              "revision": "101a6d5de117067caf6eb55afdd32b4425c4eb297dd73da5a22448fa5acc5526"
+            },
+            {
+              "key": "record:dialogue:4117fd677db47f64f817efd20e443a192f7c6590020184aa1060bdc9fcddd5eb",
+              "revision": "255c704ef231d512753b309a395eef2e477aad10f10b4735070937ed30922d60"
+            },
+            {
+              "key": "record:dialogue:a0ce9f45f1add589b7879c32cb2dd5facf9739047f1056069bf641e9aab3c6fb",
+              "revision": "d84a79bbeddfc59dbf96c233a24a135ac9d09db832eed2c9a8dafea850f40f9b"
+            },
+            {
+              "key": "record:dialogue:ca38ad1828faefb21c0710a0b8f2f17ff2b713e773513fe566fa181d5b50a51d",
+              "revision": "5e8f2dc2cd674033bba480d73b47cdf34e158ee2ef4dc1ac96e1ac5b9bed42b3"
+            },
+            {
+              "key": "selection:1c61cb638280651175da8bd2a519bd21f074f13e88e8d4295e692c852c91eed2",
+              "revision": "951a1583ac6a78010b0729bfef171b965cd7e00c0f2e11b90eb095e374daeea7"
+            }
+          ],
+          "records": [
+            {
+              "recordId": "dialogue:a0ce9f45f1add589b7879c32cb2dd5facf9739047f1056069bf641e9aab3c6fb",
+              "revision": "d521556f06e0b7253e3104d0d47de203333d34b0e6b26182fb459fba0ddd0ed7",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "user",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "我的腘绳肌现在疼,解释一下RPE",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:4117fd677db47f64f817efd20e443a192f7c6590020184aa1060bdc9fcddd5eb",
+              "revision": "379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:309754bdfd6a723e675e5d01d6377c2a4280d90dc62217a1909c2a758b1d5846",
+              "revision": "c9ca7f09d4358bdd588da0eebeaed3319b631c3c175517d6243e13c4ba34bcf8",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【本地分析】 目前尚不能给出整课AU,请先确认评分范围。这个数只描述所报负荷,不是疲劳分、伤病概率或停训阈值;下一步确认整课口径并记录恢复。 依据:本地知识与教学候选仅帮助解释,没有修改计划或记录。 R168:LOAD_SRPE|研究候选,未独立核验。整课实际分钟 × 整课实际sRPE;仅两者均已记录时计算;计划RPE不得代入;适用限制:允许计算,不以计算结果直接调课",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:ca38ad1828faefb21c0710a0b8f2f17ff2b713e773513fe566fa181d5b50a51d",
+              "revision": "255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、",
+                  "unit": null
+                },
+                {
+                  "name": "textPart2",
+                  "value": "在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb",
+                  "unit": null
+                },
+                {
+                  "name": "textPart3",
+                  "value": "71b9b;未经独立核验。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            }
+          ],
+          "coverage": {
+            "selected": 4,
+            "omitted": 2,
+            "unknowns": [
+              "上下文预算有限，部分历史或训练结构未发送；不能把已选分段/组次当作整课总量。",
+              "训练历史来自当前分析投影的可读取范围,并非全量历史;日期较早的专项记录可入选。",
+              "本机计算与解释按问题筛选传递,属于客户端申报;未独立核验,候选未确认,不构成医疗许可。",
+              "本次读取范围内没有可用的本人实际训练结构;不从计划推断完成量。",
+              "恢复背景含近期记录及分析引用的较早对照;旧数据是比较依据,不代表当前疲劳。",
+              "比赛目标或目标保存时间未知;目标不作为实测能力。",
+              "日历为计划上下文;保存时刻未记录。已开始/已完成课程不能当作未开始课程修改。",
+              "另有6项缺失或冲突说明受预算限制未全部列出；不能据此视为资料完整。"
+            ]
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "请生成未来八周训练计划",
+        "requestId": "747a94ff-d073-4bf6-8581-c283ad3b07f7",
+        "snapshotId": "72dd677a-2c5a-4b87-9a0d-2e6ddd06cb52",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:39.114Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "72dd677a-2c5a-4b87-9a0d-2e6ddd06cb52",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:39.114Z"
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "本周总结",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [
+            {
+              "key": "record:dialogue:20de61811143d8e8da190d0192209f09042e2eefc458459d6c828c3033036b65",
+              "revision": "86644b811aa46e2b55c12331e01683e0f4738685ef51bff7eb127a62a54b48f1"
+            },
+            {
+              "key": "record:dialogue:9e6efc9cb6a914f856956c8d3a5a2d0c03f0a322282c560d37b320f7ea58081f",
+              "revision": "20fb85dc88acbfa953889a64c95ed444b9312b7b50a7216e15d5899d9d2911a7"
+            },
+            {
+              "key": "record:dialogue:c832fec6cf27114e019b9a0c82de1b2ed432e8f1be619920da6a686ba0f27245",
+              "revision": "3a09878cd0332ce0908fb03a13f148760acc9fb2262ba9175eb3672aaf6f5ed1"
+            },
+            {
+              "key": "record:dialogue:e4abf5acaa78403808ebbab374984c7b68d14e51bf68f8578254534ebb9ab7d1",
+              "revision": "327ec94199804d0d84d9ea6588504e6d1c3721bcca941264b40e44a59e4a06bc"
+            },
+            {
+              "key": "selection:9c4a54dad7da19de17583db8194c6a91b2d03c2bc752f939d15efd0532fc1d45",
+              "revision": "7bdc45e331fdf98b98be50eec171933121613899e8d98cc47c2b9d2de0839f91"
+            }
+          ],
+          "records": [
+            {
+              "recordId": "dialogue:e4abf5acaa78403808ebbab374984c7b68d14e51bf68f8578254534ebb9ab7d1",
+              "revision": "83ba7f13a1c4c754bcdc4fd8b2d0de54c4000a902026477e3570faf30c878955",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "user",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "请生成未来八周训练计划",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:c832fec6cf27114e019b9a0c82de1b2ed432e8f1be619920da6a686ba0f27245",
+              "revision": "255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、",
+                  "unit": null
+                },
+                {
+                  "name": "textPart2",
+                  "value": "在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb",
+                  "unit": null
+                },
+                {
+                  "name": "textPart3",
+                  "value": "71b9b;未经独立核验。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:9e6efc9cb6a914f856956c8d3a5a2d0c03f0a322282c560d37b320f7ea58081f",
+              "revision": "a4442956e3c14162a254e9830165d65ec13e3d6e18047a61375c7ce5258c9879",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "已依据当前保存资料生成8周周期草案。【个体周期(计划,不是实际)】 目标未确认 草案PENDING;依据NEEDS_REVIEW;2026-11-02:BASE;2026-11-09:BUILD;2026-11-16:BUILD;2026-11-23:BUILD;2026-11-30:BUILD;2026-12-07:BUILD 执行结果尚待复核 后续周有条件;只在用户确认且宿主复核后写入。 请在「复盘→个体周期计划」核对比赛目标、训练背景和差异;尚未确认的目标先保存,正式课表不会自动改变。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:20de61811143d8e8da190d0192209f09042e2eefc458459d6c828c3033036b65",
+              "revision": "07d03623dd677405610a425e43e6cadbc73406c714c0ebb53e48ca6b5217192e",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "coach",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。 安排思路:先核对原课表、目标与可用时间,讨论关键课的优先级和恢复间隔,不补课追进度。具体取舍需确认,本轮未修改日历。 请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况,才能核对安排。当前仅能讨论框架,未修改计划。",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            }
+          ],
+          "coverage": {
+            "selected": 4,
+            "omitted": 1,
+            "unknowns": [
+              "上下文预算有限，部分历史或训练结构未发送；不能把已选分段/组次当作整课总量。",
+              "按2026-10-26至2026-10-29(含首尾)的本地日期检索已有训练;未找到的日期不以近期训练替代,覆盖不代表完整历史。",
+              "训练历史来自当前分析投影的可读取范围,并非全量历史;日期较早的专项记录可入选。",
+              "本机计算与解释按问题筛选传递,属于客户端申报;未独立核验,候选未确认,不构成医疗许可。",
+              "本次读取范围内没有可用的本人实际训练结构;不从计划推断完成量。",
+              "近期对话仅用于理解指代,不是新的实测事实;只传递有限片段,未传部分不能视为不存在。"
+            ]
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "本周总结",
+        "requestId": "384bfef7-cd43-42d3-b4fe-2815256db627",
+        "snapshotId": "bd33660e-ff07-4cda-abb1-9d3ce4eb7fbf",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:39.468Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "bd33660e-ff07-4cda-abb1-9d3ce4eb7fbf",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:39.468Z"
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "body": {
+        "question": "比较这两节力量训练，有什么变化？",
+        "declarations": [],
+        "context": {
+          "version": "coach-context-v2",
+          "dependencyVersions": [
+            {
+              "key": "record:analysis:6dd9f6cb370b63a79a8078295c410180194460bd691c56eb2460c91a63a07aa4",
+              "revision": "305e9f7409befe4aca79fae5089a5c2c3523f4f1eb0ff929e7f5ffe24736bee5"
+            },
+            {
+              "key": "record:ctx:0545284e584028f2411a2443a4e15ca05cb38d0553bc784d78d992ed8e8eddd7",
+              "revision": "e616f1bd377a0cf30f886d9e157e48af6f5dc19334455738e0ecf82fe1f6651e"
+            },
+            {
+              "key": "record:ctx:0bd3262f992bf6fa8414c02f9e1b9f74cdd91718c5031f3e4a4424b447854041",
+              "revision": "88963dba3a32a587aa1e2d78b88a65e8581af38546e65cb7a3b019c3627ec78a"
+            },
+            {
+              "key": "record:ctx:0cdba3e84fd8cbd5cb010488f9354e6010829b4c8bc86361222a587c17c4601f",
+              "revision": "a809423ffa1b7b2bbfecc478944a37928d84537a38db8f7463f33c66aa18ca7a"
+            },
+            {
+              "key": "record:ctx:9af4c606f8fa538695a062ec93ff184571443a6a2b2c2ace2641a3d507c65081",
+              "revision": "e350e7b04be19718c24dfd8733dfce8c954b6b182d7dd4b66a3d0554dae9c272"
+            },
+            {
+              "key": "record:dialogue:a43030c764f9b3a2baf8d86aeaead4410dd3a8c8c48c2da622c74c1000a0aa63",
+              "revision": "68a0382657279611f87ed52f4815d7edfdef4b99013f52f6ab401826773c61ec"
+            },
+            {
+              "key": "selection:0396ce60b6ecb522641950b0e805932e5aac914fd16ae0a0b681b8845741c903",
+              "revision": "79ed53cfac4c2074582981ce0d82df6b2b5cd1609a630a899c2bd41d0950bf2f"
+            }
+          ],
+          "records": [
+            {
+              "recordId": "ctx:0bd3262f992bf6fa8414c02f9e1b9f74cdd91718c5031f3e4a4424b447854041",
+              "revision": "0",
+              "occurredAt": "2026-10-29T14:01:39.553Z",
+              "knownAt": "2026-10-29T14:01:39.556Z",
+              "category": "STRENGTH",
+              "state": "ACTUAL",
+              "source": "USER_DECLARED:APP",
+              "fields": [
+                {
+                  "name": "quality",
+                  "value": "PARTIAL",
+                  "unit": null
+                },
+                {
+                  "name": "evidenceVersion",
+                  "value": "a0020f4c778480d9",
+                  "unit": null
+                },
+                {
+                  "name": "sourceGroup",
+                  "value": "a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278",
+                  "unit": null
+                },
+                {
+                  "name": "protocolGroup",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "protocol",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "provenanceVerified",
+                  "value": false,
+                  "unit": null
+                },
+                {
+                  "name": "modality",
+                  "value": "STRENGTH",
+                  "unit": null
+                },
+                {
+                  "name": "observedType",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "actualDuration",
+                  "value": 0.011,
+                  "unit": "s"
+                },
+                {
+                  "name": "sessionRpe",
+                  "value": null,
+                  "unit": "UNKNOWN"
+                },
+                {
+                  "name": "segmentCount",
+                  "value": 0,
+                  "unit": null
+                },
+                {
+                  "name": "setCount",
+                  "value": 1,
+                  "unit": null
+                },
+                {
+                  "name": "jumpContacts",
+                  "value": null,
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "ctx:9af4c606f8fa538695a062ec93ff184571443a6a2b2c2ace2641a3d507c65081",
+              "revision": "0",
+              "occurredAt": "2026-10-29T14:01:39.553Z",
+              "knownAt": "2026-10-29T14:01:39.556Z",
+              "category": "STRENGTH",
+              "state": "ACTUAL",
+              "source": "USER_DECLARED:APP",
+              "fields": [
+                {
+                  "name": "parent",
+                  "value": "ctx:0bd3262f992bf6fa8414c02f9e1b9f74cdd91718c5031f3e4a4424b447854041",
+                  "unit": null
+                },
+                {
+                  "name": "structure",
+                  "value": "STRENGTH_SET",
+                  "unit": null
+                },
+                {
+                  "name": "setIndex",
+                  "value": 1,
+                  "unit": null
+                },
+                {
+                  "name": "exercise",
+                  "value": "local:back-squat",
+                  "unit": null
+                },
+                {
+                  "name": "catalogueVersion",
+                  "value": "U11_CATALOG_1",
+                  "unit": null
+                },
+                {
+                  "name": "side",
+                  "value": "UNSPECIFIED",
+                  "unit": null
+                },
+                {
+                  "name": "load",
+                  "value": 40,
+                  "unit": "kg"
+                },
+                {
+                  "name": "loadBasis",
+                  "value": "UNKNOWN",
+                  "unit": null
+                },
+                {
+                  "name": "reps",
+                  "value": 5,
+                  "unit": "reps"
+                },
+                {
+                  "name": "hold",
+                  "value": null,
+                  "unit": "s"
+                },
+                {
+                  "name": "setRpe",
+                  "value": null,
+                  "unit": "UNKNOWN"
+                },
+                {
+                  "name": "rir",
+                  "value": null,
+                  "unit": "reps"
+                },
+                {
+                  "name": "eccentric",
+                  "value": null,
+                  "unit": "s"
+                },
+                {
+                  "name": "rangeProtocol",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "completion",
+                  "value": "COMPLETED",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "ctx:0cdba3e84fd8cbd5cb010488f9354e6010829b4c8bc86361222a587c17c4601f",
+              "revision": "0",
+              "occurredAt": "2026-10-29T14:01:39.567Z",
+              "knownAt": "2026-10-29T14:01:39.571Z",
+              "category": "STRENGTH",
+              "state": "ACTUAL",
+              "source": "USER_DECLARED:APP",
+              "fields": [
+                {
+                  "name": "quality",
+                  "value": "PARTIAL",
+                  "unit": null
+                },
+                {
+                  "name": "evidenceVersion",
+                  "value": "8c647d3af2012659",
+                  "unit": null
+                },
+                {
+                  "name": "sourceGroup",
+                  "value": "a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278",
+                  "unit": null
+                },
+                {
+                  "name": "protocolGroup",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "protocol",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "provenanceVerified",
+                  "value": false,
+                  "unit": null
+                },
+                {
+                  "name": "modality",
+                  "value": "STRENGTH",
+                  "unit": null
+                },
+                {
+                  "name": "observedType",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "actualDuration",
+                  "value": 0.008,
+                  "unit": "s"
+                },
+                {
+                  "name": "sessionRpe",
+                  "value": null,
+                  "unit": "UNKNOWN"
+                },
+                {
+                  "name": "segmentCount",
+                  "value": 0,
+                  "unit": null
+                },
+                {
+                  "name": "setCount",
+                  "value": 1,
+                  "unit": null
+                },
+                {
+                  "name": "jumpContacts",
+                  "value": null,
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "ctx:0545284e584028f2411a2443a4e15ca05cb38d0553bc784d78d992ed8e8eddd7",
+              "revision": "0",
+              "occurredAt": "2026-10-29T14:01:39.567Z",
+              "knownAt": "2026-10-29T14:01:39.571Z",
+              "category": "STRENGTH",
+              "state": "ACTUAL",
+              "source": "USER_DECLARED:APP",
+              "fields": [
+                {
+                  "name": "parent",
+                  "value": "ctx:0cdba3e84fd8cbd5cb010488f9354e6010829b4c8bc86361222a587c17c4601f",
+                  "unit": null
+                },
+                {
+                  "name": "structure",
+                  "value": "STRENGTH_SET",
+                  "unit": null
+                },
+                {
+                  "name": "setIndex",
+                  "value": 1,
+                  "unit": null
+                },
+                {
+                  "name": "exercise",
+                  "value": "local:back-squat",
+                  "unit": null
+                },
+                {
+                  "name": "catalogueVersion",
+                  "value": "U11_CATALOG_1",
+                  "unit": null
+                },
+                {
+                  "name": "side",
+                  "value": "UNSPECIFIED",
+                  "unit": null
+                },
+                {
+                  "name": "load",
+                  "value": 50,
+                  "unit": "kg"
+                },
+                {
+                  "name": "loadBasis",
+                  "value": "UNKNOWN",
+                  "unit": null
+                },
+                {
+                  "name": "reps",
+                  "value": 5,
+                  "unit": "reps"
+                },
+                {
+                  "name": "hold",
+                  "value": null,
+                  "unit": "s"
+                },
+                {
+                  "name": "setRpe",
+                  "value": null,
+                  "unit": "UNKNOWN"
+                },
+                {
+                  "name": "rir",
+                  "value": null,
+                  "unit": "reps"
+                },
+                {
+                  "name": "eccentric",
+                  "value": null,
+                  "unit": "s"
+                },
+                {
+                  "name": "rangeProtocol",
+                  "value": null,
+                  "unit": null
+                },
+                {
+                  "name": "completion",
+                  "value": "COMPLETED",
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "analysis:6dd9f6cb370b63a79a8078295c410180194460bd691c56eb2460c91a63a07aa4",
+              "revision": "b4217a3dd19d49ebec7ca4eb44493936b538d87632e9de61d3ec83b41dcf1da5",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "ANALYSIS",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:LOCAL_ANALYSIS",
+              "fields": [
+                {
+                  "name": "kind",
+                  "value": "COMPUTED",
+                  "unit": null
+                },
+                {
+                  "name": "metric",
+                  "value": "STRENGTH_SETS",
+                  "unit": null
+                },
+                {
+                  "name": "value",
+                  "value": 1,
+                  "unit": "sets"
+                },
+                {
+                  "name": "evidenceVersions",
+                  "value": "8c647d3af2012659",
+                  "unit": null
+                },
+                {
+                  "name": "formula",
+                  "value": "count(COMPLETED strengthSets)",
+                  "unit": null
+                },
+                {
+                  "name": "formulaVersion",
+                  "value": "FK_DERIVED_1",
+                  "unit": null
+                },
+                {
+                  "name": "meaning",
+                  "value": "2026-10-29 21097445-dc19-4199-be36-26b0f0d003a5:strength@0(occurrence 21097445-dc19-4199-be36-26b0f0d003a5;STRENGTH/strength):完成组数 1 sets。",
+                  "unit": null
+                },
+                {
+                  "name": "inputsOmitted",
+                  "value": 0,
+                  "unit": null
+                },
+                {
+                  "name": "input0",
+                  "value": 1,
+                  "unit": "sets"
+                },
+                {
+                  "name": "inputSource0",
+                  "value": "8c647d3af2012659:strengthSets[0].completion.COMPLETED",
+                  "unit": null
+                },
+                {
+                  "name": "boundedSummary",
+                  "value": true,
+                  "unit": null
+                }
+              ]
+            },
+            {
+              "recordId": "dialogue:a43030c764f9b3a2baf8d86aeaead4410dd3a8c8c48c2da622c74c1000a0aa63",
+              "revision": "d279de05ef7b179866b2f65785ccd096a97b7fe158afe1bd7cc446bf5de2d569",
+              "occurredAt": null,
+              "knownAt": null,
+              "category": "DIALOGUE",
+              "state": "UNKNOWN",
+              "source": "USER_DECLARED:CONVERSATION",
+              "fields": [
+                {
+                  "name": "speaker",
+                  "value": "user",
+                  "unit": null
+                },
+                {
+                  "name": "text",
+                  "value": "本周总结",
+                  "unit": null
+                },
+                {
+                  "name": "factAuthority",
+                  "value": "NONE",
+                  "unit": null
+                }
+              ]
+            }
+          ],
+          "coverage": {
+            "selected": 6,
+            "omitted": 11,
+            "unknowns": [
+              "上下文预算有限，部分历史或训练结构未发送；不能把已选分段/组次当作整课总量。",
+              "训练历史来自当前分析投影的可读取范围,并非全量历史;日期较早的专项记录可入选。",
+              "按用户选择的顺序读取实际训练;未选择的其他训练不代替所选记录。",
+              "本机计算与解释按问题筛选传递,属于客户端申报;未独立核验,候选未确认,不构成医疗许可。",
+              "恢复背景含近期记录及分析引用的较早对照;旧数据是比较依据,不代表当前疲劳。",
+              "近期对话仅用于理解指代,不是新的实测事实;只传递有限片段,未传部分不能视为不存在。"
+            ]
+          }
+        },
+        "consent": {
+          "purpose": "coach_explanation",
+          "disclosureVersion": "coach-self-report-v1",
+          "mode": "PERSISTENT"
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "body": {
+        "question": "比较这两节力量训练，有什么变化？",
+        "requestId": "177e17fa-b8be-4768-80d0-1791f2f9625d",
+        "snapshotId": "e515c2ca-b1a7-43d4-9cb7-d2bde8f45a81",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:40.308Z"
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "body": {
+        "snapshotId": "e515c2ca-b1a7-43d4-9cb7-d2bde8f45a81",
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "asOf": "2026-10-29T14:01:40.308Z"
+      }
+    }
+  ],
+  "responses": [
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "0f66b352-b606-4ba4-a0c3-2369ca888459",
+          "consentId": "3cafe77c-0b7e-40c5-87cd-2fcbb8799523",
+          "asOf": "2026-10-29T14:01:35.038Z"
+        },
+        "expiresAt": "2026-10-29T14:11:35.038Z",
+        "sourceVersion": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": []
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "65148d55-48d7-4f87-ac5d-9f4ce7742989",
+          "consentId": "3cafe77c-0b7e-40c5-87cd-2fcbb8799523",
+          "asOf": "2026-10-29T14:01:35.322Z"
+        },
+        "expiresAt": "2026-10-29T14:11:35.322Z",
+        "sourceVersion": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": []
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "我没有腿疼\nRPE是主观用力程度量表。\n常用CR10量表范围为0–10，数值越大通常表示主观努力越高。\n它描述用力感，不能单独确定恢复或医学安全。",
+        "answerGate": {
+          "policyVersion": "coach-answer-gate-v1",
+          "decision": "VALIDATED",
+          "text": "我没有腿疼\nRPE是主观用力程度量表。\n常用CR10量表范围为0–10，数值越大通常表示主观努力越高。\n它描述用力感，不能单独确定恢复或医学安全。",
+          "blocks": [
+            {
+              "id": "legacy:0",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "我没有腿疼",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:0"
+            },
+            {
+              "id": "legacy:1",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "RPE是主观用力程度量表。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:1"
+            },
+            {
+              "id": "legacy:2",
+              "kind": "OBSERVED_FACT",
+              "text": "常用CR10量表范围为0–10，数值越大通常表示主观努力越高。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:2"
+            },
+            {
+              "id": "legacy:3",
+              "kind": "UNCERTAINTY",
+              "text": "它描述用力感，不能单独确定恢复或医学安全。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:3"
+            }
+          ],
+          "reasonCodes": [],
+          "taskCoverage": [
+            {
+              "id": "task:answer",
+              "kind": "ANSWER",
+              "satisfied": true,
+              "blockIds": [
+                "legacy:0",
+                "legacy:1",
+                "legacy:2"
+              ]
+            }
+          ],
+          "professionalReview": "PENDING",
+          "finalHash": "497c0e62a3e7c002169598f90c95acef3cd10bb8f1ace29b0597243c27b1f6a3",
+          "evidenceQuotes": [
+            "我没有腿疼"
+          ],
+          "computedQuotes": [],
+          "gates": [
+            {
+              "gate": "G0",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G1",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G2",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G3",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G4",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G5",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G6",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G7",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G8",
+              "status": "PASS",
+              "reasons": []
+            }
+          ]
+        },
+        "source": "MODEL",
+        "computedQuotes": [],
+        "evidenceQuotes": [
+          "我没有腿疼"
+        ],
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-answer-gate-v1",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "1aadf648-3534-430b-857d-5ada32fad976",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_NEEDED",
+          "enabled": true,
+          "sources": []
+        }
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。",
+        "answerGate": {
+          "policyVersion": "coach-answer-gate-v1",
+          "decision": "VALIDATED",
+          "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。",
+          "blocks": [
+            {
+              "id": "legacy:0",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:0"
+            },
+            {
+              "id": "legacy:1",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:1"
+            },
+            {
+              "id": "legacy:2",
+              "kind": "UNCERTAINTY",
+              "text": "个体变化需要持续观察，单次酸痛不能证明训练效果。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:2"
+            }
+          ],
+          "reasonCodes": [],
+          "taskCoverage": [
+            {
+              "id": "task:answer",
+              "kind": "ANSWER",
+              "satisfied": true,
+              "blockIds": [
+                "legacy:0",
+                "legacy:1"
+              ]
+            }
+          ],
+          "professionalReview": "NOT_REQUIRED",
+          "finalHash": "840df13d222fa17ab64214aec2b0cf1d24b15623f5730df3f80f51c3c2f4d31a",
+          "evidenceQuotes": [],
+          "computedQuotes": [],
+          "gates": [
+            {
+              "gate": "G0",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G1",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G2",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G3",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G4",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G5",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G6",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G7",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G8",
+              "status": "PASS",
+              "reasons": []
+            }
+          ]
+        },
+        "source": "MODEL",
+        "computedQuotes": [],
+        "evidenceQuotes": [],
+        "route": "LOW",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-answer-gate-v1",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "e647cfb6-57af-4706-968b-06e6a4112d59",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_NEEDED",
+          "enabled": true,
+          "sources": []
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "enabled": false,
+        "consentRevoked": true
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+        "expiresAt": "2027-10-29T14:01:38.320Z"
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "8c39f9f5-658d-400b-b4d8-59c219b4c301",
+          "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+          "asOf": "2026-10-29T14:01:38.604Z"
+        },
+        "expiresAt": "2026-10-29T14:11:38.604Z",
+        "sourceVersion": "71668ad034ea4823918b0606723eefbef2d6cac2f6dc7df947c2e8ea3893529a",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": [
+          "用户申报[DIALOGUE；状态未知]：speaker=user；text=请解释RIR和RPE的区别；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 4bb1e022175879cd02ed8cd82d5203348549460884958c29322e21f83403e953；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 我没有腿疼 RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 4abf26fa18771da4fd11f4a1148f1400872d6efb1844edeb25ac8224fe0b752c；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 76e030186eced79f2df56860463c8af0f25cf2f23cf3929e2fcc07ec4c22b65f；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833；未经独立核验。",
+          "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。"
+        ]
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?\nRPE是主观用力程度量表。\n常用CR10量表范围为0–10，数值越大通常表示主观努力越高。\n它描述用力感，不能单独确定恢复或医学安全。\n用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。",
+        "answerGate": {
+          "policyVersion": "coach-answer-gate-v1",
+          "decision": "REPAIRED",
+          "text": "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?\nRPE是主观用力程度量表。\n常用CR10量表范围为0–10，数值越大通常表示主观努力越高。\n它描述用力感，不能单独确定恢复或医学安全。\n用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。",
+          "blocks": [
+            {
+              "id": "legacy:0",
+              "kind": "CANDIDATE_ADVICE",
+              "text": "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:0"
+            },
+            {
+              "id": "legacy:2",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "RPE是主观用力程度量表。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:2"
+            },
+            {
+              "id": "legacy:3",
+              "kind": "OBSERVED_FACT",
+              "text": "常用CR10量表范围为0–10，数值越大通常表示主观努力越高。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:3"
+            },
+            {
+              "id": "legacy:4",
+              "kind": "UNCERTAINTY",
+              "text": "它描述用力感，不能单独确定恢复或医学安全。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:4"
+            },
+            {
+              "id": "host:quote:0",
+              "kind": "OBSERVED_FACT",
+              "text": "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "host:quote:0"
+            }
+          ],
+          "reasonCodes": [
+            "UNSUPPORTED_DOSE"
+          ],
+          "taskCoverage": [
+            {
+              "id": "task:answer",
+              "kind": "ANSWER",
+              "satisfied": true,
+              "blockIds": [
+                "legacy:0",
+                "legacy:2",
+                "legacy:3",
+                "host:quote:0"
+              ]
+            }
+          ],
+          "professionalReview": "PENDING",
+          "finalHash": "d6f3b20c396deaeabd7f59312844b09a121263c45a0624340046227908cbab03",
+          "evidenceQuotes": [
+            "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。"
+          ],
+          "computedQuotes": [],
+          "gates": [
+            {
+              "gate": "G0",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G1",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G2",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G3",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G4",
+              "status": "REPAIRED",
+              "reasons": [
+                "UNSUPPORTED_DOSE"
+              ]
+            },
+            {
+              "gate": "G5",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G6",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G7",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G8",
+              "status": "PASS",
+              "reasons": []
+            }
+          ]
+        },
+        "source": "MODEL",
+        "computedQuotes": [],
+        "evidenceQuotes": [
+          "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。"
+        ],
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "unverified": true,
+        "validation": {
+          "status": "PARTIALLY_ACCEPTED",
+          "rejectedAssertionTypes": [
+            "UNSUPPORTED_DOSE"
+          ],
+          "policyVersion": "coach-answer-gate-v1",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "1ea0360a-5b1f-40e7-9414-9584f646e743",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_NEEDED",
+          "enabled": true,
+          "sources": []
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "72dd677a-2c5a-4b87-9a0d-2e6ddd06cb52",
+          "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+          "asOf": "2026-10-29T14:01:39.114Z"
+        },
+        "expiresAt": "2026-10-29T14:11:39.114Z",
+        "sourceVersion": "a93635d11ea634b2bd00b669b1803194db113e07db8e59665c5529aca6e50044",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": [
+          "用户申报[DIALOGUE；状态未知]：speaker=user；text=我的腘绳肌现在疼,解释一下RPE；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 d521556f06e0b7253e3104d0d47de203333d34b0e6b26182fb459fba0ddd0ed7；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地分析】 目前尚不能给出整课AU,请先确认评分范围。这个数只描述所报负荷,不是疲劳分、伤病概率或停训阈值;下一步确认整课口径并记录恢复。 依据:本地知识与教学候选仅帮助解释,没有修改计划或记录。 R168:LOAD_SRPE|研究候选,未独立核验。整课实际分钟 × 整课实际sRPE;仅两者均已记录时计算;计划RPE不得代入;适用限制:允许计算,不以计算结果直接调课；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 c9ca7f09d4358bdd588da0eebeaed3319b631c3c175517d6243e13c4ba34bcf8；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、；textPart2=在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb；textPart3=71b9b;未经独立核验。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f；未经独立核验。"
+        ]
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。\n安排思路：先核对原课表、目标与可用时间，讨论关键课的优先级和恢复间隔，不补课追进度。具体取舍需确认，本轮未修改日历。\n请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况，才能核对安排。当前仅能讨论框架，未修改计划。",
+        "answerGate": {
+          "policyVersion": "coach-answer-gate-v1",
+          "decision": "PARTIAL",
+          "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。\n安排思路：先核对原课表、目标与可用时间，讨论关键课的优先级和恢复间隔，不补课追进度。具体取舍需确认，本轮未修改日历。\n请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况，才能核对安排。当前仅能讨论框架，未修改计划。",
+          "blocks": [
+            {
+              "id": "legacy:0",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:0"
+            },
+            {
+              "id": "legacy:1",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:1"
+            },
+            {
+              "id": "legacy:2",
+              "kind": "UNCERTAINTY",
+              "text": "个体变化需要持续观察，单次酸痛不能证明训练效果。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:2"
+            },
+            {
+              "id": "host:framework",
+              "kind": "CANDIDATE_ADVICE",
+              "text": "安排思路：先核对原课表、目标与可用时间，讨论关键课的优先级和恢复间隔，不补课追进度。具体取舍需确认，本轮未修改日历。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "host:framework"
+            },
+            {
+              "id": "host:clarification",
+              "kind": "UNCERTAINTY",
+              "text": "请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况，才能核对安排。当前仅能讨论框架，未修改计划。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "host:clarification"
+            }
+          ],
+          "reasonCodes": [
+            "TASK_DROPPED"
+          ],
+          "taskCoverage": [
+            {
+              "id": "task:arrangement",
+              "kind": "ARRANGEMENT",
+              "satisfied": true,
+              "blockIds": [
+                "host:framework"
+              ]
+            }
+          ],
+          "professionalReview": "PENDING",
+          "finalHash": "c73717c570a98104d89cd9626fecc33f78b35d240e6942c7e1e91db48024b0ab",
+          "evidenceQuotes": [],
+          "computedQuotes": [],
+          "gates": [
+            {
+              "gate": "G0",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G1",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G2",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G3",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G4",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G5",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G6",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G7",
+              "status": "PARTIAL",
+              "reasons": [
+                "TASK_DROPPED"
+              ]
+            },
+            {
+              "gate": "G8",
+              "status": "PASS",
+              "reasons": []
+            }
+          ]
+        },
+        "source": "MODEL",
+        "computedQuotes": [],
+        "evidenceQuotes": [],
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "unverified": true,
+        "validation": {
+          "status": "PARTIALLY_ACCEPTED",
+          "rejectedAssertionTypes": [
+            "TASK_DROPPED"
+          ],
+          "policyVersion": "coach-answer-gate-v1",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "8dde81b6-c68b-4573-a7c0-bc3ae83a5403",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_NEEDED",
+          "enabled": true,
+          "sources": []
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "bd33660e-ff07-4cda-abb1-9d3ce4eb7fbf",
+          "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+          "asOf": "2026-10-29T14:01:39.468Z"
+        },
+        "expiresAt": "2026-10-29T14:11:39.468Z",
+        "sourceVersion": "d015298bb75bfb7b40bca315a279cfd32241bd93a1511c4a25f36e90771387f2",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": [
+          "用户申报[DIALOGUE；状态未知]：speaker=user；text=请生成未来八周训练计划；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 83ba7f13a1c4c754bcdc4fd8b2d0de54c4000a902026477e3570faf30c878955；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、；textPart2=在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb；textPart3=71b9b;未经独立核验。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=已依据当前保存资料生成8周周期草案。【个体周期(计划,不是实际)】 目标未确认 草案PENDING;依据NEEDS_REVIEW;2026-11-02:BASE;2026-11-09:BUILD;2026-11-16:BUILD;2026-11-23:BUILD;2026-11-30:BUILD;2026-12-07:BUILD 执行结果尚待复核 后续周有条件;只在用户确认且宿主复核后写入。 请在「复盘→个体周期计划」核对比赛目标、训练背景和差异;尚未确认的目标先保存,正式课表不会自动改变。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 a4442956e3c14162a254e9830165d65ec13e3d6e18047a61375c7ce5258c9879；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。 安排思路:先核对原课表、目标与可用时间,讨论关键课的优先级和恢复间隔,不补课追进度。具体取舍需确认,本轮未修改日历。 请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况,才能核对安排。当前仅能讨论框架,未修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 07d03623dd677405610a425e43e6cadbc73406c714c0ebb53e48ca6b5217192e；未经独立核验。"
+        ]
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。",
+        "answerGate": {
+          "policyVersion": "coach-answer-gate-v1",
+          "decision": "VALIDATED",
+          "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。",
+          "blocks": [
+            {
+              "id": "legacy:0",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:0"
+            },
+            {
+              "id": "legacy:1",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:1"
+            },
+            {
+              "id": "legacy:2",
+              "kind": "UNCERTAINTY",
+              "text": "个体变化需要持续观察，单次酸痛不能证明训练效果。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:2"
+            }
+          ],
+          "reasonCodes": [],
+          "taskCoverage": [
+            {
+              "id": "task:answer",
+              "kind": "ANSWER",
+              "satisfied": true,
+              "blockIds": [
+                "legacy:0",
+                "legacy:1"
+              ]
+            }
+          ],
+          "professionalReview": "NOT_REQUIRED",
+          "finalHash": "840df13d222fa17ab64214aec2b0cf1d24b15623f5730df3f80f51c3c2f4d31a",
+          "evidenceQuotes": [],
+          "computedQuotes": [],
+          "gates": [
+            {
+              "gate": "G0",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G1",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G2",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G3",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G4",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G5",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G6",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G7",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G8",
+              "status": "PASS",
+              "reasons": []
+            }
+          ]
+        },
+        "source": "MODEL",
+        "computedQuotes": [],
+        "evidenceQuotes": [],
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "validation": {
+          "status": "ACCEPTED_STRUCTURALLY",
+          "rejectedAssertionTypes": [],
+          "policyVersion": "coach-answer-gate-v1",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "fe8390fd-1670-4bcc-9427-a10b172a0083",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_NEEDED",
+          "enabled": true,
+          "sources": []
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "GET",
+      "status": 200,
+      "body": {
+        "service": "fangkun-coach",
+        "configured": true,
+        "reason": null,
+        "schemaVerified": true,
+        "requiredSchemaVersion": 3,
+        "capabilities": {
+          "persistentConsent": true,
+          "contextVersion": "coach-context-v2",
+          "assertionPolicy": "coach-assertions-v2",
+          "retrieval": "NOT_CONFIGURED"
+        },
+        "connectionVerified": false,
+        "authorizationVerified": false,
+        "billingVerified": false
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "snapshotRef": {
+          "snapshotId": "e515c2ca-b1a7-43d4-9cb7-d2bde8f45a81",
+          "consentId": "81f4f812-fb04-4f6c-9d95-1ec72c180209",
+          "asOf": "2026-10-29T14:01:40.308Z"
+        },
+        "expiresAt": "2026-10-29T14:11:40.308Z",
+        "sourceVersion": "c8178ed1ca9e30b801417fe2aad14f0e1102ee076e9dd8828925183313bd9114",
+        "provenance": "USER_DECLARED",
+        "disclosureVersion": "coach-self-report-v1",
+        "factQuotes": [],
+        "contextQuotes": [
+          "用户申报[STRENGTH；实绩申报]：quality=PARTIAL；evidenceVersion=a0020f4c778480d9；sourceGroup=a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278；protocolGroup=未知；protocol=未知；provenanceVerified=false；modality=STRENGTH；observedType=未知；actualDuration=0.011 s；sessionRpe=未知 UNKNOWN；segmentCount=0；setCount=1；jumpContacts=未知；发生时间 2026-10-29T14:01:39.553Z；记录时间 2026-10-29T14:01:39.556Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。",
+          "用户申报[STRENGTH；实绩申报]：parent=ctx:0bd3262f992bf6fa8414c02f9e1b9f74cdd91718c5031f3e4a4424b447854041；structure=STRENGTH_SET；setIndex=1；exercise=local:back-squat；catalogueVersion=U11_CATALOG_1；side=UNSPECIFIED；load=40 kg；loadBasis=UNKNOWN；reps=5 reps；hold=未知 s；setRpe=未知 UNKNOWN；rir=未知 reps；eccentric=未知 s；rangeProtocol=未知；completion=COMPLETED；发生时间 2026-10-29T14:01:39.553Z；记录时间 2026-10-29T14:01:39.556Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。",
+          "用户申报[STRENGTH；实绩申报]：quality=PARTIAL；evidenceVersion=8c647d3af2012659；sourceGroup=a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278；protocolGroup=未知；protocol=未知；provenanceVerified=false；modality=STRENGTH；observedType=未知；actualDuration=0.008 s；sessionRpe=未知 UNKNOWN；segmentCount=0；setCount=1；jumpContacts=未知；发生时间 2026-10-29T14:01:39.567Z；记录时间 2026-10-29T14:01:39.571Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。",
+          "用户申报[STRENGTH；实绩申报]：parent=ctx:0cdba3e84fd8cbd5cb010488f9354e6010829b4c8bc86361222a587c17c4601f；structure=STRENGTH_SET；setIndex=1；exercise=local:back-squat；catalogueVersion=U11_CATALOG_1；side=UNSPECIFIED；load=50 kg；loadBasis=UNKNOWN；reps=5 reps；hold=未知 s；setRpe=未知 UNKNOWN；rir=未知 reps；eccentric=未知 s；rangeProtocol=未知；completion=COMPLETED；发生时间 2026-10-29T14:01:39.567Z；记录时间 2026-10-29T14:01:39.571Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。",
+          "用户申报[ANALYSIS；状态未知]：kind=COMPUTED；metric=STRENGTH_SETS；value=1 sets；evidenceVersions=8c647d3af2012659；formula=count(COMPLETED strengthSets)；formulaVersion=FK_DERIVED_1；meaning=2026-10-29 21097445-dc19-4199-be36-26b0f0d003a5:strength@0(occurrence 21097445-dc19-4199-be36-26b0f0d003a5;STRENGTH/strength):完成组数 1 sets。；inputsOmitted=0；input0=1 sets；inputSource0=8c647d3af2012659:strengthSets[0].completion.COMPLETED；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 b4217a3dd19d49ebec7ca4eb44493936b538d87632e9de61d3ec83b41dcf1da5；未经独立核验。",
+          "用户申报[DIALOGUE；状态未知]：speaker=user；text=本周总结；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 d279de05ef7b179866b2f65785ccd096a97b7fe158afe1bd7cc446bf5de2d569；未经独立核验。"
+        ]
+      }
+    },
+    {
+      "path": "/api/coach-chat",
+      "method": "POST",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。",
+        "answerGate": {
+          "policyVersion": "coach-answer-gate-v1",
+          "decision": "NEEDS_CLARIFICATION",
+          "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。\n动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。\n个体变化需要持续观察，单次酸痛不能证明训练效果。",
+          "blocks": [
+            {
+              "id": "legacy:1",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "一般力量训练通过反复机械张力和恢复，引起神经与肌肉适应。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:1"
+            },
+            {
+              "id": "legacy:2",
+              "kind": "GENERAL_KNOWLEDGE",
+              "text": "动作练习会改善协调，肌肉变化也受负荷、恢复和营养影响。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:2"
+            },
+            {
+              "id": "legacy:3",
+              "kind": "UNCERTAINTY",
+              "text": "个体变化需要持续观察，单次酸痛不能证明训练效果。",
+              "evidenceRefs": [],
+              "dependsOn": [],
+              "groupId": "legacy:3"
+            }
+          ],
+          "reasonCodes": [
+            "UI_STATE_MISMATCH",
+            "TASK_DROPPED"
+          ],
+          "taskCoverage": [
+            {
+              "id": "task:comparison",
+              "kind": "COMPARISON",
+              "satisfied": false,
+              "blockIds": []
+            }
+          ],
+          "professionalReview": "NOT_REQUIRED",
+          "finalHash": "840df13d222fa17ab64214aec2b0cf1d24b15623f5730df3f80f51c3c2f4d31a",
+          "evidenceQuotes": [],
+          "computedQuotes": [],
+          "gates": [
+            {
+              "gate": "G0",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G1",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G2",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G3",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G4",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G5",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G6",
+              "status": "PASS",
+              "reasons": []
+            },
+            {
+              "gate": "G7",
+              "status": "PARTIAL",
+              "reasons": [
+                "TASK_DROPPED"
+              ]
+            },
+            {
+              "gate": "G8",
+              "status": "PASS",
+              "reasons": []
+            }
+          ]
+        },
+        "source": "MODEL",
+        "computedQuotes": [],
+        "evidenceQuotes": [],
+        "route": "COMPLEX",
+        "model": "synthetic-model",
+        "requestedModel": "synthetic-model",
+        "usage": {
+          "promptTokens": 100,
+          "completionTokens": 50,
+          "cacheHitTokens": 20,
+          "cacheMissTokens": 80,
+          "reasoningTokens": 10,
+          "totalTokens": 150
+        },
+        "costMicros": "182",
+        "currency": "CNY",
+        "planChanged": false,
+        "unverified": true,
+        "validation": {
+          "status": "PARTIALLY_ACCEPTED",
+          "rejectedAssertionTypes": [
+            "UI_STATE_MISMATCH",
+            "TASK_DROPPED"
+          ],
+          "policyVersion": "coach-answer-gate-v1",
+          "professionalValidation": "NOT_PROVEN",
+          "factVerification": "USER_DECLARED"
+        },
+        "stage": "COMPLETED",
+        "traceId": "f3c8f9cd-b0a8-4d70-9a8b-bb804ec6f214",
+        "dispatchState": "RETURNED",
+        "ledgerState": "SETTLED",
+        "retrieval": {
+          "state": "NOT_NEEDED",
+          "enabled": true,
+          "sources": []
+        }
+      }
+    },
+    {
+      "path": "/api/coach-snapshot",
+      "method": "DELETE",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "revoked": true
+      }
+    }
+  ],
+  "shots": [
+    "screenshots/desktop.png",
+    "screenshots/mobile.png"
+  ],
+  "server": {
+    "ready": true,
+    "synthetic": true,
+    "publicOrigin": "http://127.0.0.1:8080",
+    "mode": "normal",
+    "providerCalls": 6,
+    "activeProvider": 0,
+    "maxActiveProvider": 2,
+    "dispatches": [
+      {
+        "question": "我没有腿疼，解释一下RPE",
+        "mode": "delayed",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "FACT",
+            "detail": "我没有腿疼"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:35.088Z",
+        "returnedAt": "2026-10-29T14:01:35.476Z"
+      },
+      {
+        "question": "一般力量训练为什么会引起肌肉适应？",
+        "mode": "delayed",
+        "facts": [],
+        "startedAt": "2026-10-29T14:01:35.351Z",
+        "returnedAt": "2026-10-29T14:01:35.476Z"
+      },
+      {
+        "question": "我的腘绳肌现在疼，解释一下RPE",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=请解释RIR和RPE的区别；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 4bb1e022175879cd02ed8cd82d5203348549460884958c29322e21f83403e953；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 我没有腿疼 RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 4abf26fa18771da4fd11f4a1148f1400872d6efb1844edeb25ac8224fe0b752c；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 76e030186eced79f2df56860463c8af0f25cf2f23cf3929e2fcc07ec4c22b65f；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833；未经独立核验。"
+          },
+          {
+            "id": "ref5",
+            "kind": "FACT",
+            "detail": "用户申报[ANALYSIS；状态未知]：kind=ANALYSIS_COVERAGE；dataQuality=MISSING；missing=当前是否疼痛、在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对；writeAuthority=NONE；medicalClearance=false；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb71b9b；未经独立核验。"
+          },
+          {
+            "id": "ref6",
+            "kind": "FACT",
+            "detail": "我的腘绳肌现在疼"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:38.639Z",
+        "returnedAt": "2026-10-29T14:01:38.639Z"
+      },
+      {
+        "question": "请生成未来八周训练计划",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=我的腘绳肌现在疼,解释一下RPE；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 d521556f06e0b7253e3104d0d47de203333d34b0e6b26182fb459fba0ddd0ed7；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地知识】 力量复盘先看实际组和动作质量,时长不代表组量。  记录同一动作的重量、次数、规范动作余量与疼痛;动作变形就停止该组或降低要求,先在熟悉负荷下核对技术,次日看恢复,不因一次完成自动加重量。  以上是一般训练知识,不代表已经评估你的个人能力,也没有修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 379eacaa7d0ec6f2b8fea4e56abc0a16db1c7a9181b67e0328e1ebcd73cb0833；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【本地分析】 目前尚不能给出整课AU,请先确认评分范围。这个数只描述所报负荷,不是疲劳分、伤病概率或停训阈值;下一步确认整课口径并记录恢复。 依据:本地知识与教学候选仅帮助解释,没有修改计划或记录。 R168:LOAD_SRPE|研究候选,未独立核验。整课实际分钟 × 整课实际sRPE;仅两者均已记录时计算;计划RPE不得代入;适用限制:允许计算,不以计算结果直接调课；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 c9ca7f09d4358bdd588da0eebeaed3319b631c3c175517d6243e13c4ba34bcf8；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、；textPart2=在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb；textPart3=71b9b;未经独立核验。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f；未经独立核验。"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:39.143Z",
+        "returnedAt": "2026-10-29T14:01:39.143Z"
+      },
+      {
+        "question": "本周总结",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=请生成未来八周训练计划；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 83ba7f13a1c4c754bcdc4fd8b2d0de54c4000a902026477e3570faf30c878955；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、在哪里、是否影响动作? RPE是主观用力程度量表。 常用CR10量表范围为0–10,数值越大通常表示主观努力越高。 它描述用力感,不能单独确定恢复或医学安全。 用户申报[ANALYSIS;状态未知]:kind=ANALYSIS_COVERAGE;dataQuality=MISSING;missing=当前是否疼痛、；textPart2=在哪里、是否影响动作?;缺少原热身或日常功能表现;睡眠未记录,不妨碍已确认训练的分析;HRV未记录,不补零;近期实际训练明细未确认;下一课目的、日期与计划版本待核对;writeAuthority=NONE;medicalClearance=false;boundedSummary=true;发生时间 未知;记录时间 未知;来源 USER_DECLARED:LOCAL_ANALYSIS;修订 e7ede6ee056716533d51720664a634d5fc291b7259e5fa27f07b624acbb；textPart3=71b9b;未经独立核验。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 255e40f714d601929c02d06024391f5495e2aee003166980a282278dd9dbd77f；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=已依据当前保存资料生成8周周期草案。【个体周期(计划,不是实际)】 目标未确认 草案PENDING;依据NEEDS_REVIEW;2026-11-02:BASE;2026-11-09:BUILD;2026-11-16:BUILD;2026-11-23:BUILD;2026-11-30:BUILD;2026-12-07:BUILD 执行结果尚待复核 后续周有条件;只在用户确认且宿主复核后写入。 请在「复盘→个体周期计划」核对比赛目标、训练背景和差异;尚未确认的目标先保存,正式课表不会自动改变。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 a4442956e3c14162a254e9830165d65ec13e3d6e18047a61375c7ce5258c9879；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=coach；text=【联网模型解释 · 未取得本轮新网页】 一般力量训练通过反复机械张力和恢复,引起神经与肌肉适应。 动作练习会改善协调,肌肉变化也受负荷、恢复和营养影响。 个体变化需要持续观察,单次酸痛不能证明训练效果。 安排思路:先核对原课表、目标与可用时间,讨论关键课的优先级和恢复间隔,不补课追进度。具体取舍需确认,本轮未修改日历。 请补充专项与目标日期、原课表及近期训练、主观疲劳和不适情况,才能核对安排。当前仅能讨论框架,未修改计划。；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 07d03623dd677405610a425e43e6cadbc73406c714c0ebb53e48ca6b5217192e；未经独立核验。"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:39.495Z",
+        "returnedAt": "2026-10-29T14:01:39.495Z"
+      },
+      {
+        "question": "比较这两节力量训练，有什么变化？",
+        "mode": "normal",
+        "facts": [
+          {
+            "id": "ref1",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：quality=PARTIAL；evidenceVersion=a0020f4c778480d9；sourceGroup=a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278；protocolGroup=未知；protocol=未知；provenanceVerified=false；modality=STRENGTH；observedType=未知；actualDuration=0.011 s；sessionRpe=未知 UNKNOWN；segmentCount=0；setCount=1；jumpContacts=未知；发生时间 2026-10-29T14:01:39.553Z；记录时间 2026-10-29T14:01:39.556Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref2",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：parent=ctx:0bd3262f992bf6fa8414c02f9e1b9f74cdd91718c5031f3e4a4424b447854041；structure=STRENGTH_SET；setIndex=1；exercise=local:back-squat；catalogueVersion=U11_CATALOG_1；side=UNSPECIFIED；load=40 kg；loadBasis=UNKNOWN；reps=5 reps；hold=未知 s；setRpe=未知 UNKNOWN；rir=未知 reps；eccentric=未知 s；rangeProtocol=未知；completion=COMPLETED；发生时间 2026-10-29T14:01:39.553Z；记录时间 2026-10-29T14:01:39.556Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref3",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：quality=PARTIAL；evidenceVersion=8c647d3af2012659；sourceGroup=a3bbc38677754cfea81bfc71b172532875b34175be1aa97c0e9d182974d36278；protocolGroup=未知；protocol=未知；provenanceVerified=false；modality=STRENGTH；observedType=未知；actualDuration=0.008 s；sessionRpe=未知 UNKNOWN；segmentCount=0；setCount=1；jumpContacts=未知；发生时间 2026-10-29T14:01:39.567Z；记录时间 2026-10-29T14:01:39.571Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref4",
+            "kind": "FACT",
+            "detail": "用户申报[STRENGTH；实绩申报]：parent=ctx:0cdba3e84fd8cbd5cb010488f9354e6010829b4c8bc86361222a587c17c4601f；structure=STRENGTH_SET；setIndex=1；exercise=local:back-squat；catalogueVersion=U11_CATALOG_1；side=UNSPECIFIED；load=50 kg；loadBasis=UNKNOWN；reps=5 reps；hold=未知 s；setRpe=未知 UNKNOWN；rir=未知 reps；eccentric=未知 s；rangeProtocol=未知；completion=COMPLETED；发生时间 2026-10-29T14:01:39.567Z；记录时间 2026-10-29T14:01:39.571Z；来源 USER_DECLARED:APP；修订 0；未经独立核验。"
+          },
+          {
+            "id": "ref5",
+            "kind": "FACT",
+            "detail": "用户申报[ANALYSIS；状态未知]：kind=COMPUTED；metric=STRENGTH_SETS；value=1 sets；evidenceVersions=8c647d3af2012659；formula=count(COMPLETED strengthSets)；formulaVersion=FK_DERIVED_1；meaning=2026-10-29 21097445-dc19-4199-be36-26b0f0d003a5:strength@0(occurrence 21097445-dc19-4199-be36-26b0f0d003a5;STRENGTH/strength):完成组数 1 sets。；inputsOmitted=0；input0=1 sets；inputSource0=8c647d3af2012659:strengthSets[0].completion.COMPLETED；boundedSummary=true；发生时间 未知；记录时间 未知；来源 USER_DECLARED:LOCAL_ANALYSIS；修订 b4217a3dd19d49ebec7ca4eb44493936b538d87632e9de61d3ec83b41dcf1da5；未经独立核验。"
+          },
+          {
+            "id": "ref6",
+            "kind": "CONTEXT",
+            "detail": "用户申报[DIALOGUE；状态未知]：speaker=user；text=本周总结；factAuthority=NONE；发生时间 未知；记录时间 未知；来源 USER_DECLARED:CONVERSATION；修订 d279de05ef7b179866b2f65785ccd096a97b7fe158afe1bd7cc446bf5de2d569；未经独立核验。"
+          }
+        ],
+        "startedAt": "2026-10-29T14:01:40.363Z",
+        "returnedAt": "2026-10-29T14:01:40.363Z"
+      }
+    ],
+    "pending": 0,
+    "reservations": [
+      {
+        "state": "SETTLED",
+        "count": 6
+      }
+    ],
+    "grantRows": [
+      {
+        "subject_id": "gate:alice",
+        "enabled": true
+      }
+    ]
+  }
+}

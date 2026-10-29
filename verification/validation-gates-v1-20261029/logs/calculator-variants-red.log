@@ -1,0 +1,36 @@
+✔ ties do not choose the first runner as a winner (2.604447ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (2.727161ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.411989ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.337578ms)
+✖ equivalent natural-language correction and missing timing forms preserve the same state (0.570267ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 307.349278
+
+✖ failing tests:
+
+test at src/lib/coach/question-calculation-v1.test.ts:31:1
+✖ equivalent natural-language correction and missing timing forms preserve the same state (0.570267ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /旧总时间124秒.*新总时间119秒/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/question-calculation-v1.test.ts:32:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /旧总时间124秒.*新总时间119秒/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -1,0 +1,5 @@
+
+> typecheck
+> tsc --noEmit
+
+server/coach-deepseek/coach-chat.controller.js(123,41): error TS18048: 'prepared.brief.sources' is possibly 'undefined'.

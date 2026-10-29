@@ -1,0 +1,41 @@
+✔ HTML fallback and 404 identify missing API instead of reporting HTTP 200 success (15.335709ms)
+✔ untrusted error payload never reaches rendering as an object (0.745916ms)
+✔ known provider errors yield actionable safe messages; arbitrary provider text is hidden (0.290418ms)
+✔ configuration probe sends no personal data and does not claim connectivity (0.641749ms)
+✔ a static app response is not mistaken for configured DeepSeek (0.245191ms)
+✔ success requires the trusted response contract and bounded text (1.102845ms)
+✔ trusted binding failure is configuration failure rather than network failure (0.265891ms)
+✔ prototype property names cannot become rendered error objects (0.328746ms)
+✔ successful rule processing is distinct from a provider-generated answer (0.266763ms)
+✔ rejection after provider response preserves actual dispatch and settlement, never claims no call (0.310279ms)
+✔ revoked grant, exhausted concurrency and unresolved ledger have distinct explanations (0.298681ms)
+✖ V1 decision and final blocks/hash are preserved; inconsistent final text fails decoding (10.443731ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 415.538452
+
+✖ failing tests:
+
+test at src/lib/coach/online-service.test.ts:74:1
+✖ V1 decision and final blocks/hash are preserved; inconsistent final text fails decoding (10.443731ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'NEEDS_CLARIFICATION'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/online-service.test.ts:79:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'NEEDS_CLARIFICATION',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

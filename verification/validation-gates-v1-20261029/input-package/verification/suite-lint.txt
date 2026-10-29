@@ -1,0 +1,3 @@
+COMMAND: python3 tools/gate_eval.py lint
+EXIT_CODE: 0
+{"cases": 50, "criteria": 150, "professional_required": 7}

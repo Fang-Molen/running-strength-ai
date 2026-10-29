@@ -1,0 +1,3 @@
+COMMAND: python3 tools/gate_eval.py evaluate --results verification/待测结果模板.jsonl --out verification/待测门槛报告.json
+EXIT_CODE: 2
+{"counts": {"PASS": 0, "FAIL": 0, "PENDING": 50}, "actual_app_acceptance": "NOT_ESTABLISHED_BY_THIS_TOOL", "usage": {"attempts": 0, "known_tokens": 0, "unknown_attempts": 0, "exact_total_known": false}}

@@ -1,0 +1,15 @@
+✔ X07 paired Markdown is normalized before sentence splitting, preserving words and sources (3.222284ms)
+✔ explicit 结论 leads, next session pulled out, reasoning keeps the rest in order (0.662208ms)
+✔ no label: first sentence is the conclusion; nothing is lost or rewritten (0.187863ms)
+✔ red flag keeps the safety sentence first (0.076114ms)
+✔ single short answer has no reasoning (0.198229ms)
+✔ source tag is not the conclusion; incidental safety wording does not force reasoning open (0.091848ms)
+✔ very long first sentence is cut at the first ： — the tail is kept verbatim at the top of the reasoning (0.11901ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.127029

@@ -1,0 +1,3 @@
+COMMAND: python3 tools/gate_eval.py template --out verification/待测结果模板.jsonl
+EXIT_CODE: 0
+Created UNRUN template; no product results.

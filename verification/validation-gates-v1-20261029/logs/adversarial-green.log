@@ -1,0 +1,27 @@
+✔ numbered information is preserved rather than deleting entire lines (10.260534ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.367729ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (3.784917ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (5.946271ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.924572ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (1.047497ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.13573ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.921457ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.837511ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (2.379326ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.885453ms)
+✔ coverage clarification does not add unrelated medical warnings (0.441485ms)
+✔ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.671009ms)
+✔ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (1.62727ms)
+✔ ties do not choose the first runner as a winner (0.31235ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.131548ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.277197ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.23942ms)
+✔ equivalent natural-language correction and missing timing forms preserve the same state (0.194122ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 427.025243

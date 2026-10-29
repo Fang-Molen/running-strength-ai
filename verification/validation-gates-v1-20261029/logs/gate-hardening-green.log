@@ -1,0 +1,28 @@
+✔ duplicate decoded keys at any depth cannot silently choose the last policy (1.769342ms)
+✔ partial JSON, trailing values and unbounded depth fail closed (0.203917ms)
+✔ symptoms and caution never become declared medical restriction or denied clearance (4.502172ms)
+✔ coverage unknown and explicitly missing remain distinct; legacy false is not denied permission (1.334528ms)
+✔ compact user-facing evidence never renders false coverage as confirmed absence or machine enums (0.314093ms)
+✔ numbered information is preserved rather than deleting entire lines (4.379829ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (2.076774ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (2.570146ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (4.287109ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.755286ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.77785ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.00371ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.95123ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.807916ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (0.734295ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.72471ms)
+✔ ties do not choose the first runner as a winner (0.279631ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.130256ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.287262ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.391219ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 442.559871

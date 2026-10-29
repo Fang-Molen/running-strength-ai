@@ -1,0 +1,14 @@
+✔ ties do not choose the first runner as a winner (2.033725ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.195525ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.385741ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.335736ms)
+✔ equivalent natural-language correction and missing timing forms preserve the same state (0.200051ms)
+✔ explicit recorded-distance lists sum stated units without assuming complete annual coverage (0.191799ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8.463243

@@ -1,0 +1,18 @@
+✔ computes mixed-distance work without inventing rest or using fixed benchmark answers (4.950559ms)
+✔ session RPE requires explicit whole-session scope and scale (1.440761ms)
+✔ pace, yearly range and corrections are computed only from user inputs (0.415165ms)
+✔ ambiguous or unrequested new dose is not calculated into a personal prescription (0.211388ms)
+✔ source matching allows exact excerpts, rejects invented numbers and fuzzy quotations (0.162554ms)
+✔ citing a user wish cannot turn it into injury clearance or a phantom write (8.365907ms)
+✔ acute inability to walk is retained as a restriction; normal walking is not invented into an emergency (1.026086ms)
+✔ warning about harm is not permission, while actual permission remains blocked (2.081856ms)
+✔ explicit advice against sprinting is not a hold release (0.490018ms)
+✔ host computed quotation remains atomic despite sentence punctuation; empty headings do not survive filtering (5.588564ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29.563458

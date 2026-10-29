@@ -1,0 +1,11 @@
+✔ network preference and actual retrieval state remain separate; no retry on failed adapter (0.979399ms)
+✔ retrieval receipts require current real-shaped source metadata, not only a URL (0.228035ms)
+✔ action success binds current owner, permission, date, item, portion and idempotency key (0.194714ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 258.640453

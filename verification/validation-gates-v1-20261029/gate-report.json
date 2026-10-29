@@ -1,0 +1,271 @@
+{
+  "scope": "REVIEW_RECORD_CONTRACT_CHECK_NOT_AUTOMATIC_SEMANTIC_JUDGMENT",
+  "run_scopes": [
+    "SYNTHETIC_HARNESS_TEST"
+  ],
+  "counts": {
+    "PASS": 33,
+    "FAIL": 0,
+    "PENDING": 17
+  },
+  "records_complete": false,
+  "actual_app_acceptance": "NOT_ESTABLISHED_BY_THIS_TOOL",
+  "usage": {
+    "attempts": 0,
+    "known_tokens": 0,
+    "unknown_attempts": 0,
+    "exact_total_known": false
+  },
+  "results": [
+    {
+      "case_id": "G001",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G002",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G003",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G004",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G005",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G006",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G007",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G008",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G009",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G010",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G011",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G012",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G013",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G014",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G015",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G016",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G017",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G018",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G019",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G020",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G021",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G022",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G023",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G024",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G025",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G026",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G027",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G028",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G029",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G030",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G031",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G032",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G033",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G034",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G035",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G036",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G037",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G038",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G039",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G040",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G041",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G042",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G043",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G044",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G045",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G046",
+      "status": "PENDING",
+      "errors": []
+    },
+    {
+      "case_id": "G047",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G048",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G049",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "case_id": "G050",
+      "status": "PASS",
+      "errors": []
+    }
+  ]
+}

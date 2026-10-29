@@ -1,0 +1,21 @@
+✔ unlinked recovery includes dated key metrics, subjective feedback, and independently recorded nap (32.53838ms)
+✔ known-after-request readings are excluded from both daily health and minute samples (3.35766ms)
+✔ historical day is preserved, and athlete switching cannot expose previous recovery (2.243741ms)
+✔ current changes use a comparable seven-day recovery baseline without leaking source labels (3.240343ms)
+✔ independent conflicting health sources are retained as a conflict instead of a preferred number (1.353499ms)
+✔ muscle recovery keeps confirmed exposure and does not transmit custom exercise or session names (5.66083ms)
+✔ unreadable health records and missing records have different output (4.700052ms)
+✔ recovery packet reads do not mutate existing health or rest records (1.23414ms)
+✔ available health recovery, steps and calorie components retain their own measurement scopes (1.548033ms)
+✔ additional health metrics exclude future-known values and preserve independent-source conflicts (1.478277ms)
+✔ an explicit zero-step record stays available without filling absent energy fields (1.012386ms)
+✔ coach and health tile use newer most-recent Body Battery, without calling receipt time a measurement (1.485788ms)
+✔ coach uses newer measured Body Battery when day summary is older (1.058214ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.328696

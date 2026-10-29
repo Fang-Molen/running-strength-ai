@@ -1,0 +1,45 @@
+✖ delivered plan advice is independently checked with the same scope and task contract (16.481185ms)
+✔ numbered information is preserved rather than deleting entire lines (1.551969ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (1.900956ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (1.988167ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (2.024492ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.774578ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.824653ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (3.02494ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.948219ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.554706ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (0.723901ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.862079ms)
+✔ coverage clarification does not add unrelated medical warnings (0.347144ms)
+✔ network preference and actual retrieval state remain separate; no retry on failed adapter (0.355316ms)
+✔ retrieval receipts require current real-shaped source metadata, not only a URL (0.235915ms)
+✔ action success binds current owner, permission, date, item, portion and idempotency key (0.174193ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 413.465465
+
+✖ failing tests:
+
+test at src/lib/coach/answer-delivery.test.ts:5:1
+✖ delivered plan advice is independently checked with the same scope and task contract (16.481185ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-delivery.test.ts:10:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

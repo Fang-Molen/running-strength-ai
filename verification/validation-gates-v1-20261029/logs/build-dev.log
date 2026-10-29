@@ -1,0 +1,101 @@
+
+> build:dev
+> node scripts/clean-build-output.mjs && node scripts/with-app-env.mjs vite build --mode development
+
+vite v8.3.2 building client environment for development...
+transforming...
+✓ 2610 modules transformed.
+rendering chunks...
+computing gzip size...
+.output/public/assets/running-technique-library-y4R8NKHe.css      2.84 kB │ gzip:     0.94 kB
+.output/public/assets/exercise-demo-C_iwlK6u.css                  9.14 kB │ gzip:     2.39 kB
+.output/public/assets/routes-C_4zkgO-.css                        45.30 kB │ gzip:     7.68 kB
+.output/public/assets/index-CWqm3VLx.css                        130.61 kB │ gzip:    23.62 kB
+.output/public/assets/food-photo-Q2CfwnrS.js                      0.06 kB │ gzip:     0.07 kB
+.output/public/assets/garmin-log-CyA3UyDy.js                      0.06 kB │ gzip:     0.07 kB
+.output/public/assets/evidence-decision-host-BAJsTE5x.js          0.07 kB │ gzip:     0.09 kB
+.output/public/assets/evidence-history-Bz2VVqat.js                0.07 kB │ gzip:     0.09 kB
+.output/public/assets/online-coach-3ovUtNxy.js                    0.11 kB │ gzip:     0.11 kB
+.output/public/assets/ownership-BsJgZfxY.js                       0.12 kB │ gzip:     0.13 kB
+.output/public/assets/garmin-view-scope-v7vIAKGS.js               0.30 kB │ gzip:     0.22 kB
+.output/public/assets/rolldown-runtime-hePW80VL.js                0.71 kB │ gzip:     0.42 kB
+.output/public/assets/bodylab-panel-aQD-81w5.js                   1.45 kB │ gzip:     0.86 kB
+.output/public/assets/activity-format-B79AQEfc.js                 2.25 kB │ gzip:     1.04 kB
+.output/public/assets/exercise-demo-NHq4GpUg.js                   5.22 kB │ gzip:     2.20 kB
+.output/public/assets/profile-hH6G8AHv.js                         5.62 kB │ gzip:     2.64 kB
+.output/public/assets/identity-BsLKMPoM.js                        5.94 kB │ gzip:     2.58 kB
+.output/public/assets/client-ClTOeJkO.js                          7.07 kB │ gzip:     3.19 kB
+.output/public/assets/observation-_QK8nE_F.js                     7.58 kB │ gzip:     3.06 kB
+.output/public/assets/running-technique-library-DWP6RFFV.js       7.68 kB │ gzip:     2.98 kB
+.output/public/assets/dist-CUZ958O3.js                            7.76 kB │ gzip:     3.09 kB
+.output/public/assets/data-DF2KrfWo.js                          116.27 kB │ gzip:    19.06 kB
+.output/public/assets/index-BeOTmg0e.js                         473.29 kB │ gzip:   150.80 kB
+.output/public/assets/routes-Cqn72Or4.js                      5,037.34 kB │ gzip: 1,379.17 kB
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/components/garmin-log.tsx is dynamically imported by src/components/garmin-sync.tsx but also statically imported by src/components/coach-sheet.tsx, src/components/garmin-sync.tsx, src/components/training-log-v76.tsx, dynamic import will not move module into another chunk.
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/lib/health/evidence-decision-host.ts is dynamically imported by src/lib/health/evidence-history.ts but also statically imported by src/components/health-page-v89.tsx, src/lib/health/coach-data.ts, dynamic import will not move module into another chunk.
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/lib/coach/online-coach.ts is dynamically imported by src/components/garmin-sync.tsx but also statically imported by src/components/ability-radar-card.tsx, src/components/coach-sheet.tsx, src/components/plan400.tsx, src/components/training-log-v76.tsx, src/lib/coach/online-session.ts, dynamic import will not move module into another chunk.
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/lib/health/evidence-history.ts is dynamically imported by src/lib/coach/c03/runtime.ts but also statically imported by src/components/health-page-v89.tsx, dynamic import will not move module into another chunk.
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/lib/nutrition/food-photo.ts is dynamically imported by src/components/r8.tsx but also statically imported by src/components/food-photo-review.tsx, src/components/plan-source.tsx, dynamic import will not move module into another chunk.
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.26s
+vite v8.3.2 building ssr environment for development...
+transforming...
+✓ 574 modules transformed.
+rendering chunks...
+computing gzip size...
+node_modules/.nitro/vite/services/ssr/assets/router-CWqm3VLx.css                     130.61 kB │ gzip:  23.62 kB
+node_modules/.nitro/vite/services/ssr/assets/kysely-adapter-Cj_QZw5p.js                0.05 kB │ gzip:   0.07 kB
+node_modules/.nitro/vite/services/ssr/assets/start-5Z2QO8AU.js                         0.14 kB │ gzip:   0.13 kB
+node_modules/.nitro/vite/services/ssr/assets/empty-plugin-adapters-D9UWiqvJ.js         0.22 kB │ gzip:   0.16 kB
+node_modules/.nitro/vite/services/ssr/assets/rolldown-runtime-D7D4PA-g.js              0.36 kB │ gzip:   0.25 kB
+node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-nOXTnMza.js    1.00 kB │ gzip:   0.52 kB
+node_modules/.nitro/vite/services/ssr/assets/routes-B0rY32D4.js                        1.14 kB │ gzip:   0.57 kB
+node_modules/.nitro/vite/services/ssr/assets/observation-CPunzQrj.js                   1.22 kB │ gzip:   0.82 kB
+node_modules/.nitro/vite/services/ssr/assets/verify.server-DsLpvEi4.js                 1.49 kB │ gzip:   0.81 kB
+node_modules/.nitro/vite/services/ssr/assets/model-access-DWLlYCSq.js                  2.45 kB │ gzip:   1.06 kB
+node_modules/.nitro/vite/services/ssr/assets/coach-knowledge-qdvUcwPC.js              13.88 kB │ gzip:   6.01 kB
+node_modules/.nitro/vite/services/ssr/assets/gate-identity.server-Bjku2B6p.js         20.64 kB │ gzip:   6.58 kB
+node_modules/.nitro/vite/services/ssr/assets/training-import-ai-Dt_-Lpvv.js           40.45 kB │ gzip:  11.78 kB
+node_modules/.nitro/vite/services/ssr/assets/coach-plan-ai-DF3ACKzk.js                41.05 kB │ gzip:  11.07 kB
+node_modules/.nitro/vite/services/ssr/index.js                                        77.03 kB │ gzip:  19.67 kB
+node_modules/.nitro/vite/services/ssr/assets/server-CCiHCT1g.js                      347.75 kB │ gzip:  82.00 kB
+node_modules/.nitro/vite/services/ssr/assets/router-BAfhQ4Ra.js                      867.87 kB │ gzip: 283.67 kB
+
+✓ built in 1.22s
+
+[nitro] ◐ Building [Nitro] (preset: static, compatibility: 2026-10-29)
+[nitro] ✔ Generated public .output/public
+[nitro] ℹ Initializing prerenderer
+MISSING_CODE_SPLITTING_GROUP_DEBUG_NAME
+`output.codeSplitting.groups[0].name` is a function. Set `output.codeSplitting.groups[0].debugName` so the bundler timing report can identify this group.
+ℹ Generated .output/nitro.json
+[nitro] ℹ Prerendering 1 initial routes with crawler
+Worker error: Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:2145:21)
+    at listenInCluster (node:net:2224:12)
+    at node:net:2448:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+[nitro]   ├─ / (105ms)
+  │ └── [503] 
+[nitro] ℹ Prerendered 0 routes in 0.506 seconds
+error during build:
+Error: Static prerender has not produced index.html
+    at builder.build (file:///workspace/running-strength-ai/node_modules/.vite-temp/vite.config.ts.timestamp-1793276065470-e0859dbd8ad5c8.mjs:549:64)
+    at buildEnvironments (file:///workspace/running-strength-ai/node_modules/nitro/dist/vite.mjs:120:31)
+    at async Object.buildApp (file:///workspace/running-strength-ai/node_modules/vite/dist/node/chunks/node.js:34905:5)
+    at async CAC.<anonymous> (file:///workspace/running-strength-ai/node_modules/vite/dist/node/cli.js:780:3)

@@ -1,0 +1,17 @@
+✔ numbered information is preserved rather than deleting entire lines (9.279287ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.259696ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (2.566183ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (4.428977ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.659082ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.682808ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.0365ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.944161ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.652162ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 411.806523

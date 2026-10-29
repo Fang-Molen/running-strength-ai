@@ -1,0 +1,12 @@
+✔ missing medical records do not prevent accurate authority clarification (10.853535ms)
+✔ tool failure and uncertain submission are explicit technical states, with no retry or completion (2.927191ms)
+✔ missing nutrition quantity and sleep data get specific useful clarification (2.765868ms)
+✔ watch timer and elapsed remain separate; lineage dedup is explicit and no unrelated activity lost (0.488828ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21.51524

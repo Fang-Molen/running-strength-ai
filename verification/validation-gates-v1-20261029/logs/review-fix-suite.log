@@ -1,0 +1,39 @@
+✔ delivered plan advice is independently checked with the same scope and task contract (16.802259ms)
+✔ numbered information is preserved rather than deleting entire lines (1.950867ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (1.762813ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (2.090226ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (2.722647ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.736969ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.912243ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.022599ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (1.187548ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.674835ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (0.755096ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.819593ms)
+✔ coverage clarification does not add unrelated medical warnings (0.690379ms)
+✔ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.608096ms)
+✔ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (1.72069ms)
+✔ a later uncertainty disclaimer cannot authorize an earlier false coverage assertion (0.702607ms)
+✔ a warning later in the paragraph does not authorize affirmative stacking of planned sessions (1.165605ms)
+✔ asking which session to retain is clarification, not a completed arrangement (1.038784ms)
+✔ review 1: existing plan dose cannot be transferred to a different activity or intensity (1.64089ms)
+✔ review 2: nonnumeric accomplishments and comparison conclusions require evidence for every kind (1.179966ms)
+✔ review 3: a request to formulate a future plan cannot be completed by clarification alone (0.55804ms)
+✔ review 4: multiple corrections within each current or prior message apply in textual order (0.359371ms)
+✔ review 5: completion punctuation does not convert completion into unknown timing (0.197898ms)
+✔ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (0.27915ms)
+✔ review 7: retrieved evidence is delivered and checked consistently by server and client (0.960716ms)
+✔ ties do not choose the first runner as a winner (0.279951ms)
+✔ pace display rounds total seconds before decomposing minutes and retains original ordering (0.123736ms)
+✔ corrections apply all preceding user events in sequence, without reading a future event (0.115994ms)
+✔ explicit completion without a timing preserves distance and marks only total time unknown (0.156576ms)
+✔ equivalent natural-language correction and missing timing forms preserve the same state (0.162335ms)
+✔ explicit recorded-distance lists sum stated units without assuming complete annual coverage (0.145459ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 477.714657

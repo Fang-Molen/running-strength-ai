@@ -1,0 +1,160 @@
+✖ review 1: existing plan dose cannot be transferred to a different activity or intensity (21.376001ms)
+✖ review 2: nonnumeric accomplishments and comparison conclusions require evidence for every kind (1.142589ms)
+✖ review 3: a request to formulate a future plan cannot be completed by clarification alone (3.36343ms)
+✖ review 4: multiple corrections within each current or prior message apply in textual order (0.376406ms)
+✖ review 5: completion punctuation does not convert completion into unknown timing (0.267833ms)
+✖ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (0.949668ms)
+✖ review 7: retrieved evidence is delivered and checked consistently by server and client (1.193826ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 0
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 526.627849
+
+✖ failing tests:
+
+test at src/lib/coach/answer-review-regressions.test.ts:10:1
+✖ review 1: existing plan dose cannot be transferred to a different activity or intensity (21.376001ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /冲刺30分钟/. Input:
+  
+  '如果状态合适，建议安排明天冲刺30分钟。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:13:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '如果状态合适，建议安排明天冲刺30分钟。',
+    expected: /冲刺30分钟/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:17:1
+✖ review 2: nonnumeric accomplishments and comparison conclusions require evidence for every kind (1.142589ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /你已经完成/. Input:
+  
+  '你已经完成原计划。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:21:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '你已经完成原计划。',
+    expected: /你已经完成/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:26:1
+✖ review 3: a request to formulate a future plan cannot be completed by clarification alone (3.36343ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(['PARTIAL', 'NEEDS_CLARIFICATION'].includes(r.decision))
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:29:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:32:1
+✖ review 4: multiple corrections within each current or prior message apply in textual order (0.376406ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /新总时间180秒/. Input:
+  
+  '旧总时间183秒；更正第2组由61秒为60秒，新总时间182秒；其余组不变，旧自述保留，未改写已保存记录（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:34:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '旧总时间183秒；更正第2组由61秒为60秒，新总时间182秒；其余组不变，旧自述保留，未改写已保存记录（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）',
+    expected: /新总时间180秒/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:38:1
+✖ review 5: completion punctuation does not convert completion into unknown timing (0.267833ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /完成1600米.*183秒.*总.*未知/. Input:
+  
+  '已知完成1200米；已知工作时间183秒（3分3秒）；其余组完成状态未知，不按零或完成处理（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:40:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '已知完成1200米；已知工作时间183秒（3分3秒）；其余组完成状态未知，不按零或完成处理（按用户自述计算，未核验、未写入记录，不代表完整覆盖或生理结论。）',
+    expected: /完成1600米.*183秒.*总.*未知/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:43:1
+✖ review 6: retrieval uses the receipt-validation clock, not the earlier personal snapshot (0.949668ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'FAILED'
+  - 'SUCCEEDED'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:47:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAILED',
+    expected: 'SUCCEEDED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/answer-review-regressions.test.ts:49:1
+✖ review 7: retrieved evidence is delivered and checked consistently by server and client (1.193826ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(['VALIDATED', 'REPAIRED'].includes(gate.decision))
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-review-regressions.test.ts:54:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

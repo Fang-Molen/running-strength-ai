@@ -29,36 +29,38 @@
 ## Tasks
 
 ### Task 1: Evidence states and deterministic arithmetic (C01/C02)
-- [ ] Reproduce RV01–04 and unknown-as-fact with failing tests.
-- [ ] Add evidence-state projection (coverage/symptom/caution/declared restriction/clearance separated); remove false medical-clearance wire field.
-- [ ] Fix calculator ties, rounding, chronological correction application and independent completion/timing.
-- [ ] Run pure tests and existing relevant tests; commit.
+- [x] Reproduce RV01–04 and unknown-as-fact with failing tests.
+- [x] Add evidence-state projection (coverage/symptom/caution/declared restriction/clearance separated); remove false medical-clearance wire field.
+- [x] Fix calculator ties, rounding, chronological correction application and independent completion/timing.
+- [x] Run pure tests and existing relevant tests; commit.
 Expected: exact original and transformed cases pass; no inferred medical restriction or missing=zero.
 
 ### Task 2: Shared claim, dependency and task gate (C03/C04/C05)
-- [ ] Write fail-first tests for typed labels, quantity roles, supported plan advice, whole-group repairs, task omissions and final host append.
-- [ ] Add focused evidence/claim/task modules, bounded legacy adapter and final status/result types.
-- [ ] Preserve supported numbered advice, normalize/deduplicate quotes, explain unknown and partial results; validate all composed blocks.
-- [ ] Run pure and policy regressions; commit.
+- [x] Write fail-first tests for typed labels, quantity roles, supported plan advice, whole-group repairs, task omissions and final host append.
+- [x] Add focused evidence/claim/task modules, bounded legacy adapter and final status/result types.
+- [x] Preserve supported numbered advice, normalize/deduplicate quotes, explain unknown and partial results; validate all composed blocks.
+- [x] Run pure and policy regressions; commit.
 Expected: no empty-answer success, forged tags/receipts or orphan actions; Q12/Q14/Q15 useful supported information survives.
 
 ### Task 3: Controller, client and tool receipts (C06/C07)
-- [ ] Fail-first duplicate-key/schema and controller final-gate tests.
-- [ ] Integrate the gate across modern, legacy and analysis responses without bypassing existing source/auth/budget controls.
-- [ ] Add trusted retrieval/action receipt interfaces with truthful NOT_NEEDED/FAILED states; no model-provided URL/receipt can authorize access or writes.
-- [ ] Decode/verify final decision, blocks, hashes and task state in client; run HTTP/client tests and typecheck; commit.
+- [x] Fail-first duplicate-key/schema and controller final-gate tests.
+- [x] Integrate the gate across modern, legacy and analysis responses without bypassing existing source/auth/budget controls.
+- [x] Add trusted retrieval/action receipt interfaces with truthful NOT_NEEDED/FAILED states; no model-provided URL/receipt can authorize access or writes.
+- [x] Decode/verify final decision, blocks, hashes and task state in client; run HTTP/client tests and typecheck; commit.
 Expected: final composition is verified; valid partial result is distinguishable from completed task; original request remains recoverable on failure.
 
 ### Task 4: UI state and request isolation (C08)
-- [ ] Add fail-first status/render/request-identity tests.
-- [ ] Surface partial/clarification/professional-pending state and collapsed verified sources; preserve cancellation/account/revision safety.
-- [ ] Run component tests, build:dev and available browser checks at requested widths; record exact limitations; commit.
+- [x] Add fail-first status/render/request-identity tests.
+- [x] Surface partial/clarification/professional-pending state and collapsed verified sources; preserve cancellation/account/revision safety.
+- [x] Run component tests, build:dev and available browser checks at requested widths; record exact limitations; commit.
 Expected: only validated blocks render; late/cancelled replies do not overwrite another question; no false completion.
 
 ### Task 5: Frozen offline acceptance, review and handoff (C09/C10)
-- [ ] Verify package SHA, lint and 23 tool self-tests; adapt all 50 synthetic cases with explicit mapping traces.
-- [ ] Save raw→old final→new final for 9 legacy replies and metamorphic checks; separate L1/L2/L3/L4/L5 conclusions.
-- [ ] Run evaluator without fabricated reviews (professional required stays pending), full npm test, typecheck and diff/secret checks.
-- [ ] Fresh whole-branch code review; fix important findings with RED→GREEN.
-- [ ] Produce ZIP with source patch, commits, all final outputs/reasons/gates/hashes, request ledger (new paid=0), metrics and remaining blockers; push specified test branch only.
+- [x] Verify package SHA, lint and 23 tool self-tests; adapt all 50 synthetic cases with explicit mapping traces.
+- [x] Save raw→old final→new final for 9 legacy replies and metamorphic checks; separate L1/L2/L3/L4/L5 conclusions.
+- [x] Run evaluator without fabricated reviews (professional required stays pending), full npm test, typecheck and diff/secret checks.
+- [x] Fresh whole-branch code review; fix important findings with RED→GREEN.
+- [x] Produce ZIP with source patch, commits, all final outputs/reasons/gates/hashes, request ledger (new paid=0), metrics and remaining blockers; push specified test branch only.
 Expected: complete and honest evidence package, no hidden paid calls or claimed expert sign-off.
+
+Completion scope: all authorized implementation and offline execution steps are recorded, including negative/pending outcomes. Checkmarks do not mean all release gates passed. Professional review and final live generation remain externally blocked, not performed. AI review was on d1a0789 with a single counterexample fix pass; later changes are covered by targeted regressions, not a claimed second independent review. Full npm test is explicitly not green; the same three legacy makeup failures were reproduced on 0fd2e5f. Final code freeze is 64a1496; subsequent commits only package artifacts/docs.

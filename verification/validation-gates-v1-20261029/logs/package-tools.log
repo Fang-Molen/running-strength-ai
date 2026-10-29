@@ -1,0 +1,28 @@
+test_changed_fixture_hash_detected (test_gate_eval.ContractTests.test_changed_fixture_hash_detected) ... ok
+test_complete_records_do_not_certify_app (test_gate_eval.ContractTests.test_complete_records_do_not_certify_app) ... ok
+test_duplicate_json_keys_rejected (test_gate_eval.ContractTests.test_duplicate_json_keys_rejected) ... ok
+test_duplicate_live_attempts_rejected (test_gate_eval.ContractTests.test_duplicate_live_attempts_rejected) ... ok
+test_duplicate_result_is_rejected (test_gate_eval.ContractTests.test_duplicate_result_is_rejected) ... ok
+test_empty_final_blocks (test_gate_eval.ContractTests.test_empty_final_blocks) ... ok
+test_explicit_fail_not_hidden_by_pending (test_gate_eval.ContractTests.test_explicit_fail_not_hidden_by_pending) ... ok
+test_hash_mismatch_blocks (test_gate_eval.ContractTests.test_hash_mismatch_blocks) ... ok
+test_live_without_receipts_rejected (test_gate_eval.ContractTests.test_live_without_receipts_rejected) ... ok
+test_missing_criterion_blocks (test_gate_eval.ContractTests.test_missing_criterion_blocks) ... ok
+test_missing_results (test_gate_eval.ContractTests.test_missing_results) ... ok
+test_mixed_commits_rejected (test_gate_eval.ContractTests.test_mixed_commits_rejected) ... ok
+test_negative_usage_blocks (test_gate_eval.ContractTests.test_negative_usage_blocks) ... ok
+test_no_usage_is_not_known_zero (test_gate_eval.ContractTests.test_no_usage_is_not_known_zero) ... ok
+test_pass_without_evidence_blocks (test_gate_eval.ContractTests.test_pass_without_evidence_blocks) ... ok
+test_professional_pending_is_not_pass (test_gate_eval.ContractTests.test_professional_pending_is_not_pass) ... ok
+test_retry_usage_and_unknown_not_zero (test_gate_eval.ContractTests.test_retry_usage_and_unknown_not_zero) ... ok
+test_suite_contract (test_gate_eval.ContractTests.test_suite_contract) ... ok
+test_unknown_check_not_accepted (test_gate_eval.ContractTests.test_unknown_check_not_accepted) ... ok
+test_unknown_result_is_rejected (test_gate_eval.ContractTests.test_unknown_result_is_rejected) ... ok
+test_unrun_never_passes (test_gate_eval.ContractTests.test_unrun_never_passes) ... ok
+test_wrong_decision_blocks (test_gate_eval.ContractTests.test_wrong_decision_blocks) ... ok
+test_wrong_professional_bypass (test_gate_eval.ContractTests.test_wrong_professional_bypass) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.020s
+
+OK

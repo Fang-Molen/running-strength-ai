@@ -1,0 +1,21 @@
+✔ EWMA constant daily 300 AU remains 300/300, ratio one after 28 complete days (4.136081ms)
+✔ EWMA last-day impulse matches analytical recurrence rather than arithmetic mean (0.551651ms)
+✔ EWMA seed is first observed load with explicit exponential decay and no pre-window zero padding (1.445998ms)
+✔ EWMA unknown days never become zero and 27 confirmations cannot produce a ratio (2.317942ms)
+✔ EWMA explicitly confirmed no-training days have zero AU, zero chronic denominator has no ratio (0.356197ms)
+✔ EWMA saved missing RPE or duration remains unknown even after completeness confirmation (0.828989ms)
+✔ EWMA identical session retransmission deduplicates; distinct sessions on the same day sum (0.402567ms)
+✔ EWMA conflicting same session ID invalidates both dates instead of choosing one (5.709812ms)
+✔ EWMA another athlete cannot contribute load or completeness assertions (0.402025ms)
+✔ EWMA saved source additions, removal, correction and rating changes invalidate prior day confirmation (1.8982ms)
+✔ EWMA invalid finite, duration, RPE and missing source inputs never produce a load (0.287323ms)
+✔ EWMA calendar validates real dates and crosses month/year without timezone drift (0.067001ms)
+✔ EWMA output gives descriptive values without a sweet zone, percentage or automatic prescription (0.499582ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30.198344

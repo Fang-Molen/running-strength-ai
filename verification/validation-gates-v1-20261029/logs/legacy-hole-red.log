@@ -1,0 +1,47 @@
+✔ numbered information is preserved rather than deleting entire lines (10.12887ms)
+✔ unknown coverage is not confirmed incompleteness, while declared missingness is allowed (3.094627ms)
+✔ conditional advice bound to an existing time plan survives without claiming it completed (3.851651ms)
+✔ GENERAL_KNOWLEDGE cannot authorize individual dose, writes, or injury clearance (4.696098ms)
+✔ a failed block invalidates its whole dependency group and descendants, including cycles (0.64147ms)
+✔ model-reported coverage cannot manufacture completion after next-session advice is lost (0.77425ms)
+✔ all host append text is checked together with the final answer, and exact evidence is deduplicated (1.049777ms)
+✔ symptom alone cannot be recast as declared medical restriction or denied permission (0.848853ms)
+✔ untrusted references cannot self-certify personal facts and label unknown sources as verified (0.643172ms)
+✔ empty candidates and unreferenced typed facts are not accepted merely because fallback prose exists (1.195557ms)
+✔ length repair removes a whole dependency closure rather than leaving an orphaned action (0.781141ms)
+✔ coverage clarification does not add unrelated medical warnings (0.362007ms)
+✔ implicit continuation cannot borrow the original plan to bypass an active scoped restriction (0.62193ms)
+✔ current counterevidence and absence of causal evidence cannot be laundered through prose without numbers (1.562912ms)
+✖ a later uncertainty disclaimer cannot authorize an earlier false coverage assertion (0.897457ms)
+✔ a warning later in the paragraph does not authorize affirmative stacking of planned sessions (0.842664ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 467.848341
+
+✖ failing tests:
+
+test at src/lib/coach/answer-gate.test.ts:91:1
+✖ a later uncertainty disclaimer cannot authorize an earlier false coverage assertion (0.897457ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /覆盖并不完整/. Input:
+  
+  '记录覆盖并不完整：记录本身不能证明全年实际训练都齐全；缺失不补零。\n记录覆盖尚未确认，不能由现有记录证明全年训练完整，也不能断言已经漏记。'
+  
+      at TestContext.<anonymous> (file:///workspace/running-strength-ai/src/lib/coach/answer-gate.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '记录覆盖并不完整：记录本身不能证明全年实际训练都齐全；缺失不补零。\n记录覆盖尚未确认，不能由现有记录证明全年训练完整，也不能断言已经漏记。',
+    expected: /覆盖并不完整/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

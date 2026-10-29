@@ -1,0 +1,21 @@
+✔ load adapter native elapsed milliseconds and imported seconds both yield 30 minutes × RPE 6 = 180 AU (13.212545ms)
+✔ load adapter cannot turn unclosed native session into whole-session duration (0.403097ms)
+✔ load adapter ignores other athlete starts and imported records (0.169806ms)
+✔ load adapter does not count set RPE or unbound RPE as session RPE (0.405711ms)
+✔ load adapter explicit saved import rating fills missing RPE; duplicate ratings remain unresolved (0.572823ms)
+✔ load adapter void removes evidence; feedback or duration correction withdraws stale values (0.77664ms)
+✔ load coverage is explicit append-only, excludes current/future days and isolates athletes (2.565204ms)
+✔ load coverage invalidates a confirmed rest day after an actual import arrives (2.161806ms)
+✔ load coverage failed storage never reports successful save (0.73692ms)
+✔ load adapter future restoration cannot revive a session before the requested asOf (0.456097ms)
+✔ load adapter orders correction commit times instead of trusting input array order (0.58457ms)
+✔ load adapter future field correction does not withdraw existing facts prematurely (0.440864ms)
+✔ load adapter unknown correction commit time keeps affected day incomplete without inventing chronology (0.733615ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28.715559

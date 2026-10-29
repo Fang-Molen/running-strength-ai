@@ -1,0 +1,22 @@
+✔ actual two sets, not four planned sets, reach 3D evidence, coach and global host (55.682779ms)
+✔ completion-only V4 feedback is UNKNOWN and does not borrow planned muscle groups (6.490138ms)
+✔ void and field corrections invalidate old muscle evidence immediately without rewriting originals (4.899742ms)
+✔ different athlete cannot contribute a set or a pain record (0.944993ms)
+✔ explicit timed pain overrides participation and deletion returns to observed exposure (4.104854ms)
+✔ knee pain and date-only history are not invented quadriceps evidence (1.545408ms)
+✔ missing continuous device data stays unavailable; rereads are stable (1.102541ms)
+✔ corrupt local records are explicit read errors and retained byte-for-byte (0.547145ms)
+✔ equal-version conflicting exercises are excluded regardless of input order (0.267093ms)
+✔ equal-version retraction wins and cannot resurrect because of ordering (0.402286ms)
+✔ v89.2 V4 free-text moves logged set by set reach muscle view, log and coach as the same record (15.395043ms)
+✔ linked display cache without committed source cannot fabricate participation or muscle recruitment (1.853422ms)
+✔ v89.2 library aliases point at real library entries; planned run types come from plan text only (0.475076ms)
+✔ v89.3 U12: old pain stays 待复核 beyond 72h; a later explicit 0 clears it without claiming recovery (1.183563ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 113.717081
