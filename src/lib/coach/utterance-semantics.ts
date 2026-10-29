@@ -77,7 +77,7 @@ export function parseCoachUtterance(question: string) {
     );
   const knowledge = /解释|讲解|科普|定义|什么是|是什么|想了解|原理|含义/.test(text);
   const requestedActivity =
-    /能否|能不能|可以|怎么练|如何练|怎么安排|如何安排|安排.*(?:训练|跑|组)|明天.*(?:跑|练)|今天.*(?:跑|练)|带痛跑|复训|恢复训练/.test(
+    /能否|能不能|可以|怎么练|如何练|怎么安排|如何安排|安排.*(?:训练|跑|组)|明天.*(?:跑|练)|今天.*(?:跑|练)|带痛跑|继续冲刺|冲刺.*(?:建议|处理)|复训|恢复训练/.test(
       text,
     );
   const task = writeRequested

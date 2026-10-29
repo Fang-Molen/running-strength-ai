@@ -221,3 +221,19 @@ test('canonical load summary traverses real HTTP controller; full provider input
   if(process.env.FK_CAPTURE_LOAD_MEMORY==='1')await writeFile(new URL('../../verification/load-memory-20261029/http-input-measurement.json',import.meta.url),JSON.stringify({transport:'IN_PROCESS_REAL_HTTP_CONTROLLER',networkListener:false,provider:'INJECTED_FAKE',paidCalls:0,measurements},null,2)+'\n')
  }finally{await db.close()}
 })
+
+test('host displays exact verified quotations without requiring duplicate model prose; forged quote still fails',async()=>{
+ const db=new PGlite(),policy=syntheticPolicy();let forge=false;
+ try{
+  await migrate(db);
+  const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authenticate:async()=> 'quote-regression-synthetic',policy:()=>policy,now:()=>now,fetch:async(_url,init)=>{
+   const wire=JSON.parse(JSON.parse(String(init?.body)).messages[1].content),source=wire.facts.find((f:{detail:string})=>f.detail==='突然“啪”一声');assert.ok(source);
+   return Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:'请先停止冲刺并尽快寻求专业评估，不能据此自行诊断。',nextStep:null,citations:[source.id],evidenceQuotes:[{sourceId:source.id,quote:forge?'突然响了三声':source.detail}],medicalReferral:true,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:0,prompt_cache_miss_tokens:100}});
+  }});
+  const send=(path:string,body:unknown)=>handleCoachHttpRequest(new Request('https://coach.test/api/'+path,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime});
+  const question='训练后小腿有不适，突然“啪”一声，现在走路都困难。我想继续冲刺。';
+  for(const flag of [false,true]){forge=flag;const created=await send('coach-snapshot',{...input,question}),receipt=await created.json();assert.equal(created.status,200);
+   const response=await send('coach-chat',{question,...receipt.snapshotRef,requestId:'quote_regression_'+String(flag)}),body=await response.json();assert.equal(response.status,flag?502:200,JSON.stringify(body));if(!flag){assert.match(body.text,/突然“啪”一声/);assert.match(body.text,/停止冲刺/)}else assert.equal(body.error,'OUTPUT_REJECTED');
+  }
+ }finally{await db.close()}
+})

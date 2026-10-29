@@ -18,8 +18,8 @@ const arg=(name:string,fallback:string)=>args.includes(name)?args[args.indexOf(n
 const start=Number(arg('--start','0')),count=Number(arg('--count','3')),phase=arg('--phase','smoke');
 const all=JSON.parse(readFileSync(base+'/dispatch-order.json','utf8')).schedule;
 const targeted=[14,30,34,35,36,37,38,39,1];
-const indices=phase==='smoke'?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];
-const schedule=indices.map(i=>all[i]);
+const indices=phase.startsWith('smoke')?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];
+const schedule=indices.map(i=>all[i]);const replay=args.includes('--replay');
 const asOf='2026-10-29T12:00:00.000Z',now=Date.parse(asOf)+1000;mock.timers.enable({apis:['Date'],now});
 const hash=(x:any)=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const rows=(name:string)=>readFileSync(base+'/input-package/'+name,'utf8').trim().split('\n').map(x=>JSON.parse(x));
@@ -38,7 +38,7 @@ function fact(r:any){
 }
 const facts=owned.map(fact);
 for(const r of owned.filter((r:any)=>r.kind==='run'))facts.push({...fact({...r,kind:'feedback',sleep:'未记录'}),id:r.id+'-feedback',sourceRecordId:r.id,measure:'SORENESS',side:'UNSPECIFIED',notes:r.note} as any);
-const policy:any={enabled:true,approvalId:'user-new-questions-20261029',approvalExpiresAt:new Date(Math.max(Date.now(),now)+86400000).toISOString(),campaignId:'new-questions-20261029',phase:'evaluation',model:paid?'deepseek-flash':'synthetic-model',acceptedResponseModels:paid?['deepseek-flash']:['synthetic-model'],modelVersion:paid?'alias-model-list-20261029':'fake',modelVerified:true,samplingVerified:true,temperature:.4,jsonObjectModeVerified:true,tokenUpperBoundVerified:true,tokenOverheadUpperBound:256,reasoningIncludedInCompletionVerified:true,usageCacheAccountingVerified:true,priceVersion:'estimate-only-handoff-20261023',pricesVerified:true,currency:'USD',inputMicrosPerMillion:300000,cachedInputMicrosPerMillion:6000,outputMicrosPerMillion:1200000,timeoutMs:29000,caps:{campaignCalls:50,pilotCalls:3,campaignCostMicros:'200000',ownerCalls:50,ownerCostMicros:'200000',concurrency:1,globalDailyCalls:50,globalDailyCostMicros:'200000',ownerDailyCalls:50,ownerDailyCostMicros:'200000',perCallCostMicros:'20000'}};
+const policy:any={enabled:true,approvalId:'user-new-questions-20261029',approvalExpiresAt:new Date(Math.max(Date.now(),now)+86400000).toISOString(),campaignId:'new-questions-20261029',phase:'evaluation',model:paid||replay?'deepseek-flash':'synthetic-model',acceptedResponseModels:paid||replay?['deepseek-flash']:['synthetic-model'],modelVersion:paid?'alias-model-list-20261029':'fake',modelVerified:true,samplingVerified:true,temperature:.4,jsonObjectModeVerified:true,tokenUpperBoundVerified:true,tokenOverheadUpperBound:256,reasoningIncludedInCompletionVerified:true,usageCacheAccountingVerified:true,priceVersion:'estimate-only-handoff-20261023',pricesVerified:true,currency:'USD',inputMicrosPerMillion:300000,cachedInputMicrosPerMillion:6000,outputMicrosPerMillion:1200000,timeoutMs:29000,caps:{campaignCalls:50,pilotCalls:3,campaignCostMicros:'200000',ownerCalls:50,ownerCostMicros:'200000',concurrency:1,globalDailyCalls:50,globalDailyCostMicros:'200000',ownerDailyCalls:50,ownerDailyCostMicros:'200000',perCallCostMicros:'20000'}};
 let active:any,provider:any=null,payload:any=null;
 const callLog=out+'/calls.jsonl',resultLog=out+'/'+phase+(paid?'-results.jsonl':'-offline.jsonl');
 const existing=existsSync(callLog)?readFileSync(callLog,'utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x)):[];
@@ -62,6 +62,7 @@ const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authent
  if(active.mode==='ALL_HISTORY'){const wire=JSON.parse(payload.messages[1].content);wire.facts=[...wire.facts,...owned.map((r:any,i:number)=>({id:'history-'+i,kind:'FACT',detail:JSON.stringify(r)}))];wire.coverage={selected:wire.facts.length,omitted:0,unknowns:['记录完整性未确认；缺失不补零；全量历史为测试适配器对照，不是旧版实测']};payload.messages[1].content=JSON.stringify(wire);if(Buffer.byteLength(JSON.stringify(payload))>110000)throw Error('TEST_BASELINE_INPUT_CAP');}
 
  if(JSON.stringify(payload).includes('OTHER-1')||JSON.stringify(payload).includes('发烧')&&active.kind==='ISOLATED_STORED_HISTORY')throw Error('FOREIGN_FACT');
+ if(replay){const receipt=existing.find(r=>r.requestId==='smoke-'+active.path_id+'-'+active.turn);if(!receipt)throw Error('REPLAY_RECEIPT_MISSING');provider=receipt.reply;return Response.json(provider)}
  if(!paid)appendFileSync(out+'/offline-payloads.jsonl',JSON.stringify({phase,path:active.path_id,payload})+'\n');
  if(!paid||active.mode==='ALL_HISTORY'){provider={model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:'一般训练解释须结合记录与缺失信息核对。',nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:0,prompt_cache_miss_tokens:100}};return Response.json(provider)}
  return dispatchReal();

@@ -218,7 +218,9 @@ export async function onRequestPost({request,env={},data={}}) {
       const parsed=JSON.parse(restored),sources=canonical.brief.sources??[],claims=parsed.evidenceQuotes??[];
       let text=[parsed.text,typeof parsed.nextStep==='string'?parsed.nextStep:''].filter(Boolean).join('\n');
       if(!Array.isArray(claims)||claims.length>48||parsed.citations.some(/** @param {string} id */id=>!sources.some(s=>s.id===id)))throw Error('EVIDENCE_REFERENCE_INVALID');
-      for(const claim of claims)if(!claim||Object.keys(claim).some(k=>!['sourceId','quote'].includes(k))||typeof claim.quote!=='string'||!sources.some(s=>s.kind==='FACT'&&s.id===claim.sourceId&&supportedEvidenceQuote(s.detail,claim.quote))||!parsed.citations.includes(claim.sourceId)||!text.includes(claim.quote))throw Error('EVIDENCE_QUOTE_INVALID');
+      for(const claim of claims)if(!claim||Object.keys(claim).some(k=>!['sourceId','quote'].includes(k))||typeof claim.quote!=='string'||!sources.some(s=>s.kind==='FACT'&&s.id===claim.sourceId&&supportedEvidenceQuote(s.detail,claim.quote))||!parsed.citations.includes(claim.sourceId))throw Error('EVIDENCE_QUOTE_INVALID');
+      const missingQuotes=claims.filter(c=>!text.includes(c.quote)).map(c=>c.quote);
+      if(missingQuotes.length)text=['依据（用户自述，未独立核验）：',...missingQuotes,text].join('\n');
       const allowed=[...sources.filter(s=>s.kind==='FACT').map(s=>s.detail),...claims.map(c=>c.quote)];
       for(const quote of allowed)if(text.includes(quote)&&!claims.some(c=>c.quote===quote))throw Error('EVIDENCE_CITATION_REQUIRED');
       const assertionOptions={factQuotes:allowed,safetyRestricted,restrictions,question:refs.question};

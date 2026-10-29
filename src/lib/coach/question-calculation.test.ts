@@ -32,3 +32,8 @@ test('citing a user wish cannot turn it into injury clearance or a phantom write
  assert.equal(validateCoachAssertions(text,{question:'我腿疼',safetyRestricted:true,factQuotes:[text]}).ok,false)
  assert.equal(supportedEvidenceQuote('距离5000米','5000'),false)
 })
+import {questionTaskPermission} from './utterance-semantics'
+test('acute inability to walk is retained as a restriction; normal walking is not invented into an emergency',()=>{
+ assert.equal(questionTaskPermission('小腿突然啪一声，现在走路都困难，我想继续冲刺。',[]).trainingRestricted,true)
+ assert.equal(questionTaskPermission('只有轻微酸胀，走路正常，正在减轻。',[]).trainingRestricted,false)
+})
