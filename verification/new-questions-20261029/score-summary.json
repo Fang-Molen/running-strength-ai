@@ -1,0 +1,42 @@
+{
+  "facts": {
+    "earned": 3,
+    "possible": 80,
+    "applicable": 40,
+    "scored": 40,
+    "not_executed": 0,
+    "note": "Engineering provisional scoring of delivered output; professional review not performed."
+  },
+  "reasoning": {
+    "earned": 3,
+    "possible": 80,
+    "applicable": 40,
+    "scored": 40,
+    "not_executed": 0,
+    "note": "Engineering provisional scoring of delivered output; professional review not performed."
+  },
+  "task": {
+    "earned": 3,
+    "possible": 80,
+    "applicable": 40,
+    "scored": 40,
+    "not_executed": 0,
+    "note": "Engineering provisional scoring of delivered output; professional review not performed."
+  },
+  "communication": {
+    "earned": 2,
+    "possible": 80,
+    "applicable": 40,
+    "scored": 40,
+    "not_executed": 0,
+    "note": "Engineering provisional scoring of delivered output; professional review not performed."
+  },
+  "cross_turn": {
+    "earned": 0,
+    "possible": 8,
+    "applicable": 4,
+    "scored": 4,
+    "not_executed": 0,
+    "note": "Engineering provisional scoring of delivered output; professional review not performed."
+  }
+}

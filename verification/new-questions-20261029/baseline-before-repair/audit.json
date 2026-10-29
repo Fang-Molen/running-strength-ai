@@ -1,0 +1,51 @@
+{
+  "generationRequests": 40,
+  "freeModelListRequests": 1,
+  "retries": 0,
+  "conversations": 38,
+  "dialogueRounds": 34,
+  "historySessions": 6,
+  "uniqueRequestIds": 40,
+  "providerUsageAvailable": 40,
+  "allUsageSumsReconciled": true,
+  "referenceSentToModel": false,
+  "referenceExclusionBasis": "Runner opens only dispatch-order.json and 03 synthetic history; scoring file first read in separate evaluator process. Payloads frozen before scoring.",
+  "foreignHistoryRowsSent": 0,
+  "sameSystemInstructions": true,
+  "sameGenerationOptions": true,
+  "options": {
+    "model": "deepseek-flash",
+    "temperature": 0.4,
+    "max_tokens": 900,
+    "stream": false,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "immutableBackendVersion": "NA: API reports only deepseek-flash alias",
+  "totals": {
+    "prompt_tokens": 83462,
+    "completion_tokens": 35045,
+    "total_tokens": 118507,
+    "prompt_cache_hit_tokens": 4992,
+    "prompt_cache_miss_tokens": 78470,
+    "reasoning_tokens": 33168
+  },
+  "finishReasons": {
+    "length": 35,
+    "stop": 5
+  },
+  "warnings": [
+    "Full-history baseline uses test-only provider transport after capturing App prompt template, bypasses App input envelope and output validation. Not old App or App E2E.",
+    "Current-selection route uses real selector + PGlite-authorized snapshot + real in-process HTTP controller; browser/App entry orchestration not tested.",
+    "Ledger price constants are test accounting from handoff, not verified current provider billing; actual monetary charge NA.",
+    "Adapter maps original rows into facts; feedback prose/sleep missingness are not fully transmitted by current selector. Results do not establish importer or scientific validity."
+  ],
+  "codeCommit": "ca5d7dbf76adbcb957d7c8548fa4d851056c681b",
+  "secretValueFoundInArtifacts": false,
+  "mappingAssumptions": [
+    "Day-only source dates mapped to 08:00 Asia/Shanghai; synthetic timestamp, not observed acquisition time.",
+    "rpe -> CR10 is a test mapping assumption, not source scale proof; not valid for validating session AU."
+  ],
+  "harnessSha256": "73f7198c421f468e06449bb705b953e684fc59d63196a62bd90bb3629f79fa03"
+}

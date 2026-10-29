@@ -1,7 +1,7 @@
-✔ T1 future correction excluded; retraction never resurrects older revision (9.082385ms)
-✔ T1 source and athlete isolated, same revision conflict withheld (0.320056ms)
-✔ T2 mixed occurrence retains two components; precise segments and independent dimensions (3.41976ms)
-✔ T3 unknown is insufficient; unrelated directions do not create data conflict (4.041876ms)
+✔ T1 future correction excluded; retraction never resurrects older revision (11.410399ms)
+✔ T1 source and athlete isolated, same revision conflict withheld (0.258989ms)
+✔ T2 mixed occurrence retains two components; precise segments and independent dimensions (2.133709ms)
+✔ T3 unknown is insufficient; unrelated directions do not create data conflict (2.303504ms)
 ℹ tests 4
 ℹ suites 0
 ℹ pass 4
@@ -9,4 +9,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 23.070133
+ℹ duration_ms 22.990033

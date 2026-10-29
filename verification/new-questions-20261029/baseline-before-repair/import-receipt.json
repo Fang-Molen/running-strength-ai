@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "rows": 245,
+  "owners": {
+    "SYN-A": 244,
+    "SYN-B": 1
+  },
+  "duplicates": 0,
+  "readOwner": "SYN-A",
+  "readRows": 244,
+  "timeZone": "Asia/Shanghai",
+  "asOf": "2026-10-29T12:00:00.000Z",
+  "sourceHash": "bc4177f7e774b65382f991ae7a1e86c17830ff637e2c76d494e195faf5ba4612",
+  "mapping": "Original rows retained in isolated in-memory PGlite. Training -> AnalysisFact with original IDs/revision, 08:00 local occurrence, duration/distance converted to SI. No invented session RPE; no pain severity inferred."
+}

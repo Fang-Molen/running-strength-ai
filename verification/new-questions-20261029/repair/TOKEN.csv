@@ -1,0 +1,13 @@
+row_type,request_id,phase,path_id,request_count,prompt_tokens,completion_tokens,total_tokens,prompt_cache_hit_tokens,prompt_cache_miss_tokens,reasoning_tokens,finish_reason,output_limit,controller_accepted,client_accepted,semantic_status,billed_cost
+request,smoke-Q08-A-1,smoke,Q08-A,1,494,317,811,0,494,NA,stop,1800,False,False,FAIL,NA
+request,smoke2-Q08-A-1,smoke2,Q08-A,1,596,230,826,384,212,NA,stop,1800,True,False,FAIL,NA
+request,smoke3-Q08-A-1,smoke3,Q08-A,1,609,268,877,0,609,NA,stop,1800,True,True,ENGINEERING_PASS_PROFESSIONAL_PENDING,NA
+request,smoke3-Q15-A-1,smoke3,Q15-A,1,630,603,1233,128,502,NA,stop,1800,True,True,PARTIAL_NOT_ACCEPTED,NA
+request,smoke3-Q01-B-1,smoke3,Q01-B,1,563,208,771,128,435,NA,stop,1800,True,True,FAIL,NA
+request,smoke4-Q15-A-1,smoke4,Q15-A,1,652,258,910,128,524,NA,stop,1800,True,True,PARTIAL_NOT_ACCEPTED,NA
+request,smoke4-Q01-B-1,smoke4,Q01-B,1,585,194,779,128,457,NA,stop,1800,True,True,ENGINEERING_PASS,NA
+request,full-Q08-A-1,full,Q08-A,1,631,313,944,128,503,NA,stop,1800,True,True,ENGINEERING_PASS_PROFESSIONAL_PENDING,NA
+request,full-Q15-A-1,full,Q15-A,1,652,251,903,512,140,NA,stop,1800,True,True,FAIL,NA
+request,smoke5-Q15-A-1,smoke5,Q15-A,1,705,215,920,128,577,NA,stop,1800,True,True,FAIL,NA
+request,smoke5-Q15-B-1,smoke5,Q15-B,1,703,294,997,256,447,NA,stop,1800,True,True,FAIL,NA
+repair_total,ALL,,,11,6820,3151,9971,1920,4900,NA: provider omitted breakdown,,,,,,NA

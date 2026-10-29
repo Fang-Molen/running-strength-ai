@@ -1,0 +1,105 @@
+{
+  "scope": "SYNTHETIC_REPAIR_RETEST_STOPPED_AT_SEMANTIC_GATE",
+  "candidateCommit": "176f3da",
+  "generationRequests": 11,
+  "smokeRequests": 9,
+  "targetedRequests": 2,
+  "sameVersionFinalCampaignRequests": 0,
+  "plannedFinalRounds": 40,
+  "fullPhaseCeiling": 50,
+  "automaticRetries": 0,
+  "observedExplicitRepeatedSmokeAttempts": {
+    "Q08-A": 3,
+    "Q15-A": 3,
+    "Q15-B": 1,
+    "Q01-B": 2
+  },
+  "providerFinish": {
+    "stop": 11
+  },
+  "parseable": 11,
+  "controllerAccepted": 10,
+  "clientAccepted": 9,
+  "semantic": {
+    "FAIL": 6,
+    "ENGINEERING_PASS_PROFESSIONAL_PENDING": 2,
+    "PARTIAL_NOT_ACCEPTED": 2,
+    "ENGINEERING_PASS": 1
+  },
+  "totals": {
+    "prompt_tokens": 6820,
+    "completion_tokens": 3151,
+    "total_tokens": 9971,
+    "prompt_cache_hit_tokens": 1920,
+    "prompt_cache_miss_tokens": 4900
+  },
+  "reasoningTokens": "NA: no reasoning breakdown returned; never substitute zero",
+  "thinkingRequested": "disabled",
+  "outputLimit": 1800,
+  "fee": "NA: provider ledger constants are estimates, not a bill",
+  "priorGenerationRequests": 40,
+  "priorTokens": 118507,
+  "lifetimeGenerationRequests": 51,
+  "lifetimeTokens": 128478,
+  "foreignFactsSent": 0,
+  "rubricSent": false,
+  "professionalReview": "NOT_PERFORMED",
+  "browserAcceptance": "NOT_PERFORMED",
+  "bundleSha256": "30bcf449abace6cc276c5dbc33c8a0cf15a4e97a5a4f40135baef3a73bc75a35",
+  "providerReasoningContentStoredInPublishedArtifacts": false,
+  "limits": [
+    "Isolated raw-history adapter plus real selector, application session orchestration, authorization/HTTP/controller/client checks; not a browser or complete production importer acceptance.",
+    "No successful real history pair in this repair run.",
+    "No claim of fully repaired P0 or release readiness."
+  ],
+  "secretScan": {
+    "actualValueFound": false,
+    "filesScanned": 55
+  },
+  "artifactHashes": {
+    "smoke-replay-math-offline.jsonl": "4450df260684c9a327c902e9c2663e220ea0dcf75d8e9e27bb4e490740abb4e5",
+    "full-suite-failures.log": "482c3ff3096c8f1384092b24ccfd8fccd66f6149ec8a448199f8b686e950bc7b",
+    "smoke-offline.jsonl": "5bd944337193e769a13d36442da8a26e9cd0c50c65b47660d47afefdb4de3518",
+    "smoke-replay-final-offline.jsonl": "9094b3716fd0a27afffaca678275a46138ab27c818a1d712b55fbe9e4a0b4755",
+    "DEFECT-CROSSWALK.md": "c9a2c81249eb7dce40406df73d00cf0e4ebed8044bf8b44556c1aa95b6dae642",
+    "smoke2-results.jsonl": "2e60e6605ca359824fe02c5a3bf8cfbf0ee12618db6653d8a67afd96144c327b",
+    "run.ts": "9bee671d95f6c1e96cba16137bdd40231f08803d6b7445cb779320d26efc7bfc",
+    "targeted-tests.log": "0b021f53e21d97f2c559c60309626d934e276d9b90af69dde528a34260565a40",
+    "typecheck.log": "8fa1cf5506304e8abac55868e7f1a136c9b1dde57a3981a382da4c21ea129a6f",
+    "FINAL-CAMPAIGN-NOT-RUN.jsonl": "f1791800a46d97041a85c5105bce8b203e958b97acbe10451e97afddd6c0ed3b",
+    "additional-regressions.log": "98849d41cf8c6ead5ea490979614d1d15cf678cce8f6a960b5f5c587354ccfc9",
+    "import-receipt.json": "f72d8fe631b6ed65d9cab826c1c4dcd36cdcd9efe4ebecc7b66383e4fe919ec6",
+    "SUMMARY.md": "06e9fc0d9395f245501d84a2d3f8943314a668baa73402d9fcef9b17b84858e4",
+    "smoke-replay-clean-offline.jsonl": "054ce1813eba8bdb6e71e724c215462b5619ba03b6e6f37de976974831b2520b",
+    "calls.jsonl": "9828d4d9fb5e24ac4b115d0fa164527da6ef85325aeb1ba157792ec72ae66f63",
+    "full-offline.jsonl": "05d59b48ba55091713f5821277fa6e0bb556607a613e3c677c93c56656933752",
+    "smoke-attempt1.jsonl": "26ac52ca7ee0f77e6de947a5d2d5d6432498026276be63a3e7636b8f14e5a4ed",
+    "smoke5-results.jsonl": "0f157f1387a345fd0e161a81d0462ee0cc8afa4ad0c62eec056df390d44ea6db",
+    "smoke3-results.jsonl": "33798be212c3b1333207180a84e07bff81db1b9dd9107d49af04d18f8e058cf0",
+    "offline-payloads.jsonl": "ab712b290daf04fdcac3c0a70e126cf21d1cda9c3a97117e7e66ff1ea17c156d",
+    "provider.py": "95530bd56ac04b7f03b236e0e9bfbb5d3c5ed7ec7189777efc3dc49b6d7096a3",
+    "dispatches.jsonl": "86bd006ba0c8cb2a6ef277ee77504a868abb0c3a4ac9a8bf001c32563618dda2",
+    "RESULTS.jsonl": "5d4fbe9f5ff0cd7dccd5e2e94cb76271469d10aa33a3ec7d411ec05d37c17d88",
+    "smoke-replay-second-offline.jsonl": "ae414e0e2b47d810ebe2cfdd005e3f13d694ab6d1cebe28bba5a4eb6d5fedc78",
+    "smoke4-results.jsonl": "7ea0d2f4c89bd5ab90baa7f459729890b742d4fb3822f2907a2269ee447d37dd",
+    "smoke-results.jsonl": "26ac52ca7ee0f77e6de947a5d2d5d6432498026276be63a3e7636b8f14e5a4ed",
+    "requirements.md": "1723a01515b64b0a05c26fd543f60169d8a84229bc2ab4d41c83809dbeb25b6e",
+    "TOKEN.csv": "2427f286252e4236f38964683177d6ba8f300672cc244e54dc8d587520a2f7d4",
+    "full-results.jsonl": "7aeeb915f77de6716a94de04e4ec18f7b514d7313c6960b555ef1dff1b498e3a",
+    "smoke-replay-offline.jsonl": "37c1ca179fa3727ff2c5cb546bf54b56c45fceb9b73eb08b7f4770d2ea4e05fd"
+  },
+  "verification": {
+    "targetedFiles": 34,
+    "targetedTests": 321,
+    "targetedFailed": 0,
+    "additionalTests": 544,
+    "additionalFailed": 0,
+    "independentCountsAdditive": false,
+    "typecheck": "PASS",
+    "fullNpmTest": {
+      "pass": 14,
+      "fail": 5,
+      "scope": "script stage only; subsequent stages not executed"
+    }
+  }
+}

@@ -1,17 +1,17 @@
-✔ running work is recorded immediately but only an explicit finish marks the log completed (89.956907ms)
-✔ strength finish is idempotent and a correction reaches the log and Fangkun without rewriting the original event (39.88082ms)
-✔ repeated watch import creates one activity and changed device totals do not overwrite a manual correction (9.219805ms)
-✔ the actual Garmin view writer and formal import reader merge one scoped activity after repeated saves (2.69246ms)
-✔ independent phone and watch sources need a confirmed identity link; equal values alone do not merge (11.763168ms)
-✔ switching athlete excludes both automatic and explicitly selected old training from Fangkun (9.723348ms)
-✔ switching athlete cannot resume or write into another athlete running occurrence (0.786665ms)
-✔ switching athlete does not restore another athlete recorded strength sets (0.83083ms)
-✔ stale running write callbacks cannot mutate another athlete before any resume check (3.579742ms)
-✔ stale strength completion does not append an event or close the old athlete occurrence (0.719638ms)
-✔ two athletes can execute the same strength template independently (1.566942ms)
-✔ a repeated completion from an older decision cannot close a newer strength session (1.088715ms)
-✔ an athlete A to B to A switch invalidates a queued running write (0.888063ms)
-✔ a completed training event triggers a fresh Fangkun projection after the commit (8.402125ms)
+✔ running work is recorded immediately but only an explicit finish marks the log completed (62.37581ms)
+✔ strength finish is idempotent and a correction reaches the log and Fangkun without rewriting the original event (22.867073ms)
+✔ repeated watch import creates one activity and changed device totals do not overwrite a manual correction (6.657941ms)
+✔ the actual Garmin view writer and formal import reader merge one scoped activity after repeated saves (1.986326ms)
+✔ independent phone and watch sources need a confirmed identity link; equal values alone do not merge (8.765901ms)
+✔ switching athlete excludes both automatic and explicitly selected old training from Fangkun (7.162309ms)
+✔ switching athlete cannot resume or write into another athlete running occurrence (0.500522ms)
+✔ switching athlete does not restore another athlete recorded strength sets (0.556356ms)
+✔ stale running write callbacks cannot mutate another athlete before any resume check (2.548352ms)
+✔ stale strength completion does not append an event or close the old athlete occurrence (1.204936ms)
+✔ two athletes can execute the same strength template independently (1.522019ms)
+✔ a repeated completion from an older decision cannot close a newer strength session (1.068887ms)
+✔ an athlete A to B to A switch invalidates a queued running write (0.664739ms)
+✔ a completed training event triggers a fresh Fangkun projection after the commit (6.604491ms)
 ℹ tests 14
 ℹ suites 0
 ℹ pass 14
@@ -19,4 +19,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 189.271808
+ℹ duration_ms 129.924564

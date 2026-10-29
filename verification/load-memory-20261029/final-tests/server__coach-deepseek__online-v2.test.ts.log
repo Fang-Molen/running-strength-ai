@@ -1,16 +1,17 @@
-✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (23.197098ms)
-✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (36.771114ms)
-✔ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (3043.928544ms)
-✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (1678.563642ms)
-✔ bounded context accepts structured old history without converting targets into actuals (1.511872ms)
-✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (1680.045527ms)
-✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (1983.907961ms)
-✔ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (1760.089706ms)
-ℹ tests 8
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (5.106971ms)
+✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (10.961906ms)
+✔ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (1660.835661ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (993.035365ms)
+✔ bounded context accepts structured old history without converting targets into actuals (0.786743ms)
+✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (1012.417099ms)
+✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (1041.30965ms)
+✔ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (911.499433ms)
+✔ host displays exact verified quotations without requiring duplicate model prose; forged quote still fails (1034.993432ms)
+ℹ tests 9
 ℹ suites 0
-ℹ pass 8
+ℹ pass 9
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 10222.191436
+ℹ duration_ms 6678.218048

@@ -1,8 +1,8 @@
-✔ facts are de-identified: no activity name/city, id or source identity (1.780503ms)
-✔ garmin directWorkoutRpe 10-100 maps to RPE 1-10 (0.210026ms)
-✔ public coach route requires trusted bindings even with an API key and client facts (7.642008ms)
-✔ C03 merge: client question cap matches trusted server boundary (1000); over-limit or control chars never fetch (523.388963ms)
-✔ all online adapters share v2 assertions: fabricated personal numbers and writes fail (17.825937ms)
+✔ facts are de-identified: no activity name/city, id or source identity (0.995668ms)
+✔ garmin directWorkoutRpe 10-100 maps to RPE 1-10 (0.118098ms)
+✔ public coach route requires trusted bindings even with an API key and client facts (3.840235ms)
+✔ C03 merge: client question cap matches trusted server boundary (1000); over-limit or control chars never fetch (311.055513ms)
+✔ all online adapters share v2 assertions: fabricated personal numbers and writes fail (10.790619ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -10,4 +10,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 597.573257
+ℹ duration_ms 344.789556

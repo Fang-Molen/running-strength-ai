@@ -1,4 +1,4 @@
-✔ capture menu has four equivalent actions and closes as an accessible sheet (9.763577ms)
+✔ capture menu has four equivalent actions and closes as an accessible sheet (6.307215ms)
 ℹ tests 1
 ℹ suites 0
 ℹ pass 1
@@ -6,4 +6,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 16.950714
+ℹ duration_ms 9.967991
