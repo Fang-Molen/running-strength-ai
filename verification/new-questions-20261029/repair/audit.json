@@ -63,9 +63,9 @@
     "smoke-replay-final-offline.jsonl": "9094b3716fd0a27afffaca678275a46138ab27c818a1d712b55fbe9e4a0b4755",
     "DEFECT-CROSSWALK.md": "c9a2c81249eb7dce40406df73d00cf0e4ebed8044bf8b44556c1aa95b6dae642",
     "smoke2-results.jsonl": "2e60e6605ca359824fe02c5a3bf8cfbf0ee12618db6653d8a67afd96144c327b",
-    "run.ts": "9bee671d95f6c1e96cba16137bdd40231f08803d6b7445cb779320d26efc7bfc",
+    "run.ts": "a2b25ee96e729e26d0c299c237886738678c14d8a5a2e7d8f7758c7fee02cfbc",
     "targeted-tests.log": "0b021f53e21d97f2c559c60309626d934e276d9b90af69dde528a34260565a40",
-    "typecheck.log": "8fa1cf5506304e8abac55868e7f1a136c9b1dde57a3981a382da4c21ea129a6f",
+    "typecheck.log": "dac125c794db702133345f3a0d33f3193f975fddc564ca4f1498b0d4132ed500",
     "FINAL-CAMPAIGN-NOT-RUN.jsonl": "f1791800a46d97041a85c5105bce8b203e958b97acbe10451e97afddd6c0ed3b",
     "additional-regressions.log": "98849d41cf8c6ead5ea490979614d1d15cf678cce8f6a960b5f5c587354ccfc9",
     "import-receipt.json": "f72d8fe631b6ed65d9cab826c1c4dcd36cdcd9efe4ebecc7b66383e4fe919ec6",
@@ -83,9 +83,10 @@
     "smoke-replay-second-offline.jsonl": "ae414e0e2b47d810ebe2cfdd005e3f13d694ab6d1cebe28bba5a4eb6d5fedc78",
     "smoke4-results.jsonl": "7ea0d2f4c89bd5ab90baa7f459729890b742d4fb3822f2907a2269ee447d37dd",
     "smoke-results.jsonl": "26ac52ca7ee0f77e6de947a5d2d5d6432498026276be63a3e7636b8f14e5a4ed",
-    "requirements.md": "1723a01515b64b0a05c26fd543f60169d8a84229bc2ab4d41c83809dbeb25b6e",
+    "requirements.md": "d9c7a4755ba513a99651bc066b2d5ac1bac1ed661c34b5147a8f6ca652fac276",
     "TOKEN.csv": "2427f286252e4236f38964683177d6ba8f300672cc244e54dc8d587520a2f7d4",
     "full-results.jsonl": "7aeeb915f77de6716a94de04e4ec18f7b514d7313c6960b555ef1dff1b498e3a",
+    "STOPPED.json": "9ad228e1fbaa6eab6ad70d9ee335242317c01be3f671cbf6fd115ee5360c6f9a",
     "smoke-replay-offline.jsonl": "37c1ca179fa3727ff2c5cb546bf54b56c45fceb9b73eb08b7f4770d2ea4e05fd"
   },
   "verification": {
@@ -101,5 +102,6 @@
       "fail": 5,
       "scope": "script stage only; subsequent stages not executed"
     }
-  }
+  },
+  "durableGenerationStop": true
 }

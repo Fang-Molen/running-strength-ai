@@ -16,6 +16,7 @@ import {training,set} from '../../../src/lib/health/analysis-fixtures';
 const base='verification/new-questions-20261029',out='verification/new-questions-20261029/repair',args=process.argv.slice(2),paid=args.includes('--paid');
 const arg=(name:string,fallback:string)=>args.includes(name)?args[args.indexOf(name)+1]:fallback;
 const start=Number(arg('--start','0')),count=Number(arg('--count','3')),phase=arg('--phase','smoke');
+if(paid&&existsSync(out+'/STOPPED.json'))throw Error('CAMPAIGN_STOPPED_AT_SEMANTIC_GATE_NO_GENERATION');
 const all=JSON.parse(readFileSync(base+'/dispatch-order.json','utf8')).schedule;
 const targeted=[14,30,34,35,36,37,38,39,1];
 const indices=phase==='smoke5'?[30,31]:phase.startsWith('smoke')?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];

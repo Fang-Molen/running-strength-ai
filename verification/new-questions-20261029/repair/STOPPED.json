@@ -1,0 +1,7 @@
+{
+  "generationDisabled": true,
+  "reason": "Q15 semantic smoke failed; user requires failure stop before expansion",
+  "generationRequestsSoFar": 11,
+  "totalTokensSoFar": 9971,
+  "nextAction": "Offline repairs and review only; do not launch full campaign."
+}
