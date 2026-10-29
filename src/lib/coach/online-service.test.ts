@@ -53,3 +53,11 @@ test('revoked grant, exhausted concurrency and unresolved ledger have distinct e
   const result=await readCoachResponse(Response.json({ok:false,error,dispatchState:'NOT_SENT'},{status:403}));assert.ok('error'in result);assert.match(result.error,pattern)
  }
 })
+import {validateFinalAnswer} from './answer-gate';
+test('V1 decision and final blocks/hash are preserved; inconsistent final text fails decoding',async()=>{
+ const gate=validateFinalAnswer({question:'比较两课并给下一课安排。',candidate:{text:'仅供参考。'},sources:[],computedQuotes:[],safetyRestricted:false});
+ const base={ok:true,text:gate.text,answerGate:gate,route:'LOW',model:'synthetic-model',planChanged:false};
+ const r=await readCoachResponse(Response.json(base));assert.ok('text'in r);assert.equal(r.answerGate?.decision,gate.decision);
+ assert.ok('error'in await readCoachResponse(Response.json({...base,text:'另一个没有验证过的答案。'})));
+ assert.ok('error'in await readCoachResponse(Response.json({...base,answerGate:{...gate,finalHash:'fake'}})));
+});

@@ -54,3 +54,31 @@ test('length repair removes a whole dependency closure rather than leaving an or
  const r=validateFinalAnswer(input('解释依据。',text+'\n'+action,{maxChars:60,sources:[{id:'e-source',kind:'FACT',detail:text}],candidate:{text:text+'\n'+action,evidenceQuotes:[{sourceId:'e-source',quote:text}],blocks:[{id:'e',kind:'OBSERVED_FACT',text,groupId:'e',evidenceRefs:[{id:'e-source',revision:'snapshot'}],dependsOn:[]},{id:'a',kind:'CANDIDATE_ADVICE',text:action,groupId:'a',dependsOn:['e'],evidenceRefs:[]}]}}));
  assert.ok(r.blocks.every(b=>b.dependsOn.every(d=>r.blocks.some(x=>x.id===d))));
 });
+test('coverage clarification does not add unrelated medical warnings',()=>{
+ const r=validateFinalAnswer(input('记录完整吗？','记录覆盖并不完整。'));
+ assert.doesNotMatch(r.text,/医疗|医嘱/);
+});
+test('implicit continuation cannot borrow the original plan to bypass an active scoped restriction',()=>{
+ const r=validateFinalAnswer(input('医生限制冲刺，今天能冲刺吗？','原计划有冲刺，所以可以按计划继续。',{restrictions:[{id:'doctor',version:'1',status:'ACTIVE',scope:'DECLARED_RESTRICTION',actions:['LOWER_BODY'],sourceText:'用户转述医生限制冲刺'}]}));
+ assert.doesNotMatch(r.text,/可以按计划继续/);assert.ok(r.reasonCodes.includes('RISK_SCOPE_CONFLICT'));
+});
+test('current counterevidence and absence of causal evidence cannot be laundered through prose without numbers',()=>{
+ for(const text of ['比旧表低就证明你恢复恶化。','这页证明你的疲劳已经恢复。']){
+ const r=validateFinalAnswer(input('换表后恢复差了吗？',text));assert.doesNotMatch(r.text,/证明.*恢复/);assert.ok(r.reasonCodes.includes('SOURCE_MISMATCH'));
+ }
+ const context={version:'coach-context-v2' as const,dependencyVersions:[],coverage:{selected:1,omitted:0,unknowns:[]},records:[{recordId:'pain',revision:'2',category:'RECOVERY' as const,state:'ACTUAL' as const,source:'USER_DECLARED',occurredAt:null,knownAt:null,fields:[{name:'measure',value:'PAIN',unit:null},{name:'notes',value:'当前小腿疼痛',unit:null}]}]};
+ const r=validateFinalAnswer(input('用最新信息回答。','继续引用缓存无痛并允许加量。',{context}));assert.doesNotMatch(r.text,/缓存无痛|允许加量/);
+});
+test('a later uncertainty disclaimer cannot authorize an earlier false coverage assertion',()=>{
+ const text='记录覆盖并不完整：记录本身不能证明全年实际训练都齐全；缺失不补零。';
+ const r=validateFinalAnswer(input('全年记录完整吗？',text));assert.doesNotMatch(r.text,/覆盖并不完整/);assert.ok(r.reasonCodes.includes('UNKNOWN_AS_FACT'));
+ const safe=validateFinalAnswer(input('全年记录完整吗？','不能证明记录不完整，也不能证明已经完整。'));assert.doesNotMatch(safe.reasonCodes.join(','),/UNKNOWN_AS_FACT/);
+});
+test('a warning later in the paragraph does not authorize affirmative stacking of planned sessions',()=>{
+ const r=validateFinalAnswer(input('原计划本周两次训练，这周只能训练一次，怎么安排？','可把两次合并到一次，但不要把单次负荷拉高。'));
+ assert.doesNotMatch(r.text,/可把两次合并到一次/);
+});
+test('asking which session to retain is clarification, not a completed arrangement',()=>{
+ const r=validateFinalAnswer(input('原计划两次，这周只能一次，你建议怎么安排？','请确认本周要保留哪节课。'));
+ assert.ok(['PARTIAL','NEEDS_CLARIFICATION'].includes(r.decision));assert.ok(r.reasonCodes.includes('TASK_DROPPED'));
+});

@@ -1,3 +1,4 @@
+import {parseStrictJson} from './strict-json';
 import type { VerifiedDeepSeekPolicy } from './coach-service-contract.ts';
 export function providerReturnedModel(reply: unknown): string | null { const model=(reply as {model?:unknown})?.model; return typeof model==='string' ? model : null; }
 export type VerifiedProviderUsage = { promptTokens: number; completionTokens: number; cacheHitTokens: number; cacheMissTokens: number; reasoningTokens: number | null; totalTokens: number };
@@ -23,7 +24,7 @@ export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPo
   if (choice.finish_reason !== 'stop' || !message || message.role !== 'assistant' || message.function_call !== undefined || (message.tool_calls !== undefined && (!Array.isArray(message.tool_calls) || message.tool_calls.length > 0))) throw new Error('PROVIDER_FINISH');
   if (typeof message.content !== 'string' || !message.content.trim() || message.content.length > 12000) throw new Error('PROVIDER_CONTENT');
   // Strict JSON; never scrape a JSON-shaped substring from surrounding prose.
-  let parsed: unknown; try { parsed = JSON.parse(message.content); } catch { throw new Error('PROVIDER_JSON'); }
+  let parsed: unknown; try { parsed = parseStrictJson(message.content); } catch { throw new Error('PROVIDER_JSON'); }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('PROVIDER_JSON');
   const value=parsed as Record<string,unknown>;
   if(analysisMode){
@@ -32,9 +33,19 @@ export function validateProviderReply(reply: unknown, policy: VerifiedDeepSeekPo
     if(value.derivedFactIds!==undefined&&(!Array.isArray(value.derivedFactIds)||value.derivedFactIds.length>200||value.derivedFactIds.some(id=>typeof id!=='string'||!/^D[1-9]\d*$/.test(id))||new Set(value.derivedFactIds).size!==value.derivedFactIds.length))throw Error('PROVIDER_ANALYSIS_SCHEMA');
     return message.content;
   }
-  const allowed=['mode','text','nextStep','citations','medicalReferral','compareIds','seriesIds','planChanged','evidenceQuotes'];
+  const allowed=['mode','text','nextStep','citations','medicalReferral','compareIds','seriesIds','planChanged','evidenceQuotes','schemaVersion','blocks'];
   if(Object.keys(value).some(k=>!allowed.includes(k)) || !['answer','ask','unavailable'].includes(value.mode as string) || typeof value.text!=='string' || !value.text.trim() || (value.nextStep!==null && typeof value.nextStep!=='string') || !Array.isArray(value.citations) || value.citations.length>100 || value.citations.some(id=>typeof id!=='string'||id.length>120) || typeof value.medicalReferral!=='boolean' || value.planChanged!==false) throw new Error('PROVIDER_SCHEMA');
   for(const key of ['compareIds','seriesIds'])if(value[key]!==null && value[key]!==undefined && (!Array.isArray(value[key]) || (value[key] as unknown[]).some(id=>typeof id!=='string'||id.length>120)))throw new Error('PROVIDER_SCHEMA');
+  if(value.schemaVersion!==undefined&&value.schemaVersion!=='coach-gate-v1')throw Error('PROVIDER_SCHEMA');
+  if(value.blocks!==undefined){
+    if(!Array.isArray(value.blocks)||!value.blocks.length||value.blocks.length>48)throw Error('PROVIDER_SCHEMA');
+    for(const block of value.blocks){
+      if(!block||typeof block!=='object'||Array.isArray(block))throw Error('PROVIDER_SCHEMA');
+      const b=block as Record<string,unknown>;
+      if(Object.keys(b).some(k=>!['id','kind','text','evidenceRefs','dependsOn','groupId'].includes(k))||typeof b.id!=='string'||!b.id||b.id.length>120||typeof b.groupId!=='string'||!b.groupId||b.groupId.length>120||!['OBSERVED_FACT','DERIVED_FACT','EXISTING_PLAN','CANDIDATE_ADVICE','GENERAL_KNOWLEDGE','UNCERTAINTY','ACTION_RESULT'].includes(String(b.kind))||typeof b.text!=='string'||!b.text.trim()||b.text.length>4000||!Array.isArray(b.evidenceRefs)||b.evidenceRefs.length>16||!Array.isArray(b.dependsOn)||b.dependsOn.length>48||b.dependsOn.some(x=>typeof x!=='string'||x.length>120))throw Error('PROVIDER_SCHEMA');
+      for(const ref of b.evidenceRefs){if(!ref||typeof ref!=='object'||Object.keys(ref).some(k=>!['id','revision'].includes(k))||typeof ref.id!=='string'||typeof ref.revision!=='string'||!ref.revision||ref.id.length>120||ref.revision.length>120)throw Error('PROVIDER_SCHEMA');}
+    }
+  }
   return message.content;
 }
 export async function boundedResponseJson(response: Response, maxBytes = 65536): Promise<unknown> {

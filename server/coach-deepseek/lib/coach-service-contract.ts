@@ -72,5 +72,7 @@ export type FangkunCoachServices = {
   ledger: CoachLedger;
   /** Test or trusted transport adapter. Browser input can never supply this. */
   fetch?: typeof globalThis.fetch;
+  /** Host configured retrieval only; browser/model payloads cannot supply this port. */
+  retrieve?: (question:string,signal:AbortSignal)=>Promise<import('../../../src/lib/coach/answer-tools').RetrievalPage[]>;
   now?: () => number;
 };

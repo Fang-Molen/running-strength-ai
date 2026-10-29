@@ -78,7 +78,7 @@ test('actual controller scopes unsolicited output actions using current question
    answer=text;
    const created=await send('coach-snapshot',{...input,question,...(restriction?{context:context(restriction)}:{})}),receipt=await created.json();assert.equal(created.status,200,JSON.stringify(receipt));
    const response=await send('coach-chat',{question,...receipt.snapshotRef,requestId:`output_scope_${i}`}),body=await response.json();
-   assert.equal(response.status,expected,JSON.stringify(body));assert.equal(body.dispatchState,'RETURNED');assert.equal(body.ledgerState,'SETTLED');
+   assert.equal(response.status,200,JSON.stringify(body));if(expected===502){assert.equal(body.answerGate.decision,'SAFE_REFUSAL');assert.doesNotMatch(body.text,/你可以继续跑步|可以先考虑坐姿上肢/);assert.ok(body.answerGate.reasonCodes.includes('RISK_SCOPE_CONFLICT'));}assert.equal(body.dispatchState,'RETURNED');assert.equal(body.ledgerState,'SETTLED');
    if(i===2){assert.match(body.text,/RPE/);assert.doesNotMatch(body.text,/可以继续跑步/);assert.equal(body.validation.status,'PARTIALLY_ACCEPTED')}
   }
   assert.equal(dispatches,cases.length);
@@ -237,3 +237,24 @@ test('host displays exact verified quotations without requiring duplicate model 
   }
  }finally{await db.close()}
 })
+
+test('answer V1 gates preserve plan advice and repair unknown-as-fact through the actual controller',async()=>{
+ const db=new PGlite(),policy=syntheticPolicy();let answer='',wire:any=null;
+ try{
+  await migrate(db);
+  const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authenticate:async()=> 'synthetic-gate-owner',policy:()=>policy,now:()=>now,fetch:async(_u,init)=>{
+   wire=JSON.parse(JSON.parse(String(init?.body)).messages[1].content);
+   return Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:answer,nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:0,prompt_cache_miss_tokens:100}});
+  }});
+  const send=(path:string,body:unknown)=>handleCoachHttpRequest(new Request('https://coach.test/api/'+path,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime});
+  const cases=[['昨天跑5公里25分钟，今天跑5公里24分钟。明天原计划轻松跑30分钟，请比较两课并给明天安排建议，不要修改。','若主观疲劳与日常活动均无异常，可先考虑保留原计划30分钟轻松跑；若不适加重则暂停并复核。'],['2025年已记录4公里和5公里，全年记录完整吗？','记录覆盖并不完整。']];
+  for(const [i,[question,text]] of cases.entries()){
+   answer=text;const created=await send('coach-snapshot',{...input,question});const receipt=await created.json();assert.equal(created.status,200);
+   const response=await send('coach-chat',{question,...receipt.snapshotRef,requestId:'answer_gate_'+i}),body=await response.json();
+   assert.equal(response.status,200,JSON.stringify(body));assert.ok(body.answerGate);assert.equal(body.text,body.answerGate.text);assert.equal(body.answerGate.policyVersion,'coach-answer-gate-v1');
+   if(i===0){assert.match(body.text,/30分钟轻松跑/);assert.match(body.text,/5:00.*4:48/);assert.ok(body.answerGate.taskCoverage.every((r:any)=>r.satisfied));}
+   else{assert.doesNotMatch(body.text,/覆盖并不完整/);assert.match(body.text,/覆盖尚未确认/);}
+   assert.equal(wire.safety.clearance,'UNKNOWN');assert.equal('medicalClearance'in wire.safety,false);
+  }
+ }finally{await db.close();}
+});

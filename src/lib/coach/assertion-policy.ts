@@ -4,10 +4,10 @@ import {boundPlanReference} from './plan-reference';
 import { parseCoachUtterance, restrictionActionScope, type ScopedRestriction, type ActionScope } from './utterance-semantics';
 export const COACH_ASSERTION_POLICY_VERSION='coach-assertions-v2' as const;
 export type CoachAssertionKind='BOUND_FACT'|'GENERAL_EDUCATION'|'PERSONAL_QUANTITY'|'WRITE_OR_CLEARANCE'|'DIAGNOSIS'|'UNVERIFIED_RETRIEVAL'|'SOURCE_PROVENANCE'|'EXPLANATION';
-function affirmed(text:string,pattern:RegExp):boolean {
+export function affirmed(text:string,pattern:RegExp):boolean {
  return [...text.matchAll(new RegExp(pattern.source,'gi'))].some(match=>{
   const prefix=(text.slice(0,match.index).split(/[，,。；;！!？?\n]|但是|不过|然而|可是|但/).at(-1)??'').trim();
-  const neg=/(?:不能|不可|不得|不应|不可以|不建议|不推荐|不要|尚未|没有|不代表|不意味着|无法|未|不)(?:直接|自动|擅自|据此|再|就|已经|已|可以|允许|继续|照常|放心|说|认为|说明|表示|你|您)*$/.exec(prefix);
+  const neg=/(?:不能|不可|不得|不应|不可以|不建议|不推荐|不要|尚未|没有|不代表|不意味着|无法|未|不)(?:直接|自动|擅自|据此|以此|再|就|已经|已|可以|允许|继续|照常|放心|说|认为|说明|表示|证明|确认|判断|是|你|您)*$/.exec(prefix);
   return !neg||/不|未|无|没|非/.test(prefix.slice(0,neg.index));
  });
 }

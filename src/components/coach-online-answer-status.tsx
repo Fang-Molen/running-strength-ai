@@ -1,3 +1,4 @@
+import {CoachAnswerValidation} from './coach-answer-validation'
 import {onStorageChange} from '@/lib/core/storage-changes'
 import { useEffect, useState } from 'react'
 import { onlinePreviewIsCurrent, type OnlineAnswerBasis } from '@/lib/coach/online-session'
@@ -10,5 +11,5 @@ export function CoachOnlineAnswerStatus({basis}:{basis:OnlineAnswerBasis}){
   let timer:ReturnType<typeof setTimeout>|undefined;const off=onStorageChange(()=>{clearTimeout(timer);timer=setTimeout(refresh,0)});
   refresh();events.forEach(e=>window.addEventListener(e,refresh));return()=>{off();clearTimeout(timer);events.forEach(e=>window.removeEventListener(e,refresh))}
  },[basis])
- return changed?<p data-testid="online-answer-stale" className="mt-2 text-xs text-amber-600">本回答的相关资料已变化或暂不可核对；请重新分析后再参考。原回答保留，不代表当前建议。</p>:null
+ return <><CoachAnswerValidation decision={basis.answerDecision} professionalReview={basis.professionalReview} sources={basis.sourceEvidence}/>{changed?<p data-testid="online-answer-stale" className="mt-2 text-xs text-amber-600">本回答的相关资料已变化或暂不可核对；请重新分析后再参考。原回答保留，不代表当前建议。</p>:null}</>
 }

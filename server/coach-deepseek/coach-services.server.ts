@@ -4,7 +4,7 @@ import { assertVerifiedPolicy } from './lib/coach-request-boundary.ts';
 import { createCoachSnapshotStore } from './coach-snapshot-store.server.ts';
 
 /** Dependency injection is server code only; HTTP JSON never selects these ports. */
-export function createCoachServices(options: { db: LedgerDatabase; authenticate: (request: Request) => Promise<string | null>; policy: () => VerifiedDeepSeekPolicy | null; now?: () => number; fetch?: typeof fetch }) {
+export function createCoachServices(options: { db: LedgerDatabase; authenticate: (request: Request) => Promise<string | null>; policy: () => VerifiedDeepSeekPolicy | null; now?: () => number; fetch?: typeof fetch; retrieve?: FangkunCoachServices['retrieve'] }) {
   const now = options.now ?? Date.now;
   const snapshots = createCoachSnapshotStore(options.db, now);
   const services: FangkunCoachServices = {
@@ -12,6 +12,7 @@ export function createCoachServices(options: { db: LedgerDatabase; authenticate:
     loadAuthorizedSnapshot: (subject, refs) => snapshots.load(subject, refs),
     getVerifiedPolicy: async () => { const policy = options.policy(); assertVerifiedPolicy(policy, now()); return policy; },
     ledger: createDeepSeekLedger(options.db), now,
+    ...(options.retrieve ? { retrieve: options.retrieve } : {}),
     ...(options.fetch ? { fetch: options.fetch } : {}),
   };
   return { services, snapshots };

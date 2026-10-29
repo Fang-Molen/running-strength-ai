@@ -1,3 +1,5 @@
+import {verifyDeliveredAnswer} from './answer-delivery'
+import type {AnswerDecision} from './answer-gate'
 import {computedCoachQuotes} from './context-comparison'
 import {questionEvidence,supportedEvidenceQuote} from './question-evidence'
 import { type OnlineConversationTurn } from './online-handoff'
@@ -47,7 +49,7 @@ export function selectCoachDeclarations(facts:AnalysisFact[],owner:string,asOf:s
  }
  return result
 }
-export type OnlineAnswerBasis={conversation?:readonly OnlineConversationTurn[];owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
+export type OnlineAnswerBasis={answerDecision?:AnswerDecision;sourceEvidence?:string[];professionalReview?:'PENDING'|'NOT_REQUIRED';conversation?:readonly OnlineConversationTurn[];owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
 function context(question:string,day:string,selectedTrainingIds:readonly string[]=[],conversation:readonly OnlineConversationTurn[]=[]){
  const now=new Date().toISOString(),selected=readOnlineContext(question,day,now,undefined,selectedTrainingIds,conversation,{currentLoadCache:true})
  return {...selected,now,enabled:onlineSetting().on}
@@ -124,8 +126,12 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   const sources=[...computed,...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
   const quoted=answer.evidenceQuotes??[]
   if(quoted.some(q=>!answer.text.includes(q)||!sources.some(s=>supportedEvidenceQuote(s,q))))return {error:'模型引用与本次资料不一致，已保留本地回答。'}
+  if(answer.answerGate){
+   if(!verifyDeliveredAnswer(answer.answerGate,{question:preview.question,context:preview.context,restrictions,factQuotes:[...sources,...quoted],citedQuotes:quoted,computedQuotes:computed,safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'}))return {error:'最终回答与当前资料、安全限制或任务状态不一致，已保留本地回答。'}
+  }else{
   const checked=validateCoachAssertions(answer.text,{citedQuotes:quoted,question:preview.question,restrictions,factQuotes:[...sources,...quoted],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
   if(!checked.ok)return {error:'模型内容未通过事实或安全核验，已保留本地回答。'}
+  }
   return {...answer,source:answer.source}
  }catch(error){return {error:controller.signal.aborted?'本轮联网已取消或超时，本地回答保留；不会自动重试。':error instanceof TypeError?'网络连接失败，本地回答保留；未确认模型是否收到请求，不自动重试。':error instanceof Error?error.message:'联网不可用，本地回答保留。'}}
  finally{

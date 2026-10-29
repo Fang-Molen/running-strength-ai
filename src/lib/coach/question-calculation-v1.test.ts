@@ -24,3 +24,10 @@ test('explicit completion without a timing preserves distance and marks only tot
  assert.match(s,/完成1200米.*179秒.*总.*未知/);assert.doesNotMatch(s,/完成900米|完成状态未知/);
  assert.match(answer('我做了5×250米，前4组是40秒、41秒、42秒、43秒，第5组完成但未计时。'),/完成1250米.*166秒.*总.*未知/);
 });
+test('equivalent natural-language correction and missing timing forms preserve the same state',()=>{
+ assert.match(answer('第4组改28秒，其他不变，请更新。',['成绩是30、31、32、33秒。','第2组改29秒，其他不变。']),/旧总时间124秒.*新总时间119秒/);
+ assert.match(answer('4×300米，前三组58/60/61秒，第四组完成但未计时，汇总。'),/完成1200米.*179秒.*总.*未知/);
+});
+test('explicit recorded-distance lists sum stated units without assuming complete annual coverage',()=>{
+ assert.match(answer('2024年已记录8km和2km，全年记录完整吗？'),/合计10公里.*完整性.*未知|合计10公里.*不能证明/);
+});

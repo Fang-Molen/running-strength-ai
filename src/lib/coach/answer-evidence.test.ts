@@ -16,3 +16,7 @@ test('compact user-facing evidence never renders false coverage as confirmed abs
  const quote=contextModelQuote({...context.records[0],source:'USER_DECLARED:CANONICAL_LOAD_SUMMARY',category:'ANALYSIS',fields:[{name:'distanceComplete',value:false,unit:null},{name:'sessions',value:2,unit:null},{name:'knownDistance',value:10000,unit:'m'},{name:'missingDays',value:5,unit:null}]});
  assert.doesNotMatch(quote,/完整距离覆盖=false|UNKNOWN|PAIN/);assert.match(quote,/覆盖未确认/);
 });
+test('explicit absence of a profile restriction is not recorded as an active medical order',()=>{
+ const c={...context,records:[{...context.records[0],category:'RESTRICTION' as const,fields:[{name:'restriction',value:'没有身体限制',unit:null}]}]};
+ assert.equal(buildAnswerEvidenceState('有哪些限制？',c).declaredRestrictions.length,0);
+});

@@ -60,6 +60,8 @@ export function contextModelQuote(r:CoachContextRecord):string {
  const f=(name:string)=>r.fields.find(f=>f.name===name)?.value??null;
  const date=r.occurredAt??'发生日期未知';
  const provenance=`（用户申报；来源 ${r.source}；修订 ${r.revision}；未经独立核验。）`;
+ if(typeof f('summary')==='string')return `用户申报：${f('summary')}。${provenance}`;
+ if(r.category==='PLAN'&&typeof f('plannedMinutes')==='number')return `原计划：${f('title')??'训练'}${f('plannedMinutes')}分钟（非已执行）。${provenance}`;
  if(r.source==='USER_DECLARED:CANONICAL_LOAD_SUMMARY')return `范围${f('scope')??'未知'}，已记录${f('sessions')??'未知'}课，已知跑步距离${typeof f('knownDistance')==='number'?Number(f('knownDistance'))/1000+'公里':'未知'}；整课负荷缺项日期${f('missingDays')??'未知'}天（不是无训练记录天数）；记录覆盖未确认，未记录日期不补零，不能证明每次训练都记录齐全；距离字段${f('distanceComplete')===true?'齐全':'完整性未确认'}；整课负荷${f('qualifiedSessionLoad')??'未知'} AU；个人生理基线未建立。${provenance}`;
  if(['TRAINING','STRENGTH'].includes(r.category)&&(f('knownWorkTime')!==null||f('strengthDose')!==null)){
   const pace=f('paceSecondsPerKm'),rounded=typeof pace==='number'?Math.round(pace):null,p=rounded===null?'未知':`${Math.floor(rounded/60)}:${String(rounded%60).padStart(2,'0')}/km`;

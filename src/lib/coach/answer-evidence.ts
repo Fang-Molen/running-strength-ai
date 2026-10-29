@@ -1,5 +1,5 @@
 import type {CoachRequestContext} from './online-contract';
-import {parseCoachUtterance} from './utterance-semantics';
+import {interpretProfileLimit,parseCoachUtterance} from './utterance-semantics';
 export type CoverageState='COMPLETE'|'INCOMPLETE'|'UNKNOWN';
 export type ClearanceState='GRANTED'|'DENIED'|'UNKNOWN';
 export type AnswerEvidenceState={coverage:CoverageState;clearance:ClearanceState;symptomReports:{id:string;revision:string;text:string;source:string}[];systemCautions:string[];declaredRestrictions:{id:string;revision:string;text:string;source:string}[]};
@@ -16,7 +16,7 @@ export function buildAnswerEvidenceState(question:string,context?:CoachRequestCo
   if(r.category==='RECOVERY'&&['PAIN','SORENESS'].includes(String(value('measure')))){
    const notes=String(value('notes')??'');if(notes&&!/^(?:无疼痛|无痛|没有疼痛)[；;。]?$/.test(notes))result.symptomReports.push({id:r.recordId,revision:r.revision,text:notes,source:r.source});
   }
-  if(r.category==='RESTRICTION'&&typeof value('restriction')==='string'&&!value('omittedRestrictionCount'))result.declaredRestrictions.push({id:r.recordId,revision:r.revision,text:String(value('restriction')),source:r.source});
+  if(r.category==='RESTRICTION'&&typeof value('restriction')==='string'&&!value('omittedRestrictionCount')&&!['NONE_EXPLICIT','RESOLVED','UNKNOWN'].includes(interpretProfileLimit(String(value('restriction'))).status))result.declaredRestrictions.push({id:r.recordId,revision:r.revision,text:String(value('restriction')),source:r.source});
   const clearance=value('clearance');if(r.category==='RESTRICTION'&&['GRANTED','DENIED'].includes(String(clearance)))result.clearance=clearance as ClearanceState;
   if(value('coverageState')==='INCOMPLETE')result.coverage='INCOMPLETE';
  }
