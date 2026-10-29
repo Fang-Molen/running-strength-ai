@@ -1,3 +1,4 @@
+import {boundPlanReference} from './plan-reference';
 /** Shared browser/server lexical assertion policy. This is format/risk screening,
  * not a diagnosis, scientific review, or independent verification of self reports. */
 import { parseCoachUtterance, restrictionActionScope, type ScopedRestriction, type ActionScope } from './utterance-semantics';
@@ -10,7 +11,7 @@ function affirmed(text:string,pattern:RegExp):boolean {
   return !neg||/不|未|无|没|非/.test(prefix.slice(0,neg.index));
  });
 }
-export type CoachAssertionOptions={factQuotes:readonly string[];safetyRestricted:boolean;restrictions?:readonly ScopedRestriction[];question?:string};
+export type CoachAssertionOptions={factQuotes:readonly string[];safetyRestricted:boolean;restrictions?:readonly ScopedRestriction[];question?:string;citedQuotes?:readonly string[]};
 function educationalQuantity(clause:string):boolean {
  // Match whole teaching statements; an attached personal measurement cannot
  // borrow their exemption. Conversion arithmetic is checked deterministically.
@@ -74,7 +75,7 @@ export function validateCoachAssertions(text:string,options:CoachAssertionOption
   else if(/[0-9０-９]|[零〇一二两三四五六七八九十百千万]+\s*(?:组|次|秒|小时|分钟|公里|米|公斤|千克)/.test(clause)){
    const personal=/(?:你|您|本人|该运动员|你的|本次|昨天|明天|今日|今天|昨日|实际|记录显示|测试显示|测得|建议(?:跑|做|练)|安排|完成了)/.test(clause.replace(/(?:不代表|并非|不是|不能当作|不等于)(?:你|您)的(?:实际|个人)?(?:成绩|数据|表现)/g,''));
    const general=/(?:一般|科普|例如|举例|示例|例子|通常|常用|定义|量表|每公里|换算)/.test(clause);
-   if(educationalQuantity(clause)||general&&!personal){kind='GENERAL_EDUCATION'}else{kind='PERSONAL_QUANTITY';error='UNBOUND_PERSONAL_QUANTITY'}
+   if(!options.safetyRestricted&&!restrictions.length&&boundPlanReference(clause,options.question,options.citedQuotes)){kind='BOUND_FACT'}else if(educationalQuantity(clause)||general&&!personal){kind='GENERAL_EDUCATION'}else{kind='PERSONAL_QUANTITY';error='UNBOUND_PERSONAL_QUANTITY'}
   }
   if(error)errors.push(error);
   assertions.push({kind,text:clause,valid:!error});
