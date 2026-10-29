@@ -44,3 +44,9 @@ test('warning about harm is not permission, while actual permission remains bloc
 test('explicit advice against sprinting is not a hold release',()=>{
  assert.equal(validateCoachAssertions('不建议继续冲刺。',{question:'小腿疼，走路困难',safetyRestricted:true,factQuotes:[]}).ok,true)
 })
+import {retainValidCoachSentences} from './assertion-policy'
+test('host computed quotation remains atomic despite sentence punctuation; empty headings do not survive filtering',()=>{
+ const quote='总距离700米；时间140秒（宿主计算，未写入。）';
+ const result=retainValidCoachSentences('依据：\n'+quote+'\n四、复查与反证\n你已跑999公里。\n）',{factQuotes:[quote],question:'计算距离',safetyRestricted:false});
+ assert.ok(result.includes(quote));assert.doesNotMatch(result,/999|四、|\n）/)
+})

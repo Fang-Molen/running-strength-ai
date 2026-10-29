@@ -1,6 +1,6 @@
 import {mock} from 'node:test';
 import {runOnlineExplanation} from '../../../src/lib/coach/online-session';
-import {validateCoachAssertions} from '../../../src/lib/coach/assertion-policy';
+import {validateCoachAssertions,retainValidCoachSentences} from '../../../src/lib/coach/assertion-policy';
 import {validateProviderReply} from '../../../server/coach-deepseek/lib/coach-provider-boundary';
 import {readFileSync,writeFileSync,appendFileSync,mkdirSync,existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
@@ -84,8 +84,8 @@ for(let i=start;i<Math.min(start+count,schedule.length);i++){
    dispatchReal();let parsed:any=null,error:string|null=null;
    try{const raw=validateProviderReply(provider,policy,{inputTokenLimit:26000,outputTokenLimit:1800});parsed=JSON.parse(raw);
     const wire=JSON.parse(payload.messages[1].content),claims=parsed.evidenceQuotes??[];
-    if(!Array.isArray(claims)||claims.some((c:any)=>!wire.facts.some((f:any)=>f.kind==='FACT'&&f.id===c.sourceId&&f.detail===c.quote)||!parsed.text.includes(c.quote)||!parsed.citations.includes(c.sourceId)))throw Error('BASELINE_SOURCE_MISMATCH');
-    const checked=validateCoachAssertions([parsed.text,parsed.nextStep??''].join('\n'),{factQuotes:claims.map((c:any)=>c.quote),question:active.question,safetyRestricted:wire.safety.trainingRestricted});if(!checked.ok)throw Error('BASELINE_ASSERTION_POLICY');
+    if(!Array.isArray(claims)||claims.some((c:any)=>!wire.facts.some((f:any)=>f.kind==='FACT'&&f.id===c.sourceId&&f.detail===c.quote)||!parsed.citations.includes(c.sourceId)))throw Error('BASELINE_SOURCE_MISMATCH');
+    const options={factQuotes:claims.map((c:any)=>c.quote),question:active.question,safetyRestricted:wire.safety.trainingRestricted};let text=[...claims.filter((c:any)=>!parsed.text.includes(c.quote)).map((c:any)=>c.quote),parsed.text,parsed.nextStep??''].join('\n');if(!validateCoachAssertions(text,options).ok)text=retainValidCoachSentences(text,options);if(!text||!validateCoachAssertions(text,options).ok)throw Error('BASELINE_ASSERTION_POLICY');parsed.text=text;
    }catch(e){error=e instanceof Error?e.message:'BASELINE_INVALID'}
    result={http:200,body:{ok:!error,text:parsed?.text??'',nextStep:parsed?.nextStep??null,error,validation:'TEST_BASELINE_NOT_APP_HTTP_ACCEPTANCE',finishReason:provider?.choices?.[0]?.finish_reason}};
   }

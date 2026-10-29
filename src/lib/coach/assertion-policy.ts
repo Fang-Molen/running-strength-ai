@@ -81,3 +81,14 @@ export function validateCoachAssertions(text:string,options:CoachAssertionOption
  }
  return {ok:errors.length===0,errors:[...new Set(errors)],policyVersion:COACH_ASSERTION_POLICY_VERSION,professionalValidation:'NOT_PROVEN' as const,assertions};
 }
+
+/** Keep verified quotes atomic when filtering sentences (including punctuation inside
+ * a source), then validate restored sentences. Never salvage a numeric fragment. */
+export function retainValidCoachSentences(text:string,options:CoachAssertionOptions):string {
+ const quotes=[...new Set(options.factQuotes.filter(q=>q&&text.includes(q)))].sort((a,b)=>b.length-a.length);
+ const markers: {marker:string;quote:string}[]=[];let masked=text;
+ for(const [i,quote]of quotes.entries()){let marker=String.fromCharCode(0xe000+i);while(text.includes(marker))marker+='证';markers.push({marker,quote});masked=masked.split(quote).join(marker)}
+ masked=masked.replace(/^\s*[一二三四五六七八九十]+[、．.][^\n]{0,50}$/gm,'').replace(/^\s*\d+[)）.、][^\n]*$/gm,'').replace(/^\s*[一二三四五六七八九十\d]+种假设[^\n]*$/gm,'');
+ const restored=(masked.match(/[^。！？!?\n]+[。！？!?]?/g)??[]).map(s=>{for(const {marker,quote}of markers)s=s.split(marker).join(quote);return s.trim()});
+ return restored.filter(s=>s&&validateCoachAssertions(s,options).ok&&!/^[）)\s；;。]+$/.test(s)).join('\n').trim();
+}
