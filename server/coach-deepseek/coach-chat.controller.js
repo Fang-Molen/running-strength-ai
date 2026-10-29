@@ -230,6 +230,8 @@ export async function onRequestPost({request,env={},data={}}) {
       if(!validation.ok){
         // Drop whole sentences only, never substrings that leave broken punctuation or permissions.
         text=retainValidCoachSentences(text,assertionOptions);
+        const retainedQuotes=claims.filter(c=>!text.includes(c.quote)).map(c=>c.quote);
+        if(retainedQuotes.length)text=[...retainedQuotes,text].join('\n');
         if(!text||!validateCoachAssertions(text,assertionOptions).ok||text.length<10)throw Error('ASSERTION_POLICY_REJECTED');
       }
       const promoted=text.split(/[。；，,\n]|但是|然而|不过|但|却/).some(clause=>!/(?:未|没有|不能|无法|尚未|并未).{0,8}(?:核验|验证|证实)/.test(clause)&&/(?:设备|实验室|医疗|手表|Garmin|COROS).{0,8}(?:已核验|已验证|证实)|(?:已核验|已验证).{0,8}(?:设备|实验室|医疗|手表|Garmin|COROS)/i.test(clause));

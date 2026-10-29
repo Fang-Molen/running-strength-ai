@@ -8,7 +8,7 @@ import {shiftLoadDay} from '../core/coach-load-metrics'
 import {contextPeriod} from './context-period'
 import {sha256Hex} from '../core/sha256-sync'
 import type {CoachContextRecord} from './online-contract'
-export const asksLoadSummary=(q:string)=>/负荷|曲线|趋势|汇总|总量|月度|周度|整课\s*AU/i.test(q)
+export const asksLoadSummary=(q:string)=>/负荷|曲线|趋势|汇总|总量|月度|周度|整课\s*AU|(?:已记录|累计|记录).{0,12}(?:多少|总).{0,8}(?:公里|距离|跑量)/i.test(q)
 
 /** Exact full-scope totals precede optional representative details in the token budget. */
 export function loadSummaryRecord(summary:LoadSummary,question:string,day:string):CoachContextRecord {

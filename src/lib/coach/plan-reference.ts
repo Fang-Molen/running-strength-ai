@@ -18,12 +18,12 @@ export function boundPlanReference(clause:string,question:string|undefined,cited
  if(!/保留|关键课|其余课|原计划|可用|可练|可完成|只能|优先|取舍|本周|这周|顺延|放弃|取消/.test(clause))return false
  // An availability statement cannot become an accomplishment, measurement, or new dose.
  if(/已完成|已经完成|完成了|实际完成|已训练|已练|已经练|昨天|前天|测得|记录显示|实绩/.test(clause))return false
- if(/(?:把|将).{0,20}(?:压成|合并|叠加|塞进)/.test(clause)&&!/不|勿|不要|避免|不能/.test(clause))return false
+ if(/(?:把|将).{0,20}(?:压成|压缩成|合并|叠加|塞进)/.test(clause)&&!/不|勿|不要|避免|不能/.test(clause))return false
  const hits=[...clause.matchAll(new RegExp('('+digits+')\\s*次','g'))];if(!hits.length)return false
  let remainder=clause
  for(const m of hits){const value=count(m[1]);if(value===null||value!==planned&&value!==capacity)return false
   const before=clause.slice(0,m.index),after=clause.slice((m.index??0)+m[0].length)
-  if(value>capacity&&!/^中/.test(after)&&!/(?:原计划|原课表)(?:本周|这周)?(?:有)?$/.test(before))return false
+  if(value>capacity&&!/^中/.test(after)&&/(?:保留|安排|完成|执行|训练|练|可以)[^，,。；;]{0,6}$/.test(before)&&!/(?:原计划|原课表)(?:本周|这周)?(?:有)?$/.test(before))return false
   remainder=remainder.replace(m[0],'')
  }
  // Reject all other quantities, even if their numeric value occurs in a source.
