@@ -6,7 +6,7 @@ export type CoachAssertionKind='BOUND_FACT'|'GENERAL_EDUCATION'|'PERSONAL_QUANTI
 function affirmed(text:string,pattern:RegExp):boolean {
  return [...text.matchAll(new RegExp(pattern.source,'gi'))].some(match=>{
   const prefix=(text.slice(0,match.index).split(/[，,。；;！!？?\n]|但是|不过|然而|可是|但/).at(-1)??'').trim();
-  const neg=/(?:不能|不可|不得|不应|不可以|不要|尚未|没有|不代表|不意味着|无法|未|不)(?:直接|自动|擅自|据此|再|就|已经|已|可以|允许|继续|照常|放心|说|认为|说明|表示|你|您)*$/.exec(prefix);
+  const neg=/(?:不能|不可|不得|不应|不可以|不建议|不推荐|不要|尚未|没有|不代表|不意味着|无法|未|不)(?:直接|自动|擅自|据此|再|就|已经|已|可以|允许|继续|照常|放心|说|认为|说明|表示|你|您)*$/.exec(prefix);
   return !neg||/不|未|无|没|非/.test(prefix.slice(0,neg.index));
  });
 }
@@ -41,6 +41,8 @@ function releasesRestrictedActivity(text:string,evidence:readonly ScopedRestrict
  // Evaluate the action the ANSWER proposes. A safe upper-body clause followed
  // by a negated running clause must not be merged into one lower-body action.
  return text.split(/[，,。；;！!？?\n]|但是|不过|然而|可是|但/).filter(Boolean).some(clause=>{
+  // A direct harm warning asserts risk, not clearance; explicit permission never borrows it.
+  if(!/(?:可以|允许|获准|放心)/.test(clause)&&/(?:继续|带痛).{0,8}(?:冲刺|跑步|训练).{0,4}(?:可能|会|容易)(?:导致|引起)?(?:加重|损伤|恶化)/.test(clause))return false;
   // A general causal capability is not permission to perform the exercise now.
   if(/(?:训练|运动|锻炼|方法|原理).{0,8}可以(?:帮助|改善|提高|促进|增强|引起|导致|影响)/.test(clause)&&!/(?:你|您|本人|该运动员|现在|今天|明天)/.test(clause))return false;
   if(!affirmed(clause,/(?:可以|继续|照常|允许|放心|获准)[^，,]{0,18}(?:训练|跑步|跑跳|冲刺|跳跃|深蹲|硬拉|卧推|弯举|力量|练习|复训)|(?:训练|跑步|冲刺|力量|练习)(?:现在|今天|仍然|依然|也)?(?:可以|允许|获准)?(?:照常|继续|恢复|执行|开始)|(?:训练|跑步|力量)(?:已)?放行|(?:训练|跑步|冲刺).{0,6}(?:不必|不用|无需|无须)(?:停止|暂停)/))return false;

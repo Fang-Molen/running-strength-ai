@@ -37,3 +37,10 @@ test('acute inability to walk is retained as a restriction; normal walking is no
  assert.equal(questionTaskPermission('小腿突然啪一声，现在走路都困难，我想继续冲刺。',[]).trainingRestricted,true)
  assert.equal(questionTaskPermission('只有轻微酸胀，走路正常，正在减轻。',[]).trainingRestricted,false)
 })
+test('warning about harm is not permission, while actual permission remains blocked',()=>{
+ assert.equal(validateCoachAssertions('继续冲刺可能加重损伤。不要继续冲刺。',{question:'小腿疼，现在走路困难，能否冲刺？',safetyRestricted:true,factQuotes:[]}).ok,true)
+ assert.equal(validateCoachAssertions('你可以继续冲刺，可能加重损伤。',{question:'小腿疼',safetyRestricted:true,factQuotes:[]}).ok,false)
+})
+test('explicit advice against sprinting is not a hold release',()=>{
+ assert.equal(validateCoachAssertions('不建议继续冲刺。',{question:'小腿疼，走路困难',safetyRestricted:true,factQuotes:[]}).ok,true)
+})
