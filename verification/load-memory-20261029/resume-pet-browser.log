@@ -1,0 +1,19 @@
+{"switched":{"owner":"pet-browser-synthetic-B","captureOwner":"local","receipts":["local","local"],"modules":["http://127.0.0.1:8080/src/lib/core/events.ts?t=1793240496096"]}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(!(await page.getByRole('dialog').innerText()).includes('RPE 7/10'))
+
+    at file:///workspace/fangkun-20261028/verification/phased-plan-20261028/1d-browser.mjs:22:666 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

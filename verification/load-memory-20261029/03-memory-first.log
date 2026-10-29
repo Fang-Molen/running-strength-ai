@@ -1,0 +1,37 @@
+✖ 新增、更正、删除、重复和回放的增量日结果等于全量参考 (27.696874ms)
+✔ 失败后不返回旧成功缓存；恢复可重读且不依赖缓存持久化 (3.162164ms)
+✔ 明确历史截止与晚录入隔离，缓存不跨人物和时区复用 (2.649888ms)
+✔ 日界按用户时区含夏令时，不用UTC午夜截掉当日晚训练 (0.759987ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.079267
+
+✖ failing tests:
+
+test at src/lib/health/load-memory.test.ts:12:1
+✖ 新增、更正、删除、重复和回放的增量日结果等于全量参考 (27.696874ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   '2026-10-21'
+  - ]
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/load-memory.test.ts:29:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

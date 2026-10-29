@@ -1,0 +1,17 @@
+✔ floating pet: shown for every theme with that theme's own role (classic = robot) (27.786421ms)
+✔ floating pet: hidden on coach tab, when master switch is off, and when the user hid it (0.865391ms)
+✔ floating pet: visibility is read from fk-pet-visible-v1 (only "0" hides) (1.917072ms)
+✔ tap shows a fixed gentle tip bubble with a hide button and changes mood; closing restores idle mood (2.088562ms)
+✔ reduced motion: no animation classes; normal: breathe + blink; talking adds bounce (1.507736ms)
+✔ position: clamped on screen above the dock, stored and parsed safely (1.495739ms)
+✔ settings toggle: visible for every theme, honours master switch, shows state (2.990802ms)
+✔ wiring: app shell has one import + one use; settings has one import + one use; no network or answer code in the pet (3.059506ms)
+✔ page → mood mapping (only the existing 12 moods) and floating pet follows the page (9.106654ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.300968

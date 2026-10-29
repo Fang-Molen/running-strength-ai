@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import {openPetCapture} from '@/lib/ui/pet-capture-navigation'
 import { FLOATING_PET_ENABLED, FLOATING_PET_POS_KEY, FLOATING_PET_VISIBLE_KEY, PET_ENABLED, petMoodSrc, petRoleForTheme } from './config'
 import { PET_DONE_EVENTS, PET_DONE_MS, petMoodForPage } from './page-mood'
 import {
@@ -152,7 +153,8 @@ export function FloatingPet({ theme, page = 'today', onCoachTab = false, enabled
     if (suppressClick.current) { suppressClick.current = false; return }
     const r = wrap.current?.getBoundingClientRect()
     if (r) setPlace({ below: r.top < 110, alignLeft: r.left + r.width / 2 < window.innerWidth / 2 })
-    dispatch({ type: 'tap' })
+    openPetCapture('menu')
+    dispatch({ type: 'close' })
   }
 
   const motion = !reduced
@@ -167,7 +169,7 @@ export function FloatingPet({ theme, page = 'today', onCoachTab = false, enabled
       <p>{tip}</p>
       <button type="button" data-testid="floating-pet-hide" onClick={hide} className="mt-1 min-h-7 rounded-md border border-line px-2 text-[11px] leading-none text-muted">收起</button>
     </div> : null}
-    <button type="button" data-testid="floating-pet-body" aria-label="桌宠。点一下说句话，拖动可移动，长按收起"
+    <button type="button" data-testid="floating-pet-body" aria-label="桌宠。点一下打开快捷记录，拖动可移动，长按收起"
       onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer} onClick={onClick} onContextMenu={e => e.preventDefault()}
       className={'pointer-events-auto block cursor-grab bg-transparent p-0 ' + (motion && talking ? 'fk-fpet-bounce' : motion && hop ? 'fk-fpet-hop' : '')}
       style={{ touchAction: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none', userSelect: 'none' }}>

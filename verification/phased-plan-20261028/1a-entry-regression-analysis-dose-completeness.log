@@ -1,0 +1,12 @@
+✔ missing segment distance cannot escape as an authoritative full-course total (43.134185ms)
+✔ unknown time stays a labelled subtotal while full known distance remains usable (4.321484ms)
+✔ strength missing repetitions are not silently replaced with a complete repetition total (5.557374ms)
+✔ explicit skipped segment is distinct from an unrecorded completion (3.114917ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 80.087739

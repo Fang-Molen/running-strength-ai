@@ -3,6 +3,8 @@ export type ActivityMember = {
   id: string; source: 'execution' | 'phone' | 'import' | 'garmin'; sport: string;
   durationSec: number | null; distanceM?: number | null; originIds?: string[];
   startedAt?: string; endedAt?: string; status?: 'completed' | 'incomplete';
+  /** A corrected segment cannot establish a replacement whole-session total. */
+  withdrawnMeasurements?: ('duration' | 'distance')[];
 }
 const actualKeys = (m: ActivityMember) => [m.id, ...(m.originIds ?? [])]
   .filter(k => !/^(?:p400:|plan400:|sched:)/.test(k))
@@ -26,7 +28,9 @@ export function activityDose(members: ActivityMember[]) {
     return known[0]
   }
   const doses = groups.map(g => ({
-    sport: g[0].sport, duration: consistent(g.map(m => m.durationSec)), distance: consistent(g.map(m => m.distanceM)),
+    sport: g[0].sport,
+    duration: g.some(m => m.withdrawnMeasurements?.includes('duration')) ? null : consistent(g.map(m => m.durationSec)),
+    distance: g.some(m => m.withdrawnMeasurements?.includes('distance')) ? null : consistent(g.map(m => m.distanceM)),
     intervals: g.flatMap(m => m.startedAt && m.endedAt && Number.isFinite(Date.parse(m.startedAt)) && Date.parse(m.endedAt) >= Date.parse(m.startedAt)
       ? [{ start:Date.parse(m.startedAt), end:Date.parse(m.endedAt) }] : []),
   }))
@@ -39,10 +43,14 @@ export function activityDose(members: ActivityMember[]) {
     return items.reduce((n,d) => n+d[key]!,0)
   }
   const ambiguous = doses.length > 1 && !separate(doses)
+  const corrected = members.some(m => m.withdrawnMeasurements?.length)
   return {
     durationSec: total(doses,'duration'), runningDurationSec: total(runs,'duration'), runningDistanceM: total(runs,'distance'),
     durationPartial: false,
-    measurementNote: conflict ? '同一活动的来源数值存在冲突，请核对原记录；冲突数值暂不汇总。'
-      : ambiguous ? '分项时间或整课范围未能核对，不确定是否重叠；各分项保留，整课时长暂不相加。' : undefined,
+    measurementNote: [
+      conflict ? '同一活动的来源数值存在冲突，请核对原记录；冲突数值暂不汇总。' : '',
+      corrected ? '活动已有更正，旧总量暂不引用；请核对更正后的明细。' : '',
+      ambiguous ? '分项时间或整课范围未能核对，不确定是否重叠；各分项保留，整课时长暂不相加。' : '',
+    ].filter(Boolean).join('') || undefined,
   }
 }

@@ -1,3 +1,4 @@
+import { CoachLoadMetricsPanel } from './coach-load-metrics-panel'
 import { SymptomPanel } from './symptom-panel'
 import { retainEvidenceDecision } from '@/lib/health/evidence-history'
 import { readEvidenceDecision } from '@/lib/health/evidence-decision-host'
@@ -220,6 +221,7 @@ function RecoveryTab({ day, today, rev, onCoach, onMuscle, rest, trend, onDay: s
       {t.value && t.key === "BB" && !t.stale ? <p className="keep text-xs text-muted">{t.sub}</p> : null}
       {t.delta ? <p className="keep text-xs text-muted">{t.delta}</p> : null}{t.stale ? <p className="keep text-xs text-[#e8b04a]" data-testid="h89-stale">{t.stale}</p> : null}
     </button>)}</div> : null}
+    <CoachLoadMetricsPanel revision={rev} day={day} />
     {emptyMetrics ? <details className="fk-h89-disclosure" data-testid="h89-empty-trend"><summary>查看健康趋势</summary>{explorer}</details> : explorer}
     <details className="fk-h89-disclosure"><summary>睡眠与训练时段</summary><EventCards day={day} d={all[day] ?? null} view={view} rev={rev} /></details>
     <button type="button" className="fk-h89-card flex w-full items-center gap-3 text-left" onClick={onMuscle} data-testid="h89-muscle-entry">

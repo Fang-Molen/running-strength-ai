@@ -1,0 +1,26 @@
+{
+  "transport": "IN_PROCESS_REAL_HTTP_CONTROLLER",
+  "networkListener": false,
+  "provider": "INJECTED_FAKE",
+  "paidCalls": 0,
+  "measurements": [
+    {
+      "revision": 1,
+      "requestAndModelMilliseconds": 59.628999000000476,
+      "wholeProviderBodyBytes": 5410,
+      "entireMessagesBytes": 5280,
+      "providerCalls": 1,
+      "followupReads": 0,
+      "realModelTokens": null
+    },
+    {
+      "revision": 2,
+      "requestAndModelMilliseconds": 43.89716099999896,
+      "wholeProviderBodyBytes": 5412,
+      "entireMessagesBytes": 5282,
+      "providerCalls": 1,
+      "followupReads": 0,
+      "realModelTokens": null
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import {notifyStorageChange} from './storage-changes'
 export type MemoryStore = {
   getItem(key: string): string | null
   setItem(key: string, value: string): void
@@ -21,6 +22,7 @@ let backend: MemoryStore | null = null
 
 export function setStoreBackend(store: MemoryStore | null) {
   backend = store
+  notifyStorageChange("BACKEND_CHANGED")
 }
 
 /** v89.11.13：大块、非关键同步数据（佳明日内样本、已确认训练导入）改放 IndexedDB（见 bulk-store.ts）。
@@ -35,7 +37,7 @@ export type BulkLayer = {
   keys(): readonly string[]
 }
 let bulk: BulkLayer | null = null
-export function setBulkLayer(layer: BulkLayer | null) { bulk = layer }
+export function setBulkLayer(layer: BulkLayer | null) { bulk = layer; notifyStorageChange("BULK_CHANGED") }
 export function bulkLayerActive(): boolean { return bulk !== null }
 const wrappers = new WeakMap<object, { layer: BulkLayer; wrapped: MemoryStore }>()
 function rawStore(): MemoryStore | null {
@@ -102,8 +104,10 @@ export function writeEnvelope<T>(key: string, data: T, revision?: number): Envel
   }
   try {
     box.setItem(key, JSON.stringify(next))
+    notifyStorageChange(key)
     return next
   } catch {
+    notifyStorageChange(key) // A failed acknowledgement may follow a completed write.
     return null
   }
 }

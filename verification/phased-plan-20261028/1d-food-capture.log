@@ -1,0 +1,16 @@
+✔ a repeated request reuses the durable food entry without another nutrition event (11.503986ms)
+✔ one request cannot be reused for a changed date, meal, or nutrition draft (4.939214ms)
+✔ retry after removal never recreates a withdrawn food entry (3.883526ms)
+✔ retry after correction cannot overwrite newer food values (5.043276ms)
+✔ capture receipt survives a restarted reader and undo appends history only (4.070479ms)
+✔ conditional undo refuses corrected entries and wrong athlete without touching history (1.617146ms)
+✔ storage failure retains request, date, meal, and owner in a reloadable draft (1.425747ms)
+✔ clearing a completed request cannot discard a newer draft (0.72767ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 47.474768

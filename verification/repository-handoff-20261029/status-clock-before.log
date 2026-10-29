@@ -1,0 +1,37 @@
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (4.172586ms)
+✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (38.06ms)
+✔ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (4807.015829ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (2547.783693ms)
+✔ bounded context accepts structured old history without converting targets into actuals (1.790798ms)
+✖ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (2631.370876ms)
+✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (3288.018152ms)
+✔ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (2979.258682ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16311.859021
+
+✖ failing tests:
+
+test at server/coach-deepseek/online-v2.test.ts:144:1
+✖ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (2631.370876ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'POLICY_UNVERIFIED'
+  - 'SCHEMA_MIGRATION_REQUIRED'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/server/coach-deepseek/online-v2.test.ts:153:16)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'POLICY_UNVERIFIED',
+    expected: 'SCHEMA_MIGRATION_REQUIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

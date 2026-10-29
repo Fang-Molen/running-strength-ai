@@ -186,7 +186,7 @@ export function HomeEditor({ layout, onChange, onClose }: { layout: Layout; onCh
 /* ---------------- 3) 全局“+记一笔” ---------------- */
 // v83（P0-03）：记一笔只写一条“计划外”训练事实；不造“按计划完成”的日程条目、不补默认 30 分钟、不按组数估用时。
 function saveParsed(p: Parsed, today: string, rpe: number | null, noteId: string, at: string): { msg: string; ok: boolean; soft?: boolean; ref?: QuickRecordRef } {
-  if (p.kind === "weight") return upsertCheck({ date: today, weight: p.kg } as never) ? { ok: true, msg: `已记体重 ${p.kg} kg` } : { ok: false, msg: "保存失败" }
+  if (p.kind === "weight") return upsertCheck({ date: p.date ?? today, weight: p.kg } as never) ? { ok: true, msg: `已记体重 ${p.kg} kg` } : { ok: false, msg: "保存失败" }
   if (p.kind === "unknown") return { ok: false, msg: "没认出来" }
   const r = saveQuickTraining(p, noteId, at, rpe)
   return r.ok ? { ok: true, msg: r.msg, ref: r.ref } : { ok: false, soft: r.soft, msg: r.msg }
@@ -212,9 +212,10 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
   useEffect(() => { if (open) setNotes(loadNotes()) }, [open])
   const taRef = useRef<HTMLTextAreaElement>(null), fileRef = useRef<HTMLInputElement>(null)
   useEffect(() => { const t = taRef.current; if (t) { t.style.height = "auto"; t.style.height = `${Math.min(t.scrollHeight, 260)}px` } }, [text, open])
-  const parsedLines = useMemo(() => text.split(/\n|；|;/).map(l => parseQuickLog(l.trim())).filter(r => r.kind !== "unknown"), [text]);
+  const parsedLines = useMemo(() => text.split(/\n|；|;/).filter(l=>l.trim()).map(l => parseQuickLog(l.trim(), today)), [text, today]);
   const multipleRecords = parsedLines.length > 1;
-  const p: Parsed | null = parsedLines.length === 1 ? parsedLines[0] : null;
+  const p: Parsed | null = parsedLines.length === 1 && parsedLines[0].kind !== "unknown" ? parsedLines[0] : null;
+  const unrecorded=parsedLines.flatMap(p=>p.unrecorded??[]);
   const save = () => {
     if (saving.current) return
     if (!text.trim() && !atts.length) { setErr("先写点什么或加一张截图"); return }
@@ -270,12 +271,13 @@ export function QuickLog({ today, onSaved, onFile, openWith }: { today: string; 
       </div>
       <ImageIntake title="截图完整识别" onText={(raw, file) => { setText(x => (x ? x + "\n" : "") + raw); setErr(""); if (file && atts.length < 3) void toThumb(file).then(url => setAtts(a => [...a, {id:crypto.randomUUID(),name:file.name,url}])).catch(() => setErr("文字已保留，图片附件保存失败，请重新选择。")); }} />
       {atts.length ? <div className="mt-2 flex flex-wrap gap-2" aria-label="附件">{atts.map(a => <div key={a.id}><img src={a.url} alt={a.name} className="size-20 rounded-lg object-contain" /><button type="button" className="min-h-11 text-xs text-accent" onClick={() => setAtts(v => v.filter(x => x.id !== a.id))}>移除图片</button></div>)}</div> : null}
+      {unrecorded.length>0?<p role="status" className="mt-2 text-sm text-amber-400">识别范围：{unrecorded.join("；")}</p>:null}
       {multipleRecords ? <p className="mt-2 text-sm text-amber-400">检测到多条数据，快速记录将完整保存为笔记。请到“详细记录”逐项核对后入库，不会只记录第一条。</p> : null}
       {text.trim() ? <div className="mt-3 rounded-2xl border border-line bg-surface p-3 text-sm" aria-label="识别结果">
         {p ? <>{p.kind === "run" ? <p><b className="text-[#2182bd]">识别为跑步</b> · {p.title} · 距离 {p.km ?? "—"} 公里 · 用时 {p.minutes ?? "—"} 分{p.pace ? ` · 配速 ${p.pace}` : ""}</p>
-          : p.kind === "strength" ? <p><b className="text-[#d07a2b]">识别为力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg ?? "自重"}{p.kg ? " kg" : ""}</p>
+          : p.kind === "strength" ? <p><b className="text-[#d07a2b]">识别为力量</b> · {p.name} · {p.sets} 组 × {p.reps} 次 · {p.kg ?? (p.weightBasis === '自重' ? '自重' : '重量未知')}{p.kg ? ` kg（${p.weightBasis ?? '口径未确认'}）` : ""}</p>
           : p.kind === "weight" ? <p><b>识别为体重</b> · {p.kg} kg</p> : null}
-          <p className="keep mt-1 text-xs text-muted">保存后会记入数据，原文也会作为笔记保留。</p>
+          <p className="keep mt-1 text-xs text-muted">记录日期：{p.date ?? today}。保存后会记入数据，原文也会作为笔记保留。</p>
           {p.kind === "run" || p.kind === "strength" ? <div className="mt-2"><EnergyGauge compact mode={p.kind === "run" ? "run" : "strength"} label="用力（可不填）" value={rpe} onChange={setRpe} /></div> : null}</>
           : <p className="text-muted">没有识别出训练或体重数据，将作为笔记保存，不会丢失。</p>}
       </div> : null}

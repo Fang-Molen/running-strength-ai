@@ -1,0 +1,317 @@
+{
+  "files": 34,
+  "filePass": 34,
+  "fileFail": 0,
+  "tests": 318,
+  "pass": 318,
+  "fail": 0,
+  "seconds": 37.038,
+  "results": [
+    {
+      "file": "server/coach-deepseek/online-v2.test.ts",
+      "exit": 0,
+      "seconds": 15.556,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/components/load-evidence-view.test.tsx",
+      "exit": 0,
+      "seconds": 3.369,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/components/pet/pet-capture.test.tsx",
+      "exit": 0,
+      "seconds": 2.105,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/context-period-range.test.ts",
+      "exit": 0,
+      "seconds": 0.771,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-chat-transport.test.ts",
+      "exit": 0,
+      "seconds": 5.582,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-coach.test.ts",
+      "exit": 0,
+      "seconds": 5.622,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-context.test.ts",
+      "exit": 0,
+      "seconds": 4.459,
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-facts-linkage.test.ts",
+      "exit": 0,
+      "seconds": 3.823,
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-facts-v86.test.ts",
+      "exit": 0,
+      "seconds": 4.742,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-history-entry.test.ts",
+      "exit": 0,
+      "seconds": 3.61,
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-nutrition-facts.test.ts",
+      "exit": 0,
+      "seconds": 1.023,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-recovery-facts.test.ts",
+      "exit": 0,
+      "seconds": 3.997,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-service.test.ts",
+      "exit": 0,
+      "seconds": 0.674,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-session.test.ts",
+      "exit": 0,
+      "seconds": 3.603,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/online-training-facts.test.ts",
+      "exit": 0,
+      "seconds": 3.805,
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/r5/online-guard-relax.test.ts",
+      "exit": 0,
+      "seconds": 0.989,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/coach/r6-online-integrity.test.ts",
+      "exit": 0,
+      "seconds": 4.681,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/core/coach-load-metrics-store.test.ts",
+      "exit": 0,
+      "seconds": 1.339,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/core/coach-load-metrics.test.ts",
+      "exit": 0,
+      "seconds": 0.683,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/core/import-log-correction.test.ts",
+      "exit": 0,
+      "seconds": 3.576,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/core/storage-journal.test.ts",
+      "exit": 0,
+      "seconds": 1.245,
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/analysis-evidence.test.ts",
+      "exit": 0,
+      "seconds": 0.879,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/load-evidence.test.ts",
+      "exit": 0,
+      "seconds": 0.736,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/load-integration.test.ts",
+      "exit": 0,
+      "seconds": 3.409,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/load-memory.test.ts",
+      "exit": 0,
+      "seconds": 2.598,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/load-prototype.test.ts",
+      "exit": 0,
+      "seconds": 0.829,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/recovery-host-u11-cutoff.test.ts",
+      "exit": 0,
+      "seconds": 3.517,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/health/recovery-host-u11.test.ts",
+      "exit": 0,
+      "seconds": 4.598,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/ui/online-preferences.test.ts",
+      "exit": 0,
+      "seconds": 3.459,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/ui/pet-capture.test.ts",
+      "exit": 0,
+      "seconds": 2.942,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/ui/quick-log-1d.test.ts",
+      "exit": 0,
+      "seconds": 1.191,
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/ui/quick-log-load-scope.test.ts",
+      "exit": 0,
+      "seconds": 1.19,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/ui/quick-log-v83.test.ts",
+      "exit": 0,
+      "seconds": 1.335,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "file": "src/lib/ui/training-record-sync.test.ts",
+      "exit": 0,
+      "seconds": 3.438,
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    }
+  ]
+}

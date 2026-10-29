@@ -1,0 +1,5 @@
+
+> typecheck
+> tsc --noEmit
+
+src/components/load-evidence-view.test.tsx(10,242): error TS1005: ',' expected.

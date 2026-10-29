@@ -1,0 +1,141 @@
+✖ 1A real analysis and online entry withdraw a conflicted total while retaining reliable segments and provenance (50.428114ms)
+✖ 1A distance-only conflict hides aggregate distance and pace without withdrawing reliable total time (9.643244ms)
+✖ 1A legacy daily context withdraws both conflicting totals and surfaces their current limitation (20.297323ms)
+✖ 1A historical asOf receives only a present uncertainty note, never cache observations or future imports (6.267268ms)
+✔ 1A same day and distance do not bridge identities, missing cache fields or another owner (62.319493ms)
+✖ 1A a reloaded cache remains transient and clearing it restores only the unchanged confirmed total (7.509857ms)
+✖ 1A the modern entry does not restore stale aggregate totals after a confirmed segment correction (12.155999ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 1
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.12552
+
+✖ failing tests:
+
+test at src/lib/health/analysis-import-conflicts.test.ts:41:1
+✖ 1A real analysis and online entry withdraw a conflicted total while retaining reliable segments and provenance (50.428114ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1800 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-import-conflicts.test.ts:46:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1800,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/health/analysis-import-conflicts.test.ts:62:1
+✖ 1A distance-only conflict hides aggregate distance and pace without withdrawing reliable total time (9.643244ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /5\.00|5\.10|配速/. Input:
+  
+  '合成独立活动 · 5.00 km · 用时 30:00 · 配速 6:00/km。还不知道这次是轻松跑、间歇还是长距离，所以没算进肌肉负荷；在日志里把它关联到计划课后，会按课型计入。'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-import-conflicts.test.ts:70:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '合成独立活动 · 5.00 km · 用时 30:00 · 配速 6:00/km。还不知道这次是轻松跑、间歇还是长距离，所以没算进肌肉负荷；在日志里把它关联到计划课后，会按课型计入。',
+    expected: /5\.00|5\.10|配速/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at src/lib/health/analysis-import-conflicts.test.ts:74:1
+✖ 1A legacy daily context withdraws both conflicting totals and surfaces their current limitation (20.297323ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1800 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-import-conflicts.test.ts:80:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1800,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/health/analysis-import-conflicts.test.ts:86:1
+✖ 1A historical asOf receives only a present uncertainty note, never cache observations or future imports (6.267268ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1800 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-import-conflicts.test.ts:91:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1800,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/health/analysis-import-conflicts.test.ts:119:1
+✖ 1A a reloaded cache remains transient and clearing it restores only the unchanged confirmed total (7.509857ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1800 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-import-conflicts.test.ts:124:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1800,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/health/analysis-import-conflicts.test.ts:132:1
+✖ 1A the modern entry does not restore stale aggregate totals after a confirmed segment correction (12.155999ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1800 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/analysis-import-conflicts.test.ts:138:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1800,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

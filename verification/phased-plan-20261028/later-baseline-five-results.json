@@ -1,0 +1,32 @@
+[
+  {
+    "file": "src/components/training-redesign.test.tsx",
+    "exit": 1,
+    "log": "verification/phased-plan-20261028/later-baseline-training-redesign.test.tsx.log",
+    "summary": "tton><button type=\"button\" aria-pressed=\"true\">60 kg</button><button type=\"button\" aria-pressed=\"false\">62 kg</button></div><label class=\"fk-figure-check\"><input type=\"checkbox\"/>设置目标体脂率<span class=\"text-xs text-muted\">选填</span></label><p class=\"keep text-sm text-muted\">目标体脂率：暂不设置</p><div class=\"fk-figure-delta\"><span>当前 56 kg</span><span aria-hidden=\"true\">→</span><b>目标 60 kg</b><span class=\"text-muted\">增加 4.0 kg</span></div></form><button type=\"button\" class=\"mt-3 min-h-11 w-full rounded-xl border border-line text-sm\">身体数据与趋势 ›</button></div><footer class=\"shrink-0 border-t border-line px-4 pt-2\" style=\"padding-bottom:max(12px, env(safe-area-inset-bottom))\"><p class=\"keep fk-figure-status\" role=\"status\" aria-live=\"polite\">目标已保存，可继续调整</p><button type=\"submit\" form=\"_R_0_\" disabled=\"\" class=\"fk-orange-btn fk-figure-save\">目标已保存</button></footer></div></div>...',\n    expected: /角色外观参考图（非3D）/,\n    operator: 'match',\n    diff: 'simple'\n  }\n"
+  },
+  {
+    "file": "src/components/warmup-workflow.test.tsx",
+    "exit": 1,
+    "log": "verification/phased-plan-20261028/later-baseline-warmup-workflow.test.tsx.log",
+    "summary": "/></label><label class=\"mt-3 block text-sm\">清晰线条<b class=\"float-right\">0%</b><input type=\"range\" class=\"mt-2 w-full accent-[#ff6a1a]\" aria-label=\"target清晰线条\" min=\"0\" max=\"100\" step=\"5\" value=\"0\"/></label><label class=\"mt-3 block text-sm\">肌肉饱满<b class=\"float-right\">30%</b><input type=\"range\" class=\"mt-2 w-full accent-[#ff6a1a]\" aria-label=\"target肌肉饱满\" min=\"0\" max=\"100\" step=\"5\" value=\"30\"/></label><label class=\"mt-3 block text-sm\">柔和轮廓<b class=\"float-right\">0%</b><input type=\"range\" class=\"mt-2 w-full accent-[#ff6a1a]\" aria-label=\"target柔和轮廓\" min=\"0\" max=\"100\" step=\"5\" value=\"0\"/></label><p class=\"keep mt-2 text-xs text-muted\">修改仅为外观参考，绝不改变真实身体测量值。无合格模型时仅保存偏好，参考图不会随滑杆变形。</p><button class=\"min-h-11 rounded-xl border border-line px-3 text-sm mt-3 w-full text-accent\" type=\"button\">保存视觉参考</button><p role=\"status\" class=\"mt-2 text-xs\"></p></details></section>...',\n    expected: /male-front.webp/,\n    operator: 'match',\n    diff: 'simple'\n  }\n"
+  },
+  {
+    "file": "src/lib/character/integration.test.tsx",
+    "exit": 1,
+    "log": "verification/phased-plan-20261028/later-baseline-integration.test.tsx.log",
+    "summary": "\" loading=\"lazy\" decoding=\"async\" class=\"mx-auto max-h-[420px] w-full object-contain\" alt=\"杠铃深蹲 · 女性版姿势示意（待审核）\"/><figcaption class=\"mt-1 text-sm font-semibold text-amber-500\">姿势示意·待审核</figcaption></figure><p role=\"status\" class=\"mt-2 text-sm text-muted\">演示加载中…</p></section>'\n  \n      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/character/integration.test.tsx:44:12)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1382:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)\n      at Test.postRun (node:internal/test_runner/test:1522:19)\n      at Test.run (node:internal/test_runner/test:1447:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: 'on>...',\n    expected: /female-front.webp/,\n    operator: 'match',\n    diff: 'simple'\n  }\n"
+  },
+  {
+    "file": "src/lib/core/coach-training-mechanisms.test.ts",
+    "exit": 1,
+    "log": "verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log",
+    "summary": "态。\\n' +\n    '\\n' +\n    '较短恢复通常使后续重复段在更不充分的恢复下进行；充分恢复更有利于维持较高跑速与动作质量。具体适应还受实际速度、总量和个体水平影响。\\n' +\n    '\\n' +\n    '这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。'\n  \n      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/core/coach-training-mechanisms.test.ts:47:16)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1382:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)\n      at Test.postRun (node:internal/test_runner/test:1522:19)\n      at Test.run (node:internal/test_runner/test:1447:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: '相同跑段距离和组数，不代表相同训练刺激；恢复时间会改变下一组开始时的状态。\\n\\n较短恢复通常使后续重复段在更不充分的恢复下进行；充分恢复更有利于维持较高跑速与动作质量。具体适应还受实际速度、总量和个体水平影响。\\n\\n这是一般原理；用于你的训练时，还需结合目标、实际训练和恢复反应。',\n    expected: /^结论：/,\n    operator: 'match',\n    diff: 'simple'\n  }\n"
+  },
+  {
+    "file": "src/lib/ui/plan400-components-store.test.ts",
+    "exit": 1,
+    "log": "verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log",
+    "summary": "ected: 2,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n\ntest at src/lib/ui/plan400-components-store.test.ts:60:1\n✖ 解除关联后不再自动关联；用户可重新确认 (1.298452ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  + actual - expected\n  \n  + undefined\n  - 'user'\n  \n      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/plan400-components-store.test.ts:66:12)\n      at Test.runInAsyncScope (node:async_hooks:227:14)\n      at Test.run (node:internal/test_runner/test:1382:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)\n      at Test.postRun (node:internal/test_runner/test:1522:19)\n      at Test.run (node:internal/test_runner/test:1447:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: undefined,\n    expected: 'user',\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n"
+  }
+]

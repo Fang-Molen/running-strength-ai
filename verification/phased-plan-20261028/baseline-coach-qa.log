@@ -1,0 +1,21 @@
+
+> test:coach-qa
+> node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/coach/online-session.test.ts src/lib/coach/online-service.test.ts src/lib/coach/r5/guard-conversation.test.ts src/lib/core/coach-general-question.test.ts src/lib/core/coach-colloquial-pain.test.ts server/coach-deepseek/coach-status.test.mjs server/coach-deepseek/coach-runtime.test.ts server/coach-deepseek/coach-backend-adapter.test.mjs src/lib/core/coach-guard-k15.test.ts
+
+✔ server/coach-deepseek/coach-backend-adapter.test.mjs (14924.489623ms)
+✔ server/coach-deepseek/coach-runtime.test.ts (31649.650801ms)
+✔ server/coach-deepseek/coach-status.test.mjs (1452.921636ms)
+✔ src/lib/coach/online-service.test.ts (2306.284184ms)
+✔ src/lib/coach/online-session.test.ts (7917.272406ms)
+✔ src/lib/coach/r5/guard-conversation.test.ts (3485.513235ms)
+✔ src/lib/core/coach-colloquial-pain.test.ts (12801.648169ms)
+✔ src/lib/core/coach-general-question.test.ts (10446.63761ms)
+✔ src/lib/core/coach-guard-k15.test.ts (6589.042441ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32220.306235

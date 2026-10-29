@@ -1,0 +1,64 @@
+✖ 混合一句话不悄悄只保存跑步，原文和原因保留 (2.655086ms)
+✖ 未支持心率明确作为原文，结构化训练不冒称已经记录心率 (5.511444ms)
+✖ 明确每手和总重口径保存到逐组字段，不只放标题 (0.927801ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.013069
+
+✖ failing tests:
+
+test at src/lib/ui/quick-log-load-scope.test.ts:5:1
+✖ 混合一句话不悄悄只保存跑步，原文和原因保留 (2.655086ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'run' !== 'unknown'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/quick-log-load-scope.test.ts:8:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'run',
+    expected: 'unknown',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/ui/quick-log-load-scope.test.ts:14:1
+✖ 未支持心率明确作为原文，结构化训练不冒称已经记录心率 (5.511444ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(p.unrecorded?.some(x => /心率/.test(x)))
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/quick-log-load-scope.test.ts:17:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/ui/quick-log-load-scope.test.ts:24:1
+✖ 明确每手和总重口径保存到逐组字段，不只放标题 (0.927801ms)
+  TypeError: Cannot read properties of undefined (reading 'value')
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/quick-log-load-scope.test.ts:29:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

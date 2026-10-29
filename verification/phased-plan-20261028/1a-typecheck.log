@@ -1,0 +1,5 @@
+
+> typecheck
+> tsc --noEmit
+
+src/lib/nutrition/food-capture.test.ts(7,26): error TS2307: Cannot find module './food-capture' or its corresponding type declarations.

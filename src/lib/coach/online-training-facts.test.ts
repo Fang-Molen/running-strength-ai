@@ -11,6 +11,8 @@ import {saveRunningPlan} from '../core/running-plan.ts'
 import {startTrackSession,commitTrackContinuous,finishTrackSession} from '../ui/running-workouts.ts'
 import {onlineTrainingFacts} from './online-training-facts.ts'
 import {logSession,type Session,type Plan} from '../strength/model.ts'
+import {garminViewKey} from '../health/garmin-view-scope.ts'
+import {readCurrentImportConflicts} from '../core/current-import-conflicts.ts'
 
 const day='2026-10-22',asOf='2026-10-22T12:00:00.000Z',owner='synthetic-online-training'
 function fixture(t:test.TestContext){
@@ -209,4 +211,75 @@ test('a real confirmed Garmin import is readable without an optional watch cache
  t.mock.timers.tick(1000);assert.ok(appendCorrection({trainingOccurrenceId:result.record.confirmedImportId,kind:'VOID',reason:'合成撤销导入'}))
  assert.doesNotMatch(text(onlineTrainingFacts(day,new Date().toISOString())),/5321|1845/)
  assert.match(text(onlineTrainingFacts(day,asOf)),/5321/)
+})
+
+function currentCacheFixture(t:test.TestContext){
+ const f=fixture(t),identity='garmin:PRIVATE_ACCOUNT:activity-A'
+ const draft=createTrainingImportDraft({sport:'RUNNING',occurredAt:recorded(`${day}T09:00:00.000Z`),title:recorded('PRIVATE_WATCH_TITLE'),totalDistanceMeters:recorded(5000),durationSeconds:recorded(1800),
+  runningSegments:[{id:'segment-A',kind:'REPETITION',distanceMeters:recorded(300),durationSeconds:recorded(50),completion:'COMPLETED',sourceIds:['user-confirmed']}]},'TEXT',['user-confirmed'])
+ draft.sourceRecordIdentity=identity
+ const saved=confirmTrainingImport(draft);assert.ok(saved.ok)
+ const cache=(patch:Record<string,unknown>={})=>f.store.setItem(garminViewKey('fk-garmin-acts-v1'),JSON.stringify({A:{athleteId:owner,id:123,sourceIdentity:identity,start:`${day}T09:00:00.000Z`,type:'running',dist:5000,dur:1900,...patch}}))
+ return {...f,cache,record:saved.record}
+}
+
+test('1A current same-identity cache conflict withdraws only the ambiguous total and preserves reliable segments',t=>{
+ const f=currentCacheFixture(t);f.cache()
+ const before=JSON.stringify([...f.data]),out=text(onlineTrainingFacts(day,asOf))
+ assert.match(out,/总时长未知.*当前.*冲突/)
+ assert.match(out,/总距离\s*5000米/);assert.match(out,/第1段\s*300米，50秒/)
+ assert.match(out,/缓存.*录入时间未知/);assert.match(out,/不作为历史事实/)
+ assert.doesNotMatch(out,/总时长\s*1800秒|1900|PRIVATE_/)
+ assert.equal(JSON.stringify([...f.data]),before)
+})
+
+test('1A current distance conflict leaves unconflicted time available and never fabricates corrected totals',t=>{
+ const f=currentCacheFixture(t);f.cache({dist:5100,dur:1800})
+ const out=text(onlineTrainingFacts(day,asOf))
+ assert.match(out,/总距离未知.*当前.*冲突/);assert.match(out,/总时长\s*1800秒/)
+ assert.doesNotMatch(out,/总距离\s*5000米|5100/)
+})
+
+test('1A cache conflicts are current diagnostics even for a historical cutoff and never introduce future import facts',t=>{
+ const f=currentCacheFixture(t);t.mock.timers.tick(86_400_000);f.cache()
+ const out=text(onlineTrainingFacts(day,asOf,{selectedOccurrenceId:f.record.confirmedImportId}))
+ assert.match(out,/当前.*冲突/);assert.match(out,/录入时间未知/);assert.match(out,/不作为历史事实/)
+ assert.match(out,/第1段\s*300米，50秒/)
+ assert.doesNotMatch(out,/1900|截止.*存在冲突/)
+ const earlier=text(onlineTrainingFacts(day,'2026-10-22T11:59:59.000Z',{selectedOccurrenceId:f.record.confirmedImportId}))
+ assert.doesNotMatch(earlier,/冲突|5000|1800|300米/)
+})
+
+test('1A similar independent identity, missing cache fields, and other owner cache never invalidate confirmed totals',t=>{
+ const f=currentCacheFixture(t)
+ for(const patch of [{sourceIdentity:'garmin:PRIVATE_ACCOUNT:activity-B'},{dur:null,dist:null},{athleteId:'other-athlete'}]){
+  f.cache(patch)
+  const out=text(onlineTrainingFacts(day,asOf))
+  assert.match(out,/总时长\s*1800秒/);assert.match(out,/总距离\s*5000米/);assert.doesNotMatch(out,/来源冲突|缓存.*冲突/)
+ }
+ f.cache();setEventContext({athleteId:'other-athlete'})
+ assert.doesNotMatch(text(onlineTrainingFacts(day,asOf,{selectedOccurrenceId:f.record.confirmedImportId})),/冲突|5000|1800|300米/)
+})
+
+test('1A corrected or removed current cache clears only its transient conflict and leaves confirmed import intact',t=>{
+ const f=currentCacheFixture(t);f.cache();assert.match(text(onlineTrainingFacts(day,asOf)),/当前.*冲突/)
+ f.cache({dur:1800});assert.match(text(onlineTrainingFacts(day,asOf)),/总时长\s*1800秒/)
+ f.store.removeItem(garminViewKey('fk-garmin-acts-v1'))
+ assert.match(text(onlineTrainingFacts(day,asOf)),/总时长\s*1800秒/)
+})
+
+test('1A current conflict metadata survives a fresh storage backend without acquiring historical validity or cache values',t=>{
+ const f=currentCacheFixture(t);f.cache();t.mock.timers.tick(1000)
+ const stored=JSON.stringify([...f.data]),disk=new Map<string,string>(JSON.parse(stored))
+ const restarted={getItem:(key:string)=>disk.get(key)??null,setItem:(key:string,value:string)=>{disk.set(key,value)},keys:()=>[...disk.keys()]}
+ setStoreBackend(restarted)
+ const conflict=readCurrentImportConflicts([f.record]).get(f.record.confirmedImportId)
+ assert.ok(conflict)
+ const {note,...metadata}=conflict
+ assert.deepEqual(metadata,{occurrenceId:f.record.confirmedImportId,duration:true,distance:false,observedAt:'2026-10-22T12:00:01.000Z',cacheKnownAt:null,usableAsHistoricalEvidence:false})
+ assert.match(note,/当前.*冲突/);assert.match(note,/录入时间未知.*不作为历史事实/)
+ assert.equal(JSON.stringify([...disk]),stored)
+ assert.doesNotMatch(JSON.stringify(conflict),/1900|PRIVATE_/)
+ setEventContext({athleteId:'other-athlete'})
+ assert.equal(readCurrentImportConflicts([f.record]).size,0)
 })

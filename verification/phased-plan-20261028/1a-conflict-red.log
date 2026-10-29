@@ -1,0 +1,128 @@
+✔ unlinked chat includes completed native strength actual values and completion RPE without private labels (24.204459ms)
+✔ an open session retains recorded timed sets while its whole-session status remains unfinished (4.849483ms)
+✔ weight corrections and deletion are reflected on each read, with prior asOf preserving the earlier value (6.651787ms)
+✔ future committed work and another athlete never enter the current request even when selected (7.200491ms)
+✔ completed native running stays separate from strength and carries actual distance and duration (8.300468ms)
+✔ selected older native training gets detail priority while the day summary stays on the requested date (21.945259ms)
+✔ conflicting whole-session RPE is not averaged or replaced by the completion value (1.784279ms)
+✔ unreadable training containers differ from a clean empty history (0.751714ms)
+✔ a malformed running transaction is reported instead of an empty training history (0.582979ms)
+✔ reading a mixed native training history is storage read-only (1.463721ms)
+✔ confirmed totals-only running remains a dated actual import without invented segments or whole-session completion (3.768028ms)
+✔ a confirmed duration-only strength import has actual seconds and does not fabricate sets or running distance (0.934281ms)
+✔ visible import total corrections withdraw old totals and preserve their historical asOf values (3.204867ms)
+✔ corrected import segments remain segment values while aggregate distance and duration are withdrawn (2.385654ms)
+✔ a legitimate import feedback withdrawal supersedes RPE without being mislabelled a source conflict (1.676191ms)
+✔ the real strength-page completion feedback is readable without inventing plan sets or load (0.898168ms)
+✔ editing strength feedback keeps one dated report and a later skip withdraws its completion claim (1.188871ms)
+✔ strength completion feedback requires current owner and a reliable journal time at the cutoff (1.283089ms)
+✔ voiding and restoring a dated strength completion report obey their known-time boundary (1.719955ms)
+✔ an occurrence-bound completion and an unbound event used as its close never create extra reports (2.157942ms)
+✔ a real confirmed Garmin import is readable without an optional watch cache and retains owner/asOf/void boundaries (2.442828ms)
+✖ 1A current same-identity cache conflict withdraws only the ambiguous total and preserves reliable segments (2.155689ms)
+✖ 1A current distance conflict leaves unconflicted time available and never fabricates corrected totals (1.01619ms)
+✖ 1A cache conflicts are current diagnostics even for a historical cutoff and never introduce future import facts (1.166729ms)
+✔ 1A similar independent identity, missing cache fields, and other owner cache never invalidate confirmed totals (3.452168ms)
+✖ 1A corrected or removed current cache clears only its transient conflict and leaves confirmed import intact (1.033705ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 22
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 128.25381
+
+✖ failing tests:
+
+test at src/lib/coach/online-training-facts.test.ts:321:1
+✖ 1A current same-identity cache conflict withdraws only the ambiguous total and preserves reliable segments (2.155689ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /总时长未知.*当前.*冲突/. Input:
+  
+  '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n' +
+    '近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n' +
+    '2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-training-facts.test.ts:325:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。',
+    expected: /总时长未知.*当前.*冲突/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-training-facts.test.ts:333:1
+✖ 1A current distance conflict leaves unconflicted time available and never fabricates corrected totals (1.01619ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /总距离未知.*当前.*冲突/. Input:
+  
+  '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n' +
+    '近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n' +
+    '2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-training-facts.test.ts:337:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。',
+    expected: /总距离未知.*当前.*冲突/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-training-facts.test.ts:341:1
+✖ 1A cache conflicts are current diagnostics even for a historical cutoff and never introduce future import facts (1.166729ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /当前.*冲突/. Input:
+  
+  '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n' +
+    '近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n' +
+    '选定训练·2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-training-facts.test.ts:346:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n选定训练·2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。',
+    expected: /当前.*冲突/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-training-facts.test.ts:367:1
+✖ 1A corrected or removed current cache clears only its transient conflict and leaves confirmed import intact (1.033705ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /当前.*冲突/. Input:
+  
+  '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n' +
+    '近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n' +
+    '2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-training-facts.test.ts:370:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-10-22 逐组/逐段/完成自报/已确认导入训练：本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）。\n近7天同范围（2026-10-16—2026-10-22）本机已完成0次；本机有实际记录但整课未完成0次；已确认导入1条（不推断整课完成）；跑步1次、力量0次（跑步与力量可能属同课，不相加）；截至 2026-10-22T12:00:00.000Z，与手表摘要同源记录不重复累加。\n2026-10-22 导入跑步（已确认导入实际，整课完成状态未单独记录；整课RPE未记录）：已确认实际总距离 5000米；已确认实际总时长 1800秒；第1段 300米，50秒。',
+    expected: /当前.*冲突/,
+    operator: 'match',
+    diff: 'simple'
+  }

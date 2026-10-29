@@ -1,0 +1,311 @@
+{
+  "baseline": "92632540c8cd42267461d42403786bec2a2281eb",
+  "codeSignature": "d53541c83990c906ccfd3bb8a57023956363af4b3e4384c668ca9707cc90c8c5",
+  "files": [
+    {
+      "path": "server/coach-deepseek/coach-chat.controller.js",
+      "sha256": "bea841d7bf71536c75a60b26dfcea11e873775df473773b40adae788be339904"
+    },
+    {
+      "path": "server/coach-deepseek/online-v2.test.ts",
+      "sha256": "98690f04a52186c9b23b3089cdc991e385d28bcf531e7c392faab7ee32aa9fa5"
+    },
+    {
+      "path": "src/components/coach-load-metrics-panel.tsx",
+      "sha256": "6b77d1a9e46efacf2ef188405a34bff5d0830e9c499f0f70d1a71f764fc4c6f5"
+    },
+    {
+      "path": "src/components/coach-online-answer-status.tsx",
+      "sha256": "60ba0936ac71fac294580529fbb4208d25ff580415d3e14c3dfd72aa1e05953d"
+    },
+    {
+      "path": "src/components/coach-sheet.tsx",
+      "sha256": "b68da2a79fe2950492b48edf9bb5c16d612f3afd250d459e140e13fe5b31336f"
+    },
+    {
+      "path": "src/components/food-entry-sheet-capture.test.tsx",
+      "sha256": "7f2b684c7f01c1cd5b982f3c634a70a1d9795acf3e8631edfd51b80a2805637d"
+    },
+    {
+      "path": "src/components/food-entry-sheet.tsx",
+      "sha256": "c3852b04df01534c9e7b6d94d7fc71958c67dc038972fa792619a6916aa6466d"
+    },
+    {
+      "path": "src/components/health-page-v89.tsx",
+      "sha256": "65cf72f319fe46e5c3284b4b901e74c1002f279d7bd946b301e44194e90296e7"
+    },
+    {
+      "path": "src/components/load-evidence-view.test.tsx",
+      "sha256": "6cc05fa65ce0befe978b7be16f387c45c93d3c38de07d2cf9f50bbd83321d9f2"
+    },
+    {
+      "path": "src/components/load-evidence-view.tsx",
+      "sha256": "4e8ce78bbd3a6978caf5c241c27cae7c0f3d409c8517620a2522d8a22a20f2a1"
+    },
+    {
+      "path": "src/components/pet/floating-pet.tsx",
+      "sha256": "a5a49606cd7e40164118824786060b6359ac83b902fc231aea8eb3108fbf0a7f"
+    },
+    {
+      "path": "src/components/pet/pet-capture.test.tsx",
+      "sha256": "2c02d3f4dd149e02978f79478bef462f792e7e7bae1b2c6ccdd26d0645040c14"
+    },
+    {
+      "path": "src/components/pet/pet-capture.tsx",
+      "sha256": "7db4ababcbd9fe63928856b7ac9a520d29a7f2ee5ad47221e0e6ab115117b6c2"
+    },
+    {
+      "path": "src/components/r8.tsx",
+      "sha256": "5515646a7008c370a5933890360857a81b00e963c1e1b0af43e0dafebb3e8ccc"
+    },
+    {
+      "path": "src/components/strength-app.tsx",
+      "sha256": "bec9fd83459a734aea15e67201c5abfc1eb30bddb9134339836ff4b319427bc3"
+    },
+    {
+      "path": "src/components/training-load-evidence.tsx",
+      "sha256": "7731c755fd17736c3d60034a4e21a71aa9853c7a5747a2cd35f78ff85d361017"
+    },
+    {
+      "path": "src/components/training-log-panel.tsx",
+      "sha256": "e9e1a0a25b72c38ce0c29f25df133ef54d251aa2db8bd6732691c93c7f7ad38b"
+    },
+    {
+      "path": "src/components/training-log-v76.tsx",
+      "sha256": "4be15da13f399d086eb6e1166ce68a94fada5294afe2a1bafcca86c8691ca74b"
+    },
+    {
+      "path": "src/lib/coach/context-fields.ts",
+      "sha256": "02aec88cc0061c6c865e2809357624a7caf4d56b68d8b37ca2e6d00b143bea4b"
+    },
+    {
+      "path": "src/lib/coach/context-period-range.test.ts",
+      "sha256": "7f197e0c7f6545702dc5e3a4846b5e759e0ac6a925a9f12ad527f01cf9b50da8"
+    },
+    {
+      "path": "src/lib/coach/context-period.ts",
+      "sha256": "ca399faa0dcd9c8f6f054776e1ac89ece05222ba65d83c8fac0e4119d3ce41ba"
+    },
+    {
+      "path": "src/lib/coach/cycle/feedback-cutoff.test.ts",
+      "sha256": "105e63149a7a787a71492e7e8a097d1182e310a339a3ebc11c630405774a9ee4"
+    },
+    {
+      "path": "src/lib/coach/cycle/host.test.ts",
+      "sha256": "64196c9f4a75cebb7a265aaae7b3f8ca2dfecce5d3d48060f682b05f2f7b777f"
+    },
+    {
+      "path": "src/lib/coach/cycle/host.ts",
+      "sha256": "7f2c2f1e948043b033bc4724999c751f65f059b68624f90ca8c19608e1f5de46"
+    },
+    {
+      "path": "src/lib/coach/online-context.test.ts",
+      "sha256": "43c05c817b7332c349affaa919ad8354a97e6d445f3b3d1536d57024df8448ee"
+    },
+    {
+      "path": "src/lib/coach/online-context.ts",
+      "sha256": "4db4ed60e42800015716779025ff328cfa9f24de6912400959519f322b62c7fd"
+    },
+    {
+      "path": "src/lib/coach/online-handoff.ts",
+      "sha256": "55f2e2b3267e3711e22d87a782db676001c0677e99a548e0340f19cefc8940da"
+    },
+    {
+      "path": "src/lib/coach/online-history-entry.test.ts",
+      "sha256": "3e2e69b3d9600681d18dbad3030ebb30f467d6dc5b4bf5db414e1b82f86c7084"
+    },
+    {
+      "path": "src/lib/coach/online-load-context.ts",
+      "sha256": "bae92509820ba2bd180c91715e080b2f92d2ffbd7db572b31e22faa160840225"
+    },
+    {
+      "path": "src/lib/coach/online-session.ts",
+      "sha256": "05cdf139f43ba627b8a38daa4c9c20a4fb2fd14e5326e03ef03293feba19671f"
+    },
+    {
+      "path": "src/lib/coach/online-training-facts.test.ts",
+      "sha256": "246c7bc2a6e28defe8039f09d3414175b27995fb2d79f5cc51af33e7f70bee9b"
+    },
+    {
+      "path": "src/lib/coach/online-training-facts.ts",
+      "sha256": "8dbcb8c28a45eb70e3f6b4318be8dc07792952028b8fad8d79eaccce94b7b0d7"
+    },
+    {
+      "path": "src/lib/core/coach-import-evidence.ts",
+      "sha256": "85433bfa8f4f8051bd5f07013e269ef762a5dee5db4af6e7ae204efad954aa7d"
+    },
+    {
+      "path": "src/lib/core/coach-import-totals.test.ts",
+      "sha256": "1401c8afd8c447f4e1b1df5e51ac93e1511b6eb44353ca0e57146485e8250f9a"
+    },
+    {
+      "path": "src/lib/core/coach-load-metrics-store.ts",
+      "sha256": "6fd419dd0d3cace3fbcdec4f37530e8df21e48d53c85b3f311534183ace3044e"
+    },
+    {
+      "path": "src/lib/core/coach-load-metrics.ts",
+      "sha256": "85092ae858c85307d5b0d8c7d1205ee05a072eb297b9296056e06e730d596545"
+    },
+    {
+      "path": "src/lib/core/coach-v4-formal-rows.ts",
+      "sha256": "6abb919e9345ec65aa3f111e1bbe412765cdecbfdc972a218f48b7bad891063e"
+    },
+    {
+      "path": "src/lib/core/current-import-conflicts.ts",
+      "sha256": "4a347de8f2e8fbd3759fadcb1eca784f93e4fa654f6dcc7dccfe5600713ff261"
+    },
+    {
+      "path": "src/lib/core/restore-transaction.test.ts",
+      "sha256": "18279dd1e792f92379d7cbfa8bbf1dfc661587128986db0806eb1d45f1501e9d"
+    },
+    {
+      "path": "src/lib/core/restore-transaction.ts",
+      "sha256": "354ee0fe2ebe3f9800fb8bc596e8753a49257dc53e96cd8b62229490122ef76f"
+    },
+    {
+      "path": "src/lib/core/storage-changes.ts",
+      "sha256": "b7f8fba3c2b9841c637483ca552e15b0fd328b7cc64dc1a1a73d686fc705b59a"
+    },
+    {
+      "path": "src/lib/core/storage-journal.ts",
+      "sha256": "f95deab3e6261ca5bd7a54bff9a8ac62c5cd698600d3a2ea44095c3bc5db36b1"
+    },
+    {
+      "path": "src/lib/core/storage.ts",
+      "sha256": "07781ab1266191e5788223f561bfa89c2e51a5d240f25afef566306822e3af7e"
+    },
+    {
+      "path": "src/lib/health/analysis-contract.ts",
+      "sha256": "951a6ed8827ccd11b9ffc72a263c765173368131c0fa4f6ec589f37815e85143"
+    },
+    {
+      "path": "src/lib/health/analysis-from-parts.ts",
+      "sha256": "ce5cfff2b1fce52e1a5de5300c6a55be72a2f2e75ab74d99452ab34f6bf3f41e"
+    },
+    {
+      "path": "src/lib/health/analysis-host.ts",
+      "sha256": "05e182b2ea003e9bc3bfeaeb062a635f6af1cfd4e845e83fc10adda6344fe9a1"
+    },
+    {
+      "path": "src/lib/health/analysis-import-conflicts.test.ts",
+      "sha256": "22f3da998b75ba0772e201ab81c660f0b03b1cc0cdab14ecb3fd7d7c6d034986"
+    },
+    {
+      "path": "src/lib/health/body-capture-context.ts",
+      "sha256": "2d1d9cb15210c634506dd8090c3287eba07a046fd91c155990d87402fd5957cf"
+    },
+    {
+      "path": "src/lib/health/coach-data.ts",
+      "sha256": "82cc1f54a87ab8f72f0417a2db6202713cfcfd9707cea30a415d2f74d181a00f"
+    },
+    {
+      "path": "src/lib/health/load-evidence.test.ts",
+      "sha256": "c74f7ac6d38593254aa0a05e3b5728df0a7ca24d63e2eef19971695539d6a632"
+    },
+    {
+      "path": "src/lib/health/load-evidence.ts",
+      "sha256": "244adaac786bea3061d9612f594b1258b127548094bedcdba5d668e88b3ca2e0"
+    },
+    {
+      "path": "src/lib/health/load-integration.test.ts",
+      "sha256": "6d6c5782a1ac715885624ced3bb2615e79fdc8a7dc1d97122673247cb9c27e90"
+    },
+    {
+      "path": "src/lib/health/load-memory.test.ts",
+      "sha256": "0b6c026014c2e35907e7f770a712eafdaf5468a0e74c85f22689bdef5c7611f0"
+    },
+    {
+      "path": "src/lib/health/load-memory.ts",
+      "sha256": "cd7c77b416c352e44106543d0fbdcd33faca2886692d69c236ab56fa87de26cb"
+    },
+    {
+      "path": "src/lib/health/load-prototype.test.ts",
+      "sha256": "1df019fd6ff9b612b54695dd99c015185ecd6120e2bcb84361e5943e7c9a3b7b"
+    },
+    {
+      "path": "src/lib/health/load-prototype.ts",
+      "sha256": "a1039ade70a4a8d611e9a52698e772c25d56e24bf0a061a23b710d19dd1c1bde"
+    },
+    {
+      "path": "src/lib/health/muscle-recovery-u11.ts",
+      "sha256": "a655b9585e85e3800e3dfeba8940f489064a025e3b69fe92306ea11ef601809f"
+    },
+    {
+      "path": "src/lib/health/recovery-host-u11.ts",
+      "sha256": "45d55794e7e429482371037ec13108f85748107ed67780d2322c4fb90f8fd00f"
+    },
+    {
+      "path": "src/lib/nutrition/entry-workflow.ts",
+      "sha256": "b8c2d7c2100367ddcd3c17c96856179f6f121982514313d6a2f23715a864f27e"
+    },
+    {
+      "path": "src/lib/nutrition/food-capture.test.ts",
+      "sha256": "a3af258921db888ec37567ae88bf38b3d57e4b59c0b1b1e72df51ca64e0a5f95"
+    },
+    {
+      "path": "src/lib/nutrition/food-capture.ts",
+      "sha256": "6381d3bf61eb6fcf226b4df22999e13ad6d83d780f303a7634b3a9adc61970e1"
+    },
+    {
+      "path": "src/lib/nutrition/food-search-readiness.test.ts",
+      "sha256": "a4f9c9741328a3472eef22441c6faaa8346115042df8367f9854923cad432f86"
+    },
+    {
+      "path": "src/lib/nutrition/food-search-readiness.ts",
+      "sha256": "b32501963f6ebe7b22ff05949676e678691fc9c01cb8ccd2c7ac7830063f371d"
+    },
+    {
+      "path": "src/lib/nutrition/log.ts",
+      "sha256": "e9eba985b94760e22b081b62bc8eb95d0f229e91675e371eeb7c1af66606d003"
+    },
+    {
+      "path": "src/lib/ui/activity-dose.ts",
+      "sha256": "da24dd6db0ab06939ee32abfc623b9588636f91fc79818f0b9742f23d2f9ee7d"
+    },
+    {
+      "path": "src/lib/ui/pet-capture-navigation.ts",
+      "sha256": "9208e33e01f82eae523f3589e3b1a6388c488a6352311207bb68bb5b20569af7"
+    },
+    {
+      "path": "src/lib/ui/pet-capture.test.ts",
+      "sha256": "a0f70f1e5b74f7f3b54d05ba32dd007375332df5311d32b204f7266f8078cdd9"
+    },
+    {
+      "path": "src/lib/ui/pet-capture.ts",
+      "sha256": "f750b63b0d67ca642a67d9154bd3fd73760d2c0ed132ac9fddeaf482729d43c6"
+    },
+    {
+      "path": "src/lib/ui/quick-log-1d.test.ts",
+      "sha256": "fdf4a9768e74403f397739d9d0b2b44cfaf5770b50239abe0a46a5fac7d4add7"
+    },
+    {
+      "path": "src/lib/ui/quick-log-load-scope.test.ts",
+      "sha256": "bd4be4549a72aef911d5b34e9468ff9de7d38b54e74f17b479c3eb522d8e3f91"
+    },
+    {
+      "path": "src/lib/ui/quick-log-save.ts",
+      "sha256": "13a0e96328c7b42790eca3107f0ef40670a8428f810ab1835e4daf856a27e4ae"
+    },
+    {
+      "path": "src/lib/ui/quick-log.ts",
+      "sha256": "12c833bdfa8114c3a58f8288a7c2b6c47587cebf4e5d84ebe4d9c9e8cc52f85f"
+    },
+    {
+      "path": "src/lib/ui/training-activity-dose.test.ts",
+      "sha256": "793f79668a0b51de68fb9260eda53065f77c300874ca497571d34e1159ab32f6"
+    },
+    {
+      "path": "src/lib/ui/training-read-model-1a.test.ts",
+      "sha256": "e41b7e53b327efe8ecee7d5a7a3ac886e4c2e05aa1f5f4404ab4ac7b2c4a8b46"
+    },
+    {
+      "path": "src/lib/ui/training-read-model.ts",
+      "sha256": "7691ff09f9bbbdcaaa3265aaacf034ca5cba963a092cfddb6153ab2ab31438e5"
+    },
+    {
+      "path": "startup.sh",
+      "sha256": "f2f6514f6db3a117f926846f84cd8c3bb7aa984ad6d720a83f92829e30e65279"
+    }
+  ],
+  "codeSignatureAlgorithm": "SHA256 of UTF-8 files JSON, sorted object keys, compact separators"
+}

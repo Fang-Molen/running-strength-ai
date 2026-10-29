@@ -1,0 +1,12 @@
+✔ 1A repeated same-account saves retain A once, same-day B separately, after storage restart and athlete switch (81.765506ms)
+✔ 1A explicit schedule link and unlink survive storage restart without changing A, B or raw watch values (4.704482ms)
+✔ 1A conflicting source time remains visible while missing time stays unknown after restart (1.485724ms)
+✔ 1A a confirmed lap correction withdraws old totals consistently from log, week and coach after restart (38.146467ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 132.689373

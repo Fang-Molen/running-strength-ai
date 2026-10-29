@@ -1,0 +1,17 @@
+✔ parser: strength, run, weight, unknown (6.057498ms)
+✔ streak: done or logged deviation counts; up to 2 freezes per week; missed without reason does not count (2.490437ms)
+✔ reminders: max 2/day, master off = none, logged = none (1.826926ms)
+✔ override: only that day, caps 20 min, home strength version; logged sessions untouched (0.653822ms)
+✔ plan band thresholds (0.352464ms)
+✔ onboarding: defaults, ≤2 goals, tier, equipment preset, preview only future days as proposals (2.403571ms)
+✔ settings: instant save, master greys children, brief coach keeps safety (0.499197ms)
+✔ tier gating for training-log pro metrics (0.214532ms)
+✔ training-log metrics gated by tier (0.853924ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36.622832

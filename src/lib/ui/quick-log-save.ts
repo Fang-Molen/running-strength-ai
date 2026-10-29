@@ -17,12 +17,13 @@ export const quickDraftId = (noteId: string) => `act-q-${noteId}`.replace(/[^0-9
 
 /** 纯函数：一句话 → 导入草稿内容（不含 id）。未知的保持未知。 */
 export function quickDraftInput(p: Extract<Parsed, { kind: 'run' | 'strength' }>, at: string, rpe: number | null) {
-  const occurredAt = f(at.replace(/\.\d+Z$/, 'Z')), sessionRpe = f(rpe != null && rpe >= 1 ? Math.round(rpe) : null)
+  const occurredAt = f((p.date ? new Date(`${p.date}T00:00:00`).toISOString() : at).replace(/\.\d+Z$/, 'Z')), sessionRpe = f(rpe != null && rpe >= 1 ? Math.round(rpe) : null)
   const common = { occurredAt, sessionRpe, subjectiveRecovery: f(null), sleepHours: f(null), pain: f(null), soreness: f(null), uncertainFields: [], conflicts: [] }
-  if (p.kind === 'run') return { ...common, sport: 'RUNNING', title: f(`${p.title}${p.km ? ` ${p.km} 公里` : ''}`), durationSeconds: f(p.minutes != null ? p.minutes * 60 : null), totalDistanceMeters: f(p.km != null ? Math.round(p.km * 1000) : null),
-    runningStructure: 'UNAVAILABLE', runningSegments: [], strengthSets: [], warnings: ['记一笔（计划外）', ...(p.minutes == null ? ['用时未填'] : []), ...(p.km == null ? ['距离未填'] : [])] }
-  return { ...common, sport: 'STRENGTH', title: f(`${p.name} ${p.sets}×${p.reps}${p.kg ? ` ${p.kg}kg` : ''}`), durationSeconds: f(null), totalDistanceMeters: f(null), runningStructure: 'UNAVAILABLE', runningSegments: [],
-    strengthSets: Array.from({ length: p.sets }, (_, i) => ({ id: `q${i + 1}`, exerciseName: f(p.name), setOrdinal: f(i + 1), weightKg: f(p.kg), repetitions: f(p.reps), durationSeconds: f(null), recoverySeconds: f(null), completion: 'COMPLETED' })), warnings: ['记一笔（计划外）', '用时未填'] }
+  if (p.kind === 'run') return { ...common, sport: 'RUNNING', title: f(`${p.title}${p.km ? ` ${p.km} 公里` : ''}`), durationSeconds: f(p.minutes != null ? Math.round(p.minutes * 60) : null), totalDistanceMeters: f(p.km != null ? Math.round(p.km * 1000) : null),
+    runningStructure: 'UNAVAILABLE', runningSegments: [], strengthSets: [], warnings: ['记一笔（计划外）',...(p.unrecorded??[]), ...(p.minutes == null ? ['用时未填'] : []), ...(p.km == null ? ['距离未填'] : [])] }
+  const weightNote = p.weightBasis ? `重量口径：${p.weightBasis}，不自动换算总重` : '重量口径未确认'
+  return { ...common, sport: 'STRENGTH', title: f(`${p.name} ${p.sets}×${p.reps}${p.kg ? ` ${p.weightBasis ?? ''}${p.kg}kg` : p.weightBasis==='自重'?' 自重':''}`), durationSeconds: f(null), totalDistanceMeters: f(null), runningStructure: 'UNAVAILABLE', runningSegments: [],
+    strengthSets: Array.from({ length: p.sets }, (_, i) => ({ id: `q${i + 1}`, exerciseName: f(p.name), setOrdinal: f(i + 1), weightKg: f(p.kg), loadBasis: f(p.weightBasis==='单手'?'PER_HAND':p.weightBasis==='总重'?'TOTAL_EXTERNAL':p.weightBasis==='自重'?'BODYWEIGHT':'UNKNOWN'), repetitions: f(p.reps), durationSeconds: f(null), recoverySeconds: f(null), completion: 'COMPLETED' })), warnings: ['记一笔（计划外）',...(p.unrecorded??[]), '用时未填', weightNote, ...(p.date?['只记录日期，具体时刻未提供']:[])] }
 }
 
 /** 保存一条训练事实；同一 noteId 重试不会重复（confirmTrainingImport 按 draftId 幂等）。 */
@@ -34,7 +35,7 @@ export function saveQuickTraining(p: Parsed, noteId: string, at: string, rpe: nu
   const r = confirmTrainingImport(draft)
   if (!r.ok) return { ok: false, msg: `日志未同步：${r.reason}` }
   const sport = p.kind === 'run' ? 'RUNNING' : 'STRENGTH'
-  return { ok: true, ref: { draftId: r.record.draftId, confirmedImportId: r.record.confirmedImportId, sport }, msg: p.kind === 'run' && p.minutes == null ? '已记入训练日志（用时未填，显示为未知）' : '已记入训练日志' }
+  return { ok: true, ref: { draftId: r.record.draftId, confirmedImportId: r.record.confirmedImportId, sport }, msg: (p.kind === 'run' && p.minutes == null ? '已记入训练日志（用时未填，显示为未知）' : '已记入训练日志')+(p.unrecorded?.length?'；部分信息仅存原文，请查看识别范围':'') }
 }
 
 /** 撤回 / 恢复笔记生成的训练（作废更正，不物理删除，可恢复）。返回实际改动的条数。 */

@@ -18,6 +18,7 @@ import { handleCoachHttpRequest } from './coach-http.server.ts';
 import type { VerifiedDeepSeekPolicy } from './lib/coach-service-contract.ts';
 import { estimateInputTokenUpperBound } from '../../src/lib/coach/deepseek-policy.ts';
 import type { ScopedRestriction } from '../../src/lib/coach/utterance-semantics.ts';
+import { boundedContextRecord } from '../../src/lib/coach/context-fields';
 
 const now = Date.parse('2026-10-28T04:00:00Z');
 const input: CoachSnapshotCreate = {question:'解释RPE',declarations:[],consent:{purpose:'coach_explanation',disclosureVersion:'coach-self-report-v1',mode:'PERSISTENT'}};
@@ -61,7 +62,7 @@ test('actual controller scopes unsolicited output actions using current question
    dispatches++;return Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:answer,nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:20,prompt_cache_miss_tokens:80,completion_tokens_details:{reasoning_tokens:10}}});
   }});
   const send=(path:string,body:unknown)=>handleCoachHttpRequest(new Request(`https://coach.test/api/${path}`,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime});
-  const context=(restriction:string):NonNullable<CoachSnapshotCreate['context']>=>({version:'coach-context-v2',dependencyVersions:[],records:[{recordId:'restriction-one',revision:restriction.includes('全部')?'2':'1',occurredAt:'2026-10-01T00:00:00Z',knownAt:'2026-10-01T00:00:00Z',category:'RESTRICTION',state:'UNKNOWN',source:'USER_DECLARED:PROFILE',fields:[{name:'restriction',value:restriction,unit:null},{name:'medicalClearance',value:false,unit:null}]}],coverage:{selected:1,omitted:0,unknowns:[]}});
+  const context=(restriction:string):NonNullable<CoachSnapshotCreate['context']>=>({version:'coach-context-v2',dependencyVersions:[],records:[boundedContextRecord({recordId:'restriction-one',revision:restriction.includes('全部')?'2':'1',occurredAt:'2026-10-01T00:00:00Z',knownAt:'2026-10-01T01:00:00Z',category:'RESTRICTION',state:'UNKNOWN',source:'USER_DECLARED:PROFILE',fields:[{name:'restriction',value:restriction,unit:null},{name:'medicalClearance',value:false,unit:null}]})],coverage:{selected:1,omitted:0,unknowns:[]}});
   const education='一般科普：RPE通常用0到10表示主观用力程度。',upper='如果上肢无症状，可以先考虑坐姿上肢技术练习候选，不涉及跑跳。';
   const cases:[string,string,string|null,number][]=[
    ['我现在腿疼，解释一下RPE',education,null,200],
@@ -71,6 +72,7 @@ test('actual controller scopes unsolicited output actions using current question
    ['解释一下RPE','你可以继续跑步。','旧腿部疼痛限制仍待复核',502],
    ['解释一下RPE',upper,'旧腿部疼痛限制仍待复核',200],
    ['解释一下RPE',upper,'医生要求停止全部训练',502],
+   ['解释一下RPE',upper,'旧腿部疼痛限制仍待复核；'+'背景情况。'.repeat(60)+'医生要求停止全部训练',502],
   ];
   for(const [i,[question,text,restriction,expected]]of cases.entries()){
    answer=text;
@@ -125,7 +127,10 @@ test('bounded context accepts structured old history without converting targets 
  }
 });
 
-test('GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness',async()=>{
+test('GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness',async t=>{
+ // The status endpoint checks policy expiry against wall time. Keep it on the
+ // same synthetic date as the runtime so this schema test does not expire.
+ t.mock.timers.enable({apis:['Date'],now:new Date(now)});
  const db=new PGlite(),policy=syntheticPolicy();let authenticated=0,dispatches=0;
  try{
   await migrate(db,['001_deepseek_budget.sql','002_coach_snapshots.sql']);
@@ -189,3 +194,30 @@ test('real selector to snapshot HTTP to controller budgets long history and empt
   }
  }finally{await db.close()}
 });
+
+test('canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections',async()=>{
+ const {buildLoadSummary}=await import('../../src/lib/health/load-evidence')
+ const {training,context:fixtureContext}=await import('../../src/lib/health/analysis-fixtures')
+ const db=new PGlite(),policy=syntheticPolicy(),captured:{body:unknown;bytes:number}[]=[]
+ try{
+  await migrate(db)
+  const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authenticate:async()=> 'synthetic-load-owner',policy:()=>policy,now:()=>now,fetch:async(_url,init)=>{
+   const body=JSON.parse(String(init?.body));captured.push({body,bytes:new TextEncoder().encode(String(init?.body)).length})
+   return Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:'已记录负荷只能作描述性比较，缺失记录仍需核对。',nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:20,prompt_cache_miss_tokens:80,completion_tokens_details:{reasoning_tokens:10}}})
+  }})
+  const send=(path:string,body:unknown)=>handleCoachHttpRequest(new Request('https://coach.test/api/'+path,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime})
+  const question='汇总我的2026-10-01到2026-10-27训练负荷，保留疼痛反证与缺项',versions:string[]=[],measurements:unknown[]=[]
+  for(const revision of [1,2]){
+   const fact=training({athleteId:'local',revision,startedAt:'2026-10-20T08:00:00Z',occurredAt:'2026-10-20T08:00:00Z',knownAt:'2026-10-20T09:00:00Z',receivedAt:'2026-10-20T09:00:00Z',endedAt:'2026-10-20T08:30:00Z',modality:'RUN',strengthSets:[],runSegments:[{id:'run',blockId:'b',roundIndex:null,stepIndex:1,kind:'CONTINUOUS',distanceM:revision===1?5000:4000,durationSeconds:1800,completion:'COMPLETED',restAfterSeconds:null,rawResolutionSeconds:null,gradePercent:null,surface:null}],actualDurationSeconds:1800,sessionRpe:6,sessionRpeScale:'CR10'})
+   const snapshot=projectAnalysisEvidence({context:{...fixtureContext,athleteId:'local',asOf:new Date(now).toISOString()},facts:[fact]}),summary=buildLoadSummary(snapshot,'2026-10-01','2026-10-27')
+   const started=performance.now(),selected=selectOnlineContext({owner:'local',question,day:'2026-10-28',asOf:new Date(now).toISOString(),facts:snapshot.facts,loadSummary:summary,trainingProfile:{restrictions:[{value:'合成旧疼痛限制：暂不冲刺，不能据HRV改善解除',version:'synthetic-pain'}],conflicts:[]} as never,unknowns:['合成来源冲突仍待核对，存在未同步记录。'],conversation:[{role:'user',text:'刚才的数字只是我的口头回忆，请优先保存记录。'}]})
+   const receiptResponse=await send('coach-snapshot',{...input,question,context:selected.context}),receipt=await receiptResponse.json();assert.equal(receiptResponse.status,200,JSON.stringify(receipt))
+   const answer=await send('coach-chat',{question,...receipt.snapshotRef,requestId:'load-summary-'+revision});assert.equal(answer.status,200,JSON.stringify(await answer.json()))
+   const body=captured.at(-1)!.body as {messages:{role:string;content:string}[]},wire=JSON.parse(body.messages[1].content),all=JSON.stringify(wire)
+   assert.match(all,/CANONICAL_LOAD_SUMMARY/);assert.match(all,new RegExp('knownDistance='+String(revision===1?5000:4000)));assert.match(all,/missingDays=27/);assert.match(all,/疼痛/);assert.match(all,/冲突/)
+   versions.push(selected.sourceVersion);measurements.push({revision,requestAndModelMilliseconds:performance.now()-started,wholeProviderBodyBytes:captured.at(-1)!.bytes,entireMessagesBytes:new TextEncoder().encode(JSON.stringify(body.messages)).length,providerCalls:1,followupReads:0,realModelTokens:null})
+  }
+  assert.notEqual(versions[0],versions[1]);assert.equal(captured.length,2)
+  if(process.env.FK_CAPTURE_LOAD_MEMORY==='1')await writeFile(new URL('../../verification/load-memory-20261029/http-input-measurement.json',import.meta.url),JSON.stringify({transport:'IN_PROCESS_REAL_HTTP_CONTROLLER',networkListener:false,provider:'INJECTED_FAKE',paidCalls:0,measurements},null,2)+'\n')
+ }finally{await db.close()}
+})

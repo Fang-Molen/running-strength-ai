@@ -1,0 +1,142 @@
+✖ phased 1B personal recovery, prior-year history and self/other clauses select owned context (8.732557ms)
+✖ phased 1B requested prior year is not displaced by fifteen recent workouts (18.988893ms)
+✖ phased 1B explicit calendar day and prior year honor the athlete timezone at New Year (2.821339ms)
+✖ phased 1C long restriction tails and dialogue remain transmitted or explicitly incomplete (2.052079ms)
+✖ phased 1C old baseline and counterevidence remain dependencies of transmitted analysis (17.348824ms)
+✔ X03 question handoff carries computed analysis and a bounded conversation, without claiming verified facts (11.004335ms)
+✔ X02 colloquial personal reviews and mixed subjects retrieve owned facts without treating friends as the athlete (6.383456ms)
+✔ explicit comparison selects the requested owned sessions rather than unrelated latest activity (4.280313ms)
+✔ general education and third-person cases do not select personal records (5.310954ms)
+✔ an old UI selection does not attach private facts to a fresh general definition (0.480119ms)
+✔ relevant older history preserves actual run split and rest structure without claiming a recent window (0.880552ms)
+✔ strength dose preserves actual load basis, repetitions, completion and RIR (1.024572ms)
+✔ foreign, future, planned and conflicting training facts cannot become actual context (1.221689ms)
+✔ target and saved schedule remain distinct from measured performance (1.234147ms)
+✔ dependency fingerprint follows selected evidence, not clock, unrelated nutrition or foreign rows (1.903852ms)
+✔ context is bounded and truncated workout structure is explicitly unknown (40.74141ms)
+✔ nutrition entries retain completeness unknown, actual eating time unknown and no account/device identifiers (1.838718ms)
+✔ personal data requests and broad generic exercise questions are separated (0.87908ms)
+✔ different questions sharing unchanged records do not share a conflicting selection version key (1.500285ms)
+✔ date-only body measurement does not fabricate a measurement instant (0.644689ms)
+✔ real frontend contexts pass the shared server boundary, including response protocols and maximum coverage (20.617224ms)
+✔ unrelated profile edit does not change a selected goal field revision (2.035775ms)
+✔ large structured context fits real quoted provider-input budget, not only snapshot-body budget (25.402322ms)
+✔ budget cannot erase omitted safety restrictions as implicit training permission (28.940955ms)
+✔ clock-only packet regeneration keeps online context stable; corrected dose still invalidates (19.746146ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 20
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 237.376042
+
+✖ failing tests:
+
+test at src/lib/coach/online-context.test.ts:11:1
+✖ phased 1B personal recovery, prior-year history and self/other clauses select owned context (8.732557ms)
+  AssertionError [ERR_ASSERTION]: 我现在恢复得如何
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:13:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-context.test.ts:18:1
+✖ phased 1B requested prior year is not displaced by fifteen recent workouts (18.988893ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.context.coverage.unknowns.some(s => /2025/.test(s)))
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:23:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-context.test.ts:31:1
+✖ phased 1B explicit calendar day and prior year honor the athlete timezone at New Year (2.821339ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'new-year',
+      'prior'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:35:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-context.test.ts:38:1
+✖ phased 1C long restriction tails and dialogue remain transmitted or explicitly incomplete (2.052079ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /禁止冲刺|限制资料.*未完整/. Input:
+  
+  '{"version":"coach-context-v2","dependencyVersions":[{"key":"record:ctx:1a50f0ae1e9bde35525f23b81fc652916e9d09fd3a4e311e17d4ce1bf0f83efa","revision":"3d0ad22937e56925af815e1f6a478f2e51cb926f63a4ea5f21c959c70719d9ae"},{"key":"record:ctx:2692418ad45700e198e96425df154415e13a464a4854e9d82a76d7f8b7a34026","revision":"c70c5827d81fba42d57968d484ec33708ad555cdaec550d843fca7a274456f62"},{"key":"record:ctx:639469b151a34f0fd3a4173811e7a1f29d061a3fc371c2b96c3806987295b81f","revision":"a64fb3300491c7b65ce817eaa05fb8383b5d02c03bae2c762a50c7ac485cb830"},{"key":"selection:0d10aefa93b8e23c1c5a806f9d47ed6d35fdec75658849a2a294dcea7779acb1","revision":"2145f59408413ebb0c92c3899c384827420ec3fe81607478131b29304e42b5d2"}],"records":[{"recordId":"ctx:1a50f0ae1e9bde35525f23b81fc652916e9d09fd3a4e311e17d4ce1bf0f83efa","revision":"9265190d2fb1e5f1765f9fc0ae42fb32e1038805306059fbc9a5475974687120","occurredAt":"2026-10-20T10:00:00.000Z","knownAt":"2026-10-20T10:00:00.000Z","category":"RESTRICTION","state":"UNKNOWN","source":"USER_DECLARED:ATHLETE_PROFILE","fields":[{"name":"restriction","value":"背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背","unit":null},{"name":"sourceDate","value":"2026-10-20T10:00:00Z","unit":null},{"name":"requiresReview","value":true,"unit":null},{"name":"medicalClearance","value":false,"unit":null}]},{"recordId":"ctx:2692418ad45700e198e96425df154415e13a464a4854e9d82a76d7f8b7a34026","revision":"1","occurredAt":"2026-09-15T09:00:00.000Z","knownAt":"2026-09-15T10:00:00.000Z","category":"TRAINING","state":"ACTUAL","source":"USER_DECLARED:MANUAL","fields":[{"name":"quality","value":"AVAILABLE","unit":null},{"name":"evidenceVersion","value":"9e8a556ab693d6a5","unit":null},{"name":"sourceGroup","value":"1862a231790bda864e088fc9f3ff1dbcd13ca59c9c59f7a1cb6004465feae6e6","unit":null},{"name":"protocolGroup","value":"aa7ccbb33aa2c45387771d7d5fb91d7113147aa8c752b08bb1773ef6ff4f474c","unit":null},{"name":"protocol","value":"TRACK_REPETITION","unit":null},{"name":"provenanceVerified","value":false,"unit":null},{"name":"modality","value":"RUN","unit":null},{"name":"observedType","value":"INTERVAL","unit":null},{"name":"actualDuration","value":1800,"unit":"s"},{"name":"sessionRpe","value":7,"unit":"CR10"},{"name":"segmentCount","value":1,"unit":null},{"name":"setCount","value":0,"unit":null},{"name":"jumpContacts","value":null,"unit":null}]},{"recordId":"ctx:639469b151a34f0fd3a4173811e7a1f29d061a3fc371c2b96c3806987295b81f","revision":"1","occurredAt":"2026-09-15T09:00:00.000Z","knownAt":"2026-09-15T10:00:00.000Z","category":"TRAINING","state":"ACTUAL","source":"USER_DECLARED:MANUAL","fields":[{"name":"parent","value":"ctx:2692418ad45700e198e96425df154415e13a464a4854e9d82a76d7f8b7a34026","unit":null},{"name":"structure","value":"RUN_SEGMENT","unit":null},{"name":"block","value":"ctx:5d5b116c6605a465c7cb2dfcb905fc3f9b3a47b676e425326f70729aeae2675a","unit":null},{"name":"round","value":1,"unit":null},{"name":"step","value":1,"unit":null},{"name":"kind","value":"REPETITION","unit":null},{"name":"distance","value":400,"unit":"m"},{"name":"duration","value":72,"unit":"s"},{"name":"restAfter","value":180,"unit":"s"},{"name":"restScope","value":"AFTER_REPEAT","unit":null},{"name":"completion","value":"COMPLETED","unit":null},{"name":"surface","value":"TRACK","unit":null},{"name":"grade","value":null,"unit":"%"},{"name":"heartRate","value":null,"unit":"bpm"},{"name":"heartRateMethod","value":null,"unit":null}]}],"coverage":{"selected":3,"omitted":0,"unknowns":["恢复背景仅选本问题日期附近的近期记录;旧训练用于历史比较,不代表当前疲劳。","比赛目标或目标保存时间未知;目标不作为实测能力。","日历为计划上下文;保存时刻未记录。已开始/已完成课程不能当作未开始课程修改。","本次日期附近没有可读取的本人课表;不代表历史课表为空。","daysPerWeek未知。","minutes未知。","equipment未知。"]}}'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:43:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'd02c03bae2c762a50c7ac485cb830"},{"key":"selection:0d10aefa93b8e23c1c5a806f9d47ed6d35fdec75658849a2a294dcea7779acb1","revision":"2145f59408413ebb0c92c3899c384827420ec3fe81607478131b29304e42b5d2"}],"records":[{"recordId":"ctx:1a50f0ae1e9bde35525f23b81fc652916e9d09fd3a4e311e17d4ce1bf0f83efa","revision":"9265190d2fb1e5f1765f9fc0ae42fb32e1038805306059fbc9a5475974687120","occurredAt":"2026-10-20T10:00:00.000Z","knownAt":"2026-10-20T10:00:00.000Z","category":"RESTRICTION","state":"UNKNOWN","source":"USER_DECLARED:ATHLETE_PROFILE","fields":[{"name":"restriction","value":"背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背景说明。背","unit":null},{"name":"sourceDate","value":"2026-10-20T10:00:00Z","unit":null},{"name":"requiresReview","value":true,"unit":null},{"name":"medicalClearance","value":false,"unit":null}]},{"recordId":"ctx:2692418ad45700e198e96425df154415e13a464a4854e9d82a76d7f8b7a34026","revision":"1","occurredAt":"2026-09-15T09:00:00.000Z","knownAt":"2026-09-15T10:00:00.000Z","category":"TRAINING","state":"ACTUAL","source":"USER_DECLARED:MANUAL","fields":[{"name":"quality","value":"AVAILABLE","unit":null},{"name":"evidenceVersion","value":"9e8a556ab693d6a5","unit":null},{"name":"sourceGroup","value":"1862a231790bda864e088fc9f3ff1dbcd13ca59c9c59f7a1cb6004465feae6e6","unit":null},{"name":"protocolGroup","value":"aa7ccbb33aa2c45387771d7d5fb91d7113147aa8c752b08bb1773ef6ff4f474c","unit":null},{"name":"protocol","value":"TRACK_REPETITION","unit":null},{"name":"provenanceVerified","value":false,"unit":null},{"name":"modality","value":"RUN","unit":null},{"name":"observedType","value":"INTERVAL","unit":null},{"name":"actualDuration","value":1800,"unit":"s"},{"name":"sessionRpe","value":7,"unit":"CR10"},{"name":"segmentCount","value":1,"unit":null},{"name":"setCount","value":0,"unit":null},{"name":"jumpContacts","value":null,"unit":null}]},{"recordId":"ctx:639469b151a34f0fd3a4173811e7a1f29d061a3fc371c2b96c3806987295b81f","revision":"1","occurredAt":"2026-09-15T09:00:00.000Z","knownAt":"2026-09-15T10:00:00.000Z","category":"TRAINING","state":"ACTUAL","source":"USER_DECLARED:MANUAL","fields":[{"name":"parent","value":"ctx:2692418ad45700e198e96425df154415e13a464a4854e9d82a76d7f8b7a34026","unit":null},{"name":"structure","value":"RUN_SEGMENT","unit":null},{"name":"block","value":"ctx:5d5b116c6605a465c7cb2dfcb905fc3f9b3a47b676e425326f70729aeae2675a","unit":null},{"name":"round","value":1,"unit":null},{"name":"step","value":1,"unit":null},{"name":"kind","value":"REPETITION","unit":null},{"name":"distance","value":400,"unit":"m"},{"name":"duration","value":72,"unit":"s"},{"name":"restAfter","value":180,"unit":"s"},{"name":"restScope","value":"AFTER_REPEAT","unit":null},{"name":"completion","value":"COMPLETED","unit":null},{"name":"surface","value":"TRACK","unit":null},{"name":"grade","value":null,"unit":"%"},{"name":"heartRate","value":null,"unit":"bpm"},{"name":"heartRateMethod","value":null,"unit":null}]}],"coverage":{"selected":3,"omitted":0,"unknowns":["恢复背景仅选本问题日期附近的近期记录;旧训练用于历史比较,不代表当前疲劳。","比赛目标或目标保存时间未知;目标不作为实测能力。","日历为计划上下文;保存时刻未记录。已开始/已完成课程不能当作未开始课程修改。","本次日期附近没有可读取的本人课表;不代表历史课表为空。","daysPerWeek未知。","minutes未知。","equipment未知。"]}}...',
+    expected: /禁止冲刺|限制资料.*未完整/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/lib/coach/online-context.test.ts:49:1
+✖ phased 1C old baseline and counterevidence remain dependencies of transmitted analysis (17.348824ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.context.records.some(r => r.category === 'ANALYSIS' && r.fields.some(f => f.name === 'counterevidence' && f.value)))
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/coach/online-context.test.ts:58:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

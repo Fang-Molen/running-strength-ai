@@ -1,0 +1,11 @@
+✔ future missed feedback stays unknown at an earlier cutoff and appears when recorded (41.385232ms)
+✔ future pain and high exertion do not become earlier cycle counterevidence (19.931377ms)
+✔ feedback with an invalid recorded time remains unknown instead of establishing a missed session (10.552043ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86.329847

@@ -1,0 +1,24 @@
+{
+  "synthetic": true,
+  "rows": 360,
+  "repeatedQueries": 8,
+  "cold": {
+    "milliseconds": 85.78491100000019,
+    "sourceReads": 1
+  },
+  "cached": {
+    "milliseconds": 12.463790000000017,
+    "sourceReads": 0
+  },
+  "fullReference": {
+    "milliseconds": 270.2798889999999,
+    "sourceReads": 8
+  },
+  "afterCorrection": {
+    "milliseconds": 52.59362800000008,
+    "changedDays": [
+      "2026-10-22"
+    ]
+  },
+  "scope": "Local cache/query measurement; no real model, no token or financial savings estimate. First source read and reads after mutation rebuild retained projection; stable repeated queries use indexed cached facts."
+}

@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-28",
+  "base_head": "92632540c8cd42267461d42403786bec2a2281eb",
+  "branch": "codex/phased-plan-local-20261028",
+  "scope": "local synthetic recovery/cycle/storage review; no commit/push/merge/deploy/production or paid API",
+  "final_regression": {
+    "log": "later-final-regression.log",
+    "passed_files": 54,
+    "failed_files": 0,
+    "exit_code": 0
+  },
+  "known_baseline_failed_files": 5,
+  "files": [
+    {
+      "path": "src/lib/core/restore-transaction.ts",
+      "bytes": 8684,
+      "sha256": "354ee0fe2ebe3f9800fb8bc596e8753a49257dc53e96cd8b62229490122ef76f"
+    },
+    {
+      "path": "src/lib/core/restore-transaction.test.ts",
+      "bytes": 9425,
+      "sha256": "18279dd1e792f92379d7cbfa8bbf1dfc661587128986db0806eb1d45f1501e9d"
+    },
+    {
+      "path": "src/lib/coach/cycle/host.ts",
+      "bytes": 17885,
+      "sha256": "f301b505c3d7530a20e9a1e9d63fdadbfd783521f61d70111540830b718f9cd9"
+    },
+    {
+      "path": "src/lib/coach/cycle/host.test.ts",
+      "bytes": 12372,
+      "sha256": "64196c9f4a75cebb7a265aaae7b3f8ca2dfecce5d3d48060f682b05f2f7b777f"
+    },
+    {
+      "path": "src/lib/coach/cycle/feedback-cutoff.test.ts",
+      "bytes": 2748,
+      "sha256": "8abf031483edcf20c647065db0f7792208f9e24044b9206704289118f3b2873d"
+    },
+    {
+      "path": "docs/phased-plan-20261028/2-3-status.md",
+      "bytes": 16161,
+      "sha256": "c125989b997518591d4e2b9d10f57f6fa11d87ae97a17a5e2a56bd45c364cf25"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log",
+      "bytes": 9949,
+      "sha256": "d03a078a24ee636ea22334a66e13423e9679f14064fecfcc06c63c81835d702e"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-baseline-integration.test.tsx.log",
+      "bytes": 24429,
+      "sha256": "3235e32de083e2ad5f995b1499737a16dd00b3957552bf3b5715daa505b0dfc8"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log",
+      "bytes": 3520,
+      "sha256": "bb161ee1e026a9fa6b460f3babb75cc3cebd7cc149a0ba0eb9d6dc4040bee746"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-baseline-training-redesign.test.tsx.log",
+      "bytes": 16273,
+      "sha256": "3e0daa6e0cdf41c2de4070ba768dbc89a4b64fdd8ec8d6ab9431e81fd45751a1"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-baseline-warmup-workflow.test.tsx.log",
+      "bytes": 7931,
+      "sha256": "58c63512f5bbc1ef9184a67d9f29ed9511014803721dfa0ad8f3439e13eebb00"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-cycle-final.log",
+      "bytes": 1032,
+      "sha256": "8289bfdaf5d3fd1e504756b270da75569f3110907c290f92ef5f6cc1c23a970b"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-feedback-green.log",
+      "bytes": 422,
+      "sha256": "421315f14ac5f79645c846fe364d756ecc3f0d93140d5aabc4f20754c3e84326"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-feedback-host.log",
+      "bytes": 1598,
+      "sha256": "26da2946054696bc23d4b7abb2a9d46cdb35acd959cbecf6fd25114ceae109c4"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-feedback-red.log",
+      "bytes": 3194,
+      "sha256": "2f40ed5109d6d9296bff9c518e1074d6e09c9c468492b25703f520bb1565d450"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-final-regression.log",
+      "bytes": 3385,
+      "sha256": "75ddc83a2bbc1479b2d153f236a05477bc92e46ebdefc8def7349d6e59aa4966"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-regression.log",
+      "bytes": 2892,
+      "sha256": "a4db1b2d53c2885a2833c67d71218cc9a092cfc8698b609091f59230df4b134e"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-restore-green.log",
+      "bytes": 1374,
+      "sha256": "2476d9a89b060ab6c9c5d144f71bd2925ea53d1f17094eb0163ed586aae9383e"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-restore-red.log",
+      "bytes": 4578,
+      "sha256": "de5dc66dc17241e0da3f8083b0de93538df897673d4d526a449dda12fc3facf3"
+    },
+    {
+      "path": "verification/phased-plan-20261028/later-baseline-five-results.json",
+      "bytes": 6769,
+      "sha256": "2cc7cfbf4a50831624b303fac9ad589eae3664ed72e78520e24ec55ed2e84a9a"
+    }
+  ]
+}

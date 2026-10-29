@@ -1,0 +1,12 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(!(await page.getByRole('dialog').innerText()).includes('RPE 7/10'))\n",
+  "checks": [
+    "Pet tap four actions; sentence editable draft; double-click saves once and binds A without touching B or activity count",
+    "Receipt survives full reload and same owner reload",
+    "Dragging persists position without opening panel; reduced motion is off",
+    "Long press hides pet; equivalent entry remains; unsaved body draft survives closing",
+    "390x844 mobile sheet scrolls, editable inputs and Save fit; body capture saves"
+  ],
+  "errors": [],
+  "body": "FANGKUN\n方坤\n记一笔\n\n离线功能暂不可用\n\n29\n10月 · 周四\n恢复\n数据不足，按身体感觉来\n调整今天\n时间与场地 ›\n快捷工具\n›\n编辑首页卡片\n今日训练\n周一\n26\n周二\n27\n周三\n28\n今天\n29\n周五\n30\n周六\n31\n周日\n1\n\n这天还没有安排。\n\n添加训练\n推荐本周训练\n计时与逐组记录\n›\n随手记，接着聊\n先核对草稿，一次保存即可\n记饮食\n搜索食物、核对份量\n补训练反馈\n绑定已有训练\n记身体状态\n恢复感受、局部酸痛\n问方坤\n带上已选训练继续聊\n最近保存\n身体状态 · 恢复感受 4/10 · 小腿酸痛 3/10\n2026/10/29 03:24:46\n训练反馈 · RPE 7/10 · 小腿酸痛 3/10\n2026/10/29 03:24:40\n＋ 快捷记录\n今天\n训练\n方坤\n饮食\n健康"
+}

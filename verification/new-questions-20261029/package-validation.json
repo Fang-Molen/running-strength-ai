@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "scope": "PACKAGE_ONLY_NOT_APP_OR_MODEL",
+  "verifiedFiles": [
+    "00_Codex执行说明.md",
+    "01_方坤输入_32路径.jsonl",
+    "02_评测参考_勿传方坤.jsonl",
+    "03_合成历史_245条.jsonl",
+    "04_评测与token测试.md",
+    "05_校验报告.txt"
+  ],
+  "manifest": {
+    "00_Codex执行说明.md": {
+      "bytes": 5282,
+      "sha256": "ed684bd8e393473ac31170c008bb1a0fd7f307843588882fe556355a58cf3f62"
+    },
+    "01_方坤输入_32路径.jsonl": {
+      "bytes": 7842,
+      "sha256": "6cc33ad10982bf4a97442335e4181f42afabb93e02dffd02e40bdd962835428a"
+    },
+    "02_评测参考_勿传方坤.jsonl": {
+      "bytes": 10784,
+      "sha256": "61308311369db032ca80e8ca78a9e042efc875c992d0fd5d03c4d04446e67505"
+    },
+    "03_合成历史_245条.jsonl": {
+      "bytes": 38503,
+      "sha256": "e032adaf500a2a5ba26d823b395916002b31709281656f1e2ff0e5e89724e1b0"
+    },
+    "04_评测与token测试.md": {
+      "bytes": 6121,
+      "sha256": "65bbf82ddfc4a81a1be01b3bc06ceaf95674fa1e1063ef8345f2ed9caed12ca0"
+    },
+    "05_校验报告.txt": {
+      "bytes": 309,
+      "sha256": "396d3e9628b1b7d66af3f5b0f3ba9f887cbe412242b35151870c4aa231094ca2"
+    }
+  },
+  "paths": 32,
+  "dialogueTurns": 34,
+  "historyConversations": 6,
+  "historyRows": 245,
+  "ownerRows": {
+    "SYN-A": 244,
+    "SYN-B": 1
+  },
+  "year2025Runs": 183,
+  "year2025RecordedKm": 915,
+  "recentRecordedKm": 10,
+  "recentPaceSecondsPerKm": [
+    300,
+    324
+  ],
+  "providerCalls": 0,
+  "cost": 0
+}

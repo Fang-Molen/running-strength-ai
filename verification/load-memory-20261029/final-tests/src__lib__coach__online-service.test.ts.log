@@ -1,0 +1,19 @@
+✔ HTML fallback and 404 identify missing API instead of reporting HTTP 200 success (5.687442ms)
+✔ untrusted error payload never reaches rendering as an object (1.073063ms)
+✔ known provider errors yield actionable safe messages; arbitrary provider text is hidden (0.433081ms)
+✔ configuration probe sends no personal data and does not claim connectivity (0.876997ms)
+✔ a static app response is not mistaken for configured DeepSeek (5.571653ms)
+✔ success requires the trusted response contract and bounded text (4.261135ms)
+✔ trusted binding failure is configuration failure rather than network failure (1.150716ms)
+✔ prototype property names cannot become rendered error objects (2.742614ms)
+✔ successful rule processing is distinct from a provider-generated answer (0.479188ms)
+✔ rejection after provider response preserves actual dispatch and settlement, never claims no call (0.548239ms)
+✔ revoked grant, exhausted concurrency and unresolved ledger have distinct explanations (0.483945ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 39.312876

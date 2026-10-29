@@ -181,36 +181,38 @@ export function assessCycleFeedback(d: CycleDocument, input = readCycleContext()
     d.draft.sourceEntries.some(
       (e) => !byId.has(e.id) || analysisDigest(byId.get(e.id)) !== e.version,
     );
+  // Calendar actuals are current stored values; only feedback known at this cutoff
+  // can change execution counts, counterevidence or the feedback revision.
+  const actuals = new Map(sessions.flatMap((s) => {
+    const actual = byId.get(s.id)?.actual;
+    return actual && Date.parse(actual.at) <= Date.parse(now) ? [[s.id, actual] as const] : [];
+  }));
   const completed = sessions.filter((s) => {
-    const e = byId.get(s.id);
+    const e = byId.get(s.id), a = actuals.get(s.id);
     return (
       e?.status === "done" &&
-      e.actual &&
-      Date.parse(e.actual.at) <= Date.parse(now) &&
-      e.actual.outcome !== "missed" &&
-      e.actual.executionState !== "PARTIAL" &&
-      e.actual.executionState !== "INTERRUPTED" &&
-      e.actual.minutes !== null &&
-      e.actual.minutes >= s.minutes &&
-      e.actual.intensity === s.intensity &&
-      !e.actual.reasons.length &&
+      a &&
+      a.outcome !== "missed" &&
+      a.executionState !== "PARTIAL" &&
+      a.executionState !== "INTERRUPTED" &&
+      a.minutes !== null &&
+      a.minutes >= s.minutes &&
+      a.intensity === s.intensity &&
+      !a.reasons.length &&
       analysisDigest(e.runComponents) === analysisDigest(s.runComponents) &&
       analysisDigest(e.exercises) === analysisDigest(s.exercises)
     );
   }).length;
   const missed = sessions.filter(
-    (s) => byId.get(s.id)?.actual?.outcome === "missed" || byId.get(s.id)?.status === "skipped",
+    // A current status has no independent recorded time; legacy skipped rows
+    // and later feedback cannot establish a missed session at this cutoff.
+    (s) => actuals.get(s.id)?.outcome === "missed",
   ).length;
-  const rows = sessions.flatMap((s) => {
-    const e = byId.get(s.id);
-    return e?.actual ? [e.actual] : [];
-  });
+  const rows = [...actuals.values()];
   const shortfall = sessions.some((s) => {
-    const e = byId.get(s.id),
-      a = e?.actual;
+    const a = actuals.get(s.id);
     return (
       !!a &&
-      Date.parse(a.at) <= Date.parse(now) &&
       ((a.minutes !== null && a.minutes < s.minutes) ||
         a.executionState === "PARTIAL" ||
         a.executionState === "INTERRUPTED" ||
@@ -224,7 +226,7 @@ export function assessCycleFeedback(d: CycleDocument, input = readCycleContext()
     rows.some(
       (a) => a.reasons.includes("pain") || a.reasons.includes("tired") || (a.rpe ?? 0) >= 9,
     );
-  const unrecorded = sessions.filter((s) => s.date < today && !byId.get(s.id)?.actual).length;
+  const unrecorded = sessions.filter((s) => s.date < today && !actuals.has(s.id)).length;
   const state: CycleFeedback["state"] = invalid
     ? "WITHDRAWN"
     : adverse || missed > 0

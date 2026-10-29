@@ -47,7 +47,7 @@ export function selectCoachDeclarations(facts:AnalysisFact[],owner:string,asOf:s
 }
 export type OnlineAnswerBasis={conversation?:readonly OnlineConversationTurn[];owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
 function context(question:string,day:string,selectedTrainingIds:readonly string[]=[],conversation:readonly OnlineConversationTurn[]=[]){
- const now=new Date().toISOString(),selected=readOnlineContext(question,day,now,undefined,selectedTrainingIds,conversation)
+ const now=new Date().toISOString(),selected=readOnlineContext(question,day,now,undefined,selectedTrainingIds,conversation,{currentLoadCache:true})
  return {...selected,now,enabled:onlineSetting().on}
 }
 export function onlinePreviewIsCurrent(basis:OnlineAnswerBasis,requireEnabled=true):boolean{

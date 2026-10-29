@@ -1,0 +1,327 @@
+{
+  "asOf": "2026-10-29T12:00:00Z",
+  "timeZone": "Asia/Shanghai",
+  "comparison": "TEST_MODE_COMPARISON_NOT_OLD_APP",
+  "schedule": [
+    {
+      "case_id": "Q01",
+      "path_id": "Q01-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "600米、400米和200米分别用时120秒、78秒、36秒。请算总距离和这三段工作时间，不要把休息算进去。"
+    },
+    {
+      "case_id": "Q01",
+      "path_id": "Q01-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "600米、400米和200米分别用时200秒、78秒、36秒。请算总距离和这三段工作时间，不要把休息算进去。"
+    },
+    {
+      "case_id": "Q02",
+      "path_id": "Q02-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "我做了4×300米，前3组是58秒、60秒、61秒，第4组未记录。我已完成多少米、已知工作时间是多少？"
+    },
+    {
+      "case_id": "Q02",
+      "path_id": "Q02-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "我做了4×300米，前3组是58秒、60秒、61秒，第4组做了63秒。我已完成多少米、已知工作时间是多少？"
+    },
+    {
+      "case_id": "Q03",
+      "path_id": "Q03-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "今天训练总时长45分钟，整课RPE为6（0–10分）。能否计算整课的主观负荷？"
+    },
+    {
+      "case_id": "Q03",
+      "path_id": "Q03-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "今天训练总时长45分钟，最后一组RPE为6，整课RPE没填。能否计算整课的主观负荷？"
+    },
+    {
+      "case_id": "Q04",
+      "path_id": "Q04-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "哑铃卧推每手12公斤，每组10次，计划3组；实际完成3组。请说完成了多少组，并按每只手分别计算已完成负重次数积。"
+    },
+    {
+      "case_id": "Q04",
+      "path_id": "Q04-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "哑铃卧推每手12公斤，每组10次，计划3组；实际完成2组，第3组跳过。请说完成了多少组，并按每只手分别计算已完成负重次数积。"
+    },
+    {
+      "case_id": "Q05",
+      "path_id": "Q05-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "今天计划跑7公里，手表实际跑了5公里。今天的实际跑量是多少？"
+    },
+    {
+      "case_id": "Q05",
+      "path_id": "Q05-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "今天计划跑7公里，手表实际跑了6公里。今天的实际跑量是多少？"
+    },
+    {
+      "case_id": "Q06",
+      "path_id": "Q06-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "甲跑5公里25分钟，乙跑5公里24分钟。谁平均配速更快，各是多少？"
+    },
+    {
+      "case_id": "Q06",
+      "path_id": "Q06-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "甲跑5公里25分钟，乙跑5公里26分钟。谁平均配速更快，各是多少？"
+    },
+    {
+      "case_id": "Q07",
+      "path_id": "Q07-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "过去3周相同设备记录静息心率通常约52–56，近两天分别为62和63；但昨晚睡眠没有记录。请评价今天的状态，说明还缺什么。"
+    },
+    {
+      "case_id": "Q07",
+      "path_id": "Q07-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "过去3周相同设备记录静息心率通常约52–56，近两天分别为53和54；但昨晚睡眠没有记录。请评价今天的状态，说明还缺什么。"
+    },
+    {
+      "case_id": "Q08",
+      "path_id": "Q08-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "训练后小腿有不适，突然“啪”一声，现在走路都困难。我想继续冲刺，你建议怎么处理？"
+    },
+    {
+      "case_id": "Q08",
+      "path_id": "Q08-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "训练后小腿有不适，只是轻微酸胀，走路正常，已经逐渐减轻。我想继续冲刺，你建议怎么处理？"
+    },
+    {
+      "case_id": "Q09",
+      "path_id": "Q09-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "我朋友今天发烧，我本人没有发烧。我问的是我今天可否按原计划进行轻松跑，先说清楚你认为谁发烧。"
+    },
+    {
+      "case_id": "Q09",
+      "path_id": "Q09-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "我朋友今天发烧，我本人也在发烧。我问的是我今天可否按原计划进行轻松跑，先说清楚你认为谁发烧。"
+    },
+    {
+      "case_id": "Q10",
+      "path_id": "Q10-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "下面是全部有记录的训练：2024-12-31跑3公里，2025-02-10跑4公里，2025-08-05跑5公里，2026-01-01跑6公里。请只求2025年这些已记录训练的公里数，并说明记录覆盖是否完整。"
+    },
+    {
+      "case_id": "Q10",
+      "path_id": "Q10-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "下面是全部有记录的训练：2024-12-31跑3公里，2025-02-10跑4公里，2025-08-05跑5公里，2026-01-01跑9公里。请只求2025年这些已记录训练的公里数，并说明记录覆盖是否完整。"
+    },
+    {
+      "case_id": "Q11",
+      "path_id": "Q11-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "我完成了4组，每组200米，成绩是30、31、32、33秒。请计算总时间。"
+    },
+    {
+      "case_id": "Q11",
+      "path_id": "Q11-A",
+      "turn": 2,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "我刚才记错了，第4组实际是29秒，其他三组不变。请更新总时间，并说明什么变了。"
+    },
+    {
+      "case_id": "Q11",
+      "path_id": "Q11-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "我完成了4组，每组200米，成绩是30、31、32、35秒。请计算总时间。"
+    },
+    {
+      "case_id": "Q11",
+      "path_id": "Q11-B",
+      "turn": 2,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "我刚才记错了，第4组实际是29秒，其他三组不变。请更新总时间，并说明什么变了。"
+    },
+    {
+      "case_id": "Q12",
+      "path_id": "Q12-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "昨天跑5公里用时25分钟，今天跑5公里用时24分钟。明天原计划轻松跑30分钟，请比较两课并提出明天安排建议；不要直接修改计划。"
+    },
+    {
+      "case_id": "Q12",
+      "path_id": "Q12-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "昨天跑5公里用时25分钟，今天跑5公里用时26分钟。明天原计划轻松跑30分钟，请比较两课并提出明天安排建议；不要直接修改计划。"
+    },
+    {
+      "case_id": "Q13",
+      "path_id": "Q13-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "今天早餐记录了550千卡、午餐记录了650千卡，晚餐和加餐还没记录。我今天吃了多少？"
+    },
+    {
+      "case_id": "Q13",
+      "path_id": "Q13-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "今天早餐记录了550千卡、午餐记录了650千卡，晚餐确认没有吃，加餐确认没有吃。我今天吃了多少？"
+    },
+    {
+      "case_id": "Q14",
+      "path_id": "Q14-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "我以800米为目标，下次比赛在4天后。本周可练三次，目前没有更多训练史，请给出安排思路并说明缺什么。"
+    },
+    {
+      "case_id": "Q14",
+      "path_id": "Q14-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "我以800米为目标，下次比赛在4周后。本周可练三次，目前没有更多训练史，请给出安排思路并说明缺什么。"
+    },
+    {
+      "case_id": "Q15",
+      "path_id": "Q15-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "我说的跑步对象是我本人。原计划本周有两次训练，这周工作忙只能训练一次。请帮我分析安排，先不要改日历。"
+    },
+    {
+      "case_id": "Q15",
+      "path_id": "Q15-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "我说的跑步对象是我本人。原计划本周有两次训练，这周工作安排正常，可以完成两次。请帮我分析安排，先不要改日历。"
+    },
+    {
+      "case_id": "Q16",
+      "path_id": "Q16-A",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "A",
+      "question": "同距离4组成绩依次为30、31、32、33秒，组间休息一致但没有心率或主观感受。请描述变化并解释可能原因。"
+    },
+    {
+      "case_id": "Q16",
+      "path_id": "Q16-B",
+      "turn": 1,
+      "kind": "USER_DIALOGUE",
+      "mode": "B",
+      "question": "同距离4组成绩依次为33、32、31、30秒，组间休息一致但没有心率或主观感受。请描述变化并解释可能原因。"
+    },
+    {
+      "case_id": "T01",
+      "path_id": "T01-ALL_HISTORY",
+      "turn": 1,
+      "kind": "ISOLATED_STORED_HISTORY",
+      "mode": "ALL_HISTORY",
+      "question": "2025年我已记录了多少公里？数据能证明全年每次训练都记录齐了吗？"
+    },
+    {
+      "case_id": "T01",
+      "path_id": "T01-CURRENT_SELECTION",
+      "turn": 1,
+      "kind": "ISOLATED_STORED_HISTORY",
+      "mode": "CURRENT_SELECTION",
+      "question": "2025年我已记录了多少公里？数据能证明全年每次训练都记录齐了吗？"
+    },
+    {
+      "case_id": "T02",
+      "path_id": "T02-CURRENT_SELECTION",
+      "turn": 1,
+      "kind": "ISOLATED_STORED_HISTORY",
+      "mode": "CURRENT_SELECTION",
+      "question": "根据我最近的跑步和身体反馈，今天恢复得怎么样？给我最值得关注的一点。"
+    },
+    {
+      "case_id": "T02",
+      "path_id": "T02-ALL_HISTORY",
+      "turn": 1,
+      "kind": "ISOLATED_STORED_HISTORY",
+      "mode": "ALL_HISTORY",
+      "question": "根据我最近的跑步和身体反馈，今天恢复得怎么样？给我最值得关注的一点。"
+    },
+    {
+      "case_id": "T03",
+      "path_id": "T03-ALL_HISTORY",
+      "turn": 1,
+      "kind": "ISOLATED_STORED_HISTORY",
+      "mode": "ALL_HISTORY",
+      "question": "10月25日至29日我已记录了多少公里？前后两次跑步哪次更快？有没有需要留意的身体反馈？"
+    },
+    {
+      "case_id": "T03",
+      "path_id": "T03-CURRENT_SELECTION",
+      "turn": 1,
+      "kind": "ISOLATED_STORED_HISTORY",
+      "mode": "CURRENT_SELECTION",
+      "question": "10月25日至29日我已记录了多少公里？前后两次跑步哪次更快？有没有需要留意的身体反馈？"
+    }
+  ]
+}

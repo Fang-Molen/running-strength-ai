@@ -71,3 +71,19 @@ test('X01 explicit disjoint components can sum; overlap or a corrected conflicti
  assert.equal(mergeActivities([corrected,{...corrected,source:'garmin'}])[0].durationSec,1600);
  assert.equal(mergeActivities([corrected,{...a,source:'garmin'}])[0].durationSec,null);
 });
+
+test('1A a third source joining two explicit identities collapses the whole activity once in any input order', () => {
+  const a = run('import:A'), b = run('import:B')
+  const bridge = { ...run('garmin:A', 'garmin'), originIds: ['garmin:A', 'import:A', 'import:B'] }
+  for (const rows of [[a, b, bridge], [b, a, bridge], [bridge, a, b]]) {
+    const original = JSON.stringify(rows)
+    const merged = mergeActivities(rows)
+    assert.equal(merged.length, 1)
+    assert.equal(merged[0].durationSec, 1611.94)
+    assert.equal(merged[0].distanceM, 6010)
+    assert.equal(merged[0].members?.length, 3)
+    assert.equal(activityWeeks(merged, day, 1)[0].minutes, 27)
+    assert.equal(JSON.stringify(mergeActivities(JSON.parse(JSON.stringify(merged)))), JSON.stringify(merged))
+    assert.equal(JSON.stringify(rows), original)
+  }
+})

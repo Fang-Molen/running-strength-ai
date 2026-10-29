@@ -9,6 +9,75 @@ import { projectAnalysisEvidence } from '../health/analysis-evidence';
 import { buildMuscleExposure } from '../health/muscle-exposure';
 import { evaluateRecoveryEvidence } from '../health/recovery-assessment';
 import { buildCoachAnalysisPacket } from '../health/analysis-packet';
+import { contextualQuestion, dialogueRecords, localAnalysisRecords } from './online-handoff';
+
+test('phased 1B personal recovery, prior-year history and self/other clauses select owned context',()=>{
+ for(const q of ['我现在恢复得如何','我去年的训练变化','我没有腿疼但感觉累','我朋友腿疼，我自己的跑步怎么办','我明天呢'])assert.equal(onlineContextNeeds(q).personal,true,q);
+ for(const q of ['我朋友现在恢复得如何','去年训练是什么意思','我没有腿疼，解释一下RPE'])assert.equal(onlineContextNeeds(q).personal,false,q);
+ assert.match(contextualQuestion('我明天呢',[{role:'user',text:'复盘我去年的跑步训练'}]),/去年/);
+});
+
+test('phased 1B requested prior year is not displaced by fifteen recent workouts',()=>{
+ const old=training({id:'last-year',occurredAt:'2025-11-15T09:00:00Z',knownAt:'2025-11-15T10:00:00Z',receivedAt:'2025-11-15T10:00:00Z'});
+ const recent=Array.from({length:15},(_,i)=>{const at=`2026-10-${String(i+1).padStart(2,'0')}T09:00:00Z`;return training({id:'recent-'+i,occurredAt:at,startedAt:at,knownAt:at,receivedAt:at})});
+ const r=selectOnlineContext(input('复盘我去年的训练',[...recent,old]));
+ assert.deepEqual(r.selectedFacts.map(f=>f.id),['last-year']);
+ assert.ok(r.context.coverage.unknowns.some(s=>/2025/.test(s)));
+ const absent=selectOnlineContext(input('复盘我去年的训练',recent));
+ assert.equal(absent.selectedFacts.length,0);
+ assert.ok(absent.context.coverage.unknowns.some(s=>/没有|缺/.test(s)));
+ const compare=selectOnlineContext(input('比较我去年与今年的训练变化',[...recent,old]));
+ assert.ok(compare.selectedFacts.some(f=>f.id==='last-year'));
+ assert.ok(compare.selectedFacts.some(f=>f.id.startsWith('recent-')));
+});
+
+test('phased 1B explicit calendar day and prior year honor the athlete timezone at New Year',()=>{
+ const prior=training({id:'prior',occurredAt:'2025-12-31T15:30:00Z',knownAt:'2026-01-01T01:00:00Z',receivedAt:'2026-01-01T01:00:00Z'});
+ const localNewYear=training({id:'new-year',occurredAt:'2025-12-31T16:30:00Z',knownAt:'2026-01-01T01:00:00Z',receivedAt:'2026-01-01T01:00:00Z'});
+ const i={...input('复盘我去年的训练',[prior,localNewYear]),day:'2026-01-01',asOf:'2026-01-01T04:00:00Z',timeZone:'Asia/Shanghai'};
+ assert.deepEqual(selectOnlineContext(i).selectedFacts.map(f=>f.id),['prior']);
+ assert.deepEqual(selectOnlineContext({...i,question:'复盘我2026-01-01的训练'}).selectedFacts.map(f=>f.id),['new-year']);
+});
+
+test('phased 1C long restriction tails and dialogue remain transmitted or explicitly incomplete',()=>{
+ const text='背景说明。'.repeat(65)+'禁止冲刺，需复核腿部功能';
+ const i=input('根据我的情况安排明天训练');
+ i.trainingProfile={days:null,daysPerWeek:null,minutes:null,equipment:null,notes:null,restrictions:[{value:text,source:'ATHLETE_PROFILE',at:'2026-10-20T10:00:00Z',version:'r1'}],conflicts:[],version:'one',sourceRule:'synthetic'};
+ const r=selectOnlineContext(i);
+ assert.match(JSON.stringify(r.context),/禁止冲刺|限制资料.*未完整/);
+ assert.deepEqual(parseCoachContext(r.context,Date.parse(now)),r.context);
+ const dialogue=dialogueRecords('local','明天呢',[{role:'user',text}]);
+ assert.match(JSON.stringify(dialogue),/禁止冲刺/);
+ assert.ok(dialogue.every(r=>r.fields.every(f=>typeof f.value!=='string'||f.value.length<=256)));
+});
+
+test('phased 1C old baseline and counterevidence remain dependencies of transmitted analysis',()=>{
+ const current=training({occurredAt:'2026-10-27T09:00:00Z',startedAt:'2026-10-27T09:00:00Z',knownAt:'2026-10-27T10:00:00Z',receivedAt:'2026-10-27T10:00:00Z'});
+ const baseline:AnalysisFact={...training(),id:'baseline',kind:'METRIC',metric:'HRV_RMSSD',value:50,unit:'ms',statistic:'SAMPLE',windowStart:null,windowEnd:null,providerDate:null,isFinal:null,energyKind:null};
+ const snap=projectAnalysisEvidence({context:{athleteId:'local',asOf:now,timeZone:'UTC',planVersion:null,consentVersion:'TEST',analysisVersion:'TEST'},facts:[current,baseline]});
+ const exposure=buildMuscleExposure(snap);
+ const packet=buildCoachAnalysisPacket(snap,evaluateRecoveryEvidence(snap,exposure),exposure,{question:'我现在恢复得如何'});
+ packet.assessment.hypotheses=[{id:'hypothesis',claim:'当前信号有相反依据',supportingRefs:[{id:current.id,revision:1}],weakeningRefs:[{id:baseline.id,revision:1}],certainty:'UNRESOLVED',discriminator:'复查同协议来源'}];
+ const i={...input('我现在恢复得如何',[current,baseline]),packet};
+ const r=selectOnlineContext(i);
+ assert.ok(r.context.records.some(r=>r.category==='ANALYSIS'&&r.fields.some(f=>f.name==='counterevidence'&&f.value)));
+ assert.ok(r.selectedFacts.some(f=>f.id==='baseline'),'a comparison baseline older than seven days must accompany the interpretation');
+ assert.notEqual(selectOnlineContext({...i,facts:[current,{...baseline,revision:2,value:35}]}).sourceVersion,r.sourceVersion);
+});
+
+test('phased 1C candidate conditions and packet restrictions keep their decision boundaries',()=>{
+ const f=training(),snap=projectAnalysisEvidence({context:{athleteId:'local',asOf:now,timeZone:'UTC',planVersion:null,consentVersion:'TEST',analysisVersion:'TEST'},facts:[f]});
+ const exposure=buildMuscleExposure(snap),packet=buildCoachAnalysisPacket(snap,evaluateRecoveryEvidence(snap,exposure),exposure,{question:'明天怎么安排'});
+ packet.assessment.candidates=[{id:'candidate',kind:'DEFER_AND_REVIEW',basisRefs:[{id:f.id,revision:1}],action:'SKIP',reason:'等待局部功能复核',observation:'日常步行反应',supportsWhen:'功能恢复后重新讨论',weakensWhen:'疼痛加重需复核',doNotExecute:['禁止冲刺'],conditions:['条件尚未确认'],planVersion:'p1',requiresConfirmation:true}];
+ packet.safetyConstraints=[{id:'hold',version:'h1',scope:'医生要求暂停全部训练',evidenceRefs:[]}];
+ const records=localAnalysisRecords(packet,'local','明天怎么安排',[f]);
+ const candidate=records.find(r=>r.fields.some(f=>f.name==='kind'&&f.value==='CANDIDATE'));
+ assert.ok(candidate);
+ assert.ok(candidate.fields.some(f=>f.name==='action'&&f.value==='SKIP'));
+ assert.ok(candidate.fields.some(f=>f.name==='doNotExecute'&&String(f.value).includes('禁止冲刺')));
+ assert.ok(candidate.fields.some(f=>f.name==='weakensWhen'&&String(f.value).includes('疼痛')));
+ assert.ok(records.some(r=>r.category==='RESTRICTION'&&r.fields.some(f=>String(f.value).includes('暂停全部训练'))));
+});
 
 const now = '2026-10-28T04:00:00.000Z';
 function training(patch: Partial<TrainingFact> = {}): TrainingFact {

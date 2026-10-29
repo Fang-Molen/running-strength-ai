@@ -1,0 +1,16 @@
+✔ X01 linked import and watch count 26:51.94 once, before and after V4 projection/reload (2.512219ms)
+✔ X01 same day/time/distance without identity remains two activities; unlink restores two rows (9.225628ms)
+✔ X01 conflicting source durations remain visible and are not summed or silently preferred (1.24276ms)
+✔ X01 unknown duplicate is not a missing component or a zero-duration activity (0.214442ms)
+✔ X01 mixed session keeps run pace separate and does not invent non-overlapping component time (0.28856ms)
+✔ X01 remerging projected rows retains individual sources and remains idempotent (0.310352ms)
+✔ X01 explicit disjoint components can sum; overlap or a corrected conflicting source cannot (0.688773ms)
+✔ 1A a third source joining two explicit identities collapses the whole activity once in any input order (0.546676ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23.958177

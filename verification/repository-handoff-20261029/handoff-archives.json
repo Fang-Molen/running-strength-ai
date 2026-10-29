@@ -1,0 +1,14 @@
+[
+  {
+    "path": "handoff/20261029/Fangkun-GPT-Work-Load-Memory-Handoff.zip",
+    "sha256": "45b867f77b0db95f9ef3a0747c05baa0a6017c0610ec22480be4f07f4e13457a",
+    "bytes": 913246,
+    "crc": "PASS"
+  },
+  {
+    "path": "handoff/20261029/Fangkun-GPT-Work-Handoff.zip",
+    "sha256": "d0d83307e0dcec1d7ab7a665420ea42f30a9c7fb220b17e8784f1f4689d0a514",
+    "bytes": 994604,
+    "crc": "PASS"
+  }
+]

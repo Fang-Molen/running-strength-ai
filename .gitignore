@@ -7,3 +7,7 @@ evidence/
 node_modules
 .output
 .vercel
+.grok/*.log
+.grok/*.pid
+__pycache__/
+*.pyc

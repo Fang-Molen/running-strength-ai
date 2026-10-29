@@ -1,0 +1,12 @@
+✔ src/lib/coach/context-period-range.test.ts (460.172233ms)
+✔ src/lib/health/load-evidence.test.ts (695.445965ms)
+✔ src/lib/health/load-integration.test.ts (2889.154795ms)
+✔ src/lib/health/load-memory.test.ts (2312.243118ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2903.305647

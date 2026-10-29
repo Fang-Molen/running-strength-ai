@@ -1,0 +1,2 @@
+{"files": 34, "filePass": 33, "fileFail": 1, "tests": 318, "pass": 317, "fail": 1, "seconds": 56.673}
+[{"file": "server/coach-deepseek/online-v2.test.ts", "exit": 1, "seconds": 24.756, "tests": 8, "pass": 7, "fail": 1, "skipped": 0}]

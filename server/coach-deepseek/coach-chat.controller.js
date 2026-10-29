@@ -1,4 +1,5 @@
 import { trustedBindingsPresent } from './coach-status.js';
+import { contextTextField } from '../../src/lib/coach/context-fields.ts';
 import { normalizeAskCoachInput, buildCoachModelRequest, interpretCoachModelOutput, coachLocalSafetyTurn } from '../../src/lib/strength/coach-pipeline.ts';
 import { MODEL_DEV_USER_ID } from '../../src/lib/strength/model-access.ts';
 import { assertDeepSeekNumericGrounding, assertDeepSeekEvidenceQuotes } from '../../src/lib/coach/deepseek-grounding.ts';
@@ -93,12 +94,13 @@ export async function onRequestPost({request,env={},data={}}) {
     const semantic=parseCoachUtterance(refs.question);
     restrictions=(snapshot.context?.records??[]).filter(r=>r.category==='RESTRICTION').map(r=>{
       const values=Object.fromEntries(r.fields.map(f=>[f.name,f.value]));
-      const raw=String(values.restriction??values.region??'');
+      const fullRestriction=contextTextField(r,'restriction');
+      const raw=fullRestriction||String(values.region??'');
       const region=/HAMSTRING|THIGH|CALF|QUAD|KNEE|ANKLE|FOOT|HIP|LOWER/i.test(raw)?'腿':/SHOULDER|ARM|ELBOW|WRIST|UPPER/i.test(raw)?'上肢':raw;
-      const interpreted=interpretProfileLimit(String(values.restriction??''));
+      const interpreted=interpretProfileLimit(fullRestriction);
       /** @type {import('../../src/lib/coach/utterance-semantics.ts').RestrictionStatus} */
-      const status=values.restriction!==undefined?interpreted.status:values.value===0?'UNKNOWN':'ACTIVE';
-      return {id:r.recordId,version:r.revision,status,scope:'DECLARED_RESTRICTION',actions:restrictionActionScope(region),sourceText:raw,occurredAt:r.occurredAt};
+      const status=values.contentIncomplete?'REVIEW_PENDING':values.restriction!==undefined?interpreted.status:values.value===0?'UNKNOWN':'ACTIVE';
+      return {id:r.recordId,version:r.revision,status,scope:'DECLARED_RESTRICTION',actions:values.contentIncomplete?['UNKNOWN']:restrictionActionScope(region),sourceText:raw,occurredAt:r.occurredAt};
     });
     if(canonical.brief.pain||originals.some(b=>b.constraints.medicalReferral))restrictions.push({id:'scalar-restriction',version:'declared',status:'ACTIVE',scope:'DECLARED_UNSCOPED',actions:['UNKNOWN'],sourceText:'未提供疼痛部位',occurredAt:null});
     safetyRestricted=questionTaskPermission(refs.question,restrictions).trainingRestricted;

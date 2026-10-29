@@ -44,6 +44,7 @@ async function save(ctx: RestoreContext, op: RestoreOperation): Promise<void> {
 async function isolated(ctx: RestoreContext, op: Pick<RestoreOperation, 'subject'>): Promise<void> {
   if (ctx.subject() !== op.subject) throw Error('SUBJECT_CHANGED')
   if (!await ctx.isolation()) throw Error('WRITER_ISOLATION_UNPROVEN')
+  if (ctx.subject() !== op.subject) throw Error('SUBJECT_CHANGED')
 }
 async function committed(ctx: RestoreContext, op: RestoreOperation): Promise<RestoreResult> {
   try { await ctx.afterCommit?.(structuredClone(op)); return result(op, 'COMMITTED') }
@@ -62,6 +63,7 @@ async function rollback(ctx: RestoreContext, op: RestoreOperation): Promise<Rest
       const current = await backend.read(entry.key)
       if (current !== entry.before) {
         if (current !== entry.target) throw Error('ROLLBACK_CONFLICT')
+        await isolated(ctx, op)
         await backend.write(entry.key, entry.before)
       }
       if (await backend.read(entry.key) !== entry.before) throw Error('ROLLBACK_VERIFY_FAILED')
@@ -126,6 +128,8 @@ export async function executeRestore(request: RestoreRequest, ctx: RestoreContex
       const backend = ctx.backends[entry.backend]
       if (await backend.read(entry.key) !== entry.before) throw Error('PREVIEW_CHANGED')
       entry.intent = true; await save(ctx, op)
+      // Awaited reads and journal writes can outlive the identity or isolation check.
+      await isolated(ctx, op)
       await backend.write(entry.key, entry.target)
       if (await backend.read(entry.key) !== entry.target) throw Error('TARGET_VERIFY_FAILED')
       entry.written = true; await save(ctx, op)

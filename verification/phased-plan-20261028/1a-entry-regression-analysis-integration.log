@@ -1,0 +1,20 @@
+✔ A08 live U11 host retains mixed run plus strength and detailed actuals (45.122486ms)
+✔ A23 source correction updates health and coach while frozen earlier view stays unchanged (87.720437ms)
+✔ A14 medical hold retains numeric recovery facts instead of stale warning only (25.035174ms)
+✔ A27 partial food entry is logged energy, never full-day deficit; analysis read does not write (6.292104ms)
+✔ A31 late COROS response is dropped after athlete switch, no cache contamination (10.77915ms)
+✔ A31 revocation during request rejects response even if server response arrives (2.208837ms)
+✔ analysis material revision stays stable across rereads to prevent history refresh loops (18.187811ms)
+✔ legacy event without commit time stays outside frozen analysis and records a gap (4.721026ms)
+✔ C27 V4 mixed host keeps actual occurrence, not plan date alias (11.265738ms)
+✔ C28 VOID immediately invalidates host projections without deleting stored events (10.216151ms)
+✔ C29 pain with unknown muscle location is still a safety hold (2.738408ms)
+✔ C03 retained last-year activity can be selected without becoming current fatigue or mixing owners (69.688643ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 317.438158

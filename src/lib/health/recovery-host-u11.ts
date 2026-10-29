@@ -1,3 +1,4 @@
+import {calendarDate,calendarDayEnd} from './load-evidence'
 import { getRunningPlanSnapshot } from '../core/running-plan'
 import { readSavedSessionLoads } from '../core/coach-load-metrics-store'
 import { analysisFromParts } from './analysis-from-parts'
@@ -15,6 +16,7 @@ import type { V4Day } from '../ui/plan400-view'
 import { planDays, planTag, planPrefix } from '../plan/active-plan'
 import { libraryKey, purposeRunType, RUN_TYPE_LABEL, v4RunType } from './muscle-log-source'
 import { coachImports, effectiveImportedTraining } from '../core/coach-import-evidence'
+import { readCurrentImportConflicts } from '../core/current-import-conflicts'
 import { loadOwnedComponents } from '../ui/plan400-components-store'
 import { garminRows } from '../ui/training-read-model'
 import { garminViewKey } from './garmin-view-scope'
@@ -40,15 +42,18 @@ export const regionFromExplicitLabel = (label: string): Region | null => {
 const iso = (v: unknown): v is string => typeof v === 'string' && /T.*(?:Z|[+-]\d\d:\d\d)$/.test(v) && Number.isFinite(Date.parse(v))
 export const partEvidenceKey = (p: TrainingPart) => p.occurrenceId && p.componentId
   ? `${p.athleteId}|${p.occurrenceId}|${p.componentId}|${p.modality}` : `${p.athleteId}|${p.sourceId}|${p.eventId}|${p.modality}`
-export function readRecoveryProjection(day = localDay(), asOf = new Date().toISOString(), sourceWindowHours:number|'RETAINED_HISTORY'=72) {
+export function readRecoveryProjection(day = localDay(), asOf = new Date().toISOString(), sourceWindowHours:number|'RETAINED_HISTORY'=72,options:{trainingRange?:{startDay:string;endDay:string};timeZone?:string}={}) {
   if (!validDay(day) || !iso(asOf)) throw Error('INVALID_RECOVERY_TIME')
+  const timeZone=options.timeZone??Intl.DateTimeFormat().resolvedOptions().timeZone
+  const inRange=(at:string)=>{if(!options.trainingRange)return true;const d=calendarDate(at,timeZone);return d>=options.trainingRange.startDay&&d<=options.trainingRange.endDay}
   const athleteId = currentAthleteId(), parts: TrainingPart[] = [], symptoms: Symptom[] = []
   const sources: RecoverySource[] = [], gaps: string[] = [], notes: string[] = [], painUpdates: SymptomUpdate[] = [], painLabel = new Map<string, string>()
-  const endOfDay = new Date(`${day}T23:59:59.999`).getTime()
+  const endOfDay = calendarDayEnd(day,timeZone)
   const cutoff = Math.min(Date.parse(asOf), endOfDay), effectiveAsOf = new Date(cutoff).toISOString()
   const recent = (time: string) => iso(time) && Date.parse(time) <= cutoff && (sourceWindowHours==='RETAINED_HISTORY'||Date.parse(time) >= cutoff - sourceWindowHours * 3600000)
   let unreadable = !currentStore(), painReviewRequired = false
   const add = (p: TrainingPart, label: string, detail: string, actualSets: number | null = null) => {
+    if(!inRange(p.occurredAt))return
     const regionSets: Partial<Record<Region, number>> = {}
     for (const e of p.exercises ?? []) for (const r of exerciseRegions(e.catalogId)) regionSets[r] = (regionSets[r] ?? 0) + (e.actualSets ?? 0)
     parts.push(p); sources.push({id:partEvidenceKey(p),label,occurredAt:p.occurredAt,knownAt:p.knownAt,actualSets,detail,...(p.modality==='STRENGTH'?{regionSets}:{})})
@@ -65,10 +70,10 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     const occurrences = listTrainingOccurrences()
     // v89.2：与训练日志同一份记录——这次训练自己的逐组事件（日志“逐组已记”的同一口径），不再要求原计划快照逐组对齐。
     const strengthDays = new Set<string>(), runDays = new Set<string>(), phoneRunPlans = new Set<string>(), phoneOccurrences = new Map<string,string[]>()
-    const loads = readSavedSessionLoads(athleteId,effectiveAsOf)
+    const loads = readSavedSessionLoads(athleteId,effectiveAsOf,timeZone)
     for (const occurrence of occurrences) {
       const oid = occurrence.trainingOccurrenceId
-      if (!occurrence.startedAt || !recent(occurrence.startedAt)) continue
+      if (!occurrence.startedAt || !recent(occurrence.startedAt)||!inRange(occurrence.startedAt)) continue
       if (!events.some(e => e.event_id === occurrence.startEventId)) continue
       const corrections = readTrainingCorrectionsAsOf(oid,effectiveAsOf)
       if (corrections.unknownCommitTime.length) { gaps.push('训练更正缺少可靠录入时间，历史肌群依据未知'); continue }
@@ -77,7 +82,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const endedAt=closed&&iso(occurrence.endedAt)&&Date.parse(occurrence.endedAt)<=cutoff?occurrence.endedAt:null
       const load=loads.find(s=>s.id===oid)
       const actualProtocols=[...new Set(events.filter(e=>e.payload?.trainingOccurrenceId===oid).map(e=>e.payload?.trainingProtocol).filter((v):v is string=>typeof v==='string'&&!!v.trim()))]
-      const meta={endedAt,protocolKey:actualProtocols.length===1?actualProtocols[0]:null,sessionRpe:load?.sessionRpe??null,sessionRpeScale:load?.sessionRpe!=null?'0-10_SESSION_RPE':null}
+      const meta={endedAt,actualDurationSeconds:load?.minutes!=null?load.minutes*60:null,sessionLoadEvidence:load?.measurement,protocolKey:actualProtocols.length===1?actualProtocols[0]:null,sessionRpe:load?.sessionRpe??null,sessionRpeScale:load?.sessionRpe!=null?'0-10_SESSION_RPE':null}
       const snapshot = occurrence.trainingPlanSnapshotId ? getTrainingPlanSnapshot(occurrence.trainingPlanSnapshotId) : null
       const latest = new Map<string, (typeof records)[number]>()
       for (const r of records) {
@@ -100,7 +105,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
         const name = (typeof q.name === 'string' && q.name.trim()) || planned?.name || String(q.moveId)
         const key = libraryKey(name, typeof q.catalogId === 'string' ? q.catalogId : planned?.catalogId) ?? undefined
         const n=(v:unknown)=>typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null
-        strengthSets.push({id:r.event.event_id,catalogId:key??null,catalogVersion:'U11_CATALOG_1',side:['LEFT','RIGHT','BILATERAL'].includes(String(q.side))?q.side as StrengthSet['side']:'UNSPECIFIED',loadKg:eff.weight.value,loadBasis:['TOTAL_EXTERNAL','PER_HAND','ASSISTANCE','BODYWEIGHT'].includes(String(q.loadBasis))?q.loadBasis as StrengthSet['loadBasis']:'UNKNOWN',reps:timed?null:eff.reps.value,holdSeconds:timed?n(q.actualAmount):null,setRpe:n(q.setRpe),rir:n(q.rir),effortScale:typeof q.effortScale==='string'?q.effortScale:null,eccentricSeconds:n(q.eccentricSeconds),rangeProtocol:typeof q.rangeProtocol==='string'?q.rangeProtocol:null,completion:'COMPLETED'})
+        strengthSets.push({id:r.event.event_id,catalogId:key??null,catalogVersion:'U11_CATALOG_1',side:['LEFT','RIGHT','BILATERAL'].includes(String(q.side))?q.side as StrengthSet['side']:'UNSPECIFIED',loadKg:eff.weight.value,loadBasis:['TOTAL_EXTERNAL','PER_HAND','ASSISTANCE','BODYWEIGHT'].includes(String(q.loadBasis))?q.loadBasis as StrengthSet['loadBasis']:'UNKNOWN',reps:timed?null:eff.reps.value,holdSeconds:timed?n(q.actualAmount):null,setRpe:n(q.setRpe),rir:n(q.rir),effortScale:typeof q.effortScale==='string'?q.effortScale:null,eccentricSeconds:n(q.eccentricSeconds),rangeProtocol:typeof q.rangeProtocol==='string'?q.rangeProtocol:null,restAfterSeconds:n(q.actualRestSeconds),completion:'COMPLETED'})
         const same = exercises.find(e => e.catalogId === key && e.name === name)
         if (same) same.actualSets!++
         else exercises.push({ catalogId: key, name, actualSets: 1, verified: true })
@@ -141,17 +146,27 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
     // v89.10.6：先读手表跑步关联——已关联计划课的那条手表跑步，导入记录（同一来源标识）不再重复列出。
     let match: ReturnType<typeof loadRunMatch> = { links: [], suggestions: [] }
     try { match = loadRunMatch() } catch { match = { links: [], suggestions: [] } }
-    const imports = coachImports(athleteId,effectiveAsOf)
+    const imports = coachImports(athleteId,effectiveAsOf), currentConflicts = readCurrentImportConflicts(imports)
     const confirmedLinks=loadOwnedComponents(currentStore()).days
     for (const rawRecord of imports) {
       const projected=effectiveImportedTraining(rawRecord,effectiveAsOf),record=projected.record;
-      if (!record.occurredAt.value || !recent(record.occurredAt.value)) continue
+      if (!record.occurredAt.value || !recent(record.occurredAt.value)||!inRange(record.occurredAt.value)) continue
       const corrections = readTrainingCorrectionsAsOf(record.confirmedImportId,effectiveAsOf)
       if (corrections.unknownCommitTime.length) { gaps.push('导入训练更正缺少可靠录入时间，历史肌群依据未知'); continue }
       if (corrections.voided) continue
       if (corrections.rows.some(c=>c.kind==='FIELD'&&c.field==='feedback')) {
         gaps.push('导入反馈更正尚不能唯一对应原反馈，肌群分析等待核对；不表示限制已解除'); continue
       }
+      const conflict=currentConflicts.get(record.confirmedImportId)
+      if(conflict)gaps.push(conflict.note)
+      const durationCorrected=corrections.rows.some(c=>c.kind==='FIELD'&&c.field==='duration')
+      const distanceCorrected=corrections.rows.some(c=>c.kind==='FIELD'&&c.field==='distance')
+      if(durationCorrected||distanceCorrected)gaps.push('导入整课总量受逐项更正影响，相关总量未知；保留可核对分段，不用单段更正补造整课总量。')
+      // This is a detached read projection. Withdraw only ambiguous totals;
+      // retain confirmed segment values and the import's real knownAt. The
+      // current cache has no receipt time and never becomes historical evidence.
+      if(conflict?.duration||durationCorrected)record.durationSeconds={...record.durationSeconds,value:null,status:'AMBIGUOUS'}
+      if(conflict?.distance||distanceCorrected)record.totalDistanceMeters={...record.totalDistanceMeters,value:null,status:'AMBIGUOUS'}
       if(projected.revision)notes.push('导入训练按已确认的逐项更正读取，原始来源保留；未知更正值不补零。');
       const linked=match.links.find(l=>l.by==='user'&&record.sourceRecordIdentity&&[l.run.id,...l.run.originIds].includes(record.sourceRecordIdentity))
       const linkedDay=linked?/^plan400:(\d{4}-\d\d-\d\d):running$/.exec(linked.entry.id)?.[1]:null
@@ -159,13 +174,14 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
       const phoneIds=linkedDay?phoneOccurrences.get(`v4run:${linkedDay}`)??[]:[]
       const confirmedPhone=receipt?.linkedBy==='user'&&iso(receipt.linkedAt)&&Date.parse(receipt.linkedAt)<=cutoff&&phoneIds.length===1?phoneIds[0]:null
       const cc=record.comparisonContext
-      const fullSeconds=record.sport!=='MIXED'&&record.durationSeconds.status==='RECORDED'?record.durationSeconds.value:null
+      const importedLoad=loads.find(s=>s.id===record.confirmedImportId)
+      const fullSeconds=record.durationSeconds.status==='RECORDED'?record.durationSeconds.value:null
       const computedEnd=fullSeconds!==null&&iso(record.occurredAt.value)?new Date(Date.parse(record.occurredAt.value)+fullSeconds*1000).toISOString():null
       const durationValid=computedEnd!==null&&Date.parse(computedEnd)<=cutoff&&Date.parse(computedEnd)<=Date.parse(record.confirmedAt)
-      const base = {actualDurationSeconds:durationValid?fullSeconds:null,endedAt:durationValid?computedEnd:null,sourceKind:!record.sourceRecordIdentity&&!record.provenance?'MANUAL_IMPORT' as const:undefined,
+      const base = {sessionLoadEvidence:importedLoad?.measurement,actualDurationSeconds:durationValid?fullSeconds:null,endedAt:durationValid?computedEnd:null,sourceKind:!record.sourceRecordIdentity&&!record.provenance?'MANUAL_IMPORT' as const:undefined,
         deviceId:cc?.deviceId.status==='RECORDED'?cc.deviceId.value:null,protocolKey:cc?.protocolKey.status==='RECORDED'?cc.protocolKey.value:null,
         athleteId,eventId:record.confirmedImportId,occurrenceId:record.confirmedImportId,
-        occurredAt:record.occurredAt.value,knownAt:projected.knownAt,revision:projected.revision,sourceId:record.confirmedImportId,actual:'CONFIRMED' as const,provenance:record.provenance??{provider:providerOf(record.sourceRecordIdentity),accountRef:null,recordId:record.sourceRecordIdentity??record.confirmedImportId,measuredAt:record.occurredAt.value,receivedAt:record.confirmedAt},sessionRpe:record.sessionRpe.status==='RECORDED'?record.sessionRpe.value:null,sessionRpeScale:record.sessionRpe.status==='RECORDED'?'0-10_SESSION_RPE':null}
+        occurredAt:record.occurredAt.value,knownAt:projected.knownAt,revision:projected.revision,sourceId:record.confirmedImportId,actual:'CONFIRMED' as const,provenance:record.provenance??{provider:providerOf(record.sourceRecordIdentity),accountRef:null,recordId:record.sourceRecordIdentity??record.confirmedImportId,measuredAt:record.occurredAt.value,receivedAt:record.confirmedAt},sessionRpe:importedLoad?.sessionRpe??null,sessionRpeScale:importedLoad?.sessionRpe!=null?'0-10_SESSION_RPE':null}
       if (record.sport === 'STRENGTH' || record.sport === 'MIXED') {
         const exercises: NonNullable<TrainingPart['exercises']> = []
         for (const s of record.strengthSets) {
@@ -177,7 +193,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
           if(old) old.actualSets!++
           else exercises.push({catalogId,name:s.exerciseName.value??undefined,actualSets:1,verified:true})
         }
-        add({...base,componentId:'strength',modality:'STRENGTH',exercises,strengthSets:record.strengthSets.map(s=>({id:s.id,catalogId:libraryKey(s.exerciseName.value)??null,catalogVersion:'U11_CATALOG_1',side:s.side?.status==='RECORDED'?(s.side.value??'UNSPECIFIED'):'UNSPECIFIED',loadKg:s.weightKg.status==='RECORDED'?s.weightKg.value:null,loadBasis:s.loadBasis?.status==='RECORDED'?(s.loadBasis.value??'UNKNOWN'):'UNKNOWN',reps:s.repetitions.status==='RECORDED'?s.repetitions.value:null,holdSeconds:s.durationSeconds.status==='RECORDED'?s.durationSeconds.value:null,setRpe:null,rir:s.rir?.status==='RECORDED'?s.rir.value:null,effortScale:s.rir?.status==='RECORDED'?'RIR':null,eccentricSeconds:null,rangeProtocol:s.rangeProtocol?.status==='RECORDED'?s.rangeProtocol.value:null,completion:s.completion==='COMPLETED'?'COMPLETED':s.completion==='SKIPPED'?'SKIPPED':'NOT_RECORDED'}))},'已确认导入力量',
+        add({...base,componentId:'strength',modality:'STRENGTH',exercises,strengthSets:record.strengthSets.map(s=>({id:s.id,catalogId:libraryKey(s.exerciseName.value)??null,catalogVersion:'U11_CATALOG_1',side:s.side?.status==='RECORDED'?(s.side.value??'UNSPECIFIED'):'UNSPECIFIED',loadKg:s.weightKg.status==='RECORDED'?s.weightKg.value:null,loadBasis:s.loadBasis?.status==='RECORDED'?(s.loadBasis.value??'UNKNOWN'):'UNKNOWN',reps:s.repetitions.status==='RECORDED'?s.repetitions.value:null,holdSeconds:s.durationSeconds.status==='RECORDED'?s.durationSeconds.value:null,setRpe:null,rir:s.rir?.status==='RECORDED'?s.rir.value:null,effortScale:s.rir?.status==='RECORDED'?'RIR':null,eccentricSeconds:null,rangeProtocol:s.rangeProtocol?.status==='RECORDED'?s.rangeProtocol.value:null,restAfterSeconds:s.recoverySeconds.status==='RECORDED'?s.recoverySeconds.value:null,completion:s.completion==='COMPLETED'?'COMPLETED':s.completion==='SKIPPED'?'SKIPPED':'NOT_RECORDED'}))},'已确认导入力量',
           exercises.map(e=>`${e.name} ${e.actualSets}组`).join('；')||'无法判断具体肌群：只有摘要，没有动作明细',
           exercises.length ? exercises.reduce((n,e)=>n+(e.actualSets??0),0) : null)
       }
@@ -267,7 +283,7 @@ export function readRecoveryProjection(day = localDay(), asOf = new Date().toISO
   const intraday=intradayRecoveryFromStore(stored,athleteId,day,effectiveAsOf)??buildIntradayRecovery({athleteId,day,now:effectiveAsOf,utcOffsetMinutes:-new Date(asOf).getTimezoneOffset(),samples:[],sleepEvents:[],trainingEvents:[]})
   if(!stored[day])intraday.warnings.push('这天没有手表逐时样本；日汇总仍在身体指标中保留，不拼成全天曲线。')
   intraday.warnings.push('午睡时段：佳明午睡字段未核准，自报午睡只有估计时长、没有起止时间，不画进曲线。')
-  const analysis=analysisFromParts(athleteId,effectiveAsOf,parts)
+  const analysis=analysisFromParts(athleteId,effectiveAsOf,parts,timeZone)
   const exposure=buildMuscleExposure(analysis)
   return {athleteId,day,review,sources,intraday,unreadable,painReviewRequired,analysis,exposure,parts,
     revision:shortHash(JSON.stringify([athleteId,day,review.regions,review.gaps,sources,unreadable,painReviewRequired,parts])),automaticPrescription:false as const}

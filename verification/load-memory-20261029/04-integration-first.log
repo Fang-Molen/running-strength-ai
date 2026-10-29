@@ -1,0 +1,28 @@
+✖ 实际保存→口径核对→完整性→问答同源→更正撤回总量→重新读取→切换人物 (84.717876ms)
+✔ 离散日期汇总不包含中间记录，区间包含；混合组件仍只一整课 (2.374748ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.836136
+
+✖ failing tests:
+
+test at src/lib/health/load-integration.test.ts:14:1
+✖ 实际保存→口径核对→完整性→问答同源→更正撤回总量→重新读取→切换人物 (84.717876ms)
+  AssertionError [ERR_ASSERTION]: summary survived real context budget
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/load-integration.test.ts:46:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

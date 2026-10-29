@@ -1,0 +1,11 @@
+✔ src/lib/coach/context-period-range.test.ts (597.585723ms)
+✔ src/lib/coach/online-context.test.ts (4093.290627ms)
+✔ src/lib/coach/online-history-entry.test.ts (3342.097445ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4109.181255

@@ -1,0 +1,15 @@
+✔ chat training and recovery agree on the earlier cutoff after a later reps correction (108.323153ms)
+✔ future native void and restore affect only snapshots that know those corrections (12.264473ms)
+✔ a future import field correction cannot withdraw the earlier confirmed muscle detail (51.409869ms)
+✔ import void and restore use their actual commit cutoffs (7.516679ms)
+✔ native correction with unknown commit time remains an explicit evidence gap (3.292265ms)
+✔ import correction with unknown commit time remains an explicit evidence gap (2.104755ms)
+✔ a later running close event cannot hide segments already known at the historical cutoff (12.45397ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 252.162838

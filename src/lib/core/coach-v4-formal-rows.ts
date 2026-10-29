@@ -17,7 +17,7 @@ export type FormalRowsResult={rows:FormalEvidenceRow[];unknownCommitTime:string[
 const SCALAR:Record<string,{metric:EvolutionMetric;unit:string;key:string[]}>={
  SESSION_RPE:{metric:'SESSION_RPE',unit:'score',key:['value','rpe']},SLEEP:{metric:'SLEEP_HOURS',unit:'h',key:['hours','value']},PAIN:{metric:'PAIN_SCORE',unit:'score',key:['intensity']},SUBJECTIVE_RECOVERY:{metric:'SUBJECTIVE_RECOVERY',unit:'score',key:['value']},SORENESS:{metric:'SORENESS',unit:'score',key:['intensity']}}
 function evidenceType(e:CommittedEvent['event']):string|null{
- if(!['EVIDENCE_RECORDED','RPE_RECORDED','PAIN_RECORDED','SLEEP_RECORDED'].includes(e.event_type))return null
+ if(!['EVIDENCE_RECORDED','RPE_RECORDED','PAIN_RECORDED','SLEEP_RECORDED','SUBJECTIVE_FEEDBACK'].includes(e.event_type))return null
  const n=e.payload?.evidenceType
  if(typeof n==='string'&&n in SCALAR)return n
  if(e.event_type==='PAIN_RECORDED')return 'PAIN'

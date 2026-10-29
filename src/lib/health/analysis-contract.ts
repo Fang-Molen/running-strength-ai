@@ -56,6 +56,7 @@ export interface RunSegment {
  completion: 'COMPLETED' | 'SKIPPED' | 'NOT_RECORDED';
 }
 export interface StrengthSet {
+ restAfterSeconds?: number | null;
  id: string; catalogId: string | null; catalogVersion: string | null; side: Side;
  loadKg: number | null; loadBasis: 'TOTAL_EXTERNAL' | 'PER_HAND' | 'ASSISTANCE' | 'BODYWEIGHT' | 'UNKNOWN';
  reps: number | null; holdSeconds: number | null; setRpe: number | null; rir: number | null;
@@ -63,6 +64,7 @@ export interface StrengthSet {
  completion: 'COMPLETED' | 'SKIPPED' | 'NOT_RECORDED';
 }
 export interface TrainingFact extends EvidenceMeta {
+ sessionLoadEvidence?: import('./load-evidence').SessionLoadEvidence;
  runningStructure?: unknown;
  kind: 'TRAINING'; canonicalActivityId: string; occurrenceId: string; componentId: string;
  modality: 'RUN' | 'STRENGTH' | 'JUMP' | 'OTHER';

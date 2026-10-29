@@ -2,7 +2,7 @@
 import {currentAthleteId} from '../core/events';
 import {validDate} from '../ui/fieldwork-plan-drafts';
 import {todayDate} from './body';
-import {loadEntries,recordManualFood,updateEntry,nutrientOf,type FoodEntry,type Meal,type NutrientKey} from './log';
+import {loadEntries,recordManualFood,updateEntry,nutrientOf,findFoodRequest,type FoodEntry,type Meal,type NutrientKey} from './log';
 import {defaultAmount,sourceLabel,needsCheck,type FoodRow,type Macros} from './food-db';
 export const NUTRIENT_KEYS: NutrientKey[]=['kcal','protein','carb','fat','fiber'];
 export const NUTRIENT_LABELS={kcal:'热量',protein:'蛋白质',carb:'碳水',fat:'脂肪',fiber:'膳食纤维'};
@@ -36,10 +36,21 @@ export function changeFoodAmount(d:NutritionDraft,amount:string):NutritionDraft{
  if(!reference||!Number.isFinite(after)||after<=0)return {...d,amount,quantityReference:reference};
  return {...d,amount,quantityReference:reference,values:Object.fromEntries(NUTRIENT_KEYS.map(k=>{const raw=reference.values[k];return [k,raw.trim()===''?'':String(Number(raw)*after/reference.amount)]})) as NutritionDraft['values']};
 }
-export type FoodSaveInput={draft:NutritionDraft;date:string;meal:Meal;acknowledged:boolean;athleteId:string;entryId?:string;expectedRevision?:string};
+export type FoodSaveInput={draft:NutritionDraft;date:string;meal:Meal;acknowledged:boolean;athleteId:string;entryId?:string;expectedRevision?:string;requestId?:string};
 export function commitFoodDraft(input:FoodSaveInput):{ok:true;row:FoodEntry}|{ok:false;reason:string}{
  try{
   if(input.athleteId!==currentAthleteId())throw Error('当前运动员已变化，请重新打开记录。');
+  const requestFingerprint=input.requestId?JSON.stringify({draft:input.draft,date:input.date,meal:input.meal,athleteId:input.athleteId,entryId:input.entryId,expectedRevision:input.expectedRevision}):undefined;
+  if(input.requestId){
+   if(!input.requestId.trim())throw Error('保存请求无效，请重新打开记录。');
+   const original=findFoodRequest(input.requestId);
+   if(original){
+    if(!input.acknowledged||original.row.requestFingerprint!==requestFingerprint)throw Error('此保存请求的内容已变化，请重新打开记录。');
+    const current=loadEntries().find(row=>row.id===original.row.id);
+    if(!current||JSON.stringify(current)!==JSON.stringify(original.row))throw Error('这条饮食已被更正或撤销，请重新查看记录。');
+    return {ok:true,row:current};
+   }
+  }
   if(!validDate(input.date)||input.date>todayDate())throw Error('请填写有效的实际日期，不能记入未来。');
   const d=input.draft;if(!d.name.trim())throw Error('请填写食物名称。');
   if(!input.acknowledged)throw Error('请核对食物、份量、来源及本次营养后确认保存。');
@@ -52,7 +63,7 @@ export function commitFoodDraft(input:FoodSaveInput):{ok:true;row:FoodEntry}|{ok
   const patch={name:snapshot.name,date:input.date,meal:input.meal,amount:snapshot.amount,unit:d.unit,grams:p.grams??undefined,kcal:p.total.kcal,protein:p.total.protein??undefined,carb:p.total.carb,carbs:undefined,fat:p.total.fat,fiber:p.total.fiber,foodId:snapshot.foodId??undefined,foodSnapshot:undefined,nutritionSnapshot:snapshot,
    label:p.total.kcal==null?'营养待补充':source.label+(d.userEdited.length?'·人工补充':''),nutritionSource:{kind:product||retained?'DATABASE_SNAPSHOT':'MANUAL',at:date,evidence:[source.label,d.brand,source.uri].filter(Boolean).join(' · '),uncertainty:source.estimated?'来源值或用户估计尚待核对；未知字段保留为空。':'所用产品版本已记录，仍需核对实物规格。',reviewed:true},source:'MANUAL' as const,revisionId:crypto.randomUUID(),
    // Changing the local day cannot retain the previous day's timestamp as a fact.
-   eatenAt:prior?.date===input.date?prior.eatenAt:undefined};
+   eatenAt:prior?.date===input.date?prior.eatenAt:undefined,...(input.requestId?{requestId:input.requestId,requestFingerprint}:{requestId:undefined,requestFingerprint:undefined})};
   if(input.entryId){const saved=updateEntry(input.entryId,patch,input.expectedRevision);const row=saved?.find(r=>r.id===input.entryId);if(!row)throw Error('保存失败或记录已变化，输入仍保留。');return {ok:true,row}}
   const row=recordManualFood(patch);if(!row)throw Error('保存失败，输入仍保留。');return {ok:true,row};
  }catch(error){return {ok:false,reason:error instanceof Error?error.message:'保存失败，输入仍保留。'}}

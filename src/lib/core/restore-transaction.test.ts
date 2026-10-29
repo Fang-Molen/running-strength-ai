@@ -114,3 +114,55 @@ test('B05 unknown legacy-writer isolation and changed preview both reject before
   assert.equal((await executeRestore(request(), f.context)).state, 'NOT_STARTED')
   assert.deepEqual(f.writes, [])
 }))
+
+test('B05 an account switch while awaiting isolation rejects before preparing a restore', () => fixture(async f => {
+  let subject = 'synthetic-a'
+  f.context.subject = () => subject
+  f.context.isolation = async () => { subject = 'synthetic-b'; return true }
+  const result = await executeRestore(request(), f.context)
+  assert.equal(result.state, 'NOT_STARTED')
+  assert.equal(result.reason, 'SUBJECT_CHANGED')
+  assert.equal(await f.saved(), null)
+  assert.deepEqual(f.writes, [])
+}))
+
+test('B05 an account switch while persisting write intent cannot write a target', () => fixture(async f => {
+  let subject = 'synthetic-a'
+  f.context.subject = () => subject
+  f.journalFault(op => { if (op.entries.some(entry => entry.intent)) subject = 'synthetic-b'; return null })
+  const result = await executeRestore(request(), f.context)
+  assert.equal(result.state, 'RECOVERY_REQUIRED')
+  assert.deepEqual(f.writes, [])
+  assert.deepEqual([...f.values.values()], ['old', 'mirror-old'])
+  subject = 'synthetic-a'; f.journalFault(() => null)
+  assert.equal((await recoverRestore('op', f.context)).state, 'ROLLED_BACK')
+  assert.deepEqual(f.writes, [])
+}))
+
+test('B05 isolation lost while persisting write intent cannot write a target', () => fixture(async f => {
+  let isolated = true
+  f.context.isolation = async () => isolated
+  f.journalFault(op => { if (op.entries.some(entry => entry.intent)) isolated = false; return null })
+  const result = await executeRestore(request(), f.context)
+  assert.equal(result.state, 'RECOVERY_REQUIRED')
+  assert.deepEqual(f.writes, [])
+  assert.deepEqual([...f.values.values()], ['old', 'mirror-old'])
+}))
+
+test('B05 an account switch during rollback read cannot restore into the new account', () => fixture(async f => {
+  let subject = 'synthetic-a', interrupted = false
+  f.context.subject = () => subject
+  f.journalFault(op => {
+    if (op.entries.some(entry => entry.written)) interrupted = true
+    return interrupted ? 'before' : null
+  })
+  assert.equal((await executeRestore(request(), f.context)).state, 'RECOVERY_REQUIRED')
+  assert.equal(f.values.get('local:a'), 'new')
+  f.journalFault(() => null)
+  const read = f.context.backends.local.read
+  f.context.backends.local.read = async key => { const value = await read(key); subject = 'synthetic-b'; return value }
+  const writesBeforeRecovery = [...f.writes]
+  assert.equal((await recoverRestore('op', f.context)).state, 'RECOVERY_REQUIRED')
+  assert.deepEqual(f.writes, writesBeforeRecovery)
+  assert.equal(f.values.get('local:a'), 'new', 'before-images remain in the journal for the original account')
+}))

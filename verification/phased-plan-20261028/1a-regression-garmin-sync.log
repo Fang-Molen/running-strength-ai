@@ -1,0 +1,31 @@
+INITIAL requests 329
+FULL requests 51 RECENT requests 18
+✔ Garmin mapping preserves decimal units, valid zero and stable source ID (2.181487ms)
+✔ successful synthetic sync reports actual coverage, 6.5h sleep and zero observations (3.230834ms)
+✔ duplicate activity ID is one record, different IDs with same measurements stay separate (1.020005ms)
+✔ divergent duplicate activity IDs block writes rather than select a value (0.369559ms)
+✔ partial health endpoint failure stays partial while preserving valid data (0.639542ms)
+✔ all failed endpoints never report successful sync (0.599443ms)
+✔ HTTP200 with no available fields is empty, not successful record coverage (1.520254ms)
+✔ login expiry produces an attempt report without writing any new data (0.373444ms)
+✔ subject switch during sync discards rows and does not write old report into new user (0.326155ms)
+✔ logout generation change prevents late response writes (0.477826ms)
+✔ account changes in another tab detected by final status fence (0.657587ms)
+✔ a known account cannot be imported into another athlete (0.401635ms)
+✔ transport and report storage failures are explicit (0.527979ms)
+✔ real local import service deduplicates stable source ID, keeps corrections, and unifies raw view identity (9.675049ms)
+✔ R1 SYNC-04: network failure on status is reported as fail (not auth) and still produces a report (0.545655ms)
+✔ v78 health history backfills 14 older days per sync until 90 days, only after a clean save (8.796219ms)
+✔ first sync collects 90 days daily + 28 days intraday in one go, then marks full review (8.952186ms)
+✔ auto sync same local day after full review = RECENT: 3 days, 20-item list, far fewer requests (1.292082ms)
+✔ new local day or no full review → FULL even for auto (1.382002ms)
+✔ RECENT pages further only while every item is new/changed (cap 200) (7.767852ms)
+✔ first sync throttled (429) saves partial, cursor resumes, no full-review mark (5.381927ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.344342

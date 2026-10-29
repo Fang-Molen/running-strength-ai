@@ -1,3 +1,4 @@
+import { TrainingLoadEvidence } from './training-load-evidence'
 import type React from "react"
 import { useEffect, useMemo, useState } from "react"
 import { Activity, Dumbbell, Footprints } from "lucide-react"
@@ -25,6 +26,7 @@ import { AssessmentPanel } from "@/components/assessment-panel"
 import { AthleteGrowthCard } from "@/components/athlete-growth-card"
 import type { Plan } from "@/lib/strength/model"
 import { garminActivities } from "@/lib/coach/online-coach"
+import {openPetCapture, selectPetTraining} from '@/lib/ui/pet-capture-navigation'
 
 const FILTER_KEY = "fk-log-filter-v2", OLD_FILTER_KEY = "fk-log-filter-v1"
 const FEEL: Record<string, string> = { easy: "轻松", ok: "正好", hard: "吃力", pain: "有不适", skip: "这周没练" }
@@ -76,15 +78,17 @@ function RecordRow({ r, plan, onAsk, open, onOpen, link }: { r: ActivityRow; pla
       </span>
       <span className="text-muted" aria-hidden="true">{open ? "▾" : "›"}</span>
     </button>
-    {open ? <div className="mb-3 space-y-2">
+    {open ? <div className="mb-3 space-y-2" onClick={()=>selectPetTraining(r.importId??r.occurrenceId??null)}>
       {link ? <RunLinkNote link={link} /> : null}
       {r.v4 ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-fact-note"><p className="keep font-bold">{planPrefix()}这节课</p>{r.v4.running ? <p className="keep">跑步：{r.v4.running.label}{r.v4.running.detail ? ` · ${r.v4.running.detail}` : ""}</p> : null}{r.v4.strength ? <p className="keep">力量：{r.v4.strength.label}</p> : null}{r.v4.legacyOverall ? <p className="keep text-muted">历史整课记录（旧口径，只读；整课 RPE 不拆给跑步或力量）</p> : null}</div> : null}
       {r.v4parts ? <div className="rounded-lg border border-line px-2 py-1 text-xs" data-testid="v4-parts-note"><p className="keep font-bold">{planPrefix()}分项评价</p>{[partLine("跑步", r.v4parts.running), partLine("力量", r.v4parts.strength)].map((x, i) => x ? <p key={i} className="keep">{x}</p> : null)}{!partLine("跑步", r.v4parts.running) && !partLine("力量", r.v4parts.strength) ? <p className="keep text-muted">还没有分项评价</p> : null}</div> : null}
+      {g ? <TrainingLoadEvidence id={r.importId??String(r.garminId)} startedAt={r.startedAt} /> : null}
       {g ? <GarminActivityRow g={g} detailOnly /> : null}
       {occ ? <OccurrenceCard item={occ} plan={plan} onAsk={onAsk} /> : null}
       {imp ? <ImportRow item={imp} onAsk={onAsk} onDeleted={() => window.dispatchEvent(new Event("fk-training-activities-changed"))} /> : null}
       {!g && !occ && !imp ? <PhoneRecordDetail row={r} /> : null}
       <button type="button" className="min-h-11 rounded-full border border-line px-3 text-sm font-bold" onClick={() => onAsk(r.importId ?? r.occurrenceId ?? null)}>让方坤复盘这次</button>
+      <button type="button" className="min-h-11 rounded-full border border-line px-3 text-sm font-bold" onClick={()=>openPetCapture('feedback',r.importId??r.occurrenceId??null)}>补训练反馈</button>
     </div> : null}
   </li>
 }

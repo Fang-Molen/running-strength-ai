@@ -1,0 +1,14 @@
+✔ no user plan / goal → facts say goal unknown and carry no bundled plan (43.719262ms)
+✔ goal comes from the user: profile target or explicitly stated chat goal (10.055562ms)
+✔ plan lines require an actual imported plan, not just an old log, and are labelled as plan (6.33879ms)
+✔ G04: askOnlineCoach honours setOnline(false) itself — no fetch (24.746425ms)
+✔ server does not treat a client fact snapshot or API key as authority (3.683474ms)
+✔ local interval-rest explainer no longer assumes the 400m/53s goal (0.564542ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121.281014

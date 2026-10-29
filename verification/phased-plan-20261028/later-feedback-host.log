@@ -1,0 +1,23 @@
+✔ goal save is explicit, versioned, separate from measured ability and calendar (16.546508ms)
+✔ cycle preview does not write, confirmation only adds first week and undo restores exact originals (68.727795ms)
+✔ unknown goal remains useful as a conditional rolling draft but cannot confirm (16.795015ms)
+✔ same basis is idempotent; a goal date change invalidates pending confirmation (33.823481ms)
+✔ account switch cannot read or confirm another account cycle (10.09307ms)
+✔ new pain invalidates and blocks a pending cycle regardless of prior normal status (26.807492ms)
+✔ reject never modifies formal calendar and cannot later accept the same token (10.940043ms)
+✔ later course edits and actual execution block destructive undo (19.273876ms)
+✔ atomic calendar receipt remains authoritative when the card journal fails after acceptance (19.945368ms)
+✔ historical corrections withdraw dependent conclusions without rewriting old drafts (33.415882ms)
+✔ saved future feedback stays pending in the earlier host review and appears at its cutoff (34.093233ms)
+✔ unchanged evidence remains confirmable as the clock advances within the same day (19.532758ms)
+✔ current cycle facts stay local until server authorization; stale candidate structure is withheld (251.821584ms)
+✔ older accepted draft can be undone after a newer draft exists (47.234221ms)
+✔ explicit four-week window survives version check, confirmation and undo without changing goal (26.521597ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 646.067846

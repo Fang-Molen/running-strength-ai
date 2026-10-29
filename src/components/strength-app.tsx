@@ -42,6 +42,8 @@ import type {CoachStrengthAction} from "@/components/coach-strength-edit-panel";
 import { BodyCenter, type BodyPane } from "@/components/body-center";
 import { AppearanceSettings } from "@/components/appearance-settings";
 import { FloatingPet } from "@/components/pet/floating-pet";
+import {PetCaptureHost} from '@/components/pet/pet-capture';
+import {openPetCapture} from '@/lib/ui/pet-capture-navigation';
 import { readCharacterTheme, writeCharacterTheme, getCharacterTheme, CHARACTER_THEME_BACKGROUND, CHARACTER_THEME_KEY, type CharacterThemeId } from "@/lib/ui/character-themes";
 import { readWallpaper, writeWallpaper, type WallpaperId, readDisplayMode, writeDisplayMode, type DisplayMode } from "@/lib/ui/appearance";
 import { readFontScale, writeFontScale, type FontScale } from "@/lib/ui/font-scale-v89";
@@ -1123,6 +1125,8 @@ function StrengthAppInner() {
       {firstRun ? <Onboarding suspended={settingsOpen} today={todayIso} onDone={() => { setFirstRun(false); setHomeRev((v) => v + 1); }} /> : null}
       <ChromeMetrics />
       <FloatingPet theme={characterTheme} page={tab} onCoachTab={tab === "coach"} />
+      <PetCaptureHost onCoach={id=>{setCoachFocus(id);setCoachLink(id?'bound':'ask');setTab('coach')}} />
+      <button type="button" aria-label="打开快捷记录" className="fixed z-30 min-h-11 rounded-full border border-line bg-surface px-3 text-xs shadow-sm" style={{left:'calc(var(--fk-side-w, 0px) + 12px)',bottom:'calc(env(safe-area-inset-bottom, 0px) + 84px)'}} onClick={()=>openPetCapture()}>＋ 快捷记录</button>
       <nav className={"ui03-dock dock fixed inset-x-0 bottom-0 z-20" + (tab === "coach" ? " fk-dock-coach" : "")} aria-label="主导航">
         <div className="ui03-dock-inner mx-auto grid max-w-3xl grid-cols-5">
           <div className="fk-side-brand fk-desk-only" aria-hidden="true"><span className="fk-side-mark">坤</span><span><b>FANGKUN</b><small>方坤 · 训练教练</small></span></div>

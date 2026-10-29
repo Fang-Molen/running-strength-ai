@@ -1,0 +1,34 @@
+{
+  "purpose": "Preserve current work for testing, not a release",
+  "targetRepository": "Fang-Molen/running-strength-ai",
+  "targetBranch": "test/load-memory-20261029",
+  "baseCommit": "92632540c8cd42267461d42403786bec2a2281eb",
+  "tests": {
+    "files": 34,
+    "filePass": 34,
+    "fileFail": 0,
+    "tests": 318,
+    "pass": 318,
+    "fail": 0,
+    "seconds": 37.038
+  },
+  "typecheckExit": 0,
+  "secretScan": "PASS, including reachable history and embedded ZIPs; pattern-based",
+  "realDeepSeekCalls": 0,
+  "newQuestionPaths": 32,
+  "newQuestionTurns": 34,
+  "longHistoryComparisonSessions": 6,
+  "knownIncomplete": [
+    "Full browser interaction acceptance",
+    "Five pre-existing baseline failure groups",
+    "Synthetic stored-history adapter and real DeepSeek campaign"
+  ],
+  "changesForHandoff": [
+    "Portable input-package paths",
+    "Source verification accepts descendants of the original baseline",
+    "Freeze schema-readiness test time to prevent its synthetic policy expiring",
+    "Preserve original handoff ZIPs, synthetic screenshots and user input package"
+  ],
+  "sourceWhitespaceExit": 0,
+  "historicalEvidenceWhitespace": "175 whitespace warnings in preserved verification artifacts; source/documentation check clean"
+}

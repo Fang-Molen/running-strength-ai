@@ -1,3 +1,5 @@
+import {calendarDate} from '../health/load-evidence'
+import {readCurrentImportConflicts} from './current-import-conflicts'
 import { calendarDay } from './coach-calendar.ts'
 import { coachImports } from './coach-import-evidence.ts'
 import { loadImportRatings, type ImportRating } from './coach-import-rating.ts'
@@ -12,7 +14,7 @@ import { calculateLoadTrend, loadDayFingerprint, shiftLoadDay, validLoadDay, typ
 
 export const LOAD_COVERAGE_PREFIX = 'fr255-load-day-coverage-v1:'
 type CoverageAssertion = { id: string; athleteId: string; recordedAt: string; startDay: string; endDay: string; days: LoadDayConfirmation[] }
-type Sources = { athleteId: string; events: AppEvent[]; occurrences: TrainingOccurrence[]; imports: ConfirmedTrainingImport[]; corrections: TrainingCorrection[]; ratings: ImportRating[]; asOf: string }
+type Sources = { athleteId: string; events: AppEvent[]; occurrences: TrainingOccurrence[]; imports: ConfirmedTrainingImport[]; corrections: TrainingCorrection[]; ratings: ImportRating[]; asOf: string;timeZone?:string }
 
 /** Saved evidence adapter. Session elapsed milliseconds and imported seconds have distinct conversions. */
 export function projectSavedSessionLoads(input: Sources): SavedSessionLoad[] {
@@ -30,7 +32,7 @@ export function projectSavedSessionLoads(input: Sources): SavedSessionLoad[] {
     const id = occurrence.trainingOccurrenceId
     const starts = events.filter(e => e.event_id === occurrence.startEventId && e.event_type === 'TRAINING_STARTED')
     if (!starts.length || (voided(id) && !unknownTimeIds.has(id))) continue
-    const day = occurrence.startedAt ? calendarDay(occurrence.startedAt) : null
+    const day = occurrence.startedAt ? calendarDate(occurrence.startedAt,input.timeZone??Intl.DateTimeFormat().resolvedOptions().timeZone) : null
     if (!day) continue
     const close = events.filter(e => e.event_id === occurrence.closeEventId)
     const rpeEvents = events.filter(e => e.payload.trainingOccurrenceId === id && e.event_type === 'RPE_RECORDED' && e.payload.evidenceType === 'SESSION_RPE')
@@ -38,7 +40,7 @@ export function projectSavedSessionLoads(input: Sources): SavedSessionLoad[] {
     const changes = changesFor(id)
     const start = Date.parse(occurrence.startedAt!), end = Date.parse(occurrence.endedAt ?? '')
     const validClose = close.length === 1 && starts.length === 1 && starts[0].timestamp === occurrence.startedAt && close[0].timestamp === occurrence.endedAt && ['COMPLETED', 'INTERRUPTED'].includes(occurrence.lifecycle) && Number.isFinite(end) && end <= Date.parse(asOf) && end > start
-    result.push({ id, athleteId, day,
+    result.push({ id, athleteId, day, measurement:{origin:'NATIVE',completed:validClose,durationBasis:'ELAPSED',ratingScope:'SESSION',ratingCollectedAt:rpeEvents.length===1&&typeof rpeEvents[0].payload.ratingCollectedAt==='string'?rpeEvents[0].payload.ratingCollectedAt:null,ratingRecordedAt:rpeEvents.length===1?rpeEvents[0].timestamp:null,ratingScale:'0-10_SESSION_RPE',sourceIds:[...starts,...close,...rpeEvents].map(e=>e.event_id)},
       sessionRpe: unknownTimeIds.has(id) || changes.some(c => c.kind === 'FIELD' && c.field === 'feedback') ? null : evidence.sessionRpe.status === 'RECORDED' ? evidence.sessionRpe.value : null,
       minutes: validClose && !unknownTimeIds.has(id) && !changes.some(c => c.kind === 'FIELD' && c.field === 'duration') ? (end - start) / 60_000 : null,
       sourceIds: [...new Set([...starts, ...close, ...rpeEvents].map(e => e.event_id))],
@@ -47,24 +49,26 @@ export function projectSavedSessionLoads(input: Sources): SavedSessionLoad[] {
   }
   for (const record of imports) {
     if ((record.athleteId ?? 'local') !== athleteId || (voided(record.confirmedImportId) && !unknownTimeIds.has(record.confirmedImportId)) || !record.occurredAt.value || !Number.isFinite(Date.parse(record.confirmedAt)) || Date.parse(record.confirmedAt) > Date.parse(asOf) || !Number.isFinite(Date.parse(record.occurredAt.value)) || Date.parse(record.occurredAt.value) > Date.parse(asOf)) continue
-    const day = calendarDay(record.occurredAt.value)
+    const day = calendarDate(record.occurredAt.value,input.timeZone??Intl.DateTimeFormat().resolvedOptions().timeZone)
     if (!day) continue
     const changes = changesFor(record.confirmedImportId)
     // More than one saved rating remains ambiguous, even if the numeric values agree.
     const ratings = input.ratings.filter(r => r.athleteId === athleteId && r.occurrenceId === record.confirmedImportId && Number.isFinite(Date.parse(r.recordedAt)) && Date.parse(r.recordedAt) <= Date.parse(asOf) && Date.parse(r.recordedAt) >= Date.parse(record.confirmedAt))
-    const values = [record.sessionRpe.status === 'RECORDED' ? record.sessionRpe.value : null, ...ratings.map(r => r.value)].filter((v): v is number => v !== null)
+    const captureRatings=events.filter(e=>e.payload.trainingOccurrenceId===record.confirmedImportId&&e.event_type==='RPE_RECORDED'&&e.payload.evidenceType==='SESSION_RPE'&&typeof e.payload.value==='number')
+    const values = [record.sessionRpe.status === 'RECORDED' ? record.sessionRpe.value : null, ...ratings.map(r => r.value),...captureRatings.map(e=>Number(e.payload.value))].filter((v): v is number => v !== null)
     const rpe = unknownTimeIds.has(record.confirmedImportId) || changes.some(c => c.kind === 'FIELD' && c.field === 'feedback') || values.length !== 1 ? null : values[0]
-    result.push({ id: record.confirmedImportId, athleteId, day, sessionRpe: rpe,
+    result.push({ id: record.confirmedImportId, athleteId, day, sessionRpe: rpe, measurement:{origin:'CONFIRMED_IMPORT',completed:true,durationBasis:'UNKNOWN',ratingScope:'SESSION',ratingCollectedAt:captureRatings.length===1&&typeof captureRatings[0].payload.ratingCollectedAt==='string'?captureRatings[0].payload.ratingCollectedAt:null,ratingRecordedAt:captureRatings.length===1?captureRatings[0].timestamp:ratings.length===1?ratings[0].recordedAt:record.confirmedAt,ratingScale:'0-10_SESSION_RPE',sourceIds:[record.confirmedImportId,...ratings.map(r=>r.id),...captureRatings.map(e=>e.event_id)]},
       minutes: record.durationSeconds.status === 'RECORDED' && record.durationSeconds.value !== null && !unknownTimeIds.has(record.confirmedImportId) && !changes.some(c => c.kind === 'FIELD' && c.field === 'duration') ? record.durationSeconds.value / 60 : null,
-      sourceIds: [...new Set([record.confirmedImportId, ...record.sourceIds, ...ratings.map(r => r.id)])],
-      revision: JSON.stringify({ record, changes, ratings }),
+      sourceIds: [...new Set([record.confirmedImportId, ...record.sourceIds, ...ratings.map(r => r.id),...captureRatings.map(e=>e.event_id)])],
+      revision: JSON.stringify({ record, changes, ratings, captureRatings }),
     })
   }
   return result
 }
 
-export function readSavedSessionLoads(athleteId = currentAthleteId(), asOf = new Date().toISOString()): SavedSessionLoad[] {
-  return projectSavedSessionLoads({ athleteId, asOf, events: loadCommittedEventRecords().filter(r=>r.recordedAt&&Number.isFinite(Date.parse(r.recordedAt))&&Date.parse(r.recordedAt)<=Date.parse(asOf)).map(r=>r.event), occurrences: listTrainingOccurrences(), imports: coachImports(athleteId, asOf), corrections: listCorrections(), ratings: loadImportRatings() })
+export function readSavedSessionLoads(athleteId = currentAthleteId(), asOf = new Date().toISOString(),timeZone=Intl.DateTimeFormat().resolvedOptions().timeZone): SavedSessionLoad[] {
+  const imports=coachImports(athleteId,asOf),conflicts=readCurrentImportConflicts(imports)
+  return projectSavedSessionLoads({ athleteId, asOf,timeZone, events: loadCommittedEventRecords().filter(r=>r.recordedAt&&Number.isFinite(Date.parse(r.recordedAt))&&Date.parse(r.recordedAt)<=Date.parse(asOf)).map(r=>r.event), occurrences: listTrainingOccurrences(), imports, corrections: listCorrections(), ratings: loadImportRatings() }).map(s=>conflicts.has(s.id)?{...s,minutes:conflicts.get(s.id)!.duration?null:s.minutes,revision:JSON.stringify([s.revision,conflicts.get(s.id)!.duration,conflicts.get(s.id)!.distance])}:s)
 }
 
 export function readLoadCoverage(athleteId = currentAthleteId(), asOf = new Date().toISOString()): LoadDayConfirmation[] {

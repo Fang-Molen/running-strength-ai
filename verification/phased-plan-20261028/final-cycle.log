@@ -1,0 +1,25 @@
+
+> test:cycle
+> node --import ./evaluation/deepseek-development/no-network.mjs --import ./scripts/test-register.mjs --test --test-concurrency=3 src/lib/coach/cycle/*.test.ts src/lib/coach/assessment/*.test.ts
+
+✔ src/lib/coach/assessment/history-host.test.ts (5060.873938ms)
+✔ src/lib/coach/assessment/history.test.ts (1799.921393ms)
+✔ src/lib/coach/cycle/adaptive-import.test.ts (2998.31376ms)
+✔ src/lib/coach/cycle/adaptive.test.ts (4318.317576ms)
+✔ src/lib/coach/cycle/cycle.test.ts (1955.662517ms)
+✔ src/lib/coach/cycle/event-selection.test.ts (1624.339146ms)
+✔ src/lib/coach/cycle/feedback-cutoff.test.ts (3444.288903ms)
+✔ src/lib/coach/cycle/host.test.ts (4332.080908ms)
+✔ src/lib/coach/cycle/lock.test.ts (618.707361ms)
+✔ src/lib/coach/cycle/portrait-evidence.test.ts (1561.114128ms)
+✔ src/lib/coach/cycle/request.test.ts (2472.200516ms)
+✔ src/lib/coach/cycle/review-findings.test.ts (4639.040068ms)
+✔ src/lib/coach/cycle/stage-evidence.test.ts (2041.069998ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13414.616231

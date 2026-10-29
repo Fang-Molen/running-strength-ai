@@ -1,0 +1,33 @@
+✔ phased 1B personal recovery, prior-year history and self/other clauses select owned context (21.883176ms)
+✔ phased 1B requested prior year is not displaced by fifteen recent workouts (79.331056ms)
+✔ phased 1B explicit calendar day and prior year honor the athlete timezone at New Year (4.606011ms)
+✔ phased 1C long restriction tails and dialogue remain transmitted or explicitly incomplete (6.177627ms)
+✔ phased 1C old baseline and counterevidence remain dependencies of transmitted analysis (32.029821ms)
+✔ X03 question handoff carries computed analysis and a bounded conversation, without claiming verified facts (12.922449ms)
+✔ X02 colloquial personal reviews and mixed subjects retrieve owned facts without treating friends as the athlete (6.617564ms)
+✔ explicit comparison selects the requested owned sessions rather than unrelated latest activity (4.738995ms)
+✔ general education and third-person cases do not select personal records (3.044647ms)
+✔ an old UI selection does not attach private facts to a fresh general definition (0.628465ms)
+✔ relevant older history preserves actual run split and rest structure without claiming a recent window (1.289449ms)
+✔ strength dose preserves actual load basis, repetitions, completion and RIR (1.068466ms)
+✔ foreign, future, planned and conflicting training facts cannot become actual context (1.142385ms)
+✔ target and saved schedule remain distinct from measured performance (2.136554ms)
+✔ dependency fingerprint follows selected evidence, not clock, unrelated nutrition or foreign rows (3.011648ms)
+✔ context is bounded and truncated workout structure is explicitly unknown (30.806808ms)
+✔ nutrition entries retain completeness unknown, actual eating time unknown and no account/device identifiers (2.280382ms)
+✔ personal data requests and broad generic exercise questions are separated (0.777974ms)
+✔ different questions sharing unchanged records do not share a conflicting selection version key (3.412682ms)
+✔ date-only body measurement does not fabricate a measurement instant (0.710795ms)
+✔ real frontend contexts pass the shared server boundary, including response protocols and maximum coverage (18.822005ms)
+✔ unrelated profile edit does not change a selected goal field revision (2.36057ms)
+✔ large structured context fits real quoted provider-input budget, not only snapshot-body budget (23.260022ms)
+✔ budget cannot erase omitted safety restrictions as implicit training permission (27.670257ms)
+✔ clock-only packet regeneration keeps online context stable; corrected dose still invalidates (16.286751ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 316.954108

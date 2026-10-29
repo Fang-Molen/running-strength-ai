@@ -1,0 +1,37 @@
+✔ 同一混合课整课AU只一次；跑步和力量保留独立外部量 (18.0065ms)
+✖ 未结束原生、移动时长、末组评分以及未来采集不能生成整课AU (3.571411ms)
+✔ 明确完成的导入可缺结束时刻；口径证明不足仅候选，未知量表不计算 (1.470752ms)
+✔ 部分跑步距离保留已知量；未知与跳过分开；力量不同口径不相加 (0.717224ms)
+✔ 空白不为零；确认仅匹配本人/时区/版本/截止时间，相关修改失效 (3.370969ms)
+✔ 同版本重复幂等，晚同步不可污染历史；跨午夜按开始日一次归属 (0.622797ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.190106
+
+✖ failing tests:
+
+test at src/lib/health/load-evidence.test.ts:17:1
+✖ 未结束原生、移动时长、末组评分以及未来采集不能生成整课AU (3.571411ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  180 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/load-evidence.test.ts:21:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 180,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

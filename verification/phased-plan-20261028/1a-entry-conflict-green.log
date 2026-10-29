@@ -1,0 +1,15 @@
+✔ 1A real analysis and online entry withdraw a conflicted total while retaining reliable segments and provenance (81.220126ms)
+✔ 1A distance-only conflict hides aggregate distance and pace without withdrawing reliable total time (18.838157ms)
+✔ 1A legacy daily context withdraws both conflicting totals and surfaces their current limitation (19.730027ms)
+✔ 1A historical asOf receives only a present uncertainty note, never cache observations or future imports (18.814103ms)
+✔ 1A same day and distance do not bridge identities, missing cache fields or another owner (35.715669ms)
+✔ 1A a reloaded cache remains transient and clearing it restores only the unchanged confirmed total (31.275979ms)
+✔ 1A the modern entry does not restore stale aggregate totals after a confirmed segment correction (10.26547ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 233.631648

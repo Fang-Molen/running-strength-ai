@@ -1,0 +1,19 @@
+{
+  "source": "Fang-Molen/fangkun",
+  "sourceBranch": "codex/coaching-repairs-20261028",
+  "base": "92632540c8cd42267461d42403786bec2a2281eb",
+  "branch": "codex/phased-plan-local-20261028",
+  "node": "v24.19.0",
+  "npm": "11.9.0",
+  "lockSha256": "a895766ef619a478c36c2c437a246ec7de6a06f6351434b58af1f5aaf890bcc7",
+  "packageHashesVerified": 7,
+  "restoredFixtures": [
+    "panel-fixture.html",
+    "panel-fixture.js"
+  ],
+  "notRestored": [
+    ".grok/preview.log",
+    "verification/coaching-repairs-20261028/__pycache__/"
+  ],
+  "productionActions": []
+}

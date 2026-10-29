@@ -1,0 +1,42 @@
+[
+  {
+    "path": "src/components/coach-load-metrics-panel.tsx",
+    "before": "0cc2570d1a239d9abda2c41651e6e9249731463d6cfe78f6523f32e991ce1bd7",
+    "after": "5eb012f71f582b61a7fcb75d1851343f6d55895aeb04ddc501e8c2403ca1c97e"
+  },
+  {
+    "path": "src/components/load-evidence-view.tsx",
+    "before": null,
+    "after": "ba3a4bfccd8d99a7ce045743e15595d16ea1f82864dbff059d815f07ff8555ff"
+  },
+  {
+    "path": "src/components/load-evidence-view.test.tsx",
+    "before": null,
+    "after": "4e1daa0171f61936d3ed64d97dc63fb3bc6cc502791888b7fb468ddf16bca6c1"
+  },
+  {
+    "path": "src/lib/health/load-prototype.ts",
+    "before": null,
+    "after": "09ea5b16bccb4aca16ea12af850b5d8a07d5dd41385bc2eb0fd5eaa7aca1093d"
+  },
+  {
+    "path": "src/lib/health/load-prototype.test.ts",
+    "before": null,
+    "after": "5114342725779d2cbb17da28fc40805aaf28b8cf66ad49a22ecf818e94cc1e8d"
+  },
+  {
+    "path": "docs/load-ui-codex-handoff.md",
+    "before": null,
+    "after": "a18d499f80a7d80171ebe0302a2c743959eecf23cc4f3f7755bb67d9970d7fff"
+  },
+  {
+    "path": "docs/load-evidence-research-handoff.md",
+    "before": null,
+    "after": "2d8c59b261208174a087ee81ea835cbb3949cde81ba1ba41eb32230ee6cf0d35"
+  },
+  {
+    "path": "docs/load-evidence-prototype-plan.md",
+    "before": null,
+    "after": "dc375b8d02e8017099174d7e02f029d33599d8acc858a297360d748c5a6240c6"
+  }
+]

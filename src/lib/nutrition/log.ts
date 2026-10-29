@@ -23,6 +23,9 @@ export type FoodEntry = {
   /** User-entered actual eating time; absent means unknown. */
   eatenAt?: string;
   revisionId?: string;
+  /** Stable capture identity, committed with the nutrition event itself. */
+  requestId?: string;
+  requestFingerprint?: string;
   nutritionSnapshot?: NutritionSnapshot;
   foodSnapshot?: {foodId:string;brand:string;region:string;variant:string;amount:number;unit:"g"|"份";nutrients:Record<"kcal"|"protein"|"carbs"|"fat",number|null>&{fiber?:number|null};source:{kind:string;status:string;uri:string|null;notes:string;checkedOn:string|null};note:string};
 };
@@ -117,10 +120,27 @@ export function validFoodEntry(row: FoodEntry): boolean {
 
 /** One existing immutable event commits the meal and its provenance together. */
 export function recordManualFood(input: Omit<FoodEntry, "id" | "athleteId" | "source">): FoodEntry | null {
+  if (input.requestId) {
+    const prior = findFoodRequest(input.requestId);
+    if (prior) {
+      const current = loadEntries().find(row => row.id === prior.row.id);
+      return input.requestFingerprint && prior.row.requestFingerprint === input.requestFingerprint && current && JSON.stringify(current) === JSON.stringify(prior.row) ? current : null;
+    }
+  }
   const row: FoodEntry = { ...input, id: `food-${crypto.randomUUID()}`, athleteId: currentAthleteId(), source: "MANUAL", recordedAt: new Date().toISOString() };
   if (!validFoodEntry(row)) return null;
   if (!dispatchEvent("NUTRITION_RECORDED", { foodEntry: row })) return null;
   foodChanged(); return loadEntries().find(saved => saved.id === row.id) ?? null;
+}
+
+/** Original receipt is read from immutable history, including after deletion. */
+export function findFoodRequest(requestId: string) {
+  for (const event of loadEvents()) {
+    if (event.event_type !== 'NUTRITION_RECORDED' || event.athlete_id !== currentAthleteId()) continue;
+    const row = event.payload.foodEntry as FoodEntry | undefined;
+    if (row?.requestId === requestId && row.athleteId === event.athlete_id && validFoodEntry(row)) return {event, row};
+  }
+  return null;
 }
 
 export type NutrientKey = "kcal" | "protein" | "carb" | "fat" | "fiber";

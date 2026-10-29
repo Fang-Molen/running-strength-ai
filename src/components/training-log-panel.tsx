@@ -1,3 +1,4 @@
+import { TrainingLoadEvidence } from './training-load-evidence'
 import type React from "react"
 import { ImportLogCorrectionPanel } from './import-log-correction-panel'
 import { useMemo, useState } from "react"
@@ -133,14 +134,16 @@ export function OccurrenceCard({ item, plan, onAsk }: { item: TrainingOccurrence
   const undo = compensationDraft(item.trainingOccurrenceId)
 
   return <article className="border-b border-line py-1 text-sm last:border-b-0">
-    <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex min-h-12 w-full items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-accent">
+    <button type="button" aria-expanded={open} onClick={() => { selectPetTraining(open ? null : item.trainingOccurrenceId); setOpen((value) => !value) }} className="flex min-h-12 w-full items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-accent">
       <span className={(hasRunning && !hasStrength ? "chip-run" : "chip-lift") + " grid size-10 shrink-0 place-items-center rounded-2xl"}>{hasRunning && !hasStrength ? <Activity className="size-4" /> : <Dumbbell className="size-4" />}</span>
       <span className="min-w-0 flex-1"><span className="block truncate font-bold">{title}</span><span className="mt-0.5 block truncate text-xs text-muted">{formatDeviceLocal(item.startedAt)} · {status}{hasRunning ? ` · 跑步 ${runningRecorded}/${trackSlots.length} 段` : hasStrength ? ` · 力量 ${attempts.length || snapshot?.exercises.length || 0} 组` : ""}</span></span>
       <span className="shrink-0 text-lg text-muted" aria-hidden="true">{open ? "↑" : "›"}</span>
     </button>
-    {open ? <div className="mt-2 border-t border-line pt-2"><p className="text-xs font-bold text-accent">{sessionType}</p><button type="button" onClick={() => onAsk(item.trainingOccurrenceId)} className="mt-2 min-h-10 rounded-xl border border-line px-3 font-bold">问教练</button></div> : null}
+    {open ? <div className="mt-2 border-t border-line pt-2"><p className="text-xs font-bold text-accent">{sessionType}</p><button type="button" className="min-h-11 rounded-full border border-line px-3 font-bold" onClick={()=>openPetCapture("feedback",item.trainingOccurrenceId)}>补训练反馈</button>
+      <button type="button" onClick={() => onAsk(item.trainingOccurrenceId)} className="mt-2 min-h-10 rounded-xl border border-line px-3 font-bold">问教练</button></div> : null}
     {open ? <div className="mt-3 space-y-2 border-t border-line pt-3">
       <p>开始时间 {formatDeviceLocal(item.startedAt)}</p>
+      <TrainingLoadEvidence id={item.trainingOccurrenceId} startedAt={item.startedAt} />
       <p className="font-bold">原计划（保留快照）</p>
       {snapshot?.exercises.length ? <ul className="space-y-1">{snapshot.exercises.map((exercise) => <li key={exercise.moveId}>{exercise.name || "未命名动作"} · {exercise.sets} 组 · {exercise.amount} {exercise.mode === "seconds" ? "秒" : "次"}{exercise.weightKg > 0 ? ` · ${exercise.weightKg} kg` : ""}</li>)}</ul> : <p className="text-muted">未记录</p>}
       <TrackStructureList occurrenceId={item.trainingOccurrenceId} />
@@ -256,7 +259,7 @@ export function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingI
   const run = item.runningSegments.length > 0
   const lift = item.strengthSets.length > 0
   return <article className="border-b border-line py-1 text-sm last:border-b-0">
-    <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex min-h-12 w-full items-center gap-3 text-left">
+    <button type="button" aria-expanded={open} onClick={() => { selectPetTraining(open ? null : item.confirmedImportId); setOpen((value) => !value) }} className="flex min-h-12 w-full items-center gap-3 text-left">
       <span className={(run && !lift ? "chip-run" : "chip-lift") + " grid size-10 shrink-0 place-items-center rounded-2xl"}>{run && !lift ? <Activity className="size-4" /> : <Dumbbell className="size-4" />}</span>
       <span className="min-w-0 flex-1"><span className="block truncate font-bold">{item.title.value || "未命名上传"}</span><span className="mt-0.5 block truncate text-xs text-muted">{formatDeviceLocal(item.occurredAt.value)} · {item.sport === "UNKNOWN" ? "证据不足" : "已确认上传"}</span>{item.durationSeconds.value != null ? <span className="mt-0.5 block text-xs tabular-nums">用时 {fmtDurationPrecise(item.durationSeconds.value)}</span> : null}</span>
       <span className="text-lg text-muted" aria-hidden="true">{open ? "↑" : "›"}</span>
@@ -265,7 +268,9 @@ export function ImportRow({ item, onAsk, onDeleted }: { item: ConfirmedTrainingI
       
       {item.runningSegments.length ? <ul className="space-y-1">{item.runningSegments.map((segment, index) => <li key={segment.id}>原始跑步 {index + 1} · {segment.distanceMeters.value ?? "距离未记录"} 米 · <span className="whitespace-nowrap tabular-nums">{segment.durationSeconds.value != null ? fmtSeconds(segment.durationSeconds.value) : "时间未记录"}</span> · {STATUS[segment.completion] ?? segment.completion}</li>)}</ul> : <p className="text-muted">跑步分段：未记录</p>}
       {item.strengthSets.length ? <ul className="space-y-1">{item.strengthSets.map((set, index) => <li key={set.id}>原始力量 {index + 1} · {set.exerciseName.value || "动作未记录"} · {set.repetitions.value ?? "次数未记录"} · {STATUS[set.completion] ?? set.completion}</li>)}</ul> : null}
+      <TrainingLoadEvidence id={item.confirmedImportId} startedAt={item.occurredAt.value} />
       <ImportLogCorrectionPanel record={item} onSaved={onDeleted}/>
+      <button type="button" className="min-h-11 rounded-full border border-line px-3 font-bold" onClick={()=>openPetCapture("feedback",item.confirmedImportId)}>补训练反馈</button>
       <button type="button" onClick={() => onAsk(item.confirmedImportId)} className="min-h-11 rounded-full border border-line px-3 font-bold">问教练</button>
       
       {!deleteConfirm ? <button type="button" onClick={() => { setDeleteConfirm(true); setDeleteError("") }} className="min-h-11 rounded-full border border-red-500 px-3 font-bold text-red-600">永久删除这条上传记录</button> : <div className="rounded-xl border border-red-500 p-3 space-y-2">
@@ -371,3 +376,4 @@ export function TrainingLogPanel({ plan, onAsk , reviewSlot }: { plan: Plan; onA
     </section> : null}
   </div>
 }
+import {openPetCapture, selectPetTraining} from '@/lib/ui/pet-capture-navigation'

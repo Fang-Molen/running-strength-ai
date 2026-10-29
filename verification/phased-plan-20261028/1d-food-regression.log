@@ -1,0 +1,76 @@
+✔ reopened sheet renders saved draft date meal and honest online-search fallback (16.208624ms)
+✔ weighed food five nutrients at 50g (3.523581ms)
+✔ weighed food five nutrients at 100g (0.435644ms)
+✔ weighed food five nutrients at 150g (0.846112ms)
+✔ weighed food five nutrients at 250g (0.326336ms)
+✔ product search includes brand and never merges same-name products (0.862066ms)
+✔ brand serving uses exact product and grams only when documented (1.210122ms)
+✔ known protein and fiber survive absent energy (0.578072ms)
+✔ only energy never invents other nutrients (0.6797ms)
+✔ unmatched name remains wholly unknown; explicit zero remains known (0.737374ms)
+✔ selection without confirmation cannot save (0.236494ms)
+✔ manual correction of catalog values is explicitly estimated and traceable (0.379383ms)
+✔ explicit unknown carb must not resurrect a stale legacy alias (0.117772ms)
+✔ missing legacy quantity is not fabricated during editing (0.623278ms)
+✔ 150g snapshot roundtrip and quantity edit rescale all five from stored base (0.811051ms)
+✔ catalog changes never rewrite a recorded snapshot on refresh (0.291294ms)
+✔ move meal and local day changes membership without duplicate inclusion (0.928902ms)
+✔ editing rejects stale revision instead of overwriting newer values (0.695934ms)
+✔ delete excludes row on refreshed aggregate and preserves original event (0.928242ms)
+✖ legacy carbs and new carb share the same total and missing list (1.56593ms)
+✖ correcting legacy row preserves original bytes and prior evidence (0.7559ms)
+✔ reject invalid quantity 0 (0.181854ms)
+✔ reject invalid quantity -1 (0.180593ms)
+✔ reject invalid quantity Infinity (0.149879ms)
+✔ reject invalid quantity bad (0.213311ms)
+✔ reject impossible day, future date, incompatible units, or actor switch (0.278786ms)
+✔ storage failure leaves records and draft unchanged (0.549029ms)
+✔ editing amount through blank and small intermediate digits never compounds rounding (0.540908ms)
+✔ aggregate: null is pending, never 0; per-nutrient counts (0.248832ms)
+✔ a repeated request reuses the durable food entry without another nutrition event (0.961871ms)
+✔ one request cannot be reused for a changed date, meal, or nutrition draft (1.197564ms)
+✔ retry after removal never recreates a withdrawn food entry (0.843228ms)
+✔ retry after correction cannot overwrite newer food values (0.572964ms)
+✔ capture receipt survives a restarted reader and undo appends history only (1.527755ms)
+✔ conditional undo refuses corrected entries and wrong athlete without touching history (1.14632ms)
+✔ storage failure retains request, date, meal, and owner in a reloadable draft (0.607505ms)
+✔ clearing a completed request cannot discard a newer draft (0.384179ms)
+✔ local catalogue does not claim online search readiness or guess missing product metadata (0.289592ms)
+✔ explicit product brand region and raw/cooked qualifier survive presentation (0.274139ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 37
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1021.501965
+
+✖ failing tests:
+
+test at src/lib/nutrition/entry-workflow.test.ts:34:1
+✖ legacy carbs and new carb share the same total and missing list (1.56593ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  30 !== 70
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/nutrition/entry-workflow.test.ts:34:369)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 30,
+    expected: 70,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/nutrition/entry-workflow.test.ts:35:1
+✖ correcting legacy row preserves original bytes and prior evidence (0.7559ms)
+  TypeError: Cannot read properties of undefined (reading 'nutritionSnapshot')
+      at draftFromEntry (file:///workspace/fangkun-20261028/src/lib/nutrition/entry-workflow.ts:16:19)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/nutrition/entry-workflow.test.ts:35:337)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7)

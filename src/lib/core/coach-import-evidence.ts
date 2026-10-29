@@ -1,9 +1,10 @@
 import { loadImportRatings, type ImportRating } from './coach-import-rating.ts'
 import { loadConfirmedTrainingImports, normalizeConfirmedTrainingImport, type ConfirmedTrainingImport, type ImportField } from './training-import.ts'
-import { currentAthleteId } from './events.ts'
+import { currentAthleteId, loadEvents } from './events.ts'
 import { strictIso, type FormalEvidenceRow } from './coach-v4-c11-adapter.ts'
 import type { CoachParts } from './coach-brief.ts'
 import { listCorrections, type TrainingCorrection } from './training-correction.ts'
+import { readCurrentImportConflicts } from './current-import-conflicts'
 
 const value = <T>(f: ImportField<T>): T | null => f.status === 'RECORDED' ? f.value : null
 export function coachImports(athleteId=currentAthleteId(), asOf=new Date().toISOString()): ConfirmedTrainingImport[] {
@@ -62,6 +63,15 @@ export function importedFormalRows(records:readonly ConfirmedTrainingImport[], a
   }
   for(const [suffix,metric,f] of [['pain','PAIN_SCORE',r.pain],['soreness','SORENESS',r.soreness]] as const)
    if(value(f))push(suffix,metric,value(f)!.intensity,'score',`${suffix}:session`)
+  // Existing event writer can append explicitly bound feedback to an import;
+  // this never edits the retained device record or creates a new occurrence.
+  for(const event of loadEvents().filter(e=>e.athlete_id===athleteId&&e.payload.trainingOccurrenceId===r.confirmedImportId&&typeof e.payload.captureId==='string'&&strictIso(e.timestamp)&&Date.parse(e.timestamp)<=Date.parse(asOf))){
+   const metric=event.payload.evidenceType
+   if(metric!=='SESSION_RPE'&&metric!=='SUBJECTIVE_RECOVERY'&&metric!=='SORENESS')continue
+   const v=metric==='SORENESS'?event.payload.intensity:event.payload.value
+   if(typeof v!=='number'||!Number.isFinite(v)||v<1||v>10)continue
+   rows.push({recordId:event.event_id,athleteId,trainingOccurrenceId:r.confirmedImportId,sourceEventId:event.event_id,metric,value:v,unit:'score',protocol:`${metric.toLowerCase()}:session`,status:voided?'VOIDED':'OBSERVED',source:'USER_REPORT',occurredAt:r.occurredAt.value!,knownAt:event.timestamp,verifiedByFormalProjection:false})
+  }
   for(const [i,s] of r.runningSegments.entries()){
    const dist=value(s.distanceMeters),seconds=value(s.durationSeconds),round=value(s.round),repeat=value(s.repeat)
    const protocol=round!==null&&repeat!==null&&s.kind==='REPETITION'?`running:import:rep:b:step:${round}:${repeat}${dist!==null?`:${dist}m`:''}`:`running:import:segment:${i+1}:${encodeURIComponent(s.id)}:${s.kind}${dist!==null?`:${dist}m`:''}`
@@ -125,8 +135,12 @@ export function importedCoachParts(r:ConfirmedTrainingImport,question:string,cor
  const sources:NonNullable<CoachParts['sources']>=active.map(row=>({id:row.sourceEventId,kind:'FACT',detail:(labels[row.metric]
   ?`${labels[row.metric]} 已确认导入：${row.value??'未知'}${row.unit==='h'?'小时':'/10'}；自报来源${row.supersedesRecordId?'；已更正':''}`
   :`${row.metric==='SPLIT_SECONDS'?'跑步分段':row.metric==='REST_SECONDS'?'恢复段':row.metric==='HR_AVG_BPM'?'分段平均心率':'力量实际组'}：${row.value===null?'未知':Number(row.value.toFixed(2))} ${row.unit}；${row.protocol}${row.measurement?`；方法 ${row.measurement.method==='UNKNOWN'?'未知':row.measurement.method}`:''}${row.supersedesRecordId?'；已更正':''}`).slice(0,300)}))
+ const conflict=readCurrentImportConflicts([r]).get(r.confirmedImportId)
+ const durationChanged=corrections.some(c=>c.trainingOccurrenceId===r.confirmedImportId&&c.kind==='FIELD'&&c.field==='duration'&&c.recordedAt&&strictIso(c.recordedAt)&&Date.parse(c.recordedAt)<=Date.parse(asOf))
+ if(conflict)sources.unshift({id:r.confirmedImportId+':current-conflict',kind:'CONTEXT',detail:conflict.note})
+ if(durationChanged)sources.unshift({id:r.confirmedImportId+':corrected-total',kind:'CONTEXT',detail:'导入整课时长受逐项更正影响，相关总量未知；保留可核对分段，不用单段更正补造整课时长。'})
  sources.unshift({id:r.confirmedImportId,kind:'CONTEXT',detail:`用户选择的独立导入，${r.occurredAt.value}；不是自动合并到本机课次`})
  const rating=(metric:FormalEvidenceRow['metric'])=>{const hits=active.filter(row=>row.metric===metric);return hits.length===1?hits[0].value:null}
  const feedbackChanged=corrections.some(c=>c.kind==='FIELD'&&c.field==='feedback'&&c.recordedAt&&Date.parse(c.recordedAt)<=Date.parse(asOf))
- return {question,occurrenceId:r.confirmedImportId,runningStructure:r.runningStructure==='UNAVAILABLE'?'UNAVAILABLE':'AVAILABLE',sessionRpe:rating('SESSION_RPE'),sleepHours:rating('SLEEP_HOURS'),subjectiveRecovery:rating('SUBJECTIVE_RECOVERY'),recoveryState:null,fatigueState:null,duplicateCount:0,repetitionSlots:r.runningSegments.filter(s=>s.kind==='REPETITION').length,continuousCount:r.runningSegments.filter(s=>s.kind==='CONTINUOUS').length,plannedSetCount:null,completedSetCount:r.strengthSets.filter(s=>s.completion==='COMPLETED').length||null,durationSec:value(r.durationSeconds),pain:!feedbackChanged&&!!value(r.pain),soreness:!feedbackChanged&&!!value(r.soreness),daysToCompetition:null,week:null,bias:null,sources:sources.slice(0,100),sourceIds:sources.slice(0,100).map(s=>s.id),running:[],fuel:null}
+ return {question,occurrenceId:r.confirmedImportId,runningStructure:r.runningStructure==='UNAVAILABLE'?'UNAVAILABLE':'AVAILABLE',sessionRpe:rating('SESSION_RPE'),sleepHours:rating('SLEEP_HOURS'),subjectiveRecovery:rating('SUBJECTIVE_RECOVERY'),recoveryState:null,fatigueState:null,duplicateCount:0,repetitionSlots:r.runningSegments.filter(s=>s.kind==='REPETITION').length,continuousCount:r.runningSegments.filter(s=>s.kind==='CONTINUOUS').length,plannedSetCount:null,completedSetCount:r.strengthSets.filter(s=>s.completion==='COMPLETED').length||null,durationSec:conflict?.duration||durationChanged?null:value(r.durationSeconds),pain:!feedbackChanged&&!!value(r.pain),soreness:!feedbackChanged&&active.some(row=>row.metric==='SORENESS'&&row.value!==null),daysToCompetition:null,week:null,bias:null,sources:sources.slice(0,100),sourceIds:sources.slice(0,100).map(s=>s.id),running:[],fuel:null}
 }

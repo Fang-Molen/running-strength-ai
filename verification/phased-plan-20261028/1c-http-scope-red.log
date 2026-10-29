@@ -1,0 +1,34 @@
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (3.625601ms)
+✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (17.827507ms)
+✖ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (2121.266672ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (1238.089678ms)
+✔ bounded context accepts structured old history without converting targets into actuals (1.189022ms)
+✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (1168.340525ms)
+✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (1476.039957ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6035.009653
+
+✖ failing tests:
+
+test at server/coach-deepseek/online-v2.test.ts:54:1
+✖ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (2121.266672ms)
+  AssertionError [ERR_ASSERTION]: {"ok":true,"text":"如果上肢无症状，可以先考虑坐姿上肢技术练习候选，不涉及跑跳。","source":"MODEL","route":"COMPLEX","model":"synthetic-model","requestedModel":"synthetic-model","usage":{"promptTokens":100,"completionTokens":50,"cacheHitTokens":20,"cacheMissTokens":80,"reasoningTokens":10,"totalTokens":150},"costMicros":"182","currency":"CNY","planChanged":false,"validation":{"status":"ACCEPTED_STRUCTURALLY","rejectedAssertionTypes":[],"policyVersion":"coach-assertions-v2","professionalValidation":"NOT_PROVEN","factVerification":"USER_DECLARED"},"stage":"COMPLETED","traceId":"ea402afa-78b8-4fd8-ba89-f9140949ddf1","dispatchState":"RETURNED","ledgerState":"SETTLED","retrieval":{"state":"NOT_REQUESTED"}}
+  
+  200 !== 502
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/server/coach-deepseek/online-v2.test.ts:81:20)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 502,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,15 @@
+✔ selected A feedback is durable, idempotent and visible to coach without making an activity (22.190142ms)
+✔ failure preserves editable draft and switching athlete cannot submit or read it (1.331659ms)
+✔ unknown target, stale target and an existing RPE cannot be overwritten (3.303561ms)
+✔ body feedback retains actual day and absence; parse does not claim third party or negated soreness (0.859843ms)
+✔ conditional feedback undo refuses later edits and preserves original import (2.842129ms)
+✔ native standard soreness feedback reaches the formal evidence adapter (1.202971ms)
+✔ saved body status reaches coach only on the actual day and owner, never as an activity (871.336189ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 920.799085

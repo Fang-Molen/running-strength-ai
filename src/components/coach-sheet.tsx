@@ -373,7 +373,11 @@ export function CoachSheet({
       try {
         const selected=readOnlineContext(value,day,at,undefined,selectedIds);
         const records=selected.context.records.filter(r=>r.category==='TRAINING'||r.category==='STRENGTH');
-        const reply=['【本地对比】','按你选择的训练分别核对；单次差异不能证明能力进步或因果，未修改计划。',...records.map(contextRecordQuote),...selected.context.coverage.unknowns].join('\n');
+        // Comparison is read-only, but must not consume an accompanying change
+        // request. The existing R5 service only saves a preview at this point.
+        const change=prepareR5Command(value,at);
+        const changeReply=change.kind==='PROPOSAL'?'同时已生成修改差异，请在下方确认卡核对；接受前不会修改正式课表。':change.kind==='ANSWER'?change.text:/改课|改成|改为|调整|交换/.test(value)?'改课候选尚未形成，请明确目标日期和要改变的内容；正式课表保持原样。':'';
+        const reply=['【本地对比】','按你选择的训练分别核对；单次差异不能证明能力进步或因果，未修改计划。',changeReply,...records.map(contextRecordQuote),...selected.context.coverage.unknowns].filter(Boolean).join('\n');
         const id=crypto.randomUUID();
         setMemory(current=>current?.athleteId===athleteId?{...current,messages:[...current.messages,{id:id+'-user',role:'user' as const,text:value},{id:id+'-comparison',role:'coach' as const,text:reply,onlineBasis:{owner:athleteId,question:value,day,sourceVersion:selected.sourceVersion,selectedTrainingIds:[...selectedIds]}}].slice(-40)}:current);
         setDraft('');setNotice('');queueOnline(value,athleteId,selectedIds);

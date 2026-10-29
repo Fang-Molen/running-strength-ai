@@ -1,0 +1,39 @@
+✔ X01 linked import and watch count 26:51.94 once, before and after V4 projection/reload (2.366566ms)
+✔ X01 same day/time/distance without identity remains two activities; unlink restores two rows (6.301817ms)
+✔ X01 conflicting source durations remain visible and are not summed or silently preferred (0.877598ms)
+✔ X01 unknown duplicate is not a missing component or a zero-duration activity (0.18561ms)
+✔ X01 mixed session keeps run pace separate and does not invent non-overlapping component time (0.284033ms)
+✔ X01 remerging projected rows retains individual sources and remains idempotent (0.200231ms)
+✔ X01 explicit disjoint components can sum; overlap or a corrected conflicting source cannot (0.327146ms)
+✖ 1A a third source joining two explicit identities collapses the whole activity once in any input order (0.814046ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.65019
+
+✖ failing tests:
+
+test at src/lib/ui/training-activity-dose.test.ts:66:1
+✖ 1A a third source joining two explicit identities collapses the whole activity once in any input order (0.814046ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/training-activity-dose.test.ts:72:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

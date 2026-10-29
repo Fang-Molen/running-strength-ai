@@ -1,0 +1,12 @@
+✔ a repeated request reuses the durable food entry without another nutrition event (7.327931ms)
+✔ one request cannot be reused for a changed date, meal, or nutrition draft (0.967188ms)
+✔ retry after removal never recreates a withdrawn food entry (1.22273ms)
+✔ retry after correction cannot overwrite newer food values (1.146199ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.044756

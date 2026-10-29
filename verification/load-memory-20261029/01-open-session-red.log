@@ -1,0 +1,40 @@
+✔ 分项显示实际跑量及整课负荷，保留证据版本 (19.519215ms)
+✔ 缺评分和缺距离不能填零 (1.008478ms)
+✔ 混合课整课评分不拆分、不重复计算 (1.22274ms)
+✔ 剔除他人记录，更正只使用最新版本 (0.621265ms)
+✔ 力量只统计完成组，未记录的组保持不完整 (0.606503ms)
+✔ 未知评分口径不推算整课负荷 (1.939494ms)
+✔ 尚未结束的课不能计算整课负荷 (0.557672ms)
+✔ 按用户时区归属日期，不纳入未来训练 (0.523042ms)
+✖ 未结束原生训练即使有时长和评分也不能产生整课AU (1.153509ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.723473
+
+✖ failing tests:
+
+test at src/lib/health/load-prototype.test.ts:17:1
+✖ 未结束原生训练即使有时长和评分也不能产生整课AU (1.153509ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  180 !== null
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/health/load-prototype.test.ts:19:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 180,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,3 +1,4 @@
+import {notifyStorageChange} from './storage-changes'
 import { currentStore, type MemoryStore } from "./storage.ts";
 
 /** recordedAt (ported additively from K20): wall-clock commit time. Absent on legacy entries = unknown, never inferred from order. */
@@ -55,8 +56,10 @@ export function appendJournal<T>(prefix: string, id: string, data: T): boolean {
     const key = prefix + id + ":" + nonce;
     const serialized = JSON.stringify({ schemaVersion: 1, id, order, data, recordedAt: new Date().toISOString() });
     box.setItem(key, serialized);
+    notifyStorageChange(key);
     return box.getItem(key) === serialized;
   } catch {
+    notifyStorageChange(prefix); // Re-read after uncertain writes as well.
     return false;
   }
 }

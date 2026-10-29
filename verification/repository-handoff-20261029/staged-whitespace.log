@@ -1,0 +1,337 @@
+verification/load-memory-20261029/01-domain-red.log:21: trailing whitespace.
++  
+verification/load-memory-20261029/01-domain-red.log:23: trailing whitespace.
++  
+verification/load-memory-20261029/01-open-session-red.log:24: trailing whitespace.
++  
+verification/load-memory-20261029/01-open-session-red.log:26: trailing whitespace.
++  
+verification/load-memory-20261029/02-quick-red.log:18: trailing whitespace.
++  
+verification/load-memory-20261029/02-quick-red.log:20: trailing whitespace.
++  
+verification/load-memory-20261029/02-quick-red.log:37: trailing whitespace.
++  
+verification/load-memory-20261029/02-quick-red.log:39: trailing whitespace.
++  
+verification/load-memory-20261029/03-memory-first.log:20: trailing whitespace.
++  
+verification/load-memory-20261029/03-memory-first.log:25: trailing whitespace.
++  
+verification/load-memory-20261029/06-http-red.log:16: trailing whitespace.
++  
+verification/load-memory-20261029/06-http-red.log:18: trailing whitespace.
++  
+verification/load-memory-20261029/final-build.log:35: trailing whitespace.
++[plugin builtin:vite-reporter] 
+verification/load-memory-20261029/final-build.log:94: trailing whitespace.
++  │ └── [503] 
+verification/load-memory-20261029/final-typecheck.log:4: new blank line at EOF.
+verification/load-memory-20261029/integration-typecheck.log:4: new blank line at EOF.
+verification/load-memory-20261029/progress-typecheck.log:4: new blank line at EOF.
+verification/load-memory-20261029/progress-typecheck2.log:4: new blank line at EOF.
+verification/load-memory-20261029/resume-build.log:35: trailing whitespace.
++[plugin builtin:vite-reporter] 
+verification/new-questions-20261029/TOKEN.csv:1: trailing whitespace.
++row_type,path_id,status,request_count,prompt_tokens,completion_tokens,total_tokens,cache_hit_tokens,cache_miss_tokens,reasoning_tokens,billed_cost
+verification/new-questions-20261029/TOKEN.csv:2: trailing whitespace.
++conversation,Q01-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:3: trailing whitespace.
++conversation,Q01-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:4: trailing whitespace.
++conversation,Q02-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:5: trailing whitespace.
++conversation,Q02-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:6: trailing whitespace.
++conversation,Q03-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:7: trailing whitespace.
++conversation,Q03-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:8: trailing whitespace.
++conversation,Q04-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:9: trailing whitespace.
++conversation,Q04-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:10: trailing whitespace.
++conversation,Q05-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:11: trailing whitespace.
++conversation,Q05-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:12: trailing whitespace.
++conversation,Q06-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:13: trailing whitespace.
++conversation,Q06-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:14: trailing whitespace.
++conversation,Q07-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:15: trailing whitespace.
++conversation,Q07-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:16: trailing whitespace.
++conversation,Q08-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:17: trailing whitespace.
++conversation,Q08-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:18: trailing whitespace.
++conversation,Q09-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:19: trailing whitespace.
++conversation,Q09-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:20: trailing whitespace.
++conversation,Q10-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:21: trailing whitespace.
++conversation,Q10-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:22: trailing whitespace.
++conversation,Q11-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:23: trailing whitespace.
++conversation,Q11-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:24: trailing whitespace.
++conversation,Q12-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:25: trailing whitespace.
++conversation,Q12-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:26: trailing whitespace.
++conversation,Q13-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:27: trailing whitespace.
++conversation,Q13-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:28: trailing whitespace.
++conversation,Q14-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:29: trailing whitespace.
++conversation,Q14-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:30: trailing whitespace.
++conversation,Q15-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:31: trailing whitespace.
++conversation,Q15-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:32: trailing whitespace.
++conversation,Q16-A,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:33: trailing whitespace.
++conversation,Q16-B,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:34: trailing whitespace.
++conversation,T01-ALL_HISTORY,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:35: trailing whitespace.
++conversation,T01-CURRENT_SELECTION,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:36: trailing whitespace.
++conversation,T02-CURRENT_SELECTION,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:37: trailing whitespace.
++conversation,T02-ALL_HISTORY,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:38: trailing whitespace.
++conversation,T03-ALL_HISTORY,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/TOKEN.csv:39: trailing whitespace.
++conversation,T03-CURRENT_SELECTION,NOT_RUN,0,NA,NA,NA,NA,NA,NA,NA
+verification/new-questions-20261029/input-package/00_Codex执行说明.md:38: new blank line at EOF.
+verification/new-questions-20261029/input-package/04_评测与token测试.md:54: new blank line at EOF.
+verification/phased-plan-20261028/1a-bridge-red-details.log:23: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-bridge-red-details.log:25: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:41: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:45: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:64: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:68: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:87: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:91: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:110: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-conflict-red.log:114: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-correction-red.log:19: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-correction-red.log:21: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:22: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:24: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:41: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:43: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:62: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:64: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:83: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:85: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:104: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:106: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:125: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-conflict-red.log:127: trailing whitespace.
++  
+verification/phased-plan-20261028/1a-entry-typecheck.log:4: new blank line at EOF.
+verification/phased-plan-20261028/1a-typecheck-final.log:4: new blank line at EOF.
+verification/phased-plan-20261028/1bc-green-attempt.log:40: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-green-attempt.log:42: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:40: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:42: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:59: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:61: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:81: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:86: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:105: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:107: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:126: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-detail.log:128: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:40: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:42: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:60: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:69: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:89: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:94: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:113: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:115: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:134: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-red-valid-fixture.log:136: trailing whitespace.
++  
+verification/phased-plan-20261028/1bc-typecheck.log:4: new blank line at EOF.
+verification/phased-plan-20261028/1c-candidate-red.log:41: trailing whitespace.
++  
+verification/phased-plan-20261028/1c-candidate-red.log:43: trailing whitespace.
++  
+verification/phased-plan-20261028/1c-http-scope-red.log:22: trailing whitespace.
++  
+verification/phased-plan-20261028/1c-http-scope-red.log:24: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:20: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:23: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:39: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:41: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:57: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:59: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:75: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-red.log:77: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-regression.log:54: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-regression.log:56: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-sheet-red.log:16: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-food-sheet-red.log:18: trailing whitespace.
++  
+verification/phased-plan-20261028/1d-typecheck.log:4: new blank line at EOF.
+verification/phased-plan-20261028/baseline-build-dev-network.log:35: trailing whitespace.
++[plugin builtin:vite-reporter] 
+verification/phased-plan-20261028/baseline-build-dev.log:35: trailing whitespace.
++[plugin builtin:vite-reporter] 
+verification/phased-plan-20261028/baseline-build-dev.log:103: trailing whitespace.
++  │ └── [503] 
+verification/phased-plan-20261028/baseline-typecheck.log:4: new blank line at EOF.
+verification/phased-plan-20261028/final-build-dev.log:35: trailing whitespace.
++[plugin builtin:vite-reporter] 
+verification/phased-plan-20261028/final-typecheck.log:4: new blank line at EOF.
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:29: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:35: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:54: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:60: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:79: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:85: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:104: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:110: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:129: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-coach-training-mechanisms.test.ts.log:135: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-integration.test.tsx.log:21: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-integration.test.tsx.log:23: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-integration.test.tsx.log:40: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-integration.test.tsx.log:42: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log:20: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log:22: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log:41: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log:43: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log:63: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-plan400-components-store.test.ts.log:66: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-training-redesign.test.tsx.log:19: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-training-redesign.test.tsx.log:21: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-warmup-workflow.test.tsx.log:19: trailing whitespace.
++  
+verification/phased-plan-20261028/later-baseline-warmup-workflow.test.tsx.log:21: trailing whitespace.
++  
+verification/phased-plan-20261028/later-feedback-red.log:19: trailing whitespace.
++  
+verification/phased-plan-20261028/later-feedback-red.log:22: trailing whitespace.
++  
+verification/phased-plan-20261028/later-feedback-red.log:40: trailing whitespace.
++  
+verification/phased-plan-20261028/later-feedback-red.log:43: trailing whitespace.
++  
+verification/phased-plan-20261028/later-feedback-red.log:63: trailing whitespace.
++  
+verification/phased-plan-20261028/later-feedback-red.log:66: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:29: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:32: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:49: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:54: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:71: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:76: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:93: trailing whitespace.
++  
+verification/phased-plan-20261028/later-restore-red.log:96: trailing whitespace.
++  
+verification/phased-plan-20261028/review-history-red.log:17: trailing whitespace.
++  
+verification/phased-plan-20261028/review-history-red.log:22: trailing whitespace.
++  
+verification/repository-handoff-20261029/status-clock-before.log:24: trailing whitespace.
++  
+verification/repository-handoff-20261029/status-clock-before.log:27: trailing whitespace.
++  
+verification/repository-handoff-20261029/typecheck.log:4: new blank line at EOF.

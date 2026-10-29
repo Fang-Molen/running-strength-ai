@@ -1,0 +1,30 @@
+✖ reopened sheet renders saved draft date meal and honest online-search fallback (16.59036ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28.635932
+
+✖ failing tests:
+
+test at src/components/food-entry-sheet-capture.test.tsx:10:1
+✖ reopened sheet renders saved draft date meal and honest online-search fallback (16.59036ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /value="合成晚餐"/. Input:
+  
+  '<div class="fixed inset-0 z-[70] bg-black/60"><div tabindex="-1" role="dialog" aria-modal="true" aria-label="登记饮食" class="fk-sheet absolute inset-x-0 mx-auto flex max-w-xl flex-col rounded-t-3xl border-t border-line bg-[#141518] shadow-2xl" style="bottom:0;max-height:min(calc(100dvh - 8px), calc(100dvh - env(safe-area-inset-top) - 8px))"><header class="flex shrink-0 items-center gap-2 border-b border-line px-4 pb-2 pt-3"><div class="min-w-0 flex-1"><h2 class="truncate text-lg font-black">记录饮食</h2></div><button type="button" aria-label="关闭" class="grid size-11 shrink-0 place-items-center rounded-full border border-line"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x size-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></header><div class="fk-sheet-content min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"><div class="fk-food-entry space-y-3"><div class="grid grid-cols-2 gap-2"><label class="text-xs text-muted">日期<input aria-label="饮食记录日期" type="date" max="2026-10-28" class="fk-cell min-h-11 w-full text-base" value="2026-10-28"/></label><label class="text-xs text-muted">餐次<select aria-label="饮食餐次" class="fk-cell min-h-11 w-full text-base"><option>早餐</option><option selected="">午餐</option><option>晚餐</option><option>加餐</option></select></label></div><div><input aria-label="吃了什么" placeholder="吃了什么？如 灌汤小笼包、伯牙绝弦" class="fk-cell min-h-11 w-full text-base" value=""/></div><section aria-label="拍照识别" class="rounded-xl border border-line p-3 text-sm"><input type="file" accept="image/*" capture="environment" aria-label="选择营养标签图片" class="hidden"/><button type="button" class="min-h-11 w-full rounded-xl border border-accent font-bold text-accent disabled:opacity-40">拍照 / 选图识别（营养标签·小票）</button><p class="keep mt-1 text-[11px] text-muted">照片只在本机识字、不上传；识出的文字会联网整理（设置里可改）。</p><p class="keep mt-2 text-xs text-muted" data-testid="dish-photo-status">菜品照片（没有文字）识别：检查中…</p></section></div></div><footer class="shrink-0 border-t border-line px-4 pt-2" style="padding-bottom:max(12px, env(safe-area-inset-bottom))"><p role="alert" class="keep mb-2 text-sm text-amber-400"></p><button type="button" class="fk-orange-btn min-h-12 w-full rounded-xl font-bold disabled:opacity-40" disabled="">确认保存饮食</button></footer></div></div>'
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/components/food-entry-sheet-capture.test.tsx:18:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ton type="button" aria-label="关闭" class="grid size-11 shrink-0 place-items-center rounded-full border border-line"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x size-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></header><div class="fk-sheet-content min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3"><div class="fk-food-entry space-y-3"><div class="grid grid-cols-2 gap-2"><label class="text-xs text-muted">日期<input aria-label="饮食记录日期" type="date" max="2026-10-28" class="fk-cell min-h-11 w-full text-base" value="2026-10-28"/></label><label class="text-xs text-muted">餐次<select aria-label="饮食餐次" class="fk-cell min-h-11 w-full text-base"><option>早餐</option><option selected="">午餐</option><option>晚餐</option><option>加餐</option></select></label></div><div><input aria-label="吃了什么" placeholder="吃了什么？如 灌汤小笼包、伯牙绝弦" class="fk-cell min-h-11 w-full text-base" value=""/></div><section aria-label="拍照识别" class="rounded-xl border border-line p-3 text-sm"><input type="file" accept="image/*" capture="environment" aria-label="选择营养标签图片" class="hidden"/><button type="button" class="min-h-11 w-full rounded-xl border border-accent font-bold text-accent disabled:opacity-40">拍照 / 选图识别（营养标签·小票）</button><p class="keep mt-1 text-[11px] text-muted">照片只在本机识字、不上传；识出的文字会联网整理（设置里可改）。</p><p class="keep mt-2 text-xs text-muted" data-testid="dish-photo-status">菜品照片（没有文字）识别：检查中…</p></section></div></div><footer class="shrink-0 border-t border-line px-4 pt-2" style="padding-bottom:max(12px, env(safe-area-inset-bottom))"><p role="alert" class="keep mb-2 text-sm text-amber-400"></p><button type="button" class="fk-orange-btn min-h-12 w-full rounded-xl font-bold disabled:opacity-40" disabled="">确认保存饮食</button></footer></div></div>...',
+    expected: /value="合成晚餐"/,
+    operator: 'match',
+    diff: 'simple'
+  }

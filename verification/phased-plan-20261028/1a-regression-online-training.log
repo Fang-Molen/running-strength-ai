@@ -1,0 +1,29 @@
+✔ unlinked chat includes completed native strength actual values and completion RPE without private labels (32.676093ms)
+✔ an open session retains recorded timed sets while its whole-session status remains unfinished (3.940598ms)
+✔ weight corrections and deletion are reflected on each read, with prior asOf preserving the earlier value (5.667342ms)
+✔ future committed work and another athlete never enter the current request even when selected (2.203859ms)
+✔ completed native running stays separate from strength and carries actual distance and duration (8.334978ms)
+✔ selected older native training gets detail priority while the day summary stays on the requested date (23.596411ms)
+✔ conflicting whole-session RPE is not averaged or replaced by the completion value (2.206252ms)
+✔ unreadable training containers differ from a clean empty history (0.821136ms)
+✔ a malformed running transaction is reported instead of an empty training history (0.663607ms)
+✔ reading a mixed native training history is storage read-only (1.953174ms)
+✔ confirmed totals-only running remains a dated actual import without invented segments or whole-session completion (4.220801ms)
+✔ a confirmed duration-only strength import has actual seconds and does not fabricate sets or running distance (1.034796ms)
+✔ visible import total corrections withdraw old totals and preserve their historical asOf values (4.869672ms)
+✔ corrected import segments remain segment values while aggregate distance and duration are withdrawn (4.493714ms)
+✔ a legitimate import feedback withdrawal supersedes RPE without being mislabelled a source conflict (2.260241ms)
+✔ the real strength-page completion feedback is readable without inventing plan sets or load (1.035639ms)
+✔ editing strength feedback keeps one dated report and a later skip withdraws its completion claim (1.543428ms)
+✔ strength completion feedback requires current owner and a reliable journal time at the cutoff (1.535767ms)
+✔ voiding and restoring a dated strength completion report obey their known-time boundary (1.677373ms)
+✔ an occurrence-bound completion and an unbound event used as its close never create extra reports (2.332957ms)
+✔ a real confirmed Garmin import is readable without an optional watch cache and retains owner/asOf/void boundaries (2.639243ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 131.451216

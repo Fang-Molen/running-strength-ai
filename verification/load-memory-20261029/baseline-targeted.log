@@ -1,0 +1,13 @@
+✔ src/components/load-evidence-view.test.tsx (817.194135ms)
+✔ src/lib/coach/online-context.test.ts (4220.464785ms)
+✔ src/lib/core/coach-load-metrics-store.test.ts (1601.074922ms)
+✔ src/lib/core/coach-load-metrics.test.ts (922.074101ms)
+✔ src/lib/health/load-prototype.test.ts (711.201305ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4237.680333

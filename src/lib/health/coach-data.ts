@@ -1,4 +1,5 @@
 import { readEvidenceDecision } from './evidence-decision-host'
+import { bodyCaptureContext } from './body-capture-context'
 import { evidenceDecisionText } from './evidence-decision'
 import { healthModeSummary } from './mode'
 import { loadWatch } from './legacy-inputs'
@@ -9,6 +10,7 @@ import { localDay, shiftDay, validDay, shortHash } from './observation'
 import { currentStore } from '../core/storage'
 import { aggregate, loadEntries } from '../nutrition/log'
 import { coachImports } from '../core/coach-import-evidence'
+import { readCurrentImportConflicts } from '../core/current-import-conflicts'
 import { currentAthleteId, loadEvents } from '../core/events'
 import { occurrenceVoided, listCorrections } from '../core/training-correction'
 import { listTrainingOccurrences } from '../core/occurrence'
@@ -58,7 +60,14 @@ export function readCoachData(day=localDay()):CoachDataContext{
   const foods=loadEntries().filter(e=>e.date===day&&(e.athleteId??'local')===currentAthleteId()),agg=aggregate(foods)
   const all=coachImports().filter(i=>!occurrenceVoided(i.confirmedImportId)),unknownDate=all.filter(i=>i.occurredAt.status!=='RECORDED'||!i.occurredAt.value).length
   const imports=all.filter(i=>i.occurredAt.status==='RECORDED'&&i.occurredAt.value&&Number.isFinite(Date.parse(i.occurredAt.value))).map(i=>({i,day:localDay(new Date(i.occurredAt.value!))})).filter(x=>x.day>=shiftDay(day,-27)&&x.day<=day).sort((a,b)=>b.day.localeCompare(a.day))
-  const result:CoachDataContext={mode:healthModeSummary(loadWatch(currentStore()),snap),day,sourceId:`appdata:${day}`,health:snap.metrics.map(v=>({metric:v.metric,state:v.state,detail:healthSummaryLine(v).slice(0,500)})),fatigue:{ruleStatus:fatigue.ruleStatus,automaticPrescription:false,state:fatigue.state,title:fatigue.title,reasons:fatigue.signals.map(s=>s.detail),excluded:fatigue.excluded,action:fatigue.action,followup:fatigue.followup},balance:{from:balance.from,to:balance.to,plannedRun:balance.planned.run,plannedStrength:balance.planned.strength,actualSessions:balance.actual.sessions,knownMinutes:balance.actual.knownMinutes,unknownMinutes:balance.actual.unknownMinutes,knownRunKm:balance.actual.knownRunKm,unknownRunKm:balance.actual.unknownRunKm,groups:balance.planned.muscleGroups,observations:balance.observations.slice(0,20),gaps:balance.gaps,action:balance.action},coreActual:coreActual(day),nutrition:{count:foods.length,knownKcal:agg.kcal.sum,pending:agg.kcal.pending},imports:{count:imports.length,unknownDate,latest:imports.slice(0,8).map(({i,day})=>({id:i.confirmedImportId.slice(0,120),day,title:String(i.title.value??'未命名训练').slice(0,120),sport:i.sport,distanceM:i.totalDistanceMeters.status==='RECORDED'&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='distance')?i.totalDistanceMeters.value:null,durationSec:i.durationSeconds.status==='RECORDED'&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='duration')?i.durationSeconds.value:null}))},subjective:ci?`当天感受：${({fresh:'轻松',ok:'一般',tired:'很累'} as Record<string,string>)[ci.fatigue??'']??'疲劳未填'}；疼痛：${({none:'不疼',mild:'有点疼',sharp:'明显疼'} as Record<string,string>)[ci.pain??'']??'未填'}；主观恢复：${ci.recovery??'未填'}`:'当天主观感受未记录',warnings:[...(scheduleUnreadable()?['兼容日程无法读取，零汇总不能解释为没有训练']:[]),...(snap.unreadable?['健康存储无法读取；未当作没有健康记录']:[]),'这些为日历日背景，不自动绑定某次训练。','经验阈值尚未科学核准，只作复核提示，不决定减量、停训或医学回归。','已确认导入与日程实际明细可能重叠，分开列示，不重复累加。','导入距离/时长有更正时，日汇总暂不引用旧总量；请进入对应训练核对更正后的明细。','独立截图证据需选择“用于健康分析”后进入健康记录；待核对图片不参与分析。'],planChanged:false}
+  const currentConflicts=readCurrentImportConflicts(imports.map(({i})=>i))
+  const result:CoachDataContext={mode:healthModeSummary(loadWatch(currentStore()),snap),day,sourceId:`appdata:${day}`,health:snap.metrics.map(v=>({metric:v.metric,state:v.state,detail:healthSummaryLine(v).slice(0,500)})),fatigue:{ruleStatus:fatigue.ruleStatus,automaticPrescription:false,state:fatigue.state,title:fatigue.title,reasons:fatigue.signals.map(s=>s.detail),excluded:fatigue.excluded,action:fatigue.action,followup:fatigue.followup},balance:{from:balance.from,to:balance.to,plannedRun:balance.planned.run,plannedStrength:balance.planned.strength,actualSessions:balance.actual.sessions,knownMinutes:balance.actual.knownMinutes,unknownMinutes:balance.actual.unknownMinutes,knownRunKm:balance.actual.knownRunKm,unknownRunKm:balance.actual.unknownRunKm,groups:balance.planned.muscleGroups,observations:balance.observations.slice(0,20),gaps:balance.gaps,action:balance.action},coreActual:coreActual(day),nutrition:{count:foods.length,knownKcal:agg.kcal.sum,pending:agg.kcal.pending},imports:{count:imports.length,unknownDate,latest:imports.slice(0,8).map(({i,day})=>({id:i.confirmedImportId.slice(0,120),day,title:String(i.title.value??'未命名训练').slice(0,120),sport:i.sport,distanceM:i.totalDistanceMeters.status==='RECORDED'&&!currentConflicts.get(i.confirmedImportId)?.distance&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='distance')?i.totalDistanceMeters.value:null,durationSec:i.durationSeconds.status==='RECORDED'&&!currentConflicts.get(i.confirmedImportId)?.duration&&!listCorrections(i.confirmedImportId).some(c=>c.kind==='FIELD'&&c.field==='duration')?i.durationSeconds.value:null}))},subjective:ci?`当天感受：${({fresh:'轻松',ok:'一般',tired:'很累'} as Record<string,string>)[ci.fatigue??'']??'疲劳未填'}；疼痛：${({none:'不疼',mild:'有点疼',sharp:'明显疼'} as Record<string,string>)[ci.pain??'']??'未填'}；主观恢复：${ci.recovery??'未填'}`:'当天主观感受未记录',warnings:[...(scheduleUnreadable()?['兼容日程无法读取，零汇总不能解释为没有训练']:[]),...(snap.unreadable?['健康存储无法读取；未当作没有健康记录']:[]),'这些为日历日背景，不自动绑定某次训练。','经验阈值尚未科学核准，只作复核提示，不决定减量、停训或医学回归。','已确认导入与日程实际明细可能重叠，分开列示，不重复累加。','导入距离/时长有更正时，日汇总暂不引用旧总量；请进入对应训练核对更正后的明细。','独立截图证据需选择“用于健康分析”后进入健康记录；待核对图片不参与分析。'],planChanged:false}
+  result.warnings.push(...new Set([...currentConflicts.values()].map(conflict=>conflict.note)))
+  const body=bodyCaptureContext(day)
+  if(body.rows.length){
+    result.subjective=(ci?`${result.subjective}；`:'')+body.text
+    result.sourceId+=':body:'+shortHash(body.rows.map(r=>r.id).join('|'))
+  }
   const recovery=readRecoveryProjection(day)
   result.muscleRecovery={revision:recovery.revision,summary:recovery.review.summary,explanation:recoveryExplanation(recovery),
     hasEvidence:recovery.sources.length>0||recovery.review.gaps.length>0,hasObservedRegions:recovery.review.regions.some(r=>r.state!=='UNKNOWN'),unreadable:recovery.unreadable}
@@ -82,7 +91,7 @@ export function answerFromAppData(brief:CoachBrief):string|null{
   if((health||balance)&&d.decision){
     const caution=health&&/很累|特别疲劳|腿沉|睡不够|状态很差/.test(q)?'你这轮提到的新不适或疲劳需优先核对；不能用手表数据抵消你的感受。下文选项均待核对，先暂缓加量，补充发生时间、部位与热身表现。\n':''
     const cycle=balance&&brief.daysToCompetition!=null?`距目标比赛${brief.daysToCompetition}天；结合原计划目的复核，不自动补量。\n`:''
-    return `分析日期：${d.day}（本机记录，只读）。\n${caution}${d.decision.text}\n${d.subjective}。证据不足时只作有限解释。\n${cycle}${d.warnings.filter(w=>w.includes('无法读取')).join('；')}`
+    return `分析日期：${d.day}（本机记录，只读）。\n${caution}${d.decision.text}\n${d.subjective}。证据不足时只作有限解释。\n${cycle}${d.warnings.filter(w=>/无法读取|缓存.*冲突/.test(w)).join('；')}`
   }
   const lines=[`分析日期：${d.day}（本机已保存记录）。`,`${d.mode.label}：${d.mode.description}`]
   if(health){lines.push(...d.health.filter(x=>x.state!=='MISSING'&&['SLEEP','HRV','RHR','BODY_BATTERY','RECOVERY','READINESS'].includes(x.metric)).map(x=>x.detail),d.subjective,`基于已保存记录的判断：${d.fatigue.title}。`,...d.fatigue.reasons,`建议：${d.fatigue.action}`,`跟进：${d.fatigue.followup}`);if(d.fatigue.excluded.length)lines.push(`暂不采用：${d.fatigue.excluded.slice(0,4).join('；')}。`)}
@@ -93,6 +102,7 @@ export function answerFromAppData(brief:CoachBrief):string|null{
   if(balance&&!health)lines.push(`当天恢复复核：${d.fatigue.title}。${d.fatigue.action}`)
   if(food)lines.push(`${d.day} 饮食 ${d.nutrition.count} 条，已知热量合计 ${Math.round(d.nutrition.knownKcal)} kcal，${d.nutrition.pending} 项热量待补；未确认全天记录完整，不能据此判断吃得不足。`)
   if(imports)lines.push(`近28天已确认导入活动 ${d.imports.count} 条；另有 ${d.imports.unknownDate} 条日期未知未纳入。`,`最近导入：${d.imports.latest.slice(0,3).map(i=>`${i.day} ${i.title}${i.distanceM!=null?` ${i.distanceM}米`:''}${i.durationSec!=null?` ${i.durationSec}秒`:''}`).join('；')||'暂无'}。`,'导入与日程记录可能重叠，未合并计算总负荷。')
+  if(imports)lines.push(...d.warnings.filter(w=>/缓存.*冲突/.test(w)))
   if(d.warnings.some(x=>x.includes('无法读取')))lines.push(...d.warnings.filter(x=>x.includes('无法读取')),'无法读取不等于没有问题。')
   if(health&&/很累|特别疲劳|腿沉|睡不够|状态很差/.test(q))lines.push('你这轮提到的新不适或疲劳需优先核对；上面的结果只反映已保存记录，不能用手表数据抵消你的感受。先暂缓加量，补充发生时间、部位与热身表现。')
   if(balance&&brief.daysToCompetition!=null&&brief.daysToCompetition>=0&&brief.daysToCompetition<=28)lines.push(`当前目标距比赛${brief.daysToCompetition}天；需结合参赛项目和原定减量安排，不为补齐肌群或比例临时堆训练。`)

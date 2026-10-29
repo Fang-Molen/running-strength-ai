@@ -1,0 +1,20 @@
+[
+  "server/coach-deepseek/online-v2.test.ts",
+  "src/components/food-entry-sheet-capture.test.tsx",
+  "src/components/pet/pet-capture.test.tsx",
+  "src/lib/coach/online-context.test.ts",
+  "src/lib/coach/online-history-entry.test.ts",
+  "src/lib/coach/online-service.test.ts",
+  "src/lib/coach/online-session.test.ts",
+  "src/lib/coach/online-training-facts.test.ts",
+  "src/lib/core/coach-import-totals.test.ts",
+  "src/lib/core/restore-transaction.test.ts",
+  "src/lib/health/analysis-import-conflicts.test.ts",
+  "src/lib/nutrition/food-capture.test.ts",
+  "src/lib/nutrition/food-search-readiness.test.ts",
+  "src/lib/ui/pet-capture.test.ts",
+  "src/lib/ui/quick-log-1d.test.ts",
+  "src/lib/ui/quick-log-v83.test.ts",
+  "src/lib/ui/training-activity-dose.test.ts",
+  "src/lib/ui/training-read-model-1a.test.ts"
+]

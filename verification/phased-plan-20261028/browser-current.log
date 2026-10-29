@@ -1,0 +1,14 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.selectOption: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByLabel('本次问答关联训练', { exact: true })[22m
+
+    at /workspace/fangkun-20261028/verification/phased-plan-20261028/browser/flows.mjs:130:49 {
+  log: [ "  - waiting for getByLabel('本次问答关联训练', { exact: true })" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

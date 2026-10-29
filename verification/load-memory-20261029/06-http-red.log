@@ -1,0 +1,28 @@
+✖ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (1616.316275ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1621.497599
+
+✖ failing tests:
+
+test at server/coach-deepseek/online-v2.test.ts:246:1
+✖ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (1616.316275ms)
+  AssertionError [ERR_ASSERTION]: {"ok":false,"error":"DECLARATIONS_INVALID","text":"联网解释当前不可用；保留本地训练分析与原计划。"}
+  
+  400 !== 200
+  
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/server/coach-deepseek/online-v2.test.ts:264:20)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 400,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

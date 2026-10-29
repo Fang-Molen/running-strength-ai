@@ -1,0 +1,35 @@
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/workspace/fangkun-20261028/src/components/pet/pet-capture' imported from /workspace/fangkun-20261028/src/components/pet/pet-capture.test.tsx
+    at finalizeResolution (node:internal/modules/esm/resolve:271:11)
+    at moduleResolve (node:internal/modules/esm/resolve:865:10)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at nextResolve (node:internal/modules/esm/hooks:785:28)
+    at resolve (file:///workspace/fangkun-20261028/scripts/test-loader.mjs:11:20)
+    at nextResolve (node:internal/modules/esm/hooks:785:28)
+    at AsyncLoaderHooksOnLoaderHookWorker.resolve (node:internal/modules/esm/hooks:269:30)
+    at MessagePort.handleMessage (node:internal/modules/esm/worker:251:24)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:856:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///workspace/fangkun-20261028/src/components/pet/pet-capture'
+}
+
+Node.js v24.19.0
+✖ src/components/pet/pet-capture.test.tsx (444.627892ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 455.314234
+
+✖ failing tests:
+
+test at src/components/pet/pet-capture.test.tsx:1:1
+✖ src/components/pet/pet-capture.test.tsx (444.627892ms)
+  'test failed'

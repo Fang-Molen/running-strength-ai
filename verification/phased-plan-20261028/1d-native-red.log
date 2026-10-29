@@ -1,0 +1,15 @@
+✖ src/lib/ui/pet-capture.test.ts (1356.289076ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1366.861983
+
+✖ failing tests:
+
+test at src/lib/ui/pet-capture.test.ts:1:1
+✖ src/lib/ui/pet-capture.test.ts (1356.289076ms)
+  'test failed'

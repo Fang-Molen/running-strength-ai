@@ -1,0 +1,36 @@
+✔ 1A repeated same-account saves retain A once, same-day B separately, after storage restart and athlete switch (81.07702ms)
+✔ 1A explicit schedule link and unlink survive storage restart without changing A, B or raw watch values (4.57278ms)
+✔ 1A conflicting source time remains visible while missing time stays unknown after restart (1.569135ms)
+✖ 1A a confirmed lap correction withdraws old totals consistently from log, week and coach after restart (4.460666ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.230115
+
+✖ failing tests:
+
+test at src/lib/ui/training-read-model-1a.test.ts:124:1
+✖ 1A a confirmed lap correction withdraws old totals consistently from log, week and coach after restart (4.460666ms)
+  AssertionError [ERR_ASSERTION]: a corrected segment does not establish a replacement whole-session time
+  
+  1611.94 !== null
+  
+      at verify (file:///workspace/fangkun-20261028/src/lib/ui/training-read-model-1a.test.ts:141:16)
+      at TestContext.<anonymous> (file:///workspace/fangkun-20261028/src/lib/ui/training-read-model-1a.test.ts:153:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1611.94,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,107 @@
+✔ B05 persists verified before-images for each physical backend before touching targets (13.56873ms)
+✔ B05 backup/log failure before PREPARED never modifies either target (0.794178ms)
+✔ B05 write failure restores each backend to its own old value and verifies rollback (8.350767ms)
+✔ B05 committed transaction survives a lost commit acknowledgement without rollback (5.990698ms)
+✔ B05 unknown commit outcome stays restricted, restart resolves authoritative COMMITTED (8.774334ms)
+✔ B05 target written before receipt failure is rolled back after a journal restart (7.110229ms)
+✔ B05 external modification blocks rollback instead of overwriting the independent change (5.4701ms)
+✔ B05 cache notification failure after COMMITTED never reverts persisted values (3.847976ms)
+✔ B05 unknown legacy-writer isolation and changed preview both reject before writes (0.759677ms)
+✖ B05 an account switch while awaiting isolation rejects before preparing a restore (2.698131ms)
+✖ B05 an account switch while persisting write intent cannot write a target (2.905083ms)
+✖ B05 isolation lost while persisting write intent cannot write a target (3.715062ms)
+✖ B05 an account switch during rollback read cannot restore into the new account (4.065463ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 9
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75.024999
+
+✖ failing tests:
+
+test at src/lib/core/restore-transaction.test.ts:134:1
+✖ B05 an account switch while awaiting isolation rejects before preparing a restore (2.698131ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'RECOVERY_REQUIRED'
+  - 'NOT_STARTED'
+  
+      at file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:139:12
+      at async fixture (file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:41:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'RECOVERY_REQUIRED',
+    expected: 'NOT_STARTED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/core/restore-transaction.test.ts:144:1
+✖ B05 an account switch while persisting write intent cannot write a target (2.905083ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   'local:a'
+  + ]
+  - []
+  
+      at file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:151:12
+      at async fixture (file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:41:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/core/restore-transaction.test.ts:158:1
+✖ B05 isolation lost while persisting write intent cannot write a target (3.715062ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   'local:a'
+  + ]
+  - []
+  
+      at file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:165:12
+      at async fixture (file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:41:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/lib/core/restore-transaction.test.ts:168:1
+✖ B05 an account switch during rollback read cannot restore into the new account (4.065463ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'ROLLED_BACK'
+  - 'RECOVERY_REQUIRED'
+  
+      at file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:182:12
+      at async fixture (file:///workspace/fangkun-20261028/src/lib/core/restore-transaction.test.ts:41:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ROLLED_BACK',
+    expected: 'RECOVERY_REQUIRED',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

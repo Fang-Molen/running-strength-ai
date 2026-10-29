@@ -238,6 +238,31 @@ test("historical corrections withdraw dependent conclusions without rewriting ol
   assert.equal(d.draft.weeks[0].sessions[0].candidate?.actual, undefined);
 });
 
+test("saved future feedback stays pending in the earlier host review and appears at its cutoff", async (t) => {
+  setup(t);
+  await goal();
+  const d = await prepareCycle(now);
+  assert.equal((await decideCycle(d.id, "ACCEPT", now)).ok, true);
+  const candidate = d.draft.weeks[0].sessions.find((session) => session.candidate)!.candidate!;
+  const recordedAt = candidate.date + "T10:00:00Z";
+  const schedule = loadSchedule();
+  saveSchedule({
+    ...schedule,
+    entries: schedule.entries.map((entry) => entry.id === candidate.id ? {
+      ...entry,
+      actual: { outcome: "missed", minutes: null, intensity: null, reasons: [], note: "合成未来反馈", at: recordedAt },
+    } : entry),
+  });
+  const stored = loadSchedule();
+  const earlier = refreshCycleFeedback(now).find((document) => document.id === d.id)!;
+  assert.equal(earlier.feedback?.state, "PENDING");
+  assert.equal(earlier.feedback?.missed, 0);
+  const current = refreshCycleFeedback(recordedAt).find((document) => document.id === d.id)!;
+  assert.equal(current.feedback?.missed, 1);
+  assert.notEqual(current.feedback?.basis, earlier.feedback?.basis);
+  assert.deepEqual(loadSchedule(), stored, "feedback review never edits recorded training");
+});
+
 test("unchanged evidence remains confirmable as the clock advances within the same day", async (t) => {
   setup(t);
   await goal();

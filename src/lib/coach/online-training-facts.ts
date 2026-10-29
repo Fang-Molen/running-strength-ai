@@ -7,6 +7,7 @@ import {readFormalEvidenceRows} from '../core/coach-v4-formal-rows-store'
 import {adaptFormalEvidenceRows,strictIso} from '../core/coach-v4-c11-adapter'
 import {evaluateCoachEvolution,type EvolutionEvidence} from '../core/coach-evolution-v4'
 import {coachImports} from '../core/coach-import-evidence'
+import {readCurrentImportConflicts} from '../core/current-import-conflicts'
 import {listCorrections} from '../core/training-correction'
 import {loadTrainingActivities} from '../ui/training-read-model'
 import {RUNNING_TRANSACTION_PREFIX} from '../core/running-transaction'
@@ -14,7 +15,7 @@ import {exerciseById} from '../strength/catalog'
 import {localDay,shiftDay,validDay} from '../health/observation'
 
 type Facts={summary:string[];details:string[]}
-type ImportTotals={distanceM:number|null;durationSec:number|null;distanceChanged:boolean;durationChanged:boolean}
+type ImportTotals={distanceM:number|null;durationSec:number|null;distanceChanged:boolean;durationChanged:boolean;distanceConflict:boolean;durationConflict:boolean}
 type SessionFacts={id:string;date:string;at:string;kind:string;run:boolean;lift:boolean;completed:boolean;status:string;rows:EvolutionEvidence[];rpe:string;names:Map<string,string>;identity:string;importTotals?:ImportTotals;selfReport?:string}
 const round=(n:number)=>Number(n.toFixed(2))
 const clipped=(s:string,n:number)=>s.length<=n?s:s.slice(0,n-8)+'（明细省略）'
@@ -54,8 +55,8 @@ function groupDetail(session:SessionFacts,selected:boolean):string{
  const rests=session.rows.filter(r=>r.metric==='REST_SECONDS'&&r.value!=null).map(r=>`${round(r.value!)}秒`)
  const totals=session.importTotals
  const aggregate=totals?[
-  totals.distanceM!==null?`已确认实际总距离 ${round(totals.distanceM)}米`:`总距离未知${totals.distanceChanged?'（已有更正，旧总量已撤回）':'（未记录）'}`,
-  totals.durationSec!==null?`已确认实际总时长 ${round(totals.durationSec)}秒`:`总时长未知${totals.durationChanged?'（已有更正，旧总量已撤回）':'（未记录）'}`,
+  totals.distanceM!==null?`已确认实际总距离 ${round(totals.distanceM)}米`:`总距离未知${totals.distanceConflict?'（当前缓存来源冲突，待核对）':totals.distanceChanged?'（已有更正，旧总量已撤回）':'（未记录）'}`,
+  totals.durationSec!==null?`已确认实际总时长 ${round(totals.durationSec)}秒`:`总时长未知${totals.durationConflict?'（当前缓存来源冲突，待核对）':totals.durationChanged?'（已有更正，旧总量已撤回）':'（未记录）'}`,
  ]:[]
  const pieces=[...aggregate,...lifts,...runs,...(rests.length?[`实际组间休息 ${rests.slice(0,6).join('、')}${rests.length>6?'等':''}`]:[])]
  const head=`${selected?'选定训练·':''}${session.date} ${session.kind}（${session.status}；${session.rpe}）`
@@ -79,6 +80,8 @@ export function onlineTrainingFacts(day:string,asOf:string,options:{selectedOccu
   // Reuse only identity links from the unified log; its current numeric values are not as-of evidence.
   const links=loadTrainingActivities(),identity=(id:string)=>{const row=links.find(r=>r.occurrenceId===id||r.importId===id||r.id===id||r.originIds.includes(id));return row?.id??id}
   const sessions:SessionFacts[]=[],occurrences=listTrainingOccurrences()
+  const imports=coachImports(owner,asOf),currentConflicts=readCurrentImportConflicts(imports)
+  const conflictNotes=new Set<string>()
   for(const occurrence of occurrences){
    const id=occurrence.trainingOccurrenceId,start=events.find(e=>e.event_id===occurrence.startEventId&&e.event_type==='TRAINING_STARTED')
    if(!start||removed(id))continue
@@ -96,16 +99,18 @@ export function onlineTrainingFacts(day:string,asOf:string,options:{selectedOccu
    }
    sessions.push({id,date,at:start.timestamp,kind:run&&lift?'跑步＋力量':run?'跑步':lift?'力量':'训练',run,lift,completed,status,rows,rpe:rpeLine(rows,close?.payload.rpe,rpeConflict(id)),names,identity:identity(id)})
   }
-  for(const record of coachImports(owner,asOf)){
+  for(const record of imports){
    const id=record.confirmedImportId;if(removed(id)||!validTime(record.occurredAt.value))continue
    const date=localDay(new Date(record.occurredAt.value));if(date>day||(date<from&&id!==selected))continue
+   const conflict=currentConflicts.get(id),distanceConflict=conflict?.distance??false,durationConflict=conflict?.duration??false
+   if(conflict)conflictNotes.add(conflict.note)
    const rows=active.filter(r=>r.occurrenceId===id),same=sessions.find(s=>s.identity===identity(id))
    if(same)continue
    const incomplete=record.runningSegments.some(s=>s.completion!=='COMPLETED')||record.strengthSets.some(s=>s.completion!=='COMPLETED')
    // A segment correction does not establish a replacement whole-session total.
    const distanceChanged=visibleCorrections.some(c=>c.trainingOccurrenceId===id&&c.kind==='FIELD'&&c.field==='distance')
    const durationChanged=visibleCorrections.some(c=>c.trainingOccurrenceId===id&&c.kind==='FIELD'&&c.field==='duration')
-   const importTotals={distanceM:!distanceChanged&&record.totalDistanceMeters.status==='RECORDED'?record.totalDistanceMeters.value:null,durationSec:!durationChanged&&record.durationSeconds.status==='RECORDED'?record.durationSeconds.value:null,distanceChanged,durationChanged}
+   const importTotals={distanceM:!distanceChanged&&!distanceConflict&&record.totalDistanceMeters.status==='RECORDED'?record.totalDistanceMeters.value:null,durationSec:!durationChanged&&!durationConflict&&record.durationSeconds.status==='RECORDED'?record.durationSeconds.value:null,distanceChanged,durationChanged,distanceConflict,durationConflict}
    sessions.push({id,date,at:record.occurredAt.value,kind:record.sport==='RUNNING'?'导入跑步':record.sport==='STRENGTH'?'导入力量':'导入训练',run:record.sport==='RUNNING'||record.sport==='MIXED',lift:record.sport==='STRENGTH'||record.sport==='MIXED',completed:false,status:incomplete?'已有实际记录，整课未确认完成':'已确认导入实际，整课完成状态未单独记录',rows,rpe:rpeLine(rows,null,rpeConflict(id)),names:new Map(),identity:identity(id),importTotals})
   }
   // The strength page saves completion/feedback without creating an occurrence. A save/edit is
@@ -145,6 +150,7 @@ export function onlineTrainingFacts(day:string,asOf:string,options:{selectedOccu
   if(ordered.length>8)summary.push(`训练摘要仅列最近或选定的8次明细，另${ordered.length-8}次未展开。`)
   if(formal.unknownCommitTime.length||formal.corrections.unknownCommitTime.length)summary.push('部分旧训练缺少可靠录入时间，未补造数值或完成事实。')
   if(snapshot.quarantined.length)summary.push('部分训练数值或重复来源有冲突，相关数值未采用。')
+  summary.push(...conflictNotes)
   return{summary:summary.map(s=>clipped(s,500)),details}
  }catch{return fail('部分训练来源读取失败，不能解释为没有训练；请保留并核对原记录。')}
 }

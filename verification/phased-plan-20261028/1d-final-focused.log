@@ -1,0 +1,16 @@
+✔ src/components/food-entry-sheet-capture.test.tsx (1629.510177ms)
+✔ src/components/pet/pet-capture.test.tsx (2270.967734ms)
+✔ src/lib/nutrition/entry-workflow.test.ts (1047.777936ms)
+✔ src/lib/nutrition/food-capture.test.ts (1032.043227ms)
+✔ src/lib/nutrition/food-search-readiness.test.ts (768.896342ms)
+✔ src/lib/ui/pet-capture.test.ts (3461.71296ms)
+✔ src/lib/ui/quick-log-1d.test.ts (1786.28994ms)
+✔ src/lib/ui/quick-log-v83.test.ts (1939.846236ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5561.408195

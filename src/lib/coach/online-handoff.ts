@@ -2,15 +2,16 @@ import type { AnalysisFact, CoachAnalysisPacket, EvidenceRef } from '../health/a
 import type { CoachContextRecord } from './online-contract'
 import { stableJson } from '../health/analysis-evidence'
 import { sha256Hex } from '../core/sha256-sync'
+import { boundedContextRecord } from './context-fields'
 
 export type OnlineConversationTurn = { role: 'user' | 'coach'; text: string }
 export function contextualQuestion(question:string,turns:readonly OnlineConversationTurn[]=[]):string {
- if(!/^(?:那|那么|明天呢|后天呢|刚才|这节|这次|继续|为什么这么)/.test(question.trim()))return question
+ if(!/^(?:那|那么|(?:我)?明天呢|(?:我)?后天呢|刚才|这节|这次|继续|为什么这么)/.test(question.trim()))return question
  const prior=turns.filter(t=>t.role==='user').at(-1)
- return prior ? `${prior.text.slice(0,256)}；追问：${question}` : question
+ return prior ? `${prior.text}；追问：${question}` : question
 }
 const digest=(v:unknown)=>sha256Hex(stableJson(v))
-const clean=(s:string)=>s.normalize('NFKC').replace(/[\u0000-\u001f<>]/g,' ').slice(0,256)
+const clean=(s:string)=>s.normalize('NFKC').replace(/[\u0000-\u001f<>]/g,' ')
 const field=(name:string,value:string|number|boolean|null,unit:string|null=null)=>({name,value:typeof value==='string'?clean(value):value,unit})
 
 /** A browser analysis is transmitted as a declared interpretation, never installed
@@ -31,13 +32,19 @@ export function localAnalysisRecords(packet:CoachAnalysisPacket|undefined,owner:
  for(const d of packet.derivedFacts??[])if(supported(d.evidenceRefs))result.push(make('computed:'+digest([d.metric,d.evidenceRefs,d.inputs,d.formula,d.value,d.unit]),[field('kind','COMPUTED'),field('metric',d.metric),field('value',d.value,d.unit),field('evidenceVersions',refs(d.evidenceRefs)),field('formula',d.formula),field('formulaVersion',d.formulaVersion),field('meaning',meaning(d.text)),field('inputsOmitted',Math.max(0,d.inputs.length-4)),...d.inputs.slice(0,4).flatMap((i,n)=>[field('input'+n,i.value,i.unit),field('inputSource'+n,refs([i.ref])+':'+i.field)])]))
  for(const [i,o]of packet.assessment.observations.entries())if(supported(o.evidenceRefs)&&!(packet.derivedFacts??[]).some(d=>d.text===o.text))result.push(make('observation:'+i,[field('kind','OBSERVATION'),field('meaning',meaning(o.text)),field('evidenceVersions',refs(o.evidenceRefs))]))
  for(const h of packet.assessment.hypotheses)if(supported(h.supportingRefs)&&h.weakeningRefs.every(r=>keys.has(`${r.id}@${r.revision}`)))result.push(make(h.id,[field('kind','HYPOTHESIS'),field('meaning',h.claim),field('certainty',h.certainty),field('support',refs(h.supportingRefs)),field('counterevidence',refs(h.weakeningRefs)),field('review',h.discriminator)]))
- if(/明天|下一|安排|计划|方案|调整/.test(question))for(const c of packet.assessment.candidates)if(c.basisRefs.every(r=>keys.has(`${r.id}@${r.revision}`)))result.push(make('candidate:'+digest([c.kind,c.action,c.changedVariable,c.basisRefs]),[field('kind','CANDIDATE'),field('candidateKind',c.kind),field('reason',c.reason??null),field('conditions',c.conditions.join('；')),field('executionState',c.executionState??'HOST_REVIEW_REQUIRED'),field('planVersion',c.planVersion?digest(c.planVersion):null),field('requiresConfirmation',true),field('medicalClearance',false)]))
+ if(/明天|下一|安排|计划|方案|调整/.test(question))for(const c of packet.assessment.candidates)if(c.basisRefs.every(r=>keys.has(`${r.id}@${r.revision}`)))result.push(make('candidate:'+digest([c.kind,c.action,c.changedVariable,c.basisRefs]),[
+  field('kind','CANDIDATE'),field('candidateKind',c.kind),field('action',c.action??null),field('changedVariable',c.changedVariable??null),field('reason',c.reason??null),
+  field('conditions',c.conditions.join('；')),field('observation',c.observation??null),field('supportsWhen',c.supportsWhen??null),field('weakensWhen',c.weakensWhen??null),field('doNotExecute',(c.doNotExecute??[]).join('；')),field('evidenceVersions',refs(c.basisRefs)),
+  field('executionState',c.executionState??'HOST_REVIEW_REQUIRED'),field('planVersion',c.planVersion?digest(c.planVersion):null),field('requiresConfirmation',true),field('medicalClearance',false)]))
+ for(const constraint of packet.safetyConstraints??[])result.push({...make('constraint:'+digest(constraint.id),[
+  field('restriction',constraint.scope),field('constraintVersion',constraint.version),field('evidenceVersions',refs(constraint.evidenceRefs)),field('evidenceAvailable',constraint.evidenceRefs.every(r=>keys.has(`${r.id}@${r.revision}`))),field('medicalClearance',false)
+ ]),category:'RESTRICTION'})
  result.push(make('coverage',[field('kind','ANALYSIS_COVERAGE'),field('dataQuality',packet.assessment.dataQuality),field('missing',packet.assessment.missingDecisionInputs.join('；')),field('writeAuthority','NONE'),field('medicalClearance',false)]))
- return result
+ return result.map(boundedContextRecord)
 }
 
 /** Conversation clarifies the question only; its numbers are not quotable evidence. */
 export function dialogueRecords(owner:string,question:string,turns:readonly OnlineConversationTurn[]):CoachContextRecord[]{
- return turns.slice(-4).map((turn,index)=>({recordId:'dialogue:'+digest([owner,question,index,turn]),revision:digest(turn),occurredAt:null,knownAt:null,
+ return turns.slice(-4).map((turn,index)=>boundedContextRecord({recordId:'dialogue:'+digest([owner,question,index,turn]),revision:digest(turn),occurredAt:null,knownAt:null,
   category:'DIALOGUE',state:'UNKNOWN',source:'USER_DECLARED:CONVERSATION',fields:[field('speaker',turn.role),field('text',turn.text),field('factAuthority','NONE')]}))
 }

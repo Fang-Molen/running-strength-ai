@@ -1,0 +1,25 @@
+✔ unbound free chat retains meal and measured weight in local facts: 你看我的饮食，我应该吃哪些高热量的食物才能增重？ (57.018352ms)
+✔ unbound free chat retains meal and measured weight in local facts: 你不是可以读取我饮食健康里面的东西吗？ (21.280738ms)
+✔ unbound native strength retains actual load, repetitions and RPE at the local fact boundary (9.004372ms)
+✔ daily recovery retains quantitative readings, subjective recovery and independent rest (7.543745ms)
+✔ unknown nutrition stays unknown while an explicit recorded zero remains zero (2.601488ms)
+✔ unreadable food and health storage remain errors in the local domain summaries (2.371002ms)
+✔ future-known and future-day records are excluded by the request as-of boundary (6.883203ms)
+✔ foreign food, body, health and legacy V4 records never enter the local snapshot (7.781301ms)
+✔ long context preserves all three domain summaries and discloses omitted details (8.499687ms)
+✔ the requested historical day is preserved in local nutrition and health (3.211256ms)
+✔ food corrections and deletions are reflected by the next local projection (11.835675ms)
+✔ online off stops the client before either proxy or provider receives a request (2.43795ms)
+✔ new local records remain readable when old chat denies visibility, without authorizing upload (2.077856ms)
+✔ large Chinese context retains local domain facts without uploading unauthorised records (211.337083ms)
+ℹ Preserved local fact summary: 3872 characters; model uploads: 0
+✔ oversized local facts (UTF-8 byte cap) do not bypass missing server authorization (1.739142ms)
+✔ oversized local facts (proxy fact character cap) do not bypass missing server authorization (0.186772ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 363.575229

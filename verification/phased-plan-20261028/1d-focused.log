@@ -1,0 +1,12 @@
+✔ src/components/pet/floating-pet.test.tsx (762.972246ms)
+✔ src/components/pet/pet-capture.test.tsx (1481.035409ms)
+✔ src/lib/core/coach-v4-formal-rows.test.ts (743.702024ms)
+✔ src/lib/ui/pet-capture.test.ts (1218.618252ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1980.232421

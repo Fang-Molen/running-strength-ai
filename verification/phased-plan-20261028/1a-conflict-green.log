@@ -1,0 +1,35 @@
+✔ unlinked chat includes completed native strength actual values and completion RPE without private labels (32.567187ms)
+✔ an open session retains recorded timed sets while its whole-session status remains unfinished (3.874462ms)
+✔ weight corrections and deletion are reflected on each read, with prior asOf preserving the earlier value (8.321448ms)
+✔ future committed work and another athlete never enter the current request even when selected (2.351814ms)
+✔ completed native running stays separate from strength and carries actual distance and duration (8.382797ms)
+✔ selected older native training gets detail priority while the day summary stays on the requested date (24.30166ms)
+✔ conflicting whole-session RPE is not averaged or replaced by the completion value (1.846799ms)
+✔ unreadable training containers differ from a clean empty history (0.823239ms)
+✔ a malformed running transaction is reported instead of an empty training history (0.431037ms)
+✔ reading a mixed native training history is storage read-only (1.307884ms)
+✔ confirmed totals-only running remains a dated actual import without invented segments or whole-session completion (4.248307ms)
+✔ a confirmed duration-only strength import has actual seconds and does not fabricate sets or running distance (1.505733ms)
+✔ visible import total corrections withdraw old totals and preserve their historical asOf values (3.383608ms)
+✔ corrected import segments remain segment values while aggregate distance and duration are withdrawn (2.455786ms)
+✔ a legitimate import feedback withdrawal supersedes RPE without being mislabelled a source conflict (2.717127ms)
+✔ the real strength-page completion feedback is readable without inventing plan sets or load (1.446927ms)
+✔ editing strength feedback keeps one dated report and a later skip withdraws its completion claim (1.955257ms)
+✔ strength completion feedback requires current owner and a reliable journal time at the cutoff (1.814503ms)
+✔ voiding and restoring a dated strength completion report obey their known-time boundary (1.897132ms)
+✔ an occurrence-bound completion and an unbound event used as its close never create extra reports (1.969017ms)
+✔ a real confirmed Garmin import is readable without an optional watch cache and retains owner/asOf/void boundaries (2.585074ms)
+✔ 1A current same-identity cache conflict withdraws only the ambiguous total and preserves reliable segments (1.774965ms)
+✔ 1A current distance conflict leaves unconflicted time available and never fabricates corrected totals (1.039274ms)
+✔ 1A cache conflicts are current diagnostics even for a historical cutoff and never introduce future import facts (1.7379ms)
+✔ 1A similar independent identity, missing cache fields, and other owner cache never invalidate confirmed totals (3.933018ms)
+✔ 1A corrected or removed current cache clears only its transient conflict and leaves confirmed import intact (3.135086ms)
+✔ 1A current conflict metadata survives a fresh storage backend without acquiring historical validity or cache values (1.300964ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 154.879629

@@ -1,5 +1,6 @@
 /** Descriptive load trend only. No injury probability, thresholds or training prescription. */
 export type SavedSessionLoad = {
+  measurement?: import('../health/load-evidence').SessionLoadEvidence
   id: string
   athleteId: string
   day: string
@@ -66,7 +67,7 @@ export function savedSessionAu(session: SavedSessionLoad): number | null {
 /** Canonical full snapshot, not a lossy hash. Identical retransmissions do not change it. */
 export function loadDayFingerprint(sessions: readonly SavedSessionLoad[], athleteId: string, day: string): string {
   return JSON.stringify([...new Set(sessions.filter(s => s.athleteId === athleteId && s.day === day).map(s => JSON.stringify({
-    id: s.id, rpe: s.sessionRpe, minutes: s.minutes, revision: s.revision,
+    id: s.id, rpe: s.sessionRpe, minutes: s.minutes, revision: s.revision, measurement:s.measurement,
     sourceIds: [...new Set(s.sourceIds)].sort(),
   })))].sort())
 }
