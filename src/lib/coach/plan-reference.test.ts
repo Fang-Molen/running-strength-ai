@@ -42,3 +42,10 @@ test('stored pace comparisons compute the winner from two complete runs, indepen
  assert.deepEqual(contextPaceComparison('今天恢复怎样？',c),[])
  assert.deepEqual(contextPaceComparison('哪次更快？',{...c,records:records.slice(0,1)}),[])
 })
+import {selfReportRangeComparison} from './context-comparison'
+test('self-reported heart-rate comparisons use the supplied range rather than a population cutoff',()=>{
+ assert.match(selfReportRangeComparison('静息心率通常约70–80，近两天分别为72和85。').join(''),/72.*处于.*85.*高于/)
+ assert.match(selfReportRangeComparison('静息心率通常约70–80，近两天分别为68和69。').join(''),/68.*低于.*69.*低于/)
+ assert.deepEqual(selfReportRangeComparison('静息心率通常约70–80，今天感觉很好。'),[])
+ assert.deepEqual(selfReportRangeComparison('静息心率通常约80–70，近两天分别为72和85。'),[])
+})

@@ -76,6 +76,7 @@ const conversations=new Map<string,any[]>();
 if(paid&&existsSync(resultLog))for(const r of readFileSync(resultLog,'utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x))){const list=conversations.get(r.path_id)??[];list.push({role:'user',text:r.question},{role:'coach',text:r.result?.body?.text??''});conversations.set(r.path_id,list)}
 for(let i=start;i<Math.min(start+count,schedule.length);i++){
  active=schedule[i];payload=null;provider=null;const began=performance.now();
+ if(replay&&args.includes('--app-only')&&active.mode==='ALL_HISTORY')continue;
  const historyMode=active.kind==='ISOLATED_STORED_HISTORY',conversation=conversations.get(active.path_id)??[];
  const summary=historyMode?buildLoadSummary(projectAnalysisEvidence({context:{athleteId:'SYN-A',asOf,timeZone:'Asia/Shanghai',planVersion:null,consentVersion:'synthetic',analysisVersion:'test'},facts:facts as any}),active.case_id==='T01'?'2025-01-01':'2026-10-25',active.case_id==='T01'?'2025-12-31':'2026-10-29'):undefined;
  const selected=selectOnlineContext({owner:'SYN-A',question:active.question,day:'2026-10-29',asOf,timeZone:'Asia/Shanghai',facts:historyMode?facts as any:[],loadSummary:summary,conversation,unknowns:historyMode?['完整性未确认；训练与睡眠存在未记录字段。']:[]});

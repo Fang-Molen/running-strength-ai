@@ -62,12 +62,15 @@ export function validateCoachAssertions(text:string,options:CoachAssertionOption
  // A quotation is evidence for numbers, never authority to write, diagnose or clear injury.
  if(options.factQuotes.length){const risk=validateCoachAssertions(text,{...options,factQuotes:[]});const blocked=risk.assertions.filter(a=>!a.valid&&a.kind!=='PERSONAL_QUANTITY');if(blocked.length)return {...risk,ok:false,errors:risk.errors.filter(e=>e!=='UNBOUND_PERSONAL_QUANTITY')}}
  let prose=text;
- for(const quote of options.factQuotes){if(quote&&prose.includes(quote)){assertions.push({kind:'BOUND_FACT',text:quote,valid:true});prose=prose.split(quote).join('')}}
+ for(const quote of [...options.factQuotes].sort((a,b)=>b.length-a.length)){if(quote&&prose.includes(quote)){assertions.push({kind:'BOUND_FACT',text:quote,valid:true});prose=prose.split(quote).join('')}}
  // Strip list numbering only, preserving every measurement, date and percentage.
  prose=prose.replace(/^\s*(?:[-*]\s*)?(?:\d+[.、)）]\s*|[（(]\d+[)）]\s*)/gm,'');
  for(const clause of prose.split(/[。；;！!？?\n]/).map(x=>x.trim()).filter(Boolean)){
   let kind:CoachAssertionKind='EXPLANATION',error:string|undefined;
-  if(affirmed(clause,/(?:已|已经)(?:替你|为你)?(?:修改|保存|更新|执行|写入|调整|交换)(?:了)?(?:课表|计划|资料|记录|日历|训练)|解除(?:安全|疼痛|医疗|训练)?限制/)){kind='WRITE_OR_CLEARANCE';error='UNAUTHORIZED_WRITE_OR_CLEARANCE'}
+  // “未改写已保存记录” refers to the state of an existing record. Keep any
+  // separate affirmative write in the same clause subject to the normal check.
+  const writeClause=clause.replace(/(?:未|没有|不会|不应)(?:改写|修改|覆盖)(?:已经|已)保存(?:的)?(?:记录|资料|计划|课表)/g,'保留原有记录');
+  if(affirmed(writeClause,/(?:已|已经)(?:替你|为你)?(?:修改|保存|更新|执行|写入|调整|交换)(?:了)?(?:课表|计划|资料|记录|日历|训练)|解除(?:安全|疼痛|医疗|训练)?限制/)){kind='WRITE_OR_CLEARANCE';error='UNAUTHORIZED_WRITE_OR_CLEARANCE'}
   else if(affirmed(clause,/(?:确诊(?:为)?|诊断为).{0,12}(?:炎|撕裂|骨折|拉伤|病|综合征|损伤|障碍|贫血|抑郁|焦虑)|就是.{0,10}(?:炎|撕裂|骨折|拉伤)|(?:你|您的?).{0,8}(?:患有|得了).{0,12}(?:炎|撕裂|骨折|拉伤|病|综合征|损伤|障碍|贫血|抑郁|焦虑)/)){kind='DIAGNOSIS';error='DIAGNOSIS_CLAIM'}
   else if(releasesRestrictedActivity(clause,restrictions,options.safetyRestricted)){kind='WRITE_OR_CLEARANCE';error='ACTIVE_HOLD_RELEASE'}
   else if(affirmed(clause,/(?:设备|实验室|医疗|手表|Garmin|COROS).{0,8}(?:已核验|已验证|证实)|(?:已核验|已验证).{0,8}(?:设备|实验室|医疗|手表|Garmin|COROS)/)){kind='SOURCE_PROVENANCE';error='SOURCE_VERIFICATION_OVERCLAIM'}

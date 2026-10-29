@@ -1,6 +1,16 @@
 import {questionCalculations} from './question-calculation'
 import {contextTextField} from './context-fields'
 import type {CoachRequestContext} from './online-contract'
+/** Compare explicitly supplied self-report values, without inventing a baseline
+ * or turning a numerical relation into a recovery or diagnostic conclusion. */
+export function selfReportRangeComparison(question:string):string[]{
+ const range=/静息心率通常约\s*(\d+(?:\.\d+)?)\s*[–—-]\s*(\d+(?:\.\d+)?)/.exec(question);
+ const recent=/近两天分别为\s*(\d+(?:\.\d+)?)和(\d+(?:\.\d+)?)/.exec(question);
+ if(!range||!recent)return [];
+ const low=+range[1],high=+range[2],values=[+recent[1],+recent[2]];
+ if(low<=0||high<low||high>300||values.some(v=>v<=0||v>300))return [];
+ return [`按当前自述比较，近两天静息心率：${values.map(v=>`${v}${v<low?'低于':v>high?'高于':'处于'}所给常态区间${low}–${high}`).join('；')}。这是相对所给个人参考的数值关系，不能据此确诊原因或证明完全恢复。`];
+}
 /** Deterministic display of two fully recorded continuous-run work paces.
  * Descriptive comparison only, no causal inference, training dose or clearance. */
 export function contextPaceComparison(question:string,context?:CoachRequestContext):string[]{
@@ -19,5 +29,5 @@ export function contextPaceComparison(question:string,context?:CoachRequestConte
  * of whether prose filtering removed a model paraphrase. Never calls a model. */
 export function computedCoachQuotes(question:string,context?:CoachRequestContext):string[]{
  const prior=(context?.records??[]).filter(r=>r.category==='DIALOGUE'&&r.fields.some(f=>f.name==='speaker'&&f.value==='user')).map(r=>contextTextField(r,'text'))
- return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context)]
+ return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context),...selfReportRangeComparison(question)]
 }
