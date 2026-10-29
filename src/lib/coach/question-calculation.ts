@@ -13,18 +13,23 @@ export function questionCalculations(question:string,prior:readonly string[]=[])
  if(separate){const d=[...separate[1].matchAll(/(\d+(?:\.\d+)?)\s*米/g)].map(m=>+m[1]),t=[...separate[2].matchAll(/(\d+(?:\.\d+)?)\s*秒/g)].map(m=>+m[1]);if(d.length===t.length&&finite(d)&&finite(t))add(`总距离${sum(d)}米；已知工作时间${duration(sum(t))}，不含休息`)}
  // Explicit repeated distance + only the reported timings, including partial completion.
  const repeats=q.match(/(\d+)\s*[×x*]\s*(\d+(?:\.\d+)?)米/),timings=q.match(/(?:前\d+组(?:是|为)?|成绩(?:依次)?(?:是|为))([\d.、,，/和秒\s]+)秒/);
- if(repeats&&timings){const ts=numberList(timings[1]);const last=q.match(/第\d+组(?:做了|用时|是|为)(\d+(?:\.\d+)?)秒/);if(last)ts.push(+last[1]);const completed=q.match(/第(\d+)组(?:已)?完成(?:但|却)/),n=+repeats[1];const completedWithoutTime=completed&&+completed[1]===n&&ts.length===n-1;
+ if(repeats&&timings){const ts=numberList(timings[1]);const last=q.match(/第\d+组(?:做了|用时|是|为)(\d+(?:\.\d+)?)秒/);if(last)ts.push(+last[1]);const completed=q.match(/第(\d+)组(?:已)?完成(?![?？])/),n=+repeats[1];const prefix=completed?(q.slice(0,completed.index).split(/[，,。；;]/).at(-1)??''):'';const completedWithoutTime=completed&&+completed[1]===n&&ts.length===n-1&&!/(?:不确定|不能确认|不清楚|尚未确认|想知道)$/.test(prefix)&&!/[吗?？]/.test(q.slice(completed.index,(completed.index??0)+completed[0].length+3));
   if(finite(ts)&&ts.length<=n)add(`已知完成${(completedWithoutTime?n:ts.length)*+repeats[2]}米；已知工作时间${duration(sum(ts))}；${completedWithoutTime?'各组完成状态明确，最后一组未计时，总工作时间未知':ts.length<n?'其余组完成状态未知，不按零或完成处理':'所述各组均有时间记录'}`)}
  // Equal-distance repetitions and an explicitly indexed correction preserve old total.
  const series=(s:string)=>s.match(/(?:成绩(?:依次)?(?:是|为)|成绩依次为)([\d.、,，/和秒\s]+)秒/);
  const own=series(q);
  if(!repeats&&own){const ts=numberList(own[1]);if(finite(ts))add(`所述各组工作时间合计${duration(sum(ts))}；首组${ts[0]}秒，末组${ts.at(-1)}秒；时间${ts.at(-1)!>ts[0]?'增加':ts.at(-1)!<ts[0]?'减少':'相同'}，不能据此证明原因`)}
- const correction=q.match(/第(\d+)组(?:实际)?(?:是|为|改为|改)(\d+(?:\.\d+)?)秒/);
- if(correction&&/更正|记错|更新|其他.*不变/.test(q)){
+ const corrections=(s:string)=>[...s.matchAll(/第(\d+)组(?:实际)?(?:是|为|改为|改)?(\d+(?:\.\d+)?)秒/g)];
+ const current=corrections(q);
+ if(current.length&&/更正|记错|更新|其他.*不变/.test(q)){
   const events=prior.map(normalize);let at=-1;events.forEach((s,i)=>{if(series(s))at=i;});
   if(at>=0){const ts=numberList(series(events[at])![1]);
-   for(const event of events.slice(at+1)){const update=event.match(/第(\d+)组(?:实际)?(?:是|为|改为|改)(\d+(?:\.\d+)?)秒/);if(update&&/更正|记错|更新|其他.*不变/.test(event)&&+update[1]>=1&&+update[1]<=ts.length)ts[+update[1]-1]=+update[2]}
-   const i=+correction[1]-1;if(finite(ts)&&i>=0&&i<ts.length){const old=sum(ts),oldValue=ts[i];ts[i]=+correction[2];add(`旧总时间${old}秒；更正第${i+1}组由${oldValue}秒为${ts[i]}秒，新总时间${sum(ts)}秒；其余组不变，旧自述保留，未改写已保存记录`)}}
+   for(const event of events.slice(at+1))if(/更正|记错|更新|其他.*不变/.test(event))for(const update of corrections(event))if(+update[1]>=1&&+update[1]<=ts.length)ts[+update[1]-1]=+update[2];
+   if(finite(ts)&&current.every(m=>+m[1]>=1&&+m[1]<=ts.length)){
+    const old=sum(ts),changes:string[]=[];for(const update of current){const i=+update[1]-1,oldValue=ts[i];ts[i]=+update[2];changes.push(`更正第${i+1}组由${oldValue}秒为${ts[i]}秒`);}
+    add(`旧总时间${old}秒；${changes.join('；')}，新总时间${sum(ts)}秒；其余组不变，旧自述保留，未改写已保存记录`);
+   }
+  }
  }
  const minutes=q.match(/(?:训练总时长|总时长|整课时长)\s*(\d+(?:\.\d+)?)分钟/),rpe=q.match(/整课\s*RPE(?:为|是)?\s*(\d+(?:\.\d+)?)/i);
  if(minutes&&rpe&&/(?:0\s*[–—-]\s*10|0到10|0至10)/.test(q)&&+rpe[1]<=10&&!/整课.*(?:未知|没填|未填)/.test(q))add(`整课主观负荷${+minutes[1]}分钟×${+rpe[1]}=${+minutes[1]*+rpe[1]} AU；仅为主观负荷，不能表示疲劳百分比`);

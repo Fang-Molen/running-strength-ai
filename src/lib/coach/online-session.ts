@@ -1,3 +1,4 @@
+import {retrievalPageQuote,type RetrievalState} from './answer-tools'
 import {verifyDeliveredAnswer} from './answer-delivery'
 import type {AnswerDecision} from './answer-gate'
 import {computedCoachQuotes} from './context-comparison'
@@ -49,7 +50,7 @@ export function selectCoachDeclarations(facts:AnalysisFact[],owner:string,asOf:s
  }
  return result
 }
-export type OnlineAnswerBasis={answerDecision?:AnswerDecision;sourceEvidence?:string[];professionalReview?:'PENDING'|'NOT_REQUIRED';conversation?:readonly OnlineConversationTurn[];owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
+export type OnlineAnswerBasis={answerDecision?:AnswerDecision;sourceEvidence?:string[];retrievalState?:RetrievalState['state'];professionalReview?:'PENDING'|'NOT_REQUIRED';conversation?:readonly OnlineConversationTurn[];owner:string;question:string;day:string;sourceVersion:string;selectedTrainingIds?:readonly string[]}
 function context(question:string,day:string,selectedTrainingIds:readonly string[]=[],conversation:readonly OnlineConversationTurn[]=[]){
  const now=new Date().toISOString(),selected=readOnlineContext(question,day,now,undefined,selectedTrainingIds,conversation,{currentLoadCache:true})
  return {...selected,now,enabled:onlineSetting().on}
@@ -123,11 +124,11 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   try{restrictions=readR5Context(new Date().toISOString(),preview.question).restrictions}catch{/* Retain the captured restrictions on read failure. */}
   const computed=computedCoachQuotes(preview.question,preview.context)
   if((answer.computedQuotes??[]).some(q=>!computed.includes(q)||!answer.text.includes(q)))return {error:'宿主比较与当前记录不一致。'}
-  const sources=[...computed,...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
+  const sources=[...(answer.retrieval?.sources??[]).map(retrievalPageQuote),...computed,...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
   const quoted=answer.evidenceQuotes??[]
   if(quoted.some(q=>!answer.text.includes(q)||!sources.some(s=>supportedEvidenceQuote(s,q))))return {error:'模型引用与本次资料不一致，已保留本地回答。'}
   if(answer.answerGate){
-   if(!verifyDeliveredAnswer(answer.answerGate,{question:preview.question,context:preview.context,restrictions,factQuotes:[...sources,...quoted],citedQuotes:quoted,computedQuotes:computed,safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'}))return {error:'最终回答与当前资料、安全限制或任务状态不一致，已保留本地回答。'}
+   if(!verifyDeliveredAnswer(answer.answerGate,{question:preview.question,context:preview.context,restrictions,factQuotes:[...sources,...quoted],citedQuotes:quoted,computedQuotes:computed,...(answer.retrieval?{tools:{retrieval:answer.retrieval}}:{}),safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'}))return {error:'最终回答与当前资料、安全限制或任务状态不一致，已保留本地回答。'}
   }else{
   const checked=validateCoachAssertions(answer.text,{citedQuotes:quoted,question:preview.question,restrictions,factQuotes:[...sources,...quoted],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
   if(!checked.ok)return {error:'模型内容未通过事实或安全核验，已保留本地回答。'}

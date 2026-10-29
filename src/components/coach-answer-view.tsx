@@ -4,7 +4,8 @@ import { displayCoachEvidence } from '@/lib/ui/coach-evidence-display'
 
 /** Render common model Markdown markers as plain text without changing the stored answer. */
 const displayText=(value:string)=>value.replace(/\*\*([^*\n]+)\*\*/g,'$1')
-export function CoachAnswerView({ text }: { text: string }) {
+export function CoachAnswerView({ text,verified=false }: { text: string;verified?:boolean }) {
+  if(verified)return <div data-testid="coach-gated-answer" className="whitespace-pre-wrap break-words leading-relaxed">{displayText(text)}</div>
   const readable = displayCoachEvidence(text)
   const d = digestCoachAnswer(readable.text)
   return <div data-testid="coach-answer" className="space-y-1.5">

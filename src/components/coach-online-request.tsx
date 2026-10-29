@@ -30,7 +30,7 @@ export function CoachOnlineRequest({question,owner,disabled,selectedTrainingIds,
    setBusy(false)
    if(currentAthleteId()!==owner){callbacks.current.onDismiss();return}
    if('text'in result&&!controller.signal.aborted){
-    const basis={conversation:preview.conversation,owner,question,day:preview.day,sourceVersion:preview.sourceVersion,selectedTrainingIds:preview.selectedTrainingIds,...(result.answerGate?{answerDecision:result.answerGate.decision,professionalReview:result.answerGate.professionalReview,sourceEvidence:result.evidenceQuotes??[]}:{} )}
+    const basis={conversation:preview.conversation,owner,question,day:preview.day,sourceVersion:preview.sourceVersion,selectedTrainingIds:preview.selectedTrainingIds,...(result.answerGate?{answerDecision:result.answerGate.decision,retrievalState:result.retrieval?.state,professionalReview:result.answerGate.professionalReview,sourceEvidence:result.evidenceQuotes??[]}:{} )}
     callbacks.current.onAnswer(result.text,owner,result.source,'unverified'in result&&result.unverified===true,basis)
     show(result.source==='LOCAL'?'本次由规则处理，未调用模型。':result.answerGate&&['PARTIAL','NEEDS_CLARIFICATION','FAILED_TECHNICAL'].includes(result.answerGate.decision)?'本轮尚未完成全部任务，请查看回答中的缺项。':'联网解释已返回；未修改正式记录。')
     callbacks.current.onDismiss()

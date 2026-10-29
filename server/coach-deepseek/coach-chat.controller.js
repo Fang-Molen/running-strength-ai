@@ -1,4 +1,4 @@
-import {resolveAnswerRetrieval} from '../../src/lib/coach/answer-tools.ts';
+import {resolveAnswerRetrieval,retrievalPageQuote} from '../../src/lib/coach/answer-tools.ts';
 import {validateFinalAnswer, ANSWER_GATE_VERSION} from '../../src/lib/coach/answer-gate.ts';
 import {buildAnswerEvidenceState} from '../../src/lib/coach/answer-evidence.ts';
 import {computedCoachQuotes} from '../../src/lib/coach/context-comparison.ts';
@@ -119,9 +119,9 @@ export async function onRequestPost({request,env={},data={}}) {
     if(modern)route={...route,outputTokenLimit:1800};
     policy=await services.getVerifiedPolicy(); assertVerifiedPolicy(policy,now);
     if(typeof env.DEEPSEEK_API_KEY!=='string'||!env.DEEPSEEK_API_KEY.trim())return fail('SERVICE_KEY_MISSING');
-    retrieval=await resolveAnswerRetrieval(refs.question,true,services.retrieve,now);
+    retrieval=await resolveAnswerRetrieval(refs.question,true,services.retrieve,services.now??Date.now);
     prepared.brief.sources=prepared.brief.sources??[];
-    for(const page of retrieval.sources)prepared.brief.sources.push({id:'retrieved:'+page.id,kind:'FACT',detail:page.quote+'（检索来源：'+page.url+'；取得时间'+page.fetchedAt+'）'});
+    for(const page of retrieval.sources)prepared.brief.sources.push({id:'retrieved:'+page.id,kind:'FACT',detail:retrievalPageQuote(page)});
     aliased=aliasCoachInput(prepared);
     modelRequest=modern?{messages:[]}:buildCoachModelRequest(normalizeAskCoachInput(aliased.input),{profile:'minimal-transport'});
     if(snapshot.provenance==='USER_DECLARED'&&!modern) {
@@ -218,7 +218,7 @@ export async function onRequestPost({request,env={},data={}}) {
       if(validation.status!=='ACCEPTED_STRUCTURALLY')return json({ok:false,error:validation.status==='REJECTED'?'ANALYSIS_OUTPUT_REJECTED':'ANALYSIS_SEMANTIC_REVIEW_REQUIRED',validation,text:'联网解释尚未通过事实或语义复核；保留本地事实、原有限制与正式课表。',planChanged:false},422);
       const composed=composeVerifiedAnalysisAnswer(parsed,analysisPacket);
       const sources=[...analysisPacket.assessment.observations,...(analysisPacket.derivedFacts??[])].map((f,i)=>({id:'analysis:'+i,kind:'FACT',detail:f.text}));
-      const answerGate=validateFinalAnswer({question:refs.question,candidate:{text:composed,evidenceQuotes:sources.filter(s=>composed.includes(s.detail)).map(s=>({sourceId:s.id,quote:s.detail}))},sources,computedQuotes:[],context:snapshot.context,safetyRestricted,restrictions,tools:{retrieval},now:snapshot.asOf});
+      const answerGate=validateFinalAnswer({question:refs.question,candidate:{text:composed,evidenceQuotes:sources.filter(s=>composed.includes(s.detail)).map(s=>({sourceId:s.id,quote:s.detail}))},sources,computedQuotes:[],context:snapshot.context,safetyRestricted,restrictions,tools:{retrieval},now:new Date(services.now?.()??Date.now()).toISOString()});
       const text=answerGate.text;
       await authorizationStillValid();
       // Never truncate away required evidence, units or safety after validating.
@@ -233,7 +233,7 @@ export async function onRequestPost({request,env={},data={}}) {
       for(const claim of claims)if(!claim||Object.keys(claim).some(k=>!['sourceId','quote'].includes(k))||typeof claim.quote!=='string'||!sources.some(s=>s.kind==='FACT'&&s.id===claim.sourceId&&supportedEvidenceQuote(s.detail,claim.quote))||!parsed.citations.includes(claim.sourceId))throw Error('EVIDENCE_QUOTE_INVALID');
       const wireCitations=JSON.parse(raw).citations;
       parsed.text=parsed.text.replace(/[（(\[]((?:ref)\d+)[）)\]]/g,(/** @type {string} */marker,/** @type {string} */id)=>wireCitations.includes(id)?'':marker);
-      const answerGate=validateFinalAnswer({question:refs.question,candidate:parsed,sources,computedQuotes:computedCoachQuotes(refs.question,snapshot.context),context:snapshot.context,safetyRestricted,restrictions,tools:{retrieval},now:snapshot.asOf});
+      const answerGate=validateFinalAnswer({question:refs.question,candidate:parsed,sources,computedQuotes:computedCoachQuotes(refs.question,snapshot.context),context:snapshot.context,safetyRestricted,restrictions,tools:{retrieval},now:new Date(services.now?.()??Date.now()).toISOString()});
       await authorizationStillValid();
       return json({ok:true,text:answerGate.text,answerGate,source:'MODEL',computedQuotes:answerGate.computedQuotes,evidenceQuotes:answerGate.evidenceQuotes,route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false,...(answerGate.decision!=='VALIDATED'?{unverified:true}:{}),validation:{status:answerGate.decision==='VALIDATED'?'ACCEPTED_STRUCTURALLY':'PARTIALLY_ACCEPTED',rejectedAssertionTypes:answerGate.reasonCodes,policyVersion:answerGate.policyVersion,professionalValidation:'NOT_PROVEN',factVerification:'USER_DECLARED'},stage:'COMPLETED',traceId,dispatchState:'RETURNED',ledgerState:'SETTLED',retrieval});
     }
@@ -269,6 +269,6 @@ export async function onRequestPost({request,env={},data={}}) {
     }
   } catch {return fail('OUTPUT_REJECTED',502);}
   const sources=canonical.brief.sources??[],candidate={text:interpreted.turn.text,nextStep:interpreted.turn.nextStep,evidenceQuotes:sources.filter(s=>s.kind==='FACT'&&interpreted.turn.text.includes(s.detail)).map(s=>({sourceId:s.id,quote:s.detail}))};
-  const answerGate=validateFinalAnswer({question:refs.question,candidate,sources,computedQuotes:[],context:snapshot.context,safetyRestricted,restrictions,tools:{retrieval},now:snapshot.asOf});
+  const answerGate=validateFinalAnswer({question:refs.question,candidate,sources,computedQuotes:[],context:snapshot.context,safetyRestricted,restrictions,tools:{retrieval},now:new Date(services.now?.()??Date.now()).toISOString()});
   return json({ok:true,text:answerGate.text,answerGate,turn:{...interpreted.turn,text:answerGate.text},compareIds:interpreted.compareIds,seriesIds:interpreted.seriesIds,route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false});
 }

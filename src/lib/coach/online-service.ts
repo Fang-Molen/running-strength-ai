@@ -1,3 +1,4 @@
+import {validRetrievalState,type RetrievalState} from './answer-tools';
 /** Same-origin diagnostics. A configured key is not proof of a successful paid call. */
 import {ANSWER_GATE_VERSION,type AnswerGateResult} from './answer-gate';
 import {sha256Hex} from '../core/sha256-sync';
@@ -52,16 +53,17 @@ const ERRORS: Record<string, string> = {
 }
 const knownError = (code: unknown): string | undefined => typeof code === 'string' && Object.hasOwn(ERRORS, code) ? ERRORS[code] : undefined
 const missingRoute = '当前部署未提供有效的 /api/coach-chat 接口，请管理员检查服务端部署'
-export type DecodedCoachAnswer={text:string;source?:'LOCAL'|'MODEL';model?:string;unverified?:true;evidenceQuotes?:string[];computedQuotes?:string[];answerGate?:AnswerGateResult}
+export type DecodedCoachAnswer={text:string;source?:'LOCAL'|'MODEL';model?:string;unverified?:true;evidenceQuotes?:string[];computedQuotes?:string[];answerGate?:AnswerGateResult;retrieval?:RetrievalState}
 export async function readCoachResponse(response: Response): Promise<DecodedCoachAnswer | { error: string }> {
   if ([404,405].includes(response.status) || response.headers.get('content-type')?.includes('text/html')) return { error: missingRoute }
   const data = await response.json().catch(() => null)
+  if(data?.retrieval?.sources&&!validRetrievalState(data.retrieval))return {error:'检索回执已过期或不完整，本轮不将其作为已核验来源。'};
   if(data?.answerGate){const g=data.answerGate;
     if(g.policyVersion!==ANSWER_GATE_VERSION||!['VALIDATED','REPAIRED','PARTIAL','NEEDS_CLARIFICATION','SAFE_REFUSAL','FAILED_TECHNICAL'].includes(g.decision)||!['NOT_REQUIRED','PENDING'].includes(g.professionalReview)||typeof g.text!=='string'||g.text!==data.text||g.finalHash!==sha256Hex(g.text)||!Array.isArray(g.blocks)||g.blocks.length>100||g.blocks.some((b:unknown)=>!b||typeof b!=='object'||typeof (b as {text?:unknown}).text!=='string')||g.blocks.map((b:{text:string})=>b.text).join('\n')!==g.text||!Array.isArray(g.taskCoverage)||!Array.isArray(g.reasonCodes))return {error:'最终回答与校验结果不一致，已保留本地回答。'};
   }
   if (response.ok && data?.ok === true && data.planChanged === false && typeof data.text === 'string' && data.text.trim() && data.text.length <= 1000) {
     if(data.route==='LOCAL'&&data.model===null)return {text:data.text,source:'LOCAL'}
-    if(['LOW','COMPLEX'].includes(data.route)&&typeof data.model==='string'&&/^[A-Za-z0-9_.:/-]{1,80}$/.test(data.model))return {text:data.text,source:'MODEL',model:data.model,...(data.answerGate?{answerGate:data.answerGate}:{}),...(Array.isArray(data.computedQuotes)&&data.computedQuotes.length<=4&&data.computedQuotes.every((q:unknown)=>typeof q==='string'&&q.length<=400)?{computedQuotes:data.computedQuotes}:{}),...(Array.isArray(data.evidenceQuotes)&&data.evidenceQuotes.length<=48&&data.evidenceQuotes.every((q:unknown)=>typeof q==='string'&&q.length<=400)?{evidenceQuotes:data.evidenceQuotes}:{}),...(data.unverified===true?{unverified:true as const}:{})}
+    if(['LOW','COMPLEX'].includes(data.route)&&typeof data.model==='string'&&/^[A-Za-z0-9_.:/-]{1,80}$/.test(data.model))return {text:data.text,source:'MODEL',model:data.model,...(data.answerGate?{answerGate:data.answerGate}:{}),...(data.retrieval?.sources?{retrieval:data.retrieval}:{}),...(Array.isArray(data.computedQuotes)&&data.computedQuotes.length<=4&&data.computedQuotes.every((q:unknown)=>typeof q==='string'&&q.length<=400)?{computedQuotes:data.computedQuotes}:{}),...(Array.isArray(data.evidenceQuotes)&&data.evidenceQuotes.length<=48&&data.evidenceQuotes.every((q:unknown)=>typeof q==='string'&&q.length<=400)?{evidenceQuotes:data.evidenceQuotes}:{}),...(data.unverified===true?{unverified:true as const}:{})}
     return {text:data.text} // Legacy readers remain compatible; new consent flow requires explicit provenance.
   }
   const known = knownError(data?.error) ?? knownError(data?.code)

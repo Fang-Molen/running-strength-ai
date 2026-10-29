@@ -1,5 +1,5 @@
 import {contextModelQuote} from './online-contract';
-import {actionReceiptMatches,type ActionBinding} from './answer-tools';
+import {actionReceiptMatches,checkedRetrievalProse,type ActionBinding} from './answer-tools';
 import {affirmed,validateCoachAssertions,type CoachAssertionOptions} from './assertion-policy';
 import {supportedEvidenceQuote} from './question-evidence';
 import {computedCoachQuotes} from './context-comparison';
@@ -20,11 +20,16 @@ export type AnswerGateInput={question:string;candidate:AnswerCandidate;sources:A
 export type AnswerGateResult={policyVersion:typeof ANSWER_GATE_VERSION;decision:AnswerDecision;text:string;blocks:AnswerBlock[];reasonCodes:string[];taskCoverage:ReturnType<typeof evaluateAnswerTask>;professionalReview:'PENDING'|'NOT_REQUIRED';finalHash:string;evidenceQuotes:string[];computedQuotes:string[];gates:{gate:string;status:'PASS'|'REPAIRED'|'PARTIAL';reasons:string[]}[]};
 const stripNumbering=(s:string)=>s.replace(/^\s*(?:[-*]\s*)?(?:\d+[.、)）]\s*|[（(]\d+[)）]\s*)/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').trim();
 const inferKind=(s:string):AnswerBlockKind=>/^(?:请确认|请补充|请提供|需要你确认)/.test(s)?'UNCERTAINTY':/^(?:已|已经)(?:为你|替你|成功)?(?:登记|录入|写入|保存|更新|修改|重排)/.test(s)?'ACTION_RESULT':/若|如果|是否|建议|可考虑|可以先|先考虑|安排|优先|保留/.test(s)?'CANDIDATE_ADVICE':/未知|未确认|未记录|不能|无法|缺少|请提供|补充|补记/.test(s)?'UNCERTAINTY':/[0-9]/.test(s)?'OBSERVED_FACT':'GENERAL_KNOWLEDGE';
+export function unsupportedSemanticFact(text:string,facts:readonly string[],computed:readonly string[]):boolean{
+ const completed=/(?:你|本人|本次|今天).{0,8}(?:已经|已)(?:完成|跑完|做完|执行)|你(?:完成了|训练过)/.test(text);
+ const comparison=/(?:配速|两次|两课).{0,5}(?:相同|更快|更慢)/.test(text);
+ return (completed||comparison)&&!facts.some(f=>supportedEvidenceQuote(f,text))&&!(comparison&&computed.some(q=>/相同|并列/.test(q)&&/相同|并列/.test(text)));
+}
 function legacyBlocks(candidate:AnswerCandidate):AnswerBlock[]{
  const paragraphs=[candidate.text,candidate.nextStep??''].filter(Boolean).flatMap(t=>t.split(/\n+/));let i=0;
  return paragraphs.flatMap(p=>{
   // Legacy conditional paragraphs are atomic. Never detach the condition/stop rule.
-  const parts=/若|如果|只有|停止条件|出现.*(?:停止|暂停)/.test(p)?[p]:p.match(/[^。！？!?]+[。！？!?]?/g)??[];
+  const parts=/若|如果|只有|停止条件|出现.*(?:停止|暂停)|https?:\/\//.test(p)?[p]:p.match(/[^。！？!?]+[。！？!?]?/g)??[];
   return parts.map(s=>{const id='legacy:'+(i++);return {id,kind:inferKind(s),text:stripNumbering(s),evidenceRefs:[],dependsOn:[],groupId:id};});
  }).filter(b=>!!b.text);
 }
@@ -67,6 +72,7 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
   }
   if(/(?:按照|执行|遵循).{0,10}(?:网页|备注|页面).{0,8}指令|读取(?:另|其他).{0,5}(?:账号|用户)/.test(text)){reasons.add('SOURCE_MISMATCH');return false;}
   if(expectedComputed.some(q=>/平均配速相同|并列/.test(q))&&affirmed(text,/更快/) ){reasons.add('DERIVATION_INVALID');return false;}
+  if(unsupportedSemanticFact(text,facts,expectedComputed)){reasons.add('SOURCE_MISMATCH');return false;}
   let checkText=text;
   const action=input.tools?.action;
   const actionText=text.replace(/(?:未|没有|不会|不应)(?:改写|修改|覆盖)(?:已经|已)保存(?:的)?(?:记录|资料|计划|课表)/g,'保留原有记录');
@@ -74,12 +80,8 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
   if(kind==='ACTION_RESULT'&&action&&actionReceiptMatches(action.intent,action.receipt,action.currentOwner,action.authorized)&&text===action.claimText)return true;
   if(kind==='ACTION_RESULT'){reasons.add('WRITE_UNCONFIRMED');return false;}
   if(/https?:\/\//.test(text)||/(?:刚刚|本次|刚才).{0,6}(?:查到|查证|检索到|搜索到)/.test(text)){
-   const retrieval=input.tools?.retrieval,now=Date.parse(input.now??new Date().toISOString());
-   const matching=retrieval?.sources.filter(s=>Date.parse(s.fetchedAt)<=now&&Date.parse(s.expiresAt)>=now&&text.includes(s.url)&&text.includes(s.quote));
-   if(!retrieval?.enabled||retrieval.state!=='SUCCEEDED'||!matching?.length){reasons.add('RETRIEVAL_UNPROVEN');return false;}
-   for(const source of matching)checkText=checkText.replace(source.url,'').replace(source.quote,'');
-   // Tool-backed exact quote supports that excerpt, never any individual diagnosis.
-   checkText=checkText.replace(/(?:根据|依据)?本次(?:实际)?(?:查到|取得|检索到)的?(?:标签页|页面|资料)/g,'');
+   const checked=checkedRetrievalProse(text,input.tools?.retrieval,Date.parse(input.now??new Date().toISOString()));
+   if(!checked.ok){reasons.add('RETRIEVAL_UNPROVEN');return false;}checkText=checked.prose;
   }
   const bound=kind==='CANDIDATE_ADVICE'&&boundExistingPlanAdvice(checkText,input.question,[...validClaims.map(c=>c.quote),...plans]);
   if(bound&&!plannedAdviceActionIsSafe(checkText,options)){reasons.add('RISK_SCOPE_CONFLICT');return false;}
