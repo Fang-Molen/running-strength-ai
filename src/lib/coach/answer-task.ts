@@ -5,7 +5,7 @@ export function buildAnswerTask(question:string):AnswerRequirement[]{
  const requirements:AnswerRequirement[]=[];
  const add=(kind:AnswerRequirement['kind'])=>requirements.push({id:'task:'+kind.toLowerCase(),kind});
  if(/比较|对比|哪次.*快|谁.*快|前后.*变化/.test(question))add('COMPARISON');
- if(/(?:制定|生成|拟定|设计).{0,20}(?:训练计划|课表)|未来.{0,12}训练计划|(?:建议|提出|给出|给我|请给|如何|怎么|考虑).{0,14}(?:明天|安排|规划|下一课)|(?:明天|下一课).{0,12}(?:建议|安排|考虑)|先帮我规划|安排思路|怎么调整|定明天强度|安排负重/.test(question))add('ARRANGEMENT');
+ if(/(?:制定|生成|拟定|设计).{0,20}(?:训练计划|课表)|未来.{0,12}训练计划|(?:建议|提出|给出|给我|请给|如何|怎么|考虑|分析).{0,14}(?:明天|安排|规划|下一课)|(?:明天|下一课).{0,12}(?:建议|安排|考虑)|先帮我规划|安排思路|怎么调整|定明天强度|安排负重/.test(question))add('ARRANGEMENT');
  if(/缺什么|缺项|资料清单|所需资料|补什么|需要什么资料/.test(question))add('MISSING_DATA');
  if(/(?:记录|全年|覆盖).{0,8}(?:完整|齐全)|完整性/.test(question))add('COVERAGE');
  if(needsAnswerRetrieval(question))add('RETRIEVAL');

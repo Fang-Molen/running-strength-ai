@@ -21,3 +21,9 @@ test('watch timer and elapsed remain separate; lineage dedup is explicit and no 
  const quotes=computedCoachQuotes('为何这次跑步有两个时长？合计今天跑量。',context).join('\n');assert.match(quotes,/6.01公里/);assert.match(quotes,/4:28\/km/);assert.match(quotes,/不能相加/);
  const more={...context,records:[...context.records,record('other','two')]};assert.match(computedCoachQuotes('合计今天跑量。',more).join('\n'),/12.02公里/);
 });
+test('analyze arrangement is a planning task; source quotes cannot substitute for the requested arrangement',()=>{
+ const question='原计划本周两次，这周只能一次。请帮我分析安排，先不要改日历。';
+ const r=validateFinalAnswer(base(question,'请确认本周想保留哪一次。'));
+ assert.ok(r.taskCoverage.some(t=>t.kind==='ARRANGEMENT'));
+ assert.ok(['PARTIAL','NEEDS_CLARIFICATION'].includes(r.decision));assert.match(r.text,/安排思路/);
+});
