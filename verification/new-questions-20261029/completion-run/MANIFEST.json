@@ -4,8 +4,8 @@
     "sha256": "46d79aec55ec20d181b1213ed2914492f199567a3a8a4c44f325f213021e63be"
   },
   "CALCULATION-AUDIT-v1.json": {
-    "bytes": 2048,
-    "sha256": "37c9328d15c7b337bbb56653efe3f02530fbcc4b3152efa4b3907fa53c34787e"
+    "bytes": 2175,
+    "sha256": "6ad7bbb2295e0f649a515e3740e42473e375c3230aeb5fe8785d46cab75e8d98"
   },
   "DEFECT-CROSSWALK.md": {
     "bytes": 2776,
@@ -100,8 +100,8 @@
     "sha256": "74a2fcb8941501dfcfbbb40b6cb42f077ac3940d9e946a3b8ca7d66def0817ab"
   },
   "report.py": {
-    "bytes": 26061,
-    "sha256": "e11eeb52f576b3856a668126f68c0f104276c63a0c98011d0b992ba0379da0af"
+    "bytes": 26094,
+    "sha256": "6c00a584d383d2509f360c5fd946f0aa936a250fed7da2a8c1ea1f2858d4287f"
   },
   "run.ts": {
     "bytes": 15775,
