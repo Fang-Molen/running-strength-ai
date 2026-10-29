@@ -52,9 +52,12 @@ function releasesRestrictedActivity(text:string,evidence:readonly ScopedRestrict
   });
  });
 }
-export function validateCoachAssertions(text:string,options:CoachAssertionOptions) {
+export type CoachAssertionResult={ok:boolean;errors:string[];policyVersion:typeof COACH_ASSERTION_POLICY_VERSION;professionalValidation:'NOT_PROVEN';assertions:{kind:CoachAssertionKind;text:string;valid:boolean}[]};
+export function validateCoachAssertions(text:string,options:CoachAssertionOptions):CoachAssertionResult {
  const errors:string[]=[],assertions:{kind:CoachAssertionKind;text:string;valid:boolean}[]=[];
  const restrictions=outputRestrictions(options);
+ // A quotation is evidence for numbers, never authority to write, diagnose or clear injury.
+ if(options.factQuotes.length){const risk=validateCoachAssertions(text,{...options,factQuotes:[]});const blocked=risk.assertions.filter(a=>!a.valid&&a.kind!=='PERSONAL_QUANTITY');if(blocked.length)return {...risk,ok:false,errors:risk.errors.filter(e=>e!=='UNBOUND_PERSONAL_QUANTITY')}}
  let prose=text;
  for(const quote of options.factQuotes){if(quote&&prose.includes(quote)){assertions.push({kind:'BOUND_FACT',text:quote,valid:true});prose=prose.split(quote).join('')}}
  // Strip list numbering only, preserving every measurement, date and percentage.

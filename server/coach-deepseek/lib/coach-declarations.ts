@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { deriveCoachBrief, type CoachBrief } from '../../../src/lib/core/coach-brief.ts';
 import type { AskCoachRawInput } from '../../../src/lib/strength/coach-pipeline.ts';
-import { COACH_DISCLOSURE_VERSION, declarationQuote, contextRecordQuote, type CoachDeclaration, type CoachSnapshotCreate, type CoachRequestContext, type CoachContextRecord } from './coach-declaration-contract.ts';
+import { COACH_DISCLOSURE_VERSION, declarationQuote, contextRecordQuote, contextModelQuote, type CoachDeclaration, type CoachSnapshotCreate, type CoachRequestContext, type CoachContextRecord } from './coach-declaration-contract.ts';
 import { validTime } from './coach-request-boundary.ts';
 
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -63,7 +63,7 @@ export function declarationCoachInput(input: CoachSnapshotCreate): AskCoachRawIn
     id: `decl:${createHash('sha256').update(JSON.stringify([d.recordId, d.revision, d.metric])).digest('hex').slice(0, 32)}`,
     kind: 'FACT', detail: declarationQuote(d),
   }));
-  for(const r of input.context?.records??[])sources.push({id:`ctx:${createHash('sha256').update(JSON.stringify([r.recordId,r.revision])).digest('hex').slice(0,32)}`,kind:r.category==='DIALOGUE'?'CONTEXT':'FACT',detail:contextRecordQuote(r)});
+  for(const r of input.context?.records??[])sources.push({id:`ctx:${createHash('sha256').update(JSON.stringify([r.recordId,r.revision])).digest('hex').slice(0,32)}`,kind:r.category==='DIALOGUE'?'CONTEXT':'FACT',detail:contextModelQuote(r)});
   const brief = deriveCoachBrief({
     question: input.question, occurrenceId: null, runningStructure: 'UNAVAILABLE',
     sessionRpe: null, sleepHours: null, subjectiveRecovery: null, recoveryState: null, fatigueState: null,

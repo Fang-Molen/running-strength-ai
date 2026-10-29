@@ -254,3 +254,11 @@ test('clock-only packet regeneration keeps online context stable; corrected dose
  assert.equal(first.sourceVersion,later.sourceVersion);
  assert.notEqual(first.sourceVersion,select('2026-10-28T04:00:02.000Z',training({revision:2,runSegments:[{...training().runSegments[0],durationSeconds:70}]})).sourceVersion);
 });
+test('recent recovery preserves both run essentials, strength and literal feedback through budget',()=>{
+ const dates=['2026-10-25','2026-10-27','2026-10-28'];
+ const fs=dates.map((d,i)=>training({id:'key-'+i,occurredAt:d+'T00:00:00Z',startedAt:d+'T00:00:00Z',knownAt:d+'T00:00:00Z',receivedAt:d+'T00:00:00Z',modality:i===2?'STRENGTH':'RUN',actualDurationSeconds:i===0?1500:i===1?1620:null,runSegments:i===2?[]:[{id:'segment',blockId:'run',roundIndex:null,stepIndex:1,kind:'CONTINUOUS',distanceM:5000,durationSeconds:i===0?1500:1620,completion:'COMPLETED',restAfterSeconds:null,rawResolutionSeconds:null,gradePercent:null,surface:null}]}));
+ const feedback={...fs[0],id:'feedback',occurredAt:'2026-10-29T00:00:00Z',knownAt:'2026-10-29T00:00:00Z',receivedAt:'2026-10-29T00:00:00Z',kind:'RESPONSE',relatedTrainingRefs:[],region:'calves',side:'RIGHT',measure:'PAIN',value:null,scale:'UNKNOWN',notes:'右小腿酸痛；睡眠未记录；原因未知',elapsedHours:null,observationProtocol:null,functionTaskId:null} as AnalysisFact;
+ const result=selectOnlineContext({...input('根据我最近的跑步和身体反馈，今天恢复得怎么样？',[...fs,feedback]),day:'2026-10-29',asOf:'2026-10-29T12:00:00Z'});
+ assert.ok(['key-0','key-1','key-2','feedback'].every(id=>result.selectedFacts.some(f=>f.id===id)),JSON.stringify(result.selectedFacts.map(f=>f.id)));
+ const wire=JSON.stringify(result.context);assert.match(wire,/睡眠未记录/);assert.match(wire,/5000/);assert.match(wire,/1500/);assert.match(wire,/1620/);
+})

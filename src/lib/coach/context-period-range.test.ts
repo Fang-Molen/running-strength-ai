@@ -23,3 +23,7 @@ test('审查回归：昨天、上周和本月使用明确日历范围，不退�
  assert.deepEqual(contextPeriod('我的上周训练负荷','2026-10-29','UTC').bounds,{startDay:'2026-10-19',endDay:'2026-10-25'})
  assert.deepEqual(contextPeriod('我的本月负荷','2026-10-29','Asia/Shanghai').bounds,{startDay:'2026-10-01',endDay:'2026-10-29'})
 })
+test('recent evidence for today recovery is not restricted to today; short Chinese month range is explicit',()=>{
+ assert.deepEqual(contextPeriod('根据我最近的跑步和身体反馈，今天恢复得怎么样？','2026-10-29','Asia/Shanghai').bounds,{startDay:'2026-10-23',endDay:'2026-10-29'})
+ assert.deepEqual(contextPeriod('10月25日至29日我记录多少公里？','2026-10-29','Asia/Shanghai').bounds,{startDay:'2026-10-25',endDay:'2026-10-29'})
+})

@@ -1,5 +1,6 @@
+import {questionEvidence,supportedEvidenceQuote} from './question-evidence'
 import { type OnlineConversationTurn } from './online-handoff'
-import { COACH_DISCLOSURE_VERSION, declarationQuote, contextRecordQuote, type CoachRequestContext, type CoachDeclaration, type CoachSnapshotReference } from './online-contract'
+import { COACH_DISCLOSURE_VERSION, declarationQuote, contextRecordQuote, contextModelQuote, type CoachRequestContext, type CoachDeclaration, type CoachSnapshotReference } from './online-contract'
 import { readCoachResponse, coachServiceStatusText, type DecodedCoachAnswer } from './online-service'
 import { onlineSetting } from './online-coach'
 import { readAnalysis } from '../health/analysis-host'
@@ -117,7 +118,10 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   if(!answer.source)return {error:'回答来源未能确认，已保留本地回答；不将其标为模型解释。'}
   let restrictions=preview.restrictions
   try{restrictions=readR5Context(new Date().toISOString(),preview.question).restrictions}catch{/* Retain the captured restrictions on read failure. */}
-  const checked=validateCoachAssertions(answer.text,{question:preview.question,restrictions,factQuotes:[...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextRecordQuote)],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
+  const sources=[...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
+  const quoted=answer.evidenceQuotes??[]
+  if(quoted.some(q=>!answer.text.includes(q)||!sources.some(s=>supportedEvidenceQuote(s,q))))return {error:'模型引用与本次资料不一致，已保留本地回答。'}
+  const checked=validateCoachAssertions(answer.text,{question:preview.question,restrictions,factQuotes:[...sources,...quoted],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
   if(!checked.ok)return {error:'模型内容未通过事实或安全核验，已保留本地回答。'}
   return {...answer,source:answer.source}
  }catch(error){return {error:controller.signal.aborted?'本轮联网已取消或超时，本地回答保留；不会自动重试。':error instanceof TypeError?'网络连接失败，本地回答保留；未确认模型是否收到请求，不自动重试。':error instanceof Error?error.message:'联网不可用，本地回答保留。'}}

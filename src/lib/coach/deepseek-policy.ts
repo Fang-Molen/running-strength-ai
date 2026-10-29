@@ -5,7 +5,7 @@ export type DeepSeekRouteKind = 'LOCAL' | 'LOW' | 'COMPLEX'
 export type DeepSeekRoute = {
   kind: DeepSeekRouteKind
   inputTokenLimit: 0 | 4000 | 8000
-  outputTokenLimit: 0 | 900
+  outputTokenLimit: 0 | 900 | 1800
   toolRounds: 0
   retries: 0
   reason: string

@@ -2,7 +2,7 @@ import {asksLoadSummary,loadQuestionAnalysis,loadSummaryRecord} from './online-l
 import {calendarDate,type LoadSummary} from '../health/load-evidence'
 import { localAnalysisRecords, dialogueRecords, contextualQuestion, type OnlineConversationTurn } from './online-handoff';
 /** Read-only, question-scoped self reports. This is selection, not provider verification. */
-import { contextRecordQuote, type CoachContextRecord, type CoachRequestContext } from './online-contract';
+import { contextModelQuote, type CoachContextRecord, type CoachRequestContext } from './online-contract';
 import type { AnalysisFact, TrainingFact, CoachAnalysisPacket } from '../health/analysis-contract';
 import type { CycleGoal } from './cycle/types';
 import type { ScheduleEntry } from '../ui/day-schedule-rules';
@@ -53,7 +53,7 @@ export const ONLINE_QUOTED_CONTEXT_BYTES = 4800;
 export function quotedOnlineContextBytes(question:string,context:CoachRequestContext):number {
   // Source IDs in the real aliased prompt are shorter than these full IDs.
   // Nested JSON escaping must be counted because the request embeds JSON text.
-  const facts=context.records.map(r=>({id:r.recordId,kind:'FACT',detail:contextRecordQuote(r)}));
+  const facts=context.records.map(r=>({id:r.recordId,kind:'FACT',detail:contextModelQuote(r)}));
   return new TextEncoder().encode(JSON.stringify([{role:'user',content:JSON.stringify({question,facts,coverage:context.coverage})}])).length;
 }
 
@@ -88,7 +88,7 @@ const categoryOf = (f: AnalysisFact): CoachContextRecord['category'] => f.kind =
   : f.kind === 'RESPONSE' ? /PAIN|FUNCTION/.test(f.measure) ? 'RESTRICTION' : 'RECOVERY'
   : /LT1|LT2|VDOT|^CS$|VO2|PB|THRESHOLD/.test(f.metric) ? 'CAPABILITY' : 'RECOVERY';
 
-function factRecords(f: AnalysisFact): CoachContextRecord[] {
+function factRecords(f: AnalysisFact,includeChildren=true): CoachContextRecord[] {
   const recordId = id([f.athleteId, f.provider, f.accountRef, f.deviceId, f.id]);
   const base = {recordId, revision:String(f.revision), occurredAt:date(f.occurredAt), knownAt:date(f.knownAt),
     category:categoryOf(f), state:'ACTUAL' as const, source:'USER_DECLARED:' + f.provider};
@@ -98,8 +98,13 @@ function factRecords(f: AnalysisFact): CoachContextRecord[] {
   const common = [field('quality', f.quality), field('evidenceVersion',digest([f.id,f.revision]).slice(0,16)), field('sourceGroup', digest([f.provider,f.accountRef,f.deviceId,f.protocolKey])),
     field('protocolGroup', f.protocolKey ? digest(f.protocolKey) : null), field('protocol',protocol),field('provenanceVerified',false)];
   if (f.kind === 'METRIC') return [{...base, fields:[...common,field('metric',f.metric),field('value',f.value,clean(f.unit,32)),field('statistic',f.statistic),field('temporalResolution',f.temporalResolution ?? 'UNKNOWN'),field('energyKind',f.energyKind)]}];
-  if (f.kind === 'RESPONSE') return [{...base,fields:[...common,field('measure',f.measure),field('value',f.value,clean(f.scale,32)),field('region',f.region),field('side',f.side),field('elapsed',f.elapsedHours,'h'),field('functionTask',f.functionTaskId),field('observationProtocol',f.observationProtocol)]}];
-  const result:CoachContextRecord[] = [{...base,fields:[...common,field('modality',f.modality),field('observedType',f.observedType),field('actualDuration',f.actualDurationSeconds,'s'),field('sessionRpe',f.sessionRpe,clean(f.sessionRpeScale ?? 'UNKNOWN',32)),field('segmentCount',f.runSegments.length),field('setCount',f.strengthSets.length),field('jumpContacts',f.jumpContacts)]}];
+  if (f.kind === 'RESPONSE') return [{...base,fields:[...common,field('measure',f.measure),field('value',f.value,clean(f.scale,32)),field('region',f.region),field('side',f.side),field('elapsed',f.elapsedHours,'h'),field('functionTask',f.functionTaskId),field('observationProtocol',f.observationProtocol),field('notes',f.notes)]}];
+  const completed=f.runSegments.filter(s=>s.completion==='COMPLETED');
+  const distance=completed.filter(s=>s.distanceM!==null).reduce((n,s)=>n+s.distanceM!,0);
+  const work=completed.filter(s=>s.durationSeconds!==null).reduce((n,s)=>n+s.durationSeconds!,0);
+  const continuous=completed.length===1&&completed[0].kind==='CONTINUOUS'&&completed[0].distanceM&&completed[0].durationSeconds;
+  const result:CoachContextRecord[] = [{...base,fields:[...common,field('modality',f.modality),field('observedType',f.observedType),field('actualDuration',f.actualDurationSeconds,'s'),field('sessionRpe',f.sessionRpe,clean(f.sessionRpeScale ?? 'UNKNOWN',32)),field('segmentCount',f.runSegments.length),field('setCount',f.strengthSets.length),field('jumpContacts',f.jumpContacts),...(!includeChildren?[field('knownDistance',completed.some(s=>s.distanceM!==null)?distance:null,'m'),field('knownWorkTime',completed.some(s=>s.durationSeconds!==null)?work:null,'s'),field('distanceComplete',!!f.runSegments.length&&f.runSegments.every(s=>s.completion==='COMPLETED'&&s.distanceM!==null)),field('paceSecondsPerKm',continuous?Number((completed[0].durationSeconds!*1000/completed[0].distanceM!).toFixed(6)):null,'s/km'),field('strengthDose',f.strengthSets.length?f.strengthSets.map(s=>`${s.catalogId??'未知动作'} ${s.completion} ${s.reps??'未知'}次 ${s.loadKg??'未知'}kg(${s.loadBasis})`).join('；'):null)]:[])]}];
+  if(!includeChildren)return result;
   for (const s of f.runSegments) result.push({...base,recordId:id([recordId,'segment',s.id]), fields:[field('parent',recordId),field('structure','RUN_SEGMENT'),field('block',id([recordId,s.blockId])),field('round',s.roundIndex),field('step',s.stepIndex),field('kind',s.kind ?? 'UNKNOWN'),field('distance',s.distanceM,'m'),field('duration',s.durationSeconds,'s'),field('restAfter',s.restAfterSeconds,'s'),field('restScope',s.restScope ?? 'UNSPECIFIED'),field('completion',s.completion),field('surface',s.surface),field('grade',s.gradePercent,'%'),field('heartRate',s.averageHeartRateBpm,'bpm'),field('heartRateMethod',s.heartRateMethod)]});
   for (const [index,s] of f.strengthSets.entries()) result.push({...base,category:'STRENGTH',recordId:id([recordId,'set',s.id]),fields:[field('parent',recordId),field('structure','STRENGTH_SET'),field('setIndex',index+1),field('exercise',s.catalogId),field('catalogueVersion',s.catalogVersion),field('side',s.side),field('load',s.loadKg,'kg'),field('loadBasis',s.loadBasis),field('reps',s.reps,'reps'),field('hold',s.holdSeconds,'s'),field('setRpe',s.setRpe,clean(s.effortScale ?? 'UNKNOWN',32)),field('rir',s.rir,'reps'),field('eccentric',s.eccentricSeconds,'s'),field('rangeProtocol',s.rangeProtocol),field('completion',s.completion)]});
   return result;
@@ -131,7 +136,7 @@ export function selectOnlineContext(input: OnlineContextInput) {
         if(selection.length)return selectionIndex(f)>=0;
         if(period.label&&!period.matches(f.occurredAt))return false;
         const strength=/力量|深蹲|硬拉|卧推|负重|组次|增肌/.test(input.question),run=/跑|间歇|冲刺|\d+\s*米/.test(input.question);
-        return needs.training && (strength===run || strength&&f.modality==='STRENGTH' || run&&f.modality==='RUN');
+        return needs.training && (needs.recovery || strength===run || strength&&f.modality==='STRENGTH' || run&&f.modality==='RUN');
       }
       if(f.kind==='RESPONSE' && /PAIN|FUNCTION/.test(f.measure))return needs.restrictions;
       if(f.kind==='METRIC' && categoryOf(f)==='CAPABILITY')return needs.goal;
@@ -152,7 +157,7 @@ export function selectOnlineContext(input: OnlineContextInput) {
     if(representatives.length>1)eligible.sort((a,b)=>(representatives.includes(a)?0:1)-(representatives.includes(b)?0:1));
     if(selection.length){note('按用户选择的顺序读取实际训练；未选择的其他训练不代替所选记录。');if(selection.some((_,i)=>!eligible.some(f=>selectionIndex(f)===i)))note('部分所选训练无法在本人可核对的资料中找到；比较依据不完整，不借用其他训练补齐。')}
     if(input.loadSummary&&!selection.length&&!period.error)candidates.push(loadSummaryRecord(input.loadSummary,question,input.day));
-    for(const f of eligible){candidates.push(...factRecords(f));selectedFacts.push(f)}
+    for(const f of eligible){candidates.push(...factRecords(f,!(needs.recovery&&!selection.length&&/最近|近期|哪次|前后|身体反馈/.test(question)&&!/分段|逐组|间歇|休息/.test(question))));selectedFacts.push(f)}
     candidates.push(...localAnalysisRecords(input.packet,input.owner,input.question,eligible));
     if(input.packet)note("本机计算与解释按问题筛选传递，属于客户端申报；未独立核验，候选未确认，不构成医疗许可。");
     if(needs.training&&!eligible.some(f=>f.kind==='TRAINING'))note('本次读取范围内没有可用的本人实际训练结构；不从计划推断完成量。');

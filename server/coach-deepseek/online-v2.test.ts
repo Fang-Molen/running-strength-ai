@@ -214,7 +214,7 @@ test('canonical load summary traverses real HTTP controller; full provider input
    const receiptResponse=await send('coach-snapshot',{...input,question,context:selected.context}),receipt=await receiptResponse.json();assert.equal(receiptResponse.status,200,JSON.stringify(receipt))
    const answer=await send('coach-chat',{question,...receipt.snapshotRef,requestId:'load-summary-'+revision});assert.equal(answer.status,200,JSON.stringify(await answer.json()))
    const body=captured.at(-1)!.body as {messages:{role:string;content:string}[]},wire=JSON.parse(body.messages[1].content),all=JSON.stringify(wire)
-   assert.match(all,/CANONICAL_LOAD_SUMMARY/);assert.match(all,new RegExp('knownDistance='+String(revision===1?5000:4000)));assert.match(all,/missingDays=27/);assert.match(all,/疼痛/);assert.match(all,/冲突/)
+   assert.match(all,/CANONICAL_LOAD_SUMMARY/);assert.match(all,new RegExp('已知跑步距离'+String(revision===1?5:4)+'公里'));assert.match(all,/缺项日期27天/);assert.match(all,/疼痛/);assert.match(all,/冲突/)
    versions.push(selected.sourceVersion);measurements.push({revision,requestAndModelMilliseconds:performance.now()-started,wholeProviderBodyBytes:captured.at(-1)!.bytes,entireMessagesBytes:new TextEncoder().encode(JSON.stringify(body.messages)).length,providerCalls:1,followupReads:0,realModelTokens:null})
   }
   assert.notEqual(versions[0],versions[1]);assert.equal(captured.length,2)

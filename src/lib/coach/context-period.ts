@@ -2,6 +2,8 @@ import {validLoadDay,shiftLoadDay} from '../core/coach-load-metrics'
 /** Calendar selection is not a physiological cutoff. Explicit invalid periods match nothing. */
 export const requestsCalendarPeriod=(question:string)=>/前天|昨天|昨日|今天|明天|本周|这周|上周|本月|这个月|近\d+天|过去\d+天|前年|去年|今年|上个月|20\d{2}年|\d{4}-\d{2}-\d{2}/.test(question)
 export function contextPeriod(question:string,day:string,timeZone:string){
+ const chineseRange=question.match(/(?:(20\d{2})年)?(\d{1,2})月(\d{1,2})日?(?:至|到)(?:(\d{1,2})月)?(\d{1,2})日/);
+ if(chineseRange){const [,y,m,d,em,ed]=chineseRange;question=question.replace(chineseRange[0],`${y??day.slice(0,4)}-${m.padStart(2,'0')}-${d.padStart(2,'0')}至${y??day.slice(0,4)}-${(em??m).padStart(2,'0')}-${ed.padStart(2,'0')}`)}
  const year=Number(day.slice(0,4)),month=Number(day.slice(5,7)),hits=[...question.matchAll(/\d{4}-\d{2}-\d{2}/g)],days=hits.map(m=>m[0]),years=new Set<number>()
  if(/前年/.test(question))years.add(year-2)
  if(/去年/.test(question))years.add(year-1)
@@ -20,7 +22,8 @@ export function contextPeriod(question:string,day:string,timeZone:string){
  }else if(hits.length>2&&/(?:到|至|~|～|—|–)/.test(question))error='多个日期范围含义不明确，请分开指定。'
  // Relative periods are anchored to the caller's as-of calendar day, never to a pre-shifted question day.
  if(!hits.length&&!years.size&&!monthPrefix){
-  if(/前天|昨天|昨日|今天|明天/.test(question)){const offset=/前天/.test(question)?-2:/昨天|昨日/.test(question)?-1:/明天/.test(question)?1:0;const at=shiftLoadDay(day,offset)!;range={startDay:at,endDay:at}}
+  if(/最近|近期/.test(question)&&/今天.*(?:恢复|状态)|(?:恢复|状态).*今天/.test(question))range={startDay:shiftLoadDay(day,-6)!,endDay:day}
+  else if(/前天|昨天|昨日|今天|明天/.test(question)){const offset=/前天/.test(question)?-2:/昨天|昨日/.test(question)?-1:/明天/.test(question)?1:0;const at=shiftLoadDay(day,offset)!;range={startDay:at,endDay:at}}
   else if(/上周|本周|这周/.test(question)){const weekday=(new Date(day+'T12:00:00Z').getUTCDay()+6)%7,start=shiftLoadDay(day,-weekday)!;range=/上周/.test(question)?{startDay:shiftLoadDay(start,-7)!,endDay:shiftLoadDay(start,-1)!}:{startDay:start,endDay:day}}
   else if(/本月|这个月/.test(question))range={startDay:day.slice(0,7)+'-01',endDay:day}
   else {const n=question.match(/(?:最近|近|过去)(\d+)天/);if(n){const count=Number(n[1]);if(count<1||count>3660)error='日期范围超出可检索范围，请指定起止日期。';else range={startDay:shiftLoadDay(day,1-count)!,endDay:day}}}
