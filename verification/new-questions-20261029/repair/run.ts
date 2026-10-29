@@ -18,7 +18,7 @@ const arg=(name:string,fallback:string)=>args.includes(name)?args[args.indexOf(n
 const start=Number(arg('--start','0')),count=Number(arg('--count','3')),phase=arg('--phase','smoke');
 const all=JSON.parse(readFileSync(base+'/dispatch-order.json','utf8')).schedule;
 const targeted=[14,30,34,35,36,37,38,39,1];
-const indices=phase.startsWith('smoke')?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];
+const indices=phase==='smoke5'?[30,31]:phase.startsWith('smoke')?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];
 const schedule=indices.map(i=>all[i]);const replay=args.includes('--replay');
 const asOf='2026-10-29T12:00:00.000Z',now=Date.parse(asOf)+1000;mock.timers.enable({apis:['Date'],now});
 const hash=(x:any)=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
@@ -42,9 +42,9 @@ const policy:any={enabled:true,approvalId:'user-new-questions-20261029',approval
 let active:any,provider:any=null,payload:any=null;
 const callLog=out+'/calls.jsonl',resultLog=out+'/'+phase+(paid?'-results.jsonl':'-offline.jsonl');
 const existing=existsSync(callLog)?readFileSync(callLog,'utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x)):[];
-let totalCalls=existing.length,totalTokens=existing.reduce((s,r)=>s+(r.reply?.usage?.total_tokens||0),0);
+let phaseCount=0;let totalCalls=existing.length,totalTokens=existing.reduce((s,r)=>s+(r.reply?.usage?.total_tokens||0),0);
 function dispatchReal(){
- if(totalCalls>=50||totalTokens>=200000)throw Error('CAMPAIGN_STOP_CAP');
+ if(totalCalls>=60||totalTokens>=200000||(!phase.startsWith('smoke')&&existing.filter(r=>r.requestId.startsWith('full-')||r.requestId.startsWith('final-')).length+(phaseCount++)>=50)||(phase.startsWith('smoke')&&existing.filter(r=>r.requestId.startsWith('smoke')).length+(phaseCount++)>=10))throw Error('CAMPAIGN_STOP_CAP');
  const requestId=phase+'-'+active.path_id+'-'+active.turn;
  if(existing.some(r=>r.requestId===requestId))throw Error('NO_DUPLICATE_PAID_CALL');
  totalCalls++;const started=performance.now();
