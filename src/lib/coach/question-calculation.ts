@@ -12,15 +12,18 @@ export function questionCalculations(question:string,prior:readonly string[]=[])
  if(separate){const d=[...separate[1].matchAll(/(\d+(?:\.\d+)?)\s*米/g)].map(m=>+m[1]),t=[...separate[2].matchAll(/(\d+(?:\.\d+)?)\s*秒/g)].map(m=>+m[1]);if(d.length===t.length&&finite(d)&&finite(t))add(`总距离${sum(d)}米；已知工作时间${duration(sum(t))}，不含休息`)}
  // Explicit repeated distance + only the reported timings, including partial completion.
  const repeats=q.match(/(\d+)\s*[×x*]\s*(\d+(?:\.\d+)?)米/),timings=q.match(/(?:前\d+组(?:是|为)|成绩(?:依次)?(?:是|为))([\d.、,，和秒\s]+)秒/);
- if(repeats&&timings){let ts=numberList(timings[1]);const last=q.match(/第\d+组(?:做了|用时|是|为)(\d+(?:\.\d+)?)秒/);if(last)ts.push(+last[1]);if(finite(ts)&&ts.length<=+repeats[1])add(`已知完成${ts.length*+repeats[2]}米；已知工作时间${duration(sum(ts))}；${ts.length<+repeats[1]?'其余组完成状态未知，不按零或完成处理':'所述各组均有时间记录'}`)}
+ if(repeats&&timings){const ts=numberList(timings[1]);const last=q.match(/第\d+组(?:做了|用时|是|为)(\d+(?:\.\d+)?)秒/);if(last)ts.push(+last[1]);const completed=q.match(/第(\d+)组(?:已)?完成(?:但|却)/),n=+repeats[1];const completedWithoutTime=completed&&+completed[1]===n&&ts.length===n-1;
+  if(finite(ts)&&ts.length<=n)add(`已知完成${(completedWithoutTime?n:ts.length)*+repeats[2]}米；已知工作时间${duration(sum(ts))}；${completedWithoutTime?'各组完成状态明确，最后一组未计时，总工作时间未知':ts.length<n?'其余组完成状态未知，不按零或完成处理':'所述各组均有时间记录'}`)}
  // Equal-distance repetitions and an explicitly indexed correction preserve old total.
  const series=(s:string)=>s.match(/(?:成绩(?:依次)?(?:是|为)|成绩依次为)([\d.、,，和秒\s]+)秒/);
  const own=series(q);
  if(!repeats&&own){const ts=numberList(own[1]);if(finite(ts))add(`所述各组工作时间合计${duration(sum(ts))}；首组${ts[0]}秒，末组${ts.at(-1)}秒；时间${ts.at(-1)!>ts[0]?'增加':ts.at(-1)!<ts[0]?'减少':'相同'}，不能据此证明原因`)}
  const correction=q.match(/第(\d+)组(?:实际)?(?:是|为)(\d+(?:\.\d+)?)秒/);
  if(correction&&/更正|记错|更新|其他.*不变/.test(q)){
-  const before=[...prior].reverse().find(s=>series(s.normalize('NFKC')));
-  if(before){const m=series(before.normalize('NFKC'))!,ts=numberList(m[1]),i=+correction[1]-1;if(finite(ts)&&i>=0&&i<ts.length){const old=sum(ts),oldValue=ts[i];ts[i]=+correction[2];add(`旧总时间${old}秒；更正第${i+1}组由${oldValue}秒为${ts[i]}秒，新总时间${sum(ts)}秒；其余组不变，旧自述保留，未改写已保存记录`)}}
+  const events=prior.map(s=>s.normalize('NFKC'));let at=-1;events.forEach((s,i)=>{if(series(s))at=i;});
+  if(at>=0){const ts=numberList(series(events[at])![1]);
+   for(const event of events.slice(at+1)){const update=event.match(/第(\d+)组(?:实际)?(?:是|为)(\d+(?:\.\d+)?)秒/);if(update&&/更正|记错|更新|其他.*不变/.test(event)&&+update[1]>=1&&+update[1]<=ts.length)ts[+update[1]-1]=+update[2]}
+   const i=+correction[1]-1;if(finite(ts)&&i>=0&&i<ts.length){const old=sum(ts),oldValue=ts[i];ts[i]=+correction[2];add(`旧总时间${old}秒；更正第${i+1}组由${oldValue}秒为${ts[i]}秒，新总时间${sum(ts)}秒；其余组不变，旧自述保留，未改写已保存记录`)}}
  }
  const minutes=q.match(/(?:训练总时长|总时长|整课时长)\s*(\d+(?:\.\d+)?)分钟/),rpe=q.match(/整课\s*RPE(?:为|是)?\s*(\d+(?:\.\d+)?)/i);
  if(minutes&&rpe&&/(?:0\s*[–—-]\s*10|0到10|0至10)/.test(q)&&+rpe[1]<=10&&!/整课.*(?:未知|没填|未填)/.test(q))add(`整课主观负荷${+minutes[1]}分钟×${+rpe[1]}=${+minutes[1]*+rpe[1]} AU；仅为主观负荷，不能表示疲劳百分比`);
@@ -28,8 +31,10 @@ export function questionCalculations(question:string,prior:readonly string[]=[])
  const hand=q.match(/每手\s*(\d+(?:\.\d+)?)\s*(?:公斤|千克)/),reps=q.match(/每组\s*(\d+)次/),sets=q.match(/实际完成\s*(\d+)组/);
  if(hand&&reps&&sets)add(`实际完成${+sets[1]}组、${+sets[1]*+reps[1]}次；每只手负重次数积${+hand[1]*+sets[1]*+reps[1]} kg·次；跳过的组不计入完成`);
  // Directly paired distances/durations, arbitrary distances and order.
- const pace=[...q.matchAll(/(?:(甲|乙|昨天|今天|前天))?跑\s*(\d+(?:\.\d+)?)公里(?:用时)?\s*(\d+(?:\.\d+)?)分钟/g)].filter(m=>+m[2]>0);
- if(pace.length>=2){const ps=pace.map(m=>Number((+m[3]*60/+m[2]).toFixed(6)));add(pace.map((m,i)=>`${m[1]??'第'+(i+1)+'次'}平均配速${Math.floor(ps[i]/60)}:${String(Math.round(ps[i]%60)).padStart(2,'0')}/km`).join('；')+`；${pace[ps.indexOf(Math.min(...ps))][1]??'第'+(ps.indexOf(Math.min(...ps))+1)+'次'}用时每公里较少、更快；条件未必相同，不证明疲劳因果`)}
+ const pace=[...q.matchAll(/([A-Za-z\u4e00-\u9fff]{1,6})?跑\s*(\d+(?:\.\d+)?)\s*(公里|千米|米|km|m)(?:用时)?\s*(\d+(?:\.\d+)?)\s*(?:分钟|min)/gi)].filter(m=>+m[2]>0);
+ if(pace.length>=2||pace.length===1&&/配速/.test(q)){const ps=pace.map(m=>+m[4]*60/(+m[2]*(/^(?:米|m)$/i.test(m[3])?.001:1))),format=(n:number)=>{const t=Math.round(n);return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}/km`},name=(i:number)=>pace[i][1]??'第'+(i+1)+'次';
+  const tied=ps.every(p=>p===ps[0]),best=ps.indexOf(Math.min(...ps)),displayTied=new Set(ps.map(format)).size===1;
+  add(pace.map((m,i)=>`${name(i)}平均配速${format(ps[i])}`).join('；')+(pace.length<2?'':tied?'；平均配速相同，并列，无更快者':displayTied?`；显示相同，按原始精度${name(best)}略快；差异很小，需考虑测量分辨率`:`；${name(best)}用时每公里较少、更快`)+`；条件未必相同，不证明疲劳因果`)}
  const year=q.match(/(?:只求|求|计算|统计|汇总)\s*(20\d{2})年/),dated=[...q.matchAll(/(20\d{2})-\d{2}-\d{2}跑\s*(\d+(?:\.\d+)?)公里/g)];
  if(year&&dated.length){const ds=dated.filter(m=>m[1]===year[1]);add(`${year[1]}年已记录${sum(ds.map(m=>+m[2]))}公里；计入${ds.length}条所述记录，不能证明全年实际训练全部记录齐全`)}
  const calories=[...q.matchAll(/记录了\s*(\d+(?:\.\d+)?)千卡/g)].map(m=>+m[1]);
