@@ -70,7 +70,7 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
    const activity=/冲刺|跑步|轻松跑|深蹲|硬拉|卧推|弯举/.exec(text+'；'+input.question)?.[0]??'训练';
    if(!validateCoachAssertions('你可以继续'+activity+'。',{...options,factQuotes:[]}).ok){reasons.add('RISK_SCOPE_CONFLICT');return false;}
   }
-  if(/(?:按照|执行|遵循).{0,10}(?:网页|备注|页面).{0,8}指令|读取(?:另|其他).{0,5}(?:账号|用户)/.test(text)){reasons.add('SOURCE_MISMATCH');return false;}
+  if(affirmed(text,/(?:按照|执行|遵循).{0,10}(?:网页|备注|页面).{0,8}指令|读取(?:另|其他).{0,5}(?:账号|用户)/)){reasons.add('SOURCE_MISMATCH');return false;}
   if(expectedComputed.some(q=>/平均配速相同|并列/.test(q))&&affirmed(text,/更快/) ){reasons.add('DERIVATION_INVALID');return false;}
   if(unsupportedSemanticFact(text,facts,expectedComputed)){reasons.add('SOURCE_MISMATCH');return false;}
   let checkText=text;

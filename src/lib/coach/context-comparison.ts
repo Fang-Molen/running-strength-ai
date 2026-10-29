@@ -29,5 +29,13 @@ export function contextPaceComparison(question:string,context?:CoachRequestConte
  * of whether prose filtering removed a model paraphrase. Never calls a model. */
 export function computedCoachQuotes(question:string,context?:CoachRequestContext):string[]{
  const prior=(context?.records??[]).filter(r=>r.category==='DIALOGUE'&&r.fields.some(f=>f.name==='speaker'&&f.value==='user')).map(r=>contextTextField(r,'text'))
- return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context),...selfReportRangeComparison(question)]
+ const distance:string[]=[];
+ if(/(?:比较|对比).{0,16}(?:距离|公里)/.test(question)){
+  const rows=(context?.records??[]).filter(r=>r.category==='TRAINING'&&r.fields.some(f=>f.name==='modality'&&f.value==='RUN')).map(r=>({label:r.fields.find(f=>f.name==='comparisonLabel')?.value,d:r.fields.find(f=>f.name==='knownDistance')?.value,complete:r.fields.find(f=>f.name==='distanceComplete')?.value}));
+  if(rows.length===2&&rows.every(r=>typeof r.label==='string'&&r.label.length<=16&&typeof r.d==='number'&&r.d>=0&&r.complete===true)){
+   const [a,b]=rows,delta=Number((Math.abs(Number(a.d)-Number(b.d))/1000).toFixed(6));
+   distance.push(`所述两条距离：${a.label}${Number(a.d)/1000}公里，${b.label}${Number(b.d)/1000}公里；${delta===0?'距离相同':(Number(a.d)>Number(b.d)?a.label:b.label)+'比另一条多'+delta+'公里'}。仅比较本轮提供的自述数据，未读取另一账号，也不把他人数据归给本人。`);
+  }
+ }
+ return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context),...selfReportRangeComparison(question),...distance]
 }
