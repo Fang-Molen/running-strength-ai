@@ -6,18 +6,18 @@
   "measurements": [
     {
       "revision": 1,
-      "requestAndModelMilliseconds": 56.869125999999596,
-      "wholeProviderBodyBytes": 5693,
-      "entireMessagesBytes": 5531,
+      "requestAndModelMilliseconds": 54.834915999999794,
+      "wholeProviderBodyBytes": 5798,
+      "entireMessagesBytes": 5636,
       "providerCalls": 1,
       "followupReads": 0,
       "realModelTokens": null
     },
     {
       "revision": 2,
-      "requestAndModelMilliseconds": 29.853347000000213,
-      "wholeProviderBodyBytes": 5694,
-      "entireMessagesBytes": 5532,
+      "requestAndModelMilliseconds": 41.36656000000039,
+      "wholeProviderBodyBytes": 5799,
+      "entireMessagesBytes": 5637,
       "providerCalls": 1,
       "followupReads": 0,
       "realModelTokens": null

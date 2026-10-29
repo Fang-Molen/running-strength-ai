@@ -1,17 +1,17 @@
-✔ actual two sets, not four planned sets, reach 3D evidence, coach and global host (75.949703ms)
-✔ completion-only V4 feedback is UNKNOWN and does not borrow planned muscle groups (5.633061ms)
-✔ void and field corrections invalidate old muscle evidence immediately without rewriting originals (4.279575ms)
-✔ different athlete cannot contribute a set or a pain record (0.781876ms)
-✔ explicit timed pain overrides participation and deletion returns to observed exposure (2.618418ms)
-✔ knee pain and date-only history are not invented quadriceps evidence (0.670759ms)
-✔ missing continuous device data stays unavailable; rereads are stable (0.78513ms)
-✔ corrupt local records are explicit read errors and retained byte-for-byte (0.459291ms)
-✔ equal-version conflicting exercises are excluded regardless of input order (0.262826ms)
-✔ equal-version retraction wins and cannot resurrect because of ordering (0.186371ms)
-✔ v89.2 V4 free-text moves logged set by set reach muscle view, log and coach as the same record (13.694254ms)
-✔ linked display cache without committed source cannot fabricate participation or muscle recruitment (1.641949ms)
-✔ v89.2 library aliases point at real library entries; planned run types come from plan text only (0.508094ms)
-✔ v89.3 U12: old pain stays 待复核 beyond 72h; a later explicit 0 clears it without claiming recovery (1.035007ms)
+✔ actual two sets, not four planned sets, reach 3D evidence, coach and global host (73.937838ms)
+✔ completion-only V4 feedback is UNKNOWN and does not borrow planned muscle groups (5.556265ms)
+✔ void and field corrections invalidate old muscle evidence immediately without rewriting originals (4.14965ms)
+✔ different athlete cannot contribute a set or a pain record (0.811981ms)
+✔ explicit timed pain overrides participation and deletion returns to observed exposure (3.525742ms)
+✔ knee pain and date-only history are not invented quadriceps evidence (0.722076ms)
+✔ missing continuous device data stays unavailable; rereads are stable (0.833093ms)
+✔ corrupt local records are explicit read errors and retained byte-for-byte (0.940384ms)
+✔ equal-version conflicting exercises are excluded regardless of input order (0.25261ms)
+✔ equal-version retraction wins and cannot resurrect because of ordering (0.162224ms)
+✔ v89.2 V4 free-text moves logged set by set reach muscle view, log and coach as the same record (12.361327ms)
+✔ linked display cache without committed source cannot fabricate participation or muscle recruitment (2.063343ms)
+✔ v89.2 library aliases point at real library entries; planned run types come from plan text only (0.412ms)
+✔ v89.3 U12: old pain stays 待复核 beyond 72h; a later explicit 0 clears it without claiming recovery (0.976118ms)
 ℹ tests 14
 ℹ suites 0
 ℹ pass 14
@@ -19,4 +19,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 125.875386
+ℹ duration_ms 126.307716

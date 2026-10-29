@@ -1,0 +1,7 @@
+{
+  "paid_generation_disabled": true,
+  "reason": "40 planned cases measured; full-regression 50/50 cap reached. Semantic gaps reported, no release. Replays remain allowed.",
+  "paid_calls": 54,
+  "full_calls": 50,
+  "tokens": 184405
+}

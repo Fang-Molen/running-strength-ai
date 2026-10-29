@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "method": "separate Python arithmetic plus implementing-assistant per-question semantic review; not model judge or independent professional review",
+  "original_questions_changed": false,
+  "original_references_changed": false,
+  "reference_errors_found": 0,
+  "scope": "All 32 paths/34 turns and 6 histories checked; numeric rows below, nonnumeric expected conditions in RESULTS.jsonl. Code/source-contract errors fixed; no golden alteration.",
+  "calculations": {
+    "Q01-A": {
+      "distance_m": 1200,
+      "time_s": 234
+    },
+    "Q01-B": {
+      "distance_m": 1200,
+      "time_s": 314
+    },
+    "Q02-A": {
+      "known_distance_m": 900,
+      "known_work_s": 179,
+      "fourth": "UNKNOWN"
+    },
+    "Q02-B": {
+      "distance_m": 1200,
+      "time_s": 242
+    },
+    "Q03-A": {
+      "session_AU": 270
+    },
+    "Q03-B": {
+      "session_AU": null,
+      "reason": "last-set RPE cannot substitute for unknown session RPE"
+    },
+    "Q04-A": {
+      "sets": 3,
+      "reps": 30,
+      "per_hand_kg_reps": 360
+    },
+    "Q04-B": {
+      "sets": 2,
+      "reps": 20,
+      "per_hand_kg_reps": 240
+    },
+    "Q06-A": {
+      "pace_s_per_km": [
+        300.0,
+        288.0
+      ],
+      "faster": "乙"
+    },
+    "Q06-B": {
+      "pace_s_per_km": [
+        300.0,
+        312.0
+      ],
+      "faster": "甲"
+    },
+    "Q10-A/B": {
+      "2025_km": 9
+    },
+    "Q11-A": {
+      "old": 126,
+      "new": 122
+    },
+    "Q11-B": {
+      "old": 128,
+      "new": 122
+    },
+    "Q12-A/B": {
+      "same_arithmetic_as": "Q06-A/B, labels yesterday/today"
+    },
+    "Q13-A/B": {
+      "recorded_kcal": 1200,
+      "A_coverage": "UNKNOWN",
+      "B_coverage": "user explicitly reports no dinner/snack"
+    },
+    "Q16-A/B": {
+      "sum_s": 126,
+      "A_trend": "increasing",
+      "B_trend": "decreasing"
+    },
+    "T01": {
+      "2025_rows": 183,
+      "km": 915
+    },
+    "T03": {
+      "km": 10,
+      "paces_s_per_km": [
+        300.0,
+        324.0
+      ],
+      "faster_date": "2026-10-25"
+    }
+  }
+}

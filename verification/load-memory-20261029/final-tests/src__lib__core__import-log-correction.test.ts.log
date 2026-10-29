@@ -1,13 +1,13 @@
-✔ a bound decimal correction changes the coach facts without mutating or duplicating the import (35.648247ms)
-✔ a stale editor cannot replace a later correction or create a second correction on repeated submit (2.306919ms)
-✔ invalid, blank, zero duration, unchanged and unconfirmed values never commit (1.437892ms)
-✔ voided, deleted and different-athlete imports cannot be edited from a stale screen (1.068888ms)
-✔ distance correction retains seconds and rest while using the effective distance (1.049959ms)
-✔ a failed storage write is reported and the existing effective record is preserved (0.815376ms)
-✔ a changed source withdraws the old dependent judgment while retaining its original metrics (10.889615ms)
-✔ strength edits accept fractional weight but reject fractional repetitions (1.415689ms)
-✔ corrected import projection preserves cutoff, other segments and raw source, and quarantines unbound edits (1.353075ms)
-✔ colliding segment aliases do not offer a guessed correction target (0.54528ms)
+✔ a bound decimal correction changes the coach facts without mutating or duplicating the import (51.609037ms)
+✔ a stale editor cannot replace a later correction or create a second correction on repeated submit (2.53461ms)
+✔ invalid, blank, zero duration, unchanged and unconfirmed values never commit (1.559875ms)
+✔ voided, deleted and different-athlete imports cannot be edited from a stale screen (1.028045ms)
+✔ distance correction retains seconds and rest while using the effective distance (1.007114ms)
+✔ a failed storage write is reported and the existing effective record is preserved (0.947965ms)
+✔ a changed source withdraws the old dependent judgment while retaining its original metrics (11.129663ms)
+✔ strength edits accept fractional weight but reject fractional repetitions (1.398673ms)
+✔ corrected import projection preserves cutoff, other segments and raw source, and quarantines unbound edits (1.528879ms)
+✔ colliding segment aliases do not offer a guessed correction target (0.567393ms)
 ℹ tests 10
 ℹ suites 0
 ℹ pass 10
@@ -15,4 +15,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 70.828592
+ℹ duration_ms 95.052541

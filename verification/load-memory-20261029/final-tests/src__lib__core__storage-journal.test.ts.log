@@ -1,14 +1,14 @@
-✔ two separate clients interleave durable event commits without lost writes (14.627617ms)
-✔ legacy conflicting and duplicate events remain byte-for-byte untouched on new append (0.308073ms)
-✔ two writers save feedback without stale-array overwrite (0.655115ms)
-✔ overlapping same-id differing feedback remains auditable and is excluded from inference (0.411729ms)
-✔ journal+legacy+intake choices round trip actual backup and reload (3.621065ms)
-✔ unknown oversized backup key remains rejected (0.110706ms)
-✔ quota and adapters without durable enumeration fail visibly (0.153671ms)
-✔ malformed physical records are retained and never silently deleted (0.251569ms)
-✔ listener failure cannot cause successful durable event to be reported as failed (0.182404ms)
-✔ feedback observations are connected to first-week explanation without dose authorization (4.290332ms)
-✔ prediction written after an early valid-window observation cannot count as prior evidence (0.135084ms)
+✔ two separate clients interleave durable event commits without lost writes (16.113445ms)
+✔ legacy conflicting and duplicate events remain byte-for-byte untouched on new append (1.651583ms)
+✔ two writers save feedback without stale-array overwrite (0.670448ms)
+✔ overlapping same-id differing feedback remains auditable and is excluded from inference (0.373202ms)
+✔ journal+legacy+intake choices round trip actual backup and reload (6.259952ms)
+✔ unknown oversized backup key remains rejected (0.116055ms)
+✔ quota and adapters without durable enumeration fail visibly (0.336706ms)
+✔ malformed physical records are retained and never silently deleted (0.189796ms)
+✔ listener failure cannot cause successful durable event to be reported as failed (0.364468ms)
+✔ feedback observations are connected to first-week explanation without dose authorization (4.959216ms)
+✔ prediction written after an early valid-window observation cannot count as prior evidence (0.147372ms)
 ℹ tests 11
 ℹ suites 0
 ℹ pass 11
@@ -16,4 +16,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 33.534509
+ℹ duration_ms 49.99183

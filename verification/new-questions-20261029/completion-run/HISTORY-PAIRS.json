@@ -1,0 +1,131 @@
+[
+  {
+    "case": "T01",
+    "engineering_fact_gate": "PASS",
+    "professional_review": "NOT_PERFORMED",
+    "A_selected_receipt": "final3-T01-ALL_HISTORY-1",
+    "B_selected_receipt": "final3-T01-CURRENT_SELECTION-1",
+    "A_first_and_session_usage": {
+      "prompt_tokens": 21783,
+      "completion_tokens": 254,
+      "total_tokens": 22037,
+      "prompt_tokens_details": {
+        "cached_tokens": 21632
+      },
+      "prompt_cache_hit_tokens": 21632,
+      "prompt_cache_miss_tokens": 151
+    },
+    "B_first_and_session_usage": {
+      "prompt_tokens": 1781,
+      "completion_tokens": 230,
+      "total_tokens": 2011,
+      "prompt_tokens_details": {
+        "cached_tokens": 1536
+      },
+      "prompt_cache_hit_tokens": 1536,
+      "prompt_cache_miss_tokens": 245
+    },
+    "A_session_requests": 1,
+    "B_session_requests": 1,
+    "A_provider_latency_ms": 2839.241846000001,
+    "B_provider_latency_ms": 2248.747372,
+    "A_total_ms": 2941.8535119999997,
+    "B_total_ms": 2342.8952519999984,
+    "A_local_overhead_ms": 102.61166599999888,
+    "B_local_overhead_ms": 94.14787999999862,
+    "A_selection_ms": null,
+    "B_selection_ms": null,
+    "token_reduction_percent": 90.87443844443436,
+    "all_development_attempts_requests": 5,
+    "all_development_attempts_tokens": 69947,
+    "A_output_chars": 95,
+    "B_output_chars": 111,
+    "note": "A is a 26k test transport baseline, not legacy App. Extraction alone was not separately timed. Local overhead includes DB/auth/validation and is not retrieval timing. Selected sessions are complete one-call sessions; all failed/obsolete development attempts remain in campaign totals."
+  },
+  {
+    "case": "T02",
+    "engineering_fact_gate": "PASS",
+    "professional_review": "NOT_PERFORMED",
+    "A_selected_receipt": "final3-T02-ALL_HISTORY-1",
+    "B_selected_receipt": "final3-T02-CURRENT_SELECTION-1",
+    "A_first_and_session_usage": {
+      "prompt_tokens": 21284,
+      "completion_tokens": 806,
+      "total_tokens": 22090,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      },
+      "prompt_cache_hit_tokens": 896,
+      "prompt_cache_miss_tokens": 20388
+    },
+    "B_first_and_session_usage": {
+      "prompt_tokens": 1293,
+      "completion_tokens": 733,
+      "total_tokens": 2026,
+      "prompt_tokens_details": {
+        "cached_tokens": 1152
+      },
+      "prompt_cache_hit_tokens": 1152,
+      "prompt_cache_miss_tokens": 141
+    },
+    "A_session_requests": 1,
+    "B_session_requests": 1,
+    "A_provider_latency_ms": 5367.394469999999,
+    "B_provider_latency_ms": 4761.9780070000015,
+    "A_total_ms": 5415.945952000002,
+    "B_total_ms": 4824.528502000001,
+    "A_local_overhead_ms": 48.55148200000258,
+    "B_local_overhead_ms": 62.5504949999995,
+    "A_selection_ms": null,
+    "B_selection_ms": null,
+    "token_reduction_percent": 90.8284291534631,
+    "all_development_attempts_requests": 3,
+    "all_development_attempts_tokens": 26043,
+    "A_output_chars": 750,
+    "B_output_chars": 811,
+    "note": "A is a 26k test transport baseline, not legacy App. Extraction alone was not separately timed. Local overhead includes DB/auth/validation and is not retrieval timing. Selected sessions are complete one-call sessions; all failed/obsolete development attempts remain in campaign totals."
+  },
+  {
+    "case": "T03",
+    "engineering_fact_gate": "PASS",
+    "professional_review": "NOT_PERFORMED",
+    "A_selected_receipt": "final4-T03-ALL_HISTORY-1",
+    "B_selected_receipt": "final4-T03-CURRENT_SELECTION-1",
+    "A_first_and_session_usage": {
+      "prompt_tokens": 21310,
+      "completion_tokens": 702,
+      "total_tokens": 22012,
+      "prompt_tokens_details": {
+        "cached_tokens": 21120
+      },
+      "prompt_cache_hit_tokens": 21120,
+      "prompt_cache_miss_tokens": 190
+    },
+    "B_first_and_session_usage": {
+      "prompt_tokens": 1319,
+      "completion_tokens": 529,
+      "total_tokens": 1848,
+      "prompt_tokens_details": {
+        "cached_tokens": 1152
+      },
+      "prompt_cache_hit_tokens": 1152,
+      "prompt_cache_miss_tokens": 167
+    },
+    "A_session_requests": 1,
+    "B_session_requests": 1,
+    "A_provider_latency_ms": 5119.683308,
+    "B_provider_latency_ms": 4369.707082999999,
+    "A_total_ms": 5233.6223039999995,
+    "B_total_ms": 4455.503037,
+    "A_local_overhead_ms": 113.93899599999986,
+    "B_local_overhead_ms": 85.79595400000107,
+    "A_selection_ms": null,
+    "B_selection_ms": null,
+    "token_reduction_percent": 91.6045793203707,
+    "all_development_attempts_requests": 4,
+    "all_development_attempts_tokens": 47612,
+    "A_output_chars": 715,
+    "B_output_chars": 517,
+    "note": "A is a 26k test transport baseline, not legacy App. Extraction alone was not separately timed. Local overhead includes DB/auth/validation and is not retrieval timing. Selected sessions are complete one-call sessions; all failed/obsolete development attempts remain in campaign totals."
+  }
+]

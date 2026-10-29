@@ -1,0 +1,97 @@
+{
+  "candidate_code_commit": "2d46210462d7ec64e3027278fbbb1ef28604c6c4",
+  "model_input_builder_frozen_at": "b420ec8",
+  "post_render_policy_changed_during_run": true,
+  "same_exact_code_40_paid_calls": "NOT_PERFORMED; original paid inputs/replies were replayed on the final candidate without network; no claim of same-commit paid full campaign.",
+  "uniform_app_replay_rebuilt_input_hash_matches": 37,
+  "baseline_saved_wire_receipts": 3,
+  "uniform_replay_cases": 40,
+  "paid_generation_requests": 54,
+  "smoke_requests": 4,
+  "full_regression_requests": 50,
+  "full_limit": 50,
+  "automatic_retries": 0,
+  "totals": {
+    "prompt_tokens": 168399,
+    "completion_tokens": 16006,
+    "total_tokens": 184405,
+    "prompt_cache_hit_tokens": 62592,
+    "prompt_cache_miss_tokens": 105807
+  },
+  "smoke_usage": {
+    "prompt_tokens": 2724,
+    "completion_tokens": 999,
+    "total_tokens": 3723,
+    "prompt_cache_hit_tokens": 1152,
+    "prompt_cache_miss_tokens": 1572
+  },
+  "full_usage": {
+    "prompt_tokens": 165675,
+    "completion_tokens": 15007,
+    "total_tokens": 180682,
+    "prompt_cache_hit_tokens": 61440,
+    "prompt_cache_miss_tokens": 104235
+  },
+  "main_distinct_40_usage": {
+    "prompt_tokens": 93634,
+    "completion_tokens": 11692,
+    "total_tokens": 105326,
+    "prompt_cache_hit_tokens": 56832,
+    "prompt_cache_miss_tokens": 36802
+  },
+  "finish_stop": 54,
+  "strict_json_parseable": 54,
+  "nonempty_model_text": 54,
+  "reasoning_tokens": "NA: supplier did not return breakdown; never substitute zero",
+  "thinking_requested": "disabled",
+  "output_limit": 1800,
+  "bill_fee": "NA: no provider invoice available; ledger prices are test estimates, not billing evidence",
+  "live_first_main_dialogue_accepted": 32,
+  "live_first_main_dialogue_denominator": 34,
+  "live_first_main_app_and_current_history_accepted": 35,
+  "live_first_main_app_denominator": 37,
+  "latest_uniform_app_replay_accepted": 37,
+  "latest_uniform_test_baseline_accepted": 3,
+  "history_engineering_fact_groups_passed": 3,
+  "history_groups": 3,
+  "dialogue_status": {
+    "ENGINEERING_PASS": 27,
+    "ENGINEERING_PASS_PROFESSIONAL_PENDING": 2,
+    "FAIL": 1,
+    "PARTIAL": 4
+  },
+  "no_release": "NOT_READY: Q10-B unsupported coverage assertion, Q12/Q14 task omissions and professional review pending. Exact final commit paid full campaign not established.",
+  "prior_generations": 51,
+  "prior_tokens": 128478,
+  "lifetime_generations": 105,
+  "lifetime_tokens": 312883,
+  "earlier_free_models_get": 1,
+  "frozen_input_files_sha_match": {
+    "00_Codex执行说明.md": true,
+    "01_方坤输入_32路径.jsonl": true,
+    "02_评测参考_勿传方坤.jsonl": true,
+    "03_合成历史_245条.jsonl": true,
+    "04_评测与token测试.md": true,
+    "05_校验报告.txt": true
+  },
+  "reference_answers_sent": false,
+  "synthetic_only": true,
+  "foreign_history_facts_sent": 0,
+  "professional_review": "NOT_PERFORMED",
+  "browser_acceptance": "NOT_PERFORMED",
+  "production_importer_acceptance": "NOT_PERFORMED",
+  "provider_fingerprints": {
+    "bc19ba97cbe016479903222bb1578db6": 54
+  },
+  "test_clock_notice": "dispatch startedAt is the fixed synthetic as-of clock, not wall time. provider created epoch and monotonic latencies retained per request.",
+  "offline_tests": {
+    "related_suite_files": 34,
+    "related_tests": 321,
+    "related_failures": 0,
+    "additional_suite_tests": 76,
+    "additional_failures": 0,
+    "counts_overlap_do_not_add": true,
+    "typecheck": "PASS",
+    "full_npm_test": "Not rerun; prior stage script failures remain archived; no full-repo green claim."
+  }
+}

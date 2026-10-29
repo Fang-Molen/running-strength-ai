@@ -1,3 +1,5 @@
+> 2026-10-29 最新：34轮+6会话真实测量已跑完，未全部通过。本次续测54次/184,405 tokens，正式回归50/50已封顶。逐轮结果、保存回复复验与剩余缺陷见 [completion-run/SUMMARY.md](verification/new-questions-20261029/completion-run/SUMMARY.md)。不得继续付费重跑或把工程接受等同语义/专业通过。
+
 # 方坤测试接手入口
 
 目标仓库：`Fang-Molen/running-strength-ai`。目标分支：`test/load-memory-20261029`。

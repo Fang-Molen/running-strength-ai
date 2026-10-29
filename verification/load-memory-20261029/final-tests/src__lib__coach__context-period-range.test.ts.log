@@ -1,8 +1,8 @@
-✔ 明确范围含中间记录，离散日期不扩大为范围 (29.113103ms)
-✔ 跨年、闰日和用户时区保留包含边界 (0.28591ms)
-✔ 无效或倒序范围不得猜测成离散日期或近期记录 (0.296345ms)
-✔ 审查回归：昨天、上周和本月使用明确日历范围，不退回28天 (0.806754ms)
-✔ recent evidence for today recovery is not restricted to today; short Chinese month range is explicit (0.269065ms)
+✔ 明确范围含中间记录，离散日期不扩大为范围 (20.440348ms)
+✔ 跨年、闰日和用户时区保留包含边界 (0.311028ms)
+✔ 无效或倒序范围不得猜测成离散日期或近期记录 (0.263566ms)
+✔ 审查回归：昨天、上周和本月使用明确日历范围，不退回28天 (0.874766ms)
+✔ recent evidence for today recovery is not restricted to today; short Chinese month range is explicit (0.312519ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -10,4 +10,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 37.522316
+ℹ duration_ms 27.878228

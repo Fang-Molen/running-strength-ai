@@ -1,16 +1,16 @@
-✔ load adapter native elapsed milliseconds and imported seconds both yield 30 minutes × RPE 6 = 180 AU (13.268232ms)
-✔ load adapter cannot turn unclosed native session into whole-session duration (0.348404ms)
-✔ load adapter ignores other athlete starts and imported records (0.167142ms)
-✔ load adapter does not count set RPE or unbound RPE as session RPE (0.508234ms)
-✔ load adapter explicit saved import rating fills missing RPE; duplicate ratings remain unresolved (0.463598ms)
-✔ load adapter void removes evidence; feedback or duration correction withdraws stale values (0.675326ms)
-✔ load coverage is explicit append-only, excludes current/future days and isolates athletes (2.700641ms)
-✔ load coverage invalidates a confirmed rest day after an actual import arrives (2.3074ms)
-✔ load coverage failed storage never reports successful save (0.936939ms)
-✔ load adapter future restoration cannot revive a session before the requested asOf (0.475836ms)
-✔ load adapter orders correction commit times instead of trusting input array order (0.468234ms)
-✔ load adapter future field correction does not withdraw existing facts prematurely (0.526913ms)
-✔ load adapter unknown correction commit time keeps affected day incomplete without inventing chronology (0.877509ms)
+✔ load adapter native elapsed milliseconds and imported seconds both yield 30 minutes × RPE 6 = 180 AU (21.331621ms)
+✔ load adapter cannot turn unclosed native session into whole-session duration (0.387713ms)
+✔ load adapter ignores other athlete starts and imported records (0.180481ms)
+✔ load adapter does not count set RPE or unbound RPE as session RPE (0.631109ms)
+✔ load adapter explicit saved import rating fills missing RPE; duplicate ratings remain unresolved (0.807194ms)
+✔ load adapter void removes evidence; feedback or duration correction withdraws stale values (0.862246ms)
+✔ load coverage is explicit append-only, excludes current/future days and isolates athletes (2.843846ms)
+✔ load coverage invalidates a confirmed rest day after an actual import arrives (2.399417ms)
+✔ load coverage failed storage never reports successful save (1.111831ms)
+✔ load adapter future restoration cannot revive a session before the requested asOf (0.548425ms)
+✔ load adapter orders correction commit times instead of trusting input array order (0.850158ms)
+✔ load adapter future field correction does not withdraw existing facts prematurely (0.583317ms)
+✔ load adapter unknown correction commit time keeps affected day incomplete without inventing chronology (0.933984ms)
 ℹ tests 13
 ℹ suites 0
 ℹ pass 13
@@ -18,4 +18,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 29.056235
+ℹ duration_ms 42.453453

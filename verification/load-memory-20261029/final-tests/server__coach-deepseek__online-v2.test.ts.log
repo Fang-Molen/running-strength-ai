@@ -1,12 +1,12 @@
-✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (5.106971ms)
-✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (10.961906ms)
-✔ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (1660.835661ms)
-✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (993.035365ms)
-✔ bounded context accepts structured old history without converting targets into actuals (0.786743ms)
-✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (1012.417099ms)
-✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (1041.30965ms)
-✔ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (911.499433ms)
-✔ host displays exact verified quotations without requiring duplicate model prose; forged quote still fails (1034.993432ms)
+✔ general education and causal explanations survive; personal numbers, clearance and phantom writes do not (2.958198ms)
+✔ output activity scope retains knowledge and unrelated upper-body candidates while rejecting unsolicited painful running clearance (11.99701ms)
+✔ actual controller scopes unsolicited output actions using current question symptoms and persisted restriction records (1505.07049ms)
+✔ persistent grant, independent snapshots, relevant revision invalidation, revocation and reversible migration (972.496675ms)
+✔ bounded context accepts structured old history without converting targets into actuals (4.684162ms)
+✔ GET verifies actual v3 schema metadata; 002-only and rollback never advertise modern readiness (1027.773746ms)
+✔ real selector to snapshot HTTP to controller budgets long history and empty personal/general contexts (1137.892773ms)
+✔ canonical load summary traverses real HTTP controller; full provider input keeps coverage and corrections (1006.153707ms)
+✔ host displays exact verified quotations without requiring duplicate model prose; forged quote still fails (971.433967ms)
 ℹ tests 9
 ℹ suites 0
 ℹ pass 9
@@ -14,4 +14,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 6678.218048
+ℹ duration_ms 6650.612374

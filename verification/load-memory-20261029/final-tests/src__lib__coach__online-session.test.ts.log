@@ -1,16 +1,16 @@
-✔ only owned actual scalar evidence is sent; no plans, foreign devices or unknown scales (7.896817ms)
-✔ explicit zero stays zero; out of range, future and expired records are omitted (0.174102ms)
-✔ explicit consent creates snapshot, sends only reference, validates exact numeric quote and revokes (35.872069ms)
-✔ no consent, changed evidence or disabled preference cannot upload (6.31678ms)
-✔ changed evidence after snapshot prevents provider call and revokes authorization (1.740678ms)
-✔ server cannot replace displayed consent facts (1.64241ms)
-✔ v2 shared assertions reject unsupported personal dose even without a hold (2.349604ms)
-✔ relaxed guard is NOT applied while a safety hold is active: unsupported numbers and release wording are blocked (5.341043ms)
-✔ safety state UNKNOWN (no evidence) is treated like a hold: strict guard (3.985554ms)
-✔ write / clearance claims are blocked even with the relaxed guard (1.561528ms)
-✔ identity changes and cancellation during a pending response cannot deliver its text (5.998381ms)
-✔ persistent online preference automatically sends each independent question without per-turn confirmation (2.747162ms)
-✔ education quantities and physiological explanation pass while false retrieval and fabricated units fail (5.844039ms)
+✔ only owned actual scalar evidence is sent; no plans, foreign devices or unknown scales (6.331238ms)
+✔ explicit zero stays zero; out of range, future and expired records are omitted (0.155925ms)
+✔ explicit consent creates snapshot, sends only reference, validates exact numeric quote and revokes (30.233215ms)
+✔ no consent, changed evidence or disabled preference cannot upload (4.02379ms)
+✔ changed evidence after snapshot prevents provider call and revokes authorization (1.770652ms)
+✔ server cannot replace displayed consent facts (1.757823ms)
+✔ v2 shared assertions reject unsupported personal dose even without a hold (2.312917ms)
+✔ relaxed guard is NOT applied while a safety hold is active: unsupported numbers and release wording are blocked (5.252257ms)
+✔ safety state UNKNOWN (no evidence) is treated like a hold: strict guard (1.885035ms)
+✔ write / clearance claims are blocked even with the relaxed guard (1.650491ms)
+✔ identity changes and cancellation during a pending response cannot deliver its text (4.409199ms)
+✔ persistent online preference automatically sends each independent question without per-turn confirmation (3.195904ms)
+✔ education quantities and physiological explanation pass while false retrieval and fabricated units fail (6.295125ms)
 ℹ tests 13
 ℹ suites 0
 ℹ pass 13
@@ -18,4 +18,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 104.009981
+ℹ duration_ms 88.053673

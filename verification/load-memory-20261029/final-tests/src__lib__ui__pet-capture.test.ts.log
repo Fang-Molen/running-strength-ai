@@ -1,10 +1,10 @@
-✔ selected A feedback is durable, idempotent and visible to coach without making an activity (14.189849ms)
-✔ failure preserves editable draft and switching athlete cannot submit or read it (0.830169ms)
-✔ unknown target, stale target and an existing RPE cannot be overwritten (2.354721ms)
-✔ body feedback retains actual day and absence; parse does not claim third party or negated soreness (0.536957ms)
-✔ conditional feedback undo refuses later edits and preserves original import (1.354617ms)
-✔ native standard soreness feedback reaches the formal evidence adapter (0.710379ms)
-✔ saved body status reaches coach only on the actual day and owner, never as an activity (679.76347ms)
+✔ selected A feedback is durable, idempotent and visible to coach without making an activity (13.974033ms)
+✔ failure preserves editable draft and switching athlete cannot submit or read it (0.783468ms)
+✔ unknown target, stale target and an existing RPE cannot be overwritten (2.00209ms)
+✔ body feedback retains actual day and absence; parse does not claim third party or negated soreness (0.507803ms)
+✔ conditional feedback undo refuses later edits and preserves original import (1.355909ms)
+✔ native standard soreness feedback reaches the formal evidence adapter (0.735656ms)
+✔ saved body status reaches coach only on the actual day and owner, never as an activity (602.003506ms)
 ℹ tests 7
 ℹ suites 0
 ℹ pass 7
@@ -12,4 +12,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 712.770826
+ℹ duration_ms 639.158326

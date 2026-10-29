@@ -1,19 +1,19 @@
-✔ live route refuses client owner/consent assertions without the existing trusted services (3.981286ms)
-✔ live route rejects arbitrary client facts even when trusted services are installed (14.543751ms)
-✔ analysis wire retains owner/plan/actual status, run rest protocol and candidate conditions (2.157174ms)
-✔ analysis wire retains per-hand strength, side, effort and range protocol without recomputing dose (1.487747ms)
-✔ numeric substrings cannot be reassigned from running time to rest or next-session dose (1.406545ms)
-✔ provider accepts only bounded host derived IDs in the closed analysis schema (0.533222ms)
-✔ actual route binds the question and appends code-computed pace/work/distance (31.493159ms)
-✔ unavailable network preserves local fallback without retry or fabricated success (5.683957ms)
-✔ local consent and fact text alone never create a server snapshot authorization (243.631842ms)
-✔ client transmits only server snapshot references and rejects unbounded or unverified output (16.671641ms)
-✔ threshold source/test/protocol identity and unknown device are retained without exposing private IDs (2.884698ms)
-✔ server rechecks reconstructed packet before dispatch: planned fact (2.119267ms)
-✔ server rechecks reconstructed packet before dispatch: future receipt (1.701118ms)
-✔ server rechecks reconstructed packet before dispatch: forged derived pace (1.953398ms)
-✔ R6 server adapter binds computed comparison and intact planned dose to an authorized snapshot (10.58705ms)
-✔ R6 server adapter rejects owner, source version, computed values, plan version and dose mutations (11.773064ms)
+✔ live route refuses client owner/consent assertions without the existing trusted services (4.402389ms)
+✔ live route rejects arbitrary client facts even when trusted services are installed (23.548545ms)
+✔ analysis wire retains owner/plan/actual status, run rest protocol and candidate conditions (2.603564ms)
+✔ analysis wire retains per-hand strength, side, effort and range protocol without recomputing dose (1.708819ms)
+✔ numeric substrings cannot be reassigned from running time to rest or next-session dose (1.512414ms)
+✔ provider accepts only bounded host derived IDs in the closed analysis schema (0.41902ms)
+✔ actual route binds the question and appends code-computed pace/work/distance (29.181813ms)
+✔ unavailable network preserves local fallback without retry or fabricated success (8.876816ms)
+✔ local consent and fact text alone never create a server snapshot authorization (269.588943ms)
+✔ client transmits only server snapshot references and rejects unbounded or unverified output (16.943493ms)
+✔ threshold source/test/protocol identity and unknown device are retained without exposing private IDs (2.902454ms)
+✔ server rechecks reconstructed packet before dispatch: planned fact (1.92844ms)
+✔ server rechecks reconstructed packet before dispatch: future receipt (1.585834ms)
+✔ server rechecks reconstructed packet before dispatch: forged derived pace (1.945755ms)
+✔ R6 server adapter binds computed comparison and intact planned dose to an authorized snapshot (11.053048ms)
+✔ R6 server adapter rejects owner, source version, computed values, plan version and dose mutations (12.422797ms)
 ℹ tests 16
 ℹ suites 0
 ℹ pass 16
@@ -21,4 +21,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 356.426421
+ℹ duration_ms 394.597817

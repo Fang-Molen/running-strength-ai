@@ -1,14 +1,14 @@
-✔ confirmed food-sheet records provide daily totals, recent dates and actual meal macros without a training link (16.747177ms)
-✔ the nutrition-and-health panel save path reaches the same read-only facts (1.882591ms)
-✔ unknown nutrients remain unknown while an explicit recorded zero remains zero (1.17066ms)
-✔ legacy food without a recordedAt remains visible with an explicit unknown save time (0.650768ms)
-✔ future meals and other athletes do not enter food totals or weight facts (0.761886ms)
-✔ repeated calls reread food corrections, deletions, body measurements and athlete changes (3.56356ms)
-✔ unreadable legacy nutrition is a read failure instead of a false empty record claim (0.428064ms)
-✔ malformed event sources and unavailable key enumeration are reported rather than silently ignored (0.554905ms)
-✔ body read failure does not hide valid food records or pretend that weight is absent (0.62553ms)
-✔ nutrition packets cap detail count and omit IDs, location, note, photo and raw source metadata (4.021959ms)
-✔ no meals in the requested week does not erase older records, and latest measured weight stays dated (0.53165ms)
+✔ confirmed food-sheet records provide daily totals, recent dates and actual meal macros without a training link (18.416413ms)
+✔ the nutrition-and-health panel save path reaches the same read-only facts (2.505819ms)
+✔ unknown nutrients remain unknown while an explicit recorded zero remains zero (0.747374ms)
+✔ legacy food without a recordedAt remains visible with an explicit unknown save time (0.560442ms)
+✔ future meals and other athletes do not enter food totals or weight facts (0.73141ms)
+✔ repeated calls reread food corrections, deletions, body measurements and athlete changes (3.728176ms)
+✔ unreadable legacy nutrition is a read failure instead of a false empty record claim (0.486431ms)
+✔ malformed event sources and unavailable key enumeration are reported rather than silently ignored (0.519481ms)
+✔ body read failure does not hide valid food records or pretend that weight is absent (0.648585ms)
+✔ nutrition packets cap detail count and omit IDs, location, note, photo and raw source metadata (5.939811ms)
+✔ no meals in the requested week does not erase older records, and latest measured weight stays dated (0.477017ms)
 ℹ tests 11
 ℹ suites 0
 ℹ pass 11
@@ -16,4 +16,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 36.246742
+ℹ duration_ms 40.690197

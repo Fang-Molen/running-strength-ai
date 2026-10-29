@@ -1,9 +1,9 @@
-✔ no user plan / goal → facts say goal unknown and carry no bundled plan (25.079177ms)
-✔ goal comes from the user: profile target or explicitly stated chat goal (8.533764ms)
-✔ plan lines require an actual imported plan, not just an old log, and are labelled as plan (5.000009ms)
-✔ G04: askOnlineCoach honours setOnline(false) itself — no fetch (14.040366ms)
-✔ server does not treat a client fact snapshot or API key as authority (2.012506ms)
-✔ local interval-rest explainer no longer assumes the 400m/53s goal (0.27233ms)
+✔ no user plan / goal → facts say goal unknown and carry no bundled plan (26.36106ms)
+✔ goal comes from the user: profile target or explicitly stated chat goal (5.749686ms)
+✔ plan lines require an actual imported plan, not just an old log, and are labelled as plan (4.638435ms)
+✔ G04: askOnlineCoach honours setOnline(false) itself — no fetch (18.649083ms)
+✔ server does not treat a client fact snapshot or API key as authority (2.908023ms)
+✔ local interval-rest explainer no longer assumes the 400m/53s goal (0.454884ms)
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -11,4 +11,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 73.547338
+ℹ duration_ms 74.726168

@@ -1,12 +1,12 @@
-✔ approved v2 retires the old blanket relaxation; historical label remains readable (0.583067ms)
-✔ strict guardR5Reply is unchanged: still rejects all four relaxed rules (2.800531ms)
-✔ historical fabricated personal quantity now fails shared v2 policy (2.006107ms)
-✔ historical pain clearance now fails shared v2 policy (0.164448ms)
-✔ historical diagnosis now fails shared v2 policy (0.137226ms)
-✔ a clean answer passes without the unverified flag (0.138318ms)
-✔ write / clearance claims stay blocked, even together with a relaxed rule (0.204097ms)
-✔ setting relaxed=false restores the strict behaviour (one-line restore) (0.105618ms)
-✔ general education no longer inherits personal-number and blanket causal restrictions (0.194232ms)
+✔ approved v2 retires the old blanket relaxation; historical label remains readable (0.659711ms)
+✔ strict guardR5Reply is unchanged: still rejects all four relaxed rules (7.518404ms)
+✔ historical fabricated personal quantity now fails shared v2 policy (2.221159ms)
+✔ historical pain clearance now fails shared v2 policy (0.180541ms)
+✔ historical diagnosis now fails shared v2 policy (0.176675ms)
+✔ a clean answer passes without the unverified flag (1.634667ms)
+✔ write / clearance claims stay blocked, even together with a relaxed rule (0.323226ms)
+✔ setting relaxed=false restores the strict behaviour (one-line restore) (0.122494ms)
+✔ general education no longer inherits personal-number and blanket causal restrictions (0.235594ms)
 ℹ tests 9
 ℹ suites 0
 ℹ pass 9
@@ -14,4 +14,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 11.183179
+ℹ duration_ms 18.602829

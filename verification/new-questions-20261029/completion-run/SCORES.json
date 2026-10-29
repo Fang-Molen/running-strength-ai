@@ -1,0 +1,69 @@
+{
+  "reviewer": "Implementing assistant initial engineering review; not independent professional validation. No paid judge calls. Public development set, not unseen population accuracy.",
+  "pass_rule": "No score averaging: fact, reasoning and task must each be 2; communication must remain readable (>=1), cross-turn 2 when applicable. Professional pending is separate.",
+  "all_40_dimensions": {
+    "facts": {
+      "applicable": 40,
+      "scored": 40,
+      "not_executed": 0,
+      "score_sum": 79,
+      "max": 80,
+      "counts": {
+        "2": 39,
+        "1": 1
+      }
+    },
+    "reasoning_limits": {
+      "applicable": 40,
+      "scored": 40,
+      "not_executed": 0,
+      "score_sum": 78,
+      "max": 80,
+      "counts": {
+        "2": 39,
+        "0": 1
+      }
+    },
+    "task_completion": {
+      "applicable": 40,
+      "scored": 40,
+      "not_executed": 0,
+      "score_sum": 75,
+      "max": 80,
+      "counts": {
+        "2": 35,
+        "1": 5
+      }
+    },
+    "cross_turn": {
+      "applicable": 4,
+      "scored": 4,
+      "not_executed": 0,
+      "score_sum": 8,
+      "max": 8,
+      "counts": {
+        "2": 4
+      }
+    },
+    "communication": {
+      "applicable": 40,
+      "scored": 40,
+      "not_executed": 0,
+      "score_sum": 57,
+      "max": 80,
+      "counts": {
+        "1": 23,
+        "2": 17
+      }
+    }
+  },
+  "dialogue_34_status": {
+    "ENGINEERING_PASS": 27,
+    "ENGINEERING_PASS_PROFESSIONAL_PENDING": 2,
+    "FAIL": 1,
+    "PARTIAL": 4
+  },
+  "history_6_status": {
+    "ENGINEERING_PASS": 6
+  }
+}

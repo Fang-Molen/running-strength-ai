@@ -2,7 +2,7 @@
 
 最新授权：用户要求将当前全部成果提交并推送到 `Fang-Molen/running-strength-ai` 的新分支 `test/load-memory-20261029`，仅此次指定分支可推送；不合并、不建 PR、不发布、不部署。接手入口见仓库根目录 `TESTING-HANDOFF.md`，该页优先于旧包中的未推送说明。
 
-测试任务：用户上传“新题与 Token 对照测试”并要求使用其 DeepSeek API，本次合成测试单独获准付费；真实数据传输仍禁止。已校验32路径、34对话轮次、6个历史对照会话，尚未调用真实模型。Personal vault 已由用户添加密钥，但当前实例检查仍无绑定；环境须声明 `DEEPSEEK_API_KEY` 需求。进展见 `verification/new-questions-20261029/SUMMARY.md`。
+测试任务最新结果：34轮题目+6个长历史会话已完成真实DeepSeek测量，未全部通过。本次续测54次/184,405 tokens（冒烟4次、正式回归50/50次），付费入口已锁定。27轮工程通过、2轮专业待审、4轮部分、1轮失败；历史关键事实3/3组通过。完整逐轮与用量见 `verification/new-questions-20261029/completion-run/SUMMARY.md`，该报告优先于下方旧阶段验证说明。未达到全部放行条件，不合并不发布。
 
 **先读本页，再读 EXECUTION.md。保留现有成果；不要从头开发、重置工作区或重复覆盖旧包。**
 

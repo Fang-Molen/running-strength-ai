@@ -1,9 +1,9 @@
-✔ repairing damaged aggregate settings preserves explicit coach and reference OFF (1.261667ms)
-✔ damaged coach record does not reset unrelated disabled features (0.586482ms)
-✔ a legacy reference switch remains authoritative when another setting changes (0.180892ms)
-✔ turning one feature ON does not turn other disabled features ON (0.124507ms)
-✔ chat toggle and settings use the same choice in both directions (0.234503ms)
-✔ invalid saved booleans do not become permission; fresh defaults stay unchanged (0.216847ms)
+✔ repairing damaged aggregate settings preserves explicit coach and reference OFF (4.345285ms)
+✔ damaged coach record does not reset unrelated disabled features (0.639772ms)
+✔ a legacy reference switch remains authoritative when another setting changes (0.200782ms)
+✔ turning one feature ON does not turn other disabled features ON (0.251388ms)
+✔ chat toggle and settings use the same choice in both directions (0.280572ms)
+✔ invalid saved booleans do not become permission; fresh defaults stay unchanged (0.224237ms)
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -11,4 +11,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 17.856122
+ℹ duration_ms 22.941812
