@@ -1,3 +1,5 @@
+import {questionCalculations} from './question-calculation'
+import {contextTextField} from './context-fields'
 import type {CoachRequestContext} from './online-contract'
 /** Deterministic display of two fully recorded continuous-run work paces.
  * Descriptive comparison only, no causal inference, training dose or clearance. */
@@ -11,4 +13,11 @@ export function contextPaceComparison(question:string,context?:CoachRequestConte
  const date=(n:number)=>ordered[n].r.occurredAt!.slice(0,10)
  const missingSleep=(context?.records??[]).some(r=>r.fields.some(f=>f.name==='notes'&&typeof f.value==='string'&&f.value.includes('睡眠未记录')));
  return [`按已记录连续跑段比较，${pace[0]===pace[1]?'两次平均配速相同':date(pace[0]<pace[1]?0:1)+'这次更快'}：${date(0)}为${format(pace[0])}，${date(1)}为${format(pace[1])}；条件未必相同，不能据此确定疲劳原因。`,...(missingSleep?['资料缺项：睡眠未记录。']:[])]
+}
+
+/** Display the same host-verified arithmetic used in the prompt, independently
+ * of whether prose filtering removed a model paraphrase. Never calls a model. */
+export function computedCoachQuotes(question:string,context?:CoachRequestContext):string[]{
+ const prior=(context?.records??[]).filter(r=>r.category==='DIALOGUE'&&r.fields.some(f=>f.name==='speaker'&&f.value==='user')).map(r=>contextTextField(r,'text'))
+ return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context)]
 }
