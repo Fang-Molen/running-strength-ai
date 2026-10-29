@@ -258,3 +258,35 @@ test('answer V1 gates preserve plan advice and repair unknown-as-fact through th
   }
  }finally{await db.close();}
 });
+
+test('trusted retrieval receipts survive controller composition and remain distinct from personal diagnosis',async()=>{
+ const db=new PGlite(),policy=syntheticPolicy();
+ try{
+  await migrate(db);
+  const quote='合成食品标签：每100毫升40千卡。',url='https://example.test/label';
+  const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authenticate:async()=> 'synthetic-retrieval-owner',policy:()=>policy,now:()=>now,retrieve:async()=>[{id:'label',url,quote,fetchedAt:new Date(now).toISOString(),expiresAt:new Date(now+60000).toISOString()}],fetch:async()=>Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:'尚需核对资料。',nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:0,prompt_cache_miss_tokens:100}})});
+  const send=(path:string,body:unknown)=>handleCoachHttpRequest(new Request('https://coach.test/api/'+path,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime});
+  const question='查询最新食物标签再解释。';const created=await send('coach-snapshot',{...input,question}),r=await created.json();
+  const response=await send('coach-chat',{question,...r.snapshotRef,requestId:'retrieval_receipt'});const body=await response.json();assert.equal(response.status,200);assert.equal(body.retrieval.state,'SUCCEEDED');assert.match(body.text,/40千卡/);assert.match(body.text,/https:\/\/example.test/);assert.ok(body.answerGate.taskCoverage.every((r:any)=>r.satisfied));
+ }finally{await db.close();}
+});
+
+test('trusted read-only registration receipts bind owner, date, quantity and success before a completion claim',async()=>{
+ const db=new PGlite(),policy=syntheticPolicy();let mode='valid',lookups=0;
+ try{
+  await migrate(db);
+  const runtime=createCoachServices({db:createPgliteTransactionAdapter(db),authenticate:async()=> 'synthetic-receipt-owner',policy:()=>policy,now:()=>now,
+   lookupActionReceipt:async(_subject,snapshot)=>{lookups++;const intent={requestId:'write-1',owner:snapshot.athleteId,date:'2026-10-28',target:'breakfast',item:'synthetic-milk',quantity:'250ml',idempotencyKey:'once-1'};
+    return {intent,receipt:{...intent,status:mode==='unknown'?'UNKNOWN':'SUCCEEDED',...(mode==='owner'?{owner:'another-owner'}:{}),...(mode==='date'?{date:'2026-10-27'}:{}),...(mode==='quantity'?{quantity:'500ml'}:{})},currentOwner:'untrusted-adapter-value-is-overwritten',authorized:mode!=='unauthorized',claimText:'已登记到指定早餐。'};},
+   fetch:async()=>Response.json({model:'synthetic-model',choices:[{finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({mode:'answer',text:'已登记到指定早餐。',nextStep:null,citations:[],evidenceQuotes:[],medicalReferral:false,compareIds:null,seriesIds:null,planChanged:false})}}],usage:{prompt_tokens:100,completion_tokens:50,total_tokens:150,prompt_cache_hit_tokens:20,prompt_cache_miss_tokens:80}})});
+  const send=(path:string,body:unknown)=>handleCoachHttpRequest(new Request(`https://coach.test/api/${path}`,{method:'POST',headers:{'content-type':'application/json',origin:'https://coach.test'},body:JSON.stringify(body)}),{env:syntheticEnv(policy),runtime});
+  for(const value of ['valid','owner','date','quantity','unknown','unauthorized']){
+   mode=value;const question='请核实早餐登记结果',created=await send('coach-snapshot',{...input,question}),receipt=await created.json();
+   assert.equal(created.status,200,JSON.stringify(receipt));const response=await send('coach-chat',{question,...receipt.snapshotRef,requestId:'receipt-'+mode}),body=await response.json();
+   assert.equal(response.status,200,JSON.stringify(body));assert.equal(body.actionReceipt.snapshotId,receipt.snapshotRef.snapshotId);assert.equal(body.actionReceipt.consentId,receipt.snapshotRef.consentId);
+   if(mode==='valid'){assert.equal(body.text,'已登记到指定早餐。');assert.equal(body.answerGate.decision,'VALIDATED');}
+   else{assert.doesNotMatch(body.text,/已登记到指定早餐/);assert.ok(body.answerGate.reasonCodes.includes('WRITE_UNCONFIRMED'));}
+  }
+  assert.equal(lookups,6);
+ }finally{await db.close()}
+});

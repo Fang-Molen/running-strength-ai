@@ -4,7 +4,7 @@ import {boundExistingPlanAdvice,plannedAdviceActionIsSafe} from './advice-ground
 import {buildAnswerEvidenceState} from './answer-evidence';
 import {evaluateAnswerTask} from './answer-task';
 import {unsupportedEvidenceStateClaim,unsupportedSemanticFact,type AnswerGateResult,type AnswerToolState} from './answer-gate';
-import {checkedRetrievalProse,validRetrievalState} from './answer-tools';
+import {actionReceiptMatches,checkedRetrievalProse,validRetrievalState} from './answer-tools';
 import {contextModelQuote,type CoachRequestContext} from './online-contract';
 /** Browser rechecks the delivered semantic groups against the still-current
  * local evidence. A server hash is integrity metadata, never source authority. */
@@ -21,6 +21,7 @@ export function verifyDeliveredAnswer(gate:AnswerGateResult,input:{question:stri
   const bound=b.kind==='CANDIDATE_ADVICE'&&boundExistingPlanAdvice(b.text,input.question,[...input.citedQuotes,...plans]);
   const options={...input,factQuotes:[...input.factQuotes,...input.computedQuotes,...(bound?[b.text]:[])]};
   if(bound&&!plannedAdviceActionIsSafe(b.text,options))return false;
+  if(b.kind==='ACTION_RESULT'){const a=input.tools?.action;if(!a||!actionReceiptMatches(a.intent,a.receipt,a.currentOwner,a.authorized)||b.text!==a.claimText)return false;continue;}
   let text=b.text;
   if(/https?:\/\//.test(text)||/(?:刚刚|本次|刚才).{0,6}(?:查到|查证|检索到|搜索到)/.test(text)){const checked=checkedRetrievalProse(text,input.tools?.retrieval,now);if(!checked.ok)return false;text=checked.prose;}
   if(!validateCoachAssertions(text,options).ok)return false;

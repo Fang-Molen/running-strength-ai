@@ -22,7 +22,7 @@ const stripNumbering=(s:string)=>s.replace(/^\s*(?:[-*]\s*)?(?:\d+[.、)）]\s*|
 const inferKind=(s:string):AnswerBlockKind=>/^(?:请确认|请补充|请提供|需要你确认)/.test(s)?'UNCERTAINTY':/^(?:已|已经)(?:为你|替你|成功)?(?:登记|录入|写入|保存|更新|修改|重排)/.test(s)?'ACTION_RESULT':/若|如果|是否|建议|可考虑|可以先|先考虑|安排|优先|保留/.test(s)?'CANDIDATE_ADVICE':/未知|未确认|未记录|不能|无法|缺少|请提供|补充|补记/.test(s)?'UNCERTAINTY':/[0-9]/.test(s)?'OBSERVED_FACT':'GENERAL_KNOWLEDGE';
 export function unsupportedSemanticFact(text:string,facts:readonly string[],computed:readonly string[]):boolean{
  const completed=/(?:你|本人|本次|今天).{0,8}(?:已经|已)(?:完成|跑完|做完|执行)|你(?:完成了|训练过)/.test(text);
- const comparison=/(?:配速|两次|两课).{0,5}(?:相同|更快|更慢)/.test(text);
+ const comparison=/(?:配速|两次|两课|今天|昨天).{0,5}(?:相同|更快|更慢)/.test(text);
  return (completed||comparison)&&!facts.some(f=>supportedEvidenceQuote(f,text))&&!(comparison&&computed.some(q=>/相同|并列/.test(q)&&/相同|并列/.test(text)));
 }
 function legacyBlocks(candidate:AnswerCandidate):AnswerBlock[]{
@@ -36,7 +36,7 @@ function legacyBlocks(candidate:AnswerCandidate):AnswerBlock[]{
 export function unsupportedEvidenceStateClaim(text:string,state:AnswerEvidenceState){
  if(state.coverage==='UNKNOWN'&&affirmed(text,/(?:记录|覆盖)[^\n，,。；;：:]{0,8}(?:并不完整|不完整|存在缺失|已经完整|已经齐全|全部齐全)/))return true;
  if(state.clearance==='UNKNOWN'&&/(?:没有|未|尚未|没).{0,5}(?:得到|获得|取得|获).{0,4}(?:医疗|医生)?许可/.test(text)&&!/许可(?:资料|状态).{0,5}(?:未知|未记录|未确认)/.test(text))return true;
- if(!state.declaredRestrictions.some(r=>/医生|医嘱|医疗/.test(r.text))&&/(?:医生|医嘱).{0,8}(?:禁止|限制)/.test(text))return true;
+ if(!state.declaredRestrictions.some(r=>/医生|医嘱|医疗/.test(r.text))&&affirmed(text,/(?:医生|医嘱).{0,8}(?:禁止|限制)/))return true;
  if(!state.declaredRestrictions.length&&/(?:你|当前).{0,8}(?:已申报|存在|已有).{0,6}(?:医生|医疗|医嘱|训练限制|活动限制)|医生(?:已经|已)?禁止/.test(text))return true;
  if(!state.declaredRestrictions.length&&/(?:安全状态|状态显示).{0,8}(?:训练受限|活动限制)/.test(text))return true;
  return false;
@@ -47,13 +47,14 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
  const reasons=new Set<string>();const state=input.evidenceState??buildAnswerEvidenceState(input.question,input.context);
  if(!input.candidate.text.trim()&&!input.candidate.blocks?.length)reasons.add('EMPTY_RESPONSE');
  const claims=input.candidate.evidenceQuotes??[],validClaims=claims.filter(c=>input.sources.some(s=>s.kind==='FACT'&&s.id===c.sourceId&&supportedEvidenceQuote(s.detail,c.quote)));
+ if(new Set(validClaims.map(c=>c.sourceId+'\0'+c.quote)).size<validClaims.length)reasons.add('EVIDENCE_DEDUPLICATED');
  if(validClaims.length!==claims.length)reasons.add('SOURCE_MISMATCH');
  const expectedComputed=computedCoachQuotes(input.question,input.context);
  const computed=input.computedQuotes.filter(q=>expectedComputed.includes(q));
  if(computed.length!==input.computedQuotes.length)reasons.add('DERIVATION_INVALID');
  const hostContext=(input.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote);
  const plans=(input.context?.records??[]).filter(r=>r.category==='PLAN'&&r.state==='PLANNED').map(contextModelQuote);
- const facts=[...validClaims.map(c=>c.quote),...computed,...hostContext];
+ const facts=[...validClaims.filter(c=>!c.sourceId.startsWith('retrieved:')).map(c=>c.quote),...computed,...hostContext];
  const options:CoachAssertionOptions={question:input.question,factQuotes:facts,citedQuotes:validClaims.map(c=>c.quote),restrictions:input.restrictions,safetyRestricted:input.safetyRestricted};
  const all=input.candidate.blocks?.length?input.candidate.blocks.map(b=>({...b,text:stripNumbering(b.text)})):legacyBlocks(input.candidate);
  const ids=new Set<string>();const bad=new Set<string>();
@@ -62,6 +63,7 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
  const allowedKinds=['OBSERVED_FACT','DERIVED_FACT','EXISTING_PLAN','CANDIDATE_ADVICE','GENERAL_KNOWLEDGE','UNCERTAINTY','ACTION_RESULT'];
  function checked(text:string,kind:AnswerBlockKind){
   if(/\b(?:UNKNOWN|PAIN|SORENESS|COMPLETED)\b|(?:UNKNOWN|distanceComplete|完整距离覆盖)\s*=\s*(?:false|true)/.test(text)){reasons.add('UI_STATE_MISMATCH');return false;}
+  if(affirmed(text,/恢复(?:已)?取消(?:的)?(?:写操作|登记|写入)/)){reasons.add('CANCELLED_ACTION_REPLAY');return false;}
   if(kind==='CANDIDATE_ADVICE'&&affirmed(text,/压缩成|压成|合并到|叠加|塞进/)){reasons.add('UNSUPPORTED_DOSE');return false;}
   if(unsupportedEvidenceStateClaim(text,state)){reasons.add('UNKNOWN_AS_FACT');return false;}
   if(affirmed(text,/(?:证明|确定).{0,16}(?:恢复恶化|恢复正常|疲劳已经恢复|完全恢复)/)&&!/(?:不能|无法|不足以).{0,14}(?:证明|确定)/.test(text)){reasons.add('SOURCE_MISMATCH');return false;}
@@ -103,14 +105,27 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
  const kept=all.filter(b=>!bad.has(b.id)&&b.text);
  const host=(text:string,kind:AnswerBlockKind,id:string)=>{if(checked(text,kind)&&!kept.some(b=>b.text===text||b.text.includes(text)))kept.push({id,kind,text,evidenceRefs:[],dependsOn:[],groupId:id});};
  computed.forEach((q,i)=>host(q,'DERIVED_FACT','host:calculation:'+i));
+ if(input.tools?.retrieval.state==='SUCCEEDED')for(const [i,page]of input.tools.retrieval.sources.entries()){
+  if(!kept.some(b=>b.text.includes(page.quote)&&b.text.includes(page.url)))host('本次取得的网页原文：'+page.quote+' '+page.url,'OBSERVED_FACT','host:web:'+i);
+ }
  if(validClaims.some(c=>/\b(?:UNKNOWN|PAIN|SORENESS|COMPLETED)\b|完整距离覆盖=/.test(c.quote)))hostContext.slice(0,6).forEach((q,i)=>host(q,'OBSERVED_FACT','host:projection:'+i));
  // Exact accepted citations remain available when numeric paraphrases are removed.
  if(!kept.length||buildAnswerTask(input.question).some(t=>t.kind==='COMPARISON'||t.kind==='ANSWER'))for(const [i,c]of validClaims.entries())host(c.quote,'OBSERVED_FACT','host:quote:'+i);
+ if(buildAnswerTask(input.question).some(t=>t.kind==='ARRANGEMENT')&&!plans.length)for(const [i,q]of hostContext.entries())if(/可练|可用.{0,6}(?:天|次)|可训练/.test(q))host(q,'OBSERVED_FACT','host:availability:'+i);
  if(!kept.length&&!reasons.has('DEPENDENCY_BROKEN')&&/总结|汇总|当前有效|回放|计划是什么/.test(input.question))hostContext.slice(0,6).forEach((q,i)=>host(q,'OBSERVED_FACT','host:context:'+i));
  if(buildAnswerTask(input.question).some(r=>r.kind==='COVERAGE'))host(state.coverage==='UNKNOWN'?'记录覆盖尚未确认，不能由现有记录证明全年训练完整，也不能断言已经漏记。':state.coverage==='INCOMPLETE'?'按你明确提供的漏记说明，当前记录存在缺失；缺失部分的数量未知。':'记录完整性按明确确认的范围说明。','UNCERTAINTY','host:coverage');
- if(reasons.has('UNKNOWN_AS_FACT')&&!state.declaredRestrictions.length&&/医嘱|医疗|许可|限制训练|训练限制|活动限制/.test(input.candidate.text))host('症状是当前自述；没有可用的医嘱限制或医疗许可资料，许可状态未知。谨慎处理是系统建议。','UNCERTAINTY','host:authority');
+ if(reasons.has('UNKNOWN_AS_FACT')&&!state.declaredRestrictions.length&&/医嘱|医疗|许可|限制训练|训练限制|活动限制/.test(input.candidate.text))host('症状来自当前本人自述；医疗许可状态未知。当前资料未提供医嘱记录。谨慎处理是系统建议。','UNCERTAINTY','host:authority');
+ if(reasons.has('RISK_SCOPE_CONFLICT')){
+  state.symptomReports.slice(0,2).forEach((r,i)=>host('当前本人反馈：'+r.text+'。其原因和许可状态仍需核实。','OBSERVED_FACT','host:symptom:'+i));
+  state.declaredRestrictions.slice(0,2).forEach((r,i)=>host('用户转述的限制：'+r.text+'。需核实有效范围，不能因原计划而放行。','OBSERVED_FACT','host:restriction:'+i));
+ }
+ if(!kept.length&&/换表|HRV/.test(input.question))host('设备或算法变化后，数值未必可比；请提供同口径记录与个人常态，再结合主观反馈观察，不能仅凭下降判定恢复恶化。','UNCERTAINTY','host:device');
+ if(!kept.length&&/睡眠/.test(input.question))host('当前睡眠时长未知；未同步不等于没有睡眠。请补录或重新同步后核对，不能据缺失判断疲劳程度。','UNCERTAINTY','host:sleep');
+ if(!kept.length&&/登记|录入/.test(input.question)&&!input.tools?.action)host('请先确认食物份量或重量、配料及所属餐次；如选择估算需明确标注。当前没有成功写入回执，尚未确认登记。','UNCERTAINTY','host:food');
+ if(input.tools?.action?.receipt.status==='UNKNOWN'){reasons.add('ACTION_STATUS_UNKNOWN');host('提交结果未知，尚未确认完成；请按原幂等键查询回执并对账，不要重新创建登记。','UNCERTAINTY','host:action-unknown');}
  const retrievalSucceeded=input.tools?.retrieval.state==='SUCCEEDED'&&!!input.tools.retrieval.sources.length;
  if(buildAnswerTask(input.question).some(r=>r.kind==='RETRIEVAL')&&!retrievalSucceeded){reasons.add('RETRIEVAL_UNPROVEN');host('本轮未能取得所需的最新网页，查询尚未完成；已有资料仅可作为有限背景。联网选择保留。','UNCERTAINTY','host:retrieval');}
+ if(reasons.has('UI_STATE_MISMATCH')&&!kept.length)host('当前状态未知，证据不足；请补充近期训练、主观恢复和不适反馈后再判断。','UNCERTAINTY','host:unknown');
  let coverage=evaluateAnswerTask(input.question,kept,retrievalSucceeded);
  if(coverage.some(t=>!t.satisfied))reasons.add('TASK_DROPPED');
  if(coverage.some(t=>!t.satisfied&&t.kind==='ARRANGEMENT')&&!input.safetyRestricted&&!state.symptomReports.length){
@@ -126,8 +141,10 @@ export function validateFinalAnswer(input:AnswerGateInput):AnswerGateResult{
  let text=kept.map(b=>b.text).join('\n');
  if(!text||text.length>max||kept.some(b=>!checked(b.text,b.kind))){kept.splice(0,kept.length,{id:'host:technical',kind:'UNCERTAINTY',text:'本轮最终回答无法完整核验，已停止处理；请缩小问题范围，原记录和计划保留。',evidenceRefs:[],dependsOn:[],groupId:'host:technical'});text=kept[0].text;reasons.add('FINAL_VALIDATION_FAILED');}
  coverage=evaluateAnswerTask(input.question,kept,retrievalSucceeded);
+ const riskRefusal=reasons.has('RISK_SCOPE_CONFLICT')&&!/当前|最新信息|已知信息|已知资料/.test(input.question)&&kept.every(b=>b.id.startsWith('host:'));
+ if(riskRefusal)reasons.add('TASK_DROPPED');
  const complete=coverage.every(t=>t.satisfied)&&!reasons.has('TASK_DROPPED');
- const decision:AnswerDecision=reasons.has('FINAL_VALIDATION_FAILED')||reasons.has('EMPTY_RESPONSE')?'FAILED_TECHNICAL':complete?(reasons.size?'REPAIRED':'VALIDATED'):reasons.has('RISK_SCOPE_CONFLICT')?'SAFE_REFUSAL':reasons.has('DEPENDENCY_BROKEN')?'PARTIAL':coverage.every(t=>!t.satisfied)||kept.every(b=>b.kind==='UNCERTAINTY')?'NEEDS_CLARIFICATION':'PARTIAL';
+ const decision:AnswerDecision=reasons.has('FINAL_VALIDATION_FAILED')||reasons.has('EMPTY_RESPONSE')||reasons.has('ACTION_STATUS_UNKNOWN')||reasons.has('CANCELLED_ACTION_REPLAY')||reasons.has('RETRIEVAL_UNPROVEN')&&kept.every(b=>b.kind==='UNCERTAINTY')?'FAILED_TECHNICAL':complete?(reasons.size?'REPAIRED':'VALIDATED'):reasons.has('RISK_SCOPE_CONFLICT')?(riskRefusal?'SAFE_REFUSAL':'PARTIAL'):reasons.has('DEPENDENCY_BROKEN')?'PARTIAL':coverage.every(t=>!t.satisfied)||kept.every(b=>b.kind==='UNCERTAINTY')||/先帮我规划/.test(input.question)&&!plans.length?'NEEDS_CLARIFICATION':'PARTIAL';
  const professionalReview=/疼|痛|伤|医|恢复|HRV/.test(input.question)||kept.some(b=>b.kind==='CANDIDATE_ADVICE')?'PENDING':'NOT_REQUIRED';
  const reasonCodes=[...reasons];
  const stageCodes=[['WRITE_UNCONFIRMED'],['SCHEMA_INVALID','EMPTY_RESPONSE'],['SOURCE_MISMATCH','UNKNOWN_AS_FACT'],['DERIVATION_INVALID'],['UNSUPPORTED_DOSE','RISK_SCOPE_CONFLICT','DIAGNOSIS_CLAIM'],['WRITE_UNCONFIRMED','RETRIEVAL_UNPROVEN'],['DEPENDENCY_BROKEN'],['TASK_DROPPED'],['FINAL_VALIDATION_FAILED']];

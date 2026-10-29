@@ -127,8 +127,9 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   const sources=[...(answer.retrieval?.sources??[]).map(retrievalPageQuote),...computed,...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
   const quoted=answer.evidenceQuotes??[]
   if(quoted.some(q=>!answer.text.includes(q)||!sources.some(s=>supportedEvidenceQuote(s,q))))return {error:'模型引用与本次资料不一致，已保留本地回答。'}
+  if(answer.actionReceipt&&(answer.actionReceipt.snapshotId!==ref?.snapshotId||answer.actionReceipt.consentId!==ref?.consentId))return {error:'动作回执与本轮授权不一致，未确认完成。'}
   if(answer.answerGate){
-   if(!verifyDeliveredAnswer(answer.answerGate,{question:preview.question,context:preview.context,restrictions,factQuotes:[...sources,...quoted],citedQuotes:quoted,computedQuotes:computed,...(answer.retrieval?{tools:{retrieval:answer.retrieval}}:{}),safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'}))return {error:'最终回答与当前资料、安全限制或任务状态不一致，已保留本地回答。'}
+   if(!verifyDeliveredAnswer(answer.answerGate,{question:preview.question,context:preview.context,restrictions,factQuotes:[...sources,...quoted],citedQuotes:quoted,computedQuotes:computed,tools:{retrieval:answer.retrieval??{state:'NOT_NEEDED',enabled:true,sources:[]},...(answer.actionReceipt?{action:answer.actionReceipt}:{})},safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'}))return {error:'最终回答与当前资料、安全限制或任务状态不一致，已保留本地回答。'}
   }else{
   const checked=validateCoachAssertions(answer.text,{citedQuotes:quoted,question:preview.question,restrictions,factQuotes:[...sources,...quoted],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})
   if(!checked.ok)return {error:'模型内容未通过事实或安全核验，已保留本地回答。'}

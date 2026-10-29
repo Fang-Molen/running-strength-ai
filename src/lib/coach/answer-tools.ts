@@ -1,6 +1,6 @@
 export type RetrievalPage={id:string;url:string;quote:string;fetchedAt:string;expiresAt:string};
 export type RetrievalState={state:'NOT_NEEDED'|'REQUESTED'|'SUCCEEDED'|'PARTIAL'|'FAILED'|'STALE_CACHE';enabled:boolean;sources:RetrievalPage[]};
-export function needsAnswerRetrieval(question:string){return /(?:查询|查找|搜索|检索|查证).{0,16}(?:最新|标签|文献|网页|资料)|最新.{0,8}(?:标签|研究)|这个网页/.test(question);}
+export function needsAnswerRetrieval(question:string){return /(?:查询|查找|搜索|检索|查证).{0,16}(?:最新|标签|文献|网页|资料)|最新.{0,8}(?:标签|研究)|这个网页|按检索结果/.test(question);}
 /** Trusted adapter only. No model URL, history or write authorization is sent.
  * The preference is retained after failure; no automatic retry or model call. */
 export async function resolveAnswerRetrieval(question:string,enabled:boolean,port?: (question:string,signal:AbortSignal)=>Promise<RetrievalPage[]>,clock:number|(()=>number)=Date.now):Promise<RetrievalState>{

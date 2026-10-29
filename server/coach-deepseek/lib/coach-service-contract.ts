@@ -74,5 +74,7 @@ export type FangkunCoachServices = {
   fetch?: typeof globalThis.fetch;
   /** Host configured retrieval only; browser/model payloads cannot supply this port. */
   retrieve?: (question:string,signal:AbortSignal)=>Promise<import('../../../src/lib/coach/answer-tools').RetrievalPage[]>;
+  /** Read an already-authorized action receipt; this port never performs a write. */
+  lookupActionReceipt?: (subject:VerifiedCoachSubject,snapshot:AuthorizedCoachSnapshot,signal:AbortSignal)=>Promise<import('../../../src/lib/coach/answer-gate').AnswerToolState['action']>;
   now?: () => number;
 };

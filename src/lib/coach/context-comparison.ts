@@ -37,5 +37,20 @@ export function computedCoachQuotes(question:string,context?:CoachRequestContext
    distance.push(`所述两条距离：${a.label}${Number(a.d)/1000}公里，${b.label}${Number(b.d)/1000}公里；${delta===0?'距离相同':(Number(a.d)>Number(b.d)?a.label:b.label)+'比另一条多'+delta+'公里'}。仅比较本轮提供的自述数据，未读取另一账号，也不把他人数据归给本人。`);
   }
  }
- return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context),...selfReportRangeComparison(question),...distance]
+ return [...questionCalculations(question,prior).map(s=>s.detail),...contextPaceComparison(question,context),...selfReportRangeComparison(question),...distance,...contextWearableComparison(question,context)]
+}
+
+/** Descriptive calculations only on explicitly selected complete records. Match by
+ * upstream activity lineage, never by similar time or distance alone. */
+export function contextWearableComparison(question:string,context?:CoachRequestContext):string[]{
+ if(!/两个时长|时长口径|合计/.test(question))return [];
+ const records=(context?.records??[]).filter(r=>r.category==='TRAINING'&&r.state==='ACTUAL'&&r.fields.some(f=>f.name==='subjectRole'&&f.value==='SELF'));
+ const groups=new Map<string,typeof records>();
+ for(const r of records){const lineage=r.fields.find(f=>f.name==='activityLineage')?.value;const key=typeof lineage==='string'&&lineage?lineage:r.recordId;groups.set(key,[...(groups.get(key)??[]),r]);}
+ const values=[...groups.values()].map(rs=>{const f=(r:typeof records[number],name:string)=>r.fields.find(f=>f.name===name)?.value;const ds=rs.map(r=>f(r,'knownDistance'));if(rs.some(r=>r.fields.find(f=>f.name==='knownDistance')?.unit!=='m')||ds.some(d=>typeof d!=='number'||!Number.isFinite(d)||d<0)||new Set(ds).size!==1||rs.some(r=>f(r,'distanceComplete')!==true||f(r,'modality')!=='RUN'))return null;return {rs,d:Number(ds[0]),timer:rs.map(r=>f(r,'timerSeconds')).find(v=>typeof v==='number'&&v>0),elapsed:rs.map(r=>f(r,'elapsedSeconds')).find(v=>typeof v==='number'&&v>0)};});
+ if(!values.length||values.some(v=>!v))return [];
+ const valid=values.filter((v):v is NonNullable<typeof v>=>v!==null),out:string[]=[];
+ if(/合计/.test(question))out.push('所选跑步记录按已匹配活动标识去重，距离合计'+Number((valid.reduce((n,v)=>n+v.d,0)/1000).toFixed(6))+'公里；来源：'+records.map(r=>r.source).join('、')+'。未匹配到同一活动的记录分别保留，不代表全天记录完整。');
+ if(/两个时长|时长口径/.test(question)&&valid.length===1){const v=valid[0];if(typeof v.timer==='number'&&typeof v.elapsed==='number'&&v.d>0){const pace=Math.round(v.timer*1000/v.d);out.push('同一活动的计时器时长'+v.timer+'秒、经过时长'+v.elapsed+'秒，口径不同，不能相加；按计时器时长与'+v.d/1000+'公里计算配速约'+Math.floor(pace/60)+':'+String(pace%60).padStart(2,'0')+'/km。来源：'+records.map(r=>r.source).join('、')+'。');}}
+ return out.filter(q=>q.length<=400);
 }
