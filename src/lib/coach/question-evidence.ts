@@ -13,6 +13,6 @@ export function supportedEvidenceQuote(detail:string,quote:string):boolean{
  if(quote.length<4||quote.length>1000||/^[0-9\s.％%+-]+$/.test(quote))return false;
  const boundary=(c:string|undefined)=>c===undefined||/[，,；;。\n：:]/.test(c);
  let at=detail.indexOf(quote);
- while(at>=0){if(boundary(at?detail[at-1]:undefined)&&boundary(detail[at+quote.length]))return true;at=detail.indexOf(quote,at+1)}
+ while(at>=0){if(boundary(at?detail[at-1]:undefined)&&(boundary(quote.at(-1))||boundary(detail[at+quote.length])))return true;at=detail.indexOf(quote,at+1)}
  return false;
 }

@@ -29,6 +29,7 @@ test('quotes may select complete exact source fields, never altered values or cu
  assert.equal(supportedEvidenceQuote(s,'范围2025年，已记录183课，已知距离915公里'),true)
  assert.equal(supportedEvidenceQuote(s,'已知距离915公里'),true)
  assert.equal(supportedEvidenceQuote(s,'已知距离916公里'),false)
+ assert.equal(supportedEvidenceQuote('睡眠未记录。（来源：自述）','睡眠未记录。'),true)
  assert.equal(supportedEvidenceQuote('结论：不能恢复冲刺；需评估。','恢复冲刺'),false)
  assert.equal(supportedEvidenceQuote('距离=5000米；覆盖未知','5000米'),false)
 })
