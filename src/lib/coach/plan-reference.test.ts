@@ -23,3 +23,12 @@ test('recorded-distance questions use the same canonical aggregate path as expli
  assert.equal(asksLoadSummary('10月25日至29日我已记录了多少公里？'),true)
  assert.equal(asksLoadSummary('一般配速是什么？'),false)
 })
+import {supportedEvidenceQuote} from './question-evidence'
+test('quotes may select complete exact source fields, never altered values or cut negations',()=>{
+ const s='范围2025年，已记录183课，已知距离915公里；覆盖未确认；未经核验。'
+ assert.equal(supportedEvidenceQuote(s,'范围2025年，已记录183课，已知距离915公里'),true)
+ assert.equal(supportedEvidenceQuote(s,'已知距离915公里'),true)
+ assert.equal(supportedEvidenceQuote(s,'已知距离916公里'),false)
+ assert.equal(supportedEvidenceQuote('结论：不能恢复冲刺；需评估。','恢复冲刺'),false)
+ assert.equal(supportedEvidenceQuote('距离=5000米；覆盖未知','5000米'),false)
+})

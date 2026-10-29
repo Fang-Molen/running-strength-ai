@@ -1,3 +1,4 @@
+import {supportedEvidenceQuote} from '../../../src/lib/coach/question-evidence';
 import {mock} from 'node:test';
 import {runOnlineExplanation} from '../../../src/lib/coach/online-session';
 import {validateCoachAssertions,retainValidCoachSentences} from '../../../src/lib/coach/assertion-policy';
@@ -19,7 +20,7 @@ const start=Number(arg('--start','0')),count=Number(arg('--count','3')),phase=ar
 if(paid&&existsSync(out+'/STOPPED.json'))throw Error('CAMPAIGN_STOPPED_AT_SEMANTIC_GATE_NO_GENERATION');
 const all=JSON.parse(readFileSync(base+'/dispatch-order.json','utf8')).schedule;
 const targeted=[14,30,34,35,36,37,38,39,1];
-const indices=phase==='smoke5'?[30,31]:phase.startsWith('smoke')?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];
+const indices=phase==='history-replay'?[34,35,36,37,38,39]:phase==='smoke5'?[30,31]:phase.startsWith('smoke')?[14,30,1]:[...targeted,...all.map((_:any,i:number)=>i).filter((i:number)=>!targeted.includes(i))];
 const schedule=indices.map(i=>all[i]);const replay=args.includes('--replay');
 const asOf='2026-10-29T12:00:00.000Z',now=Date.parse(asOf)+1000;mock.timers.enable({apis:['Date'],now});
 const hash=(x:any)=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
@@ -45,7 +46,7 @@ const callLog=out+'/calls.jsonl',resultLog=out+'/'+phase+(paid?'-results.jsonl':
 const existing=existsSync(callLog)?readFileSync(callLog,'utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x)):[];
 let phaseCount=0;let totalCalls=existing.length,totalTokens=existing.reduce((s,r)=>s+(r.reply?.usage?.total_tokens||0),0);
 function dispatchReal(){
- if(totalCalls>=60||totalTokens>=200000||(!phase.startsWith('smoke')&&existing.filter(r=>r.requestId.startsWith('full-')||r.requestId.startsWith('final-')).length+(phaseCount++)>=50)||(phase.startsWith('smoke')&&existing.filter(r=>r.requestId.startsWith('smoke')).length+(phaseCount++)>=10))throw Error('CAMPAIGN_STOP_CAP');
+ if(totalCalls>=60||totalTokens>=200000||(!phase.startsWith('smoke')&&existing.filter(r=>/^(?:full|final\d*)-/.test(r.requestId)).length+(phaseCount++)>=50)||(phase.startsWith('smoke')&&existing.filter(r=>r.requestId.startsWith('smoke')).length+(phaseCount++)>=10))throw Error('CAMPAIGN_STOP_CAP');
  const requestId=phase+'-'+active.path_id+'-'+active.turn;
  if(existing.some(r=>r.requestId===requestId))throw Error('NO_DUPLICATE_PAID_CALL');
  totalCalls++;const started=performance.now();
@@ -85,8 +86,8 @@ for(let i=start;i<Math.min(start+count,schedule.length);i++){
    dispatchReal();let parsed:any=null,error:string|null=null;
    try{const raw=validateProviderReply(provider,policy,{inputTokenLimit:26000,outputTokenLimit:1800});parsed=JSON.parse(raw);
     const wire=JSON.parse(payload.messages[1].content),claims=parsed.evidenceQuotes??[];
-    if(!Array.isArray(claims)||claims.some((c:any)=>!wire.facts.some((f:any)=>f.kind==='FACT'&&f.id===c.sourceId&&f.detail===c.quote)||!parsed.citations.includes(c.sourceId)))throw Error('BASELINE_SOURCE_MISMATCH');
-    const options={citedQuotes:claims.map((c:any)=>c.quote),factQuotes:claims.map((c:any)=>c.quote),question:active.question,safetyRestricted:wire.safety.trainingRestricted};let text=[...claims.filter((c:any)=>!parsed.text.includes(c.quote)).map((c:any)=>c.quote),parsed.text,parsed.nextStep??''].join('\n');if(!validateCoachAssertions(text,options).ok)text=retainValidCoachSentences(text,options);if(!text||!validateCoachAssertions(text,options).ok)throw Error('BASELINE_ASSERTION_POLICY');parsed.text=text;
+    if(!Array.isArray(claims)||parsed.citations.some((id:string)=>!wire.facts.some((f:any)=>f.id===id))||claims.some((c:any)=>!wire.facts.some((f:any)=>f.kind==='FACT'&&f.id===c.sourceId&&supportedEvidenceQuote(f.detail,c.quote))||!parsed.citations.includes(c.sourceId)))throw Error('BASELINE_SOURCE_MISMATCH');
+    const options={citedQuotes:claims.map((c:any)=>c.quote),factQuotes:claims.map((c:any)=>c.quote),question:active.question,safetyRestricted:wire.safety.trainingRestricted};parsed.text=parsed.text.replace(/[（(\[]((?:ref)\d+)[）)\]]/g,(marker:string,id:string)=>parsed.citations.includes(id)?'':marker);let text=[...claims.filter((c:any)=>!parsed.text.includes(c.quote)).map((c:any)=>c.quote),parsed.text,parsed.nextStep??''].join('\n');if(!validateCoachAssertions(text,options).ok)text=retainValidCoachSentences(text,options);if(!text||!validateCoachAssertions(text,options).ok)throw Error('BASELINE_ASSERTION_POLICY');parsed.text=text;
    }catch(e){error=e instanceof Error?e.message:'BASELINE_INVALID'}
    result={http:200,body:{ok:!error,text:parsed?.text??'',nextStep:parsed?.nextStep??null,error,validation:'TEST_BASELINE_NOT_APP_HTTP_ACCEPTANCE',finishReason:provider?.choices?.[0]?.finish_reason}};
   }
