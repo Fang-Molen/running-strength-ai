@@ -1,3 +1,4 @@
+import {contextPaceComparison} from '../../src/lib/coach/context-comparison.ts';
 import { questionEvidence, supportedEvidenceQuote } from '../../src/lib/coach/question-evidence.ts';
 import { trustedBindingsPresent } from './coach-status.js';
 import { contextTextField } from '../../src/lib/coach/context-fields.ts';
@@ -234,9 +235,11 @@ export async function onRequestPost({request,env={},data={}}) {
         if(retainedQuotes.length)text=[...retainedQuotes,text].join('\n');
         if(!text||!validateCoachAssertions(text,assertionOptions).ok||text.length<10)throw Error('ASSERTION_POLICY_REJECTED');
       }
+      const computedQuotes=contextPaceComparison(refs.question,snapshot.context);
+      if(computedQuotes.length)text=[text,...computedQuotes].join('\n');
       const promoted=text.split(/[。；，,\n]|但是|然而|不过|但|却/).some(clause=>!/(?:未|没有|不能|无法|尚未|并未).{0,8}(?:核验|验证|证实)/.test(clause)&&/(?:设备|实验室|医疗|手表|Garmin|COROS).{0,8}(?:已核验|已验证|证实)|(?:已核验|已验证).{0,8}(?:设备|实验室|医疗|手表|Garmin|COROS)/i.test(clause));
       if(promoted||text.length>1000)throw Error('SOURCE_OR_LENGTH_INVALID');
-      return json({ok:true,text,source:'MODEL',evidenceQuotes:claims.filter(c=>text.includes(c.quote)).map(c=>c.quote),route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false,...(!validation.ok?{unverified:true}:{}),validation:{status:validation.ok?'ACCEPTED_STRUCTURALLY':'PARTIALLY_ACCEPTED',rejectedAssertionTypes:validation.errors,policyVersion:validation.policyVersion,professionalValidation:'NOT_PROVEN',factVerification:'USER_DECLARED'},stage:'COMPLETED',traceId,dispatchState:'RETURNED',ledgerState:'SETTLED',retrieval:{state:'NOT_REQUESTED'}});
+      return json({ok:true,text,source:'MODEL',computedQuotes,evidenceQuotes:claims.filter(c=>text.includes(c.quote)).map(c=>c.quote),route:route.kind,model:providerReturnedModel(reply),requestedModel:policy.model,usage,costMicros:actualCost,currency:policy.currency,planChanged:false,...(!validation.ok?{unverified:true}:{}),validation:{status:validation.ok?'ACCEPTED_STRUCTURALLY':'PARTIALLY_ACCEPTED',rejectedAssertionTypes:validation.errors,policyVersion:validation.policyVersion,professionalValidation:'NOT_PROVEN',factVerification:'USER_DECLARED'},stage:'COMPLETED',traceId,dispatchState:'RETURNED',ledgerState:'SETTLED',retrieval:{state:'NOT_REQUESTED'}});
     }
     assertDeepSeekEvidenceQuotes(canonical,restored);
     assertDeepSeekNumericGrounding(canonical,restored);
@@ -262,6 +265,8 @@ export async function onRequestPost({request,env={},data={}}) {
     interpreted=interpretCoachModelOutput(canonical,JSON.stringify(parsed));
     if(interpreted.turn.mode==='unavailable'||interpreted.turn.planChanged!==false||interpreted.turn.text.length>1000)throw new Error('OUTPUT_GUARD');
     if(snapshot.provenance==='USER_DECLARED') {
+      const computedQuotes=contextPaceComparison(refs.question,snapshot.context);
+      if(computedQuotes.length)text=[text,...computedQuotes].join('\n');
       const promoted=String(parsed.text).split(/[。；，,\n]|但是|然而|不过|但|却/).some(clause=>!/(?:未|没有|不能|无法|尚未|并未).{0,8}(?:核验|验证|证实)/.test(clause)&&/(?:设备|实验室|医疗|手表|Garmin|COROS).{0,8}(?:已核验|已验证|证实)|(?:已核验|已验证).{0,8}(?:设备|实验室|医疗|手表|Garmin|COROS)/i.test(clause));
       if(promoted)throw new Error('SOURCE_VERIFICATION_OVERCLAIM');
       const disclosure=snapshot.declarations?.length?'本次资料为用户申报，未核验设备或实验室原始记录。':'本次未提供个人记录，以下解释不代表个人评估。';

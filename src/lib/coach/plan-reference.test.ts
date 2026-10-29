@@ -33,3 +33,12 @@ test('quotes may select complete exact source fields, never altered values or cu
  assert.equal(supportedEvidenceQuote('结论：不能恢复冲刺；需评估。','恢复冲刺'),false)
  assert.equal(supportedEvidenceQuote('距离=5000米；覆盖未知','5000米'),false)
 })
+import {contextPaceComparison} from './context-comparison'
+import type {CoachRequestContext} from './online-contract'
+test('stored pace comparisons compute the winner from two complete runs, independent of model prose',()=>{
+ const records=[{d:4000,t:1200,day:'2026-10-20'},{d:4000,t:1080,day:'2026-10-22'}].map((x,i)=>({recordId:'run'+i,revision:'1',occurredAt:x.day+'T00:00:00Z',knownAt:x.day+'T00:00:00Z',source:'USER_DECLARED:MANUAL',state:'ACTUAL',category:'TRAINING',fields:[{name:'modality',value:'RUN',unit:null},{name:'knownDistance',value:x.d,unit:'m'},{name:'knownWorkTime',value:x.t,unit:'s'},{name:'paceSecondsPerKm',value:x.t*1000/x.d,unit:'s/km'},{name:'distanceComplete',value:true,unit:null}]})) as CoachRequestContext['records'];
+ const c:CoachRequestContext={version:'coach-context-v2',dependencyVersions:[],records,coverage:{selected:2,omitted:0,unknowns:[]}};
+ assert.match(contextPaceComparison('前后两次跑步哪次更快？',c).join(''),/2026-10-22这次更快.*5:00.*4:30/)
+ assert.deepEqual(contextPaceComparison('今天恢复怎样？',c),[])
+ assert.deepEqual(contextPaceComparison('哪次更快？',{...c,records:records.slice(0,1)}),[])
+})

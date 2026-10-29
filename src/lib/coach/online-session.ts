@@ -1,3 +1,4 @@
+import {contextPaceComparison} from './context-comparison'
 import {questionEvidence,supportedEvidenceQuote} from './question-evidence'
 import { type OnlineConversationTurn } from './online-handoff'
 import { COACH_DISCLOSURE_VERSION, declarationQuote, contextRecordQuote, contextModelQuote, type CoachRequestContext, type CoachDeclaration, type CoachSnapshotReference } from './online-contract'
@@ -118,7 +119,9 @@ export async function runOnlineExplanation(preview:OnlinePreview,options:{consen
   if(!answer.source)return {error:'回答来源未能确认，已保留本地回答；不将其标为模型解释。'}
   let restrictions=preview.restrictions
   try{restrictions=readR5Context(new Date().toISOString(),preview.question).restrictions}catch{/* Retain the captured restrictions on read failure. */}
-  const sources=[...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
+  const computed=contextPaceComparison(preview.question,preview.context)
+  if((answer.computedQuotes??[]).some(q=>!computed.includes(q)||!answer.text.includes(q)))return {error:'宿主比较与当前记录不一致。'}
+  const sources=[...computed,...preview.declarations.map(declarationQuote),...(preview.context?.records??[]).filter(r=>r.category!=='DIALOGUE').map(contextModelQuote),...questionEvidence(preview.question,preview.context).map(s=>s.detail)]
   const quoted=answer.evidenceQuotes??[]
   if(quoted.some(q=>!answer.text.includes(q)||!sources.some(s=>supportedEvidenceQuote(s,q))))return {error:'模型引用与本次资料不一致，已保留本地回答。'}
   const checked=validateCoachAssertions(answer.text,{citedQuotes:quoted,question:preview.question,restrictions,factQuotes:[...sources,...quoted],safetyRestricted:preview.trainingRestricted??preview.packet.assessment.safetyState!=='NO_KNOWN_HOLD'})

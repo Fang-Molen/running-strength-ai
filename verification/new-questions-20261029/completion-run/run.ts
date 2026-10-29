@@ -1,3 +1,4 @@
+import {contextPaceComparison} from '../../../src/lib/coach/context-comparison';
 import {supportedEvidenceQuote} from '../../../src/lib/coach/question-evidence';
 import {mock} from 'node:test';
 import {runOnlineExplanation} from '../../../src/lib/coach/online-session';
@@ -87,7 +88,7 @@ for(let i=start;i<Math.min(start+count,schedule.length);i++){
    try{const raw=validateProviderReply(provider,policy,{inputTokenLimit:26000,outputTokenLimit:1800});parsed=JSON.parse(raw);
     const wire=JSON.parse(payload.messages[1].content),claims=parsed.evidenceQuotes??[];
     if(!Array.isArray(claims)||parsed.citations.some((id:string)=>!wire.facts.some((f:any)=>f.id===id))||claims.some((c:any)=>!wire.facts.some((f:any)=>f.kind==='FACT'&&f.id===c.sourceId&&supportedEvidenceQuote(f.detail,c.quote))||!parsed.citations.includes(c.sourceId)))throw Error('BASELINE_SOURCE_MISMATCH');
-    const options={citedQuotes:claims.map((c:any)=>c.quote),factQuotes:claims.map((c:any)=>c.quote),question:active.question,safetyRestricted:wire.safety.trainingRestricted};parsed.text=parsed.text.replace(/[（(\[]((?:ref)\d+)[）)\]]/g,(marker:string,id:string)=>parsed.citations.includes(id)?'':marker);let text=[...claims.filter((c:any)=>!parsed.text.includes(c.quote)).map((c:any)=>c.quote),parsed.text,parsed.nextStep??''].join('\n');if(!validateCoachAssertions(text,options).ok)text=retainValidCoachSentences(text,options);if(!text||!validateCoachAssertions(text,options).ok)throw Error('BASELINE_ASSERTION_POLICY');parsed.text=text;
+    const options={citedQuotes:claims.map((c:any)=>c.quote),factQuotes:claims.map((c:any)=>c.quote),question:active.question,safetyRestricted:wire.safety.trainingRestricted};parsed.text=parsed.text.replace(/[（(\[]((?:ref)\d+)[）)\]]/g,(marker:string,id:string)=>parsed.citations.includes(id)?'':marker);let text=[...claims.filter((c:any)=>!parsed.text.includes(c.quote)).map((c:any)=>c.quote),parsed.text,parsed.nextStep??''].join('\n');if(!validateCoachAssertions(text,options).ok)text=retainValidCoachSentences(text,options);if(!text||!validateCoachAssertions(text,options).ok)throw Error('BASELINE_ASSERTION_POLICY');parsed.text=[text,...contextPaceComparison(active.question,selected.context)].join('\n');
    }catch(e){error=e instanceof Error?e.message:'BASELINE_INVALID'}
    result={http:200,body:{ok:!error,text:parsed?.text??'',nextStep:parsed?.nextStep??null,error,validation:'TEST_BASELINE_NOT_APP_HTTP_ACCEPTANCE',finishReason:provider?.choices?.[0]?.finish_reason}};
   }
